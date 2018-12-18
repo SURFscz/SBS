@@ -1,0 +1,362 @@
+[
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/4",
+      "idp_entity_id": "https://idp/3",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_9"
+    },
+    "time": 1497483689000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/4",
+      "idp_entity_id": "https://idp/2",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_1"
+    },
+    "time": 1488890164000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/2",
+      "idp_entity_id": "https://idp/2",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_1"
+    },
+    "time": 1482616187000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/3",
+      "idp_entity_id": "https://idp/2",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_7"
+    },
+    "time": 1527151987000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/2",
+      "idp_entity_id": "https://idp/2",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_9"
+    },
+    "time": 1520460861000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/3",
+      "idp_entity_id": "https://idp/2",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_8"
+    },
+    "time": 1508477593000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/1",
+      "idp_entity_id": "https://idp/3",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_3"
+    },
+    "time": 1461605894000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/5",
+      "idp_entity_id": "https://idp/1",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_10"
+    },
+    "time": 1463401148000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/4",
+      "idp_entity_id": "https://idp/2",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_7"
+    },
+    "time": 1516065773000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/4",
+      "idp_entity_id": "https://idp/1",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_5"
+    },
+    "time": 1505101182000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/3",
+      "idp_entity_id": "https://idp/2",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_4"
+    },
+    "time": 1481949855000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/5",
+      "idp_entity_id": "https://idp/1",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_6"
+    },
+    "time": 1486470180000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/1",
+      "idp_entity_id": "https://idp/1",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_9"
+    },
+    "time": 1509321039000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/2",
+      "idp_entity_id": "https://idp/1",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_10"
+    },
+    "time": 1502003801000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/3",
+      "idp_entity_id": "https://idp/2",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_1"
+    },
+    "time": 1522208800000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/2",
+      "idp_entity_id": "https://idp/1",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_8"
+    },
+    "time": 1476370427000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/3",
+      "idp_entity_id": "https://idp/1",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_10"
+    },
+    "time": 1479476170000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/3",
+      "idp_entity_id": "https://idp/3",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_6"
+    },
+    "time": 1479462500000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/5",
+      "idp_entity_id": "https://idp/3",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_7"
+    },
+    "time": 1505305372000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/2",
+      "idp_entity_id": "https://idp/2",
+      "state": "prodaccepted"
+    },
+    "fields": {
+      "user_id": "user_6"
+    },
+    "time": 1459228819000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/2",
+      "idp_entity_id": "https://idp/1",
+      "state": "testaccepted"
+    },
+    "fields": {
+      "user_id": "user_4"
+    },
+    "time": 1506372026000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/1",
+      "idp_entity_id": "https://idp/2",
+      "state": "testaccepted"
+    },
+    "fields": {
+      "user_id": "user_2"
+    },
+    "time": 1506603434000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/4",
+      "idp_entity_id": "https://idp/1",
+      "state": "testaccepted"
+    },
+    "fields": {
+      "user_id": "user_5"
+    },
+    "time": 1470764519000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/5",
+      "idp_entity_id": "https://idp/1",
+      "state": "testaccepted"
+    },
+    "fields": {
+      "user_id": "user_6"
+    },
+    "time": 1468793490000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/4",
+      "idp_entity_id": "https://idp/3",
+      "state": "testaccepted"
+    },
+    "fields": {
+      "user_id": "user_5"
+    },
+    "time": 1491601278000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/2",
+      "idp_entity_id": "https://idp/3",
+      "state": "testaccepted"
+    },
+    "fields": {
+      "user_id": "user_8"
+    },
+    "time": 1520851417000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/2",
+      "idp_entity_id": "https://idp/3",
+      "state": "testaccepted"
+    },
+    "fields": {
+      "user_id": "user_10"
+    },
+    "time": 1491425809000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/3",
+      "idp_entity_id": "https://idp/1",
+      "state": "testaccepted"
+    },
+    "fields": {
+      "user_id": "user_10"
+    },
+    "time": 1494947641000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/3",
+      "idp_entity_id": "https://idp/1",
+      "state": "testaccepted"
+    },
+    "fields": {
+      "user_id": "user_8"
+    },
+    "time": 1499768889000000000
+  },
+  {
+    "measurement": "eb_logins_tst",
+    "tags": {
+      "sp_entity_id": "https://sp/1",
+      "idp_entity_id": "https://idp/1",
+      "state": "testaccepted"
+    },
+    "fields": {
+      "user_id": "user_10"
+    },
+    "time": 1477856263000000000
+  }
+]

@@ -1,0 +1,4 @@
+body::after {
+    background: #a2670e;
+    content: "local";
+}

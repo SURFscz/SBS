@@ -1,0 +1,46 @@
+@import "../stylesheets/vars.scss";
+
+.language-selector {
+
+  margin: 0 20px 16px 25px;
+  list-style: none;
+  border: 1px solid $darker-blue;
+  border-radius: $br;
+
+  li {
+    display: inline-block;
+    padding: 2px 12px;
+    margin: 0;
+
+    &:first-child {
+      border-bottom-left-radius: 1px;
+      border-top-left-radius: 1px;
+    }
+
+    &:last-child {
+      border-bottom-right-radius: 1px;
+      border-top-right-radius: 1px;
+    }
+
+    &:not(:first-child):not(:last-child) {
+      border-left: 1px $darker-blue solid;
+      border-right: 1px $darker-blue solid;
+    }
+
+    a {
+      font-weight: normal;
+      color: $darker-blue;
+      text-decoration: none;
+    }
+
+    &.active {
+      background-color: $darker-blue;
+
+      a {
+        color: white;
+      }
+
+    }
+  }
+
+}

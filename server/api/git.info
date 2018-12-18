@@ -1,0 +1,5 @@
+commit 37bd70f95d77835993135a8aec5ab920d514968a
+Author: Okke Harsta <oharsta@zilverline.com>
+Date:   Thu Oct 4 12:38:35 2018 +0200
+
+    Disable download button to prevent multiple downloads

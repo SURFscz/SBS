@@ -1,0 +1,12 @@
+database:
+  name: sbs_test
+  host: localhost
+  username: sbs
+  password: sbs
+
+secret_key: secret
+
+api_users:
+  - name: "sysadmin"
+    password: "secret"
+    scope: "read, write"
