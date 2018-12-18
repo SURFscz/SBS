@@ -1,0 +1,114 @@
+@import "../stylesheets/vars.scss";
+
+.header-container {
+
+  background: $gold;
+
+  &.guest {
+    background: none;
+  }
+
+  .header {
+    max-width: $medium;
+    margin: 0 auto;
+    padding: 6px 20px 0 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    img.logo {
+      height: 40px;
+    }
+
+    p.title {
+      color: $darker-blue;
+      font-size: 24px;
+      font-style: italic;
+      font-weight: bold;
+      margin-bottom: 16px;
+
+      &.first {
+        margin-left: 20px;
+      }
+    }
+
+    svg.fa-lightbulb {
+      color: $darker-blue;
+      margin: 0 25px 16px;
+      font-size: 26px;
+      font-weight: bold;
+      transform: rotate(-45deg);
+    }
+
+    ul.links {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      list-style: none;
+
+      li.item {
+        display: inline-block;
+        margin-right: 60px;
+        font-size: 30px;
+        text-transform: uppercase;
+
+        &.title {
+          margin-left: 210px;
+          font-weight: bold;
+          text-transform: uppercase;
+          font-size: 21px;
+          color: $blue;
+        }
+
+        &.profile {
+          margin-left: auto;
+        }
+
+        &.border-left {
+          border-left: 1px solid $blue;
+          padding-left: 15px;
+        }
+
+      }
+
+      a.welcome-link {
+        position: relative;
+      }
+
+      ul.user-profile {
+        position: absolute;
+        z-index: 2;
+        padding: 10px;
+        list-style: none;
+        min-width: 300px;
+        top: 50px;
+        background: #fff;
+        border-radius: $br;
+        box-shadow: 1px 1px $br rgba(black, .3);
+
+        li {
+          font-style: italic;
+          font-size: 13px;
+          margin-bottom: 5px;
+          display: block;
+
+          span {
+            &.value {
+              font-style: normal;
+              float: right;
+            }
+          }
+
+        }
+      }
+
+    }
+
+  }
+
+}
+
+
+
+
+

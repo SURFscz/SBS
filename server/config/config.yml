@@ -1,0 +1,9 @@
+database:
+  uri: "mysql+pymysql://sbs:sbs@localhost/sbs"
+
+secret_key: secret
+
+api_users:
+  - name: "sysadmin"
+    password: "secret"
+    scope: "read, write"

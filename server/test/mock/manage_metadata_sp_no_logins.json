@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "2cc71508-1b68-4a3e-b553-f04b6b2a689c",
+    "version": 11,
+    "data": {
+      "entityid": "https://sp/no_logins",
+      "state": "prodaccepted",
+      "metaDataFields": {
+        "name:en": "SP1-en",
+        "name:nl": "SP1-nl"
+      }
+    }
+  },
+  {
+    "_id": "c9002374-7e5a-4c82-bb36-8c6ae47ed745",
+    "version": 1,
+    "data": {
+      "entityid": "https://sp/2",
+      "state": "testaccepted",
+      "metaDataFields": {
+        "name:en": "SP2-en",
+        "name:nl": "SP2-nl"
+      }
+    }
+  }
+]
