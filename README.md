@@ -6,7 +6,7 @@ Samenwerking Beheer Systeem ↣ Collaboration Management System
 
 ### [Overview Requirements](#system-requirements)
 
-- Python 3.6.x
+- Python 3.7.x
 - MySQL v8.x
 - Yarn 1.x
 - node
