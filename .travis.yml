@@ -28,6 +28,8 @@ script:
   - cd client
   - yarn install
   - CI=true yarn test
+  - pwd
+  - ls -la src/components/../lib/Spin.js
   - yarn build
 after_success:
   - codecov
