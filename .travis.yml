@@ -2,8 +2,6 @@ language: python
 
 python:
   - "3.6"
-node_js:
-  - "8.12"
 cache:
   yarn: false
   directories:
@@ -12,6 +10,8 @@ before_install:
   - pip install -r ./requirements/test.txt
   - pip install codecov
   - npm install -g yarn
+  - nvm install v8.12.0
+  - nvm use v8.12.0
 install:
 before_script:
   - mysql -e "create database IF NOT EXISTS sbs_test; CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
