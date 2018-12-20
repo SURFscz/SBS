@@ -4,7 +4,7 @@
 
   margin: 0 20px 16px 25px;
   list-style: none;
-  border: 1px solid $darker-blue;
+  border: 1px solid $blue;
   border-radius: $br;
 
   li {
@@ -23,18 +23,18 @@
     }
 
     &:not(:first-child):not(:last-child) {
-      border-left: 1px $darker-blue solid;
-      border-right: 1px $darker-blue solid;
+      border-left: 1px $blue solid;
+      border-right: 1px $blue solid;
     }
 
     a {
       font-weight: normal;
-      color: $darker-blue;
+      color: $blue;
       text-decoration: none;
     }
 
     &.active {
-      background-color: $darker-blue;
+      background-color: $blue;
 
       a {
         color: white;

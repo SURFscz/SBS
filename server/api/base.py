@@ -1,9 +1,11 @@
 import logging
 import os
+import time
 from functools import wraps
-
+from datetime import date
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from werkzeug.exceptions import HTTPException, Unauthorized
+from flask.json import JSONEncoder
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
@@ -37,6 +39,15 @@ def get_user(config, auth):
 def _add_custom_header(response):
     response.headers.set("x-session-alive", "true")
     response.headers["server"] = ""
+
+
+class DynamicExtendedJSONEncoder(JSONEncoder):
+    def default(self, o):
+        if hasattr(o, "__json__"):
+            return o.__json__()
+        if isinstance(o, date):
+            return time.mktime(o.timetuple())
+        return super(DynamicExtendedJSONEncoder, self).default(o)
 
 
 def json_endpoint(f):

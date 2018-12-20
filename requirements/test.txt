@@ -1,5 +1,5 @@
 -r base.txt
-Flask-Testing==0.7.1
+flask-testing==0.7.1
 pytest==4.0.2
 pytest-cov==2.6.0
 flake8==3.6.0

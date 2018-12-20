@@ -54,7 +54,7 @@ See the [Wiki](https://github.com/SURFscz/SBS/wiki) for the API documentation.
 
 To run all Python tests:
 ```
-pytest server
+pytest server/test
 ```
 To generate coverage reports:
 ```

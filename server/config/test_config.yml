@@ -1,8 +1,5 @@
 database:
-  name: sbs_test
-  host: localhost
-  username: sbs
-  password: sbs
+  uri: "mysql+pymysql://sbs:sbs@localhost/sbs_test"
 
 secret_key: secret
 

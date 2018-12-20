@@ -8,6 +8,10 @@ I18n.translations.en = {
     header: {
         title: "Collaboration Management System"
     },
+    navigation: {
+        registration: "Registration",
+        collaborations: "Collaborations"
+    },
     error_dialog: {
         title: "Unexpected error",
         body: "This is embarrassing; an unexpected error has occurred. It has been logged and reported. Please try again...",

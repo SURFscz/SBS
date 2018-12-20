@@ -1,0 +1,56 @@
+@import "../stylesheets/vars.scss";
+
+.navigation-container {
+
+  background-color: $blue;
+
+  .spinner {
+    position: fixed;
+    top: 2%;
+    left: 49%;
+  }
+
+  .navigation {
+    max-width: $medium;
+    margin: 0 auto;
+    padding: 25px 15px 0 15px;
+    font-size: 20px;
+    display: flex;
+    position: relative;
+
+    a.menu-item {
+      color: lighten($light-blue, 5);
+      margin-right: 50px;
+      padding-bottom: 12px;
+      text-decoration: none;
+
+      &:hover, &:visited {
+        text-decoration: none;
+      }
+
+      &.active {
+        color: white;
+        font-weight: bold;
+        border-bottom: 6px solid white;
+      }
+    }
+
+    a.push {
+      position: absolute;
+      top: 8px;
+      right: 15px;
+      font-size: 16px;
+
+      i {
+        margin-left: 35px;
+        color: $blue;
+      }
+    }
+
+  }
+}
+
+
+
+
+

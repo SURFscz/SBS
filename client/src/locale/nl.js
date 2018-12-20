@@ -8,6 +8,11 @@ I18n.translations.nl = {
     header: {
         title: "Samenwerking Beheer Systeem",
     },
+    navigation: {
+        registration: "Registratie",
+        collaborations: "Samenwerkingen"
+    },
+
     error_dialog: {
         title: "Onverwachte fout",
         body: "Dit is gênant; er is een onverwachte fout opgetreden. De fout is gerapporteerd. Probeer het nogmaals...",
