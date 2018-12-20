@@ -1,0 +1,28 @@
+language: python
+
+python:
+  - "3.7"
+node_js:
+- "7"
+cache:
+  yarn: true
+  directories:
+  - node_modules
+before_install:
+  - pip install -r ./requirements/test.txt
+  - pip install codecov
+  - npm install -g yarn
+install:
+before_script:
+  - mysql -e "create database IF NOT EXISTS sbs_test; CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
+    GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
+    SET GLOBAL TRANSACTION ISOLATION LEVEL SERIALIZABLE;" -uroot
+script:
+  - pytest --cov=server --cov-report= server/test
+  - flake8 ./server/
+  - cd client
+  - yarn install
+  - CI=true yarn test
+  - yarn build
+after_success:
+  - codecov
