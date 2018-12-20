@@ -4,7 +4,7 @@ import logging
 from flask import Blueprint, request as current_request, session, current_app
 
 from server.api.base import json_endpoint
-from server.db.db import User, db
+from server.db.db import User
 from server.db.models import update, save
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
@@ -32,9 +32,17 @@ def me():
     return user, 200
 
 
+@user_api.route("/<user_id>", strict_slashes=False)
+@json_endpoint
+def user_by_id(user_id):
+    # options(joinedload("instances"))
+    user = User.query.get(user_id)
+    return (user, 200) if user else (None, 404)
+
+
 @user_api.route("/", strict_slashes=False)
 @json_endpoint
-def users():
+def all_users():
     return User.query.all(), 200
 
 
