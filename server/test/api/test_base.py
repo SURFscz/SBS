@@ -12,5 +12,5 @@ class TestBase(AbstractTest):
         self.assertEqual(401, res.status_code)
 
     def test_404(self):
-        res = self.get("/api/users/nope",response_status_code=404)
+        res = self.get("/api/users/nope", response_status_code=404)
         self.assertDictEqual({'message': 'http://localhost/api/users/nope not found'}, res)
