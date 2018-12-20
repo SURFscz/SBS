@@ -3,9 +3,9 @@ language: python
 python:
   - "3.6"
 node_js:
-- "8.12"
+- "node"
 cache:
-  yarn: true
+  yarn: false
   directories:
   - node_modules
 before_install:
@@ -20,6 +20,7 @@ before_script:
 script:
   - pytest --cov=server --cov-report= server/test
   - flake8 ./server/
+  - node -v
   - cd client
   - yarn install
   - CI=true yarn test

@@ -17,8 +17,7 @@ class SQLAlchemyPrePing(SQLAlchemy):
         super().apply_pool_defaults(app, options)
 
 
-# Any because: https://github.com/python/mypy/issues/2477
-db: Any = SQLAlchemyPrePing()
+db = SQLAlchemyPrePing()
 
 
 def db_migrations(sqlalchemy_database_uri):
