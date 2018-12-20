@@ -82,3 +82,10 @@ class AbstractTest(TestCase):
                                         content_type="application/json")
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
             return response.json
+
+    def put(self, url, body={}, response_status_code=201):
+        with requests.Session():
+            response = self.client.put(url, headers=BASIC_AUTH_HEADER, data=json.dumps(body),
+                                       content_type="application/json")
+            self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
+            return response.json
