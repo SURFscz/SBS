@@ -1,4 +1,4 @@
-import spinner from "../lib/Spin";
+import spinner from "../utils/Spin";
 
 function validateResponse(showErrorDialog) {
     return res => {
