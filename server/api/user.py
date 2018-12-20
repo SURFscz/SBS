@@ -5,6 +5,7 @@ from flask import Blueprint, request as current_request, session, current_app
 
 from server.api.base import json_endpoint
 from server.db.db import User, db
+from server.db.models import update, save
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
@@ -39,12 +40,14 @@ def users():
 
 @user_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
-def create():
-    json_dict = current_request.get_json()
-    user = User(**json_dict)
-    db.session.merge(user)
-    db.session.commit()
-    return user, 201
+def save_user():
+    return save(User)
+
+
+@user_api.route("/", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def update_user():
+    return update(User)
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
