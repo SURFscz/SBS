@@ -2,7 +2,7 @@ import React from "react";
 import I18n from "i18n-js";
 
 import MDSpinner from "react-md-spinner";
-import spinner from "../lib/Spin.js";
+import spinner from "../utils/Spin.js";
 
 import {NavLink} from "react-router-dom";
 
