@@ -2,12 +2,12 @@ import React from "react";
 import I18n from "i18n-js";
 
 import MDSpinner from "react-md-spinner";
-import spinner from "../lib/Spin";
+import spinner from "../lib/Spin.js";
 
 import {NavLink} from "react-router-dom";
 
 import "./Navigation.scss";
-import {isEmpty} from "../utils/Utils";
+import {isEmpty} from "../utils/Utils.js";
 
 export default class Navigation extends React.PureComponent {
 
