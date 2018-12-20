@@ -1,0 +1,88 @@
+@import "../stylesheets/vars.scss";
+
+.registration {
+  background-color: white;
+  padding: 25px 10px;
+
+  .step-container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+    .step {
+      background-color: $lightest-grey;
+      border: 1px solid $medium-grey;
+      color: $medium-grey;
+      border-radius: $br;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      position: relative;
+      padding: 25px;
+
+      svg.fa-info-circle {
+        position: absolute;
+        right: -10px;
+        top: -10px;
+        z-index: 9;
+        color: $blue;
+        font-size: 22px;
+      }
+
+      &.active {
+        background-color: lighten($light-blue, 2%);
+        border: 2px solid $blue;
+        color: $darker-blue;
+      }
+
+      .step-number {
+        display: inline-block;
+        margin-right: 8px;
+        font-weight: bold;
+        font-size: 20px;
+      }
+
+      .step-title {
+        font-size: 20px;
+        display: inline-block;
+        margin-bottom: 8px;
+      }
+
+      .step-sub {
+        font-size: 16px;
+      }
+
+      svg.step-icon {
+        font-size: 48px;
+        margin: 15px 0;
+        color: $medium-grey;
+
+        &.active {
+          color: $blue;
+        }
+      }
+    }
+
+    .step-divider {
+      display: flex;
+      justify-content: space-between;
+      margin: 15px 0;
+      color: $light-grey;
+      font-size: 16px;
+
+      svg.fa-circle {
+        margin: 0 10px;
+      }
+    }
+  }
+
+  .__react_component_tooltip {
+    text-align: center;
+  }
+
+
+}
