@@ -1,11 +1,9 @@
 import os
-from typing import Any
 
+from flask_jsontools.formatting import JsonSerializableBase
 from flask_migrate import command
 from flask_sqlalchemy import SQLAlchemy
-
 from sqlalchemy.ext.declarative import declarative_base
-from flask_jsontools.formatting import JsonSerializableBase
 
 Base = declarative_base(cls=(JsonSerializableBase,))
 
@@ -35,4 +33,3 @@ class User(Base, db.Model):
     uid = db.Column("uid", db.String(length=512), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=True)
     email = db.Column("email", db.String(length=255), nullable=True)
-
