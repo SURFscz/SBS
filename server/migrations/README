@@ -1,4 +1,4 @@
 Generic single-database configuration.
 
-from SBS/server
+cd SBS/server
 alembic -c ./migrations/alembic.ini revision -m "description"

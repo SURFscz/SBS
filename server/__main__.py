@@ -1,12 +1,13 @@
 import logging
 import os
 from logging.handlers import TimedRotatingFileHandler
-from flask_migrate import Migrate, command
+
 import yaml
 from flask import Flask, jsonify, request as current_request
+from flask_migrate import Migrate
 from munch import munchify
 
-from server.api.base import base_api
+from server.api.base import base_api, DynamicExtendedJSONEncoder
 from server.api.user import user_api
 from server.db.db import db, db_migrations
 
@@ -61,14 +62,16 @@ app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False
 
+app.json_encoder = DynamicExtendedJSONEncoder
+
 db.init_app(app)
+app.db = db
 
 app.app_config = config
 app.app_config["profile"] = profile
 
 Migrate(app, db)
 db_migrations(config.database.uri)
-
 
 # WSGI production mode dictates that no flask app is actually running
 if is_local:

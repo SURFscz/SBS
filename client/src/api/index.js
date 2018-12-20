@@ -1,5 +1,4 @@
 import spinner from "../lib/Spin";
-import {isEmpty} from "../utils/Utils";
 
 function validateResponse(showErrorDialog) {
     return res => {
@@ -63,15 +62,19 @@ function fetchDelete(path) {
     return validFetch(path, {method: "delete"});
 }
 
-function queryParam(options) {
-    const entries = Object.entries(options[0]);
-    return entries.reduce((acc, entry) => isEmpty(entry[1]) ? acc : acc + `${entry[0]}=${entry[1]}&`, "?");
-}
-
 //API
 export function me() {
     return fetchJson("/api/users/me", {}, {}, false);
 }
+
+export function health() {
+    return fetchJson("/health");
+}
+
 export function reportError(error) {
     return postPutJson("/api/users/error", error, "post");
+}
+
+export function deleteCollaboration(id) {
+    return fetchDelete(`/api/collaboration/${id}`)
 }

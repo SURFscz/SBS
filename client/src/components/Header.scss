@@ -2,7 +2,7 @@
 
 .header-container {
 
-  background: $gold;
+  background: white;
 
   &.guest {
     background: none;
@@ -17,11 +17,11 @@
     align-items: center;
 
     img.logo {
-      height: 40px;
+      height: 60px;
     }
 
     p.title {
-      color: $darker-blue;
+      color: $blue;
       font-size: 24px;
       font-style: italic;
       font-weight: bold;
@@ -33,7 +33,7 @@
     }
 
     svg.fa-lightbulb {
-      color: $darker-blue;
+      color: $blue;
       margin: 0 25px 16px;
       font-size: 26px;
       font-weight: bold;
@@ -57,7 +57,7 @@
           font-weight: bold;
           text-transform: uppercase;
           font-size: 21px;
-          color: $blue;
+          color: $blue;;
         }
 
         &.profile {
@@ -65,7 +65,7 @@
         }
 
         &.border-left {
-          border-left: 1px solid $blue;
+          border-left: 1px solid $blue;;
           padding-left: 15px;
         }
 
