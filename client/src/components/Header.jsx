@@ -3,7 +3,7 @@ import I18n from "i18n-js";
 import {Link} from "react-router-dom";
 import logo from "../images/surflogo.png";
 import "./Header.scss";
-import {isEmpty, stop} from "../utils/Utils";
+import {isEmpty, stopEvent} from "../utils/Utils";
 import LanguageSelector from "./LanguageSelector";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -26,7 +26,7 @@ export default class Header extends React.PureComponent {
     }
 
     login = e => {
-        stop(e);
+        stopEvent(e);
         window.location.href = "/login";
     };
 

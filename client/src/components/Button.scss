@@ -1,0 +1,67 @@
+@import "../stylesheets/vars.scss";
+
+a.button {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: $light-blue;
+  border: 2px solid $blue;
+  color: $blue;
+  border-radius: $br;
+  font-size: larger;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    background-color: darken($light-blue, 3%);
+    color: darken($blue, 8%);
+    border: 2px solid darken($blue, 8%);
+  }
+
+  &:hover, &:visited {
+    text-decoration: none;
+  }
+
+  &:not(:last-child) {
+    margin-right: 15px;
+  }
+
+  &.disabled {
+    cursor: no-drop;
+    background-color: $lightest-grey;
+    border: 1px solid $medium-grey;
+    color: $medium-grey;
+
+    &:hover {
+      background-color: $lightest-grey;
+      border: 1px solid $medium-grey;
+      color: $medium-grey;
+    }
+  }
+
+  i {
+    margin-left: 10px;
+    color: white;
+  }
+
+  &.cancel {
+    background-color: $lighter-grey;
+    color: white;
+    border: none;
+  }
+
+  &.green {
+    background-color: $green;
+    color: white;
+    border: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    i {
+      color: white;
+      margin: 0;
+      font-size: larger;
+    }
+  }
+}

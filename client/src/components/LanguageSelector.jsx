@@ -2,14 +2,14 @@ import React from "react";
 import I18n from "i18n-js";
 import Cookies from "js-cookie";
 import {replaceQueryParameter} from "../utils/QueryParameters";
-import {stop} from "../utils/Utils";
+import {stopEvent} from "../utils/Utils";
 import moment from "moment-timezone";
 import "./LanguageSelector.scss"
 
 export default class LanguageSelector extends React.PureComponent {
 
     handleChooseLocale = locale => e => {
-        stop(e);
+        stopEvent(e);
         Cookies.set("lang", locale, {expires: 356, secure: document.location.protocol.endsWith("https")});
         I18n.locale = locale;
         moment.locale(locale);

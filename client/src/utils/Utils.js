@@ -1,4 +1,4 @@
-export function stop(e) {
+export function stopEvent(e) {
     if (e !== undefined && e !== null) {
         e.preventDefault();
         e.stopPropagation();

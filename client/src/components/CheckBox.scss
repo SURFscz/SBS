@@ -27,9 +27,8 @@ div.checkbox {
         padding: 1px 2px;
         margin: 2px 0;
         cursor: pointer;
-        i {
+        svg {
             color: transparent;
-            padding: 0 1px;
         }
     }
 
@@ -40,26 +39,26 @@ div.checkbox {
     }
 
     input[type="checkbox"]:checked + label span {
-        border: 2px solid $blue;
+        border: 3px solid $blue;
+        background-color: $blue;
         border-radius: 2px;
         box-shadow: none;
         padding: 0;
-        i {
+        svg {
             background-color: $blue;
             color: white;
-            padding: 3px 2px;
         }
     }
 
     input[type="checkbox"]:checked:disabled + label span {
         border: 3px solid $medium-grey;
         cursor: default;
-        i {
+        svg {
             background-color: $medium-grey;
         }
     }
 
-    i.fa-info-circle {
+    svg.fa-info-circle {
         color: $blue;
         margin-left: 8px;
         font-size: 16px;

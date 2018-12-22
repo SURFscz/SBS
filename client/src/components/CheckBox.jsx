@@ -1,8 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-
-import "./CheckBox.css";
-import "./RadioBox.css";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import "./CheckBox.scss";
 import ReactTooltip from "react-tooltip";
 
 export default class CheckBox extends React.PureComponent {
@@ -20,15 +19,15 @@ export default class CheckBox extends React.PureComponent {
                 <input type="checkbox" id={name} name={name} checked={value}
                        onChange={onChange} disabled={readOnly}/>
                 <label htmlFor={name}>
-                    <span ref={ref => this.input = ref} tabIndex="0"><i className="fa fa-check"></i></span>
+                    <span ref={ref => this.input = ref} tabIndex="0"><FontAwesomeIcon icon="check"/></span>
                 </label>
-                {info && <span>
-                    <label  htmlFor={name} className={`info ${readOnly ? "disabled" : ""}`}>{info}</label>
-                    {tooltip && <i data-tip data-for={name} className="fa fa-info-circle"></i>}
+                {info && <em>
+                    <label htmlFor={name} className={`info ${readOnly ? "disabled" : ""}`}>{info}</label>
+                    {tooltip && <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>}
                     {tooltip && <ReactTooltip id={name} type="info" effect="solid">
                         <p dangerouslySetInnerHTML={{__html: tooltip}}/>
                     </ReactTooltip>}
-                </span>}
+                </em>}
             </div>
         );
     }
