@@ -2,14 +2,15 @@
 
 .registration {
   background-color: white;
-  padding: 25px 10px;
+  padding: 35px 0 65px 0;
 
   .step-container {
-    max-width: 1200px;
-    margin: auto;
+    max-width: $medium;
+    margin: 0 auto;
+    padding: 0 180px;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 
     .step {
@@ -23,20 +24,28 @@
       flex-direction: column;
       position: relative;
       padding: 25px;
+      min-width: 235px;
 
       svg.fa-info-circle {
         position: absolute;
-        right: -10px;
-        top: -10px;
+        right: -5px;
+        top: -5px;
         z-index: 9;
         color: $blue;
         font-size: 22px;
+        background-color: white;
       }
 
       &.active {
-        background-color: lighten($light-blue, 2%);
+        background-color: $light-blue;
         border: 2px solid $blue;
-        color: $darker-blue;
+        color: $blue;
+      }
+
+      &.done {
+        background-color: $light-green;
+        border: 2px solid $green;
+        color: $green;
       }
 
       .step-number {
@@ -50,6 +59,7 @@
         font-size: 20px;
         display: inline-block;
         margin-bottom: 8px;
+        font-weight: bold;
       }
 
       .step-sub {
@@ -64,6 +74,10 @@
         &.active {
           color: $blue;
         }
+
+        &.done {
+          color: $green;
+        }
       }
     }
 
@@ -74,9 +88,84 @@
       color: $light-grey;
       font-size: 16px;
 
+      &.done {
+        color: $medium-grey;
+      }
+
       svg.fa-circle {
         margin: 0 10px;
       }
+    }
+  }
+
+  .step-form {
+    max-width: $medium;
+    margin: 40px auto;
+    padding: 0 180px;
+
+    p.form-title {
+      font-size: 28px;
+      line-height: 28px;
+      color: $blue;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    p.info {
+      margin-bottom: 40px;
+    }
+    section.form-element {
+      padding: 2px 25px 2px 25px;
+      border-left: 2px solid $blue;
+      margin: 25px 0;
+
+      &.invalid {
+        border-left: 2px solid $lighter-grey;
+      }
+    }
+    table {
+      width: 50%;
+      tr {
+        border-bottom: 1px solid $light-grey;
+      }
+      td {
+        padding: 5px 0;
+        &.attribute {
+          width: 50%;
+        }
+        &.value {
+          width: 50%;
+          color:$dark-grey
+        }
+      }
+    }
+    .required-marker {
+      color: $red;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    input[type=text], input[type=email], textarea {
+      display: block;
+      width: 100%;
+      border: 1px solid $lighter-grey;
+      padding: 6px;
+      border-radius: $br;
+      font-size: 14px;
+      margin-top: 5px;
+
+      &[disabled] {
+        background-color: $light-grey;
+      }
+    }
+    .form-label {
+      margin-bottom: 5px;
+      display: inline-block;
+    }
+    a.start {
+      margin-top: 20px;
+      padding: 10px 35px;
+      font-size: 24px;
+      line-height: 24px;
     }
   }
 

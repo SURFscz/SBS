@@ -14,8 +14,10 @@ user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 @json_endpoint
 def me():
     sub = current_request.headers.get("Oidc-Claim-Sub")
+    # TODO read more headers
     if sub:
-        user = {"uid": sub, "guest": False}
+        user = {"uid": sub, "name": "John Doe", "email": "john@example.org", "organization": "University Groningen",
+                "guest": False}
         session["user"] = user
         return user, 200
 
@@ -23,7 +25,8 @@ def me():
         return session["user"], 200
 
     if current_app.app_config.profile == "local":
-        user = {"uid": "uid", "display_name": "John Doe", "guest": False}
+        user = {"uid": "uid", "name": "John Doe", "email": "john@example.org", "organization": "University Groningen",
+                "guest": False}
         session["user"] = user
         return user, 200
 

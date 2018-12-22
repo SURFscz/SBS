@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 import "./ErrorDialog.scss";
 import I18n from "i18n-js";
-import {stop} from "../utils/Utils";
+import {stopEvent} from "../utils/Utils";
 
 export default function ErrorDialog({isOpen = false, close}) {
     return (
@@ -21,7 +21,7 @@ export default function ErrorDialog({isOpen = false, close}) {
             </section>
             <section className="dialog-buttons">
                 <a href="/close" className="button blue error" onClick={e => {
-                    stop(e);
+                    stopEvent(e);
                     close(e);
                 }}>{I18n.t("error_dialog.ok")}</a>
             </section>
