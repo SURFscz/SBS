@@ -32,6 +32,11 @@ Ensure MySQL is running and run the Python server:
 ```
 PROFILE=local python -m server
 ```
+With TESTING=1 no mails will be send. If you do want to validate the mails you can run a fake smtp server with:
+```
+python -m smtpd -n -c DebuggingServer localhost:1025 
+```
+
 The GUI can be started with:
 ```
 cd client

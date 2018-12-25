@@ -7,3 +7,7 @@ api_users:
   - name: "sysadmin"
     password: "secret"
     scope: "read, write"
+
+mail:
+  host: localhost
+  port: 1025

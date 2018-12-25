@@ -6,6 +6,7 @@ from flask import Blueprint, request as current_request, session, current_app
 from server.api.base import json_endpoint
 from server.db.db import User
 from server.db.models import update, save
+from server.mail import collaboration_invite
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
@@ -59,6 +60,13 @@ def save_user():
 @json_endpoint
 def update_user():
     return update(User)
+
+
+@user_api.route("/send_invitation", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def send_invitation():
+    collaboration_invite({"salutation": "Dear John"}, "test", ["test@example.com"])
+    return {}, 201
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
