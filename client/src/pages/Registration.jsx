@@ -1,5 +1,5 @@
 import React from "react";
-import {health} from "../api";
+import {health, inviteForCollaboration} from "../api";
 import ReactTooltip from "react-tooltip";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import I18n from "i18n-js";
@@ -68,7 +68,10 @@ class Registration extends React.Component {
                           onChange={e => this.setState({agreedWithPolicy: e.target.checked})}/>
             </section>
             <Button className="start" disabled={!this.form2Invariant(motivation, agreedWithPolicy)}
-                    onClick={() => this.setState({step: "3"})} txt={I18n.t("registration.request")}/>
+                    onClick={() => {
+                        this.setState({step: "3"});
+                        inviteForCollaboration();
+                    }} txt={I18n.t("registration.request")}/>
         </div>);
     };
 

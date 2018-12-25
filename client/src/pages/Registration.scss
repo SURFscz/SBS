@@ -115,11 +115,11 @@
     }
     section.form-element {
       padding: 2px 25px 2px 25px;
-      border-left: 2px solid $blue;
+      border-left: 3px solid $blue;
       margin: 25px 0;
 
       &.invalid {
-        border-left: 2px solid $lighter-grey;
+        border-left: 3px solid $lighter-grey;
       }
     }
     table {

@@ -78,3 +78,7 @@ export function reportError(error) {
 export function deleteCollaboration(id) {
     return fetchDelete(`/api/collaboration/${id}`)
 }
+
+export function inviteForCollaboration() {
+    return postPutJson(`/api/users/send_invitation`, {}, "post")
+}

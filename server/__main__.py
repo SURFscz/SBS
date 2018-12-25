@@ -1,7 +1,7 @@
 import logging
 import os
 from logging.handlers import TimedRotatingFileHandler
-
+from flask_mail import Mail
 import yaml
 from flask import Flask, jsonify, request as current_request
 from flask_migrate import Migrate
@@ -61,6 +61,10 @@ app.register_error_handler(404, page_not_found)
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False
+
+app.config["MAIL_SERVER"] = config.mail.host
+app.config["MAIL_PORT"] = int(config.mail.port)
+app.mail = Mail(app)
 
 app.json_encoder = DynamicExtendedJSONEncoder
 
