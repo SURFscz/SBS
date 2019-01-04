@@ -120,10 +120,10 @@ class Registration extends React.Component {
         const done = this.doneClassName(currentStep, step);
         return (<div key={step} className={`step ${active} ${done}`}>
             <span className="step-info" data-for={step} data-tip>
-                <FontAwesomeIcon icon="info-circle"/>
-                    <ReactTooltip id={step} type="info" class="tool-tip" effect="solid" dataBorder={true}>
-                        <span dangerouslySetInnerHTML={{__html: I18n.t(`registration.step${step}.tooltip`)}}/>
-                    </ReactTooltip>
+                {/*<FontAwesomeIcon icon="info-circle"/>*/}
+                    {/*<ReactTooltip id={step} type="info" class="tool-tip" effect="solid" dataBorder={true}>*/}
+                        {/*<span dangerouslySetInnerHTML={{__html: I18n.t(`registration.step${step}.tooltip`)}}/>*/}
+                    {/*</ReactTooltip>*/}
             </span>
             <div>
                 <span className="step-number">{step}</span>

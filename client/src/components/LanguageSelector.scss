@@ -2,9 +2,9 @@
 
 .language-selector {
 
-  margin: 0 20px 16px 25px;
+  margin: 0 0 16px 0;
   list-style: none;
-  border: 1px solid $blue;
+  border: 1px solid $primary-green;
   border-radius: $br;
 
   li {
@@ -23,18 +23,18 @@
     }
 
     &:not(:first-child):not(:last-child) {
-      border-left: 1px $blue solid;
-      border-right: 1px $blue solid;
+      border-left: 1px $primary-green solid;
+      border-right: 1px $primary-green solid;
     }
 
     a {
       font-weight: normal;
-      color: $blue;
+      color: $primary-green;
       text-decoration: none;
     }
 
     &.active {
-      background-color: $blue;
+      background-color: $primary-green;
 
       a {
         color: white;

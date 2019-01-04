@@ -2,7 +2,7 @@
 
 .navigation-container {
 
-  background-color: $blue;
+  background-color: $primary-green;
 
   .spinner {
     position: fixed;
@@ -19,7 +19,7 @@
     position: relative;
 
     a.menu-item {
-      color: lighten($light-blue, 5);
+      color: $light-grey;
       margin-right: 50px;
       padding-bottom: 12px;
       text-decoration: none;
@@ -43,7 +43,7 @@
 
       i {
         margin-left: 35px;
-        color: $blue;
+        color: $primary-green;
       }
     }
 

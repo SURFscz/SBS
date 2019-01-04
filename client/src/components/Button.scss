@@ -52,11 +52,15 @@ a.button {
   }
 
   &.green {
-    background-color: $green;
+    background-color: lighten($primary-green, 0%);
     color: white;
-    border: none;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    border: 2px solid darken($primary-green, 3%);
+    border-radius: $br;
+
+    &:hover {
+      background-color: darken($primary-green, 5%);
+      border: 2px solid darken($primary-green, 10%);
+    }
 
     i {
       color: white;

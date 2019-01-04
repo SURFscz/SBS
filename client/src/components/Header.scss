@@ -3,6 +3,8 @@
 .header-container {
 
   background: white;
+      max-width: $medium;
+    margin: 0 auto;
 
   &.guest {
     background: none;
@@ -21,9 +23,9 @@
     }
 
     p.title {
-      color: $blue;
       font-size: 24px;
       margin-bottom: 16px;
+      color: $primary-green;
 
       &.first {
         margin-left: 20px;
@@ -55,7 +57,7 @@
           font-weight: bold;
           text-transform: uppercase;
           font-size: 21px;
-          color: $blue;;
+          color: $primary-green;;
         }
 
         &.profile {
@@ -63,7 +65,7 @@
         }
 
         &.border-left {
-          border-left: 1px solid $blue;;
+          border-left: 1px solid $primary-green;
           padding-left: 15px;
         }
 
