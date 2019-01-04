@@ -7,7 +7,7 @@
   .step-container {
     max-width: $medium;
     margin: 0 auto;
-    padding: 0 180px;
+    padding: 0 $medium-padding;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -40,12 +40,25 @@
         background-color: $light-blue;
         border: 2px solid $blue;
         color: $blue;
+
+        //&:after {
+        //  content: "aaaaaaa";
+        //  width: 109px;
+        //  height: 0;
+        //  border-left: 0px solid red;
+        //  border-right: 90px solid purple;
+        //  border-top: 179px solid green;
+        //  position: absolute;
+        //  top: 0px;
+        //  right: -100px;
+        //  border-bottom: 20px solid yellow;
+        //}
       }
 
       &.done {
-        background-color: $light-green;
-        border: 2px solid $green;
-        color: $green;
+        background-color: lighten($primary-green, 5%);
+        border: 2px solid $primary-green;
+        color: white;
       }
 
       .step-number {
@@ -76,7 +89,7 @@
         }
 
         &.done {
-          color: $green;
+          color: white;
         }
       }
     }
@@ -101,43 +114,50 @@
   .step-form {
     max-width: $medium;
     margin: 40px auto;
-    padding: 0 180px;
+    padding: 0 $medium-padding;
 
     p.form-title {
-      font-size: 28px;
-      line-height: 28px;
-      color: $blue;
+      font-size: 24px;
+      line-height: 24px;
       font-weight: bold;
       margin-bottom: 20px;
     }
+
     p.info {
       margin-bottom: 40px;
     }
+
     section.form-element {
       padding: 2px 25px 2px 25px;
-      border-left: 3px solid $blue;
+      border-left: 3px solid $primary-green;
       margin: 25px 0;
 
       &.invalid {
         border-left: 3px solid $lighter-grey;
       }
     }
+
     table {
       width: 50%;
+
       tr {
         border-bottom: 1px solid $light-grey;
       }
+
       td {
         padding: 5px 0;
+
         &.attribute {
           width: 50%;
         }
+
         &.value {
           width: 50%;
-          color:$dark-grey
+          color: $dark-grey
         }
       }
     }
+
     .required-marker {
       color: $red;
       font-size: 18px;
@@ -157,10 +177,12 @@
         background-color: $light-grey;
       }
     }
+
     .form-label {
       margin-bottom: 5px;
       display: inline-block;
     }
+
     a.start {
       margin-top: 20px;
       padding: 10px 35px;

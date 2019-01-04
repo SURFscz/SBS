@@ -41,7 +41,6 @@ export default class Header extends React.PureComponent {
                     <Link to="/" ><img className="logo" src={logo} alt=""/></Link>
 
                     <p className="title first">{I18n.t("header.title")}</p>
-                    <FontAwesomeIcon icon="lightbulb"/>
                     <ul className="links">
                         {currentUser.guest && <li className="item">
                             <a href="#login" onClick={this.login}>{I18n.t("header.links.login")}</a>
