@@ -1,12 +1,12 @@
 import React from "react";
 import {health, inviteForCollaboration} from "../api";
-import ReactTooltip from "react-tooltip";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import I18n from "i18n-js";
 import "./Registration.scss";
 import Button from "../components/Button";
 import CheckBox from "../components/CheckBox";
 import {isEmpty} from "../utils/Utils";
+import {setFlash} from "../utils/Flash";
 
 class Registration extends React.Component {
 
@@ -31,7 +31,10 @@ class Registration extends React.Component {
     renderForm1 = () =>
         (<div className="step-form">
             <p className="form-title">{I18n.t("registration.formTitle", {service: this.props.service})}</p>
-            <Button className="start" onClick={() => this.setState({step: "2"})} txt={I18n.t("registration.start")}/>
+            <Button className="start" onClick={() => {
+                this.setState({step: "2"});
+                setFlash(I18n.t("registration.flash.info", {step: 1}));
+            }} txt={I18n.t("registration.start")}/>
         </div>);
 
     renderForm2 = () => {
@@ -78,17 +81,16 @@ class Registration extends React.Component {
     renderForm3 = () =>
         (<div className="step-form 3">
             <p className="form-title">{I18n.t("registration.formEndedTitle", {service: this.props.service})}</p>
-            <p className="info" dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.info", {service: this.props.service})}}/>
-            <p className="contact" dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact", {service: this.props.service})}}/>
+            <p className="info"
+               dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.info", {service: this.props.service})}}/>
+            <p className="contact"
+               dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact", {service: this.props.service})}}/>
         </div>);
 
 
     requiredMarker = () => <sup className="required-marker">*</sup>;
 
-    form2Invariant = (motivation, agreedWithPolicy) => {
-        console.log(`${!isEmpty(motivation) && agreedWithPolicy}  ${motivation}  ${agreedWithPolicy}`);
-        return !isEmpty(motivation) && agreedWithPolicy;
-    };
+    form2Invariant = (motivation, agreedWithPolicy) => !isEmpty(motivation) && agreedWithPolicy;
 
     getUserTable = user =>
         (<table>
@@ -121,9 +123,9 @@ class Registration extends React.Component {
         return (<div key={step} className={`step ${active} ${done}`}>
             <span className="step-info" data-for={step} data-tip>
                 {/*<FontAwesomeIcon icon="info-circle"/>*/}
-                    {/*<ReactTooltip id={step} type="info" class="tool-tip" effect="solid" dataBorder={true}>*/}
-                        {/*<span dangerouslySetInnerHTML={{__html: I18n.t(`registration.step${step}.tooltip`)}}/>*/}
-                    {/*</ReactTooltip>*/}
+                {/*<ReactTooltip id={step} type="info" class="tool-tip" effect="solid" dataBorder={true}>*/}
+                {/*<span dangerouslySetInnerHTML={{__html: I18n.t(`registration.step${step}.tooltip`)}}/>*/}
+                {/*</ReactTooltip>*/}
             </span>
             <div>
                 <span className="step-number">{step}</span>
