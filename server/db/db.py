@@ -3,8 +3,8 @@ import os
 from flask_jsontools.formatting import JsonSerializableBase
 from flask_migrate import command
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import MetaData
+from sqlalchemy.ext.declarative import declarative_base
 
 metadata = MetaData()
 Base = declarative_base(cls=(JsonSerializableBase,), metadata=metadata)
@@ -40,7 +40,7 @@ class User(Base, db.Model):
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="user",
                                                cascade="all, delete-orphan", passive_deletes=True)
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="user",
-                                               cascade="all, delete-orphan", passive_deletes=True)
+                                                cascade="all, delete-orphan", passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="user",
                                     cascade="all, delete-orphan", passive_deletes=True)
 

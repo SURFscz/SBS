@@ -5,7 +5,6 @@ import requests
 from flask_testing import TestCase
 from sqlalchemy import event
 
-from server.db.db import User
 from server.test.seed import seed
 
 BASIC_AUTH_HEADER = {"Authorization": "Basic c3lzYWRtaW46c2VjcmV0"}
