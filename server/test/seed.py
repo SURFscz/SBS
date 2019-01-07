@@ -34,8 +34,7 @@ def seed(db):
 
     mail = Service(name="mail", contact_email=john.email)
     network = Service(name="network", status="pending")
-    _persist(db, mail)
-    _persist(db, network)
+    _persist(db, mail, network)
 
     ai_computing = Collaboration(name="AI computing", organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[])
