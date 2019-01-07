@@ -43,6 +43,15 @@ def upgrade():
                     sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
 
+    op.create_table("users_organisations",
+                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False, primary_key=True),
+                    sa.Column("organisation_id", sa.Integer(), sa.ForeignKey("organisations.id"), nullable=False,
+                              primary_key=True),
+                    sa.Column("role", sa.String(length=255), nullable=False),
+                    sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
+                              nullable=False),
+                    )
+
     op.create_table("collaborations",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
                     sa.Column("name", sa.String(length=512), nullable=False),
@@ -58,6 +67,15 @@ def upgrade():
                     sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
 
+    op.create_table("users_collaborations",
+                    sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
+                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False),
+                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id"), nullable=False),
+                    sa.Column("role", sa.String(length=255), nullable=False),
+                    sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
+                              nullable=False),
+                    )
+
     op.create_table("services",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
                     sa.Column("name", sa.String(length=512), nullable=False),
@@ -65,7 +83,7 @@ def upgrade():
                     sa.Column("address", sa.Text(), nullable=True),
                     sa.Column("identity_type", sa.String(length=255), nullable=True),
                     sa.Column("uri", sa.String(length=255), nullable=True),
-                    sa.Column("contact_email", sa.Integer(), sa.ForeignKey("organisations.id"), nullable=False),
+                    sa.Column("contact_email", sa.String(length=255), nullable=True),
                     sa.Column("status", sa.String(length=255), nullable=True),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
@@ -75,21 +93,19 @@ def upgrade():
                     sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
 
-    op.create_table("users_collaborations",
-                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False),
-                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id"), nullable=False),
-                    sa.Column("role", sa.String(length=255), nullable=False),
-                    )
-
     op.create_table("services_collaborations",
-                    sa.Column("service_id", sa.Integer(), sa.ForeignKey("services.id"), nullable=False),
-                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id"), nullable=False),
+                    sa.Column("service_id", sa.Integer(), sa.ForeignKey("services.id"), nullable=False,
+                              primary_key=True),
+                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id"), nullable=False,
+                              primary_key=True),
                     )
 
-    op.create_table("users_organisations",
-                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False),
-                    sa.Column("organisation_id", sa.Integer(), sa.ForeignKey("organisations.id"), nullable=False),
-                    sa.Column("role", sa.String(length=255), nullable=False),
+    op.create_table("services_users_collaborations",
+                    sa.Column("service_id", sa.Integer(), sa.ForeignKey("services.id"), nullable=False,
+                              primary_key=True),
+                    sa.Column("users_collaborations_id", sa.Integer(), sa.ForeignKey("users_collaborations.id"),
+                              nullable=False,
+                              primary_key=True),
                     )
 
     op.create_table("join_requests",
@@ -106,7 +122,7 @@ def upgrade():
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
                     sa.Column("hash", sa.String(length=512), nullable=False),
                     sa.Column("message", sa.Text(), nullable=True),
-                    sa.Column("user_email", sa.Integer(), sa.ForeignKey("users.id"), nullable=False),
+                    sa.Column("user_email", sa.String(length=255), nullable=False),
                     sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id"), nullable=False),
                     sa.Column("accepted", sa.Boolean(), nullable=True),
                     sa.Column("denied", sa.Boolean(), nullable=True),

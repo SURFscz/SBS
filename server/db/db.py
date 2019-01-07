@@ -4,8 +4,10 @@ from flask_jsontools.formatting import JsonSerializableBase
 from flask_migrate import command
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import MetaData
 
-Base = declarative_base(cls=(JsonSerializableBase,))
+metadata = MetaData()
+Base = declarative_base(cls=(JsonSerializableBase,), metadata=metadata)
 
 
 class SQLAlchemyPrePing(SQLAlchemy):
@@ -35,3 +37,120 @@ class User(Base, db.Model):
     email = db.Column("email", db.String(length=255), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    organisation_memberships = db.relationship("OrganisationMembership", back_populates="user",
+                                               cascade="all, delete-orphan", passive_deletes=True)
+    collaboration_memberships = db.relationship("CollaborationMembership", back_populates="user",
+                                               cascade="all, delete-orphan", passive_deletes=True)
+    join_requests = db.relationship("JoinRequest", back_populates="user",
+                                    cascade="all, delete-orphan", passive_deletes=True)
+
+
+class Organisation(Base, db.Model):
+    __tablename__ = "organisations"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=True)
+    email = db.Column("description", db.Text(), nullable=True)
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
+                                     passive_deletes=True)
+    members = db.relationship("OrganisationMembership", back_populates="organisation", cascade="all, delete-orphan",
+                              passive_deletes=True)
+
+
+class OrganisationMembership(Base, db.Model):
+    __tablename__ = "users_organisations"
+    role = db.Column("role", db.String(length=255), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
+    user = db.relationship("User", back_populates="organisation_memberships")
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
+    organisation = db.relationship("Organisation", back_populates="members")
+
+
+services_collaborations_association = db.Table(
+    "services_collaborations",
+    metadata,
+    db.Column("collaboration_id", db.Integer(), db.ForeignKey("collaborations.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
+)
+
+services_users_collaborations_association = db.Table(
+    "services_users_collaborations",
+    metadata,
+    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("users_collaborations_id", db.Integer, db.ForeignKey("users_collaborations.id", ondelete="CASCADE"),
+              primary_key=True)
+)
+
+
+class Service(Base, db.Model):
+    __tablename__ = "services"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=True)
+    description = db.Column("description", db.Text(), nullable=True)
+    address = db.Column("address", db.Text(), nullable=True)
+    identity_type = db.Column("identity_type", db.String(length=255), nullable=False)
+    uri = db.Column("uri", db.String(length=255), nullable=False)
+    contact_email = db.Column("contact_email", db.String(length=255), nullable=False)
+    status = db.Column("status", db.String(length=255), nullable=False)
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+
+
+class Collaboration(Base, db.Model):
+    __tablename__ = "collaborations"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=True)
+    description = db.Column("description", db.Text(), nullable=True)
+    status = db.Column("status", db.String(length=255), nullable=False)
+    enrollment = db.Column("enrollment", db.String(length=255), nullable=False)
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
+    organisation = db.relationship("Organisation", back_populates="collaborations")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    services = db.relationship("Service", secondary=services_collaborations_association, lazy="select",
+                               backref=db.backref("collaborations", lazy=True), cascade_backrefs=False,
+                               passive_deletes=True)
+    members = db.relationship("CollaborationMembership", back_populates="collaboration", cascade="all, delete-orphan",
+                              passive_deletes=True)
+    join_requests = db.relationship("JoinRequest", back_populates="collaboration",
+                                    cascade="all, delete-orphan", passive_deletes=True)
+    invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
+                                  passive_deletes=True)
+
+
+class CollaborationMembership(Base, db.Model):
+    __tablename__ = "users_collaborations"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    role = db.Column("role", db.String(length=255), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="collaboration_memberships")
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
+    collaboration = db.relationship("Collaboration", back_populates="members")
+    services = db.relationship("Service", secondary=services_users_collaborations_association, lazy="select")
+
+
+class JoinRequest(Base, db.Model):
+    __tablename__ = "join_requests"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    hash = db.Column("hash", db.String(length=512), nullable=False)
+    message = db.Column("message", db.Text(), nullable=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
+    user = db.relationship("User", back_populates="join_requests")
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"), primary_key=True)
+    collaboration = db.relationship("Collaboration", back_populates="join_requests")
+
+
+class Invitation(Base, db.Model):
+    __tablename__ = "invitations"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    hash = db.Column("hash", db.String(length=512), nullable=False)
+    message = db.Column("message", db.Text(), nullable=True)
+    user_email = db.Column("user_email", db.String(length=255), nullable=False)
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"), primary_key=True)
+    collaboration = db.relationship("Collaboration", back_populates="invitations")
+    accepted = db.Column("accepted", db.Boolean(), nullable=True)
+    denied = db.Column("denied", db.Boolean(), nullable=True)
+    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
