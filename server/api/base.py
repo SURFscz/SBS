@@ -30,6 +30,8 @@ def auth_filter(config):
         raise Unauthorized(description="Invalid username or password")
 
     request_context.is_authorized_api_call = is_authorized_api_call
+    if is_authorized_api_call:
+        request_context.api_user = get_user(config, auth)[0].name
 
 
 def get_user(config, auth):

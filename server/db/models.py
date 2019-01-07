@@ -1,6 +1,6 @@
 import datetime
 
-from flask import request
+from flask import request, session, g as request_context
 
 from server.db.db import db, User
 
@@ -32,8 +32,19 @@ def save(cls):
         return None, 415
 
     json_dict = transform_json(request.get_json())
+    add_audit_trail_data(cls, json_dict)
+
     validate(cls, json_dict)
     return _merge(cls, json_dict), 201
+
+
+def add_audit_trail_data(cls, json_dict):
+    column_names = cls.__table__.columns._data.keys()
+    if "created_by" in column_names:
+        user_name = session["user"]["uid"] if "user" in session and not session["user"][
+            "guest"] else request_context.api_user
+        json_dict["created_by"] = user_name
+        json_dict["updated_by"] = user_name
 
 
 def update(cls):
@@ -41,6 +52,8 @@ def update(cls):
         return None, 415
 
     json_dict = transform_json(request.get_json())
+    add_audit_trail_data(cls, json_dict)
+
     pk = list({k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys())[0]
     instance = cls.query.filter(cls.__dict__[pk] == json_dict[pk])
     if not instance:
@@ -59,7 +72,7 @@ def delete(cls, primary_key):
 deserialization_mapping = {"users": User}
 
 forbidden_fields = ["created_at", "updated_at", "created_by", "updated_by"]
-date_fields = ["start_date", "end_date", "created_by", "updated_by"]
+date_fields = ["start_date", "end_date", "created_at", "updated_at"]
 
 
 def cleanse_json(json_dict):

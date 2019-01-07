@@ -66,7 +66,8 @@ class AbstractTest(TestCase):
                 model.query.delete()
             db.session.commit()
 
-            user = User(uid="urn:john", name="John Doe", email="john@example.org")
+            user = User(uid="urn:john", name="John Doe", email="john@example.org", created_by="urn:admin",
+                        updated_by="urn:admin")
             db.session.add(user)
             db.session.commit()
 

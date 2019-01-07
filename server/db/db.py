@@ -33,3 +33,5 @@ class User(Base, db.Model):
     uid = db.Column("uid", db.String(length=512), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=True)
     email = db.Column("email", db.String(length=255), nullable=True)
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
