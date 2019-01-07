@@ -25,9 +25,8 @@ class TestUser(AbstractTest):
 
     def test_users(self):
         users = self.get("/api/users")
-        self.assertEqual(1, len(users))
-        john = users[0]
-        self.assertEqual("John Doe", john["name"])
+        self.assertEqual(2, len(users))
+        john = list(filter(lambda u: u["name"] == "John Doe", users))[0]
 
         john = self.get(f"/api/users/{john['id']}")
         self.assertEqual("John Doe", john["name"])
