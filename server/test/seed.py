@@ -1,7 +1,8 @@
-from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
-    JoinRequest, Invitation, services_users_collaborations_association, services_collaborations_association, metadata
-import random
 import datetime
+import random
+
+from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
+    JoinRequest, Invitation, metadata
 
 join_request_hash = str(random.getrandbits(512))
 invitation_hash = str(random.getrandbits(512))
