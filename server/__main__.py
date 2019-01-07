@@ -79,5 +79,4 @@ db_migrations(config.database.uri)
 
 # WSGI production mode dictates that no flask app is actually running
 if is_local:
-    # os.system("alembic --raiseerr upgrade head")
     app.run(port=8080, debug=False, host="0.0.0.0", threaded=True)
