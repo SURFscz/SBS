@@ -32,8 +32,8 @@ def seed(db):
     organisation_membership = OrganisationMembership(role="admin", user=john, organisation=uuc)
     _persist(db, organisation_membership)
 
-    mail = Service(name="mail", contact_email=john.email)
-    network = Service(name="network", status="pending")
+    mail = Service(entity_id="https://mail", name="mail", contact_email=john.email)
+    network = Service(entity_id="https://network", name="network", status="pending")
     _persist(db, mail, network)
 
     ai_computing = Collaboration(name="AI computing", organisation=uuc, services=[mail, network],

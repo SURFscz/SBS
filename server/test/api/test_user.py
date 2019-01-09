@@ -39,7 +39,7 @@ class TestUser(AbstractTest):
         self.assertEqual("john@changed.com", john["email"])
 
     def test_find_by_uid(self):
-        john = self.get("/api/users/find_by_uid/urn:john")
+        john = self.get("/api/users/find_by_uid", query_data={"uid": "urn:john"})
         self.assertEqual("network",
                          john["collaboration_memberships"][0]["user_service_profiles"][0]["service"]["name"])
         self.assertEqual("UUC", john["organisation_memberships"][0]["organisation"]["name"])

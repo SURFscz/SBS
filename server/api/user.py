@@ -51,9 +51,10 @@ def user_by_id(user_id):
     return user, 200
 
 
-@user_api.route("/find_by_uid/<uid>", strict_slashes=False)
+@user_api.route("/find_by_uid", strict_slashes=False)
 @json_endpoint
-def user_by_uid(uid):
+def user_by_uid():
+    uid = current_request.args.get("uid")
     user = _user_query().filter(User.uid == uid).one()
     for cm in user.collaboration_memberships:
         for usc in cm.user_service_profiles:

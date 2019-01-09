@@ -71,15 +71,20 @@ class AbstractTest(TestCase):
             return response.json if hasattr(response, "json") else None
 
     def post(self, url, body={}, response_status_code=201):
+        return self._do_call(body, self.client.post, response_status_code, url)
+
+    def put(self, url, body={}, response_status_code=201):
+        return self._do_call(body, self.client.put, response_status_code, url)
+
+    def _do_call(self, body, call, response_status_code, url):
         with requests.Session():
-            response = self.client.post(url, headers=BASIC_AUTH_HEADER, data=json.dumps(body),
-                                        content_type="application/json")
+            response = call(url, headers=BASIC_AUTH_HEADER, data=json.dumps(body),
+                            content_type="application/json")
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
             return response.json
 
-    def put(self, url, body={}, response_status_code=201):
+    def delete(self, url, primary_key, response_status_code=204):
         with requests.Session():
-            response = self.client.put(url, headers=BASIC_AUTH_HEADER, data=json.dumps(body),
-                                       content_type="application/json")
-            self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
-            return response.json
+            response = self.client.delete(f"{url}/{primary_key}", headers=BASIC_AUTH_HEADER,
+                                          content_type="application/json")
+            self.assertEqual(response_status_code, response.status_code)
