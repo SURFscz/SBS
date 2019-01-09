@@ -3,12 +3,8 @@
 .header-container {
 
   background: white;
-      max-width: $medium;
-    margin: 0 auto;
-
-  &.guest {
-    background: none;
-  }
+  max-width: $medium;
+  margin: 0 auto;
 
   .header {
     max-width: $medium;
@@ -48,9 +44,13 @@
 
       li.item {
         display: inline-block;
-        margin-right: 60px;
-        font-size: 30px;
+        margin: 0 60px 16px 0;
+        font-size: 24px;
         text-transform: uppercase;
+        a {
+          text-decoration: none;
+          color: $primary-green;
+        }
 
         &.title {
           margin-left: 210px;

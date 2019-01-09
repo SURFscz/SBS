@@ -2,7 +2,8 @@ import datetime
 
 from flask import request, session, g as request_context
 
-from server.db.db import db, User
+from server.db.db import db, User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
+    Invitation, Service, UserServiceProfile, AuthorisationGroup
 
 
 def _flatten(l):
@@ -69,7 +70,11 @@ def delete(cls, primary_key):
     return (None, 204) if row_count > 0 else (None, 404)
 
 
-deserialization_mapping = {"users": User}
+deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
+                           "join_requests": JoinRequest, "user_service_profiles": UserServiceProfile,
+                           "collaborations": Collaboration, "organisation_memberships": OrganisationMembership,
+                           "invitations": Invitation, "authorisation_groups": AuthorisationGroup,
+                           "services": Service}
 
 forbidden_fields = ["created_at", "updated_at", "created_by", "updated_by"]
 date_fields = ["start_date", "end_date", "created_at", "updated_at"]

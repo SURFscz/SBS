@@ -6,7 +6,10 @@ I18n.translations.en = {
     select_locale: "Select English",
 
     header: {
-        title: "Collaboration Management System"
+        title: "Collaboration Management System",
+        links: {
+            login: "Login"
+        }
     },
     navigation: {
         registration: "Registration",
