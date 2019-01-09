@@ -64,6 +64,7 @@ function fetchDelete(path) {
 
 //API
 export function me() {
+    //TODO - remove this after integration with mod_mellon
     const headers = window.location.pathname.startsWith("/login") ? {"MELLON_cmuid": "urn:john"} : {};
     return fetchJson("/api/users/me", {}, headers, false);
 }
@@ -82,4 +83,8 @@ export function deleteCollaboration(id) {
 
 export function inviteForCollaboration() {
     return postPutJson(`/api/users/send_invitation`, {}, "post")
+}
+
+export function serviceByEntityId() {
+
 }

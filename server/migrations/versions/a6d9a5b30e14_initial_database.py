@@ -73,7 +73,8 @@ def upgrade():
     op.create_table("collaboration_memberships",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
                     sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False),
-                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id"), nullable=False),
+                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
+                              nullable=False),
                     sa.Column("role", sa.String(length=255), nullable=False),
                     sa.Column("created_by", sa.String(length=512), nullable=False),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
@@ -82,6 +83,7 @@ def upgrade():
 
     op.create_table("services",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
+                    sa.Column("entity_id", sa.String(length=512), nullable=False),
                     sa.Column("name", sa.String(length=512), nullable=False),
                     sa.Column("description", sa.Text(), nullable=True),
                     sa.Column("address", sa.Text(), nullable=True),
@@ -99,9 +101,11 @@ def upgrade():
                     )
 
     op.create_table("services_collaborations",
-                    sa.Column("service_id", sa.Integer(), sa.ForeignKey("services.id"), nullable=False,
+                    sa.Column("service_id", sa.Integer(), sa.ForeignKey("services.id", ondelete="cascade"),
+                              nullable=False,
                               primary_key=True),
-                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id"), nullable=False,
+                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
+                              nullable=False,
                               primary_key=True),
                     )
 
@@ -137,17 +141,20 @@ def upgrade():
                     )
 
     op.create_table("services_authorisation_groups",
-                    sa.Column("service_id", sa.Integer(), sa.ForeignKey("services.id"), nullable=False,
+                    sa.Column("service_id", sa.Integer(), sa.ForeignKey("services.id", ondelete="cascade"),
+                              nullable=False,
                               primary_key=True),
-                    sa.Column("authorisation_group_id", sa.Integer(), sa.ForeignKey("authorisation_groups.id"),
+                    sa.Column("authorisation_group_id", sa.Integer(),
+                              sa.ForeignKey("authorisation_groups.id", ondelete="cascade"),
                               nullable=False, primary_key=True),
                     )
 
     op.create_table("collaboration_memberships_authorisation_groups",
                     sa.Column("collaboration_membership_id", sa.Integer(),
-                              sa.ForeignKey("collaboration_memberships.id"), nullable=False,
+                              sa.ForeignKey("collaboration_memberships.id", ondelete="cascade"), nullable=False,
                               primary_key=True),
-                    sa.Column("authorisation_group_id", sa.Integer(), sa.ForeignKey("authorisation_groups.id"),
+                    sa.Column("authorisation_group_id", sa.Integer(),
+                              sa.ForeignKey("authorisation_groups.id", ondelete="cascade"),
                               nullable=False, primary_key=True),
                     )
 
