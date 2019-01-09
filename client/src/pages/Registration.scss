@@ -23,8 +23,8 @@
       align-items: center;
       flex-direction: column;
       position: relative;
-      padding: 25px;
-      min-width: 235px;
+      padding: 35px;
+      min-width: 255px;
 
       svg.fa-info-circle {
         position: absolute;
@@ -34,6 +34,15 @@
         color: $blue;
         font-size: 22px;
         background-color: white;
+      }
+
+      svg.fa-check {
+        position: absolute;
+        right: 3px;
+        top: 3px;
+        z-index: 9;
+        color: white;
+        font-size: 32px;
       }
 
       &.active {

@@ -17,7 +17,8 @@ class Registration extends React.Component {
             motivation: "",
             reference: "",
             agreedWithPolicy: false,
-            serviceName: null
+            serviceName: null,
+            serviceId: null
         }
     }
 
@@ -26,7 +27,7 @@ class Registration extends React.Component {
             .then(json => {
                 const {user} = this.props;
                 const step = user.guest ? "1" : "2";
-                this.setState({step: step, serviceName: json.name});
+                this.setState({step: step, serviceName: json.name, serviceId: json.id});
             })
             .catch(e => {
                 setFlash(I18n.t("registration.unknownService", {service: this.props.service}), "error")
@@ -137,6 +138,7 @@ class Registration extends React.Component {
                 {/*<ReactTooltip id={step} type="info" class="tool-tip" effect="solid" dataBorder={true}>*/}
                 {/*<span dangerouslySetInnerHTML={{__html: I18n.t(`registration.step${step}.tooltip`)}}/>*/}
                 {/*</ReactTooltip>*/}
+                {done && <FontAwesomeIcon className="check" icon="check"/>}
             </span>
             <div>
                 <span className="step-number">{step}</span>
