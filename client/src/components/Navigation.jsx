@@ -7,7 +7,6 @@ import spinner from "../utils/Spin.js";
 import {NavLink} from "react-router-dom";
 
 import "./Navigation.scss";
-import {isEmpty} from "../utils/Utils.js";
 
 export default class Navigation extends React.PureComponent {
 
@@ -35,9 +34,6 @@ export default class Navigation extends React.PureComponent {
 
     render() {
         const {currentUser} = this.props;
-        if (isEmpty(currentUser) || currentUser.guest) {
-            return null;
-        }
         return (
             <div className="navigation-container">
                 <div className="navigation">

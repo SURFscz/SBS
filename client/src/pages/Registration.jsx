@@ -6,10 +6,8 @@ import "./Registration.scss";
 import Button from "../components/Button";
 import CheckBox from "../components/CheckBox";
 import {isEmpty} from "../utils/Utils";
-import {setFlash} from "../utils/Flash";
 
 class Registration extends React.Component {
-
 
     constructor(props, context) {
         super(props, context);
@@ -22,7 +20,11 @@ class Registration extends React.Component {
     }
 
     componentDidMount = () => {
-        health();
+        health().then(() => {
+            const {user} = this.props;
+            const step = user.guest ? "1" : "2";
+            this.setState({"step": step});
+        });
     };
 
 
@@ -32,8 +34,7 @@ class Registration extends React.Component {
         (<div className="step-form">
             <p className="form-title">{I18n.t("registration.formTitle", {service: this.props.service})}</p>
             <Button className="start" onClick={() => {
-                this.setState({step: "2"});
-                setFlash(I18n.t("registration.flash.info", {step: 1}));
+                window.location.href = `/login?state=${this.props.service}`;
             }} txt={I18n.t("registration.start")}/>
         </div>);
 

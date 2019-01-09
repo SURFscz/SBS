@@ -62,14 +62,6 @@ class AbstractTest(TestCase):
         AbstractTest.app = app
         db = app.db
         with app.app_context():
-            # for model in [User, ]:
-            #     model.query.delete()
-            # db.session.commit()
-            #
-            # user = User(uid="urn:john", name="John Doe", email="john@example.org", created_by="urn:admin",
-            #             updated_by="urn:admin")
-            # db.session.add(user)
-            # db.session.commit()
             seed(db)
 
     def get(self, url, query_data={}, response_status_code=200):

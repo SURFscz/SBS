@@ -38,11 +38,11 @@ class User(Base, db.Model):
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="user",
-                                               cascade="all, delete-orphan", passive_deletes=True)
+                                               cascade_backrefs=False, passive_deletes=True)
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="user",
-                                                cascade="all, delete-orphan", passive_deletes=True)
+                                                cascade_backrefs=False, passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="user",
-                                    cascade="all, delete-orphan", passive_deletes=True)
+                                    cascade_backrefs=False, passive_deletes=True)
 
 
 class Organisation(Base, db.Model):
@@ -54,17 +54,18 @@ class Organisation(Base, db.Model):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
                                      passive_deletes=True)
-    members = db.relationship("OrganisationMembership", back_populates="organisation", cascade="all, delete-orphan",
-                              passive_deletes=True)
+    organisation_memberships = db.relationship("OrganisationMembership", back_populates="organisation",
+                                               cascade="all, delete-orphan", passive_deletes=True)
 
 
 class OrganisationMembership(Base, db.Model):
-    __tablename__ = "users_organisations"
+    __tablename__ = "organisation_memberships"
     role = db.Column("role", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
     user = db.relationship("User", back_populates="organisation_memberships")
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
-    organisation = db.relationship("Organisation", back_populates="members")
+    organisation = db.relationship("Organisation", back_populates="organisation_memberships")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
 
 
 services_collaborations_association = db.Table(
@@ -75,13 +76,58 @@ services_collaborations_association = db.Table(
     db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
 )
 
-services_users_collaborations_association = db.Table(
-    "services_users_collaborations",
+services_authorisation_groups_association = db.Table(
+    "services_authorisation_groups",
     metadata,
+    db.Column("authorisation_group_id", db.Integer(), db.ForeignKey("authorisation_groups.id", ondelete="CASCADE"),
+              primary_key=True),
     db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
-    db.Column("users_collaborations_id", db.Integer, db.ForeignKey("users_collaborations.id", ondelete="CASCADE"),
-              primary_key=True)
 )
+
+collaboration_memberships_authorisation_groups_association = db.Table(
+    "collaboration_memberships_authorisation_groups",
+    metadata,
+    db.Column("authorisation_group_id", db.Integer(), db.ForeignKey("authorisation_groups.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("collaboration_membership_id", db.Integer(),
+              db.ForeignKey("collaboration_memberships.id", ondelete="CASCADE"), primary_key=True),
+)
+
+
+class CollaborationMembership(Base, db.Model):
+    __tablename__ = "collaboration_memberships"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    role = db.Column("role", db.String(length=255), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="collaboration_memberships")
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
+    collaboration = db.relationship("Collaboration", back_populates="collaboration_memberships")
+    user_service_profiles = db.relationship("UserServiceProfile", cascade="all, delete-orphan", passive_deletes=True,
+                                            lazy="select")
+    authorisation_groups = db.relationship("AuthorisationGroup",
+                                           secondary=collaboration_memberships_authorisation_groups_association,
+                                           back_populates="collaboration_memberships",
+                                           lazy="select")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+
+
+class UserServiceProfile(Base, db.Model):
+    __tablename__ = "user_service_profiles"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    service = db.relationship("Service")
+    collaboration_membership_id = db.Column(db.Integer(), db.ForeignKey("collaboration_memberships.id"))
+    collaboration_membership = db.relationship("CollaborationMembership")
+    name = db.Column("name", db.String(length=255), nullable=True)
+    ssh_key = db.Column("ssh_key", db.Text(), nullable=True)
+    email = db.Column("email", db.String(length=255), nullable=True)
+    address = db.Column("address", db.String(length=255), nullable=True)
+    role = db.Column("role", db.String(length=255), nullable=True)
+    identifier = db.Column("identifier", db.String(length=255), nullable=True)
+    telephone_number = db.Column("telephone_number", db.String(length=255), nullable=True)
+    status = db.Column("status", db.String(length=255), nullable=True)
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
 
 class Service(Base, db.Model):
@@ -92,6 +138,7 @@ class Service(Base, db.Model):
     address = db.Column("address", db.Text(), nullable=True)
     identity_type = db.Column("identity_type", db.String(length=255), nullable=False)
     uri = db.Column("uri", db.String(length=255), nullable=False)
+    accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=False)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=False)
     status = db.Column("status", db.String(length=255), nullable=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
@@ -104,31 +151,38 @@ class Collaboration(Base, db.Model):
     name = db.Column("name", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=False)
+    access_type = db.Column("access_type", db.String(length=255), nullable=False)
     enrollment = db.Column("enrollment", db.String(length=255), nullable=False)
+    accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=False)
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
     organisation = db.relationship("Organisation", back_populates="collaborations")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    services = db.relationship("Service", secondary=services_collaborations_association, lazy="select",
-                               backref=db.backref("collaborations", lazy=True), cascade_backrefs=False,
-                               passive_deletes=True)
-    members = db.relationship("CollaborationMembership", back_populates="collaboration", cascade="all, delete-orphan",
-                              passive_deletes=True)
+    services = db.relationship("Service", secondary=services_collaborations_association, lazy="select")
+    collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
+                                                cascade="all, delete-orphan", passive_deletes=True)
+    authorisation_groups = db.relationship("AuthorisationGroup", back_populates="collaboration",
+                                           cascade="all, delete-orphan", passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="collaboration",
                                     cascade="all, delete-orphan", passive_deletes=True)
     invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
                                   passive_deletes=True)
 
 
-class CollaborationMembership(Base, db.Model):
-    __tablename__ = "users_collaborations"
+class AuthorisationGroup(Base, db.Model):
+    __tablename__ = "authorisation_groups"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    role = db.Column("role", db.String(length=255), nullable=False)
-    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
-    user = db.relationship("User", back_populates="collaboration_memberships")
-    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
-    collaboration = db.relationship("Collaboration", back_populates="members")
-    services = db.relationship("Service", secondary=services_users_collaborations_association, lazy="select")
+    name = db.Column("name", db.String(length=255), nullable=False)
+    uri = db.Column("uri", db.String(length=255), nullable=True)
+    description = db.Column("description", db.Text(), nullable=True)
+    status = db.Column("status", db.String(length=255), nullable=True)
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"), primary_key=True)
+    collaboration = db.relationship("Collaboration", back_populates="authorisation_groups")
+    services = db.relationship("Service", secondary=services_authorisation_groups_association, lazy="select")
+    collaboration_memberships = db.relationship("CollaborationMembership",
+                                                secondary=collaboration_memberships_authorisation_groups_association,
+                                                back_populates="authorisation_groups",
+                                                lazy="select")
 
 
 class JoinRequest(Base, db.Model):

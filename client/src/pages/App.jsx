@@ -1,7 +1,17 @@
 import React from "react";
 import "./App.scss";
 import {library} from '@fortawesome/fontawesome-svg-core'
-import {faLightbulb, faGavel, faLink, faBook, faInfoCircle, faCircle, faCheck, faCheckCircle, faWindowClose} from '@fortawesome/free-solid-svg-icons'
+import {
+    faLightbulb,
+    faGavel,
+    faLink,
+    faBook,
+    faInfoCircle,
+    faCircle,
+    faCheck,
+    faCheckCircle,
+    faWindowClose
+} from '@fortawesome/free-solid-svg-icons'
 import Header from "../components/Header";
 import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import NotFound from "../pages/NotFound";
@@ -15,6 +25,7 @@ import Registration from "./Registration";
 import Collaborations from "./Collaborations";
 import Footer from "../components/Footer";
 import Flash from "../components/Flash";
+import {getParameterByName} from "../utils/QueryParameters";
 
 
 library.add(faLightbulb, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck, faWindowClose);
@@ -96,11 +107,19 @@ class App extends React.Component {
                                      close={errorDialogAction}/>
                     </div>}
                     <Switch>
-                        <Route exact path="/" render={() => <Redirect to="/registration"/>}/>
-                        <Route path="/login" render={() => <Redirect to="/registration"/>}/>
+                        <Route exact path="/" render={() => <Redirect to="/home"/>}/>
+                        <Route path="/login" render={() =>
+                            <Redirect
+                                to={`/registration?service=${getParameterByName("state", window.location.search)}`}/>}
+                        />
                         <Route path="/redirect" render={() => <Redirect to="/registration"/>}/>
                         <Route path="/registration"
-                               render={props => <Registration user={currentUser} service={"TestCollaboration"} {...props}/>}/>
+                               render={props => <Registration user={currentUser}
+                                                              service={getParameterByName("service", window.location.search)}
+                                                              {...props}/>}
+                        />
+                        <Route path="/home"
+                               render={props => <Collaborations user={currentUser} {...props}/>}/>
                         <Route path="/collaborations"
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
