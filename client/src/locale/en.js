@@ -22,6 +22,7 @@ I18n.translations.en = {
         formEndedTitle: "Your request to join {{service}} is sent for review",
         request: "Request",
         continue: "Continue",
+        unknownService: "The Service with the ID {{service}} does not exists",
         step1: {
             title: "Link your account",
             sub: "Select organization",

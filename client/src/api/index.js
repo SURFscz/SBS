@@ -85,6 +85,6 @@ export function inviteForCollaboration() {
     return postPutJson(`/api/users/send_invitation`, {}, "post")
 }
 
-export function serviceByEntityId() {
-
+export function serviceByEntityId(entityId) {
+    return fetchJson(`/api/service/find_by_entity?entity_id=${encodeURIComponent(entityId)}`, {}, {}, false);
 }
