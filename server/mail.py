@@ -25,10 +25,10 @@ def _do_send_mail(subject, recipients, template, context):
     return msg.html
 
 
-def collaboration_invite(context, collaboration, recipients):
+def collaboration_join_request(context, collaboration, recipients):
     return _do_send_mail(
-        subject=f"Invitation to join collaboration {collaboration}",
+        subject=f"Join request for collaboration {collaboration}",
         recipients=recipients,
-        template="collaboration_invite",
+        template="collaboration_join_request",
         context=context
     )
