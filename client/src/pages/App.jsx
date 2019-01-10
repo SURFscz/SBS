@@ -116,6 +116,7 @@ class App extends React.Component {
                         <Route path="/registration"
                                render={props => <Registration user={currentUser}
                                                               service={getParameterByName("service", window.location.search)}
+                                                              collaboration={getParameterByName("collaboration", window.location.search)}
                                                               {...props}/>}
                         />
                         <Route path="/home"

@@ -13,6 +13,7 @@ Samenwerking Beheer Systeem ↣ Collaboration Management System
 
 ### [Getting started](#getting-started)
 
+#### [Server](#server)
 Create a virtual environment and install the required python packages:
 ```
 python3 -m venv .venv
@@ -36,7 +37,7 @@ With TESTING=1 no mails will be send. If you do want to validate the mails you c
 ```
 python -m smtpd -n -c DebuggingServer localhost:1025 
 ```
-
+#### [Client](#client)
 The GUI can be started with:
 ```
 cd client
@@ -76,4 +77,9 @@ Or to run all the tests and do not watch:
 cd client
 CI=true yarn test
 ```
- 
+With the environment variable `CONFIG=config/test_config.yml` the test database is used. After you ran one or all of the tests
+the database is left with the test data seed.
+
+Start the registration with [http://localhost:3000/registration?collaboration=AI%20computing](http://localhost:3000/registration?collaboration=AI%20computing) 
+
+
