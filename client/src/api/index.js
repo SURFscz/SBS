@@ -81,10 +81,14 @@ export function deleteCollaboration(id) {
     return fetchDelete(`/api/collaboration/${id}`)
 }
 
-export function inviteForCollaboration() {
-    return postPutJson(`/api/users/send_invitation`, {}, "post")
+export function inviteForCollaboration(clientData) {
+    return postPutJson(`/api/users/send_invitation`, clientData, "post")
 }
 
 export function serviceByEntityId(entityId) {
     return fetchJson(`/api/service/find_by_entity?entity_id=${encodeURIComponent(entityId)}`, {}, {}, false);
+}
+
+export function collaborationByName(name) {
+    return fetchJson(`/api/collaboration/find_by_name?name=${encodeURIComponent(name)}`, {}, {}, false);
 }

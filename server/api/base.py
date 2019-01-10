@@ -10,7 +10,7 @@ from werkzeug.exceptions import HTTPException, Unauthorized
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
-white_listing = ["health", "info", "api/users/me", "api/service/find_by_entity"]
+white_listing = ["health", "info", "api/users/me", "api/collaboration/find_by_name"]
 
 
 def auth_filter(config):

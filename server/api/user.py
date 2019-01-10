@@ -5,7 +5,7 @@ from flask import Blueprint, request as current_request, session
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
-from server.db.db import User, OrganisationMembership, CollaborationMembership
+from server.db.db import User, OrganisationMembership, CollaborationMembership, Collaboration
 from server.db.models import update, save
 from server.mail import collaboration_invite
 
@@ -83,7 +83,13 @@ def update_user():
 @user_api.route("/send_invitation", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def send_invitation():
-    collaboration_invite({"salutation": "Dear John"}, "test", ["test@example.com"])
+    client_data = current_request.get_json()
+    collaboration = Collaboration.query.join(Collaboration.services).filter(
+        Collaboration.id == client_data["collaborationId"]).one()
+    admin_members = list(filter(lambda membership: membership.role == "admin", collaboration.collaboration_memberships))
+    admin_emails = list(map(lambda membership: membership.user.email, admin_members))
+    collaboration_invite({"salutation": "Dear"}, collaboration.name, admin_emails)
+    # create JoinRequest and implement back-end to approve - deny this JoinRequest
     return {}, 201
 
 

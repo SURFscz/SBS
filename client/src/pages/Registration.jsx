@@ -1,5 +1,5 @@
 import React from "react";
-import {inviteForCollaboration, serviceByEntityId} from "../api";
+import {collaborationByName, inviteForCollaboration} from "../api";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import I18n from "i18n-js";
 import "./Registration.scss";
@@ -17,21 +17,33 @@ class Registration extends React.Component {
             motivation: "",
             reference: "",
             agreedWithPolicy: false,
-            serviceName: null,
-            serviceId: null
+            collaborationName: null,
+            collaborationId: null
         }
     }
 
     componentDidMount = () => {
-        serviceByEntityId(this.props.service)
-            .then(json => {
-                const {user} = this.props;
-                const step = user.guest ? "1" : "2";
-                this.setState({step: step, serviceName: json.name, serviceId: json.id});
-            })
-            .catch(e => {
-                setFlash(I18n.t("registration.unknownService", {service: this.props.service}), "error")
-            })
+        const {collaboration} = this.props;
+        if (!collaboration) {
+            setFlash(I18n.t("registration.requiredCollaboration"), "error");
+
+        } else {
+            collaborationByName(collaboration)
+                .then(res => {
+                    const {user} = this.props;
+                    const step = user.guest ? "1" : "2";
+                    this.setState({
+                        step: step,
+                        collaborationName: res.name,
+                        collaborationId: res.id
+                    });
+                })
+                .catch(e => {
+                    setFlash(I18n.t("registration.unknownCollaboration", {
+                        collaboration: collaboration
+                    }), "error")
+                })
+        }
     };
 
 
@@ -39,24 +51,24 @@ class Registration extends React.Component {
 
     renderForm1 = () =>
         (<div className="step-form">
-            <p className="form-title">{I18n.t("registration.formTitle", {service: this.state.serviceName || ""})}</p>
-            {this.state.serviceName && <Button className="start" onClick={() => {
-                window.location.href = `/login?state=${this.props.service}`;
+            <p className="form-title">{I18n.t("registration.formTitle", {collaboration: this.state.collaborationName || ""})}</p>
+            {this.state.collaborationName && <Button className="start" onClick={() => {
+                window.location.href = `/login?state=${this.props.collaboration}`;
             }} txt={I18n.t("registration.start")}/>}
         </div>);
 
     renderForm2 = () => {
-        const {motivation, reference, agreedWithPolicy, serviceName} = this.state;
+        const {motivation, reference, agreedWithPolicy, collaborationName} = this.state;
         const {user} = this.props;
         return (<div className="step-form">
-            <p className="form-title">{I18n.t("registration.formTitle", {service: serviceName || ""})}</p>
+            <p className="form-title">{I18n.t("registration.formTitle", {collaboration: collaborationName || ""})}</p>
             <p>{I18n.t("registration.step2.registrationInfo")}</p>
             <section className={`form-element`}>
                 {this.getUserTable(user)}
             </section>
             <section className={`form-element ${isEmpty(motivation) ? "invalid" : ""}`}>
                 <label
-                    className="form-label">{I18n.t("registration.step2.motivationInfo", {service: serviceName || ""})}</label>{this.requiredMarker()}
+                    className="form-label">{I18n.t("registration.step2.motivationInfo", {collaboration: collaborationName || ""})}</label>{this.requiredMarker()}
                 <textarea rows="5"
                           value={motivation}
                           placeholder={I18n.t("registration.step2.motivationPlaceholder")}
@@ -64,18 +76,18 @@ class Registration extends React.Component {
             </section>
             <section className={`form-element`}>
                 <label
-                    className="form-label">{I18n.t("registration.step2.reference", {service: serviceName})}</label>
+                    className="form-label">{I18n.t("registration.step2.reference", {collaboration: collaborationName})}</label>
                 <input type="text"
                        value={reference}
-                       placeholder={I18n.t("registration.step2.referencePlaceholder", {service: serviceName})}
+                       placeholder={I18n.t("registration.step2.referencePlaceholder", {collaboration: collaborationName})}
                        onChange={e => this.setState({reference: e.target.value})}/>
             </section>
             <section className={`form-element ${agreedWithPolicy ? "" : "invalid"}`}>
                 <label className="form-label"
-                       dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {service: serviceName})}}/>{this.requiredMarker()}
+                       dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: collaborationName})}}/>{this.requiredMarker()}
                 <CheckBox name="policy"
                           value={agreedWithPolicy}
-                          info={I18n.t("registration.step2.policyConfirmation", {service: serviceName})}
+                          info={I18n.t("registration.step2.policyConfirmation", {collaboration: collaborationName})}
                           onChange={e => this.setState({agreedWithPolicy: e.target.checked})}/>
             </section>
             <Button className="start" disabled={!this.form2Invariant(motivation, agreedWithPolicy)}
@@ -87,14 +99,14 @@ class Registration extends React.Component {
     };
 
     renderForm3 = () => {
-        const {serviceName} = this.state;
+        const {collaborationName} = this.state;
         return (
             <div className="step-form 3">
-                <p className="form-title">{I18n.t("registration.formEndedTitle", {service: serviceName})}</p>
+                <p className="form-title">{I18n.t("registration.formEndedTitle", {collaboration: collaborationName})}</p>
                 <p className="info"
-                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.info", {service: serviceName})}}/>
+                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.info", {collaboration: collaborationName})}}/>
                 <p className="contact"
-                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact", {service: serviceName})}}/>
+                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact", {collaboration: collaborationName})}}/>
             </div>
         );
     };

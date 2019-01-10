@@ -24,7 +24,8 @@ def seed(db):
 
     john = User(uid="urn:john", name="John Doe", email="john@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org")
-    _persist(db, john, mary)
+    admin = User(uid="urn:admin", name="The Boss", email="boss@example.org")
+    _persist(db, john, mary, admin)
 
     uuc = Organisation(name="UUC", email="john.doe@uuc.org", created_by="urn:admin", updated_by="urnadmin")
     _persist(db, uuc)
@@ -41,7 +42,8 @@ def seed(db):
     _persist(db, ai_computing)
 
     john_ai_computing = CollaborationMembership(role="researcher", user=john, collaboration=ai_computing)
-    _persist(db, john_ai_computing)
+    admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
+    _persist(db, john_ai_computing, admin_ai_computing)
 
     user_service_profile = UserServiceProfile(service=network, collaboration_membership=john_ai_computing,
                                               name="John Doe")

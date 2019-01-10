@@ -16,13 +16,14 @@ I18n.translations.en = {
         collaborations: "Collaborations"
     },
     registration: {
-        title: "Request access to the resources of {{service}}",
+        title: "Request access to the resources of {{collaboration}}",
         start: "Start",
-        formTitle: "Request access to the resources of {{service}}",
-        formEndedTitle: "Your request to join {{service}} is sent for review",
+        formTitle: "Request access to the resources of {{collaboration}}",
+        formEndedTitle: "Your request to join {{collaboration}} is sent for review",
         request: "Request",
         continue: "Continue",
-        unknownService: "The Service with the ID {{service}} does not exists",
+        requiredCollaboration: "Invalid request. Collaboration need to be specified.",
+        unknownCollaboration: "The Collaboration with the with the name {{collaboration}} does not exists",
         step1: {
             title: "Link your account",
             sub: "Select organization",
@@ -35,13 +36,13 @@ I18n.translations.en = {
             icon: "book",
             tooltip: "When you have chosen your organization<br/> then you'll need to optionally <br/>motivate your request <br/>and review & accept our terms",
             registrationInfo: "We will registrate the following information:",
-            motivationInfo: "Why would you like to join the collaboration {{service}}?",
+            motivationInfo: "Why would you like to join the collaboration {{collaboration}}?",
             motivationPlaceholder: "Describe your work or need to access the resources at the collaboration in order for an admin to grant you the proper user rights?",
-            reference: "Do you have a reference within {{service}}?",
-            referencePlaceholder: "Write down the names of people you know within {{service}} like co-researchers.",
+            reference: "Do you have a reference within {{collaboration}}?",
+            referencePlaceholder: "Write down the names of people you know within {{collaboration}} like co-researchers.",
             policy: "Our Policy",
-            policyInfo: "You must agree that your information will be used for resources linked to {{service}}. Please check out <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy\"'>Acceptable Use Policy</a> to which you have agreed upon.",
-            policyConfirmation: "I have read the User Acceptance Policy of {{service}} and accept it"
+            policyInfo: "You must agree that your information will be used for resources linked to {{collaboration}}. Please check out <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy\"'>Acceptable Use Policy</a> to which you have agreed upon.",
+            policyConfirmation: "I have read the User Acceptance Policy of {{collaboration}} and accept it"
         },
         step3: {
             title: "Wait for approval",
