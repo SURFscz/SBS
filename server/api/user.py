@@ -7,7 +7,7 @@ from sqlalchemy.orm import joinedload
 from server.api.base import json_endpoint
 from server.db.db import User, OrganisationMembership, CollaborationMembership, Collaboration
 from server.db.models import update, save
-from server.mail import collaboration_invite
+from server.mail import collaboration_join_request
 
 UID_HEADER_NAME = "MELLON_cmuid"
 
@@ -88,7 +88,7 @@ def send_invitation():
         Collaboration.id == client_data["collaborationId"]).one()
     admin_members = list(filter(lambda membership: membership.role == "admin", collaboration.collaboration_memberships))
     admin_emails = list(map(lambda membership: membership.user.email, admin_members))
-    collaboration_invite({"salutation": "Dear"}, collaboration.name, admin_emails)
+    collaboration_join_request({"salutation": "Dear"}, collaboration.name, admin_emails)
     # create JoinRequest and implement back-end to approve - deny this JoinRequest
     return {}, 201
 

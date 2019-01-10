@@ -110,7 +110,7 @@ class App extends React.Component {
                         <Route exact path="/" render={() => <Redirect to="/home"/>}/>
                         <Route path="/login" render={() =>
                             <Redirect
-                                to={`/registration?service=${getParameterByName("state", window.location.search)}`}/>}
+                                to={`/registration?collaboration=${getParameterByName("state", window.location.search)}`}/>}
                         />
                         <Route path="/redirect" render={() => <Redirect to="/registration"/>}/>
                         <Route path="/registration"
