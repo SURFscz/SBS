@@ -111,7 +111,6 @@ def send_invitation():
     join_request = db.session.merge(join_request)
     db.session.commit()
 
-    # create JoinRequest and implement back-end to approve - deny this JoinRequest
     collaboration_join_request({
         "salutation": "Dear",
         "collaboration": collaboration,

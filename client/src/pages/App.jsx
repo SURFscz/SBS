@@ -121,7 +121,7 @@ class App extends React.Component {
                         />
                         <Route path="/home"
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
-                        <Route path="/collaborations"
+                        <Route path="/my-collaborations"
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
                         <Route path="/collaborations/:id"
                                render={props => <CollaborationDetail user={currentUser} {...props}/>}/>
