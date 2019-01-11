@@ -112,7 +112,6 @@ class App extends React.Component {
                             <Redirect
                                 to={`/registration?collaboration=${getParameterByName("state", window.location.search)}`}/>}
                         />
-                        <Route path="/redirect" render={() => <Redirect to="/registration"/>}/>
                         <Route path="/registration"
                                render={props => <Registration user={currentUser}
                                                               service={getParameterByName("service", window.location.search)}
@@ -121,7 +120,7 @@ class App extends React.Component {
                         />
                         <Route path="/home"
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
-                        <Route path="/collaborations"
+                        <Route path="/collaborations/:id"
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
                         <Route component={NotFound}/>

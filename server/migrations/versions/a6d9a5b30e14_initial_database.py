@@ -113,7 +113,7 @@ def upgrade():
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
                     sa.Column("service_id", sa.Integer(), sa.ForeignKey("services.id"), nullable=False),
                     sa.Column("collaboration_membership_id", sa.Integer(),
-                              sa.ForeignKey("collaboration_memberships.id"),
+                              sa.ForeignKey("collaboration_memberships.id", ondelete="cascade"),
                               nullable=False),
                     sa.Column("name", sa.String(length=255), nullable=True),
                     sa.Column("ssh_key", sa.Text(), nullable=True),
@@ -137,7 +137,8 @@ def upgrade():
                     sa.Column("uri", sa.String(length=255), nullable=True),
                     sa.Column("description", sa.Text(), nullable=True),
                     sa.Column("status", sa.String(length=255), nullable=True),
-                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id"), nullable=False),
+                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
+                              nullable=False),
                     )
 
     op.create_table("services_authorisation_groups",
@@ -160,10 +161,11 @@ def upgrade():
 
     op.create_table("join_requests",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
-                    sa.Column("hash", sa.String(length=512), nullable=False),
+                    sa.Column("reference", sa.Text(), nullable=True),
                     sa.Column("message", sa.Text(), nullable=True),
                     sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False),
-                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id"), nullable=False),
+                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
+                              nullable=False),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
                     )
@@ -173,7 +175,8 @@ def upgrade():
                     sa.Column("hash", sa.String(length=512), nullable=False),
                     sa.Column("message", sa.Text(), nullable=True),
                     sa.Column("user_email", sa.String(length=255), nullable=False),
-                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id"), nullable=False),
+                    sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
+                              nullable=False),
                     sa.Column("accepted", sa.Boolean(), nullable=True),
                     sa.Column("denied", sa.Boolean(), nullable=True),
                     sa.Column("expiry_date", sa.DateTime(timezone=True), nullable=True),

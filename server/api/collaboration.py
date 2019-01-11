@@ -15,6 +15,13 @@ def collaboration_by_name():
     return collaboration, 200
 
 
+@collaboration_api.route("/<id>", strict_slashes=False)
+@json_endpoint
+def collaboration_by_id(id):
+    collaboration = Collaboration.query.get(id)
+    return collaboration, 200
+
+
 @collaboration_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_collaboration():

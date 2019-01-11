@@ -16,7 +16,7 @@ white_listing = ["health", "info", "api/users/me", "api/collaboration/find_by_na
 def auth_filter(config):
     url = current_request.base_url
 
-    if "user" in session and not session["user"]["guest"]:
+    if "user" in session and "guest" in session["user"] and not session["user"]["guest"]:
         return
 
     is_whitelisted_url = False

@@ -155,7 +155,7 @@ class Collaboration(Base, db.Model):
     access_type = db.Column("access_type", db.String(length=255), nullable=True)
     enrollment = db.Column("enrollment", db.String(length=255), nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
-    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
     organisation = db.relationship("Organisation", back_populates="collaborations")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
@@ -177,7 +177,7 @@ class AuthorisationGroup(Base, db.Model):
     uri = db.Column("uri", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=True)
-    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"), primary_key=True)
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="authorisation_groups")
     services = db.relationship("Service", secondary=services_authorisation_groups_association, lazy="select")
     collaboration_memberships = db.relationship("CollaborationMembership",
@@ -189,11 +189,11 @@ class AuthorisationGroup(Base, db.Model):
 class JoinRequest(Base, db.Model):
     __tablename__ = "join_requests"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    hash = db.Column("hash", db.String(length=512), nullable=False)
     message = db.Column("message", db.Text(), nullable=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
+    reference = db.Column("reference", db.Text(), nullable=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="join_requests")
-    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"), primary_key=True)
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="join_requests")
 
 
@@ -203,7 +203,7 @@ class Invitation(Base, db.Model):
     hash = db.Column("hash", db.String(length=512), nullable=False)
     message = db.Column("message", db.Text(), nullable=True)
     user_email = db.Column("user_email", db.String(length=255), nullable=False)
-    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"), primary_key=True)
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="invitations")
     accepted = db.Column("accepted", db.Boolean(), nullable=True)
     denied = db.Column("denied", db.Boolean(), nullable=True)

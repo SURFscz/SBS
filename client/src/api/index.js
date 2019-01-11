@@ -92,3 +92,7 @@ export function serviceByEntityId(entityId) {
 export function collaborationByName(name) {
     return fetchJson(`/api/collaboration/find_by_name?name=${encodeURIComponent(name)}`, {}, {}, false);
 }
+
+export function collaborationById(id) {
+    return fetchJson(`/api/collaboration/${id}`, {}, {}, false);
+}
