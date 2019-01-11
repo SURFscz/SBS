@@ -1,7 +1,7 @@
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, session
 
 from server.api.base import json_endpoint
-from server.db.db import Collaboration
+from server.db.db import Collaboration, CollaborationMembership
 from server.db.models import update, save, delete
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
@@ -20,6 +20,14 @@ def collaboration_by_name():
 def collaboration_by_id(id):
     collaboration = Collaboration.query.get(id)
     return collaboration, 200
+
+
+@collaboration_api.route("/", strict_slashes=False)
+@json_endpoint
+def collaborations():
+    res = Collaboration.query.join(Collaboration.collaboration_memberships).filter(
+        CollaborationMembership.user_id == session["user"]["id"]).all()
+    return res, 200
 
 
 @collaboration_api.route("/", methods=["POST"], strict_slashes=False)

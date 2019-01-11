@@ -1,5 +1,5 @@
 import React from "react";
-import {collaborationById} from "../api";
+import {collaborations} from "../api";
 import "./Collaborations.scss";
 
 
