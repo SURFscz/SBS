@@ -1,12 +1,6 @@
 import React from "react";
-import {collaborationById, health} from "../api";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import I18n from "i18n-js";
+import {collaborationById} from "../api";
 import "./Collaboration.scss";
-import Button from "../components/Button";
-import CheckBox from "../components/CheckBox";
-import {isEmpty} from "../utils/Utils";
-import {setFlash} from "../utils/Flash";
 
 
 class Collaborations extends React.Component {
