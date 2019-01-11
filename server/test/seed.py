@@ -4,7 +4,6 @@ import random
 from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
     JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup
 
-join_request_hash = str(random.getrandbits(512))
 invitation_hash = str(random.getrandbits(512))
 
 
@@ -53,7 +52,7 @@ def seed(db):
                                              collaboration_memberships=[john_ai_computing])
     _persist(db, authorisation_group)
 
-    join_request = JoinRequest(hash=join_request_hash, message="Please...", user=john, collaboration=ai_computing)
+    join_request = JoinRequest(message="Please...", user=john, collaboration=ai_computing)
     _persist(db, join_request)
 
     invitation = Invitation(hash=invitation_hash, user_email="curious@ex.org", collaboration=ai_computing,

@@ -27,7 +27,7 @@ def _do_send_mail(subject, recipients, template, context):
 
 def collaboration_join_request(context, collaboration, recipients):
     return _do_send_mail(
-        subject=f"Join request for collaboration {collaboration}",
+        subject=f"Join request for collaboration {collaboration.name}",
         recipients=recipients,
         template="collaboration_join_request",
         context=context

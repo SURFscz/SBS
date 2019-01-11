@@ -11,3 +11,5 @@ api_users:
 mail:
   host: localhost
   port: 1025
+
+base_url: http://localhost:3000

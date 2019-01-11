@@ -9,7 +9,7 @@ class TestUser(AbstractTest):
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.json["guest"], True)
 
-    def test_me_shib(self):
+    def test_me_identity_header(self):
         response = self.client.get("/api/users/me", headers={UID_HEADER_NAME: "uid"})
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.json["guest"], False)

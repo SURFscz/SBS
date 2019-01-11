@@ -2,8 +2,27 @@
 {% block title %}SURFNET Collaboration invite{% endblock %}
 {% block content %}
 
-Beste {{ salutation }},
+<p>{{ salutation }},</p>
 
-DUMMY TEKST DEZE TEKST MOET WORDEN AANGEPAST
+<p>The user {{ user.name }} has requested access to the collaboration {{ collaboration.name }}.</p>
+<p>The motivation for this request:</p>
+<p>{{ join_request.message }}</p>
+{% if join_request.reference is defined and join_request.reference|length %}
+<p>The user has provided the following references within the collaboration.</p>
+<p>{{ join_request.reference }}</p>
+{% else %}
+<p>The user has not provided any references within the collaboration.</p>
+{% endif %}
+<table cellpadding="10" width="90%" align="center"
+       style="margin-bottom:1em;margin-left:auto;margin-right:auto;margin-top:1em;">
+    <tr>
+        <td bgcolor="#D9EDF7"
+            style="mso-line-height-rule:exactly;line-height:18px;font-size:13px;font-family:Arial, sans-serif;border-radius:4px 4px 4px 4px;color:#333333;border-style:solid;border-width:1px;border-color:#4FB3CF;"
+            align="center" width="100%">
+            <span lang="en"><a href="{{base_url}}/collaborations/{{collaboration.id}}" style="color:#0088CC;">Login to process this request.</a></span>
+            <br/>
+        </td>
+    </tr>
+</table>
 
 {% endblock %}
