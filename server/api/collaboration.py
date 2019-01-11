@@ -4,7 +4,7 @@ from server.api.base import json_endpoint
 from server.db.db import Collaboration
 from server.db.models import update, save, delete
 
-collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaboration")
+collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 
 @collaboration_api.route("/find_by_name", strict_slashes=False)

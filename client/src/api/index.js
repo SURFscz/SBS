@@ -78,7 +78,7 @@ export function reportError(error) {
 }
 
 export function deleteCollaboration(id) {
-    return fetchDelete(`/api/collaboration/${id}`)
+    return fetchDelete(`/api/collaborations/${id}`)
 }
 
 export function inviteForCollaboration(clientData) {
@@ -86,13 +86,17 @@ export function inviteForCollaboration(clientData) {
 }
 
 export function serviceByEntityId(entityId) {
-    return fetchJson(`/api/service/find_by_entity?entity_id=${encodeURIComponent(entityId)}`, {}, {}, false);
+    return fetchJson(`/api/services/find_by_entity?entity_id=${encodeURIComponent(entityId)}`, {}, {}, false);
 }
 
 export function collaborationByName(name) {
-    return fetchJson(`/api/collaboration/find_by_name?name=${encodeURIComponent(name)}`, {}, {}, false);
+    return fetchJson(`/api/collaborations/find_by_name?name=${encodeURIComponent(name)}`, {}, {}, false);
 }
 
 export function collaborationById(id) {
-    return fetchJson(`/api/collaboration/${id}`, {}, {}, false);
+    return fetchJson(`/api/collaborations/${id}`, {}, {}, false);
+}
+
+export function collaborations() {
+    return fetchJson(`/api/collaborations`);
 }

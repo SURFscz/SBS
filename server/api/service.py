@@ -4,7 +4,7 @@ from server.api.base import json_endpoint
 from server.db.db import Service
 from server.db.models import update, save, delete
 
-service_api = Blueprint("service_api", __name__, url_prefix="/api/service")
+service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
 
 @service_api.route("/find_by_entity", strict_slashes=False)
