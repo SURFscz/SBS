@@ -27,7 +27,7 @@ class Collaborations extends React.Component {
     render() {
         const {collaboration} = this.state;
         return <div className="collaboration-detail">
-            {collaboration.name}
+            <p>Name</p>{collaboration.name}
         </div>
     }
 }

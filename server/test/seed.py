@@ -55,8 +55,8 @@ def seed(db):
     join_request = JoinRequest(message="Please...", user=john, collaboration=ai_computing)
     _persist(db, join_request)
 
-    invitation = Invitation(hash=invitation_hash, user_email="curious@ex.org", collaboration=ai_computing,
-                            expiry_date=datetime.date.today() + datetime.timedelta(days=14))
+    invitation = Invitation(hash=invitation_hash, invitee_email="curious@ex.org", collaboration=ai_computing,
+                            expiry_date=datetime.date.today() + datetime.timedelta(days=14), user=admin)
     _persist(db, invitation)
 
     db.session.commit()
