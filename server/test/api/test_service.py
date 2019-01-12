@@ -11,6 +11,10 @@ class TestService(AbstractTest):
         mail = self._find_mail_by_entity_id()
         self.assertEqual("mail", mail["name"])
 
+    def test_search(self):
+        res = self.get("/api/services/search", query_data={"q": "networ"})
+        self.assertEqual(1, len(res))
+
     def test_find_by_non_existing_entity_id(self):
         self.get("/api/services/find_by_entity", query_data={"entity_id": "nope"}, response_status_code=500)
 

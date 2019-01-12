@@ -20,6 +20,7 @@ def upgrade():
     conn = op.get_bind()
     # No alembic equivalent for fulltext index
     conn.execute(text("ALTER TABLE collaborations ADD FULLTEXT(name, description)"))
+    conn.execute(text("ALTER TABLE services ADD FULLTEXT(name, entity_id, description)"))
 
     conn.execute(text("ALTER TABLE collaborations ADD UNIQUE INDEX collaborations_unique_name(name)"))
     conn.execute(text("ALTER TABLE users ADD UNIQUE INDEX users_unique_uid(uid)"))
