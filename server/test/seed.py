@@ -33,7 +33,8 @@ def seed(db):
     _persist(db, organisation_membership)
 
     mail = Service(entity_id="https://mail", name="mail", contact_email=john.email)
-    network = Service(entity_id="https://network", name="network", status="pending")
+    network = Service(entity_id="https://network", name="network", description="Network enabling service SSH access",
+                      status="pending")
     _persist(db, mail, network)
 
     ai_computing = Collaboration(name="AI computing",
