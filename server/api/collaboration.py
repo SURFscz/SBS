@@ -2,7 +2,7 @@ from flask import Blueprint, request as current_request, session
 from sqlalchemy import text
 
 from server.api.base import json_endpoint
-from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db
+from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup
 from server.db.models import update, save, delete
 from sqlalchemy.orm import joinedload
 
@@ -31,19 +31,36 @@ def collaboration_search():
 @collaboration_api.route("/<id>", strict_slashes=False)
 @json_endpoint
 def collaboration_by_id(id):
-    collaboration = Collaboration.query.get(id)
+    user_id = session["user"]["id"]
+    collaboration = Collaboration.query \
+        .options(joinedload(Collaboration.authorisation_groups)
+                 .subqueryload(AuthorisationGroup.collaboration_memberships)
+                 .subqueryload(CollaborationMembership.user_service_profiles)) \
+        .options(joinedload(Collaboration.invitations)) \
+        .options(joinedload(Collaboration.join_requests).subqueryload(JoinRequest.user)) \
+        .options(joinedload(Collaboration.collaboration_memberships)
+                 .subqueryload(CollaborationMembership.user_service_profiles)) \
+        .options(joinedload(Collaboration.services)) \
+        .join(Collaboration.collaboration_memberships) \
+        .filter(CollaborationMembership.user_id == user_id) \
+        .filter(Collaboration.id == id) \
+        .one()
+
+    # collaboration = Collaboration.query.get(id)
     return collaboration, 200
 
 
 @collaboration_api.route("/", strict_slashes=False)
 @json_endpoint
 def collaborations():
+    user_id = session["user"]["id"]
     res = Collaboration.query \
+        .options(joinedload(Collaboration.authorisation_groups)) \
         .options(joinedload(Collaboration.invitations)) \
         .options(joinedload(Collaboration.join_requests).subqueryload(JoinRequest.user)) \
         .options(joinedload(Collaboration.collaboration_memberships)) \
         .join(Collaboration.collaboration_memberships) \
-        .filter(CollaborationMembership.user_id == session["user"]["id"]).all()
+        .filter(CollaborationMembership.user_id == user_id).all()
     return res, 200
 
 

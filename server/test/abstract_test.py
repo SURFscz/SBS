@@ -5,6 +5,7 @@ import requests
 from flask_testing import TestCase
 from sqlalchemy import event
 
+from server.api.user import UID_HEADER_NAME
 from server.test.seed import seed
 
 BASIC_AUTH_HEADER = {"Authorization": "Basic c3lzYWRtaW46c2VjcmV0"}
@@ -64,9 +65,14 @@ class AbstractTest(TestCase):
         with app.app_context():
             seed(db)
 
-    def get(self, url, query_data={}, response_status_code=200):
+    def login(self, uid="urn:john"):
         with requests.Session():
-            response = self.client.get(url, headers=BASIC_AUTH_HEADER, query_string=query_data)
+            self.client.get("/api/users/me", headers={UID_HEADER_NAME: uid})
+
+    def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True):
+        with requests.Session():
+            response = self.client.get(url, headers=BASIC_AUTH_HEADER if with_basic_auth else {},
+                                       query_string=query_data)
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
             return response.json if hasattr(response, "json") else None
 
