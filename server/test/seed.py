@@ -36,7 +36,9 @@ def seed(db):
     network = Service(entity_id="https://network", name="network", status="pending")
     _persist(db, mail, network)
 
-    ai_computing = Collaboration(name="AI computing", organisation=uuc, services=[mail, network],
+    ai_computing = Collaboration(name="AI computing",
+                                 description="Artifical Intelligence computing for the Unincorporated Urban Community",
+                                 organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[])
     _persist(db, ai_computing)
 
