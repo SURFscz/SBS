@@ -31,3 +31,17 @@ class TestCollaboration(AbstractTest):
         collaboration = self._find_by_name_id()
         self.delete("/api/collaborations", primary_key=collaboration["id"])
         self.assertEqual(0, Collaboration.query.count())
+
+    def test_my_collaborations(self):
+        self.login()
+        my_collaborations = self.get("/api/collaborations")
+        self.assertEqual(1, len(my_collaborations))
+        collaboration = my_collaborations[0]
+        self.assertEqual(1, len(collaboration["authorisation_groups"]))
+        self.assertEqual(2, len(collaboration["collaboration_memberships"]))
+        self.assertEqual(1, len(collaboration["join_requests"]))
+        self.assertEqual(1, len(collaboration["invitations"]))
+
+        collaboration = self.get(f"/api/collaborations/{collaboration['id']}")
+        researcher = list(filter(lambda cm: cm["role"] == "researcher", collaboration["collaboration_memberships"]))[0]
+        self.assertEqual("John Doe", researcher["user_service_profiles"][0]["name"])
