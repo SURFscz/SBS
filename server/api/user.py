@@ -4,7 +4,7 @@ import logging
 from flask import Blueprint, request as current_request, current_app, session
 from sqlalchemy.orm import joinedload
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, is_admin_user
 from server.db.db import User, OrganisationMembership, CollaborationMembership, Collaboration, JoinRequest, db
 from server.db.models import update, save
 from server.mail import collaboration_join_request
@@ -44,7 +44,8 @@ def _user_to_session_object(user):
         "uid": user.uid,
         "name": user.name,
         "email": user.email,
-        "guest": False
+        "guest": False,
+        "admin": is_admin_user(user)
     }
 
 
