@@ -7,6 +7,10 @@ class TestCollaboration(AbstractTest):
     def _find_by_name_id(self):
         return self.get("/api/collaborations/find_by_name", query_data={"name": "AI computing"})
 
+    def test_search(self):
+        res = self.get("/api/collaborations/search", query_data={"q": "urban"})
+        self.assertEqual(1, len(res))
+
     def test_collaboration_new(self):
         organisation_id = Organisation.query.filter(Organisation.name == "UUC").one().id
         collaboration = self.post("/api/collaborations",
