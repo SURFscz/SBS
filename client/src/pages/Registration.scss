@@ -38,11 +38,12 @@
 
       svg.fa-check {
         position: absolute;
-        right: 3px;
-        top: 3px;
+        right: 10px;
+        top: -22px;
         z-index: 9;
         color: white;
-        font-size: 32px;
+        font-size: 232px;
+        opacity: .15;
       }
 
       &.active {
