@@ -11,6 +11,7 @@ from server.api.base import base_api, DynamicExtendedJSONEncoder
 from server.api.collaboration import collaboration_api
 from server.api.service import service_api
 from server.api.user import user_api
+from server.api.user_service_profile import user_service_profile_api
 from server.db.db import db, db_migrations
 
 
@@ -59,6 +60,7 @@ app.register_blueprint(base_api)
 app.register_blueprint(user_api)
 app.register_blueprint(service_api)
 app.register_blueprint(collaboration_api)
+app.register_blueprint(user_service_profile_api)
 
 app.register_error_handler(404, page_not_found)
 
