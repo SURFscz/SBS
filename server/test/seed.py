@@ -26,7 +26,8 @@ def seed(db):
     admin = User(uid="urn:admin", name="The Boss", email="boss@example.org")
     _persist(db, john, mary, admin)
 
-    uuc = Organisation(name="UUC", email="john.doe@uuc.org", created_by="urn:admin", updated_by="urnadmin")
+    uuc = Organisation(name="UUC", description="Unincorporated Urban Community", created_by="urn:admin",
+                       updated_by="urnadmin")
     _persist(db, uuc)
 
     organisation_membership = OrganisationMembership(role="admin", user=john, organisation=uuc)

@@ -45,8 +45,6 @@ def collaboration_by_id(id):
         .filter(CollaborationMembership.user_id == user_id) \
         .filter(Collaboration.id == id) \
         .one()
-
-    # collaboration = Collaboration.query.get(id)
     return collaboration, 200
 
 

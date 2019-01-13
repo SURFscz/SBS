@@ -9,6 +9,7 @@ from munch import munchify
 
 from server.api.base import base_api, DynamicExtendedJSONEncoder
 from server.api.collaboration import collaboration_api
+from server.api.organisation import organisation_api
 from server.api.service import service_api
 from server.api.user import user_api
 from server.api.user_service_profile import user_service_profile_api
@@ -61,12 +62,13 @@ app.register_blueprint(user_api)
 app.register_blueprint(service_api)
 app.register_blueprint(collaboration_api)
 app.register_blueprint(user_service_profile_api)
+app.register_blueprint(organisation_api)
 
 app.register_error_handler(404, page_not_found)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = is_local or is_test
+app.config["SQLALCHEMY_ECHO"] = False  # is_local or is_test
 
 app.config["MAIL_SERVER"] = config.mail.host
 app.config["MAIL_PORT"] = int(config.mail.port)

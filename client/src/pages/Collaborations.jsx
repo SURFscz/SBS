@@ -1,5 +1,5 @@
 import React from "react";
-import {collaborations} from "../api";
+import {myCollaborations} from "../api";
 import "./Collaborations.scss";
 
 
@@ -13,7 +13,7 @@ class Collaborations extends React.Component {
     }
 
     componentWillMount = () => {
-            collaborations()
+            myCollaborations()
                 .then(json => this.setState({collaborations: json}));
     };
 

@@ -27,6 +27,8 @@ import Footer from "../components/Footer";
 import Flash from "../components/Flash";
 import {getParameterByName} from "../utils/QueryParameters";
 import CollaborationDetail from "./CollaborationDetail";
+import Organisations from "./Organisations";
+import OrganisationDetail from "./OrganisationDetail";
 
 
 library.add(faLightbulb, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck, faWindowClose);
@@ -121,10 +123,16 @@ class App extends React.Component {
                         />
                         <Route path="/home"
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
-                        <Route path="/my-collaborations"
+                        <Route exact path="/collaborations"
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
-                        <Route path="/collaborations/:id"
+                        <Route exact path="/collaborations/:id"
                                render={props => <CollaborationDetail user={currentUser} {...props}/>}/>
+                        {currentUser.admin &&
+                        <Route exact path="/organisations"
+                               render={props => <Organisations user={currentUser} {...props}/>}/>}
+                        {currentUser.admin &&
+                        <Route exact path="/organisations/:id"
+                               render={props => <OrganisationDetail user={currentUser} {...props}/>}/>}
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
                         <Route component={NotFound}/>
                     </Switch>
