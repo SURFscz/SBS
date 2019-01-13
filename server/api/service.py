@@ -23,7 +23,7 @@ def collaboration_search():
     sql = text(f"SELECT id, entity_id, name, description FROM services "
                f"WHERE MATCH (name, entity_id, description) AGAINST ('{q}*' IN BOOLEAN MODE)")
     result_set = db.engine.execute(sql)
-    res = [{"id": row[0], "name": row[1], "description": row[2]} for row in result_set]
+    res = [{"id": row[0], "entity_id": row[1], "name": row[2], "description": row[3]} for row in result_set]
     return res, 200
 
 

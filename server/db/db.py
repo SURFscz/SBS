@@ -48,8 +48,8 @@ class User(Base, db.Model):
 class Organisation(Base, db.Model):
     __tablename__ = "organisations"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    name = db.Column("name", db.String(length=255), nullable=True)
-    email = db.Column("description", db.Text(), nullable=True)
+    name = db.Column("name", db.String(length=255), nullable=False)
+    description = db.Column("description", db.Text(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",

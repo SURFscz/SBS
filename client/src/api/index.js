@@ -97,6 +97,26 @@ export function collaborationById(id) {
     return fetchJson(`/api/collaborations/${id}`, {}, {}, false);
 }
 
-export function collaborations() {
+export function myCollaborations() {
     return fetchJson(`/api/collaborations`);
+}
+
+export function myOrganisations() {
+    return fetchJson(`/api/organisations`);
+}
+
+export function organisationById(id) {
+    return fetchJson(`/api/organisations/${id}`, {}, {}, false);
+}
+
+export function searchOrganisations(q) {
+    return fetchJson(`/api/organisations/search?q=${encodeURIComponent(q)}`);
+}
+
+export function createOrganisations(organisation) {
+    return postPutJson("/api/organisations", organisation, "post");
+}
+
+export function updateOrganisation(organisation) {
+    return postPutJson("/api/organisations", organisation, "put");
 }

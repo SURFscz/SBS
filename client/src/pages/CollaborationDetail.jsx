@@ -3,7 +3,7 @@ import {collaborationById} from "../api";
 import "./CollaborationDetail.scss";
 
 
-class Collaborations extends React.Component {
+class CollaborationDetail extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -32,4 +32,4 @@ class Collaborations extends React.Component {
     }
 }
 
-export default Collaborations;
+export default CollaborationDetail;

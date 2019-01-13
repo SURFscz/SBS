@@ -13,7 +13,8 @@ I18n.translations.en = {
     },
     navigation: {
         registration: "Registration",
-        my_collaborations: "My Collaborations"
+        collaborations: "Collaborations",
+        organisations: "Organisations"
     },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
