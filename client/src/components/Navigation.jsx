@@ -29,7 +29,10 @@ export default class Navigation extends React.PureComponent {
     }
 
     renderSpinner() {
-        return this.state.loading ? <div className="spinner"><MDSpinner size={42} singleColor={"#4DB2CF"} duration={1000} borderSize={6}/> </div> : null;
+        return this.state.loading ? <div className="spinner"><MDSpinner size={42}
+                                                                        singleColor={"#FFD700"}
+                                                                        duration={1000}
+                                                                        borderSize={8}/> </div> : null;
     }
 
     render() {
