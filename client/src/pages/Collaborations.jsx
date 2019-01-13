@@ -20,7 +20,7 @@ class Collaborations extends React.Component {
     render() {
         const {collaborations} = this.state;
         return <div className="collaborations">
-            {collaborations.length}
+            { JSON.stringify(collaborations, null, 2)}
         </div>
     }
 }
