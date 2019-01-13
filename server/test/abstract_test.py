@@ -1,6 +1,6 @@
 import json
 import os
-
+from base64 import b64encode
 import requests
 from flask_testing import TestCase
 from sqlalchemy import event
@@ -8,7 +8,8 @@ from sqlalchemy import event
 from server.api.user import UID_HEADER_NAME
 from server.test.seed import seed
 
-BASIC_AUTH_HEADER = {"Authorization": "Basic c3lzYWRtaW46c2VjcmV0"}
+# See api_users in config/test_config.yml
+BASIC_AUTH_HEADER = {"Authorization": f"Basic {b64encode(b'sysadmin:secret').decode('ascii')}"}
 
 
 # The database is cleared and seeded once and after each test the transaction is rolled back.

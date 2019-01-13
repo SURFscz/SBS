@@ -45,7 +45,8 @@ def add_audit_trail_data(cls, json_dict):
         user_name = session["user"]["uid"] if "user" in session and not session["user"][
             "guest"] else request_context.api_user
         json_dict["created_by"] = user_name
-        json_dict["updated_by"] = user_name
+        if "updated_by" in column_names:
+            json_dict["updated_by"] = user_name
 
 
 def update(cls):
