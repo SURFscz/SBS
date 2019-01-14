@@ -8,9 +8,15 @@ import {
     faBook,
     faInfoCircle,
     faCircle,
+    faPlus,
     faCheck,
     faCheckCircle,
-    faWindowClose
+    faWindowClose,
+    faSearch,
+    faArrowRight,
+    faExternalLinkAlt,
+    faArrowUp,
+    faArrowDown,
 } from '@fortawesome/free-solid-svg-icons'
 import Header from "../components/Header";
 import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
@@ -31,7 +37,8 @@ import Organisations from "./Organisations";
 import OrganisationDetail from "./OrganisationDetail";
 
 
-library.add(faLightbulb, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck, faWindowClose);
+library.add(faLightbulb, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck,
+    faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown);
 
 const S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 

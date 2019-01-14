@@ -43,6 +43,8 @@ def my_organisations():
     organisations = Organisation.query \
         .options(joinedload(Organisation.organisation_memberships)
                  .subqueryload(OrganisationMembership.user)) \
+        .options(joinedload(Organisation.collaborations)
+                 .subqueryload(Collaboration.collaboration_memberships)) \
         .join(OrganisationMembership.user) \
         .filter(OrganisationMembership.user_id == user_id) \
         .all()

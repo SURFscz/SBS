@@ -1,38 +1,181 @@
 @import "../stylesheets/vars.scss";
 
-.collaboration {
-  background-color: white;
-  padding: 35px 0 65px 0;
+.organisations {
+  background-color: $background;
+  padding: $medium-padding 0;
 
-  .step-container {
+  .title {
+    font-weight: bold;
+    font-size: 28px;
     max-width: $medium;
     margin: 0 auto;
-    padding: 0 $medium-padding;
+    padding: 25px 0;
+  }
+
+  .info-block-container {
+    max-width: $medium;
+    margin: 10px auto;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
 
-
-    input[type=text], input[type=email], textarea {
-      display: block;
-      width: 100%;
-      border: 1px solid $lighter-grey;
-      padding: 6px;
+    .info-block {
       border-radius: $br;
-      font-size: 14px;
-      margin-top: 5px;
+      background-color: white;
+      border: solid 1px $lightest-grey;
+      box-shadow: 0 2px 4px 0 $lighter-grey, 0 4px 16px 0 $lighter-grey;
+      padding: 15px 10px;
+      width: calc(20% - 2em);
 
-      &[disabled] {
-        background-color: $light-grey;
+      .header {
+        font-weight: bold;
+        font-size: 22px;
+        padding: 10px 5px;
+        border-bottom: solid 1px $lighter-grey;
+        display: flex;
+
+        .counter {
+          font-size: 24px;
+          margin-left: auto;
+        }
+
+        &.organisation-members {
+          color: $members;
+        }
+
+        &.organisation-collaborations {
+          color: $collaborations;
+        }
+
+        &.profile {
+          color: $profile;
+        }
+      }
+
+      div.content {
+        padding: 10px 5px;
+      }
+
+      div.profile {
+        p {
+          margin-bottom: 5px;
+        }
+      }
+
+      div.organisation-members, div.organisation-collaborations {
+        a {
+          display: inline-block;
+          color: $dark-grey;
+          margin-bottom: 5px;
+          text-decoration: none;
+
+          &:visited {
+            text-decoration: none;
+          }
+
+          &:hover {
+            color: $blue;
+          }
+        }
+
+        svg {
+          color: $blue;
+          margin-right: 15px;
+        }
+
+        span.count {
+          display: inline-block;
+          color: $blue;
+          margin-left: 5px;
+        }
       }
     }
+  }
 
-    .form-label {
-      margin-bottom: 5px;
-      display: inline-block;
+  .collaboration-search {
+    background-color: white;
+    padding: $medium-padding 0;
+    max-width: $medium;
+    border-radius: $br;
+    margin: 15px auto 10px auto;
+    box-shadow: 0 2px 4px 0 $lighter-grey, 0 4px 16px 0 $lighter-grey;
+    position: relative;
+
+    div.search {
+      display: flex;
+      padding: 0 15px;
+      position: relative;
+
+      svg.fa-search {
+        position: absolute;
+        font-size: 18px;
+        color: $blue;
+        top: 14px;
+        left: 22px;
+      }
+
+      input[type=text] {
+        flex-grow: 2;
+        border: 1px solid $lighter-grey;
+        padding-left: 45px;
+        border-radius: $br;
+        font-size: 16px;
+        min-height: 45px;
+
+        &.with-button {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+
+        &[disabled] {
+          background-color: $light-grey;
+        }
+      }
+
+      a.button.blue {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
     }
+  }
 
+  .organisation-list {
+    background-color: white;
+    padding: $medium-padding;
+    max-width: $medium;
+    border-radius: $br;
+    margin: 15px auto 0 auto;
+    box-shadow: 0 2px 4px 0 $lighter-grey, 0 4px 16px 0 $lighter-grey;
+    position: relative;
+
+    table {
+      width: 100%;
+
+      th {
+        text-align: left;
+        cursor: pointer;
+        padding: 0 0 10px 0;
+
+        svg {
+          margin-left: 15px;
+          color: $lighter-grey;
+
+          &.current, &.reverse {
+            color: $blue;
+          }
+        }
+      }
+
+      tbody tr:nth-child(odd) {
+        background-color: $background;
+      }
+
+      td {
+        vertical-align: middle;
+        padding: 5px 0;
+      }
+    }
   }
 
   .__react_component_tooltip {

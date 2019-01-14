@@ -13,6 +13,10 @@ a.button {
   cursor: pointer;
   text-decoration: none;
 
+  svg {
+    margin-left: 25px;
+  }
+
   &:hover {
     background-color: darken($light-blue, 3%);
     color: darken($blue, 8%);

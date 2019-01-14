@@ -2,7 +2,7 @@ import React from "react";
 import {stopEvent} from "../utils/Utils";
 import "./Button.scss";
 
-export default function Button({onClick, txt, disabled = false, cancelButton = false, className = ""}) {
+export default function Button({onClick, txt, disabled = false, cancelButton = false, className = "", icon = null}) {
     const disable = disabled ? "disabled" : "";
     const cancel = cancelButton ? "cancel" : "blue";
     const cn = `button ${disable} ${cancel} ${className}`;
@@ -12,6 +12,6 @@ export default function Button({onClick, txt, disabled = false, cancelButton = f
             if (!disabled) {
                 onClick();
             }
-        }}>{txt}</a>
+        }}>{txt}{icon}</a>
     );
 }
