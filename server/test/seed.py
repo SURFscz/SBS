@@ -49,7 +49,14 @@ def seed(db):
     _persist(db, john_ai_computing, admin_ai_computing)
 
     user_service_profile = UserServiceProfile(service=network, collaboration_membership=john_ai_computing,
-                                              name="John Doe")
+                                              name="John Doe", telephone_number="0612345678",
+                                              ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
+                                                      "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
+                                                      "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
+                                                      "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
+                                                      "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
+                                                      "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
+                                                      "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     _persist(db, user_service_profile)
 
     authorisation_group = AuthorisationGroup(name="auth_group", collaboration=ai_computing, services=[network],
