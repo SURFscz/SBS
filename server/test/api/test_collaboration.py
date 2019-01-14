@@ -1,5 +1,6 @@
 from server.db.db import Collaboration, Organisation
 from server.test.abstract_test import AbstractTest
+from server.test.seed import collaboration_ai_computing_uuid
 
 
 class TestCollaboration(AbstractTest):
@@ -11,6 +12,15 @@ class TestCollaboration(AbstractTest):
         res = self.get("/api/collaborations/search", query_data={"q": "urban"})
         self.assertEqual(1, len(res))
 
+    def test_members(self):
+        members = self.get("/api/collaborations/members", query_data={"identifier": collaboration_ai_computing_uuid})
+        self.assertEqual(1, len(members))
+
+        member = members[0]
+        self.assertEqual("urn:john", member["uid"])
+        self.assertEqual("John Doe", member["name"])
+        self.assertFalse("email" in member)
+
     def test_collaboration_new(self):
         organisation_id = Organisation.query.filter(Organisation.name == "UUC").one().id
         collaboration = self.post("/api/collaborations",
@@ -19,6 +29,7 @@ class TestCollaboration(AbstractTest):
                                       "organisation_id": organisation_id
                                   })
         self.assertIsNotNone(collaboration["id"])
+        self.assertIsNotNone(collaboration["identifier"])
         self.assertEqual("new_collaboration", collaboration["name"])
 
     def test_collaboration_update(self):

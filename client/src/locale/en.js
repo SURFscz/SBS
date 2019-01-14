@@ -62,6 +62,12 @@ I18n.translations.en = {
         email: "E-mail",
         organization:"Organization"
     },
+    collaboration: {
+        dashboard: "My Collaborations",
+        requests: "Join Requests",
+        invitations: "Invitations",
+        services: "Services",
+    },
     error_dialog: {
         title: "Unexpected error",
         body: "This is embarrassing; an unexpected error has occurred. It has been logged and reported. Please try again...",

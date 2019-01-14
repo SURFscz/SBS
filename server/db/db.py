@@ -149,6 +149,7 @@ class Service(Base, db.Model):
 class Collaboration(Base, db.Model):
     __tablename__ = "collaborations"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    identifier = db.Column("identifier", db.String(length=255), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=True)
