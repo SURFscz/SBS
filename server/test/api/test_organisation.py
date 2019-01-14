@@ -1,5 +1,6 @@
 from server.db.db import Organisation
 from server.test.abstract_test import AbstractTest
+from server.test.seed import ucc_name
 
 
 class TestOrganisation(AbstractTest):
@@ -11,8 +12,9 @@ class TestOrganisation(AbstractTest):
     def test_my_organisations(self):
         self.login()
         organisations = self.get("/api/organisations")
-        self.assertEqual(1, len(organisations))
-        self.assertEqual("urn:john", organisations[0]["organisation_memberships"][0]["user"]["uid"])
+        self.assertEqual(2, len(organisations))
+        organisation = AbstractTest.find_by_name(organisations, ucc_name)
+        self.assertEqual("urn:john", organisation["organisation_memberships"][0]["user"]["uid"])
 
     def test_organisation_by_id(self):
         self.login()
@@ -23,11 +25,11 @@ class TestOrganisation(AbstractTest):
         organisation = self.post("/api/organisations", body={"name": "new_organisation"})
         self.assertIsNotNone(organisation["id"])
         self.assertEqual("new_organisation", organisation["name"])
-        self.assertEqual(2, Organisation.query.count())
+        self.assertEqual(3, Organisation.query.count())
 
         organisation["name"] = "changed"
         organisation = self.put("/api/organisations", body=organisation)
         self.assertEqual("changed", organisation["name"])
 
         self.delete("/api/organisations", primary_key=organisation["id"])
-        self.assertEqual(1, Organisation.query.count())
+        self.assertEqual(2, Organisation.query.count())

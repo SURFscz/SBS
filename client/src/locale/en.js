@@ -60,13 +60,50 @@ I18n.translations.en = {
     profile: {
         name: "Name",
         email: "E-mail",
-        organization:"Organization"
+        organization: "Organization"
     },
-    collaboration: {
-        dashboard: "My Collaborations",
+    collaborations: {
+        dashboard: "Dashboard",
+        title: "My Collaborations",
         requests: "Join Requests",
+        authorisations: "Authorisations",
         invitations: "Invitations",
         services: "Services",
+        profile: "Profile",
+        add: "New",
+        searchPlaceHolder: "SEARCH FOR ALL COLLABORATIONS..."
+    },
+    collaboration: {
+        name: "Name",
+        identifier: "Identifier",
+        description: "Description",
+        access_type: "Access Type",
+        enrollment: "Enrollment",
+        organisation: "Organisation",
+        accepted_user_policy: "AUP",
+        role: "Role"
+    },
+    organisations: {
+        dashboard: "Dashboard",
+        title: "My Organisation",
+        members: "Members",
+        collaborations: "Collaborations",
+        profile: "Profile",
+        add: "New",
+        searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS..."
+    },
+    organisation: {
+        name: "Name",
+        description: "Description",
+        role: "Role"
+    },
+    autocomplete: {
+        name: "Name",
+        description: "Description",
+        link: "Link",
+        noResults: "No results",
+        resultsLimited: "More entries matched than can be shown, please narrow your search term..."
+
     },
     error_dialog: {
         title: "Unexpected error",

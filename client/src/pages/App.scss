@@ -1,5 +1,8 @@
+@import "../stylesheets/vars.scss";
+
 .app-container {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+  background-color: $background;
 }

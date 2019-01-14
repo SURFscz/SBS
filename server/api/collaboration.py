@@ -23,7 +23,7 @@ def collaboration_by_name():
 def collaboration_search():
     q = current_request.args.get("q")
     sql = text(f"SELECT id, name, description FROM collaborations "
-               f"WHERE MATCH (name,description) AGAINST ('{q}*' IN BOOLEAN MODE)")
+               f"WHERE MATCH (name,description) AGAINST ('{q}*' IN BOOLEAN MODE) AND id > 0 LIMIT 16")
     result_set = db.engine.execute(sql)
     res = [{"id": row[0], "name": row[1], "description": row[2]} for row in result_set]
     return res, 200
@@ -57,6 +57,7 @@ def collaboration_by_id(id):
                  .subqueryload(AuthorisationGroup.collaboration_memberships)
                  .subqueryload(CollaborationMembership.user_service_profiles)) \
         .options(joinedload(Collaboration.invitations)) \
+        .options(joinedload(Collaboration.organisation)) \
         .options(joinedload(Collaboration.join_requests).subqueryload(JoinRequest.user)) \
         .options(joinedload(Collaboration.collaboration_memberships)
                  .subqueryload(CollaborationMembership.user_service_profiles)) \
@@ -77,6 +78,8 @@ def collaborations():
         .options(joinedload(Collaboration.invitations)) \
         .options(joinedload(Collaboration.join_requests).subqueryload(JoinRequest.user)) \
         .options(joinedload(Collaboration.collaboration_memberships)) \
+        .options(joinedload(Collaboration.services)) \
+        .options(joinedload(Collaboration.organisation)) \
         .join(Collaboration.collaboration_memberships) \
         .filter(CollaborationMembership.user_id == user_id).all()
     return res, 200

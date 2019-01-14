@@ -66,6 +66,11 @@ class AbstractTest(TestCase):
         with app.app_context():
             seed(db)
 
+    @staticmethod
+    def find_by_name(coll, name):
+        res = list(filter(lambda item: item["name"] == name, coll))
+        return res[0] if len(res) > 0 else None
+
     def login(self, uid="urn:john"):
         with requests.Session():
             self.client.get("/api/users/me", headers={UID_HEADER_NAME: uid})

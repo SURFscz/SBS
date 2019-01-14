@@ -101,6 +101,10 @@ export function myCollaborations() {
     return fetchJson(`/api/collaborations`);
 }
 
+export function searchCollaborations(q) {
+    return fetchJson(`/api/collaborations/search?q=${encodeURIComponent(q)}`);
+}
+
 export function myOrganisations() {
     return fetchJson(`/api/organisations`);
 }
