@@ -1,10 +1,11 @@
 import datetime
 import random
-
+import uuid
 from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
     JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup
 
 invitation_hash = str(random.getrandbits(512))
+collaboration_ai_computing_uuid = str(uuid.uuid4())
 
 
 def _persist(db, *objs):
@@ -39,6 +40,7 @@ def seed(db):
     _persist(db, mail, network)
 
     ai_computing = Collaboration(name="AI computing",
+                                 identifier=collaboration_ai_computing_uuid,
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
                                  organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[])

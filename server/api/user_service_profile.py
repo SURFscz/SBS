@@ -2,7 +2,7 @@ from flask import Blueprint, request as current_request
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
-from server.db.db import CollaborationMembership, UserServiceProfile, User
+from server.db.db import CollaborationMembership, UserServiceProfile, User, Service
 
 UID_HEADER_NAME = "MELLON_cmuid"
 
@@ -28,12 +28,15 @@ def _attributes_per_service(user_service_profile: UserServiceProfile):
 @json_endpoint
 def attributes():
     uid = current_request.args.get("uid")
+    service_entity_id = current_request.args.get("service_entity_id")
     user_service_profiles = UserServiceProfile.query \
         .options(joinedload(UserServiceProfile.service)) \
         .join(UserServiceProfile.collaboration_membership) \
         .join(CollaborationMembership.user) \
         .filter(User.uid == uid) \
+        .filter(Service.entity_id == service_entity_id) \
         .all()
+
     attributes_per_service = list(map(_attributes_per_service, user_service_profiles))
     if len(user_service_profiles) > 0:
         user = user_service_profiles[0].collaboration_membership.user

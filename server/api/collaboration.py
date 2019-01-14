@@ -1,8 +1,9 @@
 from flask import Blueprint, request as current_request, session
-from sqlalchemy import text
-
+from sqlalchemy import text, or_
+from sqlalchemy.orm import aliased, load_only
+import uuid
 from server.api.base import json_endpoint
-from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup
+from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User
 from server.db.models import update, save, delete
 from sqlalchemy.orm import joinedload
 
@@ -26,6 +27,25 @@ def collaboration_search():
     result_set = db.engine.execute(sql)
     res = [{"id": row[0], "name": row[1], "description": row[2]} for row in result_set]
     return res, 200
+
+
+@collaboration_api.route("/members", strict_slashes=False)
+@json_endpoint
+def members():
+    identifier = current_request.args.get("identifier")
+    collaboration_authorisation_group = aliased(Collaboration)
+    collaboration_membership = aliased(Collaboration)
+
+    users = User.query \
+        .options(load_only("uid", "name")) \
+        .join(User.collaboration_memberships) \
+        .join(collaboration_membership, CollaborationMembership.collaboration) \
+        .join(CollaborationMembership.authorisation_groups) \
+        .join(collaboration_authorisation_group, AuthorisationGroup.collaboration) \
+        .filter(or_(collaboration_authorisation_group.identifier == identifier,
+                    collaboration_membership.identifier == identifier)) \
+        .all()
+    return users, 200
 
 
 @collaboration_api.route("/<id>", strict_slashes=False)
@@ -65,7 +85,11 @@ def collaborations():
 @collaboration_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_collaboration():
-    return save(Collaboration)
+    def _pre_save_callback(json_dict):
+        json_dict["identifier"] = str(uuid.uuid4())
+        return json_dict
+
+    return save(Collaboration, pre_save_callback=_pre_save_callback)
 
 
 @collaboration_api.route("/", methods=["PUT"], strict_slashes=False)

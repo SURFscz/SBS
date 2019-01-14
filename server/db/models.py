@@ -28,11 +28,13 @@ def _merge(cls, d):
     return merged
 
 
-def save(cls):
+def save(cls, pre_save_callback=None):
     if not request.is_json:
         return None, 415
 
     json_dict = transform_json(request.get_json())
+    if pre_save_callback:
+        json_dict = pre_save_callback(json_dict)
     add_audit_trail_data(cls, json_dict)
 
     validate(cls, json_dict)

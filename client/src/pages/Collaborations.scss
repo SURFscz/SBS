@@ -1,30 +1,71 @@
 @import "../stylesheets/vars.scss";
 
 .collaboration {
-  background-color: white;
-  padding: 35px 0 65px 0;
+  background-color: $background;
+  padding: 35px 0;
 
-  .step-container {
+  .title {
+    font-weight: bold;
+    font-size: 28px;
+  }
+
+  .info-block-container {
     max-width: $medium;
     margin: 0 auto;
-    padding: 0 $medium-padding;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 
-
-    input[type=text], input[type=email], textarea {
-      display: block;
-      width: 100%;
-      border: 1px solid $lighter-grey;
-      padding: 6px;
+    .info-block {
       border-radius: $br;
-      font-size: 14px;
-      margin-top: 5px;
+      background-color: white;
 
-      &[disabled] {
-        background-color: $light-grey;
+      &.join-request {
+        title {
+          color: $join-request;
+        }
+      }
+
+      &.authorization {
+        title {
+          color: $authorization;
+        }
+      }
+
+      &.services {
+        title {
+          color: $services;
+        }
+      }
+
+      &.profile {
+        title {
+          color: $profile;
+        }
+      }
+    }
+
+    .collaborations {
+      background-color: white;
+
+      .search {
+        display: flex;
+
+        input[type=search] {
+          display: block;
+          flex-grow: 2;
+          border: 1px solid $lighter-grey;
+          padding: 6px;
+          border-radius: $br;
+          font-size: 14px;
+          margin-top: 5px;
+
+          &[disabled] {
+            background-color: $light-grey;
+          }
+
+        }
       }
     }
 

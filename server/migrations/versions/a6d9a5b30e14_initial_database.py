@@ -55,7 +55,8 @@ def upgrade():
 
     op.create_table("collaborations",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
-                    sa.Column("name", sa.String(length=512), nullable=False),
+                    sa.Column("identifier", sa.String(length=255), nullable=False),
+                    sa.Column("name", sa.String(length=255), nullable=False),
                     sa.Column("description", sa.Text(), nullable=True),
                     sa.Column("status", sa.String(length=255), nullable=True),
                     sa.Column("access_type", sa.String(length=255), nullable=True),
