@@ -1,4 +1,3 @@
-import os
 from threading import Thread
 
 from flask import current_app, render_template
@@ -11,8 +10,6 @@ def _send_async_email(ctx, msg, mail):
 
 
 def _do_send_mail(subject, recipients, template, context):
-    if "TEST" in os.environ and os.environ["TEST"] == "1":
-        return
     recipients = recipients if isinstance(recipients, list) else list(
         map(lambda x: x.strip(), recipients.split(",")))
     msg = Message(subject=subject, sender=("SURFnet", "no-reply@surfnet.nl"),
@@ -25,10 +22,20 @@ def _do_send_mail(subject, recipients, template, context):
     return msg.html
 
 
-def collaboration_join_request(context, collaboration, recipients):
+def mail_collaboration_join_request(context, collaboration, recipients):
     return _do_send_mail(
         subject=f"Join request for collaboration {collaboration.name}",
         recipients=recipients,
         template="collaboration_join_request",
+        context=context
+    )
+
+
+def mail_accepted_declined_join_request(context, join_request, accepted, recipients):
+    part = "accepted" if accepted else "declined"
+    return _do_send_mail(
+        subject=f"Join request for collaboration {join_request.collaboration.name} has been {part}",
+        recipients=recipients,
+        template=f"join_request_{part}",
         context=context
     )

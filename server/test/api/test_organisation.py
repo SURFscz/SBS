@@ -1,3 +1,5 @@
+import json
+
 from server.db.db import Organisation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ucc_name
@@ -33,3 +35,9 @@ class TestOrganisation(AbstractTest):
 
         self.delete("/api/organisations", primary_key=organisation["id"])
         self.assertEqual(2, Organisation.query.count())
+
+    def test_organisation_forbidden(self):
+        organisation = self.post("/api/organisations", body={"name": "new_organisation"})
+        self.login("urn:peter")
+        response = self.client.post("/api/organisations", data=json.dumps(organisation))
+        self.assertEqual(403, response.status_code)

@@ -6,7 +6,7 @@ secret_key: secret
 api_users:
   - name: "sysadmin"
     password: "secret"
-    scope: "read, write"
+    scope: ["read", "write"]
 
 mail:
   host: localhost

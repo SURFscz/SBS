@@ -54,7 +54,7 @@ class AbstractTest(TestCase):
     @classmethod
     def setUpClass(cls):
         os.environ["CONFIG"] = "config/test_config.yml"
-        os.environ["TEST"] = "1"
+        os.environ["TESTING"] = "1"
 
         from server.__main__ import app
 
