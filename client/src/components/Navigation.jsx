@@ -28,21 +28,23 @@ export default class Navigation extends React.PureComponent {
         );
     }
 
-    renderSpinner() {
-        return this.state.loading ? <div className="spinner"><MDSpinner size={42}
-                                                                        singleColor={"#FFD700"}
-                                                                        duration={1000}
-                                                                        borderSize={8}/> </div> : null;
-    }
+    renderSpinner = () =>
+        this.state.loading ? <div className="spinner">
+            <MDSpinner size={42}
+                       singleColor={"#FFD700"}
+                       duration={1000}
+                       borderSize={8}/>
+        </div> : null;
 
     render() {
         const {currentUser} = this.props;
         return (
             <div className="navigation-container">
                 <div className="navigation">
-                    {!currentUser.guest && this.renderItem("/collaborations", "collaborations")}
+                    {this.renderItem("/home", "home")}
                     {this.renderItem("/registration", "registration")}
-                    {currentUser.admin && this.renderItem("/organisations", "organisations")}
+                    {currentUser.guestX && this.renderItem("/collaborations", "collaborations")}
+                    {currentUser.adminX && this.renderItem("/organisations", "organisations")}
                 </div>
                 {this.renderSpinner()}
             </div>

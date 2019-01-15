@@ -5,7 +5,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import debounce from "lodash.debounce";
 import I18n from "i18n-js";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Button from "./Organisations";
+import Button from "../components/Button";
 import Autocomplete from "../components/Autocomplete";
 
 
@@ -21,7 +21,7 @@ class Organisations extends React.Component {
             loadingAutoComplete: false,
             moreToShow: false,
             sorted: "name",
-            reverse: true,
+            reverse: false,
         }
     }
 
@@ -204,10 +204,13 @@ class Organisations extends React.Component {
         );
     };
 
+    newOrganisation = e => stopEvent(e);
+
 
     renderSearch = (organisations, user, query, loadingAutoComplete, suggestions, moreToShow, selected) => {
         const adminClassName = user.admin ? "with-button" : "";
         const showAutoCompletes = (query.length > 1 || "*" === query.trim()) && !loadingAutoComplete;
+        const isAdmin = user.admin;
 
         return (
             <section className="organisation-search">
@@ -219,9 +222,9 @@ class Organisations extends React.Component {
                            onKeyDown={this.onSearchKeyDown}
                            placeholder={I18n.t("organisations.searchPlaceHolder")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
-                    {user.admin && <Button onClick={() => this}
-                                           txt={I18n.t("organisations.add")}
-                                           icon={<FontAwesomeIcon icon="plus"/>}/>
+                    {isAdmin && <Button onClick={this.newOrganisation}
+                                        txt={I18n.t("collaborations.add")}
+                                        icon={<FontAwesomeIcon icon="plus"/>}/>
                     }
                 </div>
                 {showAutoCompletes && <Autocomplete suggestions={suggestions}
@@ -241,7 +244,7 @@ class Organisations extends React.Component {
         const {user} = this.props;
         return (
             <div className="organisations">
-                {/*{this.renderSearch(organisations, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}*/}
+                {this.renderSearch(organisations, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}
                 <div className="title">
                     <span>{I18n.t("organisations.dashboard")}</span>
                 </div>

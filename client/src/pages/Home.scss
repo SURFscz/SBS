@@ -1,0 +1,12 @@
+@import "../stylesheets/vars.scss";
+
+.home {
+  background-color: white;
+  padding: 35px 0 65px 0;
+
+  .home-container {
+    max-width: $medium;
+    margin: 0 auto;
+    padding: 0 $medium-padding;
+  }
+}

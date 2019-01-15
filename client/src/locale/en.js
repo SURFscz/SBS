@@ -12,9 +12,13 @@ I18n.translations.en = {
         }
     },
     navigation: {
+        home: "Home",
         registration: "Registration",
         collaborations: "Collaborations",
         organisations: "Organisations"
+    },
+    home: {
+        title: "TODO - Home dashboard"
     },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
@@ -85,7 +89,7 @@ I18n.translations.en = {
     },
     organisations: {
         dashboard: "Dashboard",
-        title: "My Organisation",
+        title: "My Organisations",
         members: "Members",
         collaborations: "Collaborations",
         profile: "Profile",
