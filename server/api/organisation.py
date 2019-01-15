@@ -3,6 +3,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
+from server.api.security import confirm_write_access
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration
 from server.db.models import update, save, delete
 
@@ -54,16 +55,28 @@ def my_organisations():
 @organisation_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_organisation():
+    confirm_write_access()
     return save(Organisation)
 
 
 @organisation_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_organisation():
+    def override_func():
+        user_id = session["user"]["id"]
+        organisation_id = current_request.get_json()["id"]
+        return OrganisationMembership.query() \
+            .filter(OrganisationMembership.user_id == user_id) \
+            .filter(OrganisationMembership.organisation_id == organisation_id) \
+            .filter(OrganisationMembership.role == "admin") \
+            .count() > 0
+
+    confirm_write_access(override_func=override_func)
     return update(Organisation)
 
 
 @organisation_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_organisation(id):
+    confirm_write_access()
     return delete(Organisation, id)

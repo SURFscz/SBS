@@ -25,12 +25,13 @@ class Organisations extends React.Component {
         }
     }
 
-    componentWillMount = () => {
+    componentWillMount = () =>
         myOrganisations()
             .then(json => {
-                this.setState({organisations: json});
+                const {sorted, reverse} = this.state;
+                const organisations = this.sortOrganisations(json, sorted, reverse);
+                this.setState({organisations: organisations})
             });
-    };
 
     onSearchKeyDown = e => {
         const {suggestions, selected} = this.state;
@@ -152,14 +153,16 @@ class Organisations extends React.Component {
     };
 
     sortTable = (organisations, name, sorted, reverse) => () => {
+        const sortedOrganisations = this.sortOrganisations(organisations, name, reverse);
         const reversed = (sorted === name ? !reverse : false);
-        const sortedOrganisations = [...organisations].sort((a, b) => {
-            const aSafe = a[name] || "";
-            const bSafe = b[name] || "";
-            return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
-        });
         this.setState({organisations: sortedOrganisations, sorted: name, reverse: reversed});
     };
+
+    sortOrganisations = (organisations, name, reverse) => [...organisations].sort((a, b) => {
+        const aSafe = a[name] || "";
+        const bSafe = b[name] || "";
+        return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
+    });
 
     getOrganisationValue = (organisation, user, name) => {
         switch (name) {

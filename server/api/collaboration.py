@@ -1,11 +1,14 @@
+import uuid
+
 from flask import Blueprint, request as current_request, session
 from sqlalchemy import text, or_
 from sqlalchemy.orm import aliased, load_only
-import uuid
+from sqlalchemy.orm import joinedload
+
 from server.api.base import json_endpoint
+from server.api.security import confirm_collaboration_admin, confirm_organization_admin
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User
 from server.db.models import update, save, delete
-from sqlalchemy.orm import joinedload
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
@@ -29,6 +32,7 @@ def collaboration_search():
     return res, 200
 
 
+# Call for LSC to get all members based on the identifier of the Collaboration
 @collaboration_api.route("/members", strict_slashes=False)
 @json_endpoint
 def members():
@@ -48,30 +52,33 @@ def members():
     return users, 200
 
 
-@collaboration_api.route("/<id>", strict_slashes=False)
+@collaboration_api.route("/<collaboration_id>", strict_slashes=False)
 @json_endpoint
-def collaboration_by_id(id):
-    user_id = session["user"]["id"]
-    collaboration = Collaboration.query \
-        .options(joinedload(Collaboration.authorisation_groups)
-                 .subqueryload(AuthorisationGroup.collaboration_memberships)
-                 .subqueryload(CollaborationMembership.user_service_profiles)) \
+def collaboration_by_id(collaboration_id):
+    query = Collaboration.query. \
+        options(joinedload(Collaboration.authorisation_groups)
+                .subqueryload(AuthorisationGroup.collaboration_memberships)
+                .subqueryload(CollaborationMembership.user_service_profiles)) \
         .options(joinedload(Collaboration.invitations)) \
         .options(joinedload(Collaboration.organisation)) \
-        .options(joinedload(Collaboration.join_requests).subqueryload(JoinRequest.user)) \
+        .options(joinedload(Collaboration.join_requests)
+                 .subqueryload(JoinRequest.user)) \
         .options(joinedload(Collaboration.collaboration_memberships)
                  .subqueryload(CollaborationMembership.user_service_profiles)) \
-        .options(joinedload(Collaboration.services)) \
-        .join(Collaboration.collaboration_memberships) \
-        .filter(CollaborationMembership.user_id == user_id) \
-        .filter(Collaboration.id == id) \
-        .one()
+        .options(joinedload(Collaboration.services))
+
+    if not session["user"]["admin"]:
+        user_id = session["user"]["id"]
+        query = query \
+            .join(Collaboration.collaboration_memberships) \
+            .filter(CollaborationMembership.user_id == user_id)
+    collaboration = query.filter(Collaboration.id == collaboration_id).one()
     return collaboration, 200
 
 
 @collaboration_api.route("/", strict_slashes=False)
 @json_endpoint
-def collaborations():
+def my_collaborations():
     user_id = session["user"]["id"]
     res = Collaboration.query \
         .options(joinedload(Collaboration.authorisation_groups)) \
@@ -81,7 +88,8 @@ def collaborations():
         .options(joinedload(Collaboration.services)) \
         .options(joinedload(Collaboration.organisation)) \
         .join(Collaboration.collaboration_memberships) \
-        .filter(CollaborationMembership.user_id == user_id).all()
+        .filter(CollaborationMembership.user_id == user_id) \
+        .all()
     return res, 200
 
 
@@ -92,16 +100,19 @@ def save_collaboration():
         json_dict["identifier"] = str(uuid.uuid4())
         return json_dict
 
+    confirm_organization_admin(current_request.get_json()["organisation_id"])
     return save(Collaboration, pre_save_callback=_pre_save_callback)
 
 
 @collaboration_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_collaboration():
+    confirm_collaboration_admin(current_request.get_json()["id"])
     return update(Collaboration)
 
 
 @collaboration_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_collaboration(id):
+    confirm_collaboration_admin(id)
     return delete(Collaboration, id)

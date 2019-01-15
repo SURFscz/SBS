@@ -9,6 +9,7 @@ from munch import munchify
 
 from server.api.base import base_api, DynamicExtendedJSONEncoder
 from server.api.collaboration import collaboration_api
+from server.api.join_request import join_request_api
 from server.api.organisation import organisation_api
 from server.api.service import service_api
 from server.api.user import user_api
@@ -26,7 +27,7 @@ def _init_logging(local):
     if local:
         logging.basicConfig(level=logging.INFO)
     else:
-        handler = TimedRotatingFileHandler(f"{os.path.dirname(os.path.realpath(__file__))}/../log/stats.log",
+        handler = TimedRotatingFileHandler(f"{os.path.dirname(os.path.realpath(__file__))}/../log/sbs.log",
                                            when="midnight", backupCount=30)
         formatter = logging.Formatter("SBS: %(asctime)s %(name)s %(levelname)s %(message)s")
         handler.setFormatter(formatter)
@@ -43,7 +44,7 @@ def page_not_found(_):
 config_file_location = os.environ.get("CONFIG", "config/config.yml")
 config = munchify(yaml.load(read_file(config_file_location)))
 
-test = os.environ.get("TEST")
+test = os.environ.get("TESTING")
 profile = os.environ.get("PROFILE")
 
 is_local = profile is not None and profile == "local"
@@ -63,12 +64,13 @@ app.register_blueprint(service_api)
 app.register_blueprint(collaboration_api)
 app.register_blueprint(user_service_profile_api)
 app.register_blueprint(organisation_api)
+app.register_blueprint(join_request_api)
 
 app.register_error_handler(404, page_not_found)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = is_local or is_test
+app.config["SQLALCHEMY_ECHO"] = False  # is_local or is_test
 
 app.config["MAIL_SERVER"] = config.mail.host
 app.config["MAIL_PORT"] = int(config.mail.port)

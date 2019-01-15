@@ -36,6 +36,7 @@ import CollaborationDetail from "./CollaborationDetail";
 import Organisations from "./Organisations";
 import OrganisationDetail from "./OrganisationDetail";
 import Home from "./Home";
+import JoinRequest from "./JoinRequest";
 
 
 library.add(faLightbulb, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck,
@@ -54,6 +55,10 @@ class App extends React.Component {
             errorDialogAction: () => this.setState({errorDialogOpen: false})
         };
         window.onerror = (msg, url, line, col, err) => {
+            if (err && err.response && err.response.status === 404) {
+                this.props.history.push("/404");
+                return;
+            }
             this.setState({errorDialogOpen: true});
             const info = err || {};
             const response = info.response || {};
@@ -141,6 +146,8 @@ class App extends React.Component {
                         {currentUser.admin &&
                         <Route exact path="/organisations/:id"
                                render={props => <OrganisationDetail user={currentUser} {...props}/>}/>}
+                        <Route exact path="/join-request/:id"
+                               render={props => <JoinRequest user={currentUser} {...props}/>}/>
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
                         <Route component={NotFound}/>
                     </Switch>

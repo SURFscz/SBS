@@ -1,13 +1,12 @@
 import json
 import logging
 
-from flask import Blueprint, request as current_request, current_app, session
+from flask import Blueprint, request as current_request, session
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint, is_admin_user
-from server.db.db import User, OrganisationMembership, CollaborationMembership, Collaboration, JoinRequest, db
+from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.models import update, save
-from server.mail import collaboration_join_request
 
 UID_HEADER_NAME = "MELLON_cmuid"
 
@@ -22,9 +21,9 @@ def me():
 
     uid = current_request.headers.get(UID_HEADER_NAME)
     if uid:
-        users = User.query.filter(User.uid == uid).all()
-        if len(users) > 0:
-            user = _user_to_session_object(users[0])
+        user = User.query.filter(User.uid == uid).first()
+        if user:
+            user = _user_to_session_object(user)
         else:
             user = User(uid=uid, name="todo", email="todo", created_by="system", updated_by="system")
             user = db.session.merge(user)
@@ -32,7 +31,7 @@ def me():
 
             user = _user_to_session_object(user)
     else:
-        user = {"uid": "anonymous", "guest": True}
+        user = {"uid": "anonymous", "guest": True, "admin": False}
     session["user"] = user
     return user, 200
 
@@ -94,32 +93,6 @@ def save_user():
 @json_endpoint
 def update_user():
     return update(User)
-
-
-@user_api.route("/send_invitation", methods=["POST"], strict_slashes=False)
-@json_endpoint
-def send_invitation():
-    client_data = current_request.get_json()
-    collaboration = Collaboration.query.join(Collaboration.services).filter(
-        Collaboration.id == client_data["collaborationId"]).one()
-    admin_members = list(
-        filter(lambda membership: membership.role == "admin", collaboration.collaboration_memberships))
-    admin_emails = list(map(lambda membership: membership.user.email, admin_members))
-    join_request = JoinRequest(message=client_data["motivation"],
-                               reference=client_data["reference"],
-                               user_id=session["user"]["id"],
-                               collaboration=collaboration)
-    join_request = db.session.merge(join_request)
-    db.session.commit()
-
-    collaboration_join_request({
-        "salutation": "Dear",
-        "collaboration": collaboration,
-        "user": session["user"],
-        "base_url": current_app.app_config.base_url,
-        "join_request": join_request
-    }, collaboration, admin_emails)
-    return {}, 201
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)

@@ -20,14 +20,16 @@ class Collaborations extends React.Component {
             loadingAutoComplete: false,
             moreToShow: false,
             sorted: "name",
-            reverse: true,
+            reverse: false,
         }
     }
 
-    componentWillMount = () => {
-        myCollaborations()
-            .then(json => this.setState({collaborations: json}));
-    };
+    componentWillMount = () => myCollaborations()
+        .then(json => {
+            const {sorted, reverse} = this.state;
+            const sortedCollaborations = this.sortCollaborations(json, sorted, reverse);
+            this.setState({collaborations: sortedCollaborations})
+        });
 
     onSearchKeyDown = e => {
         const {suggestions, selected} = this.state;
@@ -202,13 +204,15 @@ class Collaborations extends React.Component {
 
     sortTable = (collaborations, name, sorted, reverse) => () => {
         const reversed = (sorted === name ? !reverse : false);
-        const sortedCollaborations = [...collaborations].sort((a, b) => {
-            const aSafe = a[name] || "";
-            const bSafe = b[name] || "";
-            return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
-        });
+        const sortedCollaborations = this.sortCollaborations(collaborations, name, reverse);
         this.setState({collaborations: sortedCollaborations, sorted: name, reverse: reversed});
     };
+
+    sortCollaborations = (collaborations, name, reverse) => [...collaborations].sort((a, b) => {
+        const aSafe = a[name] || "";
+        const bSafe = b[name] || "";
+        return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
+    });
 
     getCollaborationValue = (collaboration, user, name) => {
         switch (name) {
@@ -226,7 +230,7 @@ class Collaborations extends React.Component {
 
     renderCollaborationRow = (collaboration, user, names) => {
         return (
-            <tr key={collaboration.id}>
+            <tr key={collaboration.id} onClick={this.openCollaboration(collaboration)}>
                 {names.map(name => <td key={name}>{this.getCollaborationValue(collaboration, user, name)}</td>)}
             </tr>
         );

@@ -163,7 +163,7 @@
       th {
         text-align: left;
         cursor: pointer;
-        padding: 0 0 10px 0;
+        padding: 0 5px 10px 5px;
 
         svg {
           margin-left: 15px;
@@ -175,13 +175,21 @@
         }
       }
 
-      tbody tr:nth-child(odd) {
-        background-color: $background;
+      tbody {
+        tr {
+          cursor: pointer;
+          &:hover {
+            color: $blue;
+          }
+          &:nth-child(odd) {
+            background-color: $background;
+          }
+        }
       }
 
       td {
         vertical-align: middle;
-        padding: 5px 0;
+        padding: 5px;
       }
     }
   }

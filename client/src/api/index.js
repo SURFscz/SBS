@@ -82,7 +82,7 @@ export function deleteCollaboration(id) {
 }
 
 export function inviteForCollaboration(clientData) {
-    return postPutJson(`/api/users/send_invitation`, clientData, "post")
+    return postPutJson("/api/join_requests", clientData, "post")
 }
 
 export function serviceByEntityId(entityId) {
@@ -123,4 +123,8 @@ export function createOrganisations(organisation) {
 
 export function updateOrganisation(organisation) {
     return postPutJson("/api/organisations", organisation, "put");
+}
+
+export function joinRequestById(id) {
+    return fetchJson(`/api/join_requests/${id}`);
 }
