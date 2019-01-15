@@ -296,11 +296,11 @@ class Collaborations extends React.Component {
         const {collaborations, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
         const {user} = this.props;
         return (
-            <div className="collaborations">
+            <div className="mod-collaborations">
                 {this.renderSearch(collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}
-                <div className="title">
-                    <span>{I18n.t("collaborations.dashboard")}</span>
-                </div>
+                {/*<div className="title">*/}
+                    {/*<span>{I18n.t("collaborations.dashboard")}</span>*/}
+                {/*</div>*/}
                 <section className="info-block-container">
                     {this.renderRequests(collaborations.map(collaboration => collaboration.join_requests).flat())}
                     {this.renderInvitations(collaborations.map(collaboration => collaboration.invitations).flat())}

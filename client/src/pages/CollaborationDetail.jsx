@@ -26,7 +26,7 @@ class CollaborationDetail extends React.Component {
 
     render() {
         const {collaboration} = this.state;
-        return <div className="collaboration-detail">
+        return <div className="mod-collaboration-detail">
             { JSON.stringify(collaboration, null, 2)}
         </div>
     }

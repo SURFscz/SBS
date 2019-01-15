@@ -1,6 +1,6 @@
 @import "../stylesheets/vars.scss";
 
-.collaborations {
+.mod-collaborations {
   background-color: $background;
   padding: $medium-padding 0;
 
@@ -14,7 +14,7 @@
 
   .info-block-container {
     max-width: $medium;
-    margin: 10px auto;
+    margin: 30px auto 10px auto;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

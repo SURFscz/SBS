@@ -246,7 +246,7 @@ class Organisations extends React.Component {
         const {organisations, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
         const {user} = this.props;
         return (
-            <div className="organisations">
+            <div className="mod-organisations">
                 {this.renderSearch(organisations, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}
                 <div className="title">
                     <span>{I18n.t("organisations.dashboard")}</span>

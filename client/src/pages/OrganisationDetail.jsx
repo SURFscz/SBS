@@ -25,7 +25,7 @@ class OrganisationDetail extends React.Component {
 
     render() {
         const {organisation} = this.state;
-        return <div className="organisation">
+        return <div className="mod-organisation-detail">
             { JSON.stringify(organisation, null, 2)}
         </div>
     }

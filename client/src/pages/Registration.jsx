@@ -168,7 +168,7 @@ class Registration extends React.Component {
 
     render() {
         const {step} = this.state;
-        return <div className="registration">
+        return <div className="mod-registration">
             <div className="step-container">
                 {["1", ".1.", "2", ".2.", "3"].map(i => this.renderStepPart(step, i))}
             </div>
