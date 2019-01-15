@@ -146,7 +146,7 @@ class App extends React.Component {
                         {currentUser.admin &&
                         <Route exact path="/organisations/:id"
                                render={props => <OrganisationDetail user={currentUser} {...props}/>}/>}
-                        <Route exact path="/join-request/:id"
+                        <Route exact path="/join-requests/:id"
                                render={props => <JoinRequest user={currentUser} {...props}/>}/>
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
                         <Route component={NotFound}/>

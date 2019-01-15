@@ -16,7 +16,7 @@ class Home extends React.Component {
     };
     render() {
         return (
-            <div className="home">
+            <div className="mod-home">
                 <div className="home-container">
                     <div>
                         <a href="/demo" onClick={e => {

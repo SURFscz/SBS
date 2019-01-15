@@ -1,0 +1,38 @@
+@import "../stylesheets/vars.scss";
+
+.input-field {
+  display: flex;
+  align-items: center;
+
+  label {
+    display: inline-block;
+    padding: 14px 34px 14px 14px;
+    margin: 10px 0 10px 10px;
+    font-weight: bold;
+    min-width: 150px;
+    border: 1px solid $lighter-grey;
+    background-color: $background;
+    border-bottom-left-radius: $br;
+    border-top-left-radius: $br;
+    color: $dark-green;
+  }
+
+  input[type=text] {
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid $lighter-grey;
+    border-right: 1px solid $lighter-grey;
+    border-top: 1px solid $lighter-grey;
+    border-left: none;
+    padding: 16px;
+    border-bottom-right-radius: $br;
+    border-top-right-radius: $br;
+    font-size: 14px;
+
+    &[disabled] {
+      background-color: $background;
+      cursor: not-allowed;
+    }
+  }
+
+}

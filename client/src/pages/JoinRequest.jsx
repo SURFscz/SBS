@@ -1,6 +1,7 @@
 import React from "react";
 import "./JoinRequest.scss";
 import {joinRequestById} from "../api";
+import InputField from "../components/InputField";
 
 class JoinRequest extends React.Component {
 
@@ -25,11 +26,11 @@ class JoinRequest extends React.Component {
     render() {
         const {joinRequest} = this.state;
         return (
-            <div className="join-request">
+            <div className="mod-join-request">
                 <div className="join-request-container">
-                    <div>
-                        {joinRequest.id}
-                    </div>
+                        <InputField name="Motivation" value={"Nice"} disabled={true} />
+                        <InputField name="WTF" placeholder={"somw placeholddr"} />
+                        <InputField name="id" value={joinRequest.id} toolTip={"WTF Long Long"} />
                 </div>
             </div>)
             ;

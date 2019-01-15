@@ -1,12 +1,16 @@
 @import "../stylesheets/vars.scss";
 
-.join-request {
-  background-color: white;
-  padding: 35px 0 65px 0;
+.mod-join-request {
+  background-color: $background;
+  padding: $medium-padding 0;
 
   .join-request-container {
     max-width: $medium;
-    margin: 0 auto;
-    padding: 0 $medium-padding;
+    margin: 10px auto;
+    border-radius: $br;
+    background-color: white;
+    border: solid 1px $lightest-grey;
+    box-shadow: 0 2px 4px 0 $lighter-grey, 0 4px 16px 0 $lighter-grey;
+    padding: 15px 10px;
   }
 }
