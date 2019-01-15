@@ -35,6 +35,7 @@ import {getParameterByName} from "../utils/QueryParameters";
 import CollaborationDetail from "./CollaborationDetail";
 import Organisations from "./Organisations";
 import OrganisationDetail from "./OrganisationDetail";
+import Home from "./Home";
 
 
 library.add(faLightbulb, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck,
@@ -129,7 +130,7 @@ class App extends React.Component {
                                                               {...props}/>}
                         />
                         <Route path="/home"
-                               render={props => <Collaborations user={currentUser} {...props}/>}/>
+                               render={props => <Home user={currentUser} {...props}/>}/>
                         <Route exact path="/collaborations"
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
                         <Route exact path="/collaborations/:id"
