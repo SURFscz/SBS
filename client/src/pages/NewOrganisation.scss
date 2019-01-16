@@ -1,0 +1,18 @@
+@import "../stylesheets/vars.scss";
+
+.mod-new-organisation {
+  background-color: $background;
+
+  .new-organisation {
+    max-width: $medium;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px $medium-padding;
+
+    .title {
+      font-size: 22px;
+      color: $dark-grey;
+      margin-bottom: 40px;
+    }
+  }
+}

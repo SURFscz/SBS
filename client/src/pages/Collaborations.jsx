@@ -14,6 +14,7 @@ class Collaborations extends React.Component {
         super(props, context);
         this.state = {
             collaborations: [],
+            sortedCollaborations: [],
             selected: -1,
             suggestions: [],
             query: "",
@@ -26,9 +27,15 @@ class Collaborations extends React.Component {
 
     componentWillMount = () => myCollaborations()
         .then(json => {
+            const {user} = this.props;
+            json.forEach(coll => {
+                const membership = coll.collaboration_memberships.find(m => m.user_id === user.id);
+                coll.role = membership ? membership.role : "";
+                coll.organisation_name = coll.organisation.name;
+            });
             const {sorted, reverse} = this.state;
             const sortedCollaborations = this.sortCollaborations(json, sorted, reverse);
-            this.setState({collaborations: sortedCollaborations})
+            this.setState({collaborations: sortedCollaborations, sortedCollaborations: sortedCollaborations})
         });
 
     onSearchKeyDown = e => {
@@ -214,19 +221,7 @@ class Collaborations extends React.Component {
         return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
     });
 
-    getCollaborationValue = (collaboration, user, name) => {
-        switch (name) {
-            case "role" : {
-                const membership = collaboration.collaboration_memberships.find(m => m.user_id === user.id);
-                return membership ? membership.role : "";
-            }
-            case "organisation" : {
-                return collaboration.organisation.name;
-            }
-            default:
-                return collaboration[name];
-        }
-    };
+    getCollaborationValue = (collaboration, user, name) => collaboration[name];
 
     renderCollaborationRow = (collaboration, user, names) => {
         return (
@@ -237,7 +232,7 @@ class Collaborations extends React.Component {
     };
 
     renderCollaborations = (collaborations, user, sorted, reverse) => {
-        const names = ["name", "role", "description", "access_type", "enrollment", "organisation", "accepted_user_policy"];
+        const names = ["name", "role", "description", "access_type", "enrollment", "organisation_name", "accepted_user_policy"];
         return (
             <section className="collaboration-list">
                 <table>
@@ -293,13 +288,13 @@ class Collaborations extends React.Component {
     };
 
     render() {
-        const {collaborations, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
+        const {collaborations, sortedCollaborations, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
         const {user} = this.props;
         return (
             <div className="mod-collaborations">
                 {this.renderSearch(collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}
                 {/*<div className="title">*/}
-                    {/*<span>{I18n.t("collaborations.dashboard")}</span>*/}
+                {/*<span>{I18n.t("collaborations.dashboard")}</span>*/}
                 {/*</div>*/}
                 <section className="info-block-container">
                     {this.renderRequests(collaborations.map(collaboration => collaboration.join_requests).flat())}
@@ -311,7 +306,7 @@ class Collaborations extends React.Component {
                 <div className="title">
                     <span>{I18n.t("collaborations.title")}</span>
                 </div>
-                {this.renderCollaborations(collaborations, user, sorted, reverse)}
+                {this.renderCollaborations(sortedCollaborations, user, sorted, reverse)}
             </div>);
     }
 }

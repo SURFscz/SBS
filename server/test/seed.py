@@ -32,9 +32,9 @@ def seed(db):
     admin = User(uid="urn:admin", name="The Boss", email="boss@example.org")
     _persist(db, john, mary, peter, admin)
 
-    uuc = Organisation(name=ucc_name, description="Unincorporated Urban Community", created_by="urn:admin",
+    uuc = Organisation(name=ucc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community", created_by="urn:admin",
                        updated_by="urnadmin")
-    uva = Organisation(name="Amsterdam UVA", description="University of Amsterdam", created_by="urn:admin",
+    uva = Organisation(name="Amsterdam UVA", tenant_identifier="https://uva", description="University of Amsterdam", created_by="urn:admin",
                        updated_by="urnadmin")
     _persist(db, uuc, uva)
 

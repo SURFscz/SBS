@@ -3,11 +3,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import "./InputField.scss";
 
-export default function InputField({onChange, name, value, placeholder = "", disabled=false, toolTip = null}) {
+export default function InputField({onChange, name, value, placeholder = "", disabled = false, toolTip = null, onBlur = () => true}) {
     return (
         <div className="input-field">
             <label htmlFor={name}> {name}</label>
-            <input type="text"  disabled={disabled} value={value} onChange={onChange} placeholder={placeholder}/>
+            <input type="text" disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
+                   placeholder={placeholder}/>
             {toolTip &&
             <section>
                 <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
