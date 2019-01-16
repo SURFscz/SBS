@@ -22,6 +22,9 @@ class TestJoinRequest(AbstractTest):
                                      with_basic_auth=False)
             self.assertIsNotNone(join_request["id"])
             self.assertEqual(1, len(outbox))
+            mail_msg = outbox[0]
+            self.assertListEqual(["boss@example.org"], mail_msg.recipients)
+            self.assertTrue(f"http://localhost:3000/collaborations/{collaboration_id}" in mail_msg.html)
 
     def test_join_request_delete(self):
         self.assertEqual(2, JoinRequest.query.count())
