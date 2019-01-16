@@ -16,4 +16,3 @@ base_url: http://localhost:3000
 
 admin_users:
   - uid: "urn:john"
-  - uid: "urn:admin"
