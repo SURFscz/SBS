@@ -109,6 +109,14 @@ export function myOrganisations() {
     return fetchJson(`/api/organisations`);
 }
 
+export function organisationNameExists(name) {
+    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}`);
+}
+
+export function organisationIdentifierExists(identifier) {
+    return fetchJson(`/api/organisations/identifier_exists?identifier=${encodeURIComponent(identifier)}`);
+}
+
 export function organisationById(id) {
     return fetchJson(`/api/organisations/${id}`, {}, {}, false);
 }

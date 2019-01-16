@@ -37,6 +37,7 @@ import Organisations from "./Organisations";
 import OrganisationDetail from "./OrganisationDetail";
 import Home from "./Home";
 import JoinRequest from "./JoinRequest";
+import NewOrganisation from "./NewOrganisation";
 
 
 library.add(faLightbulb, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck,
@@ -148,6 +149,8 @@ class App extends React.Component {
                                render={props => <OrganisationDetail user={currentUser} {...props}/>}/>}
                         <Route exact path="/join-requests/:id"
                                render={props => <JoinRequest user={currentUser} {...props}/>}/>
+                        <Route path="/new-organisation"
+                               render={props => <NewOrganisation user={currentUser} {...props}/>}/>
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
                         <Route component={NotFound}/>
                     </Switch>

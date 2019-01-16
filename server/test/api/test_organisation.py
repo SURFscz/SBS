@@ -24,7 +24,8 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(2, len(organisation["collaborations"][0]["collaboration_memberships"]))
 
     def test_organisation_crud(self):
-        organisation = self.post("/api/organisations", body={"name": "new_organisation"})
+        organisation = self.post("/api/organisations", body={"name": "new_organisation",
+                                                             "tenant_identifier": "https://ti1"})
         self.assertIsNotNone(organisation["id"])
         self.assertEqual("new_organisation", organisation["name"])
         self.assertEqual(3, Organisation.query.count())
@@ -37,7 +38,22 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(2, Organisation.query.count())
 
     def test_organisation_forbidden(self):
-        organisation = self.post("/api/organisations", body={"name": "new_organisation"})
+        organisation = self.post("/api/organisations", body={"name": "new_organisation",
+                                                             "tenant_identifier": "https://ti2"})
         self.login("urn:peter")
         response = self.client.post("/api/organisations", data=json.dumps(organisation))
         self.assertEqual(403, response.status_code)
+
+    def test_organisation_name_exists(self):
+        res = self.get("/api/organisations/name_exists", query_data={"name":"uuc"})
+        self.assertEqual(True, res)
+
+        res = self.get("/api/organisations/name_exists", query_data={"name":"xyc"})
+        self.assertEqual(False, res)
+
+    def test_organisation_identifier_exists(self):
+        res = self.get("/api/organisations/identifier_exists", query_data={"identifier":"https://uuc"})
+        self.assertEqual(True, res)
+
+        res = self.get("/api/organisations/identifier_exists", query_data={"identifier":"https://xyz"})
+        self.assertEqual(False, res)

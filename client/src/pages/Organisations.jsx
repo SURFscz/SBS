@@ -15,6 +15,7 @@ class Organisations extends React.Component {
         super(props, context);
         this.state = {
             organisations: [],
+            sortedOrganisations: [],
             selected: -1,
             suggestions: [],
             query: "",
@@ -28,9 +29,14 @@ class Organisations extends React.Component {
     componentWillMount = () =>
         myOrganisations()
             .then(json => {
+                const {user} = this.props;
+                json.forEach(org => {
+                    const membership = org.organisation_memberships.find(m => m.user_id === user.id);
+                    org.role = membership ? membership.role : "";
+                });
                 const {sorted, reverse} = this.state;
                 const organisations = this.sortOrganisations(json, sorted, reverse);
-                this.setState({organisations: organisations})
+                this.setState({organisations: organisations, sortedOrganisations: organisations})
             });
 
     onSearchKeyDown = e => {
@@ -153,9 +159,9 @@ class Organisations extends React.Component {
     };
 
     sortTable = (organisations, name, sorted, reverse) => () => {
-        const sortedOrganisations = this.sortOrganisations(organisations, name, reverse);
         const reversed = (sorted === name ? !reverse : false);
-        this.setState({organisations: sortedOrganisations, sorted: name, reverse: reversed});
+        const sortedOrganisations = this.sortOrganisations(organisations, name, reversed);
+        this.setState({sortedOrganisations: sortedOrganisations, sorted: name, reverse: reversed});
     };
 
     sortOrganisations = (organisations, name, reverse) => [...organisations].sort((a, b) => {
@@ -164,16 +170,7 @@ class Organisations extends React.Component {
         return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
     });
 
-    getOrganisationValue = (organisation, user, name) => {
-        switch (name) {
-            case "role" : {
-                const membership = organisation.organisation_memberships.find(m => m.user_id === user.id);
-                return membership ? membership.role : "";
-            }
-            default:
-                return organisation[name];
-        }
-    };
+    getOrganisationValue = (organisation, user, name) => organisation[name];
 
     renderOrganisationRow = (organisation, user, names) => {
         return (
@@ -207,7 +204,9 @@ class Organisations extends React.Component {
         );
     };
 
-    newOrganisation = e => stopEvent(e);
+    newOrganisation = () => {
+        this.props.history.push("new-organisation")
+    };
 
 
     renderSearch = (organisations, user, query, loadingAutoComplete, suggestions, moreToShow, selected) => {
@@ -243,7 +242,7 @@ class Organisations extends React.Component {
     };
 
     render() {
-        const {organisations, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
+        const {organisations, sortedOrganisations, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
         const {user} = this.props;
         return (
             <div className="mod-organisations">
@@ -259,7 +258,7 @@ class Organisations extends React.Component {
                 <div className="title">
                     <span>{I18n.t("organisations.title")}</span>
                 </div>
-                {this.renderOrganisations(organisations, user, sorted, reverse)}
+                {this.renderOrganisations(sortedOrganisations, user, sorted, reverse)}
             </div>);
     }
 }

@@ -106,10 +106,6 @@ def save_collaboration():
     confirm_organization_admin(current_request.get_json()["organisation_id"])
     res = save(Collaboration, pre_save_callback=_pre_save_callback)
     return res
-    # collaboration_membership = CollaborationMembership(role="admin", user_id=session["user"]["id"],
-    #                                                    collaboration=collaboration)
-    # db.session.merge(collaboration_membership)
-    # db.session.commit()
 
 
 @collaboration_api.route("/", methods=["PUT"], strict_slashes=False)

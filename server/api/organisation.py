@@ -1,6 +1,7 @@
 from flask import Blueprint, request as current_request, session
-from sqlalchemy import text
+from sqlalchemy import text, select, func
 from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import aliased, load_only
 
 from server.api.base import json_endpoint
 from server.api.security import confirm_write_access
@@ -8,6 +9,26 @@ from server.db.db import Organisation, db, OrganisationMembership, Collaboration
 from server.db.models import update, save, delete
 
 organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/organisations")
+
+
+@organisation_api.route("/name_exists", strict_slashes=False)
+@json_endpoint
+def name_exists():
+    name = current_request.args.get("name")
+    org = Organisation.query \
+        .options(load_only("id")) \
+        .filter(func.lower(Organisation.name) == func.lower(name)).first()
+    return org is not None, 200
+
+
+@organisation_api.route("/identifier_exists", strict_slashes=False)
+@json_endpoint
+def identifier_exists():
+    identifier = current_request.args.get("identifier")
+    org = Organisation.query \
+        .options(load_only("id")) \
+        .filter(func.lower(Organisation.tenant_identifier) == func.lower(identifier)).first()
+    return org is not None, 200
 
 
 @organisation_api.route("/search", strict_slashes=False)
@@ -66,10 +87,10 @@ def update_organisation():
         user_id = session["user"]["id"]
         organisation_id = current_request.get_json()["id"]
         return OrganisationMembership.query() \
-            .filter(OrganisationMembership.user_id == user_id) \
-            .filter(OrganisationMembership.organisation_id == organisation_id) \
-            .filter(OrganisationMembership.role == "admin") \
-            .count() > 0
+                   .filter(OrganisationMembership.user_id == user_id) \
+                   .filter(OrganisationMembership.organisation_id == organisation_id) \
+                   .filter(OrganisationMembership.role == "admin") \
+                   .count() > 0
 
     confirm_write_access(override_func=override_func)
     return update(Organisation)

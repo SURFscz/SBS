@@ -34,6 +34,7 @@ def upgrade():
     op.create_table("organisations",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
                     sa.Column("name", sa.String(length=255), nullable=True),
+                    sa.Column("tenant_identifier", sa.String(length=255), nullable=False),
                     sa.Column("description", sa.Text(), nullable=True),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
@@ -191,6 +192,22 @@ def upgrade():
                     sa.Column("created_by", sa.String(length=512), nullable=False),
                     )
 
+    op.create_table("organisation_invitations",
+                    sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
+                    sa.Column("hash", sa.String(length=512), nullable=False),
+                    sa.Column("message", sa.Text(), nullable=True),
+                    sa.Column("invitee_email", sa.String(length=255), nullable=False),
+                    sa.Column("organisation_id", sa.Integer(), sa.ForeignKey("organisations.id", ondelete="cascade"),
+                              nullable=False),
+                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="cascade"),
+                              nullable=False),
+                    sa.Column("accepted", sa.Boolean(), nullable=True),
+                    sa.Column("denied", sa.Boolean(), nullable=True),
+                    sa.Column("expiry_date", sa.DateTime(timezone=True), nullable=True),
+                    sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
+                              nullable=False),
+                    sa.Column("created_by", sa.String(length=512), nullable=False),
+                    )
 
 def downgrade():
     op.drop_table("collaboration_memberships_authorisation_groups")

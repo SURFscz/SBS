@@ -83,9 +83,16 @@ I18n.translations.en = {
         description: "Description",
         access_type: "Access Type",
         enrollment: "Enrollment",
-        organisation: "Organisation",
+        organisation_name: "Organisation",
         accepted_user_policy: "AUP",
-        role: "Role"
+        role: "Role",
+        newTitle: "Add new collaboration",
+        subTitle: "Enter / edit the collaboration details. You will become an administrator of the new Collaboration.",
+        members: "Members",
+        admin: "Administrator",
+        manager: "Manager",
+        member: "Member"
+
     },
     organisations: {
         dashboard: "Dashboard",
@@ -97,9 +104,22 @@ I18n.translations.en = {
         searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS..."
     },
     organisation: {
+        title: "Add new organisation",
+        subTitle: "Enter / edit the organisation details.",
         name: "Name",
+        namePlaceHolder: "The unique name of an organisation",
+        tenant: "Tenant identifier",
+        tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institution",
         description: "Description",
-        role: "Role"
+        descriptionPlaceholder: "The description of the organisation is visible to anyone",
+        alreadyExists: "An organisation with {{attribute}} {{value}} already exists.",
+        members: "Members",
+        role: "Role",
+        admin: "Administrator",
+        manager: "Manager",
+        member: "Member",
+        yourself: "{{name}} (it's You)",
+        anotherAdmin: "It is highly recommended to invite another administrator."
     },
     autocomplete: {
         name: "Name",
