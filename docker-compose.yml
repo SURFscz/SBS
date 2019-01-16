@@ -1,0 +1,74 @@
+version: "2"
+
+services:
+
+  db:
+    image: mysql:8.0
+    volumes:
+      - ./etc/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${SECRET}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+    networks:
+      - backend
+    restart: unless-stopped
+
+  server:
+    build: server
+    volumes:
+      - ./log:/opt/app/log
+      - ./etc/config.env:/tmp/config.env
+      - ./etc/alembic.env:/tmp/alembic.env
+    depends_on:
+      - db
+    networks:
+      - frontend
+      - backend
+    ports:
+      - 3000
+    environment:
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+
+      API_USER: ${API_USER}
+      API_PASS: ${API_PASS}
+
+      HOST: 0.0.0.0
+      PORT: 3000
+
+      ADMIN_USERS: ${ADMIN_USERS}
+    command:
+      - /bin/bash
+      - -c
+      - |
+        envsubst < /tmp/config.env > server/config/config.yml
+        envsubst < /tmp/alembic.env > server/migrations/alembic.ini
+        echo "Waiting for Database..."
+        sleep 20
+        python -m server
+    restart: unless-stopped
+
+  client:
+    build: client
+    ports:
+      - 8081:80
+    networks:
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  data:
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
