@@ -70,8 +70,9 @@ app.register_error_handler(404, page_not_found)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = False  # is_local or is_test
+app.config["SQLALCHEMY_ECHO"] = is_local or is_test
 
+app.config["TESTING"] = test
 app.config["MAIL_SERVER"] = config.mail.host
 app.config["MAIL_PORT"] = int(config.mail.port)
 app.mail = Mail(app)

@@ -70,7 +70,9 @@ def user_by_id(user_id):
 @json_endpoint
 def user_by_uid():
     uid = current_request.args.get("uid")
-    user = _user_query().filter(User.uid == uid).one()
+    user = _user_query()\
+        .options(joinedload(User.join_requests))\
+        .filter(User.uid == uid).one()
     for cm in user.collaboration_memberships:
         for usc in cm.user_service_profiles:
             usc.service

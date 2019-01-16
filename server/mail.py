@@ -1,3 +1,4 @@
+import os
 from threading import Thread
 
 from flask import current_app, render_template
@@ -15,9 +16,15 @@ def _do_send_mail(subject, recipients, template, context):
     msg = Message(subject=subject, sender=("SURFnet", "no-reply@surfnet.nl"),
                   recipients=recipients)
     msg.html = render_template(f"{template}.html", **context)
-    ctx = current_app.app_context()
-    thr = Thread(target=_send_async_email, args=[ctx, msg, current_app.mail])
-    thr.start()
+
+    test = os.environ.get("TESTING")
+    mail = current_app.mail
+    if test:
+        mail.send(msg)
+    else:
+        ctx = current_app.app_context()
+        thr = Thread(target=_send_async_email, args=[ctx, msg, mail])
+        thr.start()
 
     return msg.html
 
