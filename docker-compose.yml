@@ -28,7 +28,7 @@ services:
       - frontend
       - backend
     ports:
-      - 3000
+      - 8008:8080
     environment:
       DB_HOST: db
       DB_NAME: ${DB_NAME}
@@ -41,10 +41,12 @@ services:
       API_USER: ${API_USER}
       API_PASS: ${API_PASS}
 
-      HOST: 0.0.0.0
-      PORT: 3000
+      HOST: ${HOST}
+      PORT: ${PORT}
 
       ADMIN_USERS: ${ADMIN_USERS}
+
+      PROFILE: local
     command:
       - /bin/bash
       - -c
@@ -59,7 +61,7 @@ services:
   client:
     build: client
     ports:
-      - 8081:80
+      - 80:80
     networks:
       - frontend
     restart: unless-stopped
