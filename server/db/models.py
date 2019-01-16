@@ -5,6 +5,15 @@ from flask import request, session, g as request_context
 from server.db.db import db, User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
     Invitation, Service, UserServiceProfile, AuthorisationGroup
 
+deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
+                           "join_requests": JoinRequest, "user_service_profiles": UserServiceProfile,
+                           "collaborations": Collaboration, "organisation_memberships": OrganisationMembership,
+                           "invitations": Invitation, "authorisation_groups": AuthorisationGroup,
+                           "services": Service}
+
+forbidden_fields = ["created_at", "updated_at"]
+date_fields = ["start_date", "end_date", "created_at", "updated_at"]
+
 
 def _flatten(l):
     return [item for sublist in l for item in sublist]
@@ -28,19 +37,6 @@ def _merge(cls, d):
     return merged
 
 
-def save(cls, pre_save_callback=None):
-    if not request.is_json:
-        return None, 415
-
-    json_dict = transform_json(request.get_json())
-    if pre_save_callback:
-        json_dict = pre_save_callback(json_dict)
-    add_audit_trail_data(cls, json_dict)
-
-    validate(cls, json_dict)
-    return _merge(cls, json_dict), 201
-
-
 def add_audit_trail_data(cls, json_dict):
     column_names = cls.__table__.columns._data.keys()
     if "created_by" in column_names:
@@ -49,6 +45,28 @@ def add_audit_trail_data(cls, json_dict):
         json_dict["created_by"] = user_name
         if "updated_by" in column_names:
             json_dict["updated_by"] = user_name
+
+    # Also process all relationship children
+    relationship_keys = list(filter(lambda k: k in deserialization_mapping, json_dict.keys()))
+    for rel in relationship_keys:
+        for child in json_dict[rel]:
+            add_audit_trail_data(deserialization_mapping[rel], child)
+
+
+def save(cls, pre_save_callback=None):
+    if not request.is_json:
+        return None, 415
+
+    json_dict = request.get_json()
+
+    if pre_save_callback:
+        json_dict = pre_save_callback(json_dict)
+
+    add_audit_trail_data(cls, json_dict)
+    json_dict = transform_json(json_dict)
+
+    validate(cls, json_dict)
+    return _merge(cls, json_dict), 201
 
 
 def update(cls):
@@ -71,16 +89,6 @@ def delete(cls, primary_key):
     row_count = cls.query.filter(cls.__dict__[pk] == primary_key).delete()
     db.session.commit()
     return (None, 204) if row_count > 0 else (None, 404)
-
-
-deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
-                           "join_requests": JoinRequest, "user_service_profiles": UserServiceProfile,
-                           "collaborations": Collaboration, "organisation_memberships": OrganisationMembership,
-                           "invitations": Invitation, "authorisation_groups": AuthorisationGroup,
-                           "services": Service}
-
-forbidden_fields = ["created_at", "updated_at", "created_by", "updated_by"]
-date_fields = ["start_date", "end_date", "created_at", "updated_at"]
 
 
 def cleanse_json(json_dict):

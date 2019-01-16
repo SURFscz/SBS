@@ -1,12 +1,9 @@
 import json
 import logging
 import os
-import time
-from datetime import date
 from functools import wraps
 
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
-from flask.json import JSONEncoder
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized
 
@@ -49,15 +46,6 @@ def is_admin_user(user):
 def _add_custom_header(response):
     response.headers.set("x-session-alive", "true")
     response.headers["server"] = ""
-
-
-class DynamicExtendedJSONEncoder(JSONEncoder):
-    def default(self, o):
-        if hasattr(o, "__json__"):
-            return o.__json__()
-        if isinstance(o, date):
-            return time.mktime(o.timetuple())
-        return super(DynamicExtendedJSONEncoder, self).default(o)
 
 
 _audit_trail_methods = ["PUT", "POST", "DELETE"]

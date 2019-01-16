@@ -7,8 +7,9 @@ from flask import Flask, jsonify, request as current_request
 from flask_migrate import Migrate
 from munch import munchify
 
-from server.api.base import base_api, DynamicExtendedJSONEncoder
+from server.api.base import base_api
 from server.api.collaboration import collaboration_api
+from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
 from server.api.join_request import join_request_api
 from server.api.organisation import organisation_api
 from server.api.service import service_api

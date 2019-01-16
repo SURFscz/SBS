@@ -31,7 +31,7 @@ def confirm_organization_admin(organisation_id):
             .join(Organisation.organisation_memberships) \
             .filter(OrganisationMembership.user_id == user_id) \
             .filter(OrganisationMembership.role == "admin") \
-            .filter(OrganisationMembership.id == organisation_id) \
+            .filter(OrganisationMembership.organisation_id == organisation_id) \
             .count() > 0
 
     confirm_write_access(override_func=override_func)
