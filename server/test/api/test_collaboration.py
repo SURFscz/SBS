@@ -1,6 +1,6 @@
 from server.db.db import Collaboration, Organisation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name
+from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, ucc_name
 
 
 class TestCollaboration(AbstractTest):
@@ -22,15 +22,27 @@ class TestCollaboration(AbstractTest):
         self.assertFalse("email" in member)
 
     def test_collaboration_new(self):
-        organisation_id = Organisation.query.filter(Organisation.name == "UUC").one().id
+        organisation_id = Organisation.query.filter(Organisation.name == ucc_name).one().id
+        self.login("urn:john")
         collaboration = self.post("/api/collaborations",
                                   body={
                                       "name": "new_collaboration",
                                       "organisation_id": organisation_id
-                                  })
+                                  }, with_basic_auth=False)
         self.assertIsNotNone(collaboration["id"])
         self.assertIsNotNone(collaboration["identifier"])
         self.assertEqual("new_collaboration", collaboration["name"])
+
+    def test_collaboration_new_no_organisation_admin(self):
+        organisation_id = Organisation.query.filter(Organisation.name == ucc_name).one().id
+        self.login("urn:peter")
+        self.post("/api/collaborations",
+                  body={
+                      "name": "new_collaboration",
+                      "organisation_id": organisation_id
+                  },
+                  with_basic_auth=False,
+                  response_status_code=403)
 
     def test_collaboration_update(self):
         collaboration = self._find_by_name_id()

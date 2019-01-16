@@ -98,10 +98,18 @@ def my_collaborations():
 def save_collaboration():
     def _pre_save_callback(json_dict):
         json_dict["identifier"] = str(uuid.uuid4())
+        json_dict["collaboration_memberships"] = [{
+            "role": "admin", "user_id": session["user"]["id"]
+        }]
         return json_dict
 
     confirm_organization_admin(current_request.get_json()["organisation_id"])
-    return save(Collaboration, pre_save_callback=_pre_save_callback)
+    res = save(Collaboration, pre_save_callback=_pre_save_callback)
+    return res
+    # collaboration_membership = CollaborationMembership(role="admin", user_id=session["user"]["id"],
+    #                                                    collaboration=collaboration)
+    # db.session.merge(collaboration_membership)
+    # db.session.commit()
 
 
 @collaboration_api.route("/", methods=["PUT"], strict_slashes=False)
