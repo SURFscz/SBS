@@ -20,6 +20,10 @@ I18n.translations.en = {
     home: {
         title: "TODO - Home dashboard"
     },
+    forms: {
+        submit: "Add",
+        cancel: "Cancel"
+    },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
         start: "Start",
@@ -113,13 +117,20 @@ I18n.translations.en = {
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
         alreadyExists: "An organisation with {{attribute}} {{value}} already exists.",
-        members: "Members",
+        required: "The {{attribute}} is required for an organisation",
+        administrators: "Administrators",
+        administratorsPlaceholder: "Invite administrators by email",
+        administratorsTooltip: "Administrators of an organisation <br/>can create collaborations in this organisation.<br/><br/>Add emails separated by <span class=\"code\">comma, space </span><br/>or <span class=\"code\">semi-colon</span> or one-by-one",
         role: "Role",
         admin: "Administrator",
         manager: "Manager",
         member: "Member",
         yourself: "{{name}} (it's You)",
-        anotherAdmin: "It is highly recommended to invite another administrator."
+        anotherAdmin: "It is highly recommended to invite administrators.",
+        deleteConfirmation: "Are you sure you want to delete this organisation?",
+        flash: {
+            created: "Organisation {{name}} was successfully created"
+        }
     },
     autocomplete: {
         name: "Name",
@@ -129,6 +140,16 @@ I18n.translations.en = {
         resultsLimited: "More entries matched than can be shown, please narrow your search term..."
 
     },
+    confirmationDialog: {
+        title: "Please confirm",
+        confirm: "Confirm",
+        cancel: "Cancel",
+        leavePage: "Do you really want to leave this page?",
+        leavePageSub: "Changes that you made will not be saved.",
+        stay: "Stay",
+        leave: "Leave"
+    },
+
     error_dialog: {
         title: "Unexpected error",
         body: "This is embarrassing; an unexpected error has occurred. It has been logged and reported. Please try again...",

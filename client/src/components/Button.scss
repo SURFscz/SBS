@@ -3,12 +3,11 @@
 a.button {
   display: inline-block;
   padding: 10px 15px;
-  background-color: $light-blue;
-  border: 1px solid $blue;
-  color: $blue;
+  background-color: $blue;
+  color: white;
   border-radius: $br;
-  font-size: larger;
-  font-weight: bold;
+  text-transform: uppercase;
+  min-width: 140px;
   text-align: center;
   cursor: pointer;
   text-decoration: none;
@@ -18,29 +17,22 @@ a.button {
   }
 
   &:hover {
-    background-color: darken($light-blue, 3%);
-    color: darken($blue, 8%);
-    border: 1px solid darken($blue, 8%);
+    background-color: darken($blue, 5%);
+    color: darken(white, 10%);
   }
 
   &:hover, &:visited {
     text-decoration: none;
   }
 
-  &:not(:last-child) {
-    margin-right: 15px;
-  }
-
   &.disabled {
     cursor: no-drop;
-    background-color: $lightest-grey;
-    border: 1px solid $medium-grey;
-    color: $medium-grey;
+    background-color: $lighter-grey;
+    color: white;
 
     &:hover {
-      background-color: $lightest-grey;
-      border: 1px solid $medium-grey;
-      color: $medium-grey;
+      background-color: darken($lighter-grey, 5%);
+      color: darken(white, 10%);
     }
   }
 
@@ -50,20 +42,24 @@ a.button {
   }
 
   &.cancel {
-    background-color: $lighter-grey;
+    background-color: $cancel;
     color: white;
     border: none;
+
+    &:hover {
+      background-color: darken($cancel, 5%);
+      color: darken(white, 10%);
+    }
   }
 
   &.green {
-    background-color: lighten($primary-green, 0%);
+    background-color: $primary-green;
     color: white;
-    border: 1px solid darken($primary-green, 3%);
     border-radius: $br;
 
     &:hover {
       background-color: darken($primary-green, 5%);
-      border: 1px solid darken($primary-green, 10%);
+      color: darken($primary-green, 10%);
     }
 
     i {
@@ -73,3 +69,4 @@ a.button {
     }
   }
 }
+

@@ -9,8 +9,8 @@ from server.test.abstract_test import AbstractTest
 class TestModels(AbstractTest):
 
     def test_nested_audit_trail(self):
-        collaboration_json = {'name': 'new_collaboration', 'organisation_id': 315,
-                              'collaboration_memberships': [{'role': 'admin', 'user_id': 616}]}
+        collaboration_json = {"name": "new_collaboration", "organisation_id": 315,
+                              "collaboration_memberships": [{"role": "admin", "user_id": 616}]}
         with self.app.test_client():
             request_context.api_user = munchify({"name": "system"})
 
