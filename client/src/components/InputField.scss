@@ -7,13 +7,25 @@
   label {
     display: inline-block;
     padding: 14px 34px 14px 14px;
-    margin: 10px 0 10px 10px;
-    min-width: 200px;
+    margin: 10px 0;
+    min-width: 180px;
     border: 1px solid $lighter-grey;
     background-color: $background;
     border-bottom-left-radius: $br;
     border-top-left-radius: $br;
     color: $dark-green;
+    position: relative;
+
+  }
+
+  span.tool-tip-section {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 14px;
+    color: $blue;
+    cursor: pointer;
+    padding: 0 4px;
   }
 
   input[type=text] {
@@ -33,5 +45,10 @@
       cursor: not-allowed;
     }
   }
+
+  .__react_component_tooltip {
+    text-align: center;
+  }
+
 
 }

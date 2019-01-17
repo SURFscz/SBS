@@ -125,7 +125,7 @@ export function searchOrganisations(q) {
     return fetchJson(`/api/organisations/search?q=${encodeURIComponent(q)}`);
 }
 
-export function createOrganisations(organisation) {
+export function createOrganisation(organisation) {
     return postPutJson("/api/organisations", organisation, "post");
 }
 

@@ -5,8 +5,8 @@
   padding: $medium-padding 0;
 
   .title {
-    font-weight: bold;
-    font-size: 28px;
+    font-size: 22px;
+    color: $dark-grey;
     max-width: $medium;
     margin: 0 auto;
     padding: 25px 0;
@@ -14,7 +14,7 @@
 
   .info-block-container {
     max-width: $medium;
-    margin: 30px auto 10px auto;
+    margin: 10px auto;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -178,9 +178,11 @@
       tbody {
         tr {
           cursor: pointer;
+
           &:hover {
             color: $blue;
           }
+
           &:nth-child(odd) {
             background-color: $background;
           }

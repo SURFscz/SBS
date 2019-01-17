@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import "./ErrorDialog.scss";
+import "./ConfirmationDialog.scss";
 import I18n from "i18n-js";
 import {stopEvent} from "../utils/Utils";
 

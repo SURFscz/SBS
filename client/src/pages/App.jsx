@@ -1,23 +1,5 @@
 import React from "react";
 import "./App.scss";
-import {library} from '@fortawesome/fontawesome-svg-core'
-import {
-    faLightbulb,
-    faGavel,
-    faLink,
-    faBook,
-    faInfoCircle,
-    faCircle,
-    faPlus,
-    faCheck,
-    faCheckCircle,
-    faWindowClose,
-    faSearch,
-    faArrowRight,
-    faExternalLinkAlt,
-    faArrowUp,
-    faArrowDown,
-} from '@fortawesome/free-solid-svg-icons'
 import Header from "../components/Header";
 import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import NotFound from "../pages/NotFound";
@@ -38,10 +20,9 @@ import OrganisationDetail from "./OrganisationDetail";
 import Home from "./Home";
 import JoinRequest from "./JoinRequest";
 import NewOrganisation from "./NewOrganisation";
+import {addIcons} from "../utils/IconLibrary";
 
-
-library.add(faLightbulb, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck,
-    faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown);
+addIcons();
 
 const S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 
