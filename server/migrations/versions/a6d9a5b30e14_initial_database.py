@@ -5,10 +5,11 @@ Revises:
 Create Date: 2019-01-07 10:28:20.335581
 
 """
-from alembic import op
-import sqlalchemy as sa
 from datetime import datetime
+
 import pytz
+import sqlalchemy as sa
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = 'a6d9a5b30e14'
@@ -208,6 +209,7 @@ def upgrade():
                               nullable=False),
                     sa.Column("created_by", sa.String(length=512), nullable=False),
                     )
+
 
 def downgrade():
     op.drop_table("collaboration_memberships_authorisation_groups")

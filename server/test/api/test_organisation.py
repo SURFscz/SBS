@@ -45,15 +45,15 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(403, response.status_code)
 
     def test_organisation_name_exists(self):
-        res = self.get("/api/organisations/name_exists", query_data={"name":"uuc"})
+        res = self.get("/api/organisations/name_exists", query_data={"name": "uuc"})
         self.assertEqual(True, res)
 
-        res = self.get("/api/organisations/name_exists", query_data={"name":"xyc"})
+        res = self.get("/api/organisations/name_exists", query_data={"name": "xyc"})
         self.assertEqual(False, res)
 
     def test_organisation_identifier_exists(self):
-        res = self.get("/api/organisations/identifier_exists", query_data={"identifier":"https://uuc"})
+        res = self.get("/api/organisations/identifier_exists", query_data={"identifier": "https://uuc"})
         self.assertEqual(True, res)
 
-        res = self.get("/api/organisations/identifier_exists", query_data={"identifier":"https://xyz"})
+        res = self.get("/api/organisations/identifier_exists", query_data={"identifier": "https://xyz"})
         self.assertEqual(False, res)
