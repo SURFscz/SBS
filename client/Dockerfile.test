@@ -1,0 +1,16 @@
+# Stage 1. - Build process
+
+FROM node:8 as build-deps
+
+WORKDIR /opt/app
+
+COPY package.json yarn.lock ./
+RUN yarn
+
+COPY . ./
+RUN yarn build
+RUN CI=true yarn test
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
