@@ -25,11 +25,12 @@ services:
     depends_on:
       - db
     networks:
-      - frontend
       - backend
     ports:
       - 8008:8080
     environment:
+      SECRET: ${SECRET}
+      
       DB_HOST: db
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
@@ -58,12 +59,32 @@ services:
         python -m server
     restart: unless-stopped
 
-  client:
-    build: client
+  client-test:
+    build:
+      context: client
+      dockerfile: Dockerfile.test
+    ports:
+      - 8081:3000
+    networks:
+      - frontend
+      - backend
+    links:
+      - server
+    restart: unless-stopped
+
+  client-prod:
+    build:
+      context: client
+      dockerfile: Dockerfile.prod
+    volumes:
+      - ./etc/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 80:80
     networks:
       - frontend
+      - backend
+    links:
+      - server
     restart: unless-stopped
 
 volumes:
