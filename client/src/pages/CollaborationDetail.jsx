@@ -21,7 +21,6 @@ class CollaborationDetail extends React.Component {
         } else {
             this.props.history.push("/404");
         }
-
     };
 
     render() {

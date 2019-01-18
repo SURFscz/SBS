@@ -63,7 +63,7 @@ def save(cls, custom_json=None, pre_save_callback=None):
         json_dict = pre_save_callback(json_dict)
 
     add_audit_trail_data(cls, json_dict)
-    json_dict = transform_json(json_dict)
+    json_dict = transform_json(cls, json_dict)
 
     validate(cls, json_dict)
     return _merge(cls, json_dict), 201
@@ -74,7 +74,7 @@ def update(cls, custom_json=None):
         return None, 415
 
     json_dict = request.get_json() if custom_json is None else custom_json
-    json_dict = transform_json(json_dict)
+    json_dict = transform_json(cls, json_dict)
     add_audit_trail_data(cls, json_dict)
 
     pk = list({k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys())[0]
@@ -92,7 +92,14 @@ def delete(cls, primary_key):
     return (None, 204) if row_count > 0 else (None, 404)
 
 
-def cleanse_json(json_dict):
+def cleanse_json(json_dict, cls=None):
+    if cls:
+        column_names = cls.__table__.columns._data.keys() + list(cls.__dict__.keys())
+        # Need to avoid RuntimeError: dictionary changed size during iteration
+        for k in list(json_dict.keys()):
+            if k not in column_names:
+                del json_dict[k]
+
     for forbidden in forbidden_fields:
         if forbidden in json_dict:
             del json_dict[forbidden]
@@ -110,7 +117,7 @@ def parse_date_fields(json_dict):
             parse_date_fields(rel)
 
 
-def transform_json(json_dict):
+def transform_json(cls, json_dict):
     def _contains_list(coll):
         return len(list(filter(lambda item: isinstance(item, list), coll))) > 0
 
@@ -123,7 +130,7 @@ def transform_json(json_dict):
             return item[0], list(map(lambda i: cls(**_do_transform(i.items())), item[1]))
         return item
 
-    cleanse_json(json_dict)
+    cleanse_json(json_dict, cls=cls)
     parse_date_fields(json_dict)
 
     if _contains_list(json_dict.values()):

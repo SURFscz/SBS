@@ -1,11 +1,12 @@
 import datetime
-import random
 import uuid
+from secrets import token_urlsafe
 
 from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
-    JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup
+    JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
 
-invitation_hash = str(random.getrandbits(512))
+organisation_invitation_hash = token_urlsafe()
+invitation_hash = token_urlsafe()
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
 ucc_name = "UUC"
@@ -39,6 +40,10 @@ def seed(db):
                        created_by="urn:admin",
                        updated_by="urnadmin")
     _persist(db, uuc, uva)
+
+    organisation_invitation = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
+                                                     invitee_email="roger@example.org", organisation=uuc, user=john)
+    _persist(db, organisation_invitation)
 
     organisation_membership = OrganisationMembership(role="admin", user=john, organisation=uuc)
     _persist(db, organisation_membership)

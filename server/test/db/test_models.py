@@ -10,12 +10,13 @@ class TestModels(AbstractTest):
 
     def test_nested_audit_trail(self):
         collaboration_json = {"name": "new_collaboration", "organisation_id": 315,
+                              "bogus": "will_be_removed",
                               "collaboration_memberships": [{"role": "admin", "user_id": 616}]}
         with self.app.test_client():
             request_context.api_user = munchify({"name": "system"})
 
             cls = Collaboration
             add_audit_trail_data(cls, collaboration_json)
-            json_dict = transform_json(collaboration_json)
+            json_dict = transform_json(cls, collaboration_json)
             collaboration = cls(**json_dict)
             self.assertEqual(collaboration.collaboration_memberships[0].created_by, "system")

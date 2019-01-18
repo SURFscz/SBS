@@ -22,7 +22,9 @@ I18n.translations.en = {
     },
     forms: {
         submit: "Add",
-        cancel: "Cancel"
+        cancel: "Cancel",
+        showMore: "More",
+        hideSome: "Less"
     },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
@@ -103,7 +105,7 @@ I18n.translations.en = {
         title: "My Organisations",
         members: "Members",
         collaborations: "Collaborations",
-        profile: "Profile",
+        invitations: "Invitations",
         add: "New",
         searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS..."
     },
@@ -112,15 +114,17 @@ I18n.translations.en = {
         subTitle: "Enter / edit the organisation details.",
         name: "Name",
         namePlaceHolder: "The unique name of an organisation",
-        tenant: "Tenant identifier",
+        tenant_identifier: "Tenant identifier",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institution",
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
+        message: "Message",
+        messagePlaceholder: "Personal message to the administrators",
+        messageTooltip: "The message will be included in the<br/>email invitation tot the administrators.",
         alreadyExists: "An organisation with {{attribute}} {{value}} already exists.",
         required: "The {{attribute}} is required for an organisation",
         administrators: "Administrators",
         administratorsPlaceholder: "Invite administrators by email",
-        // administratorsTooltip: "Administrators of an organisation <br/>can create collaborations in this organisation.<br/><br/>Add emails separated by <span class=\"code\">comma, space </span><br/>or <span class=\"code\">semi-colon</span> or one-by-on using <br/>the <span class=\"code\">enter</span> key.",
         administratorsTooltip: "Administrators of an organisation <br/>can create collaborations in this organisation.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
         role: "Role",
         admin: "Administrator",

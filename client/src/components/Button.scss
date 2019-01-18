@@ -68,5 +68,23 @@ a.button {
       font-size: larger;
     }
   }
+
+  &.white {
+    background-color: white;
+    color: $blue;
+    border-radius: $br;
+    border: 1px solid $lighter-grey;
+
+    &:hover {
+      background-color: darken(white, 3%);
+      color: darken($blue, 10%);
+    }
+
+    i {
+      color: $blue;
+      margin: 0;
+      font-size: larger;
+    }
+  }
 }
 

@@ -12,6 +12,7 @@ from server.api.collaboration import collaboration_api
 from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
 from server.api.join_request import join_request_api
 from server.api.organisation import organisation_api
+from server.api.organisation_invitation import organisation_invitations_api
 from server.api.service import service_api
 from server.api.user import user_api
 from server.api.user_service_profile import user_service_profile_api
@@ -66,6 +67,7 @@ app.register_blueprint(collaboration_api)
 app.register_blueprint(user_service_profile_api)
 app.register_blueprint(organisation_api)
 app.register_blueprint(join_request_api)
+app.register_blueprint(organisation_invitations_api)
 
 app.register_error_handler(404, page_not_found)
 
@@ -76,6 +78,7 @@ app.config["SQLALCHEMY_ECHO"] = is_local or is_test
 app.config["TESTING"] = test
 app.config["MAIL_SERVER"] = config.mail.host
 app.config["MAIL_PORT"] = int(config.mail.port)
+app.config["OPEN_MAIL_IN_BROWSER"] = os.environ.get("OPEN_MAIL_IN_BROWSER", 0)
 app.mail = Mail(app)
 
 app.json_encoder = DynamicExtendedJSONEncoder

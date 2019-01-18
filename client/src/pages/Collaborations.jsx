@@ -22,6 +22,7 @@ class Collaborations extends React.Component {
             moreToShow: false,
             sorted: "name",
             reverse: false,
+            showMore: []
         }
     }
 
@@ -57,6 +58,13 @@ class Collaborations extends React.Component {
             this.setState({selected: -1, query: "", suggestions: []});
         }
 
+    };
+
+    toggleShowMore = name => e => {
+        stopEvent(e);
+        const {showMore} = this.state;
+        const newShowMore = showMore.includes(name) ? showMore.filter(item => item !== name) : showMore.concat([name]);
+        this.setState({showMore: newShowMore});
     };
 
     search = e => {
@@ -101,6 +109,8 @@ class Collaborations extends React.Component {
     };
 
     renderRequests = joinRequests => {
+        const showMore = joinRequests.length > 6;
+        const showMoreItems = this.state.showMore.includes("joinRequests");
         return (
             <section className="info-block ">
                 <div className="header join-requests">
@@ -108,20 +118,30 @@ class Collaborations extends React.Component {
                     <span className="counter">{joinRequests.length}</span>
                 </div>
                 <div className="content">
-                    {joinRequests.map((request, i) =>
+                    {(showMore && !showMoreItems ? joinRequests.slice(0, 5) : joinRequests).map((request, i) =>
                         <div className="join-request" key={i}>
                             <a href={`/join-requests/${request.id}`} onClick={this.openJoinRequest(request)}>
                                 <FontAwesomeIcon icon={"arrow-right"}/>
                                 <span>{request.user.name}</span>
                             </a>
                         </div>)}
+                    {showMore && <section className="show-more">
+                        <Button className="white"
+                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                                onClick={this.toggleShowMore("joinRequests")}/>
+                    </section>}
+
                 </div>
             </section>
         );
     };
 
     renderAuthorisations = collaborations => {
-        const authorisationGroups = collaborations.map(collaboration => collaboration.authorisation_groups).flat()
+        const authorisationGroups = collaborations.map(collaboration => collaboration.authorisation_groups)
+            .flat().filter(item => !isEmpty(item));
+        const showMore = collaborations.length > 6;
+        const showMoreItems = this.state.showMore.includes("authorisationGroups");
+
         return (
             <section className="info-block ">
                 <div className="header authorisations">
@@ -129,7 +149,7 @@ class Collaborations extends React.Component {
                     <span className="counter">{authorisationGroups.length}</span>
                 </div>
                 <div className="content">
-                    {collaborations.map((collaboration, i) =>
+                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations).map((collaboration, i) =>
                         <div className="collaboration-authorisations" key={i}>
                             <a href={`/collaborations/${collaboration.id}`}
                                onClick={this.openCollaboration(collaboration)}>
@@ -137,12 +157,19 @@ class Collaborations extends React.Component {
                                 <span className="count">{`(${collaboration.authorisation_groups.length})`}</span>
                             </a>
                         </div>)}
+                    {showMore && <section className="show-more">
+                        <Button className="white"
+                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                                onClick={this.toggleShowMore("authorisationGroups")}/>
+                    </section>}
                 </div>
             </section>
         );
     };
 
     renderInvitations = invitations => {
+        const showMore = invitations.length > 6;
+        const showMoreItems = this.state.showMore.includes("invitations");
         return (
             <section className="info-block ">
                 <div className="header invitations">
@@ -150,13 +177,18 @@ class Collaborations extends React.Component {
                     <span className="counter">{invitations.length}</span>
                 </div>
                 <div className="content">
-                    {invitations.map((invitation, i) =>
+                    {(showMore && !showMoreItems ? invitations.slice(0, 5) : invitations).map((invitation, i) =>
                         <div className="invitation" key={i}>
                             <a href={`/invitations/${invitation.id}`} onClick={this.openInvitation(invitation)}>
                                 <FontAwesomeIcon icon={"arrow-right"}/>
                                 <span>{invitation.invitee_email}</span>
                             </a>
                         </div>)}
+                    {showMore && <section className="show-more">
+                        <Button className="white"
+                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                                onClick={this.toggleShowMore("invitations")}/>
+                    </section>}
                 </div>
 
             </section>
@@ -164,7 +196,11 @@ class Collaborations extends React.Component {
     };
 
     renderServices = collaborations => {
-        const services = collaborations.map(collaboration => collaboration.services).flat();
+
+        const services = collaborations.map(collaboration => collaboration.services)
+            .flat().filter(item => !isEmpty(item));
+        const showMore = collaborations.length > 6;
+        const showMoreItems = this.state.showMore.includes("services");
         return (
             <section className="info-block ">
                 <div className="header services">
@@ -172,7 +208,7 @@ class Collaborations extends React.Component {
                     <span className="counter">{services.length}</span>
                 </div>
                 <div className="content">
-                    {collaborations.map((collaboration, i) =>
+                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations).map((collaboration, i) =>
                         <div className="collaboration-services" key={i}>
                             <a href={`/collaborations/${collaboration.id}`}
                                onClick={this.openCollaboration(collaboration)}>
@@ -180,23 +216,13 @@ class Collaborations extends React.Component {
                                 <span className="count">{`(${collaboration.services.length})`}</span>
                             </a>
                         </div>)}
+                    {showMore && <section className="show-more">
+                        <Button className="white"
+                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                                onClick={this.toggleShowMore("services")}/>
+                    </section>}
                 </div>
 
-            </section>
-        );
-    };
-
-    renderProfile = user => {
-        return (
-            <section className="info-block ">
-                <div className="header profile">
-                    <span className="type">{I18n.t("collaborations.profile")}</span>
-                </div>
-                <div className="content profile">
-                    <p>{user.uid}</p>
-                    <p>{user.name}</p>
-                    <p>{user.email}</p>
-                </div>
             </section>
         );
     };
@@ -262,7 +288,8 @@ class Collaborations extends React.Component {
 
         return (
             <section className="collaboration-search">
-                <div className="search">
+                <div className="search"
+                     tabIndex="1" onBlur={this.onBlurSearch(suggestions)}>
                     <input type="text"
                            className={adminClassName}
                            onChange={this.search}
@@ -271,8 +298,7 @@ class Collaborations extends React.Component {
                            placeholder={I18n.t("collaborations.searchPlaceHolder")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
                     {user.admin && <Button onClick={() => this}
-                                           txt={I18n.t("collaborations.add")}
-                                           icon={<FontAwesomeIcon icon="plus"/>}/>
+                                           txt={I18n.t("collaborations.add")}/>
                     }
                 </div>
                 {showAutoCompletes && <Autocomplete suggestions={suggestions}
@@ -297,11 +323,12 @@ class Collaborations extends React.Component {
                     <span>{I18n.t("collaborations.dashboard")}</span>
                 </div>
                 <section className="info-block-container">
-                    {this.renderRequests(collaborations.map(collaboration => collaboration.join_requests).flat())}
-                    {this.renderInvitations(collaborations.map(collaboration => collaboration.invitations).flat())}
+                    {this.renderRequests(collaborations.map(collaboration => collaboration.join_requests)
+                        .flat().filter(item => !isEmpty(item)))}
+                    {this.renderInvitations(collaborations.map(collaboration => collaboration.invitations)
+                        .flat().filter(item => !isEmpty(item)))}
                     {this.renderServices(collaborations)}
                     {this.renderAuthorisations(collaborations)}
-                    {this.renderProfile(user)}
                 </section>
                 <div className="title">
                     <span>{I18n.t("collaborations.title")}</span>

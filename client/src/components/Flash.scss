@@ -9,15 +9,15 @@ div.flash {
   z-index: 6;
   opacity: .93;
 
-  transition: top 350ms ease-in-out;
+  transition: top 750ms ease-in-out;
 
   &.hide {
-    transition: top 1250ms ease-in-out;
+    transition: top 750ms ease-in-out;
     top: -80px;
   }
 
   &.info {
-    background-color: $primary-green;
+    background-color: darken($primary-green, 10%);
   }
 
   &.warning {
@@ -39,15 +39,15 @@ div.flash {
       font-weight: bold;
     }
 
-    a.close {
-      text-decoration: none;
-      position: absolute;
-      right: 10px;
-      top: -5px;
-      color: white;
-      font-size: larger;
-      padding: 6px;
-    }
+  }
+
+  a.close {
+    text-decoration: none;
+    position: absolute;
+    right: 10px;
+    top: -5px;
+    color: white;
+    padding: 6px;
   }
 
 
