@@ -6,7 +6,7 @@
 
   .new-organisation {
     max-width: $medium;
-    box-shadow: 0 2px 4px 0 $lighter-grey, 0 4px 16px 0 $lighter-grey;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
     margin: 0 auto;
     background-color: white;
     padding: 30px $medium-padding;
@@ -25,10 +25,6 @@
 
     div.input-field {
       margin-top: 15px;
-    }
-
-    span.code {
-      font-family: Courier;
     }
 
     section.email-tags {

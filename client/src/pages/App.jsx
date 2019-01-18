@@ -21,6 +21,7 @@ import Home from "./Home";
 import JoinRequest from "./JoinRequest";
 import NewOrganisation from "./NewOrganisation";
 import {addIcons} from "../utils/IconLibrary";
+import OrganisationInvite from "./OrganisationInvite";
 
 addIcons();
 
@@ -130,6 +131,8 @@ class App extends React.Component {
                                render={props => <OrganisationDetail user={currentUser} {...props}/>}/>}
                         <Route exact path="/join-requests/:id"
                                render={props => <JoinRequest user={currentUser} {...props}/>}/>
+                        <Route exact path="/organisation-invitations/:action/:hash"
+                               render={props => <OrganisationInvite user={currentUser} {...props}/>}/>}
                         <Route path="/new-organisation"
                                render={props => <NewOrganisation user={currentUser} {...props}/>}/>
                         <Route path="/error" render={props => <ServerError {...props}/>}/>

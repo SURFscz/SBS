@@ -5,7 +5,7 @@ import "./InputField.scss";
 
 export default function InputField({
                                        onChange, name, value, placeholder = "", disabled = false,
-                                       toolTip = null, onBlur = () => true, onEnter = null
+                                       toolTip = null, onBlur = () => true, onEnter = null, multiline= false
                                    }) {
     return (
         <div className="input-field">
@@ -17,13 +17,16 @@ export default function InputField({
                 </ReactTooltip>
             </span>}
             </label>
-
+            {!multiline &&
             <input type="text" disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
                    placeholder={placeholder} onKeyDown={e => {
                 if (onEnter && e.keyCode === 13) {//enter
                     onEnter(e);
                 }
-            }}/>
+            }}/>}
+            {multiline &&
+            <textarea disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
+                   placeholder={placeholder} />}
         </div>
     );
 }

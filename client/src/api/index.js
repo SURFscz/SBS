@@ -136,3 +136,15 @@ export function updateOrganisation(organisation) {
 export function joinRequestById(id) {
     return fetchJson(`/api/join_requests/${id}`);
 }
+
+export function organisationInvitationByHash(hash) {
+    return fetchJson(`/api/organisation_invitations/find_by_hash?hash=${hash}`);
+}
+
+export function organisationInvitationAccept(organisationInvitation) {
+    return postPutJson("/api/organisation_invitations/accept", organisationInvitation, "post");
+}
+
+export function organisationInvitationDecline(organisationInvitation) {
+    return postPutJson("/api/organisation_invitations/decline", organisationInvitation, "post");
+}

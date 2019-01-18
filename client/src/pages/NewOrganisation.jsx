@@ -21,6 +21,7 @@ class NewOrganisation extends React.Component {
             tenant_identifier: "",
             administrators: [],
             email: "",
+            message: "",
             required: ["name", "tenant_identifier"],
             alreadyExists: {},
             initial: true,
@@ -59,7 +60,8 @@ class NewOrganisation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            createOrganisation(this.state).then(res => {
+            const {name, tenant_identifier, administrators, message, description} = this.state;
+            createOrganisation({name, tenant_identifier, administrators, message, description}).then(res => {
                 this.props.history.push("/organisations");
                 setFlash(I18n.t("organisation.flash.created", {name: res.name}))
             });
@@ -90,7 +92,9 @@ class NewOrganisation extends React.Component {
         } else if (!isEmpty(email) && validEmailRegExp.test(email.trim())) {
             emails = [email];
         }
-        if (!isEmpty(emails)) {
+        if (isEmpty(emails)) {
+            this.setState({email: ""});
+        } else {
             const uniqueEmails = [...new Set(administrators.concat(emails))];
             this.setState({email: "", administrators: uniqueEmails});
         }
@@ -100,7 +104,7 @@ class NewOrganisation extends React.Component {
     render() {
         const {
             name, description, tenant_identifier, email, initial, alreadyExists, administrators,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage
+            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         //TODO based on the params of the path
@@ -138,20 +142,26 @@ class NewOrganisation extends React.Component {
                                 onChange={e => this.setState({tenant_identifier: e.target.value})}
                                 placeholder={I18n.t("organisation.tenantPlaceHolder")}
                                 onBlur={this.validateOrganisationTenantIdentifier}
-                                name={I18n.t("organisation.tenant")}/>
+                                name={I18n.t("organisation.tenant_identifier")}/>
                     {alreadyExists.tenant && <span
                         className="error">{I18n.t("organisation.alreadyExists", {
-                        attribute: I18n.t("organisation.tenant").toLowerCase(),
+                        attribute: I18n.t("organisation.tenant_identifier").toLowerCase(),
                         value: tenant_identifier
                     })}</span>}
                     {(!initial && isEmpty(tenant_identifier)) && <span
                         className="error">{I18n.t("organisation.required", {
-                        attribute: I18n.t("organisation.tenant").toLowerCase()
+                        attribute: I18n.t("organisation.tenant_identifier").toLowerCase()
                     })}</span>}
 
                     <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                                 placeholder={I18n.t("organisation.descriptionPlaceholder")}
                                 name={I18n.t("organisation.description")}/>
+
+                    <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                                placeholder={I18n.t("organisation.messagePlaceholder")}
+                                name={I18n.t("organisation.message")}
+                                toolTip={I18n.t("organisation.messageTooltip")}
+                                multiline={true}/>
 
                     <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                                 placeholder={I18n.t("organisation.administratorsPlaceholder")}
@@ -159,6 +169,7 @@ class NewOrganisation extends React.Component {
                                 toolTip={I18n.t("organisation.administratorsTooltip")}
                                 onBlur={this.addEmail}
                                 onEnter={this.addEmail}/>
+
                     <section className="email-tags">
                         {administrators.map(mail =>
                             <div key={mail} className="email-tag">

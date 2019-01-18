@@ -1,5 +1,3 @@
-import json
-
 from server.db.db import Organisation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ucc_name
@@ -14,7 +12,7 @@ class TestOrganisation(AbstractTest):
     def test_my_organisations(self):
         self.login()
         organisations = self.get("/api/organisations")
-        self.assertEqual(2, len(organisations))
+        self.assertEqual(1, len(organisations))
         organisation = AbstractTest.find_by_name(organisations, ucc_name)
         self.assertEqual("urn:john", organisation["organisation_memberships"][0]["user"]["uid"])
 
@@ -24,8 +22,10 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(2, len(organisation["collaborations"][0]["collaboration_memberships"]))
 
     def test_organisation_crud(self):
+        self.login()
         organisation = self.post("/api/organisations", body={"name": "new_organisation",
-                                                             "tenant_identifier": "https://ti1"})
+                                                             "tenant_identifier": "https://ti1"},
+                                 with_basic_auth=False)
         self.assertIsNotNone(organisation["id"])
         self.assertEqual("new_organisation", organisation["name"])
         self.assertEqual(3, Organisation.query.count())
@@ -38,11 +38,11 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(2, Organisation.query.count())
 
     def test_organisation_forbidden(self):
-        organisation = self.post("/api/organisations", body={"name": "new_organisation",
-                                                             "tenant_identifier": "https://ti2"})
         self.login("urn:peter")
-        response = self.client.post("/api/organisations", data=json.dumps(organisation))
-        self.assertEqual(403, response.status_code)
+        self.post("/api/organisations", with_basic_auth=False,
+                  body={"name": "new_organisation",
+                        "tenant_identifier": "https://ti2"},
+                  response_status_code=403)
 
     def test_organisation_name_exists(self):
         res = self.get("/api/organisations/name_exists", query_data={"name": "uuc"})

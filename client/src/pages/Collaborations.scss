@@ -24,9 +24,9 @@
       border-radius: $br;
       background-color: white;
       border: solid 1px $lightest-grey;
-      box-shadow: 0 2px 4px 0 $lighter-grey, 0 4px 16px 0 $lighter-grey;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
       padding: 15px 10px;
-      width: calc(20% - 2em);
+      width: calc(25% - 2em);
 
       .header {
         text-transform: uppercase;
@@ -56,13 +56,16 @@
           color: $services;
         }
 
-        &.profile {
-          color: $profile;
-        }
       }
 
       div.content {
         padding: 10px 5px;
+
+        section.show-more {
+          margin-top: 15px;
+          text-align: center;
+        }
+
       }
 
       div.profile {
@@ -107,7 +110,7 @@
     max-width: $medium;
     border-radius: $br;
     margin: 15px auto 10px auto;
-    box-shadow: 0 2px 4px 0 $lighter-grey, 0 4px 16px 0 $lighter-grey;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
     position: relative;
 
     div.search {
@@ -117,9 +120,9 @@
 
       svg.fa-search {
         position: absolute;
-        font-size: 18px;
+        font-size: 16px;
         color: $blue;
-        top: 14px;
+        top: 12px;
         left: 22px;
       }
 
@@ -129,7 +132,6 @@
         padding-left: 45px;
         border-radius: $br;
         font-size: 16px;
-        min-height: 45px;
 
         &.with-button {
           border-top-right-radius: 0;
@@ -154,7 +156,7 @@
     max-width: $medium;
     border-radius: $br;
     margin: 15px auto 0 auto;
-    box-shadow: 0 2px 4px 0 $lighter-grey, 0 4px 16px 0 $lighter-grey;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
     position: relative;
 
     table {

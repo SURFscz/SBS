@@ -1,12 +1,16 @@
-from flask import Blueprint, request as current_request, session
+import datetime
+from secrets import token_urlsafe
+
+from flask import Blueprint, request as current_request, session, current_app
 from sqlalchemy import text, func
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, contains_eager
 from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint
 from server.api.security import confirm_write_access
-from server.db.db import Organisation, db, OrganisationMembership, Collaboration
+from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
 from server.db.models import update, save, delete
+from server.mail import mail_organisation_invitation
 
 organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/organisations")
 
@@ -63,11 +67,16 @@ def organisation_by_id(id):
 def my_organisations():
     user_id = session["user"]["id"]
     organisations = Organisation.query \
-        .options(joinedload(Organisation.organisation_memberships)
-                 .subqueryload(OrganisationMembership.user)) \
-        .options(joinedload(Organisation.collaborations)
-                 .subqueryload(Collaboration.collaboration_memberships)) \
+        .join(Organisation.organisation_memberships) \
         .join(OrganisationMembership.user) \
+        .outerjoin(Organisation.collaborations) \
+        .outerjoin(Collaboration.collaboration_memberships) \
+        .outerjoin(Organisation.organisation_invitations) \
+        .options(contains_eager(Organisation.organisation_memberships).
+                 contains_eager(OrganisationMembership.user)) \
+        .options(contains_eager(Organisation.collaborations).
+                 contains_eager(Collaboration.collaboration_memberships)) \
+        .options(contains_eager(Organisation.organisation_invitations)) \
         .filter(OrganisationMembership.user_id == user_id) \
         .all()
     return organisations, 200
@@ -77,7 +86,27 @@ def my_organisations():
 @json_endpoint
 def save_organisation():
     confirm_write_access()
-    return save(Organisation)
+    data = current_request.get_json()
+    administrators = data["administrators"] if "administrators" in data else []
+    message = data["message"] if "message" in data else None
+
+    res = save(Organisation)
+    user = User.query.get(session["user"]["id"])
+    for administrator in administrators:
+        organisation = res[0]
+        invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+                                            organisation=organisation, user=user,
+                                            expiry_date=datetime.date.today() + datetime.timedelta(days=14),
+                                            created_by=user.uid)
+        invitation = db.session.merge(invitation)
+        mail_organisation_invitation({
+            "salutation": "Dear",
+            "invitation": invitation,
+            "base_url": current_app.app_config.base_url
+        }, organisation, [administrator])
+        db.session.commit()
+
+    return res
 
 
 @organisation_api.route("/", methods=["PUT"], strict_slashes=False)
