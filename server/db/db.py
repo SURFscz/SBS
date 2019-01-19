@@ -61,6 +61,9 @@ class Organisation(Base, db.Model):
                                                cascade="all, delete-orphan",
                                                passive_deletes=True)
 
+    def is_member(self, user_id):
+        return len(list(filter(lambda membership: membership.user_id == user_id, self.organisation_memberships))) > 0
+
 
 class OrganisationMembership(Base, db.Model):
     __tablename__ = "organisation_memberships"

@@ -137,6 +137,22 @@ I18n.translations.en = {
             created: "Organisation {{name}} was successfully created"
         }
     },
+    organisationInvitation: {
+        title: "Invitation to join organisation {{organisation}}",
+        organisationName: "Name",
+        organisationDescription: "Description",
+        organisationAdministrators: "Administrators",
+        message: "Message",
+        inviter: "Inviter",
+        messageTooltip: "The user {{name}} has invited you with this message",
+        decline: "Decline",
+        accept: "Accept",
+        declineInvitation: "Are you sure you want to decline this invitation?",
+        flash: {
+            inviteDeclined: "Invitation for organisation {{name}} is declined",
+            inviteAccepted: "Invitation for organisation {{name}} is accepted",
+        }
+    },
     autocomplete: {
         name: "Name",
         description: "Description",

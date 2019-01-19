@@ -64,8 +64,7 @@ function fetchDelete(path) {
 
 //API
 export function me() {
-    //TODO - remove this after integration with mod_mellon
-    const headers = window.location.pathname.startsWith("/login") ? {"MELLON_cmuid": "urn:john"} : {};
+    const headers = window.location.pathname.startsWith("/login") ? {"MELLON_cmuid": "urn:roger"} : {};
     return fetchJson("/api/users/me", {}, headers, false);
 }
 
@@ -135,6 +134,10 @@ export function updateOrganisation(organisation) {
 
 export function joinRequestById(id) {
     return fetchJson(`/api/join_requests/${id}`);
+}
+
+export function organisationInvitationById(id) {
+    return fetchJson(`/api/organisation_invitations/${id}`);
 }
 
 export function organisationInvitationByHash(hash) {

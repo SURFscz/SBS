@@ -114,9 +114,9 @@
     padding: 0 $medium-padding;
 
     p.form-title {
-      font-size: 24px;
-      line-height: 24px;
-      font-weight: bold;
+      font-size: 20px;
+      color: $dark-grey;
+      text-transform: uppercase;
       margin-bottom: 20px;
     }
 
