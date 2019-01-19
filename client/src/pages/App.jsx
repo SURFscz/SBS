@@ -131,6 +131,8 @@ class App extends React.Component {
                                render={props => <OrganisationDetail user={currentUser} {...props}/>}/>}
                         <Route exact path="/join-requests/:id"
                                render={props => <JoinRequest user={currentUser} {...props}/>}/>
+                        <Route exact path="/organisation-invitations/:id"
+                               render={props => <OrganisationInvite user={currentUser} {...props}/>}/>}
                         <Route exact path="/organisation-invitations/:action/:hash"
                                render={props => <OrganisationInvite user={currentUser} {...props}/>}/>}
                         <Route path="/new-organisation"

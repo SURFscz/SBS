@@ -2,7 +2,7 @@ import json
 import logging
 
 from flask import Blueprint, request as current_request, session
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, is_admin_user
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
@@ -50,16 +50,20 @@ def _user_to_session_object(user):
 
 def _user_query():
     return User.query \
-        .options(joinedload(User.organisation_memberships).subqueryload(OrganisationMembership.organisation)) \
-        .options(joinedload(User.collaboration_memberships).subqueryload(CollaborationMembership.collaboration))
+        .outerjoin(User.organisation_memberships) \
+        .outerjoin(OrganisationMembership.organisation) \
+        .outerjoin(User.collaboration_memberships) \
+        .outerjoin(CollaborationMembership.collaboration) \
+        .options(contains_eager(User.organisation_memberships)
+                 .contains_eager(OrganisationMembership.organisation)) \
+        .options(contains_eager(User.collaboration_memberships)
+                 .contains_eager(CollaborationMembership.collaboration))
 
 
 @user_api.route("/<user_id>", strict_slashes=False)
 @json_endpoint
 def user_by_id(user_id):
-    user = _user_query().get(user_id)
-    if not user:
-        return None, 404
+    user = _user_query().filter(User.id == user_id).one()
     for cm in user.collaboration_memberships:
         for usc in cm.user_service_profiles:
             usc.service
@@ -70,8 +74,9 @@ def user_by_id(user_id):
 @json_endpoint
 def user_by_uid():
     uid = current_request.args.get("uid")
-    user = _user_query()\
-        .options(joinedload(User.join_requests))\
+    user = _user_query() \
+        .outerjoin(User.join_requests) \
+        .options(contains_eager(User.join_requests)) \
         .filter(User.uid == uid).one()
     for cm in user.collaboration_memberships:
         for usc in cm.user_service_profiles:

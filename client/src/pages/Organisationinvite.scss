@@ -27,10 +27,22 @@
       margin-top: 15px;
     }
 
+    .required-marker {
+      color: $red;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    div.checkbox {
+      margin-top: 10px;
+    }
     section.actions {
       margin: 30px 0;
 
       a.cancel {
+        margin-left: 25px;
+      }
+
+      a.white {
         margin-left: 25px;
       }
     }

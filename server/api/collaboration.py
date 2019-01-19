@@ -2,7 +2,7 @@ import uuid
 
 from flask import Blueprint, request as current_request, session
 from sqlalchemy import text, or_
-from sqlalchemy.orm import aliased, load_only
+from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
@@ -55,17 +55,28 @@ def members():
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_by_id(collaboration_id):
-    query = Collaboration.query. \
-        options(joinedload(Collaboration.authorisation_groups)
-                .subqueryload(AuthorisationGroup.collaboration_memberships)
-                .subqueryload(CollaborationMembership.user_service_profiles)) \
-        .options(joinedload(Collaboration.invitations)) \
-        .options(joinedload(Collaboration.organisation)) \
-        .options(joinedload(Collaboration.join_requests)
-                 .subqueryload(JoinRequest.user)) \
-        .options(joinedload(Collaboration.collaboration_memberships)
-                 .subqueryload(CollaborationMembership.user_service_profiles)) \
-        .options(joinedload(Collaboration.services))
+    authorisation_group_collaboration_memberships = aliased(CollaborationMembership)
+    collaboration_collaboration_memberships = aliased(CollaborationMembership)
+
+    query = Collaboration.query \
+        .join(Collaboration.organisation) \
+        .outerjoin(Collaboration.authorisation_groups) \
+        .outerjoin(authorisation_group_collaboration_memberships, AuthorisationGroup.collaboration_memberships) \
+        .outerjoin(CollaborationMembership.user_service_profiles) \
+        .outerjoin(Collaboration.invitations) \
+        .outerjoin(Collaboration.join_requests) \
+        .outerjoin(JoinRequest.user) \
+        .outerjoin(collaboration_collaboration_memberships, Collaboration.collaboration_memberships) \
+        .outerjoin(Collaboration.services) \
+        .options(contains_eager(Collaboration.authorisation_groups)
+                 .contains_eager(AuthorisationGroup.collaboration_memberships)
+                 .contains_eager(CollaborationMembership.user_service_profiles)) \
+        .options(contains_eager(Collaboration.invitations)) \
+        .options(contains_eager(Collaboration.organisation)) \
+        .options(contains_eager(Collaboration.join_requests)
+                 .contains_eager(JoinRequest.user)) \
+        .options(contains_eager(Collaboration.collaboration_memberships)) \
+        .options(contains_eager(Collaboration.services))
 
     if not session["user"]["admin"]:
         user_id = session["user"]["id"]
@@ -81,12 +92,18 @@ def collaboration_by_id(collaboration_id):
 def my_collaborations():
     user_id = session["user"]["id"]
     res = Collaboration.query \
-        .options(joinedload(Collaboration.authorisation_groups)) \
-        .options(joinedload(Collaboration.invitations)) \
-        .options(joinedload(Collaboration.join_requests).subqueryload(JoinRequest.user)) \
+        .join(Collaboration.organisation) \
+        .outerjoin(Collaboration.authorisation_groups) \
+        .outerjoin(Collaboration.invitations) \
+        .outerjoin(Collaboration.join_requests) \
+        .outerjoin(JoinRequest.user) \
+        .outerjoin(Collaboration.services) \
         .options(joinedload(Collaboration.collaboration_memberships)) \
-        .options(joinedload(Collaboration.services)) \
-        .options(joinedload(Collaboration.organisation)) \
+        .options(contains_eager(Collaboration.authorisation_groups)) \
+        .options(contains_eager(Collaboration.invitations)) \
+        .options(contains_eager(Collaboration.join_requests)
+                 .contains_eager(JoinRequest.user)) \
+        .options(contains_eager(Collaboration.services)) \
         .join(Collaboration.collaboration_memberships) \
         .filter(CollaborationMembership.user_id == user_id) \
         .all()

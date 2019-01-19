@@ -31,7 +31,9 @@ def seed(db):
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org")
     admin = User(uid="urn:admin", name="The Boss", email="boss@example.org")
-    _persist(db, john, mary, peter, admin)
+    roger = User(uid="urn:roger", name="Roger Doe", email="roger@example.org")
+
+    _persist(db, john, mary, peter, admin, roger)
 
     uuc = Organisation(name=ucc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
                        created_by="urn:admin",
