@@ -168,6 +168,9 @@
         cursor: pointer;
         padding: 0 5px 10px 5px;
 
+        &.description {
+          width: 30%;
+        }
         svg {
           margin-left: 15px;
           color: $lighter-grey;
