@@ -67,10 +67,11 @@ class TestCollaboration(AbstractTest):
         self.get(f"/api/collaborations/{collaboration['id']}", response_status_code=404, with_basic_auth=False)
 
     def test_collaboration_by_id(self):
-        collaboration = self._find_by_name_id()
+        collaboration_id = self._find_by_name_id()["id"]
         self.login()
-        collaboration_id = self.get(f"/api/collaborations/{collaboration['id']}", with_basic_auth=False)["id"]
-        self.assertEqual(collaboration["id"], collaboration_id)
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
+        self.assertEqual(collaboration_id, collaboration["id"])
+        self.assertEqual("UUC", collaboration["organisation"]["name"])
 
     def test_my_collaborations(self):
         self.login()
