@@ -145,9 +145,17 @@ export function organisationInvitationByHash(hash) {
 }
 
 export function organisationInvitationAccept(organisationInvitation) {
-    return postPutJson("/api/organisation_invitations/accept", organisationInvitation, "post");
+    return postPutJson("/api/organisation_invitations/accept", organisationInvitation, "put");
 }
 
 export function organisationInvitationDecline(organisationInvitation) {
-    return postPutJson("/api/organisation_invitations/decline", organisationInvitation, "post");
+    return postPutJson("/api/organisation_invitations/decline", organisationInvitation, "put");
+}
+
+export function joinRequestAccept(joinRequest) {
+    return postPutJson("/api/join_requests/accept", joinRequest, "put");
+}
+
+export function joinRequestDecline(joinRequest) {
+    return postPutJson("/api/join_requests/decline", joinRequest, "put");
 }

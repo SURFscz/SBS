@@ -1,7 +1,7 @@
 import React from "react";
 import {organisationById} from "../api";
 import "./OrganisationDetail.scss";
-
+import ReactJson from 'react-json-view'
 
 class OrganisationDetail extends React.Component {
 
@@ -26,7 +26,8 @@ class OrganisationDetail extends React.Component {
     render() {
         const {organisation} = this.state;
         return <div className="mod-organisation-detail">
-            { JSON.stringify(organisation, null, 2)}
+            <ReactJson src={organisation} root="organisation" displayObjectSize={false} displayDataTypes={false}
+                       enableClipboard={false}/>
         </div>
     }
 }

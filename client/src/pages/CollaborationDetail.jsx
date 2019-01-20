@@ -1,7 +1,7 @@
 import React from "react";
 import {collaborationById} from "../api";
 import "./CollaborationDetail.scss";
-
+import ReactJson from 'react-json-view'
 
 class CollaborationDetail extends React.Component {
 
@@ -26,7 +26,8 @@ class CollaborationDetail extends React.Component {
     render() {
         const {collaboration} = this.state;
         return <div className="mod-collaboration-detail">
-            { JSON.stringify(collaboration, null, 2)}
+            <ReactJson src={collaboration} root="collaboration" displayObjectSize={false} displayDataTypes={false}
+                       enableClipboard={false}/>
         </div>
     }
 }

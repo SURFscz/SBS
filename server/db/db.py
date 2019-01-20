@@ -177,6 +177,9 @@ class Collaboration(Base, db.Model):
     invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
                                   passive_deletes=True)
 
+    def is_member(self, user_id):
+        return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
+
 
 class AuthorisationGroup(Base, db.Model):
     __tablename__ = "authorisation_groups"

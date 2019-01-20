@@ -34,7 +34,7 @@ class TestJoinRequest(AbstractTest):
         self.assertEqual(1, JoinRequest.query.count())
 
     def test_join_request_delete_no_access(self):
-        join_request_id = self._join_request_by_user("urn:john").id
+        join_request_id = self._join_request_by_user("urn:mary").id
         self.login("urn:peter")
         response = self.client.delete(f"/api/join_requests/{join_request_id}")
         self.assertEqual(403, response.status_code)

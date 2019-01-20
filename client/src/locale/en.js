@@ -120,12 +120,12 @@ I18n.translations.en = {
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
-        messageTooltip: "The message will be included in the<br/>email invitation tot the administrators.",
+        messageTooltip: "The message will be included in the<br/>email invitation to the administrators.",
         alreadyExists: "An organisation with {{attribute}} {{value}} already exists.",
         required: "The {{attribute}} is required for an organisation",
         administrators: "Administrators",
         administratorsPlaceholder: "Invite administrators by email",
-        administratorsTooltip: "Administrators of an organisation <br/>can create collaborations in this organisation.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
+        administratorsTooltip: "Administrators of an organisation <br/>can create collaborations in their organisations.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
         role: "Role",
         admin: "Administrator",
         manager: "Manager",
@@ -137,21 +137,37 @@ I18n.translations.en = {
             created: "Organisation {{name}} was successfully created"
         }
     },
+    joinRequest: {
+        title: "Join request from {{requester}} for collaboration {{collaboration}}",
+        message:" Motivation",
+        messageTooltip: "The motivation from {{name}} for this join request",
+        reference: "Reference",
+        referenceTooltip: "The references {{name}} has within collaboration {{collaboration}}",
+        collaborationName: "Collaboration",
+        userName: "User",
+        decline: "Decline",
+        accept: "Accept",
+        declineConfirmation: "Are you sure you want to decline this join request?",
+        flash: {
+            declined: "Join request for collaboration {{name}} is declined",
+            accepted: "Join request for collaboration {{name}} is accepted",
+        }
+    },
     organisationInvitation: {
         title: "Invitation to join organisation {{organisation}}",
         organisationName: "Name",
         organisationDescription: "Description",
         organisationAdministrators: "Administrators",
         message: "Message",
-        inviter: "Inviter",
         messageTooltip: "The user {{name}} has invited you with this message",
+        inviter: "Inviter",
         decline: "Decline",
         accept: "Accept",
         declineInvitation: "Are you sure you want to decline this invitation?",
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} is declined",
             inviteAccepted: "Invitation for organisation {{name}} is accepted",
-        }
+        },
     },
     autocomplete: {
         name: "Name",
