@@ -99,6 +99,7 @@ def my_collaborations():
         .outerjoin(JoinRequest.user) \
         .outerjoin(Collaboration.services) \
         .options(joinedload(Collaboration.collaboration_memberships)) \
+        .options(contains_eager(Collaboration.organisation)) \
         .options(contains_eager(Collaboration.authorisation_groups)) \
         .options(contains_eager(Collaboration.invitations)) \
         .options(contains_eager(Collaboration.join_requests)
