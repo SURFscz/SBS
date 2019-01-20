@@ -123,12 +123,10 @@ class App extends React.Component {
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
                         <Route exact path="/collaborations/:id"
                                render={props => <CollaborationDetail user={currentUser} {...props}/>}/>
-                        {currentUser.admin &&
                         <Route exact path="/organisations"
-                               render={props => <Organisations user={currentUser} {...props}/>}/>}
-                        {currentUser.admin &&
+                               render={props => <Organisations user={currentUser} {...props}/>}/>
                         <Route exact path="/organisations/:id"
-                               render={props => <OrganisationDetail user={currentUser} {...props}/>}/>}
+                               render={props => <OrganisationDetail user={currentUser} {...props}/>}/>
                         <Route exact path="/join-requests/:id"
                                render={props => <JoinRequest user={currentUser} {...props}/>}/>
                         <Route exact path="/organisation-invitations/:id"

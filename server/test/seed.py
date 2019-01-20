@@ -86,7 +86,7 @@ def seed(db):
                                              collaboration_memberships=[john_ai_computing])
     _persist(db, authorisation_group)
 
-    join_request_john = JoinRequest(message="Please...", user=john, collaboration=ai_computing)
+    join_request_john = JoinRequest(message="Please...", reference="Dr. Johnson", user=mary, collaboration=ai_computing)
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing)
     _persist(db, join_request_john, join_request_peter)
 

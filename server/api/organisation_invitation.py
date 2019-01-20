@@ -39,7 +39,7 @@ def organisation_invitations_by_id(id):
     return organisation_invitation, 200
 
 
-@organisation_invitations_api.route("/accept", methods=["POST"], strict_slashes=False)
+@organisation_invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def organisation_invitations_accept():
     organisation_invitation = _organisation_invitation_query() \
@@ -60,7 +60,7 @@ def organisation_invitations_accept():
     return None, 201
 
 
-@organisation_invitations_api.route("/decline", methods=["POST"], strict_slashes=False)
+@organisation_invitations_api.route("/decline", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def organisation_invitations_decline():
     organisation_invitation = _organisation_invitation_query() \
