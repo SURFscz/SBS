@@ -64,7 +64,7 @@ function fetchDelete(path) {
 
 //API
 export function me() {
-    const headers = window.location.pathname.startsWith("/login") ? {"MELLON_cmuid": "urn:john"} : {};
+    const headers = window.location.pathname.startsWith("/login") ? {"MELLON_cmuid": "urn:peter"} : {};
     return fetchJson("/api/users/me", {}, headers, false);
 }
 
@@ -162,6 +162,22 @@ export function organisationInvitationAccept(organisationInvitation) {
 
 export function organisationInvitationDecline(organisationInvitation) {
     return postPutJson("/api/organisation_invitations/decline", organisationInvitation, "put");
+}
+
+export function invitationById(id) {
+    return fetchJson(`/api/invitations/${id}`);
+}
+
+export function invitationByHash(hash) {
+    return fetchJson(`/api/invitations/find_by_hash?hash=${hash}`);
+}
+
+export function invitationAccept(invitation) {
+    return postPutJson("/api/invitations/accept", invitation, "put");
+}
+
+export function invitationDecline(invitation) {
+    return postPutJson("/api/invitations/decline", invitation, "put");
 }
 
 export function joinRequestAccept(joinRequest) {

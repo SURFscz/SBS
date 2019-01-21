@@ -191,6 +191,22 @@ I18n.translations.en = {
             inviteAccepted: "Invitation for organisation {{name}} is accepted",
         },
     },
+    invitation: {
+        title: "Invitation to join collaboration {{collaboration}}",
+        collaborationName: "Name",
+        collaborationDescription: "Description",
+        collaborationAdministrators: "Administrators",
+        message: "Message",
+        messageTooltip: "The user {{name}} has invited you with this message",
+        inviter: "Inviter",
+        decline: "Decline",
+        accept: "Accept",
+        declineInvitation: "Are you sure you want to decline this invitation?",
+        flash: {
+            inviteDeclined: "Invitation for collaboration {{name}} is declined",
+            inviteAccepted: "Invitation for collaboration {{name}} is accepted",
+        },
+    },
     autocomplete: {
         name: "Name",
         description: "Description",

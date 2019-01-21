@@ -39,10 +39,6 @@ def get_user(config, auth):
     return list(filter(lambda user: user.name == auth.username and user.password == auth.password, config.api_users))
 
 
-def is_admin_user(user):
-    return len(list(filter(lambda u: u.uid == user.uid, current_app.app_config.admin_users))) == 1
-
-
 def _add_custom_header(response):
     response.headers.set("x-session-alive", "true")
     response.headers["server"] = ""
