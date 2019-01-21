@@ -46,6 +46,19 @@ def collaboration_search():
     return res, 200
 
 
+@organisation_api.route("/mine_lite", strict_slashes=False)
+@json_endpoint
+def my_organisations_lite():
+    user_id = session["user"]["id"]
+    organisations = Organisation.query \
+        .join(Organisation.organisation_memberships) \
+        .join(OrganisationMembership.user) \
+        .filter(OrganisationMembership.user_id == user_id) \
+        .filter(OrganisationMembership.role == "admin") \
+        .all()
+    return organisations, 200
+
+
 @organisation_api.route("/<id>", strict_slashes=False)
 @json_endpoint
 def organisation_by_id(id):
@@ -104,7 +117,7 @@ def save_organisation():
             "invitation": invitation,
             "base_url": current_app.app_config.base_url
         }, organisation, [administrator])
-        db.session.commit()
+    db.session.commit()
 
     return res
 

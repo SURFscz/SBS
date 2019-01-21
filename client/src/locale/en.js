@@ -83,22 +83,44 @@ I18n.translations.en = {
         add: "New",
         searchPlaceHolder: "SEARCH FOR ALL COLLABORATIONS..."
     },
+    accessTypes: {
+        open: "Open",
+        closed: "Closed",
+        on_acceptance: "On acceptance"
+    },
     collaboration: {
+        title: "Add new collaboration",
         name: "Name",
+        namePlaceHolder: "The unique name of a collaboration",
         identifier: "Identifier",
         description: "Description",
+        descriptionPlaceholder: "The description of the organisation is visible to anyone",
         access_type: "Access Type",
+        accessTypePlaceholder: "Select an access type...",
         enrollment: "Enrollment",
+        message: "Message",
+        messagePlaceholder: "Personal message to the administrators",
+        messageTooltip: "The message will be included in the<br/>email invitation to the administrators.",
         organisation_name: "Organisation",
+        organisationPlaceholder: "Select the organisation for this collaboration...",
+        organisationTooltip: "Every collaboration belongs to<br/> minimal one and only one organisation",
         accepted_user_policy: "AUP",
+        acceptedUserPolicyPlaceholder: "The URL of the Accepted User Policy",
         role: "Role",
         newTitle: "Add new collaboration",
-        subTitle: "Enter / edit the collaboration details. You will become an administrator of the new Collaboration.",
+        subTitle: "Enter / edit the collaboration details. You will become an administrator of the new collaboration.",
+        alreadyExists: "An collaboration with {{attribute}} {{value}} already exists.",
+        required: "The {{attribute}} is required for an collaboration",
+        administrators: "Administrators",
+        administratorsPlaceholder: "Invite administrators by email",
+        administratorsTooltip: "Administrators of an collaboration <br/>can edit their collaborations and<br/>invite members.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
         members: "Members",
         admin: "Administrator",
         manager: "Manager",
-        member: "Member"
-
+        member: "Member",
+        flash: {
+            created: "Collaboration {{name}} was successfully created"
+        }
     },
     organisations: {
         dashboard: "Dashboard",
@@ -139,7 +161,7 @@ I18n.translations.en = {
     },
     joinRequest: {
         title: "Join request from {{requester}} for collaboration {{collaboration}}",
-        message:" Motivation",
+        message: " Motivation",
         messageTooltip: "The motivation from {{name}} for this join request",
         reference: "Reference",
         referenceTooltip: "The references {{name}} has within collaboration {{collaboration}}",
