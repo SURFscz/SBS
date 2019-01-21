@@ -9,7 +9,7 @@ organisation_invitation_hash = token_urlsafe()
 invitation_hash = token_urlsafe()
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
-ucc_name = "UUC"
+uuc_name = "UUC"
 collaboration_uva_researcher_uuid = str(uuid.uuid4())
 
 
@@ -35,7 +35,7 @@ def seed(db):
 
     _persist(db, john, mary, peter, admin, roger)
 
-    uuc = Organisation(name=ucc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
+    uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
                        created_by="urn:admin",
                        updated_by="urnadmin")
     uva = Organisation(name="Amsterdam UVA", tenant_identifier="https://uva", description="University of Amsterdam",
