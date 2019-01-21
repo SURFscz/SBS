@@ -1,6 +1,6 @@
 from server.db.db import Organisation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ucc_name
+from server.test.seed import uuc_name
 
 
 class TestOrganisation(AbstractTest):
@@ -13,7 +13,7 @@ class TestOrganisation(AbstractTest):
         self.login()
         organisations = self.get("/api/organisations")
         self.assertEqual(1, len(organisations))
-        organisation = AbstractTest.find_by_name(organisations, ucc_name)
+        organisation = AbstractTest.find_by_name(organisations, uuc_name)
         self.assertEqual("urn:john", organisation["organisation_memberships"][0]["user"]["uid"])
 
     def test_organisation_by_id(self):

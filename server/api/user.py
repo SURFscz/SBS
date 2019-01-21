@@ -1,12 +1,12 @@
 import json
 import logging
 import os
-from flask import Blueprint, request as current_request, session, current_app
+
+from flask import Blueprint, request as current_request, session, current_app, jsonify
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
-from server.db.models import update, save
 
 UID_HEADER_NAME = "MELLON_cmuid"
 
@@ -28,14 +28,15 @@ def _is_admin_user(uid):
 
 def _store_user_in_session(user):
     # The session is stored as a cookie in the browser. We therefore minimize the content
-    session["user"] = {
+    is_admin = {"admin": _is_admin_user(user.uid), "guest": False}
+    session_data = {
         "id": user.id,
         "uid": user.uid,
         "name": user.name,
-        "email": user.email,
-        "guest": False,
-        "admin": _is_admin_user(user.uid)
+        "email": user.email
     }
+    session["user"] = {**session_data, **is_admin}
+    return is_admin
 
 
 def _user_query():
@@ -57,17 +58,16 @@ def me():
 
     uid = current_request.headers.get(UID_HEADER_NAME)
     if uid:
-        user = _user_query().filter(User.uid == uid).first()
-        if user:
-            _store_user_in_session(user)
-            user.is_admin = _is_admin_user(uid)
-        else:
-            user = User(uid=uid, name="todo", email="todo", created_by="system", updated_by="system",
-                        is_admin=_is_admin_user(uid))
+        users = _user_query().filter(User.uid == uid).all()
+        user = users[0] if len(users) > 0 else None
+        if not user:
+            user = User(uid=uid, name="todo", email="todo", created_by="system", updated_by="system")
             user = db.session.merge(user)
             db.session.commit()
 
-            session["user"] = _user_to_session_object(user)
+        is_admin = _store_user_in_session(user)
+        json_user = jsonify(user).json
+        user = {**json_user, **is_admin}
     else:
         user = {"uid": "anonymous", "guest": True, "admin": False}
         session["user"] = user
