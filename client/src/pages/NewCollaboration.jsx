@@ -1,51 +1,57 @@
 import React from "react";
-import "./Home.scss";
-import {createOrganisation, health, organisationIdentifierExists, organisationNameExists} from "../api";
+import "./NewCollaboration.scss";
+import {collaborationNameExists, createCollaboration, myOrganisationsLite} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
-import "./NewOrganisation.scss";
 import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
+import SelectField from "../components/SelectField";
 
-class NewOrganisation extends React.Component {
+class NewCollaboration extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        this.accessTypeOptions = ["open", "closed", "on_acceptance"].map(type => ({
+            value: type,
+            label: I18n.t(`accessTypes.${type}`)
+        }));
         this.state = {
             name: "",
             description: "",
-            tenant_identifier: "",
-            administrators: [],
-            email: "",
+            access_type: this.accessTypeOptions[0],
+            administrators: [this.props.user.email],
             message: "",
-            required: ["name", "tenant_identifier"],
+            email: "",
+            accepted_user_policy: "",
+            required: ["name", "organisation"],
             alreadyExists: {},
+            organisation: undefined,
+            organisations: [],
             initial: true,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
                 () => this.props.history.push("/organisations")),
             leavePage: true,
-
         };
     }
 
     componentWillMount = () => {
-        health().then(json => true);
-    };
-
-    validateOrganisationName = e =>
-        organisationNameExists(e.target.value).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
+        myOrganisationsLite().then(json => {
+            if (json.length === 0) {
+                this.props.history.push("/404");
+            } else {
+                this.setState({organisations: json.map(org => ({label: org.name, value: org.id}))});
+            }
         });
-
-    validateOrganisationTenantIdentifier = e =>
-        organisationIdentifierExists(e.target.value).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, tenant: json}});
+    };
+    validateCollaborationName = e =>
+        collaborationNameExists(e.target.value).then(json => {
+            this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
     cancel = () => {
@@ -60,10 +66,16 @@ class NewOrganisation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, tenant_identifier, administrators, message, description} = this.state;
-            createOrganisation({name, tenant_identifier, administrators, message, description}).then(res => {
-                this.props.history.push("/organisations");
-                setFlash(I18n.t("organisation.flash.created", {name: res.name}))
+            const {
+                name, description, access_type,
+                administrators, message, accepted_user_policy, organisation
+            } = this.state;
+            createCollaboration({
+                name, description, access_type: access_type.value,
+                administrators, message, accepted_user_policy, organisation_id: organisation.value
+            }).then(res => {
+                this.props.history.push("/collaborations");
+                setFlash(I18n.t("collaboration.flash.created", {name: res.name}))
             });
         }
     };
@@ -105,70 +117,79 @@ class NewOrganisation extends React.Component {
 
     render() {
         const {
-            name, description, tenant_identifier, email, initial, alreadyExists, administrators,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message
+            name, description, access_type, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
+            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
-        //TODO based on the params of the path
         const disabled = false;
         return (
-            <div className="mod-new-organisation">
+            <div className="mod-new-collaboration">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
-                                    question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
+                                    question={leavePage ? undefined : I18n.t("collaboration.deleteConfirmation")}
                                     leavePage={leavePage}/>
 
-                <div className="new-organisation">
-                    <p className="title">{I18n.t("organisation.title")}</p>
+                <div className="new-collaboration">
+                    <p className="title">{I18n.t("collaboration.title")}</p>
                     <InputField value={name} onChange={e => {
                         this.setState({
                             name: e.target.value,
                             alreadyExists: {...this.state.alreadyExists, name: false}
                         })
                     }}
-                                placeholder={I18n.t("organisation.namePlaceHolder")}
-                                onBlur={this.validateOrganisationName}
-                                name={I18n.t("organisation.name")}/>
+                                placeholder={I18n.t("collaboration.namePlaceHolder")}
+                                onBlur={this.validateCollaborationName}
+                                name={I18n.t("collaboration.name")}/>
                     {alreadyExists.name && <span
-                        className="error">{I18n.t("organisation.alreadyExists", {
-                        attribute: I18n.t("organisation.name").toLowerCase(),
+                        className="error">{I18n.t("collaboration.alreadyExists", {
+                        attribute: I18n.t("collaboration.name").toLowerCase(),
                         value: name
                     })}</span>}
                     {(!initial && isEmpty(name)) && <span
-                        className="error">{I18n.t("organisation.required", {
-                        attribute: I18n.t("organisation.name").toLowerCase()
-                    })}</span>}
-
-                    <InputField value={tenant_identifier}
-                                onChange={e => this.setState({tenant_identifier: e.target.value})}
-                                placeholder={I18n.t("organisation.tenantPlaceHolder")}
-                                onBlur={this.validateOrganisationTenantIdentifier}
-                                name={I18n.t("organisation.tenant_identifier")}/>
-                    {alreadyExists.tenant && <span
-                        className="error">{I18n.t("organisation.alreadyExists", {
-                        attribute: I18n.t("organisation.tenant_identifier").toLowerCase(),
-                        value: tenant_identifier
-                    })}</span>}
-                    {(!initial && isEmpty(tenant_identifier)) && <span
-                        className="error">{I18n.t("organisation.required", {
-                        attribute: I18n.t("organisation.tenant_identifier").toLowerCase()
+                        className="error">{I18n.t("collaboration.required", {
+                        attribute: I18n.t("collaboration.name").toLowerCase()
                     })}</span>}
 
                     <InputField value={description} onChange={e => this.setState({description: e.target.value})}
-                                placeholder={I18n.t("organisation.descriptionPlaceholder")}
-                                name={I18n.t("organisation.description")}/>
+                                placeholder={I18n.t("collaboration.descriptionPlaceholder")}
+                                name={I18n.t("collaboration.description")}/>
+
+                    <InputField value={accepted_user_policy}
+                                onChange={e => this.setState({accepted_user_policy: e.target.value})}
+                                placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
+                                name={I18n.t("collaboration.accepted_user_policy")}/>
+
+                    <SelectField value={access_type}
+                                 options={this.accessTypeOptions}
+                                 name={I18n.t("collaboration.access_type")}
+                                 placeholder={I18n.t("collaboration.accessTypePlaceholder")}
+                                 onChange={selectedOption => this.setState({access_type: selectedOption})}
+                    />
+
+                    <SelectField value={organisation}
+                                 options={organisations}
+                                 name={I18n.t("collaboration.organisation_name")}
+                                 placeholder={I18n.t("collaboration.organisationPlaceholder")}
+                                 toolTip={I18n.t("collaboration.organisationTooltip")}
+                                 onChange={selectedOption => this.setState({organisation: selectedOption})}
+                    />
+                    {(!initial && isEmpty(organisation)) && <span
+                        className="error">{I18n.t("collaboration.required", {
+                        attribute: I18n.t("collaboration.organisation").toLowerCase()
+                    })}</span>}
 
                     <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                placeholder={I18n.t("organisation.messagePlaceholder")}
-                                name={I18n.t("organisation.message")}
-                                toolTip={I18n.t("organisation.messageTooltip")}
+
+                                placeholder={I18n.t("collaboration.messagePlaceholder")}
+                                name={I18n.t("collaboration.message")}
+                                toolTip={I18n.t("collaboration.messageTooltip")}
                                 multiline={true}/>
 
                     <InputField value={email} onChange={e => this.setState({email: e.target.value})}
-                                placeholder={I18n.t("organisation.administratorsPlaceholder")}
-                                name={I18n.t("organisation.administrators")}
-                                toolTip={I18n.t("organisation.administratorsTooltip")}
+                                placeholder={I18n.t("collaboration.administratorsPlaceholder")}
+                                name={I18n.t("collaboration.administrators")}
+                                toolTip={I18n.t("collaboration.administratorsTooltip")}
                                 onBlur={this.addEmail}
                                 onEnter={this.addEmail}/>
 
@@ -176,7 +197,7 @@ class NewOrganisation extends React.Component {
                         {administrators.map(mail =>
                             <div key={mail} className="email-tag">
                                 <span>{mail}</span>
-                                {disabled ?
+                                {(disabled || mail === this.props.user.email) ?
                                     <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :
                                     <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>}
                             </div>)}
@@ -190,4 +211,4 @@ class NewOrganisation extends React.Component {
     };
 }
 
-export default NewOrganisation;
+export default NewCollaboration;

@@ -22,6 +22,7 @@ import JoinRequest from "./JoinRequest";
 import NewOrganisation from "./NewOrganisation";
 import {addIcons} from "../utils/IconLibrary";
 import OrganisationInvite from "./OrganisationInvite";
+import NewCollaboration from "./NewCollaboration";
 
 addIcons();
 
@@ -107,7 +108,7 @@ class App extends React.Component {
                     </div>}
                     <Switch>
                         <Route exact path="/" render={() => <Redirect to="/home"/>}/>
-                        <Route path="/login" render={() =>
+                        <Route exact path="/login" render={() =>
                             <Redirect
                                 to={`/registration?collaboration=${getParameterByName("state", window.location.search)}`}/>}
                         />
@@ -134,6 +135,8 @@ class App extends React.Component {
                                render={props => <OrganisationInvite user={currentUser} {...props}/>}/>}
                         <Route path="/new-organisation"
                                render={props => <NewOrganisation user={currentUser} {...props}/>}/>
+                        <Route path="/new-collaboration"
+                               render={props => <NewCollaboration user={currentUser} {...props}/>}/>
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
                         <Route component={NotFound}/>
                     </Switch>

@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from logging.handlers import TimedRotatingFileHandler
 from flask_mail import Mail
 import yaml
@@ -10,6 +11,7 @@ from munch import munchify
 from server.api.base import base_api
 from server.api.collaboration import collaboration_api
 from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
+from server.api.invitation import invitations_api
 from server.api.join_request import join_request_api
 from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
@@ -27,7 +29,7 @@ def read_file(file_name):
 
 def _init_logging(local):
     if local:
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     else:
         handler = TimedRotatingFileHandler(f"{os.path.dirname(os.path.realpath(__file__))}/../log/sbs.log",
                                            when="midnight", backupCount=30)
@@ -68,6 +70,7 @@ app.register_blueprint(user_service_profile_api)
 app.register_blueprint(organisation_api)
 app.register_blueprint(join_request_api)
 app.register_blueprint(organisation_invitations_api)
+app.register_blueprint(invitations_api)
 
 app.register_error_handler(404, page_not_found)
 
@@ -94,4 +97,4 @@ db_migrations(config.database.uri)
 
 # WSGI production mode dictates that no flask app is actually running
 if is_local:
-    app.run(port=8080, debug=False, host="0.0.0.0", threaded=True)
+    app.run(port=8080, debug=True, host="0.0.0.0", threaded=True)

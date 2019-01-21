@@ -100,6 +100,18 @@ export function myCollaborations() {
     return fetchJson(`/api/collaborations`);
 }
 
+export function myOrganisationsLite() {
+    return fetchJson(`/api/organisations/mine_lite`);
+}
+
+export function createCollaboration(collaboration) {
+    return postPutJson("/api/collaborations", collaboration, "post");
+}
+
+export function collaborationNameExists(name) {
+    return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}`);
+}
+
 export function searchCollaborations(q) {
     return fetchJson(`/api/collaborations/search?q=${encodeURIComponent(q)}`);
 }

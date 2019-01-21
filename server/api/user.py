@@ -1,7 +1,7 @@
 import json
 import logging
-
-from flask import Blueprint, request as current_request, session
+import os
+from flask import Blueprint, request as current_request, session, current_app
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, is_admin_user
@@ -16,6 +16,13 @@ user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 @user_api.route("/me", strict_slashes=False)
 @json_endpoint
 def me():
+    # Temp code
+    headers = current_request.headers
+    for k, v in headers.items():
+        current_app.logger.info(f"Header {k} value {v}")
+    for k, v in os.environ.items():
+        current_app.logger.info(f"OS environ {k} value {v}")
+
     if "user" in session and not session["user"]["guest"]:
         return session["user"], 200
 

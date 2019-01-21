@@ -39,6 +39,11 @@ class Collaborations extends React.Component {
             this.setState({collaborations: sortedCollaborations, sortedCollaborations: sortedCollaborations})
         });
 
+    newCollaboration = () => {
+        this.props.history.push("new-collaboration");
+    };
+
+
     onSearchKeyDown = e => {
         const {suggestions, selected} = this.state;
         if (e.keyCode === 40 && selected < (suggestions.length - 1)) {//keyDown
@@ -297,7 +302,7 @@ class Collaborations extends React.Component {
                            onKeyDown={this.onSearchKeyDown}
                            placeholder={I18n.t("collaborations.searchPlaceHolder")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
-                    {user.admin && <Button onClick={() => this}
+                    {user.admin && <Button onClick={this.newCollaboration}
                                            txt={I18n.t("collaborations.add")}/>
                     }
                 </div>
