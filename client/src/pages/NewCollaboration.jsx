@@ -176,7 +176,7 @@ class NewCollaboration extends React.Component {
                     />
                     {(!initial && isEmpty(organisation)) && <span
                         className="error">{I18n.t("collaboration.required", {
-                        attribute: I18n.t("collaboration.organisation").toLowerCase()
+                        attribute: I18n.t("collaboration.organisation_name").toLowerCase()
                     })}</span>}
 
                     <InputField value={message} onChange={e => this.setState({message: e.target.value})}
