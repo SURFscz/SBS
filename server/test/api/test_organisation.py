@@ -19,7 +19,7 @@ class TestOrganisation(AbstractTest):
     def test_organisation_by_id(self):
         self.login()
         organisation = self.get(f"/api/organisations/{Organisation.query.all()[0].id}")
-        self.assertEqual(1, len(organisation["organisation_memberships"]))
+        self.assertTrue(len(organisation["organisation_memberships"]) > 0)
 
     def test_organisation_crud(self):
         self.login()

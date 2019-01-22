@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export function stopEvent(e) {
     if (e !== undefined && e !== null) {
         e.preventDefault();
@@ -26,5 +28,33 @@ export function groupBy(arr, key) {
         (acc[item[key]] = acc[item[key]] || []).push(item);
         return acc;
     }, {});
+}
+
+export function sortObjects(objects, attribute, reverse) {
+    const res = [...objects].sort((a, b) => {
+        const aS = valueForSort(attribute, a).toString();
+        const bs = valueForSort(attribute, b).toString();
+        return aS.localeCompare(bs) * (reverse ? -1 : 1);
+    });
+    return res;
+}
+
+export function valueForSort(attribute, obj) {
+    const val = obj[attribute];
+    if (moment.isMoment(val)) {
+        return val.unix();
+    }
+    if (!isEmpty(val)) {
+        return val;
+    }
+    const parts = attribute.replace(/__/g, ".").split(".");
+    const res = parts.reduce((acc, e) => {
+        if (isEmpty(acc)) {
+            return "";
+        }
+        return acc[e];
+    }, obj);
+    return res;
+
 }
 

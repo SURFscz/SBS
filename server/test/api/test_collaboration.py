@@ -79,9 +79,9 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(1, len(my_collaborations))
         collaboration = AbstractTest.find_by_name(my_collaborations, ai_computing_name)
         self.assertEqual(1, len(collaboration["authorisation_groups"]))
-        self.assertEqual(2, len(collaboration["collaboration_memberships"]))
-        self.assertEqual(2, len(collaboration["join_requests"]))
-        self.assertEqual(1, len(collaboration["invitations"]))
+        self.assertTrue(len(collaboration["collaboration_memberships"]) > 0)
+        self.assertTrue(len(collaboration["join_requests"]) > 0)
+        self.assertTrue(len(collaboration["invitations"]) > 0)
 
         collaboration = self.get(f"/api/collaborations/{collaboration['id']}")
         researcher = list(filter(lambda cm: cm["role"] == "researcher", collaboration["collaboration_memberships"]))[0]

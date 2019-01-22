@@ -1,4 +1,5 @@
 import React from "react";
+import ReactTooltip from "react-tooltip";
 import {
     deleteOrganisation,
     organisationById,
@@ -10,7 +11,7 @@ import "./OrganisationDetail.scss";
 import I18n from "i18n-js";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import InputField from "../components/InputField";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {isEmpty, sortObjects, stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import moment from "moment";
@@ -26,14 +27,15 @@ class OrganisationDetail extends React.Component {
             name: "",
             tenant_identifier: "",
             description: "",
-            sortedMembers: [],
-            sortedInvitations: [],
+            members: [],
+            filteredMembers: [],
+            invitations: [],
             required: ["name", "tenant_identifier"],
             alreadyExists: {},
             initial: true,
-            sorted: "name",
+            sorted: "user__name",
             reverse: false,
-            inviteSorted: "name",
+            inviteSorted: "invitee_email",
             inviteReverse: false,
             query: "",
             adminOfOrganisation: false,
@@ -52,16 +54,18 @@ class OrganisationDetail extends React.Component {
             organisationById(params.id)
                 .then(json => {
                     const {sorted, reverse, inviteSorted, inviteReverse} = this.state;
+                    const members = sortObjects(json.organisation_memberships, sorted, reverse);
                     this.setState({
                         originalOrganisation: json,
                         name: json.name,
                         tenant_identifier: json.tenant_identifier,
                         description: json.description,
-                        sortedMembers: this.sortMembers(json.organisation_memberships, sorted, reverse),
-                        sortedInvitations: this.sortMembers(json.organisation_invitations, inviteSorted, inviteReverse),
+                        members: members,
+                        filteredMembers: members,
+                        invitations: sortObjects(json.organisation_invitations, inviteSorted, inviteReverse),
                         adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id)
                     })
-                }).catch(e => this.props.history.push("/404"));
+                });//.catch(e => this.props.history.push("/404"));
         } else {
             this.props.history.push("/404");
         }
@@ -120,23 +124,22 @@ class OrganisationDetail extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, tenant: json}});
         });
 
+    openInvitation = invitation => e => {
+        stopEvent(e);
+        this.props.history.push(`/organisation-invitations/${invitation.id}`);
+    };
+
     sortTable = (members, name, sorted, reverse) => () => {
         const reversed = (sorted === name ? !reverse : false);
-        const sortedMembers = this.sortMembers(members, name, reversed);
-        this.setState({sortedMembers: sortedMembers, sorted: name, reverse: reversed});
+        const sortedMembers = sortObjects(members, name, reversed);
+        this.setState({filteredMembers: sortedMembers, sorted: name, reverse: reversed});
     };
 
     sortInvitationsTable = (invitations, name, sorted, reverse) => () => {
         const reversed = (sorted === name ? !reverse : false);
-        const sortedInvitations = this.invitations(invitations, name, reversed);
-        this.setState({sortedInvitations: sortedInvitations, inviteSorted: name, inviteReverse: reversed});
+        const sortedInvitations = sortObjects(invitations, name, reversed);
+        this.setState({invitations: sortedInvitations, inviteSorted: name, inviteReverse: reversed});
     };
-
-    sortMembers = (members, name, reverse) => [...members].sort((a, b) => {
-        const aSafe = a[name] || "";
-        const bSafe = b[name] || "";
-        return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
-    });
 
     headerIcon = (name, sorted, reverse) => {
         if (name === sorted) {
@@ -150,7 +153,7 @@ class OrganisationDetail extends React.Component {
         if (invitations.length === 0) {
             return <p>{I18n.t("organisationDetail.noInvitations")}</p>
         }
-        const names = ["invitee", "invitedBy", "expires", "message"];
+        const names = ["invitee_email", "user__name", "expiry_date", "message"];
         return (
             <section className="invitations-container">
                 <table className="invitations">
@@ -166,11 +169,22 @@ class OrganisationDetail extends React.Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {invitations.map((invite) => <tr key={invite.id}>
+                    {invitations.map((invite) => <tr key={invite.id} onClick={this.openInvitation(invite)}>
                         <td className="invitee">{invite.invitee_email}</td>
                         <td className="invitedBy">{invite.user.name}</td>
-                        <td className="expires">{invite.expiry_date ? moment(invite.expiry_date * 1000) : I18n.t("organisationDetail.invitation.noExpires")}</td>
-                        <td className="invitee">{invite.invitee_email}</td>
+                        <td className="expires">{invite.expiry_date ? moment(invite.expiry_date * 1000).format("LL") : I18n.t("organisationDetail.invitation.noExpires")}</td>
+                        <td className="message tooltip-cell">
+                            <span>{invite.message}</span>
+                            {!isEmpty(invite.message) &&
+                            <span className="tooltip-container">
+                                <span data-tip data-for={`invite_${invite.id}`}>
+                                    <FontAwesomeIcon icon="info-circle"/>
+                                </span>
+                                <ReactTooltip id={`invite_${invite.id}`} type="info" effect="solid">
+                                    {invite.message}
+                                </ReactTooltip>
+                            </span>}
+                        </td>
                     </tr>)}
                     </tbody>
                 </table>
@@ -181,16 +195,16 @@ class OrganisationDetail extends React.Component {
 
     searchMembers = e => {
         const query = e.target.value.toLowerCase();
-        const {sortedMembers, sorted, reverse} = this.state;
-        const newMembers = sortedMembers.filter(member => member.user.name.toLowerCase().indexOf(query) > -1 ||
+        const {members, sorted, reverse} = this.state;
+        const newMembers = members.filter(member => member.user.name.toLowerCase().indexOf(query) > -1 ||
             member.user.email.toLowerCase().indexOf(query) > -1 ||
             member.user.uid.toLowerCase().indexOf(query) > -1);
-        const newSortedMembers = this.sortMembers(newMembers, sorted, reverse);
-        this.setState({sortedMembers: newSortedMembers, query: query})
+        const newSortedMembers = sortObjects(newMembers, sorted, reverse);
+        this.setState({filteredMembers: newSortedMembers, query: query})
     };
 
-    renderMembers = (members, sortedMembers, user, sorted, reverse, query) => {
-        const isAdmin = user.admin;
+    renderMembers = (members, user, sorted, reverse, query, adminOfOrganisation) => {
+        const isAdmin = user.admin || adminOfOrganisation;
         const adminClassName = isAdmin ? "with-button" : "";
 
         return (
@@ -202,18 +216,19 @@ class OrganisationDetail extends React.Component {
                            value={query}
                            placeholder={I18n.t("organisationDetail.searchPlaceHolder")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
-                    {isAdmin && <Button onClick={this.invite}
-                                        txt={I18n.t("organisationDetail.invite")}/>
+                    {isAdmin &&
+                    <Button onClick={this.invite}
+                            txt={I18n.t("organisationDetail.invite")}/>
                     }
                 </div>
-                {this.renderMemberTable(members, sortedMembers, user, sorted, reverse)}
+                {this.renderMemberTable(members, user, sorted, reverse)}
             </section>
 
         );
     };
 
-    renderMemberTable = (members, sortedMembers, user, sorted, reverse) => {
-        const names = ["name", "email", "uid", "role", "since"];
+    renderMemberTable = (members, user, sorted, reverse) => {
+        const names = ["user__name", "user__email", "user__uid", "role", "created_at"];
         const role = {value: "admin", label: "Admin"};
         return (
             <table className="members">
@@ -229,12 +244,12 @@ class OrganisationDetail extends React.Component {
                 </tr>
                 </thead>
                 <tbody>
-                {sortedMembers.map((member, i) => <tr key={i}>
+                {members.map((member, i) => <tr key={i}>
                     <td className="name">{member.user.name}</td>
                     <td className="email">{member.user.email}</td>
                     <td className="uid">{member.user.uid}</td>
-                    <td className="role"><Select value={role} isDisabled={true} options={[role]}/></td>
-                    <td className="since">{moment(member.created_at * 1000).format("LLLL")}</td>
+                    <td className="role"><Select value={role} options={[role]}/></td>
+                    <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
                 </tr>)}
                 </tbody>
             </table>
@@ -243,9 +258,9 @@ class OrganisationDetail extends React.Component {
 
     render() {
         const {
-            name, description, tenant_identifier, originalOrganisation, initial, alreadyExists, sortedMembers, query, members,
+            name, description, tenant_identifier, originalOrganisation, initial, alreadyExists, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, sorted, reverse,
-            inviteReverse, inviteSorted, sortedInvitations
+            inviteReverse, inviteSorted, invitations, adminOfOrganisation
         } = this.state;
         if (!originalOrganisation) {
             return null;
@@ -313,18 +328,19 @@ class OrganisationDetail extends React.Component {
                     <InputField value={moment(originalOrganisation.created_at * 1000).format("LLLL")}
                                 disabled={true}
                                 name={I18n.t("organisation.created")}/>
+                    {user.admin &&
                     <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("organisationDetail.update")}
                                 onClick={this.update}/>
                         <Button className="delete" txt={I18n.t("organisationDetail.delete")}
                                 onClick={this.delete}/>
-                    </section>
+                    </section>}
 
                 </div>
                 <p className="title organisation-invitations">{I18n.t("organisationDetail.invitations", {name: originalOrganisation.name})}</p>
-                {this.renderInvitations(inviteReverse, inviteSorted, sortedInvitations)}
+                {this.renderInvitations(inviteReverse, inviteSorted, invitations)}
                 <p className="title members">{I18n.t("organisationDetail.members", {name: originalOrganisation.name})}</p>
-                {this.renderMembers(members, sortedMembers, user, sorted, reverse, query)}
+                {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfOrganisation)}
             </div>)
     }
 }

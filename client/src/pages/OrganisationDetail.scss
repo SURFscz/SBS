@@ -50,8 +50,10 @@
     div.input-field {
       margin-top: 15px;
     }
+
     section.actions {
-      margin: $medium-margin 0;
+      margin: $medium-margin 0 0 0;
+
       a.delete {
         margin-left: 25px;
       }
@@ -145,10 +147,64 @@
     td {
       vertical-align: middle;
       padding: 5px;
+        .tooltip-container {
+          margin-left: 15px;
+          color: $blue;
+        }
+    }
+  }
+
+  table.members {
+    th.name {
+      width: 15%;
+    }
+
+    th.email {
+      width: 15%;
+    }
+
+    th.uid {
+      width: 30%;
+    }
+
+    th.role {
+      width: 15%;
+    }
+
+    td.role {
+      padding-right: 25px;
+    }
+
+    th.since {
+      width: 25%;
     }
   }
 
   table.invitations {
+    th.invitee {
+      width: 20%;
+    }
+
+    th.invitedBy {
+      width: 35%;
+    }
+
+    th.expires {
+      width: 20%;
+    }
+
+    th.message {
+      width: 25%;
+    }
+
+    td.message span {
+      display: inline-block;
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     tbody {
       tr {
         cursor: pointer;
@@ -156,6 +212,10 @@
         &:hover {
           color: $blue;
         }
+      }
+
+      td.role {
+        padding-right: 25px;
       }
     }
   }
