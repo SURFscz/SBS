@@ -14,7 +14,7 @@
 
   .info-block-container {
     max-width: $medium;
-    margin: 10px auto;
+    margin: 0 auto;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -190,7 +190,7 @@
           }
 
           &:nth-child(odd) {
-            background-color: $background;
+            background-color: $lightest-grey;
           }
         }
       }

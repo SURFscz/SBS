@@ -44,6 +44,7 @@ def seed(db):
     _persist(db, uuc, uva)
 
     organisation_invitation = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
+                                                     expiry_date=datetime.date.today() + datetime.timedelta(days=14),
                                                      invitee_email="roger@example.org", organisation=uuc, user=john)
     _persist(db, organisation_invitation)
 

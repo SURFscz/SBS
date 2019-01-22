@@ -1,6 +1,6 @@
 import React from "react";
 import "./Home.scss";
-import {createOrganisation, health, organisationIdentifierExists, organisationNameExists} from "../api";
+import {createOrganisation, organisationIdentifierExists, organisationNameExists} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./NewOrganisation.scss";
