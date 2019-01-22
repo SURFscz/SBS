@@ -20,6 +20,12 @@ I18n.translations.en = {
     home: {
         title: "TODO - Home dashboard"
     },
+    forms: {
+        submit: "Add",
+        cancel: "Cancel",
+        showMore: "More",
+        hideSome: "Less"
+    },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
         start: "Start",
@@ -77,29 +83,134 @@ I18n.translations.en = {
         add: "New",
         searchPlaceHolder: "SEARCH FOR ALL COLLABORATIONS..."
     },
+    accessTypes: {
+        open: "Open",
+        closed: "Closed",
+        on_acceptance: "On acceptance"
+    },
     collaboration: {
+        title: "Add new collaboration",
         name: "Name",
+        namePlaceHolder: "The unique name of a collaboration",
         identifier: "Identifier",
         description: "Description",
+        descriptionPlaceholder: "The description of the organisation is visible to anyone",
         access_type: "Access Type",
+        accessTypePlaceholder: "Select an access type...",
         enrollment: "Enrollment",
-        organisation: "Organisation",
+        message: "Message",
+        messagePlaceholder: "Personal message to the administrators",
+        messageTooltip: "The message will be included in the<br/>email invitation to the administrators.",
+        organisation_name: "Organisation",
+        organisationPlaceholder: "Select the organisation for this collaboration...",
+        organisationTooltip: "Every collaboration belongs to<br/> minimal one and only one organisation",
         accepted_user_policy: "AUP",
-        role: "Role"
+        acceptedUserPolicyPlaceholder: "The URL of the Accepted User Policy",
+        role: "Role",
+        newTitle: "Add new collaboration",
+        subTitle: "Enter / edit the collaboration details. You will become an administrator of the new collaboration.",
+        alreadyExists: "An collaboration with {{attribute}} {{value}} already exists.",
+        required: "The {{attribute}} is required for an collaboration",
+        administrators: "Administrators",
+        administratorsPlaceholder: "Invite administrators by email",
+        administratorsTooltip: "Administrators of an collaboration <br/>can edit their collaborations and<br/>invite members.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
+        members: "Members",
+        admin: "Administrator",
+        manager: "Manager",
+        member: "Member",
+        flash: {
+            created: "Collaboration {{name}} was successfully created"
+        }
     },
     organisations: {
         dashboard: "Dashboard",
         title: "My Organisations",
         members: "Members",
         collaborations: "Collaborations",
-        profile: "Profile",
+        invitations: "Invitations",
         add: "New",
         searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS..."
     },
     organisation: {
+        title: "Add new organisation",
+        subTitle: "Enter / edit the organisation details.",
         name: "Name",
+        namePlaceHolder: "The unique name of an organisation",
+        tenant_identifier: "Tenant identifier",
+        tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institution",
         description: "Description",
-        role: "Role"
+        descriptionPlaceholder: "The description of the organisation is visible to anyone",
+        message: "Message",
+        messagePlaceholder: "Personal message to the administrators",
+        messageTooltip: "The message will be included in the<br/>email invitation to the administrators.",
+        alreadyExists: "An organisation with {{attribute}} {{value}} already exists.",
+        required: "The {{attribute}} is required for an organisation",
+        administrators: "Administrators",
+        administratorsPlaceholder: "Invite administrators by email",
+        administratorsTooltip: "Administrators of an organisation <br/>can create collaborations in their organisations.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
+        role: "Role",
+        admin: "Administrator",
+        manager: "Manager",
+        member: "Member",
+        yourself: "{{name}} (it's You)",
+        anotherAdmin: "It is highly recommended to invite administrators.",
+        deleteConfirmation: "Are you sure you want to delete this organisation?",
+        flash: {
+            created: "Organisation {{name}} was successfully created"
+        }
+    },
+    organisationDetail :{
+        title: "Organisation {{name}}",
+        back: "Back to my organisations",
+
+    },
+    joinRequest: {
+        title: "Join request from {{requester}} for collaboration {{collaboration}}",
+        message: " Motivation",
+        messageTooltip: "The motivation from {{name}} for this join request",
+        reference: "Reference",
+        referenceTooltip: "The references {{name}} has within collaboration {{collaboration}}",
+        collaborationName: "Collaboration",
+        userName: "User",
+        decline: "Decline",
+        accept: "Accept",
+        declineConfirmation: "Are you sure you want to decline this join request?",
+        flash: {
+            declined: "Join request for collaboration {{name}} is declined",
+            accepted: "Join request for collaboration {{name}} is accepted",
+        }
+    },
+    organisationInvitation: {
+        title: "Invitation to join organisation {{organisation}}",
+        organisationName: "Name",
+        organisationDescription: "Description",
+        organisationAdministrators: "Administrators",
+        message: "Message",
+        messageTooltip: "The user {{name}} has invited you with this message",
+        inviter: "Inviter",
+        decline: "Decline",
+        accept: "Accept",
+        declineInvitation: "Are you sure you want to decline this invitation?",
+        flash: {
+            inviteDeclined: "Invitation for organisation {{name}} is declined",
+            inviteAccepted: "Invitation for organisation {{name}} is accepted",
+        },
+    },
+    invitation: {
+        title: "Invitation to join collaboration {{collaboration}}",
+        collaborationName: "Name",
+        collaborationDescription: "Description",
+        collaborationAdministrators: "Administrators",
+        message: "Message",
+        messageTooltip: "The user {{name}} has invited you with this message",
+        inviter: "Inviter",
+        decline: "Decline",
+        accept: "Accept",
+        declineInvitation: "Are you sure you want to decline this invitation?",
+        flash: {
+            inviteDeclined: "Invitation for collaboration {{name}} is declined",
+            inviteAccepted: "Invitation for collaboration {{name}} is accepted",
+        },
     },
     autocomplete: {
         name: "Name",
@@ -109,6 +220,16 @@ I18n.translations.en = {
         resultsLimited: "More entries matched than can be shown, please narrow your search term..."
 
     },
+    confirmationDialog: {
+        title: "Please confirm",
+        confirm: "Confirm",
+        cancel: "Cancel",
+        leavePage: "Do you really want to leave this page?",
+        leavePageSub: "Changes that you made will not be saved.",
+        stay: "Stay",
+        leave: "Leave"
+    },
+
     error_dialog: {
         title: "Unexpected error",
         body: "This is embarrassing; an unexpected error has occurred. It has been logged and reported. Please try again...",

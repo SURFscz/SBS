@@ -31,6 +31,7 @@ def attributes():
     service_entity_id = current_request.args.get("service_entity_id")
     user_service_profiles = UserServiceProfile.query \
         .options(joinedload(UserServiceProfile.service)) \
+        .join(UserServiceProfile.service) \
         .join(UserServiceProfile.collaboration_membership) \
         .join(CollaborationMembership.user) \
         .filter(User.uid == uid) \

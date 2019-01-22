@@ -49,6 +49,7 @@ class Organisation(Base, db.Model):
     __tablename__ = "organisations"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
+    tenant_identifier = db.Column("tenant_identifier", db.String(length=512), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
@@ -56,6 +57,12 @@ class Organisation(Base, db.Model):
                                      passive_deletes=True)
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="organisation",
                                                cascade="all, delete-orphan", passive_deletes=True)
+    organisation_invitations = db.relationship("OrganisationInvitation", back_populates="organisation",
+                                               cascade="all, delete-orphan",
+                                               passive_deletes=True)
+
+    def is_member(self, user_id):
+        return len(list(filter(lambda membership: membership.user_id == user_id, self.organisation_memberships))) > 0
 
 
 class OrganisationMembership(Base, db.Model):
@@ -170,6 +177,9 @@ class Collaboration(Base, db.Model):
     invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
                                   passive_deletes=True)
 
+    def is_member(self, user_id):
+        return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
+
 
 class AuthorisationGroup(Base, db.Model):
     __tablename__ = "authorisation_groups"
@@ -206,6 +216,23 @@ class Invitation(Base, db.Model):
     invitee_email = db.Column("invitee_email", db.String(length=255), nullable=False)
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="invitations")
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User")
+    accepted = db.Column("accepted", db.Boolean(), nullable=True)
+    denied = db.Column("denied", db.Boolean(), nullable=True)
+    intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
+    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+
+
+class OrganisationInvitation(Base, db.Model):
+    __tablename__ = "organisation_invitations"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    hash = db.Column("hash", db.String(length=512), nullable=False)
+    message = db.Column("message", db.Text(), nullable=True)
+    invitee_email = db.Column("invitee_email", db.String(length=255), nullable=False)
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
+    organisation = db.relationship("Organisation", back_populates="organisation_invitations")
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User")
     accepted = db.Column("accepted", db.Boolean(), nullable=True)

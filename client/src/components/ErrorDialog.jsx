@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import "./ErrorDialog.scss";
+import "./ConfirmationDialog.scss";
 import I18n from "i18n-js";
 import {stopEvent} from "../utils/Utils";
 
@@ -12,7 +12,8 @@ export default function ErrorDialog({isOpen = false, close}) {
             contentLabel={I18n.t("error_dialog.title")}
             className="confirmation-dialog-content"
             overlayClassName="confirmation-dialog-overlay"
-            closeTimeoutMS={250}>
+            closeTimeoutMS={250}
+            ariaHideApp={false}>
             <section className="dialog-header error">
                 {I18n.t("error_dialog.title")}
             </section>

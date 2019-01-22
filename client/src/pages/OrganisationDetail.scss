@@ -1,43 +1,36 @@
 @import "../stylesheets/vars.scss";
 
-.organisation {
-  background-color: white;
-  padding: 35px 0 65px 0;
+.mod-organisation-detail {
 
-  .step-container {
+  background-color: $background;
+  padding: $medium-padding 0;
+
+  .title {
+    font-size: 22px;
+    color: $dark-grey;
     max-width: $medium;
     margin: 0 auto;
-    padding: 0 $medium-padding;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    padding: 0 0 25px 0;
+  }
+
+  .organisation-detail {
+    max-width: $medium;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+    margin: 0 auto;
+    background-color: white;
+    padding: 10px $medium-padding 30px $medium-padding;
 
 
-    input[type=text], input[type=email], textarea {
-      display: block;
-      width: 100%;
-      border: 1px solid $lighter-grey;
-      padding: 6px;
-      border-radius: $br;
-      font-size: 14px;
-      margin-top: 5px;
-
-      &[disabled] {
-        background-color: $light-grey;
-      }
-    }
-
-    .form-label {
-      margin-bottom: 5px;
+    .error {
+      color: $red;
       display: inline-block;
+      font-size: 14px;
+    }
+
+    div.input-field {
+      margin-top: 15px;
     }
 
   }
-
-  .__react_component_tooltip {
-    text-align: center;
-  }
-
 
 }

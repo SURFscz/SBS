@@ -15,6 +15,7 @@ class Organisations extends React.Component {
         super(props, context);
         this.state = {
             organisations: [],
+            sortedOrganisations: [],
             selected: -1,
             suggestions: [],
             query: "",
@@ -22,15 +23,22 @@ class Organisations extends React.Component {
             moreToShow: false,
             sorted: "name",
             reverse: false,
+            showMore: []
         }
     }
 
-    componentWillMount = () => {
+    componentWillMount = () =>
         myOrganisations()
             .then(json => {
-                this.setState({organisations: json});
+                const {user} = this.props;
+                json.forEach(org => {
+                    const membership = org.organisation_memberships.find(m => m.user_id === user.id);
+                    org.role = membership ? membership.role : "";
+                });
+                const {sorted, reverse} = this.state;
+                const organisations = this.sortOrganisations(json, sorted, reverse);
+                this.setState({organisations: organisations, sortedOrganisations: organisations})
             });
-    };
 
     onSearchKeyDown = e => {
         const {suggestions, selected} = this.state;
@@ -53,6 +61,14 @@ class Organisations extends React.Component {
 
     };
 
+    toggleShowMore = name => e => {
+        stopEvent(e);
+        const {showMore} = this.state;
+        const newShowMore = showMore.includes(name) ? showMore.filter(item => item !== name) : showMore.concat([name]);
+        this.setState({showMore: newShowMore});
+    };
+
+
     search = e => {
         const query = e.target.value;
         this.setState({query: query, selected: -1});
@@ -70,12 +86,12 @@ class Organisations extends React.Component {
         })), 200);
 
     itemSelected = organisation => {
-        // this.props.history.push(`/organisations/${organisation.id}`);
+        this.props.history.push(`/organisations/${organisation.id}`);
     };
 
     openOrganisation = organisation => e => {
         stopEvent(e);
-        // this.props.history.push(`/organisations/${organisation.id}`);
+        this.props.history.push(`/organisations/${organisation.id}`);
     };
 
     openCollaboration = collaboration => e => {
@@ -83,8 +99,17 @@ class Organisations extends React.Component {
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };
 
+    openInvitation = invitation => e => {
+        stopEvent(e);
+        this.props.history.push(`/organisation-invitations/${invitation.id}`);
+    };
+
     renderCollaborations = organisations => {
-        const collaborations = organisations.map(organisation => organisation.collaborations).flat()
+        const collaborations = organisations.map(organisation => organisation.collaborations)
+            .flat().filter(item => item !== undefined);
+        const showMore = collaborations.length > 6;
+        const showMoreItems = this.state.showMore.includes("collaborations");
+
         return (
             <section className="info-block ">
                 <div className="header organisation-collaborations">
@@ -92,7 +117,7 @@ class Organisations extends React.Component {
                     <span className="counter">{collaborations.length}</span>
                 </div>
                 <div className="content">
-                    {collaborations.map((collaboration, i) =>
+                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations).map((collaboration, i) =>
                         <div className="organisation-collaborations" key={i}>
                             <a href={`/collaborations/${collaboration.id}`}
                                onClick={this.openCollaboration(collaboration)}>
@@ -100,13 +125,22 @@ class Organisations extends React.Component {
                                 <span className="count">{`(${collaboration.collaboration_memberships.length})`}</span>
                             </a>
                         </div>)}
+                    {showMore && <section className="show-more">
+                        <Button className="white"
+                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                                onClick={this.toggleShowMore("collaborations")}/>
+                    </section>}
+
                 </div>
             </section>
         );
     };
 
     renderMembers = organisations => {
-        const memberships = organisations.map(organisation => organisation.organisation_memberships).flat();
+        const memberships = organisations.map(organisation => organisation.organisation_memberships)
+            .flat().filter(item => !isEmpty(item));
+        const showMore = organisations.length > 6;
+        const showMoreItems = this.state.showMore.includes("members");
         return (
             <section className="info-block ">
                 <div className="header organisation-members">
@@ -114,7 +148,7 @@ class Organisations extends React.Component {
                     <span className="counter">{memberships.length}</span>
                 </div>
                 <div className="content">
-                    {organisations.map((organisation, i) =>
+                    {(showMore && !showMoreItems ? organisations.slice(0, 5) : organisations).map((organisation, i) =>
                         <div className="organisation-members" key={i}>
                             <a href={`/organisations/${organisation.id}`}
                                onClick={this.openOrganisation(organisation)}>
@@ -122,23 +156,45 @@ class Organisations extends React.Component {
                                 <span className="count">{`(${organisation.organisation_memberships.length})`}</span>
                             </a>
                         </div>)}
+                    {showMore && <section className="show-more">
+                        <Button className="white"
+                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                                onClick={this.toggleShowMore("members")}/>
+                    </section>}
                 </div>
 
             </section>
         );
     };
 
-    renderProfile = user => {
+    renderOrganisationInvitations = organisations => {
+        const invitations = organisations.map(organisation => organisation.organisation_invitations)
+            .flat().filter(item => !isEmpty(item));
+        const showMore = invitations.length > 6;
+        const showMoreItems = this.state.showMore.includes("invitations");
         return (
             <section className="info-block ">
-                <div className="header profile">
-                    <span className="type">{I18n.t("organisations.profile")}</span>
+                <div className="header organisation-invitations">
+                    <span className="type">{I18n.t("organisations.invitations")}</span>
+                    <span className="counter">{invitations.length}</span>
                 </div>
-                <div className="content profile">
-                    <p>{user.uid}</p>
-                    <p>{user.name}</p>
-                    <p>{user.email}</p>
+                <div className="content">
+                    {(showMore && !showMoreItems ? invitations.slice(0, 5) : invitations).map((invitation, i) =>
+                        <div className="organisation-invitations" key={i}>
+                            <a href={`/organisation-invitations/${invitation.id}`}
+                               onClick={this.openInvitation(invitation)}>
+                                <FontAwesomeIcon icon={"arrow-right"}/>
+                                <span>{invitation.invitee_email}</span>
+                            </a>
+                        </div>)}
+                    {showMore && <section className="show-more">
+                        <Button className="white"
+                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                                onClick={this.toggleShowMore("invitations")}/>
+                    </section>}
+
                 </div>
+
             </section>
         );
     };
@@ -153,35 +209,28 @@ class Organisations extends React.Component {
 
     sortTable = (organisations, name, sorted, reverse) => () => {
         const reversed = (sorted === name ? !reverse : false);
-        const sortedOrganisations = [...organisations].sort((a, b) => {
-            const aSafe = a[name] || "";
-            const bSafe = b[name] || "";
-            return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
-        });
-        this.setState({organisations: sortedOrganisations, sorted: name, reverse: reversed});
+        const sortedOrganisations = this.sortOrganisations(organisations, name, reversed);
+        this.setState({sortedOrganisations: sortedOrganisations, sorted: name, reverse: reversed});
     };
 
-    getOrganisationValue = (organisation, user, name) => {
-        switch (name) {
-            case "role" : {
-                const membership = organisation.organisation_memberships.find(m => m.user_id === user.id);
-                return membership ? membership.role : "";
-            }
-            default:
-                return organisation[name];
-        }
-    };
+    sortOrganisations = (organisations, name, reverse) => [...organisations].sort((a, b) => {
+        const aSafe = a[name] || "";
+        const bSafe = b[name] || "";
+        return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
+    });
+
+    getOrganisationValue = (organisation, user, name) => organisation[name];
 
     renderOrganisationRow = (organisation, user, names) => {
         return (
-            <tr key={organisation.id}>
+            <tr key={organisation.id} onClick={this.openOrganisation(organisation)}>
                 {names.map(name => <td key={name}>{this.getOrganisationValue(organisation, user, name)}</td>)}
             </tr>
         );
     };
 
     renderOrganisations = (organisations, user, sorted, reverse) => {
-        const names = ["name", "role", "description"];
+        const names = ["name", "tenant_identifier", "role", "description"];
         return (
             <section className="organisation-list">
                 <table>
@@ -204,7 +253,17 @@ class Organisations extends React.Component {
         );
     };
 
-    newOrganisation = e => stopEvent(e);
+    newOrganisation = () => {
+        this.props.history.push("new-organisation")
+    };
+
+    onBlurSearch = suggestions => () => {
+        if (!isEmpty(suggestions)) {
+            setTimeout(() => this.setState({suggestions: [], loadingAutoComplete: true}), 250);
+        } else {
+            this.setState({suggestions: [], loadingAutoComplete: true});
+        }
+    };
 
 
     renderSearch = (organisations, user, query, loadingAutoComplete, suggestions, moreToShow, selected) => {
@@ -214,7 +273,8 @@ class Organisations extends React.Component {
 
         return (
             <section className="organisation-search">
-                <div className="search">
+                <div className="search"
+                     tabIndex="1" onBlur={this.onBlurSearch(suggestions)}>
                     <input type="text"
                            className={adminClassName}
                            onChange={this.search}
@@ -223,8 +283,7 @@ class Organisations extends React.Component {
                            placeholder={I18n.t("organisations.searchPlaceHolder")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
                     {isAdmin && <Button onClick={this.newOrganisation}
-                                        txt={I18n.t("collaborations.add")}
-                                        icon={<FontAwesomeIcon icon="plus"/>}/>
+                                        txt={I18n.t("collaborations.add")}/>
                     }
                 </div>
                 {showAutoCompletes && <Autocomplete suggestions={suggestions}
@@ -240,10 +299,10 @@ class Organisations extends React.Component {
     };
 
     render() {
-        const {organisations, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
+        const {organisations, sortedOrganisations, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
         const {user} = this.props;
         return (
-            <div className="organisations">
+            <div className="mod-organisations">
                 {this.renderSearch(organisations, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}
                 <div className="title">
                     <span>{I18n.t("organisations.dashboard")}</span>
@@ -251,12 +310,12 @@ class Organisations extends React.Component {
                 <section className="info-block-container">
                     {this.renderCollaborations(organisations)}
                     {this.renderMembers(organisations)}
-                    {this.renderProfile(user)}
+                    {this.renderOrganisationInvitations(organisations)}
                 </section>
                 <div className="title">
                     <span>{I18n.t("organisations.title")}</span>
                 </div>
-                {this.renderOrganisations(organisations, user, sorted, reverse)}
+                {this.renderOrganisations(sortedOrganisations, user, sorted, reverse)}
             </div>);
     }
 }

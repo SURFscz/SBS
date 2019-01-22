@@ -5,4 +5,18 @@
   min-height: 100vh;
   flex-direction: column;
   background-color: $background;
+
+  .__react_component_tooltip {
+    text-align: center;
+    opacity: 1;
+    border-radius: $br;
+    border: 1px solid $lighter-grey;
+    background-color: $lightest-grey;
+  }
+
+  .__react_component_tooltip.type-light.place-top:after {
+    border-top-color: $lighter-grey;
+  }
+
 }
+

@@ -1,0 +1,14 @@
+{% extends "mail_layout.html" %}
+{% block title %}SURFNET Collaboration join-request declined{% endblock %}
+{% block content %}
+
+<p>{{ salutation }},</p>
+<p>Your <strong>request</strong> to join collaboration
+    <a href="{{ base_url }}/collaborations/{{ join_request.collaboration.id }}" style="color:#0088CC;">
+        <strong>{{ join_request.collaboration.name }}</strong></a> has been <strong>declined</strong> by the
+    administrator {{administrator}} of the collaboration.</p>
+
+</p>
+{% endblock %}
+
+

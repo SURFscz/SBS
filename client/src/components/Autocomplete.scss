@@ -9,7 +9,7 @@ section.autocomplete {
   border-bottom-left-radius: $br;
   padding-left: 20px;
   background-color: white;
-  box-shadow: 0 2px 4px 0 $lighter-grey, 0 4px 8px 0 $lighter-grey;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
   margin-bottom: 25px;
 
   div.no-results {
