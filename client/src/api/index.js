@@ -64,8 +64,7 @@ function fetchDelete(path) {
 
 //API
 export function me() {
-    //TODO - remove this after integration with mod_mellon
-    const headers = window.location.pathname.startsWith("/login") ? {"MELLON_cmuid": "urn:john"} : {};
+    const headers = {"MELLON_cmuid": "urn:john"};
     return fetchJson("/api/users/me", {}, headers, false);
 }
 
@@ -82,7 +81,7 @@ export function deleteCollaboration(id) {
 }
 
 export function inviteForCollaboration(clientData) {
-    return postPutJson(`/api/users/send_invitation`, clientData, "post")
+    return postPutJson("/api/join_requests", clientData, "post")
 }
 
 export function serviceByEntityId(entityId) {
@@ -101,12 +100,32 @@ export function myCollaborations() {
     return fetchJson(`/api/collaborations`);
 }
 
+export function myOrganisationsLite() {
+    return fetchJson(`/api/organisations/mine_lite`);
+}
+
+export function createCollaboration(collaboration) {
+    return postPutJson("/api/collaborations", collaboration, "post");
+}
+
+export function collaborationNameExists(name, existingCollaboration = null) {
+    return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&existing_collaboration=${existingCollaboration}`);
+}
+
 export function searchCollaborations(q) {
     return fetchJson(`/api/collaborations/search?q=${encodeURIComponent(q)}`);
 }
 
 export function myOrganisations() {
     return fetchJson(`/api/organisations`);
+}
+
+export function organisationNameExists(name, existingOrganisation = null) {
+    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation=${existingOrganisation}`);
+}
+
+export function organisationIdentifierExists(identifier, existingOrganisation = null) {
+    return fetchJson(`/api/organisations/identifier_exists?identifier=${encodeURIComponent(identifier)}&existing_organisation=${existingOrganisation}`);
 }
 
 export function organisationById(id) {
@@ -117,10 +136,54 @@ export function searchOrganisations(q) {
     return fetchJson(`/api/organisations/search?q=${encodeURIComponent(q)}`);
 }
 
-export function createOrganisations(organisation) {
+export function createOrganisation(organisation) {
     return postPutJson("/api/organisations", organisation, "post");
 }
 
 export function updateOrganisation(organisation) {
     return postPutJson("/api/organisations", organisation, "put");
+}
+
+export function joinRequestById(id) {
+    return fetchJson(`/api/join_requests/${id}`);
+}
+
+export function organisationInvitationById(id) {
+    return fetchJson(`/api/organisation_invitations/${id}`);
+}
+
+export function organisationInvitationByHash(hash) {
+    return fetchJson(`/api/organisation_invitations/find_by_hash?hash=${hash}`);
+}
+
+export function organisationInvitationAccept(organisationInvitation) {
+    return postPutJson("/api/organisation_invitations/accept", organisationInvitation, "put");
+}
+
+export function organisationInvitationDecline(organisationInvitation) {
+    return postPutJson("/api/organisation_invitations/decline", organisationInvitation, "put");
+}
+
+export function invitationById(id) {
+    return fetchJson(`/api/invitations/${id}`);
+}
+
+export function invitationByHash(hash) {
+    return fetchJson(`/api/invitations/find_by_hash?hash=${hash}`);
+}
+
+export function invitationAccept(invitation) {
+    return postPutJson("/api/invitations/accept", invitation, "put");
+}
+
+export function invitationDecline(invitation) {
+    return postPutJson("/api/invitations/decline", invitation, "put");
+}
+
+export function joinRequestAccept(joinRequest) {
+    return postPutJson("/api/join_requests/accept", joinRequest, "put");
+}
+
+export function joinRequestDecline(joinRequest) {
+    return postPutJson("/api/join_requests/decline", joinRequest, "put");
 }

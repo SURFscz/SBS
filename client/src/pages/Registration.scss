@@ -1,6 +1,6 @@
 @import "../stylesheets/vars.scss";
 
-.registration {
+.mod-registration {
   background-color: white;
   padding: 35px 0 65px 0;
 
@@ -50,19 +50,6 @@
         background-color: $light-blue;
         border: 2px solid $blue;
         color: $blue;
-
-        //&:after {
-        //  content: "aaaaaaa";
-        //  width: 109px;
-        //  height: 0;
-        //  border-left: 0px solid red;
-        //  border-right: 90px solid purple;
-        //  border-top: 179px solid green;
-        //  position: absolute;
-        //  top: 0px;
-        //  right: -100px;
-        //  border-bottom: 20px solid yellow;
-        //}
       }
 
       &.done {
@@ -127,9 +114,9 @@
     padding: 0 $medium-padding;
 
     p.form-title {
-      font-size: 24px;
-      line-height: 24px;
-      font-weight: bold;
+      font-size: 20px;
+      color: $dark-grey;
+      text-transform: uppercase;
       margin-bottom: 20px;
     }
 
@@ -155,7 +142,7 @@
       }
 
       td {
-        padding: 5px 0;
+        padding: 8px 0;
 
         &.attribute {
           width: 50%;
@@ -195,9 +182,6 @@
 
     a.start {
       margin-top: 20px;
-      padding: 10px 35px;
-      font-size: 24px;
-      line-height: 24px;
     }
   }
 

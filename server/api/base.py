@@ -1,11 +1,10 @@
+import json
 import logging
 import os
-import time
-from datetime import date
 from functools import wraps
 
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
-from flask.json import JSONEncoder
+from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
@@ -17,6 +16,7 @@ def auth_filter(config):
     url = current_request.base_url
 
     if "user" in session and "guest" in session["user"] and not session["user"]["guest"]:
+        request_context.is_authorized_api_call = False
         return
 
     is_whitelisted_url = False
@@ -32,15 +32,11 @@ def auth_filter(config):
 
     request_context.is_authorized_api_call = is_authorized_api_call
     if is_authorized_api_call:
-        request_context.api_user = get_user(config, auth)[0].name
+        request_context.api_user = get_user(config, auth)[0]
 
 
 def get_user(config, auth):
     return list(filter(lambda user: user.name == auth.username and user.password == auth.password, config.api_users))
-
-
-def is_admin_user(user):
-    return len(list(filter(lambda u: u.uid == user.uid, current_app.app_config.admin_users))) == 1
 
 
 def _add_custom_header(response):
@@ -48,13 +44,16 @@ def _add_custom_header(response):
     response.headers["server"] = ""
 
 
-class DynamicExtendedJSONEncoder(JSONEncoder):
-    def default(self, o):
-        if hasattr(o, "__json__"):
-            return o.__json__()
-        if isinstance(o, date):
-            return time.mktime(o.timetuple())
-        return super(DynamicExtendedJSONEncoder, self).default(o)
+_audit_trail_methods = ["PUT", "POST", "DELETE"]
+
+
+def _audit_trail():
+    method = current_request.method
+    if method in _audit_trail_methods:
+        msg = json.dumps(current_request.json) if method != "DELETE" else ""
+        user_name = session["user"]["uid"] if "user" in session else request_context.api_user.name
+        logger = logging.getLogger("main")
+        logger.info(f"Path {current_request.path} {method} called by {user_name} {msg}")
 
 
 def json_endpoint(f):
@@ -64,12 +63,18 @@ def json_endpoint(f):
             auth_filter(current_app.app_config)
             body, status = f(*args, **kwargs)
             response = jsonify(body)
+            _audit_trail()
             _add_custom_header(response)
             return response, status
         except Exception as e:
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e))
             logging.getLogger().exception(response)
-            response.status_code = e.code if isinstance(e, HTTPException) else 500
+            if isinstance(e, NoResultFound):
+                response.status_code = 404
+            elif isinstance(e, HTTPException):
+                response.status_code = e.code
+            else:
+                response.status_code = 500
             _add_custom_header(response)
             if response.status_code == 401:
                 response.headers.set("WWW-Authenticate", "Basic realm=\"Please login\"")

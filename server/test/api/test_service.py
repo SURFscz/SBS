@@ -16,7 +16,7 @@ class TestService(AbstractTest):
         self.assertEqual(1, len(res))
 
     def test_find_by_non_existing_entity_id(self):
-        self.get("/api/services/find_by_entity", query_data={"entity_id": "nope"}, response_status_code=500)
+        self.get("/api/services/find_by_entity", query_data={"entity_id": "nope"}, response_status_code=404)
 
     def test_service_new(self):
         service = self.post("/api/services", body={"entity_id": "https://new_service", "name": "new_service"})

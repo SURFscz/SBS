@@ -1,23 +1,5 @@
 import React from "react";
 import "./App.scss";
-import {library} from '@fortawesome/fontawesome-svg-core'
-import {
-    faLightbulb,
-    faGavel,
-    faLink,
-    faBook,
-    faInfoCircle,
-    faCircle,
-    faPlus,
-    faCheck,
-    faCheckCircle,
-    faWindowClose,
-    faSearch,
-    faArrowRight,
-    faExternalLinkAlt,
-    faArrowUp,
-    faArrowDown,
-} from '@fortawesome/free-solid-svg-icons'
 import Header from "../components/Header";
 import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import NotFound from "../pages/NotFound";
@@ -36,10 +18,14 @@ import CollaborationDetail from "./CollaborationDetail";
 import Organisations from "./Organisations";
 import OrganisationDetail from "./OrganisationDetail";
 import Home from "./Home";
+import JoinRequest from "./JoinRequest";
+import NewOrganisation from "./NewOrganisation";
+import {addIcons} from "../utils/IconLibrary";
+import OrganisationInvite from "./OrganisationInvite";
+import NewCollaboration from "./NewCollaboration";
+import Invite from "./Invite";
 
-
-library.add(faLightbulb, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck,
-    faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown);
+addIcons();
 
 const S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 
@@ -54,6 +40,10 @@ class App extends React.Component {
             errorDialogAction: () => this.setState({errorDialogOpen: false})
         };
         window.onerror = (msg, url, line, col, err) => {
+            if (err && err.response && err.response.status === 404) {
+                this.props.history.push("/404");
+                return;
+            }
             this.setState({errorDialogOpen: true});
             const info = err || {};
             const response = info.response || {};
@@ -119,13 +109,12 @@ class App extends React.Component {
                     </div>}
                     <Switch>
                         <Route exact path="/" render={() => <Redirect to="/home"/>}/>
-                        <Route path="/login" render={() =>
+                        <Route exact path="/login" render={() =>
                             <Redirect
                                 to={`/registration?collaboration=${getParameterByName("state", window.location.search)}`}/>}
                         />
                         <Route path="/registration"
                                render={props => <Registration user={currentUser}
-                                                              service={getParameterByName("service", window.location.search)}
                                                               collaboration={getParameterByName("collaboration", window.location.search)}
                                                               {...props}/>}
                         />
@@ -135,12 +124,24 @@ class App extends React.Component {
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
                         <Route exact path="/collaborations/:id"
                                render={props => <CollaborationDetail user={currentUser} {...props}/>}/>
-                        {currentUser.admin &&
                         <Route exact path="/organisations"
-                               render={props => <Organisations user={currentUser} {...props}/>}/>}
-                        {currentUser.admin &&
+                               render={props => <Organisations user={currentUser} {...props}/>}/>
                         <Route exact path="/organisations/:id"
-                               render={props => <OrganisationDetail user={currentUser} {...props}/>}/>}
+                               render={props => <OrganisationDetail user={currentUser} {...props}/>}/>
+                        <Route exact path="/join-requests/:id"
+                               render={props => <JoinRequest user={currentUser} {...props}/>}/>
+                        <Route exact path="/organisation-invitations/:id"
+                               render={props => <OrganisationInvite user={currentUser} {...props}/>}/>}
+                        <Route exact path="/organisation-invitations/:action/:hash"
+                               render={props => <OrganisationInvite user={currentUser} {...props}/>}/>}
+                        <Route exact path="/invitations/:id"
+                               render={props => <Invite user={currentUser} {...props}/>}/>}
+                        <Route exact path="/invitations/:action/:hash"
+                               render={props => <Invite user={currentUser} {...props}/>}/>}
+                        <Route path="/new-organisation"
+                               render={props => <NewOrganisation user={currentUser} {...props}/>}/>
+                        <Route path="/new-collaboration"
+                               render={props => <NewCollaboration user={currentUser} {...props}/>}/>
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
                         <Route component={NotFound}/>
                     </Switch>

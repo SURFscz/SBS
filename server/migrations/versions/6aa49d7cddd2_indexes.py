@@ -27,6 +27,7 @@ def upgrade():
     conn.execute(text("ALTER TABLE collaborations ADD UNIQUE INDEX collaborations_unique_name(name)"))
     conn.execute(text("ALTER TABLE users ADD UNIQUE INDEX users_unique_uid(uid)"))
     conn.execute(text("ALTER TABLE organisations ADD UNIQUE INDEX organisations_unique_name(name)"))
+    conn.execute(text("ALTER TABLE organisations ADD UNIQUE INDEX organisations_unique_tenant(tenant_identifier)"))
     conn.execute(text("ALTER TABLE services ADD UNIQUE INDEX services_unique_entity_id(entity_id)"))
     conn.execute(text(
         "ALTER TABLE authorisation_groups ADD UNIQUE INDEX authorisation_groups_unique_name(name, collaboration_id)"))

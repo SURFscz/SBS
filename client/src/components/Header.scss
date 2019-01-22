@@ -1,5 +1,12 @@
 @import "../stylesheets/vars.scss";
 
+.flash.hide + div.header-container {
+  .header {
+    margin: 0 auto;
+    transition: margin-top 150ms ease-in-out;
+  }
+}
+
 .header-container {
 
   background: white;
@@ -7,9 +14,10 @@
 
   .header {
     max-width: $medium;
-    margin: 0 auto;
+    margin: 40px auto 0 auto;
     padding: 6px 20px 0 20px;
     position: relative;
+    transition: margin 150ms ease-in-out;
     display: flex;
     align-items: center;
 
@@ -46,6 +54,7 @@
         margin: 0 60px 16px 0;
         font-size: 24px;
         text-transform: uppercase;
+
         a {
           text-decoration: none;
           color: $primary-green;
@@ -83,7 +92,7 @@
         top: 50px;
         background: #fff;
         border-radius: $br;
-        box-shadow: 1px 1px $br rgba(black, .3);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
 
         li {
           font-style: italic;

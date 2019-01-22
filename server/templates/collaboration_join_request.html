@@ -1,5 +1,5 @@
 {% extends "mail_layout.html" %}
-{% block title %}SURFNET Collaboration invite{% endblock %}
+{% block title %}SURFNET Collaboration join-request{% endblock %}
 {% block content %}
 
 <p>{{ salutation }},</p>
@@ -7,7 +7,7 @@
 <p>The user {{ user.name }} has requested access to the collaboration {{ collaboration.name }}.</p>
 <p>The motivation for this request:</p>
 <p>{{ join_request.message }}</p>
-{% if join_request.reference is defined and join_request.reference|length %}
+{% if join_request.reference is defined and join_request.reference != None and join_request.reference|length %}
 <p>The user has provided the following references within the collaboration.</p>
 <p>{{ join_request.reference }}</p>
 {% else %}

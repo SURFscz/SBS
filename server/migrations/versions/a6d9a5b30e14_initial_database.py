@@ -5,10 +5,11 @@ Revises:
 Create Date: 2019-01-07 10:28:20.335581
 
 """
-from alembic import op
-import sqlalchemy as sa
 from datetime import datetime
+
 import pytz
+import sqlalchemy as sa
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = 'a6d9a5b30e14'
@@ -34,6 +35,7 @@ def upgrade():
     op.create_table("organisations",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
                     sa.Column("name", sa.String(length=255), nullable=True),
+                    sa.Column("tenant_identifier", sa.String(length=255), nullable=False),
                     sa.Column("description", sa.Text(), nullable=True),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
@@ -44,9 +46,10 @@ def upgrade():
                     )
 
     op.create_table("organisation_memberships",
-                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False, primary_key=True),
-                    sa.Column("organisation_id", sa.Integer(), sa.ForeignKey("organisations.id"), nullable=False,
+                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="cascade"), nullable=False,
                               primary_key=True),
+                    sa.Column("organisation_id", sa.Integer(), sa.ForeignKey("organisations.id", ondelete="cascade"),
+                              nullable=False, primary_key=True),
                     sa.Column("role", sa.String(length=255), nullable=False),
                     sa.Column("created_by", sa.String(length=512), nullable=False),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
@@ -62,7 +65,8 @@ def upgrade():
                     sa.Column("access_type", sa.String(length=255), nullable=True),
                     sa.Column("enrollment", sa.String(length=255), nullable=True),
                     sa.Column("accepted_user_policy", sa.String(length=255), nullable=True),
-                    sa.Column("organisation_id", sa.Integer(), sa.ForeignKey("organisations.id"), nullable=False),
+                    sa.Column("organisation_id", sa.Integer(), sa.ForeignKey("organisations.id", ondelete="cascade"),
+                              nullable=False),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
                     sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
@@ -73,7 +77,7 @@ def upgrade():
 
     op.create_table("collaboration_memberships",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
-                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False),
+                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="cascade"), nullable=False),
                     sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
                               nullable=False),
                     sa.Column("role", sa.String(length=255), nullable=False),
@@ -112,7 +116,8 @@ def upgrade():
 
     op.create_table("user_service_profiles",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
-                    sa.Column("service_id", sa.Integer(), sa.ForeignKey("services.id"), nullable=False),
+                    sa.Column("service_id", sa.Integer(), sa.ForeignKey("services.id", ondelete="cascade"),
+                              nullable=False),
                     sa.Column("collaboration_membership_id", sa.Integer(),
                               sa.ForeignKey("collaboration_memberships.id", ondelete="cascade"),
                               nullable=False),
@@ -164,7 +169,7 @@ def upgrade():
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
                     sa.Column("reference", sa.Text(), nullable=True),
                     sa.Column("message", sa.Text(), nullable=True),
-                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=False),
+                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="cascade"), nullable=False),
                     sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
                               nullable=False),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
@@ -177,6 +182,23 @@ def upgrade():
                     sa.Column("message", sa.Text(), nullable=True),
                     sa.Column("invitee_email", sa.String(length=255), nullable=False),
                     sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
+                              nullable=False),
+                    sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="cascade"),
+                              nullable=False),
+                    sa.Column("accepted", sa.Boolean(), nullable=True),
+                    sa.Column("denied", sa.Boolean(), nullable=True),
+                    sa.Column("expiry_date", sa.DateTime(timezone=True), nullable=True),
+                    sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
+                              nullable=False),
+                    sa.Column("created_by", sa.String(length=512), nullable=False),
+                    )
+
+    op.create_table("organisation_invitations",
+                    sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
+                    sa.Column("hash", sa.String(length=512), nullable=False),
+                    sa.Column("message", sa.Text(), nullable=True),
+                    sa.Column("invitee_email", sa.String(length=255), nullable=False),
+                    sa.Column("organisation_id", sa.Integer(), sa.ForeignKey("organisations.id", ondelete="cascade"),
                               nullable=False),
                     sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id", ondelete="cascade"),
                               nullable=False),

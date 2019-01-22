@@ -1,13 +1,15 @@
 import datetime
-import random
 import uuid
-from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
-    JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup
+from secrets import token_urlsafe
 
-invitation_hash = str(random.getrandbits(512))
+from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
+    JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
+
+organisation_invitation_hash = token_urlsafe()
+invitation_hash = token_urlsafe()
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
-ucc_name = "UUC"
+uuc_name = "UUC"
 collaboration_uva_researcher_uuid = str(uuid.uuid4())
 
 
@@ -29,13 +31,21 @@ def seed(db):
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org")
     admin = User(uid="urn:admin", name="The Boss", email="boss@example.org")
-    _persist(db, john, mary, peter, admin)
+    roger = User(uid="urn:roger", name="Roger Doe", email="roger@example.org")
 
-    uuc = Organisation(name=ucc_name, description="Unincorporated Urban Community", created_by="urn:admin",
+    _persist(db, john, mary, peter, admin, roger)
+
+    uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
+                       created_by="urn:admin",
                        updated_by="urnadmin")
-    uva = Organisation(name="Amsterdam UVA", description="University of Amsterdam", created_by="urn:admin",
+    uva = Organisation(name="Amsterdam UVA", tenant_identifier="https://uva", description="University of Amsterdam",
+                       created_by="urn:admin",
                        updated_by="urnadmin")
     _persist(db, uuc, uva)
+
+    organisation_invitation = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
+                                                     invitee_email="roger@example.org", organisation=uuc, user=john)
+    _persist(db, organisation_invitation)
 
     organisation_membership = OrganisationMembership(role="admin", user=john, organisation=uuc)
     _persist(db, organisation_membership)
@@ -76,7 +86,7 @@ def seed(db):
                                              collaboration_memberships=[john_ai_computing])
     _persist(db, authorisation_group)
 
-    join_request_john = JoinRequest(message="Please...", user=john, collaboration=ai_computing)
+    join_request_john = JoinRequest(message="Please...", reference="Dr. Johnson", user=mary, collaboration=ai_computing)
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing)
     _persist(db, join_request_john, join_request_peter)
 
