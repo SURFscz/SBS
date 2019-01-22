@@ -95,6 +95,11 @@ app.app_config["profile"] = profile
 Migrate(app, db)
 db_migrations(config.database.uri)
 
+from server.test.seed import seed
+with app.app_context():
+   print("Seeding the data...")
+   seed(db)
+   
 # WSGI production mode dictates that no flask app is actually running
 if is_local:
     app.run(port=8080, debug=False, host="0.0.0.0", threaded=True)
