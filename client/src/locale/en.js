@@ -140,6 +140,7 @@ I18n.translations.en = {
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institution",
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
+        created: "Created at",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
         messageTooltip: "The message will be included in the<br/>email invitation to the administrators.",
@@ -160,9 +161,34 @@ I18n.translations.en = {
         }
     },
     organisationDetail :{
+        backToOrganisations: "Back to my organisations",
         title: "Organisation {{name}}",
         back: "Back to my organisations",
-
+        members: "Members of {{name}}",
+        invitations: "Invitations for {{name}}",
+        searchPlaceHolder: "Search for members",
+        invite: "Invite",
+        noInvitations: "No pending invitations",
+        member: {
+            name: "Name",
+            email: "Email",
+            uid: "UID",
+            role: "Role",
+            since: "Since"
+        },
+        invitation: {
+            invitee: "Email",
+            invitedBy: "Invited by",
+            expires: "Expires",
+            noExpires: "N/A",
+            message: "UID",
+        },
+        update: "Update",
+        delete: "Delete",
+        flash :{
+            updated: "Organisation {{name}} was successfully updated",
+            deleted: "Organisation {{name}} was successfully deleted"
+        }
     },
     joinRequest: {
         title: "Join request from {{requester}} for collaboration {{collaboration}}",

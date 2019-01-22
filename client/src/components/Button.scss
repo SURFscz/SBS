@@ -52,6 +52,17 @@ a.button {
     }
   }
 
+  &.delete {
+    background-color: $red;
+    color: white;
+    border: none;
+
+    &:hover {
+      background-color: darken($red, 5%);
+      color: darken(white, 10%);
+    }
+  }
+
   &.green {
     background-color: $primary-green;
     color: white;
