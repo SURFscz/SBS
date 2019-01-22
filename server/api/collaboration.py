@@ -28,10 +28,12 @@ def collaboration_by_name():
 @json_endpoint
 def name_exists():
     name = current_request.args.get("name")
-    org = Collaboration.query \
-        .options(load_only("id")) \
-        .filter(func.lower(Collaboration.name) == func.lower(name)).first()
-    return org is not None, 200
+    existing_collaboration = current_request.args.get("existing_collaboration", "")
+    coll = Collaboration.query.options(load_only("id")) \
+        .filter(func.lower(Collaboration.name) == func.lower(name))\
+        .filter(func.lower(Collaboration.name) != func.lower(existing_collaboration))\
+        .first()
+    return coll is not None, 200
 
 
 @collaboration_api.route("/search", strict_slashes=False)
