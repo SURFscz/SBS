@@ -6,7 +6,8 @@ from server.db.db import User, Organisation, OrganisationMembership, Service, Co
     JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
 
 organisation_invitation_hash = token_urlsafe()
-invitation_hash = token_urlsafe()
+invitation_hash_curious = token_urlsafe()
+invitation_hash_no_way = token_urlsafe()
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
 uuc_name = "UUC"
@@ -32,8 +33,9 @@ def seed(db):
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org")
     admin = User(uid="urn:admin", name="The Boss", email="boss@example.org")
     roger = User(uid="urn:roger", name="Roger Doe", email="roger@example.org")
+    harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org")
 
-    _persist(db, john, mary, peter, admin, roger)
+    _persist(db, john, mary, peter, admin, roger, harry)
 
     uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
                        created_by="urn:admin",
@@ -43,13 +45,24 @@ def seed(db):
                        updated_by="urnadmin")
     _persist(db, uuc, uva)
 
-    organisation_invitation = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
-                                                     expiry_date=datetime.date.today() + datetime.timedelta(days=14),
-                                                     invitee_email="roger@example.org", organisation=uuc, user=john)
-    _persist(db, organisation_invitation)
+    organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
+                                                           expiry_date=datetime.date.today() + datetime.timedelta(
+                                                               days=14),
+                                                           invitee_email="roger@example.org", organisation=uuc,
+                                                           user=john)
+    organisation_invitation_pass = OrganisationInvitation(message="Let me please join as I "
+                                                                  "really, really, really \n really, "
+                                                                  "really, really \n want to...",
+                                                          hash=token_urlsafe(),
+                                                          expiry_date=datetime.date.today() + datetime.timedelta(
+                                                              days=21),
+                                                          invitee_email="pass@example.org", organisation=uuc, user=john)
+    _persist(db, organisation_invitation_roger, organisation_invitation_pass)
 
-    organisation_membership = OrganisationMembership(role="admin", user=john, organisation=uuc)
-    _persist(db, organisation_membership)
+    organisation_membership_john = OrganisationMembership(role="admin", user=john, organisation=uuc)
+    organisation_membership_mary = OrganisationMembership(role="admin", user=mary, organisation=uuc)
+    organisation_membership_harry = OrganisationMembership(role="admin", user=harry, organisation=uuc)
+    _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry)
 
     mail = Service(entity_id="https://mail", name="mail", contact_email=john.email)
     network = Service(entity_id="https://network", name="network", description="Network enabling service SSH access",
@@ -91,9 +104,13 @@ def seed(db):
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing)
     _persist(db, join_request_john, join_request_peter)
 
-    invitation = Invitation(hash=invitation_hash, invitee_email="curious@ex.org", collaboration=ai_computing,
+    invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
                             expiry_date=datetime.date.today() + datetime.timedelta(days=14), user=admin,
                             message="Please join...")
-    _persist(db, invitation)
+    invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
+                                  expiry_date=datetime.date.today() + datetime.timedelta(days=21), user=admin,
+                                  message="Let me please join as I really, really, really \n really, "
+                                          "really, really \n want to...")
+    _persist(db, invitation, invitation_noway)
 
     db.session.commit()

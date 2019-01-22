@@ -170,18 +170,18 @@ I18n.translations.en = {
         invite: "Invite",
         noInvitations: "No pending invitations",
         member: {
-            name: "Name",
-            email: "Email",
-            uid: "UID",
+            user__name: "Name",
+            user__email: "Email",
+            user__uid: "UID",
             role: "Role",
-            since: "Since"
+            created_at: "Since"
         },
         invitation: {
-            invitee: "Email",
-            invitedBy: "Invited by",
-            expires: "Expires",
+            invitee_email: "Invitee email",
+            user__name: "Invited by",
+            expiry_date: "Expires",
             noExpires: "N/A",
-            message: "UID",
+            message: "Message",
         },
         update: "Update",
         delete: "Delete",
