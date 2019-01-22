@@ -19,9 +19,11 @@ organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/orga
 @json_endpoint
 def name_exists():
     name = current_request.args.get("name")
-    org = Organisation.query \
-        .options(load_only("id")) \
-        .filter(func.lower(Organisation.name) == func.lower(name)).first()
+    existing_organisation = current_request.args.get("existing_organisation", "")
+    org = Organisation.query.options(load_only("id")) \
+        .filter(func.lower(Organisation.name) == func.lower(name)) \
+        .filter(func.lower(Organisation.name) != func.lower(existing_organisation)) \
+        .first()
     return org is not None, 200
 
 
@@ -29,9 +31,11 @@ def name_exists():
 @json_endpoint
 def identifier_exists():
     identifier = current_request.args.get("identifier")
-    org = Organisation.query \
-        .options(load_only("id")) \
-        .filter(func.lower(Organisation.tenant_identifier) == func.lower(identifier)).first()
+    existing_organisation = current_request.args.get("existing_organisation", "")
+    org = Organisation.query.options(load_only("id")) \
+        .filter(func.lower(Organisation.tenant_identifier) == func.lower(identifier))\
+        .filter(func.lower(Organisation.tenant_identifier) != func.lower(existing_organisation))\
+        .first()
     return org is not None, 200
 
 
@@ -66,8 +70,8 @@ def organisation_by_id(id):
     collaboration = Organisation.query \
         .options(joinedload(Organisation.organisation_memberships)
                  .subqueryload(OrganisationMembership.user)) \
-        .options(joinedload(Organisation.collaborations)
-                 .subqueryload(Collaboration.collaboration_memberships)) \
+        .options(joinedload(Organisation.organisation_invitations)
+                 .subqueryload(OrganisationInvitation.user)) \
         .join(OrganisationMembership.user) \
         .filter(OrganisationMembership.user_id == user_id) \
         .filter(Organisation.id == id) \

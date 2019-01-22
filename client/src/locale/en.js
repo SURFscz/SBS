@@ -159,6 +159,11 @@ I18n.translations.en = {
             created: "Organisation {{name}} was successfully created"
         }
     },
+    organisationDetail :{
+        title: "Organisation {{name}}",
+        back: "Back to my organisations",
+
+    },
     joinRequest: {
         title: "Join request from {{requester}} for collaboration {{collaboration}}",
         message: " Motivation",

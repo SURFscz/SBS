@@ -30,13 +30,8 @@ class NewOrganisation extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
                 () => this.props.history.push("/organisations")),
             leavePage: true,
-
         };
     }
-
-    componentWillMount = () => {
-        health().then(json => true);
-    };
 
     validateOrganisationName = e =>
         organisationNameExists(e.target.value).then(json => {

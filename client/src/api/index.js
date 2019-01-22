@@ -64,7 +64,7 @@ function fetchDelete(path) {
 
 //API
 export function me() {
-    const headers = window.location.pathname.startsWith("/login") ? {"MELLON_cmuid": "urn:john"} : {};
+    const headers = {"MELLON_cmuid": "urn:john"};
     return fetchJson("/api/users/me", {}, headers, false);
 }
 
@@ -108,8 +108,8 @@ export function createCollaboration(collaboration) {
     return postPutJson("/api/collaborations", collaboration, "post");
 }
 
-export function collaborationNameExists(name) {
-    return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}`);
+export function collaborationNameExists(name, existingCollaboration = null) {
+    return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&existing_collaboration=${existingCollaboration}`);
 }
 
 export function searchCollaborations(q) {
@@ -120,12 +120,12 @@ export function myOrganisations() {
     return fetchJson(`/api/organisations`);
 }
 
-export function organisationNameExists(name) {
-    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}`);
+export function organisationNameExists(name, existingOrganisation = null) {
+    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation=${existingOrganisation}`);
 }
 
-export function organisationIdentifierExists(identifier) {
-    return fetchJson(`/api/organisations/identifier_exists?identifier=${encodeURIComponent(identifier)}`);
+export function organisationIdentifierExists(identifier, existingOrganisation = null) {
+    return fetchJson(`/api/organisations/identifier_exists?identifier=${encodeURIComponent(identifier)}&existing_organisation=${existingOrganisation}`);
 }
 
 export function organisationById(id) {

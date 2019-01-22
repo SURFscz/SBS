@@ -19,7 +19,7 @@ class TestOrganisation(AbstractTest):
     def test_organisation_by_id(self):
         self.login()
         organisation = self.get(f"/api/organisations/{Organisation.query.all()[0].id}")
-        self.assertEqual(2, len(organisation["collaborations"][0]["collaboration_memberships"]))
+        self.assertEqual(1, len(organisation["organisation_memberships"]))
 
     def test_organisation_crud(self):
         self.login()
@@ -48,12 +48,26 @@ class TestOrganisation(AbstractTest):
         res = self.get("/api/organisations/name_exists", query_data={"name": "uuc"})
         self.assertEqual(True, res)
 
+        res = self.get("/api/organisations/name_exists", query_data={"name": "uuc", "existing_organisation": "uuc"})
+        self.assertEqual(False, res)
+
         res = self.get("/api/organisations/name_exists", query_data={"name": "xyc"})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/organisations/name_exists", query_data={"name": "xyc", "existing_organisation": "xyc"})
         self.assertEqual(False, res)
 
     def test_organisation_identifier_exists(self):
         res = self.get("/api/organisations/identifier_exists", query_data={"identifier": "https://uuc"})
         self.assertEqual(True, res)
 
+        res = self.get("/api/organisations/identifier_exists",
+                       query_data={"identifier": "https://uuc", "existing_organisation": "HTTPS://UUC"})
+        self.assertEqual(False, res)
+
         res = self.get("/api/organisations/identifier_exists", query_data={"identifier": "https://xyz"})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/organisations/identifier_exists",
+                       query_data={"identifier": "https://xyz", "existing_organisation": "https://xyz"})
         self.assertEqual(False, res)
