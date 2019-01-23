@@ -21,9 +21,10 @@ import Home from "./Home";
 import JoinRequest from "./JoinRequest";
 import NewOrganisation from "./NewOrganisation";
 import {addIcons} from "../utils/IconLibrary";
-import OrganisationInvite from "./OrganisationInvite";
+import OrganisationInvitation from "./OrganisationInvitation";
 import NewCollaboration from "./NewCollaboration";
 import Invite from "./Invite";
+import NewOrganisationInvitation from "./NewOrganisationInvitation";
 
 addIcons();
 
@@ -120,29 +121,48 @@ class App extends React.Component {
                         />
                         <Route path="/home"
                                render={props => <Home user={currentUser} {...props}/>}/>
+
                         <Route exact path="/collaborations"
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
+
                         <Route exact path="/collaborations/:id"
                                render={props => <CollaborationDetail user={currentUser} {...props}/>}/>
+
                         <Route exact path="/organisations"
                                render={props => <Organisations user={currentUser} {...props}/>}/>
+
                         <Route exact path="/organisations/:id"
                                render={props => <OrganisationDetail user={currentUser} {...props}/>}/>
+
                         <Route exact path="/join-requests/:id"
                                render={props => <JoinRequest user={currentUser} {...props}/>}/>
+
                         <Route exact path="/organisation-invitations/:id"
-                               render={props => <OrganisationInvite user={currentUser} {...props}/>}/>}
+                               render={props => <OrganisationInvitation user={currentUser} {...props}/>}/>}
+
                         <Route exact path="/organisation-invitations/:action/:hash"
-                               render={props => <OrganisationInvite user={currentUser} {...props}/>}/>}
+                               render={props => <OrganisationInvitation user={currentUser} {...props}/>}/>}
+
+                        <Route exact path="/new-organisation-invite/:organisation_id"
+                               render={props => <NewOrganisationInvitation user={currentUser} {...props}/>}/>}
+
+                        {/*<Route exact path="/new-invite/:collaboration_id"*/}
+                               {/*render={props => <NewInvitation user={currentUser} {...props}/>}/>}*/}
+
                         <Route exact path="/invitations/:id"
                                render={props => <Invite user={currentUser} {...props}/>}/>}
+
                         <Route exact path="/invitations/:action/:hash"
                                render={props => <Invite user={currentUser} {...props}/>}/>}
+
                         <Route path="/new-organisation"
                                render={props => <NewOrganisation user={currentUser} {...props}/>}/>
+
                         <Route path="/new-collaboration"
                                render={props => <NewCollaboration user={currentUser} {...props}/>}/>
-                        <Route path="/error" render={props => <ServerError {...props}/>}/>
+
+                               <Route path="/error" render={props => <ServerError {...props}/>}/>
+
                         <Route component={NotFound}/>
                     </Switch>
                     <Footer/>

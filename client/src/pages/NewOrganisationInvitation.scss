@@ -1,0 +1,75 @@
+@import "../stylesheets/vars.scss";
+
+.mod-new-organisation-invitation {
+  background-color: $background;
+  padding-top: $medium-padding;
+
+  .new-organisation-invitation {
+    max-width: $medium;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px $medium-padding;
+
+    .title {
+      font-size: 22px;
+      color: $dark-grey;
+      margin-bottom: 30px;
+    }
+
+    .error {
+      color: $red;
+      display: inline-block;
+      font-size: 14px;
+    }
+
+    div.input-field {
+      margin-top: 15px;
+    }
+
+    section.email-tags {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .email-tag {
+        border: 1px solid $lighter-grey;
+        border-radius: $br;
+        margin: 10px 10px 0 0;
+        display: flex;
+        align-content: center;
+        align-items: center;
+
+        span {
+          &:first-child {
+            padding-left: 6px;
+            padding-right: 24px;
+            word-break: break-all;
+          }
+
+          &:last-child {
+            padding: 6px 14px;
+            background-color: $background;
+            cursor: pointer;
+            font-size: 14px;
+            color: $red;
+
+            &.disabled {
+              cursor: not-allowed;
+            }
+          }
+        }
+      }
+    }
+
+
+    section.actions {
+      margin: $medium-margin 0;
+
+      a.cancel {
+        margin-left: 25px;
+      }
+    }
+
+  }
+}

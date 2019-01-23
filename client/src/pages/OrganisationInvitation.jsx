@@ -8,18 +8,18 @@ import {
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
-import "./OrganisationInvite.scss";
+import "./OrganisationInvitation.scss";
 import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 
-class OrganisationInvite extends React.Component {
+class OrganisationInvitation extends React.Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            organisationInvite: {user: {}, organisation: {organisation_memberships: []},},
+            organisationInvitation: {user: {}, organisation: {organisation_memberships: []},},
             acceptedTerms: false,
             initial: true,
             readOnly: true,
@@ -35,13 +35,13 @@ class OrganisationInvite extends React.Component {
         if (params.hash) {
             organisationInvitationByHash(params.hash)
                 .then(json => {
-                    this.setState({organisationInvite: json, readOnly: false});
+                    this.setState({organisationInvitation: json, readOnly: false});
                 })
                 .catch(e => this.props.history.push("/404"));
         } else if (params.id) {
             organisationInvitationById(params.id)
                 .then(json => {
-                    this.setState({organisationInvite: json});
+                    this.setState({organisationInvitation: json});
                 })
                 .catch(e => this.props.history.push("/404"));
         } else {
@@ -52,7 +52,7 @@ class OrganisationInvite extends React.Component {
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
     gotoOrganisations = () => this.setState({confirmationDialogOpen: false},
-        () => this.props.history.push(`/organisations/${this.state.organisationInvite.organisation.id}`));
+        () => this.props.history.push(`/organisations/${this.state.organisationInvitation.organisation.id}`));
 
     cancel = () => {
         this.setState({
@@ -69,10 +69,10 @@ class OrganisationInvite extends React.Component {
     };
 
     doDecline = () => {
-        const {organisationInvite} = this.state;
-        organisationInvitationDecline(organisationInvite).then(res => {
+        const {organisationInvitation} = this.state;
+        organisationInvitationDecline(organisationInvitation).then(res => {
             this.props.history.push("/organisations");
-            setFlash(I18n.t("organisationInvitation.flash.inviteDeclined", {name: organisationInvite.organisation.name}));
+            setFlash(I18n.t("organisationInvitation.flash.inviteDeclined", {name: organisationInvitation.organisation.name}));
         });
     };
 
@@ -83,10 +83,10 @@ class OrganisationInvite extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {organisationInvite} = this.state;
-            organisationInvitationAccept(organisationInvite).then(res => {
+            const {organisationInvitation} = this.state;
+            organisationInvitationAccept(organisationInvitation).then(res => {
                 this.gotoOrganisations();
-                setFlash(I18n.t("organisationInvitation.flash.inviteAccepted", {name: organisationInvite.organisation.name}));
+                setFlash(I18n.t("organisationInvitation.flash.inviteAccepted", {name: organisationInvitation.organisation.name}));
             });
         }
     };
@@ -102,14 +102,14 @@ class OrganisationInvite extends React.Component {
 
     requiredMarker = () => <sup className="required-marker">*</sup>;
 
-    administrators = organisationInvite => organisationInvite.organisation.organisation_memberships
+    administrators = organisationInvitation => organisationInvitation.organisation.organisation_memberships
         .filter(m => m.role === "admin")
         .map(m => `${m.user.name} <${m.user.email}>`)
         .join(", ");
 
     render() {
         const {
-            organisationInvite, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction,
+            organisationInvitation, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction, readOnly, leavePage
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
@@ -122,36 +122,36 @@ class OrganisationInvite extends React.Component {
                                     question={I18n.t("organisationInvitation.declineInvitation")}/>
 
                 <div className="organisation-invitation">
-                    <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvite.organisation.name})}</p>
-                    <InputField value={organisationInvite.organisation.name}
+                    <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>
+                    <InputField value={organisationInvitation.organisation.name}
                                 name={I18n.t("organisationInvitation.organisationName")}
                                 disabled={true}/>
 
-                    <InputField value={organisationInvite.organisation.description}
+                    <InputField value={organisationInvitation.organisation.description}
                                 name={I18n.t("organisationInvitation.organisationDescription")}
                                 disabled={true}/>
 
-                    <InputField value={this.administrators(organisationInvite)}
+                    <InputField value={this.administrators(organisationInvitation)}
                                 name={I18n.t("organisationInvitation.organisationAdministrators")}
                                 disabled={true}/>
 
-                    <InputField value={organisationInvite.user.name}
+                    <InputField value={organisationInvitation.user.name}
                                 name={I18n.t("organisationInvitation.inviter")}
                                 disabled={true}/>
 
-                    <InputField value={organisationInvite.message}
+                    <InputField value={organisationInvitation.message}
                                 name={I18n.t("organisationInvitation.message")}
-                                toolTip={I18n.t("organisationInvitation.messageTooltip", {name: organisationInvite.user.name})}
+                                toolTip={I18n.t("organisationInvitation.messageTooltip", {name: organisationInvitation.user.name})}
                                 disabled={true}
                                 multiline={true}/>
 
                     {!readOnly &&
                     <section className={`form-element ${acceptedTerms ? "" : "invalid"}`}>
                         <label className="form-label"
-                               dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: organisationInvite.organisation.name})}}/>{this.requiredMarker()}
+                               dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: organisationInvitation.organisation.name})}}/>{this.requiredMarker()}
                         <CheckBox name="policy"
                                   value={acceptedTerms}
-                                  info={I18n.t("registration.step2.policyConfirmation", {collaboration: organisationInvite.organisation.name})}
+                                  info={I18n.t("registration.step2.policyConfirmation", {collaboration: organisationInvitation.organisation.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
                     </section>}
 
@@ -167,4 +167,4 @@ class OrganisationInvite extends React.Component {
     };
 }
 
-export default OrganisationInvite;
+export default OrganisationInvitation;

@@ -112,6 +112,7 @@ class OrganisationDetail extends React.Component {
 
     invite = e => {
         stopEvent(e);
+        this.props.history.push(`/new-organisation-invite/${this.state.originalOrganisation.id}`);
     };
 
     validateOrganisationName = e =>

@@ -24,7 +24,8 @@ I18n.translations.en = {
         submit: "Add",
         cancel: "Cancel",
         showMore: "More",
-        hideSome: "Less"
+        hideSome: "Less",
+        today: "Today"
     },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
@@ -208,9 +209,13 @@ I18n.translations.en = {
     },
     organisationInvitation: {
         title: "Invitation to join organisation {{organisation}}",
+        createTitle: "Send invitations to join organisation {{organisation}}",
         organisationName: "Name",
         organisationDescription: "Description",
         organisationAdministrators: "Administrators",
+        required: "The {{attribute}} is required for an organisation",
+        expiryDate: "Expiry date",
+        expiryDateTooltip:"The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         message: "Message",
         messageTooltip: "The user {{name}} has invited you with this message",
         inviter: "Inviter",
@@ -220,6 +225,7 @@ I18n.translations.en = {
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} is declined",
             inviteAccepted: "Invitation for organisation {{name}} is accepted",
+            created: "Invitions for organisation {{name}} are created"
         },
     },
     invitation: {
