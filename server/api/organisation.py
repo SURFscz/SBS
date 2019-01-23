@@ -1,4 +1,3 @@
-import datetime
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, session, current_app
