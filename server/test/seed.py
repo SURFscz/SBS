@@ -14,6 +14,12 @@ ai_computing_name = "AI computing"
 uuc_name = "UUC"
 collaboration_uva_researcher_uuid = str(uuid.uuid4())
 
+service_mail_name = "Mail Services"
+service_mail_entity_id = "https://mail"
+
+service_network_name = "Network Services"
+service_network_entity_id = "https://network"
+
 
 def _persist(db, *objs):
     required_attrs = ["created_by", "updated_by"]
@@ -65,8 +71,9 @@ def seed(db):
     organisation_membership_harry = OrganisationMembership(role="admin", user=harry, organisation=uuc)
     _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry)
 
-    mail = Service(entity_id="https://mail", name="mail", contact_email=john.email)
-    network = Service(entity_id="https://network", name="network", description="Network enabling service SSH access",
+    mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email)
+    network = Service(entity_id=service_network_entity_id, name=service_network_name,
+                      description="Network enabling service SSH access",
                       status="pending")
     _persist(db, mail, network)
 
