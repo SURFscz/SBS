@@ -1,7 +1,6 @@
 import React from "react";
 import "./Home.scss";
 import moment from "moment";
-import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -64,8 +63,8 @@ class NewOrganisationInvitation extends React.Component {
         if (this.isValid()) {
             const {administrators, message, organisation} = this.state;
             organisationInvitations({administrators, message, organisation_id: organisation.id}).then(res => {
-                this.props.history.push("/organisations");
-                setFlash(I18n.t("organisationInvitation.flash.created", {name: res.name}))
+                this.props.history.push(`/organisations/${organisation.id}`);
+                setFlash(I18n.t("organisationInvitation.flash.created", {name: organisation.name}))
             });
         }
     };
@@ -135,10 +134,16 @@ class NewOrganisationInvitation extends React.Component {
                                 toolTip={I18n.t("organisation.administratorsTooltip")}
                                 onBlur={this.addEmail}
                                 onEnter={this.addEmail}/>
-                    {(!initial && isEmpty(administrators)) && <span
-                        className="error">{I18n.t("organisation.required", {
-                        attribute: I18n.t("organisation.administrators:").toLowerCase()
-                    })}</span>}
+                    {(!initial && isEmpty(administrators)) &&
+                    <span
+                        className="error">{I18n.t("organisationInvitation.requiredAdministrator")}</span>}
+                    <section className="email-tags">
+                        {administrators.map(mail =>
+                            <div key={mail} className="email-tag">
+                                <span>{mail}</span>
+                                <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
+                            </div>)}
+                    </section>
 
                     <DateField value={expiry_date}
                                onChange={e => this.setState({expiry_date: e})}
@@ -146,15 +151,8 @@ class NewOrganisationInvitation extends React.Component {
                                name={I18n.t("organisationInvitation.expiryDate")}
                                toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>
 
-                    <section className="email-tags">
-                        {administrators.map(mail =>
-                            <div key={mail} className="email-tag">
-                                <span>{mail}</span>
-                                <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>}
-                            </div>)}
-                    </section>
                     <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("forms.submit")} onClick={this.submit}/>
+                        <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")} onClick={this.submit}/>
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>
                 </div>

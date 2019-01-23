@@ -1,4 +1,5 @@
 import moment from "moment";
+import escape from "lodash.escape";
 
 export function stopEvent(e) {
     if (e !== undefined && e !== null) {
@@ -56,5 +57,11 @@ export function valueForSort(attribute, obj) {
     }, obj);
     return res;
 
+}
+
+export function escapeHtmlTooltip(msg) {
+    msg = escape(msg);
+    msg = msg.replace(/\n/g, "<br/>");
+    return msg;
 }
 

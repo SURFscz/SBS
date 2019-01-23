@@ -11,7 +11,7 @@ import "./OrganisationDetail.scss";
 import I18n from "i18n-js";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import InputField from "../components/InputField";
-import {isEmpty, sortObjects, stopEvent} from "../utils/Utils";
+import {escapeHtmlTooltip, isEmpty, sortObjects, stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import moment from "moment";
@@ -181,8 +181,8 @@ class OrganisationDetail extends React.Component {
                                 <span data-tip data-for={`invite_${invite.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
-                                <ReactTooltip id={`invite_${invite.id}`} type="info" effect="solid">
-                                    {invite.message}
+                                <ReactTooltip id={`invite_${invite.id}`} type="info" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{__html: escapeHtmlTooltip(invite.message)}}/>{}
                                 </ReactTooltip>
                             </span>}
                         </td>
