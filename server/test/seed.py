@@ -4,6 +4,7 @@ from secrets import token_urlsafe
 
 from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
     JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
+from server.db.defaults import default_expiry_date
 
 organisation_invitation_hash = token_urlsafe()
 invitation_hash_curious = token_urlsafe()
@@ -105,8 +106,7 @@ def seed(db):
     _persist(db, join_request_john, join_request_peter)
 
     invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
-                            expiry_date=datetime.date.today() + datetime.timedelta(days=14), user=admin,
-                            message="Please join...")
+                            expiry_date=default_expiry_date(), user=admin, message="Please join...")
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
                                   expiry_date=datetime.date.today() + datetime.timedelta(days=21), user=admin,
                                   message="Let me please join as I really, really, really \n really, "

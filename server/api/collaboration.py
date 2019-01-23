@@ -10,6 +10,7 @@ from sqlalchemy.orm import joinedload
 from server.api.base import json_endpoint
 from server.api.security import confirm_collaboration_admin, confirm_organization_admin
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
+from server.db.defaults import default_expiry_date
 from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
 
@@ -145,7 +146,7 @@ def save_collaboration():
     for administrator in administrators:
         invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
                                 collaboration=collaboration, user=user, intended_role="admin",
-                                expiry_date=datetime.date.today() + datetime.timedelta(days=14),
+                                expiry_date=default_expiry_date(),
                                 created_by=user.uid)
         invitation = db.session.merge(invitation)
         mail_collaboration_invitation({

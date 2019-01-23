@@ -6,6 +6,7 @@ import {
     faArrowRight,
     faArrowUp,
     faBook,
+    faCalendarAlt,
     faCheck,
     faCheckCircle,
     faCircle,
@@ -16,16 +17,16 @@ import {
     faLightbulb,
     faLink,
     faPlus,
-    faTimes,
     faQuestion,
     faQuestionCircle,
     faSearch,
+    faTimes,
     faTrash,
     faWindowClose,
 } from '@fortawesome/free-solid-svg-icons'
 
 export function addIcons() {
-    library.add(faLightbulb, faArrowLeft, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck,
+    library.add(faLightbulb, faCalendarAlt, faArrowLeft, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faCircle, faCheck,
         faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
         faQuestion, faQuestionCircle, faEnvelope, faTrash, faTimes);
 }
