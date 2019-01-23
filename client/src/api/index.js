@@ -228,3 +228,8 @@ export function invitationAccept(invitation) {
 export function invitationDecline(invitation) {
     return postPutJson("/api/invitations/decline", invitation, "put");
 }
+
+//Memberships
+export function deleteOrganisationMembership(organisationId, userId) {
+    return fetchDelete(`/api/organisation_memberships/${organisationId}/${userId}`)
+}

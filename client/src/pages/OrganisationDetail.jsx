@@ -1,7 +1,7 @@
 import React from "react";
 import ReactTooltip from "react-tooltip";
 import {
-    deleteOrganisation,
+    deleteOrganisation, deleteOrganisationMembership,
     organisationById,
     organisationIdentifierExists,
     organisationNameExists,
@@ -42,6 +42,7 @@ class OrganisationDetail extends React.Component {
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationQuestion: I18n.t("organisation.deleteConfirmation"),
             leavePage: false,
 
         }
@@ -80,8 +81,30 @@ class OrganisationDetail extends React.Component {
         }
     };
 
+    deleteMember = member => () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("organisationDetail.deleteMemberConfirmation", {name: member.user.name}),
+            confirmationDialogAction: this.doDeleteMember(member)
+        });
+    };
+
+    doDeleteMember = member => () => {
+        this.setState({confirmationDialogOpen: false});
+        const {originalOrganisation} = this.state;
+        deleteOrganisationMembership(originalOrganisation.id, member.user.id)
+            .then(() => {
+                this.componentWillMount();
+                setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: member.user.name}));
+            });
+    };
+
     delete = () => {
-        this.setState({confirmationDialogOpen: true, confirmationDialogAction: this.doDelete});
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("organisation.deleteConfirmation"),
+            confirmationDialogAction: this.doDelete
+        });
     };
 
     doDelete = () => {
@@ -89,7 +112,7 @@ class OrganisationDetail extends React.Component {
         deleteOrganisation(this.state.originalOrganisation.id)
             .then(() => {
                 this.props.history.push("/organisations");
-                setFlash(I18n.t("organisationDetail.flash.deleted", {name: this.state.originalOrganisation.name}))
+                setFlash(I18n.t("organisationDetail.flash.deleted", {name: this.state.originalOrganisation.name}));
             });
     };
 
@@ -131,6 +154,9 @@ class OrganisationDetail extends React.Component {
     };
 
     sortTable = (members, name, sorted, reverse) => () => {
+        if (name === "actions") {
+            return;
+        }
         const reversed = (sorted === name ? !reverse : false);
         const sortedMembers = sortObjects(members, name, reversed);
         this.setState({filteredMembers: sortedMembers, sorted: name, reverse: reversed});
@@ -229,7 +255,7 @@ class OrganisationDetail extends React.Component {
     };
 
     renderMemberTable = (members, user, sorted, reverse) => {
-        const names = ["user__name", "user__email", "user__uid", "role", "created_at"];
+        const names = ["user__name", "user__email", "user__uid", "role", "created_at", "actions"];
         const role = {value: "admin", label: "Admin"};
         return (
             <table className="members">
@@ -239,7 +265,7 @@ class OrganisationDetail extends React.Component {
                         <th key={name} className={name}
                             onClick={this.sortTable(members, name, sorted, reverse)}>
                             {I18n.t(`organisationDetail.member.${name}`)}
-                            {this.headerIcon(name, sorted, reverse)}
+                            {name !== "actions" && this.headerIcon(name, sorted, reverse)}
                         </th>
                     )}
                 </tr>
@@ -251,6 +277,7 @@ class OrganisationDetail extends React.Component {
                     <td className="uid">{member.user.uid}</td>
                     <td className="role"><Select value={role} options={[role]}/></td>
                     <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
+                    <td className="actions"><FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/></td>
                 </tr>)}
                 </tbody>
             </table>
@@ -260,7 +287,7 @@ class OrganisationDetail extends React.Component {
     render() {
         const {
             name, description, tenant_identifier, originalOrganisation, initial, alreadyExists, filteredMembers, query,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, sorted, reverse,
+            confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             inviteReverse, inviteSorted, invitations, adminOfOrganisation
         } = this.state;
         if (!originalOrganisation) {
@@ -281,7 +308,7 @@ class OrganisationDetail extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
-                                    question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
+                                    question={confirmationQuestion}
                                     leavePage={leavePage}/>
                 <div className="organisation-detail">
                     <InputField value={name} onChange={e => {

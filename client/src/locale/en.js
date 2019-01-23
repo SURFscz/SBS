@@ -132,7 +132,7 @@ I18n.translations.en = {
         invitations: "Invitations",
         add: "New",
         searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS...",
-        deleteConfirmation: "Are you sure you want to delete Service {{name}}"
+        deleteConfirmation: "Are you sure you want to delete Service {{name}}?"
     },
     services: {
         title: "Services",
@@ -171,7 +171,7 @@ I18n.translations.en = {
         statusPlaceholder: "The status of the placeholder",
         alreadyExists: "A service with {{attribute}} {{value}} already exists.",
         required: "The {{attribute}} is required for a service",
-        deleteConfirmation: "Are you sure you want to delete service {{name}}",
+        deleteConfirmation: "Are you sure you want to delete service {{name}}?",
         add: "Create",
         update: "Update",
         delete: "Delete",
@@ -225,7 +225,8 @@ I18n.translations.en = {
             user__email: "Email",
             user__uid: "UID",
             role: "Role",
-            created_at: "Since"
+            created_at: "Since",
+            actions: ""
         },
         invitation: {
             invitee_email: "Invitee email",
@@ -236,9 +237,11 @@ I18n.translations.en = {
         },
         update: "Update",
         delete: "Delete",
+        deleteMemberConfirmation: "Are you sure you want to delete the membership for {{name}}?",
         flash: {
             updated: "Organisation {{name}} was successfully updated",
-            deleted: "Organisation {{name}} was successfully deleted"
+            deleted: "Organisation {{name}} was successfully deleted",
+            memberDeleted: "Membership of {{name}} was successfully deleted"
         }
     },
     joinRequest: {
