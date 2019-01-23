@@ -15,8 +15,8 @@
     color: $dark-grey;
   }
 
-  .__react_component_tooltip.type-light.place-top:after {
-    border-top-color: $lighter-grey;
+  .__react_component_tooltip.place-top:after {
+    border-top-color: $lighter-grey !important;
   }
 
 }

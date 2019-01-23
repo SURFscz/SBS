@@ -16,8 +16,7 @@ class CollaborationDetail extends React.Component {
         const params = this.props.match.params;
         if (params.id) {
             collaborationById(params.id)
-                .then(json => this.setState({collaboration: json}))
-                .catch(e => this.props.history.push("/404"));
+                .then(json => this.setState({collaboration: json}));
         } else {
             this.props.history.push("/404");
         }

@@ -13,6 +13,10 @@ class TestService(AbstractTest):
         res = self.get("/api/services/search", query_data={"q": "networ"})
         self.assertEqual(1, len(res))
 
+    def test_search_wildcard(self):
+        res = self.get("/api/services/search", query_data={"q": "*"})
+        self.assertTrue(len(res) > 0)
+
     def test_service_new(self):
         service = self.post("/api/services", body={"entity_id": "https://new_service", "name": "new_service"})
         self.assertIsNotNone(service["id"])

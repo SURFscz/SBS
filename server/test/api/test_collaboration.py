@@ -12,6 +12,10 @@ class TestCollaboration(AbstractTest):
         res = self.get("/api/collaborations/search", query_data={"q": "ComPuti"})
         self.assertEqual(1, len(res))
 
+    def test_search_wildcard(self):
+        res = self.get("/api/collaborations/search", query_data={"q": "*"})
+        self.assertTrue(len(res) > 0)
+
     def test_members(self):
         members = self.get("/api/collaborations/members", query_data={"identifier": collaboration_ai_computing_uuid})
         self.assertEqual(1, len(members))

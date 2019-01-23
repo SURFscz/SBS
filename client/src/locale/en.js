@@ -15,7 +15,8 @@ I18n.translations.en = {
         home: "Home",
         registration: "Registration",
         collaborations: "Collaborations",
-        organisations: "Organisations"
+        organisations: "Organisations",
+        services: "Services"
     },
     home: {
         title: "TODO - Home dashboard"
@@ -130,7 +131,56 @@ I18n.translations.en = {
         collaborations: "Collaborations",
         invitations: "Invitations",
         add: "New",
-        searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS..."
+        searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS...",
+        deleteConfirmation: "Are you sure you want to delete Service {{name}}"
+    },
+    services: {
+        title: "Services",
+        add: "New",
+        searchPlaceHolder: "SEARCH FOR ALL SERVICES..."
+    },
+    service: {
+        titleNew: "Create new service",
+        titleUpdate: "Update service {{name}}",
+        name: "Name",
+        namePlaceHolder: "The unique name of the service",
+        entity_id: "Entity ID",
+        entity_idPlaceHolder: "The unique entity ID of the service",
+        entity_idTooltip: "The unique entity ID of the <br/>Service links the Service<br/>to the external Service Provider",
+        description: "Description",
+        descriptionPlaceholder: "The description of the service",
+        address: "Address",
+        addressPlaceholder: "The address of the service",
+        identity_type: "Identity type",
+        identity_typePlaceholder: "The identity type of the service",
+        identity_typeTooltip: "The primary way for<br/>identification for this service",
+        uri: "URI",
+        uriPlaceholder: "The URI of the service",
+        uriTooltip: "URI containing information <br/>about this service",
+        accepted_user_policy: "AUP",
+        accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the service",
+        accepted_user_policyTooltip: "An acceptable use policy (AUP)<br/>is a document stipulating constraints<br/>and practices that a user<br/>must agree to for access<br/>to a corporate network or<br/>the Internet.",
+        contact_email: "Email contact",
+        contact_emailPlaceholder: "The email of the contact person of this service",
+        contact_emailTooltip: "This email will be<br/>used as primary contact.",
+        status: {
+            name: "Status",
+            active: "Active",
+            in_active: "In-active"
+        },
+        statusPlaceholder: "The status of the placeholder",
+        alreadyExists: "A service with {{attribute}} {{value}} already exists.",
+        required: "The {{attribute}} is required for a service",
+        deleteConfirmation: "Are you sure you want to delete service {{name}}",
+        add: "Create",
+        update: "Update",
+        delete: "Delete",
+        cancel: "Cancel",
+        flash: {
+            created: "Service {{name}} was successfully created",
+            updated: "Service {{name}} was successfully updated",
+            deleted: "Service {{name}} was successfully deleted"
+        }
     },
     organisation: {
         title: "Add new organisation",
@@ -161,7 +211,7 @@ I18n.translations.en = {
             created: "Organisation {{name}} was successfully created"
         }
     },
-    organisationDetail :{
+    organisationDetail: {
         backToOrganisations: "Back to my organisations",
         title: "Organisation {{name}}",
         back: "Back to my organisations",
@@ -186,7 +236,7 @@ I18n.translations.en = {
         },
         update: "Update",
         delete: "Delete",
-        flash :{
+        flash: {
             updated: "Organisation {{name}} was successfully updated",
             deleted: "Organisation {{name}} was successfully deleted"
         }
@@ -215,7 +265,7 @@ I18n.translations.en = {
         organisationAdministrators: "Administrators",
         requiredAdministrator: "At least one administrator email is required for an invitation for an organisation",
         expiryDate: "Expiry date",
-        expiryDateTooltip:"The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
+        expiryDateTooltip: "The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         message: "Message",
         messageTooltip: "The user {{name}} has invited you with this message",
         inviter: "Inviter",
