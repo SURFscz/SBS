@@ -145,7 +145,7 @@ export function updateOrganisation(organisation) {
 }
 
 export function organisationInvitations(body) {
-    return postPutJson("/api/organisations", body, "put");
+    return postPutJson("/api/organisations/invites", body, "put");
 }
 
 export function deleteOrganisation(id) {

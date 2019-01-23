@@ -213,7 +213,7 @@ I18n.translations.en = {
         organisationName: "Name",
         organisationDescription: "Description",
         organisationAdministrators: "Administrators",
-        required: "The {{attribute}} is required for an organisation",
+        requiredAdministrator: "At least one administrator email is required for an invitation for an organisation",
         expiryDate: "Expiry date",
         expiryDateTooltip:"The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         message: "Message",
@@ -221,6 +221,7 @@ I18n.translations.en = {
         inviter: "Inviter",
         decline: "Decline",
         accept: "Accept",
+        invite: "Invite",
         declineInvitation: "Are you sure you want to decline this invitation?",
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} is declined",
