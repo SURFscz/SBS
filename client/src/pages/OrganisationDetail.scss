@@ -147,10 +147,11 @@
     td {
       vertical-align: middle;
       padding: 5px;
-        .tooltip-container {
-          margin-left: 15px;
-          color: $blue;
-        }
+
+      .tooltip-container {
+        margin-left: 15px;
+        color: $blue;
+      }
     }
   }
 
@@ -164,7 +165,7 @@
     }
 
     th.uid {
-      width: 30%;
+      width: 25%;
     }
 
     th.role {
@@ -176,7 +177,22 @@
     }
 
     th.since {
-      width: 25%;
+      width: 20%;
+    }
+
+    th.actions {
+      width: 10%;
+      cursor: default;
+    }
+
+    td.actions {
+      text-align: right;
+
+      svg {
+        color: $red;
+        cursor: pointer;
+        margin-right: 10px;
+      }
     }
   }
 

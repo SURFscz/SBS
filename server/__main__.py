@@ -15,6 +15,7 @@ from server.api.invitation import invitations_api
 from server.api.join_request import join_request_api
 from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
+from server.api.organisation_membership import organisation_membership_api
 from server.api.service import service_api
 from server.api.user import user_api
 from server.api.user_service_profile import user_service_profile_api
@@ -71,6 +72,7 @@ app.register_blueprint(organisation_api)
 app.register_blueprint(join_request_api)
 app.register_blueprint(organisation_invitations_api)
 app.register_blueprint(invitations_api)
+app.register_blueprint(organisation_membership_api)
 
 app.register_error_handler(404, page_not_found)
 
