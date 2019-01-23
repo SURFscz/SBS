@@ -44,7 +44,8 @@ export default class Navigation extends React.PureComponent {
                     {this.renderItem("/home", "home")}
                     {this.renderItem("/registration", "registration")}
                     {!currentUser.guest && this.renderItem("/collaborations", "collaborations")}
-                    {!currentUser.guest && this.renderItem("/organisations", "organisations")}
+                    {currentUser.admin && this.renderItem("/organisations", "organisations")}
+                    {currentUser.admin && this.renderItem("/services", "services")}
                 </div>
                 {this.renderSpinner()}
             </div>

@@ -9,6 +9,7 @@ from server.api.base import json_endpoint
 from server.api.security import confirm_write_access
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
 from server.db.defaults import default_expiry_date
+from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation
 
@@ -41,10 +42,13 @@ def identifier_exists():
 
 @organisation_api.route("/search", strict_slashes=False)
 @json_endpoint
-def collaboration_search():
+def organisation_search():
     q = current_request.args.get("q")
-    sql = text(f"SELECT id, name, description FROM organisations "
-               f"WHERE MATCH (name, description) AGAINST ('{q}*' IN BOOLEAN MODE)")
+    base_query = "SELECT id, name, description FROM organisations "
+    if q != "*":
+        base_query += f"WHERE MATCH (name, description) AGAINST ('{q}*' IN BOOLEAN MODE) " \
+            f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
+    sql = text(base_query)
     result_set = db.engine.execute(sql)
     res = [{"id": row[0], "name": row[1], "description": row[2]} for row in result_set]
     return res, 200

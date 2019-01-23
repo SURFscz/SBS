@@ -36,14 +36,12 @@ class Invite extends React.Component {
             invitationByHash(params.hash)
                 .then(json => {
                     this.setState({invite: json, readOnly: false});
-                })
-                .catch(e => this.props.history.push("/404"));
+                });
         } else if (params.id) {
             invitationById(params.id)
                 .then(json => {
                     this.setState({invite: json});
-                })
-                .catch(e => this.props.history.push("/404"));
+                });
         } else {
             this.props.history.push("/404");
         }

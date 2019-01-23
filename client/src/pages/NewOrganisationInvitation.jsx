@@ -42,8 +42,7 @@ class NewOrganisationInvitation extends React.Component {
         const params = this.props.match.params;
         if (params.organisation_id) {
             organisationById(params.organisation_id)
-                .then(json => this.setState({organisation: json}))
-                .catch(e => this.props.history.push("/404"));
+                .then(json => this.setState({organisation: json}));
         } else {
             this.props.history.push("/404");
         }

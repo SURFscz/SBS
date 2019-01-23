@@ -62,6 +62,10 @@ function postPutJson(path, body, method) {
 function fetchDelete(path) {
     return validFetch(path, {method: "delete"});
 }
+//Base
+export function health() {
+    return fetchJson("/health");
+}
 
 //Users
 export function me() {
@@ -75,36 +79,33 @@ export function reportError(error) {
 }
 
 //Services
-export function organisationNameExists(name, existingOrganisation = null) {
-    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation=${existingOrganisation}`);
+export function serviceNameExists(name, existingService = null) {
+    return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${existingService}`);
 }
 
-export function organisationIdentifierExists(identifier, existingOrganisation = null) {
-    return fetchJson(`/api/organisations/identifier_exists?identifier=${encodeURIComponent(identifier)}&existing_organisation=${existingOrganisation}`);
+export function serviceEntityIdExists(entityId, existingService = null) {
+    return fetchJson(`/api/services/entity_id_exists?entity_id=${encodeURIComponent(entityId)}&existing_service=${existingService}`);
 }
 
-export function organisationById(id) {
-    return fetchJson(`/api/organisations/${id}`, {}, {}, false);
+export function serviceById(id) {
+    return fetchJson(`/api/services/${id}`, {}, {}, false);
 }
 
-export function searchOrganisations(q) {
-    return fetchJson(`/api/organisations/search?q=${encodeURIComponent(q)}`);
+export function searchServices(q) {
+    return fetchJson(`/api/services/search?q=${encodeURIComponent(q)}`);
 }
 
-export function createOrganisation(organisation) {
-    return postPutJson("/api/organisations", organisation, "post");
+export function createService(service) {
+    debugger;
+    return postPutJson("/api/services", service, "post");
 }
 
-export function updateOrganisation(organisation) {
-    return postPutJson("/api/organisations", organisation, "put");
+export function updateService(service) {
+    return postPutJson("/api/services", service, "put");
 }
 
-export function organisationInvitations(body) {
-    return postPutJson("/api/organisations/invites", body, "put");
-}
-
-export function deleteOrganisation(id) {
-    return fetchDelete(`/api/organisations/${id}`)
+export function deleteService(id) {
+    return fetchDelete(`/api/services/${id}`)
 }
 
 //Collaborations

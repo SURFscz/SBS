@@ -29,7 +29,7 @@ export default class Autocomplete extends React.PureComponent {
     };
 
     render() {
-        const {suggestions, query, selected, itemSelected, moreToShow, entityName} = this.props;
+        const {suggestions, query, selected, itemSelected, moreToShow, entityName, additionalAttributes = []} = this.props;
         const showNoResults = query && query.trim().length > 2 && suggestions.length === 0;
         const showSuggestions = suggestions && suggestions.length > 0;
         return (
@@ -63,6 +63,9 @@ export default class Autocomplete extends React.PureComponent {
                                             </a></td>
                                         <td>{this.item(item.name, query)}</td>
                                         <td>{this.item(item.description, query)}</td>
+                                        {additionalAttributes.map((attr, i) => <td key={i}>
+                                            {this.item(item[attr], query)}
+                                        </td>)}
                                     </tr>
                                 )
                             )}

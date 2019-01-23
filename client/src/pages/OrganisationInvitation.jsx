@@ -36,14 +36,12 @@ class OrganisationInvitation extends React.Component {
             organisationInvitationByHash(params.hash)
                 .then(json => {
                     this.setState({organisationInvitation: json, readOnly: false});
-                })
-                .catch(e => this.props.history.push("/404"));
+                });
         } else if (params.id) {
             organisationInvitationById(params.id)
                 .then(json => {
                     this.setState({organisationInvitation: json});
-                })
-                .catch(e => this.props.history.push("/404"));
+                });
         } else {
             this.props.history.push("/404");
         }

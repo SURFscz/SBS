@@ -153,6 +153,7 @@ class Service(Base, db.Model):
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=True)
+    collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
 

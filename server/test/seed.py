@@ -73,8 +73,9 @@ def seed(db):
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email)
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
-                      description="Network enabling service SSH access",
-                      status="pending")
+                      description="Network enabling service SSH access", address="Some address", status="active",
+                      uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
+                      contact_email="help@example.org")
     _persist(db, mail, network)
 
     ai_computing = Collaboration(name=ai_computing_name,
