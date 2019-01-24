@@ -51,11 +51,13 @@ class CollaborationServices extends React.Component {
         const {connectedServices, availableServices} = this.state;
         //connectedServices.push()
         //this.setState()
+        //TODO add flash - realtime
     };
 
     removeService = service => {
         const {connectedServices, availableServices} = this.state;
         //this.setState()
+        //TODO add flash - realtime
     };
 
     renderConnectedServices = connectedServices => {
@@ -81,6 +83,7 @@ class CollaborationServices extends React.Component {
         if (collaboration === undefined) {
             return null;
         }
+        //TODO render an explanation info which explains the purpose ot the page. preferably inline like was done with teams
         return (
             <div className="mod-collaboration-services">
                 <div className="title">
