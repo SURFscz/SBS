@@ -7,7 +7,7 @@ from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin, confirm_organization_admin
+from server.api.security import confirm_collaboration_admin, confirm_organization_admin, confirm_write_access
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
@@ -50,6 +50,19 @@ def collaboration_search():
     return res, 200
 
 
+@collaboration_api.route("services/<collaboration_id>", strict_slashes=False)
+@json_endpoint
+def collaboration_services_by_id(collaboration_id):
+    confirm_collaboration_admin(collaboration_id)
+
+    query = Collaboration.query \
+        .outerjoin(Collaboration.services) \
+        .options(contains_eager(Collaboration.services))
+    collaboration = query.filter(Collaboration.id == collaboration_id).one()
+
+    return collaboration, 200
+
+
 # Call for LSC to get all members based on the identifier of the Collaboration
 @collaboration_api.route("/members", strict_slashes=False)
 @json_endpoint
@@ -80,7 +93,7 @@ def collaboration_by_id(collaboration_id):
         .outerjoin(Collaboration.join_requests) \
         .outerjoin(JoinRequest.user) \
         .outerjoin(Collaboration.services) \
-        .options(contains_eager(Collaboration.authorisation_groups))\
+        .options(contains_eager(Collaboration.authorisation_groups)) \
         .options(contains_eager(Collaboration.invitations)) \
         .options(contains_eager(Collaboration.organisation)) \
         .options(contains_eager(Collaboration.join_requests)
@@ -122,6 +135,36 @@ def my_collaborations():
         .filter(CollaborationMembership.user_id == user_id) \
         .all()
     return res, 200
+
+
+@collaboration_api.route("/invites", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def collaboration_invites():
+    data = current_request.get_json()
+    collaboration_id = data["collaboration_id"]
+    confirm_collaboration_admin(collaboration_id)
+
+    administrators = data["administrators"] if "administrators" in data else []
+    message = data["message"] if "message" in data else None
+    intended_role = data["intended_role"] if "intended_role" in data else "member"
+
+    collaboration = Collaboration.query.get(collaboration_id)
+    user = User.query.get(session["user"]["id"])
+
+    for administrator in administrators:
+        invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+                                collaboration=collaboration, user=user, intended_role=intended_role,
+                                expiry_date=default_expiry_date(json_dict=data),
+                                created_by=user.uid)
+        invitation = db.session.merge(invitation)
+        mail_collaboration_invitation({
+            "salutation": "Dear",
+            "invitation": invitation,
+            "base_url": current_app.app_config.base_url
+        }, collaboration, [administrator])
+    db.session.commit()
+
+    return None, 201
 
 
 @collaboration_api.route("/", methods=["POST"], strict_slashes=False)

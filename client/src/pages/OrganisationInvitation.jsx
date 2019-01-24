@@ -1,5 +1,4 @@
 import React from "react";
-import "./Home.scss";
 import {
     organisationInvitationAccept,
     organisationInvitationByHash,

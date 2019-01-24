@@ -108,7 +108,7 @@ class Organisations extends React.Component {
     renderCollaborations = organisations => {
         const collaborations = organisations.map(organisation => organisation.collaborations)
             .flat().filter(item => item !== undefined);
-        const showMore = collaborations.length > 6;
+        const showMore = collaborations.length >= 6;
         const showMoreItems = this.state.showMore.includes("collaborations");
 
         return (
@@ -139,7 +139,7 @@ class Organisations extends React.Component {
     renderMembers = organisations => {
         const memberships = organisations.map(organisation => organisation.organisation_memberships)
             .flat().filter(item => !isEmpty(item));
-        const showMore = organisations.length > 6;
+        const showMore = organisations.length >= 6;
         const showMoreItems = this.state.showMore.includes("members");
         return (
             <section className="info-block ">
@@ -169,7 +169,7 @@ class Organisations extends React.Component {
     renderOrganisationInvitations = organisations => {
         const invitations = organisations.map(organisation => organisation.organisation_invitations)
             .flat().filter(item => !isEmpty(item));
-        const showMore = invitations.length > 6;
+        const showMore = invitations.length >= 6;
         const showMoreItems = this.state.showMore.includes("invitations");
         return (
             <section className="info-block ">

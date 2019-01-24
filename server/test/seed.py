@@ -72,11 +72,14 @@ def seed(db):
     _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry)
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email)
+    wireless = Service(entity_id="https://wireless", name="Wirless", description="Network Wireless Service")
+    cloud = Service(entity_id="https://cloud", name="Cloud", description="SARA Cloud Service")
+    storage = Service(entity_id="https://storage", name="Storage", description="SURF Storage Service")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address", status="active",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
                       contact_email="help@example.org")
-    _persist(db, mail, network)
+    _persist(db, mail, wireless, cloud, storage, network)
 
     ai_computing = Collaboration(name=ai_computing_name,
                                  identifier=collaboration_ai_computing_uuid,

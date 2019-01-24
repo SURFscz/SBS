@@ -87,7 +87,7 @@ class JoinRequest extends React.Component {
                                     question={leavePage ? undefined : I18n.t("joinRequest.declineConfirmation")}
                                     leavePage={leavePage}/>
                 <div className="title">
-                    <a href="/collaborations" onClick={e => {
+                    <a href={`/collaborations/${joinRequest.collaboration.id}`} onClick={e => {
                         stopEvent(e);
                         this.props.history.push(`/collaborations/${joinRequest.collaboration.id}`)
                     }}><FontAwesomeIcon icon="arrow-left"/>

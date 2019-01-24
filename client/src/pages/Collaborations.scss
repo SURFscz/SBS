@@ -81,14 +81,18 @@
             text-decoration: none;
           }
 
+          svg {
+            color: $blue;
+            margin-right: 15px;
+          }
+
           &:hover {
             color: $blue;
-          }
-        }
 
-        svg {
-          color: $blue;
-          margin-right: 15px;
+            svg {
+              color: darken($blue, 15%);
+            }
+          }
         }
 
         span.count {
