@@ -10,6 +10,7 @@ from munch import munchify
 
 from server.api.base import base_api
 from server.api.collaboration import collaboration_api
+from server.api.collaboration_membership import collaboration_membership_api
 from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
 from server.api.invitation import invitations_api
 from server.api.join_request import join_request_api
@@ -73,6 +74,7 @@ app.register_blueprint(join_request_api)
 app.register_blueprint(organisation_invitations_api)
 app.register_blueprint(invitations_api)
 app.register_blueprint(organisation_membership_api)
+app.register_blueprint(collaboration_membership_api)
 
 app.register_error_handler(404, page_not_found)
 

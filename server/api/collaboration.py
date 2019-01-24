@@ -30,8 +30,8 @@ def name_exists():
     name = current_request.args.get("name")
     existing_collaboration = current_request.args.get("existing_collaboration", "")
     coll = Collaboration.query.options(load_only("id")) \
-        .filter(func.lower(Collaboration.name) == func.lower(name))\
-        .filter(func.lower(Collaboration.name) != func.lower(existing_collaboration))\
+        .filter(func.lower(Collaboration.name) == func.lower(name)) \
+        .filter(func.lower(Collaboration.name) != func.lower(existing_collaboration)) \
         .first()
     return coll is not None, 200
 
@@ -73,27 +73,18 @@ def members():
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_by_id(collaboration_id):
-    authorisation_group_collaboration_memberships = aliased(CollaborationMembership)
-    collaboration_collaboration_memberships = aliased(CollaborationMembership)
-
     query = Collaboration.query \
         .join(Collaboration.organisation) \
         .outerjoin(Collaboration.authorisation_groups) \
-        .outerjoin(authorisation_group_collaboration_memberships, AuthorisationGroup.collaboration_memberships) \
-        .outerjoin(CollaborationMembership.user_service_profiles) \
         .outerjoin(Collaboration.invitations) \
         .outerjoin(Collaboration.join_requests) \
         .outerjoin(JoinRequest.user) \
-        .outerjoin(collaboration_collaboration_memberships, Collaboration.collaboration_memberships) \
         .outerjoin(Collaboration.services) \
-        .options(contains_eager(Collaboration.authorisation_groups)
-                 .contains_eager(AuthorisationGroup.collaboration_memberships)
-                 .contains_eager(CollaborationMembership.user_service_profiles)) \
+        .options(contains_eager(Collaboration.authorisation_groups))\
         .options(contains_eager(Collaboration.invitations)) \
         .options(contains_eager(Collaboration.organisation)) \
         .options(contains_eager(Collaboration.join_requests)
                  .contains_eager(JoinRequest.user)) \
-        .options(contains_eager(Collaboration.collaboration_memberships)) \
         .options(contains_eager(Collaboration.services))
 
     if not session["user"]["admin"]:
@@ -102,6 +93,10 @@ def collaboration_by_id(collaboration_id):
             .join(Collaboration.collaboration_memberships) \
             .filter(CollaborationMembership.user_id == user_id)
     collaboration = query.filter(Collaboration.id == collaboration_id).one()
+
+    for membership in collaboration.collaboration_memberships:
+        membership.user
+
     return collaboration, 200
 
 
@@ -168,8 +163,11 @@ def save_collaboration():
 @collaboration_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_collaboration():
-    confirm_collaboration_admin(current_request.get_json()["id"])
-    return update(Collaboration)
+    data = current_request.get_json()
+    confirm_collaboration_admin(data["id"])
+
+    # For updating references like services, authorisation_groups, memberships there are more fine-grained API methods
+    return update(Collaboration, allow_child_cascades=False)
 
 
 @collaboration_api.route("/<id>", methods=["DELETE"], strict_slashes=False)

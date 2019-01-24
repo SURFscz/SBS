@@ -6,6 +6,8 @@ import InputField from "../components/InputField";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import Button from "../components/Button";
+import {stopEvent} from "../utils/Utils";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class JoinRequest extends React.Component {
 
@@ -84,12 +86,19 @@ class JoinRequest extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("joinRequest.declineConfirmation")}
                                     leavePage={leavePage}/>
-
-                <div className="join-request-container">
+                <div className="title">
+                    <a href="/collaborations" onClick={e => {
+                        stopEvent(e);
+                        this.props.history.push(`/collaborations/${joinRequest.collaboration.id}`)
+                    }}><FontAwesomeIcon icon="arrow-left"/>
+                        {I18n.t("collaborationDetail.backToCollaborationDetail", {name: joinRequest.collaboration.name})}
+                    </a>
                     <p className="title">{I18n.t("joinRequest.title", {
                         collaboration: joinRequest.collaboration.name,
                         requester: joinRequest.user.name
                     })}</p>
+                </div>
+                <div className="join-request-container">
                     <InputField name={I18n.t("joinRequest.message")} value={joinRequest.message} disabled={true}
                                 toolTip={I18n.t("joinRequest.messageTooltip", {name: joinRequest.user.name})}/>
 

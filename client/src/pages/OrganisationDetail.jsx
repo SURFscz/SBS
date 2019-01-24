@@ -17,6 +17,7 @@ import Button from "../components/Button";
 import moment from "moment";
 import Select from 'react-select';
 import {setFlash} from "../utils/Flash";
+import {headerIcon} from "../forms/helpers";
 
 class OrganisationDetail extends React.Component {
 
@@ -44,7 +45,6 @@ class OrganisationDetail extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: I18n.t("organisation.deleteConfirmation"),
             leavePage: false,
-
         }
     }
 
@@ -121,7 +121,7 @@ class OrganisationDetail extends React.Component {
             const {name, description, tenant_identifier, originalOrganisation} = this.state;
             updateOrganisation({id: originalOrganisation.id, name, description, tenant_identifier})
                 .then(() => {
-                    this.props.history.push("/organisations");
+                    this.props.history.push(`/organisation/${originalOrganisation.id}`);
                     setFlash(I18n.t("organisationDetail.flash.updated", {name: name}))
                 });
         }
@@ -168,17 +168,11 @@ class OrganisationDetail extends React.Component {
         this.setState({invitations: sortedInvitations, inviteSorted: name, inviteReverse: reversed});
     };
 
-    headerIcon = (name, sorted, reverse) => {
-        if (name === sorted) {
-            return reverse ? <FontAwesomeIcon icon="arrow-up" className="reverse"/> :
-                <FontAwesomeIcon icon="arrow-down" className="current"/>
-        }
-        return <FontAwesomeIcon icon="arrow-down"/>;
-    };
-
     renderInvitations = (reverse, sorted, invitations) => {
         if (invitations.length === 0) {
-            return <p>{I18n.t("organisationDetail.noInvitations")}</p>
+            return <section className="invitations-container">
+                <p>{I18n.t("organisationDetail.noInvitations")}</p>
+            </section>
         }
         const names = ["invitee_email", "user__name", "expiry_date", "message"];
         return (
@@ -190,7 +184,7 @@ class OrganisationDetail extends React.Component {
                             <th key={name} className={name}
                                 onClick={this.sortInvitationsTable(invitations, name, sorted, reverse)}>
                                 {I18n.t(`organisationDetail.invitation.${name}`)}
-                                {this.headerIcon(name, sorted, reverse)}
+                                {headerIcon(name, sorted, reverse)}
                             </th>
                         )}
                     </tr>
@@ -265,7 +259,7 @@ class OrganisationDetail extends React.Component {
                         <th key={name} className={name}
                             onClick={this.sortTable(members, name, sorted, reverse)}>
                             {I18n.t(`organisationDetail.member.${name}`)}
-                            {name !== "actions" && this.headerIcon(name, sorted, reverse)}
+                            {name !== "actions" && headerIcon(name, sorted, reverse)}
                         </th>
                     )}
                 </tr>

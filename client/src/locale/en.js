@@ -26,7 +26,8 @@ I18n.translations.en = {
         cancel: "Cancel",
         showMore: "More",
         hideSome: "Less",
-        today: "Today"
+        today: "Today",
+        manage: "Manage"
     },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
@@ -95,17 +96,20 @@ I18n.translations.en = {
         name: "Name",
         namePlaceHolder: "The unique name of a collaboration",
         identifier: "Identifier",
+        identifierTooltip: "Generated, unique and immutable<br/>identifier of a collaboration<br/>which used as identifier<br/>for external systems",
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
         access_type: "Access Type",
         accessTypePlaceholder: "Select an access type...",
         enrollment: "Enrollment",
+        enrollmentPlaceholder: "The enrollment of a collaboration",
+        enrollmentTooltip: "Determines the process<br/>in members enrol at<br/>this collaboration",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
         messageTooltip: "The message will be included in the<br/>email invitation to the administrators.",
         organisation_name: "Organisation",
         organisationPlaceholder: "Select the organisation for this collaboration...",
-        organisationTooltip: "Every collaboration belongs to<br/> minimal one and only one organisation",
+        organisationTooltip: "Every collaboration belongs to<br/>minimal one and only one organisation",
         accepted_user_policy: "AUP",
         acceptedUserPolicyPlaceholder: "The URL of the Accepted User Policy",
         role: "Role",
@@ -123,6 +127,33 @@ I18n.translations.en = {
         flash: {
             created: "Collaboration {{name}} was successfully created"
         }
+    },
+    collaborationDetail: {
+        title: "Collaboration {{name}}",
+        backToCollaborations: "Back to my collaborations",
+        backToCollaborationDetail: "Back to my collaboration {{name}}",
+        update: "Update",
+        delete: "Delete",
+        deleteConfirmation: "Are you sure you want to delete this collaboration?",
+        deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership for {{name}}?",
+        flash: {
+            updated: "Collaboration {{name}} was successfully updated",
+            deleted: "Collaboration {{name}} was successfully deleted",
+            memberDeleted: "Membership of {{name}} was successfully deleted"
+        },
+        infoBlocks: "Manage collaboration {{name}}",
+        searchPlaceHolder: "Search for members",
+        members: "Members of {{name}}",
+        member: {
+            user__name: "Name",
+            user__email: "Email",
+            user__uid: "UID",
+            role: "Role",
+            created_at: "Since",
+            actions: ""
+        },
+        invite: "Invite",
+
     },
     organisations: {
         dashboard: "Dashboard",
@@ -142,6 +173,7 @@ I18n.translations.en = {
     service: {
         titleNew: "Create new service",
         titleUpdate: "Update service {{name}}",
+        backToServices: "Back to services",
         name: "Name",
         namePlaceHolder: "The unique name of the service",
         entity_id: "Entity ID",
@@ -213,6 +245,7 @@ I18n.translations.en = {
     },
     organisationDetail: {
         backToOrganisations: "Back to my organisations",
+        backToOrganisationDetail: "Back to my organisation {{name}}",
         title: "Organisation {{name}}",
         back: "Back to my organisations",
         members: "Members of {{name}}",
@@ -237,7 +270,7 @@ I18n.translations.en = {
         },
         update: "Update",
         delete: "Delete",
-        deleteMemberConfirmation: "Are you sure you want to delete the membership for {{name}}?",
+        deleteMemberConfirmation: "Are you sure you want to delete the organisation membership for {{name}}?",
         flash: {
             updated: "Organisation {{name}} was successfully updated",
             deleted: "Organisation {{name}} was successfully deleted",

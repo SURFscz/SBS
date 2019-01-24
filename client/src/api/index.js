@@ -96,7 +96,6 @@ export function searchServices(q) {
 }
 
 export function createService(service) {
-    debugger;
     return postPutJson("/api/services", service, "post");
 }
 
@@ -131,6 +130,9 @@ export function collaborationNameExists(name, existingCollaboration = null) {
 
 export function searchCollaborations(q) {
     return fetchJson(`/api/collaborations/search?q=${encodeURIComponent(q)}`);
+}
+export function updateCollaboration(collaboration) {
+    return postPutJson("/api/collaborations", collaboration, "put");
 }
 
 export function deleteCollaboration(id) {
@@ -229,7 +231,14 @@ export function invitationDecline(invitation) {
     return postPutJson("/api/invitations/decline", invitation, "put");
 }
 
-//Memberships
+//Organisation Memberships
 export function deleteOrganisationMembership(organisationId, userId) {
     return fetchDelete(`/api/organisation_memberships/${organisationId}/${userId}`)
 }
+
+//Collaboration Memberships
+export function deleteCollaborationMembership(collaborationId, userId) {
+    return fetchDelete(`/api/collaboration_memberships/${collaborationId}/${userId}`)
+}
+
+

@@ -13,6 +13,8 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
+import {stopEvent} from "../utils/Utils";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class OrganisationInvitation extends React.Component {
 
@@ -26,7 +28,8 @@ class OrganisationInvitation extends React.Component {
             confirmationDialogOpen: false,
             leavePage: false,
             confirmationDialogAction: () => true,
-            cancelDialogAction: () => true
+            cancelDialogAction: () => true,
+            isAdminLink : false
         };
     }
 
@@ -40,7 +43,7 @@ class OrganisationInvitation extends React.Component {
         } else if (params.id) {
             organisationInvitationById(params.id)
                 .then(json => {
-                    this.setState({organisationInvitation: json});
+                    this.setState({organisationInvitation: json, isAdminLink: true});
                 });
         } else {
             this.props.history.push("/404");
@@ -108,7 +111,7 @@ class OrganisationInvitation extends React.Component {
     render() {
         const {
             organisationInvitation, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogAction, readOnly, leavePage
+            confirmationDialogAction, readOnly, leavePage, isAdminLink
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         return (
@@ -118,9 +121,17 @@ class OrganisationInvitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={I18n.t("organisationInvitation.declineInvitation")}/>
+                <div className="title">
+                    {isAdminLink && <a href="/organisations" onClick={e => {
+                        stopEvent(e);
+                        this.props.history.push(`/organisations`)
+                    }}><FontAwesomeIcon icon="arrow-left"/>
+                        {I18n.t("organisationDetail.backToOrganisations")}
+                    </a>}
+                    <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>
+                </div>
 
                 <div className="organisation-invitation">
-                    <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>
                     <InputField value={organisationInvitation.organisation.name}
                                 name={I18n.t("organisationInvitation.organisationName")}
                                 disabled={true}/>
@@ -152,14 +163,14 @@ class OrganisationInvitation extends React.Component {
                                   info={I18n.t("registration.step2.policyConfirmation", {collaboration: organisationInvitation.organisation.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
                     </section>}
-
-                    <section className="actions">
+                    {!isAdminLink && <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.accept")}
                                 onClick={this.accept}/>
                         <Button cancelButton={true} txt={I18n.t("organisationInvitation.decline")}
                                 onClick={this.decline}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                    </section>
+                    </section>}
+                    {/*TODO: if adminLink then show resend / delete    */}
                 </div>
             </div>);
     };

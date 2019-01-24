@@ -13,6 +13,8 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
+import {stopEvent} from "../utils/Utils";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class Invite extends React.Component {
 
@@ -26,7 +28,8 @@ class Invite extends React.Component {
             confirmationDialogOpen: false,
             leavePage: false,
             confirmationDialogAction: () => true,
-            cancelDialogAction: () => true
+            cancelDialogAction: () => true,
+            isAdminLink: false
         };
     }
 
@@ -40,7 +43,7 @@ class Invite extends React.Component {
         } else if (params.id) {
             invitationById(params.id)
                 .then(json => {
-                    this.setState({invite: json});
+                    this.setState({invite: json, isAdminLink: true});
                 });
         } else {
             this.props.history.push("/404");
@@ -108,7 +111,7 @@ class Invite extends React.Component {
     render() {
         const {
             invite, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogAction, readOnly, leavePage
+            confirmationDialogAction, readOnly, leavePage, isAdminLink
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         return (
@@ -118,9 +121,17 @@ class Invite extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={I18n.t("invitation.declineInvitation")}/>
+                <div className="title">
+                    {isAdminLink && <a href="/collaborations" onClick={e => {
+                        stopEvent(e);
+                        this.props.history.push(`/collaborations/${invite.collaboration.id}`)
+                    }}><FontAwesomeIcon icon="arrow-left"/>
+                        {I18n.t("collaborationDetail.backToCollaborationDetail", {name: invite.collaboration.name})}
+                    </a>}
+                    <p className="title">{I18n.t("invitation.title", {collaboration: invite.collaboration.name})}</p>
+                </div>
 
                 <div className="invitation">
-                    <p className="title">{I18n.t("invitation.title", {collaboration: invite.collaboration.name})}</p>
                     <InputField value={invite.collaboration.name}
                                 name={I18n.t("invitation.collaborationName")}
                                 disabled={true}/>
@@ -152,14 +163,14 @@ class Invite extends React.Component {
                                   info={I18n.t("registration.step2.policyConfirmation", {collaboration: invite.collaboration.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
                     </section>}
-
-                    <section className="actions">
+                    {!isAdminLink && <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("invitation.accept")}
                                 onClick={this.accept}/>
                         <Button cancelButton={true} txt={I18n.t("invitation.decline")}
                                 onClick={this.decline}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                    </section>
+                    </section>}
+                    {/*TODO: if adminLink then show resend / delete    */}
                 </div>
             </div>);
     };

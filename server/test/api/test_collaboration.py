@@ -89,7 +89,7 @@ class TestCollaboration(AbstractTest):
 
         collaboration = self.get(f"/api/collaborations/{collaboration['id']}")
         researcher = list(filter(lambda cm: cm["role"] == "researcher", collaboration["collaboration_memberships"]))[0]
-        self.assertEqual("John Doe", researcher["user_service_profiles"][0]["name"])
+        self.assertEqual("John Doe", researcher["user"]["name"])
 
     def test_collaboration_name_exists(self):
         res = self.get("/api/collaborations/name_exists", query_data={"name": ai_computing_name})

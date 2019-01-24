@@ -81,8 +81,8 @@ def seed(db):
     ai_computing = Collaboration(name=ai_computing_name,
                                  identifier=collaboration_ai_computing_uuid,
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
-                                 organisation=uuc, services=[mail, network],
-                                 join_requests=[], invitations=[])
+                                 organisation=uuc, services=[mail, network], enrollment="Form",
+                                 join_requests=[], invitations=[], access_type="open")
     uva_research = Collaboration(name="UVA UCC research",
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",

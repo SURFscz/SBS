@@ -118,9 +118,16 @@ class NewOrganisationInvitation extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-
-                <div className="new-organisation-invitation">
+                <div className="title">
+                    <a href={`/organisations${organisation.id}`} onClick={e => {
+                        stopEvent(e);
+                        this.props.history.push(`/organisations`)
+                    }}><FontAwesomeIcon icon="arrow-left"/>
+                        {I18n.t("organisationDetail.backToOrganisationDetail", {name:organisation.name})}
+                    </a>
                     <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
+                </div>
+                <div className="new-organisation-invitation">
                     <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                                 placeholder={I18n.t("organisation.messagePlaceholder")}
                                 name={I18n.t("organisation.message")}
