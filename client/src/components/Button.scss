@@ -85,6 +85,7 @@ a.button {
     color: $blue;
     border-radius: $br;
     border: 1px solid $lighter-grey;
+    min-width: 120px;
 
     &:hover {
       background-color: darken(white, 3%);

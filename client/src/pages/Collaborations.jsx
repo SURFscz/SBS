@@ -115,7 +115,7 @@ class Collaborations extends React.Component {
     };
 
     renderRequests = joinRequests => {
-        const showMore = joinRequests.length > 6;
+        const showMore = joinRequests.length >= 6;
         const showMoreItems = this.state.showMore.includes("joinRequests");
         return (
             <section className="info-block ">
@@ -144,7 +144,7 @@ class Collaborations extends React.Component {
     renderAuthorisations = collaborations => {
         const authorisationGroups = collaborations.map(collaboration => collaboration.authorisation_groups)
             .flat().filter(item => !isEmpty(item));
-        const showMore = collaborations.length > 6;
+        const showMore = collaborations.length >= 6;
         const showMoreItems = this.state.showMore.includes("authorisationGroups");
 
         return (
@@ -173,7 +173,7 @@ class Collaborations extends React.Component {
     };
 
     renderInvitations = invitations => {
-        const showMore = invitations.length > 6;
+        const showMore = invitations.length >= 6;
         const showMoreItems = this.state.showMore.includes("invitations");
         return (
             <section className="info-block ">
@@ -204,7 +204,7 @@ class Collaborations extends React.Component {
 
         const services = collaborations.map(collaboration => collaboration.services)
             .flat().filter(item => !isEmpty(item));
-        const showMore = collaborations.length > 6;
+        const showMore = collaborations.length >= 6;
         const showMoreItems = this.state.showMore.includes("services");
         return (
             <section className="info-block ">

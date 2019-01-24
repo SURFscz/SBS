@@ -141,7 +141,7 @@ I18n.translations.en = {
             deleted: "Collaboration {{name}} was successfully deleted",
             memberDeleted: "Membership of {{name}} was successfully deleted"
         },
-        infoBlocks: "Manage collaboration {{name}}",
+        infoBlocks: "Dashboard {{name}}",
         searchPlaceHolder: "Search for members",
         members: "Members of {{name}}",
         member: {
@@ -317,19 +317,38 @@ I18n.translations.en = {
     },
     invitation: {
         title: "Invitation to join collaboration {{collaboration}}",
+        createTitle: "Send invitations to join collaboration {{collaboration}}",
         collaborationName: "Name",
         collaborationDescription: "Description",
         collaborationAdministrators: "Administrators",
+        invitees: "Invitees",
+        inviteesPlaceholder: "Invite users by email",
+        inviteesTooltip: "This personal message is<br/>included in the mail send <br/>to the persons you invite",
+        intendedRole: "Role",
+        intendedRoleTooltip: "The intended role for all invitees.<br/><br/>Administrators of an collaboration<br/>can edit their collaborations and<br/>invite members.<br/>Members can only use the services of <br/>their authorisation groups",
+        requiredEmail: "At least one email is required for an invitation for a collaboration",
         message: "Message",
-        messageTooltip: "The user {{name}} has invited you with this message",
+        messagePlaceholder: "Personal message to the administrators",
+        inviteesMessagesTooltip: "Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
+        inviteesMessagePlaceholder: "Personal message to the invitees",
         inviter: "Inviter",
         decline: "Decline",
         accept: "Accept",
+        invite: "Invite",
         declineInvitation: "Are you sure you want to decline this invitation?",
+        expiryDate: "Expiry date",
+        expiryDateTooltip: "The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         flash: {
             inviteDeclined: "Invitation for collaboration {{name}} is declined",
             inviteAccepted: "Invitation for collaboration {{name}} is accepted",
+            created: "Invitations for collaboration {{name}} are successfully created"
         },
+    },
+    collaborationServices: {
+        title: "Services for collaboration {{name}}",
+        connectAllServices: "Connect all services to collaboration {{name}}",
+        connectAllServicesTooltip: "Before services can be added<br/> to authorisation groups they<br/> first need to be added<br/> to the collaboration.<br/><br/> Connecting all services will <br/>make all services available<br/> to the authorisation groups<br/> of collaboration {{name}}",
+        searchServices: "Search, select and add services to the available services for {{name}}"
     },
     autocomplete: {
         name: "Name",

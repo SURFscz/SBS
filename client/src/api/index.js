@@ -128,6 +128,10 @@ export function collaborationNameExists(name, existingCollaboration = null) {
     return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&existing_collaboration=${existingCollaboration}`);
 }
 
+export function collaborationInvitations(body) {
+    return postPutJson("/api/collaborations/invites", body, "put");
+}
+
 export function searchCollaborations(q) {
     return fetchJson(`/api/collaborations/search?q=${encodeURIComponent(q)}`);
 }
@@ -137,6 +141,10 @@ export function updateCollaboration(collaboration) {
 
 export function deleteCollaboration(id) {
     return fetchDelete(`/api/collaborations/${id}`);
+}
+
+export function collaborationServices(collaborationId) {
+    return fetchJson(`/api/collaborations/services/${collaborationId}`);
 }
 
 //Organisations

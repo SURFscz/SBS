@@ -20,11 +20,6 @@ import {setFlash} from "../utils/Flash";
 import Select from "react-select";
 import {headerIcon} from "../forms/helpers";
 
-const collaborationDetails = "collaborationDetails";
-const services = "services";
-const servicesDetails = "serviceDetails";
-const authorisationGroups = "authorisationGroups";
-const authorisationGroupsDetails = "authorisationGroupsDetails";
 
 class CollaborationDetail extends React.Component {
 
@@ -57,8 +52,6 @@ class CollaborationDetail extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: I18n.t("collaborationDetail.deleteConfirmation"),
             leavePage: false,
-            currentPage: collaborationDetails,
-            pageDetails: {},
             showMore: []
 
         }
@@ -159,6 +152,11 @@ class CollaborationDetail extends React.Component {
         return !inValid;
     };
 
+    invite = e => {
+        stopEvent(e);
+        this.props.history.push(`/new-invite/${this.state.originalCollaboration.id}`);
+    };
+
     openJoinRequest = joinRequest => e => {
         stopEvent(e);
         this.props.history.push(`/join-requests/${joinRequest.id}`);
@@ -171,26 +169,29 @@ class CollaborationDetail extends React.Component {
 
     openAuthorisationGroupDetails = authorisationGroup => e => {
         stopEvent(e);
-        this.setState({currentPage: authorisationGroupsDetails, pageDetails: {id: authorisationGroup.id}});
+        const {originalCollaboration} = this.state;
+        this.props.history.push(`/collaboration-authorisation-group-details/${originalCollaboration.id}/${authorisationGroup.id}`);
     };
 
     openAuthorisationGroups = e => {
         stopEvent(e);
-        this.setState({currentPage: authorisationGroups});
+        const {originalCollaboration} = this.state;
+        this.props.history.push(`/collaboration-authorisation-groups/${originalCollaboration.id}`);
     };
 
     openServices = e => {
         stopEvent(e);
-        this.setState({currentPage: services});
+        const {originalCollaboration} = this.state;
+        this.props.history.push(`/collaboration-services/${originalCollaboration.id}`);
     };
 
     openServiceDetails = service => e => {
         stopEvent(e);
-        this.setState({currentPage: servicesDetails, pageDetails: {id: service.id}});
+        this.props.history.push(`/services/${service.id}`);
     };
 
     renderRequests = joinRequests => {
-        const showMore = joinRequests.length > 6;
+        const showMore = joinRequests.length >= 6;
         const showMoreItems = this.state.showMore.includes("joinRequests");
         return (
             <section className="info-block ">
@@ -218,7 +219,7 @@ class CollaborationDetail extends React.Component {
     };
 
     renderAuthorisations = authorisationGroups => {
-        const showMore = authorisationGroups.length > 6;
+        const showMore = authorisationGroups.length >= 6;
         const showMoreItems = this.state.showMore.includes("authorisationGroups");
 
         return (
@@ -232,6 +233,7 @@ class CollaborationDetail extends React.Component {
                         <div className="collaboration-authorisations" key={i}>
                             <a href={`/authorisationGroups/${authorisationGroup.id}`}
                                onClick={this.openAuthorisationGroupDetails(authorisationGroup)}>
+                                <FontAwesomeIcon icon={"arrow-right"}/>
                                 <span>{authorisationGroup.name}</span>
                             </a>
                         </div>)}
@@ -249,7 +251,7 @@ class CollaborationDetail extends React.Component {
     };
 
     renderInvitations = invitations => {
-        const showMore = invitations.length > 6;
+        const showMore = invitations.length >= 6;
         const showMoreItems = this.state.showMore.includes("invitations");
         return (
             <section className="info-block ">
@@ -276,7 +278,7 @@ class CollaborationDetail extends React.Component {
     };
 
     renderServices = services => {
-        const showMore = services.length > 6;
+        const showMore = services.length >= 6;
         const showMoreItems = this.state.showMore.includes("services");
         return (
             <section className="info-block ">
@@ -289,6 +291,7 @@ class CollaborationDetail extends React.Component {
                         <div className="collaboration-services" key={i}>
                             <a href={`/services/${service.id}`}
                                onClick={this.openServiceDetails(service)}>
+                                <FontAwesomeIcon icon={"arrow-right"}/>
                                 <span>{service.name}</span>
                             </a>
                         </div>)}

@@ -27,6 +27,8 @@ import Invite from "./Invite";
 import NewOrganisationInvitation from "./NewOrganisationInvitation";
 import Service from "./Service";
 import Services from "./Services";
+import NewInvitation from "./NewInvitation";
+import CollaborationServices from "./CollaborationServices";
 
 addIcons();
 
@@ -154,8 +156,8 @@ class App extends React.Component {
                         <Route exact path="/new-organisation-invite/:organisation_id"
                                render={props => <NewOrganisationInvitation user={currentUser} {...props}/>}/>}
 
-                        {/*<Route exact path="/new-invite/:collaboration_id"*/}
-                               {/*render={props => <NewInvitation user={currentUser} {...props}/>}/>}*/}
+                        <Route exact path="/new-invite/:collaboration_id"
+                               render={props => <NewInvitation user={currentUser} {...props}/>}/>}
 
                         <Route exact path="/invitations/:id"
                                render={props => <Invite user={currentUser} {...props}/>}/>}
@@ -169,7 +171,10 @@ class App extends React.Component {
                         <Route path="/new-collaboration"
                                render={props => <NewCollaboration user={currentUser} {...props}/>}/>
 
-                               <Route path="/error" render={props => <ServerError {...props}/>}/>
+                        <Route path="/collaboration-services/:collaboration_id"
+                               render={props => <CollaborationServices user={currentUser} {...props}/>}/>
+
+                        <Route path="/error" render={props => <ServerError {...props}/>}/>
 
                         <Route component={NotFound}/>
                     </Switch>

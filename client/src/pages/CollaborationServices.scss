@@ -1,0 +1,53 @@
+@import "../stylesheets/vars.scss";
+
+.mod-collaboration-services {
+  background-color: $background;
+  margin-bottom: $medium-padding;
+
+  div.title {
+    font-size: 22px;
+    color: $dark-grey;
+    max-width: $medium;
+    margin: 0 auto;
+    padding: 10px 0 5px 0;
+
+    p {
+      padding: 10px 0 10px 0;
+    }
+
+    a {
+      display: inline-block;
+      font-size: 16px;
+      text-transform: uppercase;
+      text-decoration: none;
+      margin: 10px 0;
+      color: $blue;
+
+      &:hover {
+        font-weight: bolder;
+      }
+
+      svg {
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .collaboration-services, .collaboration-services-connected {
+    max-width: $medium;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+    margin: 0 auto 25px auto;
+    background-color: white;
+    padding: $medium-padding;
+  }
+
+  .collaboration-services {
+    div.checkbox {
+      margin-bottom: 20px;
+    }
+  }
+  .collaboration-services-connected {
+
+  }
+
+}
