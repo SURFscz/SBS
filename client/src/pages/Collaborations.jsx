@@ -7,6 +7,7 @@ import "./Collaborations.scss";
 import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Autocomplete from "../components/Autocomplete";
+import {headerIcon} from "../forms/helpers";
 
 class Collaborations extends React.Component {
 
@@ -130,13 +131,12 @@ class Collaborations extends React.Component {
                                 <span>{request.user.name}</span>
                             </a>
                         </div>)}
-                    {showMore && <section className="show-more">
-                        <Button className="white"
-                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                onClick={this.toggleShowMore("joinRequests")}/>
-                    </section>}
-
                 </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("joinRequests")}/>
+                </section>}
             </section>
         );
     };
@@ -162,12 +162,12 @@ class Collaborations extends React.Component {
                                 <span className="count">{`(${collaboration.authorisation_groups.length})`}</span>
                             </a>
                         </div>)}
-                    {showMore && <section className="show-more">
-                        <Button className="white"
-                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                onClick={this.toggleShowMore("authorisationGroups")}/>
-                    </section>}
                 </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("authorisationGroups")}/>
+                </section>}
             </section>
         );
     };
@@ -189,12 +189,12 @@ class Collaborations extends React.Component {
                                 <span>{invitation.invitee_email}</span>
                             </a>
                         </div>)}
-                    {showMore && <section className="show-more">
-                        <Button className="white"
-                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                onClick={this.toggleShowMore("invitations")}/>
-                    </section>}
                 </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("invitations")}/>
+                </section>}
 
             </section>
         );
@@ -221,23 +221,15 @@ class Collaborations extends React.Component {
                                 <span className="count">{`(${collaboration.services.length})`}</span>
                             </a>
                         </div>)}
-                    {showMore && <section className="show-more">
-                        <Button className="white"
-                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                onClick={this.toggleShowMore("services")}/>
-                    </section>}
                 </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("services")}/>
+                </section>}
 
             </section>
         );
-    };
-
-    headerIcon = (name, sorted, reverse) => {
-        if (name === sorted) {
-            return reverse ? <FontAwesomeIcon icon="arrow-up" className="reverse"/> :
-                <FontAwesomeIcon icon="arrow-down" className="current"/>
-        }
-        return <FontAwesomeIcon icon="arrow-down"/>;
     };
 
     sortTable = (collaborations, name, sorted, reverse) => () => {
@@ -273,7 +265,7 @@ class Collaborations extends React.Component {
                             <th key={name} className={name}
                                 onClick={this.sortTable(collaborations, name, sorted, reverse)}>
                                 {I18n.t(`collaboration.${name}`)}
-                                {this.headerIcon(name, sorted, reverse)}
+                                {headerIcon(name, sorted, reverse)}
                             </th>
                         )}
                     </tr>

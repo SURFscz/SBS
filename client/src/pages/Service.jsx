@@ -13,14 +13,16 @@ import "./Service.scss";
 import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {isEmpty} from "../utils/Utils";
+import {isEmpty, stopEvent} from "../utils/Utils";
 import SelectField from "../components/SelectField";
+import {serviceStatuses} from "../models/constants";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class Service extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.statusOptions = ["active", "in_active"].map(type => ({
+        this.statusOptions = serviceStatuses.map(type => ({
             value: type,
             label: I18n.t(`service.status.${type}`)
         }));
@@ -142,9 +144,17 @@ class Service extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
+                <div className="title">
+                    <a href="/services" onClick={e => {
+                        stopEvent(e);
+                        this.props.history.push(`/services`)
+                    }}><FontAwesomeIcon icon="arrow-left"/>
+                        {I18n.t("service.backToServices")}
+                    </a>
+                    <p className="title">{title}</p>
+                </div>
 
                 <div className="service">
-                    <p className="title">{title}</p>
                     <InputField value={name} onChange={e => this.setState({
                         name: e.target.value,
                         alreadyExists: {...this.state.alreadyExists, name: false}

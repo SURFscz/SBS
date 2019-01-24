@@ -120,6 +120,8 @@ class CollaborationMembership(Base, db.Model):
                                            back_populates="collaboration_memberships",
                                            lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
 
 class UserServiceProfile(Base, db.Model):

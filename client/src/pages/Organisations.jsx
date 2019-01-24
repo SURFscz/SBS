@@ -7,6 +7,7 @@ import I18n from "i18n-js";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import Autocomplete from "../components/Autocomplete";
+import {headerIcon} from "../forms/helpers";
 
 
 class Organisations extends React.Component {
@@ -125,13 +126,12 @@ class Organisations extends React.Component {
                                 <span className="count">{`(${collaboration.collaboration_memberships.length})`}</span>
                             </a>
                         </div>)}
-                    {showMore && <section className="show-more">
-                        <Button className="white"
-                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                onClick={this.toggleShowMore("collaborations")}/>
-                    </section>}
-
                 </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("collaborations")}/>
+                </section>}
             </section>
         );
     };
@@ -156,13 +156,12 @@ class Organisations extends React.Component {
                                 <span className="count">{`(${organisation.organisation_memberships.length})`}</span>
                             </a>
                         </div>)}
-                    {showMore && <section className="show-more">
-                        <Button className="white"
-                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                onClick={this.toggleShowMore("members")}/>
-                    </section>}
                 </div>
-
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("members")}/>
+                </section>}
             </section>
         );
     };
@@ -187,24 +186,14 @@ class Organisations extends React.Component {
                                 <span>{invitation.invitee_email}</span>
                             </a>
                         </div>)}
-                    {showMore && <section className="show-more">
-                        <Button className="white"
-                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                onClick={this.toggleShowMore("invitations")}/>
-                    </section>}
-
                 </div>
-
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("invitations")}/>
+                </section>}
             </section>
         );
-    };
-
-    headerIcon = (name, sorted, reverse) => {
-        if (name === sorted) {
-            return reverse ? <FontAwesomeIcon icon="arrow-up" className="reverse"/> :
-                <FontAwesomeIcon icon="arrow-down" className="current"/>
-        }
-        return <FontAwesomeIcon icon="arrow-down"/>;
     };
 
     sortTable = (organisations, name, sorted, reverse) => () => {
@@ -240,7 +229,7 @@ class Organisations extends React.Component {
                             <th key={name} className={name}
                                 onClick={this.sortTable(organisations, name, sorted, reverse)}>
                                 {I18n.t(`organisation.${name}`)}
-                                {this.headerIcon(name, sorted, reverse)}
+                                {headerIcon(name, sorted, reverse)}
                             </th>
                         )}
                     </tr>

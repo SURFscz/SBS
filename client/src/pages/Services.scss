@@ -9,7 +9,7 @@
     color: $dark-grey;
     max-width: $medium;
     margin: 0 auto;
-    padding: 25px 0;
+   padding: 25px 0 15px 0;
   }
 
   .service-search {
@@ -17,7 +17,7 @@
     padding: $medium-padding 0;
     max-width: $medium;
     border-radius: $br;
-    margin: 0 auto;
+    margin: 0 auto 25px auto;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
     position: relative;
 

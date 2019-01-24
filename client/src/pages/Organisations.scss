@@ -9,7 +9,7 @@
     color: $dark-grey;
     max-width: $medium;
     margin: 0 auto;
-    padding: 25px 0;
+   padding: 25px 0 15px 0;
   }
 
   .info-block-container {
@@ -27,6 +27,8 @@
       box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
       padding: 15px 10px;
       width: calc(33% - 2em);
+      display: flex;
+      flex-direction: column;
 
       .header {
         text-transform: uppercase;
@@ -56,10 +58,11 @@
       div.content {
         padding: 10px 5px;
 
-        section.show-more {
-          margin-top: 15px;
-          text-align: center;
-        }
+      }
+
+      section.show-more {
+        margin-top: 15px;
+        text-align: center;
       }
 
       div.organisation-members, div.organisation-collaborations, div.organisation-invitations {
