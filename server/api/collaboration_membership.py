@@ -5,7 +5,7 @@ from server.api.security import confirm_write_access
 from server.db.db import CollaborationMembership, db
 
 collaboration_membership_api = Blueprint("collaboration_membership_api", __name__,
-                                        url_prefix="/api/collaboration_memberships")
+                                         url_prefix="/api/collaboration_memberships")
 
 
 @collaboration_membership_api.route("/<collaboration_id>/<user_id>", methods=["DELETE"], strict_slashes=False)
