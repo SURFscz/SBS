@@ -15,7 +15,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import SelectField from "../components/SelectField";
-import {serviceStatuses} from "../models/constants";
+import {serviceStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class Service extends React.Component {

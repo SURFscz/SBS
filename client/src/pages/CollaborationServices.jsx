@@ -2,7 +2,7 @@ import React from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {collaborationServices, searchServices} from "../api";
+import {collaborationServices, deleteCollaborationServices, addCollaborationServices, searchServices} from "../api";
 import I18n from "i18n-js";
 import {stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -10,6 +10,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import "./CollaborationServices.scss"
 import CheckBox from "../components/CheckBox";
 import Select from "react-select";
+import {setFlash} from "../utils/Flash";
 
 class CollaborationServices extends React.Component {
 
@@ -17,30 +18,46 @@ class CollaborationServices extends React.Component {
         super(props, context);
         this.state = {
             collaboration: undefined,
-            connectedServices: [],
+            availableServices: [],
             connectAllServices: false,
-            availableServices: []
+            sorted: "name",
+            reverse: false
         };
     }
 
+    /*
+     * Only store collaboration -> derive all available services from there, sort in place in render phase
+     * use headerIcon
+     */
     componentWillMount = () => {
         const params = this.props.match.params;
         if (params.collaboration_id) {
             Promise.all([collaborationServices(params.collaboration_id), searchServices("*")])
-                .then(res => this.setState({
-                    collaboration: res[0],
-                    connectedServices: res[0].services,
-                    availableServices: res[1]
+                .then(res => {const availableServices = res[1]
                         .sort((a, b) => a.name.localeCompare(b.name))
                         .map(service => ({
                             value: service.id,
                             label: this.serviceToOption(service)
-                        }))
-                }))
+                        }));
+                    const filteredServices =
+                    this.setState({
+                        collaboration: res[0],
+                        filteredServices: res[0].services,
+                        availableServices: res[1]
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map(service => ({
+                                value: service.id,
+                                label: this.serviceToOption(service)
+                            }))
+                    });
+                })
         } else {
             this.props.history.push("/404");
         }
     };
+
+    refresh = callBack => collaborationServices(this.state.collaboration.collaboration_id)
+        .then(json => this.setState({collaboration: json}, callBack()));
 
     serviceToOption = service => `${service.name} - ${service.entity_id}`;
 
@@ -48,25 +65,39 @@ class CollaborationServices extends React.Component {
     };
 
     addService = option => {
-        const {connectedServices, availableServices} = this.state;
-        //connectedServices.push()
-        //this.setState()
-        //TODO add flash - realtime
+        const {collaboration} = this.state;
+        addCollaborationServices({collaborationId: collaboration.id, serviceId: option.value}).then(() => {
+            this.refresh(() => setFlash(I18n.t("collaborationServices.flash.added", {
+                service: option.label,
+                name: collaboration.name
+            })));
+        });
     };
 
-    removeService = service => {
-        const {connectedServices, availableServices} = this.state;
-        //this.setState()
-        //TODO add flash - realtime
+    removeService = service => e => {
+        const {collaboration} = this.state;
+        deleteCollaborationServices(collaboration.id, service.id).then(() => {
+            this.refresh(() => setFlash(I18n.t("collaborationServices.flash.deleted", {
+                service: service.name,
+                name: collaboration.name
+            })));
+        });
     };
 
     renderConnectedServices = connectedServices => {
         return (
             <table>
-                <thead></thead>
+                <thead>
+                <tr>
+                    <th className="actions"></th>
+                    <th className="name"></th>
+                    <th className="entity_id"></th>
+                    <th className="description"></th>
+                </tr>
+                </thead>
                 <tbody>
                 {connectedServices.map(service => <tr>
-                    <td><FontAwesomeIcon icon="trash"/></td>
+                    <td><FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/></td>
                     <td>{service.name}</td>
                     <td>{service.entity_id}</td>
                     <td>{service.description}</td>
@@ -78,7 +109,7 @@ class CollaborationServices extends React.Component {
 
     render() {
         const {
-            collaboration, availableServices, connectAllServices, connectedServices
+            collaboration, filteredServices, connectAllServices
         } = this.state;
         if (collaboration === undefined) {
             return null;
@@ -102,14 +133,14 @@ class CollaborationServices extends React.Component {
                     <Select className="services-select"
                             placeholder={I18n.t("collaborationServices.searchServices", {name: collaboration.name})}
                             onChange={this.addService}
-                            options={availableServices}
+                            options={filteredServices}
                             value={null}
                             isSearchable={true}
                             isClearable={true}
                     />
                 </div>
                 <div className="collaboration-services-connected">
-                    {this.renderConnectedServices(connectedServices)}
+                    {this.renderConnectedServices(collaboration.services)}
                 </div>
             </div>);
     };

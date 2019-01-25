@@ -348,7 +348,17 @@ I18n.translations.en = {
         title: "Services for collaboration {{name}}",
         connectAllServices: "Connect all services to collaboration {{name}}",
         connectAllServicesTooltip: "Before services can be added<br/> to authorisation groups they<br/> first need to be added<br/> to the collaboration.<br/><br/> Connecting all services will <br/>make all services available<br/> to the authorisation groups<br/> of collaboration {{name}}",
-        searchServices: "Search, select and add services to the available services for {{name}}"
+        searchServices: "Search, select and add services to the available services for the authorisation groups within {{name}}",
+        flash: {
+            "added": "Successfully added service {{service}} to collaboration {{name}}",
+            "deleted": "Successfully deleted service {{service}} from collaboration {{name}}",
+        },
+        service: {
+            actions: "",
+            name: "Name",
+            entity_id: "Entity ID",
+            description: "Description"
+        }
     },
     autocomplete: {
         name: "Name",

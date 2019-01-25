@@ -9,7 +9,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
-import {collaborationAccessTypes} from "../models/constants";
+import {collaborationAccessTypes} from "../forms/constants";
 import SelectField from "../components/SelectField";
 
 class NewCollaboration extends React.Component {

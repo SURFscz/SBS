@@ -14,7 +14,7 @@ import moment from "moment";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import InputField from "../components/InputField";
 import SelectField from "../components/SelectField";
-import {collaborationAccessTypes} from "../models/constants";
+import {collaborationAccessTypes} from "../forms/constants";
 import Button from "../components/Button";
 import {setFlash} from "../utils/Flash";
 import Select from "react-select";
