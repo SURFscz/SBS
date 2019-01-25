@@ -62,6 +62,7 @@ function postPutJson(path, body, method) {
 function fetchDelete(path) {
     return validFetch(path, {method: "delete"});
 }
+
 //Base
 export function health() {
     return fetchJson("/health");
@@ -135,6 +136,7 @@ export function collaborationInvitations(body) {
 export function searchCollaborations(q) {
     return fetchJson(`/api/collaborations/search?q=${encodeURIComponent(q)}`);
 }
+
 export function updateCollaboration(collaboration) {
     return postPutJson("/api/collaborations", collaboration, "put");
 }
@@ -249,4 +251,12 @@ export function deleteCollaborationMembership(collaborationId, userId) {
     return fetchDelete(`/api/collaboration_memberships/${collaborationId}/${userId}`)
 }
 
+//CollaborationServices
+export function addCollaborationServices({collaborationId, serviceId}) {
+    return postPutJson(`/api/collaborations_services`, {collaborationId, serviceId}, "put")
+}
+
+export function deleteCollaborationServices(collaborationId, serviceId) {
+    return fetchDelete(`/api/collaborations_services/${collaborationId}/${serviceId}`)
+}
 
