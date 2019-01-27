@@ -174,7 +174,7 @@ class OrganisationDetail extends React.Component {
                 <p>{I18n.t("organisationDetail.noInvitations")}</p>
             </section>
         }
-        const names = ["invitee_email", "user__name", "expiry_date", "message"];
+        const names = ["actions", "invitee_email", "user__name", "expiry_date", "message"];
         return (
             <section className="invitations-container">
                 <table className="invitations">
@@ -191,6 +191,7 @@ class OrganisationDetail extends React.Component {
                     </thead>
                     <tbody>
                     {invitations.map((invite) => <tr key={invite.id} onClick={this.openInvitation(invite)}>
+                        <td className="actions"><FontAwesomeIcon icon="arrow-right"/></td>
                         <td className="invitee">{invite.invitee_email}</td>
                         <td className="invitedBy">{invite.user.name}</td>
                         <td className="expires">{invite.expiry_date ? moment(invite.expiry_date * 1000).format("LL") : I18n.t("organisationDetail.invitation.noExpires")}</td>
@@ -278,6 +279,64 @@ class OrganisationDetail extends React.Component {
         );
     };
 
+    organisationDetails = (name, alreadyExists, initial, tenant_identifier, description, originalOrganisation, user, disabledSubmit) => {
+        return <div className="organisation-detail">
+            <InputField value={name} onChange={e => {
+                this.setState({
+                    name: e.target.value,
+                    alreadyExists: {...this.state.alreadyExists, name: false}
+                })
+            }}
+                        placeholder={I18n.t("organisation.namePlaceHolder")}
+                        onBlur={this.validateOrganisationName}
+                        name={I18n.t("organisation.name")}/>
+            {alreadyExists.name && <span
+                className="error">{I18n.t("organisation.alreadyExists", {
+                attribute: I18n.t("organisation.name").toLowerCase(),
+                value: name
+            })}</span>}
+            {(!initial && isEmpty(name)) && <span
+                className="error">{I18n.t("organisation.required", {
+                attribute: I18n.t("organisation.name").toLowerCase()
+            })}</span>}
+
+            <InputField value={tenant_identifier}
+                        onChange={e => this.setState({
+                            tenant_identifier: e.target.value,
+                            alreadyExists: {...this.state.alreadyExists, tenant_identifier: false}
+                        })}
+                        placeholder={I18n.t("organisation.tenantPlaceHolder")}
+                        onBlur={this.validateOrganisationTenantIdentifier}
+                        name={I18n.t("organisation.tenant_identifier")}/>
+            {alreadyExists.tenant && <span
+                className="error">{I18n.t("organisation.alreadyExists", {
+                attribute: I18n.t("organisation.tenant_identifier").toLowerCase(),
+                value: tenant_identifier
+            })}</span>}
+            {(!initial && isEmpty(tenant_identifier)) && <span
+                className="error">{I18n.t("organisation.required", {
+                attribute: I18n.t("organisation.tenant_identifier").toLowerCase()
+            })}</span>}
+
+            <InputField value={description}
+                        onChange={e => this.setState({description: e.target.value})}
+                        placeholder={I18n.t("organisation.descriptionPlaceholder")}
+                        name={I18n.t("organisation.description")}/>
+
+            <InputField value={moment(originalOrganisation.created_at * 1000).format("LLLL")}
+                        disabled={true}
+                        name={I18n.t("organisation.created")}/>
+            {user.admin &&
+            <section className="actions">
+                <Button disabled={disabledSubmit} txt={I18n.t("organisationDetail.update")}
+                        onClick={this.update}/>
+                <Button className="delete" txt={I18n.t("organisationDetail.delete")}
+                        onClick={this.delete}/>
+            </section>}
+
+        </div>;
+    };
+
     render() {
         const {
             name, description, tenant_identifier, originalOrganisation, initial, alreadyExists, filteredMembers, query,
@@ -296,75 +355,27 @@ class OrganisationDetail extends React.Component {
                         stopEvent(e);
                         this.props.history.push("/organisations")
                     }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("organisationDetail.backToOrganisations")}</a>
-                    <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
                 </div>
-
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     question={confirmationQuestion}
                                     leavePage={leavePage}/>
-                <div className="organisation-detail">
-                    <InputField value={name} onChange={e => {
-                        this.setState({
-                            name: e.target.value,
-                            alreadyExists: {...this.state.alreadyExists, name: false}
-                        })
-                    }}
-                                placeholder={I18n.t("organisation.namePlaceHolder")}
-                                onBlur={this.validateOrganisationName}
-                                name={I18n.t("organisation.name")}/>
-                    {alreadyExists.name && <span
-                        className="error">{I18n.t("organisation.alreadyExists", {
-                        attribute: I18n.t("organisation.name").toLowerCase(),
-                        value: name
-                    })}</span>}
-                    {(!initial && isEmpty(name)) && <span
-                        className="error">{I18n.t("organisation.required", {
-                        attribute: I18n.t("organisation.name").toLowerCase()
-                    })}</span>}
-
-                    <InputField value={tenant_identifier}
-                                onChange={e => this.setState({
-                                    tenant_identifier: e.target.value,
-                                    alreadyExists: {...this.state.alreadyExists, tenant_identifier: false}
-                                })}
-                                placeholder={I18n.t("organisation.tenantPlaceHolder")}
-                                onBlur={this.validateOrganisationTenantIdentifier}
-                                name={I18n.t("organisation.tenant_identifier")}/>
-                    {alreadyExists.tenant && <span
-                        className="error">{I18n.t("organisation.alreadyExists", {
-                        attribute: I18n.t("organisation.tenant_identifier").toLowerCase(),
-                        value: tenant_identifier
-                    })}</span>}
-                    {(!initial && isEmpty(tenant_identifier)) && <span
-                        className="error">{I18n.t("organisation.required", {
-                        attribute: I18n.t("organisation.tenant_identifier").toLowerCase()
-                    })}</span>}
-
-                    <InputField value={description}
-                                onChange={e => this.setState({description: e.target.value})}
-                                placeholder={I18n.t("organisation.descriptionPlaceholder")}
-                                name={I18n.t("organisation.description")}/>
-
-                    <InputField value={moment(originalOrganisation.created_at * 1000).format("LLLL")}
-                                disabled={true}
-                                name={I18n.t("organisation.created")}/>
-                    {user.admin &&
-                    <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("organisationDetail.update")}
-                                onClick={this.update}/>
-                        <Button className="delete" txt={I18n.t("organisationDetail.delete")}
-                                onClick={this.delete}/>
-                    </section>}
-
+                <div className="title">
+                    <p className="title organisation-invitations">{I18n.t("organisationDetail.invitations", {name: originalOrganisation.name})}</p>
                 </div>
-                <p className="title organisation-invitations">{I18n.t("organisationDetail.invitations", {name: originalOrganisation.name})}</p>
                 {this.renderInvitations(inviteReverse, inviteSorted, invitations)}
-                <p className="title members">{I18n.t("organisationDetail.members", {name: originalOrganisation.name})}</p>
+                <div className="title">
+                    <p className="title members">{I18n.t("organisationDetail.members", {name: originalOrganisation.name})}</p>
+                </div>
                 {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfOrganisation)}
+                <div className="title">
+                    <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
+                </div>
+                {this.organisationDetails(name, alreadyExists, initial, tenant_identifier, description, originalOrganisation, user, disabledSubmit)}
             </div>)
     }
+
 }
 
 export default OrganisationDetail;

@@ -53,7 +53,7 @@ def add_audit_trail_data(cls, json_dict):
             add_audit_trail_data(deserialization_mapping[rel], child)
 
 
-def save(cls, custom_json=None, pre_save_callback=None):
+def save(cls, custom_json=None, pre_save_callback=None, allow_child_cascades=True):
     if not request.is_json and custom_json is None:
         return None, 415
 
@@ -63,7 +63,7 @@ def save(cls, custom_json=None, pre_save_callback=None):
         json_dict = pre_save_callback(json_dict)
 
     add_audit_trail_data(cls, json_dict)
-    json_dict = transform_json(cls, json_dict)
+    json_dict = transform_json(cls, json_dict, allow_child_cascades=allow_child_cascades)
 
     validate(cls, json_dict)
     return _merge(cls, json_dict), 201
@@ -74,7 +74,7 @@ def update(cls, custom_json=None, allow_child_cascades=True):
         return None, 415
 
     json_dict = request.get_json() if custom_json is None else custom_json
-    json_dict = transform_json(cls, json_dict, allow_child_cascades)
+    json_dict = transform_json(cls, json_dict, allow_child_cascades=allow_child_cascades)
     add_audit_trail_data(cls, json_dict)
 
     pk = list({k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys())[0]

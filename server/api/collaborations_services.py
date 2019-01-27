@@ -14,15 +14,26 @@ collaborations_services_api = Blueprint("collaborations_services_api", __name__,
 def add_collaborations_services():
     data = current_request.get_json()
     collaboration_id = data["collaboration_id"]
-    service_id = data["service_id"]
 
     confirm_collaboration_admin(collaboration_id)
 
-    statement = f"INSERT into services_collaborations (service_id, collaboration_id) " \
-        f" VALUES ({service_id}, {collaboration_id})"
+    service_ids = data["service_ids"]
+    values = ",".join(list(map(lambda id: f"({id},{collaboration_id})", service_ids)))
+    statement = f"INSERT into services_collaborations (service_id, collaboration_id) VALUES {values}"
     sql = text(statement)
     result_set = db.engine.execute(sql)
     return (None, 201) if result_set.rowcount > 0 else (None, 404)
+
+
+@collaborations_services_api.route("/delete_all_services/<collaboration_id>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+def delete_all_services(collaboration_id):
+    confirm_collaboration_admin(collaboration_id)
+
+    statement = f"DELETE from services_collaborations WHERE collaboration_id = {collaboration_id}"
+    sql = text(statement)
+    result_set = db.engine.execute(sql)
+    return (None, 204) if result_set.rowcount > 0 else (None, 404)
 
 
 @collaborations_services_api.route("/<collaboration_id>/<service_id>", methods=["DELETE"], strict_slashes=False)

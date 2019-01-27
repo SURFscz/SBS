@@ -185,9 +185,10 @@ class CollaborationDetail extends React.Component {
         this.props.history.push(`/collaboration-services/${originalCollaboration.id}`);
     };
 
-    openServiceDetails = service => e => {
+    openServiceDetails = (collaboration, service) => e => {
         stopEvent(e);
-        this.props.history.push(`/services/${service.id}`);
+        const back = encodeURIComponent(`/collaborations/${collaboration.id}`)
+        this.props.history.push(`/services/${service.id}?back=${back}`);
     };
 
     renderRequests = joinRequests => {
@@ -277,7 +278,8 @@ class CollaborationDetail extends React.Component {
         );
     };
 
-    renderServices = services => {
+    renderServices = collaboration => {
+        const services = collaboration.services;
         const showMore = services.length >= 6;
         const showMoreItems = this.state.showMore.includes("services");
         return (
@@ -290,7 +292,7 @@ class CollaborationDetail extends React.Component {
                     {(showMore && !showMoreItems ? services.slice(0, 5) : services).map((service, i) =>
                         <div className="collaboration-services" key={i}>
                             <a href={`/services/${service.id}`}
-                               onClick={this.openServiceDetails(service)}>
+                               onClick={this.openServiceDetails(collaboration, service)}>
                                 <FontAwesomeIcon icon={"arrow-right"}/>
                                 <span>{service.name}</span>
                             </a>
@@ -349,7 +351,12 @@ class CollaborationDetail extends React.Component {
                     <td className="name">{member.user.name}</td>
                     <td className="email">{member.user.email}</td>
                     <td className="uid">{member.user.uid}</td>
-                    <td className="role"><Select value={role} options={[role]}/></td>
+                    <td className="role">
+                        <Select
+                            classNamePrefix="select-disabled"
+                            value={role}
+                            options={[role]}
+                            isDisabled={true}/></td>
                     <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
                     <td className="actions"><FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/></td>
                 </tr>)}
@@ -383,6 +390,71 @@ class CollaborationDetail extends React.Component {
         );
     };
 
+    collaborationDetails = (name, alreadyExists, initial, description, accepted_user_policy, enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit) => {
+        return <div className="collaboration-detail">
+            <InputField value={name} onChange={e => {
+                this.setState({
+                    name: e.target.value,
+                    alreadyExists: {...this.state.alreadyExists, name: false}
+                })
+            }}
+                        placeholder={I18n.t("collaboration.namePlaceHolder")}
+                        onBlur={this.validateCollaborationName}
+                        name={I18n.t("collaboration.name")}/>
+            {alreadyExists.name && <span
+                className="error">{I18n.t("collaboration.alreadyExists", {
+                attribute: I18n.t("collaboration.name").toLowerCase(),
+                value: name
+            })}</span>}
+            {(!initial && isEmpty(name)) && <span
+                className="error">{I18n.t("collaboration.required", {
+                attribute: I18n.t("collaboration.name").toLowerCase()
+            })}</span>}
+
+            <InputField value={description} onChange={e => this.setState({description: e.target.value})}
+                        placeholder={I18n.t("collaboration.descriptionPlaceholder")}
+                        name={I18n.t("collaboration.description")}/>
+
+            <InputField value={accepted_user_policy}
+                        onChange={e => this.setState({accepted_user_policy: e.target.value})}
+                        placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
+                        name={I18n.t("collaboration.accepted_user_policy")}/>
+
+            <InputField value={enrollment}
+                        onChange={e => this.setState({enrollment: e.target.value})}
+                        placeholder={I18n.t("collaboration.enrollmentPlaceholder")}
+                        toolTip={I18n.t("collaboration.enrollmentTooltip")}
+                        name={I18n.t("collaboration.enrollment")}/>
+
+            <SelectField value={this.accessTypeOptions.find(option => option.value === access_type)}
+                         options={this.accessTypeOptions}
+                         name={I18n.t("collaboration.access_type")}
+                         placeholder={I18n.t("collaboration.accessTypePlaceholder")}
+                         onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}/>
+
+            <InputField value={identifier}
+                        name={I18n.t("collaboration.identifier")}
+                        placeholder={I18n.t("collaboration.identifierPlaceholder")}
+                        toolTip={I18n.t("collaboration.identifierTooltip")}
+                        disabled={true}/>
+
+            <SelectField value={organisation}
+                         options={[organisation]}
+                         name={I18n.t("collaboration.organisation_name")}
+                         placeholder={I18n.t("collaboration.organisationPlaceholder")}
+                         toolTip={I18n.t("collaboration.organisationTooltip")}
+                         disabled={true}
+            />
+            {isAdmin &&
+            <section className="actions">
+                <Button disabled={disabledSubmit} txt={I18n.t("collaborationDetail.update")}
+                        onClick={this.update}/>
+                <Button className="delete" txt={I18n.t("collaborationDetail.delete")}
+                        onClick={this.delete}/>
+            </section>}
+        </div>;
+    };
+
     render() {
         const {
             originalCollaboration, name, description, accepted_user_policy, access_type, initial, alreadyExists,
@@ -407,87 +479,28 @@ class CollaborationDetail extends React.Component {
                     stopEvent(e);
                     this.props.history.push("/collaborations")
                 }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("collaborationDetail.backToCollaborations")}</a>
-                <p>{I18n.t("collaborationDetail.title", {name: originalCollaboration.name})}</p>
             </div>
-
             <ConfirmationDialog isOpen={confirmationDialogOpen}
                                 cancel={cancelDialogAction}
                                 confirm={confirmationDialogAction}
                                 question={confirmationQuestion}
                                 leavePage={leavePage}/>
-            <div className="collaboration-detail">
-                <InputField value={name} onChange={e => {
-                    this.setState({
-                        name: e.target.value,
-                        alreadyExists: {...this.state.alreadyExists, name: false}
-                    })
-                }}
-                            placeholder={I18n.t("collaboration.namePlaceHolder")}
-                            onBlur={this.validateCollaborationName}
-                            name={I18n.t("collaboration.name")}/>
-                {alreadyExists.name && <span
-                    className="error">{I18n.t("collaboration.alreadyExists", {
-                    attribute: I18n.t("collaboration.name").toLowerCase(),
-                    value: name
-                })}</span>}
-                {(!initial && isEmpty(name)) && <span
-                    className="error">{I18n.t("collaboration.required", {
-                    attribute: I18n.t("collaboration.name").toLowerCase()
-                })}</span>}
-
-                <InputField value={description} onChange={e => this.setState({description: e.target.value})}
-                            placeholder={I18n.t("collaboration.descriptionPlaceholder")}
-                            name={I18n.t("collaboration.description")}/>
-
-                <InputField value={accepted_user_policy}
-                            onChange={e => this.setState({accepted_user_policy: e.target.value})}
-                            placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
-                            name={I18n.t("collaboration.accepted_user_policy")}/>
-
-                <InputField value={enrollment}
-                            onChange={e => this.setState({enrollment: e.target.value})}
-                            placeholder={I18n.t("collaboration.enrollmentPlaceholder")}
-                            toolTip={I18n.t("collaboration.enrollmentTooltip")}
-                            name={I18n.t("collaboration.enrollment")}/>
-
-                <SelectField value={this.accessTypeOptions.find(option => option.value === access_type)}
-                             options={this.accessTypeOptions}
-                             name={I18n.t("collaboration.access_type")}
-                             placeholder={I18n.t("collaboration.accessTypePlaceholder")}
-                             onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}/>
-
-                <InputField value={identifier}
-                            name={I18n.t("collaboration.identifier")}
-                            placeholder={I18n.t("collaboration.identifierPlaceholder")}
-                            toolTip={I18n.t("collaboration.identifierTooltip")}
-                            disabled={true}/>
-
-                <SelectField value={organisation}
-                             options={[organisation]}
-                             name={I18n.t("collaboration.organisation_name")}
-                             placeholder={I18n.t("collaboration.organisationPlaceholder")}
-                             toolTip={I18n.t("collaboration.organisationTooltip")}
-                             disabled={true}
-                />
-                {isAdmin &&
-                <section className="actions">
-                    <Button disabled={disabledSubmit} txt={I18n.t("collaborationDetail.update")}
-                            onClick={this.update}/>
-                    <Button className="delete" txt={I18n.t("collaborationDetail.delete")}
-                            onClick={this.delete}/>
-                </section>}
-            </div>
             <p className="title info-blocks">{I18n.t("collaborationDetail.infoBlocks", {name: originalCollaboration.name})}</p>
             <section className="info-block-container">
                 {this.renderRequests(originalCollaboration.join_requests)}
                 {this.renderInvitations(originalCollaboration.invitations)}
-                {this.renderServices(originalCollaboration.services)}
+                {this.renderServices(originalCollaboration)}
                 {this.renderAuthorisations(originalCollaboration.authorisation_groups)}
             </section>
             <p className="title members">{I18n.t("collaborationDetail.members", {name: originalCollaboration.name})}</p>
             {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfCollaboration)}
+            <div className="title">
+                <p>{I18n.t("collaborationDetail.title", {name: originalCollaboration.name})}</p>
+            </div>
+            {this.collaborationDetails(name, alreadyExists, initial, description, accepted_user_policy, enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit)}
         </div>)
     }
+
 }
 
 export default CollaborationDetail;

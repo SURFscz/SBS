@@ -9,7 +9,7 @@
     color: $dark-grey;
     max-width: $medium;
     margin: 0 auto;
-   padding: 25px 0 15px 0;
+    padding: 25px 0 15px 0;
   }
 
   .info-block-container {
@@ -64,6 +64,7 @@
         padding: 10px 5px;
 
       }
+
       section.show-more {
         margin-top: auto;
         display: flex;
@@ -171,6 +172,7 @@
         &.description {
           width: 30%;
         }
+
         svg {
           margin-left: 15px;
           color: $lighter-grey;
@@ -198,6 +200,12 @@
       td {
         vertical-align: middle;
         padding: 5px;
+
+        &.actions {
+          width: 35px;
+          text-align: left;
+          color: $blue;
+        }
       }
     }
   }

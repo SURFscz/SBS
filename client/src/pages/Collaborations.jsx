@@ -233,6 +233,9 @@ class Collaborations extends React.Component {
     };
 
     sortTable = (collaborations, name, sorted, reverse) => () => {
+        if (name === "actions") {
+            return;
+        }
         const reversed = (sorted === name ? !reverse : false);
         const sortedCollaborations = this.sortCollaborations(collaborations, name, reverse);
         this.setState({collaborations: sortedCollaborations, sorted: name, reverse: reversed});
@@ -244,18 +247,23 @@ class Collaborations extends React.Component {
         return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
     });
 
-    getCollaborationValue = (collaboration, user, name) => collaboration[name];
+    getCollaborationValue = (collaboration, user, name) => {
+        if (name === "actions") {
+            return <FontAwesomeIcon icon="arrow-right"/>;
+        }
+        return collaboration[name];
+    };
 
     renderCollaborationRow = (collaboration, user, names) => {
         return (
             <tr key={collaboration.id} onClick={this.openCollaboration(collaboration)}>
-                {names.map(name => <td key={name}>{this.getCollaborationValue(collaboration, user, name)}</td>)}
+                {names.map(name => <td className={name} key={name}>{this.getCollaborationValue(collaboration, user, name)}</td>)}
             </tr>
         );
     };
 
     renderCollaborations = (collaborations, user, sorted, reverse) => {
-        const names = ["name", "role", "description", "access_type", "enrollment", "organisation_name", "accepted_user_policy"];
+        const names = ["actions", "name", "role", "description", "access_type", "enrollment", "organisation_name", "accepted_user_policy"];
         return (
             <section className="collaboration-list">
                 <table>

@@ -18,6 +18,8 @@
   .__react_component_tooltip.place-top:after {
     border-top-color: $lighter-grey !important;
   }
-
+  .select-disabled__single-value {
+    color: $dark-grey;
+  }
 }
 

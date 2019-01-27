@@ -2,12 +2,15 @@ import logging
 import os
 import sys
 from logging.handlers import TimedRotatingFileHandler
-from flask_mail import Mail
+
 import yaml
 from flask import Flask, jsonify, request as current_request
+from flask_mail import Mail
 from flask_migrate import Migrate
 from munch import munchify
 
+from server.api.authorisation_group import authorisation_group_api
+from server.api.authorisation_group_services import authorisation_group_services_api
 from server.api.base import base_api
 from server.api.collaboration import collaboration_api
 from server.api.collaboration_membership import collaboration_membership_api
@@ -77,6 +80,8 @@ app.register_blueprint(invitations_api)
 app.register_blueprint(organisation_membership_api)
 app.register_blueprint(collaboration_membership_api)
 app.register_blueprint(collaborations_services_api)
+app.register_blueprint(authorisation_group_api)
+app.register_blueprint(authorisation_group_services_api)
 
 app.register_error_handler(404, page_not_found)
 

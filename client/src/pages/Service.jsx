@@ -17,6 +17,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import SelectField from "../components/SelectField";
 import {serviceStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {getParameterByName} from "../utils/QueryParameters";
 
 class Service extends React.Component {
 
@@ -44,7 +45,8 @@ class Service extends React.Component {
             confirmationDialogOpen: false,
             leavePage: false,
             confirmationDialogAction: () => true,
-            cancelDialogAction: () => true
+            cancelDialogAction: () => true,
+            back: "/services"
         };
     }
 
@@ -52,8 +54,14 @@ class Service extends React.Component {
         const params = this.props.match.params;
         if (params.id) {
             if (params.id !== "new") {
+                const back = getParameterByName("back", window.location.search);
                 serviceById(params.id)
-                    .then(json => this.setState({...json, service: json, isNew: false}));
+                    .then(json => this.setState({
+                        ...json,
+                        service: json,
+                        isNew: false,
+                        back: isEmpty(back) ? this.state.back : back
+                    }));
             }
         } else {
             this.props.history.push("/404");
@@ -133,7 +141,7 @@ class Service extends React.Component {
         const {
             alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
             entity_id, description, address, identity_type, uri, accepted_user_policy, contact_email, status,
-            confirmationDialogAction, leavePage, isNew
+            confirmationDialogAction, leavePage, isNew, back
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const title = isNew ? I18n.t("service.titleNew") : I18n.t("service.titleUpdate", {name: service.name});
@@ -145,11 +153,11 @@ class Service extends React.Component {
                                     leavePage={leavePage}
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
                 <div className="title">
-                    <a href="/services" onClick={e => {
+                    <a href={back} onClick={e => {
                         stopEvent(e);
-                        this.props.history.push(`/services`)
+                        this.props.history.push(back)
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("service.backToServices")}
+                        {back.indexOf("collaborations") > -1 ? I18n.t("collaborationDetail.backToCollaborations") : I18n.t("service.backToServices")}
                     </a>
                     <p className="title">{title}</p>
                 </div>

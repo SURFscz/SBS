@@ -81,11 +81,11 @@ export function reportError(error) {
 
 //Services
 export function serviceNameExists(name, existingService = null) {
-    return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${existingService}`);
+    return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${encodeURIComponent(existingService)}`);
 }
 
 export function serviceEntityIdExists(entityId, existingService = null) {
-    return fetchJson(`/api/services/entity_id_exists?entity_id=${encodeURIComponent(entityId)}&existing_service=${existingService}`);
+    return fetchJson(`/api/services/entity_id_exists?entity_id=${encodeURIComponent(entityId)}&existing_service=${encodeURIComponent(existingService)}`);
 }
 
 export function serviceById(id) {
@@ -126,7 +126,7 @@ export function createCollaboration(collaboration) {
 }
 
 export function collaborationNameExists(name, existingCollaboration = null) {
-    return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&existing_collaboration=${existingCollaboration}`);
+    return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&existing_collaboration=${encodeURIComponent(existingCollaboration)}`);
 }
 
 export function collaborationInvitations(body) {
@@ -145,8 +145,12 @@ export function deleteCollaboration(id) {
     return fetchDelete(`/api/collaborations/${id}`);
 }
 
-export function collaborationServices(collaborationId) {
-    return fetchJson(`/api/collaborations/services/${collaborationId}`);
+export function collaborationServices(collaborationId, includeMemberships = false) {
+    return fetchJson(`/api/collaborations/services/${collaborationId}?include_memberships=${includeMemberships}`);
+}
+
+export function collaborationAuthorisationGroups(collaborationId) {
+    return fetchJson(`/api/collaborations/authorisation_groups/${collaborationId}`);
 }
 
 //Organisations
@@ -159,11 +163,11 @@ export function myOrganisations() {
 }
 
 export function organisationNameExists(name, existingOrganisation = null) {
-    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation=${existingOrganisation}`);
+    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
 }
 
 export function organisationIdentifierExists(identifier, existingOrganisation = null) {
-    return fetchJson(`/api/organisations/identifier_exists?identifier=${encodeURIComponent(identifier)}&existing_organisation=${existingOrganisation}`);
+    return fetchJson(`/api/organisations/identifier_exists?identifier=${encodeURIComponent(identifier)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
 }
 
 export function organisationById(id) {
@@ -252,11 +256,39 @@ export function deleteCollaborationMembership(collaborationId, userId) {
 }
 
 //CollaborationServices
-export function addCollaborationServices({collaborationId, serviceId}) {
-    return postPutJson(`/api/collaborations_services`, {collaborationId, serviceId}, "put")
+export function addCollaborationServices({collaborationId, serviceIds}) {
+    serviceIds = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
+    return postPutJson(`/api/collaborations_services`, {
+        collaboration_id: collaborationId,
+        service_ids: serviceIds
+    }, "put")
 }
 
 export function deleteCollaborationServices(collaborationId, serviceId) {
     return fetchDelete(`/api/collaborations_services/${collaborationId}/${serviceId}`)
 }
 
+export function deleteAllCollaborationServices(collaborationId) {
+    return fetchDelete(`/api/collaborations_services/delete_all_services/${collaborationId}`)
+}
+
+// AuthorisationGroups
+export function authorisationGroupNameExists(name, collaborationId, existingAuthorisationGroup = null) {
+    return fetchJson(`/api/authorisation_groups/name_exists?name=${encodeURIComponent(name)}&collaboration_id=${collaborationId}&existing_authorisation_group=${encodeURIComponent(existingAuthorisationGroup)}`);
+}
+
+export function authorisationGroupById(id, collaborationId) {
+    return fetchJson(`/api/authorisation_groups/${id}/${collaborationId}`, {}, {}, false);
+}
+
+export function createAuthorisationGroup(authorisationGroup) {
+    return postPutJson("/api/authorisation_groups", authorisationGroup, "post");
+}
+
+export function updateAuthorisationGroup(authorisationGroup) {
+    return postPutJson("/api/authorisation_groups", authorisationGroup, "put");
+}
+
+export function deleteAuthorisationGroup(id) {
+    return fetchDelete(`/api/authorisation_groups/${id}`)
+}

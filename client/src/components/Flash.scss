@@ -9,15 +9,16 @@ div.flash {
   z-index: 6;
   opacity: .93;
 
-  transition: top 750ms ease-in-out;
+  transition: top 150ms ease-in-out;
 
   &.hide {
-    transition: top 750ms ease-in-out;
+    transition: top 1000ms ease-in-out;
     top: -80px;
   }
 
   &.info {
-    background-color: $primary-green;
+    background-color: $green;
+    color: $lightest-grey;
   }
 
   &.warning {
@@ -36,7 +37,6 @@ div.flash {
     p {
       padding: 10px 25px 10px 15px;
       text-transform: uppercase;
-      font-weight: bold;
     }
 
   }

@@ -7,7 +7,7 @@ from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin, confirm_organization_admin, confirm_write_access
+from server.api.security import confirm_collaboration_admin, confirm_organization_admin
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
@@ -58,6 +58,28 @@ def collaboration_services_by_id(collaboration_id):
     query = Collaboration.query \
         .outerjoin(Collaboration.services) \
         .options(contains_eager(Collaboration.services))
+
+    include_memberships = current_request.args.get("include_memberships", False)
+    if include_memberships:
+        query = query\
+            .outerjoin(Collaboration.collaboration_memberships)\
+            .outerjoin(CollaborationMembership.user)\
+            .options(contains_eager(Collaboration.collaboration_memberships)
+                     .contains_eager(CollaborationMembership.user))
+
+    collaboration = query.filter(Collaboration.id == collaboration_id).one()
+
+    return collaboration, 200
+
+
+@collaboration_api.route("authorisation_groups/<collaboration_id>", strict_slashes=False)
+@json_endpoint
+def collaboration_authorisations_by_id(collaboration_id):
+    confirm_collaboration_admin(collaboration_id)
+
+    query = Collaboration.query \
+        .outerjoin(Collaboration.authorisation_groups) \
+        .options(contains_eager(Collaboration.authorisation_groups))
     collaboration = query.filter(Collaboration.id == collaboration_id).one()
 
     return collaboration, 200

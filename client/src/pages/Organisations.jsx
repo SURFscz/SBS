@@ -197,6 +197,9 @@ class Organisations extends React.Component {
     };
 
     sortTable = (organisations, name, sorted, reverse) => () => {
+        if (name === "actions") {
+            return;
+        }
         const reversed = (sorted === name ? !reverse : false);
         const sortedOrganisations = this.sortOrganisations(organisations, name, reversed);
         this.setState({sortedOrganisations: sortedOrganisations, sorted: name, reverse: reversed});
@@ -208,18 +211,23 @@ class Organisations extends React.Component {
         return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
     });
 
-    getOrganisationValue = (organisation, user, name) => organisation[name];
+    getOrganisationValue = (organisation, user, name) => {
+        if (name === "actions") {
+            return <FontAwesomeIcon icon="arrow-right"/>
+        }
+        return organisation[name];
+    };
 
     renderOrganisationRow = (organisation, user, names) => {
         return (
             <tr key={organisation.id} onClick={this.openOrganisation(organisation)}>
-                {names.map(name => <td key={name}>{this.getOrganisationValue(organisation, user, name)}</td>)}
+                {names.map(name => <td key={name} className={name}>{this.getOrganisationValue(organisation, user, name)}</td>)}
             </tr>
         );
     };
 
     renderOrganisations = (organisations, user, sorted, reverse) => {
-        const names = ["name", "tenant_identifier", "role", "description"];
+        const names = ["actions", "name", "tenant_identifier", "role", "description"];
         return (
             <section className="organisation-list">
                 <table>
