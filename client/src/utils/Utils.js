@@ -55,7 +55,7 @@ export function valueForSort(attribute, obj) {
         }
         return acc[e];
     }, obj);
-    return res;
+    return res || "";
 
 }
 

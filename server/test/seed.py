@@ -108,9 +108,17 @@ def seed(db):
                                                       "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     _persist(db, user_service_profile)
 
-    authorisation_group = AuthorisationGroup(name="auth_group", collaboration=ai_computing, services=[network],
-                                             collaboration_memberships=[john_ai_computing])
-    _persist(db, authorisation_group)
+    authorisation_group_researchers = AuthorisationGroup(name="AI researchers", uri="https://ai/researchers",
+                                                         status="active",
+                                                         description="Artifical computing researchers",
+                                                         collaboration=ai_computing, services=[network],
+                                                         collaboration_memberships=[john_ai_computing])
+    authorisation_group_developers = AuthorisationGroup(name="AI developers", uri="https://ai/developers",
+                                                        status="in_active",
+                                                        description="Artifical computing developers",
+                                                        collaboration=ai_computing, services=[],
+                                                        collaboration_memberships=[john_ai_computing])
+    _persist(db, authorisation_group_researchers, authorisation_group_developers)
 
     join_request_john = JoinRequest(message="Please...", reference="Dr. Johnson", user=mary, collaboration=ai_computing)
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing)

@@ -29,6 +29,8 @@ import Service from "./Service";
 import Services from "./Services";
 import NewInvitation from "./NewInvitation";
 import CollaborationServices from "./CollaborationServices";
+import CollaborationAuthorisationGroups from "./CollaborationAuthorisationGroups";
+import AuthorisationGroup from "./AuthorisationGroup";
 
 addIcons();
 
@@ -173,6 +175,12 @@ class App extends React.Component {
 
                         <Route path="/collaboration-services/:collaboration_id"
                                render={props => <CollaborationServices user={currentUser} {...props}/>}/>
+
+                        <Route path="/collaboration-authorisation-groups/:collaboration_id"
+                               render={props => <CollaborationAuthorisationGroups user={currentUser} {...props}/>}/>
+
+                        <Route path="/collaboration-authorisation-group-details/:collaboration_id/:id"
+                               render={props => <AuthorisationGroup user={currentUser} {...props}/>}/>
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 

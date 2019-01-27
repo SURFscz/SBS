@@ -42,11 +42,90 @@
   }
 
   .collaboration-services {
+    margin: 0 auto 15px auto;
+
     div.checkbox {
       margin-bottom: 20px;
     }
   }
+
   .collaboration-services-connected {
+    padding: 15px 5px;
+
+    table.connected-services {
+      width: 100%;
+
+      th {
+        text-align: left;
+        cursor: pointer;
+        padding: 5px;
+
+        &.actions {
+          width: 10%;
+          cursor: default;
+          font-weight: normal;
+
+          svg.fa-question-circle {
+            cursor: pointer;
+            margin-left: 20px;
+            color: $blue;
+          }
+        }
+
+        &.name {
+          width: 25%;
+        }
+
+        &.entity_id {
+          width: 25%;
+        }
+
+        &.description {
+          width: 40%;
+        }
+
+        svg {
+          margin-left: 15px;
+          color: $lighter-grey;
+
+          &.current, &.reverse {
+            color: $blue;
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          &:nth-child(odd) {
+            background-color: $lightest-grey;
+          }
+        }
+      }
+
+      td {
+        vertical-align: middle;
+        padding: 5px;
+
+        &.actions {
+          text-align: left;
+
+          svg {
+            color: $red;
+            cursor: pointer;
+            margin-left: 20px;
+          }
+        }
+
+        &.role {
+          padding-left: 25px;
+        }
+
+        .tooltip-container {
+          margin-left: 15px;
+          color: $blue;
+        }
+      }
+    }
 
   }
 

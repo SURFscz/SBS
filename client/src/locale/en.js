@@ -93,6 +93,7 @@ I18n.translations.en = {
     },
     collaboration: {
         title: "Add new collaboration",
+        actions: "",
         name: "Name",
         namePlaceHolder: "The unique name of a collaboration",
         identifier: "Identifier",
@@ -129,7 +130,7 @@ I18n.translations.en = {
         }
     },
     collaborationDetail: {
-        title: "Collaboration {{name}}",
+        title: "Details collaboration {{name}}",
         backToCollaborations: "Back to my collaborations",
         backToCollaborationDetail: "Back to my collaboration {{name}}",
         update: "Update",
@@ -200,7 +201,7 @@ I18n.translations.en = {
             active: "Active",
             in_active: "In-active"
         },
-        statusPlaceholder: "The status of the placeholder",
+        statusPlaceholder: "The status of the service",
         alreadyExists: "A service with {{attribute}} {{value}} already exists.",
         required: "The {{attribute}} is required for a service",
         deleteConfirmation: "Are you sure you want to delete service {{name}}?",
@@ -217,6 +218,7 @@ I18n.translations.en = {
     organisation: {
         title: "Add new organisation",
         subTitle: "Enter / edit the organisation details.",
+        actions: "",
         name: "Name",
         namePlaceHolder: "The unique name of an organisation",
         tenant_identifier: "Tenant identifier",
@@ -246,7 +248,7 @@ I18n.translations.en = {
     organisationDetail: {
         backToOrganisations: "Back to my organisations",
         backToOrganisationDetail: "Back to my organisation {{name}}",
-        title: "Organisation {{name}}",
+        title: "Details organisation {{name}}",
         back: "Back to my organisations",
         members: "Members of {{name}}",
         invitations: "Invitations for {{name}}",
@@ -262,6 +264,7 @@ I18n.translations.en = {
             actions: ""
         },
         invitation: {
+            actions: "",
             invitee_email: "Invitee email",
             user__name: "Invited by",
             expiry_date: "Expires",
@@ -348,10 +351,14 @@ I18n.translations.en = {
         title: "Services for collaboration {{name}}",
         connectAllServices: "Connect all services to collaboration {{name}}",
         connectAllServicesTooltip: "Before services can be added<br/> to authorisation groups they<br/> first need to be added<br/> to the collaboration.<br/><br/> Connecting all services will <br/>make all services available<br/> to the authorisation groups<br/> of collaboration {{name}}",
+        connectedServices: "Connected services to {{name}}",
         searchServices: "Search, select and add services to the available services for the authorisation groups within {{name}}",
+        deleteServiceTooltip: "Make this service unavailable in<br/> the collaboration {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for authorisation groups within<br/>  this collaboration",
         flash: {
             "added": "Successfully added service {{service}} to collaboration {{name}}",
             "deleted": "Successfully deleted service {{service}} from collaboration {{name}}",
+            "addedAll": "Successfully added all service to collaboration {{name}}",
+            "deletedAll": "Successfully deleted all services from collaboration {{name}}",
         },
         service: {
             actions: "",
@@ -359,6 +366,40 @@ I18n.translations.en = {
             entity_id: "Entity ID",
             description: "Description"
         }
+    },
+    authorisationGroup: {
+        title: "Authorisation groups within collaboration {{name}}",
+        titleNew: "Create new authorisation group",
+        titleUpdate: "Update authorisation group {{name}}",
+        backToCollaborationAuthorisationGroups: "Back to the authorisation groups of my collaboration {{name}}",
+        new: "New",
+        searchPlaceHolder: "Search for authorisation groups",
+        name: "Name",
+        namePlaceholder: "Name of the authorisation group",
+        alreadyExists: "A authorisation group with {{attribute}} {{value}} already exists.",
+        required: "The {{attribute}} is required for an authorisation group ",
+        uri: "URI",
+        uriPlaceholder: "URI of the authorisation group",
+        description: "Description",
+        descriptionPlaceholder: "Description of the authorisation group",
+        status: "Status",
+        statusPlaceholder: "The status of the authorisation group",
+        actions: "",
+        open: "",
+        deleteConfirmation: "Are you sure you want to delete authorisation {{name}}",
+        statusValues: {
+            active: "Active",
+            in_active: "In-active"
+        },
+        add: "Create",
+        update: "Update",
+        delete: "Delete",
+        cancel: "Cancel",
+        flash: {
+            created: "Authorisation group {{name}} was successfully created",
+            updated: "Authorisation group {{name}} was successfully updated",
+            deleted: "Successfully deleted authorisation group {{name}}",
+        },
     },
     autocomplete: {
         name: "Name",

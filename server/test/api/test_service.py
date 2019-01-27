@@ -11,7 +11,7 @@ class TestService(AbstractTest):
 
     def test_search(self):
         res = self.get("/api/services/search", query_data={"q": "networ"})
-        self.assertEqual(1, len(res))
+        self.assertEqual(2, len(res))
 
     def test_search_wildcard(self):
         res = self.get("/api/services/search", query_data={"q": "*"})

@@ -230,8 +230,18 @@
         }
       }
 
-      td.role {
-        padding-right: 25px;
+      td {
+        &.role {
+          padding-right: 25px;
+
+        }
+
+        &.actions {
+          width: 35px;
+          text-align: left;
+          color: $blue;
+        }
+
       }
     }
   }
