@@ -16,6 +16,7 @@ import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 import {stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import moment from "./Invitation";
 
 class OrganisationInvitation extends React.Component {
 
@@ -30,21 +31,25 @@ class OrganisationInvitation extends React.Component {
             cancelDialogAction: () => true,
             confirmationQuestion: "",
             leavePage: false,
-            isAdminLink: false
+            isAdminLink: false,
+            isExpired: false
         };
     }
 
     componentWillMount = () => {
         const params = this.props.match.params;
+        const today = moment();
         if (params.hash) {
             organisationInvitationByHash(params.hash)
                 .then(json => {
-                    this.setState({organisationInvitation: json});
+                    const isExpired = today.isAfter(moment(json.expiry_date * 1000));
+                    this.setState({organisationInvitation: json, isExpired});
                 });
         } else if (params.id) {
             organisationInvitationById(params.id)
                 .then(json => {
-                    this.setState({organisationInvitation: json, isAdminLink: true});
+                    const isExpired = today.isAfter(moment(json.expiry_date * 1000));
+                    this.setState({organisationInvitation: json, isAdminLink: true, isExpired});
                 });
         } else {
             this.props.history.push("/404");
@@ -153,7 +158,7 @@ class OrganisationInvitation extends React.Component {
     render() {
         const {
             organisationInvitation, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogAction, confirmationQuestion, leavePage, isAdminLink
+            confirmationDialogAction, confirmationQuestion, leavePage, isAdminLink, isExpired
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         return (
@@ -166,7 +171,7 @@ class OrganisationInvitation extends React.Component {
                 <div className="title">
                     {isAdminLink && <a href="/organisations" onClick={e => {
                         stopEvent(e);
-                                    this.gotoOrganisations();
+                        this.gotoOrganisations();
                     }}><FontAwesomeIcon icon="arrow-left"/>
                         {I18n.t("organisationInvitation.backToOrganisationDetail", {name: organisationInvitation.organisation.name})}
                     </a>}
@@ -174,6 +179,9 @@ class OrganisationInvitation extends React.Component {
                 </div>
 
                 <div className="organisation-invitation">
+                    {isExpired &&
+                    <p className="error">{I18n.t("organisationInvitation.expired", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")})}</p>}
+
                     <InputField value={organisationInvitation.organisation.name}
                                 name={I18n.t("organisationInvitation.organisationName")}
                                 disabled={true}/>
@@ -196,7 +204,7 @@ class OrganisationInvitation extends React.Component {
                                 disabled={true}
                                 multiline={true}/>
 
-                    {!isAdminLink &&
+                    {(!isAdminLink && !isExpired) &&
                     <section className={`form-element ${acceptedTerms ? "" : "invalid"}`}>
                         <label className="form-label"
                                dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: organisationInvitation.organisation.name})}}/>{this.requiredMarker()}
@@ -205,14 +213,16 @@ class OrganisationInvitation extends React.Component {
                                   info={I18n.t("registration.step2.policyConfirmation", {collaboration: organisationInvitation.organisation.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
                     </section>}
-                    {!isAdminLink && <section className="actions">
+                    {(!isAdminLink && !isExpired) &&
+                    <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.accept")}
                                 onClick={this.accept}/>
                         <Button cancelButton={true} txt={I18n.t("organisationInvitation.decline")}
                                 onClick={this.decline}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>}
-                    {isAdminLink && <section className="actions">
+                    {isAdminLink &&
+                    <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.resend")}
                                 onClick={this.resend}/>
                         <Button className="delete" txt={I18n.t("organisationInvitation.delete")}

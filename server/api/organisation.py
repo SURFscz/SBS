@@ -1,3 +1,4 @@
+import datetime
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, session, current_app
@@ -123,7 +124,8 @@ def organisation_invites():
         mail_organisation_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url
+            "base_url": current_app.app_config.base_url,
+            "expiry_days": (invitation.expiry_date - datetime.date.today()).days
         }, organisation, [administrator])
     db.session.commit()
 
@@ -150,7 +152,8 @@ def save_organisation():
         mail_organisation_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url
+            "base_url": current_app.app_config.base_url,
+            "expiry_days": (invitation.expiry_date - datetime.date.today()).days
         }, organisation, [administrator])
     db.session.commit()
 

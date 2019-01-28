@@ -70,7 +70,7 @@ class CollaborationDetail extends React.Component {
                         originalCollaboration: json,
                         members: members,
                         filteredMembers: members,
-                        adminOfOrganisation: json.collaboration_memberships.some(member => member.role === "admin" && member.user_id === user.id)
+                        adminOfCollaboration: json.collaboration_memberships.some(member => member.role === "admin" && member.user_id === user.id)
                     })
                 });
         } else {

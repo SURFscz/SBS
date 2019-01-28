@@ -1,0 +1,28 @@
+@import "../stylesheets/vars.scss";
+
+ul.user-profile {
+  position: absolute;
+  z-index: 2;
+  padding: 10px;
+  list-style: none;
+  min-width: 300px;
+  top: 50px;
+  background: #fff;
+  border-radius: $br;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+
+  li {
+    font-style: italic;
+    font-size: 13px;
+    margin-bottom: 5px;
+    display: block;
+
+    span {
+      &.value {
+        font-style: normal;
+        float: right;
+      }
+    }
+
+  }
+}

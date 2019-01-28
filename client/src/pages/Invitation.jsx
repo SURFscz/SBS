@@ -9,15 +9,16 @@ import {
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
-import "./Invite.scss";
+import "./Invitation.scss";
 import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 import {stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import moment from "moment";
 
-class Invite extends React.Component {
+class Invitation extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -30,21 +31,25 @@ class Invite extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => true,
             leavePage: false,
-            isAdminLink: false
+            isAdminLink: false,
+            isExpired: false
         };
     }
 
     componentWillMount = () => {
         const params = this.props.match.params;
+        const today = moment();
         if (params.hash) {
             invitationByHash(params.hash)
                 .then(json => {
-                    this.setState({invite: json});
+                    const isExpired = today.isAfter(moment(json.expiry_date * 1000));
+                    this.setState({invite: json, isExpired});
                 });
         } else if (params.id) {
             invitationById(params.id)
                 .then(json => {
-                    this.setState({invite: json, isAdminLink: true});
+                    const isExpired = today.isAfter(moment(json.expiry_date * 1000));
+                    this.setState({invite: json, isAdminLink: true, isExpired});
                 });
         } else {
             this.props.history.push("/404");
@@ -154,7 +159,7 @@ class Invite extends React.Component {
     render() {
         const {
             invite, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction, confirmationQuestion,
-            confirmationDialogAction, leavePage, isAdminLink
+            confirmationDialogAction, leavePage, isAdminLink, isExpired
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         return (
@@ -175,6 +180,8 @@ class Invite extends React.Component {
                 </div>
 
                 <div className="invitation">
+                    {isExpired &&
+                    <p className="error">{I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")})}</p>}
                     <InputField value={invite.collaboration.name}
                                 name={I18n.t("invitation.collaborationName")}
                                 disabled={true}/>
@@ -197,7 +204,7 @@ class Invite extends React.Component {
                                 disabled={true}
                                 multiline={true}/>
 
-                    {!isAdminLink &&
+                    {(!isAdminLink && !isExpired) &&
                     <section className={`form-element ${acceptedTerms ? "" : "invalid"}`}>
                         <label className="form-label"
                                dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: invite.collaboration.name})}}/>{this.requiredMarker()}
@@ -206,14 +213,16 @@ class Invite extends React.Component {
                                   info={I18n.t("registration.step2.policyConfirmation", {collaboration: invite.collaboration.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
                     </section>}
-                    {!isAdminLink && <section className="actions">
+                    {(!isAdminLink && !isExpired) &&
+                    <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("invitation.accept")}
                                 onClick={this.accept}/>
                         <Button cancelButton={true} txt={I18n.t("invitation.decline")}
                                 onClick={this.decline}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>}
-                    {isAdminLink && <section className="actions">
+                    {isAdminLink &&
+                    <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("invitation.resend")}
                                 onClick={this.resend}/>
                         <Button className="delete" txt={I18n.t("invitation.delete")}
@@ -226,4 +235,4 @@ class Invite extends React.Component {
     };
 }
 
-export default Invite;
+export default Invitation;

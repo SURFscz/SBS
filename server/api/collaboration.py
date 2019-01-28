@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from secrets import token_urlsafe
 
@@ -61,9 +62,9 @@ def collaboration_services_by_id(collaboration_id):
 
     include_memberships = current_request.args.get("include_memberships", False)
     if include_memberships:
-        query = query\
-            .outerjoin(Collaboration.collaboration_memberships)\
-            .outerjoin(CollaborationMembership.user)\
+        query = query \
+            .outerjoin(Collaboration.collaboration_memberships) \
+            .outerjoin(CollaborationMembership.user) \
             .options(contains_eager(Collaboration.collaboration_memberships)
                      .contains_eager(CollaborationMembership.user))
 
@@ -182,7 +183,8 @@ def collaboration_invites():
         mail_collaboration_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url
+            "base_url": current_app.app_config.base_url,
+            "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
         }, collaboration, [administrator])
     db.session.commit()
 
@@ -214,7 +216,8 @@ def save_collaboration():
         mail_collaboration_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url
+            "base_url": current_app.app_config.base_url,
+            "expiry_days": (invitation.expiry_date - datetime.date.today()).days
         }, collaboration, [administrator])
 
     admin_collaboration_membership = CollaborationMembership(role="admin", user=user, collaboration=collaboration,

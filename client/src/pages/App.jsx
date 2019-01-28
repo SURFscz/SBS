@@ -23,7 +23,6 @@ import NewOrganisation from "./NewOrganisation";
 import {addIcons} from "../utils/IconLibrary";
 import OrganisationInvitation from "./OrganisationInvitation";
 import NewCollaboration from "./NewCollaboration";
-import Invite from "./Invite";
 import NewOrganisationInvitation from "./NewOrganisationInvitation";
 import Service from "./Service";
 import Services from "./Services";
@@ -31,6 +30,7 @@ import NewInvitation from "./NewInvitation";
 import CollaborationServices from "./CollaborationServices";
 import CollaborationAuthorisationGroups from "./CollaborationAuthorisationGroups";
 import AuthorisationGroup from "./AuthorisationGroup";
+import Invitation from "./Invitation";
 
 addIcons();
 
@@ -162,10 +162,10 @@ class App extends React.Component {
                                render={props => <NewInvitation user={currentUser} {...props}/>}/>}
 
                         <Route exact path="/invitations/:id"
-                               render={props => <Invite user={currentUser} {...props}/>}/>}
+                               render={props => <Invitation user={currentUser} {...props}/>}/>}
 
                         <Route exact path="/invitations/:action/:hash"
-                               render={props => <Invite user={currentUser} {...props}/>}/>}
+                               render={props => <Invitation user={currentUser} {...props}/>}/>}
 
                         <Route path="/new-organisation"
                                render={props => <NewOrganisation user={currentUser} {...props}/>}/>

@@ -38,12 +38,13 @@ export default class Navigation extends React.PureComponent {
 
     render() {
         const {currentUser} = this.props;
+        const isAdmin = (currentUser.collaboration_memberships || []).some(membership => membership.role === "admin");
         return (
             <div className="navigation-container">
                 <div className="navigation">
                     {this.renderItem("/home", "home")}
-                    {this.renderItem("/registration", "registration")}
-                    {!currentUser.guest && this.renderItem("/collaborations", "collaborations")}
+                    {window.location.pathname.indexOf("registration") > -1 && this.renderItem("/registration", "registration")}
+                    {(currentUser.admin || isAdmin) && this.renderItem("/collaborations", "collaborations")}
                     {currentUser.admin && this.renderItem("/organisations", "organisations")}
                     {currentUser.admin && this.renderItem("/services", "services")}
                 </div>

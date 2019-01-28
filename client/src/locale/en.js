@@ -8,7 +8,9 @@ I18n.translations.en = {
     header: {
         title: "Collaboration Management System",
         links: {
-            login: "Login"
+            login: "Login",
+            help: "Help",
+            helpUrl: "https://github.com/SURFscz/SBS/wiki"
         }
     },
     navigation: {
@@ -19,7 +21,7 @@ I18n.translations.en = {
         services: "Services"
     },
     home: {
-        title: "TODO - Home dashboard"
+        title: "Dashboard for {{name}}"
     },
     forms: {
         submit: "Add",
@@ -73,6 +75,10 @@ I18n.translations.en = {
     profile: {
         name: "Name",
         email: "E-mail",
+        uid: "UID",
+        admin: "Administrator",
+        role: "Role",
+        noadmin: "Member",
         organization: "Organization"
     },
     collaborations: {
@@ -317,6 +323,7 @@ I18n.translations.en = {
         declineInvitation: "Are you sure you want to decline this invitation?",
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
+        expired: "This invitation expired on {{expiry_date}} and can not be accepted anymore",
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} is declined",
             inviteDeleted: "Invitation for organisation {{name}} is deleted",
@@ -350,6 +357,7 @@ I18n.translations.en = {
         declineInvitation: "Are you sure you want to decline this invitation?",
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
+        expired: "This invitation expired on {{expiry_date}} and can not be accepted anymore",
         expiryDate: "Expiry date",
         expiryDateTooltip: "The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         flash: {
@@ -370,7 +378,7 @@ I18n.translations.en = {
         flash: {
             "added": "Successfully added service {{service}} to collaboration {{name}}",
             "deleted": "Successfully deleted service {{service}} from collaboration {{name}}",
-            "addedAll": "Successfully added all service to collaboration {{name}}",
+            "addedAll": "Successfully added all services to collaboration {{name}}",
             "deletedAll": "Successfully deleted all services from collaboration {{name}}",
         },
         service: {

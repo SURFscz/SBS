@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.scss";
-import {stopEvent} from "../utils/Utils";
 import {health} from "../api";
+import I18n from "i18n-js";
 
 class Home extends React.Component {
 
@@ -12,21 +12,23 @@ class Home extends React.Component {
 
     componentWillMount = () => {
         health()
-            .then(json => {});
+            .then(json => {
+            });
     };
+
     render() {
+        const {user} = this.props;
         return (
             <div className="mod-home">
-                <div className="home-container">
-                    <div>
-                        <a href="/demo" onClick={e => {
-                            stopEvent(e);
-                            this.props.history.push("/registration?collaboration=AI%20computing");
-                        }}>Demo</a>
-                    </div>
+                <div className="title">
+                    <p>{I18n.t("home.title", {name: user.name})}</p>
+                </div>
+                <div className="home">
+
                 </div>
             </div>)
             ;
     };
 }
+
 export default Home;
