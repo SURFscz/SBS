@@ -61,13 +61,10 @@
     section.actions {
       margin: $medium-margin 0;
 
-      a.cancel {
+      a.cancel, a.white, a.delete {
         margin-left: 25px;
       }
 
-      a.white {
-        margin-left: 25px;
-      }
     }
 
   }

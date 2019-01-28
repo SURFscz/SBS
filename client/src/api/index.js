@@ -228,6 +228,14 @@ export function organisationInvitationDecline(organisationInvitation) {
     return postPutJson("/api/organisation_invitations/decline", organisationInvitation, "put");
 }
 
+export function organisationInvitationResend(organisationInvitation) {
+    return postPutJson("/api/organisation_invitations/resend", organisationInvitation, "put");
+}
+
+export function organisationInvitationDelete(organisationInvitationId) {
+    return fetchDelete(`/api/organisation_invitations/${organisationInvitationId}`);
+}
+
 //Invitations
 export function invitationById(id) {
     return fetchJson(`/api/invitations/${id}`);
@@ -243,6 +251,13 @@ export function invitationAccept(invitation) {
 
 export function invitationDecline(invitation) {
     return postPutJson("/api/invitations/decline", invitation, "put");
+}
+export function invitationResend(invitation) {
+    return postPutJson("/api/invitations/resend", invitation, "put");
+}
+
+export function invitationDelete(invitationId) {
+    return fetchDelete(`/api/invitations/${invitationId}`);
 }
 
 //Organisation Memberships

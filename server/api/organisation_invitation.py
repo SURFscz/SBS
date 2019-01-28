@@ -1,10 +1,12 @@
-from flask import Blueprint, request as current_request, session
+from flask import Blueprint, request as current_request, session, current_app
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_organization_admin
+from server.api.security import confirm_organization_admin, confirm_write_access
 from server.db.db import OrganisationInvitation, Organisation, OrganisationMembership, db
+from server.db.models import delete
+from server.mail import mail_organisation_invitation
 
 organisation_invitations_api = Blueprint("organisation_invitations_api", __name__,
                                          url_prefix="/api/organisation_invitations")
@@ -69,3 +71,28 @@ def organisation_invitations_decline():
     db.session.delete(organisation_invitation)
     db.session.commit()
     return None, 201
+
+
+@organisation_invitations_api.route("/resend", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def organisation_invitations_resend():
+    confirm_write_access()
+    data = current_request.get_json()
+
+    invitation = _organisation_invitation_query() \
+        .filter(OrganisationInvitation.id == data["id"]) \
+        .one()
+
+    mail_organisation_invitation({
+        "salutation": "Dear",
+        "invitation": invitation,
+        "base_url": current_app.app_config.base_url
+    }, invitation.organisation, [invitation.invitee_email])
+    return None, 201
+
+
+@organisation_invitations_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+def delete_organisation_invitation(id):
+    confirm_write_access()
+    return delete(OrganisationInvitation, id)
