@@ -352,7 +352,7 @@ I18n.translations.en = {
         connectAllServices: "Connect all services to collaboration {{name}}",
         connectAllServicesTooltip: "Before services can be added<br/> to authorisation groups they<br/> first need to be added<br/> to the collaboration.<br/><br/> Connecting all services will <br/>make all services available<br/> to the authorisation groups<br/> of collaboration {{name}}",
         connectedServices: "Connected services to {{name}}",
-        searchServices: "Search, select and add services to the available services for the authorisation groups within {{name}}",
+        searchServices: "Search, select and add services to the available services within collaboration {{name}}",
         deleteServiceTooltip: "Make this service unavailable in<br/> the collaboration {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for authorisation groups within<br/>  this collaboration",
         flash: {
             "added": "Successfully added service {{service}} to collaboration {{name}}",
@@ -369,6 +369,8 @@ I18n.translations.en = {
     },
     authorisationGroup: {
         title: "Authorisation groups within collaboration {{name}}",
+        servicesTitle: "Services for authorisation group {{name}}",
+        membersTitle: "Members of authorisation group {{name}}",
         titleNew: "Create new authorisation group",
         titleUpdate: "Update authorisation group {{name}}",
         backToCollaborationAuthorisationGroups: "Back to the authorisation groups of my collaboration {{name}}",
@@ -399,7 +401,32 @@ I18n.translations.en = {
             created: "Authorisation group {{name}} was successfully created",
             updated: "Authorisation group {{name}} was successfully updated",
             deleted: "Successfully deleted authorisation group {{name}}",
+            addedService: "Successfully added service {{service}} to authorisation group {{name}}",
+            deletedService: "Successfully deleted service {{service}} from authorisation group {{name}}",
+            addedMember: "Successfully added user {{member}} as a member of authorisation group {{name}}",
+            deletedMember: "Successfully deleted user {{member}} from authorisation group {{name}}",
         },
+        searchServices: "Search, select and add services to the available services for the authorisation group {{name}}",
+        connectedServices: "Connected services to {{name}}",
+        deleteServiceTooltip: "Make this service unavailable in<br/> the authorisation group {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>It is only not available anymore<br/> for this authorisation groups anymore",
+        searchMembers: "Search, select and add members to the authorisation group {{name}}",
+        connectedMembers: "Members of {{name}}",
+        deleteMemberTooltip: "Remove this member from<br/> the authorisation group {{name}}.<br/><br/><strong>NOTE</strong>: the user itself is NOT deleted.<br/>He / she is only no longer a <br/> member of this authorisation groups anymore",
+        service: {
+            actions: "",
+            name: "Name",
+            entity_id: "Entity ID",
+            description: "Description"
+        },
+        member: {
+            user__name: "Name",
+            user__email: "Email",
+            user__uid: "UID",
+            role: "Role",
+            created_at: "Since",
+            actions: ""
+        },
+
     },
     autocomplete: {
         name: "Name",

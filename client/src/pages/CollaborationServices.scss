@@ -33,17 +33,12 @@
     }
   }
 
-  .collaboration-services, .collaboration-services-connected {
+  .collaboration-services {
     max-width: $medium;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-    margin: 0 auto 25px auto;
+    margin: 0 auto 15px auto;
     background-color: white;
     padding: $medium-padding;
-  }
-
-  .collaboration-services {
-    margin: 0 auto 15px auto;
-
     div.checkbox {
       margin-bottom: 20px;
     }
@@ -51,7 +46,11 @@
 
   .collaboration-services-connected {
     padding: 15px 5px;
-
+    p.title {
+      color: $dark-grey;
+      font-size: 18px;
+      margin: 15px 0;
+    }
     table.connected-services {
       width: 100%;
 

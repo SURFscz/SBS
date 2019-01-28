@@ -123,36 +123,40 @@ class CollaborationServices extends React.Component {
     renderConnectedServices = (collaboration, connectedServices, sorted, reverse) => {
         const names = ["actions", "name", "entity_id", "description"];
         return (
-            <table className="connected-services">
-                <thead>
-                <tr>
-                    {names.map(name =>
-                        <th key={name} className={name}
-                            onClick={this.sortTable(connectedServices, name, sorted, reverse)}>
-                            {I18n.t(`collaborationServices.service.${name}`)}
-                            {name !== "actions" && headerIcon(name, sorted, reverse)}
-                            {name === "actions" &&
-                            <span data-tip data-for="service-delete">
+
+            <div className="collaboration-services-connected">
+                <p className="title">{I18n.t("collaborationServices.connectedServices", {name: collaboration.name})}</p>
+                <table className="connected-services">
+                    <thead>
+                    <tr>
+                        {names.map(name =>
+                            <th key={name} className={name}
+                                onClick={this.sortTable(connectedServices, name, sorted, reverse)}>
+                                {I18n.t(`collaborationServices.service.${name}`)}
+                                {name !== "actions" && headerIcon(name, sorted, reverse)}
+                                {name === "actions" &&
+                                <span data-tip data-for="service-delete">
                                 <FontAwesomeIcon icon="question-circle"/>
                                 <ReactTooltip id="service-delete" type="light" effect="solid" data-html={true}>
                                     <p dangerouslySetInnerHTML={{__html: I18n.t("collaborationServices.deleteServiceTooltip", {name: collaboration.name})}}/>
                                 </ReactTooltip>
                             </span>}
-                        </th>
-                    )}
-                </tr>
-                </thead>
-                <tbody>
-                {connectedServices.map(service => <tr key={service.id}>
-                    <td className="actions">
-                        <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>
-                    </td>
-                    <td className="name">{service.name}</td>
-                    <td className="entity_id">{service.entity_id}</td>
-                    <td className="description">{service.description}</td>
-                </tr>)}
-                </tbody>
-            </table>
+                            </th>
+                        )}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {connectedServices.map(service => <tr key={service.id}>
+                        <td className="actions">
+                            <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>
+                        </td>
+                        <td className="name">{service.name}</td>
+                        <td className="entity_id">{service.entity_id}</td>
+                        <td className="description">{service.description}</td>
+                    </tr>)}
+                    </tbody>
+                </table>
+            </div>
         );
     };
 
@@ -188,11 +192,6 @@ class CollaborationServices extends React.Component {
                             isSearchable={true}
                             isClearable={true}
                     />
-                </div>
-                <div className="title">
-                    <p className="title">{I18n.t("collaborationServices.connectedServices", {name: collaboration.name})}</p>
-                </div>
-                <div className="collaboration-services-connected">
                     {this.renderConnectedServices(collaboration, sortedServices, sorted, reverse)}
                 </div>
             </div>);

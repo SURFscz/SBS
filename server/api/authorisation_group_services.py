@@ -14,7 +14,7 @@ authorisation_group_services_api = Blueprint("authorisation_group_services_api",
 def add_authorisation_group_services():
     data = current_request.get_json()
     authorisation_group_id = data["authorisation_group_id"]
-    collaboration_id = data["authorisation_group_id"]
+    collaboration_id = data["collaboration_id"]
 
     confirm_collaboration_admin(collaboration_id)
 
@@ -45,7 +45,7 @@ def delete_authorisation_group_services(authorisation_group_id, service_id, coll
     confirm_collaboration_admin(collaboration_id)
 
     statement = f"DELETE from services_authorisation_groups WHERE service_id = {service_id}" \
-        f" AND collaboration_id = {authorisation_group_id}"
+        f" AND authorisation_group_id = {authorisation_group_id}"
     sql = text(statement)
     result_set = db.engine.execute(sql)
     return (None, 204) if result_set.rowcount > 0 else (None, 404)
