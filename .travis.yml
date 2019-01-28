@@ -19,8 +19,7 @@ before_install:
 install:
 before_script:
   - mysql -e "create database IF NOT EXISTS sbs_test; CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
-    GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
-    SET GLOBAL TRANSACTION ISOLATION LEVEL SERIALIZABLE;" -uroot
+    GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;" -uroot
 script:
   - pytest --cov=server --cov-report= server/test
   - flake8 ./server/
