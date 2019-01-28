@@ -1,10 +1,14 @@
 import React from "react";
 import {
+    addAuthorisationGroupMembers,
+    addAuthorisationGroupServices,
     authorisationGroupById,
     authorisationGroupNameExists,
     collaborationServices,
     createAuthorisationGroup,
     deleteAuthorisationGroup,
+    deleteAuthorisationGroupMembers,
+    deleteAuthorisationGroupServices,
     updateAuthorisationGroup
 } from "../api";
 import I18n from "i18n-js";
@@ -17,6 +21,11 @@ import {isEmpty, sortObjects, stopEvent} from "../utils/Utils";
 import SelectField from "../components/SelectField";
 import {authorisationGroupStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {headerIcon} from "../forms/helpers";
+import ReactTooltip from "react-tooltip";
+
+import Select from "react-select";
+import moment from "moment";
 
 class AuthorisationGroup extends React.Component {
 
@@ -81,7 +90,6 @@ class AuthorisationGroup extends React.Component {
             } else {
                 collaborationServices(params.collaboration_id, true)
                     .then(collaboration => {
-                        const {sortedMembersBy, reverseMembers} = this.state;
                         const allServices = this.sortedCollaborationServices(collaboration);
                         const allMembers = this.sortedCollaborationMembers(collaboration);
                         this.setState({
@@ -96,6 +104,28 @@ class AuthorisationGroup extends React.Component {
         } else {
             this.props.history.push("/404");
         }
+    };
+
+    refreshServices = callBack => {
+        const params = this.props.match.params;
+        authorisationGroupById(params.id, params.collaboration_id)
+            .then(json => {
+                const {sortedServicesBy, reverseServices} = this.state;
+                this.setState({
+                    sortedServices: sortObjects(json.services, sortedServicesBy, reverseServices)
+                }, callBack())
+            });
+    };
+
+    refreshMembers = callBack => {
+        const params = this.props.match.params;
+        authorisationGroupById(params.id, params.collaboration_id)
+            .then(json => {
+                const {sortedMembersBy, reverseMembers} = this.state;
+                this.setState({
+                    sortedMembers: sortObjects(json.collaboration_memberships, sortedMembersBy, reverseMembers)
+                }, callBack())
+            });
     };
 
     sortedCollaborationMembers = collaboration => collaboration.collaboration_memberships
@@ -187,6 +217,199 @@ class AuthorisationGroup extends React.Component {
         }
     };
 
+    addService = option => {
+        const {collaboration, authorisationGroup, name} = this.state;
+        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+        addAuthorisationGroupServices({
+            authorisationGroupId: authorisationGroup.id,
+            collaborationId: collaboration.id,
+            serviceIds: option.value
+        }).then(() => {
+            this.refreshServices(() => setFlash(I18n.t("authorisationGroup.flash.addedService", {
+                service: option.label,
+                name: authorisationGroupName
+            })));
+        });
+    };
+
+    removeService = service => () => {
+        const {collaboration, authorisationGroup, name} = this.state;
+        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+        deleteAuthorisationGroupServices(authorisationGroup.id, service.id, collaboration.id).then(() => {
+            this.refreshServices(() => setFlash(I18n.t("authorisationGroup.flash.deletedService", {
+                service: service.name,
+                name: authorisationGroupName
+            })));
+        });
+    };
+
+    addMember = option => {
+        const {collaboration, authorisationGroup, name} = this.state;
+        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+        addAuthorisationGroupMembers({
+            authorisationGroupId: authorisationGroup.id,
+            collaborationId: collaboration.id,
+            memberIds: option.value
+        }).then(() => {
+            this.refreshMembers(() => setFlash(I18n.t("authorisationGroup.flash.addedMember", {
+                member: option.label,
+                name: authorisationGroupName
+            })));
+        });
+    };
+
+    removeMember = member => () => {
+        const {collaboration, authorisationGroup, name} = this.state;
+        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+        deleteAuthorisationGroupMembers(authorisationGroup.id, member.id, collaboration.id).then(() => {
+            this.refreshMembers(() => setFlash(I18n.t("authorisationGroup.flash.deletedMember", {
+                member: member.user.name,
+                name: authorisationGroupName
+            })));
+        });
+    };
+
+    sortServicesTable = (services, name, sorted, reverse) => () => {
+        if (name === "actions") {
+            return;
+        }
+        const reversed = (sorted === name ? !reverse : false);
+        const sortedServices = sortObjects(services, name, reversed);
+        this.setState({sortedServices: sortedServices, sortedServicesBy: name, reverseServices: reversed});
+    };
+
+    sortMembersTable = (members, name, sorted, reverse) => () => {
+        if (name === "actions") {
+            return;
+        }
+        const reversed = (sorted === name ? !reverse : false);
+        const sortedMembers = sortObjects(members, name, reversed);
+        this.setState({sortedMembers: sortedMembers, sortedMembersBy: name, reverseMembers: reversed});
+    };
+
+    renderConnectedMembers = (collaboration, authorisationGroupName, connectedMembers, sorted, reverse) => {
+        const names = [ "actions","user__name", "user__email", "user__uid", "role", "created_at"];
+        const role = {value: "admin", label: "Admin"};
+        const membersTitle = I18n.t("authorisationGroup.membersTitle", {name: authorisationGroupName});
+        return (
+            <div className="authorisation-members-connected">
+                <p className="title">{membersTitle}</p>
+                <table className="connected-members">
+                    <thead>
+                    <tr>
+                        {names.map(name =>
+                            <th key={name} className={name}
+                                onClick={this.sortMembersTable(connectedMembers, name, sorted, reverse)}>
+                                {I18n.t(`authorisationGroup.member.${name}`)}
+                                {name !== "actions" && headerIcon(name, sorted, reverse)}
+                                {name === "actions" &&
+                                <span data-tip data-for="member-delete">
+                                <FontAwesomeIcon icon="question-circle"/>
+                                <ReactTooltip id="member-delete" type="light" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteMemberTooltip", {name: authorisationGroupName})}}/>
+                                </ReactTooltip>
+                            </span>}
+                            </th>
+                        )}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {connectedMembers.map((member, i) => <tr key={i}>
+                        <td className="actions">
+                            <FontAwesomeIcon icon="trash" onClick={this.removeMember(member)}/>
+                        </td>
+                        <td className="name">{member.user.name}</td>
+                        <td className="email">{member.user.email}</td>
+                        <td className="uid">{member.user.uid}</td>
+                        <td className="role">
+                            <Select
+                                classNamePrefix="select-disabled"
+                                value={role}
+                                options={[role]}
+                                isDisabled={true}/></td>
+                        <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
+                    </tr>)}
+                    </tbody>
+                </table>
+            </div>
+        );
+    };
+
+    renderConnectedServices = (collaboration, authorisationGroupName, connectedServices, sorted, reverse) => {
+        const names = ["actions", "name", "entity_id", "description"];
+        return (<div className="authorisation-services-connected">
+                <p className="title">{I18n.t("authorisationGroup.connectedServices", {name: authorisationGroupName})}</p>
+
+                <table className="connected-services">
+                    <thead>
+                    <tr>
+                        {names.map(name =>
+                            <th key={name} className={name}
+                                onClick={this.sortServicesTable(connectedServices, name, sorted, reverse)}>
+                                {I18n.t(`authorisationGroup.service.${name}`)}
+                                {name !== "actions" && headerIcon(name, sorted, reverse)}
+                                {name === "actions" &&
+                                <span data-tip data-for="service-delete">
+                                <FontAwesomeIcon icon="question-circle"/>
+                                <ReactTooltip id="service-delete" type="light" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteServiceTooltip", {name: authorisationGroupName})}}/>
+                                </ReactTooltip>
+                            </span>}
+                            </th>
+                        )}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {connectedServices.map(service => <tr key={service.id}>
+                        <td className="actions">
+                            <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>
+                        </td>
+                        <td className="name">{service.name}</td>
+                        <td className="entity_id">{service.entity_id}</td>
+                        <td className="description">{service.description}</td>
+                    </tr>)}
+                    </tbody>
+                </table>
+            </div>
+        );
+    };
+
+    authorisationMembers = (collaboration, authorisationGroupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers) => {
+        const availableMembers = allMembers.filter(member => !sortedMembers.find(s => s.id === member.value));
+        return (
+            <div className="authorisation-members">
+                <Select className="services-select"
+                        placeholder={I18n.t("authorisationGroup.searchMembers", {name: authorisationGroupName})}
+                        onChange={this.addMember}
+                        options={availableMembers}
+                        value={null}
+                        isSearchable={true}
+                        isClearable={true}
+                />
+                {this.renderConnectedMembers(collaboration, authorisationGroupName, sortedMembers, sortedMembersBy, reverseMembers)}
+            </div>
+        );
+
+
+    };
+
+    authorisationServices = (collaboration, authorisationGroupName, allServices, sortedServices, sortedServicesBy, reverseServices) => {
+        const availableServices = allServices.filter(service => !sortedServices.find(s => s.id === service.value));
+        return (
+            <div className="authorisation-services">
+                <Select className="services-select"
+                        placeholder={I18n.t("authorisationGroup.searchServices", {name: authorisationGroupName})}
+                        onChange={this.addService}
+                        options={availableServices}
+                        value={null}
+                        isSearchable={true}
+                        isClearable={true}
+                />
+                {this.renderConnectedServices(collaboration, authorisationGroupName, sortedServices, sortedServicesBy, reverseServices)}
+            </div>);
+    };
+
+
     authorisationGroupDetails = (name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit) => {
         return (
             <div className="authorisation-group">
@@ -247,14 +470,19 @@ class AuthorisationGroup extends React.Component {
         const {
             alreadyExists, collaboration, initial, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
             name, uri, description, status, authorisationGroup, isNew, back, leavePage,
-            allCollaborationServices, sortedServices, sortedServicesBy, reverseServices,
-            allCollaborationMembers, sortedCollaborationMembers, sortedMembersBy, reverseMembers
+            allServices, sortedServices, sortedServicesBy, reverseServices,
+            allMembers, sortedMembers, sortedMembersBy, reverseMembers
         } = this.state;
         if (!collaboration) {
             return null;
         }
+        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+
         const disabledSubmit = !initial && !this.isValid();
-        const title = isNew ? I18n.t("authorisationGroup.titleNew") : I18n.t("authorisationGroup.titleUpdate", {name: authorisationGroup.name});
+        const detailsTitle = isNew ? I18n.t("authorisationGroup.titleNew") : I18n.t("authorisationGroup.titleUpdate", {name: authorisationGroup.name});
+        const servicesTitle = I18n.t("authorisationGroup.servicesTitle", {name: authorisationGroup.name});
+        const membersTitle = I18n.t("authorisationGroup.membersTitle", {name: authorisationGroupName});
+
         return (
             <div className="mod-authorisation-group">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -269,8 +497,16 @@ class AuthorisationGroup extends React.Component {
                     }}><FontAwesomeIcon icon="arrow-left"/>
                         {I18n.t("authorisationGroup.backToCollaborationAuthorisationGroups", {name: collaboration.name})}
                     </a>
-                    <p className="title">{title}</p>
+                    {<p className="title">{isNew ? detailsTitle : servicesTitle}</p>}
                 </div>
+                {!isNew && this.authorisationServices(collaboration, authorisationGroupName, allServices, sortedServices, sortedServicesBy, reverseServices)}
+                {!isNew && <div className="title">
+                    <p className="title">{membersTitle}</p>
+                </div>}
+                {!isNew && this.authorisationMembers(collaboration, authorisationGroupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers)}
+                {!isNew && <div className="title">
+                    <p className="title">{detailsTitle}</p>
+                </div>}
                 {this.authorisationGroupDetails(name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit)}
             </div>);
     };

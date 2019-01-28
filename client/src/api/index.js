@@ -292,3 +292,39 @@ export function updateAuthorisationGroup(authorisationGroup) {
 export function deleteAuthorisationGroup(id) {
     return fetchDelete(`/api/authorisation_groups/${id}`)
 }
+
+//AuthorisationGroupServices
+export function addAuthorisationGroupServices({authorisationGroupId, collaborationId, serviceIds}) {
+    serviceIds = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
+    return postPutJson("/api/authorisation_group_services", {
+        authorisation_group_id: authorisationGroupId,
+        collaboration_id: collaborationId,
+        service_ids: serviceIds
+    }, "put")
+}
+
+export function deleteAuthorisationGroupServices(authorisationGroupId, serviceId, collaborationId) {
+    return fetchDelete(`/api/authorisation_group_services/${authorisationGroupId}/${serviceId}/${collaborationId}`)
+}
+
+export function deleteAllAuthorisationGroupServices(authorisationGroupId, collaborationId) {
+    return fetchDelete(`/api/authorisation_group_services/delete_all_services/${authorisationGroupId}/${collaborationId}`)
+}
+
+//AuthorisationGroupMembers
+export function addAuthorisationGroupMembers({authorisationGroupId, collaborationId, memberIds}) {
+    memberIds = Array.isArray(memberIds) ? memberIds : [memberIds];
+    return postPutJson("/api/authorisation_group_members", {
+        authorisation_group_id: authorisationGroupId,
+        collaboration_id: collaborationId,
+        members_ids: memberIds
+    }, "put")
+}
+
+export function deleteAuthorisationGroupMembers(authorisationGroupId, memberId, collaborationId) {
+    return fetchDelete(`/api/authorisation_group_members/${authorisationGroupId}/${memberId}/${collaborationId}`)
+}
+
+export function deleteAllAuthorisationGroupMembers(authorisationGroupId, collaborationId) {
+    return fetchDelete(`/api/authorisation_group_members/delete_all_members/${authorisationGroupId}/${collaborationId}`)
+}
