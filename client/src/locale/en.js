@@ -298,6 +298,7 @@ I18n.translations.en = {
     },
     organisationInvitation: {
         title: "Invitation to join organisation {{organisation}}",
+        backToOrganisationDetail: "Back to my organisation {{name}}",
         createTitle: "Send invitations to join organisation {{organisation}}",
         organisationName: "Name",
         organisationDescription: "Description",
@@ -311,9 +312,15 @@ I18n.translations.en = {
         decline: "Decline",
         accept: "Accept",
         invite: "Invite",
+        delete: "Delete",
+        resend: "Resend",
         declineInvitation: "Are you sure you want to decline this invitation?",
+        deleteInvitation: "Are you sure you want to delete this invitation?",
+        resendInvitation: "Are you sure you want to resend this invitation?",
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} is declined",
+            inviteDeleted: "Invitation for organisation {{name}} is deleted",
+            inviteResend: "Invitation for organisation {{name}} is resend",
             inviteAccepted: "Invitation for organisation {{name}} is accepted",
             created: "Invitions for organisation {{name}} are created"
         },
@@ -337,13 +344,19 @@ I18n.translations.en = {
         inviter: "Inviter",
         decline: "Decline",
         accept: "Accept",
+        delete: "Delete",
+        resend: "Resend",
         invite: "Invite",
         declineInvitation: "Are you sure you want to decline this invitation?",
+        deleteInvitation: "Are you sure you want to delete this invitation?",
+        resendInvitation: "Are you sure you want to resend this invitation?",
         expiryDate: "Expiry date",
         expiryDateTooltip: "The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         flash: {
             inviteDeclined: "Invitation for collaboration {{name}} is declined",
             inviteAccepted: "Invitation for collaboration {{name}} is accepted",
+            inviteDeleted: "Invitation for organisation {{name}} is deleted",
+            inviteResend: "Invitation for organisation {{name}} is resend",
             created: "Invitations for collaboration {{name}} are successfully created"
         },
     },

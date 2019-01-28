@@ -3,7 +3,9 @@ import {
     organisationInvitationAccept,
     organisationInvitationByHash,
     organisationInvitationById,
-    organisationInvitationDecline
+    organisationInvitationDecline,
+    organisationInvitationDelete,
+    organisationInvitationResend
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
@@ -23,12 +25,12 @@ class OrganisationInvitation extends React.Component {
             organisationInvitation: {user: {}, organisation: {organisation_memberships: []},},
             acceptedTerms: false,
             initial: true,
-            readOnly: true,
             confirmationDialogOpen: false,
-            leavePage: false,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => true,
-            isAdminLink : false
+            confirmationQuestion: "",
+            leavePage: false,
+            isAdminLink: false
         };
     }
 
@@ -37,7 +39,7 @@ class OrganisationInvitation extends React.Component {
         if (params.hash) {
             organisationInvitationByHash(params.hash)
                 .then(json => {
-                    this.setState({organisationInvitation: json, readOnly: false});
+                    this.setState({organisationInvitation: json});
                 });
         } else if (params.id) {
             organisationInvitationById(params.id)
@@ -56,29 +58,70 @@ class OrganisationInvitation extends React.Component {
 
     cancel = () => {
         this.setState({
-            confirmationDialogOpen: true, leavePage: true,
-            cancelDialogAction: this.gotoOrganisations, confirmationDialogAction: this.closeConfirmationDialog
+            confirmationDialogOpen: true,
+            leavePage: true,
+            cancelDialogAction: this.gotoOrganisations,
+            confirmationDialogAction: this.closeConfirmationDialog
         });
     };
 
     decline = () => {
         this.setState({
-            confirmationDialogOpen: true, leavePage: false,
-            cancelDialogAction: this.closeConfirmationDialog, confirmationDialogAction: this.doDecline
+            confirmationDialogOpen: true,
+            leavePage: false,
+            confirmationQuestion: I18n.t("organisationInvitation.declineInvitation"),
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationDialogAction: this.doDecline
         });
     };
 
     doDecline = () => {
         const {organisationInvitation} = this.state;
         organisationInvitationDecline(organisationInvitation).then(res => {
-            this.props.history.push("/organisations");
+            this.gotoOrganisations();
             setFlash(I18n.t("organisationInvitation.flash.inviteDeclined", {name: organisationInvitation.organisation.name}));
         });
     };
 
+    delete = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            leavePage: false,
+            confirmationQuestion: I18n.t("organisationInvitation.deleteInvitation"),
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationDialogAction: this.doDelete
+        });
+    };
+
+    doDelete = () => {
+        const {organisationInvitation} = this.state;
+        organisationInvitationDelete(organisationInvitation.id).then(res => {
+            this.gotoOrganisations();
+            setFlash(I18n.t("organisationInvitation.flash.inviteDeleted", {name: organisationInvitation.organisation.name}));
+        });
+    };
+
+    resend = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            leavePage: false,
+            confirmationQuestion: I18n.t("organisationInvitation.resendInvitation"),
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationDialogAction: this.doResend
+        });
+    };
+
+    doResend = () => {
+        const {organisationInvitation} = this.state;
+        organisationInvitationResend(organisationInvitation).then(res => {
+            this.gotoOrganisations();
+            setFlash(I18n.t("organisationInvitation.flash.inviteResend", {name: organisationInvitation.organisation.name}));
+        });
+    };
+
     isValid = () => {
-        const {acceptedTerms, readOnly} = this.state;
-        return acceptedTerms || readOnly;
+        const {acceptedTerms, isAdminLink} = this.state;
+        return acceptedTerms || isAdminLink;
     };
 
     doSubmit = () => {
@@ -110,7 +153,7 @@ class OrganisationInvitation extends React.Component {
     render() {
         const {
             organisationInvitation, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogAction, readOnly, leavePage, isAdminLink
+            confirmationDialogAction, confirmationQuestion, leavePage, isAdminLink
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         return (
@@ -119,13 +162,13 @@ class OrganisationInvitation extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
-                                    question={I18n.t("organisationInvitation.declineInvitation")}/>
+                                    question={confirmationQuestion}/>
                 <div className="title">
                     {isAdminLink && <a href="/organisations" onClick={e => {
                         stopEvent(e);
-                        this.props.history.push(`/organisations`)
+                                    this.gotoOrganisations();
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("organisationDetail.backToOrganisations")}
+                        {I18n.t("organisationInvitation.backToOrganisationDetail", {name: organisationInvitation.organisation.name})}
                     </a>}
                     <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>
                 </div>
@@ -153,7 +196,7 @@ class OrganisationInvitation extends React.Component {
                                 disabled={true}
                                 multiline={true}/>
 
-                    {!readOnly &&
+                    {!isAdminLink &&
                     <section className={`form-element ${acceptedTerms ? "" : "invalid"}`}>
                         <label className="form-label"
                                dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: organisationInvitation.organisation.name})}}/>{this.requiredMarker()}
@@ -169,7 +212,13 @@ class OrganisationInvitation extends React.Component {
                                 onClick={this.decline}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>}
-                    {/*TODO: if adminLink then show resend / delete    */}
+                    {isAdminLink && <section className="actions">
+                        <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.resend")}
+                                onClick={this.resend}/>
+                        <Button className="delete" txt={I18n.t("organisationInvitation.delete")}
+                                onClick={this.delete}/>
+                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                    </section>}
                 </div>
             </div>);
     };
