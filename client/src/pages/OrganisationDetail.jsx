@@ -121,7 +121,7 @@ class OrganisationDetail extends React.Component {
             const {name, description, tenant_identifier, originalOrganisation} = this.state;
             updateOrganisation({id: originalOrganisation.id, name, description, tenant_identifier})
                 .then(() => {
-                    this.props.history.push(`/organisation/${originalOrganisation.id}`);
+                    this.props.history.push(`/organisations/${originalOrganisation.id}`);
                     setFlash(I18n.t("organisationDetail.flash.updated", {name: name}))
                 });
         }

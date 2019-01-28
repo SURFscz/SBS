@@ -58,8 +58,13 @@ class NewOrganisationInvitation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {administrators, message, organisation} = this.state;
-            organisationInvitations({administrators, message, organisation_id: organisation.id}).then(res => {
+            const {administrators, message, organisation, expiry_date} = this.state;
+            organisationInvitations({
+                administrators,
+                message,
+                expiry_date: expiry_date.getTime() / 1000,
+                organisation_id: organisation.id
+            }).then(res => {
                 this.props.history.push(`/organisations/${organisation.id}`);
                 setFlash(I18n.t("organisationInvitation.flash.created", {name: organisation.name}))
             });
@@ -121,7 +126,7 @@ class NewOrganisationInvitation extends React.Component {
                         stopEvent(e);
                         this.props.history.push(`/organisations`)
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("organisationDetail.backToOrganisationDetail", {name:organisation.name})}
+                        {I18n.t("organisationDetail.backToOrganisationDetail", {name: organisation.name})}
                     </a>
                     <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
                 </div>
@@ -156,7 +161,8 @@ class NewOrganisationInvitation extends React.Component {
                                toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>
 
                     <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")} onClick={this.submit}/>
+                        <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")}
+                                onClick={this.submit}/>
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>
                 </div>

@@ -1,3 +1,5 @@
+import datetime
+
 from flask import Blueprint, request as current_request, session, current_app
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
@@ -47,10 +49,19 @@ def invitations_accept():
     invitation = _invitation_query() \
         .filter(Invitation.hash == current_request.get_json()["hash"]) \
         .one()
+
+    if invitation.expiry_date and invitation.expiry_date < datetime.datetime.now():
+        delete(Invitation, invitation.id)
+        db.session.commit()
+        raise Conflict(f"The invitation has expired at {invitation.expiry_date}")
+
     collaboration = invitation.collaboration
     user_id = session["user"]["id"]
     if collaboration.is_member(user_id):
+        delete(Invitation, invitation.id)
+        db.session.commit()
         raise Conflict(f"User {user_id} is already a member of {collaboration.name}")
+
     role = invitation.intended_role if invitation.intended_role else "member"
     collaboration_membership = CollaborationMembership(user_id=user_id,
                                                        collaboration=collaboration,
@@ -87,7 +98,8 @@ def invitations_resend():
     mail_collaboration_invitation({
         "salutation": "Dear",
         "invitation": invitation,
-        "base_url": current_app.app_config.base_url
+        "base_url": current_app.app_config.base_url,
+        "expiry_days": (invitation.expiry_date - datetime.date.today()).days
     }, invitation.collaboration, [invitation.invitee_email])
     return None, 201
 

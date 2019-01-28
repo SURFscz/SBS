@@ -65,8 +65,13 @@ class NewInvitation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {administrators, message, collaboration} = this.state;
-            collaborationInvitations({administrators, message, collaboration_id: collaboration.id}).then(res => {
+            const {administrators, message, collaboration, expiry_date} = this.state;
+            collaborationInvitations({
+                administrators,
+                message,
+                collaboration_id: collaboration.id,
+                expiry_date: expiry_date.getTime() / 1000
+            }).then(res => {
                 this.props.history.push(`/collaborations/${collaboration.id}`);
                 setFlash(I18n.t("invitation.flash.created", {name: collaboration.name}))
             });

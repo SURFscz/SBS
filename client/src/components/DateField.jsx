@@ -8,6 +8,7 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./DateField.scss"
+import moment from "moment";
 
 export default class DateField extends React.PureComponent {
 
@@ -15,7 +16,7 @@ export default class DateField extends React.PureComponent {
 
     render() {
         const {
-            onChange, name, value, disabled = false, maxDate = null, toolTip = null
+            onChange, name, value, disabled = false, maxDate = null, minDate = null, toolTip = null
         } = this.props;
         return (<div className="date-field">
                 <label className="date-field-label" htmlFor={name}>{name} {toolTip &&
@@ -39,6 +40,7 @@ export default class DateField extends React.PureComponent {
                         disabled={disabled}
                         todayButton={I18n.t("forms.today")}
                         maxDate={maxDate}
+                        minDate={minDate || moment().add(1, "day").toDate()}
                     />
                     <FontAwesomeIcon onClick={this.toggle} icon="calendar-alt"/>
                 </label>

@@ -1,3 +1,5 @@
+import datetime
+
 from flask import Blueprint, request as current_request, session, current_app
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
@@ -47,6 +49,12 @@ def organisation_invitations_accept():
     organisation_invitation = _organisation_invitation_query() \
         .filter(OrganisationInvitation.hash == current_request.get_json()["hash"]) \
         .one()
+
+    if organisation_invitation.expiry_date and organisation_invitation.expiry_date < datetime.datetime.now():
+        delete(OrganisationInvitation, organisation_invitation.id)
+        db.session.commit()
+        raise Conflict(f"The invitation has expired at {organisation_invitation.expiry_date}")
+
     organisation = organisation_invitation.organisation
     user_id = session["user"]["id"]
     if organisation.is_member(user_id):
@@ -86,7 +94,8 @@ def organisation_invitations_resend():
     mail_organisation_invitation({
         "salutation": "Dear",
         "invitation": invitation,
-        "base_url": current_app.app_config.base_url
+        "base_url": current_app.app_config.base_url,
+        "expiry_days": (invitation.expiry_date - datetime.date.today()).days
     }, invitation.organisation, [invitation.invitee_email])
     return None, 201
 

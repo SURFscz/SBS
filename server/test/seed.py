@@ -75,11 +75,12 @@ def seed(db):
     wireless = Service(entity_id="https://wireless", name="Wirless", description="Network Wireless Service")
     cloud = Service(entity_id="https://cloud", name="Cloud", description="SARA Cloud Service")
     storage = Service(entity_id="https://storage", name="Storage", description="SURF Storage Service")
+    wiki = Service(entity_id="https://wiki", name="Wiki", description="No more wiki's please")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address", status="active",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
                       contact_email="help@example.org")
-    _persist(db, mail, wireless, cloud, storage, network)
+    _persist(db, mail, wireless, cloud, storage, wiki, network)
 
     ai_computing = Collaboration(name=ai_computing_name,
                                  identifier=collaboration_ai_computing_uuid,
