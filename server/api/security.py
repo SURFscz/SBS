@@ -8,12 +8,8 @@ def is_admin_user(uid):
     return len(list(filter(lambda u: u.uid == uid, current_app.app_config.admin_users))) == 1
 
 
-def is_application_admin():
-    return session["user"]["admin"]
-
-
 def _get_impersonated_session():
-    if not is_application_admin():
+    if not session["user"]["admin"]:
         return session
 
     headers = current_request.headers
@@ -32,6 +28,10 @@ def _get_impersonated_session():
             }
         }
     return session
+
+
+def is_application_admin():
+    return _get_impersonated_session()["user"]["admin"]
 
 
 def current_user():
