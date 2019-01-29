@@ -2,6 +2,7 @@
 
 .app-container {
   display: flex;
+  position: relative;
   min-height: 100vh;
   flex-direction: column;
   background-color: $background;

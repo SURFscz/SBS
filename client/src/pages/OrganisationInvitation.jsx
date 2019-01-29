@@ -16,7 +16,7 @@ import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 import {stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import moment from "./Invitation";
+import moment from "moment";
 
 class OrganisationInvitation extends React.Component {
 

@@ -3,11 +3,11 @@ import I18n from "i18n-js";
 import {Link} from "react-router-dom";
 import logo from "../images/surflogo.png";
 import "./Header.scss";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {stopEvent} from "../utils/Utils";
 import LanguageSelector from "./LanguageSelector";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserProfile from "./UserProfile";
-
+import ReactTooltip from "react-tooltip";
 
 export default class Header extends React.PureComponent {
 
@@ -21,7 +21,7 @@ export default class Header extends React.PureComponent {
     renderProfileLink(currentUser) {
         return (
             <a href="/profile" className="welcome-link" onClick={this.handleToggle}>
-                <FontAwesomeIcon icon="user-ninja"/>
+                {/*<FontAwesomeIcon icon="user-ninja"/>*/}
                 {currentUser.name}
                 {this.renderDropDownIndicator()}
             </a>
@@ -45,11 +45,8 @@ export default class Header extends React.PureComponent {
     };
 
     render() {
-        let currentUser = this.props.currentUser;
-        if (isEmpty(currentUser)) {
-            currentUser = {display_name: "John Doe"}
-        }
-        const displayLogin = currentUser.guest && !window.location.pathname.startsWith("/registration") ;
+        const {currentUser, impersonator} = this.props;
+        const displayLogin = currentUser.guest && !window.location.pathname.startsWith("/registration");
         return (
             <div className={`header-container`}>
                 <div className="header">
@@ -60,7 +57,19 @@ export default class Header extends React.PureComponent {
                         {displayLogin && <li className="login">
                             <a href="#login" onClick={this.login}>{I18n.t("header.links.login")}</a>
                         </li>}
-                        <li className={`user-profile ${displayLogin ? "border-left" : ""}`}>
+                        {impersonator && <li className="impersonator">
+                            <span data-tip data-for="impersonator">
+                                <FontAwesomeIcon icon="user-secret"/></span>
+                            <ReactTooltip id="impersonator" type="light" effect="solid" data-html={true}>
+                                <p dangerouslySetInnerHTML={{
+                                    __html: I18n.t("header.impersonator", {
+                                        currentUser: currentUser.name,
+                                        impersonator: impersonator.name
+                                    })
+                                }}/>
+                            </ReactTooltip>
+                        </li>}
+                        <li className={`user-profile ${(displayLogin || impersonator) ? "border-left" : ""}`}>
                             {this.renderProfileLink(currentUser)}
                             {this.renderDropDown(currentUser)}
                         </li>

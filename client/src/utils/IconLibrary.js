@@ -9,7 +9,7 @@ import {
     faCalendarAlt,
     faCaretUp,
     faCaretDown,
-    faUserNinja,
+    faUserSecret,
     faCheck,
     faCheckCircle,
     faCircle,
@@ -33,6 +33,6 @@ export function addIcons() {
     library.add(faLightbulb, faCalendarAlt, faArrowLeft, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faInfo,
         faCircle, faCheck,
         faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
-        faQuestion, faQuestionCircle, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserNinja,
+        faQuestion, faQuestionCircle, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret,
     );
 }

@@ -1,4 +1,11 @@
 import spinner from "../utils/Spin";
+import {isEmpty} from "../utils/Utils";
+import {emitter} from "../utils/Events";
+
+let impersonator = null;
+emitter.addListener("impersonation", selectedUser => {
+    impersonator = selectedUser;
+});
 
 //Internal API
 function validateResponse(showErrorDialog) {
@@ -36,7 +43,9 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
         "Content-Type": "application/json",
         ...headers
     };
-
+    if (impersonator) {
+        contentHeaders["X-IMPERSONATE"] = impersonator.id;
+    }
     const fetchOptions = Object.assign({}, {headers: contentHeaders}, options, {
         credentials: "same-origin",
         redirect: "manual"
@@ -73,6 +82,16 @@ export function me() {
     //TODO - temporary local hack
     const headers = {"MELLON_cmuid": "urn:john"};
     return fetchJson("/api/users/me", {}, headers, false);
+}
+
+export function other(uid) {
+    return fetchJson(`/api/users/other?uid=${encodeURIComponent(uid)}`);
+}
+
+export function searchUsers(q, organisationId, collaborationId) {
+    const organisationIdPart = isEmpty(organisationId) ? "" : `&organisation_id=${organisationId}`;
+    const collaborationIdPart = isEmpty(collaborationId) ? "" : `&collaboration_id=${collaborationId}`;
+    return fetchJson(`/api/users/search?q=${encodeURIComponent(q)}${organisationIdPart}${collaborationIdPart}`);
 }
 
 export function reportError(error) {
@@ -252,6 +271,7 @@ export function invitationAccept(invitation) {
 export function invitationDecline(invitation) {
     return postPutJson("/api/invitations/decline", invitation, "put");
 }
+
 export function invitationResend(invitation) {
     return postPutJson("/api/invitations/resend", invitation, "put");
 }
@@ -322,10 +342,6 @@ export function deleteAuthorisationGroupServices(authorisationGroupId, serviceId
     return fetchDelete(`/api/authorisation_group_services/${authorisationGroupId}/${serviceId}/${collaborationId}`)
 }
 
-export function deleteAllAuthorisationGroupServices(authorisationGroupId, collaborationId) {
-    return fetchDelete(`/api/authorisation_group_services/delete_all_services/${authorisationGroupId}/${collaborationId}`)
-}
-
 //AuthorisationGroupMembers
 export function addAuthorisationGroupMembers({authorisationGroupId, collaborationId, memberIds}) {
     memberIds = Array.isArray(memberIds) ? memberIds : [memberIds];
@@ -338,8 +354,4 @@ export function addAuthorisationGroupMembers({authorisationGroupId, collaboratio
 
 export function deleteAuthorisationGroupMembers(authorisationGroupId, memberId, collaborationId) {
     return fetchDelete(`/api/authorisation_group_members/${authorisationGroupId}/${memberId}/${collaborationId}`)
-}
-
-export function deleteAllAuthorisationGroupMembers(authorisationGroupId, collaborationId) {
-    return fetchDelete(`/api/authorisation_group_members/delete_all_members/${authorisationGroupId}/${collaborationId}`)
 }

@@ -1,6 +1,6 @@
 import React from "react";
-
-import {emitter, getFlash, clearFlash} from "../utils/Flash";
+import {emitter} from "../utils/Events";
+import {getFlash, clearFlash} from "../utils/Flash";
 import {isEmpty} from "../utils/Utils";
 import "./Flash.scss";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
