@@ -288,12 +288,13 @@ class AuthorisationGroup extends React.Component {
     };
 
     renderConnectedMembers = (collaboration, authorisationGroupName, connectedMembers, sorted, reverse) => {
-        const names = [ "actions","user__name", "user__email", "user__uid", "role", "created_at"];
+        const names = ["actions", "user__name", "user__email", "user__uid", "role", "created_at"];
         const role = {value: "admin", label: "Admin"};
         const membersTitle = I18n.t("authorisationGroup.membersTitle", {name: authorisationGroupName});
         return (
             <div className="authorisation-members-connected">
                 <p className="title">{membersTitle}</p>
+                <em className="warning">{I18n.t("authorisationGroup.deleteMemberWarning")}</em>
                 <table className="connected-members">
                     <thead>
                     <tr>
@@ -339,7 +340,7 @@ class AuthorisationGroup extends React.Component {
         const names = ["actions", "name", "entity_id", "description"];
         return (<div className="authorisation-services-connected">
                 <p className="title">{I18n.t("authorisationGroup.connectedServices", {name: authorisationGroupName})}</p>
-
+                <em className="warning">{I18n.t("authorisationGroup.deleteServiceWarning")}</em>
                 <table className="connected-services">
                     <thead>
                     <tr>
