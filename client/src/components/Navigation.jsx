@@ -38,7 +38,7 @@ export default class Navigation extends React.PureComponent {
 
     render() {
         const {currentUser, impersonator} = this.props;
-        const isAdmin = (currentUser.collaboration_memberships || []).some(membership => membership.role === "admin");
+        const isCollaborationAdmin = (currentUser.collaboration_memberships || []).some(membership => membership.role === "admin");
         const mayImpersonate = currentUser.admin || (impersonator && impersonator.admin);
         return (
             <div className="navigation-container">

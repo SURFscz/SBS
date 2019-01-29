@@ -1,6 +1,6 @@
 import datetime
 
-from flask import Blueprint, request as current_request, session, current_app
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
