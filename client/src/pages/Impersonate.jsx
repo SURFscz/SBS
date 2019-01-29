@@ -50,13 +50,13 @@ class Impersonate extends React.Component {
             this.setState({initial: false});
         } else {
             emitter.emit("impersonation", selectedUser);
-            this.setState({selectedUser: null, query: "", initial: true});
+            this.setState({selectedUser: null, query: "", initial: true, collaboration: null, organisation: null});
         }
     };
 
     clearImpersonation = () => {
         emitter.emit("impersonation", null);
-        this.setState({selectedUser: null, query: "", initial: true});
+        this.setState({selectedUser: null, query: "", initial: true, collaboration: null, organisation: null});
     };
 
     onSearchKeyDown = e => {
@@ -175,7 +175,8 @@ class Impersonate extends React.Component {
                              </span>
                         </div>
                     </section>
-                    {(!initial && isEmpty(selectedUser)) && <span className="error">{I18n.t("impersonate.userRequired")}</span>}
+                    {(!initial && isEmpty(selectedUser)) &&
+                    <span className="error">{I18n.t("impersonate.userRequired")}</span>}
                     <InputField disabled={true} name={I18n.t("impersonate.currentImpersonation")}
                                 value={isEmpty(impersonator) ? I18n.t("impersonate.noImpersonation") :
                                     I18n.t("impersonate.currentImpersonationValue", {

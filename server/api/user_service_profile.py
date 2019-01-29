@@ -2,6 +2,7 @@ from flask import Blueprint, request as current_request
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
+from server.api.security import current_user_id
 from server.db.db import CollaborationMembership, UserServiceProfile, User, Service
 
 UID_HEADER_NAME = "MELLON_cmuid"
@@ -24,6 +25,7 @@ def _attributes_per_service(user_service_profile: UserServiceProfile):
     return {k: v for k, v in res.items() if v is not None}
 
 
+# Endpoint for SATOSA
 @user_service_profile_api.route("/attributes", strict_slashes=False)
 @json_endpoint
 def attributes():
@@ -48,3 +50,17 @@ def attributes():
             "email": user.email
         })
     return [{k: v for k, v in res.items() if v is not None} for res in attributes_per_service], 200
+
+
+@user_service_profile_api.route("/", strict_slashes=False)
+@json_endpoint
+def my_user_service_profiles():
+    user_id = current_user_id()
+    res = UserServiceProfile.query \
+        .join(UserServiceProfile.collaboration_membership_id) \
+        .join(CollaborationMembership.user) \
+        .outerjoin(UserServiceProfile.service) \
+        .filter(CollaborationMembership.user_id == user_id) \
+        .all()
+
+    return res, 200

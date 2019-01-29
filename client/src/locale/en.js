@@ -12,7 +12,7 @@ I18n.translations.en = {
             help: "Help",
             helpUrl: "https://github.com/SURFscz/SBS/wiki"
         },
-        impersonator: "You are really {{impersonator}}.<br/>But you are impersonating {{currentUser}}.<br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
+        impersonator: "You are really {{impersonator}},<br/>but you are impersonating {{currentUser}}.<br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
 
     },
     navigation: {
@@ -24,7 +24,7 @@ I18n.translations.en = {
         impersonate: "Impersonate",
     },
     home: {
-        title: "Dashboard for {{name}}"
+        title: "My service profiles"
     },
     forms: {
         submit: "Add",
@@ -103,7 +103,7 @@ I18n.translations.en = {
         dashboard: "Dashboard",
         title: "My Collaborations",
         requests: "Join Requests",
-        authorisations: "Authorisations",
+        authorisations: "Authorisation Groups",
         invitations: "Invitations",
         services: "Services",
         profile: "Profile",

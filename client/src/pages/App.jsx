@@ -134,8 +134,8 @@ class App extends React.Component {
                 <div className="app-container">
                     {currentUser && <div>
                         <Flash/>
-                        <Header currentUser={currentUser} impersonator={impersonator}/>
-                        <Navigation currentUser={currentUser} impersonator={impersonator} {...this.props}/>
+                        <Header currentUser={currentUser} impersonator={impersonator} />
+                        <Navigation currentUser={currentUser} impersonator={impersonator} />
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>
                     </div>}

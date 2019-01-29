@@ -1,6 +1,6 @@
 import React from "react";
 import I18n from "i18n-js";
-import {Link} from "react-router-dom";
+import {Link, NavLink} from "react-router-dom";
 import logo from "../images/surflogo.png";
 import "./Header.scss";
 import {stopEvent} from "../utils/Utils";
@@ -58,16 +58,18 @@ export default class Header extends React.PureComponent {
                             <a href="#login" onClick={this.login}>{I18n.t("header.links.login")}</a>
                         </li>}
                         {impersonator && <li className="impersonator">
+                            <NavLink to="/impersonate">
                             <span data-tip data-for="impersonator">
                                 <FontAwesomeIcon icon="user-secret"/></span>
-                            <ReactTooltip id="impersonator" type="light" effect="solid" data-html={true}>
-                                <p dangerouslySetInnerHTML={{
-                                    __html: I18n.t("header.impersonator", {
-                                        currentUser: currentUser.name,
-                                        impersonator: impersonator.name
-                                    })
-                                }}/>
-                            </ReactTooltip>
+                                <ReactTooltip id="impersonator" type="light" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{
+                                        __html: I18n.t("header.impersonator", {
+                                            currentUser: currentUser.name,
+                                            impersonator: impersonator.name
+                                        })
+                                    }}/>
+                                </ReactTooltip>
+                            </NavLink>
                         </li>}
                         <li className={`user-profile ${(displayLogin || impersonator) ? "border-left" : ""}`}>
                             {this.renderProfileLink(currentUser)}
