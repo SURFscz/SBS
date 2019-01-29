@@ -1,3 +1,4 @@
+---
 language: python
 env:
   CODECOV_TOKEN: "ae851f67-c91a-4063-8bd6-a9fc74b3173e"
@@ -6,28 +7,35 @@ python:
 cache:
   yarn: true
   directories:
-  - node_modules
-before_install:
-  - pip install -r ./requirements/test.txt
-  - pip install codecov
-  - rm -fr ~/.yarn
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3
-  - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-  - yarn -v
-  - nvm install v8.12.0
-  - nvm use v8.12.0
-install:
-before_script:
-  - mysql -e "create database IF NOT EXISTS sbs_test; CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
-    GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;" -uroot
-script:
-  - pytest --cov=server --cov-report= server/test
-  - flake8 ./server/
-  - yarn -v
-  - node -v
-  - cd client
-  - yarn install
-  - CI=true yarn test
-  - yarn build
-after_success:
-  - codecov
+    - node_modules
+
+jobs:
+  include:
+    - stage: test
+      before_install:
+        - pip install -r ./requirements/test.txt
+        - pip install codecov
+        - "rm -fr ~/.yarn"
+        - "curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3"
+        - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+        - yarn -v
+        - nvm install v8.12.0
+        - nvm use v8.12.0
+      before_script:
+        - mysql -e "create database IF NOT EXISTS sbs_test; CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
+          GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;" -uroot
+      script:
+        - pytest --cov=server --cov-report= server/test
+        - flake8 ./server/
+        - yarn -v
+        - node -v
+        - cd client
+        - yarn install
+        - CI=true yarn test
+        - yarn build
+      after_success:
+        - codecov
+    - stage: build containers
+      script:
+        - ./build-server.sh
+        - ./build-client.sh
