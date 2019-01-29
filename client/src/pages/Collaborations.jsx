@@ -287,8 +287,8 @@ class Collaborations extends React.Component {
     };
 
 
-    renderSearch = (collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected) => {
-        const adminClassName = user.admin ? "with-button" : "";
+    renderSearch = (collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected, isOrganisationAdmin) => {
+        const adminClassName = (user.admin || isOrganisationAdmin) ? "with-button" : "";
         const showAutoCompletes = (query.length > 1 || "*" === query.trim()) && !loadingAutoComplete;
 
         return (
@@ -302,7 +302,7 @@ class Collaborations extends React.Component {
                            onKeyDown={this.onSearchKeyDown}
                            placeholder={I18n.t("collaborations.searchPlaceHolder")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
-                    {user.admin && <Button onClick={this.newCollaboration}
+                    {(user.admin || isOrganisationAdmin) && <Button onClick={this.newCollaboration}
                                            txt={I18n.t("collaborations.add")}/>
                     }
                 </div>
@@ -321,9 +321,10 @@ class Collaborations extends React.Component {
     render() {
         const {collaborations, sortedCollaborations, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
         const {user} = this.props;
+        const isOrganisationAdmin = (user.organisation_memberships || []).some(membership => membership.role === "admin");
         return (
             <div className="mod-collaborations">
-                {user.admin && this.renderSearch(collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}
+                {(user.admin || isOrganisationAdmin) && this.renderSearch(collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected, isOrganisationAdmin)}
                 <div className="title">
                     <span>{I18n.t("collaborations.dashboard")}</span>
                 </div>

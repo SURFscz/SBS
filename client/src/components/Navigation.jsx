@@ -39,13 +39,14 @@ export default class Navigation extends React.PureComponent {
     render() {
         const {currentUser, impersonator} = this.props;
         const isCollaborationAdmin = (currentUser.collaboration_memberships || []).some(membership => membership.role === "admin");
+        const isOrganisationAdmin = (currentUser.organisation_memberships || []).some(membership => membership.role === "admin");
         const mayImpersonate = currentUser.admin || (impersonator && impersonator.admin);
         return (
             <div className="navigation-container">
                 <div className="navigation">
                     {this.renderItem("/home", "home")}
                     {window.location.pathname.indexOf("registration") > -1 && this.renderItem("/registration", "registration")}
-                    {(currentUser.admin || isAdmin) && this.renderItem("/collaborations", "collaborations")}
+                    {(currentUser.admin || isCollaborationAdmin || isOrganisationAdmin) && this.renderItem("/collaborations", "collaborations")}
                     {currentUser.admin && this.renderItem("/organisations", "organisations")}
                     {currentUser.admin && this.renderItem("/services", "services")}
                     {mayImpersonate && this.renderItem("/impersonate", "impersonate", "menu-item right")}

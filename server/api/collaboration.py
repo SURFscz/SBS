@@ -110,6 +110,8 @@ def members():
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_by_id(collaboration_id):
+    confirm_collaboration_admin(collaboration_id)
+
     query = Collaboration.query \
         .join(Collaboration.organisation) \
         .outerjoin(Collaboration.authorisation_groups) \
@@ -218,7 +220,7 @@ def save_collaboration():
             "salutation": "Dear",
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
-            "expiry_days": (invitation.expiry_date - datetime.date.today()).days
+            "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
         }, collaboration, [administrator])
 
     admin_collaboration_membership = CollaborationMembership(role="admin", user=user, collaboration=collaboration,

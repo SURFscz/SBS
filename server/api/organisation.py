@@ -125,7 +125,7 @@ def organisation_invites():
             "salutation": "Dear",
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
-            "expiry_days": (invitation.expiry_date - datetime.date.today()).days
+            "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
         }, organisation, [administrator])
     db.session.commit()
 
@@ -153,7 +153,7 @@ def save_organisation():
             "salutation": "Dear",
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
-            "expiry_days": (invitation.expiry_date - datetime.date.today()).days
+            "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
         }, organisation, [administrator])
     db.session.commit()
 
