@@ -2,8 +2,8 @@ from flask import Blueprint, request as current_request
 from sqlalchemy import text
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin
-from server.db.db import db
+from server.api.security import confirm_collaboration_admin, current_user_uid
+from server.db.db import db, UserServiceProfile, AuthorisationGroup
 
 authorisation_group_members_api = Blueprint("authorisation_group_members_api", __name__,
                                             url_prefix="/api/authorisation_group_members")
@@ -24,6 +24,18 @@ def add_authorisation_group_members():
         f"(collaboration_membership_id, authorisation_group_id) VALUES {values}"
     sql = text(statement)
     result_set = db.engine.execute(sql)
+
+    # Also create an UserServiceProfile for each Service linked to the AuthorisationGroup
+    services = AuthorisationGroup.query.get(authorisation_group_id).services
+
+    for member_id in members_ids:
+        for service in services:
+            profile = UserServiceProfile(service=service, collaboration_membership_id=member_id,
+                                         created_by=current_user_uid(), updated_by=current_user_uid())
+            db.session.add(profile)
+
+    db.session.commit()
+
     return (None, 201) if result_set.rowcount > 0 else (None, 404)
 
 
@@ -32,6 +44,7 @@ def add_authorisation_group_members():
 @json_endpoint
 def delete_all_authorisation_group_members(authorisation_group_id, collaboration_id):
     confirm_collaboration_admin(collaboration_id)
+    # TODO Also delete all UserServiceProfile for each Service linked to the AuthorisationGroup
 
     statement = f"DELETE from collaboration_memberships_authorisation_groups " \
         f"WHERE authorisation_group_id = {authorisation_group_id}"
