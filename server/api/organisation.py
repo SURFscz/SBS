@@ -1,13 +1,13 @@
 import datetime
 from secrets import token_urlsafe
 
-from flask import Blueprint, request as current_request, session, current_app
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy import text, func
 from sqlalchemy.orm import joinedload, contains_eager
 from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_write_access
+from server.api.security import confirm_write_access, current_user_id
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
 from server.db.defaults import default_expiry_date
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -58,7 +58,7 @@ def organisation_search():
 @organisation_api.route("/mine_lite", strict_slashes=False)
 @json_endpoint
 def my_organisations_lite():
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     organisations = Organisation.query \
         .join(Organisation.organisation_memberships) \
         .join(OrganisationMembership.user) \
@@ -71,7 +71,7 @@ def my_organisations_lite():
 @organisation_api.route("/<id>", strict_slashes=False)
 @json_endpoint
 def organisation_by_id(id):
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     collaboration = Organisation.query \
         .options(joinedload(Organisation.organisation_memberships)
                  .subqueryload(OrganisationMembership.user)) \
@@ -87,7 +87,7 @@ def organisation_by_id(id):
 @organisation_api.route("/", strict_slashes=False)
 @json_endpoint
 def my_organisations():
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     organisations = Organisation.query \
         .join(Organisation.organisation_memberships) \
         .join(OrganisationMembership.user) \
@@ -113,7 +113,7 @@ def organisation_invites():
     message = data["message"] if "message" in data else None
 
     organisation = Organisation.query.get(data["organisation_id"])
-    user = User.query.get(session["user"]["id"])
+    user = User.query.get(current_user_id())
 
     for administrator in administrators:
         invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
@@ -141,7 +141,7 @@ def save_organisation():
     message = data["message"] if "message" in data else None
 
     res = save(Organisation)
-    user = User.query.get(session["user"]["id"])
+    user = User.query.get(current_user_id())
     for administrator in administrators:
         organisation = res[0]
         invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
@@ -164,7 +164,7 @@ def save_organisation():
 @json_endpoint
 def update_organisation():
     def override_func():
-        user_id = session["user"]["id"]
+        user_id = current_user_id()
         organisation_id = current_request.get_json()["id"]
         return OrganisationMembership.query() \
                    .filter(OrganisationMembership.user_id == user_id) \

@@ -1,11 +1,11 @@
 import datetime
 
-from flask import Blueprint, request as current_request, session, current_app
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_organization_admin, confirm_write_access
+from server.api.security import confirm_organization_admin, confirm_write_access, current_user_id
 from server.db.db import OrganisationInvitation, Organisation, OrganisationMembership, db
 from server.db.models import delete
 from server.mail import mail_organisation_invitation
@@ -56,7 +56,7 @@ def organisation_invitations_accept():
         raise Conflict(f"The invitation has expired at {organisation_invitation.expiry_date}")
 
     organisation = organisation_invitation.organisation
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     if organisation.is_member(user_id):
         raise Conflict(f"User {user_id} is already a member of {organisation.name}")
 
