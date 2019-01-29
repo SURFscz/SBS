@@ -7,6 +7,8 @@ emitter.addListener("impersonation", selectedUser => {
     impersonator = selectedUser;
 });
 
+const impersonation_attributes = ["id", "uid", "name", "email"];
+
 //Internal API
 function validateResponse(showErrorDialog) {
     return res => {
@@ -44,10 +46,8 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
         ...headers
     };
     if (impersonator) {
-        contentHeaders["X-IMPERSONATE-ID"] = impersonator.id;
-        contentHeaders["X-IMPERSONATE-UID"] = impersonator.uid;
-        contentHeaders["X-IMPERSONATE-NAME"] = impersonator.name;
-        contentHeaders["X-IMPERSONATE-EMAIL"] = impersonator.email;
+        impersonation_attributes.forEach(attr =>
+            contentHeaders[`X-IMPERSONATE-${attr.toUpperCase()}`] = impersonator[attr]);
     }
     const fetchOptions = Object.assign({}, {headers: contentHeaders}, options, {
         credentials: "same-origin",
