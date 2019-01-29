@@ -447,9 +447,11 @@ I18n.translations.en = {
         },
         searchServices: "Search, select and add services to the available services for the authorisation group {{name}}",
         connectedServices: "Connected services to {{name}}",
+        deleteServiceWarning: "Warning: Unlinking services from the authorisation group deletes all user information specific for that service and all linked memberships",
         deleteServiceTooltip: "Make this service unavailable in<br/> the authorisation group {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>It is only not available anymore<br/> for this authorisation groups anymore",
         searchMembers: "Search, select and add members to the authorisation group {{name}}",
         connectedMembers: "Members of {{name}}",
+        deleteMemberWarning: "Warning: Unlinking memberships from the authorisation group deletes all user information specific for that membership and all linked services",
         deleteMemberTooltip: "Remove this member from<br/> the authorisation group {{name}}.<br/><br/><strong>NOTE</strong>: the user itself is NOT deleted.<br/>He / she is only no longer a <br/> member of this authorisation groups anymore",
         service: {
             actions: "",

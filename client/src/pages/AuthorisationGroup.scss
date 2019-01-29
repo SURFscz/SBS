@@ -88,7 +88,13 @@
     p.title {
       color: $dark-grey;
       font-size: 18px;
-      margin: 15px 0;
+      margin: 15px 0 10px 0;
+    }
+    em.warning {
+      color: darken($orange, 20%);
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 14px;
     }
 
     table.connected-services, table.connected-members {
