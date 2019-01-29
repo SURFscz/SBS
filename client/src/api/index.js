@@ -358,3 +358,8 @@ export function addAuthorisationGroupMembers({authorisationGroupId, collaboratio
 export function deleteAuthorisationGroupMembers(authorisationGroupId, memberId, collaborationId) {
     return fetchDelete(`/api/authorisation_group_members/${authorisationGroupId}/${memberId}/${collaborationId}`)
 }
+
+//UserServiceProfiles
+export function myUserServiceProfiles() {
+    return fetchJson("/api/user_service_profiles")
+}
