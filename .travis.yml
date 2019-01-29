@@ -13,7 +13,7 @@ jobs:
   include:
     - stage: test
       before_install:
-        - pip install -r ./requirements/test.txt
+        - pip install -r ./server/requirements/test.txt
         - pip install codecov
         - "rm -fr ~/.yarn"
         - "curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3"
