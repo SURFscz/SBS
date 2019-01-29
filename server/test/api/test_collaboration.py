@@ -5,8 +5,9 @@ from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name,
 
 class TestCollaboration(AbstractTest):
 
-    def _find_by_name_id(self):
-        return self.get("/api/collaborations/find_by_name", query_data={"name": "AI computing"}, with_basic_auth=False)
+    def _find_by_name_id(self, with_basic_auth=False):
+        return self.get("/api/collaborations/find_by_name", query_data={"name": "AI computing"},
+                        with_basic_auth=with_basic_auth)
 
     def test_search(self):
         res = self.get("/api/collaborations/search", query_data={"q": "ComPuti"})
@@ -65,10 +66,14 @@ class TestCollaboration(AbstractTest):
         response = self.client.delete(f"/api/collaborations/{collaboration['id']}")
         self.assertEqual(403, response.status_code)
 
-    def test_collaboration_by_id_not_found(self):
-        collaboration = self._find_by_name_id()
+    def test_collaboration_by_id_forbidden(self):
+        collaboration = self._find_by_name_id(with_basic_auth=True)
         self.login("urn:peter")
-        self.get(f"/api/collaborations/{collaboration['id']}", response_status_code=404, with_basic_auth=False)
+        self.get(f"/api/collaborations/{collaboration['id']}", response_status_code=403, with_basic_auth=False)
+
+    def test_collaboration_by_id_not_found(self):
+        self.login("urn:john")
+        self.get(f"/api/collaborations/{-1}", response_status_code=404, with_basic_auth=False)
 
     def test_collaboration_by_id(self):
         collaboration_id = self._find_by_name_id()["id"]
