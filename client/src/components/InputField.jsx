@@ -18,7 +18,7 @@ export default function InputField({
             </span>}
             </label>
             {!multiline &&
-            <input type="text" disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
+            <input type="text" disabled={disabled} value={value || ""} onChange={onChange} onBlur={onBlur}
                    placeholder={placeholder} onKeyDown={e => {
                 if (onEnter && e.keyCode === 13) {//enter
                     onEnter(e);

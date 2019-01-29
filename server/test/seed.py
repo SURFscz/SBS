@@ -4,13 +4,21 @@ from secrets import token_urlsafe
 
 from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
     JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
+from server.db.defaults import default_expiry_date
 
 organisation_invitation_hash = token_urlsafe()
-invitation_hash = token_urlsafe()
+invitation_hash_curious = token_urlsafe()
+invitation_hash_no_way = token_urlsafe()
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
 uuc_name = "UUC"
 collaboration_uva_researcher_uuid = str(uuid.uuid4())
+
+service_mail_name = "Mail Services"
+service_mail_entity_id = "https://mail"
+
+service_network_name = "Network Services"
+service_network_entity_id = "https://network"
 
 
 def _persist(db, *objs):
@@ -32,8 +40,9 @@ def seed(db):
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org")
     admin = User(uid="urn:admin", name="The Boss", email="boss@example.org")
     roger = User(uid="urn:roger", name="Roger Doe", email="roger@example.org")
+    harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org")
 
-    _persist(db, john, mary, peter, admin, roger)
+    _persist(db, john, mary, peter, admin, roger, harry)
 
     uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
                        created_by="urn:admin",
@@ -43,23 +52,41 @@ def seed(db):
                        updated_by="urnadmin")
     _persist(db, uuc, uva)
 
-    organisation_invitation = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
-                                                     invitee_email="roger@example.org", organisation=uuc, user=john)
-    _persist(db, organisation_invitation)
+    organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
+                                                           expiry_date=datetime.date.today() + datetime.timedelta(
+                                                               days=14),
+                                                           invitee_email="roger@example.org", organisation=uuc,
+                                                           user=john)
+    organisation_invitation_pass = OrganisationInvitation(message="Let me please join as I "
+                                                                  "really, really, really \n really, "
+                                                                  "really, really \n want to...",
+                                                          hash=token_urlsafe(),
+                                                          expiry_date=datetime.date.today() + datetime.timedelta(
+                                                              days=21),
+                                                          invitee_email="pass@example.org", organisation=uuc, user=john)
+    _persist(db, organisation_invitation_roger, organisation_invitation_pass)
 
-    organisation_membership = OrganisationMembership(role="admin", user=john, organisation=uuc)
-    _persist(db, organisation_membership)
+    organisation_membership_john = OrganisationMembership(role="admin", user=john, organisation=uuc)
+    organisation_membership_mary = OrganisationMembership(role="admin", user=mary, organisation=uuc)
+    organisation_membership_harry = OrganisationMembership(role="admin", user=harry, organisation=uuc)
+    _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry)
 
-    mail = Service(entity_id="https://mail", name="mail", contact_email=john.email)
-    network = Service(entity_id="https://network", name="network", description="Network enabling service SSH access",
-                      status="pending")
-    _persist(db, mail, network)
+    mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email)
+    wireless = Service(entity_id="https://wireless", name="Wirless", description="Network Wireless Service")
+    cloud = Service(entity_id="https://cloud", name="Cloud", description="SARA Cloud Service")
+    storage = Service(entity_id="https://storage", name="Storage", description="SURF Storage Service")
+    wiki = Service(entity_id="https://wiki", name="Wiki", description="No more wiki's please")
+    network = Service(entity_id=service_network_entity_id, name=service_network_name,
+                      description="Network enabling service SSH access", address="Some address", status="active",
+                      uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
+                      contact_email="help@example.org")
+    _persist(db, mail, wireless, cloud, storage, wiki, network)
 
     ai_computing = Collaboration(name=ai_computing_name,
                                  identifier=collaboration_ai_computing_uuid,
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
-                                 organisation=uuc, services=[mail, network],
-                                 join_requests=[], invitations=[])
+                                 organisation=uuc, services=[mail, network], enrollment="Form",
+                                 join_requests=[], invitations=[], access_type="open")
     uva_research = Collaboration(name="UVA UCC research",
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",
@@ -82,17 +109,28 @@ def seed(db):
                                                       "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     _persist(db, user_service_profile)
 
-    authorisation_group = AuthorisationGroup(name="auth_group", collaboration=ai_computing, services=[network],
-                                             collaboration_memberships=[john_ai_computing])
-    _persist(db, authorisation_group)
+    authorisation_group_researchers = AuthorisationGroup(name="AI researchers", uri="https://ai/researchers",
+                                                         status="active",
+                                                         description="Artifical computing researchers",
+                                                         collaboration=ai_computing, services=[network],
+                                                         collaboration_memberships=[john_ai_computing])
+    authorisation_group_developers = AuthorisationGroup(name="AI developers", uri="https://ai/developers",
+                                                        status="in_active",
+                                                        description="Artifical computing developers",
+                                                        collaboration=ai_computing, services=[],
+                                                        collaboration_memberships=[john_ai_computing])
+    _persist(db, authorisation_group_researchers, authorisation_group_developers)
 
     join_request_john = JoinRequest(message="Please...", reference="Dr. Johnson", user=mary, collaboration=ai_computing)
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing)
     _persist(db, join_request_john, join_request_peter)
 
-    invitation = Invitation(hash=invitation_hash, invitee_email="curious@ex.org", collaboration=ai_computing,
-                            expiry_date=datetime.date.today() + datetime.timedelta(days=14), user=admin,
-                            message="Please join...")
-    _persist(db, invitation)
+    invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
+                            expiry_date=default_expiry_date(), user=admin, message="Please join...")
+    invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
+                                  expiry_date=datetime.date.today() + datetime.timedelta(days=21), user=admin,
+                                  message="Let me please join as I really, really, really \n really, "
+                                          "really, really \n want to...")
+    _persist(db, invitation, invitation_noway)
 
     db.session.commit()

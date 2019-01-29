@@ -9,24 +9,27 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
+import {collaborationAccessTypes} from "../forms/constants";
 import SelectField from "../components/SelectField";
 
 class NewCollaboration extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.accessTypeOptions = ["open", "closed", "on_acceptance"].map(type => ({
+        this.accessTypeOptions = collaborationAccessTypes.map(type => ({
             value: type,
             label: I18n.t(`accessTypes.${type}`)
         }));
         this.state = {
             name: "",
             description: "",
-            access_type: this.accessTypeOptions[0],
+            access_type: this.accessTypeOptions[0].value,
             administrators: [this.props.user.email],
             message: "",
             email: "",
             accepted_user_policy: "",
+            enrollment: "",
+            status: "",
             required: ["name", "organisation"],
             alreadyExists: {},
             organisation: undefined,
@@ -67,11 +70,11 @@ class NewCollaboration extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {
-                name, description, access_type,
+                name, description, access_type, enrollment,
                 administrators, message, accepted_user_policy, organisation
             } = this.state;
             createCollaboration({
-                name, description, access_type: access_type.value,
+                name, description, enrollment, access_type,
                 administrators, message, accepted_user_policy, organisation_id: organisation.value
             }).then(res => {
                 this.props.history.push("/collaborations");
@@ -117,7 +120,7 @@ class NewCollaboration extends React.Component {
 
     render() {
         const {
-            name, description, access_type, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
+            name, description, access_type, administrators, message, accepted_user_policy, enrollment,organisation, organisations, email, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
@@ -129,9 +132,17 @@ class NewCollaboration extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("collaboration.deleteConfirmation")}
                                     leavePage={leavePage}/>
+                <div className="title">
+                    <a href="/collaborations" onClick={e => {
+                        stopEvent(e);
+                        this.props.history.push(`/collaborations`)
+                    }}><FontAwesomeIcon icon="arrow-left"/>
+                        {I18n.t("collaborationDetail.backToCollaborations")}
+                    </a>
+                    <p className="title">{I18n.t("collaboration.title")}</p>
+                </div>
 
                 <div className="new-collaboration">
-                    <p className="title">{I18n.t("collaboration.title")}</p>
                     <InputField value={name} onChange={e => {
                         this.setState({
                             name: e.target.value,
@@ -160,11 +171,17 @@ class NewCollaboration extends React.Component {
                                 placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
                                 name={I18n.t("collaboration.accepted_user_policy")}/>
 
-                    <SelectField value={access_type}
+                    <InputField value={enrollment}
+                                onChange={e => this.setState({enrollment: e.target.value})}
+                                placeholder={I18n.t("collaboration.enrollmentPlaceholder")}
+                                toolTip={I18n.t("collaboration.enrollmentTooltip")}
+                                name={I18n.t("collaboration.enrollment")}/>
+
+                    <SelectField value={this.accessTypeOptions.find(option => option.value === access_type)}
                                  options={this.accessTypeOptions}
                                  name={I18n.t("collaboration.access_type")}
                                  placeholder={I18n.t("collaboration.accessTypePlaceholder")}
-                                 onChange={selectedOption => this.setState({access_type: selectedOption})}
+                                 onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}
                     />
 
                     <SelectField value={organisation}

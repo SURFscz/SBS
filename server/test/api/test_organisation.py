@@ -9,6 +9,10 @@ class TestOrganisation(AbstractTest):
         organisations = self.get("/api/organisations/search", query_data={"q": "urba"})
         self.assertEqual(1, len(organisations))
 
+    def test_search_wildcard(self):
+        res = self.get("/api/organisations/search", query_data={"q": "*"})
+        self.assertTrue(len(res) > 0)
+
     def test_my_organisations(self):
         self.login()
         organisations = self.get("/api/organisations")
@@ -19,7 +23,7 @@ class TestOrganisation(AbstractTest):
     def test_organisation_by_id(self):
         self.login()
         organisation = self.get(f"/api/organisations/{Organisation.query.all()[0].id}")
-        self.assertEqual(1, len(organisation["organisation_memberships"]))
+        self.assertTrue(len(organisation["organisation_memberships"]) > 0)
 
     def test_organisation_crud(self):
         self.login()

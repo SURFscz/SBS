@@ -5,7 +5,7 @@ import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
 import Navigation from "../components/Navigation";
-import {me, reportError} from "../api";
+import {me, other, reportError} from "../api";
 import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/ErrorDialog";
@@ -21,20 +21,32 @@ import Home from "./Home";
 import JoinRequest from "./JoinRequest";
 import NewOrganisation from "./NewOrganisation";
 import {addIcons} from "../utils/IconLibrary";
-import OrganisationInvite from "./OrganisationInvite";
+import OrganisationInvitation from "./OrganisationInvitation";
 import NewCollaboration from "./NewCollaboration";
-import Invite from "./Invite";
+import NewOrganisationInvitation from "./NewOrganisationInvitation";
+import Service from "./Service";
+import Services from "./Services";
+import NewInvitation from "./NewInvitation";
+import CollaborationServices from "./CollaborationServices";
+import CollaborationAuthorisationGroups from "./CollaborationAuthorisationGroups";
+import AuthorisationGroup from "./AuthorisationGroup";
+import Invitation from "./Invitation";
+import Impersonate from "./Impersonate";
+import {emitter} from "../utils/Events";
+import {isEmpty} from "../utils/Utils";
 
 addIcons();
 
 const S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 
 class App extends React.Component {
+
     constructor(props, context) {
         super(props, context);
         this.state = {
             loading: true,
             currentUser: {},
+            impersonator: null,
             error: false,
             errorDialogOpen: false,
             errorDialogAction: () => this.setState({errorDialogOpen: false})
@@ -74,6 +86,10 @@ class App extends React.Component {
         }
     };
 
+    componentWillMount() {
+        emitter.addListener("impersonation", this.impersonate);
+    }
+
     componentDidMount() {
         const location = window.location;
         if (location.href.indexOf("error") > -1) {
@@ -89,10 +105,26 @@ class App extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        emitter.removeListener("impersonation", this.impersonate);
+    }
+
+    impersonate = selectedUser => {
+        if (isEmpty(selectedUser)) {
+            me().then(currentUser => {
+                this.setState({currentUser: currentUser, impersonator: null, loading: false});
+            });
+        } else {
+            other(selectedUser.uid).then(user => {
+                const {currentUser, impersonator} = this.state;
+                this.setState({currentUser: user, impersonator: impersonator || currentUser});
+            });
+        }
+    };
 
     render() {
         const {
-            loading, errorDialogAction, errorDialogOpen, currentUser
+            loading, errorDialogAction, errorDialogOpen, currentUser, impersonator
         } = this.state;
         if (loading) {
             return null; // render null when app is not ready yet
@@ -102,8 +134,8 @@ class App extends React.Component {
                 <div className="app-container">
                     {currentUser && <div>
                         <Flash/>
-                        <Header currentUser={currentUser}/>
-                        <Navigation currentUser={currentUser} {...this.props}/>
+                        <Header currentUser={currentUser} impersonator={impersonator}/>
+                        <Navigation currentUser={currentUser} impersonator={impersonator} {...this.props}/>
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>
                     </div>}
@@ -120,29 +152,66 @@ class App extends React.Component {
                         />
                         <Route path="/home"
                                render={props => <Home user={currentUser} {...props}/>}/>
+
                         <Route exact path="/collaborations"
                                render={props => <Collaborations user={currentUser} {...props}/>}/>
+
                         <Route exact path="/collaborations/:id"
                                render={props => <CollaborationDetail user={currentUser} {...props}/>}/>
+
                         <Route exact path="/organisations"
                                render={props => <Organisations user={currentUser} {...props}/>}/>
+
                         <Route exact path="/organisations/:id"
                                render={props => <OrganisationDetail user={currentUser} {...props}/>}/>
+
+                        <Route exact path="/services"
+                               render={props => <Services user={currentUser} {...props}/>}/>
+
+                        <Route exact path="/services/:id"
+                               render={props => <Service user={currentUser} {...props}/>}/>
+
                         <Route exact path="/join-requests/:id"
                                render={props => <JoinRequest user={currentUser} {...props}/>}/>
+
                         <Route exact path="/organisation-invitations/:id"
-                               render={props => <OrganisationInvite user={currentUser} {...props}/>}/>}
+                               render={props => <OrganisationInvitation user={currentUser} {...props}/>}/>}
+
                         <Route exact path="/organisation-invitations/:action/:hash"
-                               render={props => <OrganisationInvite user={currentUser} {...props}/>}/>}
+                               render={props => <OrganisationInvitation user={currentUser} {...props}/>}/>}
+
+                        <Route exact path="/new-organisation-invite/:organisation_id"
+                               render={props => <NewOrganisationInvitation user={currentUser} {...props}/>}/>}
+
+                        <Route exact path="/new-invite/:collaboration_id"
+                               render={props => <NewInvitation user={currentUser} {...props}/>}/>}
+
                         <Route exact path="/invitations/:id"
-                               render={props => <Invite user={currentUser} {...props}/>}/>}
+                               render={props => <Invitation user={currentUser} {...props}/>}/>}
+
                         <Route exact path="/invitations/:action/:hash"
-                               render={props => <Invite user={currentUser} {...props}/>}/>}
+                               render={props => <Invitation user={currentUser} {...props}/>}/>}
+
                         <Route path="/new-organisation"
                                render={props => <NewOrganisation user={currentUser} {...props}/>}/>
+
                         <Route path="/new-collaboration"
                                render={props => <NewCollaboration user={currentUser} {...props}/>}/>
+
+                        <Route path="/collaboration-services/:collaboration_id"
+                               render={props => <CollaborationServices user={currentUser} {...props}/>}/>
+
+                        <Route path="/collaboration-authorisation-groups/:collaboration_id"
+                               render={props => <CollaborationAuthorisationGroups user={currentUser} {...props}/>}/>
+
+                        <Route path="/collaboration-authorisation-group-details/:collaboration_id/:id"
+                               render={props => <AuthorisationGroup user={currentUser} {...props}/>}/>
+
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
+
+                        <Route path="/impersonate"
+                               render={props => <Impersonate user={currentUser}  impersonator={impersonator} {...props}/>}/>
+
                         <Route component={NotFound}/>
                     </Switch>
                     <Footer/>

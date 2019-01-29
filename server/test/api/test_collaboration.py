@@ -5,12 +5,17 @@ from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name,
 
 class TestCollaboration(AbstractTest):
 
-    def _find_by_name_id(self):
-        return self.get("/api/collaborations/find_by_name", query_data={"name": "AI computing"}, with_basic_auth=False)
+    def _find_by_name_id(self, with_basic_auth=False):
+        return self.get("/api/collaborations/find_by_name", query_data={"name": "AI computing"},
+                        with_basic_auth=with_basic_auth)
 
     def test_search(self):
         res = self.get("/api/collaborations/search", query_data={"q": "ComPuti"})
         self.assertEqual(1, len(res))
+
+    def test_search_wildcard(self):
+        res = self.get("/api/collaborations/search", query_data={"q": "*"})
+        self.assertTrue(len(res) > 0)
 
     def test_members(self):
         members = self.get("/api/collaborations/members", query_data={"identifier": collaboration_ai_computing_uuid})
@@ -61,10 +66,14 @@ class TestCollaboration(AbstractTest):
         response = self.client.delete(f"/api/collaborations/{collaboration['id']}")
         self.assertEqual(403, response.status_code)
 
-    def test_collaboration_by_id_not_found(self):
-        collaboration = self._find_by_name_id()
+    def test_collaboration_by_id_forbidden(self):
+        collaboration = self._find_by_name_id(with_basic_auth=True)
         self.login("urn:peter")
-        self.get(f"/api/collaborations/{collaboration['id']}", response_status_code=404, with_basic_auth=False)
+        self.get(f"/api/collaborations/{collaboration['id']}", response_status_code=403, with_basic_auth=False)
+
+    def test_collaboration_by_id_not_found(self):
+        self.login("urn:john")
+        self.get(f"/api/collaborations/{-1}", response_status_code=404, with_basic_auth=False)
 
     def test_collaboration_by_id(self):
         collaboration_id = self._find_by_name_id()["id"]
@@ -78,14 +87,14 @@ class TestCollaboration(AbstractTest):
         my_collaborations = self.get("/api/collaborations")
         self.assertEqual(1, len(my_collaborations))
         collaboration = AbstractTest.find_by_name(my_collaborations, ai_computing_name)
-        self.assertEqual(1, len(collaboration["authorisation_groups"]))
-        self.assertEqual(2, len(collaboration["collaboration_memberships"]))
-        self.assertEqual(2, len(collaboration["join_requests"]))
-        self.assertEqual(1, len(collaboration["invitations"]))
+        self.assertTrue(len(collaboration["authorisation_groups"]) > 0)
+        self.assertTrue(len(collaboration["collaboration_memberships"]) > 0)
+        self.assertTrue(len(collaboration["join_requests"]) > 0)
+        self.assertTrue(len(collaboration["invitations"]) > 0)
 
         collaboration = self.get(f"/api/collaborations/{collaboration['id']}")
         researcher = list(filter(lambda cm: cm["role"] == "researcher", collaboration["collaboration_memberships"]))[0]
-        self.assertEqual("John Doe", researcher["user_service_profiles"][0]["name"])
+        self.assertEqual("John Doe", researcher["user"]["name"])
 
     def test_collaboration_name_exists(self):
         res = self.get("/api/collaborations/name_exists", query_data={"name": ai_computing_name})

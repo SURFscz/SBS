@@ -1,9 +1,10 @@
-from flask import Blueprint, session, request as current_request, current_app
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_write_access, confirm_collaboration_admin
+from server.api.security import confirm_write_access, confirm_collaboration_admin, current_user_id, current_user, \
+    current_user_name, current_user_uid
 from server.db.db import CollaborationMembership, Collaboration, JoinRequest, db
 from server.db.models import delete
 from server.mail import mail_collaboration_join_request, mail_accepted_declined_join_request
@@ -12,7 +13,7 @@ join_request_api = Blueprint("join_request_api", __name__, url_prefix="/api/join
 
 
 def _ensure_access_to_join_request(join_request_id):
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     count = JoinRequest.query \
         .filter(JoinRequest.id == join_request_id) \
         .filter(JoinRequest.user_id == user_id) \
@@ -53,7 +54,7 @@ def new_join_request():
     admin_emails = list(map(lambda membership: membership.user.email, admin_members))
 
     # We need to delete other outstanding join_request for the same collaboration and user
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     existing_join_requests = JoinRequest.query \
         .join(JoinRequest.user) \
         .filter(JoinRequest.collaboration_id == collaboration_id) \
@@ -72,7 +73,7 @@ def new_join_request():
     mail_collaboration_join_request({
         "salutation": "Dear",
         "collaboration": collaboration,
-        "user": session["user"],
+        "user": current_user(),
         "base_url": current_app.app_config.base_url,
         "join_request": join_request
     }, collaboration, admin_emails)
@@ -94,7 +95,7 @@ def approve_join_request():
 
     mail_accepted_declined_join_request({"salutation": f"Dear {join_request.user.name}",
                                          "base_url": current_app.app_config.base_url,
-                                         "administrator": session["user"]["name"],
+                                         "administrator": current_user_name(),
                                          "join_request": join_request},
                                         join_request,
                                         True,
@@ -103,7 +104,7 @@ def approve_join_request():
     collaboration_membership = CollaborationMembership(user_id=user_id,
                                                        collaboration=collaboration,
                                                        role="member",
-                                                       created_by=session["user"]["uid"])
+                                                       created_by=current_user_uid())
 
     collaboration.collaboration_memberships.append(collaboration_membership)
     collaboration.join_requests.remove(join_request)
@@ -122,7 +123,7 @@ def deny_join_request():
 
     mail_accepted_declined_join_request({"salutation": f"Dear {join_request.user.name}",
                                          "base_url": current_app.app_config.base_url,
-                                         "administrator": session["user"]["name"],
+                                         "administrator": current_user_name(),
                                          "join_request": join_request},
                                         join_request,
                                         False,

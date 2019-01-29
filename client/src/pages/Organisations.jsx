@@ -7,6 +7,7 @@ import I18n from "i18n-js";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import Autocomplete from "../components/Autocomplete";
+import {headerIcon} from "../forms/helpers";
 
 
 class Organisations extends React.Component {
@@ -107,7 +108,7 @@ class Organisations extends React.Component {
     renderCollaborations = organisations => {
         const collaborations = organisations.map(organisation => organisation.collaborations)
             .flat().filter(item => item !== undefined);
-        const showMore = collaborations.length > 6;
+        const showMore = collaborations.length >= 6;
         const showMoreItems = this.state.showMore.includes("collaborations");
 
         return (
@@ -125,13 +126,12 @@ class Organisations extends React.Component {
                                 <span className="count">{`(${collaboration.collaboration_memberships.length})`}</span>
                             </a>
                         </div>)}
-                    {showMore && <section className="show-more">
-                        <Button className="white"
-                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                onClick={this.toggleShowMore("collaborations")}/>
-                    </section>}
-
                 </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("collaborations")}/>
+                </section>}
             </section>
         );
     };
@@ -139,7 +139,7 @@ class Organisations extends React.Component {
     renderMembers = organisations => {
         const memberships = organisations.map(organisation => organisation.organisation_memberships)
             .flat().filter(item => !isEmpty(item));
-        const showMore = organisations.length > 6;
+        const showMore = organisations.length >= 6;
         const showMoreItems = this.state.showMore.includes("members");
         return (
             <section className="info-block ">
@@ -156,13 +156,12 @@ class Organisations extends React.Component {
                                 <span className="count">{`(${organisation.organisation_memberships.length})`}</span>
                             </a>
                         </div>)}
-                    {showMore && <section className="show-more">
-                        <Button className="white"
-                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                onClick={this.toggleShowMore("members")}/>
-                    </section>}
                 </div>
-
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("members")}/>
+                </section>}
             </section>
         );
     };
@@ -170,7 +169,7 @@ class Organisations extends React.Component {
     renderOrganisationInvitations = organisations => {
         const invitations = organisations.map(organisation => organisation.organisation_invitations)
             .flat().filter(item => !isEmpty(item));
-        const showMore = invitations.length > 6;
+        const showMore = invitations.length >= 6;
         const showMoreItems = this.state.showMore.includes("invitations");
         return (
             <section className="info-block ">
@@ -187,27 +186,20 @@ class Organisations extends React.Component {
                                 <span>{invitation.invitee_email}</span>
                             </a>
                         </div>)}
-                    {showMore && <section className="show-more">
-                        <Button className="white"
-                                txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                onClick={this.toggleShowMore("invitations")}/>
-                    </section>}
-
                 </div>
-
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("invitations")}/>
+                </section>}
             </section>
         );
     };
 
-    headerIcon = (name, sorted, reverse) => {
-        if (name === sorted) {
-            return reverse ? <FontAwesomeIcon icon="arrow-up" className="reverse"/> :
-                <FontAwesomeIcon icon="arrow-down" className="current"/>
-        }
-        return <FontAwesomeIcon icon="arrow-down"/>;
-    };
-
     sortTable = (organisations, name, sorted, reverse) => () => {
+        if (name === "actions") {
+            return;
+        }
         const reversed = (sorted === name ? !reverse : false);
         const sortedOrganisations = this.sortOrganisations(organisations, name, reversed);
         this.setState({sortedOrganisations: sortedOrganisations, sorted: name, reverse: reversed});
@@ -219,18 +211,24 @@ class Organisations extends React.Component {
         return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
     });
 
-    getOrganisationValue = (organisation, user, name) => organisation[name];
+    getOrganisationValue = (organisation, user, name) => {
+        if (name === "actions") {
+            return <FontAwesomeIcon icon="arrow-right"/>
+        }
+        return organisation[name];
+    };
 
     renderOrganisationRow = (organisation, user, names) => {
         return (
             <tr key={organisation.id} onClick={this.openOrganisation(organisation)}>
-                {names.map(name => <td key={name}>{this.getOrganisationValue(organisation, user, name)}</td>)}
+                {names.map(name => <td key={name}
+                                       className={name}>{this.getOrganisationValue(organisation, user, name)}</td>)}
             </tr>
         );
     };
 
     renderOrganisations = (organisations, user, sorted, reverse) => {
-        const names = ["name", "tenant_identifier", "role", "description"];
+        const names = ["actions", "name", "tenant_identifier", "role", "description"];
         return (
             <section className="organisation-list">
                 <table>
@@ -240,7 +238,7 @@ class Organisations extends React.Component {
                             <th key={name} className={name}
                                 onClick={this.sortTable(organisations, name, sorted, reverse)}>
                                 {I18n.t(`organisation.${name}`)}
-                                {this.headerIcon(name, sorted, reverse)}
+                                {headerIcon(name, sorted, reverse)}
                             </th>
                         )}
                     </tr>

@@ -52,6 +52,8 @@ class Organisation(Base, db.Model):
     tenant_identifier = db.Column("tenant_identifier", db.String(length=512), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
                                      passive_deletes=True)
@@ -73,6 +75,8 @@ class OrganisationMembership(Base, db.Model):
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
     organisation = db.relationship("Organisation", back_populates="organisation_memberships")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
 
 services_collaborations_association = db.Table(
@@ -116,6 +120,8 @@ class CollaborationMembership(Base, db.Model):
                                            back_populates="collaboration_memberships",
                                            lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
 
 class UserServiceProfile(Base, db.Model):
@@ -149,6 +155,7 @@ class Service(Base, db.Model):
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=True)
+    collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
 

@@ -1,14 +1,16 @@
 import datetime
 from secrets import token_urlsafe
 
-from flask import Blueprint, request as current_request, session, current_app
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy import text, func
 from sqlalchemy.orm import joinedload, contains_eager
 from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_write_access
+from server.api.security import confirm_write_access, current_user_id
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
+from server.db.defaults import default_expiry_date
+from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation
 
@@ -33,18 +35,21 @@ def identifier_exists():
     identifier = current_request.args.get("identifier")
     existing_organisation = current_request.args.get("existing_organisation", "")
     org = Organisation.query.options(load_only("id")) \
-        .filter(func.lower(Organisation.tenant_identifier) == func.lower(identifier))\
-        .filter(func.lower(Organisation.tenant_identifier) != func.lower(existing_organisation))\
+        .filter(func.lower(Organisation.tenant_identifier) == func.lower(identifier)) \
+        .filter(func.lower(Organisation.tenant_identifier) != func.lower(existing_organisation)) \
         .first()
     return org is not None, 200
 
 
 @organisation_api.route("/search", strict_slashes=False)
 @json_endpoint
-def collaboration_search():
+def organisation_search():
     q = current_request.args.get("q")
-    sql = text(f"SELECT id, name, description FROM organisations "
-               f"WHERE MATCH (name, description) AGAINST ('{q}*' IN BOOLEAN MODE)")
+    base_query = "SELECT id, name, description FROM organisations "
+    if q != "*":
+        base_query += f"WHERE MATCH (name, description) AGAINST ('{q}*' IN BOOLEAN MODE) " \
+            f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
+    sql = text(base_query)
     result_set = db.engine.execute(sql)
     res = [{"id": row[0], "name": row[1], "description": row[2]} for row in result_set]
     return res, 200
@@ -53,7 +58,7 @@ def collaboration_search():
 @organisation_api.route("/mine_lite", strict_slashes=False)
 @json_endpoint
 def my_organisations_lite():
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     organisations = Organisation.query \
         .join(Organisation.organisation_memberships) \
         .join(OrganisationMembership.user) \
@@ -66,7 +71,7 @@ def my_organisations_lite():
 @organisation_api.route("/<id>", strict_slashes=False)
 @json_endpoint
 def organisation_by_id(id):
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     collaboration = Organisation.query \
         .options(joinedload(Organisation.organisation_memberships)
                  .subqueryload(OrganisationMembership.user)) \
@@ -82,7 +87,7 @@ def organisation_by_id(id):
 @organisation_api.route("/", strict_slashes=False)
 @json_endpoint
 def my_organisations():
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     organisations = Organisation.query \
         .join(Organisation.organisation_memberships) \
         .join(OrganisationMembership.user) \
@@ -99,6 +104,34 @@ def my_organisations():
     return organisations, 200
 
 
+@organisation_api.route("/invites", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def organisation_invites():
+    confirm_write_access()
+    data = current_request.get_json()
+    administrators = data["administrators"] if "administrators" in data else []
+    message = data["message"] if "message" in data else None
+
+    organisation = Organisation.query.get(data["organisation_id"])
+    user = User.query.get(current_user_id())
+
+    for administrator in administrators:
+        invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+                                            organisation=organisation, user=user,
+                                            expiry_date=default_expiry_date(json_dict=data),
+                                            created_by=user.uid)
+        invitation = db.session.merge(invitation)
+        mail_organisation_invitation({
+            "salutation": "Dear",
+            "invitation": invitation,
+            "base_url": current_app.app_config.base_url,
+            "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
+        }, organisation, [administrator])
+    db.session.commit()
+
+    return None, 201
+
+
 @organisation_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_organisation():
@@ -108,18 +141,19 @@ def save_organisation():
     message = data["message"] if "message" in data else None
 
     res = save(Organisation)
-    user = User.query.get(session["user"]["id"])
+    user = User.query.get(current_user_id())
     for administrator in administrators:
         organisation = res[0]
         invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
                                             organisation=organisation, user=user,
-                                            expiry_date=datetime.date.today() + datetime.timedelta(days=14),
+                                            expiry_date=default_expiry_date(),
                                             created_by=user.uid)
         invitation = db.session.merge(invitation)
         mail_organisation_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url
+            "base_url": current_app.app_config.base_url,
+            "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
         }, organisation, [administrator])
     db.session.commit()
 
@@ -130,7 +164,7 @@ def save_organisation():
 @json_endpoint
 def update_organisation():
     def override_func():
-        user_id = session["user"]["id"]
+        user_id = current_user_id()
         organisation_id = current_request.get_json()["id"]
         return OrganisationMembership.query() \
                    .filter(OrganisationMembership.user_id == user_id) \

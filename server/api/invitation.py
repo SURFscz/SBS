@@ -1,10 +1,14 @@
-from flask import Blueprint, request as current_request, session
+import datetime
+
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin
+from server.api.security import confirm_collaboration_admin, confirm_write_access, current_user_id
 from server.db.db import Invitation, CollaborationMembership, Collaboration, db
+from server.db.models import delete
+from server.mail import mail_collaboration_invitation
 
 invitations_api = Blueprint("invitations_api", __name__,
                             url_prefix="/api/invitations")
@@ -45,10 +49,19 @@ def invitations_accept():
     invitation = _invitation_query() \
         .filter(Invitation.hash == current_request.get_json()["hash"]) \
         .one()
+
+    if invitation.expiry_date and invitation.expiry_date < datetime.datetime.now():
+        delete(Invitation, invitation.id)
+        db.session.commit()
+        raise Conflict(f"The invitation has expired at {invitation.expiry_date}")
+
     collaboration = invitation.collaboration
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     if collaboration.is_member(user_id):
+        delete(Invitation, invitation.id)
+        db.session.commit()
         raise Conflict(f"User {user_id} is already a member of {collaboration.name}")
+
     role = invitation.intended_role if invitation.intended_role else "member"
     collaboration_membership = CollaborationMembership(user_id=user_id,
                                                        collaboration=collaboration,
@@ -70,3 +83,29 @@ def invitations_decline():
     db.session.delete(invitation)
     db.session.commit()
     return None, 201
+
+
+@invitations_api.route("/resend", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def invitations_resend():
+    data = current_request.get_json()
+    invitation = _invitation_query() \
+        .filter(Invitation.id == data["id"]) \
+        .one()
+
+    confirm_collaboration_admin(invitation.collaboration_id)
+
+    mail_collaboration_invitation({
+        "salutation": "Dear",
+        "invitation": invitation,
+        "base_url": current_app.app_config.base_url,
+        "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
+    }, invitation.collaboration, [invitation.invitee_email])
+    return None, 201
+
+
+@invitations_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+def delete_invitation(id):
+    confirm_write_access()
+    return delete(Invitation, id)
