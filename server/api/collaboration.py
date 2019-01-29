@@ -2,13 +2,14 @@ import datetime
 import uuid
 from secrets import token_urlsafe
 
-from flask import Blueprint, request as current_request, session, current_app
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy import text, or_, func
 from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin, confirm_organization_admin
+from server.api.security import confirm_collaboration_admin, confirm_organization_admin, is_application_admin, \
+    current_user_id
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
@@ -123,8 +124,8 @@ def collaboration_by_id(collaboration_id):
                  .contains_eager(JoinRequest.user)) \
         .options(contains_eager(Collaboration.services))
 
-    if not session["user"]["admin"]:
-        user_id = session["user"]["id"]
+    if not is_application_admin():
+        user_id = current_user_id()
         query = query \
             .join(Collaboration.collaboration_memberships) \
             .filter(CollaborationMembership.user_id == user_id)
@@ -139,7 +140,7 @@ def collaboration_by_id(collaboration_id):
 @collaboration_api.route("/", strict_slashes=False)
 @json_endpoint
 def my_collaborations():
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     res = Collaboration.query \
         .join(Collaboration.organisation) \
         .outerjoin(Collaboration.authorisation_groups) \
@@ -172,7 +173,7 @@ def collaboration_invites():
     intended_role = data["intended_role"] if "intended_role" in data else "member"
 
     collaboration = Collaboration.query.get(collaboration_id)
-    user = User.query.get(session["user"]["id"])
+    user = User.query.get(current_user_id())
 
     for administrator in administrators:
         invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
@@ -204,7 +205,7 @@ def save_collaboration():
 
     res = save(Collaboration, custom_json=data)
 
-    user = User.query.get(session["user"]["id"])
+    user = User.query.get(current_user_id())
     administrators = list(filter(lambda admin: admin != user.email, administrators))
     collaboration = res[0]
     for administrator in administrators:

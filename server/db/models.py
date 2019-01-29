@@ -2,6 +2,7 @@ import datetime
 
 from flask import request, session, g as request_context
 
+from server.api.security import current_user_uid
 from server.db.db import db, User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
     Invitation, Service, UserServiceProfile, AuthorisationGroup
 
@@ -40,7 +41,7 @@ def _merge(cls, d):
 def add_audit_trail_data(cls, json_dict):
     column_names = cls.__table__.columns._data.keys()
     if "created_by" in column_names:
-        user_name = session["user"]["uid"] if "user" in session and not session["user"][
+        user_name = current_user_uid() if "user" in session and not session["user"][
             "guest"] else request_context.api_user.name
         json_dict["created_by"] = user_name
         if "updated_by" in column_names:

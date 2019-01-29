@@ -44,7 +44,10 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
         ...headers
     };
     if (impersonator) {
-        contentHeaders["X-IMPERSONATE"] = impersonator.id;
+        contentHeaders["X-IMPERSONATE-ID"] = impersonator.id;
+        contentHeaders["X-IMPERSONATE-UID"] = impersonator.uid;
+        contentHeaders["X-IMPERSONATE-NAME"] = impersonator.name;
+        contentHeaders["X-IMPERSONATE-EMAIL"] = impersonator.email;
     }
     const fetchOptions = Object.assign({}, {headers: contentHeaders}, options, {
         credentials: "same-origin",

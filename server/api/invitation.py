@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin, confirm_write_access
+from server.api.security import confirm_collaboration_admin, confirm_write_access, current_user_id
 from server.db.db import Invitation, CollaborationMembership, Collaboration, db
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
@@ -56,7 +56,7 @@ def invitations_accept():
         raise Conflict(f"The invitation has expired at {invitation.expiry_date}")
 
     collaboration = invitation.collaboration
-    user_id = session["user"]["id"]
+    user_id = current_user_id()
     if collaboration.is_member(user_id):
         delete(Invitation, invitation.id)
         db.session.commit()

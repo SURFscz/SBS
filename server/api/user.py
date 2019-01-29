@@ -8,7 +8,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_is_application_admin
+from server.api.security import confirm_allow_impersonation, is_admin_user
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
 
@@ -26,13 +26,9 @@ def _log_headers():
         current_app.logger.info(f"OS environ {k} value {v}")
 
 
-def _is_admin_user(uid):
-    return len(list(filter(lambda u: u.uid == uid, current_app.app_config.admin_users))) == 1
-
-
 def _store_user_in_session(user):
     # The session is stored as a cookie in the browser. We therefore minimize the content
-    is_admin = {"admin": _is_admin_user(user.uid), "guest": False}
+    is_admin = {"admin": is_admin_user(user.uid), "guest": False}
     session_data = {
         "id": user.id,
         "uid": user.uid,
@@ -97,7 +93,7 @@ def collaboration_search():
             user_info["uid"] = g["uid"]
             user_info["name"] = g["name"]
             user_info["email"] = g["email"]
-            user_info["admin"] = _is_admin_user(g["uid"])
+            user_info["admin"] = is_admin_user(g["uid"])
             if g["organisation_name"] is not None and g["organisation_name"] not in [item["name"] for item in
                                                                                      user_info["organisations"]]:
                 user_info["organisations"].append({"name": g["organisation_name"], "role": g["organisation_role"]})
@@ -134,7 +130,7 @@ def me():
 @user_api.route("/other", strict_slashes=False)
 @json_endpoint
 def other():
-    confirm_is_application_admin()
+    confirm_allow_impersonation()
 
     uid = current_request.args.get("uid")
     return _user_query().filter(User.uid == uid).one(), 200
