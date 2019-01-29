@@ -116,8 +116,8 @@ class App extends React.Component {
             });
         } else {
             other(selectedUser.uid).then(user => {
-                const {currentUser} = this.state;
-                this.setState({currentUser: user, impersonator: currentUser});
+                const {currentUser, impersonator} = this.state;
+                this.setState({currentUser: user, impersonator: impersonator || currentUser});
             });
         }
     };
