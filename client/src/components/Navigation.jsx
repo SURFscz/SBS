@@ -22,9 +22,9 @@ export default class Navigation extends React.PureComponent {
         spinner.onStop = () => this.setState({loading: false});
     }
 
-    renderItem(href, value) {
+    renderItem(href, value, className = "menu-item") {
         return (
-            <NavLink activeClassName="active" className="menu-item" to={href}>{I18n.t("navigation." + value)}</NavLink>
+            <NavLink activeClassName="active" className={className} to={href}>{I18n.t("navigation." + value)}</NavLink>
         );
     }
 
@@ -37,14 +37,19 @@ export default class Navigation extends React.PureComponent {
         </div> : null;
 
     render() {
-        const {currentUser} = this.props;
+        const {currentUser, impersonator} = this.props;
+        const isCollaborationAdmin = (currentUser.collaboration_memberships || []).some(membership => membership.role === "admin");
+        const isOrganisationAdmin = (currentUser.organisation_memberships || []).some(membership => membership.role === "admin");
+        const mayImpersonate = currentUser.admin || (impersonator && impersonator.admin);
         return (
             <div className="navigation-container">
                 <div className="navigation">
                     {this.renderItem("/home", "home")}
-                    {this.renderItem("/registration", "registration")}
-                    {!currentUser.guest && this.renderItem("/collaborations", "collaborations")}
-                    {!currentUser.guest && this.renderItem("/organisations", "organisations")}
+                    {window.location.pathname.indexOf("registration") > -1 && this.renderItem("/registration", "registration")}
+                    {(currentUser.admin || isCollaborationAdmin || isOrganisationAdmin) && this.renderItem("/collaborations", "collaborations")}
+                    {currentUser.admin && this.renderItem("/organisations", "organisations")}
+                    {currentUser.admin && this.renderItem("/services", "services")}
+                    {mayImpersonate && this.renderItem("/impersonate", "impersonate", "menu-item right")}
                 </div>
                 {this.renderSpinner()}
             </div>

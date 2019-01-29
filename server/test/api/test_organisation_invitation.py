@@ -5,6 +5,10 @@ from server.test.seed import organisation_invitation_hash
 
 class TestOrganisationInvitation(AbstractTest):
 
+    @staticmethod
+    def _invitation_id_by_hash(hash):
+        return OrganisationInvitation.query.filter(OrganisationInvitation.hash == hash).one().id
+
     def test_find_by_hash(self):
         organisation_invitation = self.get("/api/organisation_invitations/find_by_hash",
                                            query_data={"hash": organisation_invitation_hash})
@@ -15,14 +19,14 @@ class TestOrganisationInvitation(AbstractTest):
 
     # Must be admin
     def test_find_by_id_forbidden(self):
-        organisation_invitation_id = OrganisationInvitation.query.one().id
+        organisation_invitation_id = self._invitation_id_by_hash(organisation_invitation_hash)
         self.login("urn:peter")
         self.get(f"/api/organisation_invitations/{organisation_invitation_id}", with_basic_auth=False,
                  response_status_code=403)
 
     # Must be admin
     def test_find_by_id(self):
-        organisation_invitation_id = OrganisationInvitation.query.one().id
+        organisation_invitation_id = self._invitation_id_by_hash(organisation_invitation_hash)
         self.login("urn:john")
         organisation_invitation = self.get(f"/api/organisation_invitations/{organisation_invitation_id}",
                                            with_basic_auth=False)

@@ -25,29 +25,32 @@ a.button {
     text-decoration: none;
   }
 
-  &.disabled {
-    cursor: no-drop;
-    background-color: $lighter-grey;
-    color: white;
+  &.cancel, &.white {
+    background-color: white;
+    color: $blue;
+    border-radius: $br;
+    border: 1px solid $lighter-grey;
+    min-width: 120px;
 
     &:hover {
-      background-color: darken($lighter-grey, 5%);
-      color: darken(white, 10%);
+      background-color: darken(white, 3%);
+      color: darken($blue, 10%);
+    }
+
+    i {
+      color: $blue;
+      margin: 0;
+      font-size: larger;
     }
   }
 
-  i {
-    margin-left: 10px;
-    color: white;
-  }
-
-  &.cancel {
-    background-color: $cancel;
+  &.delete {
+    background-color: $red;
     color: white;
     border: none;
 
     &:hover {
-      background-color: darken($cancel, 5%);
+      background-color: darken($red, 5%);
       color: darken(white, 10%);
     }
   }
@@ -69,22 +72,22 @@ a.button {
     }
   }
 
-  &.white {
-    background-color: white;
-    color: $blue;
-    border-radius: $br;
-    border: 1px solid $lighter-grey;
+
+  &.disabled {
+    cursor: no-drop;
+    background-color: $lighter-grey;
+    color: white;
 
     &:hover {
-      background-color: darken(white, 3%);
-      color: darken($blue, 10%);
-    }
-
-    i {
-      color: $blue;
-      margin: 0;
-      font-size: larger;
+      background-color: $lighter-grey;
+      color: white;
     }
   }
+
+  i {
+    margin-left: 10px;
+    color: white;
+  }
+
 }
 

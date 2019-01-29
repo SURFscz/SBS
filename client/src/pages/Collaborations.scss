@@ -9,12 +9,12 @@
     color: $dark-grey;
     max-width: $medium;
     margin: 0 auto;
-    padding: 25px 0;
+    padding: 25px 0 15px 0;
   }
 
   .info-block-container {
     max-width: $medium;
-    margin: 10px auto;
+    margin: 0 auto;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -27,6 +27,8 @@
       box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
       padding: 15px 10px;
       width: calc(25% - 2em);
+      display: flex;
+      flex-direction: column;
 
       .header {
         text-transform: uppercase;
@@ -61,17 +63,12 @@
       div.content {
         padding: 10px 5px;
 
-        section.show-more {
-          margin-top: 15px;
-          text-align: center;
-        }
-
       }
 
-      div.profile {
-        p {
-          margin-bottom: 5px;
-        }
+      section.show-more {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-around;
       }
 
       div.join-request, div.invitation, div.collaboration-services, div.collaboration-authorisations {
@@ -85,14 +82,18 @@
             text-decoration: none;
           }
 
+          svg {
+            color: $blue;
+            margin-right: 15px;
+          }
+
           &:hover {
             color: $blue;
-          }
-        }
 
-        svg {
-          color: $blue;
-          margin-right: 15px;
+            svg {
+              color: darken($blue, 15%);
+            }
+          }
         }
 
         span.count {
@@ -156,7 +157,7 @@
     padding: $medium-padding;
     max-width: $medium;
     border-radius: $br;
-    margin: 15px auto 0 auto;
+    margin: 10px auto;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
     position: relative;
 
@@ -171,6 +172,7 @@
         &.description {
           width: 30%;
         }
+
         svg {
           margin-left: 15px;
           color: $lighter-grey;
@@ -190,7 +192,7 @@
           }
 
           &:nth-child(odd) {
-            background-color: $background;
+            background-color: $lightest-grey;
           }
         }
       }
@@ -198,13 +200,14 @@
       td {
         vertical-align: middle;
         padding: 5px;
+
+        &.actions {
+          width: 35px;
+          text-align: left;
+          color: $blue;
+        }
       }
     }
   }
-
-  .__react_component_tooltip {
-    text-align: center;
-  }
-
 
 }

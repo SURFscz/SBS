@@ -2,19 +2,26 @@ import logging
 import os
 import sys
 from logging.handlers import TimedRotatingFileHandler
-from flask_mail import Mail
+
 import yaml
 from flask import Flask, jsonify, request as current_request
+from flask_mail import Mail
 from flask_migrate import Migrate
 from munch import munchify
 
+from server.api.authorisation_group import authorisation_group_api
+from server.api.authorisation_group_members import authorisation_group_members_api
+from server.api.authorisation_group_services import authorisation_group_services_api
 from server.api.base import base_api
 from server.api.collaboration import collaboration_api
+from server.api.collaboration_membership import collaboration_membership_api
+from server.api.collaborations_services import collaborations_services_api
 from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
 from server.api.invitation import invitations_api
 from server.api.join_request import join_request_api
 from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
+from server.api.organisation_membership import organisation_membership_api
 from server.api.service import service_api
 from server.api.user import user_api
 from server.api.user_service_profile import user_service_profile_api
@@ -71,6 +78,12 @@ app.register_blueprint(organisation_api)
 app.register_blueprint(join_request_api)
 app.register_blueprint(organisation_invitations_api)
 app.register_blueprint(invitations_api)
+app.register_blueprint(organisation_membership_api)
+app.register_blueprint(collaboration_membership_api)
+app.register_blueprint(collaborations_services_api)
+app.register_blueprint(authorisation_group_api)
+app.register_blueprint(authorisation_group_services_api)
+app.register_blueprint(authorisation_group_members_api)
 
 app.register_error_handler(404, page_not_found)
 

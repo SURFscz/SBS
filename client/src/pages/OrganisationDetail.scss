@@ -3,20 +3,40 @@
 .mod-organisation-detail {
 
   background-color: $background;
-  padding: $medium-padding 0;
+  padding: 0;
 
   .title {
     font-size: 22px;
     color: $dark-grey;
     max-width: $medium;
     margin: 0 auto;
-    padding: 0 0 25px 0;
+    padding: 10px 0 5px 0;
+
+    p {
+      padding: 10px 0 10px 0;
+    }
+
+    a {
+      display: inline-block;
+      font-size: 16px;
+      text-transform: uppercase;
+      text-decoration: none;
+      margin: 10px 0;
+
+      &:hover {
+        font-weight: bolder;
+      }
+
+      svg {
+        margin-right: 10px;
+      }
+    }
   }
 
   .organisation-detail {
     max-width: $medium;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-    margin: 0 auto;
+    margin: 0 auto 15px auto;
     background-color: white;
     padding: 10px $medium-padding 30px $medium-padding;
 
@@ -31,6 +51,200 @@
       margin-top: 15px;
     }
 
+    section.actions {
+      margin: $medium-margin 0 0 0;
+
+      a.delete {
+        margin-left: 25px;
+      }
+    }
   }
+
+  .members-search {
+    background-color: white;
+    padding: $medium-padding;
+    max-width: $medium;
+    border-radius: $br;
+    margin: 0 auto 10px auto;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+    position: relative;
+
+    div.search {
+      display: flex;
+      padding-bottom: 15px;
+      position: relative;
+      min-height: 40px;
+
+      svg.fa-search {
+        position: absolute;
+        font-size: 16px;
+        color: $blue;
+        top: 12px;
+        left: 22px;
+      }
+
+      input[type=text] {
+        flex-grow: 2;
+        border: 1px solid $lighter-grey;
+        padding-left: 45px;
+        border-radius: $br;
+        font-size: 16px;
+
+        &.with-button {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+
+        &[disabled] {
+          background-color: $light-grey;
+        }
+      }
+
+      a.button.blue {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+
+  .invitations-container {
+    background-color: white;
+    padding: $medium-padding;
+    max-width: $medium;
+    border-radius: $br;
+    margin: 0 auto 10px auto;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+    position: relative;
+
+  }
+
+  table.members, table.invitations {
+    width: 100%;
+
+    th {
+      text-align: left;
+      cursor: pointer;
+      padding: 5px;
+
+      svg {
+        margin-left: 15px;
+        color: $lighter-grey;
+
+        &.current, &.reverse {
+          color: $blue;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        &:nth-child(odd) {
+          background-color: $lightest-grey;
+        }
+      }
+    }
+
+    td {
+      vertical-align: middle;
+      padding: 5px;
+
+      .tooltip-container {
+        margin-left: 15px;
+        color: $blue;
+      }
+    }
+  }
+
+  table.members {
+    th.name {
+      width: 15%;
+    }
+
+    th.email {
+      width: 15%;
+    }
+
+    th.uid {
+      width: 25%;
+    }
+
+    th.role {
+      width: 15%;
+    }
+
+    td.role {
+      padding-right: 25px;
+    }
+
+    th.since {
+      width: 20%;
+    }
+
+    th.actions {
+      width: 10%;
+      cursor: default;
+    }
+
+    td.actions {
+      text-align: right;
+
+      svg {
+        color: $red;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+    }
+  }
+
+  table.invitations {
+    th.invitee {
+      width: 20%;
+    }
+
+    th.invitedBy {
+      width: 35%;
+    }
+
+    th.expires {
+      width: 20%;
+    }
+
+    th.message {
+      width: 25%;
+    }
+
+    td.message span {
+      display: inline-block;
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    tbody {
+      tr {
+        cursor: pointer;
+
+        &:hover {
+          color: $blue;
+        }
+      }
+
+      td {
+        &.role {
+          padding-right: 25px;
+
+        }
+
+        &.actions {
+          width: 35px;
+          text-align: left;
+          color: $blue;
+        }
+
+      }
+    }
+  }
+
 
 }

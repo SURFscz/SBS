@@ -1,6 +1,5 @@
 import React from "react";
-import "./Home.scss";
-import {createOrganisation, health, organisationIdentifierExists, organisationNameExists} from "../api";
+import {createOrganisation, organisationIdentifierExists, organisationNameExists} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./NewOrganisation.scss";
@@ -113,9 +112,17 @@ class NewOrganisation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
                                     leavePage={leavePage}/>
+                <div className="title">
+                    <a href="/organisations" onClick={e => {
+                        stopEvent(e);
+                        this.props.history.push(`/organisations`)
+                    }}><FontAwesomeIcon icon="arrow-left"/>
+                        {I18n.t("organisationDetail.backToOrganisations")}
+                    </a>
+                    <p className="title">{I18n.t("organisation.title")}</p>
+                </div>
 
                 <div className="new-organisation">
-                    <p className="title">{I18n.t("organisation.title")}</p>
                     <InputField value={name} onChange={e => {
                         this.setState({
                             name: e.target.value,

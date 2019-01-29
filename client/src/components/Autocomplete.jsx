@@ -17,6 +17,12 @@ export default class Autocomplete extends React.PureComponent {
         if (isEmpty(value)) {
             return <span></span>;
         }
+        if (Array.isArray(value)) {
+            return value.map((val, i) => <span key={i} className="compound">
+                {Object.keys(val).map(key => <span className="inner-compound" key={key}>{`${val[key]}`}</span>)}
+            </span>)
+        }
+        value = value.toString();
         const nameToLower = value.toLowerCase();
         const indexOf = nameToLower.indexOf(query.toLowerCase());
         if (indexOf < 0) {
@@ -29,7 +35,10 @@ export default class Autocomplete extends React.PureComponent {
     };
 
     render() {
-        const {suggestions, query, selected, itemSelected, moreToShow, entityName} = this.props;
+        const {
+            suggestions, query, selected, itemSelected, moreToShow, entityName, additionalAttributes = [],
+            ignoreAttributes = [], includeHeaders = false
+        } = this.props;
         const showNoResults = query && query.trim().length > 2 && suggestions.length === 0;
         const showSuggestions = suggestions && suggestions.length > 0;
         return (
@@ -42,7 +51,15 @@ export default class Autocomplete extends React.PureComponent {
                     {moreToShow &&
                     <em className="results-limited">{I18n.t("autocomplete.resultsLimited")}</em>}
                     <table className="result">
-                        <thead/>
+                        <thead>
+                        {includeHeaders && <tr>
+                            {!ignoreAttributes.includes("name") && <th>{I18n.t("autocomplete.name")}</th>}
+                            {!ignoreAttributes.includes("description") && <th>{I18n.t("autocomplete.description")}</th>}
+                            {additionalAttributes.map((attr, i) => <th key={i}>
+                                {I18n.t(`autocomplete.${attr}`)}
+                            </th>)}
+                        </tr>}
+                        </thead>
                         <tbody>
                         {suggestions
                             .map((item, index) => (
@@ -54,15 +71,19 @@ export default class Autocomplete extends React.PureComponent {
                                                 this.selectedRow = ref;
                                             }
                                         }}>
-                                        <td className="link">
+                                        {!isEmpty(entityName) && <td className="link">
                                             <a href={`/${entityName}/${item.id}`}
                                                rel="noopener noreferrer"
                                                onClick={e => e.stopPropagation()}
                                                target="_blank">
                                                 <FontAwesomeIcon icon="external-link-alt"/>
-                                            </a></td>
-                                        <td>{this.item(item.name, query)}</td>
-                                        <td>{this.item(item.description, query)}</td>
+                                            </a></td>}
+                                        {!ignoreAttributes.includes("name") && <td>{this.item(item.name, query)}</td>}
+                                        {!ignoreAttributes.includes("description") &&
+                                        <td>{this.item(item.description, query)}</td>}
+                                        {additionalAttributes.map((attr, i) => <td key={i}>
+                                            {this.item(item[attr], query)}
+                                        </td>)}
                                     </tr>
                                 )
                             )}
