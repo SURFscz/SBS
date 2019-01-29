@@ -95,7 +95,7 @@ def organisation_invitations_resend():
         "salutation": "Dear",
         "invitation": invitation,
         "base_url": current_app.app_config.base_url,
-        "expiry_days": (invitation.expiry_date - datetime.date.today()).days
+        "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
     }, invitation.organisation, [invitation.invitee_email])
     return None, 201
 
