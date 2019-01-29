@@ -221,7 +221,8 @@ class Organisations extends React.Component {
     renderOrganisationRow = (organisation, user, names) => {
         return (
             <tr key={organisation.id} onClick={this.openOrganisation(organisation)}>
-                {names.map(name => <td key={name} className={name}>{this.getOrganisationValue(organisation, user, name)}</td>)}
+                {names.map(name => <td key={name}
+                                       className={name}>{this.getOrganisationValue(organisation, user, name)}</td>)}
             </tr>
         );
     };

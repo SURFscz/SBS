@@ -11,14 +11,17 @@ I18n.translations.en = {
             login: "Login",
             help: "Help",
             helpUrl: "https://github.com/SURFscz/SBS/wiki"
-        }
+        },
+        impersonator: "You are really {{impersonator}}.<br/>But you are impersonating {{currentUser}}.<br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
+
     },
     navigation: {
         home: "Home",
         registration: "Registration",
         collaborations: "Collaborations",
         organisations: "Organisations",
-        services: "Services"
+        services: "Services",
+        impersonate: "Impersonate",
     },
     home: {
         title: "Dashboard for {{name}}"
@@ -30,6 +33,21 @@ I18n.translations.en = {
         hideSome: "Less",
         today: "Today",
         manage: "Manage"
+    },
+    impersonate: {
+        title: "Who do you want to be?",
+        organisation: "Organisation",
+        organisationPlaceholder: "Search and select an organisation to narrow the search result for users...",
+        collaboration: "Collaboration",
+        collaborationPlaceholder: "Search and select a collaboration to narrow the search result for users...",
+        user: "User",
+        userSearchPlaceHolder: "Search and select a user to impersonate...",
+        userRequired: "You must first select a user before pretending to be that person",
+        currentImpersonation: "Impersonation",
+        noImpersonation: "You are who you are 😇",
+        currentImpersonationValue: "You are impersonating {{currentUser}}, but you are really {{impersonator}} 😎",
+        startImpersonation: "Impersonate",
+        clearImpersonation: "Stop impersonating"
     },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
@@ -76,10 +94,10 @@ I18n.translations.en = {
         name: "Name",
         email: "E-mail",
         uid: "UID",
-        admin: "Administrator",
+        admin: "Application Super User",
         role: "Role",
         noadmin: "Member",
-        organization: "Organization"
+        organization: "Organization",
     },
     collaborations: {
         dashboard: "Dashboard",
@@ -452,6 +470,10 @@ I18n.translations.en = {
     autocomplete: {
         name: "Name",
         description: "Description",
+        email: "Email",
+        admin: "Super user",
+        organisations: "Organisations",
+        collaborations: "Collaborations",
         link: "Link",
         noResults: "No results",
         resultsLimited: "More entries matched than can be shown, please narrow your search term..."

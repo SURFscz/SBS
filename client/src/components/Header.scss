@@ -22,7 +22,8 @@
     align-items: center;
 
     img.logo {
-      height: 60px;
+      height: 65px;
+      margin: 10px 0;
     }
 
     p.title {
@@ -67,11 +68,7 @@
           font-size: 18px;
           padding: 0 35px;
 
-          svg.user-ninja {
-            margin-right: 5px;
-          }
-
-          svg.fa-user-ninja, svg.fa-info {
+          svg.fa-user-secret, svg.fa-info {
             margin-right: 5px;
           }
 
@@ -81,6 +78,11 @@
         }
       }
 
+      li.impersonator {
+        color: $red;
+        padding-right: 35px;
+        font-size: 20px;
+      }
     }
 
   }

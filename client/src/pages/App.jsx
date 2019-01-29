@@ -5,7 +5,7 @@ import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
 import Navigation from "../components/Navigation";
-import {me, reportError} from "../api";
+import {me, other, reportError} from "../api";
 import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/ErrorDialog";
@@ -31,17 +31,22 @@ import CollaborationServices from "./CollaborationServices";
 import CollaborationAuthorisationGroups from "./CollaborationAuthorisationGroups";
 import AuthorisationGroup from "./AuthorisationGroup";
 import Invitation from "./Invitation";
+import Impersonate from "./Impersonate";
+import {emitter} from "../utils/Events";
+import {isEmpty} from "../utils/Utils";
 
 addIcons();
 
 const S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 
 class App extends React.Component {
+
     constructor(props, context) {
         super(props, context);
         this.state = {
             loading: true,
             currentUser: {},
+            impersonator: null,
             error: false,
             errorDialogOpen: false,
             errorDialogAction: () => this.setState({errorDialogOpen: false})
@@ -81,6 +86,10 @@ class App extends React.Component {
         }
     };
 
+    componentWillMount() {
+        emitter.addListener("impersonation", this.impersonate);
+    }
+
     componentDidMount() {
         const location = window.location;
         if (location.href.indexOf("error") > -1) {
@@ -96,10 +105,26 @@ class App extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        emitter.removeListener("impersonation", this.impersonate);
+    }
+
+    impersonate = selectedUser => {
+        if (isEmpty(selectedUser)) {
+            me().then(currentUser => {
+                this.setState({currentUser: currentUser, impersonator: null, loading: false});
+            });
+        } else {
+            other(selectedUser.uid).then(user => {
+                const {currentUser} = this.state;
+                this.setState({currentUser: user, impersonator: currentUser});
+            });
+        }
+    };
 
     render() {
         const {
-            loading, errorDialogAction, errorDialogOpen, currentUser
+            loading, errorDialogAction, errorDialogOpen, currentUser, impersonator
         } = this.state;
         if (loading) {
             return null; // render null when app is not ready yet
@@ -109,8 +134,8 @@ class App extends React.Component {
                 <div className="app-container">
                     {currentUser && <div>
                         <Flash/>
-                        <Header currentUser={currentUser}/>
-                        <Navigation currentUser={currentUser} {...this.props}/>
+                        <Header currentUser={currentUser} impersonator={impersonator}/>
+                        <Navigation currentUser={currentUser} impersonator={impersonator} {...this.props}/>
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>
                     </div>}
@@ -183,6 +208,9 @@ class App extends React.Component {
                                render={props => <AuthorisationGroup user={currentUser} {...props}/>}/>
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
+
+                        <Route path="/impersonate"
+                               render={props => <Impersonate user={currentUser}  impersonator={impersonator} {...props}/>}/>
 
                         <Route component={NotFound}/>
                     </Switch>

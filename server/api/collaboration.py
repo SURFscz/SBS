@@ -41,13 +41,13 @@ def name_exists():
 @json_endpoint
 def collaboration_search():
     q = current_request.args.get("q")
-    base_query = "SELECT id, name, description FROM collaborations "
+    base_query = "SELECT id, name, description, organisation_id FROM collaborations "
     if q != "*":
         base_query += f"WHERE MATCH (name, description) AGAINST ('{q}*' IN BOOLEAN MODE) " \
             f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
     sql = text(base_query)
     result_set = db.engine.execute(sql)
-    res = [{"id": row[0], "name": row[1], "description": row[2]} for row in result_set]
+    res = [{"id": row[0], "name": row[1], "description": row[2], "organisation_id": row[3]} for row in result_set]
     return res, 200
 
 

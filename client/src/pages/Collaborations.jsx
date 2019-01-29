@@ -323,7 +323,7 @@ class Collaborations extends React.Component {
         const {user} = this.props;
         return (
             <div className="mod-collaborations">
-                {this.renderSearch(collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}
+                {user.admin && this.renderSearch(collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}
                 <div className="title">
                     <span>{I18n.t("collaborations.dashboard")}</span>
                 </div>
