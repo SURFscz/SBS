@@ -11,11 +11,11 @@ then
     echo "Loading docker cache..."
     # load docker images from cache
     if [ -d $CACHEDIR ]; then
-        CACHED=$( find $CACHEDIR -type f -name '*.tar.gz' )
+        CACHED=$( find $CACHEDIR -type f -name '*.tar' )
         for f in $CACHED
         do
             echo "Loading '$f' into docker";
-            zcat "$f" | docker load || true;
+            docker load < "$f" || true;
         done;
     else
         echo "Docker cache dir $CACHEDIR not found"
@@ -29,13 +29,13 @@ then
     mkdir -p $CACHEDIR
 
     # check which images to remove from the cache
-    CACHED=$( find $CACHEDIR -type f -name '*.tar.gz' | xargs -I '{}' -n1 basename '{}' .tar.gz )
+    CACHED=$( find $CACHEDIR -type f -name '*.tar' | xargs -I '{}' -n1 basename '{}' .tar )
     for i in ${CACHED}
     do
         # check if this image is still in use
         if ! docker image inspect $i > /dev/null
         then
-            rm -vf $CACHEDIR/$i.tar.gz
+            rm -vf $CACHEDIR/$i.tar
         fi
     done
 
@@ -44,10 +44,10 @@ then
     for img in ${IMAGES}
     do
         # check if this image is already cached
-        if ! [ -e $CACHEDIR/$img.tar.gz ]
+        if ! [ -e $CACHEDIR/$img.tar ]
         then
-            echo "adding $img.tar.gz"
-            docker save $img | gzip -c6 > $CACHEDIR/$img.tar.gz
+            echo "adding $img.tar"
+            docker save $img > $CACHEDIR/$img.tar
         fi
     done
 fi
