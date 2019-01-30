@@ -2,6 +2,10 @@
 language: python
 env:
   CODECOV_TOKEN: "ae851f67-c91a-4063-8bd6-a9fc74b3173e"
+
+services:
+  - docker
+
 python:
   - "3.6"
 cache:
@@ -9,8 +13,18 @@ cache:
   directories:
     - node_modules
 
+notifications:
+  slack:
+    on_success: always
+    on_failure: always
+    rooms:
+      - surfnet-nl:tEtfF52tuZaz02sdjLJ2XGUY
+
 jobs:
   include:
+    #######################################################
+    ## Build, run local tests, and check code coverage ####
+    #######################################################
     - stage: test
       before_install:
         - pip install -r ./server/requirements/test.txt
@@ -22,8 +36,12 @@ jobs:
         - nvm install v8.12.0
         - nvm use v8.12.0
       before_script:
-        - mysql -e "create database IF NOT EXISTS sbs_test; CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
-          GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;" -uroot
+        - >
+          mysql -uroot -e "
+            create database IF NOT EXISTS sbs_test;
+            CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
+            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
+          "
       script:
         - pytest --cov=server --cov-report= server/test
         - flake8 ./server/
@@ -35,6 +53,10 @@ jobs:
         - yarn build
       after_success:
         - codecov
+
+    #######################################################
+    ## Build and upload docker images #####################
+    #######################################################
     - stage: build containers
       script:
         - ./build-server.sh
