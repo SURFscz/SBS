@@ -62,14 +62,12 @@ jobs:
     #######################################################
     - stage: build containers
       before_script:
-        - pwd
-        - find
-        - "./script/travis-cache-docker.sh load"
+        - "./scripts/travis-cache-docker.sh load"
       script:
         - ./scripts/build-server.sh
         - ./scripts/build-client.sh
       before_cache:
-        - "./script/travis-cache-docker.sh save"
+        - "./scripts/travis-cache-docker.sh save"
 
       after_success:
         - >
