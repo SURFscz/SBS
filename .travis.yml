@@ -55,6 +55,7 @@ jobs:
         - yarn build
       after_success:
         - codecov
+        - find
 
     #######################################################
     ## Build and upload docker images #####################
@@ -65,4 +66,7 @@ jobs:
         - ./scripts/build-client.sh
       after_success:
         - "docker image list -a --no-trunc"
-        - "docker container list -a --no-trunc"
+        - >
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker push surfscz/sbs-server
+        - docker push surfscz/sbs-client
