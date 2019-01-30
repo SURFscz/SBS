@@ -20,7 +20,9 @@ docker build -t ${IMAGE_TAG} server/
 # also tag this image with the current branch name if we're autobuilding in travis
 if [ -n "$TRAVIS_BRANCH" ]
 then
-    docker tag ${IMAGE_TAG} "${IMAGE_NAME}:${TRAVIS_BRANCH}"
+    # only alnum and -_. allowed in tags; replace everything else by _
+    VERSION=$( echo -n "$TRAVIS_BRANCH" | tr -c '[:alnum:]-_.' '_' )
+    docker tag ${IMAGE_TAG} "${IMAGE_NAME}:${VERSION}"
 fi
 
 exit 0
