@@ -7,7 +7,7 @@ services:
     volumes:
       - ./etc/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./etc/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
-      - data:/var/lib/mysql
+      - ./data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${SECRET}
       MYSQL_DATABASE: ${DB_NAME}
@@ -52,7 +52,7 @@ services:
       API_USER: ${API_USER}
       API_PASS: ${API_PASS}
 
-      BASE_URL: http://localhost:3000
+      BASE_URL: ${BASE_URL}
 
       ADMIN_USERS: ${ADMIN_USERS}
 
@@ -87,19 +87,16 @@ services:
       context: client
       dockerfile: Dockerfile.prod
     volumes:
-      - ./etc/nginx.conf:/etc/nginx/nginx.conf
-      - ./log:/var/log/nginx
+      - ./etc/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./etc/proxy-html.conf:/usr/local/apache2/conf/extra/proxy-html.conf
     ports:
-      - 80:80
+      - ${BASE_PORT}:80
     networks:
       - frontend
       - backend
     links:
       - server
     restart: unless-stopped
-
-volumes:
-  data:
 
 networks:
   frontend:
