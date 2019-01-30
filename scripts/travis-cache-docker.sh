@@ -11,7 +11,8 @@ then
     echo "Loading docker cache..."
     # load docker images from cache
     if [ -d $CACHEDIR ]; then
-        for f in $CACHEDIR/*.tar.gz;
+        CACHED=$( find $CACHEDIR -type f -name '*.tar.gz' )
+        for f in $CACHED
         do
             echo "Loading '$f' into docker";
             zcat "$f" | docker load || true;
