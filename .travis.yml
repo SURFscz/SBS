@@ -55,7 +55,7 @@ jobs:
         - yarn build
       after_success:
         - codecov
-        - find
+        - find /home
 
     #######################################################
     ## Build and upload docker images #####################
