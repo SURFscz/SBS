@@ -61,7 +61,7 @@ jobs:
     ## Build and upload docker images #####################
     #######################################################
     - stage: build containers
-      before_install:
+      before_script:
         - ./script/travis-cache-docker.sh load
       script:
         - ./scripts/build-server.sh
