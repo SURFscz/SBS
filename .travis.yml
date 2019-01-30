@@ -61,3 +61,6 @@ jobs:
       script:
         - ./build-server.sh
         - ./build-client.sh
+      after_success:
+        - "docker image list -a --no-trunc"
+        - "docker container list -a --no-trunc"
