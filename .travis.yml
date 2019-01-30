@@ -8,6 +8,7 @@ services:
 
 python:
   - "3.6"
+
 cache:
   yarn: true
   directories:
@@ -59,8 +60,8 @@ jobs:
     #######################################################
     - stage: build containers
       script:
-        - ./build-server.sh
-        - ./build-client.sh
+        - ./scripts/build-server.sh
+        - ./scripts/build-client.sh
       after_success:
         - "docker image list -a --no-trunc"
         - "docker container list -a --no-trunc"
