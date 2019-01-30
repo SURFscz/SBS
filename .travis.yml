@@ -13,7 +13,8 @@ cache:
   pip: true
   yarn: true
   directories:
-    - node_modules
+    - "node_modules"
+    - "$HOME/docker"
 
 notifications:
   slack:
@@ -29,7 +30,6 @@ jobs:
     #######################################################
     - stage: test
       before_install:
-        - "find /home/travis > /home/travis/bla1"
         - pip install -r ./server/requirements/test.txt
         - pip install codecov
         - "rm -fr ~/.yarn"
@@ -38,8 +38,6 @@ jobs:
         - yarn -v
         - nvm install v8.12.0
         - nvm use v8.12.0
-        - "find /home/travis > /home/travis/bla2"
-        - "diff -Na -u0 /home/travis/bla1 /home/travis/bla2"
       before_script:
         - >
           mysql -uroot -e "
@@ -63,11 +61,15 @@ jobs:
     ## Build and upload docker images #####################
     #######################################################
     - stage: build containers
+      before_install:
+        - ./script/travis-cache-docker.sh load
       script:
         - ./scripts/build-server.sh
         - ./scripts/build-client.sh
+      before_cache:
+        - ./script/travis-cache-docker.sh save
+
       after_success:
-        - "docker image list -a --no-trunc"
         - >
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push surfscz/sbs-server
