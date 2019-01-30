@@ -14,7 +14,6 @@ cache:
   yarn: true
   directories:
     - "node_modules"
-    - "$HOME/docker"
 
 notifications:
   slack:
@@ -61,14 +60,9 @@ jobs:
     ## Build and upload docker images #####################
     #######################################################
     - stage: build containers
-      before_script:
-        - "./scripts/travis-cache-docker.sh load"
       script:
         - ./scripts/build-server.sh
         - ./scripts/build-client.sh
-      before_cache:
-        - "./scripts/travis-cache-docker.sh save"
-
       after_success:
         - >
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
