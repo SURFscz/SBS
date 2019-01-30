@@ -10,6 +10,7 @@ python:
   - "3.6"
 
 cache:
+  pip: true
   yarn: true
   directories:
     - node_modules
