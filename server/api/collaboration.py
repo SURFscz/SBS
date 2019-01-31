@@ -107,6 +107,17 @@ def members():
     return users, 200
 
 
+@collaboration_api.route("/my_lite", strict_slashes=False)
+@json_endpoint
+def my_collaborations_lite():
+    user_id = current_user_id()
+    res = Collaboration.query \
+        .join(Collaboration.collaboration_memberships) \
+        .filter(CollaborationMembership.user_id == user_id) \
+        .all()
+    return res, 200
+
+
 @collaboration_api.route("/lite/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_lite_by_id(collaboration_id):
@@ -171,6 +182,7 @@ def my_collaborations():
         .options(contains_eager(Collaboration.services)) \
         .join(Collaboration.collaboration_memberships) \
         .filter(CollaborationMembership.user_id == user_id) \
+        .filter(CollaborationMembership.role == "admin") \
         .all()
     return res, 200
 

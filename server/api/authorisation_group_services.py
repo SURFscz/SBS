@@ -1,3 +1,5 @@
+import uuid
+
 from flask import Blueprint, request as current_request
 from sqlalchemy import text
 
@@ -31,7 +33,7 @@ def add_authorisation_group_services():
     for service_id in service_ids:
         for member in collaboration_memberships:
             profile = UserServiceProfile(service_id=service_id, collaboration_membership=member,
-                                         created_by=user["uid"], updated_by=["uid"])
+                                         created_by=user["uid"], updated_by=["uid"], identifier=str(uuid.uuid4()))
             db.session.add(profile)
 
     db.session.commit()

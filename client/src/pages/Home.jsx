@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.scss";
 import I18n from "i18n-js";
-import {myCollaborationMemberships} from "../api";
+import {myCollaborationMemberships, myCollaborationsLite} from "../api";
 import {stopEvent} from "../utils/Utils";
 import Button from "../components/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -12,14 +12,15 @@ class Home extends React.Component {
         super(props, context);
         this.state = {
             collaborationMemberships: [],
+            collaborations: [],
             showMore: []
         };
     }
 
     componentWillMount = () => {
-        myCollaborationMemberships()
-            .then(json => {
-                this.setState({collaborationMemberships: json});
+        Promise.all([myCollaborationMemberships(), myCollaborationsLite()])
+            .then(res => {
+                this.setState({collaborationMemberships: res[0], collaborations: res[1]});
             });
     };
 
@@ -139,17 +140,10 @@ class Home extends React.Component {
 
     render() {
         const {user} = this.props;
-        const {collaborationMemberships} = this.state;
+        const {collaborationMemberships, collaborations} = this.state;
 
         const userServiceProfiles = collaborationMemberships.map(membership => membership.user_service_profiles).flat();
         const authorisationGroups = collaborationMemberships.map(membership => membership.authorisation_groups).flat();
-        const collaborations = authorisationGroups.map(authorisationGroup => authorisationGroup.collaboration)
-            .reduce((acc, collaboration) => {
-                if (!acc.find(coll => coll.id === collaboration.id)) {
-                    acc.push(collaboration);
-                }
-                return acc;
-            }, []);
         return (
             <div className="mod-home">
                 <div className="title">

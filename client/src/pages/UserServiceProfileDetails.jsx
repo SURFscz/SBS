@@ -63,6 +63,11 @@ class UserServiceProfileDetails extends React.Component {
         });
     };
 
+    authorisationByCollaborationMembership = (service, collaborationMembership) => {
+        const authorisationGroup = collaborationMembership.authorisation_groups.find(authorisationGroup => authorisationGroup.services.find(s => s.id === service.id));
+        return authorisationGroup ? authorisationGroup.name : "";
+    };
+
     render() {
         const {
             service, collaboration_membership, name, email, address, identifier, ssh_key, role, status,
@@ -90,6 +95,10 @@ class UserServiceProfileDetails extends React.Component {
                 <div className="user-service-profile">
                     <InputField value={service.name}
                                 name={I18n.t("userServiceProfile.service__name")}
+                                disabled={true}/>
+
+                    <InputField value={this.authorisationByCollaborationMembership(service, collaboration_membership)}
+                                name={I18n.t("userServiceProfile.authorisation__name")}
                                 disabled={true}/>
 
                     <InputField value={collaboration_membership.collaboration.name}
