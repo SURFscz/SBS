@@ -90,13 +90,14 @@ def seed(db):
     uva_research = Collaboration(name="UVA UCC research",
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",
-                                 organisation=uva, services=[],
+                                 organisation=uva, services=[storage, wiki],
                                  join_requests=[], invitations=[])
     _persist(db, ai_computing, uva_research)
 
     john_ai_computing = CollaborationMembership(role="researcher", user=john, collaboration=ai_computing)
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
-    _persist(db, john_ai_computing, admin_ai_computing)
+    roger_ai_computing = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
+    _persist(db, john_ai_computing, admin_ai_computing, roger_ai_computing)
 
     user_service_profile = UserServiceProfile(service=network, collaboration_membership=john_ai_computing,
                                               name="John Doe", telephone_number="0612345678",

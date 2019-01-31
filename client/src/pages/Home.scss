@@ -17,33 +17,6 @@
     }
   }
 
-  .home {
-    max-width: $medium;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-    margin: 0 auto 15px auto;
-    background-color: white;
-    padding: 10px $medium-padding 30px $medium-padding;
-
-
-    .error {
-      color: $red;
-      display: inline-block;
-      font-size: 14px;
-    }
-
-    div.input-field, div.select-field {
-      margin-top: 15px;
-    }
-
-    section.actions {
-      margin: $medium-margin 0 0 0;
-
-      a.delete {
-        margin-left: 25px;
-      }
-    }
-  }
-
   .info-block-container {
     max-width: $medium;
     margin: 15px auto 15px auto;
@@ -58,7 +31,7 @@
       border: solid 1px $lightest-grey;
       box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
       padding: 15px 10px;
-      width: calc(25% - 2em);
+      width: calc(33% - 2em);
       display: flex;
       flex-direction: column;
 
@@ -74,22 +47,17 @@
           margin-left: auto;
         }
 
-        &.join-requests {
-          color: $join-request;
-        }
-
-        &.invitations {
-          color: $invitations;
-        }
-
         &.authorisations {
           color: $authorization;
         }
 
-        &.services {
+        &.user-service-profiles {
           color: $services;
         }
 
+        &.collaborations {
+          color: $join-request;
+        }
       }
 
       div.content {
@@ -102,7 +70,7 @@
         justify-content: space-around;
       }
 
-      div.join-request, div.invitation, div.collaboration-services, div.collaboration-authorisations {
+      div.user-service-profile, div.authorisation, div.collaboration {
         a {
           display: inline-block;
           color: $dark-grey;
@@ -132,140 +100,6 @@
           color: $blue;
           margin-left: 5px;
         }
-      }
-    }
-  }
-
-  .service-profile-search {
-    background-color: white;
-    padding: $medium-padding;
-    max-width: $medium;
-    border-radius: $br;
-    margin: 15px auto;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-    position: relative;
-
-    div.search {
-      display: flex;
-      padding-bottom: 15px;
-      position: relative;
-      min-height: 40px;
-
-      svg.fa-search {
-        position: absolute;
-        font-size: 16px;
-        color: $blue;
-        top: 12px;
-        left: 22px;
-      }
-
-      input[type=text] {
-        flex-grow: 2;
-        border: 1px solid $lighter-grey;
-        padding-left: 45px;
-        border-radius: $br;
-        font-size: 16px;
-
-        &.with-button {
-          border-top-right-radius: 0;
-          border-bottom-right-radius: 0;
-        }
-
-        &[disabled] {
-          background-color: $light-grey;
-        }
-      }
-
-      a.button.blue {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-      }
-    }
-  }
-
-  .invitations-container {
-    background-color: white;
-    padding: $medium-padding;
-    max-width: $medium;
-    border-radius: $br;
-    margin: 0 auto 10px auto;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-    position: relative;
-
-  }
-
-  table.service-profiles {
-    width: 100%;
-
-    th {
-      text-align: left;
-      cursor: pointer;
-      padding: 5px;
-
-      &.name {
-        width: 15%;
-      }
-
-      &.email {
-        width: 15%;
-      }
-
-      &.uid {
-        width: 25%;
-      }
-
-      &.role {
-        width: 15%;
-      }
-
-      &.since {
-        width: 20%;
-      }
-
-      &.actions {
-        width: 10%;
-        cursor: default;
-      }
-
-      svg {
-        margin-left: 15px;
-        color: $lighter-grey;
-
-        &.current, &.reverse {
-          color: $blue;
-        }
-      }
-    }
-
-    tbody {
-      tr {
-        &:nth-child(odd) {
-          background-color: $lightest-grey;
-        }
-      }
-    }
-
-    td {
-      vertical-align: middle;
-      padding: 5px;
-
-      &.actions {
-        text-align: right;
-
-        svg {
-          color: $red;
-          cursor: pointer;
-          margin-right: 10px;
-        }
-      }
-
-      &.role {
-        padding-right: 25px;
-      }
-
-      .tooltip-container {
-        margin-left: 15px;
-        color: $blue;
       }
     }
   }

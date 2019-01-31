@@ -1,6 +1,6 @@
 import React from "react";
 import {
-    collaborationById,
+    collaborationById, collaborationLiteById,
     collaborationNameExists,
     deleteCollaboration,
     deleteCollaborationMembership,
@@ -61,18 +61,36 @@ class CollaborationDetail extends React.Component {
         const params = this.props.match.params;
         const {user} = this.props;
         if (params.id) {
-            collaborationById(params.id)
-                .then(json => {
-                    const {sorted, reverse} = this.state;
-                    const members = sortObjects(json.collaboration_memberships, sorted, reverse);
-                    this.setState({
-                        ...json,
-                        originalCollaboration: json,
-                        members: members,
-                        filteredMembers: members,
-                        adminOfCollaboration: json.collaboration_memberships.some(member => member.role === "admin" && member.user_id === user.id)
-                    })
-                });
+            const collaboration_id = parseInt(params.id, 10);
+            const member = (user.collaboration_memberships || []).find(membership => membership.collaboration_id === collaboration_id);
+            if (isEmpty(member) && !user.admin) {
+                this.props.history.push("/404");
+                return;
+            }
+            if (member.role === "admin" || user.admin) {
+                collaborationById(collaboration_id)
+                    .then(json => {
+                        const {sorted, reverse} = this.state;
+                        const members = sortObjects(json.collaboration_memberships, sorted, reverse);
+                        this.setState({
+                            ...json,
+                            originalCollaboration: json,
+                            members: members,
+                            filteredMembers: members,
+                            adminOfCollaboration: true
+                        })
+                    });
+            } else {
+                collaborationLiteById(collaboration_id)
+                    .then(json => {
+                        this.setState({
+                            ...json,
+                            originalCollaboration: json,
+                            adminOfCollaboration: false
+                        })
+                    });
+
+            }
         } else {
             this.props.history.push("/404");
         }
@@ -400,7 +418,8 @@ class CollaborationDetail extends React.Component {
             }}
                         placeholder={I18n.t("collaboration.namePlaceHolder")}
                         onBlur={this.validateCollaborationName}
-                        name={I18n.t("collaboration.name")}/>
+                        name={I18n.t("collaboration.name")}
+                        disabled={!isAdmin}/>
             {alreadyExists.name && <span
                 className="error">{I18n.t("collaboration.alreadyExists", {
                 attribute: I18n.t("collaboration.name").toLowerCase(),
@@ -413,24 +432,28 @@ class CollaborationDetail extends React.Component {
 
             <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                         placeholder={I18n.t("collaboration.descriptionPlaceholder")}
-                        name={I18n.t("collaboration.description")}/>
+                        name={I18n.t("collaboration.description")}
+                        disabled={!isAdmin}/>
 
             <InputField value={accepted_user_policy}
                         onChange={e => this.setState({accepted_user_policy: e.target.value})}
                         placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
-                        name={I18n.t("collaboration.accepted_user_policy")}/>
+                        name={I18n.t("collaboration.accepted_user_policy")}
+                        disabled={!isAdmin}/>
 
             <InputField value={enrollment}
                         onChange={e => this.setState({enrollment: e.target.value})}
                         placeholder={I18n.t("collaboration.enrollmentPlaceholder")}
                         toolTip={I18n.t("collaboration.enrollmentTooltip")}
-                        name={I18n.t("collaboration.enrollment")}/>
+                        name={I18n.t("collaboration.enrollment")}
+                        disabled={!isAdmin}/>
 
             <SelectField value={this.accessTypeOptions.find(option => option.value === access_type)}
                          options={this.accessTypeOptions}
                          name={I18n.t("collaboration.access_type")}
                          placeholder={I18n.t("collaboration.accessTypePlaceholder")}
-                         onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}/>
+                         onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}
+                         disabled={!isAdmin}/>
 
             <InputField value={identifier}
                         name={I18n.t("collaboration.identifier")}
@@ -466,34 +489,39 @@ class CollaborationDetail extends React.Component {
             return null;
         }
         const {user} = this.props;
-        const isAdmin = user.admin || (user.collaboration_memberships || [])
-            .find(membership => membership.collaboration_id === originalCollaboration.id && membership.role === "admin");
+        const isAdmin = user.admin || adminOfCollaboration;
         const disabledSubmit = !initial && !this.isValid();
         const organisation = {
             value: originalCollaboration.organisation.id,
             label: originalCollaboration.organisation.name
         };
+        const back = isAdmin ? "/collaborations" : "/home";
         return (<div className="mod-collaboration-detail">
             <div className="title">
-                <a href="/collaborations" onClick={e => {
+                <a href={back} onClick={e => {
                     stopEvent(e);
-                    this.props.history.push("/collaborations")
-                }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("collaborationDetail.backToCollaborations")}</a>
+                    this.props.history.push(back)
+                }}><FontAwesomeIcon
+                    icon="arrow-left"/>{isAdmin ? I18n.t("collaborationDetail.backToCollaborations") : I18n.t("collaborationDetail.backToHome")}
+                </a>
             </div>
-            <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                cancel={cancelDialogAction}
-                                confirm={confirmationDialogAction}
-                                question={confirmationQuestion}
-                                leavePage={leavePage}/>
-            <p className="title info-blocks">{I18n.t("collaborationDetail.infoBlocks", {name: originalCollaboration.name})}</p>
-            <section className="info-block-container">
-                {this.renderRequests(originalCollaboration.join_requests)}
-                {this.renderInvitations(originalCollaboration.invitations)}
-                {this.renderServices(originalCollaboration)}
-                {this.renderAuthorisations(originalCollaboration.authorisation_groups)}
-            </section>
-            <p className="title members">{I18n.t("collaborationDetail.members", {name: originalCollaboration.name})}</p>
-            {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfCollaboration)}
+            {isAdmin && <section>
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationQuestion}
+                                    leavePage={leavePage}/>
+                <p className="title info-blocks">{I18n.t("collaborationDetail.infoBlocks", {name: originalCollaboration.name})}</p>
+                <section className="info-block-container">
+                    {this.renderRequests(originalCollaboration.join_requests)}
+                    {this.renderInvitations(originalCollaboration.invitations)}
+                    {this.renderServices(originalCollaboration)}
+                    {this.renderAuthorisations(originalCollaboration.authorisation_groups)}
+                </section>
+
+                <p className="title members">{I18n.t("collaborationDetail.members", {name: originalCollaboration.name})}</p>
+                {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfCollaboration)}
+            </section>}
             <div className="title">
                 <p>{I18n.t("collaborationDetail.title", {name: originalCollaboration.name})}</p>
             </div>

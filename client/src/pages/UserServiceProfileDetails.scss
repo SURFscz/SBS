@@ -1,6 +1,6 @@
 @import "../stylesheets/vars.scss";
 
-.mod-organisation-invitation {
+.mod-user-service-profile {
   background-color: $background;
 
   div.title {
@@ -32,7 +32,7 @@
     }
   }
 
-  .organisation-invitation {
+  div.user-service-profile {
     max-width: $medium;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
     margin: 0 auto 25px auto;
@@ -68,5 +68,7 @@
 
     }
 
+
   }
+
 }

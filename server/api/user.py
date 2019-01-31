@@ -57,14 +57,16 @@ def collaboration_search():
     q = current_request.args.get("q")
     organisation_id = current_request.args.get("organisation_id", None)
     collaboration_id = current_request.args.get("collaboration_id", None)
+    organisation_admins = current_request.args.get("organisation_admins", None)
+    collaboration_admins = current_request.args.get("collaboration_admins", None)
 
     base_query = "SELECT u.id, u.uid, u.name, u.email, o.name, om.role, c.name, cm.role  FROM users u "
 
-    organisation_join = " INNER " if organisation_id else "LEFT "
+    organisation_join = " INNER " if organisation_id or organisation_admins else "LEFT "
     base_query += f"{organisation_join} JOIN organisation_memberships om ON om.user_id = u.id " \
         f"{organisation_join} JOIN organisations o ON o.id = om.organisation_id "
 
-    collaboration_join = " INNER " if collaboration_id else "LEFT "
+    collaboration_join = " INNER " if collaboration_id or collaboration_admins else "LEFT "
     base_query += f"{collaboration_join} JOIN collaboration_memberships cm ON cm.user_id = u.id " \
         f"{collaboration_join} JOIN collaborations c ON c.id = cm.collaboration_id "
 
@@ -78,6 +80,12 @@ def collaboration_search():
 
     if collaboration_id:
         base_query += f"AND cm.collaboration_id = {collaboration_id} "
+
+    if organisation_admins:
+        base_query += f"AND om.role = 'admin'"
+
+    if collaboration_admins:
+        base_query += f"AND cm.role = 'admin'"
 
     base_query += f" ORDER BY u.id  LIMIT {full_text_search_autocomplete_limit}"
     sql = text(base_query)

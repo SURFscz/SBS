@@ -24,7 +24,11 @@ I18n.translations.en = {
         impersonate: "Impersonate",
     },
     home: {
-        title: "My service profiles"
+        title: "My collaboration memberships",
+        userServiceProfiles: "User service profiles",
+        authorisationGroups: "Authorisation Groups",
+        collaborations: "Collaborations",
+        backToHome: "Back to home"
     },
     forms: {
         submit: "Add",
@@ -38,8 +42,10 @@ I18n.translations.en = {
         title: "Who do you want to be?",
         organisation: "Organisation",
         organisationPlaceholder: "Search and select an organisation to narrow the search result for users...",
+        organisationAdminsOnly: "Only show the administrators of organisations",
         collaboration: "Collaboration",
         collaborationPlaceholder: "Search and select a collaboration to narrow the search result for users...",
+        collaborationAdminsOnly: "Only show the administrators of collaborations",
         user: "User",
         userSearchPlaceHolder: "Search and select a user to impersonate...",
         userRequired: "You must first select a user before pretending to be that person",
@@ -106,7 +112,6 @@ I18n.translations.en = {
         authorisations: "Authorisation Groups",
         invitations: "Invitations",
         services: "Services",
-        profile: "Profile",
         add: "New",
         searchPlaceHolder: "SEARCH FOR ALL COLLABORATIONS..."
     },
@@ -156,6 +161,7 @@ I18n.translations.en = {
     collaborationDetail: {
         title: "Details collaboration {{name}}",
         backToCollaborations: "Back to my collaborations",
+        backToHome: "Back to my dashboard",
         backToCollaborationDetail: "Back to my collaboration {{name}}",
         update: "Update",
         delete: "Delete",
@@ -412,6 +418,7 @@ I18n.translations.en = {
         membersTitle: "Members of authorisation group {{name}}",
         titleNew: "Create new authorisation group",
         titleUpdate: "Update authorisation group {{name}}",
+        titleReadOnly: "Authorisation group {{name}}",
         backToCollaborationAuthorisationGroups: "Back to the authorisation groups of my collaboration {{name}}",
         new: "New",
         searchPlaceHolder: "Search for authorisation groups",
@@ -466,6 +473,40 @@ I18n.translations.en = {
             role: "Role",
             created_at: "Since",
             actions: ""
+        },
+
+    },
+    userServiceProfile: {
+        title: "My user service profiles",
+        titleUpdate: "Update user service profile {{name}}",
+        backToServices: "Back to my service profiles",
+        status: "Status",
+        statusPlaceholder: "The status of the user service profile",
+        statusValues: {
+            active: "Active",
+            in_active: "In-active"
+        },
+        open: "",
+        service__name: "Service",
+        collaboration_membership__collaboration__name: "Collaboration",
+        name: "Name",
+        namePlaceholder: "Your name to use for this user service profile",
+        email: "Email",
+        emailPlaceholder: "Your email to use for this user service profile",
+        address: "Address",
+        addressPlaceholder: "Your address to use for this user service profile",
+        identifier: "Identifier",
+        identifierPlaceholder: "Your identifier to use for this user service profile",
+        identifierTooltip: "Your unique identifier wihtin<br/> the context of this<br/>user service profile",
+        ssh_key: "SSS public key",
+        ssh_keyPlaceholder: "Your public SSh key to login on the service",
+        ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP for this service",
+
+        role: "Role",
+        searchPlaceHolder: "Search in your user service profiles...",
+        update: "Update",
+        flash: {
+            updated: "User service profile {{name}} was successfully updated",
         },
 
     },

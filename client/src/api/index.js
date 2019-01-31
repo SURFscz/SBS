@@ -91,10 +91,12 @@ export function other(uid) {
     return fetchJson(`/api/users/other?uid=${encodeURIComponent(uid)}`);
 }
 
-export function searchUsers(q, organisationId, collaborationId) {
+export function searchUsers(q, organisationId, collaborationId, limitToOrganisationAdmins, limitToCollaborationAdmins) {
     const organisationIdPart = isEmpty(organisationId) ? "" : `&organisation_id=${organisationId}`;
     const collaborationIdPart = isEmpty(collaborationId) ? "" : `&collaboration_id=${collaborationId}`;
-    return fetchJson(`/api/users/search?q=${encodeURIComponent(q)}${organisationIdPart}${collaborationIdPart}`);
+    const organisationAdminsPart = limitToOrganisationAdmins ? "&organisation_admins=true" : "";
+    const collaborationAdminsPart = limitToCollaborationAdmins ? "&collaboration_admins=true" : "";
+    return fetchJson(`/api/users/search?q=${encodeURIComponent(q)}${organisationIdPart}${collaborationIdPart}${organisationAdminsPart}${collaborationAdminsPart}`);
 }
 
 export function reportError(error) {
@@ -137,6 +139,10 @@ export function collaborationByName(name) {
 
 export function collaborationById(id) {
     return fetchJson(`/api/collaborations/${id}`, {}, {}, false);
+}
+
+export function collaborationLiteById(id) {
+    return fetchJson(`/api/collaborations/lite/${id}`, {}, {}, false);
 }
 
 export function myCollaborations() {
@@ -293,6 +299,10 @@ export function deleteCollaborationMembership(collaborationId, userId) {
     return fetchDelete(`/api/collaboration_memberships/${collaborationId}/${userId}`)
 }
 
+export function myCollaborationMemberships() {
+    return fetchJson("/api/collaboration_memberships")
+}
+
 //CollaborationServices
 export function addCollaborationServices({collaborationId, serviceIds}) {
     serviceIds = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
@@ -360,6 +370,14 @@ export function deleteAuthorisationGroupMembers(authorisationGroupId, memberId, 
 }
 
 //UserServiceProfiles
+export function userServiceProfileById(id) {
+    return fetchJson(`/api/user_service_profiles/${id}`);
+}
+
 export function myUserServiceProfiles() {
     return fetchJson("/api/user_service_profiles")
+}
+
+export function updateUserServiceProfiles(profile) {
+    return postPutJson("/api/user_service_profiles", profile, "put");
 }
