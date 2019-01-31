@@ -7,7 +7,7 @@ services:
     volumes:
       - ./etc/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./etc/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
-      - data:/var/lib/mysql
+      - ./data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${SECRET}
       MYSQL_DATABASE: ${DB_NAME}
@@ -29,15 +29,20 @@ services:
     restart: unless-stopped
 
   server:
-    build: server
+    image: surfscz/sbs-server:test
     volumes:
       - ./log:/opt/app/log
       - ./etc/config.env:/tmp/config.env
       - ./etc/alembic.env:/tmp/alembic.env
+      - ./etc/nginx.conf:/etc/nginx/nginx.conf
+      - ./log:/var/log/nginx
     depends_on:
       - db
     networks:
+      - frontend
       - backend
+    ports:
+      - ${BASE_PORT}:80
     environment:
       SECRET: ${SECRET}
       
@@ -52,7 +57,7 @@ services:
       API_USER: ${API_USER}
       API_PASS: ${API_PASS}
 
-      BASE_URL: http://localhost:3000
+      BASE_URL: ${BASE_URL}
 
       ADMIN_USERS: ${ADMIN_USERS}
 
@@ -65,41 +70,8 @@ services:
         envsubst < /tmp/config.env > server/config/test_config.yml
         envsubst < /tmp/alembic.env > server/migrations/alembic.ini
         echo "Waiting for Database..."
-        sleep 20
-        python -m server
+        nginx && python -m server
     restart: unless-stopped
-
-  client-test:
-    build:
-      context: client
-      dockerfile: Dockerfile.test
-    ports:
-      - 3000:3000
-    networks:
-      - frontend
-      - backend
-    links:
-      - server
-    restart: unless-stopped
-
-  client-prod:
-    build:
-      context: client
-      dockerfile: Dockerfile.prod
-    volumes:
-      - ./etc/nginx.conf:/etc/nginx/nginx.conf
-      - ./log:/var/log/nginx
-    ports:
-      - 80:80
-    networks:
-      - frontend
-      - backend
-    links:
-      - server
-    restart: unless-stopped
-
-volumes:
-  data:
 
 networks:
   frontend:
