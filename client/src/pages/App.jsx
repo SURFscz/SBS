@@ -34,6 +34,8 @@ import Invitation from "./Invitation";
 import Impersonate from "./Impersonate";
 import {emitter} from "../utils/Events";
 import {isEmpty} from "../utils/Utils";
+import UserServiceProfiles from "./UserServiceProfiles";
+import UserServiceProfileDetails from "./UserServiceProfileDetails";
 
 addIcons();
 
@@ -206,6 +208,12 @@ class App extends React.Component {
 
                         <Route path="/collaboration-authorisation-group-details/:collaboration_id/:id"
                                render={props => <AuthorisationGroup user={currentUser} {...props}/>}/>
+
+                        <Route path="/user-service-profiles"
+                               render={props => <UserServiceProfiles user={currentUser} {...props}/>}/>
+
+                        <Route path="/user-service-profile-details/:id"
+                               render={props => <UserServiceProfileDetails user={currentUser} {...props}/>}/>
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 

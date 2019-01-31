@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
 from server.api.security import confirm_collaboration_admin, confirm_organization_admin, is_application_admin, \
-    current_user_id
+    current_user_id, confirm_collaboration_member
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
@@ -105,6 +105,18 @@ def members():
                     collaboration_membership.identifier == identifier)) \
         .all()
     return users, 200
+
+
+@collaboration_api.route("/lite/<collaboration_id>", strict_slashes=False)
+@json_endpoint
+def collaboration_lite_by_id(collaboration_id):
+    confirm_collaboration_member(collaboration_id)
+
+    collaboration = Collaboration.query \
+        .join(Collaboration.organisation) \
+        .options(contains_eager(Collaboration.organisation)) \
+        .filter(Collaboration.id == collaboration_id).one()
+    return collaboration, 200
 
 
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)

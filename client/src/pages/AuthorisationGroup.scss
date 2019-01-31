@@ -20,6 +20,7 @@
       text-transform: uppercase;
       text-decoration: none;
       margin: 10px 0;
+      color: $blue;
 
       &:hover {
         font-weight: bolder;
@@ -78,6 +79,11 @@
     margin: 0 auto 15px auto;
     background-color: white;
     padding: $medium-padding;
+
+    &.no-admin {
+      padding: 0 0 0 $medium-padding;
+    }
+
     div.checkbox {
       margin-bottom: 20px;
     }
@@ -85,11 +91,13 @@
 
   .authorisation-services-connected, .authorisation-members-connected {
     padding: 15px 5px;
+
     p.title {
       color: $dark-grey;
       font-size: 18px;
       margin: 15px 0 10px 0;
     }
+
     em.warning {
       color: darken($orange, 20%);
       display: inline-block;

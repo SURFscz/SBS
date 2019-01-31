@@ -4,7 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin
+from server.api.security import confirm_collaboration_admin, confirm_collaboration_admin_or_authorisation_group_member
 from server.db.db import AuthorisationGroup, CollaborationMembership
 from server.db.db import db
 from server.db.models import update, save, delete
@@ -29,7 +29,7 @@ def name_exists():
 @authorisation_group_api.route("/<authorisation_group_id>/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def authorisation_group_by_id(authorisation_group_id, collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
+    confirm_collaboration_admin_or_authorisation_group_member(collaboration_id, authorisation_group_id)
 
     authorisation_group = AuthorisationGroup.query \
         .join(AuthorisationGroup.collaboration) \

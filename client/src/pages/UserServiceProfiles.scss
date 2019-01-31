@@ -1,6 +1,6 @@
 @import "../stylesheets/vars.scss";
 
-.mod-collaboration-authorisation-groups {
+.mod-user-service-profiles {
 
   background-color: $background;
   padding: 0;
@@ -34,7 +34,7 @@
     }
   }
 
-  .collaboration-authorisation-groups {
+  .user-service-profiles {
     max-width: $medium;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
     margin: 0 auto 15px auto;
@@ -42,12 +42,12 @@
     padding: $medium-padding 0;
   }
 
-  .authorisation-groups-search {
+  .user-service-profiles-search {
     position: relative;
 
     div.search {
       display: flex;
-      padding: 0 15px;
+      padding: 0 $medium-padding;
       position: relative;
       min-height: 40px;
 
@@ -56,7 +56,7 @@
         font-size: 16px;
         color: $blue;
         top: 12px;
-        left: 22px;
+        left: 30px;
       }
 
       input[type=text] {
@@ -75,18 +75,13 @@
           background-color: $light-grey;
         }
       }
-
-      a.button.blue {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-      }
     }
   }
 
-  div.authorisation-groups-list {
+  div.user-service-profiles-list {
     padding: $medium-padding;
 
-    table.authorisation-groups {
+    table {
       width: 100%;
 
       th {
@@ -157,20 +152,6 @@
           color: $blue;
         }
 
-        &.actions {
-          text-align: right;
-
-          svg {
-            color: $red;
-            cursor: pointer;
-            margin-right: 10px;
-          }
-        }
-
-        .tooltip-container {
-          margin-left: 15px;
-          color: $blue;
-        }
       }
     }
 

@@ -9,6 +9,7 @@ import Autocomplete from "../components/Autocomplete";
 import Button from "../components/Button";
 import {emitter} from "../utils/Events";
 import InputField from "../components/InputField";
+import CheckBox from "../components/CheckBox";
 
 class Impersonate extends React.Component {
 
@@ -18,7 +19,9 @@ class Impersonate extends React.Component {
             organisations: [],
             collaborations: [],
             organisation: null,
+            limitToOrganisationAdmins: false,
             collaboration: null,
+            limitToCollaborationAdmins: false,
             selected: -1,
             suggestions: [],
             query: "",
@@ -50,13 +53,19 @@ class Impersonate extends React.Component {
             this.setState({initial: false});
         } else {
             emitter.emit("impersonation", selectedUser);
-            this.setState({selectedUser: null, query: "", initial: true, collaboration: null, organisation: null});
+            this.setState({
+                selectedUser: null, query: "", initial: true, collaboration: null,
+                organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false
+            });
         }
     };
 
     clearImpersonation = () => {
         emitter.emit("impersonation", null);
-        this.setState({selectedUser: null, query: "", initial: true, collaboration: null, organisation: null});
+        this.setState({
+            selectedUser: null, query: "", initial: true, collaboration: null,
+            organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false
+        });
     };
 
     onSearchKeyDown = e => {
@@ -93,9 +102,13 @@ class Impersonate extends React.Component {
     };
 
     delayedAutocomplete = debounce(() => {
-        const {query, collaboration, organisation} = this.state;
-        searchUsers(query, organisation ? organisation.value : null, collaboration ? collaboration.value : null)
-            .then(results => this.setState({
+        const {query, collaboration, organisation, limitToCollaborationAdmins, limitToOrganisationAdmins} = this.state;
+        searchUsers(query,
+            organisation ? organisation.value : null,
+            collaboration ? collaboration.value : null,
+            limitToOrganisationAdmins,
+            limitToCollaborationAdmins).then(results =>
+            this.setState({
                 suggestions: results.length > 15 ? results.slice(0, results.length - 1) : results,
                 loadingAutoComplete: false,
                 moreToShow: results.length > 15 && this.state.query !== "*"
@@ -129,7 +142,8 @@ class Impersonate extends React.Component {
         const {user, impersonator} = this.props;
         const {
             organisations, collaborations, suggestions, organisation, collaboration, query,
-            loadingAutoComplete, selected, moreToShow, selectedUser, initial
+            loadingAutoComplete, selected, moreToShow, selectedUser, initial,
+            limitToCollaborationAdmins, limitToOrganisationAdmins
         } = this.state;
         const filteredCollaborations = organisation ? collaborations.filter(coll => coll.organisation_id === organisation.value) : collaborations;
         const filteredOrganisations = collaboration ? organisations.filter(org => org.value === collaboration.organisation_id) : organisations;
@@ -147,6 +161,10 @@ class Impersonate extends React.Component {
                                  onChange={this.organisationSelected}
                                  clearable={true}
                                  searchable={true}/>
+                    <CheckBox name="organisationAdminsOnly"
+                              value={limitToOrganisationAdmins}
+                              info={I18n.t("impersonate.organisationAdminsOnly")}
+                              onChange={() => this.setState({limitToOrganisationAdmins: !limitToOrganisationAdmins})}/>
                     <SelectField value={collaboration}
                                  options={filteredCollaborations}
                                  name={I18n.t("impersonate.collaboration")}
@@ -154,6 +172,10 @@ class Impersonate extends React.Component {
                                  onChange={this.collaborationSelected}
                                  clearable={true}
                                  searchable={true}/>
+                    <CheckBox name="collaborationAdminsOnly"
+                              value={limitToCollaborationAdmins}
+                              info={I18n.t("impersonate.collaborationAdminsOnly")}
+                              onChange={() => this.setState({limitToCollaborationAdmins: !limitToCollaborationAdmins})}/>
                     <section className="user-search">
                         <div className="search"
                              tabIndex="-1" onBlur={this.onBlurSearch(suggestions)}>
