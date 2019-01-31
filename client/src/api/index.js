@@ -87,6 +87,10 @@ export function me() {
     return fetchJson("/api/users/me", {}, headers, false);
 }
 
+export function refreshUser() {
+    return fetchJson("/api/users/refresh");
+}
+
 export function other(uid) {
     return fetchJson(`/api/users/other?uid=${encodeURIComponent(uid)}`);
 }
@@ -146,7 +150,11 @@ export function collaborationLiteById(id) {
 }
 
 export function myCollaborations() {
-    return fetchJson(`/api/collaborations`);
+    return fetchJson("/api/collaborations");
+}
+
+export function myCollaborationsLite() {
+    return fetchJson("/api/collaborations/my_lite");
 }
 
 export function createCollaboration(collaboration) {

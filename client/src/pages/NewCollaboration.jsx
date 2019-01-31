@@ -78,7 +78,8 @@ class NewCollaboration extends React.Component {
                 administrators, message, accepted_user_policy, organisation_id: organisation.value
             }).then(res => {
                 this.props.history.push("/collaborations");
-                setFlash(I18n.t("collaboration.flash.created", {name: res.name}))
+                setFlash(I18n.t("collaboration.flash.created", {name: res.name}));
+                this.props.refreshUser();
             });
         }
     };

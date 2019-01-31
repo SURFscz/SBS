@@ -8,7 +8,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_allow_impersonation, is_admin_user
+from server.api.security import confirm_allow_impersonation, is_admin_user, current_user_id
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
 
@@ -133,6 +133,16 @@ def me():
         user = {"uid": "anonymous", "guest": True, "admin": False}
         session["user"] = user
     return user, 200
+
+
+@user_api.route("/refresh", strict_slashes=False)
+@json_endpoint
+def refresh():
+    user_id = current_user_id()
+    user = _user_query().filter(User.id == user_id).one()
+    is_admin = {"admin": is_admin_user(user.uid), "guest": False}
+    json_user = jsonify(user).json
+    return {**json_user, **is_admin}, 200
 
 
 @user_api.route("/other", strict_slashes=False)

@@ -488,6 +488,7 @@ I18n.translations.en = {
         },
         open: "",
         service__name: "Service",
+        authorisation__name: "Authorisation",
         collaboration_membership__collaboration__name: "Collaboration",
         name: "Name",
         namePlaceholder: "Your name to use for this user service profile",

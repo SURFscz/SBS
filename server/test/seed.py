@@ -96,11 +96,13 @@ def seed(db):
 
     john_ai_computing = CollaborationMembership(role="researcher", user=john, collaboration=ai_computing)
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
-    roger_ai_computing = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
-    _persist(db, john_ai_computing, admin_ai_computing, roger_ai_computing)
+    roger_uva_research = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
+    peter_uva_research = CollaborationMembership(role="member", user=peter, collaboration=uva_research)
+    _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research)
 
     user_service_profile = UserServiceProfile(service=network, collaboration_membership=john_ai_computing,
                                               name="John Doe", telephone_number="0612345678",
+                                              identifier=str(uuid.uuid4()),
                                               ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                                                       "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
                                                       "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"

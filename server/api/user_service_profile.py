@@ -80,8 +80,8 @@ def my_user_service_profiles():
     user_id = current_user_id()
     profiles = UserServiceProfile.query \
         .join(UserServiceProfile.collaboration_membership) \
-        .join(UserServiceProfile.service) \
         .join(CollaborationMembership.collaboration) \
+        .join(UserServiceProfile.service) \
         .options(contains_eager(UserServiceProfile.collaboration_membership)
                  .contains_eager(CollaborationMembership.collaboration)) \
         .options(contains_eager(UserServiceProfile.service)) \
