@@ -4,7 +4,6 @@ import "./UserServiceProfiles.scss";
 import {sortObjects, stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import I18n from "i18n-js";
-import Select from "react-select";
 import {headerIcon} from "../forms/helpers";
 
 class UserServiceProfiles extends React.Component {
