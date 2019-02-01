@@ -124,7 +124,8 @@ class UserServiceProfileDetails extends React.Component {
                                 name={I18n.t("userServiceProfile.identifier")}
                                 placeholder={I18n.t("userServiceProfile.identifierPlaceholder")}
                                 onChange={e => this.setState({identifier: e.target.value})}
-                                toolTip={I18n.t("userServiceProfile.identifierTooltip")}/>
+                                toolTip={I18n.t("userServiceProfile.identifierTooltip")}
+                                disabled={true}/>
 
                     <InputField value={ssh_key}
                                 name={I18n.t("userServiceProfile.ssh_key")}

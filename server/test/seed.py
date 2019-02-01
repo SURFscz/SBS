@@ -6,6 +6,10 @@ from server.db.db import User, Organisation, OrganisationMembership, Service, Co
     JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
 from server.db.defaults import default_expiry_date
 
+the_boss_name = "The Boss"
+
+john_name = "John Doe"
+james_name = "James Byrd"
 organisation_invitation_hash = token_urlsafe()
 invitation_hash_curious = token_urlsafe()
 invitation_hash_no_way = token_urlsafe()
@@ -19,6 +23,8 @@ service_mail_entity_id = "https://mail"
 
 service_network_name = "Network Services"
 service_network_entity_id = "https://network"
+
+ai_researchers_authorisation = "AI researchers"
 
 
 def _persist(db, *objs):
@@ -35,14 +41,15 @@ def seed(db):
         db.session.execute(table.delete())
     db.session.commit()
 
-    john = User(uid="urn:john", name="John Doe", email="john@example.org")
+    john = User(uid="urn:john", name=john_name, email="john@example.org")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org")
-    admin = User(uid="urn:admin", name="The Boss", email="boss@example.org")
+    admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org")
     roger = User(uid="urn:roger", name="Roger Doe", email="roger@example.org")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org")
+    james = User(uid="urn:james", name=james_name, email="james@example.org")
 
-    _persist(db, john, mary, peter, admin, roger, harry)
+    _persist(db, john, mary, peter, admin, roger, harry, james)
 
     uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
                        created_by="urn:admin",
@@ -101,7 +108,7 @@ def seed(db):
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research)
 
     user_service_profile = UserServiceProfile(service=network, collaboration_membership=john_ai_computing,
-                                              name="John Doe", telephone_number="0612345678",
+                                              name=john_name, telephone_number="0612345678",
                                               identifier=str(uuid.uuid4()),
                                               ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                                                       "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
@@ -112,7 +119,8 @@ def seed(db):
                                                       "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     _persist(db, user_service_profile)
 
-    authorisation_group_researchers = AuthorisationGroup(name="AI researchers", uri="https://ai/researchers",
+    authorisation_group_researchers = AuthorisationGroup(name=ai_researchers_authorisation,
+                                                         uri="https://ai/researchers",
                                                          status="active",
                                                          description="Artifical computing researchers",
                                                          collaboration=ai_computing, services=[network],

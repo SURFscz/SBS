@@ -97,7 +97,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("John Doe", researcher["user"]["name"])
 
     def test_my_collaborations_no_admin(self):
-        self.login()
+        self.login("urn:james")
         my_collaborations = self.get("/api/collaborations")
         self.assertEqual(0, len(my_collaborations))
 

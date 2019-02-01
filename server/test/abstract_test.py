@@ -71,6 +71,10 @@ class AbstractTest(TestCase):
         res = list(filter(lambda item: item["name"] == name, coll))
         return res[0] if len(res) > 0 else None
 
+    @staticmethod
+    def find_entity_by_name(cls, name):
+        return cls.query.filter(cls.name == name).one()
+
     def login(self, uid="urn:john"):
         with requests.Session():
             self.client.get("/api/users/me", headers={UID_HEADER_NAME: uid})

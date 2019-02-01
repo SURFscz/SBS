@@ -7,7 +7,8 @@ from server.db.db import CollaborationMembership, OrganisationMembership, \
 
 
 def is_admin_user(uid):
-    return len(list(filter(lambda u: u.uid == uid, current_app.app_config.admin_users))) == 1
+    admin_users = current_app.app_config.admin_users
+    return len(list(filter(lambda u: u.uid == uid, admin_users))) == 1
 
 
 def _get_impersonated_session():
