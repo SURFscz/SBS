@@ -166,7 +166,7 @@ def collaboration_by_id(collaboration_id):
 @json_endpoint
 def my_collaborations():
     user_id = current_user_id()
-    res = Collaboration.query \
+    query = Collaboration.query \
         .join(Collaboration.organisation) \
         .outerjoin(Collaboration.authorisation_groups) \
         .outerjoin(Collaboration.invitations) \
@@ -181,9 +181,12 @@ def my_collaborations():
                  .contains_eager(JoinRequest.user)) \
         .options(contains_eager(Collaboration.services)) \
         .join(Collaboration.collaboration_memberships) \
-        .filter(CollaborationMembership.user_id == user_id) \
-        .filter(CollaborationMembership.role == "admin") \
-        .all()
+        .filter(CollaborationMembership.user_id == user_id)
+
+    if not is_application_admin():
+        query = query.filter(CollaborationMembership.role == "admin")
+
+    res = query.all()
     return res, 200
 
 
