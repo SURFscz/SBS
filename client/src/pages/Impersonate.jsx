@@ -107,12 +107,16 @@ class Impersonate extends React.Component {
             organisation ? organisation.value : null,
             collaboration ? collaboration.value : null,
             limitToOrganisationAdmins,
-            limitToCollaborationAdmins).then(results =>
+            limitToCollaborationAdmins).then(results => {
+            const {user, impersonator} = this.props;
+            const idsToExclude = [user, impersonator].filter(u => !isEmpty(u)).map(u => u.id);
+            results = results.filter(u => !idsToExclude.includes(u.id));
             this.setState({
                 suggestions: results.length > 15 ? results.slice(0, results.length - 1) : results,
                 loadingAutoComplete: false,
                 moreToShow: results.length > 15 && this.state.query !== "*"
-            }))
+            })
+        })
     }, 200);
 
     itemSelected = selectedUser => this.setState({
@@ -216,8 +220,7 @@ class Impersonate extends React.Component {
                     </section>
 
                 </div>
-            </div>)
-            ;
+            </div>);
     };
 }
 

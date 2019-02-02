@@ -263,6 +263,9 @@ I18n.translations.en = {
         required: "The {{attribute}} is required for an organisation",
         administrators: "Administrators",
         administratorsPlaceholder: "Invite administrators by email",
+        filePlaceholder: "Select csv or txt file...",
+        fileImportResult: "Imported {{nbr}} emails from {{fileName}}",
+        fileExtensionError: "Only .csv extension files are allowed",
         administratorsTooltip: "Administrators of an organisation <br/>can create collaborations in their organisations.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
         role: "Role",
         admin: "Administrator",
@@ -348,6 +351,7 @@ I18n.translations.en = {
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
         expired: "This invitation expired on {{expiry_date}} and can not be accepted anymore",
+        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiry date to 14 days",
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} is declined",
             inviteDeleted: "Invitation for organisation {{name}} is deleted",
@@ -367,10 +371,11 @@ I18n.translations.en = {
         inviteesTooltip: "This personal message is<br/>included in the mail send <br/>to the persons you invite",
         intendedRole: "Role",
         intendedRoleTooltip: "The intended role for all invitees.<br/><br/>Administrators of an collaboration<br/>can edit their collaborations and<br/>invite members.<br/>Members can only use the services of <br/>their authorisation groups",
+        invitee_email: "Invitee email",
         requiredEmail: "At least one email is required for an invitation for a collaboration",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
-        inviteesMessagesTooltip: "Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
+        inviteesMessagesTooltip: "Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.<br/>You can also upload a csv file<br/>with comma-separated email addresses.",
         inviteesMessagePlaceholder: "Personal message to the invitees",
         inviter: "Inviter",
         decline: "Decline",
@@ -382,6 +387,10 @@ I18n.translations.en = {
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
         expired: "This invitation expired on {{expiry_date}} and can not be accepted anymore",
+        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiry date to 14 days",
+        filePlaceholder: "Select csv or txt file...",
+        fileImportResult: "Imported {{nbr}} emails from {{fileName}}",
+        fileExtensionError: "Only .csv extension files are allowed",
         expiryDate: "Expiry date",
         expiryDateTooltip: "The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         flash: {
@@ -501,8 +510,8 @@ I18n.translations.en = {
         identifierTooltip: "Your unique identifier wihtin<br/> the context of this<br/>user service profile",
         ssh_key: "SSS public key",
         ssh_keyPlaceholder: "Your public SSh key to login on the service",
-        ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP for this service",
-
+        ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP for this service.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a mac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
+        sshKeyError: "Invalid SSH key",
         role: "Role",
         searchPlaceHolder: "Search in your user service profiles...",
         update: "Update",
@@ -522,6 +531,9 @@ I18n.translations.en = {
         noResults: "No results",
         resultsLimited: "More entries matched than can be shown, please narrow your search term..."
 
+    },
+    inputField: {
+        fileImport: "File import",
     },
     confirmationDialog: {
         title: "Please confirm",

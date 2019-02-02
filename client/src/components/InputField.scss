@@ -46,5 +46,30 @@
       cursor: not-allowed;
     }
 
+    &.file-upload {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+  }
+
+  label.file-upload {
+    border-radius: 0 $br $br 0;
+    border-left: none;
+    cursor: pointer;
+    padding-right: 4px;
+  }
+
+  span.remove {
+    display: flex;
+    em {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    svg.fa-trash {
+      margin: 0 5px 0 auto;
+      color: $red;
+    }
   }
 }

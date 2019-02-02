@@ -23,10 +23,13 @@ class NewOrganisationInvitation extends React.Component {
         this.state = {
             organisation: undefined,
             administrators: [],
+            fileName: null,
             email: "",
+            fileEmails: [],
+            fileTypeError: false,
+            fileInputKey: new Date().getMilliseconds(),
             message: "",
             expiry_date: moment().add(14, "days").toDate(),
-            required: ["administrators"],
             initial: true,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
@@ -51,16 +54,15 @@ class NewOrganisationInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {required} = this.state;
-        const inValid = required.some(attr => isEmpty(this.state[attr]));
-        return !inValid;
+        const {administrators, fileEmails} = this.state;
+        return !isEmpty(administrators) || !isEmpty(fileEmails);
     };
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {administrators, message, organisation, expiry_date} = this.state;
+            const {administrators, message, organisation, expiry_date, fileEmails} = this.state;
             organisationInvitations({
-                administrators,
+                administrators: administrators.concat(fileEmails),
                 message,
                 expiry_date: expiry_date.getTime() / 1000,
                 organisation_id: organisation.id
@@ -104,12 +106,43 @@ class NewOrganisationInvitation extends React.Component {
             this.setState({email: "", administrators: uniqueEmails});
         }
     };
+    onFileRemoval = e => {
+        stopEvent(e);
+        this.setState({
+            fileName: null, fileEmails: [], fileTypeError: false,
+            fileInputKey: new Date().getMilliseconds()
+        });
+    };
 
+    onFileUpload = e => {
+        const files = e.target.files;
+        if (!isEmpty(files)) {
+            const file = files[0];
+            if (file.name.endsWith("csv")) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const csvEmails = reader.result;
+                    const fileEmails = csvEmails.split(/[,\n\r]/)
+                        .map(s => s.trim().replace(/[\t\r\n]/g, ""))
+                        .filter(mail => validEmailRegExp.test(mail));
+                    this.setState({
+                        fileName: file.name,
+                        fileTypeError: false,
+                        fileEmails: fileEmails
+                    });
+                };
+                reader.readAsText(file);
+            } else {
+                this.setState({fileName: file.name, fileTypeError: true, fileEmails: []});
+            }
+        }
+    };
 
     render() {
         const {
             email, initial, administrators, expiry_date, organisation,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message
+            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
+            fileTypeError, fileEmails, fileInputKey
         } = this.state;
         if (organisation === undefined) {
             return null;
@@ -137,15 +170,32 @@ class NewOrganisationInvitation extends React.Component {
                                 toolTip={I18n.t("organisation.messageTooltip")}
                                 multiline={true}/>
 
-                    <InputField value={email} onChange={e => this.setState({email: e.target.value})}
+                    <InputField value={email}
+                                onChange={e => this.setState({email: e.target.value})}
                                 placeholder={I18n.t("organisation.administratorsPlaceholder")}
                                 name={I18n.t("organisation.administrators")}
                                 toolTip={I18n.t("organisation.administratorsTooltip")}
                                 onBlur={this.addEmail}
-                                onEnter={this.addEmail}/>
-                    {(!initial && isEmpty(administrators)) &&
+                                onEnter={this.addEmail}
+                                fileUpload={true}
+                                fileInputKey={fileInputKey}
+                                fileName={fileName}
+                                onFileRemoval={this.onFileRemoval}
+                                onFileUpload={this.onFileUpload}/>
+                    {fileTypeError &&
+                    <span
+                        className="error">{I18n.t("organisationInvitation.fileExtensionError")}</span>}
+
+                    {(fileName && !fileTypeError) &&
+                    <span className="info-msg">{I18n.t("organisationInvitation.fileImportResult", {
+                        nbr: fileEmails.length,
+                        fileName: fileName
+                    })}</span>}
+
+                    {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
                     <span
                         className="error">{I18n.t("organisationInvitation.requiredAdministrator")}</span>}
+
                     <section className="email-tags">
                         {administrators.map(mail =>
                             <div key={mail} className="email-tag">

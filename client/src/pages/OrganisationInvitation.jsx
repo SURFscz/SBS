@@ -161,6 +161,9 @@ class OrganisationInvitation extends React.Component {
             confirmationDialogAction, confirmationQuestion, leavePage, isAdminLink, isExpired
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
+        const expiredMessage = isAdminLink ? I18n.t("organisationInvitation.expiredAdmin", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")}) :
+            I18n.t("organisationInvitation.expired", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")});
+
         return (
             <div className="mod-organisation-invitation">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -180,7 +183,7 @@ class OrganisationInvitation extends React.Component {
 
                 <div className="organisation-invitation">
                     {isExpired &&
-                    <p className="error">{I18n.t("organisationInvitation.expired", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")})}</p>}
+                    <p className="error">{expiredMessage}</p>}
 
                     <InputField value={organisationInvitation.organisation.name}
                                 name={I18n.t("organisationInvitation.organisationName")}

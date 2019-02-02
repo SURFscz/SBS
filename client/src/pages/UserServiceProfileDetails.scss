@@ -41,11 +41,11 @@
 
     .error {
       color: $red;
-      display: inline-block;
+      display: block;
       font-size: 14px;
     }
 
-    div.input-field {
+    div.input-field, div.select-field {
       margin-top: 15px;
     }
 

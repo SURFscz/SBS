@@ -151,7 +151,10 @@ def other():
     confirm_allow_impersonation()
 
     uid = current_request.args.get("uid")
-    return _user_query().filter(User.uid == uid).one(), 200
+    user = _user_query().filter(User.uid == uid).one()
+    is_admin = {"admin": is_admin_user(user.uid), "guest": False}
+    json_user = jsonify(user).json
+    return {**json_user, **is_admin}, 200
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)

@@ -139,6 +139,11 @@
 
           &:hover {
             color: $blue;
+
+            td.open {
+              color: darken($blue, 15%);
+            }
+
           }
 
           &:nth-child(odd) {
