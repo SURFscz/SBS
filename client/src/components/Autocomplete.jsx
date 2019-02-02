@@ -39,7 +39,7 @@ export default class Autocomplete extends React.PureComponent {
             suggestions, query, selected, itemSelected, moreToShow, entityName, additionalAttributes = [],
             ignoreAttributes = [], includeHeaders = false
         } = this.props;
-        const showNoResults = query && query.trim().length > 2 && suggestions.length === 0;
+        const showNoResults = query && (query.trim().length > 2 || "*" === query.trim()) && suggestions.length === 0;
         const showSuggestions = suggestions && suggestions.length > 0;
         return (
             <section className="autocomplete">

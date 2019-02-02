@@ -162,6 +162,8 @@ class Invitation extends React.Component {
             confirmationDialogAction, leavePage, isAdminLink, isExpired
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
+        const expiredMessage = isAdminLink ? I18n.t("invitation.expiredAdmin", {expiry_date: moment(invite.expiry_date * 1000).format("LL")}) :
+            I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")});
         return (
             <div className="mod-invitation">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -181,7 +183,7 @@ class Invitation extends React.Component {
 
                 <div className="invitation">
                     {isExpired &&
-                    <p className="error">{I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")})}</p>}
+                    <p className="error">{expiredMessage}</p>}
                     <InputField value={invite.collaboration.name}
                                 name={I18n.t("invitation.collaborationName")}
                                 disabled={true}/>
@@ -198,6 +200,10 @@ class Invitation extends React.Component {
                                 name={I18n.t("invitation.inviter")}
                                 disabled={true}/>
 
+                    {isAdminLink && <InputField value={invite.invitee_email}
+                                                name={I18n.t("invitation.invitee_email")}
+                                                disabled={true}/>}
+
                     <InputField value={invite.message}
                                 name={I18n.t("invitation.message")}
                                 toolTip={I18n.t("invitation.messageTooltip", {name: invite.user.name})}
@@ -209,6 +215,7 @@ class Invitation extends React.Component {
                         <label className="form-label"
                                dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: invite.collaboration.name})}}/>{this.requiredMarker()}
                         <CheckBox name="policy"
+                                  className={`checkbox ${!initial && !acceptedTerms ? "required" : ""}`}
                                   value={acceptedTerms}
                                   info={I18n.t("registration.step2.policyConfirmation", {collaboration: invite.collaboration.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>

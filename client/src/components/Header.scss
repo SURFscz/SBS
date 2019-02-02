@@ -85,6 +85,11 @@
 
         svg.fa-user-secret {
           color: $red;
+
+          &:hover {
+            color: darken($red, 10%);
+            font-size: 23px;
+          }
         }
       }
     }

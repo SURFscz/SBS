@@ -6,11 +6,12 @@ import "./UserServiceProfileDetails.scss";
 import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {stopEvent} from "../utils/Utils";
+import {isEmpty, stopEvent} from "../utils/Utils";
 import SelectField from "../components/SelectField";
 
 import {userServiceProfileStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {validPublicSSHKeyRegExp} from "../validations/regExps";
 
 class UserServiceProfileDetails extends React.Component {
 
@@ -26,7 +27,10 @@ class UserServiceProfileDetails extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => true,
             service: {},
-            collaboration_membership: {authorisation_groups: [], collaboration: {}}
+            collaboration_membership: {authorisation_groups: [], collaboration: {}},
+            fileName: null,
+            fileTypeError: false,
+            fileInputKey: new Date().getMilliseconds()
         };
     }
 
@@ -68,10 +72,46 @@ class UserServiceProfileDetails extends React.Component {
         return authorisationGroup ? authorisationGroup.name : "";
     };
 
+    validateSSHKey = e => {
+        const sshKey = e.target.value;
+        const fileTypeError = !isEmpty(sshKey) && !validPublicSSHKeyRegExp.test(sshKey);
+        if (fileTypeError) {
+            this.setState({fileTypeError: fileTypeError, fileInputKey: new Date().getMilliseconds()});
+        } else {
+            this.setState({fileTypeError: fileTypeError});
+        }
+
+    };
+
+    onFileRemoval = e => {
+        stopEvent(e);
+        this.setState({
+            fileName: null, ssh_key: "", fileTypeError: false,
+            fileInputKey: new Date().getMilliseconds()
+        });
+    };
+
+    onFileUpload = e => {
+        const files = e.target.files;
+        if (!isEmpty(files)) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = () => {
+                const sshKey = reader.result.toString();
+                if (validPublicSSHKeyRegExp.test(sshKey)) {
+                    this.setState({fileName: file.name, fileTypeError: false, ssh_key: sshKey});
+                } else {
+                    this.setState({fileName: file.name, fileTypeError: true, ssh_key: ""});
+                }
+            };
+            reader.readAsText(file);
+        }
+    };
+
     render() {
         const {
             service, collaboration_membership, name, email, address, identifier, ssh_key, role, status,
-            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction,
+            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey
         } = this.state;
 
         const title = I18n.t("userServiceProfile.titleUpdate", {name: service.name});
@@ -131,7 +171,17 @@ class UserServiceProfileDetails extends React.Component {
                                 name={I18n.t("userServiceProfile.ssh_key")}
                                 placeholder={I18n.t("userServiceProfile.ssh_keyPlaceholder")}
                                 onChange={e => this.setState({ssh_key: e.target.value})}
-                                toolTip={I18n.t("userServiceProfile.ssh_keyTooltip")}/>
+                                toolTip={I18n.t("userServiceProfile.ssh_keyTooltip")}
+                                onBlur={this.validateSSHKey}
+                                fileUpload={true}
+                                fileName={fileName}
+                                fileInputKey={fileInputKey}
+                                onFileRemoval={this.onFileRemoval}
+                                onFileUpload={this.onFileUpload}
+                                acceptFileFormat=".pub"/>
+                    {fileTypeError &&
+                    <span
+                        className="error">{I18n.t("userServiceProfile.sshKeyError")}</span>}
 
                     <SelectField value={this.statusOptions.find(option => status === option.value)}
                                  options={this.statusOptions}

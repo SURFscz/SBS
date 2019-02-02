@@ -7,6 +7,7 @@ from werkzeug.exceptions import Conflict
 from server.api.base import json_endpoint
 from server.api.security import confirm_collaboration_admin, confirm_write_access, current_user_id
 from server.db.db import Invitation, CollaborationMembership, Collaboration, db
+from server.db.defaults import default_expiry_date
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
 
@@ -94,6 +95,10 @@ def invitations_resend():
         .one()
 
     confirm_collaboration_admin(invitation.collaboration_id)
+
+    invitation.expiry_date = default_expiry_date()
+    db.session.merge(invitation)
+    db.session.commit()
 
     mail_collaboration_invitation({
         "salutation": "Dear",
