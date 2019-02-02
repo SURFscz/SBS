@@ -12,7 +12,7 @@ I18n.translations.en = {
             help: "Help",
             helpUrl: "https://github.com/SURFscz/SBS/wiki"
         },
-        impersonator: "You are really {{impersonator}},<br/>but you are impersonating {{currentUser}}.<br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
+        impersonator: "You are really {{impersonator}},<br/>but you are impersonating {{currentUser}}.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
 
     },
     navigation: {
@@ -50,8 +50,8 @@ I18n.translations.en = {
         userSearchPlaceHolder: "Search and select a user to impersonate...",
         userRequired: "You must first select a user before pretending to be that person",
         currentImpersonation: "Impersonation",
-        noImpersonation: "You are who you are 😇",
-        currentImpersonationValue: "You are impersonating {{currentUser}}, but you are really {{impersonator}} 😎",
+        noImpersonation: "You are who you are",
+        currentImpersonationValue: "You are impersonating {{currentUser}}, but you are really {{impersonator}}",
         startImpersonation: "Impersonate",
         clearImpersonation: "Stop impersonating"
     },
@@ -100,10 +100,13 @@ I18n.translations.en = {
         name: "Name",
         email: "E-mail",
         uid: "UID",
-        admin: "Application Super User",
+        superUser: "Super User",
         role: "Role",
-        noadmin: "Member",
-        organization: "Organization",
+        member: "Member",
+        admin: "Admin",
+        organisations: "Organisations",
+        sbs: "Application",
+        collaborations: "Collaborations",
     },
     collaborations: {
         dashboard: "Dashboard",
@@ -170,7 +173,8 @@ I18n.translations.en = {
         flash: {
             updated: "Collaboration {{name}} was successfully updated",
             deleted: "Collaboration {{name}} was successfully deleted",
-            memberDeleted: "Membership of {{name}} was successfully deleted"
+            memberDeleted: "Membership of {{name}} was successfully deleted",
+            memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
         },
         infoBlocks: "Dashboard {{name}}",
         searchPlaceHolder: "Search for members",
@@ -341,6 +345,8 @@ I18n.translations.en = {
         expiryDateTooltip: "The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         message: "Message",
         messageTooltip: "The user {{name}} has invited you with this message",
+        fileImportResult: "Imported {{nbr}} emails from {{fileName}}",
+        fileExtensionError: "Only .csv extension files are allowed",
         inviter: "Inviter",
         decline: "Decline",
         accept: "Accept",

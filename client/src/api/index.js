@@ -307,6 +307,14 @@ export function deleteCollaborationMembership(collaborationId, userId) {
     return fetchDelete(`/api/collaboration_memberships/${collaborationId}/${userId}`)
 }
 
+export function updateCollaborationMembershipRole(collaborationId, userId, role) {
+    return postPutJson("/api/collaboration_memberships", {
+        collaborationId: collaborationId,
+        userId: userId,
+        role: role
+    }, "put")
+}
+
 export function myCollaborationMemberships() {
     return fetchJson("/api/collaboration_memberships")
 }

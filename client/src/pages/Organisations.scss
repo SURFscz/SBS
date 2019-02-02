@@ -61,8 +61,11 @@
       }
 
       section.show-more {
-        margin-top: 15px;
-        text-align: center;
+        margin-top: auto;
+        padding-top: 15px;
+        display: flex;
+        justify-content: space-around;
+
       }
 
       div.organisation-members, div.organisation-collaborations, div.organisation-invitations {

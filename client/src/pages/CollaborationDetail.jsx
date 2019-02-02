@@ -4,7 +4,7 @@ import {
     collaborationNameExists,
     deleteCollaboration,
     deleteCollaborationMembership,
-    updateCollaboration
+    updateCollaboration, updateCollaborationMembershipRole
 } from "../api";
 import "./CollaborationDetail.scss";
 import {isEmpty, sortObjects, stopEvent} from "../utils/Utils";
@@ -14,7 +14,7 @@ import moment from "moment";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import InputField from "../components/InputField";
 import SelectField from "../components/SelectField";
-import {collaborationAccessTypes} from "../forms/constants";
+import {collaborationAccessTypes, collaborationRoles} from "../forms/constants";
 import Button from "../components/Button";
 import {setFlash} from "../utils/Flash";
 import Select from "react-select";
@@ -28,6 +28,10 @@ class CollaborationDetail extends React.Component {
         this.accessTypeOptions = collaborationAccessTypes.map(type => ({
             value: type,
             label: I18n.t(`accessTypes.${type}`)
+        }));
+        this.roleOptions = collaborationRoles.map(role => ({
+            value: role,
+            label: I18n.t(`profile.${role}`)
         }));
 
         this.state = {
@@ -141,6 +145,16 @@ class CollaborationDetail extends React.Component {
             confirmationDialogAction: this.doDeleteMember(member)
         });
     };
+
+    changeMemberRole = member => selectedOption => {
+        const {originalCollaboration} = this.state;
+        updateCollaborationMembershipRole(originalCollaboration.id, member.user.id, selectedOption.value)
+            .then(() => {
+                this.componentWillMount();
+                setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {name: member.user.name, role: selectedOption.value}));
+            });
+
+    } ;
 
     doDeleteMember = member => () => {
         this.setState({confirmationDialogOpen: false});
@@ -348,9 +362,9 @@ class CollaborationDetail extends React.Component {
         this.setState({filteredMembers: sortedMembers, sorted: name, reverse: reversed});
     };
 
-    renderMemberTable = (members, user, sorted, reverse) => {
+    renderMemberTable = (members, user, sorted, reverse, adminOfCollaboration) => {
         const names = ["user__name", "user__email", "user__uid", "role", "created_at", "actions"];
-        const role = {value: "admin", label: "Admin"};
+        const numberOfAdmins = members.filter(member => member.role === "admin").length;
         return (
             <table className="members">
                 <thead>
@@ -372,11 +386,16 @@ class CollaborationDetail extends React.Component {
                     <td className="role">
                         <Select
                             classNamePrefix="select-disabled"
-                            value={role}
-                            options={[role]}
-                            isDisabled={true}/></td>
+                            value={this.roleOptions.find(option => option.value === member.role)}
+                            options={this.roleOptions}
+                            onChange={this.changeMemberRole(member)}
+                            isDisabled={!adminOfCollaboration || (member.role === "admin" && numberOfAdmins < 2)}/>
+                    </td>
                     <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
-                    <td className="actions"><FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/></td>
+                    <td className="actions">
+                        {(adminOfCollaboration && (member.role === "member" || (member.role === "admin" && numberOfAdmins > 1))) &&
+                        <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
+                    </td>
                 </tr>)}
                 </tbody>
             </table>
@@ -402,7 +421,7 @@ class CollaborationDetail extends React.Component {
                             txt={I18n.t("collaborationDetail.invite")}/>
                     }
                 </div>
-                {this.renderMemberTable(members, user, sorted, reverse)}
+                {this.renderMemberTable(members, user, sorted, reverse, adminOfCollaboration)}
             </section>
 
         );

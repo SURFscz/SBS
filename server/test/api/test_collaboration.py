@@ -93,7 +93,7 @@ class TestCollaboration(AbstractTest):
         self.assertTrue(len(collaboration["invitations"]) > 0)
 
         collaboration = self.get(f"/api/collaborations/{collaboration['id']}")
-        researcher = list(filter(lambda cm: cm["role"] == "researcher", collaboration["collaboration_memberships"]))[0]
+        researcher = list(filter(lambda cm: cm["role"] == "member", collaboration["collaboration_memberships"]))[0]
         self.assertEqual("John Doe", researcher["user"]["name"])
 
     def test_my_collaborations_no_admin(self):
