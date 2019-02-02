@@ -459,7 +459,8 @@ class CollaborationDetail extends React.Component {
                         name={I18n.t("collaboration.identifier")}
                         placeholder={I18n.t("collaboration.identifierPlaceholder")}
                         toolTip={I18n.t("collaboration.identifierTooltip")}
-                        disabled={true}/>
+                        disabled={true}
+                        copyClipBoard={true}/>
 
             <SelectField value={organisation}
                          options={[organisation]}

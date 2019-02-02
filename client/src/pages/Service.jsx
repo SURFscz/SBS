@@ -187,7 +187,8 @@ class Service extends React.Component {
                                 placeholder={I18n.t("service.entity_idPlaceHolder")}
                                 onBlur={this.validateServiceEntityId}
                                 name={I18n.t("service.entity_id")}
-                                toolTip={I18n.t("service.entity_idTooltip")}/>
+                                toolTip={I18n.t("service.entity_idTooltip")}
+                                copyClipBoard={true}/>
                     {alreadyExists.entity_id && <span
                         className="error">{I18n.t("service.alreadyExists", {
                         attribute: I18n.t("service.entity_id").toLowerCase(),
