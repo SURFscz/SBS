@@ -48,8 +48,10 @@ def seed(db):
     roger = User(uid="urn:roger", name="Roger Doe", email="roger@example.org")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org")
     james = User(uid="urn:james", name=james_name, email="james@example.org")
+    sarah = User(uid="urn:sarah", name="Sarah Cross", email="sarah@uva.org")
+    jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org")
 
-    _persist(db, john, mary, peter, admin, roger, harry, james)
+    _persist(db, john, mary, peter, admin, roger, harry, james, sarah, jane)
 
     uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
                        created_by="urn:admin",
@@ -101,11 +103,14 @@ def seed(db):
                                  join_requests=[], invitations=[])
     _persist(db, ai_computing, uva_research)
 
-    john_ai_computing = CollaborationMembership(role="researcher", user=john, collaboration=ai_computing)
+    john_ai_computing = CollaborationMembership(role="member", user=john, collaboration=ai_computing)
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
     roger_uva_research = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
     peter_uva_research = CollaborationMembership(role="member", user=peter, collaboration=uva_research)
-    _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research)
+    sarah_uva_research = CollaborationMembership(role="admin", user=sarah, collaboration=uva_research)
+    jane_ai_computing = CollaborationMembership(role="member", user=jane, collaboration=ai_computing)
+    _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
+             jane_ai_computing)
 
     user_service_profile = UserServiceProfile(service=network, collaboration_membership=john_ai_computing,
                                               name=john_name, telephone_number="0612345678",

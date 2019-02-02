@@ -21,7 +21,6 @@ export default class Header extends React.PureComponent {
     renderProfileLink(currentUser) {
         return (
             <a href="/profile" className="welcome-link" onClick={this.handleToggle}>
-                {/*<FontAwesomeIcon icon="user-ninja"/>*/}
                 {currentUser.name}
                 {this.renderDropDownIndicator()}
             </a>

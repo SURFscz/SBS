@@ -15,15 +15,19 @@ ul.user-profile {
   text-transform: none;
 
   li {
-    font-style: italic;
     font-size: 14px;
     margin-bottom: 7px;
-    display: block;
+    display: flex;
 
     span {
       &.value {
         font-style: normal;
-        float: right;
+        margin-left: auto;
+      }
+      &.section {
+        font-weight: bolder;
+        display: inline-block;
+        padding-top: 15px;
       }
     }
 
