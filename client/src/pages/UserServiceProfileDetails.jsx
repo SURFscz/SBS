@@ -170,7 +170,10 @@ class UserServiceProfileDetails extends React.Component {
                     <InputField value={ssh_key}
                                 name={I18n.t("userServiceProfile.ssh_key")}
                                 placeholder={I18n.t("userServiceProfile.ssh_keyPlaceholder")}
-                                onChange={e => this.setState({ssh_key: e.target.value})}
+                                onChange={e => this.setState({
+                                    ssh_key: e.target.value,
+                                    fileInputKey: new Date().getMilliseconds()
+                                })}
                                 toolTip={I18n.t("userServiceProfile.ssh_keyTooltip")}
                                 onBlur={this.validateSSHKey}
                                 fileUpload={true}
