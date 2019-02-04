@@ -38,7 +38,8 @@ def _persist(db, *objs):
 
 
 def seed(db):
-    for table in reversed(metadata.sorted_tables):
+    tables = reversed(metadata.sorted_tables)
+    for table in tables:
         db.session.execute(table.delete())
     db.session.commit()
 
