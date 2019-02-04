@@ -48,9 +48,9 @@ class AbstractTest(TestCase):
         with requests.Session():
             self.client.get("/api/users/me", headers={UID_HEADER_NAME: uid})
 
-    def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True):
+    def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True, headers={}):
         with requests.Session():
-            response = self.client.get(url, headers=BASIC_AUTH_HEADER if with_basic_auth else {},
+            response = self.client.get(url, headers={**BASIC_AUTH_HEADER, **headers} if with_basic_auth else headers,
                                        query_string=query_data)
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
             return response.json if hasattr(response, "json") else None

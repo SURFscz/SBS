@@ -18,7 +18,7 @@ before_install:
   - nvm use v8.12.0
 install:
 before_script:
-  - mysql -e "create database IF NOT EXISTS sbs_test; CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
+  - mysql -e "drop database IF EXISTS sbs_test; create database IF NOT EXISTS sbs_test; CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
     GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;" -uroot
 script:
   - pytest --cov=server --cov-report= server/test
