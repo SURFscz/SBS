@@ -1,9 +1,9 @@
 import json
 import os
 from base64 import b64encode
+
 import requests
 from flask_testing import TestCase
-from sqlalchemy import event
 
 from server.api.user import UID_HEADER_NAME
 from server.test.seed import seed
