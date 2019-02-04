@@ -1,9 +1,9 @@
 from sqlalchemy import text
 
-from server.db.db import AuthorisationGroup, Collaboration, CollaborationMembership, User, UserServiceProfile, Service, \
+from server.db.db import AuthorisationGroup, UserServiceProfile, Service, \
     db
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_researchers_authorisation, ai_computing_name, the_boss_name, service_storage_name, \
+from server.test.seed import ai_researchers_authorisation, service_storage_name, \
     service_network_name
 
 
