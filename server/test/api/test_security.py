@@ -1,8 +1,9 @@
 from flask import session, g as request_context
+from werkzeug.exceptions import Forbidden
 
 from server.api.security import is_admin_user, is_application_admin, confirm_allow_impersonation, confirm_write_access, \
     confirm_collaboration_admin, confirm_collaboration_member, confirm_organisation_admin, \
-    confirm_collaboration_admin_or_authorisation_group_member
+    confirm_collaboration_admin_or_authorisation_group_member, current_user_name
 from server.db.db import CollaborationMembership, Collaboration, User, OrganisationMembership, Organisation, \
     AuthorisationGroup
 from server.test.abstract_test import AbstractTest
@@ -77,9 +78,44 @@ class TestSecurity(AbstractTest):
             confirm_collaboration_admin_or_authorisation_group_member(authorisation_group.collaboration_id,
                                                                       authorisation_group.id)
 
+    def test_confirm_collaboration_admin_or_authorisation_group_member_as_admin(self):
+        authorisation_group = AuthorisationGroup.query.filter(
+            AuthorisationGroup.name == ai_researchers_authorisation).one()
+        user_id = self.find_entity_by_name(User, the_boss_name).id
+        with self.app.app_context():
+            session["user"] = {"uid": "urn:john", "admin": False, "id": user_id}
+            request_context.is_authorized_api_call = False
+
+            confirm_collaboration_admin_or_authorisation_group_member(authorisation_group.collaboration_id,
+                                                                      authorisation_group.id)
+
+
     def test_confirm_write_access_override(self):
         with self.app.app_context():
             session["user"] = {"uid": "urn:john", "admin": False}
             request_context.is_authorized_api_call = False
 
             confirm_write_access(True, override_func=lambda x: x)
+
+    def test_impersonation(self):
+        self.login("urn:john")
+        user_id = self.find_entity_by_name(User, the_boss_name).id
+        res = self.get("/api/users/refresh", with_basic_auth=False,
+                       headers={"X-IMPERSONATE-ID": user_id,
+                                "X-IMPERSONATE-UID": "some_uid",
+                                "X-IMPERSONATE-NAME": "some_name"})
+        self.assertEqual(the_boss_name, res["name"])
+
+    def test_current_user_name(self):
+        with self.app.app_context():
+            session["user"] = {"uid": "urn:john", "admin": True, "name": "some_name"}
+
+            self.assertEqual("some_name", current_user_name())
+
+    def test_impersonation_forbidden(self):
+        def do_test_impersonation_forbidden():
+            with self.app.app_context():
+                session["user"] = {"uid": "urn:nope", "admin": False}
+            confirm_allow_impersonation()
+
+        self.assertRaises(Forbidden, do_test_impersonation_forbidden)

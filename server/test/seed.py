@@ -24,6 +24,8 @@ service_mail_entity_id = "https://mail"
 service_network_name = "Network Services"
 service_network_entity_id = "https://network"
 service_storage_name = "Storage"
+service_wireless_name = "Wireless"
+service_cloud_name = "Cloud"
 
 ai_researchers_authorisation = "AI researchers"
 
@@ -83,8 +85,8 @@ def seed(db):
     _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry)
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email)
-    wireless = Service(entity_id="https://wireless", name="Wirless", description="Network Wireless Service")
-    cloud = Service(entity_id="https://cloud", name="Cloud", description="SARA Cloud Service")
+    wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service")
+    cloud = Service(entity_id="https://cloud", name=service_cloud_name, description="SARA Cloud Service")
     storage = Service(entity_id="https://storage", name=service_storage_name, description="SURF Storage Service")
     wiki = Service(entity_id="https://wiki", name="Wiki", description="No more wiki's please")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
