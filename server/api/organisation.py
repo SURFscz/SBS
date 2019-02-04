@@ -7,7 +7,7 @@ from sqlalchemy.orm import joinedload, contains_eager
 from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_write_access, current_user_id
+from server.api.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
 from server.db.defaults import default_expiry_date
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -71,17 +71,22 @@ def my_organisations_lite():
 @organisation_api.route("/<id>", strict_slashes=False)
 @json_endpoint
 def organisation_by_id(id):
-    user_id = current_user_id()
-    collaboration = Organisation.query \
-        .options(joinedload(Organisation.organisation_memberships)
-                 .subqueryload(OrganisationMembership.user)) \
-        .options(joinedload(Organisation.organisation_invitations)
-                 .subqueryload(OrganisationInvitation.user)) \
-        .join(OrganisationMembership.user) \
-        .filter(OrganisationMembership.user_id == user_id) \
-        .filter(Organisation.id == id) \
-        .one()
-    return collaboration, 200
+    user_uid = current_user_uid()
+    is_admin = is_admin_user(user_uid)
+
+    query = Organisation.query \
+        .options(joinedload(Organisation.organisation_memberships).subqueryload(OrganisationMembership.user)) \
+        .options(joinedload(Organisation.organisation_invitations).subqueryload(OrganisationInvitation.user)) \
+        .filter(Organisation.id == id)
+
+    if not is_admin:
+        user_id = current_user_id()
+        query = query \
+            .join(OrganisationMembership.user) \
+            .filter(OrganisationMembership.user_id == user_id)
+
+    organisation = query.one()
+    return organisation, 200
 
 
 @organisation_api.route("/", strict_slashes=False)

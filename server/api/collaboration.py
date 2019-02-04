@@ -8,7 +8,7 @@ from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin, confirm_organization_admin, is_application_admin, \
+from server.api.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit
@@ -226,7 +226,7 @@ def collaboration_invites():
 def save_collaboration():
     data = current_request.get_json()
 
-    confirm_organization_admin(data["organisation_id"])
+    confirm_organisation_admin(data["organisation_id"])
 
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None

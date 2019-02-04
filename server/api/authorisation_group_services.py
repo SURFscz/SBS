@@ -56,6 +56,9 @@ def delete_all_authorisation_group_services(authorisation_group_id, collaboratio
     statement = f"DELETE from services_authorisation_groups WHERE authorisation_group_id = {authorisation_group_id}"
     sql = text(statement)
     result_set = db.engine.execute(sql)
+
+    db.session.commit()
+
     return (None, 204) if result_set.rowcount > 0 else (None, 404)
 
 
@@ -76,4 +79,7 @@ def delete_authorisation_group_services(authorisation_group_id, service_id, coll
         f" AND authorisation_group_id = {authorisation_group_id}"
     sql = text(statement)
     result_set = db.engine.execute(sql)
+
+    db.session.commit()
+
     return (None, 204) if result_set.rowcount > 0 else (None, 404)

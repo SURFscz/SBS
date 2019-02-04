@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_organization_admin, confirm_write_access, current_user_id
+from server.api.security import confirm_organisation_admin, confirm_write_access, current_user_id
 from server.db.db import OrganisationInvitation, Organisation, OrganisationMembership, db
 from server.db.models import delete
 from server.mail import mail_organisation_invitation
@@ -39,7 +39,7 @@ def organisation_invitations_by_id(id):
         .filter(OrganisationInvitation.id == id) \
         .one()
 
-    confirm_organization_admin(organisation_invitation.organisation.id)
+    confirm_organisation_admin(organisation_invitation.organisation.id)
     return organisation_invitation, 200
 
 
