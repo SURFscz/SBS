@@ -23,6 +23,7 @@ service_mail_entity_id = "https://mail"
 
 service_network_name = "Network Services"
 service_network_entity_id = "https://network"
+service_storage_name = "Storage"
 
 ai_researchers_authorisation = "AI researchers"
 
@@ -83,7 +84,7 @@ def seed(db):
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email)
     wireless = Service(entity_id="https://wireless", name="Wirless", description="Network Wireless Service")
     cloud = Service(entity_id="https://cloud", name="Cloud", description="SARA Cloud Service")
-    storage = Service(entity_id="https://storage", name="Storage", description="SURF Storage Service")
+    storage = Service(entity_id="https://storage", name=service_storage_name, description="SURF Storage Service")
     wiki = Service(entity_id="https://wiki", name="Wiki", description="No more wiki's please")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address", status="active",
@@ -105,10 +106,11 @@ def seed(db):
 
     john_ai_computing = CollaborationMembership(role="member", user=john, collaboration=ai_computing)
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
+    jane_ai_computing = CollaborationMembership(role="member", user=jane, collaboration=ai_computing)
+
     roger_uva_research = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
     peter_uva_research = CollaborationMembership(role="member", user=peter, collaboration=uva_research)
     sarah_uva_research = CollaborationMembership(role="admin", user=sarah, collaboration=uva_research)
-    jane_ai_computing = CollaborationMembership(role="member", user=jane, collaboration=ai_computing)
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
              jane_ai_computing)
 

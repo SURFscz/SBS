@@ -2,7 +2,6 @@ import json
 import logging
 import os
 from functools import wraps
-
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized

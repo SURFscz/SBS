@@ -64,7 +64,7 @@ class OrganisationDetail extends React.Component {
                         members: members,
                         filteredMembers: members,
                         invitations: sortObjects(json.organisation_invitations, inviteSorted, inviteReverse),
-                        adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id)
+                        adminOfOrganisation: user.admin || json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id)
                     })
                 });
         } else {

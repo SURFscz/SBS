@@ -50,7 +50,7 @@ I18n.translations.en = {
         userSearchPlaceHolder: "Search and select a user to impersonate...",
         userRequired: "You must first select a user before pretending to be that person",
         currentImpersonation: "Impersonation",
-        noImpersonation: "You are who you are",
+        noImpersonation: "You are who you are - no impersonation",
         currentImpersonationValue: "You are impersonating {{currentUser}}, but you are really {{impersonator}}",
         startImpersonation: "Impersonate",
         clearImpersonation: "Stop impersonating"
