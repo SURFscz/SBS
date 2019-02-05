@@ -26,6 +26,7 @@ from server.api.service import service_api
 from server.api.user import user_api
 from server.api.user_service_profile import user_service_profile_api
 from server.db.db import db, db_migrations
+from server.test.seed import seed
 
 
 def read_file(file_name):
@@ -107,6 +108,10 @@ app.app_config["profile"] = profile
 
 Migrate(app, db)
 db_migrations(config.database.uri)
+
+with app.app_context():
+    print("Seeding the data...")
+    seed(db)
 
 # WSGI production mode dictates that no flask app is actually running
 if is_local:
