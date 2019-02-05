@@ -89,7 +89,6 @@ class TestSecurity(AbstractTest):
             confirm_collaboration_admin_or_authorisation_group_member(authorisation_group.collaboration_id,
                                                                       authorisation_group.id)
 
-
     def test_confirm_write_access_override(self):
         with self.app.app_context():
             session["user"] = {"uid": "urn:john", "admin": False}

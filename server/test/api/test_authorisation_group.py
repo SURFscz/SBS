@@ -4,7 +4,7 @@ from server.test.seed import ai_researchers_authorisation, ai_computing_name, se
     service_wireless_name
 
 
-class TestOrganisationGroup(AbstractTest):
+class TestAuthorisationGroup(AbstractTest):
 
     def test_authorisation_group_name_exists(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id

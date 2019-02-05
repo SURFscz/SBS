@@ -53,14 +53,12 @@ def invitations_accept():
 
     if invitation.expiry_date and invitation.expiry_date < datetime.datetime.now():
         delete(Invitation, invitation.id)
-        db.session.commit()
         raise Conflict(f"The invitation has expired at {invitation.expiry_date}")
 
     collaboration = invitation.collaboration
     user_id = current_user_id()
     if collaboration.is_member(user_id):
         delete(Invitation, invitation.id)
-        db.session.commit()
         raise Conflict(f"User {user_id} is already a member of {collaboration.name}")
 
     role = invitation.intended_role if invitation.intended_role else "member"
@@ -71,7 +69,6 @@ def invitations_accept():
 
     collaboration.collaboration_memberships.append(collaboration_membership)
     collaboration.invitations.remove(invitation)
-    db.session.commit()
     return None, 201
 
 
@@ -82,7 +79,6 @@ def invitations_decline():
         .filter(Invitation.hash == current_request.get_json()["hash"]) \
         .one()
     db.session.delete(invitation)
-    db.session.commit()
     return None, 201
 
 
@@ -98,7 +94,6 @@ def invitations_resend():
 
     invitation.expiry_date = default_expiry_date()
     db.session.merge(invitation)
-    db.session.commit()
 
     mail_collaboration_invitation({
         "salutation": "Dear",

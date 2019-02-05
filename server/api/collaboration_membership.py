@@ -18,7 +18,6 @@ def delete_collaboration_membership(collaboration_id, user_id):
         .filter(CollaborationMembership.collaboration_id == collaboration_id) \
         .filter(CollaborationMembership.user_id == user_id) \
         .delete()
-    db.session.commit()
     return (None, 204) if row_count > 0 else (None, 404)
 
 
@@ -39,8 +38,6 @@ def update_collaboration_membership_role():
     collaboration_membership.role = role
 
     db.session.merge(collaboration_membership)
-    db.session.commit()
-
     return collaboration_membership, 201
 
 

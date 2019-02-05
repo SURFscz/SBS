@@ -75,12 +75,7 @@ class UserServiceProfileDetails extends React.Component {
     validateSSHKey = e => {
         const sshKey = e.target.value;
         const fileTypeError = !isEmpty(sshKey) && !validPublicSSHKeyRegExp.test(sshKey);
-        if (fileTypeError) {
-            this.setState({fileTypeError: fileTypeError, fileInputKey: new Date().getMilliseconds()});
-        } else {
-            this.setState({fileTypeError: fileTypeError});
-        }
-
+        this.setState({fileTypeError: fileTypeError, fileInputKey: new Date().getMilliseconds()});
     };
 
     onFileRemoval = e => {
@@ -170,10 +165,7 @@ class UserServiceProfileDetails extends React.Component {
                     <InputField value={ssh_key}
                                 name={I18n.t("userServiceProfile.ssh_key")}
                                 placeholder={I18n.t("userServiceProfile.ssh_keyPlaceholder")}
-                                onChange={e => this.setState({
-                                    ssh_key: e.target.value,
-                                    fileInputKey: new Date().getMilliseconds()
-                                })}
+                                onChange={e => this.setState({ssh_key: e.target.value})}
                                 toolTip={I18n.t("userServiceProfile.ssh_keyTooltip")}
                                 onBlur={this.validateSSHKey}
                                 fileUpload={true}

@@ -216,8 +216,6 @@ def collaboration_invites():
             "base_url": current_app.app_config.base_url,
             "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
         }, collaboration, [administrator])
-    db.session.commit()
-
     return None, 201
 
 
@@ -253,8 +251,6 @@ def save_collaboration():
     admin_collaboration_membership = CollaborationMembership(role="admin", user=user, collaboration=collaboration,
                                                              created_by=user.uid)
     db.session.merge(admin_collaboration_membership)
-    db.session.commit()
-
     return res
 
 
