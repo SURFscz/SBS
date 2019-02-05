@@ -70,9 +70,7 @@ jobs:
     - stage: build containers
       script:
         - ./scripts/build-server.sh
-        - ./scripts/build-client.sh
       after_success:
         - >
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - docker push surfscz/sbs-server
-        - docker push surfscz/sbs-client
