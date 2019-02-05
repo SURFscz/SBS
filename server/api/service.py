@@ -3,6 +3,7 @@ from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint
+from server.api.security import confirm_write_access
 from server.db.db import Service, db, Collaboration
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
@@ -63,16 +64,19 @@ def service_by_id(service_id):
 @service_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_service():
+    confirm_write_access()
     return save(Service)
 
 
 @service_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_service():
+    confirm_write_access()
     return update(Service, allow_child_cascades=False)
 
 
 @service_api.route("/<service_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_service(service_id):
+    confirm_write_access()
     return delete(Service, service_id)

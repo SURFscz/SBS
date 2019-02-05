@@ -83,6 +83,7 @@ def organisation_by_id(id):
         user_id = current_user_id()
         query = query \
             .join(OrganisationMembership.user) \
+            .filter(OrganisationMembership.role == "admin") \
             .filter(OrganisationMembership.user_id == user_id)
 
     organisation = query.one()
@@ -167,14 +168,15 @@ def update_organisation():
     def override_func():
         user_id = current_user_id()
         organisation_id = current_request.get_json()["id"]
-        return OrganisationMembership.query() \
-                   .filter(OrganisationMembership.user_id == user_id) \
-                   .filter(OrganisationMembership.organisation_id == organisation_id) \
-                   .filter(OrganisationMembership.role == "admin") \
-                   .count() > 0
+        count = OrganisationMembership.query \
+            .filter(OrganisationMembership.user_id == user_id) \
+            .filter(OrganisationMembership.organisation_id == organisation_id) \
+            .filter(OrganisationMembership.role == "admin") \
+            .count()
+        return count > 0
 
     confirm_write_access(override_func=override_func)
-    return update(Organisation)
+    return update(Organisation, allow_child_cascades=False)
 
 
 @organisation_api.route("/<id>", methods=["DELETE"], strict_slashes=False)

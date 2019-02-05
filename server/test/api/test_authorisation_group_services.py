@@ -27,6 +27,16 @@ class TestAuthorisationGroupServices(AbstractTest):
             UserServiceProfile.service_id == service.id).one()
         self.assertEqual(service.name, user_service_profile.service.name)
 
+    def test_add_authorisation_group_service_with_duplicate_service(self):
+        authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
+        service = self.find_entity_by_name(Service, service_network_name)
+        self.put("/api/authorisation_group_services",
+                 body={
+                     "authorisation_group_id": authorisation_group.id,
+                     "collaboration_id": authorisation_group.collaboration_id,
+                     "service_ids": [service.id]
+                 }, response_status_code=500)
+
     def test_delete_all_authorisation_group_service(self):
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
         service = self.find_entity_by_name(Service, service_network_name)

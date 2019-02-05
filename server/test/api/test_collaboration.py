@@ -1,12 +1,12 @@
-from server.db.db import Collaboration, Organisation
+from server.db.db import Collaboration, Organisation, Invitation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uuc_name
 
 
 class TestCollaboration(AbstractTest):
 
-    def _find_by_name_id(self, with_basic_auth=False):
-        return self.get("/api/collaborations/find_by_name", query_data={"name": "AI computing"},
+    def _find_by_name_id(self, name=ai_computing_name, with_basic_auth=False):
+        return self.get("/api/collaborations/find_by_name", query_data={"name": name},
                         with_basic_auth=with_basic_auth)
 
     def test_search(self):
@@ -29,14 +29,18 @@ class TestCollaboration(AbstractTest):
     def test_collaboration_new(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
         self.login("urn:john")
-        collaboration = self.post("/api/collaborations",
-                                  body={
-                                      "name": "new_collaboration",
-                                      "organisation_id": organisation_id
-                                  }, with_basic_auth=False)
-        self.assertIsNotNone(collaboration["id"])
-        self.assertIsNotNone(collaboration["identifier"])
-        self.assertEqual("new_collaboration", collaboration["name"])
+        mail = self.app.mail
+        with mail.record_messages() as outbox:
+            collaboration = self.post("/api/collaborations",
+                                      body={
+                                          "name": "new_collaboration",
+                                          "organisation_id": organisation_id,
+                                          "administrators": ["the@ex.org", "that@ex.org"]
+                                      }, with_basic_auth=False)
+
+            self.assertIsNotNone(collaboration["id"])
+            self.assertIsNotNone(collaboration["identifier"])
+            self.assertEqual(2, len(outbox))
 
     def test_collaboration_new_no_organisation_admin(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
@@ -114,3 +118,56 @@ class TestCollaboration(AbstractTest):
 
         res = self.get("/api/collaborations/name_exists", query_data={"name": "xyc", "existing_collaboration": "xyc"})
         self.assertEqual(False, res)
+
+    def test_collaboration_services_by_id(self):
+        collaboration_id = self._find_by_name_id()["id"]
+        collaboration = self.get(f"/api/collaborations/services/{collaboration_id}",
+                                 query_data={"include_memberships": True})
+
+        self.assertTrue(len(collaboration["collaboration_memberships"]) > 0)
+        self.assertTrue(len(collaboration["services"]) > 0)
+
+        collaboration = self.get(f"/api/collaborations/services/{collaboration_id}")
+        self.assertTrue("collaboration_memberships" not in collaboration)
+
+    def test_collaboration_authorisation_groups_by_id(self):
+        collaboration_id = self._find_by_name_id()["id"]
+        collaboration = self.get(f"/api/collaborations/authorisation_groups/{collaboration_id}")
+
+        self.assertTrue(len(collaboration["authorisation_groups"]) > 0)
+
+    def test_collaboration_invites(self):
+        pre_count = Invitation.query.count()
+        self.login("urn:john")
+        collaboration_id = self._find_by_name_id()["id"]
+        mail = self.app.mail
+        with mail.record_messages() as outbox:
+            self.put("/api/collaborations/invites", body={
+                "collaboration_id": collaboration_id,
+                "administrators": ["new@example.org", "pop@example.org"],
+                "message": "Please join"
+            })
+            post_count = Invitation.query.count()
+            self.assertEqual(2, len(outbox))
+            self.assertEqual(pre_count + 2, post_count)
+
+    def test_my_collaborations_lite(self):
+        self.login("urn:jane")
+        collaborations = self.get("/api/collaborations/my_lite")
+        self.assertEqual(1, len(collaborations))
+
+    def test_my_collaborations_lite_no_member(self):
+        self.login("urn:harry")
+        collaborations = self.get("/api/collaborations/my_lite")
+        self.assertEqual(0, len(collaborations))
+
+    def test_collaboration_lite_by_id(self):
+        collaboration_id = self._find_by_name_id()["id"]
+        self.login("urn:jane")
+        collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
+        self.assertEqual(ai_computing_name, collaboration["name"])
+
+    def test_collaboration_lite_no_member(self):
+        collaboration_id = self._find_by_name_id()["id"]
+        self.login("urn:harry")
+        self.get(f"/api/collaborations/lite/{collaboration_id}", response_status_code=403)

@@ -6,13 +6,19 @@ from server.db.db import User, Organisation, OrganisationMembership, Service, Co
     JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
 from server.db.defaults import default_expiry_date
 
+join_request_reference = "Dr. Johnson"
+
 the_boss_name = "The Boss"
 
 john_name = "John Doe"
 james_name = "James Byrd"
+
 organisation_invitation_hash = token_urlsafe()
+organisation_invitation_expired_hash = token_urlsafe()
+
 invitation_hash_curious = token_urlsafe()
 invitation_hash_no_way = token_urlsafe()
+
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
 uuc_name = "UUC"
@@ -73,8 +79,8 @@ def seed(db):
     organisation_invitation_pass = OrganisationInvitation(message="Let me please join as I "
                                                                   "really, really, really \n really, "
                                                                   "really, really \n want to...",
-                                                          hash=token_urlsafe(),
-                                                          expiry_date=datetime.date.today() + datetime.timedelta(
+                                                          hash=organisation_invitation_expired_hash,
+                                                          expiry_date=datetime.date.today() - datetime.timedelta(
                                                               days=21),
                                                           invitee_email="pass@example.org", organisation=uuc, user=john)
     _persist(db, organisation_invitation_roger, organisation_invitation_pass)
@@ -142,9 +148,12 @@ def seed(db):
                                                         collaboration_memberships=[john_ai_computing])
     _persist(db, authorisation_group_researchers, authorisation_group_developers)
 
-    join_request_john = JoinRequest(message="Please...", reference="Dr. Johnson", user=mary, collaboration=ai_computing)
+    join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
+                                    collaboration=ai_computing)
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing)
-    _persist(db, join_request_john, join_request_peter)
+    join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing)
+
+    _persist(db, join_request_john, join_request_peter, join_request_mary)
 
     invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
                             expiry_date=default_expiry_date(), user=admin, message="Please join...",

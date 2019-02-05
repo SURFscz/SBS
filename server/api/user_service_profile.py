@@ -2,11 +2,9 @@ from flask import Blueprint, request as current_request
 from sqlalchemy.orm import joinedload, contains_eager
 
 from server.api.base import json_endpoint
-from server.api.security import current_user_id
+from server.api.security import current_user_id, confirm_owner_of_user_service_profile
 from server.db.db import CollaborationMembership, UserServiceProfile, User, Service
 from server.db.models import update
-
-UID_HEADER_NAME = "MELLON_cmuid"
 
 user_service_profile_api = Blueprint("user_service_profiles_api", __name__, url_prefix="/api/user_service_profiles")
 
@@ -93,4 +91,5 @@ def my_user_service_profiles():
 @user_service_profile_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_user_service_profile():
+    confirm_owner_of_user_service_profile()
     return update(UserServiceProfile, allow_child_cascades=False)
