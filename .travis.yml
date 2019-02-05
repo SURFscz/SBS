@@ -49,8 +49,8 @@ jobs:
       before_script:
         - >
           mysql -uroot -e "
-            drop databas eIF EXISTS sbs_test;
-            create database IF NOT EXISTS sbs_test;
+            DROP DATABASE IF EXISTS sbs_test;
+            CREATE DATABASE IF NOT EXISTS sbs_test;
             CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
             GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
           "
