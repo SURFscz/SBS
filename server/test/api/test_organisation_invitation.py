@@ -16,7 +16,6 @@ class TestOrganisationInvitation(AbstractTest):
         self.assertEqual(organisation_invitation_hash, organisation_invitation["hash"])
         membership = organisation_invitation["organisation"]["organisation_memberships"][0]
         self.assertEqual("admin", membership["role"])
-        self.assertEqual("john@example.org", membership["user"]["email"])
 
     # Must be admin
     def test_find_by_id_forbidden(self):
