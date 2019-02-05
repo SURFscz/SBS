@@ -249,7 +249,7 @@ def save_collaboration():
         }, collaboration, [administrator])
 
     admin_collaboration_membership = CollaborationMembership(role="admin", user=user, collaboration=collaboration,
-                                                             created_by=user.uid)
+                                                             created_by=user.uid, updated_by=user.uid)
     db.session.merge(admin_collaboration_membership)
     return res
 

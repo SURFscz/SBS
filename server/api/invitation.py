@@ -65,7 +65,8 @@ def invitations_accept():
     collaboration_membership = CollaborationMembership(user_id=user_id,
                                                        collaboration=collaboration,
                                                        role=role,
-                                                       created_by=invitation.user.uid)
+                                                       created_by=invitation.user.uid,
+                                                       updated_by=invitation.user.uid)
 
     collaboration.collaboration_memberships.append(collaboration_membership)
     collaboration.invitations.remove(invitation)

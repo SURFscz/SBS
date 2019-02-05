@@ -313,7 +313,8 @@ class AuthorisationGroup extends React.Component {
         return (
             <div className="authorisation-members-connected">
                 <p className="title">{membersTitle}</p>
-                {adminOfCollaboration && <em className="warning">{I18n.t("authorisationGroup.deleteMemberWarning")}</em>}
+                {adminOfCollaboration &&
+                <em className="warning">{I18n.t("authorisationGroup.deleteMemberWarning")}</em>}
                 <table className="connected-members">
                     <thead>
                     <tr>
@@ -435,7 +436,7 @@ class AuthorisationGroup extends React.Component {
     };
 
 
-    authorisationGroupDetails = (adminOfCollaboration, name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit) => {
+    authorisationGroupDetails = (adminOfCollaboration, name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit, authorisationGroup) => {
         return (
             <div className="authorisation-group">
                 <InputField value={name} onChange={e => this.setState({
@@ -475,6 +476,10 @@ class AuthorisationGroup extends React.Component {
                              placeholder={I18n.t("authorisationGroup.statusPlaceholder")}
                              onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}
                              disabled={!adminOfCollaboration}/>
+                {(!isNew && !isEmpty(authorisationGroup)) &&
+                <InputField value={moment(authorisationGroup.created_at * 1000).format("LLLL")}
+                            disabled={true}
+                            name={I18n.t("organisation.created")}/>}
 
                 {(adminOfCollaboration && isNew) &&
                 <section className="actions">
@@ -541,7 +546,7 @@ class AuthorisationGroup extends React.Component {
                 {<div className="title">
                     <p className="title">{detailsTitle}</p>
                 </div>}
-                {this.authorisationGroupDetails(adminOfCollaboration, name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit)}
+                {this.authorisationGroupDetails(adminOfCollaboration, name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit, authorisationGroup)}
             </div>);
     };
 

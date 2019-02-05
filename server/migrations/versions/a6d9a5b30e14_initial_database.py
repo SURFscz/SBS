@@ -5,9 +5,7 @@ Revises:
 Create Date: 2019-01-07 10:28:20.335581
 
 """
-from datetime import datetime
 
-import pytz
 import sqlalchemy as sa
 from alembic import op
 
@@ -26,8 +24,9 @@ def upgrade():
                     sa.Column("email", sa.String(length=255), nullable=True),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
-                              onupdate=datetime.now(tz=pytz.utc), nullable=False),
+                    sa.Column("updated_at", sa.DateTime(timezone=True),
+                              server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+                              nullable=False),
                     sa.Column("created_by", sa.String(length=512), nullable=False),
                     sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
@@ -39,8 +38,9 @@ def upgrade():
                     sa.Column("description", sa.Text(), nullable=True),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
-                              onupdate=datetime.now(tz=pytz.utc), nullable=False),
+                    sa.Column("updated_at", sa.DateTime(timezone=True),
+                              server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+                              nullable=False),
                     sa.Column("created_by", sa.String(length=512), nullable=False),
                     sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
@@ -51,9 +51,13 @@ def upgrade():
                     sa.Column("organisation_id", sa.Integer(), sa.ForeignKey("organisations.id", ondelete="cascade"),
                               nullable=False, primary_key=True),
                     sa.Column("role", sa.String(length=255), nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
+                    sa.Column("updated_at", sa.DateTime(timezone=True),
+                              server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+                              nullable=False),
+                    sa.Column("created_by", sa.String(length=512), nullable=False),
+                    sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
 
     op.create_table("collaborations",
@@ -69,8 +73,9 @@ def upgrade():
                               nullable=False),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
-                              onupdate=datetime.now(tz=pytz.utc), nullable=False),
+                    sa.Column("updated_at", sa.DateTime(timezone=True),
+                              server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+                              nullable=False),
                     sa.Column("created_by", sa.String(length=512), nullable=False),
                     sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
@@ -81,9 +86,13 @@ def upgrade():
                     sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
                               nullable=False),
                     sa.Column("role", sa.String(length=255), nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
+                    sa.Column("updated_at", sa.DateTime(timezone=True),
+                              server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+                              nullable=False),
+                    sa.Column("created_by", sa.String(length=512), nullable=False),
+                    sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
 
     op.create_table("services",
@@ -99,8 +108,9 @@ def upgrade():
                     sa.Column("status", sa.String(length=255), nullable=True),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
-                              onupdate=datetime.now(tz=pytz.utc), nullable=False),
+                    sa.Column("updated_at", sa.DateTime(timezone=True),
+                              server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+                              nullable=False),
                     sa.Column("created_by", sa.String(length=512), nullable=False),
                     sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
@@ -131,8 +141,9 @@ def upgrade():
                     sa.Column("status", sa.String(length=255), nullable=True),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
-                              onupdate=datetime.now(tz=pytz.utc), nullable=False),
+                    sa.Column("updated_at", sa.DateTime(timezone=True),
+                              server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+                              nullable=False),
                     sa.Column("created_by", sa.String(length=512), nullable=False),
                     sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
@@ -145,6 +156,13 @@ def upgrade():
                     sa.Column("status", sa.String(length=255), nullable=True),
                     sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
                               nullable=False),
+                    sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
+                              nullable=False),
+                    sa.Column("updated_at", sa.DateTime(timezone=True),
+                              server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+                              nullable=False),
+                    sa.Column("created_by", sa.String(length=512), nullable=False),
+                    sa.Column("updated_by", sa.String(length=512), nullable=False),
                     )
 
     op.create_table("services_authorisation_groups",

@@ -75,6 +75,7 @@ class OrganisationMembership(Base, db.Model):
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
     organisation = db.relationship("Organisation", back_populates="organisation_memberships")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
@@ -120,6 +121,7 @@ class CollaborationMembership(Base, db.Model):
                                            back_populates="collaboration_memberships",
                                            lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
@@ -202,6 +204,10 @@ class AuthorisationGroup(Base, db.Model):
                                                 secondary=collaboration_memberships_authorisation_groups_association,
                                                 back_populates="authorisation_groups",
                                                 lazy="select")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
 
 class JoinRequest(Base, db.Model):
