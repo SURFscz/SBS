@@ -116,24 +116,28 @@ class Registration extends React.Component {
 
     form2Invariant = (motivation, agreedWithPolicy) => !isEmpty(motivation) && agreedWithPolicy;
 
-    getUserTable = user =>
-        (<table>
-            <thead/>
-            <tbody>
-            <tr>
-                <td className="attribute">{I18n.t("profile.name")}</td>
-                <td className="value">{user.name}</td>
-            </tr>
-            <tr>
-                <td className="attribute">{I18n.t("profile.email")}</td>
-                <td className="value">{user.email}</td>
-            </tr>
-            <tr>
-                <td className="attribute">{I18n.t("profile.organization")}</td>
-                <td className="value">{user.organization}</td>
-            </tr>
-            </tbody>
-        </table>);
+    getUserTable = user => {
+        return (
+            <table>
+                <thead/>
+                <tbody>
+                <tr>
+                    <td className="attribute">{I18n.t("profile.name")}</td>
+                    <td className="value">{user.name}</td>
+                </tr>
+                <tr>
+                    <td className="attribute">{I18n.t("profile.email")}</td>
+                    <td className="value">{user.email}</td>
+                </tr>
+                <tr>
+                    <td className="attribute">{I18n.t("profile.organisations")}</td>
+                    <td className="value">{(user.organisation_memberships || []).map(om => om.organisation.name)
+                        .flat().join(", ")}</td>
+                </tr>
+                </tbody>
+            </table>
+        );
+    }
 
     renderStepDivider = (currentStep, step) =>
         (<div key={step} className={`step-divider ${this.doneClassName(currentStep, step)}`}>
