@@ -1,33 +1,76 @@
+---
 language: python
 env:
   CODECOV_TOKEN: "ae851f67-c91a-4063-8bd6-a9fc74b3173e"
+
+services:
+  - docker
+
 python:
   - "3.6"
+
 cache:
+  pip: true
   yarn: true
   directories:
-  - node_modules
-before_install:
-  - pip install -r ./server/requirements/test.txt
-  - pip install codecov
-  - rm -fr ~/.yarn
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3
-  - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-  - yarn -v
-  - nvm install v8.12.0
-  - nvm use v8.12.0
-install:
-before_script:
-  - mysql -e "create database IF NOT EXISTS sbs_test; CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
-    GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;" -uroot
-script:
-  - pytest --cov=server --cov-report= server/test
-  - flake8 ./server/
-  - yarn -v
-  - node -v
-  - cd client
-  - yarn install
-  - CI=true yarn test
-  - yarn build
-after_success:
-  - codecov
+    - "node_modules"
+
+notifications:
+  slack:
+    on_success: always
+    on_failure: always
+    rooms:
+      secure: "Md5TZWMvWo4n4ySNT1H1aZiwbERUI1UUQxy5+IQTEf4KG+EFiqdoEYzOHFObb4bxAirOsB6dbAxLyLtmn\
+               3TD4Q1lkJ2Xg6SH4BykC1qETRSIf6XOwdCIQgQuUJhMng30yawpLSqa5Nlx50aIlUi6+Y6WaD3JkDD199\
+               i7XzMxsvAcA23/A6/mxqIWZiTzcy43a+Voby27ts+ind6SQYib6nq2rZAYVuU+C0xsaWGHiVVVKpRqO+a\
+               cRAYPTQGt8G9kzuFGtNTvdHn4uWDBmBDEecX40dlVo1WtH/2sOhQRAnjM612jfyVeXmJr+YpA30RKNMa6\
+               PJ8sKDWU4+hrsxloDZDpTWQwbvrcb7/njPpb44kcUOCjNn2RFJgKvz0Xh535LC6FemQS5eka3M+Cuh50c\
+               g1Cm0vdt0+I5NZNd5KlcNPTXWBlWPdB6CORt99tlOwFmXXyfewpDOTER93xzZQS08z6cO7WDR3ag90ntI\
+               Em9+JMZqFskmbelrTpxA/BJQrhsE+PGkSXpfMqDmb3vozq+QiyL6Ggib90jR3N9ddHqD+J3Lxc4PrYdAw\
+               F8Qc6q7fAt4nAyOm2wsMLZJgmpwjrJTF9DSzz0avY/iFnIDdtxN+NxjMA0n4nazA0+DHvM1l/A0JmuDff\
+               i2n+bw4wTyMHb5IU1w1NnEpZEd3oy5/q4/k="
+
+jobs:
+  include:
+    #######################################################
+    ## Build, run local tests, and check code coverage ####
+    #######################################################
+    - stage: test
+      before_install:
+        - pip install -r ./server/requirements/test.txt
+        - pip install codecov
+        - "rm -fr ~/.yarn"
+        - "curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3"
+        - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+        - yarn -v
+        - nvm install v8.12.0
+        - nvm use v8.12.0
+      before_script:
+        - >
+          mysql -uroot -e "
+            create database IF NOT EXISTS sbs_test;
+            CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
+            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
+          "
+      script:
+        - pytest --cov=server --cov-report= server/test
+        - flake8 ./server/
+        - yarn -v
+        - node -v
+        - cd client
+        - yarn install
+        - CI=true yarn test
+        - yarn build
+      after_success:
+        - codecov
+
+    #######################################################
+    ## Build and upload docker images #####################
+    #######################################################
+    - stage: build containers
+      script:
+        - ./scripts/build-server.sh
+      after_success:
+        - >
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker push surfscz/sbs-server
