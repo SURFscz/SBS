@@ -7,6 +7,8 @@ emitter.addListener("impersonation", selectedUser => {
     impersonator = selectedUser;
 });
 
+const impersonation_attributes = ["id", "uid", "name", "email"];
+
 //Internal API
 function validateResponse(showErrorDialog) {
     return res => {
@@ -44,10 +46,8 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
         ...headers
     };
     if (impersonator) {
-        contentHeaders["X-IMPERSONATE-ID"] = impersonator.id;
-        contentHeaders["X-IMPERSONATE-UID"] = impersonator.uid;
-        contentHeaders["X-IMPERSONATE-NAME"] = impersonator.name;
-        contentHeaders["X-IMPERSONATE-EMAIL"] = impersonator.email;
+        impersonation_attributes.forEach(attr =>
+            contentHeaders[`X-IMPERSONATE-${attr.toUpperCase()}`] = impersonator[attr]);
     }
     const fetchOptions = Object.assign({}, {headers: contentHeaders}, options, {
         credentials: "same-origin",
@@ -87,14 +87,20 @@ export function me() {
     return fetchJson("/api/users/me", {}, headers, false);
 }
 
+export function refreshUser() {
+    return fetchJson("/api/users/refresh");
+}
+
 export function other(uid) {
     return fetchJson(`/api/users/other?uid=${encodeURIComponent(uid)}`);
 }
 
-export function searchUsers(q, organisationId, collaborationId) {
+export function searchUsers(q, organisationId, collaborationId, limitToOrganisationAdmins, limitToCollaborationAdmins) {
     const organisationIdPart = isEmpty(organisationId) ? "" : `&organisation_id=${organisationId}`;
     const collaborationIdPart = isEmpty(collaborationId) ? "" : `&collaboration_id=${collaborationId}`;
-    return fetchJson(`/api/users/search?q=${encodeURIComponent(q)}${organisationIdPart}${collaborationIdPart}`);
+    const organisationAdminsPart = limitToOrganisationAdmins ? "&organisation_admins=true" : "";
+    const collaborationAdminsPart = limitToCollaborationAdmins ? "&collaboration_admins=true" : "";
+    return fetchJson(`/api/users/search?q=${encodeURIComponent(q)}${organisationIdPart}${collaborationIdPart}${organisationAdminsPart}${collaborationAdminsPart}`);
 }
 
 export function reportError(error) {
@@ -139,8 +145,16 @@ export function collaborationById(id) {
     return fetchJson(`/api/collaborations/${id}`, {}, {}, false);
 }
 
+export function collaborationLiteById(id) {
+    return fetchJson(`/api/collaborations/lite/${id}`, {}, {}, false);
+}
+
 export function myCollaborations() {
-    return fetchJson(`/api/collaborations`);
+    return fetchJson("/api/collaborations");
+}
+
+export function myCollaborationsLite() {
+    return fetchJson("/api/collaborations/my_lite");
 }
 
 export function createCollaboration(collaboration) {
@@ -293,6 +307,18 @@ export function deleteCollaborationMembership(collaborationId, userId) {
     return fetchDelete(`/api/collaboration_memberships/${collaborationId}/${userId}`)
 }
 
+export function updateCollaborationMembershipRole(collaborationId, userId, role) {
+    return postPutJson("/api/collaboration_memberships", {
+        collaborationId: collaborationId,
+        userId: userId,
+        role: role
+    }, "put")
+}
+
+export function myCollaborationMemberships() {
+    return fetchJson("/api/collaboration_memberships")
+}
+
 //CollaborationServices
 export function addCollaborationServices({collaborationId, serviceIds}) {
     serviceIds = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
@@ -357,4 +383,17 @@ export function addAuthorisationGroupMembers({authorisationGroupId, collaboratio
 
 export function deleteAuthorisationGroupMembers(authorisationGroupId, memberId, collaborationId) {
     return fetchDelete(`/api/authorisation_group_members/${authorisationGroupId}/${memberId}/${collaborationId}`)
+}
+
+//UserServiceProfiles
+export function userServiceProfileById(id) {
+    return fetchJson(`/api/user_service_profiles/${id}`);
+}
+
+export function myUserServiceProfiles() {
+    return fetchJson("/api/user_service_profiles")
+}
+
+export function updateUserServiceProfiles(profile) {
+    return postPutJson("/api/user_service_profiles", profile, "put");
 }

@@ -6,6 +6,10 @@ from server.db.db import User, Organisation, OrganisationMembership, Service, Co
     JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
 from server.db.defaults import default_expiry_date
 
+the_boss_name = "The Boss"
+
+john_name = "John Doe"
+james_name = "James Byrd"
 organisation_invitation_hash = token_urlsafe()
 invitation_hash_curious = token_urlsafe()
 invitation_hash_no_way = token_urlsafe()
@@ -19,6 +23,11 @@ service_mail_entity_id = "https://mail"
 
 service_network_name = "Network Services"
 service_network_entity_id = "https://network"
+service_storage_name = "Storage"
+service_wireless_name = "Wireless"
+service_cloud_name = "Cloud"
+
+ai_researchers_authorisation = "AI researchers"
 
 
 def _persist(db, *objs):
@@ -31,18 +40,22 @@ def _persist(db, *objs):
 
 
 def seed(db):
-    for table in reversed(metadata.sorted_tables):
+    tables = reversed(metadata.sorted_tables)
+    for table in tables:
         db.session.execute(table.delete())
     db.session.commit()
 
-    john = User(uid="urn:john", name="John Doe", email="john@example.org")
+    john = User(uid="urn:john", name=john_name, email="john@example.org")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org")
-    admin = User(uid="urn:admin", name="The Boss", email="boss@example.org")
+    admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org")
     roger = User(uid="urn:roger", name="Roger Doe", email="roger@example.org")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org")
+    james = User(uid="urn:james", name=james_name, email="james@example.org")
+    sarah = User(uid="urn:sarah", name="Sarah Cross", email="sarah@uva.org")
+    jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org")
 
-    _persist(db, john, mary, peter, admin, roger, harry)
+    _persist(db, john, mary, peter, admin, roger, harry, james, sarah, jane)
 
     uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
                        created_by="urn:admin",
@@ -72,9 +85,9 @@ def seed(db):
     _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry)
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email)
-    wireless = Service(entity_id="https://wireless", name="Wirless", description="Network Wireless Service")
-    cloud = Service(entity_id="https://cloud", name="Cloud", description="SARA Cloud Service")
-    storage = Service(entity_id="https://storage", name="Storage", description="SURF Storage Service")
+    wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service")
+    cloud = Service(entity_id="https://cloud", name=service_cloud_name, description="SARA Cloud Service")
+    storage = Service(entity_id="https://storage", name=service_storage_name, description="SURF Storage Service")
     wiki = Service(entity_id="https://wiki", name="Wiki", description="No more wiki's please")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address", status="active",
@@ -90,16 +103,23 @@ def seed(db):
     uva_research = Collaboration(name="UVA UCC research",
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",
-                                 organisation=uva, services=[],
+                                 organisation=uva, services=[storage, wiki],
                                  join_requests=[], invitations=[])
     _persist(db, ai_computing, uva_research)
 
-    john_ai_computing = CollaborationMembership(role="researcher", user=john, collaboration=ai_computing)
+    john_ai_computing = CollaborationMembership(role="member", user=john, collaboration=ai_computing)
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
-    _persist(db, john_ai_computing, admin_ai_computing)
+    jane_ai_computing = CollaborationMembership(role="member", user=jane, collaboration=ai_computing)
+
+    roger_uva_research = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
+    peter_uva_research = CollaborationMembership(role="member", user=peter, collaboration=uva_research)
+    sarah_uva_research = CollaborationMembership(role="admin", user=sarah, collaboration=uva_research)
+    _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
+             jane_ai_computing)
 
     user_service_profile = UserServiceProfile(service=network, collaboration_membership=john_ai_computing,
-                                              name="John Doe", telephone_number="0612345678",
+                                              name=john_name, telephone_number="0612345678",
+                                              identifier=str(uuid.uuid4()),
                                               ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                                                       "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
                                                       "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
@@ -109,7 +129,8 @@ def seed(db):
                                                       "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     _persist(db, user_service_profile)
 
-    authorisation_group_researchers = AuthorisationGroup(name="AI researchers", uri="https://ai/researchers",
+    authorisation_group_researchers = AuthorisationGroup(name=ai_researchers_authorisation,
+                                                         uri="https://ai/researchers",
                                                          status="active",
                                                          description="Artifical computing researchers",
                                                          collaboration=ai_computing, services=[network],
@@ -126,9 +147,10 @@ def seed(db):
     _persist(db, join_request_john, join_request_peter)
 
     invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
-                            expiry_date=default_expiry_date(), user=admin, message="Please join...")
+                            expiry_date=default_expiry_date(), user=admin, message="Please join...",
+                            intended_role="member")
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
-                                  expiry_date=datetime.date.today() + datetime.timedelta(days=21), user=admin,
+                                  expiry_date=datetime.date.today() - datetime.timedelta(days=21), user=admin,
                                   message="Let me please join as I really, really, really \n really, "
                                           "really, really \n want to...")
     _persist(db, invitation, invitation_noway)

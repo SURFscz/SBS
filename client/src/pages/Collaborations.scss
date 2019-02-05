@@ -4,12 +4,18 @@
   background-color: $background;
   padding: $medium-padding 0;
 
-  .title {
+  div.title {
     font-size: 22px;
     color: $dark-grey;
     max-width: $medium;
     margin: 0 auto;
     padding: 25px 0 15px 0;
+    display: flex;
+    align-items: center;
+    a.button {
+      margin-left: auto;
+      font-size: 16px;
+    }
   }
 
   .info-block-container {
@@ -67,6 +73,7 @@
 
       section.show-more {
         margin-top: auto;
+        padding-top: 15px;
         display: flex;
         justify-content: space-around;
       }

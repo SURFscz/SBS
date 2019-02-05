@@ -3,7 +3,7 @@ import {
     addAuthorisationGroupMembers,
     addAuthorisationGroupServices,
     authorisationGroupById,
-    authorisationGroupNameExists,
+    authorisationGroupNameExists, collaborationLiteById,
     collaborationServices,
     createAuthorisationGroup,
     deleteAuthorisationGroup,
@@ -65,9 +65,23 @@ class AuthorisationGroup extends React.Component {
 
     componentWillMount = () => {
         const params = this.props.match.params;
+        const {user} = this.props;
         if (params.id && params.collaboration_id) {
+            const collaboration_id = parseInt(params.collaboration_id, 10);
+            const member = (user.collaboration_memberships || []).find(membership => membership.collaboration_id === collaboration_id);
+            if (isEmpty(member) && !user.admin) {
+                this.props.history.push("/404");
+                return;
+            }
+            if (member.role !== "admin" && !user.admin && params.id === "new") {
+                this.props.history.push("/404");
+                return;
+            }
+            const back = member.role !== "admin" && !user.admin ? "/home" : `/collaboration-authorisation-groups/${params.collaboration_id}`;
+            const adminOfCollaboration = member.role === "admin" || user.admin;
             if (params.id !== "new") {
-                Promise.all([collaborationServices(params.collaboration_id), authorisationGroupById(params.id, params.collaboration_id)])
+                const collDetail = adminOfCollaboration ? collaborationServices : collaborationLiteById;
+                Promise.all([collDetail(params.collaboration_id), authorisationGroupById(params.id, params.collaboration_id)])
                     .then(res => {
                         const {sortedServicesBy, reverseServices, sortedMembersBy, reverseMembers} = this.state;
                         const collaboration = res[0];
@@ -84,7 +98,8 @@ class AuthorisationGroup extends React.Component {
                             allServices: allServices,
                             sortedServices: sortObjects(authorisationGroup.services, sortedServicesBy, reverseServices),
                             isNew: false,
-                            back: `/collaboration-authorisation-groups/${params.collaboration_id}`
+                            back: back,
+                            adminOfCollaboration: adminOfCollaboration
                         })
                     });
             } else {
@@ -97,7 +112,8 @@ class AuthorisationGroup extends React.Component {
                             collaboration_id: collaboration.id,
                             allServices: allServices,
                             allMembers: allMembers,
-                            back: `/collaboration-authorisation-groups/${params.collaboration_id}`
+                            back: back,
+                            adminOfCollaboration: adminOfCollaboration
                         })
                     });
             }
@@ -128,14 +144,14 @@ class AuthorisationGroup extends React.Component {
             });
     };
 
-    sortedCollaborationMembers = collaboration => collaboration.collaboration_memberships
+    sortedCollaborationMembers = collaboration => (collaboration.collaboration_memberships || [])
         .sort((a, b) => a.user.name.localeCompare(b.user.name))
         .map(member => ({
             value: member.id,
             label: this.memberToOption(member)
         }));
 
-    sortedCollaborationServices = collaboration => collaboration.services
+    sortedCollaborationServices = collaboration => (collaboration.services || [])
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(service => ({
             value: service.id,
@@ -287,13 +303,17 @@ class AuthorisationGroup extends React.Component {
         this.setState({sortedMembers: sortedMembers, sortedMembersBy: name, reverseMembers: reversed});
     };
 
-    renderConnectedMembers = (collaboration, authorisationGroupName, connectedMembers, sorted, reverse) => {
-        const names = [ "actions","user__name", "user__email", "user__uid", "role", "created_at"];
+    renderConnectedMembers = (adminOfCollaboration, collaboration, authorisationGroupName, connectedMembers, sorted, reverse) => {
+        const names = ["actions", "user__name", "user__email", "user__uid", "role", "created_at"];
+        if (!adminOfCollaboration) {
+            names.shift();
+        }
         const role = {value: "admin", label: "Admin"};
         const membersTitle = I18n.t("authorisationGroup.membersTitle", {name: authorisationGroupName});
         return (
             <div className="authorisation-members-connected">
                 <p className="title">{membersTitle}</p>
+                {adminOfCollaboration && <em className="warning">{I18n.t("authorisationGroup.deleteMemberWarning")}</em>}
                 <table className="connected-members">
                     <thead>
                     <tr>
@@ -315,9 +335,10 @@ class AuthorisationGroup extends React.Component {
                     </thead>
                     <tbody>
                     {connectedMembers.map((member, i) => <tr key={i}>
-                        <td className="actions">
+                        {adminOfCollaboration && <td className="actions">
                             <FontAwesomeIcon icon="trash" onClick={this.removeMember(member)}/>
                         </td>
+                        }
                         <td className="name">{member.user.name}</td>
                         <td className="email">{member.user.email}</td>
                         <td className="uid">{member.user.uid}</td>
@@ -335,11 +356,15 @@ class AuthorisationGroup extends React.Component {
         );
     };
 
-    renderConnectedServices = (collaboration, authorisationGroupName, connectedServices, sorted, reverse) => {
+    renderConnectedServices = (adminOfCollaboration, collaboration, authorisationGroupName, connectedServices, sorted, reverse) => {
         const names = ["actions", "name", "entity_id", "description"];
+        if (!adminOfCollaboration) {
+            names.shift();
+        }
         return (<div className="authorisation-services-connected">
                 <p className="title">{I18n.t("authorisationGroup.connectedServices", {name: authorisationGroupName})}</p>
-
+                {adminOfCollaboration &&
+                <em className="warning">{I18n.t("authorisationGroup.deleteServiceWarning")}</em>}
                 <table className="connected-services">
                     <thead>
                     <tr>
@@ -361,9 +386,9 @@ class AuthorisationGroup extends React.Component {
                     </thead>
                     <tbody>
                     {connectedServices.map(service => <tr key={service.id}>
-                        <td className="actions">
+                        {adminOfCollaboration && <td className="actions">
                             <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>
-                        </td>
+                        </td>}
                         <td className="name">{service.name}</td>
                         <td className="entity_id">{service.entity_id}</td>
                         <td className="description">{service.description}</td>
@@ -374,43 +399,43 @@ class AuthorisationGroup extends React.Component {
         );
     };
 
-    authorisationMembers = (collaboration, authorisationGroupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers) => {
+    authorisationMembers = (adminOfCollaboration, collaboration, authorisationGroupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers) => {
         const availableMembers = allMembers.filter(member => !sortedMembers.find(s => s.id === member.value));
         return (
-            <div className="authorisation-members">
-                <Select className="services-select"
-                        placeholder={I18n.t("authorisationGroup.searchMembers", {name: authorisationGroupName})}
-                        onChange={this.addMember}
-                        options={availableMembers}
-                        value={null}
-                        isSearchable={true}
-                        isClearable={true}
-                />
-                {this.renderConnectedMembers(collaboration, authorisationGroupName, sortedMembers, sortedMembersBy, reverseMembers)}
+            <div className={`authorisation-members ${adminOfCollaboration ? "" : "no-admin"}`}>
+                {adminOfCollaboration && <Select className="services-select"
+                                                 placeholder={I18n.t("authorisationGroup.searchMembers", {name: authorisationGroupName})}
+                                                 onChange={this.addMember}
+                                                 options={availableMembers}
+                                                 value={null}
+                                                 isSearchable={true}
+                                                 isClearable={true}/>
+                }
+                {this.renderConnectedMembers(adminOfCollaboration, collaboration, authorisationGroupName, sortedMembers, sortedMembersBy, reverseMembers)}
             </div>
         );
 
 
     };
 
-    authorisationServices = (collaboration, authorisationGroupName, allServices, sortedServices, sortedServicesBy, reverseServices) => {
+    authorisationServices = (adminOfCollaboration, collaboration, authorisationGroupName, allServices, sortedServices, sortedServicesBy, reverseServices) => {
         const availableServices = allServices.filter(service => !sortedServices.find(s => s.id === service.value));
         return (
-            <div className="authorisation-services">
-                <Select className="services-select"
-                        placeholder={I18n.t("authorisationGroup.searchServices", {name: authorisationGroupName})}
-                        onChange={this.addService}
-                        options={availableServices}
-                        value={null}
-                        isSearchable={true}
-                        isClearable={true}
-                />
-                {this.renderConnectedServices(collaboration, authorisationGroupName, sortedServices, sortedServicesBy, reverseServices)}
+            <div className={`authorisation-services ${adminOfCollaboration ? "" : "no-admin"}`}>
+                {adminOfCollaboration && <Select className="services-select"
+                                                 placeholder={I18n.t("authorisationGroup.searchServices", {name: authorisationGroupName})}
+                                                 onChange={this.addService}
+                                                 options={availableServices}
+                                                 value={null}
+                                                 isSearchable={true}
+                                                 isClearable={true}/>
+                }
+                {this.renderConnectedServices(adminOfCollaboration, collaboration, authorisationGroupName, sortedServices, sortedServicesBy, reverseServices)}
             </div>);
     };
 
 
-    authorisationGroupDetails = (name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit) => {
+    authorisationGroupDetails = (adminOfCollaboration, name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit) => {
         return (
             <div className="authorisation-group">
                 <InputField value={name} onChange={e => this.setState({
@@ -419,7 +444,8 @@ class AuthorisationGroup extends React.Component {
                 })}
                             placeholder={I18n.t("authorisationGroup.namePlaceholder")}
                             onBlur={this.validateAuthorisationGroupName}
-                            name={I18n.t("authorisationGroup.name")}/>
+                            name={I18n.t("authorisationGroup.name")}
+                            disabled={!adminOfCollaboration}/>
                 {alreadyExists.name && <span
                     className="error">{I18n.t("authorisationGroup.alreadyExists", {
                     attribute: I18n.t("authorisationGroup.name").toLowerCase(),
@@ -433,12 +459,14 @@ class AuthorisationGroup extends React.Component {
                 <InputField value={description}
                             name={I18n.t("authorisationGroup.description")}
                             placeholder={I18n.t("authorisationGroup.descriptionPlaceholder")}
-                            onChange={e => this.setState({description: e.target.value})}/>
+                            onChange={e => this.setState({description: e.target.value})}
+                            disabled={!adminOfCollaboration}/>
 
                 <InputField value={uri}
                             name={I18n.t("authorisationGroup.uri")}
                             placeholder={I18n.t("authorisationGroup.uriPlaceholder")}
-                            onChange={e => this.setState({uri: e.target.value})}/>
+                            onChange={e => this.setState({uri: e.target.value})}
+                            disabled={!adminOfCollaboration}/>
 
                 <SelectField value={this.statusOptions.find(option => status === option.value)}
                              options={this.statusOptions}
@@ -446,15 +474,15 @@ class AuthorisationGroup extends React.Component {
                              clearable={true}
                              placeholder={I18n.t("authorisationGroup.statusPlaceholder")}
                              onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}
-                />
+                             disabled={!adminOfCollaboration}/>
 
-                {isNew &&
+                {(adminOfCollaboration && isNew) &&
                 <section className="actions">
                     <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
                             onClick={this.submit}/>
                     <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                 </section>}
-                {!isNew &&
+                {(adminOfCollaboration && !isNew) &&
                 <section className="actions">
                     <Button disabled={disabledSubmit} txt={I18n.t("authorisationGroup.update")}
                             onClick={this.submit}/>
@@ -471,7 +499,7 @@ class AuthorisationGroup extends React.Component {
             alreadyExists, collaboration, initial, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
             name, uri, description, status, authorisationGroup, isNew, back, leavePage,
             allServices, sortedServices, sortedServicesBy, reverseServices,
-            allMembers, sortedMembers, sortedMembersBy, reverseMembers
+            allMembers, sortedMembers, sortedMembersBy, reverseMembers, adminOfCollaboration
         } = this.state;
         if (!collaboration) {
             return null;
@@ -479,10 +507,16 @@ class AuthorisationGroup extends React.Component {
         const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
 
         const disabledSubmit = !initial && !this.isValid();
-        const detailsTitle = isNew ? I18n.t("authorisationGroup.titleNew") : I18n.t("authorisationGroup.titleUpdate", {name: authorisationGroup.name});
+        const title = adminOfCollaboration ? I18n.t("authorisationGroup.backToCollaborationAuthorisationGroups", {name: collaboration.name}) : I18n.t("home.backToHome");
+        let detailsTitle;
+        if (adminOfCollaboration) {
+            detailsTitle = isNew ? I18n.t("authorisationGroup.titleNew") : I18n.t("authorisationGroup.titleUpdate", {name: authorisationGroup.name});
+        } else {
+            detailsTitle = I18n.t("authorisationGroup.titleReadOnly", {name: authorisationGroup.name});
+        }
         const servicesTitle = I18n.t("authorisationGroup.servicesTitle", {name: authorisationGroup.name});
         const membersTitle = I18n.t("authorisationGroup.membersTitle", {name: authorisationGroupName});
-
+        const showTitles = !isNew && adminOfCollaboration;
         return (
             <div className="mod-authorisation-group">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -495,19 +529,19 @@ class AuthorisationGroup extends React.Component {
                         stopEvent(e);
                         this.props.history.push(back)
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("authorisationGroup.backToCollaborationAuthorisationGroups", {name: collaboration.name})}
+                        {title}
                     </a>
-                    {<p className="title">{isNew ? detailsTitle : servicesTitle}</p>}
+                    {showTitles && <p className="title">{isNew ? detailsTitle : servicesTitle}</p>}
                 </div>
-                {!isNew && this.authorisationServices(collaboration, authorisationGroupName, allServices, sortedServices, sortedServicesBy, reverseServices)}
-                {!isNew && <div className="title">
+                {!isNew && this.authorisationServices(adminOfCollaboration, collaboration, authorisationGroupName, allServices, sortedServices, sortedServicesBy, reverseServices)}
+                {showTitles && <div className="title">
                     <p className="title">{membersTitle}</p>
                 </div>}
-                {!isNew && this.authorisationMembers(collaboration, authorisationGroupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers)}
-                {!isNew && <div className="title">
+                {!isNew && this.authorisationMembers(adminOfCollaboration, collaboration, authorisationGroupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers)}
+                {<div className="title">
                     <p className="title">{detailsTitle}</p>
                 </div>}
-                {this.authorisationGroupDetails(name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit)}
+                {this.authorisationGroupDetails(adminOfCollaboration, name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit)}
             </div>);
     };
 

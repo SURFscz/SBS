@@ -3,6 +3,7 @@
 .input-field {
   display: flex;
   align-items: center;
+  position: relative;
 
   label {
     display: inline-block;
@@ -44,6 +45,65 @@
     &[disabled] {
       background-color: $background;
       cursor: not-allowed;
+    }
+
+    &.file-upload {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+  }
+
+  label.file-upload {
+    border-radius: 0 $br $br 0;
+    border-left: none;
+    cursor: pointer;
+    padding-right: 4px;
+  }
+
+  span.remove {
+    display: flex;
+
+    em {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    svg.fa-trash {
+      margin: 0 5px 0 auto;
+      color: $red;
+    }
+  }
+
+  section.copy-to-clipboard {
+    position: absolute;
+    right: 8px;
+    top: 16px;
+    font-size: 18px;
+    color: $blue;
+    padding: 4px;
+    cursor: pointer;
+    &:hover {
+      color: darken($blue, 10%);
+    }
+
+    svg.copied {
+      animation: pulse .8s;
+      animation-iteration-count: 1;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 white;
+      }
+      55% {
+        box-shadow: 0 0 4px 4px lighten($blue, 10%);
+      }
+      100% {
+        box-shadow: 0 0 0 0 white;
+      }
     }
 
   }

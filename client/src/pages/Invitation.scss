@@ -20,6 +20,7 @@
       text-transform: uppercase;
       text-decoration: none;
       margin: 10px 0;
+      color: $blue;
 
       &:hover {
         font-weight: bolder;
@@ -46,6 +47,10 @@
 
     div.input-field {
       margin-top: 15px;
+    }
+
+    .required {
+      color: $red;
     }
 
     .required-marker {

@@ -31,10 +31,20 @@
       font-weight: normal;
       color: $primary-green;
       text-decoration: none;
+
+      &:hover {
+        color: darken($primary-green, 10%);
+
+      }
     }
 
     &.active {
       background-color: $primary-green;
+
+      &:hover {
+        background-color: darken($primary-green, 10%);
+
+      }
 
       a {
         color: white;

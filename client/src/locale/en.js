@@ -12,7 +12,7 @@ I18n.translations.en = {
             help: "Help",
             helpUrl: "https://github.com/SURFscz/SBS/wiki"
         },
-        impersonator: "You are really {{impersonator}}.<br/>But you are impersonating {{currentUser}}.<br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
+        impersonator: "You are really {{impersonator}},<br/>but you are impersonating {{currentUser}}.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
 
     },
     navigation: {
@@ -24,7 +24,11 @@ I18n.translations.en = {
         impersonate: "Impersonate",
     },
     home: {
-        title: "Dashboard for {{name}}"
+        title: "My collaboration memberships",
+        userServiceProfiles: "User service profiles",
+        authorisationGroups: "Authorisation Groups",
+        collaborations: "Collaborations",
+        backToHome: "Back to home"
     },
     forms: {
         submit: "Add",
@@ -38,14 +42,16 @@ I18n.translations.en = {
         title: "Who do you want to be?",
         organisation: "Organisation",
         organisationPlaceholder: "Search and select an organisation to narrow the search result for users...",
+        organisationAdminsOnly: "Only show the administrators of organisations",
         collaboration: "Collaboration",
         collaborationPlaceholder: "Search and select a collaboration to narrow the search result for users...",
+        collaborationAdminsOnly: "Only show the administrators of collaborations",
         user: "User",
         userSearchPlaceHolder: "Search and select a user to impersonate...",
         userRequired: "You must first select a user before pretending to be that person",
         currentImpersonation: "Impersonation",
-        noImpersonation: "You are who you are 😇",
-        currentImpersonationValue: "You are impersonating {{currentUser}}, but you are really {{impersonator}} 😎",
+        noImpersonation: "You are who you are - no impersonation",
+        currentImpersonationValue: "You are impersonating {{currentUser}}, but you are really {{impersonator}}",
         startImpersonation: "Impersonate",
         clearImpersonation: "Stop impersonating"
     },
@@ -94,19 +100,21 @@ I18n.translations.en = {
         name: "Name",
         email: "E-mail",
         uid: "UID",
-        admin: "Application Super User",
+        superUser: "Super User",
         role: "Role",
-        noadmin: "Member",
-        organization: "Organization",
+        member: "Member",
+        admin: "Admin",
+        organisations: "Organisations",
+        sbs: "Application",
+        collaborations: "Collaborations",
     },
     collaborations: {
         dashboard: "Dashboard",
         title: "My Collaborations",
         requests: "Join Requests",
-        authorisations: "Authorisations",
+        authorisations: "Authorisation Groups",
         invitations: "Invitations",
         services: "Services",
-        profile: "Profile",
         add: "New",
         searchPlaceHolder: "SEARCH FOR ALL COLLABORATIONS..."
     },
@@ -156,6 +164,7 @@ I18n.translations.en = {
     collaborationDetail: {
         title: "Details collaboration {{name}}",
         backToCollaborations: "Back to my collaborations",
+        backToHome: "Back to my dashboard",
         backToCollaborationDetail: "Back to my collaboration {{name}}",
         update: "Update",
         delete: "Delete",
@@ -164,7 +173,8 @@ I18n.translations.en = {
         flash: {
             updated: "Collaboration {{name}} was successfully updated",
             deleted: "Collaboration {{name}} was successfully deleted",
-            memberDeleted: "Membership of {{name}} was successfully deleted"
+            memberDeleted: "Membership of {{name}} was successfully deleted",
+            memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
         },
         infoBlocks: "Dashboard {{name}}",
         searchPlaceHolder: "Search for members",
@@ -257,6 +267,9 @@ I18n.translations.en = {
         required: "The {{attribute}} is required for an organisation",
         administrators: "Administrators",
         administratorsPlaceholder: "Invite administrators by email",
+        filePlaceholder: "Select csv or txt file...",
+        fileImportResult: "Imported {{nbr}} emails from {{fileName}}",
+        fileExtensionError: "Only .csv extension files are allowed",
         administratorsTooltip: "Administrators of an organisation <br/>can create collaborations in their organisations.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
         role: "Role",
         admin: "Administrator",
@@ -332,6 +345,8 @@ I18n.translations.en = {
         expiryDateTooltip: "The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         message: "Message",
         messageTooltip: "The user {{name}} has invited you with this message",
+        fileImportResult: "Imported {{nbr}} emails from {{fileName}}",
+        fileExtensionError: "Only .csv extension files are allowed",
         inviter: "Inviter",
         decline: "Decline",
         accept: "Accept",
@@ -342,6 +357,7 @@ I18n.translations.en = {
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
         expired: "This invitation expired on {{expiry_date}} and can not be accepted anymore",
+        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiry date to 14 days",
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} is declined",
             inviteDeleted: "Invitation for organisation {{name}} is deleted",
@@ -361,10 +377,11 @@ I18n.translations.en = {
         inviteesTooltip: "This personal message is<br/>included in the mail send <br/>to the persons you invite",
         intendedRole: "Role",
         intendedRoleTooltip: "The intended role for all invitees.<br/><br/>Administrators of an collaboration<br/>can edit their collaborations and<br/>invite members.<br/>Members can only use the services of <br/>their authorisation groups",
+        invitee_email: "Invitee email",
         requiredEmail: "At least one email is required for an invitation for a collaboration",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
-        inviteesMessagesTooltip: "Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
+        inviteesMessagesTooltip: "Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.<br/>You can also upload a csv file<br/>with comma-separated email addresses.",
         inviteesMessagePlaceholder: "Personal message to the invitees",
         inviter: "Inviter",
         decline: "Decline",
@@ -376,6 +393,10 @@ I18n.translations.en = {
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
         expired: "This invitation expired on {{expiry_date}} and can not be accepted anymore",
+        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiry date to 14 days",
+        filePlaceholder: "Select csv or txt file...",
+        fileImportResult: "Imported {{nbr}} emails from {{fileName}}",
+        fileExtensionError: "Only .csv extension files are allowed",
         expiryDate: "Expiry date",
         expiryDateTooltip: "The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         flash: {
@@ -412,6 +433,7 @@ I18n.translations.en = {
         membersTitle: "Members of authorisation group {{name}}",
         titleNew: "Create new authorisation group",
         titleUpdate: "Update authorisation group {{name}}",
+        titleReadOnly: "Authorisation group {{name}}",
         backToCollaborationAuthorisationGroups: "Back to the authorisation groups of my collaboration {{name}}",
         new: "New",
         searchPlaceHolder: "Search for authorisation groups",
@@ -447,9 +469,11 @@ I18n.translations.en = {
         },
         searchServices: "Search, select and add services to the available services for the authorisation group {{name}}",
         connectedServices: "Connected services to {{name}}",
+        deleteServiceWarning: "Warning: Unlinking services from the authorisation group deletes all user information specific for that service and all linked memberships",
         deleteServiceTooltip: "Make this service unavailable in<br/> the authorisation group {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>It is only not available anymore<br/> for this authorisation groups anymore",
         searchMembers: "Search, select and add members to the authorisation group {{name}}",
         connectedMembers: "Members of {{name}}",
+        deleteMemberWarning: "Warning: Unlinking memberships from the authorisation group deletes all user information specific for that membership and all linked services",
         deleteMemberTooltip: "Remove this member from<br/> the authorisation group {{name}}.<br/><br/><strong>NOTE</strong>: the user itself is NOT deleted.<br/>He / she is only no longer a <br/> member of this authorisation groups anymore",
         service: {
             actions: "",
@@ -467,6 +491,41 @@ I18n.translations.en = {
         },
 
     },
+    userServiceProfile: {
+        title: "My user service profiles",
+        titleUpdate: "Update user service profile {{name}}",
+        backToServices: "Back to my service profiles",
+        status: "Status",
+        statusPlaceholder: "The status of the user service profile",
+        statusValues: {
+            active: "Active",
+            in_active: "In-active"
+        },
+        open: "",
+        service__name: "Service",
+        authorisation__name: "Authorisation",
+        collaboration_membership__collaboration__name: "Collaboration",
+        name: "Name",
+        namePlaceholder: "Your name to use for this user service profile",
+        email: "Email",
+        emailPlaceholder: "Your email to use for this user service profile",
+        address: "Address",
+        addressPlaceholder: "Your address to use for this user service profile",
+        identifier: "Identifier",
+        identifierPlaceholder: "Your identifier to use for this user service profile",
+        identifierTooltip: "Your unique identifier wihtin<br/> the context of this<br/>user service profile",
+        ssh_key: "SSS public key",
+        ssh_keyPlaceholder: "Your public SSh key to login on the service",
+        ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP for this service.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a mac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
+        sshKeyError: "Invalid SSH key",
+        role: "Role",
+        searchPlaceHolder: "Search in your user service profiles...",
+        update: "Update",
+        flash: {
+            updated: "User service profile {{name}} was successfully updated",
+        },
+
+    },
     autocomplete: {
         name: "Name",
         description: "Description",
@@ -478,6 +537,9 @@ I18n.translations.en = {
         noResults: "No results",
         resultsLimited: "More entries matched than can be shown, please narrow your search term..."
 
+    },
+    inputField: {
+        fileImport: "File import",
     },
     confirmationDialog: {
         title: "Please confirm",

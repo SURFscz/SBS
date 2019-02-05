@@ -83,7 +83,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("UUC", collaboration["organisation"]["name"])
 
     def test_my_collaborations(self):
-        self.login()
+        self.login("urn:admin")
         my_collaborations = self.get("/api/collaborations")
         self.assertEqual(1, len(my_collaborations))
         collaboration = AbstractTest.find_by_name(my_collaborations, ai_computing_name)
@@ -93,8 +93,13 @@ class TestCollaboration(AbstractTest):
         self.assertTrue(len(collaboration["invitations"]) > 0)
 
         collaboration = self.get(f"/api/collaborations/{collaboration['id']}")
-        researcher = list(filter(lambda cm: cm["role"] == "researcher", collaboration["collaboration_memberships"]))[0]
+        researcher = list(filter(lambda cm: cm["role"] == "member", collaboration["collaboration_memberships"]))[0]
         self.assertEqual("John Doe", researcher["user"]["name"])
+
+    def test_my_collaborations_no_admin(self):
+        self.login("urn:james")
+        my_collaborations = self.get("/api/collaborations")
+        self.assertEqual(0, len(my_collaborations))
 
     def test_collaboration_name_exists(self):
         res = self.get("/api/collaborations/name_exists", query_data={"name": ai_computing_name})
