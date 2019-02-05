@@ -52,7 +52,6 @@ def organisation_invitations_accept():
 
     if organisation_invitation.expiry_date and organisation_invitation.expiry_date < datetime.datetime.now():
         delete(OrganisationInvitation, organisation_invitation.id)
-        db.session.commit()
         raise Conflict(f"The invitation has expired at {organisation_invitation.expiry_date}")
 
     organisation = organisation_invitation.organisation
@@ -66,7 +65,6 @@ def organisation_invitations_accept():
 
     organisation.organisation_memberships.append(organisation_membership)
     organisation.organisation_invitations.remove(organisation_invitation)
-    db.session.commit()
     return None, 201
 
 
@@ -77,7 +75,6 @@ def organisation_invitations_decline():
         .filter(OrganisationInvitation.hash == current_request.get_json()["hash"]) \
         .one()
     db.session.delete(organisation_invitation)
-    db.session.commit()
     return None, 201
 
 

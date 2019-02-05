@@ -64,7 +64,6 @@ def save_authorisation_group():
         statement = f"INSERT into services_authorisation_groups (service_id, authorisation_group_id) VALUES {values}"
         sql = text(statement)
         db.engine.execute(sql)
-        db.session.commit()
     return res
 
 

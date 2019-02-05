@@ -37,8 +37,6 @@ def add_authorisation_group_members():
                                          created_by=user["uid"], updated_by=["uid"], identifier=str(uuid.uuid4()))
             db.session.add(profile)
 
-    db.session.commit()
-
     return (None, 201) if result_set.rowcount > 0 else (None, 404)
 
 

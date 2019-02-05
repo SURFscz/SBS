@@ -2,9 +2,12 @@ import json
 import logging
 import os
 from functools import wraps
+
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized
+
+from server.db.db import db
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
@@ -55,6 +58,13 @@ def _audit_trail():
         logger.info(f"Path {current_request.path} {method} called by {user_name} {msg}")
 
 
+def _commit_database(status):
+    if status is 500:
+        db.session.rollback()
+    else:
+        db.session.commit()
+
+
 def json_endpoint(f):
     @wraps(f)
     def json(*args, **kwargs):
@@ -64,6 +74,7 @@ def json_endpoint(f):
             response = jsonify(body)
             _audit_trail()
             _add_custom_header(response)
+            _commit_database(status)
             return response, status
         except Exception as e:
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e))
@@ -77,6 +88,7 @@ def json_endpoint(f):
             _add_custom_header(response)
             if response.status_code == 401:
                 response.headers.set("WWW-Authenticate", "Basic realm=\"Please login\"")
+            _commit_database(response.status_code)
             return response
 
     return json

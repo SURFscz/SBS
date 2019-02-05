@@ -124,7 +124,6 @@ def me():
         if not user:
             user = User(uid=uid, name="todo", email="todo", created_by="system", updated_by="system")
             user = db.session.merge(user)
-            db.session.commit()
 
         is_admin = _store_user_in_session(user)
         json_user = jsonify(user).json
