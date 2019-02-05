@@ -64,7 +64,7 @@ jobs:
         - CI=true yarn test
         - yarn build
       after_success:
-        - codecov
+        - codecov --token="ae851f67-c91a-4063-8bd6-a9fc74b3173e"
 
     #######################################################
     ## Build and upload docker images #####################
