@@ -15,7 +15,7 @@ fi
 IMAGE_TAG=${IMAGE_NAME}:${IMAGE_VERSION}
 
 # build
-docker build -t ${IMAGE_TAG} server/
+docker build -t ${IMAGE_TAG} .
 
 # also tag this image with the current branch name if we're autobuilding in travis
 if [ -n "$TRAVIS_BRANCH" ]
