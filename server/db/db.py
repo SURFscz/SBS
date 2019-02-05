@@ -160,6 +160,8 @@ class Service(Base, db.Model):
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
 
 class Collaboration(Base, db.Model):

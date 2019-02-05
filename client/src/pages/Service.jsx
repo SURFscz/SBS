@@ -18,6 +18,7 @@ import SelectField from "../components/SelectField";
 import {serviceStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {getParameterByName} from "../utils/QueryParameters";
+import moment from "moment";
 
 class Service extends React.Component {
 
@@ -240,6 +241,10 @@ class Service extends React.Component {
                                 placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
                                 onChange={e => this.setState({accepted_user_policy: e.target.value})}
                                 toolTip={I18n.t("service.accepted_user_policyTooltip")}/>
+
+                    {!isNew && <InputField value={moment(service.created_at * 1000).format("LLLL")}
+                                           disabled={true}
+                                           name={I18n.t("organisation.created")}/>}
 
                     {isNew &&
                     <section className="actions">
