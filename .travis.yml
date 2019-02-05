@@ -55,7 +55,7 @@ jobs:
             GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
           "
       script:
-        - pytest --cov=server --cov-report= server/test
+        - pytest --cov=server server/test
         - flake8 ./server/
         - yarn -v
         - node -v
