@@ -257,7 +257,8 @@ class Collaborations extends React.Component {
     renderCollaborationRow = (collaboration, user, names) => {
         return (
             <tr key={collaboration.id} onClick={this.openCollaboration(collaboration)}>
-                {names.map(name => <td className={name} key={name}>{this.getCollaborationValue(collaboration, user, name)}</td>)}
+                {names.map(name => <td className={name}
+                                       key={name}>{this.getCollaborationValue(collaboration, user, name)}</td>)}
             </tr>
         );
     };
@@ -303,7 +304,7 @@ class Collaborations extends React.Component {
                            placeholder={I18n.t("collaborations.searchPlaceHolder")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
                     {(user.admin || isOrganisationAdmin) && <Button onClick={this.newCollaboration}
-                                           txt={I18n.t("collaborations.add")}/>
+                                                                    txt={I18n.t("collaborations.add")}/>
                     }
                 </div>
                 {showAutoCompletes && <Autocomplete suggestions={suggestions}
@@ -324,7 +325,8 @@ class Collaborations extends React.Component {
         const isOrganisationAdmin = (user.organisation_memberships || []).some(membership => membership.role === "admin");
         return (
             <div className="mod-collaborations">
-                {(user.admin || isOrganisationAdmin) && this.renderSearch(collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected, isOrganisationAdmin)}
+                {user.admin &&
+                this.renderSearch(collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected, isOrganisationAdmin)}
                 <div className="title">
                     <span>{I18n.t("collaborations.dashboard")}</span>
                 </div>
@@ -338,6 +340,9 @@ class Collaborations extends React.Component {
                 </section>
                 <div className="title">
                     <span>{I18n.t("collaborations.title")}</span>
+                    {(isOrganisationAdmin && !user.admin) && <Button onClick={this.newCollaboration}
+                                                    txt={I18n.t("collaborations.add")}/>
+                    }
                 </div>
                 {this.renderCollaborations(sortedCollaborations, user, sorted, reverse)}
             </div>);

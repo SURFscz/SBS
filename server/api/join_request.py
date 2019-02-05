@@ -68,7 +68,6 @@ def new_join_request():
                                user_id=user_id,
                                collaboration=collaboration)
     join_request = db.session.merge(join_request)
-    db.session.commit()
 
     mail_collaboration_join_request({
         "salutation": "Dear",
@@ -108,8 +107,6 @@ def approve_join_request():
 
     collaboration.collaboration_memberships.append(collaboration_membership)
     collaboration.join_requests.remove(join_request)
-    db.session.commit()
-
     return None, 201
 
 
@@ -130,8 +127,6 @@ def deny_join_request():
                                         [join_request.user.email])
 
     db.session.delete(join_request)
-    db.session.commit()
-
     return None, 201
 
 

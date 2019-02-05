@@ -8,7 +8,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_allow_impersonation, is_admin_user
+from server.api.security import confirm_allow_impersonation, is_admin_user, current_user_id
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
 
@@ -57,14 +57,16 @@ def collaboration_search():
     q = current_request.args.get("q")
     organisation_id = current_request.args.get("organisation_id", None)
     collaboration_id = current_request.args.get("collaboration_id", None)
+    organisation_admins = current_request.args.get("organisation_admins", None)
+    collaboration_admins = current_request.args.get("collaboration_admins", None)
 
     base_query = "SELECT u.id, u.uid, u.name, u.email, o.name, om.role, c.name, cm.role  FROM users u "
 
-    organisation_join = " INNER " if organisation_id else "LEFT "
+    organisation_join = " INNER " if organisation_id or organisation_admins else "LEFT "
     base_query += f"{organisation_join} JOIN organisation_memberships om ON om.user_id = u.id " \
         f"{organisation_join} JOIN organisations o ON o.id = om.organisation_id "
 
-    collaboration_join = " INNER " if collaboration_id else "LEFT "
+    collaboration_join = " INNER " if collaboration_id or collaboration_admins else "LEFT "
     base_query += f"{collaboration_join} JOIN collaboration_memberships cm ON cm.user_id = u.id " \
         f"{collaboration_join} JOIN collaborations c ON c.id = cm.collaboration_id "
 
@@ -78,6 +80,12 @@ def collaboration_search():
 
     if collaboration_id:
         base_query += f"AND cm.collaboration_id = {collaboration_id} "
+
+    if organisation_admins:
+        base_query += f"AND om.role = 'admin'"
+
+    if collaboration_admins:
+        base_query += f"AND cm.role = 'admin'"
 
     base_query += f" ORDER BY u.id  LIMIT {full_text_search_autocomplete_limit}"
     sql = text(base_query)
@@ -116,7 +124,6 @@ def me():
         if not user:
             user = User(uid=uid, name="todo", email="todo", created_by="system", updated_by="system")
             user = db.session.merge(user)
-            db.session.commit()
 
         is_admin = _store_user_in_session(user)
         json_user = jsonify(user).json
@@ -127,13 +134,26 @@ def me():
     return user, 200
 
 
+@user_api.route("/refresh", strict_slashes=False)
+@json_endpoint
+def refresh():
+    user_id = current_user_id()
+    user = _user_query().filter(User.id == user_id).one()
+    is_admin = {"admin": is_admin_user(user.uid), "guest": False}
+    json_user = jsonify(user).json
+    return {**json_user, **is_admin}, 200
+
+
 @user_api.route("/other", strict_slashes=False)
 @json_endpoint
 def other():
     confirm_allow_impersonation()
 
     uid = current_request.args.get("uid")
-    return _user_query().filter(User.uid == uid).one(), 200
+    user = _user_query().filter(User.uid == uid).one()
+    is_admin = {"admin": is_admin_user(user.uid), "guest": False}
+    json_user = jsonify(user).json
+    return {**json_user, **is_admin}, 200
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)

@@ -4,7 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin
+from server.api.security import confirm_collaboration_admin, confirm_collaboration_admin_or_authorisation_group_member
 from server.db.db import AuthorisationGroup, CollaborationMembership
 from server.db.db import db
 from server.db.models import update, save, delete
@@ -29,7 +29,7 @@ def name_exists():
 @authorisation_group_api.route("/<authorisation_group_id>/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def authorisation_group_by_id(authorisation_group_id, collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
+    confirm_collaboration_admin_or_authorisation_group_member(collaboration_id, authorisation_group_id)
 
     authorisation_group = AuthorisationGroup.query \
         .join(AuthorisationGroup.collaboration) \
@@ -55,14 +55,15 @@ def save_authorisation_group():
 
     confirm_collaboration_admin(data["collaboration_id"])
 
+    service_ids = data["service_ids"] if "service_ids" in data else None
+
     res = save(AuthorisationGroup, custom_json=data, allow_child_cascades=False)
-    if "service_ids" in data:
+    if service_ids:
         authorisation_group_id = res[0].id
-        values = ",".join(list(map(lambda id: f"({id},{authorisation_group_id})", data["service_ids"])))
+        values = ",".join(list(map(lambda id: f"({id},{authorisation_group_id})", service_ids)))
         statement = f"INSERT into services_authorisation_groups (service_id, authorisation_group_id) VALUES {values}"
         sql = text(statement)
         db.engine.execute(sql)
-
     return res
 
 

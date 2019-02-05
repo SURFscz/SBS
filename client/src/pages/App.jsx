@@ -5,7 +5,7 @@ import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
 import Navigation from "../components/Navigation";
-import {me, other, reportError} from "../api";
+import {me, other, refreshUser, reportError} from "../api";
 import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/ErrorDialog";
@@ -34,6 +34,8 @@ import Invitation from "./Invitation";
 import Impersonate from "./Impersonate";
 import {emitter} from "../utils/Events";
 import {isEmpty} from "../utils/Utils";
+import UserServiceProfiles from "./UserServiceProfiles";
+import UserServiceProfileDetails from "./UserServiceProfileDetails";
 
 addIcons();
 
@@ -122,6 +124,13 @@ class App extends React.Component {
         }
     };
 
+    refreshUserMemberships = () => {
+        refreshUser().then(json => {
+                const {impersonator} = this.state;
+                this.setState({currentUser: json, impersonator: impersonator});
+        });
+    };
+
     render() {
         const {
             loading, errorDialogAction, errorDialogOpen, currentUser, impersonator
@@ -135,7 +144,7 @@ class App extends React.Component {
                     {currentUser && <div>
                         <Flash/>
                         <Header currentUser={currentUser} impersonator={impersonator}/>
-                        <Navigation currentUser={currentUser} impersonator={impersonator} {...this.props}/>
+                        <Navigation currentUser={currentUser} impersonator={impersonator}/>
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>
                     </div>}
@@ -196,7 +205,8 @@ class App extends React.Component {
                                render={props => <NewOrganisation user={currentUser} {...props}/>}/>
 
                         <Route path="/new-collaboration"
-                               render={props => <NewCollaboration user={currentUser} {...props}/>}/>
+                               render={props => <NewCollaboration user={currentUser}
+                                                                  refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
                         <Route path="/collaboration-services/:collaboration_id"
                                render={props => <CollaborationServices user={currentUser} {...props}/>}/>
@@ -207,10 +217,17 @@ class App extends React.Component {
                         <Route path="/collaboration-authorisation-group-details/:collaboration_id/:id"
                                render={props => <AuthorisationGroup user={currentUser} {...props}/>}/>
 
+                        <Route path="/user-service-profiles"
+                               render={props => <UserServiceProfiles user={currentUser} {...props}/>}/>
+
+                        <Route path="/user-service-profile-details/:id"
+                               render={props => <UserServiceProfileDetails user={currentUser} {...props}/>}/>
+
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 
                         <Route path="/impersonate"
-                               render={props => <Impersonate user={currentUser}  impersonator={impersonator} {...props}/>}/>
+                               render={props => <Impersonate user={currentUser}
+                                                             impersonator={impersonator} {...props}/>}/>
 
                         <Route component={NotFound}/>
                     </Switch>

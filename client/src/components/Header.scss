@@ -73,15 +73,24 @@
           }
 
           svg.fa-caret-down, svg.fa-caret-up {
-            margin-left: 5px;
+            margin-left: 10px;
           }
         }
       }
 
       li.impersonator {
-        color: $red;
         padding-right: 35px;
-        font-size: 20px;
+        font-size: 22px;
+        cursor: pointer;
+
+        svg.fa-user-secret {
+          color: $red;
+
+          &:hover {
+            color: darken($red, 10%);
+            font-size: 23px;
+          }
+        }
       }
     }
 

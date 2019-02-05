@@ -8,8 +8,8 @@ from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin, confirm_organization_admin, is_application_admin, \
-    current_user_id
+from server.api.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
+    current_user_id, confirm_collaboration_member
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
@@ -107,6 +107,29 @@ def members():
     return users, 200
 
 
+@collaboration_api.route("/my_lite", strict_slashes=False)
+@json_endpoint
+def my_collaborations_lite():
+    user_id = current_user_id()
+    res = Collaboration.query \
+        .join(Collaboration.collaboration_memberships) \
+        .filter(CollaborationMembership.user_id == user_id) \
+        .all()
+    return res, 200
+
+
+@collaboration_api.route("/lite/<collaboration_id>", strict_slashes=False)
+@json_endpoint
+def collaboration_lite_by_id(collaboration_id):
+    confirm_collaboration_member(collaboration_id)
+
+    collaboration = Collaboration.query \
+        .join(Collaboration.organisation) \
+        .options(contains_eager(Collaboration.organisation)) \
+        .filter(Collaboration.id == collaboration_id).one()
+    return collaboration, 200
+
+
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_by_id(collaboration_id):
@@ -143,7 +166,7 @@ def collaboration_by_id(collaboration_id):
 @json_endpoint
 def my_collaborations():
     user_id = current_user_id()
-    res = Collaboration.query \
+    query = Collaboration.query \
         .join(Collaboration.organisation) \
         .outerjoin(Collaboration.authorisation_groups) \
         .outerjoin(Collaboration.invitations) \
@@ -158,8 +181,12 @@ def my_collaborations():
                  .contains_eager(JoinRequest.user)) \
         .options(contains_eager(Collaboration.services)) \
         .join(Collaboration.collaboration_memberships) \
-        .filter(CollaborationMembership.user_id == user_id) \
-        .all()
+        .filter(CollaborationMembership.user_id == user_id)
+
+    if not is_application_admin():
+        query = query.filter(CollaborationMembership.role == "admin")
+
+    res = query.all()
     return res, 200
 
 
@@ -189,8 +216,6 @@ def collaboration_invites():
             "base_url": current_app.app_config.base_url,
             "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
         }, collaboration, [administrator])
-    db.session.commit()
-
     return None, 201
 
 
@@ -199,7 +224,7 @@ def collaboration_invites():
 def save_collaboration():
     data = current_request.get_json()
 
-    confirm_organization_admin(data["organisation_id"])
+    confirm_organisation_admin(data["organisation_id"])
 
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
@@ -226,8 +251,6 @@ def save_collaboration():
     admin_collaboration_membership = CollaborationMembership(role="admin", user=user, collaboration=collaboration,
                                                              created_by=user.uid)
     db.session.merge(admin_collaboration_membership)
-    db.session.commit()
-
     return res
 
 

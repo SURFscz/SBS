@@ -69,12 +69,7 @@ def save_service():
 @service_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_service():
-    json_dict = current_request.get_json()
-    # Contract for Service update
-    if "collaborations" in json_dict:
-        del json_dict["collaborations"]
-
-    return update(Service, custom_json=json_dict)
+    return update(Service, allow_child_cascades=False)
 
 
 @service_api.route("/<service_id>", methods=["DELETE"], strict_slashes=False)
