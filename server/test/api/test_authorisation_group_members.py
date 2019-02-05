@@ -23,3 +23,35 @@ class TestAuthorisationGroupMembers(AbstractTest):
         user_service_profile = UserServiceProfile.query.filter(
             UserServiceProfile.collaboration_membership_id == member.id).one()
         self.assertEqual(the_boss.name, user_service_profile.collaboration_membership.user.name)
+
+    def test_delete_all_authorisation_group_members(self):
+        authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
+        count = len(authorisation_group.collaboration_memberships)
+
+        self.assertEqual(1, count)
+
+        self.login("urn:admin")
+        self.delete("/api/authorisation_group_members/delete_all_members",
+                    primary_key=f"{authorisation_group.id}/{authorisation_group.collaboration_id}")
+
+        authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
+        count = len(authorisation_group.collaboration_memberships)
+
+        self.assertEqual(0, count)
+
+    def test_delete_authorisation_group_member(self):
+        authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
+        count = len(authorisation_group.collaboration_memberships)
+        collaboration_membership_id = authorisation_group.collaboration_memberships[0].id
+        self.assertEqual(1, count)
+
+        self.login("urn:admin")
+        self.delete("/api/authorisation_group_members",
+                    primary_key=f"{authorisation_group.id}/"
+                    f"{collaboration_membership_id}/"
+                    f"{authorisation_group.collaboration_id}")
+
+        authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
+        count = len(authorisation_group.collaboration_memberships)
+
+        self.assertEqual(0, count)

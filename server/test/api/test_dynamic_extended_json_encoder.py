@@ -1,14 +1,20 @@
+import uuid
+import time
+from datetime import date
+
+from flask import jsonify
+
 from server.test.abstract_test import AbstractTest
 
 
 class TestDynamicExtendedJSONEncoder(AbstractTest):
 
-    def test_encoding_circular_reference(self):
-        pass
-    #     collaboration = Collaboration(name="collaboration")
-    #     member = CollaborationMembership(role="admin", collaboration=collaboration)
-    #     collaboration.collaboration_memberships = [member]
-    #     res = jsonify(collaboration)
-    #     membership = res.json["collaboration_memberships"][0]
-    #     self.assertTrue("collaboration" not in membership)
-    #     self.assertEqual("admin", membership["role"])
+    def test_date_encoding(self):
+        _uuid = uuid.uuid4()
+        today = date.today()
+
+        obj = {"1": _uuid, "2": today}
+        res = jsonify(obj).json
+
+        self.assertEqual(res["1"], str(_uuid))
+        self.assertEqual(res["2"], time.mktime(today.timetuple()))

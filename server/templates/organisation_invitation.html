@@ -7,7 +7,7 @@
     Please read below what steps you must take to accept this invitation.
 </p>
 
-{% if invitation.message is defined and invitation.message|length %}
+{% if invitation.message is defined and invitation.message != None and invitation.message|length %}
 <hr/>
 <p>
     <strong>Personal Message from {{ invitation.user.name }}:</strong>

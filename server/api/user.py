@@ -12,7 +12,7 @@ from server.api.security import confirm_allow_impersonation, is_admin_user, curr
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
 
-UID_HEADER_NAME = "MELLON_cmuid"
+UID_HEADER_NAME = "Oidc-Claim-Cmuid"
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 

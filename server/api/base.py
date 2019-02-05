@@ -59,7 +59,7 @@ def _audit_trail():
 
 
 def _commit_database(status):
-    if status is 500:
+    if status == 500:
         db.session.rollback()
     else:
         db.session.commit()

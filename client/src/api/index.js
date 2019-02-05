@@ -83,7 +83,7 @@ export function health() {
 //Users
 export function me() {
     //TODO - temporary local hack
-    const headers = {"MELLON_cmuid": "urn:john"};
+    const headers = {"Oidc-Claim-Cmuid": "urn:john"};
     return fetchJson("/api/users/me", {}, headers, false);
 }
 
@@ -235,7 +235,7 @@ export function joinRequestById(id) {
     return fetchJson(`/api/join_requests/${id}`);
 }
 
-export function inviteForCollaboration(clientData) {
+export function joinRequestForCollaboration(clientData) {
     return postPutJson("/api/join_requests", clientData, "post");
 }
 

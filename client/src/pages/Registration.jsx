@@ -1,5 +1,5 @@
 import React from "react";
-import {collaborationByName, inviteForCollaboration} from "../api";
+import {collaborationByName, joinRequestForCollaboration} from "../api";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import I18n from "i18n-js";
 import "./Registration.scss";
@@ -93,7 +93,7 @@ class Registration extends React.Component {
             <Button className="start" disabled={!this.form2Invariant(motivation, agreedWithPolicy)}
                     onClick={() => {
                         this.setState({step: "3"});
-                        inviteForCollaboration(this.state);
+                        joinRequestForCollaboration(this.state);
                     }} txt={I18n.t("registration.request")}/>
         </div>);
     };

@@ -3,7 +3,7 @@ from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
 
 from server.db.db import CollaborationMembership, OrganisationMembership, \
-    AuthorisationGroup
+    AuthorisationGroup, UserServiceProfile
 
 
 def is_admin_user(uid):
@@ -54,7 +54,7 @@ def current_user_name():
 
 
 def confirm_allow_impersonation():
-    if not session["user"]["admin"]:
+    if "user" not in session or "admin" not in session["user"] or not session["user"]["admin"]:
         raise Forbidden()
 
 
@@ -98,13 +98,26 @@ def confirm_collaboration_admin_or_authorisation_group_member(collaboration_id, 
         user_id = current_user_id()
         is_collaboration_admin = _is_collaboration_admin(user_id, collaboration_id)
         if not is_collaboration_admin:
-            count = AuthorisationGroup.query.options(load_only("id")).join(
-                AuthorisationGroup.collaboration_memberships).filter(
-                AuthorisationGroup.id == authorisation_group_id).filter(
-                CollaborationMembership.user_id == user_id).filter(
-                AuthorisationGroup.collaboration_id == collaboration_id).count()
+            count = AuthorisationGroup.query.options(load_only("id")) \
+                .join(AuthorisationGroup.collaboration_memberships) \
+                .filter(AuthorisationGroup.id == authorisation_group_id) \
+                .filter(CollaborationMembership.user_id == user_id) \
+                .filter(AuthorisationGroup.collaboration_id == collaboration_id) \
+                .count()
             return count > 0
         return is_collaboration_admin
+
+    confirm_write_access(override_func=override_func)
+
+
+def confirm_owner_of_user_service_profile():
+    def override_func():
+        user_id = current_user_id()
+        count = UserServiceProfile.query.options(load_only("id")) \
+            .join(UserServiceProfile.collaboration_membership) \
+            .filter(CollaborationMembership.user_id == user_id) \
+            .count()
+        return count > 0
 
     confirm_write_access(override_func=override_func)
 

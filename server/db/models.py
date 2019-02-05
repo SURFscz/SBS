@@ -1,6 +1,7 @@
 import datetime
 
 from flask import request, session, g as request_context
+from werkzeug.exceptions import BadRequest
 
 from server.api.security import current_user_uid
 from server.db.db import db, User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
@@ -28,7 +29,7 @@ def validate(cls, json_dict, is_new_instance=True):
         required_attributes = filter(lambda k: not required_columns[k].primary_key, required_attributes)
     missing_attributes = list(filter(lambda key: key not in json_dict, required_attributes))
     if len(missing_attributes) > 0:
-        raise Exception(f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}")
+        raise BadRequest(f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}")
 
 
 def _merge(cls, d):
@@ -54,14 +55,11 @@ def add_audit_trail_data(cls, json_dict):
             add_audit_trail_data(deserialization_mapping[rel], child)
 
 
-def save(cls, custom_json=None, pre_save_callback=None, allow_child_cascades=True):
+def save(cls, custom_json=None, allow_child_cascades=True):
     if not request.is_json and custom_json is None:
         return None, 415
 
     json_dict = request.get_json() if custom_json is None else custom_json
-
-    if pre_save_callback:
-        json_dict = pre_save_callback(json_dict)
 
     add_audit_trail_data(cls, json_dict)
     json_dict = transform_json(cls, json_dict, allow_child_cascades=allow_child_cascades)
@@ -79,9 +77,9 @@ def update(cls, custom_json=None, allow_child_cascades=True):
     add_audit_trail_data(cls, json_dict)
 
     pk = list({k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys())[0]
-    instance = cls.query.filter(cls.__dict__[pk] == json_dict[pk])
-    if not instance:
-        return None, 404
+
+    # This will raise a NoResultFound and result in a 404
+    cls.query.filter(cls.__dict__[pk] == json_dict[pk]).one()
     validate(cls, json_dict, is_new_instance=False)
     return _merge(cls, json_dict), 201
 
