@@ -103,7 +103,8 @@ def approve_join_request():
     collaboration_membership = CollaborationMembership(user_id=user_id,
                                                        collaboration=collaboration,
                                                        role="member",
-                                                       created_by=current_user_uid())
+                                                       created_by=current_user_uid(),
+                                                       updated_by=current_user_uid())
 
     collaboration.collaboration_memberships.append(collaboration_membership)
     collaboration.join_requests.remove(join_request)

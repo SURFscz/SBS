@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 from functools import wraps
 
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
@@ -11,7 +10,7 @@ from server.db.db import db
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
-white_listing = ["health", "info", "api/users/me", "api/collaborations/find_by_name"]
+white_listing = ["health", "api/users/me", "api/collaborations/find_by_name"]
 
 
 def auth_filter(config):
@@ -98,13 +97,3 @@ def json_endpoint(f):
 @json_endpoint
 def health():
     return {"status": "UP"}, 200
-
-
-@base_api.route("/info", strict_slashes=False)
-@json_endpoint
-def info():
-    file = f"{os.path.dirname(os.path.realpath(__file__))}/git.info"
-    if os.path.isfile(file):
-        with open(file) as f:
-            return {"git": f.read()}, 200
-    return {"git": "no.info"}, 200

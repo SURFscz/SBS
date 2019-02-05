@@ -151,10 +151,13 @@ class CollaborationDetail extends React.Component {
         updateCollaborationMembershipRole(originalCollaboration.id, member.user.id, selectedOption.value)
             .then(() => {
                 this.componentWillMount();
-                setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {name: member.user.name, role: selectedOption.value}));
+                setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
+                    name: member.user.name,
+                    role: selectedOption.value
+                }));
             });
 
-    } ;
+    };
 
     doDeleteMember = member => () => {
         this.setState({confirmationDialogOpen: false});
@@ -427,7 +430,8 @@ class CollaborationDetail extends React.Component {
         );
     };
 
-    collaborationDetails = (name, alreadyExists, initial, description, accepted_user_policy, enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit) => {
+    collaborationDetails = (name, alreadyExists, initial, description, accepted_user_policy, enrollment,
+                            access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration) => {
         return <div className="collaboration-detail">
             <InputField value={name} onChange={e => {
                 this.setState({
@@ -480,6 +484,10 @@ class CollaborationDetail extends React.Component {
                         toolTip={I18n.t("collaboration.identifierTooltip")}
                         disabled={true}
                         copyClipBoard={true}/>
+
+            <InputField value={moment(originalCollaboration.created_at * 1000).format("LLLL")}
+                        disabled={true}
+                        name={I18n.t("organisation.created")}/>
 
             <SelectField value={organisation}
                          options={[organisation]}
@@ -545,7 +553,8 @@ class CollaborationDetail extends React.Component {
             <div className="title">
                 <p>{I18n.t("collaborationDetail.title", {name: originalCollaboration.name})}</p>
             </div>
-            {this.collaborationDetails(name, alreadyExists, initial, description, accepted_user_policy, enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit)}
+            {this.collaborationDetails(name, alreadyExists, initial, description, accepted_user_policy,
+                enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration)}
         </div>)
     }
 
