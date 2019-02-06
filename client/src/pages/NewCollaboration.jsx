@@ -197,13 +197,6 @@ class NewCollaboration extends React.Component {
                         attribute: I18n.t("collaboration.organisation_name").toLowerCase()
                     })}</span>}
 
-                    <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-
-                                placeholder={I18n.t("collaboration.messagePlaceholder")}
-                                name={I18n.t("collaboration.message")}
-                                toolTip={I18n.t("collaboration.messageTooltip")}
-                                multiline={true}/>
-
                     <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                                 placeholder={I18n.t("collaboration.administratorsPlaceholder")}
                                 name={I18n.t("collaboration.administrators")}
@@ -220,6 +213,14 @@ class NewCollaboration extends React.Component {
                                     <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>}
                             </div>)}
                     </section>
+
+                    <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+
+                                placeholder={I18n.t("collaboration.messagePlaceholder")}
+                                name={I18n.t("collaboration.message")}
+                                toolTip={I18n.t("collaboration.messageTooltip")}
+                                multiline={true}/>
+
                     <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("forms.submit")} onClick={this.submit}/>
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>

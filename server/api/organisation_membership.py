@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_write_access
+from server.auth.security import confirm_write_access
 from server.db.db import OrganisationMembership
 
 organisation_membership_api = Blueprint("organisation_membership_api", __name__,

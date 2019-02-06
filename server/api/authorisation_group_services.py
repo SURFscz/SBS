@@ -4,7 +4,7 @@ from flask import Blueprint, request as current_request
 from sqlalchemy import text
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin, current_user
+from server.auth.security import confirm_collaboration_admin, current_user
 from server.db.db import db, AuthorisationGroup, UserServiceProfile
 
 authorisation_group_services_api = Blueprint("authorisation_group_services_api", __name__,

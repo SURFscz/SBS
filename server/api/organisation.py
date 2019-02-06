@@ -7,7 +7,8 @@ from sqlalchemy.orm import joinedload, contains_eager
 from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid
+from server.auth.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid, \
+    is_application_admin
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
 from server.db.defaults import default_expiry_date
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -59,12 +60,14 @@ def organisation_search():
 @json_endpoint
 def my_organisations_lite():
     user_id = current_user_id()
-    organisations = Organisation.query \
-        .join(Organisation.organisation_memberships) \
-        .join(OrganisationMembership.user) \
-        .filter(OrganisationMembership.user_id == user_id) \
-        .filter(OrganisationMembership.role == "admin") \
-        .all()
+    query = Organisation.query
+    if not is_application_admin():
+        query = query \
+            .join(Organisation.organisation_memberships) \
+            .join(OrganisationMembership.user) \
+            .filter(OrganisationMembership.user_id == user_id) \
+            .filter(OrganisationMembership.role == "admin")
+    organisations = query.all()
     return organisations, 200
 
 

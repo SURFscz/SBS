@@ -8,7 +8,7 @@ from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
+from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit

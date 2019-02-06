@@ -2,7 +2,7 @@ from flask import Blueprint, request as current_request
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
-from server.api.security import current_user_id, confirm_collaboration_admin
+from server.auth.security import current_user_id, confirm_collaboration_admin
 from server.db.db import CollaborationMembership, db, UserServiceProfile, AuthorisationGroup
 
 collaboration_membership_api = Blueprint("collaboration_membership_api", __name__,

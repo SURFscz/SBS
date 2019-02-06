@@ -2,7 +2,7 @@ from flask import Blueprint, request as current_request
 from sqlalchemy import text
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin
+from server.auth.security import confirm_collaboration_admin
 from server.db.db import db
 
 collaborations_services_api = Blueprint("collaborations_services_api", __name__,

@@ -3,7 +3,7 @@ import datetime
 from flask import request, session, g as request_context
 from werkzeug.exceptions import BadRequest
 
-from server.api.security import current_user_uid
+from server.auth.security import current_user_uid
 from server.db.db import db, User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
     Invitation, Service, UserServiceProfile, AuthorisationGroup
 

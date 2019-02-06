@@ -86,7 +86,16 @@ export function config() {
 
 //Users
 export function me(config) {
-    const headers = (config.local) ? {"Oidc-Claim-Cmuid": "urn:john"} : {};
+    const headers = (config.local) ? {
+        "Oidc-Claim-Cmuid": "urn:john",
+        "Oidc-Claim-Nickname": "johny",
+        "Oidc-Claim-Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
+        "Oidc-Claim-Eduperson-Affiliation": "librarywalkin",
+        "Oidc-Claim-Schac-Home-Organisation": "scz.lab.surf.nl",
+        "Oidc-Claim-Family-Name": "Doe",
+        "Oidc-Claim-Given-Name": "John",
+        "Oidc-Claim-Email": "jdoe@example.org"
+    } : {};
     return fetchJson("/api/users/me", {}, headers, false);
 }
 

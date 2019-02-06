@@ -15,14 +15,18 @@ import {validEmailRegExp} from "../validations/regExps";
 
 import "./NewOrganisationInvitation.scss"
 import DateField from "../components/DateField";
+import {getParameterByName} from "../utils/QueryParameters";
 
 class NewOrganisationInvitation extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        const email = getParameterByName("email", window.location.search);
+        const administrators = !isEmpty(email) && validEmailRegExp.test(email.trim()) ? [email.trim()] : [];
+
         this.state = {
             organisation: undefined,
-            administrators: [],
+            administrators: administrators,
             fileName: null,
             email: "",
             fileEmails: [],
