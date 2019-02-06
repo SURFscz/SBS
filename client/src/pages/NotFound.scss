@@ -1,16 +1,51 @@
 @import "../stylesheets/vars.scss";
 
-.mod-not-found, .mod-server-error {
-    padding: 50px;
-    text-align: center;
-    margin: 50px 100px;
-    background-color: white;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-    border-radius: $br;
+.mod-not-found {
 
-    h1 {
-        font-size: 200%;
-        margin-bottom: 50px;
+    background-color: $background;
+    margin-bottom: $medium-padding;
+
+    div.title {
+        font-size: 22px;
+        color: $dark-grey;
+        max-width: $medium;
+        margin: 20px auto;
+        padding: 10px 0 5px 0;
+
+        p {
+            padding: 10px 0 10px 0;
+        }
+
+        a {
+            display: inline-block;
+            font-size: 16px;
+            text-transform: uppercase;
+            text-decoration: none;
+            margin: 10px 0;
+            color: $blue;
+
+            &:hover {
+                font-weight: bolder;
+            }
+
+            svg {
+                margin-right: 10px;
+            }
+        }
     }
 
+    .content {
+        max-width: $medium;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+        margin: 0 auto 25px auto;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 280px;
+
+        p.hero {
+            font-size: 202px;
+        }
+    }
 }
