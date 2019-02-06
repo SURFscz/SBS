@@ -139,7 +139,6 @@ class Home extends React.Component {
     };
 
     render() {
-        const {user} = this.props;
         const {collaborationMemberships, collaborations} = this.state;
 
         const userServiceProfiles = collaborationMemberships.map(membership => membership.user_service_profiles).flat();
@@ -147,7 +146,7 @@ class Home extends React.Component {
         return (
             <div className="mod-home">
                 <div className="title">
-                    <p>{I18n.t("home.title", {name: user.name})}</p>
+                    <p>{I18n.t("home.title")}</p>
                 </div>
                 <section className="info-block-container">
                     {this.renderUserProfileServices(userServiceProfiles)}
@@ -155,8 +154,7 @@ class Home extends React.Component {
                     {this.renderCollaborations(collaborations)}
 
                 </section>
-            </div>)
-            ;
+            </div>);
     };
 }
 

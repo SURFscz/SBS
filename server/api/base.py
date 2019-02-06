@@ -10,7 +10,7 @@ from server.db.db import db
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
-white_listing = ["health", "api/users/me", "api/collaborations/find_by_name"]
+white_listing = ["health", "config", "api/users/me", "api/collaborations/find_by_name"]
 
 
 def auth_filter(config):
@@ -97,3 +97,9 @@ def json_endpoint(f):
 @json_endpoint
 def health():
     return {"status": "UP"}, 200
+
+
+@base_api.route("/config", strict_slashes=False)
+@json_endpoint
+def config():
+    return {"local": current_app.config["LOCAL"]}, 200

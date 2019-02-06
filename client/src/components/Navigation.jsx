@@ -44,7 +44,7 @@ export default class Navigation extends React.PureComponent {
         return (
             <div className="navigation-container">
                 <div className="navigation">
-                    {this.renderItem("/home", "home")}
+                    {!currentUser.guest && this.renderItem("/home", "home")}
                     {window.location.pathname.indexOf("registration") > -1 && this.renderItem("/registration", "registration")}
                     {(currentUser.admin || isCollaborationAdmin || isOrganisationAdmin) && this.renderItem("/collaborations", "collaborations")}
                     {currentUser.admin && this.renderItem("/organisations", "organisations")}

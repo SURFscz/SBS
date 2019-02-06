@@ -23,6 +23,10 @@ I18n.translations.en = {
         services: "Services",
         impersonate: "Impersonate",
     },
+    login: {
+        title: "Welcome to the Collaboration Management System",
+        subTitle: "Please login..."
+    },
     home: {
         title: "My collaboration memberships",
         userServiceProfiles: "User service profiles",

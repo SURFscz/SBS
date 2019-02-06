@@ -95,6 +95,8 @@ app.config["TESTING"] = test
 app.config["MAIL_SERVER"] = config.mail.host
 app.config["MAIL_PORT"] = int(config.mail.port)
 app.config["OPEN_MAIL_IN_BROWSER"] = os.environ.get("OPEN_MAIL_IN_BROWSER", 0)
+app.config["LOCAL"] = is_local
+
 app.mail = Mail(app)
 
 app.json_encoder = DynamicExtendedJSONEncoder
