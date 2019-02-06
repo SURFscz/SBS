@@ -1,7 +1,8 @@
 from flask import session, g as request_context
 from werkzeug.exceptions import Forbidden
 
-from server.auth.security import is_admin_user, is_application_admin, confirm_allow_impersonation, confirm_write_access, \
+from server.auth.security import is_admin_user, is_application_admin, confirm_allow_impersonation, \
+    confirm_write_access, \
     confirm_collaboration_admin, confirm_collaboration_member, confirm_organisation_admin, \
     confirm_collaboration_admin_or_authorisation_group_member, current_user_name
 from server.db.db import CollaborationMembership, Collaboration, User, OrganisationMembership, Organisation, \
