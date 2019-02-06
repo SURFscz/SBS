@@ -266,7 +266,7 @@ class App extends React.Component {
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 
-                        <Route component={NotFound}/>
+                        <Route render={props => <NotFound currentUser={currentUser} {...props}/>}/>
                     </Switch>
                     <Footer/>
                 </div>

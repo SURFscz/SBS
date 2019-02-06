@@ -570,7 +570,8 @@ I18n.translations.en = {
     },
     not_found: {
         title: "404",
-        description_html: "The requested page could not be found"
+        description_html: "The requested page could not be found",
+        loginLink:"Consider to login..."
     },
     footer: {
         product: "Powered by SCZ",
