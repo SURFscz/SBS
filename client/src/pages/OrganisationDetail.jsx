@@ -135,7 +135,9 @@ class OrganisationDetail extends React.Component {
 
     invite = e => {
         stopEvent(e);
-        this.props.history.push(`/new-organisation-invite/${this.state.originalOrganisation.id}`);
+        const {query} = this.state;
+        const email = isEmpty(query) ? "" : `?email=${encodeURIComponent(query)}`;
+        this.props.history.push(`/new-organisation-invite/${this.state.originalOrganisation.id}${email}`);
     };
 
     validateOrganisationName = e =>

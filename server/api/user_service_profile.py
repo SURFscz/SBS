@@ -2,7 +2,7 @@ from flask import Blueprint, request as current_request
 from sqlalchemy.orm import joinedload, contains_eager
 
 from server.api.base import json_endpoint
-from server.api.security import current_user_id, confirm_owner_of_user_service_profile
+from server.auth.security import current_user_id, confirm_owner_of_user_service_profile
 from server.db.db import CollaborationMembership, UserServiceProfile, User, Service
 from server.db.models import update
 

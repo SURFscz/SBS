@@ -77,8 +77,13 @@ class TestOrganisation(AbstractTest):
                        query_data={"identifier": "https://xyz", "existing_organisation": "https://xyz"})
         self.assertEqual(False, res)
 
-    def test_my_organisations_lite(self):
+    def test_my_organisations_lite_super_user(self):
         self.login("urn:john")
+        res = self.get("/api/organisations/mine_lite")
+        self.assertEqual(2, len(res))
+
+    def test_my_organisations_lite_admin(self):
+        self.login("urn:mary")
         res = self.get("/api/organisations/mine_lite")
         self.assertEqual(1, len(res))
 

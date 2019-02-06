@@ -4,7 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_collaboration_admin, confirm_collaboration_admin_or_authorisation_group_member
+from server.auth.security import confirm_collaboration_admin, confirm_collaboration_admin_or_authorisation_group_member
 from server.db.db import AuthorisationGroup, CollaborationMembership
 from server.db.db import db
 from server.db.models import update, save, delete

@@ -3,7 +3,7 @@ from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_write_access, confirm_collaboration_admin, current_user_id, current_user, \
+from server.auth.security import confirm_write_access, confirm_collaboration_admin, current_user_id, current_user, \
     current_user_name, current_user_uid
 from server.db.db import CollaborationMembership, Collaboration, JoinRequest, db
 from server.db.models import delete

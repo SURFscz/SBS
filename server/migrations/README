@@ -1,4 +1,5 @@
 Generic single-database configuration.
 
-cd SBS/server
+source .venv/bin/activate
+cd ./server
 alembic -c ./migrations/alembic.ini revision -m "description"

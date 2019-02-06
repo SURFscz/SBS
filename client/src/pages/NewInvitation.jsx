@@ -17,6 +17,7 @@ import "./NewInvitation.scss"
 import DateField from "../components/DateField";
 import {collaborationRoles} from "../forms/constants";
 import SelectField from "../components/SelectField";
+import {getParameterByName} from "../utils/QueryParameters";
 
 class NewInvitation extends React.Component {
 
@@ -26,9 +27,12 @@ class NewInvitation extends React.Component {
             value: role,
             label: I18n.t(`collaboration.${role}`)
         }));
+        const email = getParameterByName("email", window.location.search);
+        const administrators = !isEmpty(email) && validEmailRegExp.test(email.trim()) ? [email.trim()] : [];
+
         this.state = {
             collaboration: undefined,
-            administrators: [],
+            administrators: administrators,
             fileName: null,
             email: "",
             fileEmails: [],

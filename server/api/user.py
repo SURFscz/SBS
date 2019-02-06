@@ -8,7 +8,8 @@ from sqlalchemy import text
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
-from server.api.security import confirm_allow_impersonation, is_admin_user, current_user_id
+from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id
+from server.auth.user_claims import claim_attribute_mapping, claim_attribute_hash_headers, claim_attribute_hash_user
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
 
@@ -49,6 +50,13 @@ def _user_query():
                  .contains_eager(OrganisationMembership.organisation)) \
         .options(contains_eager(User.collaboration_memberships)
                  .contains_eager(CollaborationMembership.collaboration))
+
+
+def _add_user_claims(request_headers, uid, user):
+    for key, attr in claim_attribute_mapping.items():
+        setattr(user, attr, request_headers.get(key))
+    name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name])))
+    user.name = name if name else user.nick_name if user.nick_name else uid
 
 
 @user_api.route("/search", strict_slashes=False)
@@ -117,13 +125,21 @@ def collaboration_search():
 def me():
     _log_headers()
 
-    uid = current_request.headers.get(UID_HEADER_NAME)
+    request_headers = current_request.headers
+    uid = request_headers.get(UID_HEADER_NAME)
     if uid:
         users = _user_query().filter(User.uid == uid).all()
         user = users[0] if len(users) > 0 else None
         if not user:
-            user = User(uid=uid, name="todo", email="todo", created_by="system", updated_by="system")
+            user = User(uid=uid, created_by="system", updated_by="system")
+            _add_user_claims(request_headers, uid, user)
             user = db.session.merge(user)
+        else:
+            hash_headers = claim_attribute_hash_headers(request_headers)
+            hash_user = claim_attribute_hash_user(user)
+            if hash_user != hash_headers:
+                _add_user_claims(request_headers, uid, user)
+                user = db.session.merge(user)
 
         is_admin = _store_user_in_session(user)
         json_user = jsonify(user).json

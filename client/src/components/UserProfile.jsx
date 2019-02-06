@@ -2,6 +2,18 @@ import React from "react";
 import I18n from "i18n-js";
 import "./UserProfile.scss";
 import CheckBox from "./CheckBox";
+import {isEmpty} from "../utils/Utils";
+
+function addUserAttribute(user, attribute, split = false) {
+    return isEmpty(user[attribute]) ? null : <li>
+        <span>{`${I18n.t(`profile.${attribute}`)}:`}</span>
+        {split ? <span className="value">
+                    <ul className="split-values">
+                        {user[attribute].split(",").map(part => <li className="value">{part}</li>)}
+                    </ul>
+                </span> : <span className="value">{user[attribute]}</span>}
+    </li>;
+}
 
 export default function UserProfile({currentUser}) {
     const organisationMemberships = currentUser.organisation_memberships || [];
@@ -14,20 +26,11 @@ export default function UserProfile({currentUser}) {
 
     const showOrganisations = organisationAdmins.length > 0 || organisationMembers.length > 0;
     const showCollaborations = collaborationAdmins.length > 0 || collaborationMembers.length > 0;
+    const attributes = ["name", "email", "uid", "affiliation", "nick_name", "schac_home_organisation", "edu_members"];
+    const splitAttributes = ["edu_members"];
     return (
         <ul className="user-profile">
-            <li>
-                <span>{`${I18n.t("profile.name")}:`}</span>
-                <span className="value">{currentUser.name}</span>
-            </li>
-            <li>
-                <span>{`${I18n.t("profile.email")}:`}</span>
-                <span className="value">{currentUser.email}</span>
-            </li>
-            <li>
-                <span>{`${I18n.t("profile.uid")}:`}</span>
-                <span className="value">{currentUser.uid}</span>
-            </li>
+            {attributes.map(attr => addUserAttribute(currentUser, attr, splitAttributes.includes(attr)))}
             {showCollaborations &&
             <ul>
                 <li>

@@ -189,7 +189,9 @@ class CollaborationDetail extends React.Component {
 
     invite = e => {
         stopEvent(e);
-        this.props.history.push(`/new-invite/${this.state.originalCollaboration.id}`);
+        const {query } = this.state;
+        const email = isEmpty(query) ? "" : `?email=${encodeURIComponent(query)}`;
+        this.props.history.push(`/new-invite/${this.state.originalCollaboration.id}${(email)}`);
     };
 
     openJoinRequest = joinRequest => e => {
