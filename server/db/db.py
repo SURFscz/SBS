@@ -178,6 +178,8 @@ class Collaboration(Base, db.Model):
     organisation = db.relationship("Organisation", back_populates="collaborations")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
     services = db.relationship("Service", secondary=services_collaborations_association, lazy="select")
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
                                                 cascade="all, delete-orphan", passive_deletes=True)
