@@ -102,4 +102,5 @@ def health():
 @base_api.route("/config", strict_slashes=False)
 @json_endpoint
 def config():
-    return {"local": current_app.config["LOCAL"]}, 200
+    return {"local": current_app.config["LOCAL"],
+            "base_url": current_app.app_config.base_url}, 200
