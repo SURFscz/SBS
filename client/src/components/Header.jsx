@@ -3,11 +3,12 @@ import I18n from "i18n-js";
 import {Link, NavLink} from "react-router-dom";
 import logo from "../images/surflogo.png";
 import "./Header.scss";
-import {stopEvent} from "../utils/Utils";
+import {isEmpty, stopEvent} from "../utils/Utils";
 import LanguageSelector from "./LanguageSelector";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserProfile from "./UserProfile";
 import ReactTooltip from "react-tooltip";
+import {getParameterByName} from "../utils/QueryParameters";
 
 export default class Header extends React.PureComponent {
 
@@ -40,12 +41,13 @@ export default class Header extends React.PureComponent {
 
     login = e => {
         stopEvent(e);
-        window.location.href = "/login";
+        const state = getParameterByName("state", window.location.search);
+        window.location.href = isEmpty(state) ? "/login" : `/login?state=${encodeURIComponent(state)}`;
     };
 
     render() {
         const {currentUser, impersonator} = this.props;
-        const displayLogin = currentUser.guest && !window.location.pathname.startsWith("/registration");
+        const displayLogin = currentUser.guest;
         return (
             <div className={`header-container`}>
                 <div className="header">
@@ -54,7 +56,7 @@ export default class Header extends React.PureComponent {
                     <p className="title first">{I18n.t("header.title")}</p>
                     <ul className="links">
                         {displayLogin && <li className="login">
-                            <a href="#login" onClick={this.login}>{I18n.t("header.links.login")}</a>
+                            <a href="/login" onClick={this.login}>{I18n.t("header.links.login")}</a>
                         </li>}
                         {impersonator && <li className="impersonator">
                             <NavLink to="/impersonate">
@@ -70,10 +72,10 @@ export default class Header extends React.PureComponent {
                                 </ReactTooltip>
                             </NavLink>
                         </li>}
-                        <li className={`user-profile ${(displayLogin || impersonator) ? "border-left" : ""}`}>
+                        {!currentUser.guest && <li className={`user-profile ${(displayLogin || impersonator) ? "border-left" : ""}`}>
                             {this.renderProfileLink(currentUser)}
                             {this.renderDropDown(currentUser)}
-                        </li>
+                        </li>}
                         <li className="help border-left">
                             <a href={I18n.t("header.links.helpUrl")} rel="noopener noreferrer"
                                target="_blank">{I18n.t("header.links.help")}</a>

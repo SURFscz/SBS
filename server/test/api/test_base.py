@@ -7,6 +7,10 @@ class TestBase(AbstractTest):
         res = self.client.get("/health")
         self.assertDictEqual({"status": "UP"}, res.json)
 
+    def test_config(self):
+        res = self.client.get("/config")
+        self.assertDictEqual({"local": False}, res.json)
+
     def test_404(self):
         res = self.get("/api/nope", response_status_code=404)
         self.assertDictEqual({'message': 'http://localhost/api/nope not found'}, res)

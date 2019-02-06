@@ -80,10 +80,13 @@ export function health() {
     return fetchJson("/health");
 }
 
+export function config() {
+    return fetchJson("/config");
+}
+
 //Users
-export function me() {
-    //TODO - temporary local hack
-    const headers = {"Oidc-Claim-Cmuid": "urn:john"};
+export function me(config) {
+    const headers = (config.local) ? {"Oidc-Claim-Cmuid": "urn:john"} : {};
     return fetchJson("/api/users/me", {}, headers, false);
 }
 
