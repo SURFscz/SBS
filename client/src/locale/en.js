@@ -139,6 +139,8 @@ I18n.translations.en = {
         namePlaceHolder: "The unique name of a collaboration",
         identifier: "Identifier",
         identifierTooltip: "Generated, unique and immutable<br/>identifier of a collaboration<br/>which used as identifier<br/>for external systems",
+        joinRequestUrl: "Join Request URL",
+        joinRequestUrlTooltip: "URL for non-members to<br/> join this collaboration.<br/><br/>The URL can be communicated<br/>to service providers that offer<br/>their service within this collaboration",
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
         access_type: "Access Type",

@@ -138,7 +138,7 @@ class App extends React.Component {
 
     render() {
         const {
-            loading, errorDialogAction, errorDialogOpen, currentUser, impersonator
+            loading, errorDialogAction, errorDialogOpen, currentUser, impersonator, config
         } = this.state;
         if (loading) {
             return null; // render null when app is not ready yet
@@ -184,7 +184,7 @@ class App extends React.Component {
                                    currentUser={currentUser} Component={Collaborations} {...props}/>}/>
 
                         <Route exact path="/collaborations/:id"
-                               render={props => <ProtectedRoute
+                               render={props => <ProtectedRoute config={config}
                                    currentUser={currentUser} Component={CollaborationDetail} {...props}/>}/>
 
                         <Route exact path="/organisations"

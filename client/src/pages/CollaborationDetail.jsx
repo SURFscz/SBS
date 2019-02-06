@@ -189,7 +189,7 @@ class CollaborationDetail extends React.Component {
 
     invite = e => {
         stopEvent(e);
-        const {query } = this.state;
+        const {query} = this.state;
         const email = isEmpty(query) ? "" : `?email=${encodeURIComponent(query)}`;
         this.props.history.push(`/new-invite/${this.state.originalCollaboration.id}${(email)}`);
     };
@@ -433,7 +433,9 @@ class CollaborationDetail extends React.Component {
     };
 
     collaborationDetails = (name, alreadyExists, initial, description, accepted_user_policy, enrollment,
-                            access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration) => {
+                            access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
+                            config) => {
+        const joinRequestUrl = `${config.base_url}/registration?collaboration=${decodeURIComponent(originalCollaboration.name)}`;
         return <div className="collaboration-detail">
             <InputField value={name} onChange={e => {
                 this.setState({
@@ -482,10 +484,15 @@ class CollaborationDetail extends React.Component {
 
             <InputField value={identifier}
                         name={I18n.t("collaboration.identifier")}
-                        placeholder={I18n.t("collaboration.identifierPlaceholder")}
                         toolTip={I18n.t("collaboration.identifierTooltip")}
                         disabled={true}
                         copyClipBoard={true}/>
+
+            {isAdmin && <InputField value={joinRequestUrl}
+                        name={I18n.t("collaboration.joinRequestUrl")}
+                        toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
+                        disabled={true}
+                        copyClipBoard={true}/>}
 
             <InputField value={moment(originalCollaboration.created_at * 1000).format("LLLL")}
                         disabled={true}
@@ -518,7 +525,7 @@ class CollaborationDetail extends React.Component {
         if (!originalCollaboration) {
             return null;
         }
-        const {user} = this.props;
+        const {user, config} = this.props;
         const isAdmin = user.admin || adminOfCollaboration;
         const disabledSubmit = !initial && !this.isValid();
         const organisation = {
@@ -556,7 +563,8 @@ class CollaborationDetail extends React.Component {
                 <p>{I18n.t("collaborationDetail.title", {name: originalCollaboration.name})}</p>
             </div>
             {this.collaborationDetails(name, alreadyExists, initial, description, accepted_user_policy,
-                enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration)}
+                enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
+                config)}
         </div>)
     }
 
