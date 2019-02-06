@@ -48,6 +48,7 @@ class AuthorisationGroup extends React.Component {
             sortedMembersBy: "user__name",
             reverseMembers: false,
             name: "",
+            short_name: "",
             uri: "",
             description: "",
             status: this.statusOptions[0].value,
@@ -436,7 +437,7 @@ class AuthorisationGroup extends React.Component {
     };
 
 
-    authorisationGroupDetails = (adminOfCollaboration, name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit, authorisationGroup) => {
+    authorisationGroupDetails = (adminOfCollaboration, name, short_name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit, authorisationGroup) => {
         return (
             <div className="authorisation-group">
                 <InputField value={name} onChange={e => this.setState({
@@ -456,6 +457,13 @@ class AuthorisationGroup extends React.Component {
                     className="error">{I18n.t("authorisationGroup.required", {
                     attribute: I18n.t("authorisationGroup.name").toLowerCase()
                 })}</span>}
+
+                <InputField value={short_name}
+                            name={I18n.t("authorisationGroup.shortName")}
+                            placeholder={I18n.t("authorisationGroup.shortNamePlaceholder")}
+                            onChange={e => this.setState({short_name: e.target.value})}
+                            toolTip={I18n.t("authorisationGroup.shortNameTooltip")}
+                            disabled={!adminOfCollaboration}/>
 
                 <InputField value={description}
                             name={I18n.t("authorisationGroup.description")}
@@ -502,7 +510,7 @@ class AuthorisationGroup extends React.Component {
     render() {
         const {
             alreadyExists, collaboration, initial, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
-            name, uri, description, status, authorisationGroup, isNew, back, leavePage,
+            name, uri, short_name, description, status, authorisationGroup, isNew, back, leavePage,
             allServices, sortedServices, sortedServicesBy, reverseServices,
             allMembers, sortedMembers, sortedMembersBy, reverseMembers, adminOfCollaboration
         } = this.state;
@@ -546,7 +554,7 @@ class AuthorisationGroup extends React.Component {
                 {<div className="title">
                     <p className="title">{detailsTitle}</p>
                 </div>}
-                {this.authorisationGroupDetails(adminOfCollaboration, name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit, authorisationGroup)}
+                {this.authorisationGroupDetails(adminOfCollaboration, name, short_name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit, authorisationGroup)}
             </div>);
     };
 

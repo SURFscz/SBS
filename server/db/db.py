@@ -198,6 +198,7 @@ class AuthorisationGroup(Base, db.Model):
     __tablename__ = "authorisation_groups"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
+    short_name = db.Column("short_name", db.String(length=255), nullable=True)
     uri = db.Column("uri", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=True)
