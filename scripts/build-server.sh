@@ -20,7 +20,7 @@ docker build -t ${IMAGE_TAG} .
 if [ -n "$TRAVIS_PULL_REQUEST" ] # tag image with PR number
 then
     VERSION=$( echo -n "PR__$TRAVIS_PULL_REQUEST" | tr -c '[:alnum:]-_.' '_' )
-if
+fi
 
 if [ -n "$TRAVIS_BRANCH" ] # tag this image with the current branch name if we're autobuilding in travis
 then
