@@ -19,6 +19,7 @@ import {serviceStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {getParameterByName} from "../utils/QueryParameters";
 import moment from "moment";
+import {validEmailRegExp} from "../validations/regExps";
 
 class Service extends React.Component {
 
@@ -43,6 +44,7 @@ class Service extends React.Component {
             alreadyExists: {},
             initial: true,
             isNew: true,
+            invalidInputs: {},
             confirmationDialogOpen: false,
             leavePage: false,
             confirmationDialogAction: () => true,
@@ -79,6 +81,13 @@ class Service extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, entity_id: json}});
         });
 
+    validateEmail = e => {
+        const email = e.target.value;
+        const {invalidInputs} = this.state;
+        const inValid = !isEmpty(email) && !validEmailRegExp.test(email);
+        this.setState({invalidInputs: {...invalidInputs, email: inValid}});
+    };
+
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
     gotoServices = () => this.setState({confirmationDialogOpen: false},
@@ -107,8 +116,10 @@ class Service extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists} = this.state;
-        const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
+        const {required, alreadyExists, invalidInputs} = this.state;
+        const inValid = Object.values(alreadyExists).some(val => val) ||
+            required.some(attr => isEmpty(this.state[attr])) ||
+            Object.keys(invalidInputs).some(key => invalidInputs[key]);
         return !inValid;
     };
 
@@ -142,7 +153,7 @@ class Service extends React.Component {
         const {
             alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
             entity_id, description, address, identity_type, uri, accepted_user_policy, contact_email, status,
-            confirmationDialogAction, leavePage, isNew, back
+            confirmationDialogAction, leavePage, isNew, back, invalidInputs
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const title = isNew ? I18n.t("service.titleNew") : I18n.t("service.titleUpdate", {name: service.name});
@@ -233,8 +244,17 @@ class Service extends React.Component {
                     <InputField value={contact_email}
                                 name={I18n.t("service.contact_email")}
                                 placeholder={I18n.t("service.contact_emailPlaceholder")}
-                                onChange={e => this.setState({contact_email: e.target.value})}
-                                toolTip={I18n.t("service.contact_emailTooltip")}/>
+                                onChange={e => this.setState({contact_email: e.target.value,
+                                    invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
+                                        ...invalidInputs,
+                                        email: false
+                                    }
+                                })}
+                                toolTip={I18n.t("service.contact_emailTooltip")}
+                                onBlur={this.validateEmail}/>
+
+                    {invalidInputs["email"] && <span
+                        className="error">{I18n.t("forms.invalidInput", {name: "email"})}</span>}
 
                     <InputField value={accepted_user_policy}
                                 name={I18n.t("service.accepted_user_policy")}
