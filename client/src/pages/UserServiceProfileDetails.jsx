@@ -11,7 +11,7 @@ import SelectField from "../components/SelectField";
 
 import {userServiceProfileStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {validPublicSSHKeyRegExp} from "../validations/regExps";
+import {validEmailRegExp, validPublicSSHKeyRegExp} from "../validations/regExps";
 
 class UserServiceProfileDetails extends React.Component {
 
@@ -30,6 +30,7 @@ class UserServiceProfileDetails extends React.Component {
             collaboration_membership: {authorisation_groups: [], collaboration: {}},
             fileName: null,
             fileTypeError: false,
+            invalidInputs: {},
             fileInputKey: new Date().getMilliseconds()
         };
     }
@@ -44,6 +45,13 @@ class UserServiceProfileDetails extends React.Component {
         } else {
             this.props.history.push("/404");
         }
+    };
+
+    validateEmail = e => {
+        const email = e.target.value;
+        const {invalidInputs} = this.state;
+        const inValid = !isEmpty(email) && !validEmailRegExp.test(email);
+        this.setState({invalidInputs: {...invalidInputs, email: inValid}});
     };
 
     gotoUserServiceProfiles = e => {
@@ -106,7 +114,8 @@ class UserServiceProfileDetails extends React.Component {
     render() {
         const {
             service, collaboration_membership, name, email, address, identifier, ssh_key, role, status,
-            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey
+            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
+            invalidInputs
         } = this.state;
 
         const title = I18n.t("userServiceProfile.titleUpdate", {name: service.name});
@@ -148,8 +157,10 @@ class UserServiceProfileDetails extends React.Component {
                     <InputField value={email}
                                 name={I18n.t("userServiceProfile.email")}
                                 placeholder={I18n.t("userServiceProfile.emailPlaceholder")}
-                                onChange={e => this.setState({email: e.target.value})}/>
-
+                                onChange={e => this.setState({email: e.target.value})}
+                                onBlur={this.validateEmail}/>
+                    {invalidInputs["email"] && <span
+                        className="error">{I18n.t("forms.invalidInput", {name: "email"})}</span>}
                     <InputField value={address}
                                 name={I18n.t("userServiceProfile.address")}
                                 placeholder={I18n.t("userServiceProfile.addressPlaceholder")}
@@ -196,7 +207,8 @@ class UserServiceProfileDetails extends React.Component {
 
                 </div>
             </div>);
-    };
+    }
+    ;
 }
 
 export default UserServiceProfileDetails;
