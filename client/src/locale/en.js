@@ -67,7 +67,7 @@ I18n.translations.en = {
         request: "Request",
         continue: "Continue",
         requiredCollaboration: "Invalid request. Collaboration need to be specified.",
-        unknownCollaboration: "The Collaboration with the with the name {{collaboration}} does not exists",
+        unknownCollaboration: "The Collaboration with the name {{collaboration}} does not exists",
         step1: {
             title: "Link your account",
             sub: "Select organisation",
@@ -86,7 +86,7 @@ I18n.translations.en = {
             referencePlaceholder: "Write down the names of people you know within {{collaboration}} like co-researchers.",
             policy: "Our Policy",
             policyInfo: "You must agree that your information will be used for resources linked to {{collaboration}}. Please check out <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy\"'>Acceptable Use Policy</a> to which you have agreed upon.",
-            policyConfirmation: "I have read the User Acceptance Policy of {{collaboration}} and accept it"
+            policyConfirmation: "I have read the Acceptable Use Policy of {{collaboration}} and accept it"
         },
         step3: {
             title: "Wait for approval",
@@ -155,7 +155,7 @@ I18n.translations.en = {
         organisationPlaceholder: "Select the organisation for this collaboration...",
         organisationTooltip: "Every collaboration belongs to<br/>minimal one and only one organisation",
         accepted_user_policy: "AUP",
-        acceptedUserPolicyPlaceholder: "The URL of the Accepted User Policy",
+        acceptedUserPolicyPlaceholder: "The URL of the Acceptable Use Policy",
         role: "Role",
         newTitle: "Add new collaboration",
         subTitle: "Enter / edit the collaboration details. You will become an administrator of the new collaboration.",
@@ -527,9 +527,9 @@ I18n.translations.en = {
         addressPlaceholder: "Your address to use for this user service profile",
         identifier: "Identifier",
         identifierPlaceholder: "Your identifier to use for this user service profile",
-        identifierTooltip: "Your unique identifier wihtin<br/> the context of this<br/>user service profile",
-        ssh_key: "SSS public key",
-        ssh_keyPlaceholder: "Your public SSh key to login on the service",
+        identifierTooltip: "Your unique identifier within<br/> the context of this<br/>user service profile",
+        ssh_key: "SSH public key",
+        ssh_keyPlaceholder: "Your public SSH key to login on the service",
         ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP for this service.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a mac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Invalid SSH key",
         role: "Role",
