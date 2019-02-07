@@ -31,6 +31,7 @@ class UserServiceProfileDetails extends React.Component {
             fileName: null,
             fileTypeError: false,
             invalidInputs: {},
+            initial: true,
             fileInputKey: new Date().getMilliseconds()
         };
     }
@@ -69,10 +70,28 @@ class UserServiceProfileDetails extends React.Component {
     };
 
     submit = () => {
-        updateUserServiceProfiles(this.state).then(() => {
-            this.gotoUserServiceProfiles();
-            setFlash(I18n.t("userServiceProfile.flash.updated", {name: this.state.service.name}));
-        });
+        const {initial} = this.state;
+        if (initial) {
+            this.setState({initial: false}, this.doSubmit)
+        } else {
+            this.doSubmit();
+        }
+    };
+
+    isValid = () => {
+        const {invalidInputs} = this.state;
+        const inValid = Object.keys(invalidInputs).some(key => invalidInputs[key]);
+        return !inValid;
+    };
+
+
+    doSubmit = () => {
+        if (this.isValid()) {
+            updateUserServiceProfiles(this.state).then(() => {
+                this.gotoUserServiceProfiles();
+                setFlash(I18n.t("userServiceProfile.flash.updated", {name: this.state.service.name}));
+            });
+        }
     };
 
     authorisationByCollaborationMembership = (service, collaborationMembership) => {
@@ -115,9 +134,9 @@ class UserServiceProfileDetails extends React.Component {
         const {
             service, collaboration_membership, name, email, address, identifier, ssh_key, role, status,
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
-            invalidInputs
+            invalidInputs, initial
         } = this.state;
-
+        const disabledSubmit = !initial && !this.isValid();
         const title = I18n.t("userServiceProfile.titleUpdate", {name: service.name});
         const back = "/home";
         return (
@@ -157,7 +176,12 @@ class UserServiceProfileDetails extends React.Component {
                     <InputField value={email}
                                 name={I18n.t("userServiceProfile.email")}
                                 placeholder={I18n.t("userServiceProfile.emailPlaceholder")}
-                                onChange={e => this.setState({email: e.target.value})}
+                                onChange={e => this.setState({email: e.target.value,
+                                    invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
+                                        ...invalidInputs,
+                                        email: false
+                                    }
+                                })}
                                 onBlur={this.validateEmail}/>
                     {invalidInputs["email"] && <span
                         className="error">{I18n.t("forms.invalidInput", {name: "email"})}</span>}
@@ -201,7 +225,7 @@ class UserServiceProfileDetails extends React.Component {
                                 disabled={true}/>
 
                     <section className="actions">
-                        <Button txt={I18n.t("userServiceProfile.update")} onClick={this.submit}/>
+                        <Button disabled={disabledSubmit} txt={I18n.t("userServiceProfile.update")} onClick={this.submit}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>
 
