@@ -40,7 +40,8 @@ I18n.translations.nl = {
         showMore: "Meer",
         hideSome: "Minder",
         today: "Vandaag",
-        manage: "Beheren"
+        manage: "Beheren",
+        invalidInput: "Foutieve waarde voor {{name}}"
     },
     impersonate: {
         title: "Wie wilt u zijn?",
@@ -573,7 +574,7 @@ I18n.translations.nl = {
     not_found: {
         title: "404",
         description_html: "Deze pagina kan niet worden gevonden.",
-        loginLink:"Consider to login..."
+        loginLink: "Consider to login..."
     },
 
     footer: {

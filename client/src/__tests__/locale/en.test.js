@@ -12,10 +12,6 @@ expect.extend({
 });
 
 test("All translations exists in all bundles", () => {
-    //we will sync later
-    if (1 === (2-1)) {
-        return;
-    }
     const contains = (translation, translationToVerify) => {
         Object.keys(translation).forEach(key => {
             expect(translationToVerify).toContainKey(key);
