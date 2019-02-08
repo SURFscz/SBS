@@ -53,7 +53,7 @@ class Service extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         if (params.id) {
             if (params.id !== "new") {

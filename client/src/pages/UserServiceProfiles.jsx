@@ -19,7 +19,7 @@ class UserServiceProfiles extends React.Component {
         }
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const {user} = this.props;
         myUserServiceProfiles(user.id)
             .then(json => {

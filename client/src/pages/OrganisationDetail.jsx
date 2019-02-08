@@ -49,7 +49,7 @@ class OrganisationDetail extends React.Component {
         }
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         const {user} = this.props;
         if (params.id) {
@@ -95,7 +95,7 @@ class OrganisationDetail extends React.Component {
         const {originalOrganisation} = this.state;
         deleteOrganisationMembership(originalOrganisation.id, member.user.id)
             .then(() => {
-                this.componentWillMount();
+                this.componentDidMount();
                 setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: member.user.name}));
             });
     };

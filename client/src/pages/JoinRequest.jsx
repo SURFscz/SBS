@@ -23,7 +23,7 @@ class JoinRequest extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         if (params.id) {
             joinRequestById(params.id)

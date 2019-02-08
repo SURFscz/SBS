@@ -50,7 +50,7 @@ class NewInvitation extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         if (params.collaboration_id) {
             collaborationById(params.collaboration_id)

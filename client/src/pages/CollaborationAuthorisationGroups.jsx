@@ -35,7 +35,7 @@ class CollaborationAuthorisationGroups extends React.Component {
         }
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         if (params.collaboration_id) {
             collaborationAuthorisationGroups(params.collaboration_id)
@@ -72,7 +72,7 @@ class CollaborationAuthorisationGroups extends React.Component {
         this.setState({confirmationDialogOpen: false});
         deleteAuthorisationGroup(group.id)
             .then(() => {
-                this.componentWillMount();
+                this.componentDidMount();
                 setFlash(I18n.t("authorisationGroup.flash.deleted", {name: group.name}));
             });
     };

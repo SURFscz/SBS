@@ -65,7 +65,7 @@ class AuthorisationGroup extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         const {user} = this.props;
         if (params.id && params.collaboration_id) {

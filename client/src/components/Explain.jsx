@@ -13,9 +13,8 @@ export default class Explain extends React.PureComponent {
 
     render() {
         const {close, isVisible, subject, children} = this.props;
-        const className = isVisible ? "" : "hide";
         return (
-            <div className={`mod-explain ${className}`}
+            <div className={`mod-explain ${isVisible ? "" : "hide"}`}
                  tabIndex="1" onBlur={close}
                  ref={ref => this.main = ref}>
                 <section className="container">

@@ -27,7 +27,7 @@ class Collaborations extends React.Component {
         }
     }
 
-    componentWillMount = () => myCollaborations()
+    componentDidMount = () => myCollaborations()
         .then(json => {
             const {user} = this.props;
             json.forEach(coll => {
