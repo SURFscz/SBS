@@ -36,7 +36,7 @@ class Impersonate extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         Promise.all([searchOrganisations("*"), searchCollaborations("*")]).then(res => {
             this.setState({
                 organisations: res[0].map(org => ({
@@ -159,7 +159,6 @@ class Impersonate extends React.Component {
         return (
             <div className="mod-impersonate">
                 <Explain
-                    title={I18n.t("impersonate.title", {name: user.name})}
                     close={() => this.setState({showExplanation: false})}
                     subject={I18n.t("explain.impersonate")}
                     isVisible={showExplanation}>

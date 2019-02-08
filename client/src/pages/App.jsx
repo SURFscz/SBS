@@ -91,11 +91,8 @@ class App extends React.Component {
         }
     };
 
-    componentWillMount() {
-        emitter.addListener("impersonation", this.impersonate);
-    }
-
     componentDidMount() {
+        emitter.addListener("impersonation", this.impersonate);
         const location = window.location;
         if (location.href.indexOf("error") > -1) {
             this.setState({loading: false});

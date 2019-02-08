@@ -43,7 +43,7 @@ class NewCollaboration extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         myOrganisationsLite().then(json => {
             if (json.length === 0) {
                 this.props.history.push("/404");

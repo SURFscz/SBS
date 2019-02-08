@@ -22,9 +22,8 @@ class Services extends React.Component {
         }
     }
 
-    componentWillMount = () => health().then(json => true);
-
     componentDidMount = () => {
+        health().then(json => true);
         if (this.inputSearch) {
             this.inputSearch.focus();
         }

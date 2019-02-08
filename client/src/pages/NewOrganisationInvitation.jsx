@@ -43,7 +43,7 @@ class NewOrganisationInvitation extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         if (params.organisation_id) {
             organisationById(params.organisation_id)

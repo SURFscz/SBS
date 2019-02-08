@@ -63,7 +63,7 @@ class CollaborationDetail extends React.Component {
         }
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         const {user} = this.props;
         if (params.id) {
@@ -152,7 +152,7 @@ class CollaborationDetail extends React.Component {
         const {originalCollaboration} = this.state;
         updateCollaborationMembershipRole(originalCollaboration.id, member.user.id, selectedOption.value)
             .then(() => {
-                this.componentWillMount();
+                this.componentDidMount();
                 setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
                     name: member.user.name,
                     role: selectedOption.value
@@ -166,7 +166,7 @@ class CollaborationDetail extends React.Component {
         const {originalCollaboration} = this.state;
         deleteCollaborationMembership(originalCollaboration.id, member.user.id)
             .then(() => {
-                this.componentWillMount();
+                this.componentDidMount();
                 setFlash(I18n.t("collaborationDetail.flash.memberDeleted", {name: member.user.name}));
             });
     };

@@ -28,7 +28,7 @@ class Organisations extends React.Component {
         }
     }
 
-    componentWillMount = () =>
+    componentDidMount = () =>
         myOrganisations()
             .then(json => {
                 const {user} = this.props;

@@ -34,7 +34,7 @@ class CollaborationServices extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         if (params.collaboration_id) {
             Promise.all([collaborationServices(params.collaboration_id), searchServices("*")])

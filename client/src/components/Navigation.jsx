@@ -17,7 +17,7 @@ export default class Navigation extends React.PureComponent {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         spinner.onStart = () => this.setState({loading: true});
         spinner.onStop = () => this.setState({loading: false});
     }

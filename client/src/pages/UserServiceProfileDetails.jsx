@@ -36,7 +36,7 @@ class UserServiceProfileDetails extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         if (params.id) {
             userServiceProfileById(params.id)

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ImpersonateExplanation({}) {
+export default function ImpersonateExplanation() {
     return [
         <section className="explanation">
             As a super user you can impersonate a different user. You will see the application exactly as that user- with the only exception of the

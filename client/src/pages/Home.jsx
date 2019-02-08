@@ -17,7 +17,7 @@ class Home extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         Promise.all([myCollaborationMemberships(), myCollaborationsLite()])
             .then(res => {
                 this.setState({collaborationMemberships: res[0], collaborations: res[1]});

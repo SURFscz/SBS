@@ -36,7 +36,7 @@ class OrganisationInvitation extends React.Component {
         };
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         const params = this.props.match.params;
         const today = moment();
         if (params.hash) {

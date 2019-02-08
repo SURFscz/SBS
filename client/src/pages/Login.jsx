@@ -5,7 +5,7 @@ import {health} from "../api";
 
 class Login extends React.Component {
 
-    componentWillMount = () => health();
+    componentDidMount = () => health();
 
     render() {
         return (
