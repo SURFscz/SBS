@@ -212,6 +212,7 @@ class OrganisationInvitation extends React.Component {
                         <label className="form-label"
                                dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: organisationInvitation.organisation.name})}}/>{this.requiredMarker()}
                         <CheckBox name="policy"
+                                  className={`checkbox ${!initial && !acceptedTerms ? "required" : ""}`}
                                   value={acceptedTerms}
                                   info={I18n.t("registration.step2.policyConfirmation", {collaboration: organisationInvitation.organisation.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
