@@ -10,6 +10,9 @@ import Button from "../components/Button";
 import {emitter} from "../utils/Events";
 import InputField from "../components/InputField";
 import CheckBox from "../components/CheckBox";
+import Explain from "../components/Explain";
+import ImpersonateExplanation from "../components/explanations/Impersonate";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class Impersonate extends React.Component {
 
@@ -29,6 +32,7 @@ class Impersonate extends React.Component {
             moreToShow: false,
             selectedUser: null,
             initial: true,
+            showExplanation: false
         };
     }
 
@@ -147,15 +151,24 @@ class Impersonate extends React.Component {
         const {
             organisations, collaborations, suggestions, organisation, collaboration, query,
             loadingAutoComplete, selected, moreToShow, selectedUser, initial,
-            limitToCollaborationAdmins, limitToOrganisationAdmins
+            limitToCollaborationAdmins, limitToOrganisationAdmins, showExplanation
         } = this.state;
         const filteredCollaborations = organisation ? collaborations.filter(coll => coll.organisation_id === organisation.value) : collaborations;
         const filteredOrganisations = collaboration ? organisations.filter(org => org.value === collaboration.organisation_id) : organisations;
         const showAutoCompletes = (query.length > 1 || "*" === query.trim()) && !loadingAutoComplete;
         return (
             <div className="mod-impersonate">
+                <Explain
+                    title={I18n.t("impersonate.title", {name: user.name})}
+                    close={() => this.setState({showExplanation: false})}
+                    subject={I18n.t("explain.impersonate")}
+                    isVisible={showExplanation}>
+                    <ImpersonateExplanation/>
+                </Explain>
                 <div className="title">
                     <p>{I18n.t("impersonate.title", {name: user.name})}</p>
+                    <FontAwesomeIcon className="help" icon="question-circle"
+                                     onClick={() => this.setState({showExplanation: true})}/>
                 </div>
                 <div className="impersonate">
                     <SelectField value={organisation}

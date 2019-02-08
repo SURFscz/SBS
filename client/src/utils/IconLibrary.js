@@ -1,5 +1,4 @@
 import {library} from '@fortawesome/fontawesome-svg-core'
-// ⌘C the icon imports and then $ pbpaste | sort
 import {
     faArrowDown,
     faArrowLeft,
@@ -13,6 +12,7 @@ import {
     faCheckCircle,
     faCircle,
     faCopy,
+    faDoorClosed,
     faEnvelope,
     faExternalLinkAlt,
     faGavel,
@@ -32,7 +32,7 @@ import {
 
 export function addIcons() {
     library.add(faLightbulb, faCalendarAlt, faArrowLeft, faCopy, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faInfo,
-        faCircle, faCheck,
+        faCircle, faCheck, faDoorClosed,
         faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
         faQuestion, faQuestionCircle, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret,
     );
