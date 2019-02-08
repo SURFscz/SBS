@@ -46,10 +46,10 @@ I18n.translations.nl = {
     impersonate: {
         title: "Wie wilt u zijn?",
         organisation: "Organisatie",
-        organisationPlaceholder: "Voer de naam van een organisatie in (of *) om een lijst met zoekresultaten te tonen...",
+        organisationPlaceholder: "Voer de naam van een organisatie in om een lijst met zoekresultaten te tonen...",
         organisationAdminsOnly: "Toon alleen de beheerders van organisaties",
         collaboration: "Samenwerking",
-        collaborationPlaceholder: "Voer de naam van een samenwerking in (of *) om een lijst met zoekresultaten te tonen...",
+        collaborationPlaceholder: "Voer de naam van een samenwerking in om een lijst met zoekresultaten te tonen...",
         collaborationAdminsOnly: "Toon alleen de beheerders van samenwerkingen",
         user: "Gebruiker",
         userSearchPlaceHolder: "Voer de naam van een gebruiker in die u 'na wil doen'...",

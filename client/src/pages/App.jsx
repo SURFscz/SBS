@@ -161,7 +161,7 @@ class App extends React.Component {
                         <Route exact path="/login"
                                render={props => {
                                    if (currentUser.guest) {
-                                      return <Login user={currentUser} {...props}/>;
+                                       return <Login user={currentUser} {...props}/>;
                                    }
                                    const state = getParameterByName("state", window.location.search);
                                    if (isEmpty(state)) {
@@ -185,7 +185,8 @@ class App extends React.Component {
 
                         <Route exact path="/collaborations/:id"
                                render={props => <ProtectedRoute config={config}
-                                   currentUser={currentUser} Component={CollaborationDetail} {...props}/>}/>
+                                                                currentUser={currentUser}
+                                                                Component={CollaborationDetail} {...props}/>}/>
 
                         <Route exact path="/organisations"
                                render={props => <ProtectedRoute
@@ -209,7 +210,8 @@ class App extends React.Component {
 
                         <Route exact path="/organisation-invitations/:id"
                                render={props => <ProtectedRoute redirectToLogin={true}
-                                   currentUser={currentUser} Component={OrganisationInvitation} {...props}/>}/>
+                                                                currentUser={currentUser}
+                                                                Component={OrganisationInvitation} {...props}/>}/>
 
                         <Route exact path="/organisation-invitations/:action/:hash"
                                render={props => <ProtectedRoute
@@ -229,7 +231,8 @@ class App extends React.Component {
 
                         <Route exact path="/invitations/:action/:hash"
                                render={props => <ProtectedRoute redirectToLogin={true}
-                                   currentUser={currentUser} Component={Invitation} {...props}/>}/>
+                                                                currentUser={currentUser}
+                                                                Component={Invitation} {...props}/>}/>
 
                         <Route path="/new-organisation"
                                render={props => <ProtectedRoute
@@ -246,7 +249,8 @@ class App extends React.Component {
 
                         <Route path="/collaboration-authorisation-groups/:collaboration_id"
                                render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={CollaborationAuthorisationGroups} {...props}/>}/>
+                                   currentUser={currentUser}
+                                   Component={CollaborationAuthorisationGroups} {...props}/>}/>
 
                         <Route path="/collaboration-authorisation-group-details/:collaboration_id/:id"
                                render={props => <ProtectedRoute
@@ -262,7 +266,8 @@ class App extends React.Component {
 
                         <Route path="/impersonate"
                                render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Impersonate} impersonator={impersonator} {...props}/>}/>
+                                   currentUser={currentUser} Component={Impersonate}
+                                   impersonator={impersonator} {...props}/>}/>
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 

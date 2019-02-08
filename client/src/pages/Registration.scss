@@ -1,188 +1,188 @@
 @import "../stylesheets/vars.scss";
 
 .mod-registration {
-  background-color: white;
-  padding: 35px 0 65px 0;
+    background-color: white;
+    padding: 35px 0 65px 0;
 
-  .step-container {
-    max-width: $medium;
-    margin: 0 auto;
-    padding: 0 $medium-padding;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    .step-container {
+        max-width: $medium;
+        margin: 0 auto;
+        padding: 0 $medium-padding;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
 
-    .step {
-      background-color: $lightest-grey;
-      border: 1px solid $medium-grey;
-      color: $medium-grey;
-      border-radius: $br;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      position: relative;
-      padding: 35px;
-      min-width: 255px;
+        .step {
+            background-color: $lightest-grey;
+            border: 1px solid $medium-grey;
+            color: $medium-grey;
+            border-radius: $br;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+            padding: 35px;
+            min-width: 255px;
 
-      svg.fa-info-circle {
-        position: absolute;
-        right: -5px;
-        top: -5px;
-        z-index: 9;
-        color: $blue;
-        font-size: 22px;
-        background-color: white;
-      }
+            svg.fa-info-circle {
+                position: absolute;
+                right: -5px;
+                top: -5px;
+                z-index: 9;
+                color: $blue;
+                font-size: 22px;
+                background-color: white;
+            }
 
-      svg.fa-check {
-        position: absolute;
-        right: 10px;
-        top: -22px;
-        z-index: 9;
-        color: white;
-        font-size: 232px;
-        opacity: .15;
-      }
+            svg.fa-check {
+                position: absolute;
+                right: 10px;
+                top: -22px;
+                z-index: 9;
+                color: white;
+                font-size: 232px;
+                opacity: .15;
+            }
 
-      &.active {
-        background-color: $light-blue;
-        border: 2px solid $blue;
-        color: $blue;
-      }
+            &.active {
+                background-color: $light-blue;
+                border: 2px solid $blue;
+                color: $blue;
+            }
 
-      &.done {
-        background-color: lighten($primary-green, 5%);
-        border: 2px solid $primary-green;
-        color: white;
-      }
+            &.done {
+                background-color: lighten($primary-green, 5%);
+                border: 2px solid $primary-green;
+                color: white;
+            }
 
-      .step-number {
-        display: inline-block;
-        margin-right: 8px;
-        font-weight: bold;
-        font-size: 20px;
-      }
+            .step-number {
+                display: inline-block;
+                margin-right: 8px;
+                font-weight: bold;
+                font-size: 20px;
+            }
 
-      .step-title {
-        font-size: 20px;
-        display: inline-block;
-        margin-bottom: 8px;
-        font-weight: bold;
-      }
+            .step-title {
+                font-size: 20px;
+                display: inline-block;
+                margin-bottom: 8px;
+                font-weight: bold;
+            }
 
-      .step-sub {
-        font-size: 16px;
-      }
+            .step-sub {
+                font-size: 16px;
+            }
 
-      svg.step-icon {
-        font-size: 48px;
-        margin: 15px 0;
-        color: $medium-grey;
+            svg.step-icon {
+                font-size: 48px;
+                margin: 15px 0;
+                color: $medium-grey;
 
-        &.active {
-          color: $blue;
+                &.active {
+                    color: $blue;
+                }
+
+                &.done {
+                    color: white;
+                }
+            }
         }
 
-        &.done {
-          color: white;
+        .step-divider {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            color: $light-grey;
+            font-size: 16px;
+
+            &.done {
+                color: $medium-grey;
+            }
+
+            svg.fa-circle {
+                margin: 0 10px;
+            }
         }
-      }
     }
 
-    .step-divider {
-      display: flex;
-      justify-content: space-between;
-      margin: 15px 0;
-      color: $light-grey;
-      font-size: 16px;
+    .step-form {
+        max-width: $medium;
+        margin: 40px auto;
+        padding: 0 $medium-padding;
 
-      &.done {
-        color: $medium-grey;
-      }
-
-      svg.fa-circle {
-        margin: 0 10px;
-      }
-    }
-  }
-
-  .step-form {
-    max-width: $medium;
-    margin: 40px auto;
-    padding: 0 $medium-padding;
-
-    p.form-title {
-      font-size: 20px;
-      color: $dark-grey;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-
-    p.info {
-      margin-bottom: 40px;
-    }
-
-    section.form-element {
-      padding: 2px 25px 2px 25px;
-      border-left: 3px solid $primary-green;
-      margin: 25px 0;
-
-      &.invalid {
-        border-left: 3px solid $lighter-grey;
-      }
-    }
-
-    table {
-      width: 50%;
-
-      tr {
-        border-bottom: 1px solid $light-grey;
-      }
-
-      td {
-        padding: 8px 0;
-
-        &.attribute {
-          width: 50%;
+        p.form-title {
+            font-size: 20px;
+            color: $dark-grey;
+            text-transform: uppercase;
+            margin-bottom: 20px;
         }
 
-        &.value {
-          width: 50%;
-          color: $dark-grey
+        p.info {
+            margin-bottom: 40px;
         }
-      }
-    }
 
-    .required-marker {
-      color: $red;
-      font-size: 18px;
-      font-weight: bold;
-    }
+        section.form-element {
+            padding: 2px 25px 2px 25px;
+            border-left: 3px solid $primary-green;
+            margin: 25px 0;
 
-    input[type=text], input[type=email], textarea {
-      display: block;
-      width: 100%;
-      border: 1px solid $lighter-grey;
-      padding: 6px;
-      border-radius: $br;
-      font-size: 14px;
-      margin-top: 5px;
+            &.invalid {
+                border-left: 3px solid $lighter-grey;
+            }
+        }
 
-      &[disabled] {
-        background-color: $light-grey;
-      }
-    }
+        table {
+            width: 50%;
 
-    .form-label {
-      margin-bottom: 5px;
-      display: inline-block;
-    }
+            tr {
+                border-bottom: 1px solid $light-grey;
+            }
 
-    a.start {
-      margin-top: 20px;
+            td {
+                padding: 8px 0;
+
+                &.attribute {
+                    width: 50%;
+                }
+
+                &.value {
+                    width: 50%;
+                    color: $dark-grey
+                }
+            }
+        }
+
+        .required-marker {
+            color: $red;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        input[type=text], input[type=email], textarea {
+            display: block;
+            width: 100%;
+            border: 1px solid $lighter-grey;
+            padding: 6px;
+            border-radius: $br;
+            font-size: 14px;
+            margin-top: 5px;
+
+            &[disabled] {
+                background-color: $light-grey;
+            }
+        }
+
+        .form-label {
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        a.start {
+            margin-top: 20px;
+        }
     }
-  }
 
 }

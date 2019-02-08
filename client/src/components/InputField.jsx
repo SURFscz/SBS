@@ -49,15 +49,16 @@ export default function InputField({
             {multiline &&
             <textarea disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
                       placeholder={placeholder}/>}
-            {copyClipBoard && <section className="copy-to-clipboard">
-                <CopyToClipboard text={value}>
+            {copyClipBoard && <CopyToClipboard text={value}>
+                <section className="copy-to-clipboard">
                     <FontAwesomeIcon icon="copy" onClick={e => {
                         const me = e.target.parentElement;
                         me.classList.add("copied");
                         setTimeout(() => me.classList.remove("copied"), 1250);
                     }}/>
-                </CopyToClipboard>
-            </section>}
+
+                </section>
+            </CopyToClipboard>}
 
         </div>
     );

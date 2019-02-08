@@ -1,26 +1,27 @@
 @import "../stylesheets/vars.scss";
 
 .app-container {
-  display: flex;
-  position: relative;
-  min-height: 100vh;
-  flex-direction: column;
-  background-color: $background;
+    display: flex;
+    position: relative;
+    min-height: 100vh;
+    flex-direction: column;
+    background-color: $background;
 
-  .__react_component_tooltip {
-    text-align: center;
-    opacity: 1;
-    border-radius: $br;
-    border: 1px solid $lighter-grey;
-    background-color: $lightest-grey;
-    color: $dark-grey;
-  }
+    .__react_component_tooltip {
+        text-align: center;
+        opacity: 1;
+        border-radius: $br;
+        border: 1px solid $lighter-grey;
+        background-color: $lightest-grey;
+        color: $dark-grey;
+    }
 
-  .__react_component_tooltip.place-top:after {
-    border-top-color: $lighter-grey !important;
-  }
-  .select-disabled__single-value {
-    color: $dark-grey;
-  }
+    .__react_component_tooltip.place-top:after {
+        border-top-color: $lighter-grey !important;
+    }
+
+    .select-disabled__single-value {
+        color: $dark-grey;
+    }
 }
 

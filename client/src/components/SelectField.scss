@@ -1,64 +1,64 @@
 @import "../stylesheets/vars.scss";
 
 .select-field {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 
-  label {
-    display: inline-block;
-    padding: 14px 34px 14px 14px;
-    margin: 5px 0;
-    min-width: 180px;
-    border: 1px solid $lighter-grey;
-    background-color: $lightest-grey;
-    border-bottom-left-radius: $br;
-    border-top-left-radius: $br;
-    color: $dark-green;
-    position: relative;
-
-  }
-
-  span.tool-tip-section {
-    position: absolute;
-    right: 0;
-    top: 0;
-    font-size: 14px;
-    color: $blue;
-    cursor: pointer;
-    padding: 0 4px;
-  }
-
-  .input-select-inner {
-    display: block;
-    width: 100%;
-    border-bottom: 1px solid $lighter-grey;
-    border-right: 1px solid $lighter-grey;
-    border-top: 1px solid $lighter-grey;
-    border-left: none;
-    border-bottom-right-radius: $br;
-    border-top-right-radius: $br;
-    font-size: 14px;
-    height: 50px;
-
-    .select-inner__control {
-      height: 100%;
-      padding-left: 8px;
-      border: none;
-    }
-
-    .select-inner__control--is-focused {
-      box-shadow: none !important;
-      border: #5f9af6 2px solid !important;
-      outline-offset: -2px;
-      outline-color: #5f9af6 !important;
-      border-radius: 0;
+    label {
+        display: inline-block;
+        padding: 14px 34px 14px 14px;
+        margin: 5px 0;
+        min-width: 180px;
+        border: 1px solid $lighter-grey;
+        background-color: $lightest-grey;
+        border-bottom-left-radius: $br;
+        border-top-left-radius: $br;
+        color: $dark-green;
+        position: relative;
 
     }
 
-    &[disabled] {
-      background-color: $background;
-      cursor: not-allowed;
+    span.tool-tip-section {
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-size: 14px;
+        color: $blue;
+        cursor: pointer;
+        padding: 0 4px;
     }
 
-  }
+    .input-select-inner {
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid $lighter-grey;
+        border-right: 1px solid $lighter-grey;
+        border-top: 1px solid $lighter-grey;
+        border-left: none;
+        border-bottom-right-radius: $br;
+        border-top-right-radius: $br;
+        font-size: 14px;
+        height: 50px;
+
+        .select-inner__control {
+            height: 100%;
+            padding-left: 8px;
+            border: none;
+        }
+
+        .select-inner__control--is-focused {
+            box-shadow: none !important;
+            border: #5f9af6 2px solid !important;
+            outline-offset: -2px;
+            outline-color: #5f9af6 !important;
+            border-radius: 0;
+
+        }
+
+        &[disabled] {
+            background-color: $background;
+            cursor: not-allowed;
+        }
+
+    }
 }

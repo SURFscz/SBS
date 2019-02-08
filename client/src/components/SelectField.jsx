@@ -7,7 +7,7 @@ import Select from "react-select";
 export default function SelectField({
                                         onChange, name, value, options, placeholder = "", disabled = false,
                                         toolTip = null, searchable = false, className = "input-select-inner",
-                                        classNamePrefix = "select-inner", clearable=false
+                                        classNamePrefix = "select-inner", clearable = false
                                     }) {
     return (
         <div className="select-field">

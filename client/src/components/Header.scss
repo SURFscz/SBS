@@ -1,100 +1,100 @@
 @import "../stylesheets/vars.scss";
 
 .flash.hide + div.header-container {
-  .header {
-    margin: 0 auto;
-    transition: margin-top 1000ms ease;
-  }
+    .header {
+        margin: 0 auto;
+        transition: margin-top 1000ms ease;
+    }
 }
 
 .header-container {
 
-  background: white;
-  margin: 0 auto;
+    background: white;
+    margin: 0 auto;
 
-  .header {
-    max-width: $medium;
-    margin: 40px auto 0 auto;
-    padding: 6px 20px 0 20px;
-    position: relative;
-    transition: margin 150ms ease-in-out;
-    display: flex;
-    align-items: center;
+    .header {
+        max-width: $medium;
+        margin: 40px auto 0 auto;
+        padding: 6px 20px 0 20px;
+        position: relative;
+        transition: margin 150ms ease-in-out;
+        display: flex;
+        align-items: center;
 
-    img.logo {
-      height: 65px;
-      margin: 10px 0;
+        img.logo {
+            height: 65px;
+            margin: 10px 0;
+        }
+
+        p.title {
+            font-size: 24px;
+            color: $primary-green;
+
+            &.first {
+                margin-left: 20px;
+            }
+        }
+
+        ul.links {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            list-style: none;
+
+            li.user-profile, li.login, li.help {
+                display: inline-block;
+                text-transform: uppercase;
+
+                a {
+                    text-decoration: none;
+                    color: $primary-green;
+
+                    &:hover {
+                        color: darken($primary-green, 10%);
+                    }
+                }
+
+                &.border-left {
+                    border-left: 1px solid $primary-green;
+                    padding-left: 15px;
+                }
+
+                &.login {
+                    font-size: 18px;
+                    margin-right: 35px;
+                }
+
+                &.user-profile, &.help {
+                    font-size: 18px;
+                    padding: 0 35px;
+
+                    svg.fa-user-secret, svg.fa-info {
+                        margin-right: 5px;
+                    }
+
+                    svg.fa-caret-down, svg.fa-caret-up {
+                        margin-left: 10px;
+                    }
+                }
+            }
+
+            li.impersonator {
+                padding-right: 35px;
+                font-size: 22px;
+                cursor: pointer;
+
+                svg.fa-user-secret {
+                    color: $red;
+
+                    &:hover {
+                        color: darken($red, 10%);
+                        font-size: 23px;
+                    }
+                }
+            }
+        }
+
     }
-
-    p.title {
-      font-size: 24px;
-      color: $primary-green;
-
-      &.first {
-        margin-left: 20px;
-      }
-    }
-
-    ul.links {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      list-style: none;
-
-      li.user-profile, li.login, li.help {
-        display: inline-block;
-        text-transform: uppercase;
-
-        a {
-          text-decoration: none;
-          color: $primary-green;
-
-          &:hover {
-            color: darken($primary-green, 10%);
-          }
-        }
-
-        &.border-left {
-          border-left: 1px solid $primary-green;
-          padding-left: 15px;
-        }
-
-        &.login {
-          font-size: 18px;
-          margin-right: 35px;
-        }
-
-        &.user-profile, &.help {
-          font-size: 18px;
-          padding: 0 35px;
-
-          svg.fa-user-secret, svg.fa-info {
-            margin-right: 5px;
-          }
-
-          svg.fa-caret-down, svg.fa-caret-up {
-            margin-left: 10px;
-          }
-        }
-      }
-
-      li.impersonator {
-        padding-right: 35px;
-        font-size: 22px;
-        cursor: pointer;
-
-        svg.fa-user-secret {
-          color: $red;
-
-          &:hover {
-            color: darken($red, 10%);
-            font-size: 23px;
-          }
-        }
-      }
-    }
-
-  }
 
 }
 

@@ -72,7 +72,8 @@ export default class Header extends React.PureComponent {
                                 </ReactTooltip>
                             </NavLink>
                         </li>}
-                        {!currentUser.guest && <li className={`user-profile ${(displayLogin || impersonator) ? "border-left" : ""}`}>
+                        {!currentUser.guest &&
+                        <li className={`user-profile ${(displayLogin || impersonator) ? "border-left" : ""}`}>
                             {this.renderProfileLink(currentUser)}
                             {this.renderDropDown(currentUser)}
                         </li>}

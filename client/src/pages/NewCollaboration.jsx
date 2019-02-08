@@ -121,7 +121,7 @@ class NewCollaboration extends React.Component {
 
     render() {
         const {
-            name, description, access_type, administrators, message, accepted_user_policy, enrollment,organisation, organisations, email, initial, alreadyExists,
+            name, description, access_type, administrators, message, accepted_user_policy, enrollment, organisation, organisations, email, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();

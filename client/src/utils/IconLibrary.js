@@ -7,13 +7,12 @@ import {
     faArrowUp,
     faBook,
     faCalendarAlt,
-    faCaretUp,
     faCaretDown,
-    faCopy,
-    faUserSecret,
+    faCaretUp,
     faCheck,
     faCheckCircle,
     faCircle,
+    faCopy,
     faEnvelope,
     faExternalLinkAlt,
     faGavel,
@@ -27,6 +26,7 @@ import {
     faSearch,
     faTimes,
     faTrash,
+    faUserSecret,
     faWindowClose,
 } from '@fortawesome/free-solid-svg-icons'
 

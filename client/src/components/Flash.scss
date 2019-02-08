@@ -1,54 +1,54 @@
 @import "../stylesheets/vars.scss";
 
 div.flash {
-  color: white;
+    color: white;
 
-  position: fixed;
-  width: 100%;
-  top: 0;
-  z-index: 6;
-  opacity: .93;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 6;
+    opacity: .93;
 
-  transition: top 150ms ease-in-out;
+    transition: top 150ms ease-in-out;
 
-  &.hide {
-    transition: top 1000ms ease-in-out;
-    top: -80px;
-  }
-
-  &.info {
-    background-color: $green;
-    color: $lightest-grey;
-  }
-
-  &.warning {
-    background-color: $orange;
-  }
-
-  &.error {
-    background-color: $red;
-  }
-
-  .message-container {
-    max-width: $medium;
-    margin: 0 auto;
-    position: relative;
-
-    p {
-      padding: 10px 25px 10px 15px;
-      text-transform: uppercase;
+    &.hide {
+        transition: top 1000ms ease-in-out;
+        top: -80px;
     }
 
-  }
+    &.info {
+        background-color: $green;
+        color: $lightest-grey;
+    }
 
-  a.close {
-    text-decoration: none;
-    position: absolute;
-    right: 10px;
-    top: -5px;
-    color: white;
-    padding: 6px;
-  }
+    &.warning {
+        background-color: $orange;
+    }
+
+    &.error {
+        background-color: $red;
+    }
+
+    .message-container {
+        max-width: $medium;
+        margin: 0 auto;
+        position: relative;
+
+        p {
+            padding: 10px 25px 10px 15px;
+            text-transform: uppercase;
+        }
+
+    }
+
+    a.close {
+        text-decoration: none;
+        position: absolute;
+        right: 10px;
+        top: -5px;
+        color: white;
+        padding: 6px;
+    }
 
 
 }

@@ -244,7 +244,8 @@ class Service extends React.Component {
                     <InputField value={contact_email}
                                 name={I18n.t("service.contact_email")}
                                 placeholder={I18n.t("service.contact_emailPlaceholder")}
-                                onChange={e => this.setState({contact_email: e.target.value,
+                                onChange={e => this.setState({
+                                    contact_email: e.target.value,
                                     invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
                                         ...invalidInputs,
                                         email: false

@@ -2,55 +2,55 @@
 
 .language-selector {
 
-  margin: 0;
-  list-style: none;
-  border: 1px solid $primary-green;
-  border-radius: $br;
-
-  li {
-    display: inline-block;
-    padding: 2px 12px;
     margin: 0;
+    list-style: none;
+    border: 1px solid $primary-green;
+    border-radius: $br;
 
-    &:first-child {
-      border-bottom-left-radius: 1px;
-      border-top-left-radius: 1px;
+    li {
+        display: inline-block;
+        padding: 2px 12px;
+        margin: 0;
+
+        &:first-child {
+            border-bottom-left-radius: 1px;
+            border-top-left-radius: 1px;
+        }
+
+        &:last-child {
+            border-bottom-right-radius: 1px;
+            border-top-right-radius: 1px;
+        }
+
+        &:not(:first-child):not(:last-child) {
+            border-left: 1px $primary-green solid;
+            border-right: 1px $primary-green solid;
+        }
+
+        a {
+            font-weight: normal;
+            color: $primary-green;
+            text-decoration: none;
+
+            &:hover {
+                color: darken($primary-green, 10%);
+
+            }
+        }
+
+        &.active {
+            background-color: $primary-green;
+
+            &:hover {
+                background-color: darken($primary-green, 10%);
+
+            }
+
+            a {
+                color: white;
+            }
+
+        }
     }
-
-    &:last-child {
-      border-bottom-right-radius: 1px;
-      border-top-right-radius: 1px;
-    }
-
-    &:not(:first-child):not(:last-child) {
-      border-left: 1px $primary-green solid;
-      border-right: 1px $primary-green solid;
-    }
-
-    a {
-      font-weight: normal;
-      color: $primary-green;
-      text-decoration: none;
-
-      &:hover {
-        color: darken($primary-green, 10%);
-
-      }
-    }
-
-    &.active {
-      background-color: $primary-green;
-
-      &:hover {
-        background-color: darken($primary-green, 10%);
-
-      }
-
-      a {
-        color: white;
-      }
-
-    }
-  }
 
 }

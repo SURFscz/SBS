@@ -1,98 +1,98 @@
 @import "../stylesheets/vars.scss";
 
 .mod-new-organisation {
-  background-color: $background;
-  margin-bottom: $medium-padding;
+    background-color: $background;
+    margin-bottom: $medium-padding;
 
-  div.title {
-    font-size: 22px;
-    color: $dark-grey;
-    max-width: $medium;
-    margin: 0 auto;
-    padding: 10px 0 5px 0;
+    div.title {
+        font-size: 22px;
+        color: $dark-grey;
+        max-width: $medium;
+        margin: 0 auto;
+        padding: 10px 0 5px 0;
 
-    p {
-      padding: 10px 0 10px 0;
-    }
-
-    a {
-      display: inline-block;
-      font-size: 16px;
-      text-transform: uppercase;
-      text-decoration: none;
-      margin: 10px 0;
-      color: $blue;
-
-      &:hover {
-        font-weight: bolder;
-      }
-
-      svg {
-        margin-right: 10px;
-      }
-    }
-  }
-
-  .new-organisation {
-    max-width: $medium;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-    margin: 0 auto 25px auto;
-    background-color: white;
-    padding: $medium-padding;
-
-    .error {
-      color: $red;
-      display: inline-block;
-      font-size: 14px;
-    }
-
-    div.input-field {
-      margin-top: 15px;
-    }
-
-    section.email-tags {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-
-      .email-tag {
-        border: 1px solid $lighter-grey;
-        border-radius: $br;
-        margin: 10px 10px 0 0;
-        display: flex;
-        align-content: center;
-        align-items: center;
-
-        span {
-          &:first-child {
-            padding-left: 6px;
-            padding-right: 24px;
-            word-break: break-all;
-          }
-
-          &:last-child {
-            padding: 6px 14px;
-            background-color: $background;
-            cursor: pointer;
-            font-size: 14px;
-            color: $red;
-
-            &.disabled {
-              cursor: not-allowed;
-            }
-          }
+        p {
+            padding: 10px 0 10px 0;
         }
-      }
+
+        a {
+            display: inline-block;
+            font-size: 16px;
+            text-transform: uppercase;
+            text-decoration: none;
+            margin: 10px 0;
+            color: $blue;
+
+            &:hover {
+                font-weight: bolder;
+            }
+
+            svg {
+                margin-right: 10px;
+            }
+        }
     }
 
+    .new-organisation {
+        max-width: $medium;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+        margin: 0 auto 25px auto;
+        background-color: white;
+        padding: $medium-padding;
 
-    section.actions {
-      margin: $medium-margin 0;
+        .error {
+            color: $red;
+            display: inline-block;
+            font-size: 14px;
+        }
 
-      a.cancel {
-        margin-left: 25px;
-      }
+        div.input-field {
+            margin-top: 15px;
+        }
+
+        section.email-tags {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
+            .email-tag {
+                border: 1px solid $lighter-grey;
+                border-radius: $br;
+                margin: 10px 10px 0 0;
+                display: flex;
+                align-content: center;
+                align-items: center;
+
+                span {
+                    &:first-child {
+                        padding-left: 6px;
+                        padding-right: 24px;
+                        word-break: break-all;
+                    }
+
+                    &:last-child {
+                        padding: 6px 14px;
+                        background-color: $background;
+                        cursor: pointer;
+                        font-size: 14px;
+                        color: $red;
+
+                        &.disabled {
+                            cursor: not-allowed;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        section.actions {
+            margin: $medium-margin 0;
+
+            a.cancel {
+                margin-left: 25px;
+            }
+        }
+
     }
-
-  }
 }
