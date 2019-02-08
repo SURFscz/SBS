@@ -43,6 +43,11 @@ I18n.translations.nl = {
         manage: "Beheren",
         invalidInput: "Foutieve waarde voor {{name}}"
     },
+    explain: {
+        title: "Uitlef {{subject}}",
+        impersonate: "Impersonate"
+    },
+
     impersonate: {
         title: "Wie wilt u zijn?",
         organisation: "Organisatie",

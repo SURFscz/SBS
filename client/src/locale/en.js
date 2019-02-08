@@ -43,6 +43,10 @@ I18n.translations.en = {
         manage: "Manage",
         invalidInput: "Invalid input for {{name}}"
     },
+    explain: {
+        title: "Explanation {{subject}}",
+        impersonate: "Impersonate"
+    },
     impersonate: {
         title: "Who do you want to be?",
         organisation: "Organisation",
