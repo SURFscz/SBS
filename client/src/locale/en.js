@@ -12,7 +12,7 @@ I18n.translations.en = {
             help: "Help",
             helpUrl: "https://github.com/SURFscz/SBS/wiki"
         },
-        impersonator: "You are really {{impersonator}},<br/>but you are impersonating {{currentUser}}.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
+        impersonator: "You are really <em>{{impersonator}}</em>,<br/>but you are impersonating <em>{{currentUser}}</em>.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
 
     },
     navigation: {
@@ -397,6 +397,7 @@ I18n.translations.en = {
         requiredEmail: "At least one email is required for an invitation for a collaboration",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
+        messageTooltip: "The message will be included in the<br/>email invitation to the administrators.",
         inviteesMessagesTooltip: "Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.<br/>You can also upload a csv file<br/>with comma-separated email addresses.",
         inviteesMessagePlaceholder: "Personal message to the invitees",
         inviter: "Inviter",

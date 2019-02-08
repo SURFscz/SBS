@@ -398,6 +398,7 @@ I18n.translations.nl = {
         requiredEmail: "U dient minimaal 1 email-adres op te geven waar u de uitnodiging om lid te worden naartoe wil sturen",
         message: "Bericht",
         messagePlaceholder: "Bericht aan de beheerders",
+        messageTooltip: "De boodschap nemen we op in de <br/>email waarmee beheerders worden uitgenodigd.",
         inviteesMessagesTooltip: "Voer email adressen in, gescheiden door een komma, spatie <br/>of punt-komma of voer ze stuk-voor-stuk in<br/>met de enter toets.<br/>U kunt ook een csv file inlezen<br/>met daarin komma-gescheiden email-adressen.",
         inviteesMessagePlaceholder: "Bericht aan genodigden",
         inviter: "Uitnodiger",

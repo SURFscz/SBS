@@ -327,7 +327,7 @@ class AuthorisationGroup extends React.Component {
                                 {name !== "actions" && headerIcon(name, sorted, reverse)}
                                 {name === "actions" &&
                                 <span data-tip data-for="member-delete">
-                                <FontAwesomeIcon icon="question-circle"/>
+                                <FontAwesomeIcon icon="info-circle"/>
                                 <ReactTooltip id="member-delete" type="light" effect="solid" data-html={true}>
                                     <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteMemberTooltip", {name: authorisationGroupName})}}/>
                                 </ReactTooltip>
@@ -378,7 +378,7 @@ class AuthorisationGroup extends React.Component {
                                 {name !== "actions" && headerIcon(name, sorted, reverse)}
                                 {name === "actions" &&
                                 <span data-tip data-for="service-delete">
-                                <FontAwesomeIcon icon="question-circle"/>
+                                <FontAwesomeIcon icon="info-circle"/>
                                 <ReactTooltip id="service-delete" type="light" effect="solid" data-html={true}>
                                     <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteServiceTooltip", {name: authorisationGroupName})}}/>
                                 </ReactTooltip>

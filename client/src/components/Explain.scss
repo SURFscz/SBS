@@ -7,7 +7,7 @@
     left: 0;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
     background: white;
-    width: 385px;
+    width: 460px;
     z-index: 5;
     height: 100%;
     transition: left 325ms ease-in-out;
@@ -18,7 +18,7 @@
 
     &.hide {
         transition: left 250ms ease-in-out;
-        left: -390px;
+        left: -470px;
     }
 
     .container {

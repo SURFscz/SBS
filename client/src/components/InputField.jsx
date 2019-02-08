@@ -17,7 +17,7 @@ export default function InputField({
         <div className="input-field">
             <label htmlFor={name}>{name} {toolTip &&
             <span className="tool-tip-section">
-                <span data-tip data-for={name}><FontAwesomeIcon icon="question-circle"/></span>
+                <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
                 <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
                     <p dangerouslySetInnerHTML={{__html: toolTip}}/>
                 </ReactTooltip>
