@@ -130,6 +130,8 @@ class Impersonate extends React.Component {
         query: `${selectedUser.name} - ${selectedUser.uid}`
     });
 
+    closeExplanation = () => this.setState({showExplanation: false});
+
     onBlurSearch = suggestions => () => {
         if (!isEmpty(suggestions)) {
             setTimeout(() => this.setState({suggestions: [], loadingAutoComplete: true}), 250);
@@ -159,7 +161,7 @@ class Impersonate extends React.Component {
         return (
             <div className="mod-impersonate">
                 <Explain
-                    close={() => this.setState({showExplanation: false})}
+                    close={this.closeExplanation}
                     subject={I18n.t("explain.impersonate")}
                     isVisible={showExplanation}>
                     <ImpersonateExplanation/>
@@ -167,6 +169,7 @@ class Impersonate extends React.Component {
                 <div className="title">
                     <p>{I18n.t("impersonate.title", {name: user.name})}</p>
                     <FontAwesomeIcon className="help" icon="question-circle"
+                                     id="impersonate_close_explanation"
                                      onClick={() => this.setState({showExplanation: true})}/>
                 </div>
                 <div className="impersonate">
