@@ -1,4 +1,4 @@
-import {replaceQueryParameter, getParameterByName} from "../../utils/QueryParameters";
+import {getParameterByName, replaceQueryParameter} from "../../utils/QueryParameters";
 
 test("Replace query parameters", () => {
     const replaced = replaceQueryParameter("?test=bogus", "test", "value");
@@ -16,7 +16,7 @@ test("Replace query parameters", () => {
 });
 
 test("Parameter by name", () => {
-   expect("value").toBe(getParameterByName("name", "?name=value"));
+    expect("value").toBe(getParameterByName("name", "?name=value"));
 });
 
 test("Parameter by name not exists", () => {

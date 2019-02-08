@@ -1,7 +1,8 @@
 import React from "react";
 import ReactTooltip from "react-tooltip";
 import {
-    deleteOrganisation, deleteOrganisationMembership,
+    deleteOrganisation,
+    deleteOrganisationMembership,
     organisationById,
     organisationIdentifierExists,
     organisationNameExists,

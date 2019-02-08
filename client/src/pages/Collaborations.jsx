@@ -341,7 +341,7 @@ class Collaborations extends React.Component {
                 <div className="title">
                     <span>{I18n.t("collaborations.title")}</span>
                     {(isOrganisationAdmin && !user.admin) && <Button onClick={this.newCollaboration}
-                                                    txt={I18n.t("collaborations.add")}/>
+                                                                     txt={I18n.t("collaborations.add")}/>
                     }
                 </div>
                 {this.renderCollaborations(sortedCollaborations, user, sorted, reverse)}

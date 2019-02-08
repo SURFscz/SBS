@@ -54,7 +54,7 @@ class CollaborationAuthorisationGroups extends React.Component {
     };
 
     openAuthorisationGroupDetails = authorisationGroup => e => {
-       stopEvent(e);
+        stopEvent(e);
         const {collaboration} = this.state;
         this.props.history.push(`/collaboration-authorisation-group-details/${collaboration.id}/${authorisationGroup.id}`);
     };

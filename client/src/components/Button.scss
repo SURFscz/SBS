@@ -1,93 +1,93 @@
 @import "../stylesheets/vars.scss";
 
 a.button {
-  display: inline-block;
-  padding: 10px 15px;
-  background-color: $blue;
-  color: white;
-  border-radius: $br;
-  text-transform: uppercase;
-  min-width: 140px;
-  text-align: center;
-  cursor: pointer;
-  text-decoration: none;
-
-  svg {
-    margin-left: 25px;
-  }
-
-  &:hover {
-    background-color: darken($blue, 5%);
-    color: darken(white, 10%);
-  }
-
-  &:hover, &:visited {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: $blue;
+    color: white;
+    border-radius: $br;
+    text-transform: uppercase;
+    min-width: 140px;
+    text-align: center;
+    cursor: pointer;
     text-decoration: none;
-  }
 
-  &.cancel, &.white {
-    background-color: white;
-    color: $blue;
-    border-radius: $br;
-    border: 1px solid $lighter-grey;
-    min-width: 120px;
+    svg {
+        margin-left: 25px;
+    }
 
     &:hover {
-      background-color: darken(white, 3%);
-      color: darken($blue, 10%);
+        background-color: darken($blue, 5%);
+        color: darken(white, 10%);
+    }
+
+    &:hover, &:visited {
+        text-decoration: none;
+    }
+
+    &.cancel, &.white {
+        background-color: white;
+        color: $blue;
+        border-radius: $br;
+        border: 1px solid $lighter-grey;
+        min-width: 120px;
+
+        &:hover {
+            background-color: darken(white, 3%);
+            color: darken($blue, 10%);
+        }
+
+        i {
+            color: $blue;
+            margin: 0;
+            font-size: larger;
+        }
+    }
+
+    &.delete {
+        background-color: $red;
+        color: white;
+        border: none;
+
+        &:hover {
+            background-color: darken($red, 5%);
+            color: darken(white, 10%);
+        }
+    }
+
+    &.green {
+        background-color: $primary-green;
+        color: white;
+        border-radius: $br;
+
+        &:hover {
+            background-color: darken($primary-green, 5%);
+            color: darken($primary-green, 10%);
+        }
+
+        i {
+            color: white;
+            margin: 0;
+            font-size: larger;
+        }
+    }
+
+
+    &.disabled {
+        cursor: no-drop;
+        background-color: $lighter-grey;
+        color: white;
+
+        &:hover {
+            background-color: $lighter-grey;
+            color: white;
+        }
     }
 
     i {
-      color: $blue;
-      margin: 0;
-      font-size: larger;
+        margin-left: 10px;
+        color: white;
     }
-  }
-
-  &.delete {
-    background-color: $red;
-    color: white;
-    border: none;
-
-    &:hover {
-      background-color: darken($red, 5%);
-      color: darken(white, 10%);
-    }
-  }
-
-  &.green {
-    background-color: $primary-green;
-    color: white;
-    border-radius: $br;
-
-    &:hover {
-      background-color: darken($primary-green, 5%);
-      color: darken($primary-green, 10%);
-    }
-
-    i {
-      color: white;
-      margin: 0;
-      font-size: larger;
-    }
-  }
-
-
-  &.disabled {
-    cursor: no-drop;
-    background-color: $lighter-grey;
-    color: white;
-
-    &:hover {
-      background-color: $lighter-grey;
-      color: white;
-    }
-  }
-
-  i {
-    margin-left: 10px;
-    color: white;
-  }
 
 }
 

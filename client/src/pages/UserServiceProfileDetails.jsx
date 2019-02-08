@@ -176,7 +176,8 @@ class UserServiceProfileDetails extends React.Component {
                     <InputField value={email}
                                 name={I18n.t("userServiceProfile.email")}
                                 placeholder={I18n.t("userServiceProfile.emailPlaceholder")}
-                                onChange={e => this.setState({email: e.target.value,
+                                onChange={e => this.setState({
+                                    email: e.target.value,
                                     invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
                                         ...invalidInputs,
                                         email: false
@@ -225,7 +226,8 @@ class UserServiceProfileDetails extends React.Component {
                                 disabled={true}/>
 
                     <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("userServiceProfile.update")} onClick={this.submit}/>
+                        <Button disabled={disabledSubmit} txt={I18n.t("userServiceProfile.update")}
+                                onClick={this.submit}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>
 

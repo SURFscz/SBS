@@ -1,10 +1,12 @@
 import React from "react";
 import {
-    collaborationById, collaborationLiteById,
+    collaborationById,
+    collaborationLiteById,
     collaborationNameExists,
     deleteCollaboration,
     deleteCollaborationMembership,
-    updateCollaboration, updateCollaborationMembershipRole
+    updateCollaboration,
+    updateCollaborationMembershipRole
 } from "../api";
 import "./CollaborationDetail.scss";
 import {isEmpty, sortObjects, stopEvent} from "../utils/Utils";
@@ -489,10 +491,10 @@ class CollaborationDetail extends React.Component {
                         copyClipBoard={true}/>
 
             {isAdmin && <InputField value={joinRequestUrl}
-                        name={I18n.t("collaboration.joinRequestUrl")}
-                        toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
-                        disabled={true}
-                        copyClipBoard={true}/>}
+                                    name={I18n.t("collaboration.joinRequestUrl")}
+                                    toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
+                                    disabled={true}
+                                    copyClipBoard={true}/>}
 
             <InputField value={moment(originalCollaboration.created_at * 1000).format("LLLL")}
                         disabled={true}
