@@ -1,10 +1,10 @@
 from flask import Blueprint
-from sqlalchemy.orm import joinedload, contains_eager
+from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_owner_of_user_service_profile
 from server.db.db import CollaborationMembership, UserServiceProfile, User, Service
-from server.db.models import update, _flatten
+from server.db.models import update
 
 user_service_profile_api = Blueprint("user_service_profiles_api", __name__, url_prefix="/api/user_service_profiles")
 
