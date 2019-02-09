@@ -7,7 +7,7 @@ from sqlalchemy import text, or_, func
 from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
@@ -21,7 +21,7 @@ collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/co
 @collaboration_api.route("/find_by_name", strict_slashes=False)
 @json_endpoint
 def collaboration_by_name():
-    name = current_request.args.get("name")
+    name = query_param("name")
     collaboration = Collaboration.query.filter(Collaboration.name == name).one()
     return collaboration, 200
 
@@ -29,8 +29,8 @@ def collaboration_by_name():
 @collaboration_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
-    name = current_request.args.get("name")
-    existing_collaboration = current_request.args.get("existing_collaboration", "")
+    name = query_param("name")
+    existing_collaboration = query_param("existing_collaboration", required=False, default="")
     coll = Collaboration.query.options(load_only("id")) \
         .filter(func.lower(Collaboration.name) == func.lower(name)) \
         .filter(func.lower(Collaboration.name) != func.lower(existing_collaboration)) \
@@ -41,7 +41,7 @@ def name_exists():
 @collaboration_api.route("/search", strict_slashes=False)
 @json_endpoint
 def collaboration_search():
-    q = current_request.args.get("q")
+    q = query_param("q")
     base_query = "SELECT id, name, description, organisation_id FROM collaborations "
     if q != "*":
         base_query += f"WHERE MATCH (name, description) AGAINST ('{q}*' IN BOOLEAN MODE) " \
@@ -61,7 +61,7 @@ def collaboration_services_by_id(collaboration_id):
         .outerjoin(Collaboration.services) \
         .options(contains_eager(Collaboration.services))
 
-    include_memberships = current_request.args.get("include_memberships", False)
+    include_memberships = query_param("include_memberships", required=False, default=False)
     if include_memberships:
         query = query \
             .outerjoin(Collaboration.collaboration_memberships) \
@@ -91,7 +91,7 @@ def collaboration_authorisations_by_id(collaboration_id):
 @collaboration_api.route("/members", strict_slashes=False)
 @json_endpoint
 def members():
-    identifier = current_request.args.get("identifier")
+    identifier = query_param("identifier")
     collaboration_authorisation_group = aliased(Collaboration)
     collaboration_membership = aliased(Collaboration)
 

@@ -2,7 +2,7 @@ from flask import Blueprint, request as current_request
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, contains_eager
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access
 from server.db.db import Service, db, Collaboration
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -14,7 +14,7 @@ service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 @service_api.route("/search", strict_slashes=False)
 @json_endpoint
 def collaboration_search():
-    q = current_request.args.get("q")
+    q = query_param("q")
     base_query = "SELECT id, entity_id, name, description FROM services "
     if q != "*":
         base_query += f"WHERE MATCH (name, entity_id, description) AGAINST ('{q}*' IN BOOLEAN MODE) " \
@@ -28,8 +28,8 @@ def collaboration_search():
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
-    name = current_request.args.get("name")
-    existing_service = current_request.args.get("existing_service", "")
+    name = query_param("name")
+    existing_service = query_param("existing_service", required=False, default="")
     org = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.name) == func.lower(name)) \
         .filter(func.lower(Service.name) != func.lower(existing_service)) \
@@ -40,8 +40,8 @@ def name_exists():
 @service_api.route("/entity_id_exists", strict_slashes=False)
 @json_endpoint
 def entity_id_exists():
-    entity_id = current_request.args.get("entity_id")
-    existing_service = current_request.args.get("existing_service", "")
+    entity_id = query_param("entity_id")
+    existing_service = query_param("existing_service", required=False, default="")
     org = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.entity_id) == func.lower(entity_id)) \
         .filter(func.lower(Service.entity_id) != func.lower(existing_service)) \

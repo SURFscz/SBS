@@ -4,7 +4,7 @@ from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_organisation_admin, confirm_write_access, current_user_id
 from server.db.db import OrganisationInvitation, Organisation, OrganisationMembership, db
 from server.db.models import delete
@@ -25,7 +25,7 @@ def _organisation_invitation_query():
 @organisation_invitations_api.route("/find_by_hash", strict_slashes=False)
 @json_endpoint
 def organisation_invitations_by_hash():
-    hash_value = current_request.args.get("hash")
+    hash_value = query_param("hash")
     organisation_invitation = _organisation_invitation_query() \
         .filter(OrganisationInvitation.hash == hash_value) \
         .one()

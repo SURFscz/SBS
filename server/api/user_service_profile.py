@@ -1,7 +1,7 @@
 from flask import Blueprint, request as current_request
 from sqlalchemy.orm import joinedload, contains_eager
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_owner_of_user_service_profile
 from server.db.db import CollaborationMembership, UserServiceProfile, User, Service
 from server.db.models import update
@@ -28,8 +28,8 @@ def _attributes_per_service(user_service_profile: UserServiceProfile):
 @user_service_profile_api.route("/attributes", strict_slashes=False)
 @json_endpoint
 def attributes():
-    uid = current_request.args.get("uid")
-    service_entity_id = current_request.args.get("service_entity_id")
+    uid = query_param("uid")
+    service_entity_id = query_param("service_entity_id")
     user_service_profiles = UserServiceProfile.query \
         .options(joinedload(UserServiceProfile.service)) \
         .join(UserServiceProfile.service) \

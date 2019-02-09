@@ -7,7 +7,7 @@ from flask import Blueprint, request as current_request, session, current_app, j
 from sqlalchemy import text
 from sqlalchemy.orm import contains_eager
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id
 from server.auth.user_claims import claim_attribute_mapping, claim_attribute_hash_headers, claim_attribute_hash_user
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
@@ -62,11 +62,11 @@ def _add_user_claims(request_headers, uid, user):
 @user_api.route("/search", strict_slashes=False)
 @json_endpoint
 def collaboration_search():
-    q = current_request.args.get("q")
-    organisation_id = current_request.args.get("organisation_id", None)
-    collaboration_id = current_request.args.get("collaboration_id", None)
-    organisation_admins = current_request.args.get("organisation_admins", None)
-    collaboration_admins = current_request.args.get("collaboration_admins", None)
+    q = query_param("q")
+    organisation_id = query_param("organisation_id", required=False)
+    collaboration_id = query_param("collaboration_id", required=False)
+    organisation_admins = query_param("organisation_admins", required=False)
+    collaboration_admins = query_param("collaboration_admins", required=False)
 
     base_query = "SELECT u.id, u.uid, u.name, u.email, o.name, om.role, c.name, cm.role  FROM users u "
 
@@ -165,7 +165,7 @@ def refresh():
 def other():
     confirm_allow_impersonation()
 
-    uid = current_request.args.get("uid")
+    uid = query_param("uid")
     user = _user_query().filter(User.uid == uid).one()
     is_admin = {"admin": is_admin_user(user.uid), "guest": False}
     json_user = jsonify(user).json
