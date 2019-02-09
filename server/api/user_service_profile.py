@@ -1,4 +1,4 @@
-from flask import Blueprint, request as current_request
+from flask import Blueprint
 from sqlalchemy.orm import joinedload, contains_eager
 
 from server.api.base import json_endpoint, query_param
