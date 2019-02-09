@@ -224,6 +224,7 @@ I18n.translations.en = {
     service: {
         titleNew: "Create new service",
         titleUpdate: "Update service {{name}}",
+        titleReadOnly: "Service {{name}}",
         backToServices: "Back to services",
         name: "Name",
         namePlaceHolder: "The unique name of the service",

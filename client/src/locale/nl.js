@@ -225,6 +225,7 @@ I18n.translations.nl = {
     service: {
         titleNew: "Nieuwe dienst aanmaken",
         titleUpdate: "Dienst {{name}} bijwerken",
+        titleReadOnly: "Dienst {{name}}",
         backToServices: "Terug naar diensten",
         name: "Naam",
         namePlaceHolder: "De unieke naam van een dienst",

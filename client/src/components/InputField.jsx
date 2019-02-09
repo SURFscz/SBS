@@ -11,7 +11,7 @@ export default function InputField({
                                        toolTip = null, onBlur = () => true, onEnter = null, multiline = false,
                                        fileUpload = false, fileName = null, onFileUpload = null, onFileRemoval = null,
                                        acceptFileFormat = "text/csv", fileInputKey = null,
-                                       copyClipBoard = false
+                                       copyClipBoard = false, link = null, history = null
                                    }) {
     return (
         <div className="input-field">
@@ -59,6 +59,7 @@ export default function InputField({
 
                 </section>
             </CopyToClipboard>}
+            {(link && history) && <FontAwesomeIcon icon="arrow-right" onClick={() => history.push(link)}/>}
 
         </div>
     );

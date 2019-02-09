@@ -65,6 +65,11 @@ class Service extends React.Component {
                         isNew: false,
                         back: isEmpty(back) ? this.state.back : back
                     }));
+            } else {
+                const isAdmin = this.props.user.admin;
+                if (!isAdmin) {
+                    this.props.history.push("/404");
+                }
             }
         } else {
             this.props.history.push("/404");
@@ -156,7 +161,9 @@ class Service extends React.Component {
             confirmationDialogAction, leavePage, isNew, back, invalidInputs
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
-        const title = isNew ? I18n.t("service.titleNew") : I18n.t("service.titleUpdate", {name: service.name});
+        const isAdmin = this.props.user.admin;
+        const title = isAdmin ? (isNew ? I18n.t("service.titleNew") : I18n.t("service.titleUpdate", {name: service.name}))
+            : I18n.t("service.titleReadOnly", {name: service.name});
         return (
             <div className="mod-service">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -165,12 +172,12 @@ class Service extends React.Component {
                                     leavePage={leavePage}
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
                 <div className="title">
-                    <a href={back} onClick={e => {
+                    {isAdmin && <a href={back} onClick={e => {
                         stopEvent(e);
                         this.props.history.push(back)
                     }}><FontAwesomeIcon icon="arrow-left"/>
                         {back.indexOf("collaborations") > -1 ? I18n.t("collaborationDetail.backToCollaborations") : I18n.t("service.backToServices")}
-                    </a>
+                    </a>}
                     <p className="title">{title}</p>
                 </div>
 
@@ -181,7 +188,8 @@ class Service extends React.Component {
                     })}
                                 placeholder={I18n.t("service.namePlaceHolder")}
                                 onBlur={this.validateServiceName}
-                                name={I18n.t("service.name")}/>
+                                name={I18n.t("service.name")}
+                                disabled={!isAdmin}/>
                     {alreadyExists.name && <span
                         className="error">{I18n.t("service.alreadyExists", {
                         attribute: I18n.t("service.name").toLowerCase(),
@@ -200,7 +208,8 @@ class Service extends React.Component {
                                 onBlur={this.validateServiceEntityId}
                                 name={I18n.t("service.entity_id")}
                                 toolTip={I18n.t("service.entity_idTooltip")}
-                                copyClipBoard={true}/>
+                                copyClipBoard={true}
+                                disabled={!isAdmin}/>
                     {alreadyExists.entity_id && <span
                         className="error">{I18n.t("service.alreadyExists", {
                         attribute: I18n.t("service.entity_id").toLowerCase(),
@@ -214,30 +223,35 @@ class Service extends React.Component {
                     <InputField value={description}
                                 name={I18n.t("service.description")}
                                 placeholder={I18n.t("service.descriptionPlaceholder")}
-                                onChange={e => this.setState({description: e.target.value})}/>
+                                onChange={e => this.setState({description: e.target.value})}
+                                disabled={!isAdmin}/>
 
                     <InputField value={address}
                                 name={I18n.t("service.address")}
                                 placeholder={I18n.t("service.addressPlaceholder")}
-                                onChange={e => this.setState({address: e.target.value})}/>
+                                onChange={e => this.setState({address: e.target.value})}
+                                disabled={!isAdmin}/>
 
                     <InputField value={identity_type}
                                 name={I18n.t("service.identity_type")}
                                 placeholder={I18n.t("service.identity_typePlaceholder")}
                                 onChange={e => this.setState({identity_type: e.target.value})}
-                                toolTip={I18n.t("service.identity_typeTooltip")}/>
+                                toolTip={I18n.t("service.identity_typeTooltip")}
+                                disabled={!isAdmin}/>
 
                     <InputField value={uri}
                                 name={I18n.t("service.uri")}
                                 placeholder={I18n.t("service.uriPlaceholder")}
                                 onChange={e => this.setState({uri: e.target.value})}
-                                toolTip={I18n.t("service.uriTooltip")}/>
+                                toolTip={I18n.t("service.uriTooltip")}
+                                disabled={!isAdmin}/>
 
                     <SelectField value={this.statusOptions.find(option => status === option.value)}
                                  options={this.statusOptions}
                                  name={I18n.t("service.status.name")}
                                  clearable={true}
                                  placeholder={I18n.t("service.statusPlaceholder")}
+                                 disabled={!isAdmin}
                                  onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}
                     />
 
@@ -252,7 +266,8 @@ class Service extends React.Component {
                                     }
                                 })}
                                 toolTip={I18n.t("service.contact_emailTooltip")}
-                                onBlur={this.validateEmail}/>
+                                onBlur={this.validateEmail}
+                                disabled={!isAdmin}/>
 
                     {invalidInputs["email"] && <span
                         className="error">{I18n.t("forms.invalidInput", {name: "email"})}</span>}
@@ -261,19 +276,20 @@ class Service extends React.Component {
                                 name={I18n.t("service.accepted_user_policy")}
                                 placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
                                 onChange={e => this.setState({accepted_user_policy: e.target.value})}
-                                toolTip={I18n.t("service.accepted_user_policyTooltip")}/>
+                                toolTip={I18n.t("service.accepted_user_policyTooltip")}
+                                disabled={!isAdmin}/>
 
                     {!isNew && <InputField value={moment(service.created_at * 1000).format("LLLL")}
                                            disabled={true}
                                            name={I18n.t("organisation.created")}/>}
 
-                    {isNew &&
+                    {(isNew && isAdmin) &&
                     <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
                                 onClick={this.submit}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>}
-                    {!isNew &&
+                    {(!isNew && isAdmin) &&
                     <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
                                 onClick={this.submit}/>

@@ -112,4 +112,19 @@
         }
 
     }
+
+    svg.fa-arrow-right {
+        position: absolute;
+        right: 6px;
+        top: 14px;
+        font-size: 34px;
+        color: $blue;
+        padding: 6px;
+        cursor: pointer;
+
+        &:hover {
+            color: darken($blue, 10%);
+        }
+
+    }
 }
