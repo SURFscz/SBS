@@ -136,12 +136,15 @@ def seed(db):
     _persist(db, user_service_profile)
 
     authorisation_group_researchers = AuthorisationGroup(name=ai_researchers_authorisation,
+                                                         short_name="ai_res",
                                                          uri="https://ai/researchers",
                                                          status="active",
                                                          description="Artifical computing researchers",
                                                          collaboration=ai_computing, services=[network],
                                                          collaboration_memberships=[john_ai_computing])
-    authorisation_group_developers = AuthorisationGroup(name="AI developers", uri="https://ai/developers",
+    authorisation_group_developers = AuthorisationGroup(name="AI developers",
+                                                        uri="https://ai/developers",
+                                                        short_name="ai_dev",
                                                         status="in_active",
                                                         description="Artifical computing developers",
                                                         collaboration=ai_computing, services=[],
