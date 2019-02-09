@@ -1,4 +1,4 @@
-from flask import Blueprint, request as current_request
+from flask import Blueprint
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, contains_eager
 
