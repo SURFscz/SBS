@@ -53,6 +53,10 @@ class TestUser(AbstractTest):
     def test_other_not_allowed(self):
         self.get("/api/users/other", query_data={"uid": "urn:mary"}, response_status_code=403)
 
+    def test_other_missing_query_parameter(self):
+        self.login("urn:john")
+        self.get("/api/users/other", response_status_code=400)
+
     def test_other(self):
         self.login("urn:john")
         res = self.get("/api/users/other", query_data={"uid": "urn:mary"})

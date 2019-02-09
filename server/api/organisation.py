@@ -6,7 +6,7 @@ from sqlalchemy import text, func
 from sqlalchemy.orm import joinedload, contains_eager
 from sqlalchemy.orm import load_only
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid, \
     is_application_admin
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
@@ -21,8 +21,8 @@ organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/orga
 @organisation_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
-    name = current_request.args.get("name")
-    existing_organisation = current_request.args.get("existing_organisation", "")
+    name = query_param("name")
+    existing_organisation = query_param("existing_organisation", required=False, default="")
     org = Organisation.query.options(load_only("id")) \
         .filter(func.lower(Organisation.name) == func.lower(name)) \
         .filter(func.lower(Organisation.name) != func.lower(existing_organisation)) \
@@ -33,8 +33,8 @@ def name_exists():
 @organisation_api.route("/identifier_exists", strict_slashes=False)
 @json_endpoint
 def identifier_exists():
-    identifier = current_request.args.get("identifier")
-    existing_organisation = current_request.args.get("existing_organisation", "")
+    identifier = query_param("identifier")
+    existing_organisation = query_param("existing_organisation", required=False, default="")
     org = Organisation.query.options(load_only("id")) \
         .filter(func.lower(Organisation.tenant_identifier) == func.lower(identifier)) \
         .filter(func.lower(Organisation.tenant_identifier) != func.lower(existing_organisation)) \
@@ -45,7 +45,7 @@ def identifier_exists():
 @organisation_api.route("/search", strict_slashes=False)
 @json_endpoint
 def organisation_search():
-    q = current_request.args.get("q")
+    q = query_param("q")
     base_query = "SELECT id, name, description FROM organisations "
     if q != "*":
         base_query += f"WHERE MATCH (name, description) AGAINST ('{q}*' IN BOOLEAN MODE) " \

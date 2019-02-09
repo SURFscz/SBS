@@ -4,7 +4,7 @@ from functools import wraps
 
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from sqlalchemy.orm.exc import NoResultFound
-from werkzeug.exceptions import HTTPException, Unauthorized
+from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
 from server.db.db import db
 
@@ -34,6 +34,13 @@ def auth_filter(config):
     request_context.is_authorized_api_call = is_authorized_api_call
     if is_authorized_api_call:
         request_context.api_user = get_user(config, auth)[0]
+
+
+def query_param(key, required=True, default=None):
+    value = current_request.args.get(key, default=default)
+    if required and not value:
+        raise BadRequest(f"Query parameter {key} is required, but missing")
+    return value
 
 
 def get_user(config, auth):

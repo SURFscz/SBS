@@ -3,7 +3,7 @@ from sqlalchemy import func
 from sqlalchemy import text
 from sqlalchemy.orm import load_only, contains_eager
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_collaboration_admin, confirm_collaboration_admin_or_authorisation_group_member
 from server.db.db import AuthorisationGroup, CollaborationMembership
 from server.db.db import db
@@ -15,9 +15,9 @@ authorisation_group_api = Blueprint("authorisation_group_api", __name__, url_pre
 @authorisation_group_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
-    name = current_request.args.get("name")
-    collaboration_id = current_request.args.get("collaboration_id")
-    existing_authorisation_group = current_request.args.get("existing_authorisation_group", "")
+    name = query_param("name")
+    collaboration_id = query_param("collaboration_id")
+    existing_authorisation_group = query_param("existing_authorisation_group", required=False, default="")
     org = AuthorisationGroup.query.options(load_only("id")) \
         .filter(func.lower(AuthorisationGroup.name) == func.lower(name)) \
         .filter(func.lower(AuthorisationGroup.name) != func.lower(existing_authorisation_group)) \

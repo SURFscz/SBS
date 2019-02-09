@@ -4,7 +4,7 @@ from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_collaboration_admin, confirm_write_access, current_user_id
 from server.db.db import Invitation, CollaborationMembership, Collaboration, db
 from server.db.defaults import default_expiry_date
@@ -26,7 +26,7 @@ def _invitation_query():
 @invitations_api.route("/find_by_hash", strict_slashes=False)
 @json_endpoint
 def invitations_by_hash():
-    hash_value = current_request.args.get("hash")
+    hash_value = query_param("hash")
     invitation = _invitation_query() \
         .filter(Invitation.hash == hash_value) \
         .one()
