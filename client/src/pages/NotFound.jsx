@@ -4,6 +4,7 @@ import "./NotFound.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {getParameterByName} from "../utils/QueryParameters";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { Planet } from 'react-kawaii'
 
 export default function NotFound({currentUser}) {
     return (
@@ -17,6 +18,7 @@ export default function NotFound({currentUser}) {
                 }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("not_found.loginLink")}</a>}
             </div>
             <div className="content">
+                <Planet size={80} mood="sad" color="white" />
                 <p className="hero">{I18n.t("not_found.title")}</p>
             </div>
         </div>
