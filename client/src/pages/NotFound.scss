@@ -40,12 +40,14 @@
         margin: 0 auto 25px auto;
         background-color: white;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 280px;
+        padding: 80px;
 
         p.hero {
-            font-size: 202px;
+            font-size: 88px;
+            margin: 80px 0;
         }
     }
 }

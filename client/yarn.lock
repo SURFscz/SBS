@@ -8652,6 +8652,13 @@ react-json-view@^1.19.1:
     react-lifecycles-compat "^3.0.4"
     react-textarea-autosize "^6.1.0"
 
+react-kawaii@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/react-kawaii/-/react-kawaii-0.11.0.tgz#b5d4fc035d7a1521d1fff7102cb8b689579274db"
+  integrity sha512-FQi9ww3c9wrNPjGLtKd5/99minWeW7TVIZgOVHyqemJjbchTe3k49qru11kA0wKr4fuO35A0imNV19/N5h9mGA==
+  dependencies:
+    prop-types "^15.6.2"
+
 react-lifecycles-compat@^3.0.0, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
