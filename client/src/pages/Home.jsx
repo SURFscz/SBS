@@ -46,12 +46,16 @@ class Home extends React.Component {
         this.props.history.push(`/collaboration-authorisation-group-details/${authorisationGroup.collaboration.id}/${authorisationGroup.id}`);
     };
 
+
     openCollaboration = collaboration => e => {
         stopEvent(e);
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };
 
-    renderUserProfileServices = userServiceProfiles => {
+    authorisationGroupForUserServiceProfile = (userServiceProfile, authorisationGroups) =>
+        authorisationGroups.find(authorisationGroup => authorisationGroup.id === userServiceProfile.authorisation_group_id);
+
+    renderUserProfileServices = (userServiceProfiles, authorisationGroups) => {
         const showMore = userServiceProfiles.length >= 6;
         const showMoreItems = this.state.showMore.includes("userServiceProfiles");
         return (
@@ -66,7 +70,7 @@ class Home extends React.Component {
                             <a href={`/user-service-profile/${userServiceProfile.id}`}
                                onClick={this.openUserServiceProfile(userServiceProfile)}>
                                 <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{userServiceProfile.service.name}</span>
+                                <span>{`${userServiceProfile.service.name} - ${this.authorisationGroupForUserServiceProfile(userServiceProfile, authorisationGroups).name}`}</span>
                             </a>
                         </div>)}
                 </div>
@@ -74,9 +78,9 @@ class Home extends React.Component {
                     {showMore && <Button className="white"
                                          txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
                                          onClick={this.toggleShowMore("userServiceProfiles")}/>}
-                    <Button className="white"
-                            txt={I18n.t("forms.manage")}
-                            onClick={this.openUserServiceProfiles}/>
+                    {userServiceProfiles.length > 0 && <Button className="white"
+                                                               txt={I18n.t("forms.manage")}
+                                                               onClick={this.openUserServiceProfiles}/>}
                 </section>
             </section>
         );
@@ -141,15 +145,16 @@ class Home extends React.Component {
     render() {
         const {collaborationMemberships, collaborations} = this.state;
 
-        const userServiceProfiles = collaborationMemberships.map(membership => membership.user_service_profiles).flat();
+
         const authorisationGroups = collaborationMemberships.map(membership => membership.authorisation_groups).flat();
+        const userServiceProfiles = authorisationGroups.map(authorisationGroup => authorisationGroup.user_service_profiles).flat();
         return (
             <div className="mod-home">
                 <div className="title">
                     <p>{I18n.t("home.title")}</p>
                 </div>
                 <section className="info-block-container">
-                    {this.renderUserProfileServices(userServiceProfiles)}
+                    {this.renderUserProfileServices(userServiceProfiles, authorisationGroups)}
                     {this.renderAuthorisationGroups(authorisationGroups)}
                     {this.renderCollaborations(collaborations)}
 

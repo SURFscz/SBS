@@ -58,6 +58,11 @@ def confirm_allow_impersonation():
         raise Forbidden()
 
 
+def confirm_authorized_api_call():
+    if not request_context.is_authorized_api_call and not is_application_admin():
+        raise Forbidden()
+
+
 def confirm_write_access(*args, override_func=None):
     if request_context.is_authorized_api_call:
         return "write" in request_context.api_user.scope
@@ -114,8 +119,7 @@ def confirm_owner_of_user_service_profile():
     def override_func():
         user_id = current_user_id()
         count = UserServiceProfile.query.options(load_only("id")) \
-            .join(UserServiceProfile.collaboration_membership) \
-            .filter(CollaborationMembership.user_id == user_id) \
+            .filter(UserServiceProfile.user_id == user_id) \
             .count()
         return count > 0
 

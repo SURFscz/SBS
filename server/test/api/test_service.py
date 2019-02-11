@@ -6,7 +6,7 @@ from server.test.seed import service_mail_name, service_network_entity_id
 class TestService(AbstractTest):
 
     def _find_by_name(self, name=service_mail_name):
-        service = Service.query.filter(Service.name == name).one()
+        service = self.find_entity_by_name(Service, name)
         return self.get(f"api/services/{service.id}")
 
     def test_search(self):
@@ -16,6 +16,11 @@ class TestService(AbstractTest):
     def test_search_wildcard(self):
         res = self.get("/api/services/search", query_data={"q": "*"})
         self.assertTrue(len(res) > 0)
+
+    def test_find_by_id_forbidden(self):
+        service = self.find_entity_by_name(Service, service_mail_name)
+        self.login("urn:roger")
+        self.get(f"api/services/{service.id}", response_status_code=403, with_basic_auth=False)
 
     def test_service_new(self):
         service = self.post("/api/services", body={"entity_id": "https://new_service", "name": "new_service"})

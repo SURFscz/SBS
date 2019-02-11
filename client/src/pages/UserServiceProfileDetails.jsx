@@ -27,7 +27,7 @@ class UserServiceProfileDetails extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => true,
             service: {},
-            collaboration_membership: {authorisation_groups: [], collaboration: {}},
+            authorisation_group: {collaboration: {}},
             fileName: null,
             fileTypeError: false,
             invalidInputs: {},
@@ -94,8 +94,6 @@ class UserServiceProfileDetails extends React.Component {
         }
     };
 
-    authorisationByCollaborationMembership = (service, collaborationMembership) => collaborationMembership.authorisation_groups.find(authorisationGroup => authorisationGroup.services.find(s => s.id === service.id));
-
     validateSSHKey = e => {
         const sshKey = e.target.value;
         const fileTypeError = !isEmpty(sshKey) && !validPublicSSHKeyRegExp.test(sshKey);
@@ -129,14 +127,13 @@ class UserServiceProfileDetails extends React.Component {
 
     render() {
         const {
-            service, collaboration_membership, name, email, address, identifier, ssh_key, role, status,
+            service, authorisation_group, name, email, address, identifier, ssh_key, role, status,
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
             invalidInputs, initial
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const title = I18n.t("userServiceProfile.titleUpdate", {name: service.name});
         const back = "/home";
-        const authorisationGroup = this.authorisationByCollaborationMembership(service, collaboration_membership);
         return (
             <div className="mod-user-service-profile">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -160,16 +157,16 @@ class UserServiceProfileDetails extends React.Component {
                                 link={`/services/${service.id}`}
                                 history={this.props.history}/>
 
-                    <InputField value={authorisationGroup ? authorisationGroup.name : ""}
-                                name={I18n.t("userServiceProfile.authorisation__name")}
+                    <InputField value={authorisation_group.name}
+                                name={I18n.t("userServiceProfile.authorisation_group__name")}
                                 disabled={true}
-                                link={authorisationGroup ? `/collaboration-authorisation-group-details/${collaboration_membership.collaboration.id}/${authorisationGroup.id}` : null}
+                                link={authorisation_group ? `/collaboration-authorisation-group-details/${authorisation_group.collaboration.id}/${authorisation_group.id}` : null}
                                 history={this.props.history}/>
 
-                    <InputField value={collaboration_membership.collaboration.name}
-                                name={I18n.t("userServiceProfile.collaboration_membership__collaboration__name")}
+                    <InputField value={authorisation_group.collaboration.name}
+                                name={I18n.t("userServiceProfile.authorisation_group__collaboration__name")}
                                 disabled={true}
-                                link={`/collaborations/${collaboration_membership.collaboration.id}`}
+                                link={`/collaborations/${authorisation_group.collaboration.id}`}
                                 history={this.props.history}/>
 
                     <InputField value={name}

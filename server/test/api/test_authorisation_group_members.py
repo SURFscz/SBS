@@ -11,7 +11,7 @@ class TestAuthorisationGroupMembers(AbstractTest):
         the_boss = self.find_entity_by_name(User, the_boss_name)
         member = CollaborationMembership.query.filter(CollaborationMembership.user_id == the_boss.id).one()
 
-        count = UserServiceProfile.query.filter(UserServiceProfile.collaboration_membership_id == member.id).count()
+        count = UserServiceProfile.query.filter(UserServiceProfile.user_id == member.user_id).count()
         self.assertEqual(0, count)
 
         self.login("urn:admin")
@@ -20,9 +20,11 @@ class TestAuthorisationGroupMembers(AbstractTest):
             "collaboration_id": collaboration.id,
             "members_ids": [member.id]
         }, with_basic_auth=False)
-        user_service_profile = UserServiceProfile.query.filter(
-            UserServiceProfile.collaboration_membership_id == member.id).one()
-        self.assertEqual(the_boss.name, user_service_profile.collaboration_membership.user.name)
+
+        user_service_profile = UserServiceProfile.query \
+            .filter(UserServiceProfile.user_id == member.user_id) \
+            .one()
+        self.assertEqual(the_boss.name, user_service_profile.user.name)
 
     def test_delete_all_authorisation_group_members(self):
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
