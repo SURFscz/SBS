@@ -45,15 +45,17 @@ def update_collaboration_membership_role():
 @json_endpoint
 def my_collaboration_memberships():
     user_id = current_user_id()
-    res = CollaborationMembership.query \
-        .join(CollaborationMembership.authorisation_groups) \
-        .join(AuthorisationGroup.collaboration) \
-        .join(CollaborationMembership.user_service_profiles) \
-        .join(UserServiceProfile.service) \
+    collaboration_memberships = CollaborationMembership.query \
+        .outerjoin(CollaborationMembership.authorisation_groups) \
+        .outerjoin(AuthorisationGroup.collaboration) \
+        .outerjoin(AuthorisationGroup.user_service_profiles) \
+        .outerjoin(UserServiceProfile.service) \
         .options(contains_eager(CollaborationMembership.authorisation_groups)
                  .contains_eager(AuthorisationGroup.collaboration)) \
-        .options(contains_eager(CollaborationMembership.user_service_profiles)
+        .options(contains_eager(CollaborationMembership.authorisation_groups)
+                 .contains_eager(AuthorisationGroup.user_service_profiles)
                  .contains_eager(UserServiceProfile.service)) \
         .filter(CollaborationMembership.user_id == user_id) \
+        .filter(UserServiceProfile.user_id == user_id) \
         .all()
-    return res, 200
+    return collaboration_memberships, 200

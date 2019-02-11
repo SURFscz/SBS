@@ -60,7 +60,7 @@ class UserServiceProfiles extends React.Component {
     };
 
     renderUserServiceProfileTable = (userServiceProfiles, sorted, reverse) => {
-        const names = ["open", "service__name", "collaboration_membership__collaboration__name", "name", "email", "address", "role", "status"];
+        const names = ["open", "service__name", "authorisation_group__name", "authorisation_group__collaboration__name", "email", "role", "status"];
         return (
             <div className="user-service-profiles-list">
                 <table>
@@ -80,10 +80,10 @@ class UserServiceProfiles extends React.Component {
                                                                  onClick={this.openUserServiceProfileDetails(profile)}>
                         <td className="open"><FontAwesomeIcon icon="arrow-right"/></td>
                         <td className="service_name">{profile.service.name}</td>
-                        <td className="collaboration_name">{profile.collaboration_membership.collaboration.name}</td>
+                        <td className="authorisation_group_name">{profile.authorisation_group.name}</td>
+                        <td className="collaboration_name">{profile.authorisation_group.collaboration.name}</td>
                         <td className="name">{profile.name}</td>
                         <td className="email">{profile.email}</td>
-                        <td className="address">{profile.address}</td>
                         <td className="role">{profile.role}</td>
                         <td className="status">{profile.status ? I18n.t(`userServiceProfile.statusValues.${profile.status}`) : ""}</td>
                     </tr>)}

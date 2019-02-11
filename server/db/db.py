@@ -47,6 +47,8 @@ class User(Base, db.Model):
                                                cascade_backrefs=False, passive_deletes=True)
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="user",
                                                 cascade_backrefs=False, passive_deletes=True)
+    user_service_profiles = db.relationship("UserServiceProfile", back_populates="user",
+                                            cascade_backrefs=False, passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="user",
                                     cascade_backrefs=False, passive_deletes=True)
 
@@ -120,8 +122,6 @@ class CollaborationMembership(Base, db.Model):
     user = db.relationship("User", back_populates="collaboration_memberships")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="collaboration_memberships")
-    user_service_profiles = db.relationship("UserServiceProfile", cascade="all, delete-orphan", passive_deletes=True,
-                                            lazy="select")
     authorisation_groups = db.relationship("AuthorisationGroup",
                                            secondary=collaboration_memberships_authorisation_groups_association,
                                            back_populates="collaboration_memberships",
@@ -135,10 +135,12 @@ class CollaborationMembership(Base, db.Model):
 class UserServiceProfile(Base, db.Model):
     __tablename__ = "user_service_profiles"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User")
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service")
-    collaboration_membership_id = db.Column(db.Integer(), db.ForeignKey("collaboration_memberships.id"))
-    collaboration_membership = db.relationship("CollaborationMembership")
+    authorisation_group_id = db.Column(db.Integer(), db.ForeignKey("authorisation_groups.id"))
+    authorisation_group = db.relationship("AuthorisationGroup")
     name = db.Column("name", db.String(length=255), nullable=True)
     ssh_key = db.Column("ssh_key", db.Text(), nullable=True)
     email = db.Column("email", db.String(length=255), nullable=True)
@@ -215,6 +217,8 @@ class AuthorisationGroup(Base, db.Model):
                                                 secondary=collaboration_memberships_authorisation_groups_association,
                                                 back_populates="authorisation_groups",
                                                 lazy="select")
+    user_service_profiles = db.relationship("UserServiceProfile", back_populates="authorisation_group",
+                                            cascade="all, delete-orphan", passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),

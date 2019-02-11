@@ -1,5 +1,6 @@
 from server.db.db import CollaborationMembership, User
 from server.test.abstract_test import AbstractTest
+from server.test.seed import service_network_name
 
 
 class TestCollaborationMembership(AbstractTest):
@@ -31,3 +32,14 @@ class TestCollaborationMembership(AbstractTest):
         collaboration_memberships = self.get("/api/collaboration_memberships", with_basic_auth=False)
 
         self.assertEqual(1, len(collaboration_memberships))
+
+        collaboration_membership = collaboration_memberships[0]
+        authorisation_groups = collaboration_membership["authorisation_groups"]
+        self.assertEqual(1, len(authorisation_groups))
+
+        authorisation_group = authorisation_groups[0]
+        user_service_profiles = authorisation_group["user_service_profiles"]
+        self.assertEqual(1, len(user_service_profiles))
+
+        user_service_profile = user_service_profiles[0]
+        self.assertEqual(service_network_name, user_service_profile["service"]["name"])
