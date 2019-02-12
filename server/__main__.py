@@ -115,12 +115,10 @@ result = None
 with app.app_context():
     while result is None:
         try:
-            sql = text("SELECT 1")
-            result = db.engine.execute(sql)
+            result = db.engine.execute(text("SELECT 1"))
         except OperationalError:
             logger.info("Waiting for the database...")
             time.sleep(1)
-            pass
 
 db_migrations(config.database.uri)
 
