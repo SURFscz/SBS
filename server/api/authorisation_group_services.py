@@ -20,6 +20,7 @@ def add_authorisation_group_services():
 
     confirm_collaboration_admin(collaboration_id)
 
+    authorisation_group = AuthorisationGroup.query.get(authorisation_group_id)
     service_ids = data["service_ids"]
     values = ",".join(list(map(lambda id: f"({id},{authorisation_group_id})", service_ids)))
     statement = f"INSERT into services_authorisation_groups (service_id, authorisation_group_id) VALUES {values}"
@@ -28,11 +29,12 @@ def add_authorisation_group_services():
 
     # Create an UserServiceProfile for each CollaborationMembership linked to the AuthorisationGroup
     # for each new Service
-    collaboration_memberships = AuthorisationGroup.query.get(authorisation_group_id).collaboration_memberships
+    collaboration_memberships = authorisation_group.collaboration_memberships
     user = current_user()
     for service_id in service_ids:
         for member in collaboration_memberships:
-            profile = UserServiceProfile(service_id=service_id, collaboration_membership=member,
+            profile = UserServiceProfile(service_id=service_id, authorisation_group=authorisation_group,
+                                         user_id=member.user_id,
                                          created_by=user["uid"], updated_by=["uid"], identifier=str(uuid.uuid4()))
             db.session.add(profile)
 
@@ -65,9 +67,7 @@ def delete_authorisation_group_services(authorisation_group_id, service_id, coll
     confirm_collaboration_admin(collaboration_id)
 
     statement = f"DELETE FROM user_service_profiles WHERE service_id = {service_id} AND " \
-        f"collaboration_membership_id in " \
-        f"(SELECT collaboration_membership_id FROM collaboration_memberships_authorisation_groups " \
-        f"WHERE authorisation_group_id = {authorisation_group_id})"
+        f"authorisation_group_id = {authorisation_group_id}"
     sql = text(statement)
     db.engine.execute(sql)
 

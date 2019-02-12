@@ -8,7 +8,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id
+from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_write_access
 from server.auth.user_claims import claim_attribute_mapping, claim_attribute_hash_headers, claim_attribute_hash_user
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -61,7 +61,9 @@ def _add_user_claims(request_headers, uid, user):
 
 @user_api.route("/search", strict_slashes=False)
 @json_endpoint
-def collaboration_search():
+def user_search():
+    confirm_allow_impersonation()
+
     q = query_param("q")
     organisation_id = query_param("organisation_id", required=False)
     collaboration_id = query_param("collaboration_id", required=False)
@@ -153,6 +155,18 @@ def me():
 @user_api.route("/refresh", strict_slashes=False)
 @json_endpoint
 def refresh():
+    def _is_organisational_admin():
+        if "user" in session and "admin" in session["user"] and session["user"]["admin"]:
+            return True
+
+        count = OrganisationMembership.query \
+            .filter(OrganisationMembership.user_id == current_user_id()) \
+            .filter(OrganisationMembership.role == "admin") \
+            .count()
+        return count > 0
+
+    confirm_write_access(override_func=_is_organisational_admin)
+
     user_id = current_user_id()
     user = _user_query().filter(User.id == user_id).one()
     is_admin = {"admin": is_admin_user(user.uid), "guest": False}

@@ -18,12 +18,26 @@ def name_exists():
     name = query_param("name")
     collaboration_id = query_param("collaboration_id")
     existing_authorisation_group = query_param("existing_authorisation_group", required=False, default="")
-    org = AuthorisationGroup.query.options(load_only("id")) \
+    authorisation_group = AuthorisationGroup.query.options(load_only("id")) \
         .filter(func.lower(AuthorisationGroup.name) == func.lower(name)) \
         .filter(func.lower(AuthorisationGroup.name) != func.lower(existing_authorisation_group)) \
         .filter(AuthorisationGroup.collaboration_id == collaboration_id) \
         .first()
-    return org is not None, 200
+    return authorisation_group is not None, 200
+
+
+@authorisation_group_api.route("/short_name_exists", strict_slashes=False)
+@json_endpoint
+def short_name_exists():
+    short_name = query_param("short_name")
+    collaboration_id = query_param("collaboration_id")
+    existing_authorisation_group = query_param("existing_authorisation_group", required=False, default="")
+    authorisation_group = AuthorisationGroup.query.options(load_only("id")) \
+        .filter(func.lower(AuthorisationGroup.short_name) == func.lower(short_name)) \
+        .filter(func.lower(AuthorisationGroup.short_name) != func.lower(existing_authorisation_group)) \
+        .filter(AuthorisationGroup.collaboration_id == collaboration_id) \
+        .first()
+    return authorisation_group is not None, 200
 
 
 @authorisation_group_api.route("/<authorisation_group_id>/<collaboration_id>", strict_slashes=False)

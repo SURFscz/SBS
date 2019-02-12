@@ -73,7 +73,7 @@ class CollaborationDetail extends React.Component {
                 this.props.history.push("/404");
                 return;
             }
-            if (member.role === "admin" || user.admin) {
+            if (user.admin || member.role === "admin") {
                 collaborationById(collaboration_id)
                     .then(json => {
                         const {sorted, reverse} = this.state;

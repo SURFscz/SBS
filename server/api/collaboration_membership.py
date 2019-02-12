@@ -1,9 +1,8 @@
 from flask import Blueprint, request as current_request
-from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
 from server.auth.security import current_user_id, confirm_collaboration_admin
-from server.db.db import CollaborationMembership, db, UserServiceProfile, AuthorisationGroup
+from server.db.db import CollaborationMembership, db
 
 collaboration_membership_api = Blueprint("collaboration_membership_api", __name__,
                                          url_prefix="/api/collaboration_memberships")
@@ -45,15 +44,16 @@ def update_collaboration_membership_role():
 @json_endpoint
 def my_collaboration_memberships():
     user_id = current_user_id()
-    res = CollaborationMembership.query \
-        .join(CollaborationMembership.authorisation_groups) \
-        .join(AuthorisationGroup.collaboration) \
-        .join(CollaborationMembership.user_service_profiles) \
-        .join(UserServiceProfile.service) \
-        .options(contains_eager(CollaborationMembership.authorisation_groups)
-                 .contains_eager(AuthorisationGroup.collaboration)) \
-        .options(contains_eager(CollaborationMembership.user_service_profiles)
-                 .contains_eager(UserServiceProfile.service)) \
+    collaboration_memberships = CollaborationMembership.query \
         .filter(CollaborationMembership.user_id == user_id) \
         .all()
-    return res, 200
+
+    for collaboration_membership in collaboration_memberships:
+        authorisation_groups = collaboration_membership.authorisation_groups
+        for authorisation_group in authorisation_groups:
+            authorisation_group.collaboration
+            user_service_profiles = authorisation_group.user_service_profiles
+            for user_service_profile in user_service_profiles:
+                user_service_profile.service
+
+    return collaboration_memberships, 200

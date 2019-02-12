@@ -353,6 +353,10 @@ export function authorisationGroupNameExists(name, collaborationId, existingAuth
     return fetchJson(`/api/authorisation_groups/name_exists?name=${encodeURIComponent(name)}&collaboration_id=${collaborationId}&existing_authorisation_group=${encodeURIComponent(existingAuthorisationGroup)}`);
 }
 
+export function authorisationGroupShortNameExists(shortName, collaborationId, existingAuthorisationGroup = null) {
+    return fetchJson(`/api/authorisation_groups/short_name_exists?short_name=${encodeURIComponent(shortName)}&collaboration_id=${collaborationId}&existing_authorisation_group=${encodeURIComponent(existingAuthorisationGroup)}`);
+}
+
 export function authorisationGroupById(id, collaborationId) {
     return fetchJson(`/api/authorisation_groups/${id}/${collaborationId}`, {}, {}, false);
 }
