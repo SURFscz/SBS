@@ -156,6 +156,9 @@ def me():
 @json_endpoint
 def refresh():
     def _is_organisational_admin():
+        if "user" in session and "admin" in session["user"] and session["user"]["admin"]:
+            return True
+
         count = OrganisationMembership.query \
             .filter(OrganisationMembership.user_id == current_user_id()) \
             .filter(OrganisationMembership.role == "admin") \

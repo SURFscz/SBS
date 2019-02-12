@@ -2,7 +2,6 @@ import uuid
 
 from flask import Blueprint, request as current_request
 from sqlalchemy import text
-from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_collaboration_admin, current_user
