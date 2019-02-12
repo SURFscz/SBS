@@ -141,8 +141,9 @@ class Home extends React.Component {
     render() {
         const {collaborationMemberships, collaborations} = this.state;
 
-        const userServiceProfiles = collaborationMemberships.map(membership => membership.user_service_profiles).flat();
         const authorisationGroups = collaborationMemberships.map(membership => membership.authorisation_groups).flat();
+        const userServiceProfiles = authorisationGroups.map(profile => profile.user_service_profiles).flat();
+
         return (
             <div className="mod-home">
                 <div className="title">
