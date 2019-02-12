@@ -7,6 +7,9 @@ api_users:
   - name: "sysadmin"
     password: "secret"
     scope: "read, write"
+  - name: "sysread"
+    password: "secret"
+    scope: ["read"]
 
 mail:
   host: localhost
@@ -16,3 +19,4 @@ base_url: http://localhost:3000
 
 admin_users:
   - uid: "urn:john"
+  - uid: "urn:rocky"
