@@ -7,6 +7,9 @@ api_users:
   - name: "sysadmin"
     password: "secret"
     scope: ["read", "write"]
+  - name: "sysread"
+    password: "secret"
+    scope: ["read"]
 
 mail:
   host: localhost

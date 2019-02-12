@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import time
 from logging.handlers import TimedRotatingFileHandler
 
 import yaml
@@ -8,6 +9,8 @@ from flask import Flask, jsonify, request as current_request
 from flask_mail import Mail
 from flask_migrate import Migrate
 from munch import munchify
+from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
 
 from server.api.authorisation_group import authorisation_group_api
 from server.api.authorisation_group_members import authorisation_group_members_api
@@ -108,6 +111,17 @@ app.app_config = config
 app.app_config["profile"] = profile
 
 Migrate(app, db)
+result = None
+with app.app_context():
+    while result is None:
+        try:
+            sql = text("SELECT 1")
+            result = db.engine.execute(sql)
+        except OperationalError:
+            logger.info("Waiting for the database...")
+            time.sleep(1)
+            pass
+
 db_migrations(config.database.uri)
 
 # WSGI production mode dictates that no flask app is actually running

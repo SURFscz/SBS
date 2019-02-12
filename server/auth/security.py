@@ -63,6 +63,13 @@ def confirm_authorized_api_call():
         raise Forbidden()
 
 
+def confirm_read_access(*args, override_func=None):
+    if request_context.is_authorized_api_call:
+        return "read" in request_context.api_user.scope
+    if not is_application_admin() and (not override_func or not override_func(*args)):
+        raise Forbidden()
+
+
 def confirm_write_access(*args, override_func=None):
     if request_context.is_authorized_api_call:
         return "write" in request_context.api_user.scope
