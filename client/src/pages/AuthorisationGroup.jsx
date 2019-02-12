@@ -3,7 +3,7 @@ import {
     addAuthorisationGroupMembers,
     addAuthorisationGroupServices,
     authorisationGroupById,
-    authorisationGroupNameExists,
+    authorisationGroupNameExists, authorisationGroupShortNameExists,
     collaborationLiteById,
     collaborationServices,
     createAuthorisationGroup,
@@ -53,7 +53,7 @@ class AuthorisationGroup extends React.Component {
             uri: "",
             description: "",
             status: this.statusOptions[0].value,
-            required: ["name"],
+            required: ["name", "short_name"],
             alreadyExists: {},
             initial: true,
             isNew: true,
@@ -170,6 +170,14 @@ class AuthorisationGroup extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
     };
+
+    validateAuthorisationGroupShortName = e => {
+        const {isNew, collaboration, authorisationGroup} = this.state;
+        authorisationGroupShortNameExists(e.target.value, collaboration.id, isNew ? null : authorisationGroup.name).then(json => {
+            this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
+        });
+    };
+
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
@@ -441,10 +449,11 @@ class AuthorisationGroup extends React.Component {
     authorisationGroupDetails = (adminOfCollaboration, name, short_name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit, authorisationGroup) => {
         return (
             <div className="authorisation-group">
-                <InputField value={name} onChange={e => this.setState({
-                    name: e.target.value,
-                    alreadyExists: {...this.state.alreadyExists, name: false}
-                })}
+                <InputField value={name}
+                            onChange={e => this.setState({
+                                name: e.target.value,
+                                alreadyExists: {...this.state.alreadyExists, name: false}
+                            })}
                             placeholder={I18n.t("authorisationGroup.namePlaceholder")}
                             onBlur={this.validateAuthorisationGroupName}
                             name={I18n.t("authorisationGroup.name")}
@@ -462,9 +471,22 @@ class AuthorisationGroup extends React.Component {
                 <InputField value={short_name}
                             name={I18n.t("authorisationGroup.shortName")}
                             placeholder={I18n.t("authorisationGroup.shortNamePlaceholder")}
-                            onChange={e => this.setState({short_name: e.target.value})}
+                            onBlur={this.validateAuthorisationGroupShortName}
+                            onChange={e => this.setState({
+                                short_name: e.target.value,
+                                alreadyExists: {...this.state.alreadyExists, short_name: false}
+                            })}
                             toolTip={I18n.t("authorisationGroup.shortNameTooltip")}
                             disabled={!adminOfCollaboration}/>
+                {alreadyExists.short_name && <span
+                    className="error">{I18n.t("authorisationGroup.alreadyExists", {
+                    attribute: I18n.t("authorisationGroup.shortName").toLowerCase(),
+                    value: short_name
+                })}</span>}
+                {(!initial && isEmpty(short_name)) && <span
+                    className="error">{I18n.t("authorisationGroup.required", {
+                    attribute: I18n.t("authorisationGroup.shortName").toLowerCase()
+                })}</span>}
 
                 <InputField value={description}
                             name={I18n.t("authorisationGroup.description")}

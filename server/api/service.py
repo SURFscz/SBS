@@ -3,8 +3,8 @@ from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_write_access
-from server.db.db import Service, db, Collaboration
+from server.auth.security import confirm_write_access, current_user_id
+from server.db.db import Service, db, Collaboration, UserServiceProfile
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
 
@@ -13,7 +13,9 @@ service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
 @service_api.route("/search", strict_slashes=False)
 @json_endpoint
-def collaboration_search():
+def service_search():
+    confirm_write_access()
+
     q = query_param("q")
     base_query = "SELECT id, entity_id, name, description FROM services "
     if q != "*":
@@ -28,6 +30,8 @@ def collaboration_search():
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
+    confirm_write_access()
+
     name = query_param("name")
     existing_service = query_param("existing_service", required=False, default="")
     org = Service.query.options(load_only("id")) \
@@ -40,6 +44,8 @@ def name_exists():
 @service_api.route("/entity_id_exists", strict_slashes=False)
 @json_endpoint
 def entity_id_exists():
+    confirm_write_access()
+
     entity_id = query_param("entity_id")
     existing_service = query_param("existing_service", required=False, default="")
     org = Service.query.options(load_only("id")) \
@@ -52,6 +58,16 @@ def entity_id_exists():
 @service_api.route("/<service_id>", strict_slashes=False)
 @json_endpoint
 def service_by_id(service_id):
+    def _user_service_profile():
+        user_id = current_user_id()
+        count = UserServiceProfile.query \
+            .filter(UserServiceProfile.service_id == service_id) \
+            .filter(UserServiceProfile.user_id == user_id) \
+            .count()
+        return count > 0
+
+    confirm_write_access(override_func=_user_service_profile)
+
     service = Service.query \
         .outerjoin(Service.collaborations) \
         .outerjoin(Collaboration.organisation) \

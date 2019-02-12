@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
-    current_user_id, confirm_collaboration_member
+    current_user_id, confirm_collaboration_member, confirm_write_access, confirm_authorized_api_call
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
@@ -22,7 +22,7 @@ collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/co
 @json_endpoint
 def collaboration_by_name():
     name = query_param("name")
-    collaboration = Collaboration.query.filter(Collaboration.name == name).one()
+    collaboration = Collaboration.query.options(load_only("id", "name")).filter(Collaboration.name == name).one()
     return collaboration, 200
 
 
@@ -41,6 +41,8 @@ def name_exists():
 @collaboration_api.route("/search", strict_slashes=False)
 @json_endpoint
 def collaboration_search():
+    confirm_write_access()
+
     q = query_param("q")
     base_query = "SELECT id, name, description, organisation_id FROM collaborations "
     if q != "*":
@@ -91,6 +93,8 @@ def collaboration_authorisations_by_id(collaboration_id):
 @collaboration_api.route("/members", strict_slashes=False)
 @json_endpoint
 def members():
+    confirm_authorized_api_call()
+
     identifier = query_param("identifier")
     collaboration_authorisation_group = aliased(Collaboration)
     collaboration_membership = aliased(Collaboration)

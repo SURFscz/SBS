@@ -1,6 +1,6 @@
 from server.db.db import Collaboration, Organisation, Invitation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uuc_name
+from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uuc_name, uva_research_name
 
 
 class TestCollaboration(AbstractTest):
@@ -8,6 +8,11 @@ class TestCollaboration(AbstractTest):
     def _find_by_name_id(self, name=ai_computing_name, with_basic_auth=False):
         return self.get("/api/collaborations/find_by_name", query_data={"name": name},
                         with_basic_auth=with_basic_auth)
+
+    def test_find_by_name_id(self):
+        collaboration = self.get("/api/collaborations/find_by_name", query_data={"name": uva_research_name},
+                                 with_basic_auth=False)
+        self.assertListEqual(["id", "name"], list(collaboration.keys()))
 
     def test_search(self):
         res = self.get("/api/collaborations/search", query_data={"q": "ComPuti"})
@@ -25,6 +30,11 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("urn:john", member["uid"])
         self.assertEqual("John Doe", member["name"])
         self.assertFalse("email" in member)
+
+    def test_members_forbidden(self):
+        self.login("urn:mary")
+        self.get("/api/collaborations/members", query_data={"identifier": collaboration_ai_computing_uuid},
+                           response_status_code=403, with_basic_auth=False)
 
     def test_collaboration_new(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
@@ -54,7 +64,9 @@ class TestCollaboration(AbstractTest):
                   response_status_code=403)
 
     def test_collaboration_update(self):
-        collaboration = self._find_by_name_id()
+        collaboration_id = self._find_by_name_id()["id"]
+        self.login()
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         collaboration["name"] = "changed"
         collaboration = self.put("/api/collaborations", body=collaboration)
         self.assertEqual("changed", collaboration["name"])

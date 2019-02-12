@@ -24,6 +24,8 @@ ai_computing_name = "AI computing"
 uuc_name = "UUC"
 collaboration_uva_researcher_uuid = str(uuid.uuid4())
 
+uva_research_name = "UVA UCC research"
+
 service_mail_name = "Mail Services"
 service_mail_entity_id = "https://mail"
 
@@ -34,6 +36,7 @@ service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
 
 ai_researchers_authorisation = "AI researchers"
+ai_researchers_authorisation_short_name = "ai_res"
 
 
 def _persist(db, *objs):
@@ -106,7 +109,7 @@ def seed(db):
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
                                  organisation=uuc, services=[mail, network], enrollment="Form",
                                  join_requests=[], invitations=[], access_type="open")
-    uva_research = Collaboration(name="UVA UCC research",
+    uva_research = Collaboration(name=uva_research_name,
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",
                                  organisation=uva, services=[storage, wiki],
@@ -123,20 +126,8 @@ def seed(db):
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
              jane_ai_computing)
 
-    user_service_profile = UserServiceProfile(service=network, collaboration_membership=john_ai_computing,
-                                              name=john_name, telephone_number="0612345678",
-                                              identifier=str(uuid.uuid4()),
-                                              ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
-                                                      "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
-                                                      "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
-                                                      "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
-                                                      "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
-                                                      "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
-                                                      "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
-    _persist(db, user_service_profile)
-
     authorisation_group_researchers = AuthorisationGroup(name=ai_researchers_authorisation,
-                                                         short_name="ai_res",
+                                                         short_name=ai_researchers_authorisation_short_name,
                                                          uri="https://ai/researchers",
                                                          status="active",
                                                          description="Artifical computing researchers",
@@ -151,6 +142,18 @@ def seed(db):
                                                         collaboration_memberships=[john_ai_computing])
     _persist(db, authorisation_group_researchers, authorisation_group_developers)
 
+    user_service_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
+                                              user=john, name=john_name, telephone_number="0612345678",
+                                              identifier=str(uuid.uuid4()),
+                                              ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
+                                                      "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
+                                                      "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
+                                                      "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
+                                                      "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
+                                                      "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
+                                                      "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
+    _persist(db, user_service_profile)
+
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
                                     collaboration=ai_computing)
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing)
@@ -163,6 +166,7 @@ def seed(db):
                             intended_role="member")
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
                                   expiry_date=datetime.date.today() - datetime.timedelta(days=21), user=admin,
+                                  intended_role="member",
                                   message="Let me please join as I really, really, really \n really, "
                                           "really, really \n want to...")
     _persist(db, invitation, invitation_noway)

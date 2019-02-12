@@ -3,7 +3,7 @@ from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_owner_of_user_service_profile
-from server.db.db import CollaborationMembership, UserServiceProfile, User, Service
+from server.db.db import CollaborationMembership, UserServiceProfile, User, Service, AuthorisationGroup
 from server.db.models import update
 
 user_service_profile_api = Blueprint("user_service_profiles_api", __name__, url_prefix="/api/user_service_profiles")
@@ -20,8 +20,11 @@ def _attributes_per_service(user_service_profile: UserServiceProfile):
         "identifier": user_service_profile.identifier,
         "telephone_number": user_service_profile.telephone_number,
         "status": user_service_profile.status,
-        "authorisation_groups": list(map(lambda ag: {"name": ag.name, "short_name": ag.short_name, "status": ag.status},
-                                         user_service_profile.collaboration_membership.authorisation_groups))
+        "authorisation_group": {
+            "name": user_service_profile.authorisation_group.name,
+            "short_name": user_service_profile.authorisation_group.short_name,
+            "status": user_service_profile.authorisation_group.status
+        }
     }
     return res
 
@@ -34,17 +37,18 @@ def attributes():
     service_entity_id = query_param("service_entity_id")
     user_service_profiles = UserServiceProfile.query \
         .join(UserServiceProfile.service) \
-        .join(UserServiceProfile.collaboration_membership) \
-        .join(CollaborationMembership.user) \
-        .options(contains_eager(UserServiceProfile.collaboration_membership)) \
+        .join(UserServiceProfile.user) \
+        .join(UserServiceProfile.authorisation_group) \
         .options(contains_eager(UserServiceProfile.service)) \
+        .options(contains_eager(UserServiceProfile.user)) \
+        .options(contains_eager(UserServiceProfile.authorisation_group)) \
         .filter(User.uid == uid) \
         .filter(Service.entity_id == service_entity_id) \
         .all()
 
     attributes_per_service = list(map(_attributes_per_service, user_service_profiles))
     if len(user_service_profiles) > 0:
-        user = user_service_profiles[0].collaboration_membership.user
+        user = user_service_profiles[0].user
         attributes_per_service.append({
             "global": True,
             **{k: getattr(user, k) for k in User.__table__.columns._data.keys()}
@@ -56,21 +60,18 @@ def attributes():
 @json_endpoint
 def user_service_profile_by_id(user_service_profile_id):
     user_id = current_user_id()
-    profile = UserServiceProfile.query \
-        .join(UserServiceProfile.collaboration_membership) \
+    user_service_profile = UserServiceProfile.query \
+        .join(UserServiceProfile.authorisation_group) \
         .join(UserServiceProfile.service) \
         .join(CollaborationMembership.collaboration) \
-        .options(contains_eager(UserServiceProfile.collaboration_membership)
-                 .contains_eager(CollaborationMembership.collaboration)) \
+        .options(contains_eager(UserServiceProfile.authorisation_group)
+                 .contains_eager(AuthorisationGroup.collaboration)) \
         .options(contains_eager(UserServiceProfile.service)) \
         .filter(CollaborationMembership.user_id == user_id) \
         .filter(UserServiceProfile.id == user_service_profile_id) \
         .one()
 
-    for authorisation_group in profile.collaboration_membership.authorisation_groups:
-        authorisation_group.services
-
-    return profile, 200
+    return user_service_profile, 200
 
 
 @user_service_profile_api.route("/", strict_slashes=False)
@@ -78,13 +79,13 @@ def user_service_profile_by_id(user_service_profile_id):
 def my_user_service_profiles():
     user_id = current_user_id()
     profiles = UserServiceProfile.query \
-        .join(UserServiceProfile.collaboration_membership) \
-        .join(CollaborationMembership.collaboration) \
+        .join(UserServiceProfile.authorisation_group) \
+        .join(AuthorisationGroup.collaboration) \
         .join(UserServiceProfile.service) \
-        .options(contains_eager(UserServiceProfile.collaboration_membership)
-                 .contains_eager(CollaborationMembership.collaboration)) \
+        .options(contains_eager(UserServiceProfile.authorisation_group)
+                 .contains_eager(AuthorisationGroup.collaboration)) \
         .options(contains_eager(UserServiceProfile.service)) \
-        .filter(CollaborationMembership.user_id == user_id) \
+        .filter(UserServiceProfile.user_id == user_id) \
         .all()
     return profiles, 200
 

@@ -27,6 +27,7 @@ class TestUser(AbstractTest):
         self.assertIsNotNone(user["collaboration_memberships"][0]["collaboration_id"], uuc_name)
 
     def test_search(self):
+        self.login("urn:john")
         res = self.get("/api/users/search", query_data={"q": "roger"})
         self.assertEqual(1, len(res))
 
@@ -52,6 +53,10 @@ class TestUser(AbstractTest):
 
     def test_other_not_allowed(self):
         self.get("/api/users/other", query_data={"uid": "urn:mary"}, response_status_code=403)
+
+    def test_refresh_not_allowed(self):
+        self.login("urn:roger")
+        self.get("/api/users/refresh", response_status_code=403)
 
     def test_other_missing_query_parameter(self):
         self.login("urn:john")

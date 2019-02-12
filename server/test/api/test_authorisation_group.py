@@ -1,7 +1,7 @@
 from server.db.db import Collaboration, AuthorisationGroup, Service
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_researchers_authorisation, ai_computing_name, service_cloud_name, \
-    service_wireless_name
+    service_wireless_name, ai_researchers_authorisation_short_name
 
 
 class TestAuthorisationGroup(AbstractTest):
@@ -27,6 +27,29 @@ class TestAuthorisationGroup(AbstractTest):
                                    "collaboration_id": collaboration_id})
         self.assertEqual(False, res)
 
+    def test_authorisation_group_short_name_exists(self):
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+
+        res = self.get("/api/authorisation_groups/short_name_exists",
+                       query_data={"short_name": ai_researchers_authorisation_short_name,
+                                   "collaboration_id": collaboration_id})
+        self.assertEqual(True, res)
+
+        res = self.get("/api/authorisation_groups/short_name_exists",
+                       query_data={"short_name": "uuc",
+                                   "existing_authorisation_group": ai_researchers_authorisation_short_name,
+                                   "collaboration_id": collaboration_id})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/authorisation_groups/short_name_exists",
+                       query_data={"short_name": "xyc", "collaboration_id": collaboration_id})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/authorisation_groups/short_name_exists",
+                       query_data={"short_name": "xyc", "existing_authorisation_group": "xyc",
+                                   "collaboration_id": collaboration_id})
+        self.assertEqual(False, res)
+
     def test_authorisation_group_by_id(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         authorisation_group_id = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation).id
@@ -42,6 +65,7 @@ class TestAuthorisationGroup(AbstractTest):
         authorisation_group_name = "new_auth_group"
         authorisation_group = self.post("/api/authorisation_groups/", body={
             "name": authorisation_group_name,
+            "short_name": authorisation_group_name,
             "uri": "https://uri",
             "description": "des",
             "status": "open",
