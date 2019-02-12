@@ -27,6 +27,7 @@ class TestUser(AbstractTest):
         self.assertIsNotNone(user["collaboration_memberships"][0]["collaboration_id"], uuc_name)
 
     def test_search(self):
+        self.login("urn:john")
         res = self.get("/api/users/search", query_data={"q": "roger"})
         self.assertEqual(1, len(res))
 

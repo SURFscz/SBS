@@ -5,7 +5,7 @@ from sqlalchemy import text
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_collaboration_admin, current_user
-from server.db.db import db, AuthorisationGroup, UserServiceProfile, CollaborationMembership
+from server.db.db import db, AuthorisationGroup, UserServiceProfile
 
 authorisation_group_services_api = Blueprint("authorisation_group_services_api", __name__,
                                              url_prefix="/api/authorisation_group_services")
