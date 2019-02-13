@@ -44,7 +44,8 @@ class OrganisationInvitation extends React.Component {
                 .then(json => {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({organisationInvitation: json, isExpired});
-                });
+                })
+                .catch(() => this.props.history.push("/404"));
         } else if (params.id) {
             organisationInvitationById(params.id)
                 .then(json => {
