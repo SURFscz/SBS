@@ -9,6 +9,7 @@ I18n.translations.en = {
         title: "Collaboration Management System",
         links: {
             login: "Login",
+            logout: "Logout",
             help: "Help",
             helpUrl: "https://github.com/SURFscz/SBS/wiki"
         },
