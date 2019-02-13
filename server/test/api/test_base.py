@@ -11,6 +11,10 @@ class TestBase(AbstractTest):
         res = self.client.get("/config")
         self.assertDictEqual({"base_url": "http://localhost:3000", "local": False}, res.json)
 
+    def test_info(self):
+        res = self.client.get("/info")
+        self.assertTrue("git" in res.json)
+
     def test_404(self):
         res = self.get("/api/nope", response_status_code=404)
         self.assertDictEqual({"message": "http://localhost/api/nope not found"}, res)
