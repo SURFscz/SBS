@@ -173,8 +173,14 @@ class App extends React.Component {
                                                               {...props}/>}/>
 
                         <Route path="/home"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Home} {...props}/>}/>
+                               render={props => {
+                                   if (currentUser.guest) {
+                                       return <Redirect to="/login"/>;
+                                   }
+                                   return <ProtectedRoute
+                                       currentUser={currentUser}
+                                       Component={Home} {...props}/>
+                               }}/>
 
                         <Route exact path="/collaborations"
                                render={props => <ProtectedRoute

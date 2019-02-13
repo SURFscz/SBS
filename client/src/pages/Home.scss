@@ -58,6 +58,10 @@
                 &.collaborations {
                     color: $join-request;
                 }
+
+                &.organisations {
+                    color: $organisations;
+                }
             }
 
             div.content {
@@ -71,7 +75,7 @@
                 justify-content: space-around;
             }
 
-            div.user-service-profile, div.authorisation, div.collaboration {
+            div.user-service-profile, div.authorisation, div.collaboration, div.organisation {
                 a {
                     display: inline-block;
                     color: $dark-grey;
@@ -103,6 +107,13 @@
                 }
             }
         }
+
+        &.with-organisations {
+            .info-block {
+                width: calc(25% - 2em);
+            }
+        }
+
     }
 
 

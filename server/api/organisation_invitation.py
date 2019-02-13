@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_organisation_admin, confirm_write_access, current_user_id
+from server.auth.security import confirm_organisation_admin, current_user_id
 from server.db.db import OrganisationInvitation, Organisation, OrganisationMembership, db
 from server.db.models import delete
 from server.mail import mail_organisation_invitation
@@ -39,7 +39,7 @@ def organisation_invitations_by_id(id):
         .filter(OrganisationInvitation.id == id) \
         .one()
 
-    confirm_organisation_admin(organisation_invitation.organisation.id)
+    confirm_organisation_admin(organisation_invitation.organisation_id)
     return organisation_invitation, 200
 
 
@@ -84,24 +84,27 @@ def organisation_invitations_decline():
 @organisation_invitations_api.route("/resend", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def organisation_invitations_resend():
-    confirm_write_access()
     data = current_request.get_json()
 
-    invitation = _organisation_invitation_query() \
+    organisation_invitation = _organisation_invitation_query() \
         .filter(OrganisationInvitation.id == data["id"]) \
         .one()
 
+    confirm_organisation_admin(organisation_invitation.organisation_id)
+
     mail_organisation_invitation({
         "salutation": "Dear",
-        "invitation": invitation,
+        "invitation": organisation_invitation,
         "base_url": current_app.app_config.base_url,
-        "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
-    }, invitation.organisation, [invitation.invitee_email])
+        "expiry_days": (organisation_invitation.expiry_date - datetime.datetime.today()).days
+    }, organisation_invitation.organisation, [organisation_invitation.invitee_email])
     return None, 201
 
 
 @organisation_invitations_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_organisation_invitation(id):
-    confirm_write_access()
+    organisation_invitation = OrganisationInvitation.query.get(id)
+    confirm_organisation_admin(organisation_invitation.organisation_id)
+
     return delete(OrganisationInvitation, id)
