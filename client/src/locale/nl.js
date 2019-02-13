@@ -32,6 +32,7 @@ I18n.translations.nl = {
         userServiceProfiles: "Mijn service profielen",
         authorisationGroups: "Autorisatie Groepen",
         collaborations: "Samenwerkingen",
+        organisations: "Organisaties",
         backToHome: "Terug naar de startpagina"
     },
     forms: {
