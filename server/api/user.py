@@ -22,9 +22,9 @@ user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 def _log_headers():
     headers = current_request.headers
     for k, v in headers.items():
-        current_app.logger.info(f"Header {k} value {v}")
+        current_app.logger.debug(f"Header {k} value {v}")
     for k, v in os.environ.items():
-        current_app.logger.info(f"OS environ {k} value {v}")
+        current_app.logger.debug(f"OS environ {k} value {v}")
 
 
 def _store_user_in_session(user):
@@ -130,20 +130,30 @@ def me():
     request_headers = current_request.headers
     uid = request_headers.get(UID_HEADER_NAME)
     if uid:
-        users = _user_query().filter(User.uid == uid).all()
+        users = User.query.filter(User.uid == uid).all()
         user = users[0] if len(users) > 0 else None
         if not user:
             user = User(uid=uid, created_by="system", updated_by="system")
             _add_user_claims(request_headers, uid, user)
+            current_app.logger.info(f"Provisioning new user {user.uid}")
             user = db.session.merge(user)
+            db.session.commit()
         else:
             hash_headers = claim_attribute_hash_headers(request_headers)
             hash_user = claim_attribute_hash_user(user)
             if hash_user != hash_headers:
+                current_app.logger.info(f"Updating user {user.uid} with new claims")
                 _add_user_claims(request_headers, uid, user)
                 user = db.session.merge(user)
+                db.session.commit()
 
         is_admin = _store_user_in_session(user)
+
+        for organisation_membership in user.organisation_memberships:
+            organisation_membership.organisation
+        for collaboration_membership in user.collaboration_memberships:
+            collaboration_membership.collaboration
+
         json_user = jsonify(user).json
         user = {**json_user, **is_admin}
     else:
