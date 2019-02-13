@@ -18,6 +18,11 @@ class TestCollaboration(AbstractTest):
         res = self.get("/api/collaborations/search", query_data={"q": "ComPuti"})
         self.assertEqual(1, len(res))
 
+    def test_search_forbidden(self):
+        self.login("unr:roger")
+        self.get("/api/collaborations/search", query_data={"q": "ComPuti"}, response_status_code=403,
+                 with_basic_auth=False)
+
     def test_search_wildcard(self):
         res = self.get("/api/collaborations/search", query_data={"q": "*"})
         self.assertTrue(len(res) > 0)
@@ -34,7 +39,7 @@ class TestCollaboration(AbstractTest):
     def test_members_forbidden(self):
         self.login("urn:mary")
         self.get("/api/collaborations/members", query_data={"identifier": collaboration_ai_computing_uuid},
-                           response_status_code=403, with_basic_auth=False)
+                 response_status_code=403, with_basic_auth=False)
 
     def test_collaboration_new(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id

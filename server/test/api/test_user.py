@@ -55,8 +55,7 @@ class TestUser(AbstractTest):
         self.get("/api/users/other", query_data={"uid": "urn:mary"}, response_status_code=403)
 
     def test_refresh_not_allowed(self):
-        self.login("urn:roger")
-        self.get("/api/users/refresh", response_status_code=403)
+        self.get("/api/users/refresh", response_status_code=401, with_basic_auth=False)
 
     def test_other_missing_query_parameter(self):
         self.login("urn:john")

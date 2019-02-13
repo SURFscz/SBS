@@ -57,6 +57,7 @@ def page_not_found(_):
 
 config_file_location = os.environ.get("CONFIG", "config/config.yml")
 config = munchify(yaml.load(read_file(config_file_location)))
+config.base_url = config.base_url[:-1] if config.base_url.endswith("/") else config.base_url
 
 test = os.environ.get("TESTING")
 profile = os.environ.get("PROFILE")

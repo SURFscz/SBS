@@ -5,7 +5,8 @@ export function ProtectedRoute({currentUser, Component, redirectToLogin = false,
     if (!currentUser.guest) {
         return <Route render={props => <Component user={currentUser} {...res} {...props}/>}/>
     } else if (redirectToLogin) {
-        return <Redirect to={`/login?state=${encodeURIComponent(res.location.pathname)}`}/>;
+        window.location.href = `/login?state=${encodeURIComponent(res.location.pathname)}`;
+        return;
     }
     return <Redirect to={"/404"}/>;
 }

@@ -211,34 +211,41 @@ class App extends React.Component {
                                                                 Component={OrganisationInvitation} {...props}/>}/>
 
                         <Route exact path="/organisation-invitations/:action/:hash"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={OrganisationInvitation} {...props}/>}/>
+                               render={props => <ProtectedRoute currentUser={currentUser}
+                                                                refreshUser={this.refreshUserMemberships}
+                                                                Component={OrganisationInvitation} {...props}/>}/>
 
                         <Route exact path="/new-organisation-invite/:organisation_id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={NewOrganisationInvitation} {...props}/>}/>
+                               render={props => <ProtectedRoute redirectToLogin={true}
+                                                                currentUser={currentUser}
+                                                                Component={NewOrganisationInvitation} {...props}/>}/>
 
                         <Route exact path="/new-invite/:collaboration_id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={NewInvitation} {...props}/>}/>
+                               render={props => <ProtectedRoute currentUser={currentUser}
+                                                                Component={NewInvitation}
+                                                                {...props}/>}/>
 
                         <Route exact path="/invitations/:id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Invitation} {...props}/>}/>
+                               render={props => <ProtectedRoute currentUser={currentUser}
+                                                                Component={Invitation}
+                                                                {...props}/>}/>
 
                         <Route exact path="/invitations/:action/:hash"
                                render={props => <ProtectedRoute redirectToLogin={true}
                                                                 currentUser={currentUser}
-                                                                Component={Invitation} {...props}/>}/>
+                                                                refreshUser={this.refreshUserMemberships}
+                                                                Component={Invitation}
+                                                                {...props}/>}/>
 
                         <Route path="/new-organisation"
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={NewOrganisation} {...props}/>}/>
 
                         <Route path="/new-collaboration"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={NewCollaboration}
-                                   refreshUser={this.refreshUserMemberships} {...props}/>}/>
+                               render={props => <ProtectedRoute currentUser={currentUser}
+                                                                Component={NewCollaboration}
+                                                                refreshUser={this.refreshUserMemberships}
+                                                                {...props}/>}/>
 
                         <Route path="/collaboration-services/:collaboration_id"
                                render={props => <ProtectedRoute
