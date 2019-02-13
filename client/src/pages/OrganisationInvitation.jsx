@@ -133,8 +133,9 @@ class OrganisationInvitation extends React.Component {
         if (this.isValid()) {
             const {organisationInvitation} = this.state;
             organisationInvitationAccept(organisationInvitation).then(res => {
-                this.gotoOrganisations();
+                this.props.history.push("/home");
                 setFlash(I18n.t("organisationInvitation.flash.inviteAccepted", {name: organisationInvitation.organisation.name}));
+                this.props.refreshUser();
             });
         }
     };

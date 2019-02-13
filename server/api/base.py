@@ -38,7 +38,7 @@ def auth_filter(config):
 
 def query_param(key, required=True, default=None):
     value = current_request.args.get(key, default=default)
-    if required and not value:
+    if required and value is None:
         raise BadRequest(f"Query parameter {key} is required, but missing")
     return value
 
@@ -109,5 +109,7 @@ def health():
 @base_api.route("/config", strict_slashes=False)
 @json_endpoint
 def config():
+    base_url = current_app.app_config.base_url
+    base_url = base_url[:-1] if base_url.endswith("/") else base_url
     return {"local": current_app.config["LOCAL"],
-            "base_url": current_app.app_config.base_url}, 200
+            "base_url": base_url}, 200

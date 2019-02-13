@@ -134,8 +134,9 @@ class Invitation extends React.Component {
         if (this.isValid()) {
             const {invite} = this.state;
             invitationAccept(invite).then(res => {
-                this.gotoCollaborations();
+                this.props.history.push("/home");
                 setFlash(I18n.t("invitation.flash.inviteAccepted", {name: invite.collaboration.name}));
+                this.props.refreshUser();
             });
         }
     };
