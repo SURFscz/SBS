@@ -44,7 +44,8 @@ class Invitation extends React.Component {
                 .then(json => {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({invite: json, isExpired});
-                });
+                })
+                .catch(() => this.props.history.push("/404"));
         } else if (params.id) {
             invitationById(params.id)
                 .then(json => {
