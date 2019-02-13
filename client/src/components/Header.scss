@@ -79,9 +79,10 @@
             }
 
             li.impersonator {
-                padding-right: 35px;
+                padding: 0 35px;
                 font-size: 22px;
                 cursor: pointer;
+                border-left: 1px solid $primary-green;
 
                 svg.fa-user-secret {
                     color: $red;
