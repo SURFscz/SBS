@@ -202,6 +202,7 @@ class Impersonate extends React.Component {
                             <span className="outer-search">
                             <input type="text"
                                    onChange={this.search}
+                                   onFocus={this.search}
                                    value={query}
                                    onKeyDown={this.onSearchKeyDown}
                                    placeholder={I18n.t("impersonate.userSearchPlaceHolder")}/>

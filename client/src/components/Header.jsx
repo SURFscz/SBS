@@ -68,7 +68,7 @@ export default class Header extends React.PureComponent {
                             <a href="/logout" onClick={this.logout}>{I18n.t("header.links.logout")}</a>
                         </li>}
 
-                        {impersonator && <li className="impersonator">
+                        {impersonator && <li className="impersonator border-left">
                             <NavLink to="/impersonate">
                             <span data-tip data-for="impersonator">
                                 <FontAwesomeIcon icon="user-secret"/></span>
