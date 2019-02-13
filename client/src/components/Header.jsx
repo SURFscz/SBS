@@ -45,6 +45,12 @@ export default class Header extends React.PureComponent {
         window.location.href = isEmpty(state) ? "/login" : `/login?state=${encodeURIComponent(state)}`;
     };
 
+    logout = e => {
+        stopEvent(e);
+        const baseUrl = this.props.config.base_url;
+        window.location.href = `/redirect_uri?logout=${baseUrl}`;
+    };
+
     render() {
         const {currentUser, impersonator} = this.props;
         const displayLogin = currentUser.guest;
@@ -58,6 +64,10 @@ export default class Header extends React.PureComponent {
                         {displayLogin && <li className="login">
                             <a href="/login" onClick={this.login}>{I18n.t("header.links.login")}</a>
                         </li>}
+                        {!displayLogin && <li className="login">
+                            <a href="/logout" onClick={this.logout}>{I18n.t("header.links.logout")}</a>
+                        </li>}
+
                         {impersonator && <li className="impersonator">
                             <NavLink to="/impersonate">
                             <span data-tip data-for="impersonator">
@@ -73,7 +83,7 @@ export default class Header extends React.PureComponent {
                             </NavLink>
                         </li>}
                         {!currentUser.guest &&
-                        <li className={`user-profile ${(displayLogin || impersonator) ? "border-left" : ""}`}>
+                        <li className="user-profile border-left">
                             {this.renderProfileLink(currentUser)}
                             {this.renderDropDown(currentUser)}
                         </li>}

@@ -10,6 +10,7 @@ I18n.translations.nl = {
         links: {
             login: "Login",
             help: "Help",
+            logout: "Logout",
             helpUrl: "https://github.com/SURFscz/SBS/wiki"
         },
         impersonator: "U bent {{impersonator}},<br/>maar u ziet SBS nu als {{currentUser}}.<br/><br/>Op de <strong>Impersonate</strong> pagina<br/> kunt u van identiteit wisselen<br/>of weer 'uzelf' worden."
