@@ -3,7 +3,7 @@ import I18n from "i18n-js";
 import {Link, NavLink} from "react-router-dom";
 import logo from "../images/surflogo.png";
 import "./Header.scss";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {isEmpty, pseudoGuid, stopEvent} from "../utils/Utils";
 import LanguageSelector from "./LanguageSelector";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserProfile from "./UserProfile";
@@ -42,13 +42,16 @@ export default class Header extends React.PureComponent {
     login = e => {
         stopEvent(e);
         const state = getParameterByName("state", window.location.search);
-        window.location.href = isEmpty(state) ? "/login" : `/login?state=${encodeURIComponent(state)}`;
+        const guid = pseudoGuid();
+        const queryParameter = isEmpty(state) ? `?guid=${guid}` : `?guid=${guid}&state=${encodeURIComponent(state)}`;
+        window.location.href = `/login${queryParameter}`;
     };
 
     logout = e => {
         stopEvent(e);
         const baseUrl = this.props.config.base_url;
-        window.location.href = `/redirect_uri?logout=${baseUrl}`;
+        const guid = pseudoGuid();
+        window.location.href = `/redirect_uri?logout=${baseUrl}&guid=${guid}`;
     };
 
     render() {

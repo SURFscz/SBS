@@ -33,15 +33,13 @@ import AuthorisationGroup from "./AuthorisationGroup";
 import Invitation from "./Invitation";
 import Impersonate from "./Impersonate";
 import {emitter} from "../utils/Events";
-import {isEmpty} from "../utils/Utils";
+import {isEmpty, pseudoGuid} from "../utils/Utils";
 import UserServiceProfiles from "./UserServiceProfiles";
 import UserServiceProfileDetails from "./UserServiceProfileDetails";
 import Login from "./Login";
 import {ProtectedRoute} from "./ProtectedRoute";
 
 addIcons();
-
-const S4 = () => (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 
 class App extends React.Component {
 
@@ -86,7 +84,7 @@ class App extends React.Component {
             window.location.href = `${location.protocol}//${location.hostname}${location.port ? ":" + location.port : ""}/error`;
         } else {
             //302 redirects from Shib are cached by the browser. We force a one-time reload
-            const guid = (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
+            const guid = pseudoGuid();
             window.location.href = `${location.href}?guid=${guid}`;
         }
     };
