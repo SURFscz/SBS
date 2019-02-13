@@ -65,7 +65,7 @@ class OrganisationDetail extends React.Component {
                         members: members,
                         filteredMembers: members,
                         invitations: sortObjects(json.organisation_invitations, inviteSorted, inviteReverse),
-                        adminOfOrganisation: user.admin || json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id)
+                        adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id)
                     })
                 });
         } else {
@@ -231,7 +231,6 @@ class OrganisationDetail extends React.Component {
     renderMembers = (members, user, sorted, reverse, query, adminOfOrganisation) => {
         const isAdmin = user.admin || adminOfOrganisation;
         const adminClassName = isAdmin ? "with-button" : "";
-
         return (
             <section className="members-search">
                 <div className="search">
@@ -255,6 +254,7 @@ class OrganisationDetail extends React.Component {
     renderMemberTable = (members, user, sorted, reverse) => {
         const names = ["user__name", "user__email", "user__uid", "role", "created_at", "actions"];
         const role = {value: "admin", label: "Admin"};
+        const numberOfAdmins = members.filter(member => member.role === "admin").length;
         return (
             <table className="members">
                 <thead>
@@ -275,7 +275,9 @@ class OrganisationDetail extends React.Component {
                     <td className="uid">{member.user.uid}</td>
                     <td className="role"><Select value={role} options={[role]}/></td>
                     <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
-                    <td className="actions"><FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/></td>
+                    <td className="actions">
+                        {numberOfAdmins > 1 && <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
+                    </td>
                 </tr>)}
                 </tbody>
             </table>
@@ -292,6 +294,7 @@ class OrganisationDetail extends React.Component {
             }}
                         placeholder={I18n.t("organisation.namePlaceHolder")}
                         onBlur={this.validateOrganisationName}
+                        disabled={!user.admin}
                         name={I18n.t("organisation.name")}/>
             {alreadyExists.name && <span
                 className="error">{I18n.t("organisation.alreadyExists", {
@@ -309,6 +312,7 @@ class OrganisationDetail extends React.Component {
                             alreadyExists: {...this.state.alreadyExists, tenant_identifier: false}
                         })}
                         placeholder={I18n.t("organisation.tenantPlaceHolder")}
+                        disabled={!user.admin}
                         onBlur={this.validateOrganisationTenantIdentifier}
                         name={I18n.t("organisation.tenant_identifier")}/>
             {alreadyExists.tenant && <span
@@ -323,6 +327,7 @@ class OrganisationDetail extends React.Component {
 
             <InputField value={description}
                         onChange={e => this.setState({description: e.target.value})}
+                        disabled={!user.admin}
                         placeholder={I18n.t("organisation.descriptionPlaceholder")}
                         name={I18n.t("organisation.description")}/>
 
@@ -353,12 +358,18 @@ class OrganisationDetail extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-organisation-detail">
-                <div className="title">
+                {adminOfOrganisation && <div className="title">
+                    <a href="/home" onClick={e => {
+                        stopEvent(e);
+                        this.props.history.push("/home")
+                    }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("home.backToHome")}</a>
+                </div>}
+                {user.admin && <div className="title">
                     <a href="/organisations" onClick={e => {
                         stopEvent(e);
                         this.props.history.push("/organisations")
                     }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("organisationDetail.backToOrganisations")}</a>
-                </div>
+                </div>}
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}

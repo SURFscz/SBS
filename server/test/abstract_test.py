@@ -68,8 +68,8 @@ class AbstractTest(TestCase):
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
             return response.json
 
-    def delete(self, url, primary_key, response_status_code=204):
+    def delete(self, url, primary_key, with_basic_auth=True, response_status_code=204):
         with requests.Session():
-            response = self.client.delete(f"{url}/{primary_key}", headers=BASIC_AUTH_HEADER,
+            response = self.client.delete(f"{url}/{primary_key}", headers=BASIC_AUTH_HEADER if with_basic_auth else {},
                                           content_type="application/json")
             self.assertEqual(response_status_code, response.status_code)

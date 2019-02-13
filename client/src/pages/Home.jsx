@@ -2,7 +2,7 @@ import React from "react";
 import "./Home.scss";
 import I18n from "i18n-js";
 import {myCollaborationMemberships, myCollaborationsLite} from "../api";
-import {stopEvent} from "../utils/Utils";
+import {isEmpty, stopEvent} from "../utils/Utils";
 import Button from "../components/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -46,6 +46,10 @@ class Home extends React.Component {
         this.props.history.push(`/collaboration-authorisation-group-details/${authorisationGroup.collaboration.id}/${authorisationGroup.id}`);
     };
 
+    openOrganisation = organisation => e => {
+        stopEvent(e);
+        this.props.history.push(`/organisations/${organisation.id}`);
+    };
 
     openCollaboration = collaboration => e => {
         stopEvent(e);
@@ -142,9 +146,39 @@ class Home extends React.Component {
         );
     };
 
+    renderOrganisations = user => {
+        const organisations = user.organisation_memberships.map(organisationMembership => organisationMembership.organisation);
+        const showMore = organisations.length >= 6;
+        const showMoreItems = this.state.showMore.includes("organisations");
+        return (
+            <section className="info-block ">
+                <div className="header organisations">
+                    <span className="type">{I18n.t("home.organisations")}</span>
+                    <span className="counter">{organisations.length}</span>
+                </div>
+                <div className="content">
+                    {(showMore && !showMoreItems ? organisations.slice(0, 5) : organisations).map((organisation, i) =>
+                        <div className="organisation" key={i}>
+                            <a href={`/organisations/${organisation.id}`}
+                               onClick={this.openOrganisation(organisation)}>
+                                <FontAwesomeIcon icon={"arrow-right"}/>
+                                <span>{organisation.name}</span>
+                            </a>
+                        </div>)}
+                </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("organisations")}/>
+                </section>}
+            </section>
+        );
+    };
+
     render() {
         const {collaborationMemberships, collaborations} = this.state;
-
+        const {user} = this.props;
+        const hasOrganisationMemberships = !isEmpty(user.organisation_memberships);
         const authorisationGroups = collaborationMemberships.map(membership => membership.authorisation_groups).flat();
         const userServiceProfiles = authorisationGroups.map(authorisationGroup => authorisationGroup.user_service_profiles).flat();
         return (
@@ -152,11 +186,11 @@ class Home extends React.Component {
                 <div className="title">
                     <p>{I18n.t("home.title")}</p>
                 </div>
-                <section className="info-block-container">
+                <section className={`info-block-container ${hasOrganisationMemberships ? "with-organisations" : ""}`}>
                     {this.renderUserProfileServices(userServiceProfiles, authorisationGroups)}
                     {this.renderAuthorisationGroups(authorisationGroups)}
                     {this.renderCollaborations(collaborations)}
-
+                    {hasOrganisationMemberships && this.renderOrganisations(user)}
                 </section>
             </div>);
     };

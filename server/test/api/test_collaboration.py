@@ -15,6 +15,7 @@ class TestCollaboration(AbstractTest):
         self.assertListEqual(["id", "name"], list(collaboration.keys()))
 
     def test_search(self):
+        self.login("urn:john")
         res = self.get("/api/collaborations/search", query_data={"q": "ComPuti"})
         self.assertEqual(1, len(res))
 
@@ -24,6 +25,7 @@ class TestCollaboration(AbstractTest):
                  with_basic_auth=False)
 
     def test_search_wildcard(self):
+        self.login("urn:john")
         res = self.get("/api/collaborations/search", query_data={"q": "*"})
         self.assertTrue(len(res) > 0)
 

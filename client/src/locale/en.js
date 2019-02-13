@@ -32,6 +32,7 @@ I18n.translations.en = {
         userServiceProfiles: "User service profiles",
         authorisationGroups: "Authorisation Groups",
         collaborations: "Collaborations",
+        organisations: "Organisations",
         backToHome: "Back to home"
     },
     forms: {

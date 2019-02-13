@@ -15,7 +15,7 @@ export default function NotFound({currentUser}) {
                     stopEvent(e);
                     const state = getParameterByName("state", window.location.search);
                     window.location.href = isEmpty(state) ? "/login" : `/login?state=${encodeURIComponent(state)}`;
-                }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("not_found.loginLink")}</a>}
+                }}><FontAwesomeIcon icon="arrow-right"/>{I18n.t("not_found.loginLink")}</a>}
             </div>
             <div className="content">
                 <Planet size={80} mood="sad" color="white" />

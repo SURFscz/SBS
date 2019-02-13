@@ -3,7 +3,7 @@ from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_write_access, current_user_id
+from server.auth.security import confirm_write_access, current_user_id, confirm_read_access
 from server.db.db import Service, db, Collaboration, UserServiceProfile
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
@@ -14,7 +14,7 @@ service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 @service_api.route("/search", strict_slashes=False)
 @json_endpoint
 def service_search():
-    confirm_write_access()
+    confirm_read_access()
 
     q = query_param("q")
     base_query = "SELECT id, entity_id, name, description FROM services "
@@ -66,7 +66,7 @@ def service_by_id(service_id):
             .count()
         return count > 0
 
-    confirm_write_access(override_func=_user_service_profile)
+    confirm_read_access(override_func=_user_service_profile)
 
     service = Service.query \
         .outerjoin(Service.collaborations) \

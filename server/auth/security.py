@@ -78,11 +78,27 @@ def confirm_write_access(*args, override_func=None):
 
 
 def _is_collaboration_admin(user_id, collaboration_id):
-    return CollaborationMembership.query.options(load_only("id")) \
-               .filter(CollaborationMembership.user_id == user_id) \
-               .filter(CollaborationMembership.role == "admin") \
-               .filter(CollaborationMembership.collaboration_id == collaboration_id) \
-               .count() > 0
+    count = CollaborationMembership.query.options(load_only("id")).filter(
+        CollaborationMembership.user_id == user_id).filter(CollaborationMembership.role == "admin").filter(
+        CollaborationMembership.collaboration_id == collaboration_id).count()
+    return count > 0
+
+
+def _is_organisation_admin(user_id, organisation_id):
+    count = OrganisationMembership.query \
+        .options(load_only("user_id")) \
+        .filter(OrganisationMembership.user_id == user_id) \
+        .filter(OrganisationMembership.role == "admin") \
+        .filter(OrganisationMembership.organisation_id == organisation_id).count()
+    return count > 0
+
+
+def confirm_organisation_admin(organisation_id):
+    def override_func():
+        user_id = current_user_id()
+        return _is_organisation_admin(user_id, organisation_id)
+
+    confirm_write_access(override_func=override_func)
 
 
 def confirm_collaboration_admin(collaboration_id):
@@ -110,7 +126,8 @@ def confirm_collaboration_admin_or_authorisation_group_member(collaboration_id, 
         user_id = current_user_id()
         is_collaboration_admin = _is_collaboration_admin(user_id, collaboration_id)
         if not is_collaboration_admin:
-            count = AuthorisationGroup.query.options(load_only("id")) \
+            count = AuthorisationGroup.query \
+                .options(load_only("id")) \
                 .join(AuthorisationGroup.collaboration_memberships) \
                 .filter(AuthorisationGroup.id == authorisation_group_id) \
                 .filter(CollaborationMembership.user_id == user_id) \
@@ -125,21 +142,10 @@ def confirm_collaboration_admin_or_authorisation_group_member(collaboration_id, 
 def confirm_owner_of_user_service_profile():
     def override_func():
         user_id = current_user_id()
-        count = UserServiceProfile.query.options(load_only("id")) \
+        count = UserServiceProfile.query \
+            .options(load_only("id")) \
             .filter(UserServiceProfile.user_id == user_id) \
             .count()
         return count > 0
-
-    confirm_write_access(override_func=override_func)
-
-
-def confirm_organisation_admin(organisation_id):
-    def override_func():
-        user_id = current_user_id()
-        return OrganisationMembership.query \
-                   .filter(OrganisationMembership.user_id == user_id) \
-                   .filter(OrganisationMembership.role == "admin") \
-                   .filter(OrganisationMembership.organisation_id == organisation_id) \
-                   .count() > 0
 
     confirm_write_access(override_func=override_func)
