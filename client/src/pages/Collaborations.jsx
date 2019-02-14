@@ -124,13 +124,15 @@ class Collaborations extends React.Component {
                     <span className="counter">{joinRequests.length}</span>
                 </div>
                 <div className="content">
-                    {(showMore && !showMoreItems ? joinRequests.slice(0, 5) : joinRequests).map((request, i) =>
-                        <div className="join-request" key={i}>
-                            <a href={`/join-requests/${request.id}`} onClick={this.openJoinRequest(request)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{request.user.name}</span>
-                            </a>
-                        </div>)}
+                    {(showMore && !showMoreItems ? joinRequests.slice(0, 5) : joinRequests)
+                        .sort((r1, r2) => r1.user.name.localeCompare(r2.user.name))
+                        .map((request, i) =>
+                            <div className="join-request" key={i}>
+                                <a href={`/join-requests/${request.id}`} onClick={this.openJoinRequest(request)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{request.user.name}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"
@@ -154,7 +156,9 @@ class Collaborations extends React.Component {
                     <span className="counter">{authorisationGroups.length}</span>
                 </div>
                 <div className="content">
-                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations).map((collaboration, i) =>
+                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations)
+                        .sort((s1, s2) => s1.name.localeCompare(s2.name))
+                        .map((collaboration, i) =>
                         <div className="collaboration-authorisations" key={i}>
                             <a href={`/collaborations/${collaboration.id}`}
                                onClick={this.openCollaboration(collaboration)}>
@@ -182,13 +186,15 @@ class Collaborations extends React.Component {
                     <span className="counter">{invitations.length}</span>
                 </div>
                 <div className="content">
-                    {(showMore && !showMoreItems ? invitations.slice(0, 5) : invitations).map((invitation, i) =>
-                        <div className="invitation" key={i}>
-                            <a href={`/invitations/${invitation.id}`} onClick={this.openInvitation(invitation)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{invitation.invitee_email}</span>
-                            </a>
-                        </div>)}
+                    {(showMore && !showMoreItems ? invitations.slice(0, 5) : invitations)
+                        .sort((i1, i2) => i1.invitee_email.localeCompare(i2.invitee_email))
+                        .map((invitation, i) =>
+                            <div className="invitation" key={i}>
+                                <a href={`/invitations/${invitation.id}`} onClick={this.openInvitation(invitation)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{invitation.invitee_email}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"
@@ -213,14 +219,16 @@ class Collaborations extends React.Component {
                     <span className="counter">{services.length}</span>
                 </div>
                 <div className="content">
-                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations).map((collaboration, i) =>
-                        <div className="collaboration-services" key={i}>
-                            <a href={`/collaborations/${collaboration.id}`}
-                               onClick={this.openCollaboration(collaboration)}>
-                                <span>{collaboration.name}</span>
-                                <span className="count">{`(${collaboration.services.length})`}</span>
-                            </a>
-                        </div>)}
+                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations)
+                        .sort((s1, s2) => s1.name.localeCompare(s2.name))
+                        .map((collaboration, i) =>
+                            <div className="collaboration-services" key={i}>
+                                <a href={`/collaborations/${collaboration.id}`}
+                                   onClick={this.openCollaboration(collaboration)}>
+                                    <span>{collaboration.name}</span>
+                                    <span className="count">{`(${collaboration.services.length})`}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"

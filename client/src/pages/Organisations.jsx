@@ -118,14 +118,17 @@ class Organisations extends React.Component {
                     <span className="counter">{collaborations.length}</span>
                 </div>
                 <div className="content">
-                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations).map((collaboration, i) =>
-                        <div className="organisation-collaborations" key={i}>
-                            <a href={`/collaborations/${collaboration.id}`}
-                               onClick={this.openCollaboration(collaboration)}>
-                                <span>{collaboration.name}</span>
-                                <span className="count">{`(${collaboration.collaboration_memberships.length})`}</span>
-                            </a>
-                        </div>)}
+                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations)
+                        .sort((s1, s2) => s1.name.localeCompare(s2.name))
+                        .map((collaboration, i) =>
+                            <div className="organisation-collaborations" key={i}>
+                                <a href={`/collaborations/${collaboration.id}`}
+                                   onClick={this.openCollaboration(collaboration)}>
+                                    <span>{collaboration.name}</span>
+                                    <span
+                                        className="count">{`(${collaboration.collaboration_memberships.length})`}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"
@@ -148,7 +151,9 @@ class Organisations extends React.Component {
                     <span className="counter">{memberships.length}</span>
                 </div>
                 <div className="content">
-                    {(showMore && !showMoreItems ? organisations.slice(0, 5) : organisations).map((organisation, i) =>
+                    {(showMore && !showMoreItems ? organisations.slice(0, 5) : organisations)
+                        .sort((s1, s2) => s1.name.localeCompare(s2.name))
+                        .map((organisation, i) =>
                         <div className="organisation-members" key={i}>
                             <a href={`/organisations/${organisation.id}`}
                                onClick={this.openOrganisation(organisation)}>
@@ -178,7 +183,9 @@ class Organisations extends React.Component {
                     <span className="counter">{invitations.length}</span>
                 </div>
                 <div className="content">
-                    {(showMore && !showMoreItems ? invitations.slice(0, 5) : invitations).map((invitation, i) =>
+                    {(showMore && !showMoreItems ? invitations.slice(0, 5) : invitations)
+                        .sort((i1, i2) => i1.invitee_email.localeCompare(i2.invitee_email))
+                        .map((invitation, i) =>
                         <div className="organisation-invitations" key={i}>
                             <a href={`/organisation-invitations/${invitation.id}`}
                                onClick={this.openInvitation(invitation)}>

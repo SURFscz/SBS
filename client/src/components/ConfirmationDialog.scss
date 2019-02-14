@@ -29,6 +29,10 @@
             font-size: large;
             font-weight: bold;
 
+            &.warning {
+                background-color: $orange;
+            }
+
             &.error {
                 background-color: $red;
             }

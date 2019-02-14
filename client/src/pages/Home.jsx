@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.scss";
 import I18n from "i18n-js";
-import {myCollaborationMemberships, myCollaborationsLite} from "../api";
+import {myAuthorisationGroups, myCollaborationsLite} from "../api";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Button from "../components/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -11,16 +11,16 @@ class Home extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            collaborationMemberships: [],
+            authorisationGroups: [],
             collaborations: [],
             showMore: []
         };
     }
 
     componentDidMount = () => {
-        Promise.all([myCollaborationMemberships(), myCollaborationsLite()])
+        Promise.all([myAuthorisationGroups(), myCollaborationsLite()])
             .then(res => {
-                this.setState({collaborationMemberships: res[0], collaborations: res[1]});
+                this.setState({authorisationGroups: res[0], collaborations: res[1]});
             });
     };
 
@@ -43,7 +43,7 @@ class Home extends React.Component {
 
     openAuthorisationGroup = authorisationGroup => e => {
         stopEvent(e);
-        this.props.history.push(`/collaboration-authorisation-group-details/${authorisationGroup.collaboration.id}/${authorisationGroup.id}`);
+        this.props.history.push(`/collaboration-authorisation-group-details/${authorisationGroup.collaboration_id}/${authorisationGroup.id}`);
     };
 
     openOrganisation = organisation => e => {
@@ -69,14 +69,17 @@ class Home extends React.Component {
                     <span className="counter">{userServiceProfiles.length}</span>
                 </div>
                 <div className="content">
-                    {(showMore && !showMoreItems ? userServiceProfiles.slice(0, 5) : userServiceProfiles).map((userServiceProfile, i) =>
-                        <div className="user-service-profile" key={i}>
-                            <a href={`/user-service-profile/${userServiceProfile.id}`}
-                               onClick={this.openUserServiceProfile(userServiceProfile)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{`${userServiceProfile.service.name} - ${this.authorisationGroupForUserServiceProfile(userServiceProfile, authorisationGroups).name}`}</span>
-                            </a>
-                        </div>)}
+                    {(showMore && !showMoreItems ? userServiceProfiles.slice(0, 5) : userServiceProfiles)
+                        .sort((i1, i2) => `${i1.service.name} - ${this.authorisationGroupForUserServiceProfile(i1, authorisationGroups).name}`
+                            .localeCompare(`${i2.service.name} - ${this.authorisationGroupForUserServiceProfile(i2, authorisationGroups).name}`))
+                        .map((userServiceProfile, i) =>
+                            <div className="user-service-profile" key={i}>
+                                <a href={`/user-service-profile/${userServiceProfile.id}`}
+                                   onClick={this.openUserServiceProfile(userServiceProfile)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{`${userServiceProfile.service.name} - ${this.authorisationGroupForUserServiceProfile(userServiceProfile, authorisationGroups).name}`}</span>
+                                </a>
+                            </div>)}
                 </div>
                 <section className="show-more">
                     {showMore && <Button className="white"
@@ -100,14 +103,16 @@ class Home extends React.Component {
                     <span className="counter">{authorisationGroups.length}</span>
                 </div>
                 <div className="content">
-                    {(showMore && !showMoreItems ? authorisationGroups.slice(0, 5) : authorisationGroups).map((authorisationGroup, i) =>
-                        <div className="authorisation" key={i}>
-                            <a href={`/collaboration-authorisation-group-details/${authorisationGroup.collaboration.id}/${authorisationGroup.id}`}
-                               onClick={this.openAuthorisationGroup(authorisationGroup)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{authorisationGroup.name}</span>
-                            </a>
-                        </div>)}
+                    {(showMore && !showMoreItems ? authorisationGroups.slice(0, 5) : authorisationGroups)
+                        .sort((s1, s2) => s1.name.localeCompare(s2.name))
+                        .map((authorisationGroup, i) =>
+                            <div className="authorisation" key={i}>
+                                <a href={`/collaboration-authorisation-group-details/${authorisationGroup.collaboration_id}/${authorisationGroup.id}`}
+                                   onClick={this.openAuthorisationGroup(authorisationGroup)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{authorisationGroup.name}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"
@@ -128,7 +133,9 @@ class Home extends React.Component {
                     <span className="counter">{collaborations.length}</span>
                 </div>
                 <div className="content">
-                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations).map((collaboration, i) =>
+                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations)
+                        .sort((s1, s2) => s1.name.localeCompare(s2.name))
+                        .map((collaboration, i) =>
                         <div className="collaboration" key={i}>
                             <a href={`/collaborations/${collaboration.id}`}
                                onClick={this.openCollaboration(collaboration)}>
@@ -176,11 +183,11 @@ class Home extends React.Component {
     };
 
     render() {
-        const {collaborationMemberships, collaborations} = this.state;
+        const {authorisationGroups, collaborations} = this.state;
         const {user} = this.props;
         const hasOrganisationMemberships = !isEmpty(user.organisation_memberships);
-        const authorisationGroups = collaborationMemberships.map(membership => membership.authorisation_groups).flat();
-        const userServiceProfiles = authorisationGroups.map(authorisationGroup => authorisationGroup.user_service_profiles).flat();
+        const profiles = authorisationGroups.map(authorisationGroup => authorisationGroup.user_service_profiles).flat();
+        const userServiceProfiles = [...new Set(profiles.map(p => p.id))].map(id => profiles.find(p => p.id === id));
         return (
             <div className="mod-home">
                 <div className="title">

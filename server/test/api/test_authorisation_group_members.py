@@ -57,3 +57,14 @@ class TestAuthorisationGroupMembers(AbstractTest):
         count = len(authorisation_group.collaboration_memberships)
 
         self.assertEqual(0, count)
+
+    def test_pre_flight(self):
+        authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
+        collaboration_membership_id = authorisation_group.collaboration_memberships[0].id
+
+        user_service_profiles = self.get("/api/authorisation_group_members/delete_pre_flight",
+                                         query_data={"authorisation_group_id": authorisation_group.id,
+                                                     "collaboration_membership_id": collaboration_membership_id,
+                                                     "collaboration_id": authorisation_group.collaboration_id})
+        self.assertEqual(1, len(user_service_profiles))
+        self.assertEqual("urn:john", user_service_profiles[0]["user"]["uid"])

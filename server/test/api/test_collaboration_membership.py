@@ -26,20 +26,3 @@ class TestCollaborationMembership(AbstractTest):
         collaboration_membership = CollaborationMembership.query.join(CollaborationMembership.user).filter(
             User.uid == "urn:jane").one()
         self.assertEqual("admin", collaboration_membership.role)
-
-    def test_my_collaboration_memberships(self):
-        self.login("urn:john")
-        collaboration_memberships = self.get("/api/collaboration_memberships", with_basic_auth=False)
-
-        self.assertEqual(1, len(collaboration_memberships))
-
-        collaboration_membership = collaboration_memberships[0]
-        authorisation_groups = collaboration_membership["authorisation_groups"]
-        self.assertEqual(2, len(authorisation_groups))
-
-        authorisation_group = self.find_by_name(authorisation_groups, ai_researchers_authorisation)
-        user_service_profiles = authorisation_group["user_service_profiles"]
-        self.assertEqual(1, len(user_service_profiles))
-
-        user_service_profile = user_service_profiles[0]
-        self.assertEqual(service_network_name, user_service_profile["service"]["name"])

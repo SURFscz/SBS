@@ -1,4 +1,4 @@
-# Stage 1. - Client build environment
+    # Stage 1. - Client build environment
 FROM node:8 as yarn-deps
 
 WORKDIR /opt/app

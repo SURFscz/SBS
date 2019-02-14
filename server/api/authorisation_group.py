@@ -4,12 +4,32 @@ from sqlalchemy import text
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_collaboration_admin, confirm_collaboration_admin_or_authorisation_group_member
-from server.db.db import AuthorisationGroup, CollaborationMembership
+from server.auth.security import confirm_collaboration_admin, confirm_collaboration_admin_or_authorisation_group_member, \
+    current_user_id
+from server.db.db import AuthorisationGroup, CollaborationMembership, UserServiceProfile
 from server.db.db import db
 from server.db.models import update, save, delete
 
 authorisation_group_api = Blueprint("authorisation_group_api", __name__, url_prefix="/api/authorisation_groups")
+
+
+@authorisation_group_api.route("/", strict_slashes=False)
+@json_endpoint
+def my_authorisation_groups():
+    user_id = current_user_id()
+
+    authorisation_groups = AuthorisationGroup.query \
+        .join(AuthorisationGroup.collaboration_memberships) \
+        .join(CollaborationMembership.user) \
+        .outerjoin(UserServiceProfile, UserServiceProfile.user_id == user_id) \
+        .outerjoin(UserServiceProfile.service) \
+        .options(contains_eager(AuthorisationGroup.collaboration_memberships)
+                 .contains_eager(CollaborationMembership.user)) \
+        .options(contains_eager(AuthorisationGroup.user_service_profiles)
+                 .contains_eager(UserServiceProfile.service)) \
+        .filter(CollaborationMembership.user_id == user_id) \
+        .all()
+    return authorisation_groups, 200
 
 
 @authorisation_group_api.route("/name_exists", strict_slashes=False)

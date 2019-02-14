@@ -75,6 +75,11 @@ function fetchDelete(path) {
     return validFetch(path, {method: "delete"});
 }
 
+function queryParam(options) {
+    const entries = Object.entries(options[0]);
+    return entries.reduce((acc, entry) => isEmpty(entry[1]) ? acc : acc + `${entry[0]}=${entry[1]}&`, "?");
+}
+
 //Base
 export function health() {
     return fetchJson("/health");
@@ -327,10 +332,6 @@ export function updateCollaborationMembershipRole(collaborationId, userId, role)
     }, "put")
 }
 
-export function myCollaborationMemberships() {
-    return fetchJson("/api/collaboration_memberships")
-}
-
 //CollaborationServices
 export function addCollaborationServices({collaborationId, serviceIds}) {
     serviceIds = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
@@ -373,6 +374,11 @@ export function deleteAuthorisationGroup(id) {
     return fetchDelete(`/api/authorisation_groups/${id}`)
 }
 
+export function myAuthorisationGroups() {
+    return fetchJson("/api/authorisation_groups")
+}
+
+
 //AuthorisationGroupServices
 export function addAuthorisationGroupServices({authorisationGroupId, collaborationId, serviceIds}) {
     serviceIds = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
@@ -387,6 +393,11 @@ export function deleteAuthorisationGroupServices(authorisationGroupId, serviceId
     return fetchDelete(`/api/authorisation_group_services/${authorisationGroupId}/${serviceId}/${collaborationId}`)
 }
 
+export function preFlightDeleteAuthorisationGroupService({authorisation_group_id, service_id, collaboration_id}) {
+    const query = queryParam(arguments);
+    return fetchJson(`/api/authorisation_group_services/delete_pre_flight${query}`);
+}
+
 //AuthorisationGroupMembers
 export function addAuthorisationGroupMembers({authorisationGroupId, collaborationId, memberIds}) {
     memberIds = Array.isArray(memberIds) ? memberIds : [memberIds];
@@ -399,6 +410,11 @@ export function addAuthorisationGroupMembers({authorisationGroupId, collaboratio
 
 export function deleteAuthorisationGroupMembers(authorisationGroupId, memberId, collaborationId) {
     return fetchDelete(`/api/authorisation_group_members/${authorisationGroupId}/${memberId}/${collaborationId}`)
+}
+
+export function preFlightDeleteAuthorisationGroupMember({authorisation_group_id, collaboration_membership_id, collaboration_id}) {
+    const query = queryParam(arguments);
+    return fetchJson(`/api/authorisation_group_members/delete_pre_flight${query}`);
 }
 
 //UserServiceProfiles
