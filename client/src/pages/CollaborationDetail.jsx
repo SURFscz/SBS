@@ -437,7 +437,7 @@ class CollaborationDetail extends React.Component {
     collaborationDetails = (name, alreadyExists, initial, description, accepted_user_policy, enrollment,
                             access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
                             config) => {
-        const joinRequestUrl = `${config.base_url}/registration?collaboration=${decodeURIComponent(originalCollaboration.name)}`;
+        const joinRequestUrl = `${config.base_url}/registration?collaboration=${encodeURIComponent(originalCollaboration.name)}`;
         return <div className="collaboration-detail">
             <InputField value={name} onChange={e => {
                 this.setState({
