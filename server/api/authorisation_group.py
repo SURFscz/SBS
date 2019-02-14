@@ -4,8 +4,8 @@ from sqlalchemy import text
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_collaboration_admin, confirm_collaboration_admin_or_authorisation_group_member, \
-    current_user_id
+from server.auth.security import confirm_collaboration_admin, \
+    confirm_collaboration_admin_or_authorisation_group_member, current_user_id
 from server.db.db import AuthorisationGroup, CollaborationMembership, UserServiceProfile
 from server.db.db import db
 from server.db.models import update, save, delete

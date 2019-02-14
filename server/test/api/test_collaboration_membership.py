@@ -1,6 +1,5 @@
 from server.db.db import CollaborationMembership, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_network_name, ai_researchers_authorisation
 
 
 class TestCollaborationMembership(AbstractTest):

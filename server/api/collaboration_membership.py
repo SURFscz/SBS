@@ -1,7 +1,7 @@
 from flask import Blueprint, request as current_request
 
 from server.api.base import json_endpoint
-from server.auth.security import current_user_id, confirm_collaboration_admin
+from server.auth.security import confirm_collaboration_admin
 from server.db.db import CollaborationMembership, db
 
 collaboration_membership_api = Blueprint("collaboration_membership_api", __name__,
