@@ -119,12 +119,13 @@ def seed(db):
     john_ai_computing = CollaborationMembership(role="member", user=john, collaboration=ai_computing)
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
     jane_ai_computing = CollaborationMembership(role="member", user=jane, collaboration=ai_computing)
+    sarah_ai_computing = CollaborationMembership(role="member", user=sarah, collaboration=ai_computing)
 
     roger_uva_research = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
     peter_uva_research = CollaborationMembership(role="member", user=peter, collaboration=uva_research)
     sarah_uva_research = CollaborationMembership(role="admin", user=sarah, collaboration=uva_research)
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
-             jane_ai_computing)
+             jane_ai_computing, sarah_ai_computing)
 
     authorisation_group_researchers = AuthorisationGroup(name=ai_researchers_authorisation,
                                                          short_name=ai_researchers_authorisation_short_name,
