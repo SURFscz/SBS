@@ -52,7 +52,7 @@ class CollaborationServices extends React.Component {
                         collaboration: collaboration,
                         sortedServices: sortObjects(services, sorted, reverse),
                         allServices: allServices,
-                        connectAllServices: allServices.length === services.length
+                        connectAllServices: allServices.length < services.length
                     });
                 })
         } else {

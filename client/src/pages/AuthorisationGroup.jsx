@@ -79,12 +79,12 @@ class AuthorisationGroup extends React.Component {
                 this.props.history.push("/404");
                 return;
             }
-            if (member.role !== "admin" && !user.admin && params.id === "new") {
+            if (!user.admin && (isEmpty(member) || member.role !== "admin") && params.id === "new") {
                 this.props.history.push("/404");
                 return;
             }
-            const back = member.role !== "admin" && !user.admin ? "/home" : `/collaboration-authorisation-groups/${params.collaboration_id}`;
-            const adminOfCollaboration = member.role === "admin" || user.admin;
+            const back = (isEmpty(member) || member.role !== "admin") && !user.admin ? "/home" : `/collaboration-authorisation-groups/${params.collaboration_id}`;
+            const adminOfCollaboration = (!isEmpty(member) && member.role === "admin") || user.admin;
             if (params.id !== "new") {
                 const collDetail = adminOfCollaboration ? collaborationServices : collaborationLiteById;
                 Promise.all([collDetail(params.collaboration_id), authorisationGroupById(params.id, params.collaboration_id)])
