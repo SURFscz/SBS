@@ -20,5 +20,6 @@ RUN apt-get update && apt-get install -y gettext-base nginx && apt-get clean && 
 COPY server/ server/
 RUN pip install --no-cache-dir -r server/requirements/base.txt
 COPY --from=yarn-deps /opt/app/build /var/www
+COPY etc/nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 80 
+EXPOSE 80

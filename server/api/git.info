@@ -1,5 +1,5 @@
-commit nbr
-Author: name <email>
-Date:   Wed Feb 13 09:33:29 2019 +0100
+commit ca6f6551d1faa209af5e63510049f8a527aa72be
+Author: Okke Harsta <oharsta@zilverline.com>
+Date:   Thu Feb 14 07:34:11 2019 +0100
 
-    Test
+    Decode collaboration name in join request url
