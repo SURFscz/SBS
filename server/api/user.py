@@ -18,7 +18,6 @@ UID_HEADER_NAME = "Oidc-Claim-Cmuid"
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
-# Temp code
 def _log_headers():
     headers = current_request.headers
     for k, v in headers.items():
@@ -58,6 +57,12 @@ def _add_user_claims(request_headers, uid, user):
     if not user.name:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
         user.name = name if name else user.nick_name if user.nick_name else uid
+
+
+def _user_json_response(user):
+    is_admin = {"admin": is_admin_user(user.uid), "guest": False}
+    json_user = jsonify(user).json
+    return {**json_user, **is_admin}, 200
 
 
 @user_api.route("/search", strict_slashes=False)
@@ -155,8 +160,7 @@ def me():
         for collaboration_membership in user.collaboration_memberships:
             collaboration_membership.collaboration
 
-        json_user = jsonify(user).json
-        user = {**json_user, **is_admin}
+        user = {**jsonify(user).json, **is_admin}
     else:
         user = {"uid": "anonymous", "guest": True, "admin": False}
         session["user"] = user
@@ -168,9 +172,7 @@ def me():
 def refresh():
     user_id = current_user_id()
     user = _user_query().filter(User.id == user_id).one()
-    is_admin = {"admin": is_admin_user(user.uid), "guest": False}
-    json_user = jsonify(user).json
-    return {**json_user, **is_admin}, 200
+    return _user_json_response(user)
 
 
 @user_api.route("/other", strict_slashes=False)
@@ -180,9 +182,7 @@ def other():
 
     uid = query_param("uid")
     user = _user_query().filter(User.uid == uid).one()
-    is_admin = {"admin": is_admin_user(user.uid), "guest": False}
-    json_user = jsonify(user).json
-    return {**json_user, **is_admin}, 200
+    return _user_json_response(user)
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
