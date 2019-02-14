@@ -55,8 +55,9 @@ def _user_query():
 def _add_user_claims(request_headers, uid, user):
     for key, attr in claim_attribute_mapping.items():
         setattr(user, attr, request_headers.get(key))
-    name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name])))
-    user.name = name if name else user.nick_name if user.nick_name else uid
+    if not user.name:
+        name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
+        user.name = name if name else user.nick_name if user.nick_name else uid
 
 
 @user_api.route("/search", strict_slashes=False)

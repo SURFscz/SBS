@@ -32,12 +32,11 @@ export function groupBy(arr, key) {
 }
 
 export function sortObjects(objects, attribute, reverse) {
-    const res = [...objects].sort((a, b) => {
+    return [...objects].sort((a, b) => {
         const aS = valueForSort(attribute, a).toString();
         const bs = valueForSort(attribute, b).toString();
         return aS.localeCompare(bs) * (reverse ? -1 : 1);
     });
-    return res;
 }
 
 export function valueForSort(attribute, obj) {

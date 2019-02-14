@@ -2,6 +2,7 @@ from server.db.db import User
 
 claim_attribute_mapping = {
     "Oidc-Claim-Cmuid": "uid",
+    "Oidc-Claim-Name": "name",
     "Oidc-Claim-Nickname": "nick_name",
     "Oidc-Claim-Edumember-Is-Member-Of": "edu_members",
     "Oidc-Claim-Eduperson-Affiliation": "affiliation",
