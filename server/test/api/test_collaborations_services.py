@@ -35,6 +35,28 @@ class TestCollaborationsServices(AbstractTest):
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(4, len(collaboration["services"]))
 
+    def test_add_collaborations_empty_services(self):
+        self.login("urn:john")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+
+        self.put("/api/collaborations_services/", body={
+            "collaboration_id": collaboration_id,
+            "service_ids": []
+        }, response_status_code=201)
+
+    def test_add_all_collaborations_services(self):
+        self.login("urn:john")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        service_ids = list(map(lambda service: service.id, Service.query.all()))
+        self.assertEqual(6, len(service_ids))
+
+        self.put("/api/collaborations_services/", body={
+            "collaboration_id": collaboration_id,
+            "service_ids": service_ids
+        })
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}")
+        self.assertEqual(len(service_ids), len(collaboration["services"]))
+
     def test_delete_all_services(self):
         self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
