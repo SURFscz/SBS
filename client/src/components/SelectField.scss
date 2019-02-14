@@ -61,4 +61,9 @@
         }
 
     }
+
+    .select-inner__control--is-disabled {
+        background-color: $background;
+        border-radius: 0;
+    }
 }
