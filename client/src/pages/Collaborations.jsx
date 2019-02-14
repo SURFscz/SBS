@@ -1,5 +1,5 @@
 import React from "react";
-import {myCollaborations, searchCollaborations} from "../api";
+import {myCollaborations, myCollaborationsLite, searchCollaborations} from "../api";
 import I18n from "i18n-js";
 import debounce from "lodash.debounce";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Autocomplete from "../components/Autocomplete";
 import {headerIcon} from "../forms/helpers";
+import ReactTooltip from "react-tooltip";
 
 class Collaborations extends React.Component {
 
@@ -23,22 +24,38 @@ class Collaborations extends React.Component {
             moreToShow: false,
             sorted: "name",
             reverse: false,
-            showMore: []
+            showMore: [],
+            isCollaborationAdmin: false
         }
     }
 
-    componentDidMount = () => myCollaborations()
-        .then(json => {
-            const {user} = this.props;
-            json.forEach(coll => {
-                const membership = coll.collaboration_memberships.find(m => m.user_id === user.id);
-                coll.role = membership ? membership.role : "";
-                coll.organisation_name = coll.organisation.name;
+    componentDidMount = () => {
+        const {user} = this.props;
+        const isCollaborationAdmin = (user.collaboration_memberships || []).some(membership => membership.role === "admin");
+        const isAdmin = user.admin;
+        if (!isCollaborationAdmin && !isAdmin) {
+            return this.props.history.push("/404");
+        }
+        const promises = isCollaborationAdmin ? [myCollaborations(), myCollaborationsLite()] : [myCollaborations()];
+        Promise.all(promises)
+            .then(res => {
+                const myCollaborations = res[0];
+                const collaborationsLite = (isCollaborationAdmin ? res[1] : [])
+                    .filter(coll => !myCollaborations.find(collaboration => collaboration.id === coll.id));
+                const collaborations = myCollaborations.concat(collaborationsLite);
+                collaborations.forEach(coll => {
+                    const membership = (coll.collaboration_memberships || []).find(m => m.user_id === user.id);
+                    coll.role = membership ? membership.role : "member";
+                    coll.organisation_name = coll.organisation.name;
+                });
+                const {sorted, reverse} = this.state;
+                const sortedCollaborations = this.sortCollaborations(collaborations, sorted, reverse);
+                this.setState({
+                    collaborations: sortedCollaborations, sortedCollaborations: sortedCollaborations,
+                    isCollaborationAdmin: isCollaborationAdmin
+                })
             });
-            const {sorted, reverse} = this.state;
-            const sortedCollaborations = this.sortCollaborations(json, sorted, reverse);
-            this.setState({collaborations: sortedCollaborations, sortedCollaborations: sortedCollaborations})
-        });
+    };
 
     newCollaboration = () => {
         this.props.history.push("new-collaboration");
@@ -159,13 +176,13 @@ class Collaborations extends React.Component {
                     {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations)
                         .sort((s1, s2) => s1.name.localeCompare(s2.name))
                         .map((collaboration, i) =>
-                        <div className="collaboration-authorisations" key={i}>
-                            <a href={`/collaborations/${collaboration.id}`}
-                               onClick={this.openCollaboration(collaboration)}>
-                                <span>{collaboration.name}</span>
-                                <span className="count">{`(${collaboration.authorisation_groups.length})`}</span>
-                            </a>
-                        </div>)}
+                            <div className="collaboration-authorisations" key={i}>
+                                <a href={`/collaborations/${collaboration.id}`}
+                                   onClick={this.openCollaboration(collaboration)}>
+                                    <span>{collaboration.name}</span>
+                                    <span className="count">{`(${collaboration.authorisation_groups.length})`}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"
@@ -296,7 +313,7 @@ class Collaborations extends React.Component {
     };
 
 
-    renderSearch = (collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected, isOrganisationAdmin) => {
+    renderSearch = (user, query, loadingAutoComplete, suggestions, moreToShow, selected, isOrganisationAdmin) => {
         const adminClassName = (user.admin || isOrganisationAdmin) ? "with-button" : "";
         const showAutoCompletes = (query.length > 1 || "*" === query.trim()) && !loadingAutoComplete;
 
@@ -328,23 +345,36 @@ class Collaborations extends React.Component {
     };
 
     render() {
-        const {collaborations, sortedCollaborations, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
         const {user} = this.props;
+        const {collaborations, sortedCollaborations, query, loadingAutoComplete, suggestions, moreToShow,
+            selected, sorted, reverse} = this.state;
+        const adminCollaborations = user.admin ? collaborations : collaborations.filter(coll => coll.role !== "member");
         const isOrganisationAdmin = (user.organisation_memberships || []).some(membership => membership.role === "admin");
         return (
             <div className="mod-collaborations">
                 {user.admin &&
-                this.renderSearch(collaborations, user, query, loadingAutoComplete, suggestions, moreToShow, selected, isOrganisationAdmin)}
-                <div className="title">
+                this.renderSearch(user, query, loadingAutoComplete, suggestions, moreToShow, selected, isOrganisationAdmin)}
+                {user.admin && <div className="title">
                     <span>{I18n.t("collaborations.dashboard")}</span>
-                </div>
+                </div>}
+                {!user.admin && <div className="title">
+                    <span>{I18n.t("collaborations.dashboardAdmin")}</span>
+                    <span data-tip data-for="dashboard-admin">
+                                <FontAwesomeIcon icon="info-circle"/>
+                                <ReactTooltip id="dashboard-admin" type="light" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("collaborations.dashboardAdminTooltip")}}/>
+                                </ReactTooltip>
+                            </span>
+                </div>}
+
+
                 <section className="info-block-container">
-                    {this.renderRequests(collaborations.map(collaboration => collaboration.join_requests)
+                    {this.renderRequests(adminCollaborations.map(collaboration => collaboration.join_requests)
                         .flat().filter(item => !isEmpty(item)))}
-                    {this.renderInvitations(collaborations.map(collaboration => collaboration.invitations)
+                    {this.renderInvitations(adminCollaborations.map(collaboration => collaboration.invitations)
                         .flat().filter(item => !isEmpty(item)))}
-                    {this.renderServices(collaborations)}
-                    {this.renderAuthorisations(collaborations)}
+                    {this.renderServices(adminCollaborations)}
+                    {this.renderAuthorisations(adminCollaborations)}
                 </section>
                 <div className="title">
                     <span>{I18n.t("collaborations.title")}</span>

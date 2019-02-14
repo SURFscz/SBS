@@ -127,6 +127,8 @@ I18n.translations.nl = {
     },
     collaborations: {
         dashboard: "Dashboard",
+        dashboardAdmin: "Admin dashboard voor mijn Samenwerkingen",
+        dashboardAdminTooltip: "This is an aggregated view<br/>on all collaborations where<br/>you are one of the administrators.",
         title: "Mijn Samenwerkingen",
         requests: "Lidmaatschap verzoeken",
         authorisations: "Autorisatie groepen",

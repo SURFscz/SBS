@@ -126,6 +126,8 @@ I18n.translations.en = {
     },
     collaborations: {
         dashboard: "Dashboard",
+        dashboardAdmin: "Admin dashboard for my Collaborations",
+        dashboardAdminTooltip: "This is an aggregated view<br/>of all collaborations where<br/>you are one of the administrators.",
         title: "My Collaborations",
         requests: "Join Requests",
         authorisations: "Authorisation Groups",
