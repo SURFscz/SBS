@@ -459,6 +459,12 @@ class CollaborationDetail extends React.Component {
                 attribute: I18n.t("collaboration.name").toLowerCase()
             })}</span>}
 
+            {isAdmin && <InputField value={joinRequestUrl}
+                                    name={I18n.t("collaboration.joinRequestUrl")}
+                                    toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
+                                    disabled={true}
+                                    copyClipBoard={true}/>}
+
             <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                         placeholder={I18n.t("collaboration.descriptionPlaceholder")}
                         name={I18n.t("collaboration.description")}
@@ -489,12 +495,6 @@ class CollaborationDetail extends React.Component {
                         toolTip={I18n.t("collaboration.identifierTooltip")}
                         disabled={true}
                         copyClipBoard={true}/>
-
-            {isAdmin && <InputField value={joinRequestUrl}
-                                    name={I18n.t("collaboration.joinRequestUrl")}
-                                    toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
-                                    disabled={true}
-                                    copyClipBoard={true}/>}
 
             <InputField value={moment(originalCollaboration.created_at * 1000).format("LLLL")}
                         disabled={true}
