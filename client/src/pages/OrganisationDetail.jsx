@@ -358,7 +358,7 @@ class OrganisationDetail extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-organisation-detail">
-                {adminOfOrganisation && <div className="title">
+                {!user.admin && <div className="title">
                     <a href="/home" onClick={e => {
                         stopEvent(e);
                         this.props.history.push("/home")
