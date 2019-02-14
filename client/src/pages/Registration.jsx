@@ -52,9 +52,12 @@ class Registration extends React.Component {
     renderForm1 = () =>
         (<div className="step-form">
             <p className="form-title">{I18n.t("registration.formTitle", {collaboration: this.state.collaborationName || ""})}</p>
-            {this.state.collaborationName && <Button className="start" onClick={() => {
-                window.location.href = `/login?state=${encodeURIComponent(this.props.location.pathname)}&collaboration=${encodeURIComponent(this.props.collaboration)}`;
-            }} txt={I18n.t("registration.start")}/>}
+            {this.state.collaborationName &&
+            <Button className="start" onClick={() => {
+                const currentUrl = `${this.props.location.pathname}?collaboration=${this.props.collaboration}`;
+                window.location.href = `/login?state=${encodeURIComponent(currentUrl)}`;
+            }} txt={I18n.t("registration.start")}/>
+            }
         </div>);
 
     renderForm2 = () => {
