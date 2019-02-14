@@ -118,7 +118,7 @@
                     cursor: default;
                     font-weight: normal;
 
-                    svg.fa-question-circle {
+                    svg.fa-info-circle {
                         cursor: pointer;
                         margin-left: 20px;
                         color: $blue;
@@ -183,3 +183,19 @@
     }
 
 }
+
+.ReactModalPortal .ReactModal__Overlay {
+    section.user-service-profiles-pre-flight {
+        text-align: left;
+        margin: 10px 10px 15px 25px;
+        font-size: 14px;
+
+        ul.user-service-profile {
+            li:first-child {
+                font-weight: bold;
+                margin-top: 10px;
+            }
+        }
+    }
+}
+

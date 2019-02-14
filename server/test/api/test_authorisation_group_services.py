@@ -70,3 +70,14 @@ class TestAuthorisationGroupServices(AbstractTest):
         result_set = db.engine.execute(sql)
         res = next(iter(result_set))
         self.assertEqual(0, res[0])
+
+    def test_pre_flight(self):
+        authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
+        service = self.find_entity_by_name(Service, service_network_name)
+
+        user_service_profiles = self.get("/api/authorisation_group_services/delete_pre_flight",
+                                         query_data={"authorisation_group_id": authorisation_group.id,
+                                                     "service_id": service.id,
+                                                     "collaboration_id": authorisation_group.collaboration_id})
+        self.assertEqual(1, len(user_service_profiles))
+        self.assertEqual("urn:john", user_service_profiles[0]["user"]["uid"])

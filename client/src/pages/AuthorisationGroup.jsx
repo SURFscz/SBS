@@ -9,7 +9,7 @@ import {
     createAuthorisationGroup,
     deleteAuthorisationGroup,
     deleteAuthorisationGroupMembers,
-    deleteAuthorisationGroupServices,
+    deleteAuthorisationGroupServices, preFlightDeleteAuthorisationGroupMember, preFlightDeleteAuthorisationGroupService,
     updateAuthorisationGroup
 } from "../api";
 import I18n from "i18n-js";
@@ -27,6 +27,8 @@ import ReactTooltip from "react-tooltip";
 
 import Select from "react-select";
 import moment from "moment";
+
+const userServiceProfileAttributes = ["name", "ssh_key", "email", "address", "telephone_number"];
 
 class AuthorisationGroup extends React.Component {
 
@@ -58,10 +60,12 @@ class AuthorisationGroup extends React.Component {
             initial: true,
             isNew: true,
             confirmationDialogOpen: false,
+            confirmationDialogQuestion: undefined,
             leavePage: true,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => true,
-            back: "/collaborations"
+            back: "/collaborations",
+            userServiceProfilesPreFlight: []
         };
     }
 
@@ -198,8 +202,12 @@ class AuthorisationGroup extends React.Component {
 
     delete = () => {
         this.setState({
-            confirmationDialogOpen: true, leavePage: false,
-            cancelDialogAction: this.closeConfirmationDialog, confirmationDialogAction: this.doDelete
+            userServiceProfilesPreFlight: [],
+            confirmationDialogOpen: true,
+            confirmationDialogQuestion: I18n.t("authorisationGroup.deleteConfirmation", {name: this.state.authorisationGroup.name}),
+            leavePage: false,
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationDialogAction: this.doDelete
         });
     };
 
@@ -258,7 +266,36 @@ class AuthorisationGroup extends React.Component {
         });
     };
 
+    userServiceProfileContainsPersonalData = userServiceProfile => {
+        return userServiceProfileAttributes.some(attr => !isEmpty(userServiceProfile[attr]))
+    };
+
     removeService = service => () => {
+        const {collaboration, authorisationGroup} = this.state;
+        preFlightDeleteAuthorisationGroupService({
+            authorisation_group_id: authorisationGroup.id,
+            service_id: service.id,
+            collaboration_id: collaboration.id
+        }).then(json => {
+            const userServiceProfiles = json.filter(userServiceProfile => this.userServiceProfileContainsPersonalData(userServiceProfile));
+            if (isEmpty(userServiceProfiles)) {
+                this.closeConfirmationDialog();
+                this.doRemoveService(service)();
+            } else {
+                this.setState({
+                    userServiceProfilesPreFlight: userServiceProfiles,
+                    confirmationDialogOpen: true,
+                    confirmationDialogQuestion: I18n.t("authorisationGroup.removeServiceConfirmation", {name: service.name}),
+                    leavePage: false,
+                    cancelDialogAction: this.closeConfirmationDialog,
+                    confirmationDialogAction: this.doRemoveService(service)
+                });
+            }
+        })
+    };
+
+    doRemoveService = service => () => {
+        this.closeConfirmationDialog();
         const {collaboration, authorisationGroup, name} = this.state;
         const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
         deleteAuthorisationGroupServices(authorisationGroup.id, service.id, collaboration.id).then(() => {
@@ -285,12 +322,36 @@ class AuthorisationGroup extends React.Component {
     };
 
     removeMember = member => () => {
-        const {collaboration, authorisationGroup, name} = this.state;
-        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+        const {collaboration, authorisationGroup} = this.state;
+        preFlightDeleteAuthorisationGroupMember({
+            authorisation_group_id: authorisationGroup.id,
+            collaboration_membership_id: member.id,
+            collaboration_id: collaboration.id
+        }).then(json => {
+            const userServiceProfiles = json.filter(userServiceProfile => this.userServiceProfileContainsPersonalData(userServiceProfile));
+            if (isEmpty(userServiceProfiles)) {
+                this.closeConfirmationDialog();
+                this.doRemoveMember(member)();
+            } else {
+                this.setState({
+                    userServiceProfilesPreFlight: userServiceProfiles,
+                    confirmationDialogOpen: true,
+                    confirmationDialogQuestion: I18n.t("authorisationGroup.removeMemberConfirmation", {name: member.user.name}),
+                    leavePage: false,
+                    cancelDialogAction: this.closeConfirmationDialog,
+                    confirmationDialogAction: this.doRemoveMember(member)
+                });
+            }
+        })
+    };
+
+    doRemoveMember = member => () => {
+        this.closeConfirmationDialog();
+        const {collaboration, authorisationGroup} = this.state;
         deleteAuthorisationGroupMembers(authorisationGroup.id, member.id, collaboration.id).then(() => {
             this.refreshMembers(() => setFlash(I18n.t("authorisationGroup.flash.deletedMember", {
                 member: member.user.name,
-                name: authorisationGroupName
+                name: authorisationGroup.name
             })));
         });
     };
@@ -311,6 +372,33 @@ class AuthorisationGroup extends React.Component {
         const reversed = (sorted === name ? !reverse : false);
         const sortedMembers = sortObjects(members, name, reversed);
         this.setState({sortedMembers: sortedMembers, sortedMembersBy: name, reverseMembers: reversed});
+    };
+
+    dialogChildren = userServiceProfilesPreFlight => {
+        if (isEmpty(userServiceProfilesPreFlight)) {
+            return null;
+        }
+        return (
+            <section className="user-service-profiles-pre-flight">
+                <p>{I18n.t("authorisationGroup.removeServiceConfirmationDetails")}</p>
+                {userServiceProfilesPreFlight.map(userServiceProfile =>
+                    <ul className="user-service-profile" key={userServiceProfile.id}>
+                        <li>
+                            <span>{I18n.t("authorisationGroup.user", {name: userServiceProfile.user.name})}</span>
+                        </li>
+                        <li className="attributes">
+                            <span>{I18n.t("authorisationGroup.attributes")}</span>
+                            <span>{": "}</span>
+                            <span>{
+                                userServiceProfileAttributes
+                                    .filter(attr => !isEmpty(userServiceProfile[attr]))
+                                    .map(attr => I18n.t(`userServiceProfile.${attr}`).toLowerCase())
+                                    .join(", ")
+                            }</span>
+                        </li>
+                    </ul>)}
+            </section>
+        );
     };
 
     renderConnectedMembers = (adminOfCollaboration, collaboration, authorisationGroupName, connectedMembers, sorted, reverse) => {
@@ -533,9 +621,9 @@ class AuthorisationGroup extends React.Component {
     render() {
         const {
             alreadyExists, collaboration, initial, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
-            name, uri, short_name, description, status, authorisationGroup, isNew, back, leavePage,
+            confirmationDialogQuestion, name, uri, short_name, description, status, authorisationGroup, isNew, back, leavePage,
             allServices, sortedServices, sortedServicesBy, reverseServices,
-            allMembers, sortedMembers, sortedMembersBy, reverseMembers, adminOfCollaboration
+            allMembers, sortedMembers, sortedMembersBy, reverseMembers, adminOfCollaboration, userServiceProfilesPreFlight
         } = this.state;
         if (!collaboration) {
             return null;
@@ -559,7 +647,9 @@ class AuthorisationGroup extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
-                                    question={I18n.t("authorisationGroup.deleteConfirmation", {name: authorisationGroup.name})}/>
+                                    question={confirmationDialogQuestion}
+                                    isWarning={!isEmpty(userServiceProfilesPreFlight)}
+                                    children={this.dialogChildren(userServiceProfilesPreFlight)}/>
                 <div className="title">
                     <a href={back} onClick={e => {
                         stopEvent(e);

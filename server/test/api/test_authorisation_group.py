@@ -6,6 +6,11 @@ from server.test.seed import ai_researchers_authorisation, ai_computing_name, se
 
 class TestAuthorisationGroup(AbstractTest):
 
+    def test_my_authorisation_groups(self):
+        self.login("urn:john")
+        authorisation_groups = self.get("api/authorisation_groups", with_basic_auth=False)
+        self.assertEqual(2, len(authorisation_groups))
+
     def test_authorisation_group_name_exists(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
 

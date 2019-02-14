@@ -38,22 +38,3 @@ def update_collaboration_membership_role():
 
     db.session.merge(collaboration_membership)
     return collaboration_membership, 201
-
-
-@collaboration_membership_api.route("/", strict_slashes=False)
-@json_endpoint
-def my_collaboration_memberships():
-    user_id = current_user_id()
-    collaboration_memberships = CollaborationMembership.query \
-        .filter(CollaborationMembership.user_id == user_id) \
-        .all()
-
-    for collaboration_membership in collaboration_memberships:
-        authorisation_groups = collaboration_membership.authorisation_groups
-        for authorisation_group in authorisation_groups:
-            authorisation_group.collaboration
-            user_service_profiles = authorisation_group.user_service_profiles
-            for user_service_profile in user_service_profiles:
-                user_service_profile.service
-
-    return collaboration_memberships, 200

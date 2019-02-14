@@ -473,7 +473,13 @@ I18n.translations.nl = {
         statusPlaceholder: "De status van de autorisatie groep",
         actions: "",
         open: "",
-        deleteConfirmation: "Weet u zeker dat u autorisatie groep {{name}} wilt verwijderen",
+        deleteConfirmation: "Weet u zeker dat u autorisatie groep {{name}} wilt verwijderen?",
+        removeServiceConfirmation: "Weet u zeker dat u service {{name}} wilt verwijderen uit deze autorisatie groep?",
+        removeServiceConfirmationDetails: "Deze service specifieke informatie van deze gebruiker zal worden verwijderd;",
+        removeMemberConfirmation: "Weet u zeker dat u lid {{name}} wilt verwijderen uit deze autorisatie groep?",
+        removeMemberConfirmationDetails: "Deze service specifieke informatie van deze gebruiker zal worden verwijderd;",
+        user: "Gebruiker {{name}}",
+        attributes: "Attributen",
         statusValues: {
             active: "Active",
             in_active: "Inactive"
@@ -542,6 +548,7 @@ I18n.translations.nl = {
         ssh_keyPlaceholder: "Uw publiek SSH key om in te loggen op de dienst",
         ssh_keyTooltip: "Uw publieke SSH key<br/>zal worden uitgewisseld<br/>met de (LDAP van) deze dienst.<br/><br/>U kunt uw publieke SSH-key ook uploaden.<br/>Om verborgen bestanden op een Mac te tonen<br/>drukt u <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Ongeldige SSH key",
+        telephone_number: "Mobiel",
         role: "Rol",
         searchPlaceHolder: "Zoek in uw dienstprofielen...",
         update: "Bijwerken",
