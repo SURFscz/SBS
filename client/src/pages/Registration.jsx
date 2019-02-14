@@ -5,7 +5,7 @@ import I18n from "i18n-js";
 import "./Registration.scss";
 import Button from "../components/Button";
 import CheckBox from "../components/CheckBox";
-import {isEmpty} from "../utils/Utils";
+import {isEmpty, pseudoGuid} from "../utils/Utils";
 import {setFlash} from "../utils/Flash";
 
 class Registration extends React.Component {
@@ -55,7 +55,7 @@ class Registration extends React.Component {
             {this.state.collaborationName &&
             <Button className="start" onClick={() => {
                 const currentUrl = `${this.props.location.pathname}?collaboration=${this.props.collaboration}`;
-                window.location.href = `/login?state=${encodeURIComponent(currentUrl)}`;
+                window.location.href = `/login?state=${encodeURIComponent(currentUrl)}&guid=${pseudoGuid()}`;
             }} txt={I18n.t("registration.start")}/>
             }
         </div>);
