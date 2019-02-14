@@ -51,7 +51,8 @@ class Collaborations extends React.Component {
                 const {sorted, reverse} = this.state;
                 const sortedCollaborations = this.sortCollaborations(collaborations, sorted, reverse);
                 this.setState({
-                    collaborations: sortedCollaborations, sortedCollaborations: sortedCollaborations,
+                    collaborations: sortedCollaborations,
+                    sortedCollaborations: sortedCollaborations,
                     isCollaborationAdmin: isCollaborationAdmin
                 })
             });
@@ -262,15 +263,18 @@ class Collaborations extends React.Component {
             return;
         }
         const reversed = (sorted === name ? !reverse : false);
-        const sortedCollaborations = this.sortCollaborations(collaborations, name, reverse);
-        this.setState({collaborations: sortedCollaborations, sorted: name, reverse: reversed});
+        const sortedCollaborations = this.sortCollaborations(collaborations, name, reversed);
+        this.setState({sortedCollaborations: sortedCollaborations, sorted: name, reverse: reversed});
     };
 
-    sortCollaborations = (collaborations, name, reverse) => [...collaborations].sort((a, b) => {
-        const aSafe = a[name] || "";
-        const bSafe = b[name] || "";
-        return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
-    });
+    sortCollaborations = (collaborations, name, reverse) => {
+        const result = [...collaborations].sort((a, b) => {
+            const aSafe = a[name] || "";
+            const bSafe = b[name] || "";
+            return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
+        });
+        return result;
+    };
 
     getCollaborationValue = (collaboration, user, name) => {
         if (name === "actions") {
