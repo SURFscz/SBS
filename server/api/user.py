@@ -4,11 +4,11 @@ import logging
 import os
 
 from flask import Blueprint, request as current_request, session, current_app, jsonify
-from sqlalchemy import text
+from sqlalchemy import text, or_
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id
+from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
 from server.auth.user_claims import claim_attribute_mapping, claim_attribute_hash_headers, claim_attribute_hash_user
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -183,6 +183,41 @@ def other():
     uid = query_param("uid")
     user = _user_query().filter(User.uid == uid).one()
     return _user_json_response(user)
+
+
+@user_api.route("/attribute_aggregation", strict_slashes=False)
+@json_endpoint
+# End point used by the SBS attribute aggregator in the github.com:OpenConext/OpenConext-attribute-aggregation project
+def attribute_aggregation():
+    confirm_read_access()
+
+    edu_person_principal_name = query_param("edu_person_principal_name")
+    email = query_param("email", required=False)
+
+    users = User.query \
+        .join(User.collaboration_memberships) \
+        .join(CollaborationMembership.collaboration) \
+        .options(contains_eager(User.collaboration_memberships)
+                 .contains_eager(CollaborationMembership.collaboration)) \
+        .filter(or_(User.uid == edu_person_principal_name,
+                    User.email == email)) \
+        .all()
+
+    # preference over edu_person_principal_name
+    if len(users) is 0:
+        return None, 404
+
+    users_eppn_match = list(filter(lambda u: u.uid == edu_person_principal_name, users))
+    user = users[0] if len(users) == 1 else users_eppn_match[0] if len(users_eppn_match) == 1 else users[0]
+
+    is_member_of = []
+
+    for collaboration_membership in user.collaboration_memberships:
+        is_member_of.append(collaboration_membership.collaboration.name)
+        for authorisation_group in collaboration_membership.authorisation_groups:
+            is_member_of.append(authorisation_group.short_name)
+
+    return is_member_of, 200
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
