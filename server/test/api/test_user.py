@@ -66,6 +66,25 @@ class TestUser(AbstractTest):
         res = self.get("/api/users/other", query_data={"uid": "urn:mary"})
         self.assertEqual("Mary Doe", res["name"])
 
+    def test_attribute_aggregation_eppn(self):
+        res = self.get("/api/users/attribute_aggregation",
+                       query_data={"edu_person_principal_name": "urn:john"})
+        self.assertListEqual(["AI computing", "ai_res", "ai_dev"], res)
+
+    def test_attribute_aggregation_preference_eppn(self):
+        res = self.get("/api/users/attribute_aggregation",
+                       query_data={"edu_person_principal_name": "urn:john", "email": "sarah@uva.org"})
+        self.assertListEqual(["AI computing", "ai_res", "ai_dev"], res)
+
+    def test_attribute_aggregation_email(self):
+        res = self.get("/api/users/attribute_aggregation",
+                       query_data={"edu_person_principal_name": "nope", "email": "john@example.org"})
+        self.assertListEqual(["AI computing", "ai_res", "ai_dev"], res)
+
+    def test_attribute_aggregation_404(self):
+        self.get("/api/users/attribute_aggregation", query_data={"edu_person_principal_name": "nope"},
+                 response_status_code=404)
+
     def test_error(self):
         self.client.get("/api/users/me", headers={UID_HEADER_NAME: "uid"})
         response = self.client.post("/api/users/error")
