@@ -32,8 +32,9 @@ class Collaborations extends React.Component {
     componentDidMount = () => {
         const {user} = this.props;
         const isCollaborationAdmin = (user.collaboration_memberships || []).some(membership => membership.role === "admin");
+        const isOrganisationAdmin = (user.organisation_memberships || []).some(membership => membership.role === "admin");
         const isAdmin = user.admin;
-        if (!isCollaborationAdmin && !isAdmin) {
+        if (!isCollaborationAdmin && !isAdmin && !isOrganisationAdmin) {
             return this.props.history.push("/404");
         }
         const promises = isCollaborationAdmin ? [myCollaborations(), myCollaborationsLite()] : [myCollaborations()];
