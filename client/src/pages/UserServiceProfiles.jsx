@@ -82,7 +82,6 @@ class UserServiceProfiles extends React.Component {
                         <td className="service_name">{profile.service.name}</td>
                         <td className="authorisation_group_name">{profile.authorisation_group.name}</td>
                         <td className="collaboration_name">{profile.authorisation_group.collaboration.name}</td>
-                        <td className="name">{profile.name}</td>
                         <td className="email">{profile.email}</td>
                         <td className="role">{profile.role}</td>
                         <td className="status">{profile.status ? I18n.t(`userServiceProfile.statusValues.${profile.status}`) : ""}</td>
