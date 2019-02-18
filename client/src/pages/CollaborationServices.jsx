@@ -71,6 +71,11 @@ class CollaborationServices extends React.Component {
 
     serviceToOption = service => `${service.name} - ${service.entity_id}`;
 
+    openService = service => e => {
+        stopEvent(e);
+        this.props.history.push(`/services/${service.id}`);
+    };
+
     connectAllServices = e => {
         const {collaboration, allServices} = this.state;
         const checked = e.target.checked;
@@ -112,7 +117,7 @@ class CollaborationServices extends React.Component {
     };
 
     sortTable = (services, name, sorted, reverse) => () => {
-        if (name === "actions") {
+        if (name === "actions" || name === "open") {
             return;
         }
         const reversed = (sorted === name ? !reverse : false);
@@ -121,7 +126,7 @@ class CollaborationServices extends React.Component {
     };
 
     renderConnectedServices = (collaboration, connectedServices, sorted, reverse) => {
-        const names = ["actions", "name", "entity_id", "description"];
+        const names = ["open", "actions", "name", "entity_id", "description"];
         return (
 
             <div className="collaboration-services-connected">
@@ -133,7 +138,7 @@ class CollaborationServices extends React.Component {
                             <th key={name} className={name}
                                 onClick={this.sortTable(connectedServices, name, sorted, reverse)}>
                                 {I18n.t(`collaborationServices.service.${name}`)}
-                                {name !== "actions" && headerIcon(name, sorted, reverse)}
+                                {(name !== "actions" && name !== "open") && headerIcon(name, sorted, reverse)}
                                 {name === "actions" &&
                                 <span data-tip data-for="service-delete">
                                 <FontAwesomeIcon icon="info-circle"/>
@@ -147,12 +152,15 @@ class CollaborationServices extends React.Component {
                     </thead>
                     <tbody>
                     {connectedServices.map(service => <tr key={service.id}>
+                        <td onClick={this.openService(service)} className="open">
+                            {<FontAwesomeIcon icon={"arrow-right"}/>}
+                        </td>
                         <td className="actions">
                             <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>
                         </td>
-                        <td className="name">{service.name}</td>
-                        <td className="entity_id">{service.entity_id}</td>
-                        <td className="description">{service.description}</td>
+                        <td onClick={this.openService(service)} className="name">{service.name}</td>
+                        <td onClick={this.openService(service)} className="entity_id">{service.entity_id}</td>
+                        <td onClick={this.openService(service)} className="description">{service.description}</td>
                     </tr>)}
                     </tbody>
                 </table>

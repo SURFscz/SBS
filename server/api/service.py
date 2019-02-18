@@ -4,7 +4,7 @@ from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin
-from server.db.db import Service, db, Collaboration, UserServiceProfile, CollaborationMembership
+from server.db.db import Service, db, Collaboration, UserServiceProfile
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
 

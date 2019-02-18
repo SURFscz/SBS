@@ -444,6 +444,7 @@ I18n.translations.nl = {
             "deletedAll": "Alle diensten zijn ontkoppeld van samenwerking {{name}}",
         },
         service: {
+            open: "",
             actions: "",
             name: "Naam",
             entity_id: "Entity ID",
