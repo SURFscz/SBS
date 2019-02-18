@@ -17,6 +17,10 @@ class TestService(AbstractTest):
         res = self.get("/api/services/search", query_data={"q": "*"})
         self.assertTrue(len(res) > 0)
 
+    def test_search_forbidden(self):
+        self.login("urn:roger")
+        self.get("/api/services/search", query_data={"q": "networ"}, response_status_code=403)
+
     def test_find_by_id_forbidden(self):
         service = self.find_entity_by_name(Service, service_mail_name)
         self.login("urn:roger")

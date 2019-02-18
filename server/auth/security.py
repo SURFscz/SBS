@@ -77,10 +77,14 @@ def confirm_write_access(*args, override_func=None):
         raise Forbidden()
 
 
-def _is_collaboration_admin(user_id, collaboration_id):
-    count = CollaborationMembership.query.options(load_only("id")).filter(
-        CollaborationMembership.user_id == user_id).filter(CollaborationMembership.role == "admin").filter(
-        CollaborationMembership.collaboration_id == collaboration_id).count()
+def is_collaboration_admin(user_id=None, collaboration_id=None):
+    user_id = user_id if user_id else current_user_id()
+    query = CollaborationMembership.query \
+        .options(load_only("id")) \
+        .filter(CollaborationMembership.user_id == user_id).filter(CollaborationMembership.role == "admin")
+    if collaboration_id:
+        query = query.filter(CollaborationMembership.collaboration_id == collaboration_id)
+    count = query.count()
     return count > 0
 
 
@@ -104,7 +108,7 @@ def confirm_organisation_admin(organisation_id):
 def confirm_collaboration_admin(collaboration_id):
     def override_func():
         user_id = current_user_id()
-        return _is_collaboration_admin(user_id, collaboration_id)
+        return is_collaboration_admin(user_id, collaboration_id)
 
     confirm_write_access(override_func=override_func)
 
@@ -124,8 +128,8 @@ def confirm_collaboration_member(collaboration_id):
 def confirm_collaboration_admin_or_authorisation_group_member(collaboration_id, authorisation_group_id):
     def override_func():
         user_id = current_user_id()
-        is_collaboration_admin = _is_collaboration_admin(user_id, collaboration_id)
-        if not is_collaboration_admin:
+        collaboration_admin = is_collaboration_admin(user_id, collaboration_id)
+        if not collaboration_admin:
             count = AuthorisationGroup.query \
                 .options(load_only("id")) \
                 .join(AuthorisationGroup.collaboration_memberships) \
@@ -134,7 +138,7 @@ def confirm_collaboration_admin_or_authorisation_group_member(collaboration_id, 
                 .filter(AuthorisationGroup.collaboration_id == collaboration_id) \
                 .count()
             return count > 0
-        return is_collaboration_admin
+        return collaboration_admin
 
     confirm_write_access(override_func=override_func)
 
