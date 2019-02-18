@@ -443,6 +443,7 @@ I18n.translations.en = {
             "deletedAll": "Successfully deleted all services from collaboration {{name}}",
         },
         service: {
+            open: "",
             actions: "",
             name: "Name",
             entity_id: "Entity ID",

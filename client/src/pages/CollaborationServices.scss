@@ -67,7 +67,7 @@
                     cursor: default;
                     font-weight: normal;
 
-                    svg.fa-question-circle {
+                    svg.fa-info-circle {
                         cursor: pointer;
                         margin-left: 20px;
                         color: $blue;
@@ -98,6 +98,8 @@
 
             tbody {
                 tr {
+                    cursor: pointer;
+
                     &:nth-child(odd) {
                         background-color: $lightest-grey;
                     }
@@ -108,12 +110,23 @@
                 vertical-align: middle;
                 padding: 5px;
 
+                &.open {
+                    svg {
+                        color: $blue;
+
+                        &:hover {
+                             color: darken($blue, 15%);
+                        }
+
+                    }
+
+                }
+
                 &.actions {
                     text-align: left;
 
                     svg {
                         color: $red;
-                        cursor: pointer;
                         margin-left: 20px;
                     }
                 }
