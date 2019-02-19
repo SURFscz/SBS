@@ -37,6 +37,7 @@ With TESTING=1 no mails will be send. If you do want to validate the mails you c
 ```
 python -m smtpd -n -c DebuggingServer localhost:1025
 ```
+
 #### [Client](#client)
 First install all dependencies with:
 ```
