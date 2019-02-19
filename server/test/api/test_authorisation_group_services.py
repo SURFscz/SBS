@@ -4,7 +4,7 @@ from server.db.db import AuthorisationGroup, UserServiceProfile, Service, \
     db
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_researchers_authorisation, service_storage_name, \
-    service_network_name
+    service_network_name, john_name
 
 
 class TestAuthorisationGroupServices(AbstractTest):
@@ -23,9 +23,9 @@ class TestAuthorisationGroupServices(AbstractTest):
             "service_ids": [service.id]
         }, with_basic_auth=False)
 
-        user_service_profile = UserServiceProfile.query.filter(
-            UserServiceProfile.service_id == service.id).one()
-        self.assertEqual(service.name, user_service_profile.service.name)
+        user_service_profiles = UserServiceProfile.query.filter(UserServiceProfile.service_id == service.id).all()
+        for user_service_profile in user_service_profiles:
+            self.assertEqual(service.name, user_service_profile.service.name)
 
     def test_add_authorisation_group_service_with_duplicate_service(self):
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
@@ -42,7 +42,7 @@ class TestAuthorisationGroupServices(AbstractTest):
         service = self.find_entity_by_name(Service, service_network_name)
 
         count = UserServiceProfile.query.filter(UserServiceProfile.service_id == service.id).count()
-        self.assertEqual(1, count)
+        self.assertEqual(2, count)
 
         self.login("urn:admin")
         self.delete("/api/authorisation_group_services/delete_all_services",
@@ -59,7 +59,7 @@ class TestAuthorisationGroupServices(AbstractTest):
         service = self.find_entity_by_name(Service, service_network_name)
 
         count = UserServiceProfile.query.filter(UserServiceProfile.service_id == service.id).count()
-        self.assertEqual(1, count)
+        self.assertEqual(2, count)
 
         self.login("urn:admin")
         self.delete("/api/authorisation_group_services",
@@ -79,5 +79,6 @@ class TestAuthorisationGroupServices(AbstractTest):
                                          query_data={"authorisation_group_id": authorisation_group.id,
                                                      "service_id": service.id,
                                                      "collaboration_id": authorisation_group.collaboration_id})
-        self.assertEqual(1, len(user_service_profiles))
-        self.assertEqual("urn:john", user_service_profiles[0]["user"]["uid"])
+        self.assertEqual(2, len(user_service_profiles))
+        user_service_profile = self.find_by_name(user_service_profiles, john_name)
+        self.assertEqual("urn:john", user_service_profile["user"]["uid"])

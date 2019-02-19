@@ -30,7 +30,7 @@ class TestAuthorisationGroupMembers(AbstractTest):
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
         count = len(authorisation_group.collaboration_memberships)
 
-        self.assertEqual(1, count)
+        self.assertEqual(2, count)
 
         self.login("urn:admin")
         self.delete("/api/authorisation_group_members/delete_all_members",
@@ -45,7 +45,7 @@ class TestAuthorisationGroupMembers(AbstractTest):
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
         count = len(authorisation_group.collaboration_memberships)
         collaboration_membership_id = authorisation_group.collaboration_memberships[0].id
-        self.assertEqual(1, count)
+        self.assertEqual(2, count)
 
         self.login("urn:admin")
         self.delete("/api/authorisation_group_members",
@@ -56,7 +56,7 @@ class TestAuthorisationGroupMembers(AbstractTest):
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
         count = len(authorisation_group.collaboration_memberships)
 
-        self.assertEqual(0, count)
+        self.assertEqual(1, count)
 
     def test_pre_flight(self):
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)

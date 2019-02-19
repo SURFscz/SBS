@@ -133,7 +133,8 @@ def seed(db):
                                                          status="active",
                                                          description="Artifical computing researchers",
                                                          collaboration=ai_computing, services=[network],
-                                                         collaboration_memberships=[john_ai_computing])
+                                                         collaboration_memberships=[john_ai_computing,
+                                                                                    jane_ai_computing])
     authorisation_group_developers = AuthorisationGroup(name="AI developers",
                                                         uri="https://ai/developers",
                                                         short_name="ai_dev",
@@ -143,17 +144,21 @@ def seed(db):
                                                         collaboration_memberships=[john_ai_computing])
     _persist(db, authorisation_group_researchers, authorisation_group_developers)
 
-    user_service_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
-                                              user=john, name=john_name, telephone_number="0612345678",
-                                              identifier=str(uuid.uuid4()),
-                                              ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
-                                                      "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
-                                                      "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
-                                                      "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
-                                                      "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
-                                                      "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
-                                                      "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
-    _persist(db, user_service_profile)
+    john_user_service_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
+                                                   user=john, name=john_name, telephone_number="0612345678",
+                                                   identifier=str(uuid.uuid4()),
+                                                   ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
+                                                           "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
+                                                           "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
+                                                           "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
+                                                           "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
+                                                           "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
+                                                           "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
+
+    jane_user_service_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
+                                                   user=jane, identifier=str(uuid.uuid4()))
+
+    _persist(db, john_user_service_profile, jane_user_service_profile)
 
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
                                     collaboration=ai_computing)
