@@ -1,6 +1,6 @@
 from server.db.db import Collaboration, Organisation, Invitation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uuc_name, uva_research_name
+from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uuc_name, uva_research_name, john_name
 
 
 class TestCollaboration(AbstractTest):
@@ -31,9 +31,9 @@ class TestCollaboration(AbstractTest):
 
     def test_members(self):
         members = self.get("/api/collaborations/members", query_data={"identifier": collaboration_ai_computing_uuid})
-        self.assertEqual(1, len(members))
+        self.assertEqual(2, len(members))
 
-        member = members[0]
+        member = self.find_by_name(members, john_name)
         self.assertEqual("urn:john", member["uid"])
         self.assertEqual("John Doe", member["name"])
         self.assertFalse("email" in member)

@@ -56,8 +56,9 @@ class Home extends React.Component {
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };
 
-    authorisationGroupForUserServiceProfile = (userServiceProfile, authorisationGroups) =>
-        authorisationGroups.find(authorisationGroup => authorisationGroup.id === userServiceProfile.authorisation_group_id);
+    authorisationGroupForUserServiceProfile = (userServiceProfile, authorisationGroups) => {
+        return authorisationGroups.find(authorisationGroup => authorisationGroup.id === userServiceProfile.authorisation_group_id);
+    };
 
     renderUserProfileServices = (userServiceProfiles, authorisationGroups) => {
         const showMore = userServiceProfiles.length >= 6;
