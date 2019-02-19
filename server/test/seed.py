@@ -97,7 +97,10 @@ def seed(db):
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service")
     cloud = Service(entity_id="https://cloud", name=service_cloud_name, description="SARA Cloud Service")
     storage = Service(entity_id="https://storage", name=service_storage_name, description="SURF Storage Service")
-    wiki = Service(entity_id="https://wiki", name="Wiki", description="No more wiki's please")
+    wiki = Service(entity_id="https://wiki", name="Wiki", description="No more wiki's please",
+                   uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
+                       "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
+                       "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address", status="active",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
@@ -144,21 +147,21 @@ def seed(db):
                                                         collaboration_memberships=[john_ai_computing])
     _persist(db, authorisation_group_researchers, authorisation_group_developers)
 
-    john_user_service_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
-                                                   user=john, name=john_name, telephone_number="0612345678",
-                                                   identifier=str(uuid.uuid4()),
-                                                   ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
-                                                           "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
-                                                           "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
-                                                           "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
-                                                           "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
-                                                           "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
-                                                           "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
+    john_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
+                                      user=john, name=john_name, telephone_number="0612345678",
+                                      identifier=str(uuid.uuid4()),
+                                      ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
+                                              "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
+                                              "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
+                                              "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
+                                              "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
+                                              "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
+                                              "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
 
     jane_user_service_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
                                                    user=jane, identifier=str(uuid.uuid4()))
 
-    _persist(db, john_user_service_profile, jane_user_service_profile)
+    _persist(db, john_profile, jane_user_service_profile)
 
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
                                     collaboration=ai_computing)

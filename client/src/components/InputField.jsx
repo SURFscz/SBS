@@ -11,7 +11,7 @@ export default function InputField({
                                        toolTip = null, onBlur = () => true, onEnter = null, multiline = false,
                                        fileUpload = false, fileName = null, onFileUpload = null, onFileRemoval = null,
                                        acceptFileFormat = "text/csv", fileInputKey = null,
-                                       copyClipBoard = false, link = null, history = null
+                                       copyClipBoard = false, link = null, externalLink = false, history = null
                                    }) {
     placeholder = disabled ? "" : placeholder;
     return (
@@ -65,7 +65,7 @@ export default function InputField({
                 </section>
             </CopyToClipboard>}
             {(link && history) && <FontAwesomeIcon icon="arrow-right" onClick={() => history.push(link)}/>}
-
+            {externalLink && <a href={value} target="_blank"><FontAwesomeIcon icon="arrow-right"/></a>}
         </div>
     );
 }

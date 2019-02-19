@@ -244,6 +244,7 @@ class Service extends React.Component {
                                 placeholder={I18n.t("service.uriPlaceholder")}
                                 onChange={e => this.setState({uri: e.target.value})}
                                 toolTip={I18n.t("service.uriTooltip")}
+                                externalLink={true}
                                 disabled={!isAdmin}/>
 
                     <SelectField value={this.statusOptions.find(option => status === option.value)}

@@ -40,7 +40,7 @@
         border-right: 1px solid $lighter-grey;
         border-top: 1px solid $lighter-grey;
         border-left: none;
-        padding: 16px;
+        padding: 16px 40px 16px 16px;
         border-bottom-right-radius: $br;
         border-top-right-radius: $br;
         font-size: 14px;
@@ -123,7 +123,7 @@
         cursor: pointer;
 
         &:hover {
-            color: darken($blue, 10%);
+            color: darken($blue, 15%);
         }
 
     }
