@@ -65,7 +65,7 @@ export default function InputField({
                 </section>
             </CopyToClipboard>}
             {(link && history) && <FontAwesomeIcon icon="arrow-right" onClick={() => history.push(link)}/>}
-            {externalLink && <a href={value} target="_blank"><FontAwesomeIcon icon="arrow-right"/></a>}
+            {externalLink && <a href={value} rel="noopener noreferrer" target="_blank"><FontAwesomeIcon icon="arrow-right"/></a>}
         </div>
     );
 }
