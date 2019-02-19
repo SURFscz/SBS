@@ -1,4 +1,4 @@
-# SBS
+# SURF SamenwerkingsBeheerSysteem (SBS)
 [![Build Status](https://travis-ci.org/SURFscz/SBS.svg)](https://travis-ci.org/SURFscz/SBS)
 [![codecov.io](https://codecov.io/github/SURFscz/SBS/coverage.svg)](https://codecov.io/github/SURFscz/SBS)
 
@@ -35,7 +35,7 @@ PROFILE=local python -m server
 ```
 With TESTING=1 no mails will be send. If you do want to validate the mails you can run a fake smtp server with:
 ```
-python -m smtpd -n -c DebuggingServer localhost:1025 
+python -m smtpd -n -c DebuggingServer localhost:1025
 ```
 #### [Client](#client)
 First install all dependencies with:
@@ -84,6 +84,6 @@ CI=true yarn test
 With the environment variable `CONFIG=config/test_config.yml` the test database is used. After you ran one or all of the tests
 the database is left with the test data seed.
 
-Start the registration with [http://localhost:3000/registration?collaboration=AI%20computing](http://localhost:3000/registration?collaboration=AI%20computing) 
+Start the registration with [http://localhost:3000/registration?collaboration=AI%20computing](http://localhost:3000/registration?collaboration=AI%20computing)
 
 
