@@ -6,12 +6,14 @@ from server.db.db import User, Organisation, OrganisationMembership, Service, Co
     JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
 from server.db.defaults import default_expiry_date
 
+
 join_request_reference = "Dr. Johnson"
 
 the_boss_name = "The Boss"
-
+roger_name = "Roger Doe"
 john_name = "John Doe"
 james_name = "James Byrd"
+sarah_name = "Sarah Cross"
 
 organisation_invitation_hash = token_urlsafe()
 organisation_invitation_expired_hash = token_urlsafe()
@@ -58,10 +60,10 @@ def seed(db):
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org")
     admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org")
-    roger = User(uid="urn:roger", name="Roger Doe", email="roger@example.org")
+    roger = User(uid="urn:roger", name=roger_name, email="roger@example.org")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org")
     james = User(uid="urn:james", name=james_name, email="james@example.org")
-    sarah = User(uid="urn:sarah", name="Sarah Cross", email="sarah@uva.org")
+    sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org")
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org")
 
     _persist(db, john, mary, peter, admin, roger, harry, james, sarah, jane)
@@ -146,6 +148,8 @@ def seed(db):
                                                         collaboration=ai_computing, services=[],
                                                         collaboration_memberships=[john_ai_computing])
     _persist(db, authorisation_group_researchers, authorisation_group_developers)
+
+    db.session.commit()
 
     john_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
                                       user=john, name=john_name, telephone_number="0612345678",

@@ -67,6 +67,10 @@ class TestAuthorisationGroup(AbstractTest):
         service_cloud_id = self.find_entity_by_name(Service, service_cloud_name).id
         service_wireless_id = self.find_entity_by_name(Service, service_wireless_name).id
 
+        # We need to link the services first to the collaboration otherwise the database complains
+        self.put("/api/collaborations_services",
+                 body={"collaboration_id": collaboration_id, "service_ids": [service_cloud_id, service_wireless_id]})
+
         authorisation_group_name = "new_auth_group"
         authorisation_group = self.post("/api/authorisation_groups/", body={
             "name": authorisation_group_name,

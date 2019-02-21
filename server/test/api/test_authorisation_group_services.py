@@ -13,6 +13,11 @@ class TestAuthorisationGroupServices(AbstractTest):
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
         service = self.find_entity_by_name(Service, service_storage_name)
 
+        # We need to link the services first to the collaboration otherwise the database complains
+        self.put("/api/collaborations_services",
+                 body={"collaboration_id": authorisation_group.collaboration_id,
+                       "service_ids": [service.id]})
+
         count = UserServiceProfile.query.filter(UserServiceProfile.service_id == service.id).count()
         self.assertEqual(0, count)
 
