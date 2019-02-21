@@ -3,30 +3,11 @@ from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_owner_of_user_service_profile
+from server.auth.user_claims import attribute_oidc_mapping, user_service_profile_claims
 from server.db.db import CollaborationMembership, UserServiceProfile, User, Service, AuthorisationGroup
 from server.db.models import update
 
 user_service_profile_api = Blueprint("user_service_profiles_api", __name__, url_prefix="/api/user_service_profiles")
-
-
-def _attributes_per_service(user_service_profile: UserServiceProfile):
-    res = {
-        "service_entity_id": user_service_profile.service.entity_id,
-        "name": user_service_profile.name,
-        "ssh_key": user_service_profile.ssh_key,
-        "email": user_service_profile.email,
-        "address": user_service_profile.address,
-        "role": user_service_profile.role,
-        "identifier": user_service_profile.identifier,
-        "telephone_number": user_service_profile.telephone_number,
-        "status": user_service_profile.status,
-        "authorisation_group": {
-            "name": user_service_profile.authorisation_group.name,
-            "short_name": user_service_profile.authorisation_group.short_name,
-            "status": user_service_profile.authorisation_group.status
-        }
-    }
-    return res
 
 
 # Endpoint for SATOSA
@@ -35,25 +16,35 @@ def _attributes_per_service(user_service_profile: UserServiceProfile):
 def attributes():
     uid = query_param("uid")
     service_entity_id = query_param("service_entity_id")
-    user_service_profiles = UserServiceProfile.query \
-        .join(UserServiceProfile.service) \
-        .join(UserServiceProfile.user) \
-        .join(UserServiceProfile.authorisation_group) \
-        .options(contains_eager(UserServiceProfile.service)) \
-        .options(contains_eager(UserServiceProfile.user)) \
-        .options(contains_eager(UserServiceProfile.authorisation_group)) \
-        .filter(User.uid == uid) \
-        .filter(Service.entity_id == service_entity_id) \
-        .all()
+    user = User.query \
+        .outerjoin(User.user_service_profiles) \
+        .outerjoin(UserServiceProfile.authorisation_group) \
+        .outerjoin(AuthorisationGroup.collaboration) \
+        .outerjoin(Service, Service.entity_id == service_entity_id) \
+        .options(contains_eager(User.user_service_profiles)
+                 .contains_eager(UserServiceProfile.authorisation_group)
+                 .contains_eager(AuthorisationGroup.collaboration)) \
+        .filter(User.uid == uid).one()
 
-    attributes_per_service = list(map(_attributes_per_service, user_service_profiles))
-    if len(user_service_profiles) > 0:
-        user = user_service_profiles[0].user
-        attributes_per_service.append({
-            "global": True,
-            **{k: getattr(user, k) for k in User.__table__.columns._data.keys()}
-        })
-    return [{k: v for k, v in res.items() if v is not None} for res in attributes_per_service], 200
+    result = {}
+    for k, v in attribute_oidc_mapping.items():
+        val = getattr(user, k)
+        if val:
+            val = val.split(",") if "," in val else [val]
+            result.setdefault(v, []).extend(val)
+    for user_service_profile in user.user_service_profiles:
+        for claim in user_service_profile_claims:
+            user_service_profile_val = getattr(user_service_profile, claim)
+            if user_service_profile_val:
+                result.setdefault(attribute_oidc_mapping[claim], []).extend([user_service_profile_val])
+    authorisation_group_short_names = list(
+        map(lambda usp: usp.authorisation_group.short_name, user.user_service_profiles))
+    collaboration_names = list(
+        map(lambda usp: usp.authorisation_group.collaboration.name, user.user_service_profiles))
+    is_member_of = list(set(authorisation_group_short_names + collaboration_names))
+    result.setdefault("isMemberOf", []).extend(is_member_of)
+    result = {k: list(set(v)) for k, v in result.items()}
+    return result, 200
 
 
 @user_service_profile_api.route("/<user_service_profile_id>", strict_slashes=False)
