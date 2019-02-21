@@ -150,6 +150,7 @@ def seed(db):
     john_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
                                       user=john, name=john_name, telephone_number="0612345678",
                                       identifier=str(uuid.uuid4()),
+                                      address="Postal 1234AA", email="john@org.com",
                                       ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                                               "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
                                               "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
