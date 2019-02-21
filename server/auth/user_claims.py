@@ -16,19 +16,20 @@ claim_attribute_mapping = {
     "Oidc-Claim-Given-Name": "given_name",
     "Oidc-Claim-Email": "email",
 }
-attribute_oidc_mapping = {
-    "uid": "uid",
-    "name": "cn",
-    "address": "address",
-    "nick_name": "displayName",
-    "edu_members": "isMemberOf",
-    "affiliation": "eduPersonAffiliation",
-    "scoped_affiliation": "eduPersonScopedAffiliation",
-    "entitlement": "eduPersonEntitlement",
-    "schac_home_organisation": "schacHomeOrganization",
-    "family_name": "surname",
-    "given_name": "givenname",
-    "email": "mail",
+is_member_of_saml = "urn:mace:dir:attribute-def:isMemberOf"
+attribute_saml_mapping = {
+    "uid": "urn:mace:dir:attribute-def:uid",
+    "name": "urn:mace:dir:attribute-def:cn",
+    "address": "urn:mace:dir:attribute-def:postalAddress",
+    "nick_name": "urn:mace:dir:attribute-def:displayName",
+    "edu_members": is_member_of_saml,
+    "affiliation": "urn:mace:dir:attribute-def:eduPersonAffiliation",
+    "scoped_affiliation": "urn:mace:dir:attribute-def:eduPersonScopedAffiliation",
+    "entitlement": "urn:mace:dir:attribute-def:eduPersonEntitlement",
+    "schac_home_organisation": "urn:mace:terena.org:attribute-def:schacHomeOrganization",
+    "family_name": "urn:mace:dir:attribute-def:sn",
+    "given_name": "urn:mace:dir:attribute-def:givenName",
+    "email": "urn:mace:dir:attribute-def:mail",
 }
 
 

@@ -8,11 +8,12 @@ class TestUserServiceProfile(AbstractTest):
     def test_attributes(self):
         res = self.get("/api/user_service_profiles/attributes",
                        query_data={"uid": "urn:john", "service_entity_id": "https://network"})
-        self.assertListEqual(res["address"], ["Postal 1234AA"])
-        self.assertListEqual(res["cn"], ["John Doe"])
-        self.assertListEqual(sorted(res["isMemberOf"]), ["AI computing", "ai_res"])
-        self.assertListEqual(sorted(res["mail"]), ["john@example.org", "john@org.com"])
-        self.assertListEqual(res["uid"], ["urn:john"])
+
+        self.assertListEqual(res["urn:mace:dir:attribute-def:postalAddress"], ["Postal 1234AA"])
+        self.assertListEqual(res["urn:mace:dir:attribute-def:cn"], ["John Doe"])
+        self.assertListEqual(sorted(res["urn:mace:dir:attribute-def:isMemberOf"]), ["AI computing", "ai_res"])
+        self.assertListEqual(sorted(res["urn:mace:dir:attribute-def:mail"]), ["john@example.org", "john@org.com"])
+        self.assertListEqual(res["urn:mace:dir:attribute-def:uid"], ["urn:john"])
 
     def test_user_service_profile_by_id(self):
         user_service_profile = self.find_entity_by_name(UserServiceProfile, john_name)

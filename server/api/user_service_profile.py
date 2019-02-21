@@ -2,8 +2,8 @@ from flask import Blueprint
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import current_user_id, confirm_owner_of_user_service_profile
-from server.auth.user_claims import attribute_oidc_mapping, user_service_profile_claims
+from server.auth.security import current_user_id, confirm_owner_of_user_service_profile, confirm_read_access
+from server.auth.user_claims import attribute_saml_mapping, user_service_profile_claims, is_member_of_saml
 from server.db.db import CollaborationMembership, UserServiceProfile, User, Service, AuthorisationGroup
 from server.db.models import update
 
@@ -14,6 +14,7 @@ user_service_profile_api = Blueprint("user_service_profiles_api", __name__, url_
 @user_service_profile_api.route("/attributes", strict_slashes=False)
 @json_endpoint
 def attributes():
+    confirm_read_access()
     uid = query_param("uid")
     service_entity_id = query_param("service_entity_id")
     user = User.query \
@@ -27,7 +28,7 @@ def attributes():
         .filter(User.uid == uid).one()
 
     result = {}
-    for k, v in attribute_oidc_mapping.items():
+    for k, v in attribute_saml_mapping.items():
         val = getattr(user, k)
         if val:
             val = val.split(",") if "," in val else [val]
@@ -36,13 +37,13 @@ def attributes():
         for claim in user_service_profile_claims:
             user_service_profile_val = getattr(user_service_profile, claim)
             if user_service_profile_val:
-                result.setdefault(attribute_oidc_mapping[claim], []).extend([user_service_profile_val])
+                result.setdefault(attribute_saml_mapping[claim], []).extend([user_service_profile_val])
     authorisation_group_short_names = list(
         map(lambda usp: usp.authorisation_group.short_name, user.user_service_profiles))
     collaboration_names = list(
         map(lambda usp: usp.authorisation_group.collaboration.name, user.user_service_profiles))
     is_member_of = list(set(authorisation_group_short_names + collaboration_names))
-    result.setdefault("isMemberOf", []).extend(is_member_of)
+    result.setdefault(is_member_of_saml, []).extend(is_member_of)
     result = {k: list(set(v)) for k, v in result.items()}
     return result, 200
 
