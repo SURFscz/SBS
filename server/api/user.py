@@ -2,14 +2,14 @@ import itertools
 import json
 import logging
 import os
-
 from flask import Blueprint, request as current_request, session, current_app, jsonify
 from sqlalchemy import text, or_
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
-from server.auth.user_claims import claim_attribute_mapping, claim_attribute_hash_headers, claim_attribute_hash_user
+from server.auth.user_claims import claim_attribute_mapping, claim_attribute_hash_headers, claim_attribute_hash_user, \
+    oidc_claim_name
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
 
@@ -54,7 +54,7 @@ def _user_query():
 def _add_user_claims(request_headers, uid, user):
     for key, attr in claim_attribute_mapping.items():
         setattr(user, attr, request_headers.get(key))
-    if not user.name:
+    if oidc_claim_name not in request_headers:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
         user.name = name if name else user.nick_name if user.nick_name else uid
 
