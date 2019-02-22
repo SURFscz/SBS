@@ -1,10 +1,12 @@
 from server.db.db import User
 
+oidc_claim_name = "Oidc-Claim-Name"
+
 user_service_profile_claims = ["name", "email", "address"]
 
 claim_attribute_mapping = {
     "Oidc-Claim-Cmuid": "uid",
-    "Oidc-Claim-Name": "name",
+    oidc_claim_name: "name",
     "Oidc-Claim-Address-Street-Address": "address",
     "Oidc-Claim-Nickname": "nick_name",
     "Oidc-Claim-Edumember-Is-Member-Of": "edu_members",
