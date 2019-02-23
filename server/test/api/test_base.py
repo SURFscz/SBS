@@ -13,7 +13,12 @@ class TestBase(AbstractTest):
 
     def test_info(self):
         res = self.client.get("/info")
-        self.assertTrue("git" in res.json)
+        self.assertTrue("commit" in res.json)
+        self.assertTrue("branch" in res.json)
+        self.assertTrue("author" in res.json)
+        self.assertTrue("author_email" in res.json)
+        self.assertTrue("date" in res.json)
+        self.assertTrue("message" in res.json)
 
     def test_404(self):
         res = self.get("/api/nope", response_status_code=404)

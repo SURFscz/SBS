@@ -14,7 +14,7 @@ fi
 
 IMAGE_TAG=${IMAGE_NAME}:${IMAGE_VERSION}
 
-git --git-dir ./.git log -1 > ./server/api/git.info
+git --git-dir ./.git  log -1 --pretty=format:'{%n  "branch": "%D",%n  "commit": "%H",%n  "author":     "%an",%n  "author_email": "%ae",%n  "date": "%ad",%n  "message": "%f"%n}' > ./server/api/git.info
 
 # build
 docker build -t ${IMAGE_TAG} .
