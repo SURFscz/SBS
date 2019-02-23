@@ -121,4 +121,4 @@ def config():
 def info():
     file = f"{os.path.dirname(os.path.realpath(__file__))}/git.info"
     with open(file) as f:
-        return {"git": f.read()}, 200
+        return json.loads(f.read()), 200

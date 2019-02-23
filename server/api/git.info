@@ -1,5 +1,8 @@
-commit ca6f6551d1faa209af5e63510049f8a527aa72be
-Author: Okke Harsta <oharsta@zilverline.com>
-Date:   Thu Feb 14 07:34:11 2019 +0100
-
-    Decode collaboration name in join request url
+{
+  "branch": "HEAD -> master, origin/master, origin/HEAD",
+  "commit": "4a4bf2406d121963ede45c99d0ce6a3b538be8ec",
+  "author":     "Okke Harsta",
+  "author_email": "oharsta@zilverline.com",
+  "date": "Sat Feb 23 12:31:50 2019 +0100",
+  "message": "Include-ssh-key-in-attributes-endpoint"
+}
