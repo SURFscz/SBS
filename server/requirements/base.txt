@@ -9,3 +9,5 @@ flask_jsontools==0.1.1-0
 flask-mail==0.9.1
 pytz==2018.9
 uWSGI==2.0.18
+werkzeug==0.14.1
+jinja2==2.10
