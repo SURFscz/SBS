@@ -2,7 +2,7 @@ from server.db.db import User
 
 oidc_claim_name = "Oidc-Claim-Name"
 
-user_service_profile_claims = ["name", "email", "address"]
+user_service_profile_claims = ["name", "email", "address", "ssh_key"]
 
 claim_attribute_mapping = {
     "Oidc-Claim-Cmuid": "uid",
@@ -18,7 +18,9 @@ claim_attribute_mapping = {
     "Oidc-Claim-Given-Name": "given_name",
     "Oidc-Claim-Email": "email",
 }
+
 is_member_of_saml = "urn:mace:dir:attribute-def:isMemberOf"
+
 attribute_saml_mapping = {
     "uid": "urn:mace:dir:attribute-def:uid",
     "name": "urn:mace:dir:attribute-def:cn",
@@ -31,8 +33,11 @@ attribute_saml_mapping = {
     "schac_home_organisation": "urn:mace:terena.org:attribute-def:schacHomeOrganization",
     "family_name": "urn:mace:dir:attribute-def:sn",
     "given_name": "urn:mace:dir:attribute-def:givenName",
-    "email": "urn:mace:dir:attribute-def:mail",
+    "email": "urn:mace:dir:attribute-def:mail"
 }
+
+user_service_profile_saml_mapping = {**attribute_saml_mapping,
+                                     "ssh_key": "urn:oid:1.3.6.1.4.1.24552.1.1.1.13"}
 
 
 def claim_attribute_hash_headers(headers):

@@ -3,7 +3,8 @@ from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_owner_of_user_service_profile, confirm_read_access
-from server.auth.user_claims import attribute_saml_mapping, user_service_profile_claims, is_member_of_saml
+from server.auth.user_claims import attribute_saml_mapping, user_service_profile_claims, is_member_of_saml, \
+    user_service_profile_saml_mapping
 from server.db.db import CollaborationMembership, UserServiceProfile, User, Service, AuthorisationGroup
 from server.db.models import update
 
@@ -37,7 +38,7 @@ def attributes():
         for claim in user_service_profile_claims:
             user_service_profile_val = getattr(user_service_profile, claim)
             if user_service_profile_val:
-                result.setdefault(attribute_saml_mapping[claim], []).extend([user_service_profile_val])
+                result.setdefault(user_service_profile_saml_mapping[claim], []).extend([user_service_profile_val])
     authorisation_group_short_names = list(
         map(lambda usp: usp.authorisation_group.short_name, user.user_service_profiles))
     collaboration_names = list(
