@@ -11,3 +11,5 @@ pytz==2018.9
 uWSGI==2.0.18
 werkzeug==0.14.1
 jinja2==2.10
+# need older version of SQLAlchemy for now, as flask_migrate pulls in flask-sqlalchemy, which doesn't work with SQLAlchemy 1.3.0
+SQLAlchemy<1.3.0
