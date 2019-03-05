@@ -31,4 +31,11 @@ then
     docker tag ${IMAGE_TAG} "${IMAGE_NAME}:${VERSION}"
 fi
 
+if [ -n "$TRAVIS_TAG" ] # tag this image with the current tag name if we're autobuilding in travis
+then
+    # only alnum and -_. allowed in tags; replace everything else by _
+    VERSION=$( echo -n "$TRAVIS_TAG" | tr -c '[:alnum:]-_.' '_' )
+    docker tag ${IMAGE_TAG} "${IMAGE_NAME}:${VERSION}"
+fi
+
 exit 0
