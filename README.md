@@ -1,6 +1,6 @@
 # SURF SamenwerkingsBeheerSysteem (SBS)
 [![Build Status](https://travis-ci.com/SURFscz/SBS.svg?branch=master)](https://travis-ci.com/SURFscz/SBS)
-[![codecov.io](https://codecov.io/github/SURFscz/SBS/coverage.svg)](https://codecov.io/github/SURFscz/SBS)
+[![codecov](https://codecov.io/gh/SURFscz/SBS/branch/master/graph/badge.svg)](https://codecov.io/gh/SURFscz/SBS)
 
 Samenwerking Beheer Systeem ↣ Collaboration Management System
 
