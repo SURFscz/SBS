@@ -63,7 +63,7 @@ jobs:
         - yarn build
         - cd ..
       after_success:
-        - codecov --token="ae851f67-c91a-4063-8bd6-a9fc74b3173e"
+        - "codecov --token=$CODECOV_TOKEN"
 
     #######################################################
     ## Build and upload docker images #####################
