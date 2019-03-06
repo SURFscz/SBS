@@ -87,4 +87,3 @@ the database is left with the test data seed.
 
 Start the registration with [http://localhost:3000/registration?collaboration=AI%20computing](http://localhost:3000/registration?collaboration=AI%20computing)
 
-
