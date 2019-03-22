@@ -52,6 +52,7 @@ jobs:
             CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
             GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
           "
+        - cp ./server/config/config.yml.sample ./server/config/config.yml
       script:
         - pytest --cov=server server/test
         - flake8 ./server/
