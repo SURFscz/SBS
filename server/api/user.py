@@ -13,14 +13,15 @@ from server.auth.user_claims import claim_attribute_mapping, claim_attribute_has
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
 
-UID_HEADER_NAME = "Oidc-Claim-Cmuid"
+UID_HEADER_NAME = "OIDC_CLAIM_cmuid"
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
 def _log_headers():
-    headers = current_request.headers
-    for k, v in headers.items():
+    for k, v in current_request.environ.items():
+        current_app.logger.debug(f"ENV {k} value {v}")
+    for k, v in current_request.headers.items():
         current_app.logger.debug(f"Header {k} value {v}")
     for k, v in os.environ.items():
         current_app.logger.debug(f"OS environ {k} value {v}")
@@ -133,7 +134,8 @@ def user_search():
 def me():
     _log_headers()
 
-    request_headers = current_request.headers
+    request_headers = current_request.environ.copy()
+    request_headers.update(current_request.headers)
     uid = request_headers.get(UID_HEADER_NAME)
     if uid:
         users = User.query.filter(User.uid == uid).all()
