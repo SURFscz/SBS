@@ -1,22 +1,22 @@
 from server.db.db import User
 
-oidc_claim_name = "Oidc-Claim-Name"
+oidc_claim_name = "OIDC_CLAIM_name"
 
 user_service_profile_claims = ["name", "email", "address", "ssh_key"]
 
 claim_attribute_mapping = {
-    "Oidc-Claim-Cmuid": "uid",
     oidc_claim_name: "name",
-    "Oidc-Claim-Address-Street-Address": "address",
-    "Oidc-Claim-Nickname": "nick_name",
-    "Oidc-Claim-Edumember-Is-Member-Of": "edu_members",
-    "Oidc-Claim-Eduperson-Affiliation": "affiliation",
-    "Oidc-Claim-Eduperson-Scoped-Affiliation": "scoped_affiliation",
-    "Oidc-Claim-Eduperson-Entitlement": "entitlement",
-    "Oidc-Claim-Schac-Home-Organisation": "schac_home_organisation",
-    "Oidc-Claim-Family-Name": "family_name",
-    "Oidc-Claim-Given-Name": "given_name",
-    "Oidc-Claim-Email": "email",
+    "OIDC_CLAIM_cmuid": "uid",
+    "OIDC-CLAIM_address_street_address": "address",
+    "OIDC_CLAIM_nickname": "nick_name",
+    "OIDC_CLAIM_edumember_is_member_of": "edu_members",
+    "OIDC_CLAIM_eduperson_affiliation": "affiliation",
+    "OIDC-CLAIM_eduperson_scoped_affiliation": "scoped_affiliation",
+    "OIDC-CLAIM_eduperson_entitlement": "entitlement",
+    "OIDC_CLAIM_schac_home_organisation": "schac_home_organisation",
+    "OIDC_CLAIM_family_name": "family_name",
+    "OIDC_CLAIM_given_name": "given_name",
+    "OIDC_CLAIM_email": "email",
 }
 
 is_member_of_saml = "urn:mace:dir:attribute-def:isMemberOf"

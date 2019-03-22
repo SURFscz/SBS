@@ -107,3 +107,8 @@ TODO.txt
 questions.txt
 
 log
+
+# server config
+server/config/config.yml
+sbs-api.wsgi
+
