@@ -39,7 +39,7 @@ def read_file(file_name):
 
 def _init_logging(local):
     if local:
-        logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+        logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     else:
         handler = TimedRotatingFileHandler(f"{os.path.dirname(os.path.realpath(__file__))}/../log/sbs.log",
                                            when="midnight", backupCount=30)
