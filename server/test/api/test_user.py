@@ -12,13 +12,13 @@ class TestUser(AbstractTest):
         self.assertEqual(user["admin"], False)
 
     def test_provision_me_identity_header(self):
-        user = self.client.get("/api/users/me", headers={UID_HEADER_NAME: "uid:new"}).json
+        user = self.client.get("/api/users/me", environ_overrides={UID_HEADER_NAME: "uid:new"}).json
         self.assertEqual(user["guest"], False)
         self.assertEqual(user["admin"], False)
         self.assertEqual(user["uid"], "uid:new")
 
     def test_me_existing_user(self):
-        user = self.client.get("/api/users/me", headers={UID_HEADER_NAME: "urn:john"}).json
+        user = self.client.get("/api/users/me", environ_overrides={UID_HEADER_NAME: "urn:john"}).json
 
         self.assertEqual(user["guest"], False)
         self.assertEqual(user["uid"], "urn:john")
@@ -86,6 +86,6 @@ class TestUser(AbstractTest):
                  response_status_code=404)
 
     def test_error(self):
-        self.client.get("/api/users/me", headers={UID_HEADER_NAME: "uid"})
+        self.client.get("/api/users/me", environ_overrides={UID_HEADER_NAME: "uid"})
         response = self.client.post("/api/users/error")
         self.assertEqual(201, response.status_code)

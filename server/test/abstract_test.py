@@ -46,7 +46,7 @@ class AbstractTest(TestCase):
 
     def login(self, uid="urn:john"):
         with requests.Session():
-            self.client.get("/api/users/me", headers={UID_HEADER_NAME: uid})
+            self.client.get("/api/users/me", environ_overrides={UID_HEADER_NAME: uid}, headers={UID_HEADER_NAME: uid})
 
     def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True, headers={}):
         with requests.Session():
