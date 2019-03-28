@@ -1,3 +1,5 @@
+from base64 import b64encode
+
 from server.db.db import Collaboration, Organisation, Invitation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uuc_name, uva_research_name, john_name
@@ -104,6 +106,16 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         self.assertEqual(collaboration_id, collaboration["id"])
         self.assertEqual("UUC", collaboration["organisation"]["name"])
+        self.assertTrue(len(collaboration["collaboration_memberships"]) >= 4)
+
+    def test_collaboration_by_id_api_call(self):
+        collaboration_id = self._find_by_name_id()["id"]
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}",
+                                 headers={"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"},
+                                 with_basic_auth=False)
+        self.assertEqual(collaboration_id, collaboration["id"])
+        self.assertEqual("UUC", collaboration["organisation"]["name"])
+        self.assertTrue(len(collaboration["collaboration_memberships"]) >= 4)
 
     def test_my_collaborations(self):
         self.login("urn:admin")

@@ -6,7 +6,6 @@ from server.db.db import User, Organisation, OrganisationMembership, Service, Co
     JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
 from server.db.defaults import default_expiry_date
 
-
 join_request_reference = "Dr. Johnson"
 
 the_boss_name = "The Boss"
@@ -24,6 +23,8 @@ invitation_hash_no_way = token_urlsafe()
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
 uuc_name = "UUC"
+amsterdam_uva_name = "Amsterdam UVA"
+
 collaboration_uva_researcher_uuid = str(uuid.uuid4())
 
 uva_research_name = "UVA UCC research"
@@ -71,7 +72,7 @@ def seed(db):
     uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
                        created_by="urn:admin",
                        updated_by="urnadmin")
-    uva = Organisation(name="Amsterdam UVA", tenant_identifier="https://uva", description="University of Amsterdam",
+    uva = Organisation(name=amsterdam_uva_name, tenant_identifier="https://uva", description="University of Amsterdam",
                        created_by="urn:admin",
                        updated_by="urnadmin")
     _persist(db, uuc, uva)
