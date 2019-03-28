@@ -39,6 +39,13 @@ def name_exists():
     return coll is not None, 200
 
 
+@collaboration_api.route("/all", strict_slashes=False)
+@json_endpoint
+def collaboration_all():
+    collaborations = Collaboration.query.all()
+    return collaborations, 200
+
+
 @collaboration_api.route("/search", strict_slashes=False)
 @json_endpoint
 def collaboration_search():

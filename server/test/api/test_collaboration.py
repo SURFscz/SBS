@@ -100,6 +100,10 @@ class TestCollaboration(AbstractTest):
         self.login("urn:john")
         self.get(f"/api/collaborations/{-1}", response_status_code=404, with_basic_auth=False)
 
+    def test_collaboration_all(self):
+        collaborations = self.get("/api/collaborations/all")
+        self.assertEqual(2, len(collaborations))
+
     def test_collaboration_by_id(self):
         collaboration_id = self._find_by_name_id()["id"]
         self.login()
