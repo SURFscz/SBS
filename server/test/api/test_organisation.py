@@ -24,8 +24,16 @@ class TestOrganisation(AbstractTest):
 
     def test_organisations_all(self):
         organisations = self.get("/api/organisations/all",
-                                 headers={"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"})
+                                 headers={"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"},
+                                 with_basic_auth=False)
         self.assertEqual(2, len(organisations))
+
+    def test_organisation_by_id_with_api_user(self):
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation = self.get(f"/api/organisations/{organisation_id}",
+                                 headers={"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"},
+                                 with_basic_auth=False)
+        self.assertTrue(len(organisation["organisation_memberships"]) > 0)
 
     def test_organisation_by_id(self):
         self.login()

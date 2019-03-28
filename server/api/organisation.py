@@ -1,7 +1,7 @@
 import datetime
 from secrets import token_urlsafe
 
-from flask import Blueprint, request as current_request, current_app
+from flask import Blueprint, request as current_request, current_app, g as request_context
 from sqlalchemy import text, func
 from sqlalchemy.orm import joinedload, contains_eager
 from sqlalchemy.orm import load_only
@@ -81,20 +81,21 @@ def my_organisations_lite():
 @organisation_api.route("/<id>", strict_slashes=False)
 @json_endpoint
 def organisation_by_id(id):
-    user_uid = current_user_uid()
-    is_admin = is_admin_user(user_uid)
-
     query = Organisation.query \
         .options(joinedload(Organisation.organisation_memberships).subqueryload(OrganisationMembership.user)) \
         .options(joinedload(Organisation.organisation_invitations).subqueryload(OrganisationInvitation.user)) \
         .filter(Organisation.id == id)
 
-    if not is_admin:
-        user_id = current_user_id()
-        query = query \
-            .join(OrganisationMembership.user) \
-            .filter(OrganisationMembership.role == "admin") \
-            .filter(OrganisationMembership.user_id == user_id)
+    if not request_context.is_authorized_api_call:
+        user_uid = current_user_uid()
+        is_admin = is_admin_user(user_uid)
+
+        if not is_admin:
+            user_id = current_user_id()
+            query = query \
+                .join(OrganisationMembership.user) \
+                .filter(OrganisationMembership.role == "admin") \
+                .filter(OrganisationMembership.user_id == user_id)
 
     organisation = query.one()
     return organisation, 200
