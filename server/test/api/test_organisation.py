@@ -1,3 +1,5 @@
+from base64 import b64encode
+
 from server.db.db import Organisation, OrganisationInvitation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name
@@ -19,6 +21,11 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(1, len(organisations))
         organisation = AbstractTest.find_by_name(organisations, uuc_name)
         self.assertEqual("urn:john", organisation["organisation_memberships"][0]["user"]["uid"])
+
+    def test_organisations_all(self):
+        organisations = self.get("/api/organisations/all",
+                                 headers={"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"})
+        self.assertEqual(2, len(organisations))
 
     def test_organisation_by_id(self):
         self.login()
