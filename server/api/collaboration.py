@@ -42,6 +42,7 @@ def name_exists():
 @collaboration_api.route("/all", strict_slashes=False)
 @json_endpoint
 def collaboration_all():
+    confirm_authorized_api_call()
     collaborations = Collaboration.query.all()
     return collaborations, 200
 
