@@ -8,7 +8,7 @@ from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid, \
-    is_application_admin
+    is_application_admin, confirm_authorized_api_call
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
 from server.db.defaults import default_expiry_date
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -45,6 +45,7 @@ def identifier_exists():
 @organisation_api.route("/all", strict_slashes=False)
 @json_endpoint
 def organisation_all():
+    confirm_authorized_api_call()
     organisations = Organisation.query.all()
     return organisations, 200
 
