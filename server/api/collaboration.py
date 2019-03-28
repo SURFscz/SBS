@@ -2,7 +2,7 @@ import datetime
 import uuid
 from secrets import token_urlsafe
 
-from flask import Blueprint, request as current_request, current_app
+from flask import Blueprint, request as current_request, current_app, g as request_context
 from sqlalchemy import text, or_, func
 from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
@@ -156,11 +156,12 @@ def collaboration_by_id(collaboration_id):
                  .contains_eager(JoinRequest.user)) \
         .options(contains_eager(Collaboration.services))
 
-    if not is_application_admin():
+    if not request_context.is_authorized_api_call and not is_application_admin():
         user_id = current_user_id()
         query = query \
             .join(Collaboration.collaboration_memberships) \
             .filter(CollaborationMembership.user_id == user_id)
+
     collaboration = query.filter(Collaboration.id == collaboration_id).one()
 
     for membership in collaboration.collaboration_memberships:
