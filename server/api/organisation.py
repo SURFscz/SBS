@@ -42,6 +42,13 @@ def identifier_exists():
     return org is not None, 200
 
 
+@organisation_api.route("/all", strict_slashes=False)
+@json_endpoint
+def organisation_all():
+    organisations = Organisation.query.all()
+    return organisations, 200
+
+
 @organisation_api.route("/search", strict_slashes=False)
 @json_endpoint
 def organisation_search():
