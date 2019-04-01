@@ -12,13 +12,10 @@ class TestBase(AbstractTest):
         self.assertDictEqual({"base_url": "http://localhost:3000", "local": False}, res.json)
 
     def test_info(self):
-        res = self.client.get("/info")
-        self.assertTrue("commit" in res.json)
-        self.assertTrue("branch" in res.json)
-        self.assertTrue("author" in res.json)
-        self.assertTrue("author_email" in res.json)
-        self.assertTrue("date" in res.json)
-        self.assertTrue("message" in res.json)
+        git_info = self.client.get("/info").json["git"]
+        self.assertTrue("commit" in git_info)
+        self.assertTrue("Date" in git_info)
+        self.assertTrue("Author" in git_info)
 
     def test_404(self):
         res = self.get("/api/nope", response_status_code=404)

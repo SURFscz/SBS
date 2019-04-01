@@ -1,8 +1,5 @@
-{
-  "branch": "HEAD -> master, origin/master, origin/HEAD",
-  "commit": "4a4bf2406d121963ede45c99d0ce6a3b538be8ec",
-  "author":     "Okke Harsta",
-  "author_email": "oharsta@zilverline.com",
-  "date": "Sat Feb 23 12:31:50 2019 +0100",
-  "message": "Include-ssh-key-in-attributes-endpoint"
-}
+commit f4d0cd9b722977bcf2b765718c04be5bb458bbb1 (HEAD -> master, origin/master)
+Author: Okke Harsta <oharsta@zilverline.com>
+Date:   Tue Mar 12 10:47:10 2019 +0100
+
+    Quote path
