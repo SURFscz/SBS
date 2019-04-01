@@ -14,11 +14,8 @@ class TestBase(AbstractTest):
     def test_info(self):
         git_info = self.client.get("/info").json["git"]
         self.assertTrue("commit" in git_info)
-        self.assertTrue("branch" in git_info)
-        self.assertTrue("author" in git_info)
-        self.assertTrue("author_email" in git_info)
-        self.assertTrue("date" in git_info)
-        self.assertTrue("message" in git_info)
+        self.assertTrue("Date" in git_info)
+        self.assertTrue("Author" in git_info)
 
     def test_404(self):
         res = self.get("/api/nope", response_status_code=404)
