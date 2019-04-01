@@ -280,14 +280,21 @@ def ldap_member(topic, id, base, role, uid, **kwargs):
 			panic(f"Error during LDAP ADD, Error: {str(e)}")
 
 		push_notification(topic, id)
-	
+
+def ldap_delete_recursive(dn):
+	log_debug(f"... DELETING DN {dn} ...")
+	for i in ldap_session.search_s(dn, ldap.SCOPE_ONELEVEL, f"(objectclass=*)"):
+		ldap_delete_recursive(i[0])
+
+	ldap_session.delete_s(dn)
+
 def ldap_delete(topic, id, dn):
 	log_debug(f"LDAP DELETE {topic}:{id}, DN: {dn}")
 
 	push_notification(topic, id)
 	
 	try:
-		ldap_session.delete_s(dn)
+		ldap_delete_recursive(dn)
 	except Exception as e:
 		panic(f"Error during LDAP delete DN: {dn}, Error: {str(e)}")
 
@@ -322,14 +329,16 @@ for o in organisations:
 
 	log_debug(f"org: [{o['id']}]: {o['name']}, description: {o['description']}, tenant: {o['tenant_identifier']} ")
 
-	ldap_ou('O', BASE_DN, o['name'], o['tenant_identifier'], o['description'])
+	ldap_ou('O', BASE_DN, o['tenant_identifier'], o['name'], o['description'])
 
 	org = api(SBS_HOST+f"/api/organisations/{o['id']}")
-	for m in org['organisation_memberships']:
+	o['members'] = deepcopy(org['organisation_memberships'])
+
+	for m in o['members']:
 		log_debug(f"- member [{m['role']}]: {m['user']['uid']}")
 
-		ldap_member('O', o['name'],
-			base = f"ou={o['name']},{BASE_DN}",
+		ldap_member('O', o['tenant_identifier'],
+			base = f"ou={o['tenant_identifier']},{BASE_DN}",
 			role = m['role'],
 			uid = m['user']['uid'],
  			displayName = m['user']['name'],
@@ -351,22 +360,22 @@ collaborations = api(SBS_HOST+"/api/collaborations/all")
 for c in collaborations:
 	org = get_organisation(c['organisation_id'])
 
-	log_debug(f"CO [{c['id']}]: {c['name']}, description: {c['description']}")
+	log_debug(f"CO [{c['identifier']}]: {c['name']}, description: {c['description']}")
 
-	ldap_ou('CO', f"ou={org['name']},{BASE_DN}", c['name'], f"{org['name']} - {c['name']}", c['description'])
+	ldap_ou('CO', f"ou={org['tenant_identifier']},{BASE_DN}", c['identifier'], c['name'], c['description'])
 
-	co_users[c['name']] = {}
+	co_users[c['identifier']] = {}
 
 	details = api(SBS_HOST+f"/api/collaborations/{c['id']}")
 
 	for m in details['collaboration_memberships']:
 		log_debug(f"- CO member [{m['role']}]")
 
-		co_users[c['name']][m["user_id"]] = m["user"]
+		co_users[c['identifier']][m["user_id"]] = m["user"]
 
 		ldap_member('CO',
-			c['name'],
-			base = f"ou={c['name']},ou={org['name']},{BASE_DN}",
+			c['identifier'],
+			base = f"ou={c['identifier']},ou={org['tenant_identifier']},{BASE_DN}",
 			role = m['role'],
 			uid = m["user"]["uid"],
 			sn = m["user"]["name"],
@@ -386,11 +395,11 @@ for org in ldap_organisations():
 	org_validated = False
 
 	for o in organisations:
-		if org[0] == f"ou={o['name']},{BASE_DN}":
+		if org[0] == f"ou={o['tenant_identifier']},{BASE_DN}":
 
 			org_validated = True
 
-			for co in ldap_collobarations(o['name']):
+			for co in ldap_collobarations(o['tenant_identifier']):
 
 				if co[0].startswith("ou=people,") or co[0].startswith("ou=groups,"):
 					continue
@@ -399,54 +408,56 @@ for org in ldap_organisations():
 				co_validated = False
 			
 				for c in collaborations:
-					if co[0] == f"ou={c['name']},ou={o['name']},{BASE_DN}":
+					if co[0] == f"ou={c['identifier']},ou={o['tenant_identifier']},{BASE_DN}":
 						co_validated = True
+
+						log_debug(f"CHECK CO: {co[0]} VALIDATED !")
+
+						for m in ldap_people(f"ou={c['identifier']},ou={o['tenant_identifier']},{BASE_DN}"):
+							cn = m[1]['cn'][0].decode()
+
+							log_debug(f"CHECK CO PERSON: {cn}...")
+							person_validated = False
+
+							for u in co_users[c['identifier']]:
+								if co_users[c['identifier']][u]['uid'] == cn:
+									person_validated = True
+									break
+
+							if person_validated:
+								log_debug(f"CHECK CO PERSON: {cn} VALIDATED !")
+							else:
+								ldap_delete("P", cn, m[0])
+
 						break
 
-				if co_validated:
-					log_debug(f"CHECK CO: {co[0]} VALIDATED !")
-
-					for m in ldap_people(f"ou={c['name']},ou={o['name']},{BASE_DN}"):
-						cn = m[1]['cn'][0].decode()
-
-						log_debug(f"CHECK CO PERSON: {cn}...")
-						person_validated = False
-
-						for u in co_users[c['name']]:
-							if co_users[c['name']][u]['uid'] == cn:
-								person_validated = True
-								break
-
-						if person_validated:
-							log_debug(f"CHECK CO PERSON: {cn} VALIDATED !")
-						else:
-							ldap_delete("P", cn, m[0])
-						
-				else:
+				if not co_validated:
 					# CO not found, remove it
-					ldap_delete("CO", co['name'], co[0])
+					ldap_delete("CO", co[0].split(',')[0].split('=')[1], co[0])
 
-	if org_validated:
-		log_debug(f"CHECK O: {org[0]} VALIDATED !")
+			log_debug(f"CHECK O: {org[0]} VALIDATED !")
 
-		for m in ldap_people(f"ou={o['name']},{BASE_DN}"):
-			cn = m[1]['cn'][0].decode()
+			for m in ldap_people(f"ou={o['tenant_identifier']},{BASE_DN}"):
+				cn = m[1]['cn'][0].decode()
 
-			log_debug(f"CHECK ORG PERSON: {cn}...")
-			person_validated = False
+				log_debug(f"CHECK ORG PERSON: {cn}...")
+				person_validated = False
 
-			for om in o['organisation_memberships']:
-				if om['user']['uid'] == cn:
-					person_validated = True
-					break
+				for om in o['members']:
+					if om['user']['uid'] == cn:
+						person_validated = True
+						break
 
-			if person_validated:
-				log_debug(f"CHECK ORG PERSON: {cn} VALIDATED !")
-			else:
-				ldap_delete("P", cn, m[0])
-	else:
+				if person_validated:
+					log_debug(f"CHECK ORG PERSON: {cn} VALIDATED !")
+				else:
+					ldap_delete("P", cn, m[0])
+
+			break
+
+	if not org_validated:
 		# Org not found, remove it !
-		ldap_delete("O", o['name'], org[0])
+		ldap_delete("O", org[0].split(',')[0].split('=')[1], org[0])
 
 ldap_session.unbind_s()
 
