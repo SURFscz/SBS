@@ -18,31 +18,30 @@ def attributes():
     confirm_read_access()
     uid = query_param("uid")
     service_entity_id = query_param("service_entity_id")
-    user = User.query \
-        .outerjoin(User.user_service_profiles) \
-        .outerjoin(UserServiceProfile.authorisation_group) \
-        .outerjoin(AuthorisationGroup.collaboration) \
-        .outerjoin(Service, Service.entity_id == service_entity_id) \
-        .options(contains_eager(User.user_service_profiles)
-                 .contains_eager(UserServiceProfile.authorisation_group)
-                 .contains_eager(AuthorisationGroup.collaboration)) \
-        .filter(User.uid == uid).one()
-
+    user_service_profiles = UserServiceProfile.query \
+        .join(Service, Service.entity_id == service_entity_id) \
+        .join(UserServiceProfile.user)\
+        .filter(User.uid == uid)\
+        .all()
+    if len(user_service_profiles) is 0:
+        return {}, 200
     result = {}
+    user = user_service_profiles[0].user
     for k, v in attribute_saml_mapping.items():
         val = getattr(user, k)
         if val:
             val = val.split(",") if "," in val else [val]
             result.setdefault(v, []).extend(val)
-    for user_service_profile in user.user_service_profiles:
+
+    for user_service_profile in user_service_profiles:
         for claim in user_service_profile_claims:
             user_service_profile_val = getattr(user_service_profile, claim)
             if user_service_profile_val:
                 result.setdefault(user_service_profile_saml_mapping[claim], []).extend([user_service_profile_val])
     authorisation_group_short_names = list(
-        map(lambda usp: usp.authorisation_group.short_name, user.user_service_profiles))
+        map(lambda usp: usp.authorisation_group.short_name, user_service_profiles))
     collaboration_names = list(
-        map(lambda usp: usp.authorisation_group.collaboration.name, user.user_service_profiles))
+        map(lambda usp: usp.authorisation_group.collaboration.name, user_service_profiles))
     is_member_of = list(set(authorisation_group_short_names + collaboration_names))
     result.setdefault(is_member_of_saml, []).extend(is_member_of)
     result = {k: list(set(v)) for k, v in result.items()}

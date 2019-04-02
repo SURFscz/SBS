@@ -16,6 +16,11 @@ class TestUserServiceProfile(AbstractTest):
         self.assertListEqual(res["urn:mace:dir:attribute-def:uid"], ["urn:john"])
         self.assertEqual(1, len(res["urn:oid:1.3.6.1.4.1.24552.1.1.1.13"]))
 
+    def test_attributes_no_service(self):
+        res = self.get("/api/user_service_profiles/attributes",
+                       query_data={"uid": "urn:john", "service_entity_id": "https://nope"})
+        self.assertDictEqual({}, res)
+
     def test_user_service_profile_by_id(self):
         user_service_profile = self.find_entity_by_name(UserServiceProfile, john_name)
         self.login("urn:john")
