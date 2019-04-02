@@ -1,3 +1,4 @@
+from server.auth.user_claims import claim_attribute_mapping
 from server.db.db import Organisation, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name
@@ -88,3 +89,8 @@ class TestUser(AbstractTest):
         self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "uid"})
         response = self.client.post("/api/users/error")
         self.assertEqual(201, response.status_code)
+
+    def test_provisioning_with_diacritics(self):
+        headers = {"OIDC_CLAIM_" + key: "Ã«Ã¤Ã¦Å¡" for key in claim_attribute_mapping.keys()}
+        user = self.client.get("api/users/me", headers=headers).json
+        self.assertEqual("ëäæš", user["email"])

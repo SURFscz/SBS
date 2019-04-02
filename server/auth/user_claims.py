@@ -1,5 +1,5 @@
 from flask import current_app
-
+import logging
 from server.db.db import User
 
 oidc_claim_name = "name"
@@ -50,10 +50,13 @@ def _get_header_key(key):
 
 
 def _get_value(request_headers, key):
+    logger = logging.getLogger("user_claims")
     s = request_headers.get(key)
     if s is None:
+        logger.debug(f"Returning None for key {key}")
         return None
     res = bytes(s, "iso-8859-1").decode("utf-8")
+    logger.debug(f"Returning {res} for key {key} with original value {s}")
     return res
 
 

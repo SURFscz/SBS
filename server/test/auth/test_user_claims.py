@@ -43,3 +43,7 @@ class TestUserClaims(AbstractTest):
     def test_iso_8859_to_utf8_conversion_with_none(self):
         res = _get_value({"key": None}, "key")
         self.assertIsNone(res)
+
+    def test_encoding_bug(self):
+        res = _get_value({"key": "Ã«Ã¤Ã¦Å¡"}, "key")
+        self.assertEqual("ëäæš", res)
