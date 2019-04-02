@@ -18,7 +18,7 @@ user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 def _log_headers():
     logger = logging.getLogger("user_api")
     for k, v in current_request.environ.items():
-        logger.warning(f"ENV {k} value {v}")
+        logger.debug(f"ENV {k} value {v}")
     for k, v in current_request.headers.items():
         logger.debug(f"Header {k} value {v}")
     for k, v in os.environ.items():
