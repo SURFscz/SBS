@@ -5,7 +5,30 @@ import time
 from logging.handlers import TimedRotatingFileHandler
 
 import yaml
+from flask import Flask, jsonify, request as current_request
+from flask_mail import Mail
+from flask_migrate import Migrate
 from munch import munchify
+from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
+
+from server.api.authorisation_group import authorisation_group_api
+from server.api.authorisation_group_members import authorisation_group_members_api
+from server.api.authorisation_group_services import authorisation_group_services_api
+from server.api.base import base_api
+from server.api.collaboration import collaboration_api
+from server.api.collaboration_membership import collaboration_membership_api
+from server.api.collaborations_services import collaborations_services_api
+from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
+from server.api.invitation import invitations_api
+from server.api.join_request import join_request_api
+from server.api.organisation import organisation_api
+from server.api.organisation_invitation import organisation_invitations_api
+from server.api.organisation_membership import organisation_membership_api
+from server.api.service import service_api
+from server.api.user import user_api
+from server.api.user_service_profile import user_service_profile_api
+from server.db.db import db, db_migrations
 
 
 def read_file(file_name):
@@ -15,7 +38,7 @@ def read_file(file_name):
 
 
 def _init_logging(local):
-    if local and False:
+    if local:
         logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     else:
         handler = TimedRotatingFileHandler(f"{os.path.dirname(os.path.realpath(__file__))}/../log/sbs.log",
@@ -39,30 +62,6 @@ is_local = profile is not None and profile == "local"
 is_test = test is not None and bool(int(test))
 
 _init_logging(is_local or is_test)
-
-from flask import Flask, jsonify, request as current_request
-from flask_mail import Mail
-from flask_migrate import Migrate
-from sqlalchemy import text
-from sqlalchemy.exc import OperationalError
-
-from server.api.authorisation_group import authorisation_group_api
-from server.api.authorisation_group_members import authorisation_group_members_api
-from server.api.authorisation_group_services import authorisation_group_services_api
-from server.api.base import base_api
-from server.api.collaboration import collaboration_api
-from server.api.collaboration_membership import collaboration_membership_api
-from server.api.collaborations_services import collaborations_services_api
-from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
-from server.api.invitation import invitations_api
-from server.api.join_request import join_request_api
-from server.api.organisation import organisation_api
-from server.api.organisation_invitation import organisation_invitations_api
-from server.api.organisation_membership import organisation_membership_api
-from server.api.service import service_api
-from server.api.user import user_api
-from server.api.user_service_profile import user_service_profile_api
-from server.db.db import db, db_migrations
 
 
 def page_not_found(_):

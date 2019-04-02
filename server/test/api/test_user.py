@@ -1,5 +1,3 @@
-from flask import current_app
-
 from server.db.db import Organisation, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name
