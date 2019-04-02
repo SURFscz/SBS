@@ -3,9 +3,9 @@ import os
 from base64 import b64encode
 
 import requests
+from flask import current_app
 from flask_testing import TestCase
 
-from server.api.user import UID_HEADER_NAME
 from server.test.seed import seed
 
 # See api_users in config/test_config.yml
@@ -44,9 +44,12 @@ class AbstractTest(TestCase):
     def find_entity_by_name(cls, name):
         return cls.query.filter(cls.name == name).one()
 
+    def uid_header_name(self):
+        return current_app.app_config.oidc_prefix + current_app.app_config.oidc_id
+
     def login(self, uid="urn:john"):
         with requests.Session():
-            self.client.get("/api/users/me", environ_overrides={UID_HEADER_NAME: uid}, headers={UID_HEADER_NAME: uid})
+            self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): uid}, headers={self.uid_header_name(): uid})
 
     def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True, headers={}):
         with requests.Session():

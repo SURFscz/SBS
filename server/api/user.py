@@ -8,20 +8,17 @@ from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
-from server.auth.user_claims import claim_attribute_mapping, claim_attribute_hash_headers, claim_attribute_hash_user, \
-    oidc_claim_name
+from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_hash_user, add_user_claims
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
-
-UID_HEADER_NAME = "OIDC_CLAIM_cmuid"
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
 def _log_headers():
-    logger = logging.getLogger()
+    logger = logging.getLogger("user_api")
     for k, v in current_request.environ.items():
-        logger.debug(f"ENV {k} value {v}")
+        logger.warning(f"ENV {k} value {v}")
     for k, v in current_request.headers.items():
         logger.debug(f"Header {k} value {v}")
     for k, v in os.environ.items():
@@ -51,14 +48,6 @@ def _user_query():
                  .contains_eager(OrganisationMembership.organisation)) \
         .options(contains_eager(User.collaboration_memberships)
                  .contains_eager(CollaborationMembership.collaboration))
-
-
-def _add_user_claims(request_headers, uid, user):
-    for key, attr in claim_attribute_mapping.items():
-        setattr(user, attr, request_headers.get(key))
-    if oidc_claim_name not in request_headers:
-        name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
-        user.name = name if name else user.nick_name if user.nick_name else uid
 
 
 def _user_json_response(user):
@@ -137,13 +126,13 @@ def me():
 
     request_headers = current_request.environ.copy()
     request_headers.update(current_request.headers)
-    uid = request_headers.get(UID_HEADER_NAME)
+    uid = request_headers.get(current_app.app_config.oidc_prefix + current_app.app_config.oidc_id)
     if uid:
         users = User.query.filter(User.uid == uid).all()
         user = users[0] if len(users) > 0 else None
         if not user:
             user = User(uid=uid, created_by="system", updated_by="system")
-            _add_user_claims(request_headers, uid, user)
+            add_user_claims(request_headers, uid, user)
             current_app.logger.info(f"Provisioning new user {user.uid}")
             user = db.session.merge(user)
             db.session.commit()
@@ -152,7 +141,7 @@ def me():
             hash_user = claim_attribute_hash_user(user)
             if hash_user != hash_headers:
                 current_app.logger.info(f"Updating user {user.uid} with new claims")
-                _add_user_claims(request_headers, uid, user)
+                add_user_claims(request_headers, uid, user)
                 user = db.session.merge(user)
                 db.session.commit()
 
