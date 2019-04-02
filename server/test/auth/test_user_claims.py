@@ -1,12 +1,13 @@
-import unittest
-import string
 import random
+import string
 
-from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_mapping, claim_attribute_hash_user
+from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_mapping, claim_attribute_hash_user, \
+    _get_header_key, get_user_uid, add_user_claims
 from server.db.db import User
+from server.test.abstract_test import AbstractTest
 
 
-class TestUserClaims(unittest.TestCase):
+class TestUserClaims(AbstractTest):
 
     @staticmethod
     def _random_str():
@@ -14,18 +15,18 @@ class TestUserClaims(unittest.TestCase):
         return "".join(random.choice(chars) for x in range(12))
 
     def test_claim_attribute_hash_headers(self):
-        headers = {key: self._random_str() for key in claim_attribute_mapping.keys()}
+        headers = {_get_header_key(key): self._random_str() for key in claim_attribute_mapping.keys()}
         hash_headers = claim_attribute_hash_headers(headers)
 
         user = User()
-        for key, attr in claim_attribute_mapping.items():
-            setattr(user, attr, headers.get(key))
+        user.uid = get_user_uid(headers)
+        add_user_claims(headers, user.uid, user)
         hash_user = claim_attribute_hash_user(user)
 
         self.assertEqual(hash_headers, hash_user)
 
     def test_claim_attribute_hash_headers_none_value(self):
-        headers = {key: None for key in claim_attribute_mapping.keys()}
+        headers = {_get_header_key(key): None for key in claim_attribute_mapping.keys()}
         hash_headers = claim_attribute_hash_headers(headers)
 
         user = User()

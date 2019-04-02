@@ -11,6 +11,10 @@ api_users:
     password: "secret"
     scopes: [read]
 
+oidc_id: "CMUID"
+oidc_prefix: "HTTP_OIDC_CLAIM_"
+oidc_uppercase: True
+
 mail:
   host: localhost
   port: 1025
