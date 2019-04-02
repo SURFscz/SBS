@@ -196,6 +196,7 @@ def ldap_ou(topic, base, ou, name, description):
 
 	elif not ldap_attributes_equal(attrs, result[0][1]):
 		ldif = modlist.modifyModlist(result[0][1], attrs)
+
 		try:
 			ldap_session.modify_s(dn, ldif)
 		except Exception as e:
@@ -229,13 +230,15 @@ def ldap_member(topic, id, base, role, uid, **kwargs):
 
 		try:
 			ldap_session.add_s(dn, ldif)
+
 		except Exception as e:
-			panic(f"Error during LDAP ADD MEMBER\n\tDN={dn}\n\tLDIF={attrs}\n\tERROR: {str(e)}")
+			panic(f"Error during LDAP ADD MEMBER\n\tDN={dn}\n\tLDIF={ldif}\n\tERROR: {str(e)}")
 
 		push_notification(topic, id)
 
 	elif not ldap_attributes_equal(attrs, result[0][1]):
 		ldif = modlist.modifyModlist(result[0][1], attrs)
+
 		try:
 			ldap_session.modify_s(dn, ldif)
 		except Exception as e:
@@ -317,6 +320,7 @@ def api(url, method='GET', headers=None, data=None):
 		log_error(f"API: {url} returns: {r.status_code}")
 
 	return None
+
 
 health = api(SBS_HOST+"/health")
 if not health or health['status'] != "UP":
@@ -458,6 +462,20 @@ for org in ldap_organisations():
 	if not org_validated:
 		# Org not found, remove it !
 		ldap_delete("O", org[0].split(',')[0].split('=')[1], org[0])
+
+result = ldap_session.search_s("olcDatabase={0}config,cn=config", ldap.SCOPE_SUBTREE, f"(objectclass=*)")
+#log_debug(f"CONFIG: {result[0][1]['olcAccess']}")
+
+log_info("Willing to adjust ACL...")
+
+n=0
+for i in result[0][1]['olcAccess']:
+	log_info(f"{i.decode()}")
+	n = n+1
+
+for o in organisations:
+	log_info(f"{{{n}}}to dn.subtree=\"ou={o['tenant_identifier']},{BASE_DN}\" by group=\"cn=admin,ou=groups,ou={o['tenant_identifier']},{BASE_DN}\" read by * break")
+	n = n+1
 
 ldap_session.unbind_s()
 
