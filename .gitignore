@@ -111,4 +111,5 @@ log
 # server config
 server/config/config.yml
 sbs-api.wsgi
+server/static/disclaimer.css
 
