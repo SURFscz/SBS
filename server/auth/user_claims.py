@@ -49,8 +49,16 @@ def _get_header_key(key):
     return res
 
 
+def _get_value(request_headers, key):
+    s = request_headers.get(key)
+    if s is None:
+        return None
+    res = bytes(s, "iso-8859-1").decode("utf-8")
+    return res
+
+
 def claim_attribute_hash_headers(headers):
-    claims = {_get_header_key(key): headers.get(_get_header_key(key)) for key in claim_attribute_mapping.keys()}
+    claims = {_get_header_key(key): _get_value(headers, _get_header_key(key)) for key in claim_attribute_mapping.keys()}
     return hash(frozenset(claims.items()))
 
 
@@ -61,7 +69,7 @@ def claim_attribute_hash_user(user: User):
 
 def add_user_claims(request_headers, uid, user):
     for key, attr in claim_attribute_mapping.items():
-        setattr(user, attr, request_headers.get(_get_header_key(key)))
+        setattr(user, attr, _get_value(request_headers, _get_header_key(key)))
     if _get_header_key(oidc_claim_name) not in request_headers:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
         user.name = name if name else user.nick_name if user.nick_name else uid
@@ -69,4 +77,4 @@ def add_user_claims(request_headers, uid, user):
 
 def get_user_uid(request_headers):
     uid_key = _get_header_key(current_app.app_config.oidc_id)
-    return request_headers.get(uid_key)
+    return _get_value(request_headers, uid_key)

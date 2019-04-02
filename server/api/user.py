@@ -8,7 +8,8 @@ from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
-from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_hash_user, add_user_claims
+from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_hash_user, add_user_claims, \
+    get_user_uid
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
 
@@ -126,7 +127,7 @@ def me():
 
     request_headers = current_request.environ.copy()
     request_headers.update(current_request.headers)
-    uid = request_headers.get(current_app.app_config.oidc_prefix + current_app.app_config.oidc_id)
+    uid = get_user_uid(request_headers)
     if uid:
         users = User.query.filter(User.uid == uid).all()
         user = users[0] if len(users) > 0 else None
