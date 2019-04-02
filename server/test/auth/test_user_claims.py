@@ -2,7 +2,7 @@ import random
 import string
 
 from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_mapping, claim_attribute_hash_user, \
-    _get_header_key, get_user_uid, add_user_claims
+    _get_header_key, get_user_uid, add_user_claims, _get_value
 from server.db.db import User
 from server.test.abstract_test import AbstractTest
 
@@ -35,3 +35,11 @@ class TestUserClaims(AbstractTest):
         hash_user = claim_attribute_hash_user(user)
 
         self.assertEqual(hash_headers, hash_user)
+
+    def test_iso_8859_to_utf8_conversion(self):
+        res = _get_value({"key": "VeÅ\x99ejnÃ©"}, "key")
+        self.assertEqual("Veřejné", res)
+
+    def test_iso_8859_to_utf8_conversion_with_none(self):
+        res = _get_value({"key": None}, "key")
+        self.assertIsNone(res)
