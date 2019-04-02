@@ -29,14 +29,15 @@ CREATE DATABASE sbs_test DEFAULT CHARACTER SET utf8;
 CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
 GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
 ```
-Ensure MySQL is running and run the Python server:
+Ensure MySQL is running and run the Python server with the correct local environment setting:
 ```
-PROFILE=local python -m server
+PROFILE=local CONFIG=config/test_config.yml python -m server
 ```
 With TESTING=1 no mails will be send. If you do want to validate the mails you can run a fake smtp server with:
 ```
 python -m smtpd -n -c DebuggingServer localhost:1025
 ```
+If you want the emails to be opened in the browser when developing add the `OPEN_MAIL_IN_BROWSER=1` to your environment
 
 #### [Client](#client)
 First install all dependencies with:
