@@ -19,12 +19,13 @@ user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
 def _log_headers():
+    logger = logging.getLogger()
     for k, v in current_request.environ.items():
-        current_app.logger.debug(f"ENV {k} value {v}")
+        logger.debug(f"ENV {k} value {v}")
     for k, v in current_request.headers.items():
-        current_app.logger.debug(f"Header {k} value {v}")
+        logger.debug(f"Header {k} value {v}")
     for k, v in os.environ.items():
-        current_app.logger.debug(f"OS environ {k} value {v}")
+        logger.debug(f"OS environ {k} value {v}")
 
 
 def _store_user_in_session(user):
