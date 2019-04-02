@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from functools import wraps
-
+from pathlib import Path
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
@@ -119,6 +119,8 @@ def config():
 @base_api.route("/info", strict_slashes=False)
 @json_endpoint
 def info():
-    file = f"{os.path.dirname(os.path.realpath(__file__))}/git.info"
-    with open(file) as f:
-        return {"git": f.read()}, 200
+    file = Path(f"{os.path.dirname(os.path.realpath(__file__))}/git.info")
+    if file.is_file():
+        with open(file) as f:
+            return {"git": f.read()}, 200
+    return {"git": "nope"}, 200
