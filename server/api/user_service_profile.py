@@ -1,3 +1,5 @@
+import logging
+
 from flask import Blueprint
 from sqlalchemy.orm import contains_eager
 
@@ -16,6 +18,8 @@ user_service_profile_api = Blueprint("user_service_profiles_api", __name__, url_
 @json_endpoint
 def attributes():
     confirm_read_access()
+    logger = logging.getLogger("user_claims")
+
     uid = query_param("uid")
     service_entity_id = query_param("service_entity_id")
     user_service_profiles = UserServiceProfile.query \
@@ -24,6 +28,7 @@ def attributes():
         .filter(User.uid == uid)\
         .all()
     if len(user_service_profiles) is 0:
+        logger.debug(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
         return {}, 200
     result = {}
     user = user_service_profiles[0].user
@@ -45,6 +50,8 @@ def attributes():
     is_member_of = list(set(authorisation_group_short_names + collaboration_names))
     result.setdefault(is_member_of_saml, []).extend(is_member_of)
     result = {k: list(set(v)) for k, v in result.items()}
+
+    logger.debug(f"Returning attributes for user {uid} and service_entity_id {service_entity_id}")
     return result, 200
 
 
