@@ -463,19 +463,26 @@ for org in ldap_organisations():
 		# Org not found, remove it !
 		ldap_delete("O", org[0].split(',')[0].split('=')[1], org[0])
 
-result = ldap_session.search_s("olcDatabase={0}config,cn=config", ldap.SCOPE_SUBTREE, f"(objectclass=*)")
-#log_debug(f"CONFIG: {result[0][1]['olcAccess']}")
+def adjust_acl(config):
+    log_info("Willing to adjust ACL...")
 
-log_info("Willing to adjust ACL...")
+    # log_debug(f"CONFIG: {config[0][1]['olcAccess']}")
 
-n=0
-for i in result[0][1]['olcAccess']:
-	log_info(f"{i.decode()}")
-	n = n+1
+    n = 0
+    for i in config[0][1]['olcAccess']:
+        log_info(f"{i.decode()}")
+        n = n + 1
 
-for o in organisations:
-	log_info(f"{{{n}}}to dn.subtree=\"ou={o['tenant_identifier']},{BASE_DN}\" by group=\"cn=admin,ou=groups,ou={o['tenant_identifier']},{BASE_DN}\" read by * break")
-	n = n+1
+    for o in organisations:
+        log_info(f"{{{n}}}to dn.subtree=\"ou={o['tenant_identifier']},{BASE_DN}\" \
+            by group=\"cn=admin,ou=groups,ou={o['tenant_identifier']},{BASE_DN}\" read by * break")
+
+        n = n + 1
+
+try:
+    adjust_acl(ldap_session.search_s("olcDatabase={0}config,cn=config", ldap.SCOPE_SUBTREE, f"(objectclass=*)"))
+except:
+    log_info("Skiking ACL modifications")
 
 ldap_session.unbind_s()
 
