@@ -52,7 +52,6 @@ jobs:
             CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
             GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
           "
-        - cp ./server/config/config.yml.sample ./server/config/config.yml
       script:
         - pytest --cov=server server/test
         - flake8 ./server/
@@ -65,14 +64,3 @@ jobs:
         - cd ..
       after_success:
         - "codecov --token=$CODECOV_TOKEN"
-
-    #######################################################
-    ## Build and upload docker images #####################
-    #######################################################
-    - stage: build containers
-      script:
-        - ./scripts/build-server.sh
-      after_success:
-        - >
-          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - docker push surfscz/sbs-server
