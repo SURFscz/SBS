@@ -55,6 +55,8 @@ def _get_value(request_headers, key):
     if s is None:
         logger.debug(f"Returning None for key {key}")
         return None
+    if current_app.config["LOCAL"]:
+        return s
     res = bytes(s, "iso-8859-1").decode("utf-8")
     logger.debug(f"Returning {res} for key {key} with original value {s}")
     return res
