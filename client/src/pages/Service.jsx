@@ -226,10 +226,12 @@ class Service extends React.Component {
                                 onChange={e => this.setState({description: e.target.value})}
                                 disabled={!isAdmin}/>
 
-                    <InputField value={address}
-                                name={I18n.t("service.address")}
-                                placeholder={I18n.t("service.addressPlaceholder")}
-                                onChange={e => this.setState({address: e.target.value})}
+                    <InputField value={uri}
+                                name={I18n.t("service.uri")}
+                                placeholder={I18n.t("service.uriPlaceholder")}
+                                onChange={e => this.setState({uri: e.target.value})}
+                                toolTip={I18n.t("service.uriTooltip")}
+                                externalLink={true}
                                 disabled={!isAdmin}/>
 
                     <InputField value={identity_type}
@@ -237,14 +239,6 @@ class Service extends React.Component {
                                 placeholder={I18n.t("service.identity_typePlaceholder")}
                                 onChange={e => this.setState({identity_type: e.target.value})}
                                 toolTip={I18n.t("service.identity_typeTooltip")}
-                                disabled={!isAdmin}/>
-
-                    <InputField value={uri}
-                                name={I18n.t("service.uri")}
-                                placeholder={I18n.t("service.uriPlaceholder")}
-                                onChange={e => this.setState({uri: e.target.value})}
-                                toolTip={I18n.t("service.uriTooltip")}
-                                externalLink={true}
                                 disabled={!isAdmin}/>
 
                     <SelectField value={this.statusOptions.find(option => status === option.value)}
@@ -255,6 +249,12 @@ class Service extends React.Component {
                                  disabled={!isAdmin}
                                  onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}
                     />
+
+                    <InputField value={address}
+                                name={I18n.t("service.address")}
+                                placeholder={I18n.t("service.addressPlaceholder")}
+                                onChange={e => this.setState({address: e.target.value})}
+                                disabled={!isAdmin}/>
 
                     <InputField value={contact_email}
                                 name={I18n.t("service.contact_email")}
