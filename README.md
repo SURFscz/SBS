@@ -78,7 +78,7 @@ To run all JavaScript tests:
 cd client
 yarn test
 ```
-Or to run all the tests and do not watch:
+Or to run all the tests and do not watch - like CI:
 ```
 cd client
 CI=true yarn test
