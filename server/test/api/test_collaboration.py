@@ -180,11 +180,14 @@ class TestCollaboration(AbstractTest):
             self.put("/api/collaborations/invites", body={
                 "collaboration_id": collaboration_id,
                 "administrators": ["new@example.org", "pop@example.org"],
-                "message": "Please join"
+                "message": "Please join",
+                "intended_role": "admin"
             })
             post_count = Invitation.query.count()
             self.assertEqual(2, len(outbox))
             self.assertEqual(pre_count + 2, post_count)
+            invitations = Invitation.query.filter(Invitation.invitee_email == "new@example.org").all()
+            self.assertEqual("admin", invitations[0].intended_role)
 
     def test_my_collaborations_lite(self):
         self.login("urn:jane")

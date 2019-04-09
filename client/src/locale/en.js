@@ -175,6 +175,7 @@ I18n.translations.en = {
         administratorsTooltip: "Administrators of an collaboration <br/>can edit their collaborations and<br/>invite members.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-on using <br/>the enter key.",
         members: "Members",
         admin: "Administrator",
+        selectRole: "Select a role...",
         manager: "Manager",
         member: "Member",
         flash: {
@@ -400,6 +401,7 @@ I18n.translations.en = {
         intendedRoleTooltip: "The intended role for all invitees.<br/><br/>Administrators of an collaboration<br/>can edit their collaborations and<br/>invite members.<br/>Members can only use the services of <br/>their authorisation groups",
         invitee_email: "Invitee email",
         requiredEmail: "At least one email is required for an invitation for a collaboration",
+        requiredRole: "You must choose the intended role for the collaboration membership",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
         messageTooltip: "The message will be included in the<br/>email invitation to the administrators.",

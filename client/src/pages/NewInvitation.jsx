@@ -38,7 +38,7 @@ class NewInvitation extends React.Component {
             fileEmails: [],
             fileTypeError: false,
             fileInputKey: new Date().getMilliseconds(),
-            intended_role: "member",
+            intended_role: undefined,
             message: "",
             expiry_date: moment().add(14, "days").toDate(),
             initial: true,
@@ -65,16 +65,17 @@ class NewInvitation extends React.Component {
     };
 
     isValid = () => {
-        const {administrators, fileEmails} = this.state;
-        return !isEmpty(administrators) || !isEmpty(fileEmails);
+        const {administrators, fileEmails, intended_role} = this.state;
+        return (!isEmpty(administrators) || !isEmpty(fileEmails)) && !isEmpty(intended_role);
     };
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {administrators, message, collaboration, expiry_date, fileEmails} = this.state;
+            const {administrators, message, collaboration, expiry_date, fileEmails, intended_role} = this.state;
             collaborationInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
+                intended_role: intended_role,
                 collaboration_id: collaboration.id,
                 expiry_date: expiry_date.getTime() / 1000
             }).then(res => {
@@ -116,6 +117,7 @@ class NewInvitation extends React.Component {
             const uniqueEmails = [...new Set(administrators.concat(emails))];
             this.setState({email: "", administrators: uniqueEmails});
         }
+        return true;
     };
 
     onFileRemoval = e => {
@@ -176,18 +178,6 @@ class NewInvitation extends React.Component {
                     <p className="title">{I18n.t("invitation.createTitle", {collaboration: collaboration.name})}</p>
                 </div>
                 <div className="new-collaboration-invitation">
-                    <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
-                                 options={this.intendedRolesOptions}
-                                 name={I18n.t("invitation.intendedRole")}
-                                 toolTip={I18n.t("invitation.intendedRoleTooltip")}
-                                 onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
-
-                    <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}
-                                name={I18n.t("collaboration.message")}
-                                toolTip={I18n.t("invitation.inviteesTooltip")}
-                                multiline={true}/>
-
                     <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                                 placeholder={I18n.t("invitation.inviteesPlaceholder")}
                                 name={I18n.t("invitation.invitees")}
@@ -220,6 +210,22 @@ class NewInvitation extends React.Component {
                                 <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
                             </div>)}
                     </section>
+
+                    <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
+                                 options={this.intendedRolesOptions}
+                                 name={I18n.t("invitation.intendedRole")}
+                                 toolTip={I18n.t("invitation.intendedRoleTooltip")}
+                                 placeholder={I18n.t("collaboration.selectRole")}
+                                 onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
+                    {(!initial && isEmpty(intended_role)) &&
+                    <span
+                        className="error">{I18n.t("invitation.requiredRole")}</span>}
+
+                    <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                                placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}
+                                name={I18n.t("collaboration.message")}
+                                toolTip={I18n.t("invitation.inviteesTooltip")}
+                                multiline={true}/>
 
                     <DateField value={expiry_date}
                                onChange={e => this.setState({expiry_date: e})}
