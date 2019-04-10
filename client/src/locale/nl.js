@@ -595,7 +595,7 @@ I18n.translations.nl = {
     not_found: {
         title: "404",
         description_html: "Deze pagina kan niet worden gevonden.",
-        loginLink: "Consider to login..."
+        loginLink: "LOGIN"
     },
 
     footer: {
