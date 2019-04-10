@@ -178,7 +178,7 @@ def seed(db):
 
     invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
                             expiry_date=default_expiry_date(), user=admin, message="Please join...",
-                            intended_role="member")
+                            intended_role="admin")
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
                                   expiry_date=datetime.date.today() - datetime.timedelta(days=21), user=admin,
                                   intended_role="member",

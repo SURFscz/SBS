@@ -38,7 +38,7 @@ class TestInvitation(AbstractTest):
             .join(CollaborationMembership.user) \
             .filter(User.uid == "urn:james") \
             .one()
-        self.assertEqual("member", collaboration_membership.role)
+        self.assertEqual("admin", collaboration_membership.role)
 
     def test_accept_already_member(self):
         self.login("urn:jane")
