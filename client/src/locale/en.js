@@ -594,7 +594,7 @@ I18n.translations.en = {
     not_found: {
         title: "404",
         description_html: "The requested page could not be found",
-        loginLink: "Consider to login..."
+        loginLink: "LOGIN"
     },
     footer: {
         product: "Powered by SCZ",
