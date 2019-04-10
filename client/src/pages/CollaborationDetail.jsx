@@ -1,6 +1,5 @@
 import React from "react";
 import {
-    authorisationGroupShortNameExists,
     collaborationById,
     collaborationLiteById,
     collaborationNameExists, collaborationShortNameExists,
@@ -185,12 +184,10 @@ class CollaborationDetail extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
-    validateCollaborationShortName = e => {
-        const {originalCollaboration, short_name} = this.state;
-        collaborationShortNameExists(e.target.value, originalCollaboration).then(json => {
+    validateCollaborationShortName = e =>
+        collaborationShortNameExists(e.target.value, this.state.originalCollaboration.short_name).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
-    };
 
     isValid = () => {
         const {required, alreadyExists} = this.state;
