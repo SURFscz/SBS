@@ -18,6 +18,7 @@
             margin-left: auto;
             font-size: 16px;
         }
+
         svg.fa-info-circle {
             color: $blue;
             font-size: 14px;
@@ -32,6 +33,11 @@
         margin: 0 auto;
         display: flex;
         flex-direction: row;
+
+        @media (max-width: $tablet-max) {
+            flex-direction: column;
+        }
+
         justify-content: space-between;
         align-items: stretch;
 
@@ -42,6 +48,11 @@
             box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
             padding: 15px 10px;
             width: calc(25% - 2em);
+
+            @media (max-width: $tablet-max) {
+                width: 100%;
+            }
+
             display: flex;
             flex-direction: column;
 
