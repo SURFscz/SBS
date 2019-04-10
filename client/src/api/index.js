@@ -91,7 +91,7 @@ export function config() {
 
 //Users
 export function me(config) {
-    const headers = (config.local && false) ? {
+    const headers = (config.local) ? {
         "OIDC_CLAIM_cmuid": "urn:john",
         "OIDC_CLAIM_Nickname": "jëhny",
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
@@ -180,6 +180,10 @@ export function createCollaboration(collaboration) {
 
 export function collaborationNameExists(name, existingCollaboration = null) {
     return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&existing_collaboration=${encodeURIComponent(existingCollaboration)}`);
+}
+
+export function collaborationShortNameExists(shortName, existingCollaboration = null) {
+    return fetchJson(`/api/collaborations/short_name_exists?short_name=${encodeURIComponent(shortName)}&existing_collaboration=${encodeURIComponent(existingCollaboration)}`);
 }
 
 export function collaborationInvitations(body) {

@@ -2,7 +2,8 @@ from base64 import b64encode
 
 from server.db.db import Collaboration, Organisation, Invitation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uuc_name, uva_research_name, john_name
+from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uuc_name, uva_research_name, john_name, \
+    ai_computing_short_name
 
 
 class TestCollaboration(AbstractTest):
@@ -152,6 +153,22 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(False, res)
 
         res = self.get("/api/collaborations/name_exists", query_data={"name": "xyc", "existing_collaboration": "xyc"})
+        self.assertEqual(False, res)
+
+    def test_collaboration_short_name_exists(self):
+        res = self.get("/api/collaborations/short_name_exists", query_data={"short_name": ai_computing_short_name})
+        self.assertEqual(True, res)
+
+        res = self.get("/api/collaborations/short_name_exists",
+                       query_data={"short_name": ai_computing_name,
+                                   "existing_collaboration": ai_computing_short_name.upper()})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/collaborations/short_name_exists", query_data={"short_name": "xyc"})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/collaborations/short_name_exists",
+                       query_data={"short_name": "xyc", "existing_collaboration": "xyc"})
         self.assertEqual(False, res)
 
     def test_collaboration_services_by_id(self):

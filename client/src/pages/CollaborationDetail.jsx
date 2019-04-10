@@ -1,8 +1,9 @@
 import React from "react";
 import {
+    authorisationGroupShortNameExists,
     collaborationById,
     collaborationLiteById,
-    collaborationNameExists,
+    collaborationNameExists, collaborationShortNameExists,
     deleteCollaboration,
     deleteCollaborationMembership,
     updateCollaboration,
@@ -39,6 +40,7 @@ class CollaborationDetail extends React.Component {
         this.state = {
             originalCollaboration: null,
             name: "",
+            short_name: "",
             description: "",
             accepted_user_policy: "",
             access_type: "",
@@ -46,7 +48,7 @@ class CollaborationDetail extends React.Component {
             enrollment: "",
             members: [],
             filteredMembers: [],
-            required: ["name"],
+            required: ["name", "short_name"],
             alreadyExists: {},
             initial: true,
             sorted: "user__name",
@@ -183,6 +185,13 @@ class CollaborationDetail extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
+    validateCollaborationShortName = e => {
+        const {originalCollaboration, short_name} = this.state;
+        collaborationShortNameExists(e.target.value, originalCollaboration).then(json => {
+            this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
+        });
+    };
+
     isValid = () => {
         const {required, alreadyExists} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
@@ -243,12 +252,12 @@ class CollaborationDetail extends React.Component {
                     {(showMore && !showMoreItems ? joinRequests.slice(0, 5) : joinRequests)
                         .sort((r1, r2) => r1.user.name.localeCompare(r2.user.name))
                         .map((request, i) =>
-                        <div className="join-request" key={i}>
-                            <a href={`/join-requests/${request.id}`} onClick={this.openJoinRequest(request)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{request.user.name}</span>
-                            </a>
-                        </div>)}
+                            <div className="join-request" key={i}>
+                                <a href={`/join-requests/${request.id}`} onClick={this.openJoinRequest(request)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{request.user.name}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"
@@ -274,13 +283,13 @@ class CollaborationDetail extends React.Component {
                     {(showMore && !showMoreItems ? authorisationGroups.slice(0, 5) : authorisationGroups)
                         .sort((a1, a2) => a1.name.localeCompare(a2.name))
                         .map((authorisationGroup, i) =>
-                        <div className="collaboration-authorisations" key={i}>
-                            <a href={`/authorisationGroups/${authorisationGroup.id}`}
-                               onClick={this.openAuthorisationGroupDetails(authorisationGroup)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{authorisationGroup.name}</span>
-                            </a>
-                        </div>)}
+                            <div className="collaboration-authorisations" key={i}>
+                                <a href={`/authorisationGroups/${authorisationGroup.id}`}
+                                   onClick={this.openAuthorisationGroupDetails(authorisationGroup)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{authorisationGroup.name}</span>
+                                </a>
+                            </div>)}
                 </div>
                 <section className="show-more">
                     {showMore && <Button className="white"
@@ -307,12 +316,12 @@ class CollaborationDetail extends React.Component {
                     {(showMore && !showMoreItems ? invitations.slice(0, 5) : invitations)
                         .sort((i1, i2) => i1.invitee_email.localeCompare(i2.invitee_email))
                         .map((invitation, i) =>
-                        <div className="invitation" key={i}>
-                            <a href={`/invitations/${invitation.id}`} onClick={this.openInvitation(invitation)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{invitation.invitee_email}</span>
-                            </a>
-                        </div>)}
+                            <div className="invitation" key={i}>
+                                <a href={`/invitations/${invitation.id}`} onClick={this.openInvitation(invitation)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{invitation.invitee_email}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"
@@ -337,13 +346,13 @@ class CollaborationDetail extends React.Component {
                     {(showMore && !showMoreItems ? services.slice(0, 5) : services)
                         .sort((s1, s2) => s1.name.localeCompare(s2.name))
                         .map((service, i) =>
-                        <div className="collaboration-services" key={i}>
-                            <a href={`/services/${service.id}`}
-                               onClick={this.openServiceDetails(collaboration, service)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{service.name}</span>
-                            </a>
-                        </div>)}
+                            <div className="collaboration-services" key={i}>
+                                <a href={`/services/${service.id}`}
+                                   onClick={this.openServiceDetails(collaboration, service)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{service.name}</span>
+                                </a>
+                            </div>)}
                 </div>
                 <section className="show-more">
                     {showMore && <Button className="white"
@@ -442,7 +451,7 @@ class CollaborationDetail extends React.Component {
         );
     };
 
-    collaborationDetails = (name, alreadyExists, initial, description, accepted_user_policy, enrollment,
+    collaborationDetails = (name, short_name, alreadyExists, initial, description, accepted_user_policy, enrollment,
                             access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
                             config) => {
         const joinRequestUrl = `${config.base_url}/registration?collaboration=${encodeURIComponent(originalCollaboration.name)}`;
@@ -465,6 +474,26 @@ class CollaborationDetail extends React.Component {
             {(!initial && isEmpty(name)) && <span
                 className="error">{I18n.t("collaboration.required", {
                 attribute: I18n.t("collaboration.name").toLowerCase()
+            })}</span>}
+
+            <InputField value={short_name}
+                        name={I18n.t("collaboration.shortName")}
+                        placeholder={I18n.t("collaboration.shortNamePlaceholder")}
+                        onBlur={this.validateCollaborationShortName}
+                        onChange={e => this.setState({
+                            short_name: e.target.value,
+                            alreadyExists: {...this.state.alreadyExists, short_name: false}
+                        })}
+                        toolTip={I18n.t("collaboration.shortNameTooltip")}
+                        disabled={!isAdmin}/>
+            {alreadyExists.short_name && <span
+                className="error">{I18n.t("collaboration.alreadyExists", {
+                attribute: I18n.t("collaboration.shortName").toLowerCase(),
+                value: short_name
+            })}</span>}
+            {(!initial && isEmpty(short_name)) && <span
+                className="error">{I18n.t("collaboration.required", {
+                attribute: I18n.t("collaboration.shortName").toLowerCase()
             })}</span>}
 
             {isAdmin && <InputField value={joinRequestUrl}
@@ -527,7 +556,7 @@ class CollaborationDetail extends React.Component {
 
     render() {
         const {
-            originalCollaboration, name, description, accepted_user_policy, access_type, initial, alreadyExists,
+            originalCollaboration, name, short_name, description, accepted_user_policy, access_type, initial, alreadyExists,
             identifier, enrollment, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             adminOfCollaboration
@@ -572,7 +601,7 @@ class CollaborationDetail extends React.Component {
             <div className="title">
                 <p>{I18n.t("collaborationDetail.title", {name: originalCollaboration.name})}</p>
             </div>
-            {this.collaborationDetails(name, alreadyExists, initial, description, accepted_user_policy,
+            {this.collaborationDetails(name, short_name, alreadyExists, initial, description, accepted_user_policy,
                 enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
                 config)}
         </div>)

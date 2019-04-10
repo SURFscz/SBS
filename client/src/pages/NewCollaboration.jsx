@@ -1,6 +1,6 @@
 import React from "react";
 import "./NewCollaboration.scss";
-import {collaborationNameExists, createCollaboration, myOrganisationsLite} from "../api";
+import {collaborationNameExists, collaborationShortNameExists, createCollaboration, myOrganisationsLite} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
@@ -22,6 +22,7 @@ class NewCollaboration extends React.Component {
         }));
         this.state = {
             name: "",
+            short_name:"",
             description: "",
             access_type: this.accessTypeOptions[0].value,
             administrators: [this.props.user.email],
@@ -30,7 +31,7 @@ class NewCollaboration extends React.Component {
             accepted_user_policy: "",
             enrollment: "",
             status: "",
-            required: ["name", "organisation"],
+            required: ["name", "short_name", "organisation"],
             alreadyExists: {},
             organisation: undefined,
             organisations: [],
@@ -57,6 +58,11 @@ class NewCollaboration extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
+    validateCollaborationShortName = e =>
+        collaborationShortNameExists(e.target.value).then(json => {
+            this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
+        });
+
     cancel = () => {
         this.setState({confirmationDialogOpen: true});
     };
@@ -70,11 +76,11 @@ class NewCollaboration extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {
-                name, description, access_type, enrollment,
+                name, short_name, description, access_type, enrollment,
                 administrators, message, accepted_user_policy, organisation
             } = this.state;
             createCollaboration({
-                name, description, enrollment, access_type,
+                name, short_name, description, enrollment, access_type,
                 administrators, message, accepted_user_policy, organisation_id: organisation.value
             }).then(res => {
                 this.props.history.push("/home");
@@ -121,7 +127,7 @@ class NewCollaboration extends React.Component {
 
     render() {
         const {
-            name, description, access_type, administrators, message, accepted_user_policy, enrollment, organisation, organisations, email, initial, alreadyExists,
+            name, short_name, description, access_type, administrators, message, accepted_user_policy, enrollment, organisation, organisations, email, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
@@ -161,6 +167,26 @@ class NewCollaboration extends React.Component {
                     {(!initial && isEmpty(name)) && <span
                         className="error">{I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.name").toLowerCase()
+                    })}</span>}
+
+                    <InputField value={short_name} onChange={e => {
+                        this.setState({
+                            short_name: e.target.value,
+                            alreadyExists: {...this.state.alreadyExists, short_name: false}
+                        })
+                    }}
+                                placeholder={I18n.t("collaboration.shortNamePlaceholder")}
+                                onBlur={this.validateCollaborationShortName}
+                                toolTip={I18n.t("collaboration.shortNameTooltip")}
+                                name={I18n.t("collaboration.shortName")}/>
+                    {alreadyExists.short_name && <span
+                        className="error">{I18n.t("collaboration.alreadyExists", {
+                        attribute: I18n.t("collaboration.shortName").toLowerCase(),
+                        value: short_name
+                    })}</span>}
+                    {(!initial && isEmpty(short_name)) && <span
+                        className="error">{I18n.t("collaboration.required", {
+                        attribute: I18n.t("collaboration.shortName").toLowerCase()
                     })}</span>}
 
                     <InputField value={description} onChange={e => this.setState({description: e.target.value})}
