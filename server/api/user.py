@@ -6,7 +6,7 @@ from flask import Blueprint, request as current_request, session, current_app, j
 from sqlalchemy import text, or_
 from sqlalchemy.orm import contains_eager
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
 from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_hash_user, add_user_claims, \
     get_user_uid
@@ -80,6 +80,7 @@ def user_search():
 
     base_query += " WHERE 1=1 "
     if q != "*":
+        q = replace_full_text_search_boolean_mode_chars(q)
         base_query += f"AND MATCH (u.name, u.email) AGAINST ('{q}*' IN BOOLEAN MODE) " \
             f"AND u.id > 0 "
 

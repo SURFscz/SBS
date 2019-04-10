@@ -31,6 +31,9 @@ class TestUser(AbstractTest):
         res = self.get("/api/users/search", query_data={"q": "roger"})
         self.assertEqual(1, len(res))
 
+        res = self.get("/api/users/search", query_data={"q": "roger@roger"})
+        self.assertEqual(1, len(res))
+
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
 
         res = self.get("/api/users/search", query_data={"q": "john", "organisation_id": organisation_id})

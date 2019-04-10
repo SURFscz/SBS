@@ -2,7 +2,7 @@ from flask import Blueprint
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, contains_eager
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin
 from server.db.db import Service, db, Collaboration, UserServiceProfile
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -19,6 +19,7 @@ def service_search():
     q = query_param("q")
     base_query = "SELECT id, entity_id, name, description FROM services "
     if q != "*":
+        q = replace_full_text_search_boolean_mode_chars(q)
         base_query += f"WHERE MATCH (name, entity_id, description) AGAINST ('{q}*' IN BOOLEAN MODE) " \
             f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
     sql = text(base_query)
