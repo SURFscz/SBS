@@ -10,7 +10,6 @@ export default function Footer() {
                          rel="noopener noreferrer">{I18n.t("footer.product")}</a></span>
                 <span><a href={I18n.t("footer.privacyLink")} target="_blank"
                          rel="noopener noreferrer">{I18n.t("footer.privacy")}</a></span>
-                <span><a href={I18n.t("footer.contactLink")}>{I18n.t("footer.contact")}</a></span>
             </div>
         </div>
     );
