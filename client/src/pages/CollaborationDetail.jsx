@@ -510,19 +510,19 @@ class CollaborationDetail extends React.Component {
                         name={I18n.t("collaboration.accepted_user_policy")}
                         disabled={!isAdmin}/>
 
-            <InputField value={enrollment}
-                        onChange={e => this.setState({enrollment: e.target.value})}
-                        placeholder={I18n.t("collaboration.enrollmentPlaceholder")}
-                        toolTip={I18n.t("collaboration.enrollmentTooltip")}
-                        name={I18n.t("collaboration.enrollment")}
-                        disabled={!isAdmin}/>
+            {/*<InputField value={enrollment}*/}
+            {/*            onChange={e => this.setState({enrollment: e.target.value})}*/}
+            {/*            placeholder={I18n.t("collaboration.enrollmentPlaceholder")}*/}
+            {/*            toolTip={I18n.t("collaboration.enrollmentTooltip")}*/}
+            {/*            name={I18n.t("collaboration.enrollment")}*/}
+            {/*            disabled={!isAdmin}/>*/}
 
-            <SelectField value={this.accessTypeOptions.find(option => option.value === access_type)}
-                         options={this.accessTypeOptions}
-                         name={I18n.t("collaboration.access_type")}
-                         placeholder={I18n.t("collaboration.accessTypePlaceholder")}
-                         onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}
-                         disabled={!isAdmin}/>
+            {/*<SelectField value={this.accessTypeOptions.find(option => option.value === access_type)}*/}
+            {/*             options={this.accessTypeOptions}*/}
+            {/*             name={I18n.t("collaboration.access_type")}*/}
+            {/*             placeholder={I18n.t("collaboration.accessTypePlaceholder")}*/}
+            {/*             onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}*/}
+            {/*             disabled={!isAdmin}/>*/}
 
             <InputField value={identifier}
                         name={I18n.t("collaboration.identifier")}

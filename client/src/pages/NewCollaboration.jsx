@@ -127,7 +127,7 @@ class NewCollaboration extends React.Component {
 
     render() {
         const {
-            name, short_name, description, access_type, administrators, message, accepted_user_policy, enrollment, organisation, organisations, email, initial, alreadyExists,
+            name, short_name, description, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
@@ -198,18 +198,18 @@ class NewCollaboration extends React.Component {
                                 placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
                                 name={I18n.t("collaboration.accepted_user_policy")}/>
 
-                    <InputField value={enrollment}
-                                onChange={e => this.setState({enrollment: e.target.value})}
-                                placeholder={I18n.t("collaboration.enrollmentPlaceholder")}
-                                toolTip={I18n.t("collaboration.enrollmentTooltip")}
-                                name={I18n.t("collaboration.enrollment")}/>
+                    {/*<InputField value={enrollment}*/}
+                    {/*            onChange={e => this.setState({enrollment: e.target.value})}*/}
+                    {/*            placeholder={I18n.t("collaboration.enrollmentPlaceholder")}*/}
+                    {/*            toolTip={I18n.t("collaboration.enrollmentTooltip")}*/}
+                    {/*            name={I18n.t("collaboration.enrollment")}/>*/}
 
-                    <SelectField value={this.accessTypeOptions.find(option => option.value === access_type)}
-                                 options={this.accessTypeOptions}
-                                 name={I18n.t("collaboration.access_type")}
-                                 placeholder={I18n.t("collaboration.accessTypePlaceholder")}
-                                 onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}
-                    />
+                    {/*<SelectField value={this.accessTypeOptions.find(option => option.value === access_type)}*/}
+                    {/*             options={this.accessTypeOptions}*/}
+                    {/*             name={I18n.t("collaboration.access_type")}*/}
+                    {/*             placeholder={I18n.t("collaboration.accessTypePlaceholder")}*/}
+                    {/*             onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}*/}
+                    {/*/>*/}
 
                     <SelectField value={organisation}
                                  options={organisations}
