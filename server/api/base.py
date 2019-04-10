@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 from functools import wraps
 from pathlib import Path
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
@@ -42,6 +43,10 @@ def query_param(key, required=True, default=None):
     if required and value is None:
         raise BadRequest(f"Query parameter {key} is required, but missing")
     return value
+
+
+def replace_full_text_search_boolean_mode_chars(input_param):
+    return re.sub("[\\W]", " ", input_param)
 
 
 def get_user(config, auth):

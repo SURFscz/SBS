@@ -7,7 +7,7 @@ from sqlalchemy import text, or_, func
 from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member, confirm_authorized_api_call, \
     confirm_allow_impersonation
@@ -67,6 +67,7 @@ def collaboration_search():
     q = query_param("q")
     base_query = "SELECT id, name, description, organisation_id FROM collaborations "
     if q != "*":
+        q = replace_full_text_search_boolean_mode_chars(q)
         base_query += f"WHERE MATCH (name, description) AGAINST ('{q}*' IN BOOLEAN MODE) " \
             f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
     sql = text(base_query)
