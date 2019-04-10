@@ -39,6 +39,18 @@ def name_exists():
     return coll is not None, 200
 
 
+@collaboration_api.route("/short_name_exists", strict_slashes=False)
+@json_endpoint
+def short_name_exists():
+    name = query_param("short_name")
+    existing_collaboration = query_param("existing_collaboration", required=False, default="")
+    coll = Collaboration.query.options(load_only("id")) \
+        .filter(func.lower(Collaboration.short_name) == func.lower(name)) \
+        .filter(func.lower(Collaboration.short_name) != func.lower(existing_collaboration)) \
+        .first()
+    return coll is not None, 200
+
+
 @collaboration_api.route("/all", strict_slashes=False)
 @json_endpoint
 def collaboration_all():

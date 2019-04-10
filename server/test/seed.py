@@ -22,6 +22,7 @@ invitation_hash_no_way = token_urlsafe()
 
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
+ai_computing_short_name = "ai_computing"
 uuc_name = "UUC"
 amsterdam_uva_name = "Amsterdam UVA"
 
@@ -114,7 +115,8 @@ def seed(db):
                                  identifier=collaboration_ai_computing_uuid,
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
                                  organisation=uuc, services=[mail, network], enrollment="Form",
-                                 join_requests=[], invitations=[], access_type="open")
+                                 join_requests=[], invitations=[], access_type="open",
+                                 short_name=ai_computing_short_name)
     uva_research = Collaboration(name=uva_research_name,
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",

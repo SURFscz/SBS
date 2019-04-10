@@ -182,6 +182,7 @@ class Collaboration(Base, db.Model):
     name = db.Column("name", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=True)
+    short_name = db.Column("short_name", db.String(length=255), nullable=True)
     access_type = db.Column("access_type", db.String(length=255), nullable=True)
     enrollment = db.Column("enrollment", db.String(length=255), nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
