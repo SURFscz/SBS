@@ -4,12 +4,12 @@ import "./UserProfile.scss";
 import CheckBox from "./CheckBox";
 import {isEmpty} from "../utils/Utils";
 
-function addUserAttribute(user, attribute, split = false) {
-    return isEmpty(user[attribute]) ? null : <li>
+function addUserAttribute(user, attribute, index, split = false) {
+    return isEmpty(user[attribute]) ? null : <li key={index}>
         <span>{`${I18n.t(`profile.${attribute}`)}:`}</span>
         {split ? <span className="value">
                     <ul className="split-values">
-                        {user[attribute].split(",").map(part => <li className="value">{part}</li>)}
+                        {user[attribute].split(",").map((part, index) => <li key={index} className="value">{part}</li>)}
                     </ul>
                 </span> : <span className="value">{user[attribute]}</span>}
     </li>;
@@ -30,14 +30,14 @@ export default function UserProfile({currentUser}) {
     const splitAttributes = ["edu_members"];
     return (
         <ul className="user-profile">
-            {attributes.map(attr => addUserAttribute(currentUser, attr, splitAttributes.includes(attr)))}
+            {attributes.map((attr, index) => addUserAttribute(currentUser, attr, index, splitAttributes.includes(attr)))}
             {showCollaborations &&
             <ul>
                 <li>
                     <span className="section">{I18n.t("profile.collaborations")}</span>
                 </li>
-                {collaborationAdmins.concat(collaborationMembers).map(membership =>
-                    <li>
+                {collaborationAdmins.concat(collaborationMembers).map((membership, index) =>
+                    <li key={index}>
                         <span>{membership.collaboration.name}</span>
                         <span className="value">{I18n.t(`profile.${membership.role}`)}</span>
                     </li>
@@ -50,8 +50,8 @@ export default function UserProfile({currentUser}) {
                 <li>
                     <span className="section">{I18n.t("profile.organisations")}</span>
                 </li>
-                {organisationAdmins.concat(organisationMembers).map(membership =>
-                    <li>
+                {organisationAdmins.concat(organisationMembers).map((membership, index )=>
+                    <li key={index}>
                         <span>{membership.organisation.name}</span>
                         <span className="value">{I18n.t(`profile.${membership.role}`)}</span>
                     </li>

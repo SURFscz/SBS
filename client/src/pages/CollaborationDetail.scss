@@ -69,6 +69,10 @@
         justify-content: space-between;
         align-items: stretch;
 
+        @media (max-width: $tablet-max) {
+            flex-direction: column;
+        }
+
         .info-block {
             border-radius: $br;
             background-color: white;
@@ -76,6 +80,11 @@
             box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
             padding: 15px 10px;
             width: calc(25% - 2em);
+
+            @media (max-width: $tablet-max) {
+                width: 100%;
+            }
+
             display: flex;
             flex-direction: column;
 
