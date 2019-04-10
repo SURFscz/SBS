@@ -147,6 +147,9 @@ I18n.translations.nl = {
         actions: "",
         name: "Naam",
         namePlaceHolder: "De unieke naam van de samenwerking",
+        shortName: "Korte naam",
+        shortNamePlaceholder: "Korte naam van de samenwerking",
+        shortNameTooltip: "Ken korte namen toe aan de samenwerkingen<br/>zodat die namen bruikbaar zijn in de<br/>via ldap te koppelen diensten (zoals Linux groepsnamen)",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare<br/>identifier van een samenwerking<br/>die wordt gebruikt als identifier<br/>voor externe systemen",
         joinRequestUrl: "Lid worden URL",
@@ -602,9 +605,7 @@ I18n.translations.nl = {
         product: "Powered by SCZ",
         productLink: "https://wiki.surfnet.nl/display/SCZ/Science+Collaboration+Zone+Home",
         privacy: "Terms & Privacy",
-        privacyLink: "https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy",
-        contact: "helpdesk@surfnet.nl",
-        contactLink: "mailto:helpdesk@surfnet.nl?subject=SCZ"
+        privacyLink: "https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy"
     }
 };
 

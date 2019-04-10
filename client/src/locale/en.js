@@ -603,9 +603,7 @@ I18n.translations.en = {
         product: "Powered by SCZ",
         productLink: "https://wiki.surfnet.nl/display/SCZ/Science+Collaboration+Zone+Home",
         privacy: "Terms & Privacy",
-        privacyLink: "https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy",
-        contact: "helpdesk@surfnet.nl",
-        contactLink: "mailto:helpdesk@surfnet.nl?subject=SCZ"
+        privacyLink: "https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy"
     }
 };
 
