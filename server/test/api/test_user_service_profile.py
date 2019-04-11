@@ -40,6 +40,15 @@ class TestUserServiceProfile(AbstractTest):
         res = self.put(f"/api/user_service_profiles", body=user_service_profile_details)
         self.assertEqual("changed", res["telephone_number"])
 
+    def test_update_user_service_profile_ssh_key_conversion(self):
+        user_service_profile = self.find_entity_by_name(UserServiceProfile, john_name)
+        self.login("urn:john")
+        user_service_profile_details = self.get(f"/api/user_service_profiles/{user_service_profile.id}")
+        ssh2_pub = self.read_file("ssh2.pub")
+        user_service_profile_details["ssh_key"] = ssh2_pub
+        res = self.put(f"/api/user_service_profiles", body=user_service_profile_details)
+        self.assertTrue(res["ssh_key"].startswith("ssh-rsa"))
+
     def test_update_user_service_profile_forbidden(self):
         user_service_profile = self.find_entity_by_name(UserServiceProfile, john_name)
         self.login("urn:john")

@@ -41,6 +41,12 @@ class AbstractTest(TestCase):
         return res[0] if len(res) > 0 else None
 
     @staticmethod
+    def read_file(file_name):
+        file = f"{os.path.dirname(os.path.realpath(__file__))}/data/{file_name}"
+        with open(file) as f:
+            return f.read()
+
+    @staticmethod
     def find_entity_by_name(cls, name):
         return cls.query.filter(cls.name == name).one()
 
