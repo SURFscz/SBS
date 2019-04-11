@@ -556,6 +556,7 @@ I18n.translations.nl = {
         ssh_keyPlaceholder: "Uw publiek SSH key om in te loggen op de dienst",
         ssh_keyTooltip: "Uw publieke SSH key<br/>zal worden uitgewisseld<br/>met de (LDAP van) deze dienst.<br/><br/>U kunt uw publieke SSH-key ook uploaden.<br/>Om verborgen bestanden op een Mac te tonen<br/>drukt u <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Ongeldige SSH key",
+        sshConvertInfo: "Dit RFC 4716 SSH-formaat converteren naar het bestandsformaat OpenSSH-key bij het opslaan van het profiel?",
         telephone_number: "Mobiel",
         role: "Rol",
         searchPlaceHolder: "Zoek in uw dienstprofielen...",

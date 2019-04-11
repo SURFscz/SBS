@@ -12,6 +12,7 @@ import SelectField from "../components/SelectField";
 import {userServiceProfileStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp, validPublicSSH2KeyRegExp, validPublicSSHKeyRegExp} from "../validations/regExps";
+import CheckBox from "../components/CheckBox";
 
 class UserServiceProfileDetails extends React.Component {
 
@@ -32,7 +33,8 @@ class UserServiceProfileDetails extends React.Component {
             fileTypeError: false,
             invalidInputs: {},
             initial: true,
-            fileInputKey: new Date().getMilliseconds()
+            fileInputKey: new Date().getMilliseconds(),
+            convertSSHKey: true
         };
     }
 
@@ -129,11 +131,12 @@ class UserServiceProfileDetails extends React.Component {
         const {
             service, authorisation_group, name, email, address, identifier, ssh_key, role, status,
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
-            invalidInputs, initial
+            invalidInputs, initial, convertSSHKey
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const title = I18n.t("userServiceProfile.titleUpdate", {name: service.name});
         const back = "/home";
+        const showConvertSSHKey = !isEmpty(ssh_key) && validPublicSSH2KeyRegExp.test(ssh_key);
         return (
             <div className="mod-user-service-profile">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -214,6 +217,10 @@ class UserServiceProfileDetails extends React.Component {
                     {fileTypeError &&
                     <span
                         className="error">{I18n.t("userServiceProfile.sshKeyError")}</span>}
+                    {showConvertSSHKey &&
+                    <CheckBox name="convertSSHKey" value={convertSSHKey}
+                              info={I18n.t("userServiceProfile.sshConvertInfo")}
+                              onChange={e => this.setState({convertSSHKey: e.target.checked})}/>}
 
                     <SelectField value={this.statusOptions.find(option => status === option.value)}
                                  options={this.statusOptions}
