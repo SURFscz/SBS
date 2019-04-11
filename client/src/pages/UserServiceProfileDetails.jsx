@@ -11,7 +11,7 @@ import SelectField from "../components/SelectField";
 
 import {userServiceProfileStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {validEmailRegExp, validPublicSSHKeyRegExp} from "../validations/regExps";
+import {validEmailRegExp, validPublicSSH2KeyRegExp, validPublicSSHKeyRegExp} from "../validations/regExps";
 
 class UserServiceProfileDetails extends React.Component {
 
@@ -96,8 +96,8 @@ class UserServiceProfileDetails extends React.Component {
 
     validateSSHKey = e => {
         const sshKey = e.target.value;
-        const fileTypeError = !isEmpty(sshKey) && !validPublicSSHKeyRegExp.test(sshKey);
-        this.setState({fileTypeError: fileTypeError, fileInputKey: new Date().getMilliseconds()});
+        const isValid = isEmpty(sshKey) || validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey);
+        this.setState({fileTypeError: !isValid, fileInputKey: new Date().getMilliseconds()});
     };
 
     onFileRemoval = e => {
@@ -115,7 +115,7 @@ class UserServiceProfileDetails extends React.Component {
             const reader = new FileReader();
             reader.onload = () => {
                 const sshKey = reader.result.toString();
-                if (validPublicSSHKeyRegExp.test(sshKey)) {
+                if (validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey)) {
                     this.setState({fileName: file.name, fileTypeError: false, ssh_key: sshKey});
                 } else {
                     this.setState({fileName: file.name, fileTypeError: true, ssh_key: ""});

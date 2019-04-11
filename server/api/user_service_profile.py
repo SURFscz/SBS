@@ -1,6 +1,8 @@
 import logging
+import subprocess
+import tempfile
 
-from flask import Blueprint
+from flask import Blueprint, request as current_request
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param
@@ -24,8 +26,8 @@ def attributes():
     service_entity_id = query_param("service_entity_id")
     user_service_profiles = UserServiceProfile.query \
         .join(Service, Service.entity_id == service_entity_id) \
-        .join(UserServiceProfile.user)\
-        .filter(User.uid == uid)\
+        .join(UserServiceProfile.user) \
+        .filter(User.uid == uid) \
         .all()
     if len(user_service_profiles) is 0:
         logger.debug(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
@@ -93,4 +95,15 @@ def my_user_service_profiles():
 @json_endpoint
 def update_user_service_profile():
     confirm_owner_of_user_service_profile()
-    return update(UserServiceProfile, allow_child_cascades=False)
+    user_service_profile = current_request.get_json()
+    if "ssh_key" in user_service_profile:
+        ssh_key = user_service_profile["ssh_key"]
+        if ssh_key and ssh_key.startswith("---- BEGIN SSH2 PUBLIC KEY ----"):
+            with tempfile.NamedTemporaryFile() as f:
+                f.write(ssh_key.encode())
+                f.flush()
+                res = subprocess.run(["ssh-keygen", "-i", "-f", f.name], stdout=subprocess.PIPE)
+                if res.returncode == 0:
+                    user_service_profile["ssh_key"] = res.stdout.decode()
+
+    return update(UserServiceProfile, custom_json=user_service_profile, allow_child_cascades=False)
