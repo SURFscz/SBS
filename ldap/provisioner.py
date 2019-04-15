@@ -5,15 +5,11 @@ import sys
 import json
 import requests
 import datetime
-import uuid
 
 from copy import deepcopy
-from http.cookies import SimpleCookie
-from requests.cookies import cookiejar_from_dict
-from requests import Session
 from requests.auth import HTTPBasicAuth
 
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 
 # CONSTANTS
 
@@ -78,7 +74,7 @@ except:
 
 notifications = None
 
-def push_notification(topic, id):
+def push_notification(topic, subject):
 	global notifications
 
 	if not notifications:
@@ -87,8 +83,8 @@ def push_notification(topic, id):
 	if topic not in notifications:
 		notifications[topic] = []
 
-	if id not in notifications[topic]:
-		notifications[topic].append(id)
+	if subject not in notifications[topic]:
+		notifications[topic].append(subject)
 
 def flush_notifications():
 	global notifications
@@ -97,9 +93,9 @@ def flush_notifications():
 		return
 
 	for topic in notifications:
-		for id in notifications[topic]:
-			log_debug(f"Notifying: {topic}:{id}")
-			publisher.send(f"{topic}:{id}".encode())
+		for subject in notifications[topic]:
+			log_debug(f"Notifying: {topic}:{subject}")
+			publisher.send(f"{topic}:{subject}".encode())
 
 	notifications = None
 
@@ -164,7 +160,7 @@ def ldap_people(base):
 	l = ldap_session.search_s(f"ou=people,{base}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organizationalPerson)(cn=*))")
 	log_ldap_result(l)
 	return l
- 
+
 def ldap_ou(topic, base, ou, name, description):
 
 	log_debug(f"[LDAP_OU]\n\tBase: {base}\n\tOU: {ou}\n\tNAME: {name}\n\tDESCRIPTION: {description}")
@@ -204,7 +200,7 @@ def ldap_ou(topic, base, ou, name, description):
 
 		push_notification(topic, ou)
 
-def ldap_member(topic, id, base, role, uid, **kwargs):
+def ldap_member(topic, subject, base, role, uid, **kwargs):
 
 	log_debug(f"[LDAP_MEMBER]\n\tBase: {base}\n\tROLE: {role}\n\tUID: {uid}")
 
@@ -234,7 +230,7 @@ def ldap_member(topic, id, base, role, uid, **kwargs):
 		except Exception as e:
 			panic(f"Error during LDAP ADD MEMBER\n\tDN={dn}\n\tLDIF={ldif}\n\tERROR: {str(e)}")
 
-		push_notification(topic, id)
+		push_notification(topic, subject)
 
 	elif not ldap_attributes_equal(attrs, result[0][1]):
 		ldif = modlist.modifyModlist(result[0][1], attrs)
@@ -244,7 +240,7 @@ def ldap_member(topic, id, base, role, uid, **kwargs):
 		except Exception as e:
 			panic(f"Error during LDAP MODIFY MEMBER\n\tDN={dn}\n\tLDIF={ldif}\n\tERROR: {str(e)}")
 
-		push_notification(topic, id)
+		push_notification(topic, subject)
 
 	result = ldap_session.search_s(f"ou=groups,{base}", ldap.SCOPE_ONELEVEL, f"(cn={role})")
 	log_ldap_result(result)
@@ -266,7 +262,7 @@ def ldap_member(topic, id, base, role, uid, **kwargs):
 		except Exception as e:
 			panic(f"Error during LDAP ADD, Error: {str(e)}")
 
-		push_notification(topic, id)
+		push_notification(topic, subject)
 
 	elif f"cn={uid},ou=people,{base}".encode() not in result[0][1]['member']:
 
@@ -282,7 +278,7 @@ def ldap_member(topic, id, base, role, uid, **kwargs):
 		except Exception as e:
 			panic(f"Error during LDAP ADD, Error: {str(e)}")
 
-		push_notification(topic, id)
+		push_notification(topic, subject)
 
 def ldap_delete_recursive(dn):
 	log_debug(f"... DELETING DN {dn} ...")
@@ -291,10 +287,10 @@ def ldap_delete_recursive(dn):
 
 	ldap_session.delete_s(dn)
 
-def ldap_delete(topic, id, dn):
-	log_debug(f"LDAP DELETE {topic}:{id}, DN: {dn}")
+def ldap_delete(topic, subject, dn):
+	log_debug(f"LDAP DELETE {topic}:{subject}, DN: {dn}")
 
-	push_notification(topic, id)
+	push_notification(topic, subject)
 	
 	try:
 		ldap_delete_recursive(dn)
@@ -353,9 +349,9 @@ for o in organisations:
 
 co_users = {}
 
-def get_organisation(id):
+def get_organisation(org_id):
 	for o in organisations:
-		if o['id'] == id:
+		if o['id'] == org_id:
 			return o
 
 	panic(f"Organisation {id} not found !")
@@ -464,25 +460,25 @@ for org in ldap_organisations():
 		ldap_delete("O", org[0].split(',')[0].split('=')[1], org[0])
 
 def adjust_acl(config):
-    log_info("Willing to adjust ACL...")
+	log_info("Willing to adjust ACL...")
 
-    # log_debug(f"CONFIG: {config[0][1]['olcAccess']}")
+	# log_debug(f"CONFIG: {config[0][1]['olcAccess']}")
 
-    n = 0
-    for i in config[0][1]['olcAccess']:
-        log_info(f"{i.decode()}")
-        n = n + 1
+	n = 0
+	for i in config[0][1]['olcAccess']:
+		log_info(f"{i.decode()}")
+		n = n + 1
 
-    for o in organisations:
-        log_info(f"{{{n}}}to dn.subtree=\"ou={o['tenant_identifier']},{BASE_DN}\" \
+		for o in organisations:
+			log_info(f"{{{n}}}to dn.subtree=\"ou={o['tenant_identifier']},{BASE_DN}\" \
             by group=\"cn=admin,ou=groups,ou={o['tenant_identifier']},{BASE_DN}\" read by * break")
 
-        n = n + 1
+			n = n + 1
 
 try:
-    adjust_acl(ldap_session.search_s("olcDatabase={0}config,cn=config", ldap.SCOPE_SUBTREE, f"(objectclass=*)"))
+	adjust_acl(ldap_session.search_s("olcDatabase={0}config,cn=config", ldap.SCOPE_SUBTREE, f"(objectclass=*)"))
 except:
-    log_info("Skiking ACL modifications")
+	log_info("Skipping ACL modifications")
 
 ldap_session.unbind_s()
 
