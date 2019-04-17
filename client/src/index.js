@@ -1,4 +1,6 @@
 import "@babel/polyfill";
+import {polyfill} from "es6-promise";
+import "isomorphic-fetch";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './stylesheets/index.scss';
@@ -11,6 +13,7 @@ import Cookies from "js-cookie";
 import "./locale/en";
 import "./locale/nl";
 
+polyfill();
 
 (() => {
     // DetermineLanguage based on parameter, cookie and finally navigator
