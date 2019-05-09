@@ -16,13 +16,13 @@ from colorama import Fore, Style
 SBS_HOST = os.environ.get("SBS_HOST", "https://sbs.exp.scz.lab.surf.nl")
 PUBLISHER_PORT = os.environ.get("PUBLISHER_PORT", "5556")
 
-BASE_DN = os.environ.get("BASE_DN", "ou=sbs,dc=example,dc=org")
+BASE_DN = os.environ.get("BASE_DN", "dc=test,dc=scz,dc=lab,dc=surf,dc=nl")
 
-LDAP_HOST = os.environ.get("LDAP_HOST", "ldap.exp.scz.lab.surf.nl")
+LDAP_HOST = os.environ.get("LDAP_HOST", "ldap.test.scz.lab.surf.nl")
 LDAP_USERNAME = os.environ.get("LDAP_USERNAME", "cn=admin")
 LDAP_PASSWORD = os.environ.get("LDAP_PASSWORD", None)
 
-API_USER = os.environ.get("API_USER", "sysadmin")
+API_USER = os.environ.get("API_USER", "sysread")
 API_PASS = os.environ.get("API_PASS", None)
 
 def log(s):
@@ -146,49 +146,43 @@ def ldap_attributes_equal(a, b):
 
 	return len(added) == 0 and len(removed) == 0 and len(modified) == 0
 
-def ldap_organisations():
-	l = ldap_session.search_s(BASE_DN, ldap.SCOPE_ONELEVEL, f"(&(objectclass=organizationalUnit)(ou=*))")
-	log_ldap_result(l)
-	return l
-
-def ldap_collobarations(org):
-	l = ldap_session.search_s(f"ou={org},{BASE_DN}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organizationalUnit)(ou=*))")
+def ldap_collobarations():
+	l = ldap_session.search_s(f"{BASE_DN}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organization)(o=*))")
 	log_ldap_result(l)
 	return l
 
 def ldap_people(base):
-	l = ldap_session.search_s(f"ou=people,{base}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organizationalPerson)(cn=*))")
+	l = ldap_session.search_s(f"ou=People,{base}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organizationalPerson)(uid=*))")
 	log_ldap_result(l)
 	return l
 
-def ldap_ou(topic, base, ou, name, description):
+def ldap_org(topic, base, name, description):
 
-	log_debug(f"[LDAP_OU]\n\tBase: {base}\n\tOU: {ou}\n\tNAME: {name}\n\tDESCRIPTION: {description}")
+	log_debug(f"[LDAP_OU]\n\tBase: {base}\n\tNAME: {name}\n\tDESCRIPTION: {description}")
 
-	result = ldap_session.search_s(base, ldap.SCOPE_ONELEVEL, f"(&(objectclass=organizationalUnit)(ou={ou}))")
+	result = ldap_session.search_s(base, ldap.SCOPE_ONELEVEL, f"(&(objectclass=organization)(o={name}))")
 	if len(result) > 1:
 		panic(f"Expected max 1 object, found: {result}")
 
 	log_ldap_result(result)
 
 	attrs = {}
-	attrs['objectClass'] = [b'top', b'organizationalUnit', b'extensibleObject']
-	attrs['ou'] = [ou.encode()]
-	attrs['name'] = [name.encode()]
+	attrs['objectClass'] = [b'top', b'organization', b'extensibleObject']
+	attrs['o'] = [name.encode()]
 	attrs['description'] = [description.encode()]
 
-	dn = f"ou={ou},{base}"
+	dn = f"o={name},{base}"
 	if len(result) == 0:
 		ldif = modlist.addModlist(attrs)
 
 		try:
 			ldap_session.add_s(dn, ldif)
-			ldap_session.add_s(f"ou=people,ou={ou},{base}" , ldif)
-			ldap_session.add_s(f"ou=groups,ou={ou},{base}" , ldif)
+			ldap_session.add_s(f"ou=People,o={name},{base}" , ldif)
+			ldap_session.add_s(f"ou=Groups,o={name},{base}" , ldif)
 		except Exception as e:
 			panic(f"Error during LDAP ADD OU\n\tDN={dn}\n\tLDIF={ldif}\n\tERROR: {str(e)}")
 
-		push_notification(topic, ou)
+		push_notification(topic, name)
 
 	elif not ldap_attributes_equal(attrs, result[0][1]):
 		ldif = modlist.modifyModlist(result[0][1], attrs)
@@ -198,13 +192,13 @@ def ldap_ou(topic, base, ou, name, description):
 		except Exception as e:
 			panic(f"Error during LDAP MODIFY OU\n\tDN={dn}\n\tLDIF={ldif}\n\tERROR: {str(e)}")
 
-		push_notification(topic, ou)
+		push_notification(topic, name)
 
-def ldap_member(topic, subject, base, role, uid, **kwargs):
+def ldap_member(topic, subject, base, roles, uid, **kwargs):
 
-	log_debug(f"[LDAP_MEMBER]\n\tBase: {base}\n\tROLE: {role}\n\tUID: {uid}")
+	log_debug(f"[LDAP_MEMBER]\n\tBase: {base}\n\tROLES: {roles}\n\tUID: {uid}")
 
-	result = ldap_session.search_s(f"ou=people,{base}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organizationalPerson)(cn={uid}))")
+	result = ldap_session.search_s(f"ou=People,{base}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organizationalPerson)(uid={uid}))")
 	if len(result) > 1:
 		panic(f"Expected max 1 object, found: {result}")
 
@@ -212,14 +206,16 @@ def ldap_member(topic, subject, base, role, uid, **kwargs):
 
 	attrs = {}
 	attrs['objectClass'] = [b'top', b'organizationalPerson', b'inetOrgPerson']
-	attrs['cn'] = [ uid.encode() ]
+	attrs['uid'] = [ uid.encode() ]
 	for attr, value in kwargs.items():
-		if value:
-			attrs[attr] = [ value.encode() ]
+		if not value:
+			value = 'n/a'
+
+		attrs[attr] = [ value.encode() ]
 
 	log_debug(f"ATTRS: {attrs}")
 
-	dn = f"cn={uid},ou=people,{base}"
+	dn = f"uid={uid},ou=People,{base}"
 
 	if len(result) == 0:
 		ldif = modlist.addModlist(attrs)
@@ -242,42 +238,43 @@ def ldap_member(topic, subject, base, role, uid, **kwargs):
 
 		push_notification(topic, subject)
 
-	result = ldap_session.search_s(f"ou=groups,{base}", ldap.SCOPE_ONELEVEL, f"(cn={role})")
-	log_ldap_result(result)
-
-	if len(result) > 0:
-		log_debug("MEMBER DATA: " + str(result[0][1]))
-		if 'member' in result[0][1]:
-			log_debug("MEMBERS UIDs: " + str(result[0][1]['member']))
-
-	if len(result) == 0 or 'member' not in result[0][1]:
-
-		attrs = {}
-		attrs['objectclass'] = [ b'groupOfNames']
-		attrs['member'] = [ f"cn={uid},ou=people,{base}".encode() ]
-
-		ldif = modlist.addModlist(attrs)
-		try:
-			ldap_session.add_s(f"cn={role},ou=groups,{base}", ldif)
-		except Exception as e:
-			panic(f"Error during LDAP ADD, Error: {str(e)}")
-
-		push_notification(topic, subject)
-
-	elif f"cn={uid},ou=people,{base}".encode() not in result[0][1]['member']:
-
-		attrs = deepcopy(result[0][1])
-		attrs['member'].append(f"cn={uid},ou=people,{base}".encode())
-
-		log_debug("OLD: "+str(result[0][1]))
-		log_debug("NEW: "+str(attrs))
-
-		ldif = modlist.modifyModlist(result[0][1], attrs)
-		try:
-			ldap_session.modify_s(f"cn={role},ou=groups,{base}", ldif)
-		except Exception as e:
-			panic(f"Error during LDAP ADD, Error: {str(e)}")
-
+	for role in roles:
+		result = ldap_session.search_s(f"ou=Groups,{base}", ldap.SCOPE_ONELEVEL, f"(cn={role})")
+		log_ldap_result(result)
+	
+		if len(result) > 0:
+			log_debug("MEMBER DATA: " + str(result[0][1]))
+			if 'member' in result[0][1]:
+				log_debug("MEMBERS UIDs: " + str(result[0][1]['member']))
+	
+		if len(result) == 0 or 'member' not in result[0][1]:
+	
+			attrs = {}
+			attrs['objectclass'] = [ b'groupOfNames']
+			attrs['member'] = [ f"uid={uid},ou=People,{base}".encode() ]
+	
+			ldif = modlist.addModlist(attrs)
+			try:
+				ldap_session.add_s(f"cn={role},ou=Groups,{base}", ldif)
+			except Exception as e:
+				panic(f"Error during LDAP ADD, Error: {str(e)}")
+	
+			push_notification(topic, subject)
+	
+		elif f"uid={uid},ou=People,{base}".encode() not in result[0][1]['member']:
+	
+			attrs = deepcopy(result[0][1])
+			attrs['member'].append(f"uid={uid},ou=People,{base}".encode())
+	
+			log_debug("OLD: "+str(result[0][1]))
+			log_debug("NEW: "+str(attrs))
+	
+			ldif = modlist.modifyModlist(result[0][1], attrs)
+			try:
+				ldap_session.modify_s(f"cn={role},ou=Groups,{base}", ldif)
+			except Exception as e:
+				panic(f"Error during LDAP ADD, Error: {str(e)}")
+	
 		push_notification(topic, subject)
 
 def ldap_delete_recursive(dn):
@@ -325,27 +322,6 @@ if not health or health['status'] != "UP":
 api(SBS_HOST+"/api/users/me")
 
 organisations = api(SBS_HOST+"/api/organisations/all")
-for o in organisations:
-
-	log_debug(f"org: [{o['id']}]: {o['name']}, description: {o['description']}, tenant: {o['tenant_identifier']} ")
-
-	ldap_ou('O', BASE_DN, o['tenant_identifier'], o['name'], o['description'])
-
-	org = api(SBS_HOST+f"/api/organisations/{o['id']}")
-	o['members'] = deepcopy(org['organisation_memberships'])
-
-	for m in o['members']:
-		log_debug(f"- member [{m['role']}]: {m['user']['uid']}")
-
-		ldap_member('O', o['tenant_identifier'],
-			base = f"ou={o['tenant_identifier']},{BASE_DN}",
-			role = m['role'],
-			uid = m['user']['uid'],
- 			displayName = m['user']['name'],
-			mail = m['user']['email'],
-			sn = m['user']['name'],
- 			givenName = m['user']['given_name'],
-		)
 
 co_users = {}
 
@@ -360,25 +336,33 @@ collaborations = api(SBS_HOST+"/api/collaborations/all")
 for c in collaborations:
 	org = get_organisation(c['organisation_id'])
 
-	log_debug(f"CO [{c['identifier']}]: {c['name']}, description: {c['description']}")
+	c['organisation_details'] = org
+	
+	log_debug(f"CO name: {c['name']}, description: {c['description']}")
 
-	ldap_ou('CO', f"ou={org['tenant_identifier']},{BASE_DN}", c['identifier'], c['name'], c['description'])
+	ldap_org('CO', f"{BASE_DN}", c['name'], json.dumps(c))
 
-	co_users[c['identifier']] = {}
+	co_users[c['name']] = {}
 
 	details = api(SBS_HOST+f"/api/collaborations/{c['id']}")
 
 	for m in details['collaboration_memberships']:
 		log_debug(f"- CO member [{m['role']}]")
 
-		co_users[c['identifier']][m["user_id"]] = m["user"]
+		co_users[c['name']][m["user_id"]] = m["user"]
 
+		roles = [ f"CO:{c['name']}", "GRP:CO:members:all", "GRP:CO:members:active" ]
+		
+		if m['role'] == 'admin':
+			roles.append("GRP:CO:admins")
+		
 		ldap_member('CO',
-			c['identifier'],
-			base = f"ou={c['identifier']},ou={org['tenant_identifier']},{BASE_DN}",
-			role = m['role'],
+			c['name'],
+			base = f"o={c['name']},{BASE_DN}",
+			roles = roles,
 			uid = m["user"]["uid"],
-			sn = m["user"]["name"],
+			cn = m["user"]["name"],
+			sn = m["user"]["family_name"],
 			mail = m["user"]["email"],
 			displayName = m["user"]["name"],
 			givenName = m["user"]["given_name"]
@@ -386,99 +370,44 @@ for c in collaborations:
 
 # Cleanup redundant objects...
 
-for org in ldap_organisations():
+log_info("Cleanup phase...")
+for co in ldap_collobarations():
 
-	if org[0].startswith("ou=people,") or org[0].startswith("ou=groups,"):
+	if co[0].startswith("ou=People,") or co[0].startswith("ou=Groups,"):
 		continue
 
-	log_debug(f"CHECK O: {org[0]}...")
-	org_validated = False
+	log_debug(f"CHECK CO: {co[0]}...")
+	co_validated = False
 
-	for o in organisations:
-		if org[0] == f"ou={o['tenant_identifier']},{BASE_DN}":
+	for c in collaborations:
+		
+		if f"{co[0]}" == f"o={c['name']},{BASE_DN}":
+			co_validated = True
 
-			org_validated = True
+			log_debug(f"CHECK CO: {co[0]} VALIDATED !")
 
-			for co in ldap_collobarations(o['tenant_identifier']):
+			for m in ldap_people(f"o={c['name']},{BASE_DN}"):
+				uid = m[1]['uid'][0].decode()
 
-				if co[0].startswith("ou=people,") or co[0].startswith("ou=groups,"):
-					continue
-
-				log_debug(f"CHECK CO: {co[0]}...")
-				co_validated = False
-			
-				for c in collaborations:
-					if co[0] == f"ou={c['identifier']},ou={o['tenant_identifier']},{BASE_DN}":
-						co_validated = True
-
-						log_debug(f"CHECK CO: {co[0]} VALIDATED !")
-
-						for m in ldap_people(f"ou={c['identifier']},ou={o['tenant_identifier']},{BASE_DN}"):
-							cn = m[1]['cn'][0].decode()
-
-							log_debug(f"CHECK CO PERSON: {cn}...")
-							person_validated = False
-
-							for u in co_users[c['identifier']]:
-								if co_users[c['identifier']][u]['uid'] == cn:
-									person_validated = True
-									break
-
-							if person_validated:
-								log_debug(f"CHECK CO PERSON: {cn} VALIDATED !")
-							else:
-								ldap_delete("P", cn, m[0])
-
-						break
-
-				if not co_validated:
-					# CO not found, remove it
-					ldap_delete("CO", co[0].split(',')[0].split('=')[1], co[0])
-
-			log_debug(f"CHECK O: {org[0]} VALIDATED !")
-
-			for m in ldap_people(f"ou={o['tenant_identifier']},{BASE_DN}"):
-				cn = m[1]['cn'][0].decode()
-
-				log_debug(f"CHECK ORG PERSON: {cn}...")
+				log_debug(f"CHECK CO PERSON: {uid}...")
 				person_validated = False
 
-				for om in o['members']:
-					if om['user']['uid'] == cn:
+				for u in co_users[c['name']]:
+					if co_users[c['name']][u]['uid'] == uid:
 						person_validated = True
 						break
 
 				if person_validated:
-					log_debug(f"CHECK ORG PERSON: {cn} VALIDATED !")
+					log_debug(f"CHECK CO PERSON: {uid} VALIDATED !")
 				else:
-					ldap_delete("P", cn, m[0])
+					ldap_delete("P", uid, m[0])
 
 			break
-
-	if not org_validated:
-		# Org not found, remove it !
-		ldap_delete("O", org[0].split(',')[0].split('=')[1], org[0])
-
-def adjust_acl(config):
-	log_info("Willing to adjust ACL...")
-
-	# log_debug(f"CONFIG: {config[0][1]['olcAccess']}")
-
-	n = 0
-	for i in config[0][1]['olcAccess']:
-		log_info(f"{i.decode()}")
-		n = n + 1
-
-		for o in organisations:
-			log_info(f"{{{n}}}to dn.subtree=\"ou={o['tenant_identifier']},{BASE_DN}\" \
-            by group=\"cn=admin,ou=groups,ou={o['tenant_identifier']},{BASE_DN}\" read by * break")
-
-			n = n + 1
-
-try:
-	adjust_acl(ldap_session.search_s("olcDatabase={0}config,cn=config", ldap.SCOPE_SUBTREE, f"(objectclass=*)"))
-except:
-	log_info("Skipping ACL modifications")
+			
+	if not co_validated:
+		# CO not found, remove it
+#		ldap_delete("CO", co[0].split(',')[0].split('=')[1], co[0])
+		log_info(f"SHOULD DELETE, {co[0]} but not now !")
 
 ldap_session.unbind_s()
 
