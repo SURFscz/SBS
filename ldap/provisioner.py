@@ -10,6 +10,7 @@ from copy import deepcopy
 from requests.auth import HTTPBasicAuth
 
 from colorama import Fore, Style
+from server.api.user_service_profile import attributes
 
 # CONSTANTS
 
@@ -156,7 +157,40 @@ def ldap_people(base):
 	log_ldap_result(l)
 	return l
 
-def ldap_org(topic, base, name, description):
+attributes_dependencies = {'labeledURI': 'labeledURIObject' }
+
+def ldap_attribute_value(attributes, attr, value):
+	if attr not in attributes:
+		attributes[attr] = []
+
+	if not value:
+		value = 'n/a'
+	
+	if not isinstance(value, list):
+		value = [ value ]
+	
+	for v in value:
+
+		if v.encode() not in attributes[attr]:
+			attributes[attr].append(v.encode())
+
+def ldap_attributes(**kwargs):
+	result = {}
+	
+	for k,v in kwargs.items():
+		
+		if k == 'labeledURI':
+			ldap_attribute_value(result, 'objectClass', 'labeledURIObject')
+		if k == 'sshPublicKey':
+			ldap_attribute_value(result, 'objectClass', 'ldapPublicKey')
+				
+		ldap_attribute_value(result, k, v)
+	
+	log_info(f"ATTRIBUTES {result}")
+
+	return result
+
+def ldap_org(topic, base, name, description, **kwargs):
 
 	log_debug(f"[LDAP_OU]\n\tBase: {base}\n\tNAME: {name}\n\tDESCRIPTION: {description}")
 
@@ -166,19 +200,28 @@ def ldap_org(topic, base, name, description):
 
 	log_ldap_result(result)
 
-	attrs = {}
-	attrs['objectClass'] = [b'top', b'organization', b'extensibleObject']
-	attrs['o'] = [name.encode()]
-	attrs['description'] = [description.encode()]
-
+	attrs = ldap_attributes(
+		objectClass = ['top', 'organization', 'extensibleObject'],
+		o = name,
+		description = description, 
+		**kwargs
+	)
+		
 	dn = f"o={name},{base}"
 	if len(result) == 0:
-		ldif = modlist.addModlist(attrs)
-
 		try:
-			ldap_session.add_s(dn, ldif)
-			ldap_session.add_s(f"ou=People,o={name},{base}" , ldif)
-			ldap_session.add_s(f"ou=Groups,o={name},{base}" , ldif)
+			ldif_org = modlist.addModlist(attrs)
+
+			ldap_session.add_s(dn, ldif_org)
+			
+			ldif_children = modlist.addModlist(
+					ldap_attributes(
+						objectClass = ['top', 'organizationalUnit']
+					)
+				)
+			
+			ldap_session.add_s(f"ou=People,o={name},{base}" , ldif_children)
+			ldap_session.add_s(f"ou=Groups,o={name},{base}" , ldif_children)
 		except Exception as e:
 			panic(f"Error during LDAP ADD OU\n\tDN={dn}\n\tLDIF={ldif}\n\tERROR: {str(e)}")
 
@@ -204,16 +247,11 @@ def ldap_member(topic, subject, base, roles, uid, **kwargs):
 
 	log_ldap_result(result)
 
-	attrs = {}
-	attrs['objectClass'] = [b'top', b'organizationalPerson', b'inetOrgPerson']
-	attrs['uid'] = [ uid.encode() ]
-	for attr, value in kwargs.items():
-		if not value:
-			value = 'n/a'
-
-		attrs[attr] = [ value.encode() ]
-
-	log_debug(f"ATTRS: {attrs}")
+	attrs = ldap_attributes(
+		objectClass = ['top', 'organizationalPerson', 'inetOrgPerson'],
+		uid = uid, 
+		**kwargs
+	)
 
 	dn = f"uid={uid},ou=People,{base}"
 
@@ -249,11 +287,13 @@ def ldap_member(topic, subject, base, roles, uid, **kwargs):
 	
 		if len(result) == 0 or 'member' not in result[0][1]:
 	
-			attrs = {}
-			attrs['objectclass'] = [ b'groupOfNames']
-			attrs['member'] = [ f"uid={uid},ou=People,{base}".encode() ]
-	
-			ldif = modlist.addModlist(attrs)
+			ldif = modlist.addModlist(
+					ldap_attributes(
+						objectClass = 'groupOfNames',
+						member = f"uid={uid},ou=People,{base}",
+						ou = "group" if role.startswith("GRP:") else "co",
+					)
+				)
 			try:
 				ldap_session.add_s(f"cn={role},ou=Groups,{base}", ldif)
 			except Exception as e:
@@ -340,10 +380,10 @@ for c in collaborations:
 	
 	log_debug(f"CO name: {c['name']}, description: {c['description']}")
 
-	ldap_org('CO', f"{BASE_DN}", c['name'], json.dumps(c))
-
 	co_users[c['name']] = {}
 
+	extra = {}
+	
 	details = api(SBS_HOST+f"/api/collaborations/{c['id']}")
 
 	for m in details['collaboration_memberships']:
@@ -370,7 +410,19 @@ for c in collaborations:
 			
 			if m['role'] == 'admin':
 				co_users[c['name']][m["user_id"]]["roles"].append(f"GRP:{a['name']}:admins")
+
+	for s in details['services']:		
+		log_debug(f"- SERVICE [{s['name']}]")
+
+		if 'labeledURI' not in extra:
+			extra['labeledURI'] = []
 		
+		extra['labeledURI'].append(s['entity_id'])
+						
+	# Make the CO...
+	ldap_org('CO', f"{BASE_DN}", c['name'], json.dumps(c), **extra)
+
+	# Add the People to it...
 	for i in co_users[c['name']].keys():
 		u = co_users[c['name']][i]
 	
