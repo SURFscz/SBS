@@ -349,23 +349,41 @@ for c in collaborations:
 	for m in details['collaboration_memberships']:
 		log_debug(f"- CO member [{m['role']}]")
 
-		co_users[c['name']][m["user_id"]] = m["user"]
-
-		roles = [ f"CO:{c['name']}", "GRP:CO:members:all", "GRP:CO:members:active" ]
+		co_users[c['name']][m["user_id"]] = {}
+		
+		co_users[c['name']][m["user_id"]]["user"] = m["user"]
+		co_users[c['name']][m["user_id"]]["roles"] = [ f"CO:{c['name']}", "GRP:CO:members:all", "GRP:CO:members:active" ]
 		
 		if m['role'] == 'admin':
-			roles.append("GRP:CO:admins")
+			co_users[c['name']][m["user_id"]]["roles"].append("GRP:CO:admins")
+	
+	for a in details['authorisation_groups']:
+		log_debug(f"- AUTH GROUP [{a['name']}]")
+
+		auth_group = api(SBS_HOST+f"/api/authorisation_groups/{a['id']}/{c['id']}")
+	
+		for m in auth_group['collaboration_memberships']:
+			
+			co_users[c['name']][m["user_id"]]["roles"].extend(
+				[ f"GRP:{a['name']}" ]
+			)
+			
+			if m['role'] == 'admin':
+				co_users[c['name']][m["user_id"]]["roles"].append(f"GRP:{a['name']}:admins")
 		
+	for i in co_users[c['name']].keys():
+		u = co_users[c['name']][i]
+	
 		ldap_member('CO',
 			c['name'],
 			base = f"o={c['name']},{BASE_DN}",
-			roles = roles,
-			uid = m["user"]["uid"],
-			cn = m["user"]["name"],
-			sn = m["user"]["family_name"],
-			mail = m["user"]["email"],
-			displayName = m["user"]["name"],
-			givenName = m["user"]["given_name"]
+			roles = u['roles'],
+			uid = u["user"]["uid"],
+			cn = u["user"]["name"],
+			sn = u["user"]["family_name"],
+			mail = u["user"]["email"],
+			displayName = u["user"]["name"],
+			givenName = u["user"]["given_name"]
 		)
 
 # Cleanup redundant objects...
@@ -393,7 +411,7 @@ for co in ldap_collobarations():
 				person_validated = False
 
 				for u in co_users[c['name']]:
-					if co_users[c['name']][u]['uid'] == uid:
+					if co_users[c['name']][u]["user"]['uid'] == uid:
 						person_validated = True
 						break
 
