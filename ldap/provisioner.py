@@ -10,7 +10,6 @@ from copy import deepcopy
 from requests.auth import HTTPBasicAuth
 
 from colorama import Fore, Style
-from server.api.user_service_profile import attributes
 
 # CONSTANTS
 
@@ -170,7 +169,6 @@ def ldap_attribute_value(attributes, attr, value):
 		value = [ value ]
 	
 	for v in value:
-
 		if v.encode() not in attributes[attr]:
 			attributes[attr].append(v.encode())
 
@@ -210,9 +208,9 @@ def ldap_org(topic, base, name, description, **kwargs):
 	dn = f"o={name},{base}"
 	if len(result) == 0:
 		try:
-			ldif_org = modlist.addModlist(attrs)
+			ldif = modlist.addModlist(attrs)
 
-			ldap_session.add_s(dn, ldif_org)
+			ldap_session.add_s(dn, ldif)
 			
 			ldif_children = modlist.addModlist(
 					ldap_attributes(
@@ -233,7 +231,7 @@ def ldap_org(topic, base, name, description, **kwargs):
 		try:
 			ldap_session.modify_s(dn, ldif)
 		except Exception as e:
-			panic(f"Error during LDAP MODIFY OU\n\tDN={dn}\n\tLDIF={ldif}\n\tERROR: {str(e)}")
+			panic(f"Error during LDAP MODIFY O\n\tDN={dn}\n\tLDIF={ldif}\n\tERROR: {str(e)}")
 
 		push_notification(topic, name)
 
@@ -292,6 +290,7 @@ def ldap_member(topic, subject, base, roles, uid, **kwargs):
 						objectClass = 'groupOfNames',
 						member = f"uid={uid},ou=People,{base}",
 						ou = "group" if role.startswith("GRP:") else "co",
+						o = base.split(',')[0].split('=')[1]
 					)
 				)
 			try:
