@@ -29,39 +29,32 @@ notifications:
                F8Qc6q7fAt4nAyOm2wsMLZJgmpwjrJTF9DSzz0avY/iFnIDdtxN+NxjMA0n4nazA0+DHvM1l/A0JmuDff\
                i2n+bw4wTyMHb5IU1w1NnEpZEd3oy5/q4/k="
 
-jobs:
-  include:
-    #######################################################
-    ## Build, run local tests, and check code coverage ####
-    #######################################################
-    - stage: test
-      before_install:
-        - pip install -r ./server/requirements/test.txt
-        - pip install codecov
-        - "rm -fr ~/.yarn"
-        - "curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3"
-        - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-        - yarn -v
-        - nvm install v8.12.0
-        - nvm use v8.12.0
-      install:
-      before_script:
-        - >
-          mysql -uroot -e "
-            DROP DATABASE IF EXISTS sbs_test;
-            CREATE DATABASE IF NOT EXISTS sbs_test;
-            CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
-            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
-          "
-      script:
-        - pytest --cov=server server/test
-        - flake8 ./server/
-        - yarn -v
-        - node -v
-        - cd client
-        - yarn install
-        - CI=true yarn test
-        - yarn build
-        - cd ..
-      after_success:
-        - "codecov --token=$CODECOV_TOKEN"
+before_install:
+  - pip install -r ./server/requirements/test.txt
+  - pip install codecov
+  - "rm -fr ~/.yarn"
+  - "curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3"
+  - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+  - yarn -v
+  - nvm install v8.12.0
+  - nvm use v8.12.0
+before_script:
+  - >
+    mysql -uroot -e "
+      DROP DATABASE IF EXISTS sbs_test;
+      CREATE DATABASE IF NOT EXISTS sbs_test;
+      CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
+      GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
+    "
+script:
+  - pytest --cov=server server/test
+  - flake8 ./server/
+  - yarn -v
+  - node -v
+  - cd client
+  - yarn install
+  - CI=true yarn test
+  - yarn build
+  - cd ..
+after_success:
+  - "codecov --token=$CODECOV_TOKEN"
