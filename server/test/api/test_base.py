@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from server.test.abstract_test import AbstractTest
 
 

@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from flask import Blueprint
 
 from server.api.base import json_endpoint

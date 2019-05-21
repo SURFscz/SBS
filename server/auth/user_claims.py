@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from flask import current_app
 import logging
 from server.db.db import User

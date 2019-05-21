@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import datetime
 from secrets import token_urlsafe
 

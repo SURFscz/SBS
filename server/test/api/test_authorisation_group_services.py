@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from sqlalchemy import text
 
 from server.db.db import AuthorisationGroup, UserServiceProfile, Service, \
