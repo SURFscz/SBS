@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """trigger_service_authorisation_group
 
 Revision ID: 9870b723a53c

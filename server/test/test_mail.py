@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from server.db.db import Collaboration
 from server.mail import mail_collaboration_join_request
 from server.test.abstract_test import AbstractTest

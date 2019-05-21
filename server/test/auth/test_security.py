@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from flask import session, g as request_context
 from werkzeug.exceptions import Forbidden
 

@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import uuid
 
 from flask import Blueprint, request as current_request
