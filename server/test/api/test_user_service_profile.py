@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from server.db.db import UserServiceProfile
 from server.test.abstract_test import AbstractTest
 from server.test.seed import john_name

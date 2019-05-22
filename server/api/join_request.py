@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict

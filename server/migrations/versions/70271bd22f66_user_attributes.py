@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """user attributes
 
 Revision ID: 70271bd22f66

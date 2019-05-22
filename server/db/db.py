@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import os
 
 from flask_jsontools.formatting import JsonSerializableBase
