@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from sqlalchemy.orm import joinedload
 
 from server.db.db import JoinRequest, User, Collaboration

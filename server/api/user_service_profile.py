@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import logging
 import subprocess
 import tempfile
@@ -29,7 +30,7 @@ def attributes():
         .join(UserServiceProfile.user) \
         .filter(User.uid == uid) \
         .all()
-    if len(user_service_profiles) is 0:
+    if len(user_service_profiles) == 0:
         logger.debug(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
         return {}, 200
     result = {}

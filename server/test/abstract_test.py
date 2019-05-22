@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import json
 import os
 from base64 import b64encode

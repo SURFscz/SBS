@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from server.db.db import AuthorisationGroup, Collaboration, CollaborationMembership, User, UserServiceProfile
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_researchers_authorisation, ai_computing_name, the_boss_name

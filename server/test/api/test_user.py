@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from server.auth.user_claims import claim_attribute_mapping
 from server.db.db import Organisation, Collaboration
 from server.test.abstract_test import AbstractTest

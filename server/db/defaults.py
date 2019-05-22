@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import datetime
 
 full_text_search_autocomplete_limit = 16

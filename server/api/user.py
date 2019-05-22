@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import itertools
 import json
 import logging
@@ -198,7 +199,7 @@ def attribute_aggregation():
         .all()
 
     # preference over edu_person_principal_name
-    if len(users) is 0:
+    if len(users) == 0:
         return None, 404
 
     users_eppn_match = list(filter(lambda u: u.uid == edu_person_principal_name, users))

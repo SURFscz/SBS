@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from base64 import b64encode
 
 from server.db.db import Collaboration, Organisation, Invitation

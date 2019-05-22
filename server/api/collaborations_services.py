@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from flask import Blueprint, request as current_request
 from sqlalchemy import text
 
@@ -18,7 +19,7 @@ def add_collaborations_services():
     confirm_collaboration_admin(collaboration_id)
 
     service_ids = data["service_ids"]
-    if len(service_ids) is 0:
+    if len(service_ids) == 0:
         return None, 201
 
     values = ",".join(list(map(lambda id: f"({id},{collaboration_id})", service_ids)))

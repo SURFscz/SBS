@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from server.db.db import Service
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id

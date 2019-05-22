@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from server.db.db import Invitation, CollaborationMembership, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import invitation_hash_no_way, ai_computing_name, invitation_hash_curious

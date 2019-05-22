@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from server.db.db import OrganisationInvitation, OrganisationMembership, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import organisation_invitation_hash, organisation_invitation_expired_hash
