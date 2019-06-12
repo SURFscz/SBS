@@ -46,14 +46,24 @@ def _init_logging(local):
                                            when="midnight", backupCount=30)
         formatter = logging.Formatter("SBS: %(asctime)s %(name)s %(levelname)s %(message)s")
         handler.setFormatter(formatter)
+        handler.setLevel(logging.INFO)
+
+        debug_handler = TimedRotatingFileHandler(f"{os.path.dirname(os.path.realpath(__file__))}/../log/sbs_debug.log",
+                                                 when="midnight", backupCount=30)
+        debug_handler.setFormatter(formatter)
+        debug_handler.setLevel(logging.DEBUG)
 
         logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
+
+        sql_a_logger = logging.getLogger("sqlalchemy.engine")
+        sql_a_logger.setLevel(logging.DEBUG)
+
         logger.addHandler(handler)
+        logger.addHandler(debug_handler)
 
 
 config_file_location = os.environ.get("CONFIG", "config/config.yml")
-config = munchify(yaml.load(read_file(config_file_location)))
+config = munchify(yaml.load(read_file(config_file_location), Loader=yaml.FullLoader))
 config.base_url = config.base_url[:-1] if config.base_url.endswith("/") else config.base_url
 
 test = os.environ.get("TESTING")
@@ -95,7 +105,7 @@ app.register_error_handler(404, page_not_found)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = is_local or is_test
+# app.config["SQLALCHEMY_ECHO"] = is_local or is_test
 
 app.config["TESTING"] = test
 app.config["MAIL_SERVER"] = config.mail.host
