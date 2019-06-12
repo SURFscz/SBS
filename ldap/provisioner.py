@@ -1,4 +1,4 @@
-#!/usr/bin/env pythion3
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -13,12 +13,14 @@ from colorama import Fore, Style
 
 # CONSTANTS
 
-SBS_HOST = os.environ.get("SBS_HOST", "https://sbs.exp.scz.lab.surf.nl")
+SBS_HOST = os.environ.get("SBS_HOST", "https://sbs.example.com")
 PUBLISHER_PORT = os.environ.get("PUBLISHER_PORT", "5556")
 
-BASE_DN = os.environ.get("BASE_DN", "dc=test,dc=scz,dc=lab,dc=surf,dc=nl")
+LDAP_PROTOCOL = os.environ.get("LDAP_PROTOCOL", "ldap://")
+LDAP_HOST = os.environ.get("LDAP_HOST", "ldap")
+LDAP_PORT = os.environ.get("LDAP_PORT", "389")
+LDAP_BASE_DN = os.environ.get("BASE_DN", "dc=example,dc=com")
 
-LDAP_HOST = os.environ.get("LDAP_HOST", "ldap.test.scz.lab.surf.nl")
 LDAP_USERNAME = os.environ.get("LDAP_USERNAME", "cn=admin")
 LDAP_PASSWORD = os.environ.get("LDAP_PASSWORD", None)
 
@@ -79,7 +81,7 @@ def push_notification(topic, subject):
 
 	if not notifications:
 		notifications = {}
-		
+
 	if topic not in notifications:
 		notifications[topic] = []
 
@@ -88,7 +90,7 @@ def push_notification(topic, subject):
 
 def flush_notifications():
 	global notifications
-	
+
 	if not notifications:
 		return
 
@@ -107,11 +109,15 @@ import ldap.modlist as modlist
 ldap_session = None
 
 try:
-	ldap_session = ldap.initialize(f"ldaps://{LDAP_HOST}")
+	ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
+
+	s = "{}{}:{}".format(LDAP_PROTOCOL, LDAP_HOST, LDAP_PORT)
+
+	ldap_session = ldap.initialize(s)
 	ldap_session.bind_s(LDAP_USERNAME, LDAP_PASSWORD)
-except:
+except Exception as e:
 	ldap_session.unbind_s()
-	panic("LDAP connection failed !")
+	panic(f"LDAP connection failed ! {str(e)}")
 
 def log_ldap_result(r):
 	log_debug(f"[LDAP SEARCH RESULT]")
@@ -164,26 +170,26 @@ def ldap_attribute_value(attributes, attr, value):
 
 	if not value:
 		value = 'n/a'
-	
+
 	if not isinstance(value, list):
 		value = [ value ]
-	
+
 	for v in value:
 		if v.encode() not in attributes[attr]:
 			attributes[attr].append(v.encode())
 
 def ldap_attributes(**kwargs):
 	result = {}
-	
+
 	for k,v in kwargs.items():
-		
+
 		if k == 'labeledURI':
 			ldap_attribute_value(result, 'objectClass', 'labeledURIObject')
 		if k == 'sshPublicKey':
 			ldap_attribute_value(result, 'objectClass', 'ldapPublicKey')
-				
+
 		ldap_attribute_value(result, k, v)
-	
+
 	log_info(f"ATTRIBUTES {result}")
 
 	return result
@@ -201,23 +207,23 @@ def ldap_org(topic, base, name, description, **kwargs):
 	attrs = ldap_attributes(
 		objectClass = ['top', 'organization', 'extensibleObject'],
 		o = name,
-		description = description, 
+		description = description,
 		**kwargs
 	)
-		
+
 	dn = f"o={name},{base}"
 	if len(result) == 0:
 		try:
 			ldif = modlist.addModlist(attrs)
 
 			ldap_session.add_s(dn, ldif)
-			
+
 			ldif_children = modlist.addModlist(
 					ldap_attributes(
 						objectClass = ['top', 'organizationalUnit']
 					)
 				)
-			
+
 			ldap_session.add_s(f"ou=People,o={name},{base}" , ldif_children)
 			ldap_session.add_s(f"ou=Groups,o={name},{base}" , ldif_children)
 		except Exception as e:
@@ -247,7 +253,7 @@ def ldap_member(topic, subject, base, roles, uid, **kwargs):
 
 	attrs = ldap_attributes(
 		objectClass = ['top', 'organizationalPerson', 'inetOrgPerson'],
-		uid = uid, 
+		uid = uid,
 		**kwargs
 	)
 
@@ -277,14 +283,14 @@ def ldap_member(topic, subject, base, roles, uid, **kwargs):
 	for role in roles:
 		result = ldap_session.search_s(f"ou=Groups,{base}", ldap.SCOPE_ONELEVEL, f"(cn={role})")
 		log_ldap_result(result)
-	
+
 		if len(result) > 0:
 			log_debug("MEMBER DATA: " + str(result[0][1]))
 			if 'member' in result[0][1]:
 				log_debug("MEMBERS UIDs: " + str(result[0][1]['member']))
-	
+
 		if len(result) == 0 or 'member' not in result[0][1]:
-	
+
 			ldif = modlist.addModlist(
 					ldap_attributes(
 						objectClass = 'groupOfNames',
@@ -297,23 +303,23 @@ def ldap_member(topic, subject, base, roles, uid, **kwargs):
 				ldap_session.add_s(f"cn={role},ou=Groups,{base}", ldif)
 			except Exception as e:
 				panic(f"Error during LDAP ADD, Error: {str(e)}")
-	
+
 			push_notification(topic, subject)
-	
+
 		elif f"uid={uid},ou=People,{base}".encode() not in result[0][1]['member']:
-	
+
 			attrs = deepcopy(result[0][1])
 			attrs['member'].append(f"uid={uid},ou=People,{base}".encode())
-	
+
 			log_debug("OLD: "+str(result[0][1]))
 			log_debug("NEW: "+str(attrs))
-	
+
 			ldif = modlist.modifyModlist(result[0][1], attrs)
 			try:
 				ldap_session.modify_s(f"cn={role},ou=Groups,{base}", ldif)
 			except Exception as e:
 				panic(f"Error during LDAP ADD, Error: {str(e)}")
-	
+
 		push_notification(topic, subject)
 
 def ldap_delete_recursive(dn):
@@ -327,7 +333,7 @@ def ldap_delete(topic, subject, dn):
 	log_debug(f"LDAP DELETE {topic}:{subject}, DN: {dn}")
 
 	push_notification(topic, subject)
-	
+
 	try:
 		ldap_delete_recursive(dn)
 	except Exception as e:
@@ -357,7 +363,7 @@ def api(url, method='GET', headers=None, data=None):
 health = api(SBS_HOST+"/health")
 if not health or health['status'] != "UP":
 	panic("Server is not UP !")
-	
+
 api(SBS_HOST+"/api/users/me")
 
 organisations = api(SBS_HOST+"/api/organisations/all")
@@ -376,55 +382,55 @@ for c in collaborations:
 	org = get_organisation(c['organisation_id'])
 
 	c['organisation_details'] = org
-	
+
 	log_debug(f"CO name: {c['name']}, description: {c['description']}")
 
 	co_users[c['name']] = {}
 
 	extra = {}
-	
+
 	details = api(SBS_HOST+f"/api/collaborations/{c['id']}")
 
 	for m in details['collaboration_memberships']:
 		log_debug(f"- CO member [{m['role']}]")
 
 		co_users[c['name']][m["user_id"]] = {}
-		
+
 		co_users[c['name']][m["user_id"]]["user"] = m["user"]
 		co_users[c['name']][m["user_id"]]["roles"] = [ f"CO:{c['name']}", "GRP:CO:members:all", "GRP:CO:members:active" ]
-		
+
 		if m['role'] == 'admin':
 			co_users[c['name']][m["user_id"]]["roles"].append("GRP:CO:admins")
-	
+
 	for a in details['authorisation_groups']:
 		log_debug(f"- AUTH GROUP [{a['name']}]")
 
 		auth_group = api(SBS_HOST+f"/api/authorisation_groups/{a['id']}/{c['id']}")
-	
+
 		for m in auth_group['collaboration_memberships']:
-			
+
 			co_users[c['name']][m["user_id"]]["roles"].extend(
 				[ f"GRP:{a['name']}" ]
 			)
-			
+
 			if m['role'] == 'admin':
 				co_users[c['name']][m["user_id"]]["roles"].append(f"GRP:{a['name']}:admins")
 
-	for s in details['services']:		
+	for s in details['services']:
 		log_debug(f"- SERVICE [{s['name']}]")
 
 		if 'labeledURI' not in extra:
 			extra['labeledURI'] = []
-		
+
 		extra['labeledURI'].append(s['entity_id'])
-						
+
 	# Make the CO...
 	ldap_org('CO', f"{BASE_DN}", c['name'], json.dumps(c), **extra)
 
 	# Add the People to it...
 	for i in co_users[c['name']].keys():
 		u = co_users[c['name']][i]
-	
+
 		ldap_member('CO',
 			c['name'],
 			base = f"o={c['name']},{BASE_DN}",
@@ -449,7 +455,7 @@ for co in ldap_collobarations():
 	co_validated = False
 
 	for c in collaborations:
-		
+
 		if f"{co[0]}" == f"o={c['name']},{BASE_DN}":
 			co_validated = True
 
@@ -472,11 +478,10 @@ for co in ldap_collobarations():
 					ldap_delete("P", uid, m[0])
 
 			break
-			
+
 	if not co_validated:
-		# CO not found, remove it
-#		ldap_delete("CO", co[0].split(',')[0].split('=')[1], co[0])
-		log_info(f"SHOULD DELETE, {co[0]} but not now !")
+		ldap_delete("CO", co[0].split(',')[0].split('=')[1], co[0])
+#		log_info(f"SHOULD DELETE, {co[0]} but not now !")
 
 ldap_session.unbind_s()
 
