@@ -16,13 +16,12 @@ from colorama import Fore, Style
 SBS_HOST = os.environ.get("SBS_HOST", "https://sbs.example.com")
 PUBLISHER_PORT = os.environ.get("PUBLISHER_PORT", "5556")
 
-LDAP_PROTOCOL = os.environ.get("LDAP_PROTOCOL", "ldap://")
+LDAP_PROT = os.environ.get("LDAP_PROT", "ldap://")
 LDAP_HOST = os.environ.get("LDAP_HOST", "ldap")
 LDAP_PORT = os.environ.get("LDAP_PORT", "389")
-LDAP_BASE_DN = os.environ.get("BASE_DN", "dc=example,dc=com")
-
-LDAP_USERNAME = os.environ.get("LDAP_USERNAME", "cn=admin")
-LDAP_PASSWORD = os.environ.get("LDAP_PASSWORD", None)
+LDAP_BASE = os.environ.get("LDAP_BASE", "dc=example,dc=com")
+LDAP_USER = os.environ.get("LDAP_USER", "cn=admin")
+LDAP_PASS = os.environ.get("LDAP_PASS", None)
 
 API_USER = os.environ.get("API_USER", "sysread")
 API_PASS = os.environ.get("API_PASS", None)
@@ -111,10 +110,10 @@ ldap_session = None
 try:
 	ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
 
-	s = "{}{}:{}".format(LDAP_PROTOCOL, LDAP_HOST, LDAP_PORT)
+	s = "{}{}:{}".format(LDAP_PROT, LDAP_HOST, LDAP_PORT)
 
 	ldap_session = ldap.initialize(s)
-	ldap_session.bind_s(LDAP_USERNAME, LDAP_PASSWORD)
+	ldap_session.bind_s(LDAP_USER, LDAP_PASS)
 except Exception as e:
 	ldap_session.unbind_s()
 	panic(f"LDAP connection failed ! {str(e)}")
@@ -153,7 +152,7 @@ def ldap_attributes_equal(a, b):
 	return len(added) == 0 and len(removed) == 0 and len(modified) == 0
 
 def ldap_collobarations():
-	l = ldap_session.search_s(f"{BASE_DN}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organization)(o=*))")
+	l = ldap_session.search_s(f"{LDAP_BASE}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organization)(o=*))")
 	log_ldap_result(l)
 	return l
 
@@ -425,7 +424,7 @@ for c in collaborations:
 		extra['labeledURI'].append(s['entity_id'])
 
 	# Make the CO...
-	ldap_org('CO', f"{BASE_DN}", c['name'], json.dumps(c), **extra)
+	ldap_org('CO', f"{LDAP_BASE}", c['name'], json.dumps(c), **extra)
 
 	# Add the People to it...
 	for i in co_users[c['name']].keys():
@@ -433,7 +432,7 @@ for c in collaborations:
 
 		ldap_member('CO',
 			c['name'],
-			base = f"o={c['name']},{BASE_DN}",
+			base = f"o={c['name']},{LDAP_BASE}",
 			roles = u['roles'],
 			uid = u["user"]["uid"],
 			cn = u["user"]["name"],
@@ -456,12 +455,12 @@ for co in ldap_collobarations():
 
 	for c in collaborations:
 
-		if f"{co[0]}" == f"o={c['name']},{BASE_DN}":
+		if f"{co[0]}" == f"o={c['name']},{LDAP_BASE}":
 			co_validated = True
 
 			log_debug(f"CHECK CO: {co[0]} VALIDATED !")
 
-			for m in ldap_people(f"o={c['name']},{BASE_DN}"):
+			for m in ldap_people(f"o={c['name']},{LDAP_BASE}"):
 				uid = m[1]['uid'][0].decode()
 
 				log_debug(f"CHECK CO PERSON: {uid}...")
