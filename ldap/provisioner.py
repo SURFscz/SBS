@@ -423,6 +423,9 @@ for c in collaborations:
 
 		extra['labeledURI'].append(s['entity_id'])
 
+	# Mark this LDAP entry as hosted by SBS_HOST...
+	extra['host'] = SBS_HOST
+
 	# Make the CO...
 	ldap_org('CO', f"{LDAP_BASE}", c['name'], json.dumps(c), **extra)
 
@@ -449,6 +452,10 @@ for co in ldap_collobarations():
 
 	if co[0].startswith("ou=People,") or co[0].startswith("ou=Groups,"):
 		continue
+
+	# we are only interested in entries that are maintained by 'me'...
+    if 'host' not in co[1] or co[1]['host'] != SBS_HOST:
+        continue
 
 	log_debug(f"CHECK CO: {co[0]}...")
 	co_validated = False
