@@ -493,6 +493,12 @@ class CollaborationDetail extends React.Component {
                 attribute: I18n.t("collaboration.shortName").toLowerCase()
             })}</span>}
 
+            <InputField value={`${organisation.short_name}:${short_name}`}
+                        name={I18n.t("collaboration.globalUrn")}
+                        copyClipBoard={true}
+                        toolTip={I18n.t("collaboration.globalUrnTooltip")}
+                        disabled={true}/>
+
             {isAdmin && <InputField value={joinRequestUrl}
                                     name={I18n.t("collaboration.joinRequestUrl")}
                                     toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
@@ -566,7 +572,8 @@ class CollaborationDetail extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         const organisation = {
             value: originalCollaboration.organisation.id,
-            label: originalCollaboration.organisation.name
+            label: originalCollaboration.organisation.name,
+            short_name: originalCollaboration.organisation.short_name
         };
         const back = isAdmin ? "/collaborations" : "/home";
         return (<div className="mod-collaboration-detail">

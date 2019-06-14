@@ -84,6 +84,7 @@ class TestAuthorisationGroup(AbstractTest):
         })
         authorisation_group = self.get(f"/api/authorisation_groups/{authorisation_group['id']}/{collaboration_id}")
         self.assertEqual(2, len(authorisation_group["services"]))
+        self.assertEqual("uuc:ai_computing:new_auth_group", authorisation_group["global_urn"])
 
     def test_update_authorisation_group(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
@@ -91,10 +92,12 @@ class TestAuthorisationGroup(AbstractTest):
         authorisation_group = self.get(f"/api/authorisation_groups/{authorisation_group_id}/{collaboration_id}")
 
         authorisation_group["status"] = "inactive"
+        authorisation_group["short_name"] = "new_short_name"
         self.put("/api/authorisation_groups/", body=authorisation_group)
 
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
         self.assertEqual("inactive", authorisation_group.status)
+        self.assertEqual("uuc:ai_computing:new_short_name", authorisation_group.global_urn)
 
     def test_delete_authorisation_group(self):
         authorisation_group_id = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation).id

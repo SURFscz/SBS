@@ -32,7 +32,8 @@ class OrganisationInvitation extends React.Component {
             confirmationQuestion: "",
             leavePage: false,
             isAdminLink: false,
-            isExpired: false
+            isExpired: false,
+            errorOccurred: false
         };
     }
 
@@ -45,13 +46,16 @@ class OrganisationInvitation extends React.Component {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({organisationInvitation: json, isExpired});
                 })
-                .catch(() => this.props.history.push("/404"));
+                .catch(() => this.setState({errorOccurred: true},
+                    () => setFlash(I18n.t("organisationInvitation.flash.notFound"), "error")));
         } else if (params.id) {
             organisationInvitationById(params.id)
                 .then(json => {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({organisationInvitation: json, isAdminLink: true, isExpired});
-                });
+                })
+                .catch(() => this.setState({errorOccurred: true},
+                    () => setFlash(I18n.t("organisationInvitation.flash.notFound"), "error")));
         } else {
             this.props.history.push("/404");
         }
@@ -133,11 +137,24 @@ class OrganisationInvitation extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {organisationInvitation} = this.state;
-            organisationInvitationAccept(organisationInvitation).then(res => {
-                this.props.history.push("/home");
-                setFlash(I18n.t("organisationInvitation.flash.inviteAccepted", {name: organisationInvitation.organisation.name}));
-                this.props.refreshUser();
-            });
+            organisationInvitationAccept(organisationInvitation)
+                .then(res => {
+                    this.props.history.push("/home");
+                    setFlash(I18n.t("organisationInvitation.flash.inviteAccepted", {name: organisationInvitation.organisation.name}));
+                    this.props.refreshUser();
+                })
+                .catch(e => {
+                    if (e.response && e.response.json) {
+                        e.response.json().then(res => {
+                            if (res.message && res.message.indexOf("already a member") > -1) {
+                                this.setState({errorOccurred: true}, () =>
+                                    setFlash(I18n.t("organisationInvitation.flash.alreadyMember"), "error"));
+                            }
+                        });
+                    } else {
+                        throw e;
+                    }
+                });
         }
     };
 
@@ -160,7 +177,7 @@ class OrganisationInvitation extends React.Component {
     render() {
         const {
             organisationInvitation, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogAction, confirmationQuestion, leavePage, isAdminLink, isExpired
+            confirmationDialogAction, confirmationQuestion, leavePage, isAdminLink, isExpired, errorOccurred
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const expiredMessage = isAdminLink ? I18n.t("organisationInvitation.expiredAdmin", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")}) :
@@ -180,7 +197,8 @@ class OrganisationInvitation extends React.Component {
                     }}><FontAwesomeIcon icon="arrow-left"/>
                         {I18n.t("organisationInvitation.backToOrganisationDetail", {name: organisationInvitation.organisation.name})}
                     </a>}
-                    <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>
+                    {!errorOccurred &&
+                    <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>}
                 </div>
 
                 <div className="organisation-invitation">
@@ -209,7 +227,7 @@ class OrganisationInvitation extends React.Component {
                                 disabled={true}
                                 multiline={true}/>
 
-                    {(!isAdminLink && !isExpired) &&
+                    {(!isAdminLink && !isExpired && !errorOccurred) &&
                     <section className={`form-element ${acceptedTerms ? "" : "invalid"}`}>
                         <label className="form-label"
                                dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: organisationInvitation.organisation.name})}}/>{this.requiredMarker()}
@@ -219,7 +237,7 @@ class OrganisationInvitation extends React.Component {
                                   info={I18n.t("registration.step2.policyConfirmation", {collaboration: organisationInvitation.organisation.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
                     </section>}
-                    {(!isAdminLink && !isExpired) &&
+                    {(!isAdminLink && !isExpired && !errorOccurred) &&
                     <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.accept")}
                                 onClick={this.accept}/>

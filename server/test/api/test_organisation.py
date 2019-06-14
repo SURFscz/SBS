@@ -93,6 +93,19 @@ class TestOrganisation(AbstractTest):
                        query_data={"identifier": "https://xyz", "existing_organisation": "https://xyz"})
         self.assertEqual(False, res)
 
+    def test_organisation_short_name_exists(self):
+        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_name})
+        self.assertEqual(True, res)
+
+        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_name, "existing_organisation": uuc_name})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": "xyc"})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": "xyc", "existing_organisation": "xyc"})
+        self.assertEqual(False, res)
+
     def test_my_organisations_lite_super_user(self):
         self.login("urn:john")
         res = self.get("/api/organisations/mine_lite")

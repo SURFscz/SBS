@@ -32,7 +32,8 @@ class Invitation extends React.Component {
             cancelDialogAction: () => true,
             leavePage: false,
             isAdminLink: false,
-            isExpired: false
+            isExpired: false,
+            errorOccurred: false
         };
     }
 
@@ -45,13 +46,17 @@ class Invitation extends React.Component {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({invite: json, isExpired});
                 })
-                .catch(() => this.props.history.push("/404"));
+                .catch(() => this.setState({errorOccurred: true},
+                    () => setFlash(I18n.t("organisationInvitation.flash.notFound"), "error")));
         } else if (params.id) {
             invitationById(params.id)
                 .then(json => {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({invite: json, isAdminLink: true, isExpired});
-                });
+                })
+                .catch(() => this.setState({errorOccurred: true},
+                    () => setFlash(I18n.t("organisationInvitation.flash.notFound"), "error")));
+
         } else {
             this.props.history.push("/404");
         }
@@ -138,7 +143,20 @@ class Invitation extends React.Component {
                 this.props.history.push("/home");
                 setFlash(I18n.t("invitation.flash.inviteAccepted", {name: invite.collaboration.name}));
                 this.props.refreshUser();
-            });
+            })
+                .catch(e => {
+                    if (e.response && e.response.json) {
+                        e.response.json().then(res => {
+                            if (res.message && res.message.indexOf("already a member") > -1) {
+                                this.setState({errorOccurred: true}, () =>
+                                    setFlash(I18n.t("organisationInvitation.flash.alreadyMember"), "error"));
+                            }
+                        });
+                    } else {
+                        throw e;
+                    }
+                });
+
         }
     };
 
@@ -161,7 +179,7 @@ class Invitation extends React.Component {
     render() {
         const {
             invite, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction, confirmationQuestion,
-            confirmationDialogAction, leavePage, isAdminLink, isExpired
+            confirmationDialogAction, leavePage, isAdminLink, isExpired, errorOccurred
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const expiredMessage = isAdminLink ? I18n.t("invitation.expiredAdmin", {expiry_date: moment(invite.expiry_date * 1000).format("LL")}) :
@@ -180,7 +198,8 @@ class Invitation extends React.Component {
                     }}><FontAwesomeIcon icon="arrow-left"/>
                         {I18n.t("collaborationDetail.backToCollaborationDetail", {name: invite.collaboration.name})}
                     </a>}
-                    <p className="title">{I18n.t("invitation.title", {collaboration: invite.collaboration.name})}</p>
+                    {!errorOccurred &&
+                    <p className="title">{I18n.t("invitation.title", {collaboration: invite.collaboration.name})}</p>}
                 </div>
 
                 <div className="invitation">
@@ -212,7 +231,7 @@ class Invitation extends React.Component {
                                 disabled={true}
                                 multiline={true}/>
 
-                    {(!isAdminLink && !isExpired) &&
+                    {(!isAdminLink && !isExpired && !errorOccurred) &&
                     <section className={`form-element ${acceptedTerms ? "" : "invalid"}`}>
                         <label className="form-label"
                                dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: invite.collaboration.name})}}/>{this.requiredMarker()}
@@ -222,7 +241,7 @@ class Invitation extends React.Component {
                                   info={I18n.t("registration.step2.policyConfirmation", {collaboration: invite.collaboration.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
                     </section>}
-                    {(!isAdminLink && !isExpired) &&
+                    {(!isAdminLink && !isExpired && !errorOccurred) &&
                     <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("invitation.accept")}
                                 onClick={this.accept}/>

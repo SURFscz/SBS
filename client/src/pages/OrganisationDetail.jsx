@@ -5,7 +5,7 @@ import {
     deleteOrganisationMembership,
     organisationById,
     organisationIdentifierExists,
-    organisationNameExists,
+    organisationNameExists, organisationShortNameExists,
     updateOrganisation
 } from "../api";
 import "./OrganisationDetail.scss";
@@ -28,6 +28,7 @@ class OrganisationDetail extends React.Component {
             originalOrganisation: null,
             name: "",
             tenant_identifier: "",
+            short_name:"",
             description: "",
             members: [],
             filteredMembers: [],
@@ -149,6 +150,11 @@ class OrganisationDetail extends React.Component {
     validateOrganisationTenantIdentifier = e =>
         organisationIdentifierExists(e.target.value, this.state.originalOrganisation.tenant_identifier).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, tenant: json}});
+        });
+
+    validateOrganisationShortName = e =>
+        organisationShortNameExists(e.target.value, this.state.originalOrganisation.short_name).then(json => {
+            this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
 
     openInvitation = invitation => e => {
@@ -284,7 +290,7 @@ class OrganisationDetail extends React.Component {
         );
     };
 
-    organisationDetails = (name, alreadyExists, initial, tenant_identifier, description, originalOrganisation, user, disabledSubmit) => {
+    organisationDetails = (name, short_name, alreadyExists, initial, tenant_identifier, description, originalOrganisation, user, disabledSubmit) => {
         return <div className="organisation-detail">
             <InputField value={name} onChange={e => {
                 this.setState({
@@ -304,6 +310,25 @@ class OrganisationDetail extends React.Component {
             {(!initial && isEmpty(name)) && <span
                 className="error">{I18n.t("organisation.required", {
                 attribute: I18n.t("organisation.name").toLowerCase()
+            })}</span>}
+
+            <InputField value={short_name}
+                        onChange={e => this.setState({
+                            short_name: e.target.value,
+                            alreadyExists: {...this.state.alreadyExists, short_name: false}
+                        })}
+                        placeholder={I18n.t("organisation.shortNamePlaceHolder")}
+                        disabled={!user.admin}
+                        onBlur={this.validateOrganisationShortName}
+                        name={I18n.t("organisation.shortName")}/>
+            {alreadyExists.short_name && <span
+                className="error">{I18n.t("organisation.alreadyExists", {
+                attribute: I18n.t("organisation.shortName").toLowerCase(),
+                value: short_name
+            })}</span>}
+            {(!initial && isEmpty(short_name)) && <span
+                className="error">{I18n.t("organisation.required", {
+                attribute: I18n.t("organisation.shortName").toLowerCase()
             })}</span>}
 
             <InputField value={tenant_identifier}
@@ -347,7 +372,7 @@ class OrganisationDetail extends React.Component {
 
     render() {
         const {
-            name, description, tenant_identifier, originalOrganisation, initial, alreadyExists, filteredMembers, query,
+            name, short_name, description, tenant_identifier, originalOrganisation, initial, alreadyExists, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             inviteReverse, inviteSorted, invitations, adminOfOrganisation
         } = this.state;
@@ -386,7 +411,7 @@ class OrganisationDetail extends React.Component {
                 <div className="title">
                     <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
                 </div>
-                {this.organisationDetails(name, alreadyExists, initial, tenant_identifier, description, originalOrganisation, user, disabledSubmit)}
+                {this.organisationDetails(name, short_name, alreadyExists, initial, tenant_identifier, description, originalOrganisation, user, disabledSubmit)}
             </div>)
     }
 

@@ -43,6 +43,18 @@ def identifier_exists():
     return org is not None, 200
 
 
+@organisation_api.route("/short_name_exists", strict_slashes=False)
+@json_endpoint
+def short_name_exists():
+    short_name = query_param("short_name")
+    existing_organisation = query_param("existing_organisation", required=False, default="")
+    org = Organisation.query.options(load_only("id")) \
+        .filter(func.lower(Organisation.short_name) == func.lower(short_name)) \
+        .filter(func.lower(Organisation.short_name) != func.lower(existing_organisation)) \
+        .first()
+    return org is not None, 200
+
+
 @organisation_api.route("/all", strict_slashes=False)
 @json_endpoint
 def organisation_all():
@@ -87,6 +99,7 @@ def organisation_by_id(id):
     query = Organisation.query \
         .options(joinedload(Organisation.organisation_memberships).subqueryload(OrganisationMembership.user)) \
         .options(joinedload(Organisation.organisation_invitations).subqueryload(OrganisationInvitation.user)) \
+        .options(joinedload(Organisation.api_keys)) \
         .filter(Organisation.id == id)
 
     if not request_context.is_authorized_api_call:

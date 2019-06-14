@@ -49,7 +49,6 @@ I18n.translations.nl = {
         title: "Uitlef {{subject}}",
         impersonate: "Impersonate"
     },
-
     impersonate: {
         title: "Wie wilt u zijn?",
         organisation: "Organisatie",
@@ -150,6 +149,8 @@ I18n.translations.nl = {
         shortName: "Korte naam",
         shortNamePlaceholder: "Korte naam van de samenwerking",
         shortNameTooltip: "Ken korte namen toe aan de samenwerkingen<br/>zodat die namen bruikbaar zijn in de<br/>via ldap te koppelen diensten (zoals Linux groepsnamen)",
+        globalUrn: "Globale urn",
+        globalUrnTooltip: "Globale unieke en read-only urn<br/>gebaseerd op de korte naam van de organisatie<br/>en deze collaboratie.",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare<br/>identifier van een samenwerking<br/>die wordt gebruikt als identifier<br/>voor externe systemen",
         joinRequestUrl: "Lid worden URL",
@@ -283,6 +284,9 @@ I18n.translations.nl = {
         namePlaceHolder: "De unieke naam van de organisatie",
         tenant_identifier: "Tenant identifier",
         tenantPlaceHolder: "De unieke tenant / organisatie identifier die de organisatie verbindt met een instelling",
+        shortName: "Korte naam",
+        shortNamePlaceholder: "Korte naam van de organisatie",
+        shortNameTooltip: "Ken korte namen toe aan organisaties<br/>zodat deze korte namen kunnen worden gebruikt<br/>in LDAP services (zoals Linux directory namen)",
         description: "Beschrijving",
         descriptionPlaceholder: "De beschrijving van de organisatie is zichtbaar voor iedereen",
         created: "Aangemaakt op",
@@ -389,7 +393,9 @@ I18n.translations.nl = {
             inviteDeleted: "Uitnodiging voor organisatie {{name}} is verwijderd",
             inviteResend: "Uitnodiging voor organisatie {{name}} is opnieuw verzonden",
             inviteAccepted: "Uitnodiging voor organisatie {{name}} is geaccepteerd",
-            created: "Uitnodiging(en) voor organisatie {{name}} aangemaakt"
+            created: "Uitnodiging(en) voor organisatie {{name}} aangemaakt",
+            alreadyMember: "De uitnodiging kon niet worden geaccepteerd omdat je al lid bent van deze organisatie",
+            notFound: "Deze uitnodiging is reeds geaccepteerd / afgewezen."
         },
     },
     invitation: {
@@ -471,6 +477,8 @@ I18n.translations.nl = {
         shortName: "Korte naam",
         shortNamePlaceholder: "Korte naam van de autorisatie groep",
         shortNameTooltip: "Ken korte namen toe aan de autorisatie groepen<br/>zodat die namen bruikbaar zijn in de<br/>via ldap te koppelen diensten (zoals Linux groepsnamen)",
+        globalUrn: "Globale urn",
+        globalUrnTooltip: "Globale unieke enread-only urn<br/>gebaseerd op de korte naam van de organsatie ,<br/>collaboratie en deze authorisatie groep.",
         alreadyExists: "Een autorisatie groep met {{attribute}} {{value}} bestaat al.",
         required: "{{attribute}} is een verplicht veld voor een autorisatie groep",
         uri: "URI",
@@ -503,8 +511,10 @@ I18n.translations.nl = {
             addedService: "Dienst {{service}} toegevoegd aan autorisatie groep {{name}}",
             deletedService: "Dienst {{service}} ontkoppeld van autorisatie groep {{name}}",
             addedMember: "Gebruiker {{member}} lid gemaakt van autorisatie groep {{name}}",
+            addedMembers: "Alle gebruikers lid gemaakt van autorisatie groep {{name}}",
             deletedMember: "Gebruiker {{member}} als lid verwijderd uit autorisatie groep {{name}}",
         },
+        addAllMembers: "Voeg alle gebruikers toe aan deze autorisatie groep",
         searchServices: "Zoek, kies en voeg diensten toe aan autorisatie groep {{name}}",
         connectedServices: "Diensten gekoppeld aan {{name}}",
         deleteServiceWarning: "Waarschuwing: ontkoppelen van een dienst van een autorisatie groep verwijdert alle dienst specifieke informatie <br/>van gekoppelde leden die via deze groep gekoppeld waren",
@@ -601,7 +611,6 @@ I18n.translations.nl = {
         description_html: "Deze pagina kan niet worden gevonden.",
         loginLink: "LOGIN"
     },
-
     footer: {
         product: "Powered by SCZ",
         productLink: "https://wiki.surfnet.nl/display/SCZ/Science+Collaboration+Zone+Home",
