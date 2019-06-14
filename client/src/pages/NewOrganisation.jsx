@@ -1,5 +1,10 @@
 import React from "react";
-import {createOrganisation, organisationIdentifierExists, organisationNameExists} from "../api";
+import {
+    createOrganisation,
+    organisationIdentifierExists,
+    organisationNameExists,
+    organisationShortNameExists
+} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./NewOrganisation.scss";
@@ -17,11 +22,12 @@ class NewOrganisation extends React.Component {
         this.state = {
             name: "",
             description: "",
+            short_name: "",
             tenant_identifier: "",
             administrators: [],
             email: "",
             message: "",
-            required: ["name", "tenant_identifier"],
+            required: ["name", "short_name", "tenant_identifier"],
             alreadyExists: {},
             initial: true,
             confirmationDialogOpen: false,
@@ -42,6 +48,11 @@ class NewOrganisation extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, tenant: json}});
         });
 
+    validateOrganisationShortName = e =>
+        organisationShortNameExists(e.target.value).then(json => {
+            this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
+        });
+
     cancel = () => {
         this.setState({confirmationDialogOpen: true});
     };
@@ -54,8 +65,8 @@ class NewOrganisation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, tenant_identifier, administrators, message, description} = this.state;
-            createOrganisation({name, tenant_identifier, administrators, message, description}).then(res => {
+            const {name, short_name, tenant_identifier, administrators, message, description} = this.state;
+            createOrganisation({name, short_name, tenant_identifier, administrators, message, description}).then(res => {
                 this.props.history.push("/organisations");
                 setFlash(I18n.t("organisation.flash.created", {name: res.name}))
             });
@@ -100,7 +111,7 @@ class NewOrganisation extends React.Component {
     render() {
         const {
             name, description, tenant_identifier, email, initial, alreadyExists, administrators,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message
+            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, short_name
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         //TODO based on the params of the path
@@ -140,6 +151,25 @@ class NewOrganisation extends React.Component {
                     {(!initial && isEmpty(name)) && <span
                         className="error">{I18n.t("organisation.required", {
                         attribute: I18n.t("organisation.name").toLowerCase()
+                    })}</span>}
+
+                    <InputField value={short_name}
+                                name={I18n.t("organisation.shortName")}
+                                placeholder={I18n.t("organisation.shortNamePlaceholder")}
+                                onBlur={this.validateOrganisationShortName}
+                                onChange={e => this.setState({
+                                    short_name: e.target.value,
+                                    alreadyExists: {...this.state.alreadyExists, short_name: false}
+                                })}
+                                toolTip={I18n.t("organisation.shortNameTooltip")}/>
+                    {alreadyExists.short_name && <span
+                        className="error">{I18n.t("organisation.alreadyExists", {
+                        attribute: I18n.t("organisation.shortName").toLowerCase(),
+                        value: short_name
+                    })}</span>}
+                    {(!initial && isEmpty(short_name)) && <span
+                        className="error">{I18n.t("organisation.required", {
+                        attribute: I18n.t("organisation.shortName").toLowerCase()
                     })}</span>}
 
                     <InputField value={tenant_identifier}

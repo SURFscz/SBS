@@ -56,11 +56,13 @@ class TestCollaboration(AbstractTest):
                                       body={
                                           "name": "new_collaboration",
                                           "organisation_id": organisation_id,
-                                          "administrators": ["the@ex.org", "that@ex.org"]
+                                          "administrators": ["the@ex.org", "that@ex.org"],
+                                          "short_name": "new_short_name"
                                       }, with_basic_auth=False)
 
             self.assertIsNotNone(collaboration["id"])
             self.assertIsNotNone(collaboration["identifier"])
+            self.assertEqual("uuc:new_short_name", collaboration["global_urn"])
             self.assertEqual(2, len(outbox))
 
     def test_collaboration_new_no_organisation_admin(self):

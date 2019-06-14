@@ -7,7 +7,7 @@ from sqlalchemy.orm import load_only, contains_eager
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_collaboration_admin, \
     confirm_collaboration_admin_or_authorisation_group_member, current_user_id
-from server.db.db import AuthorisationGroup, CollaborationMembership, UserServiceProfile
+from server.db.db import AuthorisationGroup, CollaborationMembership, UserServiceProfile, Collaboration
 from server.db.db import db
 from server.db.models import update, save, delete
 
@@ -88,9 +88,12 @@ def authorisation_group_by_id(authorisation_group_id, collaboration_id):
 def save_authorisation_group():
     data = current_request.get_json()
 
-    confirm_collaboration_admin(data["collaboration_id"])
+    collaboration_id = data["collaboration_id"]
+    confirm_collaboration_admin(collaboration_id)
 
     service_ids = data["service_ids"] if "service_ids" in data else None
+
+    _assign_global_urn(collaboration_id, data)
 
     res = save(AuthorisationGroup, custom_json=data, allow_child_cascades=False)
     if service_ids:
@@ -102,12 +105,23 @@ def save_authorisation_group():
     return res
 
 
+def _assign_global_urn(collaboration_id, data):
+    collaboration = Collaboration.query \
+        .join(Collaboration.organisation) \
+        .options(contains_eager(Collaboration.organisation)) \
+        .filter(Collaboration.id == collaboration_id).one()
+    data["global_urn"] = f"{collaboration.organisation.short_name}:{collaboration.short_name}:{data['short_name']}"
+
+
 @authorisation_group_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_authorisation_group():
     data = current_request.get_json()
 
-    confirm_collaboration_admin(data["collaboration_id"])
+    collaboration_id = data["collaboration_id"]
+    confirm_collaboration_admin(collaboration_id)
+
+    _assign_global_urn(collaboration_id, data)
 
     return update(AuthorisationGroup, custom_json=data, allow_child_cascades=False)
 

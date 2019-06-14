@@ -97,10 +97,8 @@ def delete_pre_flight():
 def delete_authorisation_group_members(authorisation_group_id, collaboration_membership_id, collaboration_id):
     confirm_collaboration_admin(collaboration_id)
 
-    statement = f"DELETE FROM user_service_profiles WHERE " \
-        f"user_id IN (SELECT user_id from collaboration_memberships WHERE id = {collaboration_membership_id})" \
-        f"AND service_id IN (SELECT service_id FROM services_authorisation_groups " \
-        f"WHERE authorisation_group_id = {authorisation_group_id})"
+    statement = f"DELETE FROM user_service_profiles WHERE authorisation_group_id = {authorisation_group_id} AND " \
+        f"user_id IN (SELECT user_id from collaboration_memberships WHERE id = {collaboration_membership_id})"
     sql = text(statement)
     db.engine.execute(sql)
 

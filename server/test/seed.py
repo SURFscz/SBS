@@ -71,12 +71,11 @@ def seed(db):
 
     _persist(db, john, mary, peter, admin, roger, harry, james, sarah, jane)
 
-    uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", description="Unincorporated Urban Community",
-                       created_by="urn:admin",
-                       updated_by="urnadmin")
+    uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", short_name="uuc",
+                       description="Unincorporated Urban Community",
+                       created_by="urn:admin", updated_by="urnadmin")
     uva = Organisation(name=amsterdam_uva_name, tenant_identifier="https://uva", description="University of Amsterdam",
-                       created_by="urn:admin",
-                       updated_by="urnadmin")
+                       created_by="urn:admin", updated_by="urnadmin", short_name="uva")
     _persist(db, uuc, uva)
 
     organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,

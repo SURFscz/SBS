@@ -22,7 +22,7 @@ class NewCollaboration extends React.Component {
         }));
         this.state = {
             name: "",
-            short_name:"",
+            short_name: "",
             description: "",
             access_type: this.accessTypeOptions[0].value,
             administrators: [this.props.user.email],
@@ -33,7 +33,7 @@ class NewCollaboration extends React.Component {
             status: "",
             required: ["name", "short_name", "organisation"],
             alreadyExists: {},
-            organisation: undefined,
+            organisation: {},
             organisations: [],
             initial: true,
             confirmationDialogOpen: false,
@@ -49,7 +49,13 @@ class NewCollaboration extends React.Component {
             if (json.length === 0) {
                 this.props.history.push("/404");
             } else {
-                this.setState({organisations: json.map(org => ({label: org.name, value: org.id}))});
+                this.setState({
+                    organisations: json.map(org => ({
+                        label: org.name,
+                        value: org.id,
+                        short_name: org.short_name
+                    }))
+                });
             }
         });
     };
@@ -188,6 +194,12 @@ class NewCollaboration extends React.Component {
                         className="error">{I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.shortName").toLowerCase()
                     })}</span>}
+
+                    <InputField value={`${organisation.short_name}:${short_name}`}
+                                name={I18n.t("collaboration.globalUrn")}
+                                copyClipBoard={true}
+                                toolTip={I18n.t("collaboration.globalUrnTooltip")}
+                                disabled={true}/>
 
                     <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                                 placeholder={I18n.t("collaboration.descriptionPlaceholder")}

@@ -12,7 +12,8 @@ from server.api.base import json_endpoint, query_param, replace_full_text_search
 from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member, confirm_authorized_api_call, \
     confirm_allow_impersonation
-from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation
+from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, AuthorisationGroup, User, Invitation, \
+    Organisation
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
@@ -84,7 +85,9 @@ def collaboration_services_by_id(collaboration_id):
 
     query = Collaboration.query \
         .outerjoin(Collaboration.services) \
-        .options(contains_eager(Collaboration.services))
+        .join(Collaboration.organisation) \
+        .options(contains_eager(Collaboration.services)) \
+        .options(contains_eager(Collaboration.organisation))
 
     include_memberships = query_param("include_memberships", required=False, default=False)
     if include_memberships:
@@ -259,7 +262,7 @@ def save_collaboration():
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
     data["identifier"] = str(uuid.uuid4())
-
+    _assign_global_urn(data["organisation_id"], data)
     res = save(Collaboration, custom_json=data)
 
     user = User.query.get(current_user_id())
@@ -284,14 +287,21 @@ def save_collaboration():
     return res
 
 
+def _assign_global_urn(organisation_id, data):
+    organisation = Organisation.query \
+        .filter(Organisation.id == organisation_id).one()
+    data["global_urn"] = f"{organisation.short_name}:{data['short_name']}"
+
+
 @collaboration_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_collaboration():
     data = current_request.get_json()
     confirm_collaboration_admin(data["id"])
 
+    _assign_global_urn(data["organisation_id"], data)
     # For updating references like services, authorisation_groups, memberships there are more fine-grained API methods
-    return update(Collaboration, allow_child_cascades=False)
+    return update(Collaboration, custom_json=data, allow_child_cascades=False)
 
 
 @collaboration_api.route("/<id>", methods=["DELETE"], strict_slashes=False)

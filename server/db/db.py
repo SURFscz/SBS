@@ -62,6 +62,7 @@ class Organisation(Base, db.Model):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
     tenant_identifier = db.Column("tenant_identifier", db.String(length=512), nullable=False)
+    short_name = db.Column("short_name", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -74,6 +75,9 @@ class Organisation(Base, db.Model):
     organisation_invitations = db.relationship("OrganisationInvitation", back_populates="organisation",
                                                cascade="all, delete-orphan",
                                                passive_deletes=True)
+    api_keys = db.relationship("ApiKey", back_populates="organisation",
+                               cascade="all, delete-orphan",
+                               passive_deletes=True)
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.organisation_memberships))) > 0
@@ -184,6 +188,7 @@ class Collaboration(Base, db.Model):
     description = db.Column("description", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=True)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
+    global_urn = db.Column("global_urn", db.Text, nullable=True)
     access_type = db.Column("access_type", db.String(length=255), nullable=True)
     enrollment = db.Column("enrollment", db.String(length=255), nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
@@ -213,6 +218,7 @@ class AuthorisationGroup(Base, db.Model):
     name = db.Column("name", db.String(length=255), nullable=False)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
     uri = db.Column("uri", db.String(length=255), nullable=True)
+    global_urn = db.Column("global_urn", db.Text, nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=True)
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
@@ -272,3 +278,15 @@ class OrganisationInvitation(Base, db.Model):
     denied = db.Column("denied", db.Boolean(), nullable=True)
     expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
+
+
+class ApiKey(Base, db.Model):
+    __tablename__ = "api_keys"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    hashed_secret = db.Column("hashed_secret", db.String(length=512), nullable=False)
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
+    organisation = db.relationship("Organisation", back_populates="api_keys")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)

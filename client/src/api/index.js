@@ -93,6 +93,7 @@ export function config() {
 export function me(config) {
     const headers = (config.local) ? {
         "OIDC_CLAIM_cmuid": "urn:john",
+        // "OIDC_CLAIM_cmuid": "urn:temp",
         "OIDC_CLAIM_Nickname": "jëhny",
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
         "OIDC_CLAIM_Eduperson-Affiliation": "librarywalkin",
@@ -227,6 +228,11 @@ export function organisationIdentifierExists(identifier, existingOrganisation = 
     return fetchJson(`/api/organisations/identifier_exists?identifier=${encodeURIComponent(identifier)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
 }
 
+export function organisationShortNameExists(short_name, existingOrganisation = null) {
+    return fetchJson(`/api/organisations/short_name_exists?short_name=${encodeURIComponent(short_name)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
+}
+
+
 export function organisationById(id) {
     return fetchJson(`/api/organisations/${id}`, {}, {}, false);
 }
@@ -270,15 +276,18 @@ export function joinRequestDecline(joinRequest) {
 
 //OrganisationInvitations
 export function organisationInvitationById(id) {
-    return fetchJson(`/api/organisation_invitations/${id}`);
+    return fetchJson(`/api/organisation_invitations/${id}`, {}, {}, false);
 }
 
 export function organisationInvitationByHash(hash) {
-    return fetchJson(`/api/organisation_invitations/find_by_hash?hash=${hash}`);
+    return fetchJson(`/api/organisation_invitations/find_by_hash?hash=${hash}`, {}, {}, false);
 }
 
 export function organisationInvitationAccept(organisationInvitation) {
-    return postPutJson("/api/organisation_invitations/accept", organisationInvitation, "put");
+    return fetchJson("/api/organisation_invitations/accept", {
+        method: "put",
+        body: JSON.stringify(organisationInvitation)
+    }, {}, false);
 }
 
 export function organisationInvitationDecline(organisationInvitation) {
@@ -295,15 +304,15 @@ export function organisationInvitationDelete(organisationInvitationId) {
 
 //Invitations
 export function invitationById(id) {
-    return fetchJson(`/api/invitations/${id}`);
+    return fetchJson(`/api/invitations/${id}`, {}, {}, false);
 }
 
 export function invitationByHash(hash) {
-    return fetchJson(`/api/invitations/find_by_hash?hash=${hash}`);
+    return fetchJson(`/api/invitations/find_by_hash?hash=${hash}`, {}, {}, false);
 }
 
 export function invitationAccept(invitation) {
-    return postPutJson("/api/invitations/accept", invitation, "put");
+    return fetchJson("/api/invitations/accept", {method: "putt", body: JSON.stringify(invitation)}, {}, false);
 }
 
 export function invitationDecline(invitation) {

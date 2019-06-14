@@ -27,6 +27,7 @@ import ReactTooltip from "react-tooltip";
 
 import Select from "react-select";
 import moment from "moment";
+import CheckBox from "../components/CheckBox";
 
 const userServiceProfileAttributes = ["name", "ssh_key", "email", "address", "telephone_number"];
 
@@ -321,6 +322,23 @@ class AuthorisationGroup extends React.Component {
         });
     };
 
+    addAllMembers = () => {
+        const {collaboration, authorisationGroup, name, allMembers, sortedMembers} = this.state;
+        const availableMembers = allMembers
+            .filter(member => !sortedMembers.find(s => s.id === member.value))
+            .map(member => member.value);
+        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+        addAuthorisationGroupMembers({
+            authorisationGroupId: authorisationGroup.id,
+            collaborationId: collaboration.id,
+            memberIds: availableMembers
+        }).then(() => {
+            this.refreshMembers(() => setFlash(I18n.t("authorisationGroup.flash.addedMembers", {
+                name: authorisationGroupName
+            })));
+        });
+    };
+
     removeMember = member => () => {
         const {collaboration, authorisationGroup} = this.state;
         preFlightDeleteAuthorisationGroupMember({
@@ -500,6 +518,7 @@ class AuthorisationGroup extends React.Component {
 
     authorisationMembers = (adminOfCollaboration, collaboration, authorisationGroupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers) => {
         const availableMembers = allMembers.filter(member => !sortedMembers.find(s => s.id === member.value));
+        const allMembersAreAdded = sortedMembers.length === allMembers.length;
         return (
             <div className={`authorisation-members ${adminOfCollaboration ? "" : "no-admin"}`}>
                 {adminOfCollaboration && <Select className="services-select"
@@ -510,6 +529,13 @@ class AuthorisationGroup extends React.Component {
                                                  isSearchable={true}
                                                  isClearable={true}/>
                 }
+                <CheckBox className="checkbox add-all-members"
+                            name="allMembersAreAdded"
+                          value={allMembersAreAdded}
+                          readOnly={!adminOfCollaboration || allMembersAreAdded}
+                          onChange={this.addAllMembers}
+                          info={I18n.t("authorisationGroup.addAllMembers")}
+                />
                 {this.renderConnectedMembers(adminOfCollaboration, collaboration, authorisationGroupName, sortedMembers, sortedMembersBy, reverseMembers)}
             </div>
         );
@@ -534,7 +560,8 @@ class AuthorisationGroup extends React.Component {
     };
 
 
-    authorisationGroupDetails = (adminOfCollaboration, name, short_name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit, authorisationGroup) => {
+    authorisationGroupDetails = (adminOfCollaboration, name, short_name, alreadyExists, initial, description,
+                                 uri, status, isNew, disabledSubmit, authorisationGroup, collaboration) => {
         return (
             <div className="authorisation-group">
                 <InputField value={name}
@@ -575,6 +602,13 @@ class AuthorisationGroup extends React.Component {
                     className="error">{I18n.t("authorisationGroup.required", {
                     attribute: I18n.t("authorisationGroup.shortName").toLowerCase()
                 })}</span>}
+
+
+                <InputField value={`${collaboration.organisation.short_name}:${collaboration.short_name}:${short_name}`}
+                            name={I18n.t("authorisationGroup.globalUrn")}
+                            toolTip={I18n.t("authorisationGroup.globalUrnTooltip")}
+                            copyClipBoard={true}
+                            disabled={true}/>
 
                 <InputField value={description}
                             name={I18n.t("authorisationGroup.description")}
@@ -667,7 +701,8 @@ class AuthorisationGroup extends React.Component {
                 {<div className="title">
                     <p className="title">{detailsTitle}</p>
                 </div>}
-                {this.authorisationGroupDetails(adminOfCollaboration, name, short_name, alreadyExists, initial, description, uri, status, isNew, disabledSubmit, authorisationGroup)}
+                {this.authorisationGroupDetails(adminOfCollaboration, name, short_name, alreadyExists, initial,
+                    description, uri, status, isNew, disabledSubmit, authorisationGroup, collaboration)}
             </div>);
     };
 
