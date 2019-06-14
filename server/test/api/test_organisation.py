@@ -32,8 +32,8 @@ class TestOrganisation(AbstractTest):
     def test_organisation_by_id_with_api_user(self):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}",
-                                 headers={"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"},
-                                 with_basic_auth=False)
+                                headers={"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"},
+                                with_basic_auth=False)
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
 
     def test_organisation_by_id(self):
@@ -97,13 +97,15 @@ class TestOrganisation(AbstractTest):
         res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_name})
         self.assertEqual(True, res)
 
-        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_name, "existing_organisation": uuc_name})
+        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": uuc_name,
+                                                                           "existing_organisation": uuc_name})
         self.assertEqual(False, res)
 
         res = self.get("/api/organisations/short_name_exists", query_data={"short_name": "xyc"})
         self.assertEqual(False, res)
 
-        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": "xyc", "existing_organisation": "xyc"})
+        res = self.get("/api/organisations/short_name_exists", query_data={"short_name": "xyc",
+                                                                           "existing_organisation": "xyc"})
         self.assertEqual(False, res)
 
     def test_my_organisations_lite_super_user(self):
