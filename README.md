@@ -64,9 +64,10 @@ See the [Wiki](https://github.com/SURFscz/SBS/wiki) for the API documentation.
 
 ### [Testing](#testing)
 
-To run all Python tests:
+To run all Python tests and validate syntax / formatting:
 ```
 pytest server/test
+flake8 ./server/
 ```
 To generate coverage reports:
 ```
