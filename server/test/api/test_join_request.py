@@ -41,6 +41,7 @@ class TestJoinRequest(AbstractTest):
         self.assertEqual(403, response.status_code)
 
     def test_accept_join_request(self):
+        self.assertEqual(3, JoinRequest.query.count())
         join_request_id = self._join_request_by_user("urn:peter").id
         self.login("urn:admin")
         mail = self.app.mail
@@ -58,6 +59,7 @@ class TestJoinRequest(AbstractTest):
         self.put("/api/join_requests/accept", body={"id": join_request_id}, response_status_code=409)
 
     def test_decline_join_request(self):
+        self.assertEqual(3, JoinRequest.query.count())
         join_request_id = self._join_request_by_user("urn:peter").id
         self.login("urn:admin")
         mail = self.app.mail

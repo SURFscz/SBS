@@ -101,7 +101,7 @@ I18n.translations.nl = {
             icon: "gavel",
             tooltip: "Als laatste stap sturen we een e-mail <br/>naar de beheerder van de service<br/>die uw verzoek zal goedkeuren of afwijzen.",
             info: "U verzoek is verstuurd naar de beheerder van de samenwerking. Die persoon zal uw verzoek beoordelen.<br/>Zijn / haar beslissing krijgt u te horen via een e-mail",
-            contact: "Als u te lang niets hoort, neem dan contact met ons op via <a href=\"mailto:someone@someone\">admin_test@uva.nl</a>"
+            contact: "Als u te lang niets hoort, neem dan contact met ons op via <a href=\"mailto:{{mail}}\">{{mail}}</a>"
         },
         flash: {
             info: "Stap {{step}} successvol afgerond."
@@ -180,7 +180,7 @@ I18n.translations.nl = {
         administratorsTooltip: "Beheerders van een samenwerking <br/>kunnen de beschrijving aanpassen en<br/>leden uitnodigen.<br/><br/>Voer email-adressen in gescheiden door een komma, spatie <br/>of punt-komma, of voeg ze stuk voor stuk toe <br/>met de enter toets.",
         members: "Leden",
         selectRole: "Selecteer een rol...",
-        admin: "Beheerders",
+        admin: "Beheerder",
         manager: "Manager",
         member: "Lid",
         flash: {

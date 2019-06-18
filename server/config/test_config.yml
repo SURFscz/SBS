@@ -18,6 +18,8 @@ oidc_uppercase: True
 mail:
   host: localhost
   port: 1025
+  sender_name: OpenConext
+  sender_email: no-reply@surfnet.nl
 
 base_url: http://localhost:3000/
 

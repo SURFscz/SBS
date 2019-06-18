@@ -26,7 +26,10 @@ def _open_mail_in_browser(html):
 def _do_send_mail(subject, recipients, template, context):
     recipients = recipients if isinstance(recipients, list) else list(
         map(lambda x: x.strip(), recipients.split(",")))
-    msg = Message(subject=subject, sender=("SURFnet", "no-reply@surfnet.nl"),
+
+    mail_ctx = current_app.app_config.mail
+    msg = Message(subject=subject,
+                  sender=(mail_ctx.get("sender_name", "SURFnet"), mail_ctx.get("sender_email", "no-reply@surfnet.nl")),
                   recipients=recipients)
     msg.html = render_template(f"{template}.html", **context)
 
