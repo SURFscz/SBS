@@ -101,7 +101,7 @@ I18n.translations.en = {
             icon: "gavel",
             tooltip: "As a last step we will sent a mail <br/>to the administrator of the service<br/>who wil either approve or deny your request.",
             info: "Your request has been sent to the collaboration manager who will review your appliance.<br/>His / hers decision will be communicated to you by e-mail",
-            contact: "Still haven't received a message from us. Please contact us via <a href=\"mailto:someone@someone\">admin_test@uva.nl</a>"
+            contact: "Still haven't received a message from us. Please contact us via <a href=\"mailto:{{mail}}\">{{mail}}</a>"
         },
         flash: {
             info: "Step {{step}} successfully finished."
@@ -365,6 +365,7 @@ I18n.translations.en = {
         flash: {
             declined: "Join request for collaboration {{name}} is declined",
             accepted: "Join request for collaboration {{name}} is accepted",
+            alreadyMember: "You are alreay a member of collaboration {{name}} and can therefore not accept this invitation"
         }
     },
     organisationInvitation: {

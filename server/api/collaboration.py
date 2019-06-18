@@ -26,8 +26,19 @@ collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/co
 @json_endpoint
 def collaboration_by_name():
     name = query_param("name")
-    collaboration = Collaboration.query.options(load_only("id", "name")).filter(Collaboration.name == name).one()
-    return collaboration, 200
+
+    collaboration = Collaboration. \
+        query \
+        .outerjoin(Collaboration.collaboration_memberships) \
+        .outerjoin(CollaborationMembership.user) \
+        .options(contains_eager(Collaboration.collaboration_memberships)
+                 .contains_eager(CollaborationMembership.user)) \
+        .filter(Collaboration.name == name).one()
+
+    admins = list(filter(lambda m: m.role == "admin", collaboration.collaboration_memberships))
+    admin_email = admins[0].user.email if len(admins) > 0 else None
+
+    return {"id": collaboration.id, "name": collaboration.name, "admin_email": admin_email}, 200
 
 
 @collaboration_api.route("/name_exists", strict_slashes=False)

@@ -17,6 +17,7 @@ import CheckBox from "../components/CheckBox";
 import {stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
+import DateField from "../components/DateField";
 
 class Invitation extends React.Component {
 
@@ -224,6 +225,11 @@ class Invitation extends React.Component {
                     {isAdminLink && <InputField value={invite.invitee_email}
                                                 name={I18n.t("invitation.invitee_email")}
                                                 disabled={true}/>}
+
+                    <DateField value={moment(invite.expiry_date * 1000).toDate()}
+                               name={I18n.t("invitation.expiryDate")}
+                               toolTip={I18n.t("invitation.expiryDateTooltip")}
+                               disabled={true}/>
 
                     <InputField value={invite.message}
                                 name={I18n.t("invitation.message")}

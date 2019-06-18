@@ -67,8 +67,8 @@ function fetchJson(path, options = {}, headers = {}, showErrorDialog = true) {
         .then(res => res.json());
 }
 
-function postPutJson(path, body, method) {
-    return fetchJson(path, {method: method, body: JSON.stringify(body)});
+function postPutJson(path, body, method, showErrorDialog = true) {
+    return fetchJson(path, {method: method, body: JSON.stringify(body)}, {}, showErrorDialog);
 }
 
 function fetchDelete(path) {
@@ -259,7 +259,7 @@ export function deleteOrganisation(id) {
 
 //JoinRequests
 export function joinRequestById(id) {
-    return fetchJson(`/api/join_requests/${id}`);
+    return fetchJson(`/api/join_requests/${id}`,{},{}, false);
 }
 
 export function joinRequestForCollaboration(clientData) {
@@ -267,7 +267,7 @@ export function joinRequestForCollaboration(clientData) {
 }
 
 export function joinRequestAccept(joinRequest) {
-    return postPutJson("/api/join_requests/accept", joinRequest, "put");
+    return postPutJson("/api/join_requests/accept", joinRequest, "put", false);
 }
 
 export function joinRequestDecline(joinRequest) {

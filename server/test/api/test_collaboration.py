@@ -17,7 +17,7 @@ class TestCollaboration(AbstractTest):
     def test_find_by_name_id(self):
         collaboration = self.get("/api/collaborations/find_by_name", query_data={"name": uva_research_name},
                                  with_basic_auth=False)
-        self.assertSetEqual({"id", "name"}, set(collaboration.keys()))
+        self.assertSetEqual({"id", "name", "admin_email"}, set(collaboration.keys()))
 
     def test_search(self):
         self.login("urn:john")

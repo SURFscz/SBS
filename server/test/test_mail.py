@@ -22,4 +22,5 @@ class TestMail(AbstractTest):
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["test@example.com"], mail_msg.recipients)
+            self.assertEqual("OpenConext <no-reply@surfnet.nl>", mail_msg.sender)
             self.assertTrue(f"http://localhost:300/collaborations/{collaboration.id}" in mail_msg.html)

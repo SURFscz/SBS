@@ -18,7 +18,8 @@ class Registration extends React.Component {
             reference: "",
             agreedWithPolicy: false,
             collaborationName: null,
-            collaborationId: null
+            collaborationId: null,
+            adminEmail: null
         }
     }
 
@@ -35,7 +36,8 @@ class Registration extends React.Component {
                     this.setState({
                         step: step,
                         collaborationName: res.name,
-                        collaborationId: res.id
+                        collaborationId: res.id,
+                        adminEmail: res.admin_email
                     });
                 })
                 .catch(e => {
@@ -102,14 +104,14 @@ class Registration extends React.Component {
     };
 
     renderForm3 = () => {
-        const {collaborationName} = this.state;
+        const {collaborationName, adminEmail} = this.state;
         return (
             <div className="step-form 3">
                 <p className="form-title">{I18n.t("registration.formEndedTitle", {collaboration: collaborationName})}</p>
                 <p className="info"
                    dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.info", {collaboration: collaborationName})}}/>
-                <p className="contact"
-                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact", {collaboration: collaborationName})}}/>
+                {adminEmail && <p className="contact"
+                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact", {mail: adminEmail})}}/>}
             </div>
         );
     };
@@ -140,7 +142,7 @@ class Registration extends React.Component {
                 </tbody>
             </table>
         );
-    }
+    };
 
     renderStepDivider = (currentStep, step) =>
         (<div key={step} className={`step-divider ${this.doneClassName(currentStep, step)}`}>

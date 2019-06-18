@@ -20,6 +20,7 @@ class JoinRequest extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
                 () => this.props.history.push("/collaborations")),
             leavePage: true,
+            alreadyMember: false
         };
     }
 
@@ -27,7 +28,11 @@ class JoinRequest extends React.Component {
         const params = this.props.match.params;
         if (params.id) {
             joinRequestById(params.id)
-                .then(json => this.setState({joinRequest: json}));
+                .then(json => this.setState({joinRequest: json}))
+                .catch(e => {
+                    debugger;
+                    this.props.history.push("/404")
+                });
         } else {
             this.props.history.push("/404");
         }
@@ -62,10 +67,17 @@ class JoinRequest extends React.Component {
 
     doSubmit = () => {
         const {joinRequest} = this.state;
-        joinRequestAccept(joinRequest).then(res => {
-            this.gotoCollaborations();
-            setFlash(I18n.t("joinRequest.flash.accepted", {name: joinRequest.collaboration.name}));
-        });
+        joinRequestAccept(joinRequest)
+            .then(() => {
+                this.gotoCollaborations();
+                setFlash(I18n.t("joinRequest.flash.accepted", {name: joinRequest.collaboration.name}));
+            })
+            .catch(e => {
+                if (e.response.status === 409) {
+                    this.setState({alreadyMember: true});
+                    setFlash(I18n.t("joinRequest.flash.alreadyMember", {name: joinRequest.collaboration.name}), "error");
+                }
+            })
     };
 
     accept = () => {
@@ -78,7 +90,8 @@ class JoinRequest extends React.Component {
     };
 
     render() {
-        const {joinRequest, confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage} = this.state;
+        const {joinRequest, confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, alreadyMember} =
+            this.state;
         return (
             <div className="mod-join-request">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -113,7 +126,8 @@ class JoinRequest extends React.Component {
 
                     <section className="actions">
                         <Button txt={I18n.t("joinRequest.accept")}
-                                onClick={this.accept}/>
+                                onClick={this.accept}
+                                disabled={alreadyMember}/>
                         <Button cancelButton={true} txt={I18n.t("joinRequest.decline")}
                                 onClick={this.decline}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>

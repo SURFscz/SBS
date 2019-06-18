@@ -38,7 +38,7 @@ class NewInvitation extends React.Component {
             fileEmails: [],
             fileTypeError: false,
             fileInputKey: new Date().getMilliseconds(),
-            intended_role: undefined,
+            intended_role: "member",
             message: "",
             expiry_date: moment().add(14, "days").toDate(),
             initial: true,
@@ -54,7 +54,12 @@ class NewInvitation extends React.Component {
         const params = this.props.match.params;
         if (params.collaboration_id) {
             collaborationById(params.collaboration_id)
-                .then(json => this.setState({collaboration: json}));
+                .then(json =>
+                    this.setState({
+                        collaboration: json,
+                        intended_role: json.collaboration_memberships.some(m => m.role === "admin") ? "member" : "admin"
+                    })
+                );
         } else {
             this.props.history.push("/404");
         }
