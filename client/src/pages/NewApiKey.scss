@@ -1,0 +1,68 @@
+@import "../stylesheets/vars.scss";
+
+.mod-new-api-key {
+    background-color: $background;
+    margin-bottom: $medium-padding;
+
+    div.title {
+        font-size: 22px;
+        color: $dark-grey;
+        max-width: $medium;
+        margin: 0 auto;
+        padding: 10px 0 5px 0;
+
+        p {
+            padding: 10px 0 10px 0;
+        }
+
+        a {
+            display: inline-block;
+            font-size: 16px;
+            text-transform: uppercase;
+            text-decoration: none;
+            margin: 10px 0;
+            color: $blue;
+
+            &:hover {
+                font-weight: bolder;
+            }
+
+            svg {
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .new-api-key {
+        max-width: $medium;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+        margin: 0 auto 25px auto;
+        background-color: white;
+        padding: $medium-padding;
+
+        .error {
+            color: $red;
+            display: block;
+            font-size: 14px;
+        }
+
+        .info-msg {
+            color: $dark-grey;
+            display: block;
+            font-size: 14px;
+        }
+
+        div.input-field, div.date-field {
+            margin-top: 15px;
+        }
+
+        section.actions {
+            margin: $medium-margin 0;
+
+            a.cancel {
+                margin-left: 25px;
+            }
+        }
+
+    }
+}

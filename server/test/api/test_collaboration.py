@@ -1,10 +1,12 @@
 # -*- coding: future_fstrings -*-
+import json
 from base64 import b64encode
 
 from server.db.db import Collaboration, Organisation, Invitation
-from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uuc_name, uva_research_name, john_name, \
+from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
+from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
     ai_computing_short_name
+from server.test.seed import uuc_secret, uuc_name
 
 
 class TestCollaboration(AbstractTest):
@@ -65,6 +67,16 @@ class TestCollaboration(AbstractTest):
             self.assertEqual("uuc:new_short_name", collaboration["global_urn"])
             self.assertEqual(2, len(outbox))
 
+    def test_collaboration_no_organisation_context(self):
+        self.login("urn:john")
+        self.post("/api/collaborations",
+                  body={
+                      "name": "new_collaboration",
+                      "administrators": ["the@ex.org", "that@ex.org"],
+                      "short_name": "new_short_name"
+                  }, with_basic_auth=False,
+                  response_status_code=400)
+
     def test_collaboration_new_no_organisation_admin(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
         self.login("urn:peter")
@@ -119,7 +131,7 @@ class TestCollaboration(AbstractTest):
     def test_collaboration_by_id_api_call(self):
         collaboration_id = self._find_by_name_id()["id"]
         collaboration = self.get(f"/api/collaborations/{collaboration_id}",
-                                 headers={"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"},
+                                 headers=API_AUTH_HEADER,
                                  with_basic_auth=False)
         self.assertEqual(collaboration_id, collaboration["id"])
         self.assertEqual("UUC", collaboration["organisation"]["name"])
@@ -229,3 +241,17 @@ class TestCollaboration(AbstractTest):
         collaboration_id = self._find_by_name_id()["id"]
         self.login("urn:harry")
         self.get(f"/api/collaborations/lite/{collaboration_id}", response_status_code=403)
+
+    def test_api_call(self):
+        response = self.client.post("/api/collaborations",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "administrators": ["the@ex.org", "that@ex.org"],
+                                        "short_name": "new_short_name"
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(201, response.status_code)
+        collaboration = AbstractTest.find_entity_by_name(Collaboration, "new_collaboration")
+        admin = list(filter(lambda m: m.role == "admin", collaboration.collaboration_memberships))[0]
+        self.assertEqual("john@example.org", admin.user.email)

@@ -161,7 +161,7 @@ class NewOrganisationInvitation extends React.Component {
                 <div className="title">
                     <a href={`/organisations${organisation.id}`} onClick={e => {
                         stopEvent(e);
-                        this.props.history.push(`/organisations`)
+                        this.props.history.push(`/organisations/${organisation.id}`)
                     }}><FontAwesomeIcon icon="arrow-left"/>
                         {I18n.t("organisationDetail.backToOrganisationDetail", {name: organisation.name})}
                     </a>

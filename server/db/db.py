@@ -76,7 +76,7 @@ class Organisation(Base, db.Model):
                                                cascade="all, delete-orphan",
                                                passive_deletes=True)
     api_keys = db.relationship("ApiKey", back_populates="organisation",
-                               cascade="all, delete-orphan",
+                               cascade="delete, delete-orphan",
                                passive_deletes=True)
 
     def is_member(self, user_id):
@@ -284,6 +284,7 @@ class ApiKey(Base, db.Model):
     __tablename__ = "api_keys"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     hashed_secret = db.Column("hashed_secret", db.String(length=512), nullable=False)
+    description = db.Column("description", db.Text(), nullable=True)
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
     organisation = db.relationship("Organisation", back_populates="api_keys")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)

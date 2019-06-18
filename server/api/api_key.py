@@ -1,12 +1,11 @@
 # -*- coding: future_fstrings -*-
-import hashlib
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request
 from werkzeug.exceptions import SecurityError
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_organisation_admin
+from server.auth.security import confirm_organisation_admin, secure_hash
 from server.db.db import ApiKey
 from server.db.models import update, save, delete
 
@@ -26,7 +25,7 @@ def _hash_secret_key():
     secret = data["hashed_secret"]
     if len(secret) < MIN_SECRET_LENGT:
         raise SecurityError(f"minimal length of secret for API key is {MIN_SECRET_LENGT}")
-    data["hashed_secret"] = hashlib.sha256(bytes(secret, "utf-8")).hexdigest()
+    data["hashed_secret"] = secure_hash(secret)
     return data
 
 

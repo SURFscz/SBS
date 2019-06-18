@@ -442,3 +442,16 @@ export function myUserServiceProfiles() {
 export function updateUserServiceProfiles(profile) {
     return postPutJson("/api/user_service_profiles", profile, "put");
 }
+
+//ApiKeys
+export function apiKeyValue() {
+    return fetchJson(`/api/api_keys`);
+}
+
+export function createApiKey(apiKey) {
+    return postPutJson("/api/api_keys", apiKey, "post");
+}
+
+export function deleteApiKey(id) {
+    return fetchDelete(`/api/api_keys/${id}`)
+}

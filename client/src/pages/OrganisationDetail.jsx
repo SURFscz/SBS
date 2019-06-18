@@ -1,6 +1,7 @@
 import React from "react";
 import ReactTooltip from "react-tooltip";
 import {
+    deleteApiKey,
     deleteOrganisation,
     deleteOrganisationMembership,
     organisationById,
@@ -28,11 +29,12 @@ class OrganisationDetail extends React.Component {
             originalOrganisation: null,
             name: "",
             tenant_identifier: "",
-            short_name:"",
+            short_name: "",
             description: "",
             members: [],
             filteredMembers: [],
             invitations: [],
+            apiKeys: [],
             required: ["name", "tenant_identifier"],
             alreadyExists: {},
             initial: true,
@@ -61,12 +63,14 @@ class OrganisationDetail extends React.Component {
                     this.setState({
                         originalOrganisation: json,
                         name: json.name,
+                        short_name: json.short_name,
                         tenant_identifier: json.tenant_identifier,
                         description: json.description,
                         members: members,
                         filteredMembers: members,
                         invitations: sortObjects(json.organisation_invitations, inviteSorted, inviteReverse),
-                        adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id)
+                        adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id),
+                        apiKeys: json.api_keys
                     })
                 });
         } else {
@@ -98,6 +102,23 @@ class OrganisationDetail extends React.Component {
             .then(() => {
                 this.componentDidMount();
                 setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: member.user.name}));
+            });
+    };
+
+    deleteApiKey = apiKey => () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("organisationDetail.deleteApiKeyConfirmation"),
+            confirmationDialogAction: this.doDeleteApiKey(apiKey)
+        });
+    };
+
+    doDeleteApiKey = apiKey => () => {
+        this.setState({confirmationDialogOpen: false});
+        deleteApiKey(apiKey.id)
+            .then(() => {
+                this.componentDidMount();
+                setFlash(I18n.t("organisationDetail.flash.apiKeyDeleted"));
             });
     };
 
@@ -140,6 +161,11 @@ class OrganisationDetail extends React.Component {
         const {query} = this.state;
         const email = isEmpty(query) ? "" : `?email=${encodeURIComponent(query)}`;
         this.props.history.push(`/new-organisation-invite/${this.state.originalOrganisation.id}${email}`);
+    };
+
+    addApiKey = e => {
+        stopEvent(e);
+        this.props.history.push(`/new-api-key/${this.state.originalOrganisation.id}`);
     };
 
     validateOrganisationName = e =>
@@ -289,6 +315,35 @@ class OrganisationDetail extends React.Component {
             </table>
         );
     };
+    organisationApiKeys = (user, adminOfOrganisation, apiKeys) => {
+        const isAdmin = user.admin || adminOfOrganisation;
+        return (
+            <div className="api-keys-container">
+                {apiKeys.length > 0 &&
+                <table className="api-keys">
+                    <thead>
+                    <tr>
+                        <th className="secret">{I18n.t("apiKeys.secret")}</th>
+                        <th className="description">{I18n.t("apiKeys.description")}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {apiKeys.map((key, i) => <tr key={i}>
+                        <td className="secret"><i>{I18n.t("apiKeys.secretValue")}</i></td>
+                        <td className="description">{key.description}</td>
+                        <td className="actions"><FontAwesomeIcon icon="trash" onClick={this.deleteApiKey(key)}/></td>
+                    </tr>)}
+                    </tbody>
+                </table>}
+
+                {isAdmin &&
+                <Button onClick={this.addApiKey}
+                        txt={I18n.t("organisationDetail.newApiKey")}/>
+                }
+            </div>
+        );
+    };
 
     organisationDetails = (name, short_name, alreadyExists, initial, tenant_identifier, description, originalOrganisation, user, disabledSubmit) => {
         return <div className="organisation-detail">
@@ -374,7 +429,7 @@ class OrganisationDetail extends React.Component {
         const {
             name, short_name, description, tenant_identifier, originalOrganisation, initial, alreadyExists, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
-            inviteReverse, inviteSorted, invitations, adminOfOrganisation
+            inviteReverse, inviteSorted, invitations, adminOfOrganisation, apiKeys
         } = this.state;
         if (!originalOrganisation) {
             return null;
@@ -408,6 +463,10 @@ class OrganisationDetail extends React.Component {
                     <p className="title members">{I18n.t("organisationDetail.members", {name: originalOrganisation.name})}</p>
                 </div>
                 {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfOrganisation)}
+                <div className="title">
+                    <p>{I18n.t("organisationDetail.apiKeys", {name: originalOrganisation.name})}</p>
+                </div>
+                {this.organisationApiKeys(user, adminOfOrganisation, apiKeys)}
                 <div className="title">
                     <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
                 </div>

@@ -38,6 +38,7 @@ import UserServiceProfiles from "./UserServiceProfiles";
 import UserServiceProfileDetails from "./UserServiceProfileDetails";
 import Login from "./Login";
 import {ProtectedRoute} from "./ProtectedRoute";
+import NewApiKey from "./NewApiKey";
 
 addIcons();
 
@@ -223,6 +224,11 @@ class App extends React.Component {
                         <Route exact path="/new-organisation-invite/:organisation_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
                                                                 Component={NewOrganisationInvitation}
+                                                                {...props}/>}/>
+
+                        <Route exact path="/new-api-key/:organisation_id"
+                               render={props => <ProtectedRoute currentUser={currentUser}
+                                                                Component={NewApiKey}
                                                                 {...props}/>}/>
 
                         <Route exact path="/new-invite/:collaboration_id"

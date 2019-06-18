@@ -168,10 +168,12 @@ def organisation_invites():
 def save_organisation():
     confirm_write_access()
     data = current_request.get_json()
+    _clear_api_keys(data)
+
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
 
-    res = save(Organisation)
+    res = save(Organisation, custom_json=data)
     user = User.query.get(current_user_id())
     for administrator in administrators:
         organisation = res[0]
@@ -189,6 +191,11 @@ def save_organisation():
     return res
 
 
+def _clear_api_keys(data):
+    if "api_keys" in data:
+        del data["api_keys"]
+
+
 @organisation_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_organisation():
@@ -203,7 +210,10 @@ def update_organisation():
         return count > 0
 
     confirm_write_access(override_func=override_func)
-    return update(Organisation, allow_child_cascades=False)
+
+    data = current_request.get_json()
+    _clear_api_keys(data)
+    return update(Organisation, custom_json=data, allow_child_cascades=False)
 
 
 @organisation_api.route("/<id>", methods=["DELETE"], strict_slashes=False)

@@ -44,7 +44,7 @@ def add_audit_trail_data(cls, json_dict):
     column_names = cls.__table__.columns._data.keys()
     if "created_by" in column_names:
         user_name = current_user_uid() if "user" in session and not session["user"][
-            "guest"] else request_context.api_user.name
+            "guest"] else request_context.api_user.name if "api_user" in request_context else "ext_api"
         json_dict["created_by"] = user_name
         if "updated_by" in column_names:
             json_dict["updated_by"] = user_name

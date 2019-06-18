@@ -285,7 +285,7 @@ I18n.translations.nl = {
         tenant_identifier: "Tenant identifier",
         tenantPlaceHolder: "De unieke tenant / organisatie identifier die de organisatie verbindt met een instelling",
         shortName: "Korte naam",
-        shortNamePlaceholder: "Korte naam van de organisatie",
+        shortNamePlaceHolder: "Korte naam van de organisatie",
         shortNameTooltip: "Ken korte namen toe aan organisaties<br/>zodat deze korte namen kunnen worden gebruikt<br/>in LDAP services (zoals Linux directory namen)",
         description: "Beschrijving",
         descriptionPlaceholder: "De beschrijving van de organisatie is zichtbaar voor iedereen",
@@ -321,6 +321,7 @@ I18n.translations.nl = {
         invitations: "Uitnodigingen voor {{name}}",
         searchPlaceHolder: "Zoek leden",
         invite: "Nodig uit",
+        newApiKey: "Voeg een nieuwe API key toe",
         noInvitations: "Geen openstaande uitnodigingen",
         member: {
             user__name: "Naam",
@@ -338,9 +339,12 @@ I18n.translations.nl = {
             noExpires: "N/A",
             message: "Bericht",
         },
+        apiKeys: "API Keys",
         update: "Bijwerken",
         delete: "Verwijderen",
         deleteMemberConfirmation: "Weet u zeker dat u het organisatie lidmaatschap van {{name}} wil verwijderen?",
+        deleteApiKeyConfirmation: "Weet u zeker dat u deze API key wilt verwijderen?",
+
         flash: {
             updated: "Organisatie {{name}} bijgewerkt",
             deleted: "Organisatie {{name}} verwijderd",
@@ -398,6 +402,21 @@ I18n.translations.nl = {
             notFound: "Deze uitnodiging is reeds geaccepteerd / afgewezen."
         },
     },
+    apiKeys: {
+        title: "Nieuwe API key voor {{organisation}}",
+        backToOrganisationDetail: "Terug naar mijn organisatie {{name}}",
+        secretDisclaimer: "Sla het secret op en bewaar het veilig. Het secret wordt one-way hashed opgeslagen",
+        secret: "Secret",
+        secretValue: "One-way hashed secret",
+        secretTooltip: "Het secret voor in de Authorization header",
+        description: "Omschrijving",
+        descriptionPlaceHolder: "Omschrijving voor deze API key",
+        descriptionTooltip: "Een optionele omschrijving betreffende het gebruik van deze API key",
+        flash: {
+            created: "API key voor organisatie {{name}} is aangemaakt.",
+        },
+    },
+
     invitation: {
         title: "Uitnodiging om lid te worden van samenwerking {{collaboration}}",
         createTitle: "Verstuurd uitnodigingen om lid te worden van samenwerking {{collaboration}}",
@@ -514,7 +533,7 @@ I18n.translations.nl = {
             addedMembers: "Alle gebruikers lid gemaakt van autorisatie groep {{name}}",
             deletedMember: "Gebruiker {{member}} als lid verwijderd uit autorisatie groep {{name}}",
         },
-        addAllMembers: "Voeg alle gebruikers toe aan deze autorisatie groep",
+        addAllMembers: "Voeg alle CO gebruikers toe aan deze autorisatie groep",
         searchServices: "Zoek, kies en voeg diensten toe aan autorisatie groep {{name}}",
         connectedServices: "Diensten gekoppeld aan {{name}}",
         deleteServiceWarning: "Waarschuwing: ontkoppelen van een dienst van een autorisatie groep verwijdert alle dienst specifieke informatie <br/>van gekoppelde leden die via deze groep gekoppeld waren",
