@@ -348,7 +348,8 @@ I18n.translations.nl = {
         flash: {
             updated: "Organisatie {{name}} bijgewerkt",
             deleted: "Organisatie {{name}} verwijderd",
-            memberDeleted: "Lidmaatschap van {{name}} verwijderd"
+            memberDeleted: "Lidmaatschap van {{name}} verwijderd",
+            apiKeyDeleted: "API key verwijderd"
         }
     },
     joinRequest: {
@@ -415,6 +416,7 @@ I18n.translations.nl = {
         flash: {
             created: "API key voor organisatie {{name}} is aangemaakt.",
         },
+        submit: "Submit"
     },
 
     invitation: {

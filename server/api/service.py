@@ -1,5 +1,5 @@
 # -*- coding: future_fstrings -*-
-from flask import Blueprint
+from flask import Blueprint, request as current_request
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, contains_eager
 
@@ -83,7 +83,12 @@ def service_by_id(service_id):
 @json_endpoint
 def save_service():
     confirm_write_access()
-    return save(Service)
+
+    data = current_request.get_json()
+    if data:
+        data["status"] = "active"
+
+    return save(Service, custom_json=data)
 
 
 @service_api.route("/", methods=["PUT"], strict_slashes=False)

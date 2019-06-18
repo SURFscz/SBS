@@ -257,7 +257,7 @@ def collaboration_invites():
 @json_endpoint
 def save_collaboration():
     data = current_request.get_json()
-
+    data["status"] = "active"
     if "organisation_id" in data:
         confirm_organisation_admin(data["organisation_id"])
         user = User.query.get(current_user_id())

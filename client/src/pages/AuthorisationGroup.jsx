@@ -625,7 +625,7 @@ class AuthorisationGroup extends React.Component {
                 <SelectField value={this.statusOptions.find(option => status === option.value)}
                              options={this.statusOptions}
                              name={I18n.t("authorisationGroup.status")}
-                             clearable={true}
+                             clearable={false}
                              placeholder={I18n.t("authorisationGroup.statusPlaceholder")}
                              onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}
                              disabled={!adminOfCollaboration}/>
