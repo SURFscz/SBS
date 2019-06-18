@@ -1,6 +1,5 @@
 # -*- coding: future_fstrings -*-
 import json
-from base64 import b64encode
 
 from server.db.db import Collaboration, Organisation, Invitation
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
