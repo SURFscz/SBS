@@ -225,7 +225,7 @@ class UserServiceProfileDetails extends React.Component {
                     <SelectField value={this.statusOptions.find(option => status === option.value)}
                                  options={this.statusOptions}
                                  name={I18n.t("userServiceProfile.status")}
-                                 clearable={true}
+                                 clearable={false}
                                  placeholder={I18n.t("userServiceProfile.statusPlaceholder")}
                                  onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}
                     />

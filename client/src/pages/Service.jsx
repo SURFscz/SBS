@@ -244,7 +244,7 @@ class Service extends React.Component {
                     <SelectField value={this.statusOptions.find(option => status === option.value)}
                                  options={this.statusOptions}
                                  name={I18n.t("service.status.name")}
-                                 clearable={true}
+                                 clearable={false}
                                  placeholder={I18n.t("service.statusPlaceholder")}
                                  disabled={!isAdmin}
                                  onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}

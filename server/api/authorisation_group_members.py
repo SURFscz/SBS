@@ -38,7 +38,7 @@ def add_authorisation_group_members():
         collaboration_member = CollaborationMembership.query.get(member_id)
         for service in services:
             profile = UserServiceProfile(service=service, user_id=collaboration_member.user_id,
-                                         authorisation_group=authorisation_group,
+                                         authorisation_group=authorisation_group, status="active",
                                          created_by=user["uid"], updated_by=["uid"], identifier=str(uuid.uuid4()))
             db.session.add(profile)
 
