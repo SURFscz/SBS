@@ -1,10 +1,11 @@
 # -*- coding: future_fstrings -*-
 import datetime
+import hashlib
 import uuid
 from secrets import token_urlsafe
 
 from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
-    JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation
+    JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation, ApiKey
 from server.db.defaults import default_expiry_date
 
 join_request_reference = "Dr. Johnson"
@@ -24,7 +25,11 @@ invitation_hash_no_way = token_urlsafe()
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
 ai_computing_short_name = "ai_computing"
+
 uuc_name = "UUC"
+uuc_secret = token_urlsafe()
+uuc_hashed_secret = hashlib.sha256(bytes(uuc_secret, "utf-8")).hexdigest()
+
 amsterdam_uva_name = "Amsterdam UVA"
 
 collaboration_uva_researcher_uuid = str(uuid.uuid4())
@@ -78,6 +83,8 @@ def seed(db):
                        created_by="urn:admin", updated_by="urnadmin", short_name="uva")
     _persist(db, uuc, uva)
 
+    api_key = ApiKey(hashed_secret=uuc_hashed_secret, organisation=uuc, created_by="urn:admin", updated_by="urn:admin")
+    _persist(db, api_key)
     organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
                                                            expiry_date=datetime.date.today() + datetime.timedelta(
                                                                days=14),

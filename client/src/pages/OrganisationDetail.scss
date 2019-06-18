@@ -108,7 +108,7 @@
         }
     }
 
-    .invitations-container {
+    .invitations-container, .api-keys-container {
         background-color: white;
         padding: $medium-padding;
         max-width: $medium;
@@ -116,10 +116,15 @@
         margin: 0 auto 10px auto;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         position: relative;
-
     }
 
-    table.members, table.invitations {
+    .api-keys-container {
+        a.button {
+            margin-top: 25px;
+        }
+    }
+
+    table.members, table.invitations, table.api-keys {
         width: 100%;
 
         th {
@@ -247,5 +252,28 @@
         }
     }
 
+    table.api-keys {
+        th {
+            cursor: default;
+        }
+
+        th.secret {
+            width: 25%;
+        }
+
+        th.description {
+            width: 75%;
+        }
+
+        td.actions {
+            text-align: right;
+
+            svg {
+                color: $red;
+                cursor: pointer;
+                margin-right: 10px;
+            }
+        }
+    }
 
 }

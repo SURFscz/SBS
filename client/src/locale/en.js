@@ -285,7 +285,7 @@ I18n.translations.en = {
         tenant_identifier: "Tenant identifier",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institution",
         shortName: "Short name",
-        shortNamePlaceholder: "Short name of the organisation",
+        shortNamePlaceHolder: "Short name of the organisation",
         shortNameTooltip: "Assign short names to organisations<br/>so that these short names can be used<br/>in the ldap services (like Linux directory names)",
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
@@ -321,6 +321,7 @@ I18n.translations.en = {
         invitations: "Invitations for {{name}}",
         searchPlaceHolder: "Search for members",
         invite: "Invite",
+        newApiKey: "Add new API key",
         noInvitations: "No pending invitations",
         member: {
             user__name: "Name",
@@ -338,13 +339,16 @@ I18n.translations.en = {
             noExpires: "N/A",
             message: "Message",
         },
+        apiKeys: "API Keys",
         update: "Update",
         delete: "Delete",
         deleteMemberConfirmation: "Are you sure you want to delete the organisation membership for {{name}}?",
+        deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
         flash: {
             updated: "Organisation {{name}} was successfully updated",
             deleted: "Organisation {{name}} was successfully deleted",
-            memberDeleted: "Membership of {{name}} was successfully deleted"
+            memberDeleted: "Membership of {{name}} was successfully deleted",
+            apiKeyDeleted: "API key was successfully deleted"
         }
     },
     joinRequest: {
@@ -397,6 +401,21 @@ I18n.translations.en = {
             alreadyMember: "The invitation could not be accepted because you are already a member of this organization",
             notFound: "This invitation has already been accepted / declined."
         },
+    },
+    apiKeys: {
+        title: "Create API key for {{organisation}}",
+        backToOrganisationDetail: "Back to my organisation {{name}}",
+        secretDisclaimer: "Copy the secret and store it somewhere safe. The secret will be one-way hashed after creation of the new API key",
+        secret: "Secret",
+        secretValue: "One-way hashed Secret",
+        secretTooltip: "The secret to use in the Authorization header",
+        description: "Description",
+        descriptionPlaceHolder: "Description for this API key",
+        descriptionTooltip: "An optional description explaining the use of this API key",
+        flash: {
+            created: "API key for organisation {{name}} is created",
+        },
+        submit: "Submit"
     },
     invitation: {
         title: "Invitation to join collaboration {{collaboration}}",
@@ -514,7 +533,7 @@ I18n.translations.en = {
             addedMembers: "Successfully added all users as a member of authorisation group {{name}}",
             deletedMember: "Successfully deleted user {{member}} from authorisation group {{name}}",
         },
-        addAllMembers: "Add all members to this authorization group",
+        addAllMembers: "Add all Collaboration members to this authorization group",
         searchServices: "Search, select and add services to the available services for the authorisation group {{name}}",
         connectedServices: "Connected services to {{name}}",
         deleteServiceWarning: "Warning: Unlinking services from the authorisation group deletes all user information specific for that service and all linked memberships",

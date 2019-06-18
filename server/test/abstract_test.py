@@ -11,7 +11,7 @@ from server.test.seed import seed
 
 # See api_users in config/test_config.yml
 BASIC_AUTH_HEADER = {"Authorization": f"Basic {b64encode(b'sysadmin:secret').decode('ascii')}"}
-
+API_AUTH_HEADER = {"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"}
 
 # The database is cleared and seeded before every test
 class AbstractTest(TestCase):

@@ -5,15 +5,18 @@ import os
 import re
 from functools import wraps
 from pathlib import Path
+
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
-from server.db.db import db
+from server.auth.security import secure_hash
+from server.db.db import db, ApiKey
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
 white_listing = ["health", "config", "info", "api/users/me", "api/collaborations/find_by_name"]
+external_api_listing = ["api/collaborations"]
 
 
 def auth_filter(config):
@@ -28,12 +31,23 @@ def auth_filter(config):
         if u in url:
             is_whitelisted_url = True
 
+    is_external_api_url = False
+    for u in external_api_listing:
+        if u in url:
+            is_external_api_url = True
+
     auth = current_request.authorization
     is_authorized_api_call = bool(auth and len(get_user(config, auth)) > 0)
 
     if not (is_whitelisted_url or is_authorized_api_call):
+        authorization_header = current_request.headers.get("Authorization")
+        is_authorized_api_key = authorization_header and authorization_header.lower().startswith("bearer")
+        if not is_authorized_api_key or not is_external_api_url:
+            raise Unauthorized(description="Invalid username or password")
 
-        raise Unauthorized(description="Invalid username or password")
+        hashed_secret = secure_hash(authorization_header[len('bearer '):])
+        api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).one()
+        request_context.external_api_organisation = api_key.organisation
 
     request_context.is_authorized_api_call = is_authorized_api_call
     if is_authorized_api_call:
@@ -67,7 +81,8 @@ def _audit_trail():
     method = current_request.method
     if method in _audit_trail_methods:
         msg = json.dumps(current_request.json) if method != "DELETE" else ""
-        user_name = session["user"]["uid"] if "user" in session else request_context.api_user.name
+        user_name = session["user"]["uid"] if "user" in session else request_context.api_user.name \
+            if "api_user" in request_context else "ext_api"
         logger = logging.getLogger("main")
         logger.info(f"Path {current_request.path} {method} called by {user_name} {msg}")
 

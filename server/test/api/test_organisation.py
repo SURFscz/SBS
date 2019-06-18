@@ -2,7 +2,7 @@
 from base64 import b64encode
 
 from server.db.db import Organisation, OrganisationInvitation
-from server.test.abstract_test import AbstractTest
+from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import uuc_name
 
 
@@ -25,16 +25,17 @@ class TestOrganisation(AbstractTest):
 
     def test_organisations_all(self):
         organisations = self.get("/api/organisations/all",
-                                 headers={"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"},
+                                 headers=API_AUTH_HEADER,
                                  with_basic_auth=False)
         self.assertEqual(2, len(organisations))
 
     def test_organisation_by_id_with_api_user(self):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}",
-                                headers={"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"},
+                                headers=API_AUTH_HEADER,
                                 with_basic_auth=False)
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
+        self.assertTrue(len(organisation["api_keys"]) > 0)
 
     def test_organisation_by_id(self):
         self.login()
@@ -166,3 +167,23 @@ class TestOrganisation(AbstractTest):
             self.assertEqual(2, len(outbox))
             post_count = OrganisationInvitation.query.count()
             self.assertEqual(pre_count + 2, post_count)
+
+    def test_organisation_no_api_keys_cascade(self):
+        self.login()
+        secret = self.get("/api/api_keys")["value"]
+
+        organisation = self.post("/api/organisations",
+                                 body={"name": "new_organisation",
+                                       "tenant_identifier": "https://ti1",
+                                       "api_keys": [
+                                           {"hashed_secret": secret}
+                                       ]},
+                                 with_basic_auth=False)
+        organisation = self.get(f"/api/organisations/{organisation['id']}")
+
+        self.assertEqual([], organisation["api_keys"])
+        organisation["api_keys"] = [{"hashed_secret": secret}]
+        organisation = self.put("/api/organisations", body=organisation)
+
+        organisation = self.get(f"/api/organisations/{organisation['id']}")
+        self.assertEqual([], organisation["api_keys"])

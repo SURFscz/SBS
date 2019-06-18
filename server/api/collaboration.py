@@ -7,6 +7,7 @@ from flask import Blueprint, request as current_request, current_app, g as reque
 from sqlalchemy import text, or_, func
 from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
+from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
@@ -257,15 +258,25 @@ def collaboration_invites():
 def save_collaboration():
     data = current_request.get_json()
 
-    confirm_organisation_admin(data["organisation_id"])
+    if "organisation_id" in data:
+        confirm_organisation_admin(data["organisation_id"])
+        user = User.query.get(current_user_id())
+        _assign_global_urn(data["organisation_id"], data)
+    elif "external_api_organisation" in request_context:
+        organisation = request_context.external_api_organisation
+        admins = list(filter(lambda mem: mem.role == "admin", organisation.organisation_memberships))
+        _assign_global_urn_to_organisation(organisation, data)
+        user = admins[0].user if len(admins) > 0 else User.query.filter(
+            User.uid == current_app.app_config.api_users[0]).one()
+        data["organisation_id"] = organisation.id
+    else:
+        raise BadRequest("Neither organization in POST data nor associated with an API key")
 
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
     data["identifier"] = str(uuid.uuid4())
-    _assign_global_urn(data["organisation_id"], data)
     res = save(Collaboration, custom_json=data)
 
-    user = User.query.get(current_user_id())
     administrators = list(filter(lambda admin: admin != user.email, administrators))
     collaboration = res[0]
     for administrator in administrators:
@@ -290,6 +301,10 @@ def save_collaboration():
 def _assign_global_urn(organisation_id, data):
     organisation = Organisation.query \
         .filter(Organisation.id == organisation_id).one()
+    _assign_global_urn_to_organisation(organisation, data)
+
+
+def _assign_global_urn_to_organisation(organisation, data):
     data["global_urn"] = f"{organisation.short_name}:{data['short_name']}"
 
 

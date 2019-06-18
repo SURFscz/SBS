@@ -11,6 +11,7 @@ div.checkbox {
 
     label {
         display: inline-block;
+        outline: none !important;
 
         &.info {
             margin-left: 10px;
@@ -47,6 +48,7 @@ div.checkbox {
         border-radius: 2px;
         box-shadow: none;
         padding: 0;
+        outline: none !important;
 
         svg {
             background-color: $blue;
@@ -56,6 +58,7 @@ div.checkbox {
 
     input[type="checkbox"]:checked:disabled + label span {
         border: 3px solid $medium-grey;
+        background-color: $medium-grey;
         cursor: default;
 
         svg {

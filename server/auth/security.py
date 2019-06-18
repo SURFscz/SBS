@@ -1,4 +1,6 @@
 # -*- coding: future_fstrings -*-
+import hashlib
+
 from flask import session, g as request_context, request as current_request, current_app
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
@@ -154,3 +156,7 @@ def confirm_owner_of_user_service_profile():
         return count > 0
 
     confirm_write_access(override_func=override_func)
+
+
+def secure_hash(secret):
+    return hashlib.sha256(bytes(secret, "utf-8")).hexdigest()
