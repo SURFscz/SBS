@@ -1,13 +1,15 @@
 # -*- coding: future_fstrings -*-
 import datetime
+import uuid
 
 from flask import Blueprint, request as current_request, current_app
+from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_collaboration_admin, confirm_write_access, current_user_id
-from server.db.db import Invitation, CollaborationMembership, Collaboration, db
+from server.auth.security import confirm_collaboration_admin, confirm_write_access, current_user_id, current_user
+from server.db.db import Invitation, CollaborationMembership, Collaboration, db, UserServiceProfile
 from server.db.defaults import default_expiry_date
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
@@ -45,6 +47,28 @@ def invitations_by_id(id):
     return invitation, 200
 
 
+def _add_authorisation_group_membership(invitation, collaboration_membership):
+    authorisation_groups = invitation.authorisation_groups
+    if len(authorisation_groups) > 0:
+        values = ",".join(list(map(lambda ag: f"({collaboration_membership.id},{ag.id})", authorisation_groups)))
+        statement = f"INSERT INTO collaboration_memberships_authorisation_groups " \
+            f"(collaboration_membership_id, authorisation_group_id) VALUES {values}"
+
+        db.engine.execute(text(statement))
+        # We need the relationship of
+        db.session.commit()
+
+    for authorisation_group in invitation.authorisation_groups:
+        # Create an UserServiceProfile for each Service linked to the AuthorisationGroup
+        services = authorisation_group.services
+        user = current_user()
+        for service in services:
+            profile = UserServiceProfile(service_id=service.id, user_id=user["id"],
+                                         authorisation_group_id=authorisation_group.id, status="active",
+                                         created_by=user["uid"], updated_by=["uid"], identifier=str(uuid.uuid4()))
+            db.session.add(profile)
+
+
 @invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def invitations_accept():
@@ -71,6 +95,12 @@ def invitations_accept():
 
     collaboration.collaboration_memberships.append(collaboration_membership)
     collaboration.invitations.remove(invitation)
+
+    # We need the persistent identifier of the collaboration_membership
+    db.session.commit()
+
+    _add_authorisation_group_membership(invitation, collaboration_membership)
+
     return None, 201
 
 

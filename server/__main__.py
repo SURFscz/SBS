@@ -15,6 +15,7 @@ from sqlalchemy.exc import OperationalError
 
 from server.api.api_key import api_key_api
 from server.api.authorisation_group import authorisation_group_api
+from server.api.authorisation_group_invitations import authorisation_group_invitations_api
 from server.api.authorisation_group_members import authorisation_group_members_api
 from server.api.authorisation_group_services import authorisation_group_services_api
 from server.api.base import base_api
@@ -102,6 +103,7 @@ app.register_blueprint(authorisation_group_api)
 app.register_blueprint(authorisation_group_services_api)
 app.register_blueprint(authorisation_group_members_api)
 app.register_blueprint(api_key_api)
+app.register_blueprint(authorisation_group_invitations_api)
 
 app.register_error_handler(404, page_not_found)
 

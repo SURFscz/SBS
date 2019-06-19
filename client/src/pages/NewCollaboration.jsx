@@ -229,6 +229,7 @@ class NewCollaboration extends React.Component {
                                  placeholder={I18n.t("collaboration.organisationPlaceholder")}
                                  toolTip={I18n.t("collaboration.organisationTooltip")}
                                  onChange={selectedOption => this.setState({organisation: selectedOption})}
+                                 searchable={true}
                     />
                     {(!initial && isEmpty(organisation)) && <span
                         className="error">{I18n.t("collaboration.required", {

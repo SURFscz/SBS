@@ -121,6 +121,14 @@ collaboration_memberships_authorisation_groups_association = db.Table(
               db.ForeignKey("collaboration_memberships.id", ondelete="CASCADE"), primary_key=True),
 )
 
+authorisation_groups_invitations_association = db.Table(
+    "authorisation_groups_invitations",
+    metadata,
+    db.Column("authorisation_group_id", db.Integer(), db.ForeignKey("authorisation_groups.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("invitation_id", db.Integer(), db.ForeignKey("invitations.id", ondelete="CASCADE"), primary_key=True),
+)
+
 
 class CollaborationMembership(Base, db.Model):
     __tablename__ = "collaboration_memberships"
@@ -128,6 +136,8 @@ class CollaborationMembership(Base, db.Model):
     role = db.Column("role", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="collaboration_memberships")
+    invitation_id = db.Column(db.Integer(), db.ForeignKey("invitations.id"))
+    invitation = db.relationship("Invitation")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="collaboration_memberships")
     authorisation_groups = db.relationship("AuthorisationGroup",
@@ -230,6 +240,7 @@ class AuthorisationGroup(Base, db.Model):
                                                 lazy="select")
     user_service_profiles = db.relationship("UserServiceProfile", back_populates="authorisation_group",
                                             cascade="all, delete-orphan", passive_deletes=True)
+    invitations = db.relationship("Invitation", secondary=authorisation_groups_invitations_association, lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -257,6 +268,9 @@ class Invitation(Base, db.Model):
     collaboration = db.relationship("Collaboration", back_populates="invitations")
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User")
+    authorisation_groups = db.relationship("AuthorisationGroup",
+                                           secondary=authorisation_groups_invitations_association,
+                                           lazy="select")
     accepted = db.Column("accepted", db.Boolean(), nullable=True)
     denied = db.Column("denied", db.Boolean(), nullable=True)
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)

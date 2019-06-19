@@ -29,10 +29,7 @@ class JoinRequest extends React.Component {
         if (params.id) {
             joinRequestById(params.id)
                 .then(json => this.setState({joinRequest: json}))
-                .catch(e => {
-                    debugger;
-                    this.props.history.push("/404")
-                });
+                .catch(e => this.props.history.push("/404"));
         } else {
             this.props.history.push("/404");
         }

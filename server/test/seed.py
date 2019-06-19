@@ -21,6 +21,7 @@ organisation_invitation_expired_hash = token_urlsafe()
 
 invitation_hash_curious = token_urlsafe()
 invitation_hash_no_way = token_urlsafe()
+invitation_hash_uva = token_urlsafe()
 
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
@@ -47,6 +48,7 @@ service_cloud_name = "Cloud"
 
 ai_researchers_authorisation = "AI researchers"
 ai_researchers_authorisation_short_name = "ai_res"
+authorisation_group_science_name = "Science"
 
 
 def _persist(db, *objs):
@@ -127,7 +129,7 @@ def seed(db):
     uva_research = Collaboration(name=uva_research_name,
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",
-                                 organisation=uva, services=[storage, wiki],
+                                 organisation=uva, services=[cloud, storage, wiki],
                                  join_requests=[], invitations=[])
     _persist(db, ai_computing, uva_research)
 
@@ -157,7 +159,15 @@ def seed(db):
                                                         description="Artifical computing developers",
                                                         collaboration=ai_computing, services=[],
                                                         collaboration_memberships=[john_ai_computing])
-    _persist(db, authorisation_group_researchers, authorisation_group_developers)
+    authorisation_group_science = AuthorisationGroup(name=authorisation_group_science_name,
+                                                     uri="https://ai/science",
+                                                     short_name="science",
+                                                     status="active",
+                                                     description="Science",
+                                                     collaboration=uva_research,
+                                                     services=[cloud, storage, wiki],
+                                                     collaboration_memberships=[roger_uva_research])
+    _persist(db, authorisation_group_researchers, authorisation_group_developers, authorisation_group_science)
 
     db.session.commit()
 
@@ -188,11 +198,14 @@ def seed(db):
     invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
                             expiry_date=default_expiry_date(), user=admin, message="Please join...",
                             intended_role="admin")
+    invitation_uva = Invitation(hash=invitation_hash_uva, invitee_email="uva@ex.org", collaboration=uva_research,
+                                expiry_date=default_expiry_date(), user=admin, message="Please join...",
+                                intended_role="member", authorisation_groups=[authorisation_group_science])
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
                                   expiry_date=datetime.date.today() - datetime.timedelta(days=21), user=admin,
                                   intended_role="member",
                                   message="Let me please join as I really, really, really \n really, "
                                           "really, really \n want to...")
-    _persist(db, invitation, invitation_noway)
+    _persist(db, invitation, invitation_uva, invitation_noway)
 
     db.session.commit()
