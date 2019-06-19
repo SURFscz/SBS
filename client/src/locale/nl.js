@@ -464,8 +464,6 @@ I18n.translations.nl = {
     },
     collaborationServices: {
         title: "Diensten voor samenwerking {{name}}",
-        connectAllServices: "Koppel alle diensten aan samenwerking {{name}}",
-        connectAllServicesTooltip: "Voordat diensten aan autorisatie <br/> groepen gekoppeld kunnen worden moeten<br/> ze eerst worden toegevoegd aan <br/> de samenwerking.<br/><br/> Door alle diensten te koppelen, worden <br/>ze beschikbaar voor alle<br/> autorisatie groepen<br/> van samenwerking {{name}}",
         connectedServices: "Met {{name}} gekoppelde diensten",
         searchServices: "Zoek, kies en voeg diensten toe aan samenwerking {{name}}",
         deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor<br/> samenwerking {{name}}.<br/><br/><strong>LET OP</strong>: de dienst zelf wordt niet verwijderd.<br/>  Hij is alleen niet beschikbaar<br/>voor autorisatie groepen van<br/> deze samenwerking",
@@ -487,6 +485,8 @@ I18n.translations.nl = {
         title: "Autorisatie groepen in samenwerking {{name}}",
         servicesTitle: "Diensten voor autorisatie groep {{name}}",
         membersTitle: "Leden van autorisatie groep {{name}}",
+        invitationsTitle: "Openstaande uitnodigingen die lid worden van autorisatie groep {{name}}",
+        pendingInvite: "Openstaande uitnodiging",
         titleNew: "Maak nieuwe autorisatie groep",
         titleUpdate: "Werk autorisatie groep {{name}} bij",
         titleReadOnly: "Autorisatie groep {{name}}",
@@ -533,9 +533,13 @@ I18n.translations.nl = {
             deletedService: "Dienst {{service}} ontkoppeld van autorisatie groep {{name}}",
             addedMember: "Gebruiker {{member}} lid gemaakt van autorisatie groep {{name}}",
             addedMembers: "Alle gebruikers lid gemaakt van autorisatie groep {{name}}",
+            addedServices: "Alle services toegevoegd aan autorisatie groep {{name}}",
             deletedMember: "Gebruiker {{member}} als lid verwijderd uit autorisatie groep {{name}}",
+            addedInvitation: "Successfully added user {{member}} as a member of authorisation group {{name}}",
+            deletedInvitation: "Successfully deleted invitee {{invitation}} from authorisation group {{name}}",
         },
-        addAllMembers: "Voeg alle CO gebruikers toe aan deze autorisatie groep",
+        addAllMembers: "Voeg alle CO gebruikers en open staande invitees toe aan deze autorisatie groep",
+        addAllServices: "Voeg alle CO diensten toe aan deze autorisatie groep",
         searchServices: "Zoek, kies en voeg diensten toe aan autorisatie groep {{name}}",
         connectedServices: "Diensten gekoppeld aan {{name}}",
         deleteServiceWarning: "Waarschuwing: ontkoppelen van een dienst van een autorisatie groep verwijdert alle dienst specifieke informatie <br/>van gekoppelde leden die via deze groep gekoppeld waren",
@@ -558,7 +562,12 @@ I18n.translations.nl = {
             created_at: "Sinds",
             actions: ""
         },
-
+        invitation: {
+            invitee_email: "Email",
+            intended_role: "Rol",
+            expiry_date: "Verloopdatum",
+            actions: ""
+        },
     },
     userServiceProfile: {
         title: "Mijn dienst profielen",

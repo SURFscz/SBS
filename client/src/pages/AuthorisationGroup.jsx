@@ -1,5 +1,6 @@
 import React from "react";
 import {
+    addAuthorisationGroupInvitations,
     addAuthorisationGroupMembers,
     addAuthorisationGroupServices,
     authorisationGroupById,
@@ -7,7 +8,7 @@ import {
     collaborationLiteById,
     collaborationServices,
     createAuthorisationGroup,
-    deleteAuthorisationGroup,
+    deleteAuthorisationGroup, deleteAuthorisationGroupInvitations,
     deleteAuthorisationGroupMembers,
     deleteAuthorisationGroupServices, preFlightDeleteAuthorisationGroupMember, preFlightDeleteAuthorisationGroupService,
     updateAuthorisationGroup
@@ -51,6 +52,9 @@ class AuthorisationGroup extends React.Component {
             sortedMembers: [],
             sortedMembersBy: "user__name",
             reverseMembers: false,
+            sortedInvitations: [],
+            sortedInvitationsBy: "invitee_email",
+            reverseInvitations: false,
             name: "",
             short_name: "",
             uri: "",
@@ -90,11 +94,14 @@ class AuthorisationGroup extends React.Component {
                 const collDetail = adminOfCollaboration ? collaborationServices : collaborationLiteById;
                 Promise.all([collDetail(params.collaboration_id), authorisationGroupById(params.id, params.collaboration_id)])
                     .then(res => {
-                        const {sortedServicesBy, reverseServices, sortedMembersBy, reverseMembers} = this.state;
+                        const {
+                            sortedServicesBy, reverseServices, sortedMembersBy, reverseMembers,
+                            sortedInvitationsBy, reverseInvitations
+                        } = this.state;
                         const collaboration = res[0];
                         const authorisationGroup = res[1];
                         const allServices = this.sortedCollaborationServices(collaboration);
-                        const allMembers = this.sortedCollaborationMembers(authorisationGroup.collaboration);
+                        const allMembers = this.sortedCollaborationMembers(collaboration);
                         this.setState({
                             ...authorisationGroup,
                             collaboration: collaboration,
@@ -102,6 +109,7 @@ class AuthorisationGroup extends React.Component {
                             authorisationGroup: authorisationGroup,
                             allMembers: allMembers,
                             sortedMembers: sortObjects(authorisationGroup.collaboration_memberships, sortedMembersBy, reverseMembers),
+                            sortedInvitations: sortObjects(authorisationGroup.invitations, sortedInvitationsBy, reverseInvitations),
                             allServices: allServices,
                             sortedServices: sortObjects(authorisationGroup.services, sortedServicesBy, reverseServices),
                             isNew: false,
@@ -140,23 +148,35 @@ class AuthorisationGroup extends React.Component {
             });
     };
 
-    refreshMembers = callBack => {
+    refreshMembersAndInvitations = callBack => {
         const params = this.props.match.params;
         authorisationGroupById(params.id, params.collaboration_id)
             .then(json => {
-                const {sortedMembersBy, reverseMembers} = this.state;
+                const {sortedMembersBy, reverseMembers, sortedInvitationsBy, reverseInvitations} = this.state;
                 this.setState({
-                    sortedMembers: sortObjects(json.collaboration_memberships, sortedMembersBy, reverseMembers)
+                    sortedMembers: sortObjects(json.collaboration_memberships, sortedMembersBy, reverseMembers),
+                    sortedInvitations: sortObjects(json.invitations, sortedInvitationsBy, reverseInvitations)
                 }, callBack())
             });
     };
 
-    sortedCollaborationMembers = collaboration => (collaboration.collaboration_memberships || [])
-        .sort((a, b) => a.user.name.localeCompare(b.user.name))
-        .map(member => ({
-            value: member.id,
-            label: this.memberToOption(member)
-        }));
+    sortedCollaborationMembers = collaboration => {
+        const members = (collaboration.collaboration_memberships || [])
+            .sort((a, b) => a.user.name.localeCompare(b.user.name))
+            .map(member => ({
+                value: member.id,
+                label: this.memberToOption(member),
+                isMember: true
+            }));
+        const invitations = (collaboration.invitations || [])
+            .sort((a, b) => a.invitee_email.localeCompare(b.invitee_email))
+            .map(invitation => ({
+                value: invitation.id,
+                label: `${invitation.invitee_email} - ${I18n.t("authorisationGroup.pendingInvite")}`,
+                isMember: false
+            }));
+        return members.concat(invitations);
+    };
 
     sortedCollaborationServices = collaboration => (collaboration.services || [])
         .sort((a, b) => a.name.localeCompare(b.name))
@@ -315,7 +335,7 @@ class AuthorisationGroup extends React.Component {
             collaborationId: collaboration.id,
             memberIds: option.value
         }).then(() => {
-            this.refreshMembers(() => setFlash(I18n.t("authorisationGroup.flash.addedMember", {
+            this.refreshMembersAndInvitations(() => setFlash(I18n.t("authorisationGroup.flash.addedMember", {
                 member: option.label,
                 name: authorisationGroupName
             })));
@@ -323,17 +343,41 @@ class AuthorisationGroup extends React.Component {
     };
 
     addAllMembers = () => {
-        const {collaboration, authorisationGroup, name, allMembers, sortedMembers} = this.state;
+        const {collaboration, authorisationGroup, name, allMembers, sortedMembers, sortedInvitations} = this.state;
         const availableMembers = allMembers
-            .filter(member => !sortedMembers.find(s => s.id === member.value))
+            .filter(member => member.isMember && !sortedMembers.find(s => s.id === member.value))
             .map(member => member.value);
+        const availableInvitations = allMembers
+            .filter(invitation => !invitation.isMember && !sortedInvitations.find(s => s.id === invitation.value))
+            .map(invitation => invitation.value);
         const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
-        addAuthorisationGroupMembers({
+        Promise.all([addAuthorisationGroupMembers({
             authorisationGroupId: authorisationGroup.id,
             collaborationId: collaboration.id,
             memberIds: availableMembers
+        }), addAuthorisationGroupInvitations({
+            authorisationGroupId: authorisationGroup.id,
+            collaborationId: collaboration.id,
+            invitationIds: availableInvitations
+        })]).then(() => {
+            this.refreshMembersAndInvitations(() => setFlash(I18n.t("authorisationGroup.flash.addedMembers", {
+                name: authorisationGroupName
+            })));
+        });
+    };
+
+    addAllServices = () => {
+        const {collaboration, authorisationGroup, name, allServices, sortedServices} = this.state;
+        const availableServices = allServices
+            .filter(service => !sortedServices.find(s => s.id === service.value))
+            .map(service => service.value);
+        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+        addAuthorisationGroupServices({
+            authorisationGroupId: authorisationGroup.id,
+            collaborationId: collaboration.id,
+            serviceIds: availableServices
         }).then(() => {
-            this.refreshMembers(() => setFlash(I18n.t("authorisationGroup.flash.addedMembers", {
+            this.refreshServices(() => setFlash(I18n.t("authorisationGroup.flash.addedMembers", {
                 name: authorisationGroupName
             })));
         });
@@ -367,8 +411,33 @@ class AuthorisationGroup extends React.Component {
         this.closeConfirmationDialog();
         const {collaboration, authorisationGroup} = this.state;
         deleteAuthorisationGroupMembers(authorisationGroup.id, member.id, collaboration.id).then(() => {
-            this.refreshMembers(() => setFlash(I18n.t("authorisationGroup.flash.deletedMember", {
+            this.refreshMembersAndInvitations(() => setFlash(I18n.t("authorisationGroup.flash.deletedMember", {
                 member: member.user.name,
+                name: authorisationGroup.name
+            })));
+        });
+    };
+
+    addInvitation = option => {
+        const {collaboration, authorisationGroup, name} = this.state;
+        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+        addAuthorisationGroupInvitations({
+            authorisationGroupId: authorisationGroup.id,
+            collaborationId: collaboration.id,
+            invitationIds: option.value
+        }).then(() => {
+            this.refreshMembersAndInvitations(() => setFlash(I18n.t("authorisationGroup.flash.addedInvitation", {
+                member: option.label,
+                name: authorisationGroupName
+            })));
+        });
+    };
+
+    removeInvitation = invitation => () => {
+        const {collaboration, authorisationGroup} = this.state;
+        deleteAuthorisationGroupInvitations(authorisationGroup.id, invitation.id, collaboration.id).then(() => {
+            this.refreshMembersAndInvitations(() => setFlash(I18n.t("authorisationGroup.flash.deletedInvitation", {
+                invitation: invitation.invitee_email,
                 name: authorisationGroup.name
             })));
         });
@@ -390,6 +459,15 @@ class AuthorisationGroup extends React.Component {
         const reversed = (sorted === name ? !reverse : false);
         const sortedMembers = sortObjects(members, name, reversed);
         this.setState({sortedMembers: sortedMembers, sortedMembersBy: name, reverseMembers: reversed});
+    };
+
+    sortInvitationsTable = (invitations, name, sorted, reverse) => () => {
+        if (name === "actions") {
+            return;
+        }
+        const reversed = (sorted === name ? !reverse : false);
+        const sortedInvitations = sortObjects(invitations, name, reversed);
+        this.setState({sortedInvitations: sortedInvitations, sortedInvitationsBy: name, reverseInvitations: reversed});
     };
 
     dialogChildren = userServiceProfilesPreFlight => {
@@ -419,12 +497,12 @@ class AuthorisationGroup extends React.Component {
         );
     };
 
-    renderConnectedMembers = (adminOfCollaboration, collaboration, authorisationGroupName, connectedMembers, sorted, reverse) => {
+    renderConnectedMembers = (adminOfCollaboration, authorisationGroupName, connectedMembers, sorted, reverse) => {
         const names = ["actions", "user__name", "user__email", "user__uid", "role", "created_at"];
         if (!adminOfCollaboration) {
             names.shift();
         }
-        const role = {value: "admin", label: "Admin"};
+
         const membersTitle = I18n.t("authorisationGroup.membersTitle", {name: authorisationGroupName});
         return (
             <div className="authorisation-members-connected">
@@ -451,29 +529,86 @@ class AuthorisationGroup extends React.Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {connectedMembers.map((member, i) => <tr key={i}>
-                        {adminOfCollaboration && <td className="actions">
-                            <FontAwesomeIcon icon="trash" onClick={this.removeMember(member)}/>
-                        </td>
-                        }
-                        <td className="name">{member.user.name}</td>
-                        <td className="email">{member.user.email}</td>
-                        <td className="uid">{member.user.uid}</td>
-                        <td className="role">
-                            <Select
-                                classNamePrefix="select-disabled"
-                                value={role}
-                                options={[role]}
-                                isDisabled={true}/></td>
-                        <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
-                    </tr>)}
+                    {connectedMembers.map((member, i) => {
+                        const role = {value: member.role, label: I18n.t(`profile.${member.role}`)};
+                        return (
+                            <tr key={i}>
+                            {adminOfCollaboration && <td className="actions">
+                                <FontAwesomeIcon icon="trash" onClick={this.removeMember(member)}/>
+                            </td>
+                            }
+                            <td className="name">{member.user.name}</td>
+                            <td className="email">{member.user.email}</td>
+                            <td className="uid">{member.user.uid}</td>
+                            <td className="role">
+                                <Select
+                                    classNamePrefix="select-disabled"
+                                    value={role}
+                                    options={[role]}
+                                    isDisabled={true}/></td>
+                            <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
+                        </tr>)
+                    })}
                     </tbody>
                 </table>
             </div>
         );
     };
 
-    renderConnectedServices = (adminOfCollaboration, collaboration, authorisationGroupName, connectedServices, sorted, reverse) => {
+    renderAuthorisationGroupInvitations = (adminOfCollaboration, authorisationGroupName, sortedInvitations, sortedInvitationsBy, reverseInvitations) => {
+        const names = ["actions", "invitee_email", "intended_role", "expiry_date"];
+        if (!adminOfCollaboration) {
+            names.shift();
+        }
+        const invitationsTitle = I18n.t("authorisationGroup.invitationsTitle", {name: authorisationGroupName});
+        return (
+            <div className="authorisation-invitations-connected">
+                <p className="title">{invitationsTitle}</p>
+                <table className="connected-invitations">
+                    <thead>
+                    <tr>
+                        {names.map(name =>
+                            <th key={name} className={name}
+                                onClick={this.sortInvitationsTable(sortedInvitations, name, sortedInvitationsBy, reverseInvitations)}>
+                                {I18n.t(`authorisationGroup.invitation.${name}`)}
+                                {name !== "actions" && headerIcon(name, sortedInvitationsBy, reverseInvitations)}
+                                {name === "actions" &&
+                                <span data-tip data-for="invitation-delete">
+                                <FontAwesomeIcon icon="info-circle"/>
+                                <ReactTooltip id="invitation-delete" type="light" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteInvitationTooltip", {name: authorisationGroupName})}}/>
+                                </ReactTooltip>
+                            </span>}
+                            </th>
+                        )}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {sortedInvitations.map((invitation, i) => {
+                        const role = {value: invitation.intended_role, label: I18n.t(`profile.${invitation.intended_role}`)};
+                        return (
+                            <tr key={i}>
+                            {adminOfCollaboration && <td className="actions">
+                                <FontAwesomeIcon icon="trash" onClick={this.removeInvitation(invitation)}/>
+                            </td>
+                            }
+                            <td className="name">{invitation.invitee_email}</td>
+                            <td className="role">
+                                <Select
+                                    classNamePrefix="select-disabled"
+                                    value={role}
+                                    options={[role]}
+                                    isDisabled={true}/></td>
+                            <td className="since">{moment(invitation.expiry_date * 1000).format("LL")}</td>
+                        </tr>)
+                    })}
+                    </tbody>
+                </table>
+            </div>
+        );
+    };
+
+    renderConnectedServices = (adminOfCollaboration, authorisationGroupName, connectedServices, sorted, reverse) => {
         const names = ["actions", "name", "entity_id", "description"];
         if (!adminOfCollaboration) {
             names.shift();
@@ -516,35 +651,42 @@ class AuthorisationGroup extends React.Component {
         );
     };
 
-    authorisationMembers = (adminOfCollaboration, collaboration, authorisationGroupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers) => {
-        const availableMembers = allMembers.filter(member => !sortedMembers.find(s => s.id === member.value));
-        const allMembersAreAdded = sortedMembers.length === allMembers.length;
+    authorisationMembers = (adminOfCollaboration, authorisationGroupName,
+                            allMembers, sortedMembers, sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations) => {
+        const availableMembers = allMembers
+            .filter(member => member.isMember && !sortedMembers.find(s => s.id === member.value));
+        const availableInvitations = allMembers
+            .filter(invitation => !invitation.isMember && !sortedInvitations.find(s => s.id === invitation.value));
+        const availableOptions = availableMembers.concat(availableInvitations);
+        const allMembersAreAdded = (sortedMembers.length + sortedInvitations.length) === allMembers.length;
         return (
             <div className={`authorisation-members ${adminOfCollaboration ? "" : "no-admin"}`}>
                 {adminOfCollaboration && <Select className="services-select"
                                                  placeholder={I18n.t("authorisationGroup.searchMembers", {name: authorisationGroupName})}
-                                                 onChange={this.addMember}
-                                                 options={availableMembers}
+                                                 onChange={option => option.isMember ? this.addMember(option) : this.addInvitation(option)}
+                                                 options={availableOptions}
                                                  value={null}
                                                  isSearchable={true}
                                                  isClearable={true}/>
                 }
                 <CheckBox className="checkbox add-all-members"
-                            name="allMembersAreAdded"
+                          name="allMembersAreAdded"
                           value={allMembersAreAdded}
                           readOnly={!adminOfCollaboration || allMembersAreAdded}
                           onChange={this.addAllMembers}
                           info={I18n.t("authorisationGroup.addAllMembers")}
                 />
-                {this.renderConnectedMembers(adminOfCollaboration, collaboration, authorisationGroupName, sortedMembers, sortedMembersBy, reverseMembers)}
+                {this.renderConnectedMembers(adminOfCollaboration, authorisationGroupName, sortedMembers, sortedMembersBy, reverseMembers)}
+                {this.renderAuthorisationGroupInvitations(adminOfCollaboration, authorisationGroupName, sortedInvitations, sortedInvitationsBy, reverseInvitations)}
             </div>
         );
 
 
     };
 
-    authorisationServices = (adminOfCollaboration, collaboration, authorisationGroupName, allServices, sortedServices, sortedServicesBy, reverseServices) => {
+    authorisationServices = (adminOfCollaboration, authorisationGroupName, allServices, sortedServices, sortedServicesBy, reverseServices) => {
         const availableServices = allServices.filter(service => !sortedServices.find(s => s.id === service.value));
+        const allServicesAreAdded = sortedServices.length === allServices.length;
         return (
             <div className={`authorisation-services ${adminOfCollaboration ? "" : "no-admin"}`}>
                 {adminOfCollaboration && <Select className="services-select"
@@ -555,7 +697,15 @@ class AuthorisationGroup extends React.Component {
                                                  isSearchable={true}
                                                  isClearable={true}/>
                 }
-                {this.renderConnectedServices(adminOfCollaboration, collaboration, authorisationGroupName, sortedServices, sortedServicesBy, reverseServices)}
+                <CheckBox className="checkbox add-all-servies"
+                          name="allServicesAreAdded"
+                          value={allServicesAreAdded}
+                          readOnly={!adminOfCollaboration || allServicesAreAdded}
+                          onChange={this.addAllServices}
+                          info={I18n.t("authorisationGroup.addAllServices")}
+                />
+
+                {this.renderConnectedServices(adminOfCollaboration, authorisationGroupName, sortedServices, sortedServicesBy, reverseServices)}
             </div>);
     };
 
@@ -657,7 +807,9 @@ class AuthorisationGroup extends React.Component {
             alreadyExists, collaboration, initial, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
             confirmationDialogQuestion, name, uri, short_name, description, status, authorisationGroup, isNew, back, leavePage,
             allServices, sortedServices, sortedServicesBy, reverseServices,
-            allMembers, sortedMembers, sortedMembersBy, reverseMembers, adminOfCollaboration, userServiceProfilesPreFlight
+            allMembers, sortedMembers, sortedMembersBy, reverseMembers,
+            sortedInvitationsBy, reverseInvitations, sortedInvitations,
+            adminOfCollaboration, userServiceProfilesPreFlight
         } = this.state;
         if (!collaboration) {
             return null;
@@ -693,11 +845,14 @@ class AuthorisationGroup extends React.Component {
                     </a>
                     {showTitles && <p className="title">{isNew ? detailsTitle : servicesTitle}</p>}
                 </div>
-                {!isNew && this.authorisationServices(adminOfCollaboration, collaboration, authorisationGroupName, allServices, sortedServices, sortedServicesBy, reverseServices)}
+                {!isNew && this.authorisationServices(adminOfCollaboration, authorisationGroupName,
+                    allServices, sortedServices, sortedServicesBy, reverseServices)}
                 {showTitles && <div className="title">
                     <p className="title">{membersTitle}</p>
                 </div>}
-                {!isNew && this.authorisationMembers(adminOfCollaboration, collaboration, authorisationGroupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers)}
+                {!isNew && this.authorisationMembers(adminOfCollaboration, authorisationGroupName,
+                    allMembers, sortedMembers, sortedMembersBy, reverseMembers,
+                    sortedInvitations, sortedInvitationsBy, reverseInvitations)}
                 {<div className="title">
                     <p className="title">{detailsTitle}</p>
                 </div>}

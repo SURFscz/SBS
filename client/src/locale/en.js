@@ -463,8 +463,6 @@ I18n.translations.en = {
     },
     collaborationServices: {
         title: "Services for collaboration {{name}}",
-        connectAllServices: "Connect all services to collaboration {{name}}",
-        connectAllServicesTooltip: "Before services can be added<br/> to authorisation groups they<br/> first need to be added<br/> to the collaboration.<br/><br/> Connecting all services will <br/>make all services available<br/> to the authorisation groups<br/> of collaboration {{name}}",
         connectedServices: "Connected services to {{name}}",
         searchServices: "Search, select and add services to the available services within collaboration {{name}}",
         deleteServiceTooltip: "Make this service unavailable in<br/> the collaboration {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for authorisation groups within<br/>  this collaboration",
@@ -486,6 +484,8 @@ I18n.translations.en = {
         title: "Authorisation groups within collaboration {{name}}",
         servicesTitle: "Services for authorisation group {{name}}",
         membersTitle: "Members of authorisation group {{name}}",
+        invitationsTitle: "Pending invitations to become members of authorisation group {{name}}",
+        pendingInvite: "Pending invite",
         titleNew: "Create new authorisation group",
         titleUpdate: "Update authorisation group {{name}}",
         titleReadOnly: "Authorisation group {{name}}",
@@ -530,11 +530,15 @@ I18n.translations.en = {
             deleted: "Successfully deleted authorisation group {{name}}",
             addedService: "Successfully added service {{service}} to authorisation group {{name}}",
             deletedService: "Successfully deleted service {{service}} from authorisation group {{name}}",
+            addedServices: "Successfully added all services to authorisation group {{name}}",
             addedMember: "Successfully added user {{member}} as a member of authorisation group {{name}}",
-            addedMembers: "Successfully added all users as a member of authorisation group {{name}}",
+            addedMembers: "Successfully added all users and invitations as (future ) members of authorisation group {{name}}",
             deletedMember: "Successfully deleted user {{member}} from authorisation group {{name}}",
+            addedInvitation: "Successfully added user {{member}} as a member of authorisation group {{name}}",
+            deletedInvitation: "Successfully deleted invitee {{invitation}} from authorisation group {{name}}",
         },
-        addAllMembers: "Add all Collaboration members to this authorization group",
+        addAllMembers: "Add all Collaboration members and outstanding invitees to this authorization group",
+        addAllServices: "Add all Collaboration services to this authorization group",
         searchServices: "Search, select and add services to the available services for the authorisation group {{name}}",
         connectedServices: "Connected services to {{name}}",
         deleteServiceWarning: "Warning: Unlinking services from the authorisation group deletes all user information specific for that service and all linked memberships",
@@ -543,6 +547,7 @@ I18n.translations.en = {
         connectedMembers: "Members of {{name}}",
         deleteMemberWarning: "Warning: Unlinking memberships from the authorisation group deletes all user information specific for that membership and all linked services",
         deleteMemberTooltip: "Remove this member from<br/> the authorisation group {{name}}.<br/><br/><strong>NOTE</strong>: the user itself is NOT deleted.<br/>He / she is only no longer a <br/> member of this authorisation groups anymore",
+        deleteInvitationTooltip: "Remove this invitation from<br/> the authorisation group {{name}}.<br/><br/><strong>NOTE</strong>: the invitation itself is NOT deleted.<br/>He / she will not be added<br/>as a member of this authorisation groups<br/>when the invitation is accepted",
         service: {
             actions: "",
             name: "Name",
@@ -557,7 +562,12 @@ I18n.translations.en = {
             created_at: "Since",
             actions: ""
         },
-
+        invitation: {
+            invitee_email: "Email",
+            intended_role: "Role",
+            expiry_date: "Expiry date",
+            actions: ""
+        },
     },
     userServiceProfile: {
         title: "My user service profiles",

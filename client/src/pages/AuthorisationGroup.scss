@@ -89,7 +89,7 @@
         }
     }
 
-    .authorisation-services-connected, .authorisation-members-connected {
+    .authorisation-services-connected, .authorisation-members-connected, .authorisation-invitations-connected {
         padding: 15px 5px;
 
         p.title {
@@ -105,7 +105,7 @@
             font-size: 14px;
         }
 
-        table.connected-services, table.connected-members {
+        table.connected-services, table.connected-members, table.connected-invitations {
             width: 100%;
 
             th {

@@ -2,19 +2,12 @@ import React from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {
-    addCollaborationServices,
-    collaborationServices,
-    deleteAllCollaborationServices,
-    deleteCollaborationServices,
-    searchServices
-} from "../api";
+import {addCollaborationServices, collaborationServices, deleteCollaborationServices, searchServices} from "../api";
 import I18n from "i18n-js";
 import {sortObjects, stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import "./CollaborationServices.scss"
-import CheckBox from "../components/CheckBox";
 import Select from "react-select";
 import {setFlash} from "../utils/Flash";
 import {headerIcon} from "../forms/helpers";
@@ -28,7 +21,6 @@ class CollaborationServices extends React.Component {
             collaboration: undefined,
             sortedServices: [],
             allServices: [],
-            connectAllServices: false,
             sorted: "name",
             reverse: false
         };
@@ -51,8 +43,7 @@ class CollaborationServices extends React.Component {
                     this.setState({
                         collaboration: collaboration,
                         sortedServices: sortObjects(services, sorted, reverse),
-                        allServices: allServices,
-                        connectAllServices: allServices.length < services.length
+                        allServices: allServices
                     });
                 })
         } else {
@@ -74,26 +65,6 @@ class CollaborationServices extends React.Component {
     openService = service => e => {
         stopEvent(e);
         this.props.history.push(`/services/${service.id}`);
-    };
-
-    connectAllServices = e => {
-        const {collaboration, allServices} = this.state;
-        const checked = e.target.checked;
-        this.setState({connectAllServices: checked});
-        if (checked) {
-            const serviceIds = allServices.map(option => option.value).filter(id => !collaboration.services.find(service => service.id === id));
-            addCollaborationServices({collaborationId: collaboration.id, serviceIds: serviceIds}).then(() => {
-                this.refresh(() => setFlash(I18n.t("collaborationServices.flash.addedAll", {
-                    name: collaboration.name
-                })));
-            });
-        } else {
-            deleteAllCollaborationServices(collaboration.id).then(() => {
-                this.refresh(() => setFlash(I18n.t("collaborationServices.flash.deletedAll", {
-                    name: collaboration.name
-                })));
-            });
-        }
     };
 
     addService = option => {
@@ -170,7 +141,7 @@ class CollaborationServices extends React.Component {
 
     render() {
         const {
-            collaboration, sortedServices, allServices, connectAllServices, sorted, reverse
+            collaboration, sortedServices, allServices, sorted, reverse
         } = this.state;
         if (collaboration === undefined) {
             return null;
@@ -189,9 +160,6 @@ class CollaborationServices extends React.Component {
                     <p className="title">{I18n.t("collaborationServices.title", {name: collaboration.name})}</p>
                 </div>
                 <div className="collaboration-services">
-                    <CheckBox name="connectAllServices" value={connectAllServices} onChange={this.connectAllServices}
-                              info={I18n.t("collaborationServices.connectAllServices", {name: collaboration.name})}
-                              tooltip={I18n.t("collaborationServices.connectAllServicesTooltip", {name: collaboration.name})}/>
                     <Select className="services-select"
                             placeholder={I18n.t("collaborationServices.searchServices", {name: collaboration.name})}
                             onChange={this.addService}

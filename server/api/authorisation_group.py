@@ -71,10 +71,12 @@ def authorisation_group_by_id(authorisation_group_id, collaboration_id):
         .outerjoin(AuthorisationGroup.collaboration_memberships) \
         .outerjoin(CollaborationMembership.user) \
         .outerjoin(AuthorisationGroup.services) \
+        .outerjoin(AuthorisationGroup.invitations) \
         .options(contains_eager(AuthorisationGroup.collaboration)) \
         .options(contains_eager(AuthorisationGroup.collaboration_memberships)
                  .contains_eager(CollaborationMembership.user)) \
         .options(contains_eager(AuthorisationGroup.services)) \
+        .options(contains_eager(AuthorisationGroup.invitations)) \
         .filter(AuthorisationGroup.id == authorisation_group_id) \
         .filter(AuthorisationGroup.collaboration_id == collaboration_id) \
         .one()

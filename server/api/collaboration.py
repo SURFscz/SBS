@@ -104,8 +104,10 @@ def collaboration_services_by_id(collaboration_id):
     include_memberships = query_param("include_memberships", required=False, default=False)
     if include_memberships:
         query = query \
+            .outerjoin(Collaboration.invitations) \
             .outerjoin(Collaboration.collaboration_memberships) \
             .outerjoin(CollaborationMembership.user) \
+            .options(contains_eager(Collaboration.invitations)) \
             .options(contains_eager(Collaboration.collaboration_memberships)
                      .contains_eager(CollaborationMembership.user))
 
