@@ -1,16 +1,14 @@
 # -*- coding: future_fstrings -*-
-import uuid
 
 from flask import Blueprint, request as current_request
 from sqlalchemy import text
-from sqlalchemy.orm import aliased, contains_eager
 
-from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_collaboration_admin, current_user
-from server.db.db import db, UserServiceProfile, AuthorisationGroup, CollaborationMembership, User
+from server.api.base import json_endpoint
+from server.auth.security import confirm_collaboration_admin
+from server.db.db import db
 
 authorisation_group_invitations_api = Blueprint("authorisation_group_invitations_api", __name__,
-                                            url_prefix="/api/authorisation_group_invitations")
+                                                url_prefix="/api/authorisation_group_invitations")
 
 
 @authorisation_group_invitations_api.route("/", methods=["PUT"], strict_slashes=False)
@@ -33,7 +31,7 @@ def add_authorisation_group_invitations():
 
 
 @authorisation_group_invitations_api.route("/<authorisation_group_id>/<invitation_id>/<collaboration_id>",
-                                       methods=["DELETE"], strict_slashes=False)
+                                           methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_authorisation_group_invitations(authorisation_group_id, invitation_id, collaboration_id):
     confirm_collaboration_admin(collaboration_id)
