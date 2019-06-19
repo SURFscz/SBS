@@ -312,7 +312,8 @@ export function invitationByHash(hash) {
 }
 
 export function invitationAccept(invitation) {
-    return fetchJson("/api/invitations/accept", {method: "putt", body: JSON.stringify(invitation)}, {}, false);
+    return fetchJson("/api/invitations/accept",
+        {method: "put", body: JSON.stringify(invitation)}, {}, false);
 }
 
 export function invitationDecline(invitation) {
