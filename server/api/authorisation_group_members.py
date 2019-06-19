@@ -30,7 +30,7 @@ def add_authorisation_group_members():
     result_set = db.engine.execute(sql)
 
     db.session.commit()
-    
+
     # Create an UserServiceProfile for each Service linked to the AuthorisationGroup
     # for each new CollaborationMembership
     authorisation_group = AuthorisationGroup.query.get(authorisation_group_id)
