@@ -140,11 +140,12 @@ class Invitation extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {invite} = this.state;
-            invitationAccept(invite).then(res => {
-                this.props.history.push("/home");
-                setFlash(I18n.t("invitation.flash.inviteAccepted", {name: invite.collaboration.name}));
-                this.props.refreshUser();
-            })
+            invitationAccept(invite)
+                .then(res => {
+                    this.props.history.push("/home");
+                    setFlash(I18n.t("invitation.flash.inviteAccepted", {name: invite.collaboration.name}));
+                    this.props.refreshUser();
+                })
                 .catch(e => {
                     if (e.response && e.response.json) {
                         e.response.json().then(res => {
