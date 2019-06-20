@@ -11,6 +11,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
 import {collaborationAccessTypes} from "../forms/constants";
 import SelectField from "../components/SelectField";
+import {getParameterByName} from "../utils/QueryParameters";
 
 class NewCollaboration extends React.Component {
 
@@ -49,12 +50,22 @@ class NewCollaboration extends React.Component {
             if (json.length === 0) {
                 this.props.history.push("/404");
             } else {
-                this.setState({
-                    organisations: json.map(org => ({
+                const organisationId = getParameterByName("organisation", window.location.search);
+                const organisations = json.map(org => ({
                         label: org.name,
                         value: org.id,
                         short_name: org.short_name
-                    }))
+                    }));
+                let organisation = {};
+                if (organisationId) {
+                    const filtered = organisations.filter(org => org.value === parseInt(organisationId, 10));
+                    if (filtered.length > 0) {
+                        organisation = filtered[0];
+                    }
+                }
+                this.setState({
+                    organisations: organisations,
+                    organisation: organisation
                 });
             }
         });

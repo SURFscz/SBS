@@ -339,17 +339,32 @@ I18n.translations.nl = {
             noExpires: "N/A",
             message: "Bericht",
         },
-        apiKeys: "API Keys",
+        collaboration: {
+            name: "Naam",
+            description: "Omschrijving",
+            short_name: "Korte naam",
+            global_urn: "Globale urn",
+            accepted_user_policy: "AUP",
+            created_at: "Sinds",
+            actions: "",
+            link: ""
+        },
+
+        apiKeys: "API Keys van {{name}}",
+        collaborations: "Samenwerkingen van {{name}}",
+        newCollaboration: "Nieuwe samenwerking",
+        searchPlaceHolderCollaborations: "Zoek voor samenwerkingen",
         update: "Bijwerken",
         delete: "Verwijderen",
         deleteMemberConfirmation: "Weet u zeker dat u het organisatie lidmaatschap van {{name}} wil verwijderen?",
         deleteApiKeyConfirmation: "Weet u zeker dat u deze API key wilt verwijderen?",
-
+        deleteCollaborationConfirmation: "Weet u zeker dat u collaboration {{name}} wil verwijderen?",
         flash: {
             updated: "Organisatie {{name}} bijgewerkt",
             deleted: "Organisatie {{name}} verwijderd",
             memberDeleted: "Lidmaatschap van {{name}} verwijderd",
-            apiKeyDeleted: "API key verwijderd"
+            apiKeyDeleted: "API key verwijderd",
+            collaborationDeleted: "Samenwerking {{name}} verwijderd",
         }
     },
     joinRequest: {

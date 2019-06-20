@@ -61,7 +61,7 @@
         }
     }
 
-    .members-search {
+    .members-search, .collaborations-search {
         background-color: white;
         padding: $medium-padding;
         max-width: $medium;
@@ -124,7 +124,7 @@
         }
     }
 
-    table.members, table.invitations, table.api-keys {
+    table.members, table.invitations, table.api-keys, table.collaborations {
         width: 100%;
 
         th {
@@ -275,5 +275,40 @@
             }
         }
     }
+
+    table.collaborations {
+        th, td {
+            cursor: pointer;
+            padding: 10px 5px;
+        }
+
+        tbody {
+            tr:hover {
+                color: $blue;
+            }
+
+        }
+
+        th.actions {
+            width: 10%;
+            cursor: default;
+        }
+
+        td.actions {
+            text-align: right;
+            z-index: 9;
+
+            svg {
+                color: $red;
+                cursor: pointer;
+                margin-right: 10px;
+            }
+        }
+
+        td.link {
+            color: $blue;
+        }
+    }
+
 
 }

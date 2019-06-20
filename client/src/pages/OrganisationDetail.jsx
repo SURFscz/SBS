@@ -1,7 +1,7 @@
 import React from "react";
 import ReactTooltip from "react-tooltip";
 import {
-    deleteApiKey,
+    deleteApiKey, deleteCollaboration,
     deleteOrganisation,
     deleteOrganisationMembership,
     organisationById,
@@ -43,6 +43,11 @@ class OrganisationDetail extends React.Component {
             inviteSorted: "invitee_email",
             inviteReverse: false,
             query: "",
+            collaborations: [],
+            filteredCollaborations: [],
+            sortedCollaborationAttribute: "name",
+            reverseCollaborationSorted: false,
+            collaborationsQuery: "",
             adminOfOrganisation: false,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
@@ -58,8 +63,12 @@ class OrganisationDetail extends React.Component {
         if (params.id) {
             organisationById(params.id)
                 .then(json => {
-                    const {sorted, reverse, inviteSorted, inviteReverse} = this.state;
+                    const {
+                        sorted, reverse, inviteSorted, inviteReverse, sortedCollaborationAttribute,
+                        reverseCollaborationSorted
+                    } = this.state;
                     const members = sortObjects(json.organisation_memberships, sorted, reverse);
+                    const collaborations = sortObjects(json.collaborations, sortedCollaborationAttribute, reverseCollaborationSorted);
                     this.setState({
                         originalOrganisation: json,
                         name: json.name,
@@ -68,6 +77,8 @@ class OrganisationDetail extends React.Component {
                         description: json.description,
                         members: members,
                         filteredMembers: members,
+                        collaborations: collaborations,
+                        filteredCollaborations: collaborations,
                         invitations: sortObjects(json.organisation_invitations, inviteSorted, inviteReverse),
                         adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id),
                         apiKeys: json.api_keys
@@ -102,6 +113,23 @@ class OrganisationDetail extends React.Component {
             .then(() => {
                 this.componentDidMount();
                 setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: member.user.name}));
+            });
+    };
+
+    deleteCollaboration = collaboration => () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("organisationDetail.deleteCollaborationConfirmation", {name: collaboration.name}),
+            confirmationDialogAction: this.doDeleteCollaboration(collaboration)
+        });
+    };
+
+    doDeleteCollaboration = collaboration => () => {
+        this.setState({confirmationDialogOpen: false});
+        deleteCollaboration(collaboration.id)
+            .then(() => {
+                this.componentDidMount();
+                setFlash(I18n.t("organisationDetail.flash.collaborationDeleted", {name: collaboration.name}));
             });
     };
 
@@ -163,6 +191,12 @@ class OrganisationDetail extends React.Component {
         this.props.history.push(`/new-organisation-invite/${this.state.originalOrganisation.id}${email}`);
     };
 
+    newCollaboration = e => {
+        stopEvent(e);
+        const {originalOrganisation} = this.state;
+        this.props.history.push(`/new-collaboration?organisation=${originalOrganisation.id}`);
+    };
+
     addApiKey = e => {
         stopEvent(e);
         this.props.history.push(`/new-api-key/${this.state.originalOrganisation.id}`);
@@ -188,7 +222,12 @@ class OrganisationDetail extends React.Component {
         this.props.history.push(`/organisation-invitations/${invitation.id}`);
     };
 
-    sortTable = (members, name, sorted, reverse) => () => {
+    openCollaboration = collaboration => e => {
+        stopEvent(e);
+        this.props.history.push(`/collaborations/${collaboration.id}`);
+    };
+
+    sortMembersTable = (members, name, sorted, reverse) => () => {
         if (name === "actions") {
             return;
         }
@@ -201,6 +240,19 @@ class OrganisationDetail extends React.Component {
         const reversed = (sorted === name ? !reverse : false);
         const sortedInvitations = sortObjects(invitations, name, reversed);
         this.setState({invitations: sortedInvitations, inviteSorted: name, inviteReverse: reversed});
+    };
+
+    sortCollaborationsTable = (collaborations, name, sorted, reverse) => () => {
+        if (name === "actions") {
+            return;
+        }
+        const reversed = (sorted === name ? !reverse : false);
+        const sortedCollaborations = sortObjects(collaborations, name, reversed);
+        this.setState({
+            filteredCollaborations: sortedCollaborations,
+            sortedCollaborationAttribute: name,
+            reverseCollaborationSorted: reversed
+        });
     };
 
     renderInvitations = (reverse, sorted, invitations) => {
@@ -260,6 +312,16 @@ class OrganisationDetail extends React.Component {
         this.setState({filteredMembers: newSortedMembers, query: query})
     };
 
+    searchCollaborations = e => {
+        const query = e.target.value.toLowerCase();
+        const {collaborations, sortedCollaborationAttribute, reverseCollaborationSorted} = this.state;
+        const newCollaborations = collaborations.filter(coll => coll.name.toLowerCase().indexOf(query) > -1 ||
+            coll.description.toLowerCase().indexOf(query) > -1 ||
+            coll.short_name.toLowerCase().indexOf(query) > -1);
+        const newSortedCollaborations = sortObjects(newCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted);
+        this.setState({filteredCollaborations: newSortedCollaborations, collaborationsQuery: query})
+    };
+
     renderMembers = (members, user, sorted, reverse, query, adminOfOrganisation) => {
         const isAdmin = user.admin || adminOfOrganisation;
         const adminClassName = isAdmin ? "with-button" : "";
@@ -293,7 +355,7 @@ class OrganisationDetail extends React.Component {
                 <tr>
                     {names.map(name =>
                         <th key={name} className={name}
-                            onClick={this.sortTable(members, name, sorted, reverse)}>
+                            onClick={this.sortMembersTable(members, name, sorted, reverse)}>
                             {I18n.t(`organisationDetail.member.${name}`)}
                             {name !== "actions" && headerIcon(name, sorted, reverse)}
                         </th>
@@ -315,6 +377,7 @@ class OrganisationDetail extends React.Component {
             </table>
         );
     };
+
     organisationApiKeys = (user, adminOfOrganisation, apiKeys) => {
         const isAdmin = user.admin || adminOfOrganisation;
         return (
@@ -342,6 +405,62 @@ class OrganisationDetail extends React.Component {
                         txt={I18n.t("organisationDetail.newApiKey")}/>
                 }
             </div>
+        );
+    };
+
+    renderCollaborations = (collaborations, user, sorted, reverse, query, adminOfOrganisation) => {
+        const isAdmin = user.admin || adminOfOrganisation;
+        const adminClassName = isAdmin ? "with-button" : "";
+        return (
+            <section className="collaborations-search">
+                <div className="search">
+                    <input type="text"
+                           className={adminClassName}
+                           onChange={this.searchCollaborations}
+                           value={query}
+                           placeholder={I18n.t("organisationDetail.searchPlaceHolderCollaborations")}/>
+                    {<FontAwesomeIcon icon="search" className={adminClassName}/>}
+                    {isAdmin &&
+                    <Button onClick={this.newCollaboration}
+                            txt={I18n.t("organisationDetail.newCollaboration")}/>
+                    }
+                </div>
+                {this.renderCollaborationsTable(collaborations, user, sorted, reverse)}
+            </section>
+
+        );
+    };
+
+    renderCollaborationsTable = (collaborations, user, sorted, reverse) => {
+        const names = ["link", "name", "description", "short_name", "global_urn", "accepted_user_policy", "created_at", "actions"];
+        return (
+            <table className="collaborations">
+                <thead>
+                <tr>
+                    {names.map(name =>
+                        <th key={name} className={name}
+                            onClick={this.sortCollaborationsTable(collaborations, name, sorted, reverse)}>
+                            {I18n.t(`organisationDetail.collaboration.${name}`)}
+                            {(name !== "actions" && name !== "link") && headerIcon(name, sorted, reverse)}
+                        </th>
+                    )}
+                </tr>
+                </thead>
+                <tbody>
+                {collaborations.map((coll, i) => <tr onClick={this.openCollaboration(coll)} key={i}>
+                    <td className="link"><FontAwesomeIcon icon="arrow-right"/></td>
+                    <td className="name">{coll.name}</td>
+                    <td className="description">{coll.description}</td>
+                    <td className="short_name">{coll.short_name}</td>
+                    <td className="global_urn">{coll.global_urn}</td>
+                    <td className="accepted_user_policy">{coll.accepted_user_policy}</td>
+                    <td className="since">{moment(coll.created_at * 1000).format("LL")}</td>
+                    <td className="actions">
+                        {<FontAwesomeIcon icon="trash" onClick={this.deleteCollaboration(coll)}/>}
+                    </td>
+                </tr>)}
+                </tbody>
+            </table>
         );
     };
 
@@ -429,7 +548,8 @@ class OrganisationDetail extends React.Component {
         const {
             name, short_name, description, tenant_identifier, originalOrganisation, initial, alreadyExists, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
-            inviteReverse, inviteSorted, invitations, adminOfOrganisation, apiKeys
+            inviteReverse, inviteSorted, invitations, adminOfOrganisation, apiKeys,
+            filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted, collaborationsQuery
         } = this.state;
         if (!originalOrganisation) {
             return null;
@@ -467,6 +587,11 @@ class OrganisationDetail extends React.Component {
                     <p>{I18n.t("organisationDetail.apiKeys", {name: originalOrganisation.name})}</p>
                 </div>
                 {this.organisationApiKeys(user, adminOfOrganisation, apiKeys)}
+                <div className="title">
+                    <p>{I18n.t("organisationDetail.collaborations", {name: originalOrganisation.name})}</p>
+                </div>
+                {this.renderCollaborations(filteredCollaborations, user, sortedCollaborationAttribute,
+                    reverseCollaborationSorted, collaborationsQuery, query, adminOfOrganisation)}
                 <div className="title">
                     <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
                 </div>

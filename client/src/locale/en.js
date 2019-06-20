@@ -339,16 +339,31 @@ I18n.translations.en = {
             noExpires: "N/A",
             message: "Message",
         },
-        apiKeys: "API Keys",
+        collaboration: {
+            name: "Name",
+            description: "Description",
+            short_name: "Short name",
+            global_urn: "Global urn",
+            accepted_user_policy: "AUP",
+            created_at: "Since",
+            actions: "",
+            link: ""
+        },
+        apiKeys: "API Keys of {{name}}",
+        collaborations: "Collaborations of {{name}}",
+        newCollaboration: "New collaboration",
+        searchPlaceHolderCollaborations: "Search for collaborations",
         update: "Update",
         delete: "Delete",
         deleteMemberConfirmation: "Are you sure you want to delete the organisation membership for {{name}}?",
         deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
+        deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}?",
         flash: {
             updated: "Organisation {{name}} was successfully updated",
             deleted: "Organisation {{name}} was successfully deleted",
             memberDeleted: "Membership of {{name}} was successfully deleted",
-            apiKeyDeleted: "API key was successfully deleted"
+            apiKeyDeleted: "API key was successfully deleted",
+            collaborationDeleted: "Collaboration {{name}} was successfully deleted",
         }
     },
     joinRequest: {
