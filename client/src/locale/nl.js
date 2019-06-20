@@ -366,6 +366,7 @@ I18n.translations.nl = {
         flash: {
             declined: "Verzoek voor lidmaatschap van samenwerking {{name}} is afgekeurd",
             accepted: "Verzoek voor lidmaatschap van samenwerking {{name}} is goedgekeurd",
+            alreadyMember: "You are alreay a member of collaboration {{name}} and can therefore not accept this invitation"
         }
     },
     organisationInvitation: {
@@ -548,6 +549,7 @@ I18n.translations.nl = {
         connectedMembers: "Leden van {{name}}",
         deleteMemberWarning: "Waarschuwing: door leden uit de autorisatie groep te verwijderen, wordt alle dienst-speficieke informatie van die gebruiker voor dat lidmaatschap en die dienst verwijderd",
         deleteMemberTooltip: "Verwijder dit lid uit de<br/>autorisatie groep {{name}}.<br/><br/><strong>LET OP</strong>: de gebruiker zelf wordt niet verwijderd.<br/>Hij / zij is alleen niet langer lid <br/>van deze autorisatie groep",
+        deleteInvitationTooltip: "Remove this invitation from<br/> the authorisation group {{name}}.<br/><br/><strong>NOTE</strong>: the invitation itself is NOT deleted.<br/>He / she will not be added<br/>as a member of this authorisation groups<br/>when the invitation is accepted",
         service: {
             actions: "",
             name: "Naam",
