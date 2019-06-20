@@ -735,7 +735,7 @@ class AuthorisationGroup extends React.Component {
 
                 <InputField value={short_name}
                             name={I18n.t("authorisationGroup.shortName")}
-                            placeholder={I18n.t("authorisationGroup.shortNamePlaceholder")}
+                            placeholder={I18n.t("authorisationGroup.shortNamePlaceHolder")}
                             onBlur={this.validateAuthorisationGroupShortName}
                             onChange={e => this.setState({
                                 short_name: e.target.value,

@@ -192,7 +192,7 @@ class NewCollaboration extends React.Component {
                             alreadyExists: {...this.state.alreadyExists, short_name: false}
                         })
                     }}
-                                placeholder={I18n.t("collaboration.shortNamePlaceholder")}
+                                placeholder={I18n.t("collaboration.shortNamePlaceHolder")}
                                 onBlur={this.validateCollaborationShortName}
                                 toolTip={I18n.t("collaboration.shortNameTooltip")}
                                 name={I18n.t("collaboration.shortName")}/>

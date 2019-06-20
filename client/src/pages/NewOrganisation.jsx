@@ -155,7 +155,7 @@ class NewOrganisation extends React.Component {
 
                     <InputField value={short_name}
                                 name={I18n.t("organisation.shortName")}
-                                placeholder={I18n.t("organisation.shortNamePlaceholder")}
+                                placeholder={I18n.t("organisation.shortNamePlaceHolder")}
                                 onBlur={this.validateOrganisationShortName}
                                 onChange={e => this.setState({
                                     short_name: e.target.value,
