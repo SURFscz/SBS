@@ -40,8 +40,8 @@ def read_file(file_name):
         return f.read()
 
 
-def _init_logging(local):
-    if local and False:
+def _init_logging(is_test):
+    if is_test:
         logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     else:
         formatter = logging.Formatter("SBS: %(asctime)s %(name)s %(levelname)s %(message)s")
@@ -72,7 +72,7 @@ profile = os.environ.get("PROFILE")
 is_local = profile is not None and profile == "local"
 is_test = test is not None and bool(int(test))
 
-_init_logging(is_local or is_test)
+_init_logging(is_test)
 
 
 def page_not_found(_):

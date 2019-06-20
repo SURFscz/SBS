@@ -18,7 +18,7 @@ user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
 def _log_headers():
-    logger = ctx_logger()
+    logger = ctx_logger("user")
     for k, v in current_request.environ.items():
         logger.debug(f"ENV {k} value {v}")
     for k, v in current_request.headers.items():
@@ -133,7 +133,7 @@ def me():
     if uid:
         users = User.query.filter(User.uid == uid).all()
         user = users[0] if len(users) > 0 else None
-        logger = ctx_logger()
+        logger = ctx_logger("user")
         if not user:
             user = User(uid=uid, created_by="system", updated_by="system")
             add_user_claims(request_headers, uid, user)
@@ -219,5 +219,5 @@ def attribute_aggregation():
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def error():
-    ctx_logger().exception(json.dumps(current_request.json))
+    ctx_logger("user").exception(json.dumps(current_request.json))
     return {}, 201

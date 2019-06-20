@@ -67,7 +67,7 @@ class UserServiceProfileDetails extends React.Component {
             confirmationDialogOpen: true,
             leavePage: true,
             cancelDialogAction: this.gotoUserServiceProfiles,
-            confirmationDialogAction: this.closeConfirmationDialog
+            confirmationDialogAction: () => this.setState({confirmationDialogOpen: false})
         });
     };
 
