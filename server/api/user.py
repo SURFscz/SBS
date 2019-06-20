@@ -1,13 +1,13 @@
 # -*- coding: future_fstrings -*-
 import itertools
 import json
-import logging
 import os
-from flask import Blueprint, request as current_request, session, current_app, jsonify
+
+from flask import Blueprint, request as current_request, session, jsonify
 from sqlalchemy import text, or_
 from sqlalchemy.orm import contains_eager
 
-from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
+from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, ctx_logger
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
 from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_hash_user, add_user_claims, \
     get_user_uid
@@ -18,7 +18,7 @@ user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
 def _log_headers():
-    logger = logging.getLogger("user_api")
+    logger = ctx_logger()
     for k, v in current_request.environ.items():
         logger.debug(f"ENV {k} value {v}")
     for k, v in current_request.headers.items():
@@ -133,17 +133,18 @@ def me():
     if uid:
         users = User.query.filter(User.uid == uid).all()
         user = users[0] if len(users) > 0 else None
+        logger = ctx_logger()
         if not user:
             user = User(uid=uid, created_by="system", updated_by="system")
             add_user_claims(request_headers, uid, user)
-            current_app.logger.info(f"Provisioning new user {user.uid}")
+            logger.info(f"Provisioning new user {user.uid}")
             user = db.session.merge(user)
             db.session.commit()
         else:
             hash_headers = claim_attribute_hash_headers(request_headers)
             hash_user = claim_attribute_hash_user(user)
             if hash_user != hash_headers:
-                current_app.logger.info(f"Updating user {user.uid} with new claims")
+                logger.info(f"Updating user {user.uid} with new claims")
                 add_user_claims(request_headers, uid, user)
                 user = db.session.merge(user)
                 db.session.commit()
@@ -218,5 +219,5 @@ def attribute_aggregation():
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def error():
-    logging.getLogger().exception(json.dumps(current_request.json))
+    ctx_logger().exception(json.dumps(current_request.json))
     return {}, 201

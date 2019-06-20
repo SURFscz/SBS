@@ -41,12 +41,13 @@ def read_file(file_name):
 
 
 def _init_logging(local):
-    if local:
+    if local and False:
         logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     else:
+        formatter = logging.Formatter("SBS: %(asctime)s %(name)s %(levelname)s %(message)s")
+
         handler = TimedRotatingFileHandler(f"{os.path.dirname(os.path.realpath(__file__))}/../log/sbs.log",
                                            when="midnight", backupCount=30)
-        formatter = logging.Formatter("SBS: %(asctime)s %(name)s %(levelname)s %(message)s")
         handler.setFormatter(formatter)
         handler.setLevel(logging.INFO)
 
@@ -56,9 +57,6 @@ def _init_logging(local):
         debug_handler.setLevel(logging.DEBUG)
 
         logger = logging.getLogger()
-
-        sql_a_logger = logging.getLogger("sqlalchemy.engine")
-        sql_a_logger.setLevel(logging.DEBUG)
 
         logger.addHandler(handler)
         logger.addHandler(debug_handler)

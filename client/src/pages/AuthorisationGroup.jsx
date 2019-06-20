@@ -826,7 +826,6 @@ class AuthorisationGroup extends React.Component {
         }
         const servicesTitle = I18n.t("authorisationGroup.servicesTitle", {name: authorisationGroup.name});
         const membersTitle = I18n.t("authorisationGroup.membersTitle", {name: authorisationGroupName});
-        const showTitles = !isNew && adminOfCollaboration;
         return (
             <div className="mod-authorisation-group">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -843,19 +842,19 @@ class AuthorisationGroup extends React.Component {
                     }}><FontAwesomeIcon icon="arrow-left"/>
                         {title}
                     </a>
-                    {showTitles && <p className="title">{isNew ? detailsTitle : servicesTitle}</p>}
+                    {!isNew && <p className="title">{servicesTitle}</p>}
                 </div>
                 {!isNew && this.authorisationServices(adminOfCollaboration, authorisationGroupName,
                     allServices, sortedServices, sortedServicesBy, reverseServices)}
-                {showTitles && <div className="title">
+                {!isNew && <div className="title">
                     <p className="title">{membersTitle}</p>
                 </div>}
                 {!isNew && this.authorisationMembers(adminOfCollaboration, authorisationGroupName,
                     allMembers, sortedMembers, sortedMembersBy, reverseMembers,
                     sortedInvitations, sortedInvitationsBy, reverseInvitations)}
-                {<div className="title">
+                <div className="title">
                     <p className="title">{detailsTitle}</p>
-                </div>}
+                </div>
                 {this.authorisationGroupDetails(adminOfCollaboration, name, short_name, alreadyExists, initial,
                     description, uri, status, isNew, disabledSubmit, authorisationGroup, collaboration)}
             </div>);
