@@ -1,6 +1,8 @@
 # -*- coding: future_fstrings -*-
 from flask import current_app
 import logging
+
+from server.api.base import ctx_logger
 from server.db.db import User
 
 oidc_claim_name = "name"
@@ -51,7 +53,7 @@ def _get_header_key(key):
 
 
 def _get_value(request_headers, key):
-    logger = logging.getLogger("user_claims")
+    logger = ctx_logger("user_claims")
     s = request_headers.get(key)
     if s is None:
         logger.debug(f"Returning None for key {key}")

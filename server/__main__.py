@@ -57,6 +57,7 @@ def _init_logging(is_test):
         debug_handler.setLevel(logging.DEBUG)
 
         logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
 
         logger.addHandler(handler)
         logger.addHandler(debug_handler)
