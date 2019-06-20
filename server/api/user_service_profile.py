@@ -20,7 +20,7 @@ user_service_profile_api = Blueprint("user_service_profiles_api", __name__, url_
 @json_endpoint
 def attributes():
     confirm_read_access()
-    logger = ctx_logger()
+    logger = ctx_logger("user_service_claims")
 
     uid = query_param("uid")
     service_entity_id = query_param("service_entity_id")
@@ -29,9 +29,11 @@ def attributes():
         .join(UserServiceProfile.user) \
         .filter(User.uid == uid) \
         .all()
+
     if len(user_service_profiles) == 0:
-        logger.debug(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
+        logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
         return {}, 200
+
     result = {}
     user = user_service_profiles[0].user
     for k, v in attribute_saml_mapping.items():
@@ -53,7 +55,7 @@ def attributes():
     result.setdefault(is_member_of_saml, []).extend(is_member_of)
     result = {k: list(set(v)) for k, v in result.items()}
 
-    logger.debug(f"Returning attributes for user {uid} and service_entity_id {service_entity_id}")
+    logger.info(f"Returning attributes for user {uid} and service_entity_id {service_entity_id}")
     return result, 200
 
 

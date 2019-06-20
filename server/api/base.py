@@ -70,8 +70,8 @@ def get_user(config, auth):
     return list(filter(lambda user: user.name == auth.username and user.password == auth.password, config.api_users))
 
 
-def ctx_logger():
-    return CustomAdapter(logging.getLogger())
+def ctx_logger(name=None):
+    return CustomAdapter(logging.getLogger(name))
 
 
 def _add_custom_header(response):
@@ -86,7 +86,7 @@ def _audit_trail():
     method = current_request.method
     if method in _audit_trail_methods:
         msg = json.dumps(current_request.json) if method != "DELETE" else ""
-        ctx_logger().info(f"Path {current_request.path} {method} {msg}")
+        ctx_logger("base").info(f"Path {current_request.path} {method} {msg}")
 
 
 def _commit_database(status):
@@ -109,7 +109,7 @@ def json_endpoint(f):
             return response, status
         except Exception as e:
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e))
-            ctx_logger().exception(response)
+            ctx_logger("base").exception(response)
             if isinstance(e, NoResultFound):
                 response.status_code = 404
             elif isinstance(e, HTTPException):
