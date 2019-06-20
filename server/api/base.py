@@ -86,7 +86,7 @@ def _audit_trail():
     method = current_request.method
     if method in _audit_trail_methods:
         msg = json.dumps(current_request.json) if method != "DELETE" else ""
-        ctx_logger("base").info(f"Path {current_request.path} {method} {msg}")
+        ctx_logger("base").debug(f"Path {current_request.path} {method} {msg}")
 
 
 def _commit_database(status):
