@@ -1,12 +1,11 @@
 # -*- coding: future_fstrings -*-
-import logging
 import subprocess
 import tempfile
 
 from flask import Blueprint, request as current_request
 from sqlalchemy.orm import contains_eager
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, ctx_logger
 from server.auth.security import current_user_id, confirm_owner_of_user_service_profile, confirm_read_access
 from server.auth.user_claims import attribute_saml_mapping, user_service_profile_claims, is_member_of_saml, \
     user_service_profile_saml_mapping
@@ -21,7 +20,7 @@ user_service_profile_api = Blueprint("user_service_profiles_api", __name__, url_
 @json_endpoint
 def attributes():
     confirm_read_access()
-    logger = logging.getLogger("user_claims")
+    logger = ctx_logger()
 
     uid = query_param("uid")
     service_entity_id = query_param("service_entity_id")
