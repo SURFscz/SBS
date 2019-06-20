@@ -125,8 +125,6 @@ def user_search():
 @user_api.route("/me", strict_slashes=False)
 @json_endpoint
 def me():
-    _log_headers()
-
     request_headers = current_request.environ.copy()
     request_headers.update(current_request.headers)
     uid = get_user_uid(request_headers)
@@ -148,6 +146,8 @@ def me():
                 add_user_claims(request_headers, uid, user)
                 user = db.session.merge(user)
                 db.session.commit()
+            else:
+                logger.info(f"Not updating user {user.uid} as the claims are not changed")
 
         is_admin = _store_user_in_session(user)
 
@@ -160,6 +160,8 @@ def me():
     else:
         user = {"uid": "anonymous", "guest": True, "admin": False}
         session["user"] = user
+
+    _log_headers()
     return user, 200
 
 
