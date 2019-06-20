@@ -475,7 +475,7 @@ class CollaborationDetail extends React.Component {
 
             <InputField value={short_name}
                         name={I18n.t("collaboration.shortName")}
-                        placeholder={I18n.t("collaboration.shortNamePlaceholder")}
+                        placeholder={I18n.t("collaboration.shortNamePlaceHolder")}
                         onBlur={this.validateCollaborationShortName}
                         onChange={e => this.setState({
                             short_name: e.target.value,
