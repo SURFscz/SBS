@@ -56,6 +56,9 @@ def _init_logging(is_test):
         debug_handler.setFormatter(formatter)
         debug_handler.setLevel(logging.DEBUG)
 
+        sql_a_logger = logging.getLogger("sqlalchemy.engine")
+        sql_a_logger.setLevel(logging.DEBUG)
+
         logger = logging.getLogger()
         logger.setLevel(logging.DEBUG)
 
