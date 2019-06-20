@@ -100,6 +100,7 @@ def organisation_by_id(id):
         .options(joinedload(Organisation.organisation_memberships).subqueryload(OrganisationMembership.user)) \
         .options(joinedload(Organisation.organisation_invitations).subqueryload(OrganisationInvitation.user)) \
         .options(joinedload(Organisation.api_keys)) \
+        .options(joinedload(Organisation.collaborations)) \
         .filter(Organisation.id == id)
 
     if not request_context.is_authorized_api_call:
