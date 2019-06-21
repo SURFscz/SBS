@@ -4,7 +4,7 @@ import ReactTooltip from "react-tooltip";
 import "./InputField.scss";
 import {isEmpty} from "../utils/Utils";
 import I18n from "i18n-js";
-import {CopyToClipboard} from 'react-copy-to-clipboard';
+import {CopyToClipboard} from "react-copy-to-clipboard";
 
 export default function InputField({
                                        onChange, name, value, placeholder = "", disabled = false,
