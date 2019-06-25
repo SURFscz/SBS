@@ -3,7 +3,7 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {organisationById, organisationInvitations} from "../api";
+import {organisationById, organisationInvitations, organisationInvitationsPreview} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
@@ -40,6 +40,9 @@ class NewOrganisationInvitation extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
                 () => this.props.history.push(`/organisations/${this.props.match.params.organisation_id}`)),
             leavePage: true,
+            tabs: ["form", "preview"],
+            activeTab: "form",
+            htmlPreview: ""
         };
     }
 
@@ -142,11 +145,81 @@ class NewOrganisationInvitation extends React.Component {
         }
     };
 
+    tabChanged = () => {
+        if (this.state.activeTab === "preview") {
+            const {administrators, message, organisation, expiry_date, fileEmails} = this.state;
+            organisationInvitationsPreview({
+                administrators: administrators.concat(fileEmails),
+                message,
+                expiry_date: expiry_date.getTime() / 1000,
+                organisation_id: organisation.id
+            }).then(res => this.setState({htmlPreview: res.html.replace(/href/g, "nope")}));
+        }
+    };
+
+    preview = () => <div dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>;
+
+
+    invitationForm = (message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date, disabledSubmit) =>
+        <>
+            <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                        placeholder={I18n.t("organisation.messagePlaceholder")}
+                        name={I18n.t("organisation.message")}
+                        toolTip={I18n.t("organisation.messageTooltip")}
+                        multiline={true}/>
+
+            <InputField value={email}
+                        onChange={e => this.setState({email: e.target.value})}
+                        placeholder={I18n.t("organisation.administratorsPlaceholder")}
+                        name={I18n.t("organisation.administrators")}
+                        toolTip={I18n.t("organisation.administratorsTooltip")}
+                        onBlur={this.addEmail}
+                        onEnter={this.addEmail}
+                        fileUpload={true}
+                        fileInputKey={fileInputKey}
+                        fileName={fileName}
+                        onFileRemoval={this.onFileRemoval}
+                        onFileUpload={this.onFileUpload}/>
+            {fileTypeError &&
+            <span
+                className="error">{I18n.t("organisationInvitation.fileExtensionError")}</span>}
+
+            {(fileName && !fileTypeError) &&
+            <span className="info-msg">{I18n.t("organisationInvitation.fileImportResult", {
+                nbr: fileEmails.length,
+                fileName: fileName
+            })}</span>}
+
+            {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
+            <span
+                className="error">{I18n.t("organisationInvitation.requiredAdministrator")}</span>}
+
+            <section className="email-tags">
+                {administrators.map(mail =>
+                    <div key={mail} className="email-tag">
+                        <span>{mail}</span>
+                        <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
+                    </div>)}
+            </section>
+
+            <DateField value={expiry_date}
+                       onChange={e => this.setState({expiry_date: e})}
+                       maxDate={moment().add(1, "month").toDate()}
+                       name={I18n.t("organisationInvitation.expiryDate")}
+                       toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>
+
+            <section className="actions">
+                <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")}
+                        onClick={this.submit}/>
+                <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+            </section>
+        </>;
+
     render() {
         const {
             email, initial, administrators, expiry_date, organisation,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
-            fileTypeError, fileEmails, fileInputKey
+            fileTypeError, fileEmails, fileInputKey, tabs, activeTab
         } = this.state;
         if (organisation === undefined) {
             return null;
@@ -167,61 +240,27 @@ class NewOrganisationInvitation extends React.Component {
                     </a>
                     <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
                 </div>
-                <div className="new-organisation-invitation">
-                    <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                placeholder={I18n.t("organisation.messagePlaceholder")}
-                                name={I18n.t("organisation.message")}
-                                toolTip={I18n.t("organisation.messageTooltip")}
-                                multiline={true}/>
+                <div className="tabs">
+                    {tabs.map(tab => {
+                        const className = tab === activeTab ? "tab active" : "tab";
 
-                    <InputField value={email}
-                                onChange={e => this.setState({email: e.target.value})}
-                                placeholder={I18n.t("organisation.administratorsPlaceholder")}
-                                name={I18n.t("organisation.administrators")}
-                                toolTip={I18n.t("organisation.administratorsTooltip")}
-                                onBlur={this.addEmail}
-                                onEnter={this.addEmail}
-                                fileUpload={true}
-                                fileInputKey={fileInputKey}
-                                fileName={fileName}
-                                onFileRemoval={this.onFileRemoval}
-                                onFileUpload={this.onFileUpload}/>
-                    {fileTypeError &&
-                    <span
-                        className="error">{I18n.t("organisationInvitation.fileExtensionError")}</span>}
-
-                    {(fileName && !fileTypeError) &&
-                    <span className="info-msg">{I18n.t("organisationInvitation.fileImportResult", {
-                        nbr: fileEmails.length,
-                        fileName: fileName
-                    })}</span>}
-
-                    {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
-                    <span
-                        className="error">{I18n.t("organisationInvitation.requiredAdministrator")}</span>}
-
-                    <section className="email-tags">
-                        {administrators.map(mail =>
-                            <div key={mail} className="email-tag">
-                                <span>{mail}</span>
-                                <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
-                            </div>)}
-                    </section>
-
-                    <DateField value={expiry_date}
-                               onChange={e => this.setState({expiry_date: e})}
-                               maxDate={moment().add(1, "month").toDate()}
-                               name={I18n.t("organisationInvitation.expiryDate")}
-                               toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>
-
-                    <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")}
-                                onClick={this.submit}/>
-                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                    </section>
+                        return (
+                            <div className={className} key={tab}
+                                 onClick={() => this.setState({activeTab: tab}, this.tabChanged)}>
+                                <h2>{I18n.t(`organisationDetail.tabs.${tab}`)}</h2>
+                            </div>
+                        );
+                    })}
                 </div>
+                {activeTab === "form" && <div className="new-organisation-invitation">
+                    {this.invitationForm(message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date, disabledSubmit)}
+                </div>}
+                {activeTab === "preview" && <div className="new-organisation-invitation">
+                    {this.preview()}
+                </div>}
             </div>);
     };
+
 }
 
 export default NewOrganisationInvitation;

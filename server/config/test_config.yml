@@ -22,6 +22,7 @@ mail:
   sender_email: no-reply@surfnet.nl
 
 base_url: http://localhost:3000/
+wiki_link: https://wiki.surfnet.nl/display/SCZ/SCZ+Public+Space
 
 admin_users:
   - uid: "urn:john"

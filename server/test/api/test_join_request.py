@@ -25,7 +25,7 @@ class TestJoinRequest(AbstractTest):
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["boss@example.org"], mail_msg.recipients)
-            self.assertTrue(f"http://localhost:3000/collaborations/{collaboration_id}" in mail_msg.html)
+            self.assertTrue(f"http://localhost:3000/join-requests/{join_request['id']}" in mail_msg.html)
 
     def test_join_request_delete(self):
         self.assertEqual(3, JoinRequest.query.count())

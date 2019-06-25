@@ -42,7 +42,7 @@ I18n.translations.en = {
         showMore: "More",
         hideSome: "Less",
         today: "Today",
-        manage: "Manage",
+        manage: "Overview",
         invalidInput: "Invalid input for {{name}}"
     },
     explain: {
@@ -364,6 +364,10 @@ I18n.translations.en = {
             memberDeleted: "Membership of {{name}} was successfully deleted",
             apiKeyDeleted: "API key was successfully deleted",
             collaborationDeleted: "Collaboration {{name}} was successfully deleted",
+        },
+        tabs: {
+            form: "Invitation details",
+            preview: "Invitation preview",
         }
     },
     joinRequest: {

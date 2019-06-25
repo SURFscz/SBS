@@ -20,7 +20,7 @@ depends_on = None
 def upgrade():
     op.create_table("users",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
-                    sa.Column("uid", sa.String(length=512), nullable=False),
+                    sa.Column("uid", sa.String(length=255), nullable=False),
                     sa.Column("name", sa.String(length=255), nullable=True),
                     sa.Column("email", sa.String(length=255), nullable=True),
                     sa.Column("nick_name", sa.String(length=255), nullable=True),
@@ -34,8 +34,8 @@ def upgrade():
                     sa.Column("updated_at", sa.DateTime(timezone=True),
                               server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
-                    sa.Column("updated_by", sa.String(length=512), nullable=False),
+                    sa.Column("created_by", sa.String(length=255), nullable=False),
+                    sa.Column("updated_by", sa.String(length=255), nullable=False),
                     )
 
     op.create_table("organisations",
@@ -48,8 +48,8 @@ def upgrade():
                     sa.Column("updated_at", sa.DateTime(timezone=True),
                               server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
-                    sa.Column("updated_by", sa.String(length=512), nullable=False),
+                    sa.Column("created_by", sa.String(length=255), nullable=False),
+                    sa.Column("updated_by", sa.String(length=255), nullable=False),
                     )
 
     op.create_table("organisation_memberships",
@@ -63,8 +63,8 @@ def upgrade():
                     sa.Column("updated_at", sa.DateTime(timezone=True),
                               server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
-                    sa.Column("updated_by", sa.String(length=512), nullable=False),
+                    sa.Column("created_by", sa.String(length=255), nullable=False),
+                    sa.Column("updated_by", sa.String(length=255), nullable=False),
                     )
 
     op.create_table("collaborations",
@@ -83,8 +83,8 @@ def upgrade():
                     sa.Column("updated_at", sa.DateTime(timezone=True),
                               server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
-                    sa.Column("updated_by", sa.String(length=512), nullable=False),
+                    sa.Column("created_by", sa.String(length=255), nullable=False),
+                    sa.Column("updated_by", sa.String(length=255), nullable=False),
                     )
 
     op.create_table("collaboration_memberships",
@@ -98,14 +98,14 @@ def upgrade():
                     sa.Column("updated_at", sa.DateTime(timezone=True),
                               server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
-                    sa.Column("updated_by", sa.String(length=512), nullable=False),
+                    sa.Column("created_by", sa.String(length=255), nullable=False),
+                    sa.Column("updated_by", sa.String(length=255), nullable=False),
                     )
 
     op.create_table("services",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
-                    sa.Column("entity_id", sa.String(length=512), nullable=False),
-                    sa.Column("name", sa.String(length=512), nullable=False),
+                    sa.Column("entity_id", sa.String(length=255), nullable=False),
+                    sa.Column("name", sa.String(length=255), nullable=False),
                     sa.Column("description", sa.Text(), nullable=True),
                     sa.Column("address", sa.Text(), nullable=True),
                     sa.Column("identity_type", sa.String(length=255), nullable=True),
@@ -118,8 +118,8 @@ def upgrade():
                     sa.Column("updated_at", sa.DateTime(timezone=True),
                               server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
-                    sa.Column("updated_by", sa.String(length=512), nullable=False),
+                    sa.Column("created_by", sa.String(length=255), nullable=False),
+                    sa.Column("updated_by", sa.String(length=255), nullable=False),
                     )
 
     op.create_table("services_collaborations",
@@ -145,8 +145,8 @@ def upgrade():
                     sa.Column("updated_at", sa.DateTime(timezone=True),
                               server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
-                    sa.Column("updated_by", sa.String(length=512), nullable=False),
+                    sa.Column("created_by", sa.String(length=255), nullable=False),
+                    sa.Column("updated_by", sa.String(length=255), nullable=False),
                     )
 
     op.create_table("user_service_profiles",
@@ -162,9 +162,9 @@ def upgrade():
                     sa.Column("name", sa.String(length=255), nullable=True),
                     sa.Column("ssh_key", sa.Text(), nullable=True),
                     sa.Column("email", sa.String(length=255), nullable=True),
-                    sa.Column("address", sa.String(length=512), nullable=True),
+                    sa.Column("address", sa.String(length=255), nullable=True),
                     sa.Column("role", sa.String(length=255), nullable=True),
-                    sa.Column("identifier", sa.String(length=512), nullable=True),
+                    sa.Column("identifier", sa.String(length=255), nullable=True),
                     sa.Column("telephone_number", sa.String(length=255), nullable=True),
                     sa.Column("status", sa.String(length=255), nullable=True),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
@@ -172,8 +172,8 @@ def upgrade():
                     sa.Column("updated_at", sa.DateTime(timezone=True),
                               server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
-                    sa.Column("updated_by", sa.String(length=512), nullable=False),
+                    sa.Column("created_by", sa.String(length=255), nullable=False),
+                    sa.Column("updated_by", sa.String(length=255), nullable=False),
                     )
 
     op.create_table("services_authorisation_groups",
@@ -207,7 +207,7 @@ def upgrade():
 
     op.create_table("invitations",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
-                    sa.Column("hash", sa.String(length=512), nullable=False),
+                    sa.Column("hash", sa.String(length=255), nullable=False),
                     sa.Column("message", sa.Text(), nullable=True),
                     sa.Column("invitee_email", sa.String(length=255), nullable=False),
                     sa.Column("collaboration_id", sa.Integer(), sa.ForeignKey("collaborations.id", ondelete="cascade"),
@@ -220,12 +220,12 @@ def upgrade():
                     sa.Column("expiry_date", sa.DateTime(timezone=True), nullable=True),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
+                    sa.Column("created_by", sa.String(length=255), nullable=False),
                     )
 
     op.create_table("organisation_invitations",
                     sa.Column("id", sa.Integer(), primary_key=True, nullable=False, autoincrement=True),
-                    sa.Column("hash", sa.String(length=512), nullable=False),
+                    sa.Column("hash", sa.String(length=255), nullable=False),
                     sa.Column("message", sa.Text(), nullable=True),
                     sa.Column("invitee_email", sa.String(length=255), nullable=False),
                     sa.Column("organisation_id", sa.Integer(), sa.ForeignKey("organisations.id", ondelete="cascade"),
@@ -237,7 +237,7 @@ def upgrade():
                     sa.Column("expiry_date", sa.DateTime(timezone=True), nullable=True),
                     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=512), nullable=False),
+                    sa.Column("created_by", sa.String(length=255), nullable=False),
                     )
 
 

@@ -138,6 +138,29 @@ def my_organisations():
     return organisations, 200
 
 
+@organisation_api.route("/invites-preview", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def organisation_invites_preview():
+    data = current_request.get_json()
+    message = data["message"] if "message" in data else None
+
+    organisation = Organisation.query.get(data["organisation_id"])
+    user = User.query.get(current_user_id())
+    invitation = {
+        "user": user,
+        "organisation": organisation,
+        "message": message,
+        "hash": token_urlsafe()
+    }
+    html = mail_organisation_invitation({
+        "salutation": "Dear",
+        "invitation": invitation,
+        "base_url": current_app.app_config.base_url,
+        "expiry_days": 14
+    }, organisation, [], preview=True)
+    return {"html": html}, 201
+
+
 @organisation_api.route("/invites", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def organisation_invites():

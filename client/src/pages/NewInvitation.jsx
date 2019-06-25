@@ -3,7 +3,7 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {collaborationById, collaborationInvitations} from "../api";
+import {collaborationById, collaborationInvitations, collaborationInvitationsPreview} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
@@ -47,6 +47,10 @@ class NewInvitation extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
                 () => this.props.history.push(`/collaborations/${this.props.match.params.collaboration_id}`)),
             leavePage: true,
+            tabs: ["form", "preview"],
+            activeTab: "form",
+            htmlPreview: ""
+
         };
     }
 
@@ -157,11 +161,91 @@ class NewInvitation extends React.Component {
         }
     };
 
+    tabChanged = () => {
+        if (this.state.activeTab === "preview") {
+            const {administrators, message, collaboration, intended_role, expiry_date, fileEmails} = this.state;
+            collaborationInvitationsPreview({
+                administrators: administrators.concat(fileEmails),
+                message,
+                intended_role: intended_role,
+                expiry_date: expiry_date.getTime() / 1000,
+                collaboration_id: collaboration.id
+            }).then(res => this.setState({htmlPreview: res.html.replace(/class="link" href/g, "nope")}));
+        }
+    };
+
+    preview = () => <div dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>;
+
+    invitationForm = (email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, intended_role, message, expiry_date, disabledSubmit) =>
+        <>
+            <InputField value={email} onChange={e => this.setState({email: e.target.value})}
+                        placeholder={I18n.t("invitation.inviteesPlaceholder")}
+                        name={I18n.t("invitation.invitees")}
+                        toolTip={I18n.t("invitation.inviteesMessagesTooltip")}
+                        onBlur={this.addEmail}
+                        onEnter={this.addEmail}
+                        fileInputKey={fileInputKey}
+                        fileUpload={true}
+                        fileName={fileName}
+                        onFileRemoval={this.onFileRemoval}
+                        onFileUpload={this.onFileUpload}/>
+            {fileTypeError &&
+            <span
+                className="error">{I18n.t("invitation.fileExtensionError")}</span>}
+
+            {(fileName && !fileTypeError) &&
+            <span className="info-msg">{I18n.t("invitation.fileImportResult", {
+                nbr: fileEmails.length,
+                fileName: fileName
+            })}</span>}
+
+            {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
+            <span
+                className="error">{I18n.t("invitation.requiredEmail")}</span>}
+
+            <section className="email-tags">
+                {administrators.map(mail =>
+                    <div key={mail} className="email-tag">
+                        <span>{mail}</span>
+                        <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
+                    </div>)}
+            </section>
+
+            <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
+                         options={this.intendedRolesOptions}
+                         name={I18n.t("invitation.intendedRole")}
+                         toolTip={I18n.t("invitation.intendedRoleTooltip")}
+                         placeholder={I18n.t("collaboration.selectRole")}
+                         onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
+            {(!initial && isEmpty(intended_role)) &&
+            <span
+                className="error">{I18n.t("invitation.requiredRole")}</span>}
+
+            <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                        placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}
+                        name={I18n.t("collaboration.message")}
+                        toolTip={I18n.t("invitation.inviteesTooltip")}
+                        multiline={true}/>
+
+            <DateField value={expiry_date}
+                       onChange={e => this.setState({expiry_date: e})}
+                       maxDate={moment().add(1, "month").toDate()}
+                       name={I18n.t("invitation.expiryDate")}
+                       toolTip={I18n.t("invitation.expiryDateTooltip")}/>
+
+            <section className="actions">
+                <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
+                        onClick={this.submit}/>
+                <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+            </section>
+        </>;
+
+
     render() {
         const {
             email, initial, administrators, expiry_date, collaboration, intended_role,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName, fileInputKey,
-            fileTypeError, fileEmails
+            fileTypeError, fileEmails, tabs, activeTab
         } = this.state;
         if (collaboration === undefined) {
             return null;
@@ -182,70 +266,30 @@ class NewInvitation extends React.Component {
                     </a>
                     <p className="title">{I18n.t("invitation.createTitle", {collaboration: collaboration.name})}</p>
                 </div>
-                <div className="new-collaboration-invitation">
-                    <InputField value={email} onChange={e => this.setState({email: e.target.value})}
-                                placeholder={I18n.t("invitation.inviteesPlaceholder")}
-                                name={I18n.t("invitation.invitees")}
-                                toolTip={I18n.t("invitation.inviteesMessagesTooltip")}
-                                onBlur={this.addEmail}
-                                onEnter={this.addEmail}
-                                fileInputKey={fileInputKey}
-                                fileUpload={true}
-                                fileName={fileName}
-                                onFileRemoval={this.onFileRemoval}
-                                onFileUpload={this.onFileUpload}/>
-                    {fileTypeError &&
-                    <span
-                        className="error">{I18n.t("invitation.fileExtensionError")}</span>}
+                <div className="tabs">
+                    {tabs.map(tab => {
+                        const className = tab === activeTab ? "tab active" : "tab";
 
-                    {(fileName && !fileTypeError) &&
-                    <span className="info-msg">{I18n.t("invitation.fileImportResult", {
-                        nbr: fileEmails.length,
-                        fileName: fileName
-                    })}</span>}
-
-                    {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
-                    <span
-                        className="error">{I18n.t("invitation.requiredEmail")}</span>}
-
-                    <section className="email-tags">
-                        {administrators.map(mail =>
-                            <div key={mail} className="email-tag">
-                                <span>{mail}</span>
-                                <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
-                            </div>)}
-                    </section>
-
-                    <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
-                                 options={this.intendedRolesOptions}
-                                 name={I18n.t("invitation.intendedRole")}
-                                 toolTip={I18n.t("invitation.intendedRoleTooltip")}
-                                 placeholder={I18n.t("collaboration.selectRole")}
-                                 onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
-                    {(!initial && isEmpty(intended_role)) &&
-                    <span
-                        className="error">{I18n.t("invitation.requiredRole")}</span>}
-
-                    <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}
-                                name={I18n.t("collaboration.message")}
-                                toolTip={I18n.t("invitation.inviteesTooltip")}
-                                multiline={true}/>
-
-                    <DateField value={expiry_date}
-                               onChange={e => this.setState({expiry_date: e})}
-                               maxDate={moment().add(1, "month").toDate()}
-                               name={I18n.t("invitation.expiryDate")}
-                               toolTip={I18n.t("invitation.expiryDateTooltip")}/>
-
-                    <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
-                                onClick={this.submit}/>
-                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                    </section>
+                        return (
+                            <div className={className} key={tab}
+                                 onClick={() => this.setState({activeTab: tab}, this.tabChanged)}>
+                                <h2>{I18n.t(`organisationDetail.tabs.${tab}`)}</h2>
+                            </div>
+                        );
+                    })}
                 </div>
+
+                {activeTab === "form" && <div className="new-collaboration-invitation">
+                    {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, intended_role, message, expiry_date, disabledSubmit)}
+                </div>}
+                {activeTab === "preview" && <div className="new-collaboration-invitation">
+                    {this.preview()}
+                </div>}
+
             </div>);
     };
+
+
 }
 
 export default NewInvitation;

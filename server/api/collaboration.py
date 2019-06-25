@@ -261,9 +261,36 @@ def collaboration_invites():
             "salutation": "Dear",
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
+            "wiki_link": current_app.app_config.wiki_link,
             "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
         }, collaboration, [administrator])
     return None, 201
+
+
+@collaboration_api.route("/invites-preview", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def collaboration_invites_preview():
+    data = current_request.get_json()
+    message = data["message"] if "message" in data else None
+    intended_role = data["intended_role"] if "intended_role" in data else "member"
+
+    collaboration = Collaboration.query.get(data["collaboration_id"])
+    user = User.query.get(current_user_id())
+    invitation = {
+        "user": user,
+        "collaboration": collaboration,
+        "intended_role": intended_role,
+        "message": message,
+        "hash": token_urlsafe()
+    }
+    html = mail_collaboration_invitation({
+        "salutation": "Dear",
+        "invitation": invitation,
+        "base_url": current_app.app_config.base_url,
+        "wiki_link": current_app.app_config.wiki_link,
+        "expiry_days": 14
+    }, collaboration, [], preview=True)
+    return {"html": html}, 201
 
 
 @collaboration_api.route("/", methods=["POST"], strict_slashes=False)
