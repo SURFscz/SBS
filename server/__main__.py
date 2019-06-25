@@ -32,6 +32,7 @@ from server.api.service import service_api
 from server.api.user import user_api
 from server.api.user_service_profile import user_service_profile_api
 from server.db.db import db, db_migrations
+from server.templates import invitation_role
 
 
 def read_file(file_name):
@@ -75,7 +76,7 @@ profile = os.environ.get("PROFILE")
 is_local = profile is not None and profile == "local"
 is_test = test is not None and bool(int(test))
 
-_init_logging(is_test)
+_init_logging(is_test or is_local)
 
 
 def page_not_found(_):
@@ -117,6 +118,10 @@ app.config["MAIL_SERVER"] = config.mail.host
 app.config["MAIL_PORT"] = int(config.mail.port)
 app.config["OPEN_MAIL_IN_BROWSER"] = os.environ.get("OPEN_MAIL_IN_BROWSER", 0)
 app.config["LOCAL"] = is_local
+
+app.jinja_env.globals.update({
+    "invitation_role": invitation_role,
+})
 
 app.mail = Mail(app)
 

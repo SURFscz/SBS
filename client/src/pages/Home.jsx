@@ -65,7 +65,7 @@ class Home extends React.Component {
         const showMoreItems = this.state.showMore.includes("userServiceProfiles");
         return (
             <section className="info-block ">
-                <div className="header user-service-profiles">
+                <div className="header user-service-profiles link" onClick={this.openUserServiceProfiles}>
                     <span className="type">{I18n.t("home.userServiceProfiles")}</span>
                     <span className="counter">{userServiceProfiles.length}</span>
                 </div>

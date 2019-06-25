@@ -42,7 +42,7 @@ I18n.translations.nl = {
         showMore: "Meer",
         hideSome: "Minder",
         today: "Vandaag",
-        manage: "Beheren",
+        manage: "Overzicht",
         invalidInput: "Foutieve waarde voor {{name}}"
     },
     explain: {
@@ -365,7 +365,11 @@ I18n.translations.nl = {
             memberDeleted: "Lidmaatschap van {{name}} verwijderd",
             apiKeyDeleted: "API key verwijderd",
             collaborationDeleted: "Samenwerking {{name}} verwijderd",
+        }, tabs: {
+            form: "Uitnodiging details",
+            preview: "Uitnodiging preview",
         }
+
     },
     joinRequest: {
         title: "Verzoek van {{requester}} om lid te worden van {{collaboration}}",

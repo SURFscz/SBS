@@ -10,7 +10,7 @@ class TestMail(AbstractTest):
     def test_send_join_request_mail(self):
         collaboration = Collaboration.query \
             .filter(Collaboration.identifier == collaboration_uva_researcher_uuid).one()
-        join_request = {"message": "please"}
+        join_request = {"message": "please", "id": 1}
         mail = self.app.mail
         with mail.record_messages() as outbox:
             context = {"salutation": "Dear",
@@ -23,4 +23,4 @@ class TestMail(AbstractTest):
             mail_msg = outbox[0]
             self.assertListEqual(["test@example.com"], mail_msg.recipients)
             self.assertEqual("OpenConext <no-reply@surfnet.nl>", mail_msg.sender)
-            self.assertTrue(f"http://localhost:300/collaborations/{collaboration.id}" in mail_msg.html)
+            self.assertTrue(f"http://localhost:300/join-requests/{join_request['id']}" in mail_msg.html)

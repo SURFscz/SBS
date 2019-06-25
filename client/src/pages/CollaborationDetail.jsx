@@ -272,7 +272,7 @@ class CollaborationDetail extends React.Component {
 
         return (
             <section className="info-block ">
-                <div className="header authorisations">
+                <div className="header authorisations link" onClick={this.openAuthorisationGroups}>
                     <span className="type">{I18n.t("collaborations.authorisations")}</span>
                     <span className="counter">{authorisationGroups.length}</span>
                 </div>
@@ -335,7 +335,7 @@ class CollaborationDetail extends React.Component {
         const showMoreItems = this.state.showMore.includes("services");
         return (
             <section className="info-block ">
-                <div className="header services">
+                <div className="header services link" onClick={this.openServices}>
                     <span className="type">{I18n.t("collaborations.services")}</span>
                     <span className="counter">{services.length}</span>
                 </div>

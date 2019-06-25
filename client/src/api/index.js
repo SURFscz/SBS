@@ -191,6 +191,10 @@ export function collaborationInvitations(body) {
     return postPutJson("/api/collaborations/invites", body, "put");
 }
 
+export function collaborationInvitationsPreview(body) {
+    return postPutJson("/api/collaborations/invites-preview", body, "post");
+}
+
 export function searchCollaborations(q) {
     return fetchJson(`/api/collaborations/search?q=${encodeURIComponent(q)}`);
 }
@@ -251,6 +255,10 @@ export function updateOrganisation(organisation) {
 
 export function organisationInvitations(body) {
     return postPutJson("/api/organisations/invites", body, "put");
+}
+
+export function organisationInvitationsPreview(body) {
+    return postPutJson("/api/organisations/invites-preview", body, "post");
 }
 
 export function deleteOrganisation(id) {

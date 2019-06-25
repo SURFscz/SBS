@@ -3,7 +3,13 @@
 {% block content %}
 <p>
     {{ invitation.user.name }} invited you to join collaboration
-    <strong>{{ invitation.collaboration.name }}</strong>.
+    <strong>{{ invitation.collaboration.name }}</strong>  as{{ invitation_role(invitation.intended_role) }}.
+    {% if invitation.intended_role == "admin" %}
+    <p/>
+    As an administrator you are responsible for managing users and authorizations for this collaboration.
+    More information about administrative duties can be found at the <a target="_blank" href="{{ wiki_link }}">SCZ wiki</a>.
+    <p/>
+    {% endif %}
     Please read below what steps you must take to accept this invitation.
 </p>
 
@@ -32,17 +38,19 @@
        style="margin-bottom:1em;margin-left:auto;margin-right:auto;margin-top:1em;">
     <tr>
         <td bgcolor="#D9EDF7"
+            class="invitation-link"
             style="mso-line-height-rule:exactly;line-height:18px;font-size:13px;font-family:Arial, sans-serif;border-radius:4px 4px 4px 4px;color:#333333;border-style:solid;border-width:1px;border-color:#4FB3CF;"
             align="center" width="47%">
-            <span><a href="{{ base_url }}/invitations/accept/{{ invitation.hash }}"
+            <span><a class="link" href="{{ base_url }}/invitations/accept/{{ invitation.hash }}"
                      style="color:#0088CC;display: inline-block;margin-right: 5px">Login to accept this invitation</a></span>
             <br/>
         </td>
         <td width="6%"></td>
         <td bgcolor="#D9EDF7"
+            class="invitation-link"
             style="mso-line-height-rule:exactly;line-height:18px;font-size:13px;font-family:Arial, sans-serif;border-radius:4px 4px 4px 4px;color:#333333;border-style:solid;border-width:1px;border-color:#4FB3CF;"
             align="center" width="47%">
-            <span><a href="{{ base_url }}/invitations/deny/{{ invitation.hash }}"
+            <span><a class="link" href="{{ base_url }}/invitations/deny/{{ invitation.hash }}"
                      style="color:#0088CC;display: inline-block;margin-left: 5px">Decline this invitation</a></span>
             <br/>
         </td>

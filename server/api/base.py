@@ -98,8 +98,9 @@ def _commit_database(status):
 
 def json_endpoint(f):
     @wraps(f)
-    def json(*args, **kwargs):
+    def wrapper(*args, **kwargs):
         try:
+            session.modified = True
             auth_filter(current_app.app_config)
             body, status = f(*args, **kwargs)
             response = jsonify(body)
@@ -122,7 +123,7 @@ def json_endpoint(f):
             _commit_database(response.status_code)
             return response
 
-    return json
+    return wrapper
 
 
 @base_api.route("/health", strict_slashes=False)
