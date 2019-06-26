@@ -2,6 +2,8 @@
 import random
 import string
 
+from flask import current_app
+
 from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_mapping, claim_attribute_hash_user, \
     _get_header_key, get_user_uid, add_user_claims, _get_value
 from server.db.db import User
@@ -48,3 +50,10 @@ class TestUserClaims(AbstractTest):
     def test_encoding_bug(self):
         res = _get_value({"key": "Ã«Ã¤Ã¦Å¡"}, "key")
         self.assertEqual("ëäæš", res)
+
+    def test_local_config(self):
+        local = current_app.config["LOCAL"]
+        current_app.config["LOCAL"] = 1
+        res = _get_value({"key": "Ã«Ã¤Ã¦Å¡"}, "key")
+        self.assertEqual("Ã«Ã¤Ã¦Å¡", res)
+        current_app.config["LOCAL"] = local

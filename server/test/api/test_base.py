@@ -1,4 +1,8 @@
 # -*- coding: future_fstrings -*-
+import json
+import os
+from pathlib import Path
+
 from server.test.abstract_test import AbstractTest
 
 
@@ -15,6 +19,14 @@ class TestBase(AbstractTest):
     def test_info(self):
         git_info = self.client.get("/info").json["git"]
         self.assertTrue("nope" in git_info)
+
+    def test_info_stub(self):
+        file = Path(f"{os.path.dirname(os.path.realpath(__file__))}/../../api/git.info")
+        with open(file, "w+") as f:
+            f.write(json.dumps({"git": "some info"}))
+        git_info = self.client.get("/info").json["git"]
+        self.assertTrue("some" in git_info)
+        os.remove(file)
 
     def test_404(self):
         res = self.get("/api/nope", response_status_code=404)

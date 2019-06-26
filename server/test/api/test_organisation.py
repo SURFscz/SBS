@@ -167,6 +167,24 @@ class TestOrganisation(AbstractTest):
             post_count = OrganisationInvitation.query.count()
             self.assertEqual(pre_count + 2, post_count)
 
+    def test_organisation_invites_preview(self):
+        self.login("urn:john")
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        res = self.post("/api/organisations/invites-preview", body={
+            "organisation_id": organisation_id
+        })
+        self.assertFalse("Personal" in res["html"])
+
+    def test_organisation_invites_preview_personal_message(self):
+        self.login("urn:john")
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        res = self.post("/api/organisations/invites-preview", body={
+            "organisation_id": organisation_id,
+            "message": "Please join"
+        })
+        self.assertTrue("Personal" in res["html"])
+        self.assertTrue("Please join" in res["html"])
+
     def test_organisation_no_api_keys_cascade(self):
         self.login()
         secret = self.get("/api/api_keys")["value"]
