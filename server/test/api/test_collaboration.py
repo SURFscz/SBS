@@ -220,6 +220,26 @@ class TestCollaboration(AbstractTest):
             invitations = Invitation.query.filter(Invitation.invitee_email == "new@example.org").all()
             self.assertEqual("admin", invitations[0].intended_role)
 
+    def test_collaboration_invites_preview(self):
+        self.login("urn:john")
+        collaboration_id = self._find_by_name_id()["id"]
+        res = self.post("/api/collaborations/invites-preview", body={
+            "collaboration_id": collaboration_id,
+            "message": "Please join",
+            "intended_role": "admin"
+        })
+        self.assertTrue("administrative duties" in res["html"])
+        self.assertTrue("Please join" in res["html"])
+
+    def test_collaboration_invites_preview_member(self):
+        self.login("urn:john")
+        collaboration_id = self._find_by_name_id()["id"]
+        res = self.post("/api/collaborations/invites-preview", body={
+            "collaboration_id": collaboration_id
+        })
+        self.assertFalse("administrative duties" in res["html"])
+        self.assertFalse("Personal" in res["html"])
+
     def test_my_collaborations_lite(self):
         self.login("urn:jane")
         collaborations = self.get("/api/collaborations/my_lite")

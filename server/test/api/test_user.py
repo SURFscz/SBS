@@ -3,6 +3,7 @@ from server.auth.user_claims import claim_attribute_mapping
 from server.db.db import Organisation, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name
+from flask import current_app
 
 
 class TestUser(AbstractTest):
@@ -20,6 +21,12 @@ class TestUser(AbstractTest):
 
     def test_me_existing_user(self):
         user = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "urn:john"}).json
+        not_changed_user = self.client.get("/api/users/me",
+                                           environ_overrides={
+                                               self.uid_header_name(): "urn:john",
+                                               f"{current_app.app_config.oidc_prefix}NAME": "urn:john"
+                                           }).json
+        self.assertDictEqual(user, not_changed_user)
 
         self.assertEqual(user["guest"], False)
         self.assertEqual(user["uid"], "urn:john")
