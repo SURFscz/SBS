@@ -21,8 +21,8 @@ class TestBase(AbstractTest):
         self.assertTrue("nope" in git_info)
 
     def test_info_stub(self):
-        file = Path(f"{os.path.dirname(os.path.realpath(__file__))}/../../api/git.info")
-        with open(str(file), "w+") as f:
+        file = str(Path(f"{os.path.dirname(os.path.realpath(__file__))}/../../api/git.info"))
+        with open(file, "w+") as f:
             f.write(json.dumps({"git": "some info"}))
         git_info = self.client.get("/info").json["git"]
         self.assertTrue("some" in git_info)
