@@ -146,6 +146,6 @@ def config():
 def info():
     file = Path(f"{os.path.dirname(os.path.realpath(__file__))}/git.info")
     if file.is_file():
-        with open(file) as f:
+        with open(str(file)) as f:
             return {"git": f.read()}, 200
     return {"git": "nope"}, 200
