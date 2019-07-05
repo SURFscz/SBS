@@ -93,7 +93,7 @@ I18n.translations.nl = {
             referencePlaceholder: "Vul de namen in van mensen die u kent die lid zijn van {{collaboration}}, zoals mede-onderzoekers.",
             policy: "Onze Policy",
             policyInfo: "U dient in te stemmen dat we uw informatie doorgeven aan diensten die zijn gekoppeld aan {{collaboration}}. Lees a.u.b. onze <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy\"'>Acceptable Use Policy</a> waar u mee akkoord gaat.",
-            policyConfirmation: "Ik heb de Acceptable Use Policy (AUP) van {{collaboration}} gelezen en accepteer die."
+            policyConfirmation: "Ik heb de Acceptable Use Policy (AUP) van {{collaboration}} gelezen en accepteer deze."
         },
         step3: {
             title: "Wacht op toestemming",
