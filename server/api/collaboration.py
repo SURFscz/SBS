@@ -307,7 +307,7 @@ def save_collaboration():
         admins = list(filter(lambda mem: mem.role == "admin", organisation.organisation_memberships))
         _assign_global_urn_to_organisation(organisation, data)
         user = admins[0].user if len(admins) > 0 else User.query.filter(
-            User.uid == current_app.app_config.api_users[0]).one()
+            User.uid == current_app.app_config.admin_users[0].uid).one()
         data["organisation_id"] = organisation.id
     else:
         raise BadRequest("Neither organization in POST data nor associated with an API key")

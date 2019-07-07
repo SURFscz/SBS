@@ -46,16 +46,14 @@ class OrganisationInvitation extends React.Component {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({organisationInvitation: json, isExpired});
                 })
-                .catch(() => this.setState({errorOccurred: true},
-                    () => setFlash(I18n.t("organisationInvitation.flash.notFound"), "error")));
+                .catch(() => setFlash(I18n.t("organisationInvitation.flash.notFound"), "error"));
         } else if (params.id) {
             organisationInvitationById(params.id)
                 .then(json => {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({organisationInvitation: json, isAdminLink: true, isExpired});
                 })
-                .catch(() => this.setState({errorOccurred: true},
-                    () => setFlash(I18n.t("organisationInvitation.flash.notFound"), "error")));
+                .catch(() => setFlash(I18n.t("organisationInvitation.flash.notFound"), "error"));
         } else {
             this.props.history.push("/404");
         }
@@ -179,6 +177,7 @@ class OrganisationInvitation extends React.Component {
             organisationInvitation, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction, confirmationQuestion, leavePage, isAdminLink, isExpired, errorOccurred
         } = this.state;
+        const errorSituation = errorOccurred || !organisationInvitation.id;
         const disabledSubmit = !initial && !this.isValid();
         const expiredMessage = isAdminLink ? I18n.t("organisationInvitation.expiredAdmin", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")}) :
             I18n.t("organisationInvitation.expired", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")});
@@ -197,7 +196,7 @@ class OrganisationInvitation extends React.Component {
                     }}><FontAwesomeIcon icon="arrow-left"/>
                         {I18n.t("organisationInvitation.backToOrganisationDetail", {name: organisationInvitation.organisation.name})}
                     </a>}
-                    {!errorOccurred &&
+                    {!errorSituation &&
                     <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>}
                 </div>
 
@@ -227,7 +226,7 @@ class OrganisationInvitation extends React.Component {
                                 disabled={true}
                                 multiline={true}/>
 
-                    {(!isAdminLink && !isExpired && !errorOccurred) &&
+                    {(!isAdminLink && !isExpired && !errorSituation) &&
                     <section className={`form-element ${acceptedTerms ? "" : "invalid"}`}>
                         <label className="form-label"
                                dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: organisationInvitation.organisation.name})}}/>{this.requiredMarker()}
@@ -237,7 +236,7 @@ class OrganisationInvitation extends React.Component {
                                   info={I18n.t("registration.step2.policyConfirmation", {collaboration: organisationInvitation.organisation.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
                     </section>}
-                    {(!isAdminLink && !isExpired && !errorOccurred) &&
+                    {(!isAdminLink && !isExpired && !errorSituation) &&
                     <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.accept")}
                                 onClick={this.accept}/>
