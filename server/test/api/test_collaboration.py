@@ -274,3 +274,29 @@ class TestCollaboration(AbstractTest):
         collaboration = AbstractTest.find_entity_by_name(Collaboration, "new_collaboration")
         admin = list(filter(lambda m: m.role == "admin", collaboration.collaboration_memberships))[0]
         self.assertEqual("john@example.org", admin.user.email)
+
+    def test_api_call_existing_name(self):
+        response = self.client.post("/api/collaborations",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                        "name": ai_computing_name,
+                                        "administrators": ["the@ex.org"],
+                                        "short_name": "new_short_name"
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(400, response.status_code)
+        data = response.json
+        self.assertEqual(data["error"], "duplicate entry")
+
+    def test_api_call_existing_short_name(self):
+        response = self.client.post("/api/collaborations",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "administrators": ["the@ex.org"],
+                                        "short_name": ai_computing_short_name
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(400, response.status_code)
+        data = response.json
+        self.assertEqual(data["error"], "duplicate entry")

@@ -385,7 +385,8 @@ I18n.translations.nl = {
         flash: {
             declined: "Verzoek voor lidmaatschap van samenwerking {{name}} is afgekeurd",
             accepted: "Verzoek voor lidmaatschap van samenwerking {{name}} is goedgekeurd",
-            alreadyMember: "You are alreay a member of collaboration {{name}} and can therefore not accept this invitation"
+            notFound: "Dit verzoek voor lidmaatschap is reeds geaccepteerd / afgewezen..",
+            alreadyMember: "U bent al lid van de samenwerking {{name}} en daarom kan u deze uitnodiging niet accepteren."
         }
     },
     organisationInvitation: {

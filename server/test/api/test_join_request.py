@@ -25,28 +25,28 @@ class TestJoinRequest(AbstractTest):
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["boss@example.org"], mail_msg.recipients)
-            self.assertTrue(f"http://localhost:3000/join-requests/{join_request['id']}" in mail_msg.html)
+            self.assertTrue(f"http://localhost:3000/join-requests/{join_request['hash']}" in mail_msg.html)
 
     def test_join_request_delete(self):
         self.assertEqual(3, JoinRequest.query.count())
-        join_request_id = self._join_request_by_user("urn:peter").id
+        join_request_hash = self._join_request_by_user("urn:peter").hash
         self.login("urn:admin")
-        self.delete("/api/join_requests", primary_key=join_request_id)
+        self.delete("/api/join_requests", primary_key=join_request_hash)
         self.assertEqual(2, JoinRequest.query.count())
 
     def test_join_request_delete_no_access(self):
-        join_request_id = self._join_request_by_user("urn:mary").id
+        join_request_hash = self._join_request_by_user("urn:mary").hash
         self.login("urn:peter")
-        response = self.client.delete(f"/api/join_requests/{join_request_id}")
+        response = self.client.delete(f"/api/join_requests/{join_request_hash}")
         self.assertEqual(403, response.status_code)
 
     def test_accept_join_request(self):
         self.assertEqual(3, JoinRequest.query.count())
-        join_request_id = self._join_request_by_user("urn:peter").id
+        join_request_hash = self._join_request_by_user("urn:peter").hash
         self.login("urn:admin")
         mail = self.app.mail
         with mail.record_messages() as outbox:
-            self.put("/api/join_requests/accept", body={"id": join_request_id})
+            self.put("/api/join_requests/accept", body={"hash": join_request_hash})
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["peter@example.org"], mail_msg.recipients)
@@ -54,25 +54,25 @@ class TestJoinRequest(AbstractTest):
             self.assertEqual(2, JoinRequest.query.count())
 
     def test_accept_join_request_already_member(self):
-        join_request_id = self._join_request_by_user("urn:john").id
+        join_request_hash = self._join_request_by_user("urn:john").hash
         self.login("urn:admin")
-        self.put("/api/join_requests/accept", body={"id": join_request_id}, response_status_code=409)
+        self.put("/api/join_requests/accept", body={"hash": join_request_hash}, response_status_code=409)
 
     def test_decline_join_request(self):
         self.assertEqual(3, JoinRequest.query.count())
-        join_request_id = self._join_request_by_user("urn:peter").id
+        join_request_hash = self._join_request_by_user("urn:peter").hash
         self.login("urn:admin")
         mail = self.app.mail
         with mail.record_messages() as outbox:
-            self.put("/api/join_requests/decline", body={"id": join_request_id})
+            self.put("/api/join_requests/decline", body={"hash": join_request_hash})
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["peter@example.org"], mail_msg.recipients)
             self.assertTrue("has been <strong>declined</strong>" in mail_msg.html)
             self.assertEqual(2, JoinRequest.query.count())
 
-    def test_join_request_by_id(self):
-        join_request_id = self._join_request_by_user("urn:peter").id
+    def test_join_request_by_hash(self):
+        join_request_hash = self._join_request_by_user("urn:peter").hash
         self.login("urn:peter")
-        join_request = self.get(f"/api/join_requests/{join_request_id}")
+        join_request = self.get(f"/api/join_requests/{join_request_hash}")
         self.assertEqual("urn:peter", join_request["user"]["uid"])

@@ -266,8 +266,8 @@ export function deleteOrganisation(id) {
 }
 
 //JoinRequests
-export function joinRequestById(id) {
-    return fetchJson(`/api/join_requests/${id}`,{},{}, false);
+export function joinRequestByHash(hash) {
+    return fetchJson(`/api/join_requests/${hash}`,{},{}, false);
 }
 
 export function joinRequestForCollaboration(clientData) {
@@ -279,7 +279,7 @@ export function joinRequestAccept(joinRequest) {
 }
 
 export function joinRequestDecline(joinRequest) {
-    return postPutJson("/api/join_requests/decline", joinRequest, "put");
+    return postPutJson("/api/join_requests/decline", joinRequest, "put", false);
 }
 
 //OrganisationInvitations

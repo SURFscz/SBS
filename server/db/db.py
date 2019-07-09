@@ -256,6 +256,7 @@ class JoinRequest(Base, db.Model):
     user = db.relationship("User", back_populates="join_requests")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="join_requests")
+    hash = db.Column("hash", db.String(length=512), nullable=False)
 
 
 class Invitation(Base, db.Model):

@@ -189,9 +189,9 @@ def seed(db):
     _persist(db, john_profile, jane_user_service_profile)
 
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
-                                    collaboration=ai_computing)
-    join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing)
-    join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing)
+                                    collaboration=ai_computing, hash=token_urlsafe())
+    join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing, hash=token_urlsafe())
+    join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=token_urlsafe())
 
     _persist(db, join_request_john, join_request_peter, join_request_mary)
 
