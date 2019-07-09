@@ -105,6 +105,7 @@ I18n.translations.nl = {
         },
         flash: {
             info: "Stap {{step}} successvol afgerond.",
+            success: "Uw verzoek om lid te worden van {{name}} is verzonden voor review",
             alreadyMember: "U bent al lid van de samenwerking {{name}} en daarom kan dit verzoek niet worden verstuurd."
         }
     },
