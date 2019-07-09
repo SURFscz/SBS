@@ -101,10 +101,12 @@ I18n.translations.en = {
             icon: "gavel",
             tooltip: "As a last step we will sent a mail <br/>to the administrator of the service<br/>who wil either approve or deny your request.",
             info: "Your request has been sent to the collaboration manager who will review your appliance.<br/>His / hers decision will be communicated to you by e-mail",
-            contact: "Still haven't received a message from us. Please contact us via <a href=\"mailto:{{mail}}\">{{mail}}</a>"
+            contact: "Still haven't received a message from us? Please contact us via <a href=\"mailto:{{mail}}\">{{mail}}</a>"
         },
         flash: {
-            info: "Step {{step}} successfully finished."
+            info: "Step {{step}} successfully finished.",
+            success: "Your request to join {{name}} is sent for review",
+            alreadyMember: "The join request could not be send because you are already a member of collaboration {{name}}",
         }
     },
     profile: {
@@ -173,7 +175,7 @@ I18n.translations.en = {
         role: "Role",
         newTitle: "Add new collaboration",
         subTitle: "Enter / edit the collaboration details. You will become an administrator of the new collaboration.",
-        alreadyExists: "An collaboration with {{attribute}} {{value}} already exists.",
+        alreadyExists: "An collaboration with {{attribute}} {{value}} already exists in organisation {{organisation}}.",
         required: "The {{attribute}} is required for an collaboration",
         administrators: "Administrators",
         administratorsPlaceholder: "Invite administrators by email",

@@ -343,7 +343,9 @@ class AuthorisationGroup extends React.Component {
     };
 
     addAllMembers = () => {
+        debugger;
         const {collaboration, authorisationGroup, name, allMembers, sortedMembers, sortedInvitations} = this.state;
+        const promises = [];
         const availableMembers = allMembers
             .filter(member => member.isMember && !sortedMembers.find(s => s.id === member.value))
             .map(member => member.value);
@@ -351,19 +353,27 @@ class AuthorisationGroup extends React.Component {
             .filter(invitation => !invitation.isMember && !sortedInvitations.find(s => s.id === invitation.value))
             .map(invitation => invitation.value);
         const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
-        Promise.all([addAuthorisationGroupMembers({
-            authorisationGroupId: authorisationGroup.id,
-            collaborationId: collaboration.id,
-            memberIds: availableMembers
-        }), addAuthorisationGroupInvitations({
-            authorisationGroupId: authorisationGroup.id,
-            collaborationId: collaboration.id,
-            invitationIds: availableInvitations
-        })]).then(() => {
-            this.refreshMembersAndInvitations(() => setFlash(I18n.t("authorisationGroup.flash.addedMembers", {
-                name: authorisationGroupName
-            })));
-        });
+        if (availableMembers.length > 0) {
+            promises.push(addAuthorisationGroupMembers({
+                authorisationGroupId: authorisationGroup.id,
+                collaborationId: collaboration.id,
+                memberIds: availableMembers
+            }));
+        }
+        if (availableInvitations.length > 0) {
+            promises.push(addAuthorisationGroupInvitations({
+                authorisationGroupId: authorisationGroup.id,
+                collaborationId: collaboration.id,
+                invitationIds: availableInvitations
+            }));
+        }
+        if (promises.length > 0) {
+            Promise.all(promises).then(() => {
+                this.refreshMembersAndInvitations(() => setFlash(I18n.t("authorisationGroup.flash.addedMembers", {
+                    name: authorisationGroupName
+                })));
+            });
+        }
     };
 
     addAllServices = () => {
@@ -533,21 +543,21 @@ class AuthorisationGroup extends React.Component {
                         const role = {value: member.role, label: I18n.t(`profile.${member.role}`)};
                         return (
                             <tr key={i}>
-                            {adminOfCollaboration && <td className="actions">
-                                <FontAwesomeIcon icon="trash" onClick={this.removeMember(member)}/>
-                            </td>
-                            }
-                            <td className="name">{member.user.name}</td>
-                            <td className="email">{member.user.email}</td>
-                            <td className="uid">{member.user.uid}</td>
-                            <td className="role">
-                                <Select
-                                    classNamePrefix="select-disabled"
-                                    value={role}
-                                    options={[role]}
-                                    isDisabled={true}/></td>
-                            <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
-                        </tr>)
+                                {adminOfCollaboration && <td className="actions">
+                                    <FontAwesomeIcon icon="trash" onClick={this.removeMember(member)}/>
+                                </td>
+                                }
+                                <td className="name">{member.user.name}</td>
+                                <td className="email">{member.user.email}</td>
+                                <td className="uid">{member.user.uid}</td>
+                                <td className="role">
+                                    <Select
+                                        classNamePrefix="select-disabled"
+                                        value={role}
+                                        options={[role]}
+                                        isDisabled={true}/></td>
+                                <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
+                            </tr>)
                     })}
                     </tbody>
                 </table>
@@ -585,22 +595,25 @@ class AuthorisationGroup extends React.Component {
                     </thead>
                     <tbody>
                     {sortedInvitations.map((invitation, i) => {
-                        const role = {value: invitation.intended_role, label: I18n.t(`profile.${invitation.intended_role}`)};
+                        const role = {
+                            value: invitation.intended_role,
+                            label: I18n.t(`profile.${invitation.intended_role}`)
+                        };
                         return (
                             <tr key={i}>
-                            {adminOfCollaboration && <td className="actions">
-                                <FontAwesomeIcon icon="trash" onClick={this.removeInvitation(invitation)}/>
-                            </td>
-                            }
-                            <td className="name">{invitation.invitee_email}</td>
-                            <td className="role">
-                                <Select
-                                    classNamePrefix="select-disabled"
-                                    value={role}
-                                    options={[role]}
-                                    isDisabled={true}/></td>
-                            <td className="since">{moment(invitation.expiry_date * 1000).format("LL")}</td>
-                        </tr>)
+                                {adminOfCollaboration && <td className="actions">
+                                    <FontAwesomeIcon icon="trash" onClick={this.removeInvitation(invitation)}/>
+                                </td>
+                                }
+                                <td className="name">{invitation.invitee_email}</td>
+                                <td className="role">
+                                    <Select
+                                        classNamePrefix="select-disabled"
+                                        value={role}
+                                        options={[role]}
+                                        isDisabled={true}/></td>
+                                <td className="since">{moment(invitation.expiry_date * 1000).format("LL")}</td>
+                            </tr>)
                     })}
                     </tbody>
                 </table>
@@ -858,7 +871,8 @@ class AuthorisationGroup extends React.Component {
                 {this.authorisationGroupDetails(adminOfCollaboration, name, short_name, alreadyExists, initial,
                     description, uri, status, isNew, disabledSubmit, authorisationGroup, collaboration)}
             </div>);
-    };
+    }
+    ;
 
 }
 

@@ -43,6 +43,19 @@ def _get_join_request(join_request_hash):
         .one()
 
 
+@join_request_api.route("/already-member", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def already_member():
+    client_data = current_request.get_json()
+    collaboration_id = client_data["collaborationId"]
+    collaboration = Collaboration.query \
+        .filter(Collaboration.id == collaboration_id).one()
+
+    user_id = current_user_id()
+    if collaboration.is_member(user_id):
+        raise Conflict(f"User {current_user_name()} is already a member of {collaboration.name}")
+
+
 @join_request_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def new_join_request():
@@ -51,12 +64,15 @@ def new_join_request():
     collaboration = Collaboration.query \
         .filter(Collaboration.id == collaboration_id).one()
 
+    user_id = current_user_id()
+    if collaboration.is_member(user_id):
+        raise Conflict(f"User {current_user_name()} is already a member of {collaboration.name}")
+
     admin_members = list(
         filter(lambda membership: membership.role == "admin", collaboration.collaboration_memberships))
     admin_emails = list(map(lambda membership: membership.user.email, admin_members))
 
     # We need to delete other outstanding join_request for the same collaboration and user
-    user_id = current_user_id()
     existing_join_requests = JoinRequest.query \
         .join(JoinRequest.user) \
         .filter(JoinRequest.collaboration_id == collaboration_id) \
