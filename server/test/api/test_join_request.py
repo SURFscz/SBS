@@ -27,6 +27,15 @@ class TestJoinRequest(AbstractTest):
             self.assertListEqual(["boss@example.org"], mail_msg.recipients)
             self.assertTrue(f"http://localhost:3000/join-requests/{join_request['hash']}" in mail_msg.html)
 
+    def test_new_join_request_already_member(self):
+        collaboration_id = Collaboration.query \
+            .filter(Collaboration.identifier == collaboration_ai_computing_uuid).one().id
+        self.login("urn:jane")
+        self.post("/api/join_requests",
+                  response_status_code=409,
+                  body={"collaborationId": collaboration_id, "motivation": "please"},
+                  with_basic_auth=False)
+
     def test_join_request_delete(self):
         self.assertEqual(3, JoinRequest.query.count())
         join_request_hash = self._join_request_by_user("urn:peter").hash

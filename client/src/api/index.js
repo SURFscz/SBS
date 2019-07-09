@@ -179,12 +179,12 @@ export function createCollaboration(collaboration) {
     return postPutJson("/api/collaborations", collaboration, "post");
 }
 
-export function collaborationNameExists(name, existingCollaboration = null) {
-    return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&existing_collaboration=${encodeURIComponent(existingCollaboration)}`);
+export function collaborationNameExists(name, organisationId, existingCollaboration = null) {
+    return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&organisation_id=${organisationId}&existing_collaboration=${encodeURIComponent(existingCollaboration)}`);
 }
 
-export function collaborationShortNameExists(shortName, existingCollaboration = null) {
-    return fetchJson(`/api/collaborations/short_name_exists?short_name=${encodeURIComponent(shortName)}&existing_collaboration=${encodeURIComponent(existingCollaboration)}`);
+export function collaborationShortNameExists(shortName, organisationId, existingCollaboration = null) {
+    return fetchJson(`/api/collaborations/short_name_exists?short_name=${encodeURIComponent(shortName)}&organisation_id=${organisationId}&existing_collaboration=${encodeURIComponent(existingCollaboration)}`);
 }
 
 export function collaborationInvitations(body) {
@@ -271,7 +271,7 @@ export function joinRequestByHash(hash) {
 }
 
 export function joinRequestForCollaboration(clientData) {
-    return postPutJson("/api/join_requests", clientData, "post");
+    return postPutJson("/api/join_requests", clientData, "post", false);
 }
 
 export function joinRequestAccept(joinRequest) {

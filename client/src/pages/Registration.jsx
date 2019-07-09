@@ -19,7 +19,8 @@ class Registration extends React.Component {
             agreedWithPolicy: false,
             collaborationName: null,
             collaborationId: null,
-            adminEmail: null
+            adminEmail: null,
+            alreadyMember: false
         }
     }
 
@@ -33,6 +34,10 @@ class Registration extends React.Component {
                 .then(res => {
                     const {user} = this.props;
                     const step = user.guest ? "1" : "2";
+                    // const promise = user.guest ? Promise.resolve(true)
+                    if (!user.guest) {
+
+                    }
                     this.setState({
                         step: step,
                         collaborationName: res.name,
@@ -98,20 +103,28 @@ class Registration extends React.Component {
             <Button className="start" disabled={!this.form2Invariant(motivation, agreedWithPolicy)}
                     onClick={() => {
                         this.setState({step: "3"});
-                        joinRequestForCollaboration(this.state);
+                        joinRequestForCollaboration(this.state)
+                            .then(() => setFlash(I18n.t("registration.flash.success", {name: collaborationName})))
+                            .catch(() => {
+                                this.setState({alreadyMember: true})
+                                setFlash(I18n.t("registration.flash.alreadyMember", {name: collaborationName}), "error")
+                            });
                     }} txt={I18n.t("registration.request")}/>
         </div>);
     };
 
     renderForm3 = () => {
-        const {collaborationName, adminEmail} = this.state;
+        const {collaborationName, adminEmail, alreadyMember} = this.state;
+        if (alreadyMember) {
+            return null;
+        }
         return (
             <div className="step-form 3">
                 <p className="form-title">{I18n.t("registration.formEndedTitle", {collaboration: collaborationName})}</p>
                 <p className="info"
                    dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.info", {collaboration: collaborationName})}}/>
                 {adminEmail && <p className="contact"
-                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact", {mail: adminEmail})}}/>}
+                                  dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact", {mail: adminEmail})}}/>}
             </div>
         );
     };

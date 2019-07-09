@@ -104,7 +104,8 @@ I18n.translations.nl = {
             contact: "Als u te lang niets hoort, neem dan contact met ons op via <a href=\"mailto:{{mail}}\">{{mail}}</a>"
         },
         flash: {
-            info: "Stap {{step}} successvol afgerond."
+            info: "Stap {{step}} successvol afgerond.",
+            alreadyMember: "U bent al lid van de samenwerking {{name}} en daarom kan dit verzoek niet worden verstuurd."
         }
     },
     profile: {
@@ -173,7 +174,7 @@ I18n.translations.nl = {
         role: "Rol",
         newTitle: "Voeg nieuwe samenwerking toe",
         subTitle: "Beschrijf de samenwerking. U wordt beheerder van de nieuwe samenwerking.",
-        alreadyExists: "Een samenwerking met {{attribute}} {{value}} bestaat al.",
+        alreadyExists: "Een samenwerking met {{attribute}} {{value}} bestaat al in organisatie {{organisation}}.",
         required: "{{attribute}} moet worden ingevuld voor een samenwerking",
         administrators: "Beheerders",
         administratorsPlaceholder: "Nodig beheerders uit via email",

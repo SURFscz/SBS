@@ -156,33 +156,55 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(0, len(my_collaborations))
 
     def test_collaboration_name_exists(self):
-        res = self.get("/api/collaborations/name_exists", query_data={"name": ai_computing_name})
+        organisation_id = self.find_entity_by_name(Collaboration, ai_computing_name).organisation_id
+        other_organisation_id = self.find_entity_by_name(Collaboration, uva_research_name).organisation_id
+
+        res = self.get("/api/collaborations/name_exists", query_data={"name": ai_computing_name,
+                                                                      "organisation_id": organisation_id})
         self.assertEqual(True, res)
 
+        res = self.get("/api/collaborations/name_exists", query_data={"name": ai_computing_name,
+                                                                      "organisation_id": other_organisation_id})
+        self.assertEqual(False, res)
+
         res = self.get("/api/collaborations/name_exists",
-                       query_data={"name": ai_computing_name, "existing_collaboration": ai_computing_name.upper()})
+                       query_data={"name": ai_computing_name, "existing_collaboration": ai_computing_name.upper(),
+                                   "organisation_id": organisation_id})
         self.assertEqual(False, res)
 
-        res = self.get("/api/collaborations/name_exists", query_data={"name": "xyc"})
+        res = self.get("/api/collaborations/name_exists", query_data={"name": "xyc",
+                                                                      "organisation_id": organisation_id})
         self.assertEqual(False, res)
 
-        res = self.get("/api/collaborations/name_exists", query_data={"name": "xyc", "existing_collaboration": "xyc"})
+        res = self.get("/api/collaborations/name_exists", query_data={"name": "xyc", "existing_collaboration": "xyc",
+                                                                      "organisation_id": organisation_id})
         self.assertEqual(False, res)
 
     def test_collaboration_short_name_exists(self):
-        res = self.get("/api/collaborations/short_name_exists", query_data={"short_name": ai_computing_short_name})
+        organisation_id = self.find_entity_by_name(Collaboration, ai_computing_name).organisation_id
+        other_organisation_id = self.find_entity_by_name(Collaboration, uva_research_name).organisation_id
+
+        res = self.get("/api/collaborations/short_name_exists", query_data={"short_name": ai_computing_short_name,
+                                                                            "organisation_id": organisation_id})
         self.assertEqual(True, res)
+
+        res = self.get("/api/collaborations/short_name_exists", query_data={"short_name": ai_computing_short_name,
+                                                                            "organisation_id": other_organisation_id})
+        self.assertEqual(False, res)
 
         res = self.get("/api/collaborations/short_name_exists",
                        query_data={"short_name": ai_computing_name,
-                                   "existing_collaboration": ai_computing_short_name.upper()})
+                                   "existing_collaboration": ai_computing_short_name.upper(),
+                                   "organisation_id": organisation_id})
         self.assertEqual(False, res)
 
-        res = self.get("/api/collaborations/short_name_exists", query_data={"short_name": "xyc"})
+        res = self.get("/api/collaborations/short_name_exists", query_data={"short_name": "xyc",
+                                                                            "organisation_id": organisation_id})
         self.assertEqual(False, res)
 
         res = self.get("/api/collaborations/short_name_exists",
-                       query_data={"short_name": "xyc", "existing_collaboration": "xyc"})
+                       query_data={"short_name": "xyc", "existing_collaboration": "xyc",
+                                   "organisation_id": organisation_id})
         self.assertEqual(False, res)
 
     def test_collaboration_services_by_id(self):

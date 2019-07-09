@@ -52,16 +52,18 @@ class NewCollaboration extends React.Component {
             } else {
                 const organisationId = getParameterByName("organisation", window.location.search);
                 const organisations = json.map(org => ({
-                        label: org.name,
-                        value: org.id,
-                        short_name: org.short_name
-                    }));
+                    label: org.name,
+                    value: org.id,
+                    short_name: org.short_name
+                }));
                 let organisation = {};
                 if (organisationId) {
                     const filtered = organisations.filter(org => org.value === parseInt(organisationId, 10));
                     if (filtered.length > 0) {
                         organisation = filtered[0];
                     }
+                } else {
+                    organisation = organisations[0];
                 }
                 this.setState({
                     organisations: organisations,
@@ -71,12 +73,12 @@ class NewCollaboration extends React.Component {
         });
     };
     validateCollaborationName = e =>
-        collaborationNameExists(e.target.value).then(json => {
+        collaborationNameExists(e.target.value, this.state.organisation.value).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
     validateCollaborationShortName = e =>
-        collaborationShortNameExists(e.target.value).then(json => {
+        collaborationShortNameExists(e.target.value, this.state.organisation.value).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
 
@@ -179,7 +181,8 @@ class NewCollaboration extends React.Component {
                     {alreadyExists.name && <span
                         className="error">{I18n.t("collaboration.alreadyExists", {
                         attribute: I18n.t("collaboration.name").toLowerCase(),
-                        value: name
+                        value: name,
+                        organisation: organisation.label
                     })}</span>}
                     {(!initial && isEmpty(name)) && <span
                         className="error">{I18n.t("collaboration.required", {
@@ -199,7 +202,8 @@ class NewCollaboration extends React.Component {
                     {alreadyExists.short_name && <span
                         className="error">{I18n.t("collaboration.alreadyExists", {
                         attribute: I18n.t("collaboration.shortName").toLowerCase(),
-                        value: short_name
+                        value: short_name,
+                        organisation: organisation.label
                     })}</span>}
                     {(!initial && isEmpty(short_name)) && <span
                         className="error">{I18n.t("collaboration.required", {
@@ -239,7 +243,11 @@ class NewCollaboration extends React.Component {
                                  name={I18n.t("collaboration.organisation_name")}
                                  placeholder={I18n.t("collaboration.organisationPlaceholder")}
                                  toolTip={I18n.t("collaboration.organisationTooltip")}
-                                 onChange={selectedOption => this.setState({organisation: selectedOption})}
+                                 onChange={selectedOption => this.setState({organisation: selectedOption},
+                                     () => {
+                                         this.validateCollaborationName({target: {value: this.state.name}});
+                                         this.validateCollaborationShortName({target: {value: this.state.short_name}});
+                                     })}
                                  searchable={true}
                     />
                     {(!initial && isEmpty(organisation)) && <span
