@@ -109,7 +109,8 @@ def json_endpoint(f):
             _commit_database(status)
             return response, status
         except Exception as e:
-            response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e))
+            response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
+                               error=True)
             ctx_logger("base").exception(response)
             if isinstance(e, NoResultFound):
                 response.status_code = 404

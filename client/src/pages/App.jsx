@@ -206,7 +206,7 @@ class App extends React.Component {
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={Service} {...props}/>}/>
 
-                        <Route exact path="/join-requests/:id"
+                        <Route exact path="/join-requests/:hash"
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={JoinRequest} {...props}/>}/>
 

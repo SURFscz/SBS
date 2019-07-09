@@ -384,6 +384,7 @@ I18n.translations.en = {
         flash: {
             declined: "Join request for collaboration {{name}} is declined",
             accepted: "Join request for collaboration {{name}} is accepted",
+            notFound: "This join request has already been accepted / declined.",
             alreadyMember: "You are alreay a member of collaboration {{name}} and can therefore not accept this invitation"
         }
     },

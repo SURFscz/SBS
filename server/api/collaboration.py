@@ -46,11 +46,16 @@ def collaboration_by_name():
 def name_exists():
     name = query_param("name")
     existing_collaboration = query_param("existing_collaboration", required=False, default="")
+    res = _do_name_exists(name, existing_collaboration)
+    return res, 200
+
+
+def _do_name_exists(name, existing_collaboration=""):
     coll = Collaboration.query.options(load_only("id")) \
         .filter(func.lower(Collaboration.name) == func.lower(name)) \
         .filter(func.lower(Collaboration.name) != func.lower(existing_collaboration)) \
         .first()
-    return coll is not None, 200
+    return coll is not None
 
 
 @collaboration_api.route("/short_name_exists", strict_slashes=False)
@@ -58,11 +63,16 @@ def name_exists():
 def short_name_exists():
     name = query_param("short_name")
     existing_collaboration = query_param("existing_collaboration", required=False, default="")
+    res = _do_short_name_exists(name, existing_collaboration)
+    return res, 200
+
+
+def _do_short_name_exists(name, existing_collaboration=""):
     coll = Collaboration.query.options(load_only("id")) \
         .filter(func.lower(Collaboration.short_name) == func.lower(name)) \
         .filter(func.lower(Collaboration.short_name) != func.lower(existing_collaboration)) \
         .first()
-    return coll is not None, 200
+    return coll is not None
 
 
 @collaboration_api.route("/all", strict_slashes=False)
@@ -309,6 +319,14 @@ def save_collaboration():
         user = admins[0].user if len(admins) > 0 else User.query.filter(
             User.uid == current_app.app_config.admin_users[0].uid).one()
         data["organisation_id"] = organisation.id
+        if _do_name_exists(data["name"]):
+            return {"status": 400,
+                    "error": "duplicate entry",
+                    "message": f"Collaboration with name '{data['name']}' already exists."}, 400
+        if _do_short_name_exists(data["short_name"]):
+            return {"status": 400,
+                    "error": "duplicate entry",
+                    "message": f"Collaboration with short_name '{data['short_name']}' already exists."}, 400
     else:
         raise BadRequest("Neither organization in POST data nor associated with an API key")
 

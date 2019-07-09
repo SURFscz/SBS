@@ -1,5 +1,6 @@
 # -*- coding: future_fstrings -*-
 from flask import Blueprint, request as current_request, current_app
+from secrets import token_urlsafe
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict
 
@@ -32,13 +33,13 @@ def _ensure_access_to_join_request(join_request_id):
     return count > 0
 
 
-def _get_join_request(join_request_id):
+def _get_join_request(join_request_hash):
     return JoinRequest.query \
         .join(JoinRequest.collaboration) \
         .join(JoinRequest.user) \
         .options(contains_eager(JoinRequest.collaboration)) \
         .options(contains_eager(JoinRequest.user)) \
-        .filter(JoinRequest.id == join_request_id) \
+        .filter(JoinRequest.hash == join_request_hash) \
         .one()
 
 
@@ -67,7 +68,8 @@ def new_join_request():
     join_request = JoinRequest(message=client_data["motivation"],
                                reference=client_data["reference"] if "reference" in client_data else None,
                                user_id=user_id,
-                               collaboration=collaboration)
+                               collaboration=collaboration,
+                               hash=token_urlsafe())
     join_request = db.session.merge(join_request)
 
     mail_collaboration_join_request({
@@ -83,8 +85,8 @@ def new_join_request():
 @join_request_api.route("/accept", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def approve_join_request():
-    join_request_id = current_request.get_json()["id"]
-    join_request = _get_join_request(join_request_id)
+    join_request_hash = current_request.get_json()["hash"]
+    join_request = _get_join_request(join_request_hash)
     collaboration = join_request.collaboration
 
     confirm_collaboration_admin(collaboration.id)
@@ -115,8 +117,8 @@ def approve_join_request():
 @join_request_api.route("/decline", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def deny_join_request():
-    join_request_id = current_request.get_json()["id"]
-    join_request = _get_join_request(join_request_id)
+    join_request_hash = current_request.get_json()["hash"]
+    join_request = _get_join_request(join_request_hash)
 
     confirm_collaboration_admin(join_request.collaboration.id)
 
@@ -132,16 +134,17 @@ def deny_join_request():
     return None, 201
 
 
-@join_request_api.route("/<join_request_id>", strict_slashes=False)
+@join_request_api.route("/<join_request_hash>", strict_slashes=False)
 @json_endpoint
-def join_request_by_id(join_request_id):
-    confirm_write_access(join_request_id, override_func=_ensure_access_to_join_request)
-    join_request = _get_join_request(join_request_id)
+def join_request_by_hash(join_request_hash):
+    join_request = _get_join_request(join_request_hash)
+    confirm_write_access(join_request.id, override_func=_ensure_access_to_join_request)
     return join_request, 200
 
 
-@join_request_api.route("/<join_request_id>", methods=["DELETE"], strict_slashes=False)
+@join_request_api.route("/<join_request_hash>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
-def delete_join_request(join_request_id):
-    confirm_write_access(join_request_id, override_func=_ensure_access_to_join_request)
-    return delete(JoinRequest, join_request_id)
+def delete_join_request(join_request_hash):
+    join_request = _get_join_request(join_request_hash)
+    confirm_write_access(join_request.id, override_func=_ensure_access_to_join_request)
+    return delete(JoinRequest, join_request.id)

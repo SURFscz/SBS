@@ -204,7 +204,7 @@ class CollaborationDetail extends React.Component {
 
     openJoinRequest = joinRequest => e => {
         stopEvent(e);
-        this.props.history.push(`/join-requests/${joinRequest.id}`);
+        this.props.history.push(`/join-requests/${joinRequest.hash}`);
     };
 
     openInvitation = invitation => e => {
@@ -250,7 +250,7 @@ class CollaborationDetail extends React.Component {
                         .sort((r1, r2) => r1.user.name.localeCompare(r2.user.name))
                         .map((request, i) =>
                             <div className="join-request" key={i}>
-                                <a href={`/join-requests/${request.id}`} onClick={this.openJoinRequest(request)}>
+                                <a href={`/join-requests/${request.hash}`} onClick={this.openJoinRequest(request)}>
                                     <FontAwesomeIcon icon={"arrow-right"}/>
                                     <span>{request.user.name}</span>
                                 </a>

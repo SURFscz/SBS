@@ -1,7 +1,7 @@
 import React from "react";
 import I18n from "i18n-js";
 import "./JoinRequest.scss";
-import {joinRequestAccept, joinRequestById, joinRequestDecline} from "../api";
+import {joinRequestAccept, joinRequestByHash, joinRequestDecline} from "../api";
 import InputField from "../components/InputField";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
@@ -26,10 +26,10 @@ class JoinRequest extends React.Component {
 
     componentDidMount = () => {
         const params = this.props.match.params;
-        if (params.id) {
-            joinRequestById(params.id)
+        if (params.hash) {
+            joinRequestByHash(params.hash)
                 .then(json => this.setState({joinRequest: json}))
-                .catch(e => this.props.history.push("/404"));
+                .catch(() => setFlash(I18n.t("joinRequest.flash.notFound"), "error"));
         } else {
             this.props.history.push("/404");
         }
@@ -56,10 +56,16 @@ class JoinRequest extends React.Component {
 
     doDecline = () => {
         const {joinRequest} = this.state;
-        joinRequestDecline(joinRequest).then(res => {
-            this.props.history.push("/collaborations");
-            setFlash(I18n.t("joinRequest.flash.declined", {name: joinRequest.collaboration.name}));
-        });
+        joinRequestDecline(joinRequest)
+            .then(() => {
+                this.props.history.push("/collaborations");
+                setFlash(I18n.t("joinRequest.flash.declined", {name: joinRequest.collaboration.name}));
+            })
+            .catch(() => {
+                this.setState({joinRequest: {collaboration: {}, user: {}}});
+                setFlash(I18n.t("joinRequest.flash.notFound"), "error");
+            });
+
     };
 
     doSubmit = () => {
@@ -73,8 +79,11 @@ class JoinRequest extends React.Component {
                 if (e.response.status === 409) {
                     this.setState({alreadyMember: true});
                     setFlash(I18n.t("joinRequest.flash.alreadyMember", {name: joinRequest.collaboration.name}), "error");
+                } else {
+                    this.setState({joinRequest: {collaboration: {}, user: {}}});
+                    setFlash(I18n.t("joinRequest.flash.notFound"), "error");
                 }
-            })
+            });
     };
 
     accept = () => {
@@ -89,6 +98,7 @@ class JoinRequest extends React.Component {
     render() {
         const {joinRequest, confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, alreadyMember} =
             this.state;
+        const joinRequestFound = joinRequest.id;
         return (
             <div className="mod-join-request">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -96,7 +106,7 @@ class JoinRequest extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("joinRequest.declineConfirmation")}
                                     leavePage={leavePage}/>
-                <div className="title">
+                {joinRequestFound && <div className="title">
                     <a href={`/collaborations/${joinRequest.collaboration.id}`} onClick={e => {
                         stopEvent(e);
                         this.props.history.push(`/collaborations/${joinRequest.collaboration.id}`)
@@ -107,7 +117,7 @@ class JoinRequest extends React.Component {
                         collaboration: joinRequest.collaboration.name,
                         requester: joinRequest.user.name
                     })}</p>
-                </div>
+                </div>}
                 <div className="join-request-container">
                     <InputField name={I18n.t("joinRequest.message")} value={joinRequest.message} disabled={true}
                                 toolTip={I18n.t("joinRequest.messageTooltip", {name: joinRequest.user.name})}/>
@@ -120,7 +130,7 @@ class JoinRequest extends React.Component {
                                 disabled={true}/>
 
                     <InputField name={I18n.t("joinRequest.userName")} value={joinRequest.user.name} disabled={true}/>
-
+                    {joinRequestFound &&
                     <section className="actions">
                         <Button txt={I18n.t("joinRequest.accept")}
                                 onClick={this.accept}
@@ -128,7 +138,7 @@ class JoinRequest extends React.Component {
                         <Button cancelButton={true} txt={I18n.t("joinRequest.decline")}
                                 onClick={this.decline}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                    </section>
+                    </section>}
 
                 </div>
             </div>)
