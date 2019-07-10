@@ -167,6 +167,13 @@
                         cursor: pointer;
                         margin-left: 20px;
                     }
+
+                    &.disabled {
+                        svg {
+                            color: $medium-grey;
+                            cursor: default;
+                        }
+                    }
                 }
 
                 &.role {

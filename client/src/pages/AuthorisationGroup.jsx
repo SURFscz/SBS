@@ -388,7 +388,7 @@ class AuthorisationGroup extends React.Component {
             collaborationId: collaboration.id,
             serviceIds: availableServices
         }).then(() => {
-            this.refreshServices(() => setFlash(I18n.t("authorisationGroup.flash.addedMembers", {
+            this.refreshServices(() => setFlash(I18n.t("authorisationGroup.flash.addedServices", {
                 name: authorisationGroupName
             })));
         });
@@ -508,7 +508,8 @@ class AuthorisationGroup extends React.Component {
         );
     };
 
-    renderConnectedMembers = (adminOfCollaboration, authorisationGroupName, connectedMembers, sorted, reverse) => {
+    renderConnectedMembers = (adminOfCollaboration, authorisationGroupName, connectedMembers, sorted, reverse,
+                              autoProvisionMembers) => {
         const names = ["actions", "user__name", "user__email", "user__uid", "role", "created_at"];
         if (!adminOfCollaboration) {
             names.shift();
@@ -544,8 +545,10 @@ class AuthorisationGroup extends React.Component {
                         const role = {value: member.role, label: I18n.t(`profile.${member.role}`)};
                         return (
                             <tr key={i}>
-                                {adminOfCollaboration && <td className="actions">
-                                    <FontAwesomeIcon icon="trash" onClick={this.removeMember(member)}/>
+                                {adminOfCollaboration &&
+                                <td className={`actions ${autoProvisionMembers ? "disabled" : ""}`}>
+                                    <FontAwesomeIcon icon="trash"
+                                                     onClick={autoProvisionMembers ? () => true : this.removeMember(member)}/>
                                 </td>
                                 }
                                 <td className="name">{member.user.name}</td>
@@ -566,7 +569,8 @@ class AuthorisationGroup extends React.Component {
         );
     };
 
-    renderAuthorisationGroupInvitations = (adminOfCollaboration, authorisationGroupName, sortedInvitations, sortedInvitationsBy, reverseInvitations) => {
+    renderAuthorisationGroupInvitations = (adminOfCollaboration, authorisationGroupName, sortedInvitations,
+                                           sortedInvitationsBy, reverseInvitations, autoProvisionMembers) => {
         const names = ["actions", "invitee_email", "intended_role", "expiry_date"];
         if (!adminOfCollaboration) {
             names.shift();
@@ -602,8 +606,10 @@ class AuthorisationGroup extends React.Component {
                         };
                         return (
                             <tr key={i}>
-                                {adminOfCollaboration && <td className="actions">
-                                    <FontAwesomeIcon icon="trash" onClick={this.removeInvitation(invitation)}/>
+                                {adminOfCollaboration &&
+                                <td className={`actions ${autoProvisionMembers ? "disabled" : ""}`}>
+                                    <FontAwesomeIcon icon="trash"
+                                                     onClick={autoProvisionMembers ? () => true : this.removeInvitation(invitation)}/>
                                 </td>
                                 }
                                 <td className="name">{invitation.invitee_email}</td>
@@ -666,7 +672,8 @@ class AuthorisationGroup extends React.Component {
     };
 
     authorisationMembers = (adminOfCollaboration, authorisationGroupName,
-                            allMembers, sortedMembers, sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations) => {
+                            allMembers, sortedMembers, sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations,
+                            autoProvisionMembers) => {
         const availableMembers = allMembers
             .filter(member => member.isMember && !sortedMembers.find(s => s.id === member.value));
         const availableInvitations = allMembers
@@ -690,8 +697,10 @@ class AuthorisationGroup extends React.Component {
                           onChange={this.addAllMembers}
                           info={I18n.t("authorisationGroup.addAllMembers")}
                 />
-                {this.renderConnectedMembers(adminOfCollaboration, authorisationGroupName, sortedMembers, sortedMembersBy, reverseMembers)}
-                {this.renderAuthorisationGroupInvitations(adminOfCollaboration, authorisationGroupName, sortedInvitations, sortedInvitationsBy, reverseInvitations)}
+                {this.renderConnectedMembers(adminOfCollaboration, authorisationGroupName, sortedMembers,
+                    sortedMembersBy, reverseMembers, autoProvisionMembers)}
+                {this.renderAuthorisationGroupInvitations(adminOfCollaboration, authorisationGroupName,
+                    sortedInvitations, sortedInvitationsBy, reverseInvitations, autoProvisionMembers)}
             </div>
         );
 
@@ -871,7 +880,7 @@ class AuthorisationGroup extends React.Component {
                 </div>}
                 {!isNew && this.authorisationMembers(adminOfCollaboration, authorisationGroupName,
                     allMembers, sortedMembers, sortedMembersBy, reverseMembers,
-                    sortedInvitations, sortedInvitationsBy, reverseInvitations)}
+                    sortedInvitations, sortedInvitationsBy, reverseInvitations, authorisationGroup.auto_provision_members)}
                 <div className="title">
                     <p className="title">{detailsTitle}</p>
                 </div>
