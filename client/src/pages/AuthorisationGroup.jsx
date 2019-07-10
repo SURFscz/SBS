@@ -57,6 +57,7 @@ class AuthorisationGroup extends React.Component {
             reverseInvitations: false,
             name: "",
             short_name: "",
+            auto_provision_members: false,
             uri: "",
             description: "",
             status: this.statusOptions[0].value,
@@ -723,7 +724,7 @@ class AuthorisationGroup extends React.Component {
     };
 
 
-    authorisationGroupDetails = (adminOfCollaboration, name, short_name, alreadyExists, initial, description,
+    authorisationGroupDetails = (adminOfCollaboration, name, short_name, auto_provision_members, alreadyExists, initial, description,
                                  uri, status, isNew, disabledSubmit, authorisationGroup, collaboration) => {
         return (
             <div className="authorisation-group">
@@ -785,6 +786,11 @@ class AuthorisationGroup extends React.Component {
                             onChange={e => this.setState({uri: e.target.value})}
                             disabled={!adminOfCollaboration}/>
 
+                <CheckBox name="auto_provision_members" value={auto_provision_members}
+                          info={I18n.t("authorisationGroup.autoProvisionMembers")}
+                          tooltip={I18n.t("authorisationGroup.autoProvisionMembersTooltip")}
+                          onChange={e => this.setState({auto_provision_members: e.target.checked})}/>
+
                 <SelectField value={this.statusOptions.find(option => status === option.value)}
                              options={this.statusOptions}
                              name={I18n.t("authorisationGroup.status")}
@@ -818,7 +824,8 @@ class AuthorisationGroup extends React.Component {
     render() {
         const {
             alreadyExists, collaboration, initial, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
-            confirmationDialogQuestion, name, uri, short_name, description, status, authorisationGroup, isNew, back, leavePage,
+            confirmationDialogQuestion, name, uri, short_name, auto_provision_members, description, status,
+            authorisationGroup, isNew, back, leavePage,
             allServices, sortedServices, sortedServicesBy, reverseServices,
             allMembers, sortedMembers, sortedMembersBy, reverseMembers,
             sortedInvitationsBy, reverseInvitations, sortedInvitations,
@@ -868,7 +875,7 @@ class AuthorisationGroup extends React.Component {
                 <div className="title">
                     <p className="title">{detailsTitle}</p>
                 </div>
-                {this.authorisationGroupDetails(adminOfCollaboration, name, short_name, alreadyExists, initial,
+                {this.authorisationGroupDetails(adminOfCollaboration, name, short_name, auto_provision_members, alreadyExists, initial,
                     description, uri, status, isNew, disabledSubmit, authorisationGroup, collaboration)}
             </div>);
     }

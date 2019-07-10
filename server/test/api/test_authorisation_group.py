@@ -64,14 +64,19 @@ class TestAuthorisationGroup(AbstractTest):
         self.assertTrue(len(authorisation_group["services"]) > 0)
 
     def test_save_authorisation_group(self):
+        self._do_test_save_authorisation_group(False, 0, 0)
+
+    def test_save_authorisation_group_auto_provision_members(self):
+        self._do_test_save_authorisation_group(True, 2, 4)
+
+    def _do_test_save_authorisation_group(self, auto_provision_members, invitations_count, members_count):
+        self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         service_cloud_id = self.find_entity_by_name(Service, service_cloud_name).id
         service_wireless_id = self.find_entity_by_name(Service, service_wireless_name).id
-
         # We need to link the services first to the collaboration otherwise the database complains
         self.put("/api/collaborations_services",
                  body={"collaboration_id": collaboration_id, "service_ids": [service_cloud_id, service_wireless_id]})
-
         authorisation_group_name = "new_auth_group"
         authorisation_group = self.post("/api/authorisation_groups/", body={
             "name": authorisation_group_name,
@@ -79,25 +84,42 @@ class TestAuthorisationGroup(AbstractTest):
             "uri": "https://uri",
             "description": "des",
             "status": "open",
+            "auto_provision_members": auto_provision_members,
             "service_ids": [service_cloud_id, service_wireless_id],
             "collaboration_id": collaboration_id,
         })
         authorisation_group = self.get(f"/api/authorisation_groups/{authorisation_group['id']}/{collaboration_id}")
+
         self.assertEqual(2, len(authorisation_group["services"]))
         self.assertEqual("uuc:ai_computing:new_auth_group", authorisation_group["global_urn"])
+        self.assertEqual(invitations_count, len(authorisation_group["invitations"]))
+        self.assertEqual(members_count, len(authorisation_group["collaboration_memberships"]))
 
     def test_update_authorisation_group(self):
+        self._do_test_update_authorisation_group(False, 0, 2)
+
+    def test_update_authorisation_group_auto_provision_members(self):
+        self._do_test_update_authorisation_group(True, 2, 4)
+        # Idempotency
+        self._do_test_update_authorisation_group(True, 2, 4)
+
+    def _do_test_update_authorisation_group(self, auto_provision_members, invitations_count, members_count):
+        self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         authorisation_group_id = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation).id
         authorisation_group = self.get(f"/api/authorisation_groups/{authorisation_group_id}/{collaboration_id}")
-
         authorisation_group["status"] = "inactive"
         authorisation_group["short_name"] = "new_short_name"
+        authorisation_group["auto_provision_members"] = auto_provision_members
         self.put("/api/authorisation_groups/", body=authorisation_group)
 
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
+
         self.assertEqual("inactive", authorisation_group.status)
         self.assertEqual("uuc:ai_computing:new_short_name", authorisation_group.global_urn)
+        self.assertEqual(authorisation_group.auto_provision_members, auto_provision_members)
+        self.assertEqual(invitations_count, len(authorisation_group.invitations))
+        self.assertEqual(members_count, len(authorisation_group.collaboration_memberships))
 
     def test_delete_authorisation_group(self):
         authorisation_group_id = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation).id

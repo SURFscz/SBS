@@ -106,7 +106,7 @@ I18n.translations.nl = {
         flash: {
             info: "Stap {{step}} successvol afgerond.",
             success: "Uw verzoek om lid te worden van {{name}} is verzonden voor review",
-            alreadyMember: "U bent al lid van de samenwerking {{name}} en daarom kan dit verzoek niet worden verstuurd."
+            alreadyMember: "Ongeldig verzoek: u bent al lid van de samenwerking {{name}}."
         }
     },
     profile: {
@@ -466,7 +466,7 @@ I18n.translations.nl = {
         accept: "Accepteren",
         delete: "Verwijderen",
         resend: "Opnieuw sturen",
-        invite: "Uitnodiging",
+        invite: "Uitnodigen",
         declineInvitation: "Weet u zeker dat u de uitnodiging wilt afslaan?",
         deleteInvitation: "Weet u zeker dat u de uitnodiging wilt verwijderen?",
         resendInvitation: "Weet u zeker dat u de uitnodiging opnieuw wil versturen?",
@@ -521,6 +521,8 @@ I18n.translations.nl = {
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de autorisatie groep",
         shortNameTooltip: "Ken korte namen toe aan de autorisatie groepen<br/>zodat die namen bruikbaar zijn in de<br/>via ldap te koppelen diensten (zoals Linux groepsnamen)",
+        autoProvisionMembers: "Auto-provision nieuwe leden van de samenwerking?",
+        autoProvisionMembersTooltip: "Check om automatisch alle bestaande leden<br/>en nieuwe leden toe te voegen aan deze autorisatie groep",
         globalUrn: "Globale urn",
         globalUrnTooltip: "Globale unieke enread-only urn<br/>gebaseerd op de korte naam van de organsatie ,<br/>collaboratie en deze authorisatie groep.",
         alreadyExists: "Een autorisatie groep met {{attribute}} {{value}} bestaat al.",

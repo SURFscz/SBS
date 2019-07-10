@@ -4,6 +4,8 @@ from sqlalchemy import func
 from sqlalchemy import text
 from sqlalchemy.orm import load_only, contains_eager
 
+from server.api.authorisation_group_invitations import do_add_authorisation_group_invitations
+from server.api.authorisation_group_members import do_add_authorisation_group_members
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_collaboration_admin, \
     confirm_collaboration_admin_or_authorisation_group_member, current_user_id
@@ -12,6 +14,28 @@ from server.db.db import db
 from server.db.models import update, save, delete
 
 authorisation_group_api = Blueprint("authorisation_group_api", __name__, url_prefix="/api/authorisation_groups")
+
+
+def auto_provision_all_members_and_invites(authorisation_group: AuthorisationGroup):
+    if not authorisation_group.auto_provision_members:
+        return
+    ag_member_identifiers = [m.id for m in authorisation_group.collaboration_memberships]
+    c_member_identifiers = [m.id for m in authorisation_group.collaboration.collaboration_memberships]
+    missing_members = list(filter(lambda m: m not in ag_member_identifiers, c_member_identifiers))
+    do_add_authorisation_group_members({
+        "authorisation_group_id": authorisation_group.id,
+        "collaboration_id": authorisation_group.collaboration_id,
+        "members_ids": missing_members
+    }, True)
+
+    ag_invitation_identifiers = [i.id for i in authorisation_group.invitations]
+    c_invitation_identifiers = [i.id for i in authorisation_group.collaboration.invitations]
+    missing_invitations = list(filter(lambda i: i not in ag_invitation_identifiers, c_invitation_identifiers))
+    do_add_authorisation_group_invitations({
+        "authorisation_group_id": authorisation_group.id,
+        "collaboration_id": authorisation_group.collaboration_id,
+        "invitations_ids": missing_invitations
+    })
 
 
 @authorisation_group_api.route("/", strict_slashes=False)
@@ -104,6 +128,9 @@ def save_authorisation_group():
         statement = f"INSERT into services_authorisation_groups (service_id, authorisation_group_id) VALUES {values}"
         sql = text(statement)
         db.engine.execute(sql)
+
+    auto_provision_all_members_and_invites(res[0])
+
     return res
 
 
@@ -125,7 +152,11 @@ def update_authorisation_group():
 
     _assign_global_urn(collaboration_id, data)
 
-    return update(AuthorisationGroup, custom_json=data, allow_child_cascades=False)
+    res = update(AuthorisationGroup, custom_json=data, allow_child_cascades=False)
+
+    auto_provision_all_members_and_invites(res[0])
+
+    return res
 
 
 @authorisation_group_api.route("/<authorisation_group_id>", methods=["DELETE"], strict_slashes=False)

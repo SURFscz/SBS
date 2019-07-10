@@ -106,7 +106,7 @@ I18n.translations.en = {
         flash: {
             info: "Step {{step}} successfully finished.",
             success: "Your request to join {{name}} is sent for review",
-            alreadyMember: "The join request could not be send because you are already a member of collaboration {{name}}",
+            alreadyMember: "Invalid join request: you are already a member of collaboration {{name}}",
         }
     },
     profile: {
@@ -519,6 +519,8 @@ I18n.translations.en = {
         shortName: "Short name",
         shortNamePlaceHolder: "Short name of the authorisation group",
         shortNameTooltip: "Assign short names to authorisation groups<br/>so that these short names can be used<br/>in the ldap services (like Linux group names)",
+        autoProvisionMembers: "Auto-provision new collaboration members?",
+        autoProvisionMembersTooltip: "Check to automatically add all existing and<br/>future new collaboration members to this authorisation group",
         globalUrn: "Global urn",
         globalUrnTooltip: "Global unique and read-only urn<br/>based on the short names of the organisation,<br/> collaboration and this authorisation group.",
         alreadyExists: "A authorisation group with {{attribute}} {{value}} already exists.",

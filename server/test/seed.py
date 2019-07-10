@@ -148,6 +148,7 @@ def seed(db):
                                                          short_name=ai_researchers_authorisation_short_name,
                                                          uri="https://ai/researchers",
                                                          status="active",
+                                                         auto_provision_members=False,
                                                          description="Artifical computing researchers",
                                                          collaboration=ai_computing, services=[network],
                                                          collaboration_memberships=[john_ai_computing,
@@ -156,6 +157,7 @@ def seed(db):
                                                         uri="https://ai/developers",
                                                         short_name="ai_dev",
                                                         status="in_active",
+                                                        auto_provision_members=False,
                                                         description="Artifical computing developers",
                                                         collaboration=ai_computing, services=[],
                                                         collaboration_memberships=[john_ai_computing])
@@ -163,6 +165,7 @@ def seed(db):
                                                      uri="https://ai/science",
                                                      short_name="science",
                                                      status="active",
+                                                     auto_provision_members=True,
                                                      description="Science",
                                                      collaboration=uva_research,
                                                      services=[cloud, storage, wiki],
@@ -192,8 +195,9 @@ def seed(db):
                                     collaboration=ai_computing, hash=token_urlsafe())
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing, hash=token_urlsafe())
     join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=token_urlsafe())
+    join_request_uva_research = JoinRequest(message="Please...", user=james, collaboration=uva_research, hash=token_urlsafe())
 
-    _persist(db, join_request_john, join_request_peter, join_request_mary)
+    _persist(db, join_request_john, join_request_peter, join_request_mary, join_request_uva_research)
 
     invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
                             expiry_date=default_expiry_date(), user=admin, message="Please join...",
