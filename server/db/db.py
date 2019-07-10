@@ -231,6 +231,7 @@ class AuthorisationGroup(Base, db.Model):
     global_urn = db.Column("global_urn", db.Text, nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=True)
+    auto_provision_members = db.Column("auto_provision_members", db.Boolean(), nullable=True, default=False)
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="authorisation_groups")
     services = db.relationship("Service", secondary=services_authorisation_groups_association, lazy="select")

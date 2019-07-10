@@ -274,6 +274,10 @@ export function joinRequestForCollaboration(clientData) {
     return postPutJson("/api/join_requests", clientData, "post", false);
 }
 
+export function joinRequestAlreadyMember(clientData) {
+    return postPutJson("/api/join_requests/already-member", clientData, "post", false);
+}
+
 export function joinRequestAccept(joinRequest) {
     return postPutJson("/api/join_requests/accept", joinRequest, "put", false);
 }

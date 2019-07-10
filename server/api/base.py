@@ -89,13 +89,6 @@ def _audit_trail():
         ctx_logger("base").info(f"Path {current_request.path} {method} {msg}")
 
 
-def _commit_database(status):
-    if status == 500:
-        db.session.rollback()
-    else:
-        db.session.commit()
-
-
 def json_endpoint(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -106,7 +99,7 @@ def json_endpoint(f):
             response = jsonify(body)
             _audit_trail()
             _add_custom_header(response)
-            _commit_database(status)
+            db.session.commit()
             return response, status
         except Exception as e:
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
@@ -121,7 +114,7 @@ def json_endpoint(f):
             _add_custom_header(response)
             if response.status_code == 401:
                 response.headers.set("WWW-Authenticate", "Basic realm=\"Please login\"")
-            _commit_database(response.status_code)
+            db.session.rollback()
             return response
 
     return wrapper

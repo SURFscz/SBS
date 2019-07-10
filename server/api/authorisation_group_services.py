@@ -1,11 +1,11 @@
 # -*- coding: future_fstrings -*-
-import uuid
 
 from flask import Blueprint, request as current_request
 from sqlalchemy import text
 from sqlalchemy.orm import aliased, contains_eager
 
 from server.api.base import json_endpoint, query_param
+from server.api.user_service_profile import create_user_service_profile
 from server.auth.security import confirm_collaboration_admin, current_user
 from server.db.db import db, AuthorisationGroup, UserServiceProfile, User, CollaborationMembership, Service
 
@@ -32,13 +32,8 @@ def add_authorisation_group_services():
     # Create an UserServiceProfile for each CollaborationMembership linked to the AuthorisationGroup
     # for each new Service
     collaboration_memberships = authorisation_group.collaboration_memberships
-    user = current_user()
-    for service_id in service_ids:
-        for member in collaboration_memberships:
-            profile = UserServiceProfile(service_id=service_id, authorisation_group=authorisation_group,
-                                         user_id=member.user_id, status="active",
-                                         created_by=user["uid"], updated_by=["uid"], identifier=str(uuid.uuid4()))
-            db.session.add(profile)
+    for member in collaboration_memberships:
+        create_user_service_profile(service_ids, authorisation_group, current_user(), member.user_id)
 
     return (None, 201) if result_set.rowcount > 0 else (None, 404)
 

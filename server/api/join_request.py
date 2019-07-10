@@ -4,6 +4,7 @@ from secrets import token_urlsafe
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict
 
+from server.api.authorisation_group_members import do_add_authorisation_group_members
 from server.api.base import json_endpoint
 from server.auth.security import confirm_write_access, confirm_collaboration_admin, current_user_id, current_user, \
     current_user_name, current_user_uid
@@ -43,17 +44,19 @@ def _get_join_request(join_request_hash):
         .one()
 
 
-@join_request_api.route("/already-member", methods=["POST"], strict_slashes=False)
-@json_endpoint
-def already_member():
-    client_data = current_request.get_json()
+def _is_already_member(client_data):
     collaboration_id = client_data["collaborationId"]
     collaboration = Collaboration.query \
         .filter(Collaboration.id == collaboration_id).one()
-
     user_id = current_user_id()
-    if collaboration.is_member(user_id):
-        raise Conflict(f"User {current_user_name()} is already a member of {collaboration.name}")
+    is_member = collaboration.is_member(user_id)
+    return is_member
+
+
+@join_request_api.route("/already-member", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def already_member():
+    return _is_already_member(current_request.get_json()), 200
 
 
 @join_request_api.route("/", methods=["POST"], strict_slashes=False)
@@ -64,8 +67,7 @@ def new_join_request():
     collaboration = Collaboration.query \
         .filter(Collaboration.id == collaboration_id).one()
 
-    user_id = current_user_id()
-    if collaboration.is_member(user_id):
+    if _is_already_member(client_data):
         raise Conflict(f"User {current_user_name()} is already a member of {collaboration.name}")
 
     admin_members = list(
@@ -73,6 +75,7 @@ def new_join_request():
     admin_emails = list(map(lambda membership: membership.user.email, admin_members))
 
     # We need to delete other outstanding join_request for the same collaboration and user
+    user_id = current_user_id()
     existing_join_requests = JoinRequest.query \
         .join(JoinRequest.user) \
         .filter(JoinRequest.collaboration_id == collaboration_id) \
@@ -127,6 +130,17 @@ def approve_join_request():
 
     collaboration.collaboration_memberships.append(collaboration_membership)
     collaboration.join_requests.remove(join_request)
+
+    # We need the persistent identifier of the collaboration_membership
+    db.session.commit()
+
+    authorisation_groups = list(filter(lambda ag: ag.auto_provision_members, collaboration.authorisation_groups))
+    for authorisation_group in authorisation_groups:
+        do_add_authorisation_group_members({
+            "authorisation_group_id": authorisation_group.id,
+            "collaboration_id": authorisation_group.collaboration_id,
+            "members_ids": [collaboration_membership.id]
+        }, True)
     return None, 201
 
 

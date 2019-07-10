@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 import subprocess
 import tempfile
+import uuid
 
 from flask import Blueprint, request as current_request
 from sqlalchemy.orm import contains_eager
@@ -9,10 +10,19 @@ from server.api.base import json_endpoint, query_param, ctx_logger
 from server.auth.security import current_user_id, confirm_owner_of_user_service_profile, confirm_read_access
 from server.auth.user_claims import attribute_saml_mapping, user_service_profile_claims, is_member_of_saml, \
     user_service_profile_saml_mapping
-from server.db.db import CollaborationMembership, UserServiceProfile, User, Service, AuthorisationGroup
+from server.db.db import CollaborationMembership, UserServiceProfile, User, Service, AuthorisationGroup, db
 from server.db.models import update
 
 user_service_profile_api = Blueprint("user_service_profiles_api", __name__, url_prefix="/api/user_service_profiles")
+
+
+def create_user_service_profile(service_ids, authorisation_group, current_user, user_id):
+    for service_id in service_ids:
+        profile = UserServiceProfile(service_id=service_id, authorisation_group=authorisation_group,
+                                     user_id=user_id, status="active",
+                                     created_by=current_user["uid"], updated_by=current_user["uid"],
+                                     identifier=str(uuid.uuid4()))
+        db.session.add(profile)
 
 
 # Endpoint for SATOSA

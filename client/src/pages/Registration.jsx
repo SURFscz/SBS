@@ -1,5 +1,5 @@
 import React from "react";
-import {collaborationByName, joinRequestForCollaboration} from "../api";
+import {collaborationByName, joinRequestAlreadyMember, joinRequestForCollaboration} from "../api";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import I18n from "i18n-js";
 import "./Registration.scss";
@@ -28,22 +28,25 @@ class Registration extends React.Component {
         const {collaboration} = this.props;
         if (!collaboration) {
             setFlash(I18n.t("registration.requiredCollaboration"), "error");
-
         } else {
             collaborationByName(collaboration)
                 .then(res => {
                     const {user} = this.props;
                     const step = user.guest ? "1" : "2";
-                    // const promise = user.guest ? Promise.resolve(true)
-                    if (!user.guest) {
-
-                    }
-                    this.setState({
-                        step: step,
-                        collaborationName: res.name,
-                        collaborationId: res.id,
-                        adminEmail: res.admin_email
-                    });
+                    const promise = user.guest ? Promise.resolve(false) :
+                        joinRequestAlreadyMember({"collaborationId": res.id});
+                    promise.then(alreadyMember => {
+                        if (alreadyMember) {
+                            setFlash(I18n.t("registration.flash.alreadyMember", {name: res.name}), "error")
+                        }
+                        this.setState({
+                            step: step,
+                            collaborationName: res.name,
+                            collaborationId: res.id,
+                            adminEmail: res.admin_email,
+                            alreadyMember: alreadyMember
+                        })
+                    })
                 })
                 .catch(e => {
                     setFlash(I18n.t("registration.unknownCollaboration", {
@@ -68,7 +71,10 @@ class Registration extends React.Component {
         </div>);
 
     renderForm2 = () => {
-        const {motivation, reference, agreedWithPolicy, collaborationName} = this.state;
+        const {motivation, reference, agreedWithPolicy, collaborationName, alreadyMember} = this.state;
+        if (alreadyMember) {
+            return null;
+        }
         const {user} = this.props;
         return (<div className="step-form">
             <p className="form-title">{I18n.t("registration.formTitle", {collaboration: collaborationName || ""})}</p>
@@ -106,8 +112,8 @@ class Registration extends React.Component {
                         joinRequestForCollaboration(this.state)
                             .then(() => setFlash(I18n.t("registration.flash.success", {name: collaborationName})))
                             .catch(() => {
-                                this.setState({alreadyMember: true})
-                                setFlash(I18n.t("registration.flash.alreadyMember", {name: collaborationName}), "error")
+                                this.setState({alreadyMember: true});
+                                setFlash(I18n.t("registration.flash.alreadyMember", {name: collaborationName}), "error");
                             });
                     }} txt={I18n.t("registration.request")}/>
         </div>);
