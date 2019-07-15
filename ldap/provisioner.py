@@ -13,7 +13,9 @@ from colorama import Fore, Style
 
 # CONSTANTS
 
-SBS_HOST = os.environ.get("SBS_HOST", "https://sbs.example.com")
+SBS_HOST = os.environ.get("SBS_HOST", "sbs.example.com")
+SBS_PROT = os.environ.get("SBS_PROT", "https")
+
 PUBLISHER_PORT = os.environ.get("PUBLISHER_PORT", "5556")
 
 LDAP_PROT = os.environ.get("LDAP_PROT", "ldap://")
@@ -340,11 +342,10 @@ def ldap_delete(topic, subject, dn):
 
 # API - part
 
-def api(url, method='GET', headers=None, data=None):
+def api(host, method='GET', headers=None, data=None):
 
-	log_debug(f"REQUESTING: {url}")
-	r = requests.request(method, url=url, headers=headers, auth=HTTPBasicAuth(API_USER, API_PASS), data=data)
-
+	log_debug(f"API: {SBS_PROT}://{host} ...")
+	r = requests.request(method, url=f"{SBS_PROT}://{host}", headers=headers, auth=HTTPBasicAuth(API_USER, API_PASS), data=data)
 	log_debug('\n'.join(f'{k}: {v}' for k, v in r.headers.items()))
 
 	if r.status_code == 200:
@@ -354,7 +355,7 @@ def api(url, method='GET', headers=None, data=None):
 			log_info(r.text)
 			return r.text
 	else:
-		log_error(f"API: {url} returns: {r.status_code}")
+		log_error(f"API: {SBS_PROT}://{host} returns: {r.status_code}")
 
 	return None
 
