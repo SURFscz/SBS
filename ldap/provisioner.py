@@ -112,7 +112,7 @@ ldap_session = None
 try:
 	ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)
 
-	s = "{}{}:{}".format(LDAP_PROT, LDAP_HOST, LDAP_PORT)
+	s = f"{LDAP_PROT}://{LDAP_HOST}:{LDAP_PORT}"
 
 	ldap_session = ldap.initialize(s)
 	ldap_session.bind_s(LDAP_USER, LDAP_PASS)
