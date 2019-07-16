@@ -163,7 +163,10 @@ def ldap_people(base):
 	log_ldap_result(l)
 	return l
 
-attributes_dependencies = {'labeledURI': 'labeledURIObject' }
+objectclass_dependencies = {
+	'labeledURI': 'labeledURIObject',
+	'sshPublicKey': 'ldapPublicKey'
+}
 
 def ldap_attribute_value(attributes, attr, value):
 	if attr not in attributes:
@@ -184,10 +187,9 @@ def ldap_attributes(**kwargs):
 
 	for k,v in kwargs.items():
 
-		if k == 'labeledURI':
-			ldap_attribute_value(result, 'objectClass', 'labeledURIObject')
-		if k == 'sshPublicKey':
-			ldap_attribute_value(result, 'objectClass', 'ldapPublicKey')
+		# Check if we need to add additional ObjectClasses...
+		if k in objectclass_dependencies:
+			ldap_attribute_value(result, 'objectClass', objectclass_dependencies[k])
 
 		ldap_attribute_value(result, k, v)
 
@@ -342,10 +344,10 @@ def ldap_delete(topic, subject, dn):
 
 # API - part
 
-def api(host, method='GET', headers=None, data=None):
+def api(method, method='GET', headers=None, data=None):
 
-	log_debug(f"API: {SBS_PROT}://{host} ...")
-	r = requests.request(method, url=f"{SBS_PROT}://{host}", headers=headers, auth=HTTPBasicAuth(API_USER, API_PASS), data=data)
+	log_debug(f"API: {method} ...")
+	r = requests.request(method, url=f"{SBS_PROT}://{SBS_HOST}{method}", headers=headers, auth=HTTPBasicAuth(API_USER, API_PASS), data=data)
 	log_debug('\n'.join(f'{k}: {v}' for k, v in r.headers.items()))
 
 	if r.status_code == 200:
@@ -355,18 +357,18 @@ def api(host, method='GET', headers=None, data=None):
 			log_info(r.text)
 			return r.text
 	else:
-		log_error(f"API: {SBS_PROT}://{host} returns: {r.status_code}")
+		log_error(f"API: {method} returns: {r.status_code}")
 
 	return None
 
 
-health = api(SBS_HOST+"/health")
+health = api("/health")
 if not health or health['status'] != "UP":
 	panic("Server is not UP !")
 
-api(SBS_HOST+"/api/users/me")
+api("/api/users/me")
 
-organisations = api(SBS_HOST+"/api/organisations/all")
+organisations = api("/api/organisations/all")
 
 co_users = {}
 
@@ -377,7 +379,11 @@ def get_organisation(org_id):
 
 	panic(f"Organisation {id} not found !")
 
-collaborations = api(SBS_HOST+"/api/collaborations/all")
+profile_attributes = {
+	"urn:oid:1.3.6.1.4.1.24552.1.1.1.13": "sshPublicKey"
+}
+
+collaborations = api("/api/collaborations/all")
 for c in collaborations:
 	org = get_organisation(c['organisation_id'])
 
@@ -389,7 +395,7 @@ for c in collaborations:
 
 	extra = {}
 
-	details = api(SBS_HOST+f"/api/collaborations/{c['id']}")
+	details = api(f"/api/collaborations/{c['id']}")
 
 	for m in details['collaboration_memberships']:
 		log_debug(f"- CO member [{m['role']}]")
@@ -405,7 +411,7 @@ for c in collaborations:
 	for a in details['authorisation_groups']:
 		log_debug(f"- AUTH GROUP [{a['name']}]")
 
-		auth_group = api(SBS_HOST+f"/api/authorisation_groups/{a['id']}/{c['id']}")
+		auth_group = api(f"/api/authorisation_groups/{a['id']}/{c['id']}")
 
 		for m in auth_group['collaboration_memberships']:
 
@@ -434,6 +440,14 @@ for c in collaborations:
 	for i in co_users[c['name']].keys():
 		u = co_users[c['name']][i]
 
+		extra = {}
+
+		for s in details['services']:
+			attributes = api(f"/api/user_service_profiles/attributes?service_entity_id={s['entity_id']}&uid={u['user']['uid']}")
+			for p in  profile_attributes.keys():
+				if p in attributes:
+					extra[profile_attributes[p]] = attributes[p]
+
 		ldap_member('CO',
 			c['name'],
 			base = f"o={c['name']},{LDAP_BASE}",
@@ -443,7 +457,8 @@ for c in collaborations:
 			sn = u["user"]["family_name"],
 			mail = u["user"]["email"],
 			displayName = u["user"]["name"],
-			givenName = u["user"]["given_name"]
+			givenName = u["user"]["given_name"],
+			**extra
 		)
 
 # Cleanup redundant objects...
