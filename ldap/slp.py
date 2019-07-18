@@ -391,7 +391,11 @@ def get_organisation(org_id):
 	panic(f"Organisation {id} not found !")
 
 profile_attributes = {
-	"urn:oid:1.3.6.1.4.1.24552.1.1.1.13": "sshPublicKey"
+    "urn:mace:dir:attribute-def:cn": "cn",
+    "urn:mace:dir:attribute-def:givenName": "givenName",
+    "urn:mace:dir:attribute-def:mail": "mail"
+	"urn:mace:dir:attribute-def:sn": "sn",
+	"urn:oid:1.3.6.1.4.1.24552.1.1.1.13": "sshPublicKey",
 }
 
 sbs_services = {}
@@ -455,26 +459,29 @@ for entity_id in sbs_services.keys():
 		for i in c['users'].keys():
 			u = c['users'][i]
 
-			extra = {}
+			uid = u["user"]["uid"]
+
+			extra = {
+				"cn": u["user"]["name"],
+				"sn": u["user"]["family_name"],
+				"mail": u["user"]["email"],
+				"displayName": u["user"]["name"],
+				"givenName": u["user"]["given_name"]
+			}
 
 			# Collect User Profile settings for the CO people using this Service....
 			for s in details['services']:
 				attributes = api(f"/api/user_service_profiles/attributes?service_entity_id={s['entity_id']}&uid={u['user']['uid']}")
-				for p in  profile_attributes.keys():
-					if p in attributes:
-						extra[profile_attributes[p]] = attributes[p]
+				for k,v in profile_attributes.items():
+					if k in attributes and len(v) > 0:
+						extra[profile_attributes[k]] = v
 
 			# Add the member...
 			ldap_member('CO',
 				c['name'],
 				base = f"o={c['identifier']},dc={entity_id},{LDAP_BASE}",
 				roles = u['roles'],
-				uid = u["user"]["uid"],
-				cn = u["user"]["name"],
-				sn = u["user"]["family_name"],
-				mail = u["user"]["email"],
-				displayName = u["user"]["name"],
-				givenName = u["user"]["given_name"],
+				uid = uid,
 				**extra
 			)
 
@@ -489,6 +496,14 @@ for s in ldap_services():
 	service_validated = False
 
 	# TO DO...
+	# Lookup this Service in sbs_services
+	# If not exists: Delete this Service from LDAP
+	# If exists:
+	#   Collect LDAP Child CO's if they are still exist in sbs_services CO list
+	#     If not: Delete that child from LDAP_PASS
+	#     If yes: Collect all members in LDAP of this CO
+	#        Check for each member if they still exist in SBS # COMBAK
+	#        If not: Delete that member
 
 ldap_session.unbind_s()
 
