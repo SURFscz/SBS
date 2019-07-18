@@ -360,7 +360,7 @@ def ldap_delete(topic, subject, dn):
 
 def api(request, method='GET', headers=None, data=None):
 
-	log_debug(f"API: {method} ...")
+	log_debug(f"API: {request} ...")
 	r = requests.request(method, url=f"{SBS_PROT}://{SBS_HOST}{request}", headers=headers, auth=HTTPBasicAuth(API_USER, API_PASS), data=data)
 	log_debug('\n'.join(f'{k}: {v}' for k, v in r.headers.items()))
 
@@ -383,8 +383,6 @@ api("/api/users/me")
 
 organisations = api("/api/organisations/all")
 
-my_services = {}
-
 def get_organisation(org_id):
 	for o in organisations:
 		if o['id'] == org_id:
@@ -396,7 +394,9 @@ profile_attributes = {
 	"urn:oid:1.3.6.1.4.1.24552.1.1.1.13": "sshPublicKey"
 }
 
+sbs_services = {}
 sbs_collaborations = api("/api/collaborations/all")
+
 for c in sbs_collaborations:
 	log_debug(f"CO name: {c['name']}, description: {c['description']}")
 
@@ -434,26 +434,22 @@ for c in sbs_collaborations:
 	for s in details['services']:
 		log_debug(f"- SERVICE [{s['name']}]")
 
-		if s['entity_id'] not in services:
-			services[s['entity_id']] = []
+		if s['entity_id'] not in sbs_services:
+			sbs_services[s['entity_id']] = []
 
-		services['entity_id'].append(c)
-
-		if 'labeledURI' not in c['extra']:
-			c['extra']['labeledURI'] = []
-
-		c['extra']['labeledURI'].append(s['entity_id'])
+		sbs_services[s['entity_id']].append(c)
 
 	# Mark this api( entry as hosted by SBS_HOST...
 	c['extra']['host'] = SBS_HOST
 
-for entity_id in services.keys:
+for entity_id in sbs_services.keys():
+	# Make the Service DC entry...
 	ldap_service(f"{LDAP_BASE}", entity_id)
 
-	for c in services[entity_id]:
+	for c in sbs_services[entity_id]:
 
-		# Make the CO...
-		ldap_org('CO', f"{LDAP_BASE},dc={entity_id}", c['name'], c['description'], **c['extra'])
+		# Make this CO as child entry for the Service DC...
+		ldap_org('CO', f"dc={entity_id},{LDAP_BASE}", c['identifier'], c['name'], **c['extra'])
 
 		# Add the People to it...
 		for i in c['users'].keys():
@@ -461,15 +457,17 @@ for entity_id in services.keys:
 
 			extra = {}
 
+			# Collect User Profile settings for the CO people using this Service....
 			for s in details['services']:
 				attributes = api(f"/api/user_service_profiles/attributes?service_entity_id={s['entity_id']}&uid={u['user']['uid']}")
 				for p in  profile_attributes.keys():
 					if p in attributes:
 						extra[profile_attributes[p]] = attributes[p]
 
+			# Add the member...
 			ldap_member('CO',
 				c['name'],
-				base = f"o={c['name']},dc={entity},{LDAP_BASE}",
+				base = f"o={c['identifier']},dc={entity_id},{LDAP_BASE}",
 				roles = u['roles'],
 				uid = u["user"]["uid"],
 				cn = u["user"]["name"],
