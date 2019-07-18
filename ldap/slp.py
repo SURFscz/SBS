@@ -461,7 +461,14 @@ for entity_id in sbs_services.keys():
 
 			uid = u["user"]["uid"]
 
-			extra = {
+			# Collect User Profile settings for the CO people using this Service....
+			for s in details['services']:
+				attributes = api(f"/api/user_service_profiles/attributes?service_entity_id={s['entity_id']}&uid={u['user']['uid']}")
+				for k,v in profile_attributes.items():
+					if k in attributes and len(attributes[k]) > 0:
+						extra[v] = attributes[k]
+
+			defaults = {
 				"cn": u["user"]["name"],
 				"sn": u["user"]["family_name"],
 				"mail": u["user"]["email"],
@@ -469,12 +476,14 @@ for entity_id in sbs_services.keys():
 				"givenName": u["user"]["given_name"]
 			}
 
-			# Collect User Profile settings for the CO people using this Service....
-			for s in details['services']:
-				attributes = api(f"/api/user_service_profiles/attributes?service_entity_id={s['entity_id']}&uid={u['user']['uid']}")
-				for k,v in profile_attributes.items():
-					if k in attributes and len(v) > 0:
-						extra[profile_attributes[k]] = v
+			for i in defaults.keys():
+				if i not in extra:
+					extra[i] = defaults[i]
+				elif len(extra[i]) > 1:
+					try:
+						extra[i].remove(defaults[i])
+					except:
+						pass
 
 			# Add the member...
 			ldap_member('CO',
