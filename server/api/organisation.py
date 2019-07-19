@@ -9,7 +9,7 @@ from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid, \
-    is_application_admin, confirm_authorized_api_call
+    is_application_admin, confirm_authorized_api_call, confirm_organisation_admin
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
 from server.db.defaults import default_expiry_date
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -164,12 +164,15 @@ def organisation_invites_preview():
 @organisation_api.route("/invites", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def organisation_invites():
-    confirm_write_access()
     data = current_request.get_json()
+    organisation_id = data["organisation_id"]
+
+    confirm_organisation_admin(organisation_id)
+
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
 
-    organisation = Organisation.query.get(data["organisation_id"])
+    organisation = Organisation.query.get(organisation_id)
     user = User.query.get(current_user_id())
 
     for administrator in administrators:
