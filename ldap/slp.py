@@ -154,12 +154,17 @@ def ldap_attributes_equal(a, b):
 	return len(added) == 0 and len(removed) == 0 and len(modified) == 0
 
 def ldap_services():
-	l = ldap_session.search_s(f"{LDAP_BASE}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organization)(dc=*))")
+	l = ldap_session.search_s(f"{LDAP_BASE}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=dcObject)(dc=*))")
 	log_ldap_result(l)
 	return l
 
-def ldap_people(base):
-	l = ldap_session.search_s(f"ou=People,{base}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organizationalPerson)(uid=*))")
+def ldap_collobarations(service):
+	l = ldap_session.search_s(f"dc={service}{LDAP_BASE}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organization)(o=*))")
+	log_ldap_result(l)
+	return l
+
+def ldap_people(service, collabaration):
+	l = ldap_session.search_s(f"ou=People,o={collabaration},dc={service},{LDAP_BASE}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organizationalPerson)(uid=*))")
 	log_ldap_result(l)
 	return l
 
@@ -391,9 +396,9 @@ def get_organisation(org_id):
 	panic(f"Organisation {id} not found !")
 
 profile_attributes = {
-    "urn:mace:dir:attribute-def:cn": "cn",
-    "urn:mace:dir:attribute-def:givenName": "givenName",
-    "urn:mace:dir:attribute-def:mail": "mail"
+	"urn:mace:dir:attribute-def:cn": "cn",
+	"urn:mace:dir:attribute-def:givenName": "givenName",
+	"urn:mace:dir:attribute-def:mail": "mail",
 	"urn:mace:dir:attribute-def:sn": "sn",
 	"urn:oid:1.3.6.1.4.1.24552.1.1.1.13": "sshPublicKey",
 }
@@ -439,9 +444,9 @@ for c in sbs_collaborations:
 		log_debug(f"- SERVICE [{s['name']}]")
 
 		if s['entity_id'] not in sbs_services:
-			sbs_services[s['entity_id']] = []
+			sbs_services[s['entity_id']] = {}
 
-		sbs_services[s['entity_id']].append(c)
+		sbs_services[s['entity_id']][c['identifier'] = c
 
 	# Mark this api( entry as hosted by SBS_HOST...
 	c['extra']['host'] = SBS_HOST
@@ -450,16 +455,18 @@ for entity_id in sbs_services.keys():
 	# Make the Service DC entry...
 	ldap_service(f"{LDAP_BASE}", entity_id)
 
-	for c in sbs_services[entity_id]:
+	for identifier, c in sbs_services[entity_id].items():
 
 		# Make this CO as child entry for the Service DC...
-		ldap_org('CO', f"dc={entity_id},{LDAP_BASE}", c['identifier'], c['name'], **c['extra'])
+		ldap_org('CO', f"dc={entity_id},{LDAP_BASE}", identifier, c['name'], **c['extra'])
 
 		# Add the People to it...
 		for i in c['users'].keys():
 			u = c['users'][i]
 
 			uid = u["user"]["uid"]
+
+			extra = {}
 
 			# Collect User Profile settings for the CO people using this Service....
 			for s in details['services']:
@@ -488,7 +495,7 @@ for entity_id in sbs_services.keys():
 			# Add the member...
 			ldap_member('CO',
 				c['name'],
-				base = f"o={c['identifier']},dc={entity_id},{LDAP_BASE}",
+				base = f"o={identifier},dc={entity_id},{LDAP_BASE}",
 				roles = u['roles'],
 				uid = uid,
 				**extra
@@ -501,18 +508,45 @@ for s in ldap_services():
 	if 'o' not in s[1] or s[1]['o'][0].decode() != SBS_HOST:
 		continue
 
-	log_debug(f"CHECK Service: {s[0]}...")
+	service = s[1]['dc'][0].decode()
 	service_validated = False
 
-	# TO DO...
-	# Lookup this Service in sbs_services
-	# If not exists: Delete this Service from LDAP
-	# If exists:
-	#   Collect LDAP Child CO's if they are still exist in sbs_services CO list
-	#     If not: Delete that child from LDAP_PASS
-	#     If yes: Collect all members in LDAP of this CO
-	#        Check for each member if they still exist in SBS # COMBAK
-	#        If not: Delete that member
+	log_debug(f"CHECK Service: {service}...")
+
+	if service in sbs_services:
+		service_validated = True
+
+		log_debug(f"CHECK Service: {service_entity_id} VALIDATED !")
+
+		for co in ldap_collobarations(service):
+			o = co[1]['o'][0].decode()
+			o_validated = False
+
+			log_debug(f"CHECK Collaboration: {o} for service: {service}...")
+
+			if o in sbs_services[service]:
+
+				for m in ldap_people(service, o):
+					uid = m[1]['uid'][0].decode()
+
+					log_debug(f"CHECK SERVICE/CO/MEMBER: {uid}...")
+					person_validated = False
+
+					for u in sbs_services[service][o]['users']:
+						if u["user"]['uid'] == uid:
+							person_validated = True
+							break
+
+					if person_validated:
+						log_debug(f"CHECK SERVICE/CO/MEMBER: {uid} VALIDATED !")
+					else:
+						ldap_delete("P", uid, m[0])
+
+		if not o_validated:
+			ldap_delete("CO", o, co[0])
+
+	if not service_validated:
+		ldap_delete("SERVICE", service, s[0])
 
 ldap_session.unbind_s()
 
