@@ -524,7 +524,7 @@ for s in ldap_services():
 
 			log_debug(f"CHECK service: {service}, Collaboration: {collaboration}...")
 
-			if collabaration in sbs_services[service]:
+			if collaboration in sbs_services[service]:
 				collaboration_validated = True
 
 				for m in ldap_people(service, collaboration):
@@ -534,7 +534,7 @@ for s in ldap_services():
 					person_validated = False
 
 					for u in sbs_services[service][collaboration]['users']:
-						if sbs_services[service][collabaration]['users'][u]['user']['uid'] == uid:
+						if sbs_services[service][collaboration]['users'][u]['user']['uid'] == uid:
 							person_validated = True
 							break
 
