@@ -504,11 +504,11 @@ for entity_id in sbs_services.keys():
 # Cleanup redundant objects...
 
 log_info("Cleanup phase...")
-for s in ldap_services():
-	if 'o' not in s[1] or s[1]['o'][0].decode() != SBS_HOST:
+for dc in ldap_services():
+	if 'o' not in dc[1] or s[1]['o'][0].decode() != SBS_HOST:
 		continue
 
-	service = s[1]['dc'][0].decode()
+	service = dc[1]['dc'][0].decode()
 	service_validated = False
 
 	log_debug(f"CHECK Service: {service}...")
@@ -538,16 +538,14 @@ for s in ldap_services():
 							person_validated = True
 							break
 
-					if person_validated:
-						log_debug(f"CHECK SERVICE/CO/MEMBER: {uid} VALIDATED !")
-					else:
+					if not person_validated:
 						ldap_delete("P", uid, m[0])
 
 			if not collaboration_validated:
-				ldap_delete("CO", o, co[0])
+				ldap_delete("CO", collaboration, o[0])
 
 	if not service_validated:
-		ldap_delete("SERVICE", service, s[0])
+		ldap_delete("SERVICE", service, dc[0])
 
 ldap_session.unbind_s()
 
