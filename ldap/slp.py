@@ -505,7 +505,7 @@ for entity_id in sbs_services.keys():
 
 log_info("Cleanup phase...")
 for dc in ldap_services():
-	if 'o' not in dc[1] or s[1]['o'][0].decode() != SBS_HOST:
+	if 'o' not in dc[1] or dc[1]['o'][0].decode() != SBS_HOST:
 		continue
 
 	service = dc[1]['dc'][0].decode()
