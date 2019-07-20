@@ -518,22 +518,23 @@ for s in ldap_services():
 
 		log_debug(f"CHECK Service: {service} VALIDATED !")
 
-		for co in ldap_collobarations(service):
-			o = co[1]['o'][0].decode()
-			o_validated = False
+		for o in ldap_collobarations(service):
+			collaboration = o[1]['o'][0].decode()
+			collaboration_validated = False
 
-			log_debug(f"CHECK Collaboration: {o} for service: {service}...")
+			log_debug(f"CHECK service: {service}, Collaboration: {collaboration}...")
 
-			if o in sbs_services[service]:
+			if collabaration in sbs_services[service]:
+				collaboration_validated = True
 
-				for m in ldap_people(service, o):
+				for m in ldap_people(service, collaboration):
 					uid = m[1]['uid'][0].decode()
 
-					log_debug(f"CHECK SERVICE/CO/MEMBER: {uid}...")
+					log_debug(f"CHECK service: {service}, Collaboration: {collaboration}, Member: {uid}...")
 					person_validated = False
 
-					for u in sbs_services[service][o]['users']:
-						if sbs_services[service][o]['users'][u]['user']['uid'] == uid:
+					for u in sbs_services[service][collaboration['users']:
+						if sbs_services[service][collabaration]['users'][u]['user']['uid'] == uid:
 							person_validated = True
 							break
 
@@ -542,8 +543,8 @@ for s in ldap_services():
 					else:
 						ldap_delete("P", uid, m[0])
 
-		if not o_validated:
-			ldap_delete("CO", o, co[0])
+			if not collaboration_validated:
+				ldap_delete("CO", o, co[0])
 
 	if not service_validated:
 		ldap_delete("SERVICE", service, s[0])
