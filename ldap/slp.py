@@ -159,7 +159,7 @@ def ldap_services():
 	return l
 
 def ldap_collobarations(service):
-	l = ldap_session.search_s(f"dc={service}{LDAP_BASE}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organization)(o=*))")
+	l = ldap_session.search_s(f"dc={service},{LDAP_BASE}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=organization)(o=*))")
 	log_ldap_result(l)
 	return l
 
@@ -446,7 +446,7 @@ for c in sbs_collaborations:
 		if s['entity_id'] not in sbs_services:
 			sbs_services[s['entity_id']] = {}
 
-		sbs_services[s['entity_id']][c['identifier'] = c
+		sbs_services[s['entity_id']][c['identifier']] = c
 
 	# Mark this api( entry as hosted by SBS_HOST...
 	c['extra']['host'] = SBS_HOST
@@ -516,7 +516,7 @@ for s in ldap_services():
 	if service in sbs_services:
 		service_validated = True
 
-		log_debug(f"CHECK Service: {service_entity_id} VALIDATED !")
+		log_debug(f"CHECK Service: {service} VALIDATED !")
 
 		for co in ldap_collobarations(service):
 			o = co[1]['o'][0].decode()
@@ -533,7 +533,7 @@ for s in ldap_services():
 					person_validated = False
 
 					for u in sbs_services[service][o]['users']:
-						if u["user"]['uid'] == uid:
+						if sbs_services[service][o]['users'][u]['user']['uid'] == uid:
 							person_validated = True
 							break
 
