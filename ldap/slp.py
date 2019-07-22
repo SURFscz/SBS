@@ -548,7 +548,7 @@ for dc in ldap_services():
 
 					if group_validated:
 						# No eliminate members who no longer exist...
-						members = list(g[1]['member'][0])
+						members = list(g[1]['member'])
 
 						for uid in members:
 							log_debug(f"CHECK service: {service}, Collaboration: {collaboration}, Group: {cn}, Member: {uid.decode()}...")
