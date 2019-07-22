@@ -556,17 +556,12 @@ for dc in ldap_services():
 							member_validated = False
 
 							for u in sbs_services[service][collaboration]['users']:
-									if uid.decode() ==
-										f"uid={sbs_services[service][collaboration]['users'][u]['user']['uid']},"
-										"ou=People,"
-										"o={collaboration},"
-										"dc={service},"
-										"{LDAP_BASE}":
+									if uid.decode() == f"uid={sbs_services[service][collaboration]['users'][u]['user']['uid']},ou=People,o={collaboration},dc={service},{LDAP_BASE}":
 										member_validated = True
-									break
+										break
 
 							if not member_validated:
-								members.delete(uid)
+								members.remove(uid)
 
 						if len(members) == 0:
 							# Group has no more members, then the group becomes invalid...
