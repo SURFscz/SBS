@@ -168,6 +168,11 @@ def ldap_people(service, collabaration):
 	log_ldap_result(l)
 	return l
 
+def ldap_groups(service, collabaration):
+	l = ldap_session.search_s(f"ou=Groups,o={collabaration},dc={service},{LDAP_BASE}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=groupOfNames)(cn*))")
+	log_ldap_result(l)
+	return l
+
 objectclass_dependencies = {
 	'labeledURI': 'labeledURIObject',
 	'sshPublicKey': 'ldapPublicKey'
@@ -527,8 +532,53 @@ for dc in ldap_services():
 			if collaboration in sbs_services[service]:
 				collaboration_validated = True
 
-				for m in ldap_people(service, collaboration):
-					uid = m[1]['uid'][0].decode()
+				for g in ldap_groups(service, collabaration):
+					cn = g[1]['cn'][0].decode()
+
+					log_debug(f"CHECK service: {service}, Collaboration: {collaboration}, Group: {cn}...")
+
+					group_validated = false
+
+					# First check that group is still used
+					# At least one person is connected to this group...
+					for u in sbs_services[service][collaboration]['users']:
+						if cn in sbs_services[service][collaboration]['users'][u]['roles']:
+							group_validated = True
+							break
+
+					if group_validated:
+						# No eliminate members who no longer exist...
+						members = list(g[1]['member'])
+
+						for uid in members:
+							log_debug(f"CHECK service: {service}, Collaboration: {collaboration}, Group: {cn}, Member: {uid.decode()}...")
+
+							member_validated = False
+
+							for u in sbs_services[service][collaboration]['users']:
+								if sbs_services[service][collaboration]['users'][u]['user']['uid'] == uid.decode():
+								member_validated = True
+								break
+
+							if not member_validated:
+								members.delete(uid)
+
+						if len(members) == 0:
+							# Group has no more members, then the group becomes invalid...
+							group_validated = False
+						elif if len(members) < len(g[1]['member'):
+							try:
+								ldap_session.modify_s(f"cn={cn},ou=Groups,{base}",
+									modlist.modifyModlist(g[1]['member'], members)
+								)
+							except Exception as e:
+								panic(f"Error during LDAP ADD, Error: {str(e)}")
+
+					if not group_validated:
+						ldap_delete("G", cn, g[0])
+
+				for p in ldap_people(service, collaboration):
+					uid = p[1]['uid'][0].decode()
 
 					log_debug(f"CHECK service: {service}, Collaboration: {collaboration}, Member: {uid}...")
 					person_validated = False
@@ -539,7 +589,7 @@ for dc in ldap_services():
 							break
 
 					if not person_validated:
-						ldap_delete("P", uid, m[0])
+						ldap_delete("P", uid, p[0])
 
 			if not collaboration_validated:
 				ldap_delete("CO", collaboration, o[0])
