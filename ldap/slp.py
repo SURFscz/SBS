@@ -169,7 +169,7 @@ def ldap_people(service, collabaration):
 	return l
 
 def ldap_groups(service, collabaration):
-	l = ldap_session.search_s(f"ou=Groups,o={collabaration},dc={service},{LDAP_BASE}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=groupOfNames)(cn*))")
+	l = ldap_session.search_s(f"ou=Groups,o={collabaration},dc={service},{LDAP_BASE}", ldap.SCOPE_ONELEVEL, f"(&(objectclass=groupOfNames)(cn=*))")
 	log_ldap_result(l)
 	return l
 
@@ -532,12 +532,12 @@ for dc in ldap_services():
 			if collaboration in sbs_services[service]:
 				collaboration_validated = True
 
-				for g in ldap_groups(service, collabaration):
+				for g in ldap_groups(service, collaboration):
 					cn = g[1]['cn'][0].decode()
 
 					log_debug(f"CHECK service: {service}, Collaboration: {collaboration}, Group: {cn}...")
 
-					group_validated = false
+					group_validated = False
 
 					# First check that group is still used
 					# At least one person is connected to this group...
@@ -548,7 +548,7 @@ for dc in ldap_services():
 
 					if group_validated:
 						# No eliminate members who no longer exist...
-						members = list(g[1]['member'])
+						members = list(g[1]['member'][0])
 
 						for uid in members:
 							log_debug(f"CHECK service: {service}, Collaboration: {collaboration}, Group: {cn}, Member: {uid.decode()}...")
@@ -556,9 +556,14 @@ for dc in ldap_services():
 							member_validated = False
 
 							for u in sbs_services[service][collaboration]['users']:
-								if sbs_services[service][collaboration]['users'][u]['user']['uid'] == uid.decode():
-								member_validated = True
-								break
+									if uid.decode() ==
+										f"uid={sbs_services[service][collaboration]['users'][u]['user']['uid']},"
+										"ou=People,"
+										"o={collaboration},"
+										"dc={service},"
+										"{LDAP_BASE}":
+										member_validated = True
+									break
 
 							if not member_validated:
 								members.delete(uid)
@@ -566,13 +571,14 @@ for dc in ldap_services():
 						if len(members) == 0:
 							# Group has no more members, then the group becomes invalid...
 							group_validated = False
-						elif if len(members) < len(g[1]['member'):
-							try:
-								ldap_session.modify_s(f"cn={cn},ou=Groups,{base}",
-									modlist.modifyModlist(g[1]['member'], members)
+						elif len(members) < len(g[1]['member']):
+							ldap_session.modify_s(
+								g[0],
+								modlist.modifyModlist(
+									{ 'member': g[1]['member'] },
+									{ 'member': members }
 								)
-							except Exception as e:
-								panic(f"Error during LDAP ADD, Error: {str(e)}")
+							)
 
 					if not group_validated:
 						ldap_delete("G", cn, g[0])
@@ -580,7 +586,7 @@ for dc in ldap_services():
 				for p in ldap_people(service, collaboration):
 					uid = p[1]['uid'][0].decode()
 
-					log_debug(f"CHECK service: {service}, Collaboration: {collaboration}, Member: {uid}...")
+					log_debug(f"CHECK service: {service}, Collaboration: {collaboration}, Person: {uid}...")
 					person_validated = False
 
 					for u in sbs_services[service][collaboration]['users']:
