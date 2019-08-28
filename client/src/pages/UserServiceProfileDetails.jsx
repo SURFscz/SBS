@@ -29,12 +29,8 @@ class UserServiceProfileDetails extends React.Component {
             cancelDialogAction: () => true,
             service: {},
             authorisation_group: {collaboration: {}},
-            fileName: null,
-            fileTypeError: false,
             invalidInputs: {},
-            initial: true,
-            fileInputKey: new Date().getMilliseconds(),
-            convertSSHKey: true
+            initial: true
         };
     }
 

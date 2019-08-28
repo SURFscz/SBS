@@ -6,7 +6,7 @@ from server.db.db import User
 
 oidc_claim_name = "name"
 
-user_service_profile_claims = ["name", "email", "address", "ssh_key"]
+user_service_profile_claims = ["name", "email", "address"]
 
 claim_attribute_mapping = {
     oidc_claim_name: "name",
@@ -37,11 +37,11 @@ attribute_saml_mapping = {
     "schac_home_organisation": "urn:mace:terena.org:attribute-def:schacHomeOrganization",
     "family_name": "urn:mace:dir:attribute-def:sn",
     "given_name": "urn:mace:dir:attribute-def:givenName",
-    "email": "urn:mace:dir:attribute-def:mail"
+    "email": "urn:mace:dir:attribute-def:mail",
+    "ssh_key": "urn:oid:1.3.6.1.4.1.24552.1.1.1.13"
 }
 
-user_service_profile_saml_mapping = {**attribute_saml_mapping,
-                                     "ssh_key": "urn:oid:1.3.6.1.4.1.24552.1.1.1.13"}
+user_service_profile_saml_mapping = {**attribute_saml_mapping}
 
 
 def _get_header_key(key):

@@ -22,6 +22,7 @@ I18n.translations.nl = {
         collaborations: "Samenwerkingen",
         organisations: "Organisaties",
         services: "Services",
+        profile: "Profiel",
         impersonate: "Impersonate",
     },
     login: {
@@ -48,6 +49,27 @@ I18n.translations.nl = {
     explain: {
         title: "Uitlef {{subject}}",
         impersonate: "Impersonate"
+    },
+    user: {
+        titleUpdate: "Update je user profiel keys",
+        ssh_key: "SSH public key",
+        ssh_keyPlaceholder: "Uw publiek SSH key om in te loggen op de dienst",
+        ssh_keyTooltip: "Uw publieke SSH key<br/>zal worden uitgewisseld<br/>met de (LDAP van) deze dienst.<br/><br/>U kunt uw publieke SSH-key ook uploaden.<br/>Om verborgen bestanden op een Mac te tonen<br/>drukt u <code>CMD-SHIFT-PERIOD</code>",
+        sshKeyError: "Ongeldige SSH key",
+        sshConvertInfo: "Dit RFC 4716 SSH-formaat converteren naar het bestandsformaat OpenSSH-key bij het opslaan van het profiel?",
+        totp_key: "TOTP key",
+        totp_keyPlaceholder: "Your Google authenticator key",
+        totp_keyTooltip: "Google Authenticator key",
+        tiqr_key:"Tiqr key",
+        tiqr_keyPlaceholder:"Your tiqr key",
+        tiqr_keyTooltip:"Tiqr key",
+        ubi_key: "Your UBI key",
+        ubi_keyPlaceholder: "Generic U2F/CTAP support",
+        ubi_keyTooltip: "Generic U2F/CTAP support",
+        update: "Update",
+        flash: {
+            updated: "Je profiel is bijgewerkt"
+        }
     },
     impersonate: {
         title: "Wie wilt u zijn?",
@@ -618,11 +640,6 @@ I18n.translations.nl = {
         identifier: "Identifier",
         identifierPlaceholder: "De identifier voor dit dienstprofiel",
         identifierTooltip: "Uw unieke identifier binnen<br/> de context van dit<br/>dienstprofiel",
-        ssh_key: "SSH public key",
-        ssh_keyPlaceholder: "Uw publiek SSH key om in te loggen op de dienst",
-        ssh_keyTooltip: "Uw publieke SSH key<br/>zal worden uitgewisseld<br/>met de (LDAP van) deze dienst.<br/><br/>U kunt uw publieke SSH-key ook uploaden.<br/>Om verborgen bestanden op een Mac te tonen<br/>drukt u <code>CMD-SHIFT-PERIOD</code>",
-        sshKeyError: "Ongeldige SSH key",
-        sshConvertInfo: "Dit RFC 4716 SSH-formaat converteren naar het bestandsformaat OpenSSH-key bij het opslaan van het profiel?",
         telephone_number: "Mobiel",
         role: "Rol",
         searchPlaceHolder: "Zoek in uw dienstprofielen...",

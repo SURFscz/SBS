@@ -66,13 +66,27 @@ def seed(db):
         db.session.execute(table.delete())
     db.session.commit()
 
-    john = User(uid="urn:john", name=john_name, email="john@example.org")
+    john = User(uid="urn:john", name=john_name, email="john@example.org",
+                ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
+                        "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
+                        "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
+                        "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
+                        "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
+                        "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
+                        "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org")
     admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org")
     roger = User(uid="urn:roger", name=roger_name, email="roger@example.org")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org")
-    james = User(uid="urn:james", name=james_name, email="james@example.org")
+    james = User(uid="urn:james", name=james_name, email="james@example.org",
+                 ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
+                         "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
+                         "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
+                         "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
+                         "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
+                         "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
+                         "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org")
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org")
 
@@ -177,14 +191,7 @@ def seed(db):
     john_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
                                       user=john, name=john_name, telephone_number="0612345678",
                                       identifier=str(uuid.uuid4()),
-                                      address="Postal 1234AA", email="john@org.com",
-                                      ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
-                                              "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
-                                              "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
-                                              "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
-                                              "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
-                                              "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
-                                              "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
+                                      address="Postal 1234AA", email="john@org.com")
 
     jane_user_service_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
                                                    user=jane, identifier=str(uuid.uuid4()))
@@ -195,7 +202,8 @@ def seed(db):
                                     collaboration=ai_computing, hash=token_urlsafe())
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing, hash=token_urlsafe())
     join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=token_urlsafe())
-    join_request_uva_research = JoinRequest(message="Please...", user=james, collaboration=uva_research, hash=token_urlsafe())
+    join_request_uva_research = JoinRequest(message="Please...", user=james, collaboration=uva_research,
+                                            hash=token_urlsafe())
 
     _persist(db, join_request_john, join_request_peter, join_request_mary, join_request_uva_research)
 

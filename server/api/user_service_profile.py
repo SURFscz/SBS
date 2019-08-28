@@ -1,9 +1,7 @@
 # -*- coding: future_fstrings -*-
-import subprocess
-import tempfile
 import uuid
 
-from flask import Blueprint, request as current_request
+from flask import Blueprint
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint, query_param, ctx_logger
@@ -107,16 +105,4 @@ def my_user_service_profiles():
 @json_endpoint
 def update_user_service_profile():
     confirm_owner_of_user_service_profile()
-    user_service_profile = current_request.get_json()
-    if "ssh_key" in user_service_profile:
-        if "convertSSHKey" in user_service_profile and user_service_profile["convertSSHKey"]:
-            ssh_key = user_service_profile["ssh_key"]
-            if ssh_key and ssh_key.startswith("---- BEGIN SSH2 PUBLIC KEY ----"):
-                with tempfile.NamedTemporaryFile() as f:
-                    f.write(ssh_key.encode())
-                    f.flush()
-                    res = subprocess.run(["ssh-keygen", "-i", "-f", f.name], stdout=subprocess.PIPE)
-                    if res.returncode == 0:
-                        user_service_profile["ssh_key"] = res.stdout.decode()
-
-    return update(UserServiceProfile, custom_json=user_service_profile, allow_child_cascades=False)
+    return update(UserServiceProfile, allow_child_cascades=False)

@@ -2,10 +2,13 @@
 import itertools
 import json
 import os
+import subprocess
+import tempfile
 
 from flask import Blueprint, request as current_request, session, jsonify
 from sqlalchemy import text, or_
 from sqlalchemy.orm import contains_eager
+from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, ctx_logger
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
@@ -13,6 +16,7 @@ from server.auth.user_claims import claim_attribute_hash_headers, claim_attribut
     get_user_uid
 from server.db.db import User, OrganisationMembership, CollaborationMembership, db
 from server.db.defaults import full_text_search_autocomplete_limit
+from server.db.models import update
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
@@ -171,6 +175,39 @@ def refresh():
     user_id = current_user_id()
     user = _user_query().filter(User.id == user_id).one()
     return _user_json_response(user)
+
+
+@user_api.route("/", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def update_user():
+    headers = current_request.headers
+    user_id = current_request.get_json()["id"]
+
+    impersonate_id = headers.get("X-IMPERSONATE-ID", default=None, type=int)
+    if impersonate_id:
+        confirm_allow_impersonation()
+    else:
+        if user_id != current_user_id():
+            raise Forbidden()
+
+    user = User.query.get(user_id)
+    custom_json = jsonify(user).json
+    user_json = current_request.get_json()
+    for attr in ["ssh_key", "ubi_key", "tiqr_key", "totp_key"]:
+        custom_json[attr] = user_json.get(attr)
+
+    if "ssh_key" in user_json:
+        if "convertSSHKey" in user_json and user_json["convertSSHKey"]:
+            ssh_key = user_json["ssh_key"]
+            if ssh_key and ssh_key.startswith("---- BEGIN SSH2 PUBLIC KEY ----"):
+                with tempfile.NamedTemporaryFile() as f:
+                    f.write(ssh_key.encode())
+                    f.flush()
+                    res = subprocess.run(["ssh-keygen", "-i", "-f", f.name], stdout=subprocess.PIPE)
+                    if res.returncode == 0:
+                        custom_json["ssh_key"] = res.stdout.decode()
+
+    return update(User, custom_json=custom_json, allow_child_cascades=False)
 
 
 @user_api.route("/other", strict_slashes=False)
