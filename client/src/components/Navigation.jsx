@@ -49,6 +49,7 @@ export default class Navigation extends React.PureComponent {
                     {(currentUser.admin || isCollaborationAdmin || isOrganisationAdmin) && this.renderItem("/collaborations", "collaborations")}
                     {currentUser.admin && this.renderItem("/organisations", "organisations")}
                     {currentUser.admin && this.renderItem("/services", "services")}
+                    {this.renderItem("/profile", "profile")}
                     {mayImpersonate && this.renderItem("/impersonate", "impersonate", "menu-item right")}
                 </div>
                 {this.renderSpinner()}

@@ -39,6 +39,7 @@ import UserServiceProfileDetails from "./UserServiceProfileDetails";
 import Login from "./Login";
 import {ProtectedRoute} from "./ProtectedRoute";
 import NewApiKey from "./NewApiKey";
+import Profile from "./Profile";
 
 addIcons();
 
@@ -283,6 +284,11 @@ class App extends React.Component {
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={Impersonate}
                                    impersonator={impersonator} {...props}/>}/>
+
+                        <Route path="/profile"
+                               render={props => <ProtectedRoute
+                                   currentUser={currentUser} Component={Profile}
+                                   refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 

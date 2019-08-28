@@ -121,6 +121,10 @@ export function searchUsers(q, organisationId, collaborationId, limitToOrganisat
     return fetchJson(`/api/users/search?q=${encodeURIComponent(q)}${organisationIdPart}${collaborationIdPart}${organisationAdminsPart}${collaborationAdminsPart}`);
 }
 
+export function updateUser(body) {
+    return postPutJson("/api/users", body, "put");
+}
+
 export function reportError(error) {
     return postPutJson("/api/users/error", error, "post");
 }

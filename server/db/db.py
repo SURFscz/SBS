@@ -45,6 +45,10 @@ class User(Base, db.Model):
     family_name = db.Column("family_name", db.String(length=255), nullable=True)
     given_name = db.Column("given_name", db.String(length=255), nullable=True)
     email = db.Column("email", db.String(length=255), nullable=True)
+    ssh_key = db.Column("ssh_key", db.Text(), nullable=True)
+    ubi_key = db.Column("ubi_key", db.Text(), nullable=True)
+    tiqr_key = db.Column("tiqr_key", db.Text(), nullable=True)
+    totp_key = db.Column("totp_key", db.Text(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="user",
@@ -160,7 +164,6 @@ class UserServiceProfile(Base, db.Model):
     authorisation_group_id = db.Column(db.Integer(), db.ForeignKey("authorisation_groups.id"))
     authorisation_group = db.relationship("AuthorisationGroup")
     name = db.Column("name", db.String(length=255), nullable=True)
-    ssh_key = db.Column("ssh_key", db.Text(), nullable=True)
     email = db.Column("email", db.String(length=255), nullable=True)
     address = db.Column("address", db.String(length=255), nullable=True)
     role = db.Column("role", db.String(length=255), nullable=True)

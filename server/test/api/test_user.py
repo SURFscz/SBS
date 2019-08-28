@@ -1,8 +1,8 @@
 # -*- coding: future_fstrings -*-
 from server.auth.user_claims import claim_attribute_mapping
-from server.db.db import Organisation, Collaboration
+from server.db.db import Organisation, Collaboration, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name, ai_computing_name
+from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name
 from flask import current_app
 
 
@@ -105,3 +105,39 @@ class TestUser(AbstractTest):
         headers = {"OIDC_CLAIM_" + key: "Ã«Ã¤Ã¦Å¡" for key in claim_attribute_mapping.keys()}
         user = self.client.get("api/users/me", headers=headers).json
         self.assertEqual("ëäæš", user["email"])
+
+    def test_update(self):
+        roger = self.find_entity_by_name(User, roger_name)
+
+        self.login("urn:roger")
+
+        body = {"ssh_key": "ssh_key",
+                "ubi_key": "ubi_key",
+                "tiqr_key": "tiqr_key",
+                "totp_key": "totp_key",
+                "id": roger.id,
+                "email": "bogus"}
+
+        self.put("/api/users", body, with_basic_auth=False)
+
+        roger = User.query.get(roger.id)
+        roger.ssh_key = "ssh_key"
+
+    def test_update_user_service_profile_ssh_key_conversion(self):
+        user = self.find_entity_by_name(User, john_name)
+        self.login("urn:john")
+
+        ssh2_pub = self.read_file("ssh2.pub")
+        body = {"ssh_key": ssh2_pub,
+                "convertSSHKey": True,
+                "id": user.id}
+        res = self.put(f"/api/users", body=body)
+        self.assertTrue(res["ssh_key"].startswith("ssh-rsa"))
+
+    def test_update_user_service_profile_ssh_key_conversion_not_default(self):
+        user = self.find_entity_by_name(User, john_name)
+        self.login("urn:john")
+        ssh2_pub = self.read_file("ssh2.pub")
+        body = {"ssh_key": ssh2_pub, "id": user.id}
+        res = self.put(f"/api/users", body=body)
+        self.assertTrue(res["ssh_key"].startswith("---- BEGIN SSH2 PUBLIC KEY ----"))
