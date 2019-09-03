@@ -89,8 +89,9 @@ def seed(db):
                          "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org")
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org")
+    daisuke = User(uid="urn:daisuke", name="Takahashi, 髙橋大輔", email="daisuke@ucc.org")
 
-    _persist(db, john, mary, peter, admin, roger, harry, james, sarah, jane)
+    _persist(db, john, mary, peter, admin, roger, harry, james, sarah, jane, daisuke)
 
     uuc = Organisation(name=uuc_name, tenant_identifier="https://uuc", short_name="uuc",
                        description="Unincorporated Urban Community",
