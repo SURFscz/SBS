@@ -11,8 +11,7 @@ import SelectField from "../components/SelectField";
 
 import {userServiceProfileStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {validEmailRegExp, validPublicSSH2KeyRegExp, validPublicSSHKeyRegExp} from "../validations/regExps";
-import CheckBox from "../components/CheckBox";
+import {validEmailRegExp} from "../validations/regExps";
 
 class UserServiceProfileDetails extends React.Component {
 
@@ -92,47 +91,15 @@ class UserServiceProfileDetails extends React.Component {
         }
     };
 
-    validateSSHKey = e => {
-        const sshKey = e.target.value;
-        const isValid = isEmpty(sshKey) || validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey);
-        this.setState({fileTypeError: !isValid, fileInputKey: new Date().getMilliseconds()});
-    };
-
-    onFileRemoval = e => {
-        stopEvent(e);
-        this.setState({
-            fileName: null, ssh_key: "", fileTypeError: false,
-            fileInputKey: new Date().getMilliseconds()
-        });
-    };
-
-    onFileUpload = e => {
-        const files = e.target.files;
-        if (!isEmpty(files)) {
-            const file = files[0];
-            const reader = new FileReader();
-            reader.onload = () => {
-                const sshKey = reader.result.toString();
-                if (validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey)) {
-                    this.setState({fileName: file.name, fileTypeError: false, ssh_key: sshKey});
-                } else {
-                    this.setState({fileName: file.name, fileTypeError: true, ssh_key: ""});
-                }
-            };
-            reader.readAsText(file);
-        }
-    };
-
     render() {
         const {
-            service, authorisation_group, name, email, address, identifier, ssh_key, role, status,
-            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
-            invalidInputs, initial, convertSSHKey
+            service, authorisation_group, name, email, address, identifier, role, status,
+            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction,
+            invalidInputs, initial
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const title = I18n.t("userServiceProfile.titleUpdate", {name: service.name});
         const back = "/home";
-        const showConvertSSHKey = !isEmpty(ssh_key) && validPublicSSH2KeyRegExp.test(ssh_key);
         return (
             <div className="mod-user-service-profile">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -197,26 +164,6 @@ class UserServiceProfileDetails extends React.Component {
                                 onChange={e => this.setState({identifier: e.target.value})}
                                 toolTip={I18n.t("userServiceProfile.identifierTooltip")}
                                 disabled={true}/>
-
-                    <InputField value={ssh_key}
-                                name={I18n.t("userServiceProfile.ssh_key")}
-                                placeholder={I18n.t("userServiceProfile.ssh_keyPlaceholder")}
-                                onChange={e => this.setState({ssh_key: e.target.value})}
-                                toolTip={I18n.t("userServiceProfile.ssh_keyTooltip")}
-                                onBlur={this.validateSSHKey}
-                                fileUpload={true}
-                                fileName={fileName}
-                                fileInputKey={fileInputKey}
-                                onFileRemoval={this.onFileRemoval}
-                                onFileUpload={this.onFileUpload}
-                                acceptFileFormat=".pub"/>
-                    {fileTypeError &&
-                    <span
-                        className="error">{I18n.t("userServiceProfile.sshKeyError")}</span>}
-                    {showConvertSSHKey &&
-                    <CheckBox name="convertSSHKey" value={convertSSHKey}
-                              info={I18n.t("userServiceProfile.sshConvertInfo")}
-                              onChange={e => this.setState({convertSSHKey: e.target.checked})}/>}
 
                     <SelectField value={this.statusOptions.find(option => status === option.value)}
                                  options={this.statusOptions}
