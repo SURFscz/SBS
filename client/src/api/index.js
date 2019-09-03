@@ -39,6 +39,14 @@ function validateResponse(showErrorDialog) {
     };
 }
 
+// It is not allowed to put non asci characters in HTTP headers
+function sanitizeHeader(s) {
+    if (typeof s === 'string' || s instanceof String) {
+        return isEmpty(s) ? s : s.replace(/[^\x00-\x7F]/g, ""); // eslint-disable-line no-control-regex
+    }
+    return s;
+}
+
 function validFetch(path, options, headers = {}, showErrorDialog = true) {
     const contentHeaders = {
         "Accept": "application/json",
@@ -47,7 +55,7 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
     };
     if (impersonator) {
         impersonation_attributes.forEach(attr =>
-            contentHeaders[`X-IMPERSONATE-${attr.toUpperCase()}`] = impersonator[attr]);
+            contentHeaders[`X-IMPERSONATE-${attr.toUpperCase()}`] = sanitizeHeader(impersonator[attr]));
     }
     const fetchOptions = Object.assign({}, {headers: contentHeaders}, options, {
         credentials: "same-origin",
@@ -271,7 +279,7 @@ export function deleteOrganisation(id) {
 
 //JoinRequests
 export function joinRequestByHash(hash) {
-    return fetchJson(`/api/join_requests/${hash}`,{},{}, false);
+    return fetchJson(`/api/join_requests/${hash}`, {}, {}, false);
 }
 
 export function joinRequestForCollaboration(clientData) {
