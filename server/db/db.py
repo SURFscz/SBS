@@ -35,6 +35,7 @@ class User(Base, db.Model):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     uid = db.Column("uid", db.String(length=512), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=True)
+    username = db.Column("username", db.String(length=255), nullable=True)
     nick_name = db.Column("nick_name", db.String(length=255), nullable=True)
     edu_members = db.Column("edu_members", db.Text(), nullable=True)
     address = db.Column("address", db.String(length=255), nullable=True)

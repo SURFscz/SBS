@@ -62,6 +62,23 @@ def _user_json_response(user):
     return {**json_user, **is_admin}, 200
 
 
+def generate_unique_username(user):
+    index = user.name.lower().find(" ")
+    if index < 0 or index > 8:
+        index = 8
+
+    username = user.name[0:index].lower()
+    counter = 2
+    while True:
+        if User.query.filter(User.username == username).count() == 0:
+            return username
+        offset = len(str(counter)) if counter > 2 else 0
+        max_len = 8 if offset > 0 else 7
+        tip_index = min(max_len, len(username)) - offset
+        username = username[0:tip_index] + str(counter)
+        counter = counter + 1
+
+
 @user_api.route("/search", strict_slashes=False)
 @json_endpoint
 def user_search():
@@ -139,7 +156,10 @@ def me():
         if not user:
             user = User(uid=uid, created_by="system", updated_by="system")
             add_user_claims(request_headers, uid, user)
+            user.username = generate_unique_username(user)
+
             logger.info(f"Provisioning new user {user.uid}")
+
             user = db.session.merge(user)
             db.session.commit()
         else:

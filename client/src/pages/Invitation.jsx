@@ -251,7 +251,8 @@ class Invitation extends React.Component {
                     {(!isAdminLink && !isExpired && !errorSituation) &&
                     <section className={`form-element ${acceptedTerms ? "" : "invalid"}`}>
                         <label className="form-label"
-                               dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: invite.collaboration.name})}}/>{this.requiredMarker()}
+                               dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo",
+                                       {collaboration: invite.collaboration.name, aup: invite.collaboration.accepted_user_policy})}}/>{this.requiredMarker()}
                         <CheckBox name="policy"
                                   className={`checkbox ${!initial && !acceptedTerms ? "required" : ""}`}
                                   value={acceptedTerms}

@@ -30,6 +30,7 @@ attribute_saml_mapping = {
     "name": "urn:mace:dir:attribute-def:cn",
     "address": "urn:mace:dir:attribute-def:postalAddress",
     "nick_name": "urn:mace:dir:attribute-def:displayName",
+    "username": "urn:mace:dir:attribute-def:shortName",
     "edu_members": is_member_of_saml,
     "affiliation": "urn:mace:dir:attribute-def:eduPersonAffiliation",
     "scoped_affiliation": "urn:mace:dir:attribute-def:eduPersonScopedAffiliation",

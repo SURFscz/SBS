@@ -115,7 +115,7 @@ I18n.translations.nl = {
             reference: "Kent u al iemand die lid is van {{collaboration}}?",
             referencePlaceholder: "Vul de namen in van mensen die u kent die lid zijn van {{collaboration}}, zoals mede-onderzoekers.",
             policy: "Onze Policy",
-            policyInfo: "U dient in te stemmen dat we uw informatie doorgeven aan diensten die zijn gekoppeld aan {{collaboration}}. Lees a.u.b. onze <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy\"'>Acceptable Use Policy</a> waar u mee akkoord gaat.",
+            policyInfo: "U dient in te stemmen dat we uw informatie doorgeven aan diensten die zijn gekoppeld aan {{collaboration}}. Lees a.u.b. onze <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy</a> waar u mee akkoord gaat.",
             policyConfirmation: "Ik heb de Acceptable Use Policy (AUP) van {{collaboration}} gelezen en accepteer deze."
         },
         step3: {
@@ -158,7 +158,7 @@ I18n.translations.nl = {
         authorisations: "Autorisatie groepen",
         invitations: "Uitnodigingen",
         services: "Services",
-        add: "Nieuw",
+        add: "Nieuwe samenwerking",
         searchPlaceHolder: "ZOEK OP ALLE SAMENWERKINGEN..."
     },
     accessTypes: {
@@ -249,13 +249,13 @@ I18n.translations.nl = {
         members: "Leden",
         collaborations: "Samenwerkingen",
         invitations: "Uitnodigingen",
-        add: "Nieuw",
+        add: "Nieuwe organisatie",
         searchPlaceHolder: "DOORZOEK ALLE ORGANISATIES...",
         deleteConfirmation: "Weet u zeker dat u Service {{name}} wilt verwijderen?"
     },
     services: {
         title: "Services",
-        add: "Nieuw",
+        add: "Nieuwe Service",
         searchPlaceHolder: "DOORZOEK ALLE SERVICES..."
     },
     service: {
