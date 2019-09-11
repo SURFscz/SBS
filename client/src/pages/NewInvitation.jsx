@@ -3,7 +3,12 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {collaborationById, collaborationInvitations, collaborationInvitationsPreview} from "../api";
+import {
+    authorisationGroupsByCollaboration,
+    collaborationById,
+    collaborationInvitations,
+    collaborationInvitationsPreview
+} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
@@ -33,6 +38,8 @@ class NewInvitation extends React.Component {
         this.state = {
             collaboration: undefined,
             administrators: administrators,
+            authorisationGroups: [],
+            selectedAuthorisationGroups: [],
             fileName: null,
             email: "",
             fileEmails: [],
@@ -56,12 +63,16 @@ class NewInvitation extends React.Component {
 
     componentDidMount = () => {
         const params = this.props.match.params;
-        if (params.collaboration_id) {
-            collaborationById(params.collaboration_id)
-                .then(json =>
+        const collaborationId = params.collaboration_id;
+        if (collaborationId) {
+            Promise.all([collaborationById(collaborationId),
+                authorisationGroupsByCollaboration(collaborationId)])
+
+                .then(res =>
                     this.setState({
-                        collaboration: json,
-                        intended_role: json.collaboration_memberships.some(m => m.role === "admin") ? "member" : "admin"
+                        collaboration: res[0],
+                        intended_role: res[0].collaboration_memberships.some(m => m.role === "admin") ? "member" : "admin",
+                        authorisationGroups: res[1].map(ag => ({value: ag.id, label: ag.name})),
                     })
                 );
         } else {
@@ -80,12 +91,14 @@ class NewInvitation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {administrators, message, collaboration, expiry_date, fileEmails, intended_role} = this.state;
+            const {administrators, message, collaboration, expiry_date, fileEmails, intended_role,
+            selectedAuthorisationGroups} = this.state;
             collaborationInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
                 intended_role: intended_role,
                 collaboration_id: collaboration.id,
+                authorisation_groups: selectedAuthorisationGroups.map(ag => ag.value),
                 expiry_date: expiry_date.getTime() / 1000
             }).then(res => {
                 this.props.history.push(`/collaborations/${collaboration.id}`);
@@ -176,7 +189,8 @@ class NewInvitation extends React.Component {
 
     preview = () => <div dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>;
 
-    invitationForm = (email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, intended_role, message, expiry_date, disabledSubmit) =>
+    invitationForm = (email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
+                      intended_role, message, expiry_date, disabledSubmit, authorisationGroups, selectedAuthorisationGroups) =>
         <>
             <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                         placeholder={I18n.t("invitation.inviteesPlaceholder")}
@@ -221,6 +235,15 @@ class NewInvitation extends React.Component {
             <span
                 className="error">{I18n.t("invitation.requiredRole")}</span>}
 
+            <SelectField value={selectedAuthorisationGroups}
+                         options={authorisationGroups
+                             .filter(group => !selectedAuthorisationGroups.find(selectedGroup => selectedGroup.value === group.value))}
+                         name={I18n.t("invitation.authorisationGroups")}
+                         isMulti={true}
+                         toolTip={I18n.t("invitation.authorisationGroupsTooltip")}
+                         placeholder={I18n.t("invitation.authorisationGroupsPlaceHolder")}
+                         onChange={selectedOptions => this.setState({selectedAuthorisationGroups: [...selectedOptions]})}/>
+
             <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                         placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}
                         name={I18n.t("collaboration.message")}
@@ -245,7 +268,7 @@ class NewInvitation extends React.Component {
         const {
             email, initial, administrators, expiry_date, collaboration, intended_role,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName, fileInputKey,
-            fileTypeError, fileEmails, tabs, activeTab
+            fileTypeError, fileEmails, tabs, activeTab, authorisationGroups, selectedAuthorisationGroups
         } = this.state;
         if (collaboration === undefined) {
             return null;
@@ -280,7 +303,9 @@ class NewInvitation extends React.Component {
                 </div>
 
                 {activeTab === "form" && <div className="new-collaboration-invitation">
-                    {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, intended_role, message, expiry_date, disabledSubmit)}
+                    {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                        administrators, intended_role, message, expiry_date, disabledSubmit, authorisationGroups,
+                        selectedAuthorisationGroups)}
                 </div>}
                 {activeTab === "preview" && <div className="new-collaboration-invitation">
                     {this.preview()}

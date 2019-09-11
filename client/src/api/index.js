@@ -100,7 +100,7 @@ export function config() {
 //Users
 export function me(config) {
     const headers = (config.local) ? {
-        "OIDC_CLAIM_cmuid": "urn:john",
+        "OIDC_CLAIM_cmuid": "urn:john2",
         // "OIDC_CLAIM_cmuid": "urn:temp",
         "OIDC_CLAIM_Nickname": "jëhny",
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
@@ -412,6 +412,9 @@ export function myAuthorisationGroups() {
     return fetchJson("/api/authorisation_groups")
 }
 
+export function authorisationGroupsByCollaboration(collaboration_id) {
+    return fetchJson(`/api/authorisation_groups/all/${collaboration_id}`)
+}
 
 //AuthorisationGroupServices
 export function addAuthorisationGroupServices({authorisationGroupId, collaborationId, serviceIds}) {
@@ -490,3 +493,5 @@ export function createApiKey(apiKey) {
 export function deleteApiKey(id) {
     return fetchDelete(`/api/api_keys/${id}`)
 }
+
+

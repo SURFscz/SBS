@@ -125,3 +125,9 @@ class TestAuthorisationGroup(AbstractTest):
         authorisation_group_id = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation).id
         self.delete(f"/api/authorisation_groups", primary_key=authorisation_group_id)
         self.delete(f"/api/authorisation_groups", primary_key=authorisation_group_id, response_status_code=404)
+
+    def test_authorisation_groups_by_collaboration(self):
+        self.login("urn:admin")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        authorisation_groups = self.get(f"/api/authorisation_groups/all/{collaboration_id}")
+        self.assertEqual(2, len(authorisation_groups))

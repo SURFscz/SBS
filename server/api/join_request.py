@@ -67,6 +67,9 @@ def new_join_request():
     collaboration = Collaboration.query \
         .filter(Collaboration.id == collaboration_id).one()
 
+    if collaboration.disable_join_requests:
+        raise Conflict(f"Collaboration {collaboration.name} has disabled join requests")
+
     if _is_already_member(client_data):
         raise Conflict(f"User {current_user_name()} is already a member of {collaboration.name}")
 

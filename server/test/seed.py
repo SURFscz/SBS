@@ -37,6 +37,8 @@ collaboration_uva_researcher_uuid = str(uuid.uuid4())
 
 uva_research_name = "UVA UCC research"
 
+uu_disabled_join_request_name = "UU"
+
 service_mail_name = "Mail Services"
 service_mail_entity_id = "https://mail"
 
@@ -145,7 +147,12 @@ def seed(db):
                                  description="University of Amsterdam Research - Urban Crowd Control",
                                  organisation=uva, services=[cloud, storage, wiki],
                                  join_requests=[], invitations=[])
-    _persist(db, ai_computing, uva_research)
+    uu_disabled_join_request = Collaboration(name=uu_disabled_join_request_name,
+                                             identifier=str(uuid.uuid4()),
+                                             description="UU", disable_join_requests=True, organisation=uva,
+                                             services=[],
+                                             join_requests=[], invitations=[])
+    _persist(db, ai_computing, uva_research, uu_disabled_join_request)
 
     john_ai_computing = CollaborationMembership(role="member", user=john, collaboration=ai_computing)
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)

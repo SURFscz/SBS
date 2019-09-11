@@ -20,7 +20,8 @@ class Registration extends React.Component {
             collaborationName: null,
             collaborationId: null,
             adminEmail: null,
-            alreadyMember: false
+            alreadyMember: false,
+            noJoinRequestCollaboration: false
         }
     }
 
@@ -31,6 +32,11 @@ class Registration extends React.Component {
         } else {
             collaborationByName(collaboration)
                 .then(res => {
+                    if (res.disable_join_requests) {
+                        setFlash(I18n.t("registration.noJoinRequestCollaboration", {name: collaboration}), "error");
+                        this.setState({noJoinRequestCollaboration: true});
+                        return;
+                    }
                     const {user} = this.props;
                     const step = user.guest ? "1" : "2";
                     const promise = user.guest ? Promise.resolve(false) :
@@ -191,12 +197,12 @@ class Registration extends React.Component {
         step.startsWith(".") ? this.renderStepDivider(currentStep, step.substring(1, 3)) : this.renderStep(currentStep, step);
 
     render() {
-        const {step} = this.state;
+        const {step, noJoinRequestCollaboration} = this.state;
         return <div className="mod-registration">
             <div className="step-container">
-                {["1", ".1.", "2", ".2.", "3"].map(i => this.renderStepPart(step, i))}
+                {!noJoinRequestCollaboration && ["1", ".1.", "2", ".2.", "3"].map(i => this.renderStepPart(step, i))}
             </div>
-            {this[`renderForm${step}`]()}
+            {!noJoinRequestCollaboration && this[`renderForm${step}`]()}
         </div>
     }
 

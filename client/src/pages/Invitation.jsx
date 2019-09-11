@@ -18,6 +18,7 @@ import {stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import DateField from "../components/DateField";
+import SelectField from "../components/SelectField";
 
 class Invitation extends React.Component {
 
@@ -227,6 +228,14 @@ class Invitation extends React.Component {
                     {isAdminLink && <InputField value={invite.invitee_email}
                                                 name={I18n.t("invitation.invitee_email")}
                                                 disabled={true}/>}
+
+                    <SelectField
+                        value={(invite.authorisation_groups || []).map(ag => ({value: ag.id, label: ag.name}))}
+                        options={[]}
+                        name={I18n.t("invitation.authorisationGroups")}
+                        isMulti={true}
+                        disabled={true}
+                    />
 
                     <DateField value={moment(invite.expiry_date * 1000).toDate()}
                                name={I18n.t("invitation.expiryDate")}

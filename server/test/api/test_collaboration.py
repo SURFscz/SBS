@@ -17,7 +17,7 @@ class TestCollaboration(AbstractTest):
     def test_find_by_name_id(self):
         collaboration = self.get("/api/collaborations/find_by_name", query_data={"name": uva_research_name},
                                  with_basic_auth=False)
-        self.assertSetEqual({"id", "name", "admin_email"}, set(collaboration.keys()))
+        self.assertSetEqual({"id", "name", "admin_email", "disable_join_requests"}, set(collaboration.keys()))
 
     def test_search(self):
         self.login("urn:john")
@@ -98,7 +98,7 @@ class TestCollaboration(AbstractTest):
     def test_collaboration_delete(self):
         collaboration = self._find_by_name_id()
         self.delete("/api/collaborations", primary_key=collaboration["id"])
-        self.assertEqual(1, Collaboration.query.count())
+        self.assertEqual(2, Collaboration.query.count())
 
     def test_collaboration_delete_no_admin(self):
         collaboration = self._find_by_name_id()
@@ -117,7 +117,7 @@ class TestCollaboration(AbstractTest):
 
     def test_collaboration_all(self):
         collaborations = self.get("/api/collaborations/all")
-        self.assertEqual(2, len(collaborations))
+        self.assertEqual(3, len(collaborations))
 
     def test_collaboration_by_id(self):
         collaboration_id = self._find_by_name_id()["id"]

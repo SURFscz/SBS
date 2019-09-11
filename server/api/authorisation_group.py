@@ -85,6 +85,18 @@ def short_name_exists():
     return authorisation_group is not None, 200
 
 
+@authorisation_group_api.route("/all/<collaboration_id>", strict_slashes=False)
+@json_endpoint
+def authorisation_groups_by_collaboration(collaboration_id):
+    confirm_collaboration_admin(collaboration_id)
+
+    authorisation_groups = AuthorisationGroup.query \
+        .join(AuthorisationGroup.collaboration) \
+        .filter(AuthorisationGroup.collaboration_id == collaboration_id) \
+        .all()
+    return authorisation_groups, 200
+
+
 @authorisation_group_api.route("/<authorisation_group_id>/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def authorisation_group_by_id(authorisation_group_id, collaboration_id):
