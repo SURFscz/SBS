@@ -1,6 +1,11 @@
 # -*- coding: future_fstrings -*-
+import uuid
+
+from munch import munchify
+
+from server.api.user import generate_unique_username
 from server.auth.user_claims import claim_attribute_mapping
-from server.db.db import Organisation, Collaboration, User
+from server.db.db import Organisation, Collaboration, User, db
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name
 from flask import current_app
@@ -160,3 +165,13 @@ class TestUser(AbstractTest):
         body = {"ssh_key": ssh2_pub, "id": user.id}
         res = self.put(f"/api/users", body=body)
         self.assertTrue(res["ssh_key"].startswith("---- BEGIN SSH2 PUBLIC KEY ----"))
+
+    def test_generate_unique_username(self):
+        # we don't want this in the normal seed
+        for username in ["john", "john2", "john3", "cinderel", "cindere2", "cindere3"]:
+            db.session.merge(User(uid=str(uuid.uuid4()), username=username, created_by="test", updated_by="test",
+                                  name="name"))
+        db.session.commit()
+
+        short_names = [generate_unique_username(munchify({"name": n})) for n in ["John Doe", "Cinderella Doe"]]
+        self.assertListEqual(["john4", "cindere4"], short_names)

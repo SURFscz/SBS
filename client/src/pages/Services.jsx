@@ -90,6 +90,7 @@ class Services extends React.Component {
             <section className="service-search">
                 <div className="search"
                      tabIndex="1" onBlur={this.onBlurSearch(suggestions)}>
+
                     <input type="text"
                            ref={ref => this.inputSearch = ref}
                            className={adminClassName}
@@ -99,8 +100,8 @@ class Services extends React.Component {
                            placeholder={I18n.t("services.searchPlaceHolder")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
                     {isAdmin && <Button onClick={this.newService}
-                                        txt={I18n.t("services.add")}/>
-                    }
+                                        txt={I18n.t("services.add")}/>}
+
                 </div>
                 {showAutoCompletes && <Autocomplete suggestions={suggestions}
                                                     query={query}

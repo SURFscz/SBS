@@ -115,7 +115,7 @@ I18n.translations.en = {
             reference: "Do you have a reference within {{collaboration}}?",
             referencePlaceholder: "Write down the names of people you know within {{collaboration}} like co-researchers.",
             policy: "Our Policy",
-            policyInfo: "You must agree that your information will be used for resources linked to {{collaboration}}. Please check out <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy\"'>Acceptable Use Policy</a> to which you have agreed upon.",
+            policyInfo: "You must agree that your information will be used for resources linked to {{collaboration}}. Please check out <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy</a> to which you have agreed upon.",
             policyConfirmation: "I have read the Acceptable Use Policy of {{collaboration}} and accept it"
         },
         step3: {
@@ -158,7 +158,7 @@ I18n.translations.en = {
         authorisations: "Authorisation Groups",
         invitations: "Invitations",
         services: "Services",
-        add: "New",
+        add: "Create new Collaboration",
         searchPlaceHolder: "SEARCH FOR ALL COLLABORATIONS..."
     },
     accessTypes: {
@@ -240,7 +240,7 @@ I18n.translations.en = {
             created_at: "Since",
             actions: ""
         },
-        invite: "Invite",
+        invite: "Invite new members",
 
     },
     organisations: {
@@ -249,13 +249,13 @@ I18n.translations.en = {
         members: "Members",
         collaborations: "Collaborations",
         invitations: "Invitations",
-        add: "New",
+        add: "Create new Organisation",
         searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS...",
         deleteConfirmation: "Are you sure you want to delete Service {{name}}?"
     },
     services: {
         title: "Services",
-        add: "New",
+        add: "Create new Service",
         searchPlaceHolder: "SEARCH FOR ALL SERVICES..."
     },
     service: {
@@ -347,7 +347,7 @@ I18n.translations.en = {
         members: "Members of {{name}}",
         invitations: "Invitations for {{name}}",
         searchPlaceHolder: "Search for members",
-        invite: "Invite",
+        invite: "Invite new members",
         newApiKey: "Add new API key",
         noInvitations: "No pending invitations",
         member: {
@@ -378,7 +378,7 @@ I18n.translations.en = {
         },
         apiKeys: "API Keys of {{name}}",
         collaborations: "Collaborations of {{name}}",
-        newCollaboration: "New collaboration",
+        newCollaboration: "Create new collaboration",
         searchPlaceHolderCollaborations: "Search for collaborations",
         update: "Update",
         delete: "Delete",
@@ -540,7 +540,7 @@ I18n.translations.en = {
         titleUpdate: "Update authorisation group {{name}}",
         titleReadOnly: "Authorisation group {{name}}",
         backToCollaborationAuthorisationGroups: "Back to the authorisation groups of my collaboration {{name}}",
-        new: "New",
+        new: "Create new Authorisation Group",
         searchPlaceHolder: "Search for authorisation groups",
         name: "Name",
         namePlaceholder: "Name of the authorisation group",
