@@ -220,6 +220,7 @@ class Collaboration(Base, db.Model):
                                     cascade="all, delete-orphan", passive_deletes=True)
     invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
                                   passive_deletes=True)
+    disable_join_requests = db.Column("disable_join_requests", db.Boolean(), nullable=True, default=False)
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0

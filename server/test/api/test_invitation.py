@@ -34,6 +34,12 @@ class TestInvitation(AbstractTest):
         self.assertEqual(ai_computing_name,
                          invitation["collaboration"]["name"])
 
+    def test_find_by_id_with_authorisation_groups(self):
+        invitation_id = self._invitation_id_by_hash(invitation_hash_uva)
+        self.login("urn:john")
+        invitation = self.get(f"/api/invitations/{invitation_id}", with_basic_auth=False)
+        self.assertEquals(1, len(invitation["authorisation_groups"]))
+
     def test_accept(self):
         self.login("urn:james")
         self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)
@@ -55,9 +61,9 @@ class TestInvitation(AbstractTest):
             .one()
         self.assertEqual("member", collaboration_membership.role)
 
-        profiles = UserServiceProfile.query\
-            .join(UserServiceProfile.user)\
-            .join(UserServiceProfile.authorisation_group)\
+        profiles = UserServiceProfile.query \
+            .join(UserServiceProfile.user) \
+            .join(UserServiceProfile.authorisation_group) \
             .filter(User.uid == "urn:jane") \
             .filter(AuthorisationGroup.name == authorisation_group_science_name) \
             .all()

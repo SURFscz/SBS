@@ -3,7 +3,7 @@ from sqlalchemy.orm import joinedload
 
 from server.db.db import JoinRequest, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_ai_computing_uuid, james_name
+from server.test.seed import collaboration_ai_computing_uuid, james_name, uu_disabled_join_request_name
 
 
 class TestJoinRequest(AbstractTest):
@@ -34,6 +34,14 @@ class TestJoinRequest(AbstractTest):
         self.post("/api/join_requests",
                   response_status_code=409,
                   body={"collaborationId": collaboration_id, "motivation": "please"},
+                  with_basic_auth=False)
+
+    def test_disabled_join_requests(self):
+        collaboration = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name)
+        self.login("urn:jane")
+        self.post("/api/join_requests",
+                  response_status_code=409,
+                  body={"collaborationId": collaboration.id, "motivation": "please"},
                   with_basic_auth=False)
 
     def test_join_request_already_member(self):

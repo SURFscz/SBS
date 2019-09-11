@@ -68,15 +68,16 @@ class AbstractTest(TestCase):
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
             return response.json if hasattr(response, "json") else None
 
-    def post(self, url, body={}, response_status_code=201, with_basic_auth=True):
-        return self._do_call(body, self.client.post, response_status_code, url, with_basic_auth)
+    def post(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True):
+        return self._do_call(body, self.client.post, headers, response_status_code, url, with_basic_auth)
 
-    def put(self, url, body={}, response_status_code=201, with_basic_auth=True):
-        return self._do_call(body, self.client.put, response_status_code, url, with_basic_auth)
+    def put(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True):
+        return self._do_call(body, self.client.put, headers, response_status_code, url, with_basic_auth)
 
-    def _do_call(self, body, call, response_status_code, url, with_basic_auth):
+    def _do_call(self, body, call, headers, response_status_code, url, with_basic_auth):
         with requests.Session():
-            response = call(url, headers=BASIC_AUTH_HEADER if with_basic_auth else {}, data=json.dumps(body),
+            response = call(url, headers={**BASIC_AUTH_HEADER, **headers} if with_basic_auth else headers,
+                            data=json.dumps(body),
                             content_type="application/json")
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
             return response.json

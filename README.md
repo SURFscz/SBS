@@ -24,6 +24,8 @@ pip install -r ./server/requirements/test.txt
 Connect to your local mysql database: `mysql -uroot` and create the SBS database and user:
 
 ```sql
+DROP DATABASE IF EXISTS sbs;
+DROP DATABASE IF EXISTS sbs_test;
 CREATE DATABASE sbs DEFAULT CHARACTER SET utf8;
 CREATE DATABASE sbs_test DEFAULT CHARACTER SET utf8;
 CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';

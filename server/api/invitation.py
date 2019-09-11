@@ -3,7 +3,7 @@ import datetime
 
 from flask import Blueprint, request as current_request, current_app
 from sqlalchemy import text
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, contains_eager
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param
@@ -20,10 +20,13 @@ invitations_api = Blueprint("invitations_api", __name__,
 
 def _invitation_query():
     return Invitation.query \
+        .outerjoin(Invitation.authorisation_groups) \
         .options(joinedload(Invitation.collaboration)
                  .subqueryload(Collaboration.collaboration_memberships)
                  .subqueryload(CollaborationMembership.user)) \
-        .options(joinedload(Invitation.user))
+        .options(joinedload(Invitation.user)) \
+        .options(contains_eager(Invitation.authorisation_groups)) \
+
 
 
 @invitations_api.route("/find_by_hash", strict_slashes=False)

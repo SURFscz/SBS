@@ -38,7 +38,8 @@ def collaboration_by_name():
     admins = list(filter(lambda m: m.role == "admin", collaboration.collaboration_memberships))
     admin_email = admins[0].user.email if len(admins) > 0 else None
 
-    return {"id": collaboration.id, "name": collaboration.name, "admin_email": admin_email}, 200
+    return {"id": collaboration.id, "name": collaboration.name, "admin_email": admin_email,
+            "disable_join_requests": collaboration.disable_join_requests}, 200
 
 
 @collaboration_api.route("/name_exists", strict_slashes=False)
@@ -261,14 +262,19 @@ def collaboration_invites():
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
     intended_role = data["intended_role"] if "intended_role" in data else "member"
+    authorisation_group_ids = data["authorisation_groups"] if "authorisation_groups" in data else []
+    authorisation_groups = AuthorisationGroup.query \
+        .filter(AuthorisationGroup.collaboration_id == collaboration_id) \
+        .filter(AuthorisationGroup.id.in_(authorisation_group_ids)) \
+        .all()
 
     collaboration = Collaboration.query.get(collaboration_id)
     user = User.query.get(current_user_id())
 
     for administrator in administrators:
         invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
-                                collaboration=collaboration, user=user, intended_role=intended_role,
-                                expiry_date=default_expiry_date(json_dict=data),
+                                collaboration=collaboration, user=user, authorisation_groups=authorisation_groups,
+                                intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 created_by=user.uid)
         invitation = db.session.merge(invitation)
         mail_collaboration_invitation({

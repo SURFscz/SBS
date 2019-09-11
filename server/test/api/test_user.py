@@ -2,7 +2,7 @@
 from server.auth.user_claims import claim_attribute_mapping
 from server.db.db import Organisation, Collaboration, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name
+from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name
 from flask import current_app
 
 
@@ -122,6 +122,25 @@ class TestUser(AbstractTest):
 
         roger = User.query.get(roger.id)
         roger.ssh_key = "ssh_key"
+
+    def test_update_someone_else_forbidden(self):
+        james = self.find_entity_by_name(User, james_name)
+
+        self.login("urn:roger")
+
+        self.put("/api/users", {"id": james.id}, with_basic_auth=False, response_status_code=403)
+
+    def test_update_impersonation(self):
+        james = self.find_entity_by_name(User, james_name)
+
+        self.login("urn:john")
+
+        body = {"id": james.id,
+                "ubi_key": "bogus"}
+
+        self.put("/api/users", body, headers={"X-IMPERSONATE-ID": 999}, with_basic_auth=False)
+        james = self.find_entity_by_name(User, james_name)
+        self.assertEqual("bogus", james.ubi_key)
 
     def test_update_user_service_profile_ssh_key_conversion(self):
         user = self.find_entity_by_name(User, john_name)

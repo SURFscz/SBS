@@ -21,6 +21,7 @@ import Button from "../components/Button";
 import {setFlash} from "../utils/Flash";
 import Select from "react-select";
 import {headerIcon} from "../forms/helpers";
+import CheckBox from "../components/CheckBox";
 
 
 class CollaborationDetail extends React.Component {
@@ -44,6 +45,7 @@ class CollaborationDetail extends React.Component {
             accepted_user_policy: "",
             access_type: "",
             identifier: "",
+            disable_join_requests: false,
             enrollment: "",
             members: [],
             filteredMembers: [],
@@ -451,7 +453,7 @@ class CollaborationDetail extends React.Component {
 
     collaborationDetails = (name, short_name, alreadyExists, initial, description, accepted_user_policy, enrollment,
                             access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
-                            config) => {
+                            config, disable_join_requests) => {
         const joinRequestUrl = `${config.base_url}/registration?collaboration=${encodeURIComponent(originalCollaboration.name)}`;
         return <div className="collaboration-detail">
             <InputField value={name} onChange={e => {
@@ -500,7 +502,7 @@ class CollaborationDetail extends React.Component {
                         toolTip={I18n.t("collaboration.globalUrnTooltip")}
                         disabled={true}/>
 
-            {isAdmin && <InputField value={joinRequestUrl}
+            {isAdmin && <InputField value={disable_join_requests ? "N/A" : joinRequestUrl}
                                     name={I18n.t("collaboration.joinRequestUrl")}
                                     toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
                                     disabled={true}
@@ -516,6 +518,12 @@ class CollaborationDetail extends React.Component {
                         placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
                         name={I18n.t("collaboration.accepted_user_policy")}
                         disabled={!isAdmin}/>
+
+            <CheckBox name="disable_join_requests"
+                      value={disable_join_requests}
+                      info={I18n.t("collaboration.disableJoinRequests")}
+                      tooltip={I18n.t("collaboration.disableJoinRequestsTooltip")}
+                      onChange={() => this.setState({disable_join_requests: !disable_join_requests})}/>
 
             {/*<InputField value={enrollment}*/}
             {/*            onChange={e => this.setState({enrollment: e.target.value})}*/}
@@ -561,7 +569,7 @@ class CollaborationDetail extends React.Component {
     render() {
         const {
             originalCollaboration, name, short_name, description, accepted_user_policy, access_type, initial, alreadyExists,
-            identifier, enrollment, filteredMembers, query,
+            identifier, enrollment, filteredMembers, query, disable_join_requests,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             adminOfCollaboration
         } = this.state;
@@ -608,7 +616,7 @@ class CollaborationDetail extends React.Component {
             </div>
             {this.collaborationDetails(name, short_name, alreadyExists, initial, description, accepted_user_policy,
                 enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
-                config)}
+                config, disable_join_requests)}
         </div>)
     }
 
