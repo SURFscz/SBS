@@ -38,7 +38,7 @@ class TestInvitation(AbstractTest):
         invitation_id = self._invitation_id_by_hash(invitation_hash_uva)
         self.login("urn:john")
         invitation = self.get(f"/api/invitations/{invitation_id}", with_basic_auth=False)
-        self.assertEquals(1, len(invitation["authorisation_groups"]))
+        self.assertEqual(1, len(invitation["authorisation_groups"]))
 
     def test_accept(self):
         self.login("urn:james")
