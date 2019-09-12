@@ -27,6 +27,7 @@ class Invitation extends React.Component {
         this.state = {
             invite: {user: {}, collaboration: {collaboration_memberships: []},},
             acceptedTerms: false,
+            personalDataConfirmation: false,
             initial: true,
             confirmationDialogOpen: false,
             confirmationQuestion: "",
@@ -35,7 +36,8 @@ class Invitation extends React.Component {
             leavePage: false,
             isAdminLink: false,
             isExpired: false,
-            errorOccurred: false
+            errorOccurred: false,
+            intentToDeny: false
         };
     }
 
@@ -46,7 +48,8 @@ class Invitation extends React.Component {
             invitationByHash(params.hash)
                 .then(json => {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
-                    this.setState({invite: json, isExpired});
+                    const intentToDeny = this.props.match.params.action === "deny";
+                    this.setState({invite: json, isExpired, intentToDeny: intentToDeny});
                 })
                 .catch(() =>
                     setFlash(I18n.t("organisationInvitation.flash.notFound"), "error"));
@@ -134,8 +137,9 @@ class Invitation extends React.Component {
 
 
     isValid = () => {
-        const {acceptedTerms, isAdminLink} = this.state;
-        return acceptedTerms || isAdminLink;
+        const {acceptedTerms, personalDataConfirmation, isAdminLink, invite} = this.state;
+        const aup = invite.collaboration.accepted_user_policy;
+        return ((acceptedTerms || !aup) && personalDataConfirmation) || isAdminLink;
     };
 
     doSubmit = () => {
@@ -182,12 +186,19 @@ class Invitation extends React.Component {
     render() {
         const {
             invite, acceptedTerms, initial, confirmationDialogOpen, cancelDialogAction, confirmationQuestion,
-            confirmationDialogAction, leavePage, isAdminLink, isExpired, errorOccurred
+            confirmationDialogAction, leavePage, isAdminLink, isExpired, errorOccurred, personalDataConfirmation,
+            intentToDeny
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const errorSituation = errorOccurred || !invite.id;
         const expiredMessage = isAdminLink ? I18n.t("invitation.expiredAdmin", {expiry_date: moment(invite.expiry_date * 1000).format("LL")}) :
             I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")});
+
+        const aup = invite.collaboration.accepted_user_policy;
+        const acceptButton = <Button cancelButton={intentToDeny} disabled={disabledSubmit} txt={I18n.t("invitation.accept")}
+                                     onClick={this.accept}/>;
+        const declineButton = <Button cancelButton={!intentToDeny} txt={I18n.t("invitation.decline")}
+                                      onClick={this.decline}/>;
         return (
             <div className="mod-invitation">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -249,22 +260,29 @@ class Invitation extends React.Component {
                                 multiline={true}/>
 
                     {(!isAdminLink && !isExpired && !errorSituation) &&
-                    <section className={`form-element ${acceptedTerms ? "" : "invalid"}`}>
-                        <label className="form-label"
-                               dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo",
-                                       {collaboration: invite.collaboration.name, aup: invite.collaboration.accepted_user_policy})}}/>{this.requiredMarker()}
+                    <section className={`form-element ${(acceptedTerms && personalDataConfirmation) ? "" : "invalid"}`}>
+                        <CheckBox name="personalDataConfirmation"
+                                  className={`checkbox ${!initial && !personalDataConfirmation ? "required" : ""}`}
+                                  value={personalDataConfirmation}
+                                  info={I18n.t("registration.step2.personalDataConfirmation", {name: invite.collaboration.name})}
+                                  onChange={e => this.setState({personalDataConfirmation: e.target.checked})}/>
+                        {!aup && <label className="form-label policy">
+                            {I18n.t("registration.step2.noAup", {name: invite.collaboration.name})}</label>}
+                        {aup &&
                         <CheckBox name="policy"
                                   className={`checkbox ${!initial && !acceptedTerms ? "required" : ""}`}
                                   value={acceptedTerms}
-                                  info={I18n.t("registration.step2.policyConfirmation", {collaboration: invite.collaboration.name})}
-                                  onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
+                                  info={I18n.t("registration.step2.policyConfirmation",
+                                      {
+                                          collaboration: invite.collaboration.name,
+                                          aup: aup
+                                      })}
+                                  onChange={e => this.setState({acceptedTerms: e.target.checked})}/>}
                     </section>}
                     {(!isAdminLink && !isExpired && !errorSituation) &&
                     <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("invitation.accept")}
-                                onClick={this.accept}/>
-                        <Button cancelButton={true} txt={I18n.t("invitation.decline")}
-                                onClick={this.decline}/>
+                        {intentToDeny && <>{declineButton}{acceptButton}</>}
+                        {!intentToDeny && <>{acceptButton}{declineButton}</>}
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>}
                     {isAdminLink &&

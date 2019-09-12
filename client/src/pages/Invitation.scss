@@ -59,7 +59,8 @@
             font-weight: bold;
         }
 
-        div.checkbox {
+        div.checkbox, label.policy {
+            display: inline-block;
             margin-top: 10px;
         }
 
