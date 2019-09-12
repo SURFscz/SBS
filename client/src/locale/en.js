@@ -115,8 +115,9 @@ I18n.translations.en = {
             reference: "Do you have a reference within {{collaboration}}?",
             referencePlaceholder: "Write down the names of people you know within {{collaboration}} like co-researchers.",
             policy: "Our Policy",
-            policyInfo: "You must agree that your information will be used for resources linked to {{collaboration}}. Please check out <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy</a> to which you have agreed upon.",
-            policyConfirmation: "I have read the Acceptable Use Policy of {{collaboration}} and accept it"
+            personalDataConfirmation: "I agree that the personal data as displayed above might be transmitted to services that are connected to collaboration {{name}}.",
+            policyConfirmation: "I have read the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy</a> of {{collaboration}} and accept it",
+            noAup: "Collaboration {{name}} has not provided a link to an Acceptable Use Policy."
         },
         step3: {
             title: "Wait for approval",

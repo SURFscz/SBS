@@ -115,8 +115,9 @@ I18n.translations.nl = {
             reference: "Kent u al iemand die lid is van {{collaboration}}?",
             referencePlaceholder: "Vul de namen in van mensen die u kent die lid zijn van {{collaboration}}, zoals mede-onderzoekers.",
             policy: "Onze Policy",
-            policyInfo: "U dient in te stemmen dat we uw informatie doorgeven aan diensten die zijn gekoppeld aan {{collaboration}}. Lees a.u.b. onze <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy</a> waar u mee akkoord gaat.",
-            policyConfirmation: "Ik heb de Acceptable Use Policy (AUP) van {{collaboration}} gelezen en accepteer deze."
+            personalDataConfirmation: "Ik geeh toestemming dat de persoonlijke data hierboven mogelijk wordt doorgegeven aan de diensten die zijn gekoppeld aan deze samenwerking.",
+            policyConfirmation: "Ik heb de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy (AUP)</a> van {{collaboration}} gelezen en accepteer deze.",
+            noAup: "Samenwerking {{name}} heeft geen link opgeven naar een Acceptable Use Policy."
         },
         step3: {
             title: "Wacht op toestemming",

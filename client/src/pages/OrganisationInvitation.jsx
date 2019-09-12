@@ -228,13 +228,10 @@ class OrganisationInvitation extends React.Component {
 
                     {(!isAdminLink && !isExpired && !errorSituation) &&
                     <section className={`form-element ${acceptedTerms ? "" : "invalid"}`}>
-                        <label className="form-label"
-                               dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo",
-                                       {collaboration: organisationInvitation.organisation.name, })}}/>{this.requiredMarker()}
                         <CheckBox name="policy"
                                   className={`checkbox ${!initial && !acceptedTerms ? "required" : ""}`}
                                   value={acceptedTerms}
-                                  info={I18n.t("registration.step2.policyConfirmation", {collaboration: organisationInvitation.organisation.name})}
+                                  info={I18n.t("registration.step2.personalDataConfirmation", {name: organisationInvitation.organisation.name})}
                                   onChange={e => this.setState({acceptedTerms: e.target.checked})}/>
                     </section>}
                     {(!isAdminLink && !isExpired && !errorSituation) &&

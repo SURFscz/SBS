@@ -141,7 +141,8 @@ def seed(db):
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
                                  organisation=uuc, services=[mail, network], enrollment="Form",
                                  join_requests=[], invitations=[], access_type="open",
-                                 short_name=ai_computing_short_name)
+                                 short_name=ai_computing_short_name,
+                                 accepted_user_policy="https://www.google.nl")
     uva_research = Collaboration(name=uva_research_name,
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",

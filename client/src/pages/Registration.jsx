@@ -16,8 +16,10 @@ class Registration extends React.Component {
             step: "1",
             motivation: "",
             reference: "",
-            agreedWithPolicy: false,
+            acceptedTerms: false,
+            personalDataConfirmation: false,
             collaborationName: null,
+            collaborationAup: null,
             collaborationId: null,
             adminEmail: null,
             alreadyMember: false,
@@ -49,6 +51,7 @@ class Registration extends React.Component {
                             step: step,
                             collaborationName: res.name,
                             collaborationId: res.id,
+                            collaborationAup: res.accepted_user_policy,
                             adminEmail: res.admin_email,
                             alreadyMember: alreadyMember
                         })
@@ -77,7 +80,10 @@ class Registration extends React.Component {
         </div>);
 
     renderForm2 = () => {
-        const {motivation, reference, agreedWithPolicy, collaborationName, alreadyMember} = this.state;
+        const {
+            motivation, reference, acceptedTerms, personalDataConfirmation, collaborationName,
+            collaborationAup, alreadyMember
+        } = this.state;
         if (alreadyMember) {
             return null;
         }
@@ -104,15 +110,29 @@ class Registration extends React.Component {
                        placeholder={I18n.t("registration.step2.referencePlaceholder", {collaboration: collaborationName})}
                        onChange={e => this.setState({reference: e.target.value})}/>
             </section>
-            <section className={`form-element ${agreedWithPolicy ? "" : "invalid"}`}>
-                <label className="form-label"
-                       dangerouslySetInnerHTML={{__html: I18n.t("registration.step2.policyInfo", {collaboration: collaborationName})}}/>{this.requiredMarker()}
+            <section className={`form-element ${((acceptedTerms || !collaborationAup) && personalDataConfirmation) ? "" : "invalid"}`}>
+                <CheckBox name="personalDataConfirmation"
+                          className={`checkbox ${!personalDataConfirmation ? "required" : ""}`}
+                          value={personalDataConfirmation}
+                          info={I18n.t("registration.step2.personalDataConfirmation", {name: collaborationName})}
+                          onChange={e => this.setState({personalDataConfirmation: e.target.checked})}/>
+
+                {!collaborationAup && <label className="policy form-label">
+                    {I18n.t("registration.step2.noAup", {name: collaborationName})}</label>}
+
+                {collaborationAup &&
                 <CheckBox name="policy"
-                          value={agreedWithPolicy}
-                          info={I18n.t("registration.step2.policyConfirmation", {collaboration: collaborationName})}
-                          onChange={e => this.setState({agreedWithPolicy: e.target.checked})}/>
+                          className={`checkbox policy ${!acceptedTerms ? "required" : ""}`}
+                          value={acceptedTerms}
+                          info={I18n.t("registration.step2.policyConfirmation",
+                              {
+                                  collaboration: collaborationName,
+                                  aup: collaborationAup
+                              })}
+                          onChange={e => this.setState({acceptedTerms: e.target.checked})}/>}
             </section>
-            <Button className="start" disabled={!this.form2Invariant(motivation, agreedWithPolicy)}
+            <Button className="start"
+                    disabled={!this.form2IsValid(motivation, acceptedTerms, personalDataConfirmation, collaborationAup)}
                     onClick={() => {
                         this.setState({step: "3"});
                         joinRequestForCollaboration(this.state)
@@ -144,7 +164,10 @@ class Registration extends React.Component {
 
     requiredMarker = () => <sup className="required-marker">*</sup>;
 
-    form2Invariant = (motivation, agreedWithPolicy) => !isEmpty(motivation) && agreedWithPolicy;
+    form2IsValid = (motivation, acceptedTerms, personalDataConfirmation, collaborationAup) => {
+        return !isEmpty(motivation) && (acceptedTerms || !collaborationAup) && personalDataConfirmation;
+    };
+
 
     getUserTable = user => {
         return (

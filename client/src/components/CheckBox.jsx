@@ -22,7 +22,8 @@ export default class CheckBox extends React.PureComponent {
                     <span ref={ref => this.input = ref} tabIndex="0"><FontAwesomeIcon icon="check"/></span>
                 </label>
                 {info && <span>
-                    <label htmlFor={name} className={`info ${readOnly ? "disabled" : ""}`}>{info}</label>
+                    <label htmlFor={name} className={`info ${readOnly ? "disabled" : ""}`}
+                           dangerouslySetInnerHTML={{__html: info}}/>
                     {tooltip && <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>}
                     {tooltip && <ReactTooltip id={name} type="info" effect="solid">
                         <p dangerouslySetInnerHTML={{__html: tooltip}}/>
