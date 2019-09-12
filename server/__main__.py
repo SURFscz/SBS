@@ -145,6 +145,16 @@ with app.app_context():
 
 db_migrations(config.database.uri)
 
+from server.api.user import generate_unique_username  # noqa: E402
+from server.db.db import User  # noqa: E711
+
+with app.app_context():
+    users = User.query.filter(User.username == None).all()  # noqa: E402
+    for user in users:
+        user.username = generate_unique_username(user)
+        db.session.merge(user)
+        db.session.commit()
+
 # WSGI production mode dictates that no flask app is actually running
 if is_local:
     app.run(port=8080, debug=False, host="0.0.0.0", threaded=True)
