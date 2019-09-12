@@ -170,6 +170,11 @@ def me():
                 add_user_claims(request_headers, uid, user)
                 user = db.session.merge(user)
                 db.session.commit()
+            if not user.username:
+                user.username = generate_unique_username(user)
+                user = db.session.merge(user)
+                db.session.commit()
+                logger.info(f"Updating user {user.uid} with new username {user.username}")
             else:
                 logger.info(f"Not updating user {user.uid} as the claims are not changed")
 
