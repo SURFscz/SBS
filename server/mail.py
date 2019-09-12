@@ -4,6 +4,8 @@ from threading import Thread
 from flask import current_app, render_template
 from flask_mail import Message
 
+from server.db.defaults import calculate_expiry_period
+
 
 def _send_async_email(ctx, msg, mail):
     with ctx:
@@ -54,6 +56,7 @@ def mail_collaboration_join_request(context, collaboration, recipients, preview=
 
 
 def mail_organisation_invitation(context, organisation, recipients, preview=False):
+    context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])}}
     return _do_send_mail(
         subject=f"Invitation to join organisation {organisation.name}",
         recipients=recipients,
@@ -64,6 +67,7 @@ def mail_organisation_invitation(context, organisation, recipients, preview=Fals
 
 
 def mail_collaboration_invitation(context, collaboration, recipients, preview=False):
+    context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])}}
     return _do_send_mail(
         subject=f"Invitation to join collaboration {collaboration.name}",
         recipients=recipients,

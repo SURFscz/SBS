@@ -133,6 +133,16 @@ class Collaborations extends React.Component {
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };
 
+    openCollaborationServices = collaboration => e => {
+        stopEvent(e);
+        this.props.history.push(`/collaboration-services/${collaboration.id}`);
+    };
+
+    openCollaborationAuthorisationGroups = (collaboration, authorisationGroup) => e => {
+        stopEvent(e);
+        this.props.history.push(`/collaboration-authorisation-groups/${collaboration.id}`);
+    };
+
     renderRequests = joinRequests => {
         const showMore = joinRequests.length >= 6;
         const showMoreItems = this.state.showMore.includes("joinRequests");
@@ -180,7 +190,7 @@ class Collaborations extends React.Component {
                         .map((collaboration, i) =>
                             <div className="collaboration-authorisations" key={i}>
                                 <a href={`/collaborations/${collaboration.id}`}
-                                   onClick={this.openCollaboration(collaboration)}>
+                                   onClick={this.openCollaborationAuthorisationGroups(collaboration)}>
                                     <span>{collaboration.name}</span>
                                     <span className="count">{`(${collaboration.authorisation_groups.length})`}</span>
                                 </a>
@@ -242,8 +252,8 @@ class Collaborations extends React.Component {
                         .sort((s1, s2) => s1.name.localeCompare(s2.name))
                         .map((collaboration, i) =>
                             <div className="collaboration-services" key={i}>
-                                <a href={`/collaborations/${collaboration.id}`}
-                                   onClick={this.openCollaboration(collaboration)}>
+                                <a href={`/collaboration-services/${collaboration.id}`}
+                                   onClick={this.openCollaborationServices(collaboration)}>
                                     <span>{collaboration.name}</span>
                                     <span className="count">{`(${collaboration.services.length})`}</span>
                                 </a>

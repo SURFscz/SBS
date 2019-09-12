@@ -132,8 +132,7 @@ def invitations_resend():
     mail_collaboration_invitation({
         "salutation": "Dear",
         "invitation": invitation,
-        "base_url": current_app.app_config.base_url,
-        "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
+        "base_url": current_app.app_config.base_url
     }, invitation.collaboration, [invitation.invitee_email])
     return None, 201
 

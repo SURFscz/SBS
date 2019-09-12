@@ -1,12 +1,13 @@
 import React from "react";
 import ReactTooltip from "react-tooltip";
 import {
-    deleteApiKey, deleteCollaboration,
+    deleteApiKey,
+    deleteCollaboration,
     deleteOrganisation,
     deleteOrganisationMembership,
     organisationById,
-    organisationIdentifierExists,
-    organisationNameExists, organisationShortNameExists,
+    organisationNameExists,
+    organisationShortNameExists,
     updateOrganisation
 } from "../api";
 import "./OrganisationDetail.scss";
@@ -28,14 +29,13 @@ class OrganisationDetail extends React.Component {
         this.state = {
             originalOrganisation: null,
             name: "",
-            tenant_identifier: "",
             short_name: "",
             description: "",
             members: [],
             filteredMembers: [],
             invitations: [],
             apiKeys: [],
-            required: ["name", "tenant_identifier"],
+            required: ["name", "short_name"],
             alreadyExists: {},
             initial: true,
             sorted: "user__name",
@@ -73,7 +73,6 @@ class OrganisationDetail extends React.Component {
                         originalOrganisation: json,
                         name: json.name,
                         short_name: json.short_name,
-                        tenant_identifier: json.tenant_identifier,
                         description: json.description,
                         members: members,
                         filteredMembers: members,
@@ -169,8 +168,8 @@ class OrganisationDetail extends React.Component {
 
     doUpdate = () => {
         if (this.isValid()) {
-            const {name, description, tenant_identifier, originalOrganisation} = this.state;
-            updateOrganisation({id: originalOrganisation.id, name, description, tenant_identifier})
+            const {name, description, originalOrganisation} = this.state;
+            updateOrganisation({id: originalOrganisation.id, name, description})
                 .then(() => {
                     this.props.history.push(`/organisations/${originalOrganisation.id}`);
                     setFlash(I18n.t("organisationDetail.flash.updated", {name: name}))
@@ -205,11 +204,6 @@ class OrganisationDetail extends React.Component {
     validateOrganisationName = e =>
         organisationNameExists(e.target.value, this.state.originalOrganisation.name).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
-        });
-
-    validateOrganisationTenantIdentifier = e =>
-        organisationIdentifierExists(e.target.value, this.state.originalOrganisation.tenant_identifier).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, tenant: json}});
         });
 
     validateOrganisationShortName = e =>
@@ -382,6 +376,7 @@ class OrganisationDetail extends React.Component {
         const isAdmin = user.admin || adminOfOrganisation;
         return (
             <div className="api-keys-container">
+                <p className="usage" dangerouslySetInnerHTML={{__html: I18n.t("apiKeys.info")}}/>
                 {apiKeys.length > 0 &&
                 <table className="api-keys">
                     <thead>
@@ -464,7 +459,7 @@ class OrganisationDetail extends React.Component {
         );
     };
 
-    organisationDetails = (name, short_name, alreadyExists, initial, tenant_identifier, description, originalOrganisation, user, disabledSubmit) => {
+    organisationDetails = (name, short_name, alreadyExists, initial, description, originalOrganisation, user, disabledSubmit) => {
         return <div className="organisation-detail">
             <InputField value={name} onChange={e => {
                 this.setState({
@@ -505,25 +500,6 @@ class OrganisationDetail extends React.Component {
                 attribute: I18n.t("organisation.shortName").toLowerCase()
             })}</span>}
 
-            <InputField value={tenant_identifier}
-                        onChange={e => this.setState({
-                            tenant_identifier: e.target.value,
-                            alreadyExists: {...this.state.alreadyExists, tenant_identifier: false}
-                        })}
-                        placeholder={I18n.t("organisation.tenantPlaceHolder")}
-                        disabled={!user.admin}
-                        onBlur={this.validateOrganisationTenantIdentifier}
-                        name={I18n.t("organisation.tenant_identifier")}/>
-            {alreadyExists.tenant && <span
-                className="error">{I18n.t("organisation.alreadyExists", {
-                attribute: I18n.t("organisation.tenant_identifier").toLowerCase(),
-                value: tenant_identifier
-            })}</span>}
-            {(!initial && isEmpty(tenant_identifier)) && <span
-                className="error">{I18n.t("organisation.required", {
-                attribute: I18n.t("organisation.tenant_identifier").toLowerCase()
-            })}</span>}
-
             <InputField value={description}
                         onChange={e => this.setState({description: e.target.value})}
                         disabled={!user.admin}
@@ -546,7 +522,7 @@ class OrganisationDetail extends React.Component {
 
     render() {
         const {
-            name, short_name, description, tenant_identifier, originalOrganisation, initial, alreadyExists, filteredMembers, query,
+            name, short_name, description, originalOrganisation, initial, alreadyExists, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             inviteReverse, inviteSorted, invitations, adminOfOrganisation, apiKeys,
             filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted, collaborationsQuery
@@ -591,11 +567,12 @@ class OrganisationDetail extends React.Component {
                     <p>{I18n.t("organisationDetail.collaborations", {name: originalOrganisation.name})}</p>
                 </div>
                 {this.renderCollaborations(filteredCollaborations, user, sortedCollaborationAttribute,
-                    reverseCollaborationSorted, collaborationsQuery, query, adminOfOrganisation)}
+                    reverseCollaborationSorted, collaborationsQuery, adminOfOrganisation)}
                 <div className="title">
                     <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
                 </div>
-                {this.organisationDetails(name, short_name, alreadyExists, initial, tenant_identifier, description, originalOrganisation, user, disabledSubmit)}
+                {this.organisationDetails(name, short_name, alreadyExists, initial,
+                    description, originalOrganisation, user, disabledSubmit)}
             </div>)
     }
 

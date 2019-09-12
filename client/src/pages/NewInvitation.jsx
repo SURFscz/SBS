@@ -47,7 +47,7 @@ class NewInvitation extends React.Component {
             fileInputKey: new Date().getMilliseconds(),
             intended_role: "member",
             message: "",
-            expiry_date: moment().add(14, "days").toDate(),
+            expiry_date: moment().add(16, "days").toDate(),
             initial: true,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),

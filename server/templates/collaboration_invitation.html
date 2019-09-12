@@ -1,20 +1,8 @@
 {% extends "mail_layout.html" %}
 {% block title %}SURFNET Collaboration invite{% endblock %}
 {% block content %}
-<p>
-    {{ invitation.user.name }} invited you to join collaboration
-    <strong>{{ invitation.collaboration.name }}</strong>  as{{ invitation_role(invitation.intended_role) }}.
-    {% if invitation.intended_role == "admin" %}
-    <p/>
-    As an administrator you are responsible for managing users and authorizations for this collaboration.
-    More information about administrative duties can be found at the <a target="_blank" href="{{ wiki_link }}">SCZ wiki</a>.
-    <p/>
-    {% endif %}
-    Please read below what steps you must take to accept this invitation.
-</p>
 
 {% if invitation.message is defined and invitation.message != None and invitation.message|length %}
-<hr/>
 <p>
     <strong>Personal Message from {{ invitation.user.name }}:</strong>
 </p>
@@ -25,14 +13,26 @@
 {% endif %}
 
 <p>
+    {{ invitation.user.name }} invited you to join collaboration
+    <strong>{{ invitation.collaboration.name }}</strong>  as{{ invitation_role(invitation.intended_role) }}.
+    {% if invitation.intended_role == "admin" %}
+    <p/>
+    As a CO manager you are responsible for managing users and authorizations for this collaboration.
+    More information about administrative duties can be found at the <a target="_blank" href="{{ wiki_link }}">SCZ wiki</a>.
+    <p/>
+    {% endif %}
+    Please read below what steps you must take to accept this invitation.
+</p>
+
+
+<p>
     <strong>Accept invitation:</strong><br>
-    To accept this invitation, please click 'Login to accept this invitation'. After logging in with your institutional
-    account you are a member of the collaboration.
+    To accept this invitation, please click 'Login to accept this invitation'. After logging in you can join the collaboration.
 </p>
 
 <p>
     If you do not want to accept this invitation, please click 'Decline this invitation' or simply ignore this email.
-    The invitation automatically expires after {{ expiry_days }} days.
+    The invitation automatically expires after {{ expiry_period }}.
 </p>
 <table cellpadding="10" width="90%" align="center"
        style="margin-bottom:1em;margin-left:auto;margin-right:auto;margin-top:1em;">

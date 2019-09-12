@@ -33,7 +33,7 @@ class NewOrganisationInvitation extends React.Component {
             fileTypeError: false,
             fileInputKey: new Date().getMilliseconds(),
             message: "",
-            expiry_date: moment().add(14, "days").toDate(),
+            expiry_date: moment().add(16, "days").toDate(),
             initial: true,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),

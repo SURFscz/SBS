@@ -4,6 +4,7 @@ import uuid
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app, g as request_context
+from munch import munchify
 from sqlalchemy import text, or_, func
 from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
@@ -282,8 +283,7 @@ def collaboration_invites():
             "salutation": "Dear",
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
-            "wiki_link": current_app.app_config.wiki_link,
-            "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
+            "wiki_link": current_app.app_config.wiki_link
         }, collaboration, [administrator])
     return None, 201
 
@@ -297,19 +297,20 @@ def collaboration_invites_preview():
 
     collaboration = Collaboration.query.get(data["collaboration_id"])
     user = User.query.get(current_user_id())
-    invitation = {
+    invitation = munchify({
         "user": user,
         "collaboration": collaboration,
         "intended_role": intended_role,
         "message": message,
-        "hash": token_urlsafe()
-    }
+        "hash": token_urlsafe(),
+        "expiry_date": default_expiry_date(data)
+    })
     html = mail_collaboration_invitation({
         "salutation": "Dear",
         "invitation": invitation,
         "base_url": current_app.app_config.base_url,
         "wiki_link": current_app.app_config.wiki_link,
-        "expiry_days": 14
+
     }, collaboration, [], preview=True)
     return {"html": html}, 201
 
@@ -359,8 +360,7 @@ def save_collaboration():
         mail_collaboration_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url,
-            "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
+            "base_url": current_app.app_config.base_url
         }, collaboration, [administrator])
 
     admin_collaboration_membership = CollaborationMembership(role="admin", user=user, collaboration=collaboration,
