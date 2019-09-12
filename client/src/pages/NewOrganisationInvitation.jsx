@@ -204,7 +204,7 @@ class NewOrganisationInvitation extends React.Component {
 
             <DateField value={expiry_date}
                        onChange={e => this.setState({expiry_date: e})}
-                       maxDate={moment().add(1, "month").toDate()}
+                       maxDate={moment().add(31, "day").toDate()}
                        name={I18n.t("organisationInvitation.expiryDate")}
                        toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>
 
