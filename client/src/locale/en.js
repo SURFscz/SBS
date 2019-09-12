@@ -30,7 +30,7 @@ I18n.translations.en = {
         subTitle: "Please login..."
     },
     home: {
-        title: "My collaboration memberships",
+        title: "My collaborations and authorization groups",
         userServiceProfiles: "User service profiles",
         authorisationGroups: "Authorisation Groups",
         collaborations: "Collaborations",
@@ -206,11 +206,11 @@ I18n.translations.en = {
         administrators: "Administrators",
         administratorsPlaceholder: "Invite administrators by email",
         administratorsTooltip: "Administrators of an collaboration <br/>can edit their collaborations and<br/>invite members.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-one using <br/>the enter key.",
-        members: "Members",
-        admin: "Administrator",
+        members: "Regular users",
         selectRole: "Select a role...",
         manager: "Manager",
-        member: "Member",
+        admin: "CO Manager",
+        member: "Regular user",
         flash: {
             created: "Collaboration {{name}} was successfully created"
         }
@@ -310,7 +310,6 @@ I18n.translations.en = {
         actions: "",
         name: "Name",
         namePlaceHolder: "The unique name of an organisation",
-        tenant_identifier: "Tenant identifier",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institution",
         shortName: "Short name",
         shortNamePlaceHolder: "Short name of the organisation",
@@ -330,6 +329,7 @@ I18n.translations.en = {
         fileExtensionError: "Only .csv extension files are allowed",
         administratorsTooltip: "Administrators of an organisation <br/>can create collaborations in their organisations.<br/><br/>Add emails separated by comma, space <br/>or semi-colon or one-by-one using <br/>the enter key.",
         role: "Role",
+        new: "Create new Organisation",
         admin: "Administrator",
         manager: "Manager",
         member: "Member",
@@ -453,8 +453,9 @@ I18n.translations.en = {
     },
     apiKeys: {
         title: "Create API key for {{organisation}}",
+        info: "With API keys the API of Collaboration Management System can be used. For more details see <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://github.com/SURFscz/SBS/wiki/External-API\"'>the wiki</a>.",
         backToOrganisationDetail: "Back to my organisation {{name}}",
-        secretDisclaimer: "Copy the secret and store it somewhere safe. The secret will be one-way hashed after creation of the new API key",
+        secretDisclaimer: "Copy the secret and store it somewhere safe. You can view this code only once. After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new key",
         secret: "Secret",
         secretValue: "One-way hashed Secret",
         secretTooltip: "The secret to use in the Authorization header",
@@ -475,8 +476,8 @@ I18n.translations.en = {
         invitees: "Invitees",
         inviteesPlaceholder: "Invite users by email",
         inviteesTooltip: "This personal message is<br/>included in the mail send <br/>to the persons you invite",
-        intendedRole: "Role",
-        intendedRoleTooltip: "The intended role for all invitees.<br/><br/>Administrators of an collaboration<br/>can edit their collaborations and<br/>invite members.<br/>Members can only use the services of <br/>their authorisation groups",
+        intendedRole: "CO Permissions",
+        intendedRoleTooltip: "The permissions granted to all invitees.<br/><br/>Managers of an collaboration<br/>can edit their collaborations and<br/>invite members.<br/>Regular users can only use the services of <br/>their authorisation groups",
         invitee_email: "Invitee email",
         authorisationGroupsPlaceHolder: "Select Authorisation groups",
         authorisationGroupsTooltip : "Select the Authorisation groups where<br/>the invitees become a member<br/>after accepting this invite",

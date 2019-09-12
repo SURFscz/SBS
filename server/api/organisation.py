@@ -3,6 +3,7 @@ import datetime
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app, g as request_context
+from munch import munchify
 from sqlalchemy import text, func
 from sqlalchemy.orm import joinedload, contains_eager
 from sqlalchemy.orm import load_only
@@ -27,18 +28,6 @@ def name_exists():
     org = Organisation.query.options(load_only("id")) \
         .filter(func.lower(Organisation.name) == func.lower(name)) \
         .filter(func.lower(Organisation.name) != func.lower(existing_organisation)) \
-        .first()
-    return org is not None, 200
-
-
-@organisation_api.route("/identifier_exists", strict_slashes=False)
-@json_endpoint
-def identifier_exists():
-    identifier = query_param("identifier")
-    existing_organisation = query_param("existing_organisation", required=False, default="")
-    org = Organisation.query.options(load_only("id")) \
-        .filter(func.lower(Organisation.tenant_identifier) == func.lower(identifier)) \
-        .filter(func.lower(Organisation.tenant_identifier) != func.lower(existing_organisation)) \
         .first()
     return org is not None, 200
 
@@ -146,17 +135,17 @@ def organisation_invites_preview():
 
     organisation = Organisation.query.get(data["organisation_id"])
     user = User.query.get(current_user_id())
-    invitation = {
+    invitation = munchify({
         "user": user,
         "organisation": organisation,
         "message": message,
-        "hash": token_urlsafe()
-    }
+        "hash": token_urlsafe(),
+        "expiry_date": default_expiry_date(data)
+    })
     html = mail_organisation_invitation({
         "salutation": "Dear",
         "invitation": invitation,
-        "base_url": current_app.app_config.base_url,
-        "expiry_days": 14
+        "base_url": current_app.app_config.base_url
     }, organisation, [], preview=True)
     return {"html": html}, 201
 
@@ -184,8 +173,7 @@ def organisation_invites():
         mail_organisation_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url,
-            "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
+            "base_url": current_app.app_config.base_url
         }, organisation, [administrator])
     return None, 201
 
@@ -212,8 +200,7 @@ def save_organisation():
         mail_organisation_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url,
-            "expiry_days": (invitation.expiry_date - datetime.datetime.today()).days
+            "base_url": current_app.app_config.base_url
         }, organisation, [administrator])
     return res
 

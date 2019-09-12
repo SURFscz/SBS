@@ -66,7 +66,6 @@ class Organisation(Base, db.Model):
     __tablename__ = "organisations"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
-    tenant_identifier = db.Column("tenant_identifier", db.String(length=512), nullable=False)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)

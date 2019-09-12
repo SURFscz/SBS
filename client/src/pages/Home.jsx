@@ -124,6 +124,13 @@ class Home extends React.Component {
         );
     };
 
+    renderCollaborationName = collaboration => {
+        const name = collaboration.name;
+        const shortNameOrg = collaboration.organisation.short_name;
+        const shortNameOrgValid = isEmpty(shortNameOrg) ? "" : ` [${collaboration.organisation.short_name}]`;
+        return `${name} ${shortNameOrgValid}`;
+    };
+
     renderCollaborations = collaborations => {
         const showMore = collaborations.length >= 6;
         const showMoreItems = this.state.showMore.includes("collaborations");
@@ -141,7 +148,7 @@ class Home extends React.Component {
                             <a href={`/collaborations/${collaboration.id}`}
                                onClick={this.openCollaboration(collaboration)}>
                                 <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{collaboration.name}</span>
+                                <span>{this.renderCollaborationName(collaboration)}</span>
                             </a>
                         </div>)}
                 </div>
@@ -195,10 +202,10 @@ class Home extends React.Component {
                     <p>{I18n.t("home.title")}</p>
                 </div>
                 <section className={`info-block-container ${hasOrganisationMemberships ? "with-organisations" : ""}`}>
-                    {this.renderUserProfileServices(userServiceProfiles, authorisationGroups)}
-                    {this.renderAuthorisationGroups(authorisationGroups)}
-                    {this.renderCollaborations(collaborations)}
                     {hasOrganisationMemberships && this.renderOrganisations(user)}
+                    {this.renderCollaborations(collaborations)}
+                    {this.renderAuthorisationGroups(authorisationGroups)}
+                    {this.renderUserProfileServices(userServiceProfiles, authorisationGroups)}
                 </section>
             </div>);
     };

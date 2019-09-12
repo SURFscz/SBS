@@ -235,7 +235,7 @@ class Organisations extends React.Component {
     };
 
     renderOrganisations = (organisations, user, sorted, reverse) => {
-        const names = ["actions", "name", "tenant_identifier", "role", "description"];
+        const names = ["actions", "name", "role", "description"];
         return (
             <section className="organisation-list">
                 <table>
@@ -288,7 +288,7 @@ class Organisations extends React.Component {
                            placeholder={I18n.t("organisations.searchPlaceHolder")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
                     {isAdmin && <Button onClick={this.newOrganisation}
-                                        txt={I18n.t("collaborations.add")}/>
+                                        txt={I18n.t("organisation.new")}/>
                     }
                 </div>
                 {showAutoCompletes && <Autocomplete suggestions={suggestions}

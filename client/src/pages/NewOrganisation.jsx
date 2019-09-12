@@ -23,11 +23,10 @@ class NewOrganisation extends React.Component {
             name: "",
             description: "",
             short_name: "",
-            tenant_identifier: "",
             administrators: [],
             email: "",
             message: "",
-            required: ["name", "short_name", "tenant_identifier"],
+            required: ["name", "short_name"],
             alreadyExists: {},
             initial: true,
             confirmationDialogOpen: false,
@@ -65,8 +64,8 @@ class NewOrganisation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, short_name, tenant_identifier, administrators, message, description} = this.state;
-            createOrganisation({name, short_name, tenant_identifier, administrators, message, description}).then(res => {
+            const {name, short_name, administrators, message, description} = this.state;
+            createOrganisation({name, short_name, administrators, message, description}).then(res => {
                 this.props.history.push("/organisations");
                 setFlash(I18n.t("organisation.flash.created", {name: res.name}))
             });
@@ -110,7 +109,7 @@ class NewOrganisation extends React.Component {
 
     render() {
         const {
-            name, description, tenant_identifier, email, initial, alreadyExists, administrators,
+            name, description, email, initial, alreadyExists, administrators,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, short_name
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
@@ -170,21 +169,6 @@ class NewOrganisation extends React.Component {
                     {(!initial && isEmpty(short_name)) && <span
                         className="error">{I18n.t("organisation.required", {
                         attribute: I18n.t("organisation.shortName").toLowerCase()
-                    })}</span>}
-
-                    <InputField value={tenant_identifier}
-                                onChange={e => this.setState({tenant_identifier: e.target.value})}
-                                placeholder={I18n.t("organisation.tenantPlaceHolder")}
-                                onBlur={this.validateOrganisationTenantIdentifier}
-                                name={I18n.t("organisation.tenant_identifier")}/>
-                    {alreadyExists.tenant && <span
-                        className="error">{I18n.t("organisation.alreadyExists", {
-                        attribute: I18n.t("organisation.tenant_identifier").toLowerCase(),
-                        value: tenant_identifier
-                    })}</span>}
-                    {(!initial && isEmpty(tenant_identifier)) && <span
-                        className="error">{I18n.t("organisation.required", {
-                        attribute: I18n.t("organisation.tenant_identifier").toLowerCase()
                     })}</span>}
 
                     <InputField value={description} onChange={e => this.setState({description: e.target.value})}

@@ -45,7 +45,7 @@ class TestOrganisation(AbstractTest):
     def test_organisation_crud(self):
         self.login()
         organisation = self.post("/api/organisations", body={"name": "new_organisation",
-                                                             "tenant_identifier": "https://ti1"},
+                                                             "short_name": "https://ti1"},
                                  with_basic_auth=False)
         self.assertIsNotNone(organisation["id"])
         self.assertEqual("new_organisation", organisation["name"])
@@ -62,7 +62,7 @@ class TestOrganisation(AbstractTest):
         self.login("urn:peter")
         self.post("/api/organisations", with_basic_auth=False,
                   body={"name": "new_organisation",
-                        "tenant_identifier": "https://ti2"},
+                        "short_name": "https://ti2"},
                   response_status_code=403)
 
     def test_organisation_name_exists(self):
@@ -76,21 +76,6 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(False, res)
 
         res = self.get("/api/organisations/name_exists", query_data={"name": "xyc", "existing_organisation": "xyc"})
-        self.assertEqual(False, res)
-
-    def test_organisation_identifier_exists(self):
-        res = self.get("/api/organisations/identifier_exists", query_data={"identifier": "https://uuc"})
-        self.assertEqual(True, res)
-
-        res = self.get("/api/organisations/identifier_exists",
-                       query_data={"identifier": "https://uuc", "existing_organisation": "HTTPS://UUC"})
-        self.assertEqual(False, res)
-
-        res = self.get("/api/organisations/identifier_exists", query_data={"identifier": "https://xyz"})
-        self.assertEqual(False, res)
-
-        res = self.get("/api/organisations/identifier_exists",
-                       query_data={"identifier": "https://xyz", "existing_organisation": "https://xyz"})
         self.assertEqual(False, res)
 
     def test_organisation_short_name_exists(self):
@@ -161,7 +146,7 @@ class TestOrganisation(AbstractTest):
             self.post("/api/organisations",
                       body={"name": "new_organisation",
                             "administrators": ["new@example.org", "pop@example.org"],
-                            "tenant_identifier": "https://ti1"},
+                            "short_name": "https://ti1"},
                       with_basic_auth=False)
             self.assertEqual(2, len(outbox))
             post_count = OrganisationInvitation.query.count()
@@ -191,7 +176,7 @@ class TestOrganisation(AbstractTest):
 
         organisation = self.post("/api/organisations",
                                  body={"name": "new_organisation",
-                                       "tenant_identifier": "https://ti1",
+                                       "short_name": "https://ti1",
                                        "api_keys": [
                                            {"hashed_secret": secret}
                                        ]},
