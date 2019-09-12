@@ -1,5 +1,4 @@
 # -*- coding: future_fstrings -*-
-import datetime
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app, g as request_context
