@@ -20,7 +20,10 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    conn.execute(text("ALTER TABLE users RENAME COLUMN short_name TO username"))
+    conn.execute(text("ALTER TABLE users DROP INDEX users_short_name"))
+    conn.execute(text("ALTER TABLE users DROP COLUMN short_name"))
+    conn.execute(text("ALTER TABLE users ADD COLUMN username varchar(255)"))
+    conn.execute(text("ALTER TABLE users ADD UNIQUE INDEX users_username(username)"))
 
     from server.api.user import generate_unique_username
     from server.db.db import User, db
