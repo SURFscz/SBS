@@ -205,7 +205,7 @@ I18n.translations.nl = {
         required: "{{attribute}} moet worden ingevuld voor een samenwerking.",
         administrators: "Beheerders",
         administratorsPlaceholder: "Nodig beheerders uit per e-mail",
-        administratorsTooltip: "Beheerders van een samenwerking <br/>kunnen de beschrijving aanpassen en<br/>leden uitnodigen.<br/><br/>Voer e-mailadressen in, gescheiden door een komma, spatie <br/>of punt-komma, of voeg ze stuk voor stuk toe<br/>met de enter toets.",
+        administratorsTooltip: "Beheerders van een samenwerking<br/>kunnen de beschrijving aanpassen en<br/>leden uitnodigen.<br/><br/>Voer e-mailadressen in, gescheiden door<br/>een komma, spatie of punt-komma, of voeg<br/>ze stuk voor stuk toe met de enter toets.",
         members: "Normale gebruikers",
         selectRole: "Selecteer een rol.",
         manager: "Manager",
@@ -287,8 +287,8 @@ I18n.translations.nl = {
         contact_emailTooltip: "Dit e-mailadres wordt gebruikt<br/>om met de contactpersoon van de dienst te communiceren.",
         status: {
             name: "Status",
-            active: "Active",
-            in_active: "Inactive"
+            active: "Actief",
+            in_active: "Inactief"
         },
         statusPlaceholder: "De status van de dienst",
         alreadyExists: "Een dienst met {{attribute}} {{value}} bestaat al.",
@@ -327,7 +327,7 @@ I18n.translations.nl = {
         filePlaceholder: "Kies een csv of txt bestand",
         fileImportResult: "{{nbr}} e-mails ge&iuml;mporteerd uit {{fileName}}.",
         fileExtensionError: "Alleen bestanden met een .csv extensie zijn toegestaan.",
-        administratorsTooltip: "Beheerders van een organisatie <br/>kunnen samenwerkingen aanmaken binnen hun organisatie.<br/><br/>Vul email-adressen van uit te nodigen mensen in, gescheiden door een komma, spatie <br/>of punt-komma, of voeg ze stuk-voor-stuk toe via <br/>de enter toets.",
+        administratorsTooltip: "Beheerders van een organisatie<br/>kunnen samenwerkingen aanmaken<br/>binnen hun organisatie.<br/><br/>Vul email-adressen van uit te nodigen<br/>mensen in, gescheiden door een komma,<br/>spatie of punt-komma, of voeg ze<br/>stuk-voor-stuk toe via de enter toets.",
         role: "Rol",
         new: "Nieuwe organisatie",
         admin: "Beheerder",
@@ -385,7 +385,7 @@ I18n.translations.nl = {
         update: "Bijwerken",
         delete: "Verwijderen",
         deleteMemberConfirmation: "Weet u zeker dat u het organisatie lidmaatschap van {{name}} wil verwijderen?",
-        deleteApiKeyConfirmation: "Weet u zeker dat u deze API key wilt verwijderen?",
+        deleteApiKeyConfirmation: "Weet u zeker dat u deze API-sleutel wilt verwijderen?",
         deleteCollaborationConfirmation: "Weet u zeker dat u collaboration {{name}} wil verwijderen?",
         flash: {
             updated: "Organisatie {{name}} is bijgewerkt.",
