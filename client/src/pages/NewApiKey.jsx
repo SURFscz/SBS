@@ -77,7 +77,7 @@ class NewApiKey extends React.Component {
                     }}><FontAwesomeIcon icon="arrow-left"/>
                         {I18n.t("apiKeys.backToOrganisationDetail", {name: organisation.name})}
                     </a>
-                    <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisation.name})}</p>
+                    <p className="title">{I18n.t("apiKeys.title", {organisation: organisation.name})}</p>
                 </div>
                 <div className="new-api-key">
                     <p>{I18n.t("apiKeys.secretDisclaimer")}</p>
