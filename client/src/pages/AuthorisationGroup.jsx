@@ -274,18 +274,20 @@ class AuthorisationGroup extends React.Component {
     };
 
     addService = option => {
-        const {collaboration, authorisationGroup, name} = this.state;
-        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
-        addAuthorisationGroupServices({
-            authorisationGroupId: authorisationGroup.id,
-            collaborationId: collaboration.id,
-            serviceIds: option.value
-        }).then(() => {
-            this.refreshServices(() => setFlash(I18n.t("authorisationGroup.flash.addedService", {
-                service: option.label,
-                name: authorisationGroupName
-            })));
-        });
+        if(option) {
+            const {collaboration, authorisationGroup, name} = this.state;
+            const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+            addAuthorisationGroupServices({
+                authorisationGroupId: authorisationGroup.id,
+                collaborationId: collaboration.id,
+                serviceIds: option.value
+            }).then(() => {
+                this.refreshServices(() => setFlash(I18n.t("authorisationGroup.flash.addedService", {
+                    service: option.label,
+                    name: authorisationGroupName
+                })));
+            });
+        }
     };
 
     userServiceProfileContainsPersonalData = userServiceProfile => {
@@ -326,6 +328,12 @@ class AuthorisationGroup extends React.Component {
                 name: authorisationGroupName
             })));
         });
+    };
+
+    addMemberOrInvitation = option => {
+        if(option) {
+            option.isMember ? this.addMember(option) : this.addInvitation(option);
+        }
     };
 
     addMember = option => {
@@ -684,7 +692,7 @@ class AuthorisationGroup extends React.Component {
             <div className={`authorisation-members ${adminOfCollaboration ? "" : "no-admin"}`}>
                 {adminOfCollaboration && <Select className="services-select"
                                                  placeholder={I18n.t("authorisationGroup.searchMembers", {name: authorisationGroupName})}
-                                                 onChange={option => option.isMember ? this.addMember(option) : this.addInvitation(option)}
+                                                 onChange={this.addMemberOrInvitation}
                                                  options={availableOptions}
                                                  value={null}
                                                  isSearchable={true}
