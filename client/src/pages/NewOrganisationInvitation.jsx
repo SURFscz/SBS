@@ -162,12 +162,6 @@ class NewOrganisationInvitation extends React.Component {
 
     invitationForm = (message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date, disabledSubmit) =>
         <>
-            <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                        placeholder={I18n.t("organisation.messagePlaceholder")}
-                        name={I18n.t("organisation.message")}
-                        toolTip={I18n.t("organisation.messageTooltip")}
-                        multiline={true}/>
-
             <InputField value={email}
                         onChange={e => this.setState({email: e.target.value})}
                         placeholder={I18n.t("organisation.administratorsPlaceholder")}
@@ -201,6 +195,12 @@ class NewOrganisationInvitation extends React.Component {
                         <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
                     </div>)}
             </section>
+
+            <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                        placeholder={I18n.t("organisation.messagePlaceholder")}
+                        name={I18n.t("organisation.message")}
+                        toolTip={I18n.t("organisation.messageTooltip")}
+                        multiline={true}/>
 
             <DateField value={expiry_date}
                        onChange={e => this.setState({expiry_date: e})}
