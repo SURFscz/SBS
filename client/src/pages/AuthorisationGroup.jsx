@@ -807,6 +807,7 @@ class AuthorisationGroup extends React.Component {
                              placeholder={I18n.t("authorisationGroup.statusPlaceholder")}
                              onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}
                              disabled={!adminOfCollaboration}/>
+
                 {(!isNew && !isEmpty(authorisationGroup)) &&
                 <InputField value={moment(authorisationGroup.created_at * 1000).format("LLLL")}
                             disabled={true}
