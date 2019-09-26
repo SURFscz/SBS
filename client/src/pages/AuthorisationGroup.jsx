@@ -798,7 +798,8 @@ class AuthorisationGroup extends React.Component {
                 <CheckBox name="auto_provision_members" value={auto_provision_members}
                           info={I18n.t("authorisationGroup.autoProvisionMembers")}
                           tooltip={I18n.t("authorisationGroup.autoProvisionMembersTooltip")}
-                          onChange={e => this.setState({auto_provision_members: e.target.checked})}/>
+                          onChange={e => this.setState({auto_provision_members: e.target.checked})}
+                          readOnly={!adminOfCollaboration}/>
 
                 <SelectField value={this.statusOptions.find(option => status === option.value)}
                              options={this.statusOptions}
