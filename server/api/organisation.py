@@ -133,6 +133,8 @@ def organisation_invites_preview():
     message = data["message"] if "message" in data else None
 
     organisation = Organisation.query.get(data["organisation_id"])
+    confirm_organisation_admin(organisation.id)
+
     user = User.query.get(current_user_id())
     invitation = munchify({
         "user": user,
