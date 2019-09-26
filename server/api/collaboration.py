@@ -295,6 +295,8 @@ def collaboration_invites_preview():
     intended_role = data["intended_role"] if "intended_role" in data else "member"
 
     collaboration = Collaboration.query.get(data["collaboration_id"])
+    confirm_collaboration_admin(collaboration.id)
+
     user = User.query.get(current_user_id())
     invitation = munchify({
         "user": user,

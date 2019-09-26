@@ -523,7 +523,8 @@ class CollaborationDetail extends React.Component {
                       value={disable_join_requests}
                       info={I18n.t("collaboration.disableJoinRequests")}
                       tooltip={I18n.t("collaboration.disableJoinRequestsTooltip")}
-                      onChange={() => this.setState({disable_join_requests: !disable_join_requests})}/>
+                      onChange={() => this.setState({disable_join_requests: !disable_join_requests})}
+                      readOnly={!isAdmin}/>
 
             {/*<InputField value={enrollment}*/}
             {/*            onChange={e => this.setState({enrollment: e.target.value})}*/}
