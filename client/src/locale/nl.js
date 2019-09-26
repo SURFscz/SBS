@@ -63,7 +63,7 @@ I18n.translations.nl = {
         tiqr_key: "Tiqr sleutel",
         tiqr_keyPlaceholder: "Uw Tiqr sleutel",
         tiqr_keyTooltip: "Tiqr sleutel",
-        ubi_key: "Uw UBI sleutel",
+        ubi_key: "Uw YubiKey",
         ubi_keyPlaceholder: "Algemene U2F/CTAP support",
         ubi_keyTooltip: "Algemene U2F/CTAP support",
         update: "Bijwerken",
