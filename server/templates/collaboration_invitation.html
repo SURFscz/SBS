@@ -1,17 +1,6 @@
 {% extends "mail_layout.html" %}
 {% block title %}SURFNET Collaboration invite{% endblock %}
 {% block content %}
-
-{% if invitation.message is defined and invitation.message != None and invitation.message|length %}
-<p>
-    <strong>Personal Message from {{ invitation.user.name }}:</strong>
-</p>
-<p>
-    "{{ invitation.message }}"
-</p>
-<hr/>
-{% endif %}
-
 <p>
     {{ invitation.user.name }} invited you to join collaboration
     <strong>{{ invitation.collaboration.name }}</strong>  as{{ invitation_role(invitation.intended_role) }}.
@@ -24,10 +13,20 @@
     Please read below what steps you must take to accept this invitation.
 </p>
 
+{% if invitation.message is defined and invitation.message != None and invitation.message|length %}
+<p>
+    <strong>Personal Message from {{ invitation.user.name }}:</strong>
+</p>
+<p>
+    "{{ invitation.message }}"
+</p>
+<hr/>
+{% endif %}
 
 <p>
     <strong>Accept invitation:</strong><br>
-    To accept this invitation, please click 'Login to accept this invitation'. After logging in you can join the collaboration.
+    To accept this invitation, please click 'Login to accept this invitation'. After logging in with your institutional account
+    you can review and accept the invitation and join the collaboration.
 </p>
 
 <p>
