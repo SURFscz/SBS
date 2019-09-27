@@ -274,18 +274,20 @@ class AuthorisationGroup extends React.Component {
     };
 
     addService = option => {
-        const {collaboration, authorisationGroup, name} = this.state;
-        const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
-        addAuthorisationGroupServices({
-            authorisationGroupId: authorisationGroup.id,
-            collaborationId: collaboration.id,
-            serviceIds: option.value
-        }).then(() => {
-            this.refreshServices(() => setFlash(I18n.t("authorisationGroup.flash.addedService", {
-                service: option.label,
-                name: authorisationGroupName
-            })));
-        });
+        if(option) {
+            const {collaboration, authorisationGroup, name} = this.state;
+            const authorisationGroupName = isEmpty(authorisationGroup) ? name : authorisationGroup.name;
+            addAuthorisationGroupServices({
+                authorisationGroupId: authorisationGroup.id,
+                collaborationId: collaboration.id,
+                serviceIds: option.value
+            }).then(() => {
+                this.refreshServices(() => setFlash(I18n.t("authorisationGroup.flash.addedService", {
+                    service: option.label,
+                    name: authorisationGroupName
+                })));
+            });
+        }
     };
 
     userServiceProfileContainsPersonalData = userServiceProfile => {
@@ -326,6 +328,12 @@ class AuthorisationGroup extends React.Component {
                 name: authorisationGroupName
             })));
         });
+    };
+
+    addMemberOrInvitation = option => {
+        if(option) {
+            option.isMember ? this.addMember(option) : this.addInvitation(option);
+        }
     };
 
     addMember = option => {
@@ -684,7 +692,7 @@ class AuthorisationGroup extends React.Component {
             <div className={`authorisation-members ${adminOfCollaboration ? "" : "no-admin"}`}>
                 {adminOfCollaboration && <Select className="services-select"
                                                  placeholder={I18n.t("authorisationGroup.searchMembers", {name: authorisationGroupName})}
-                                                 onChange={option => option.isMember ? this.addMember(option) : this.addInvitation(option)}
+                                                 onChange={this.addMemberOrInvitation}
                                                  options={availableOptions}
                                                  value={null}
                                                  isSearchable={true}
@@ -798,7 +806,8 @@ class AuthorisationGroup extends React.Component {
                 <CheckBox name="auto_provision_members" value={auto_provision_members}
                           info={I18n.t("authorisationGroup.autoProvisionMembers")}
                           tooltip={I18n.t("authorisationGroup.autoProvisionMembersTooltip")}
-                          onChange={e => this.setState({auto_provision_members: e.target.checked})}/>
+                          onChange={e => this.setState({auto_provision_members: e.target.checked})}
+                          readOnly={!adminOfCollaboration}/>
 
                 <SelectField value={this.statusOptions.find(option => status === option.value)}
                              options={this.statusOptions}
@@ -807,6 +816,7 @@ class AuthorisationGroup extends React.Component {
                              placeholder={I18n.t("authorisationGroup.statusPlaceholder")}
                              onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}
                              disabled={!adminOfCollaboration}/>
+
                 {(!isNew && !isEmpty(authorisationGroup)) &&
                 <InputField value={moment(authorisationGroup.created_at * 1000).format("LLLL")}
                             disabled={true}

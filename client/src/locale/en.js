@@ -63,7 +63,7 @@ I18n.translations.en = {
         tiqr_key:"Tiqr key",
         tiqr_keyPlaceholder:"Your tiqr key",
         tiqr_keyTooltip:"Tiqr key",
-        ubi_key: "Your UBI key",
+        ubi_key: "Your YUBI key",
         ubi_keyPlaceholder: "Generic U2F/CTAP support",
         ubi_keyTooltip: "Generic U2F/CTAP support",
         update: "Update",

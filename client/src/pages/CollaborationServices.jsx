@@ -68,13 +68,15 @@ class CollaborationServices extends React.Component {
     };
 
     addService = option => {
-        const {collaboration} = this.state;
-        addCollaborationServices({collaborationId: collaboration.id, serviceIds: option.value}).then(() => {
-            this.refresh(() => setFlash(I18n.t("collaborationServices.flash.added", {
-                service: option.label,
-                name: collaboration.name
-            })));
-        });
+        if(option) {
+            const {collaboration} = this.state;
+            addCollaborationServices({collaborationId: collaboration.id, serviceIds: option.value}).then(() => {
+                this.refresh(() => setFlash(I18n.t("collaborationServices.flash.added", {
+                    service: option.label,
+                    name: collaboration.name
+                })));
+            });
+        }
     };
 
     removeService = service => e => {
@@ -147,7 +149,7 @@ class CollaborationServices extends React.Component {
             return null;
         }
         const availableServices = allServices.filter(service => !sortedServices.find(s => s.id === service.value));
-        //TODO render an explanation info which explains the purpose ot the page. preferably inline like was done with teams
+        //TODO render an explanation info which explains the purpose of the page. preferably inline like was done with teams
         return (
             <div className="mod-collaboration-services">
                 <div className="title">
