@@ -69,6 +69,11 @@ class OrganisationDetail extends React.Component {
                     } = this.state;
                     const members = sortObjects(json.organisation_memberships, sorted, reverse);
                     const collaborations = sortObjects(json.collaborations, sortedCollaborationAttribute, reverseCollaborationSorted);
+                    const member = (user.organisation_memberships || []).find(membership => membership.organisation_id === json.id);
+                    if (isEmpty(member) && !user.admin) {
+                        this.props.history.push("/404");
+                        return;
+                    }
                     this.setState({
                         originalOrganisation: json,
                         name: json.name,
@@ -82,6 +87,9 @@ class OrganisationDetail extends React.Component {
                         adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id),
                         apiKeys: json.api_keys
                     })
+                }, () => {
+                    this.props.history.push("/404");
+                    return;
                 });
         } else {
             this.props.history.push("/404");

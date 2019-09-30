@@ -62,7 +62,19 @@ class OrganisationInvitation extends React.Component {
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
     gotoOrganisations = () => this.setState({confirmationDialogOpen: false},
-        () => this.props.history.push(`/organisations/${this.state.organisationInvitation.organisation.id}`));
+        () => {
+            const {invite} = this.state;
+            const member = (this.props.user.organisation_memberships || []).find(membership => membership.organisation_id === this.state.organisationInvitation.organisation.id);
+            if (member) {
+                this.props.history.push(`/organisations/${this.state.organisationInvitation.organisation.id}`);
+            }
+            else if(this.props.user.organisation_memberships.length) {
+                this.props.history.push(`/organisations`);
+            }
+            else {
+                this.props.history.push(`/home`);
+            }
+        });
 
     cancel = () => {
         this.setState({
