@@ -15,6 +15,9 @@ oidc_id: "CMUID"
 oidc_prefix: "HTTP_OIDC_CLAIM_"
 oidc_uppercase: True
 
+base_scope: "test.sbs.local"
+generate_multiple_eppn: true
+
 mail:
   host: localhost
   port: 1025
@@ -27,3 +30,4 @@ wiki_link: https://wiki.surfnet.nl/display/SCZ/SCZ+Public+Space
 admin_users:
   - uid: "urn:john"
   - uid: "urn:rocky"
+
