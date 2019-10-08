@@ -68,7 +68,7 @@ def seed(db):
         db.session.execute(table.delete())
     db.session.commit()
 
-    john = User(uid="urn:john", name=john_name, email="john@example.org",
+    john = User(uid="urn:john", name=john_name, email="john@example.org", username="john",
                 ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                         "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
                         "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"

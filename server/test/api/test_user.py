@@ -168,7 +168,7 @@ class TestUser(AbstractTest):
 
     def test_generate_unique_username(self):
         # we don't want this in the normal seed
-        for username in ["john", "john2", "john3", "cinderel", "cindere2", "cindere3"]:
+        for username in ["john2", "john3", "cinderel", "cindere2", "cindere3"]:
             db.session.merge(User(uid=str(uuid.uuid4()), username=username, created_by="test", updated_by="test",
                                   name="name"))
         db.session.commit()
