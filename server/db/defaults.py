@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
 from datetime import datetime, date, time, timedelta
-
+from collections.abc import Iterable
 full_text_search_autocomplete_limit = 16
 
 
@@ -12,14 +12,14 @@ def default_expiry_date(json_dict=None):
     return datetime.combine(date.today(), time()) + timedelta(days=15)
 
 
-def calculate_expiry_period(invitation):
-    if not invitation.expiry_date:
+def calculate_expiry_period(invitation, today=datetime.today()):
+    if (isinstance(invitation, Iterable) and "expiry_date" not in invitation) or not invitation.expiry_date:
         return "15 days"
-    diff = invitation.expiry_date - datetime.today()
+    diff = invitation.expiry_date - today
     if diff.days < 1:
         hours = int(diff.seconds / 60 / 60)
         if hours < 1:
-            return f"${int(diff.seconds / 60)} minutes."
+            return f"{int(diff.seconds / 60)} minutes"
         if hours == 1:
             return "1 hour"
         return f"{hours} hours"
