@@ -22,7 +22,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.10.2",
     "react-copy-to-clipboard": "^5.0.1",
-    "react-datepicker": "^2.9.6",
+    "react-datepicker": "2.0.0",
     "react-dom": "^16.10.2",
     "react-json-view": "^1.19.1",
     "react-kawaii": "^0.14.4",
