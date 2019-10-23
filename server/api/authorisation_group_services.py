@@ -71,15 +71,16 @@ def delete_pre_flight():
                                         methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_all_authorisation_group_services(authorisation_group_id, collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
+    confirm_collaboration_admin(int(collaboration_id))
 
     statement = f"DELETE FROM user_service_profiles WHERE service_id in " \
                 f"(SELECT service_id FROM services_authorisation_groups " \
-                f"WHERE authorisation_group_id = {authorisation_group_id})"
+                f"WHERE authorisation_group_id = {int(authorisation_group_id)})"
     sql = text(statement)
     db.engine.execute(sql)
 
-    statement = f"DELETE from services_authorisation_groups WHERE authorisation_group_id = {authorisation_group_id}"
+    statement = f"DELETE from services_authorisation_groups WHERE " \
+                f"authorisation_group_id = {int(authorisation_group_id)}"
     sql = text(statement)
     result_set = db.engine.execute(sql)
 
