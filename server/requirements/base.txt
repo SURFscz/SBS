@@ -14,3 +14,4 @@ SQLAlchemy==1.3.9
 future_fstrings==1.1.0
 python2-secrets==1.0.5
 Werkzeug==0.15.4
+flask-jsonschema-validator==0.0.4
