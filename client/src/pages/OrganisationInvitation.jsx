@@ -63,10 +63,10 @@ class OrganisationInvitation extends React.Component {
 
     gotoOrganisations = () => this.setState({confirmationDialogOpen: false},
         () => {
-            const {invite} = this.state;
-            const member = (this.props.user.organisation_memberships || []).find(membership => membership.organisation_id === this.state.organisationInvitation.organisation.id);
+            const {organisationInvitation} = this.state;
+            const member = (this.props.user.organisation_memberships || []).find(membership => membership.organisation_id === organisationInvitation.organisation.id);
             if (member) {
-                this.props.history.push(`/organisations/${this.state.organisationInvitation.organisation.id}`);
+                this.props.history.push(`/organisations/${organisationInvitation.organisation.id}`);
             }
             else if(this.props.user.organisation_memberships.length) {
                 this.props.history.push(`/organisations`);
