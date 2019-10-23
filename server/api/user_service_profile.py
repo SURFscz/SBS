@@ -56,8 +56,9 @@ def attributes():
             if user_service_profile_val:
                 result.setdefault(user_service_profile_saml_mapping[claim], []).extend([user_service_profile_val])
     cos = set(map(lambda usp: usp.authorisation_group.collaboration.short_name, user_service_profiles))
-    if dict(current_app.app_config).get("generate_multiple_eppn", False):
-        eppns = list(map(lambda co: f"{user.username}@{co}.{current_app.app_config.base_scope}", cos))
+    cfg = current_app.app_config
+    if cfg.get("generate_multiple_eppn", False):
+        eppns = list(map(lambda co: f"{user.username}@{co}.{cfg.base_scope}", cos))
         result.setdefault("urn:mace:dir:attribute-def:eduPersonPrincipalName", []).extend(eppns)
 
     authorisation_group_short_names = list(
