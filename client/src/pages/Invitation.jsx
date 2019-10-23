@@ -70,7 +70,16 @@ class Invitation extends React.Component {
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
     gotoCollaborations = () => this.setState({confirmationDialogOpen: false},
-        () => this.props.history.push(`/collaborations/${this.state.invite.collaboration.id}`));
+        () => {
+            const {invite} = this.state;
+            const member = (this.props.user.collaboration_memberships || []).find(membership => membership.collaboration_id === this.state.invite.collaboration.id);
+            if (member) {
+                this.props.history.push(`/collaborations/${this.state.invite.collaboration.id}`);
+            }
+            else {
+                this.props.history.push(`/home`);
+            }
+        });
 
     cancel = () => {
         this.setState({
