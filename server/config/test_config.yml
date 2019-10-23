@@ -16,7 +16,7 @@ oidc_prefix: "HTTP_OIDC_CLAIM_"
 oidc_uppercase: True
 
 base_scope: "test.sbs.local"
-generate_multiple_eppn: true
+generate_multiple_eppn: True
 
 mail:
   host: localhost
