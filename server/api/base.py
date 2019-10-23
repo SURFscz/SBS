@@ -7,6 +7,7 @@ from functools import wraps
 from pathlib import Path
 
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
+from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
@@ -109,6 +110,8 @@ def json_endpoint(f):
                 response.status_code = 404
             elif isinstance(e, HTTPException):
                 response.status_code = e.code
+            elif isinstance(e, ValidationError):
+                response.status_code = 400
             else:
                 response.status_code = 500
             _add_custom_header(response)

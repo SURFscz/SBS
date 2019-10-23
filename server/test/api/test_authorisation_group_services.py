@@ -33,6 +33,17 @@ class TestAuthorisationGroupServices(AbstractTest):
         for user_service_profile in user_service_profiles:
             self.assertEqual(service.name, user_service_profile.service.name)
 
+    def test_add_authorisation_group_service_json_validation(self):
+        authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
+
+        self.login("urn:admin")
+        res = self.put("/api/authorisation_group_services", body={
+            "authorisation_group_id": authorisation_group.id,
+            "collaboration_id": authorisation_group.collaboration_id,
+            "service_ids": ["(SELECT UpdateXML(null,@@version,null))"]
+        }, with_basic_auth=False, response_status_code=400)
+        self.assertTrue("(SELECT UpdateXML(null,@@version,null))' is not of type 'integer'" in res["message"])
+
     def test_add_authorisation_group_service_with_duplicate_service(self):
         authorisation_group = self.find_entity_by_name(AuthorisationGroup, ai_researchers_authorisation)
         service = self.find_entity_by_name(Service, service_network_name)

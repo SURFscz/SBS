@@ -8,6 +8,7 @@ from server.api.base import json_endpoint, query_param
 from server.api.user_service_profile import create_user_service_profile
 from server.auth.security import confirm_collaboration_admin, current_user
 from server.db.db import db, AuthorisationGroup, UserServiceProfile, User, CollaborationMembership, Service
+from server.schemas import json_schema_validator
 
 authorisation_group_services_api = Blueprint("authorisation_group_services_api", __name__,
                                              url_prefix="/api/authorisation_group_services")
@@ -15,6 +16,7 @@ authorisation_group_services_api = Blueprint("authorisation_group_services_api",
 
 @authorisation_group_services_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
+@json_schema_validator.validate("authorisation_group_services", "authorisation_group_services")
 def add_authorisation_group_services():
     data = current_request.get_json()
     authorisation_group_id = data["authorisation_group_id"]
@@ -72,8 +74,8 @@ def delete_all_authorisation_group_services(authorisation_group_id, collaboratio
     confirm_collaboration_admin(collaboration_id)
 
     statement = f"DELETE FROM user_service_profiles WHERE service_id in " \
-        f"(SELECT service_id FROM services_authorisation_groups " \
-        f"WHERE authorisation_group_id = {authorisation_group_id})"
+                f"(SELECT service_id FROM services_authorisation_groups " \
+                f"WHERE authorisation_group_id = {authorisation_group_id})"
     sql = text(statement)
     db.engine.execute(sql)
 
@@ -91,12 +93,12 @@ def delete_authorisation_group_services(authorisation_group_id, service_id, coll
     confirm_collaboration_admin(collaboration_id)
 
     statement = f"DELETE FROM user_service_profiles WHERE service_id = {service_id} AND " \
-        f"authorisation_group_id = {authorisation_group_id}"
+                f"authorisation_group_id = {authorisation_group_id}"
     sql = text(statement)
     db.engine.execute(sql)
 
     statement = f"DELETE from services_authorisation_groups WHERE service_id = {service_id}" \
-        f" AND authorisation_group_id = {authorisation_group_id}"
+                f" AND authorisation_group_id = {authorisation_group_id}"
     sql = text(statement)
     result_set = db.engine.execute(sql)
 
