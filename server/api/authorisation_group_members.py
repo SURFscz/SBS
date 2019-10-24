@@ -9,6 +9,7 @@ from server.api.base import json_endpoint, query_param
 from server.api.user_service_profile import create_user_service_profile
 from server.auth.security import confirm_collaboration_admin, current_user
 from server.db.db import db, UserServiceProfile, AuthorisationGroup, CollaborationMembership, User
+from server.schemas import json_schema_validator
 
 authorisation_group_members_api = Blueprint("authorisation_group_members_api", __name__,
                                             url_prefix="/api/authorisation_group_members")
@@ -41,6 +42,7 @@ def do_add_authorisation_group_members(data, assert_collaboration_admin):
 
 @authorisation_group_members_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
+@json_schema_validator.validate("models", "authorisation_group_members")
 def add_authorisation_group_members():
     data = current_request.get_json()
     result_set = do_add_authorisation_group_members(data, True)

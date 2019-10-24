@@ -541,7 +541,8 @@ class AuthorisationGroup extends React.Component {
                                 <span data-tip data-for="member-delete">
                                 <FontAwesomeIcon icon="info-circle"/>
                                 <ReactTooltip id="member-delete" type="light" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteMemberTooltip", {name: authorisationGroupName})}}/>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteMemberTooltip",
+                                            {name: encodeURIComponent(authorisationGroupName)})}}/>
                                 </ReactTooltip>
                             </span>}
                             </th>
@@ -599,7 +600,8 @@ class AuthorisationGroup extends React.Component {
                                 <span data-tip data-for="invitation-delete">
                                 <FontAwesomeIcon icon="info-circle"/>
                                 <ReactTooltip id="invitation-delete" type="light" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteInvitationTooltip", {name: authorisationGroupName})}}/>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteInvitationTooltip",
+                                            {name: encodeURIComponent(authorisationGroupName)})}}/>
                                 </ReactTooltip>
                             </span>}
                             </th>
@@ -657,7 +659,8 @@ class AuthorisationGroup extends React.Component {
                                 <span data-tip data-for="service-delete">
                                 <FontAwesomeIcon icon="info-circle"/>
                                 <ReactTooltip id="service-delete" type="light" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteServiceTooltip", {name: authorisationGroupName})}}/>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("authorisationGroup.deleteServiceTooltip",
+                                            {name: encodeURIComponent(authorisationGroupName)})}}/>
                                 </ReactTooltip>
                             </span>}
                             </th>

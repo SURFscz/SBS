@@ -1,0 +1,104 @@
+{
+    "authorisation_group_services": {
+        "type": "object",
+        "properties": {
+            "authorisation_group_id": {
+                "type": "integer"
+            },
+            "collaboration_id": {
+                "type": "integer"
+            },
+            "service_ids": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            }
+        },
+        "required": [
+            "authorisation_group_id",
+            "collaboration_id",
+            "service_ids"
+        ]
+    },
+    "authorisation_groups": {
+        "type": "object",
+        "properties": {
+            "collaboration_id": {
+                "type": "integer"
+            },
+            "service_ids": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            }
+        },
+        "required": [
+            "collaboration_id",
+            "service_ids"
+        ]
+    },
+    "authorisation_group_invitations": {
+        "type": "object",
+        "properties": {
+            "authorisation_group_id": {
+                "type": "integer"
+            },
+            "collaboration_id": {
+                "type": "integer"
+            },
+            "invitations_ids": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            }
+        },
+        "required": [
+            "collaboration_id",
+            "authorisation_group_id",
+            "invitations_ids"
+        ]
+    },
+    "authorisation_group_members": {
+        "type": "object",
+        "properties": {
+            "authorisation_group_id": {
+                "type": "integer"
+            },
+            "collaboration_id": {
+                "type": "integer"
+            },
+            "members_ids": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            }
+        },
+        "required": [
+            "authorisation_group_id",
+            "collaboration_id",
+            "members_ids"
+        ]
+    },
+    "collaborations_services": {
+        "type": "object",
+        "properties": {
+            "collaboration_id": {
+                "type": "integer"
+            },
+            "service_ids": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            }
+        },
+        "required": [
+            "collaboration_id",
+            "service_ids"
+        ]
+    }
+}

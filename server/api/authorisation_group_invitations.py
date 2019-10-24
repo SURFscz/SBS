@@ -42,8 +42,8 @@ def delete_authorisation_group_invitations(authorisation_group_id, invitation_id
     confirm_collaboration_admin(collaboration_id)
 
     statement = f"DELETE FROM authorisation_groups_invitations " \
-        f"WHERE authorisation_group_id = {authorisation_group_id}" \
-        f" AND invitation_id = {invitation_id}"
+        f"WHERE authorisation_group_id = {int(authorisation_group_id)}" \
+        f" AND invitation_id = {int(invitation_id)}"
     sql = text(statement)
     result_set = db.engine.execute(sql)
     return (None, 204) if result_set.rowcount > 0 else (None, 404)

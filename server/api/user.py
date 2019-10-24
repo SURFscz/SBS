@@ -6,7 +6,7 @@ import subprocess
 import tempfile
 
 from flask import Blueprint, request as current_request, session, jsonify
-from sqlalchemy import text, or_
+from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Forbidden
 
@@ -101,16 +101,17 @@ def user_search():
         f"{collaboration_join} JOIN collaborations c ON c.id = cm.collaboration_id "
 
     base_query += " WHERE 1=1 "
-    if q != "*":
+    not_wild_card = q != "*"
+    if not_wild_card:
         q = replace_full_text_search_boolean_mode_chars(q)
-        base_query += f"AND MATCH (u.name, u.email) AGAINST ('{q}*' IN BOOLEAN MODE) " \
-            f"AND u.id > 0 "
+        base_query += f"AND MATCH (u.name, u.email) AGAINST (:q IN BOOLEAN MODE) " \
+                      f"AND u.id > 0 "
 
     if organisation_id:
-        base_query += f"AND om.organisation_id = {organisation_id} "
+        base_query += f"AND om.organisation_id = {int(organisation_id)} "
 
     if collaboration_id:
-        base_query += f"AND cm.collaboration_id = {collaboration_id} "
+        base_query += f"AND cm.collaboration_id = {int(collaboration_id)} "
 
     if organisation_admins:
         base_query += f"AND om.role = 'admin'"
@@ -119,8 +120,12 @@ def user_search():
         base_query += f"AND cm.role = 'admin'"
 
     base_query += f" ORDER BY u.id  LIMIT {full_text_search_autocomplete_limit}"
+
     sql = text(base_query)
-    result_set = db.engine.execute(sql)
+
+    if not_wild_card:
+        sql = sql.bindparams(bindparam("q", type_=String))
+    result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
     data = [{"id": row[0], "uid": row[1], "name": row[2], "email": row[3], "organisation_name": row[4],
              "organisation_role": row[5], "collaboration_name": row[6],
              "collaboration_role": row[7]} for row in result_set]

@@ -154,9 +154,11 @@ class Registration extends React.Component {
             <div className="step-form 3">
                 <p className="form-title">{I18n.t("registration.formEndedTitle", {collaboration: collaborationName})}</p>
                 <p className="info"
-                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.info", {collaboration: collaborationName})}}/>
+                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.info",
+                           {collaboration: encodeURIComponent(collaborationName)})}}/>
                 {adminEmail && <p className="contact"
-                                  dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact", {mail: adminEmail})}}/>}
+                                  dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact",
+                                          {mail: encodeURIComponent(adminEmail)})}}/>}
             </div>
         );
     };

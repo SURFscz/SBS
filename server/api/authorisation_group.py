@@ -12,6 +12,7 @@ from server.auth.security import confirm_collaboration_admin, \
 from server.db.db import AuthorisationGroup, CollaborationMembership, UserServiceProfile, Collaboration
 from server.db.db import db
 from server.db.models import update, save, delete
+from server.schemas import json_schema_validator
 
 authorisation_group_api = Blueprint("authorisation_group_api", __name__, url_prefix="/api/authorisation_groups")
 
@@ -123,6 +124,7 @@ def authorisation_group_by_id(authorisation_group_id, collaboration_id):
 
 @authorisation_group_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
+@json_schema_validator.validate("models", "authorisation_groups")
 def save_authorisation_group():
     data = current_request.get_json()
 
@@ -159,7 +161,7 @@ def _assign_global_urn(collaboration_id, data):
 def update_authorisation_group():
     data = current_request.get_json()
 
-    collaboration_id = data["collaboration_id"]
+    collaboration_id = int(data["collaboration_id"])
     confirm_collaboration_admin(collaboration_id)
 
     _assign_global_urn(collaboration_id, data)
@@ -174,4 +176,7 @@ def update_authorisation_group():
 @authorisation_group_api.route("/<authorisation_group_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_authorisation_group(authorisation_group_id):
+    authorisation_group = AuthorisationGroup.query.filter(AuthorisationGroup.id == authorisation_group_id).one()
+
+    confirm_collaboration_admin(authorisation_group.collaboration_id)
     return delete(AuthorisationGroup, authorisation_group_id)

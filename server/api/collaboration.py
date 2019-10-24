@@ -4,7 +4,7 @@ from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from munch import munchify
-from sqlalchemy import text, or_, func
+from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import BadRequest
@@ -96,12 +96,15 @@ def collaboration_search():
 
     q = query_param("q")
     base_query = "SELECT id, name, description, organisation_id FROM collaborations "
-    if q != "*":
+    not_wild_card = q != "*"
+    if not_wild_card:
         q = replace_full_text_search_boolean_mode_chars(q)
-        base_query += f"WHERE MATCH (name, description) AGAINST ('{q}*' IN BOOLEAN MODE) " \
-            f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
+        base_query += f"WHERE MATCH (name, description) AGAINST (:q IN BOOLEAN MODE) " \
+                      f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
     sql = text(base_query)
-    result_set = db.engine.execute(sql)
+    if not_wild_card:
+        sql = sql.bindparams(bindparam("q", type_=String))
+    result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
     res = [{"id": row[0], "name": row[1], "description": row[2], "organisation_id": row[3]} for row in result_set]
     return res, 200
 
@@ -294,7 +297,7 @@ def collaboration_invites_preview():
     message = data["message"] if "message" in data else None
     intended_role = data["intended_role"] if "intended_role" in data else "member"
 
-    collaboration = Collaboration.query.get(data["collaboration_id"])
+    collaboration = Collaboration.query.get(int(data["collaboration_id"]))
     confirm_collaboration_admin(collaboration.id)
 
     user = User.query.get(current_user_id())
@@ -336,12 +339,12 @@ def save_collaboration():
             return {"status": 400,
                     "error": "duplicate entry",
                     "message": f"Collaboration with name '{data['name']}' already exists within "
-                    f"organisation '{organisation.name}'."}, 400
+                               f"organisation '{organisation.name}'."}, 400
         if _do_short_name_exists(data["short_name"], organisation.id):
             return {"status": 400,
                     "error": "duplicate entry",
                     "message": f"Collaboration with short_name '{data['short_name']}' already exists within "
-                    f"organisation '{organisation.name}'."}, 400
+                               f"organisation '{organisation.name}'."}, 400
     else:
         raise BadRequest("Neither organization in POST data nor associated with an API key")
 
