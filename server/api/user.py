@@ -79,7 +79,7 @@ def generate_unique_username(user: User):
         username = "u"
     counter = 2
     generated_user_name = username
-    while True and counter < 10_000:
+    while True and counter < 10000:
         if User.query.filter(User.username == generated_user_name).count() == 0:
             return generated_user_name
         generated_user_name = f"{username}{counter}"
