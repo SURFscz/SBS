@@ -2,8 +2,12 @@
 import itertools
 import json
 import os
+import re
+import string
 import subprocess
 import tempfile
+import unicodedata
+import random
 
 from flask import Blueprint, request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
@@ -62,21 +66,26 @@ def _user_json_response(user):
     return {**json_user, **is_admin}, 200
 
 
-def generate_unique_username(user):
-    index = user.name.lower().find(" ")
-    if index < 0 or index > 8:
-        index = 8
+def _normalize(s):
+    if s is None:
+        return ""
+    normalized = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("utf-8").strip()
+    return re.sub("[^a-zA-Z]", "", normalized)
 
-    username = user.name[0:index].lower()
+
+def generate_unique_username(user: User):
+    username = f"{_normalize(user.given_name)[0:1]}{_normalize(user.family_name)[0:10]}"[0:10].lower()
+    if len(username) == 0:
+        username = "u"
     counter = 2
-    while True:
-        if User.query.filter(User.username == username).count() == 0:
-            return username
-        offset = len(str(counter)) if counter > 2 else 0
-        max_len = 8 if offset > 0 else 7
-        tip_index = min(max_len, len(username)) - offset
-        username = username[0:tip_index] + str(counter)
+    generated_user_name = username
+    while True and counter < 10_000:
+        if User.query.filter(User.username == generated_user_name).count() == 0:
+            return generated_user_name
+        generated_user_name = f"{username}{counter}"
         counter = counter + 1
+    # Try remembering that...
+    return "".join(random.choices(string.ascii_lowercase, k=14))
 
 
 @user_api.route("/search", strict_slashes=False)
@@ -94,11 +103,11 @@ def user_search():
 
     organisation_join = " INNER " if organisation_id or organisation_admins else "LEFT "
     base_query += f"{organisation_join} JOIN organisation_memberships om ON om.user_id = u.id " \
-        f"{organisation_join} JOIN organisations o ON o.id = om.organisation_id "
+                  f"{organisation_join} JOIN organisations o ON o.id = om.organisation_id "
 
     collaboration_join = " INNER " if collaboration_id or collaboration_admins else "LEFT "
     base_query += f"{collaboration_join} JOIN collaboration_memberships cm ON cm.user_id = u.id " \
-        f"{collaboration_join} JOIN collaborations c ON c.id = cm.collaboration_id "
+                  f"{collaboration_join} JOIN collaborations c ON c.id = cm.collaboration_id "
 
     base_query += " WHERE 1=1 "
     not_wild_card = q != "*"
@@ -148,6 +157,13 @@ def user_search():
     return res, 200
 
 
+def _user_name(user):
+    user.username = generate_unique_username(user)
+    user = db.session.merge(user)
+    db.session.commit()
+    return user
+
+
 @user_api.route("/me", strict_slashes=False)
 @json_endpoint
 def me():
@@ -161,12 +177,8 @@ def me():
         if not user:
             user = User(uid=uid, created_by="system", updated_by="system")
             add_user_claims(request_headers, uid, user)
-            user.username = generate_unique_username(user)
-
+            user = _user_name(user)
             logger.info(f"Provisioning new user {user.uid}")
-
-            user = db.session.merge(user)
-            db.session.commit()
         else:
             hash_headers = claim_attribute_hash_headers(request_headers)
             hash_user = claim_attribute_hash_user(user)
@@ -176,9 +188,7 @@ def me():
                 user = db.session.merge(user)
                 db.session.commit()
             if not user.username:
-                user.username = generate_unique_username(user)
-                user = db.session.merge(user)
-                db.session.commit()
+                user = _user_name(user)
                 logger.info(f"Updating user {user.uid} with new username {user.username}")
             else:
                 logger.info(f"Not updating user {user.uid} as the claims are not changed")
