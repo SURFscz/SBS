@@ -4,6 +4,7 @@ from threading import Thread
 from flask import current_app, render_template
 from flask_mail import Message
 
+from server.api.base import ctx_logger
 from server.db.defaults import calculate_expiry_period
 
 
@@ -34,11 +35,16 @@ def _do_send_mail(subject, recipients, template, context, preview):
                   sender=(mail_ctx.get("sender_name", "SURFnet"), mail_ctx.get("sender_email", "no-reply@surfnet.nl")),
                   recipients=recipients)
     msg.html = render_template(f"{template}.html", **context)
-    if not preview:
+    suppress_mail = "suppress_sending_mails" in mail_ctx and mail_ctx.suppress_sending_mails
+    if not preview and not suppress_mail:
         mail = current_app.mail
         ctx = current_app.app_context()
         thr = Thread(target=_send_async_email, args=[ctx, msg, mail])
         thr.start()
+
+    if suppress_mail:
+        logger = ctx_logger("mail")
+        logger.info(f"Sending mail {msg.html}")
 
     if current_app.config["OPEN_MAIL_IN_BROWSER"] and not preview:
         _open_mail_in_browser(msg.html)
