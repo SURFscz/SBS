@@ -16,7 +16,7 @@ authorisation_group_services_api = Blueprint("authorisation_group_services_api",
 
 @authorisation_group_services_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
-@json_schema_validator.validate("authorisation_group_services", "authorisation_group_services")
+@json_schema_validator.validate("models", "authorisation_group_services")
 def add_authorisation_group_services():
     data = current_request.get_json()
     authorisation_group_id = data["authorisation_group_id"]
@@ -91,8 +91,10 @@ def delete_all_authorisation_group_services(authorisation_group_id, collaboratio
                                         strict_slashes=False)
 @json_endpoint
 def delete_authorisation_group_services(authorisation_group_id, service_id, collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
+    confirm_collaboration_admin(int(collaboration_id))
 
+    service_id = int(service_id)
+    authorisation_group_id = int(authorisation_group_id)
     statement = f"DELETE FROM user_service_profiles WHERE service_id = {service_id} AND " \
                 f"authorisation_group_id = {authorisation_group_id}"
     sql = text(statement)

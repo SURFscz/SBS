@@ -5,12 +5,14 @@ from sqlalchemy import text
 from server.api.base import json_endpoint
 from server.auth.security import confirm_collaboration_admin
 from server.db.db import db
+from server.schemas import json_schema_validator
 
 collaborations_services_api = Blueprint("collaborations_services_api", __name__,
                                         url_prefix="/api/collaborations_services")
 
 
 @collaborations_services_api.route("/", methods=["PUT"], strict_slashes=False)
+@json_schema_validator.validate("models", "collaborations_services")
 @json_endpoint
 def add_collaborations_services():
     data = current_request.get_json()
@@ -34,7 +36,7 @@ def add_collaborations_services():
 def delete_all_services(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
 
-    statement = f"DELETE from services_collaborations WHERE collaboration_id = {collaboration_id}"
+    statement = f"DELETE from services_collaborations WHERE collaboration_id = {int(collaboration_id)}"
     sql = text(statement)
     result_set = db.engine.execute(sql)
     return (None, 204) if result_set.rowcount > 0 else (None, 404)
@@ -45,8 +47,8 @@ def delete_all_services(collaboration_id):
 def delete_collaborations_services(collaboration_id, service_id):
     confirm_collaboration_admin(collaboration_id)
 
-    statement = f"DELETE from services_collaborations WHERE service_id = {service_id}" \
-        f" AND collaboration_id = {collaboration_id}"
+    statement = f"DELETE from services_collaborations WHERE service_id = {int(service_id)}" \
+        f" AND collaboration_id = {int(collaboration_id)}"
     sql = text(statement)
     result_set = db.engine.execute(sql)
     return (None, 204) if result_set.rowcount > 0 else (None, 404)

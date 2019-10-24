@@ -116,7 +116,8 @@ class CollaborationServices extends React.Component {
                                 <span data-tip data-for="service-delete">
                                 <FontAwesomeIcon icon="info-circle"/>
                                 <ReactTooltip id="service-delete" type="light" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("collaborationServices.deleteServiceTooltip", {name: collaboration.name})}}/>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("collaborationServices.deleteServiceTooltip",
+                                            {name: encodeURIComponent(collaboration.name)})}}/>
                                 </ReactTooltip>
                             </span>}
                             </th>

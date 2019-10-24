@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
 from flask import Blueprint, request as current_request
-from sqlalchemy import text, func
+from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
@@ -19,12 +19,16 @@ def service_search():
 
     q = query_param("q")
     base_query = "SELECT id, entity_id, name, description FROM services "
-    if q != "*":
+    not_wild_card = q != "*"
+    if not_wild_card:
         q = replace_full_text_search_boolean_mode_chars(q)
-        base_query += f"WHERE MATCH (name, entity_id, description) AGAINST ('{q}*' IN BOOLEAN MODE) " \
-            f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
+        base_query += f"WHERE MATCH (name, entity_id, description) AGAINST (:q IN BOOLEAN MODE) " \
+                      f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
     sql = text(base_query)
-    result_set = db.engine.execute(sql)
+    if not_wild_card:
+        sql = sql.bindparams(bindparam("q", type_=String))
+    result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
+
     res = [{"id": row[0], "entity_id": row[1], "name": row[2], "description": row[3]} for row in result_set]
     return res, 200
 
