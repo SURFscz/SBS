@@ -168,10 +168,10 @@ class TestUser(AbstractTest):
 
     def test_generate_unique_username(self):
         # we don't want this in the normal seed
-        for username in ["john2", "john3", "cinderel", "cindere2", "cindere3"]:
+        for username in ["jdoe", "jdoe2", "cdoemanchi", "cdoemanchi2", "cdoemanchi3", "u", "u2"]:
             db.session.merge(User(uid=str(uuid.uuid4()), username=username, created_by="test", updated_by="test",
                                   name="name"))
         db.session.commit()
-
-        short_names = [generate_unique_username(munchify({"name": n})) for n in ["John Doe", "Cinderella Doe"]]
-        self.assertListEqual(["john4", "cindere4"], short_names)
+        names = [("John2", "Doe,"), ("Cinderella!", "Doemanchinice"), (None, "髙橋 大"), ("påré", "ÄÄ")]
+        short_names = [generate_unique_username(munchify({"given_name": n[0], "family_name": n[1]})) for n in names]
+        self.assertListEqual(["jdoe3", "cdoemanchi4", "u3", "paa"], short_names)
