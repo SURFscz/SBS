@@ -59,6 +59,7 @@ def current_user_name():
 def confirm_allow_impersonation():
     if "user" not in session or "admin" not in session["user"] or not session["user"]["admin"]:
         raise Forbidden()
+    return True
 
 
 def confirm_authorized_api_call():

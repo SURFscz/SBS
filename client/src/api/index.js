@@ -42,9 +42,9 @@ function validateResponse(showErrorDialog) {
 // It is not allowed to put non asci characters in HTTP headers
 function sanitizeHeader(s) {
     if (typeof s === 'string' || s instanceof String) {
-        return isEmpty(s) ? s : s.replace(/[^\x00-\x7F]/g, ""); // eslint-disable-line no-control-regex
+        s = s.replace(/[^\x00-\x7F]/g, ""); // eslint-disable-line no-control-regex
     }
-    return s;
+    return isEmpty(s) ? "NON_ASCII_ONLY" : s;
 }
 
 function validFetch(path, options, headers = {}, showErrorDialog = true) {
@@ -56,6 +56,7 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
     if (impersonator) {
         impersonation_attributes.forEach(attr =>
             contentHeaders[`X-IMPERSONATE-${attr.toUpperCase()}`] = sanitizeHeader(impersonator[attr]));
+        debugger;
     }
     const fetchOptions = Object.assign({}, {headers: contentHeaders}, options, {
         credentials: "same-origin",
