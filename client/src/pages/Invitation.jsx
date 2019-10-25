@@ -102,9 +102,10 @@ class Invitation extends React.Component {
 
     doDecline = () => {
         const {invite} = this.state;
-        invitationDecline(invite).then(res => {
-            this.gotoCollaborations();
+        invitationDecline(invite).then(() => {
+            this.setState({confirmationDialogOpen: false});
             setFlash(I18n.t("invitation.flash.inviteDeclined", {name: invite.collaboration.name}));
+            this.props.history.push(`/home`);
         });
     };
 

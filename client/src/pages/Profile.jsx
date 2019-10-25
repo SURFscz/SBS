@@ -1,5 +1,5 @@
 import React from "react";
-import {updateUser} from "../api";
+import {health, updateUser} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./Profile.scss";
@@ -14,6 +14,7 @@ class Profile extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        const {user} = this.props;
         this.state = {
             confirmationDialogOpen: false,
             confirmationDialogAction: () => true,
@@ -24,23 +25,17 @@ class Profile extends React.Component {
             initial: true,
             fileInputKey: new Date().getMilliseconds(),
             convertSSHKey: true,
-            ssh_key: "",
-            totp_key: "",
-            tiqr_key: "",
-            ubi_key: "",
-            id: 0
-        };
-    }
-
-    componentDidMount = () => {
-        const {user} = this.props;
-        this.setState({
             ssh_key: user.ssh_key || "",
             totp_key: user.totp_key || "",
             tiqr_key: user.tiqr_key || "",
             ubi_key: user.ubi_key || "",
             id: user.id
-        })
+        };
+    }
+
+    componentDidMount = () => {
+        // needed for router to recognize the navigation
+        health();
     };
 
 
