@@ -67,7 +67,7 @@ class TestAuthorisationGroup(AbstractTest):
         self._do_test_save_authorisation_group(False, 0, 0)
 
     def test_save_authorisation_group_auto_provision_members(self):
-        self._do_test_save_authorisation_group(True, 2, 4)
+        self._do_test_save_authorisation_group(True, 2, 5)
 
     def _do_test_save_authorisation_group(self, auto_provision_members, invitations_count, members_count):
         self.login("urn:john")
@@ -99,9 +99,9 @@ class TestAuthorisationGroup(AbstractTest):
         self._do_test_update_authorisation_group(False, 0, 2)
 
     def test_update_authorisation_group_auto_provision_members(self):
-        self._do_test_update_authorisation_group(True, 2, 4)
+        self._do_test_update_authorisation_group(True, 2, 5)
         # Idempotency
-        self._do_test_update_authorisation_group(True, 2, 4)
+        self._do_test_update_authorisation_group(True, 2, 5)
 
     def _do_test_update_authorisation_group(self, auto_provision_members, invitations_count, members_count):
         self.login("urn:john")

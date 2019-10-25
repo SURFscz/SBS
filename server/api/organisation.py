@@ -9,7 +9,7 @@ from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid, \
-    is_application_admin, confirm_authorized_api_call, confirm_organisation_admin
+    is_application_admin, confirm_authorized_api_call, confirm_organisation_admin, confirm_allow_impersonation
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
 from server.db.defaults import default_expiry_date
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -54,7 +54,7 @@ def organisation_all():
 @organisation_api.route("/search", strict_slashes=False)
 @json_endpoint
 def organisation_search():
-    confirm_write_access()
+    confirm_write_access(override_func=confirm_allow_impersonation)
 
     q = query_param("q")
     base_query = "SELECT id, name, description FROM organisations "
