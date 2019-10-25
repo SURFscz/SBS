@@ -248,7 +248,6 @@ export function organisationShortNameExists(short_name, existingOrganisation = n
     return fetchJson(`/api/organisations/short_name_exists?short_name=${encodeURIComponent(short_name)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
 }
 
-
 export function organisationById(id) {
     return fetchJson(`/api/organisations/${id}`, {}, {}, false);
 }
