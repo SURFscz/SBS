@@ -91,9 +91,8 @@ def seed(db):
                          "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org")
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org")
-    daisy = User(uid="urn:daisy", name="髙橋大輔", email="daisy@ucc.org")
 
-    _persist(db, john, mary, peter, admin, roger, harry, james, sarah, jane, daisy)
+    _persist(db, john, mary, peter, admin, roger, harry, james, sarah, jane)
 
     uuc = Organisation(name=uuc_name, short_name="uuc",
                        description="Unincorporated Urban Community",
@@ -160,13 +159,12 @@ def seed(db):
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
     jane_ai_computing = CollaborationMembership(role="member", user=jane, collaboration=ai_computing)
     sarah_ai_computing = CollaborationMembership(role="member", user=sarah, collaboration=ai_computing)
-    daisy_ai_computing = CollaborationMembership(role="member", user=daisy, collaboration=ai_computing)
 
     roger_uva_research = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
     peter_uva_research = CollaborationMembership(role="member", user=peter, collaboration=uva_research)
     sarah_uva_research = CollaborationMembership(role="admin", user=sarah, collaboration=uva_research)
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
-             jane_ai_computing, sarah_ai_computing, daisy_ai_computing)
+             jane_ai_computing, sarah_ai_computing)
 
     authorisation_group_researchers = AuthorisationGroup(name=ai_researchers_authorisation,
                                                          short_name=ai_researchers_authorisation_short_name,
