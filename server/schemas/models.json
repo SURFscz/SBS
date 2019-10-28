@@ -35,8 +35,7 @@
             }
         },
         "required": [
-            "collaboration_id",
-            "service_ids"
+            "collaboration_id"
         ]
     },
     "authorisation_group_invitations": {
@@ -97,8 +96,7 @@
             }
         },
         "required": [
-            "collaboration_id",
-            "service_ids"
+            "collaboration_id"
         ]
     }
 }
