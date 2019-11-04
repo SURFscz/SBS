@@ -209,7 +209,7 @@ I18n.translations.nl = {
         members: "Normale gebruikers",
         selectRole: "Selecteer een rol.",
         manager: "Manager",
-        admin: "Beheerder",
+        admin: "CO-Beheerder",
         member: "Normale gebruiker",
         flash: {
             created: "Samenwerking {{name}} is met succes aangemaakt."
@@ -478,8 +478,8 @@ I18n.translations.nl = {
         invitees: "Genodigden",
         inviteesPlaceholder: "Deelnemers uitnodigen via e-mail",
         inviteesTooltip: "Deze tekst nemen we op in de <br/>e-mail waarmee we deelnemers<br/>uitnodigen",
-        intendedRole: "Beheersrechten",
-        intendedRoleTooltip: "De beheersrechten die alle genodigden krijgen.<br/><br/>Beheerders van een samenwerking<br/>kunnen de gegevens van de samenwerking<br/> wijzigen en leden uitnodigen.<br/>Normale gebruikers kunnen alleen diensten gebruiken <br/>van autorisatiegroepen waar ze lid van zijn.",
+        intendedRole: "CO Beheersrechten",
+        intendedRoleTooltip: "De beheersrechten die alle genodigden krijgen.<br/><br/>CO-Beheerders van een samenwerking<br/>kunnen de gegevens van de samenwerking<br/> wijzigen en leden uitnodigen.<br/>Normale gebruikers kunnen alleen diensten gebruiken <br/>van autorisatiegroepen waar ze lid van zijn.",
         invitee_email: "E-mail genodigde",
         authorisationGroupsPlaceHolder: "Selecteer Autorisatiegroepen",
         authorisationGroupsTooltip: "Selecteer de autorisatiegroepen waar<br/>de genodigde lid van wordt<br/>nadat deze uitnodiging is geaccepteerd.",
