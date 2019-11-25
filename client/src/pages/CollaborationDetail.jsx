@@ -144,24 +144,29 @@ class CollaborationDetail extends React.Component {
     };
 
     deleteMember = member => () => {
-        this.setState({
-            confirmationDialogOpen: true,
-            confirmationQuestion: I18n.t("collaborationDetail.deleteMemberConfirmation", {name: member.user.name}),
-            confirmationDialogAction: this.doDeleteMember(member)
-        });
+        const {user} = this.props;
+        if (user.id == member.user.id) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationQuestion: I18n.t("collaborationDetail.deleteMemberConfirmation", {name: member.user.name}),
+                confirmationDialogAction: this.doDeleteMember(member)
+            });
+        }
     };
 
     changeMemberRole = member => selectedOption => {
         const {originalCollaboration} = this.state;
-        updateCollaborationMembershipRole(originalCollaboration.id, member.user.id, selectedOption.value)
-            .then(() => {
-                this.componentDidMount();
-                setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
-                    name: member.user.name,
-                    role: selectedOption.value
-                }));
-            });
-
+        const {user} = this.props;
+        if (user.id == member.user.id) {
+            updateCollaborationMembershipRole(originalCollaboration.id, member.user.id, selectedOption.value)
+                .then(() => {
+                    this.componentDidMount();
+                    setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
+                        name: member.user.name,
+                        role: selectedOption.value
+                    }));
+                });
+        }
     };
 
     doDeleteMember = member => () => {
@@ -413,11 +418,11 @@ class CollaborationDetail extends React.Component {
                             value={this.roleOptions.find(option => option.value === member.role)}
                             options={this.roleOptions}
                             onChange={this.changeMemberRole(member)}
-                            isDisabled={!adminOfCollaboration || (member.role === "admin" && numberOfAdmins < 2)}/>
+                            isDisabled={!adminOfCollaboration || (member.role === "admin" && numberOfAdmins < 2) || member.user.id == user.id }/>
                     </td>
                     <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
                     <td className="actions">
-                        {(adminOfCollaboration && (member.role === "member" || (member.role === "admin" && numberOfAdmins > 1))) &&
+                        {(adminOfCollaboration && (member.role === "member" || (member.role === "admin" && numberOfAdmins > 1 && member.user.id != user.id ))) &&
                         <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
                     </td>
                 </tr>)}
