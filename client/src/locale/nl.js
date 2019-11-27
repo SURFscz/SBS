@@ -128,7 +128,7 @@ I18n.translations.nl = {
             contact: "Als u te lang niets hoort, neem dan contact met ons op via <a href=\"mailto:{{mail}}\">{{mail}}</a>."
         },
         flash: {
-            info: "Stap {{step}} is successvol afgerond.",
+            info: "Stap {{step}} is succesvol afgerond.",
             success: "Uw verzoek om lid te worden van {{name}} is verzonden voor review.",
             alreadyMember: "Ongeldig verzoek: u bent al lid van de samenwerking {{name}}."
         }
@@ -209,7 +209,7 @@ I18n.translations.nl = {
         members: "Normale gebruikers",
         selectRole: "Selecteer een rol.",
         manager: "Manager",
-        admin: "Beheerder",
+        admin: "CO-Beheerder",
         member: "Normale gebruiker",
         flash: {
             created: "Samenwerking {{name}} is met succes aangemaakt."
@@ -327,7 +327,7 @@ I18n.translations.nl = {
         filePlaceholder: "Kies een csv of txt bestand",
         fileImportResult: "{{nbr}} e-mails ge&iuml;mporteerd uit {{fileName}}.",
         fileExtensionError: "Alleen bestanden met een .csv extensie zijn toegestaan.",
-        administratorsTooltip: "Beheerders van een organisatie<br/>kunnen samenwerkingen aanmaken<br/>binnen hun organisatie.<br/><br/>Vul email-adressen van uit te nodigen<br/>mensen in, gescheiden door een komma,<br/>spatie of punt-komma, of voeg ze<br/>stuk-voor-stuk toe via de enter toets.",
+        administratorsTooltip: "Beheerders van een organisatie<br/>kunnen samenwerkingen aanmaken<br/>binnen hun organisatie.<br/><br/>Vul e-mailadressen van uit te nodigen<br/>mensen in, gescheiden door een komma,<br/>spatie of punt-komma, of voeg ze<br/>stuk-voor-stuk toe via de enter toets.",
         role: "Rol",
         new: "Nieuwe organisatie",
         admin: "Beheerder",
@@ -478,8 +478,8 @@ I18n.translations.nl = {
         invitees: "Genodigden",
         inviteesPlaceholder: "Deelnemers uitnodigen via e-mail",
         inviteesTooltip: "Deze tekst nemen we op in de <br/>e-mail waarmee we deelnemers<br/>uitnodigen",
-        intendedRole: "Beheersrechten",
-        intendedRoleTooltip: "De beheersrechten die alle genodigden krijgen.<br/><br/>Beheerders van een samenwerking<br/>kunnen de gegevens van de samenwerking<br/> wijzigen en leden uitnodigen.<br/>Normale gebruikers kunnen alleen diensten gebruiken <br/>van autorisatiegroepen waar ze lid van zijn.",
+        intendedRole: "CO Beheersrechten",
+        intendedRoleTooltip: "De beheersrechten die alle genodigden krijgen.<br/><br/>CO-Beheerders van een samenwerking<br/>kunnen de gegevens van de samenwerking<br/> wijzigen en leden uitnodigen.<br/>Normale gebruikers kunnen alleen diensten gebruiken <br/>van autorisatiegroepen waar ze lid van zijn.",
         invitee_email: "E-mail genodigde",
         authorisationGroupsPlaceHolder: "Selecteer Autorisatiegroepen",
         authorisationGroupsTooltip: "Selecteer de autorisatiegroepen waar<br/>de genodigde lid van wordt<br/>nadat deze uitnodiging is geaccepteerd.",
@@ -489,7 +489,7 @@ I18n.translations.nl = {
         message: "Bericht",
         messagePlaceholder: "Bericht aan de beheerders",
         messageTooltip: "De boodschap nemen we op in de <br/>e-mail waarmee beheerders worden uitgenodigd.",
-        inviteesMessagesTooltip: "Voer e-mail adressen in, gescheiden door een komma, spatie <br/>of punt-komma of voer ze stuk-voor-stuk in<br/>met de enter toets.<br/>U kunt ook een csv file inlezen<br/>met daarin komma-gescheiden e-mailadressen.",
+        inviteesMessagesTooltip: "Voer e-mailadressen in, gescheiden door een komma, spatie <br/>of punt-komma of voer ze stuk-voor-stuk in<br/>met de enter toets.<br/>U kunt ook een csv file inlezen<br/>met daarin komma-gescheiden e-mailadressen.",
         inviteesMessagePlaceholder: "Bericht aan genodigden",
         inviter: "Uitnodiger",
         decline: "Afslaan",
@@ -503,7 +503,7 @@ I18n.translations.nl = {
         expired: "De uitnodiging is op {{expiry_date}} verlopen en kan niet meer worden gebruikt.",
         expiredAdmin: "Deze uitnodiging is op {{expiry_date}} verlopen. Verstuur hem opnieuw om de verloopdatum 14 dagen in te toekomst te zetten.",
         filePlaceholder: "Selecteer een csv of txt bestand",
-        fileImportResult: "{{nbr}} e-mails ingelezen uit {{fileName}}.",
+        fileImportResult: "{{nbr}} e-mailadressen ingelezen uit {{fileName}}.",
         fileExtensionError: "Alleen bestanden met een .csv extensie zijn toegestaan.",
         expiryDate: "Verloopdatum",
         expiryDateTooltip: "De verloopdatum van de uitnodiging<br/>Na deze datum kan de uitnodiging <br/>niet meer gebruikt worden.",
@@ -551,7 +551,7 @@ I18n.translations.nl = {
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de autorisatiegroep",
         shortNameTooltip: "Ken korte namen toe aan de autorisatiegroepen,<br/>zodat die namen bruikbaar zijn in de<br/>via ldap te koppelen diensten (zoals Linux groepsnamen).",
-        autoProvisionMembers: "Maan nieuwe leden van de samenwerking automatisch lid?",
+        autoProvisionMembers: "Maak nieuwe leden van de samenwerking automatisch lid?",
         autoProvisionMembersTooltip: "Check om automatisch alle bestaande leden<br/>en nieuwe leden toe te voegen aan deze autorisatiegroep",
         globalUrn: "Globale urn",
         globalUrnTooltip: "Globale unieke en niet aanpasbare urn<br/>gebaseerd op de korte naam van de organsatie,<br/>samenwerking en deze authorisatiegroep.",
