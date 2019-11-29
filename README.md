@@ -62,7 +62,7 @@ yarn analyze
 
 ### [API](#api)
 
-See the [Wiki](https://github.com/SURFscz/SBS/wiki) for the API documentation.
+See the [Wiki](https://github.com/SURFscz/SBS/wiki) for the API documentation and data model.
 
 ### [Testing](#testing)
 
