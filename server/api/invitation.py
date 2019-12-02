@@ -2,13 +2,11 @@
 import datetime
 
 from flask import Blueprint, request as current_request, current_app
-from sqlalchemy import text
-from sqlalchemy.orm import joinedload, contains_eager
+from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param
-from server.api.user_service_profile import create_user_service_profile
-from server.auth.security import confirm_collaboration_admin, confirm_write_access, current_user_id, current_user
+from server.auth.security import confirm_collaboration_admin, confirm_write_access, current_user_id
 from server.db.db import Invitation, CollaborationMembership, Collaboration, db
 from server.db.defaults import default_expiry_date
 from server.db.models import delete
@@ -20,13 +18,10 @@ invitations_api = Blueprint("invitations_api", __name__,
 
 def _invitation_query():
     return Invitation.query \
-        .outerjoin(Invitation.authorisation_groups) \
         .options(joinedload(Invitation.collaboration)
                  .subqueryload(Collaboration.collaboration_memberships)
                  .subqueryload(CollaborationMembership.user)) \
-        .options(joinedload(Invitation.user)) \
-        .options(contains_eager(Invitation.authorisation_groups)) \
-
+        .options(joinedload(Invitation.user))
 
 
 @invitations_api.route("/find_by_hash", strict_slashes=False)
@@ -48,22 +43,6 @@ def invitations_by_id(id):
 
     confirm_collaboration_admin(invitation.collaboration.id)
     return invitation, 200
-
-
-def add_authorisation_group_membership(authorisation_groups, collaboration_membership):
-    if len(authorisation_groups) > 0:
-        values = ",".join(list(map(lambda ag: f"({collaboration_membership.id},{ag.id})", authorisation_groups)))
-        statement = f"INSERT INTO collaboration_memberships_authorisation_groups " \
-            f"(collaboration_membership_id, authorisation_group_id) VALUES {values}"
-
-        db.engine.execute(text(statement))
-        # We need the relationship of
-        db.session.commit()
-
-    for authorisation_group in authorisation_groups:
-        # Create an UserServiceProfile for each Service linked to the AuthorisationGroup
-        create_user_service_profile([s.id for s in authorisation_group.services], authorisation_group, current_user(),
-                                    collaboration_membership.user_id)
 
 
 @invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)
@@ -95,13 +74,6 @@ def invitations_accept():
 
     # We need the persistent identifier of the collaboration_membership
     db.session.commit()
-
-    # ensure all authorisation group membership are added
-    authorisation_groups = invitation.authorisation_groups + list(
-        filter(lambda ag: ag.auto_provision_members, collaboration.authorisation_groups))
-    unique_authorisation_groups = list({ag.id: ag for ag in authorisation_groups}.values())
-
-    add_authorisation_group_membership(unique_authorisation_groups, collaboration_membership)
 
     return None, 201
 

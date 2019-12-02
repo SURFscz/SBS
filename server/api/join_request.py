@@ -4,7 +4,6 @@ from secrets import token_urlsafe
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict
 
-from server.api.authorisation_group_members import do_add_authorisation_group_members
 from server.api.base import json_endpoint
 from server.auth.security import confirm_write_access, confirm_collaboration_admin, current_user_id, current_user, \
     current_user_name, current_user_uid
@@ -137,13 +136,6 @@ def approve_join_request():
     # We need the persistent identifier of the collaboration_membership
     db.session.commit()
 
-    authorisation_groups = list(filter(lambda ag: ag.auto_provision_members, collaboration.authorisation_groups))
-    for authorisation_group in authorisation_groups:
-        do_add_authorisation_group_members({
-            "authorisation_group_id": authorisation_group.id,
-            "collaboration_id": authorisation_group.collaboration_id,
-            "members_ids": [collaboration_membership.id]
-        }, True)
     return None, 201
 
 

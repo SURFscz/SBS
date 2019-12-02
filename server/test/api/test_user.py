@@ -85,17 +85,17 @@ class TestUser(AbstractTest):
     def test_attribute_aggregation_eppn(self):
         res = self.get("/api/users/attribute_aggregation",
                        query_data={"edu_person_principal_name": "urn:john"})
-        self.assertListEqual(["AI computing", "ai_res", "ai_dev"], res)
+        self.assertListEqual(["AI computing"], res)
 
     def test_attribute_aggregation_preference_eppn(self):
         res = self.get("/api/users/attribute_aggregation",
                        query_data={"edu_person_principal_name": "urn:john", "email": "sarah@uva.org"})
-        self.assertListEqual(["AI computing", "ai_res", "ai_dev"], res)
+        self.assertListEqual(["AI computing"], res)
 
     def test_attribute_aggregation_email(self):
         res = self.get("/api/users/attribute_aggregation",
                        query_data={"edu_person_principal_name": "nope", "email": "john@example.org"})
-        self.assertListEqual(["AI computing", "ai_res", "ai_dev"], res)
+        self.assertListEqual(["AI computing"], res)
 
     def test_attribute_aggregation_404(self):
         self.get("/api/users/attribute_aggregation", query_data={"edu_person_principal_name": "nope"},

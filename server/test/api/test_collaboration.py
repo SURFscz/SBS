@@ -37,7 +37,7 @@ class TestCollaboration(AbstractTest):
 
     def test_members(self):
         members = self.get("/api/collaborations/members", query_data={"identifier": collaboration_ai_computing_uuid})
-        self.assertEqual(2, len(members))
+        self.assertEqual(4, len(members))
 
         member = self.find_by_name(members, john_name)
         self.assertEqual("urn:john", member["uid"])
@@ -142,7 +142,6 @@ class TestCollaboration(AbstractTest):
         my_collaborations = self.get("/api/collaborations")
         self.assertEqual(1, len(my_collaborations))
         collaboration = AbstractTest.find_by_name(my_collaborations, ai_computing_name)
-        self.assertTrue(len(collaboration["authorisation_groups"]) > 0)
         self.assertTrue(len(collaboration["collaboration_memberships"]) > 0)
         self.assertTrue(len(collaboration["join_requests"]) > 0)
         self.assertTrue(len(collaboration["invitations"]) > 0)
@@ -218,12 +217,6 @@ class TestCollaboration(AbstractTest):
 
         collaboration = self.get(f"/api/collaborations/services/{collaboration_id}")
         self.assertTrue("collaboration_memberships" not in collaboration)
-
-    def test_collaboration_authorisation_groups_by_id(self):
-        collaboration_id = self._find_by_name_id()["id"]
-        collaboration = self.get(f"/api/collaborations/authorisation_groups/{collaboration_id}")
-
-        self.assertTrue(len(collaboration["authorisation_groups"]) > 0)
 
     def test_collaboration_invites(self):
         pre_count = Invitation.query.count()

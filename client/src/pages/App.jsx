@@ -28,14 +28,10 @@ import Service from "./Service";
 import Services from "./Services";
 import NewInvitation from "./NewInvitation";
 import CollaborationServices from "./CollaborationServices";
-import CollaborationAuthorisationGroups from "./CollaborationAuthorisationGroups";
-import AuthorisationGroup from "./AuthorisationGroup";
 import Invitation from "./Invitation";
 import Impersonate from "./Impersonate";
 import {emitter} from "../utils/Events";
 import {isEmpty, pseudoGuid} from "../utils/Utils";
-import UserServiceProfiles from "./UserServiceProfiles";
-import UserServiceProfileDetails from "./UserServiceProfileDetails";
 import Login from "./Login";
 import {ProtectedRoute} from "./ProtectedRoute";
 import NewApiKey from "./NewApiKey";
@@ -262,23 +258,6 @@ class App extends React.Component {
                         <Route path="/collaboration-services/:collaboration_id"
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={CollaborationServices} {...props}/>}/>
-
-                        <Route path="/collaboration-authorisation-groups/:collaboration_id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser}
-                                   Component={CollaborationAuthorisationGroups} {...props}/>}/>
-
-                        <Route path="/collaboration-authorisation-group-details/:collaboration_id/:id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={AuthorisationGroup} {...props}/>}/>
-
-                        <Route path="/user-service-profiles"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={UserServiceProfiles} {...props}/>}/>
-
-                        <Route path="/user-service-profile-details/:id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={UserServiceProfileDetails} {...props}/>}/>
 
                         <Route path="/impersonate"
                                render={props => <ProtectedRoute

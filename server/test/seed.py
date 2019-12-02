@@ -5,7 +5,7 @@ import uuid
 from secrets import token_urlsafe
 
 from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
-    JoinRequest, Invitation, metadata, UserServiceProfile, AuthorisationGroup, OrganisationInvitation, ApiKey
+    JoinRequest, Invitation, metadata, OrganisationInvitation, ApiKey
 from server.db.defaults import default_expiry_date
 
 join_request_reference = "Dr. Johnson"
@@ -47,10 +47,6 @@ service_network_entity_id = "https://network"
 service_storage_name = "Storage"
 service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
-
-ai_researchers_authorisation = "AI researchers"
-ai_researchers_authorisation_short_name = "ai_res"
-authorisation_group_science_name = "Science"
 
 
 def _persist(db, *objs):
@@ -166,45 +162,7 @@ def seed(db):
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
              jane_ai_computing, sarah_ai_computing)
 
-    authorisation_group_researchers = AuthorisationGroup(name=ai_researchers_authorisation,
-                                                         short_name=ai_researchers_authorisation_short_name,
-                                                         uri="https://ai/researchers",
-                                                         status="active",
-                                                         auto_provision_members=False,
-                                                         description="Artifical computing researchers",
-                                                         collaboration=ai_computing, services=[network],
-                                                         collaboration_memberships=[john_ai_computing,
-                                                                                    jane_ai_computing])
-    authorisation_group_developers = AuthorisationGroup(name="AI developers",
-                                                        uri="https://ai/developers",
-                                                        short_name="ai_dev",
-                                                        status="in_active",
-                                                        auto_provision_members=False,
-                                                        description="Artifical computing developers",
-                                                        collaboration=ai_computing, services=[],
-                                                        collaboration_memberships=[john_ai_computing])
-    authorisation_group_science = AuthorisationGroup(name=authorisation_group_science_name,
-                                                     uri="https://ai/science",
-                                                     short_name="science",
-                                                     status="active",
-                                                     auto_provision_members=True,
-                                                     description="Science",
-                                                     collaboration=uva_research,
-                                                     services=[cloud, storage, wiki],
-                                                     collaboration_memberships=[roger_uva_research])
-    _persist(db, authorisation_group_researchers, authorisation_group_developers, authorisation_group_science)
-
     db.session.commit()
-
-    john_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
-                                      user=john, name=john_name, telephone_number="0612345678",
-                                      identifier=str(uuid.uuid4()),
-                                      address="Postal 1234AA", email="john@org.com")
-
-    jane_user_service_profile = UserServiceProfile(service=network, authorisation_group=authorisation_group_researchers,
-                                                   user=jane, identifier=str(uuid.uuid4()))
-
-    _persist(db, john_profile, jane_user_service_profile)
 
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
                                     collaboration=ai_computing, hash=token_urlsafe())
@@ -220,7 +178,7 @@ def seed(db):
                             intended_role="admin")
     invitation_uva = Invitation(hash=invitation_hash_uva, invitee_email="uva@ex.org", collaboration=uva_research,
                                 expiry_date=default_expiry_date(), user=admin, message="Please join...",
-                                intended_role="member", authorisation_groups=[authorisation_group_science])
+                                intended_role="member")
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
                                   expiry_date=datetime.date.today() - datetime.timedelta(days=21), user=admin,
                                   intended_role="member",

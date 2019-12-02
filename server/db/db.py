@@ -56,8 +56,6 @@ class User(Base, db.Model):
                                                cascade_backrefs=False, passive_deletes=True)
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="user",
                                                 cascade_backrefs=False, passive_deletes=True)
-    user_service_profiles = db.relationship("UserServiceProfile", back_populates="user",
-                                            cascade_backrefs=False, passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="user",
                                     cascade_backrefs=False, passive_deletes=True)
 
@@ -108,31 +106,6 @@ services_collaborations_association = db.Table(
     db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
 )
 
-services_authorisation_groups_association = db.Table(
-    "services_authorisation_groups",
-    metadata,
-    db.Column("authorisation_group_id", db.Integer(), db.ForeignKey("authorisation_groups.id", ondelete="CASCADE"),
-              primary_key=True),
-    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
-)
-
-collaboration_memberships_authorisation_groups_association = db.Table(
-    "collaboration_memberships_authorisation_groups",
-    metadata,
-    db.Column("authorisation_group_id", db.Integer(), db.ForeignKey("authorisation_groups.id", ondelete="CASCADE"),
-              primary_key=True),
-    db.Column("collaboration_membership_id", db.Integer(),
-              db.ForeignKey("collaboration_memberships.id", ondelete="CASCADE"), primary_key=True),
-)
-
-authorisation_groups_invitations_association = db.Table(
-    "authorisation_groups_invitations",
-    metadata,
-    db.Column("authorisation_group_id", db.Integer(), db.ForeignKey("authorisation_groups.id", ondelete="CASCADE"),
-              primary_key=True),
-    db.Column("invitation_id", db.Integer(), db.ForeignKey("invitations.id", ondelete="CASCADE"), primary_key=True),
-)
-
 
 class CollaborationMembership(Base, db.Model):
     __tablename__ = "collaboration_memberships"
@@ -144,34 +117,10 @@ class CollaborationMembership(Base, db.Model):
     invitation = db.relationship("Invitation")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="collaboration_memberships")
-    authorisation_groups = db.relationship("AuthorisationGroup",
-                                           secondary=collaboration_memberships_authorisation_groups_association,
-                                           back_populates="collaboration_memberships",
-                                           lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
-
-
-class UserServiceProfile(Base, db.Model):
-    __tablename__ = "user_service_profiles"
-    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
-    user = db.relationship("User")
-    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
-    service = db.relationship("Service")
-    authorisation_group_id = db.Column(db.Integer(), db.ForeignKey("authorisation_groups.id"))
-    authorisation_group = db.relationship("AuthorisationGroup")
-    name = db.Column("name", db.String(length=255), nullable=True)
-    email = db.Column("email", db.String(length=255), nullable=True)
-    address = db.Column("address", db.String(length=255), nullable=True)
-    role = db.Column("role", db.String(length=255), nullable=True)
-    identifier = db.Column("identifier", db.String(length=255), nullable=True)
-    telephone_number = db.Column("telephone_number", db.String(length=255), nullable=True)
-    status = db.Column("status", db.String(length=255), nullable=True)
-    created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
 
 class Service(Base, db.Model):
@@ -214,8 +163,6 @@ class Collaboration(Base, db.Model):
     services = db.relationship("Service", secondary=services_collaborations_association, lazy="select")
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
                                                 cascade="all, delete-orphan", passive_deletes=True)
-    authorisation_groups = db.relationship("AuthorisationGroup", back_populates="collaboration",
-                                           cascade="all, delete-orphan", passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="collaboration",
                                     cascade="all, delete-orphan", passive_deletes=True)
     invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
@@ -224,32 +171,6 @@ class Collaboration(Base, db.Model):
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
-
-
-class AuthorisationGroup(Base, db.Model):
-    __tablename__ = "authorisation_groups"
-    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    name = db.Column("name", db.String(length=255), nullable=False)
-    short_name = db.Column("short_name", db.String(length=255), nullable=True)
-    uri = db.Column("uri", db.String(length=255), nullable=True)
-    global_urn = db.Column("global_urn", db.Text, nullable=True)
-    description = db.Column("description", db.Text(), nullable=True)
-    status = db.Column("status", db.String(length=255), nullable=True)
-    auto_provision_members = db.Column("auto_provision_members", db.Boolean(), nullable=True, default=False)
-    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
-    collaboration = db.relationship("Collaboration", back_populates="authorisation_groups")
-    services = db.relationship("Service", secondary=services_authorisation_groups_association, lazy="select")
-    collaboration_memberships = db.relationship("CollaborationMembership",
-                                                secondary=collaboration_memberships_authorisation_groups_association,
-                                                back_populates="authorisation_groups",
-                                                lazy="select")
-    user_service_profiles = db.relationship("UserServiceProfile", back_populates="authorisation_group",
-                                            cascade="all, delete-orphan", passive_deletes=True)
-    invitations = db.relationship("Invitation", secondary=authorisation_groups_invitations_association, lazy="select")
-    created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
-                           nullable=False)
 
 
 class JoinRequest(Base, db.Model):
@@ -274,9 +195,6 @@ class Invitation(Base, db.Model):
     collaboration = db.relationship("Collaboration", back_populates="invitations")
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User")
-    authorisation_groups = db.relationship("AuthorisationGroup",
-                                           secondary=authorisation_groups_invitations_association,
-                                           lazy="select")
     accepted = db.Column("accepted", db.Boolean(), nullable=True)
     denied = db.Column("denied", db.Boolean(), nullable=True)
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)

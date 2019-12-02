@@ -84,11 +84,6 @@ function fetchDelete(path) {
     return validFetch(path, {method: "delete"});
 }
 
-function queryParam(options) {
-    const entries = Object.entries(options[0]);
-    return entries.reduce((acc, entry) => isEmpty(entry[1]) ? acc : acc + `${entry[0]}=${entry[1]}&`, "?");
-}
-
 //Base
 export function health() {
     return fetchJson("/health");
@@ -383,103 +378,6 @@ export function deleteCollaborationServices(collaborationId, serviceId) {
     return fetchDelete(`/api/collaborations_services/${collaborationId}/${serviceId}`)
 }
 
-// AuthorisationGroups
-export function authorisationGroupNameExists(name, collaborationId, existingAuthorisationGroup = null) {
-    return fetchJson(`/api/authorisation_groups/name_exists?name=${encodeURIComponent(name)}&collaboration_id=${collaborationId}&existing_authorisation_group=${encodeURIComponent(existingAuthorisationGroup)}`);
-}
-
-export function authorisationGroupShortNameExists(shortName, collaborationId, existingAuthorisationGroup = null) {
-    return fetchJson(`/api/authorisation_groups/short_name_exists?short_name=${encodeURIComponent(shortName)}&collaboration_id=${collaborationId}&existing_authorisation_group=${encodeURIComponent(existingAuthorisationGroup)}`);
-}
-
-export function authorisationGroupById(id, collaborationId) {
-    return fetchJson(`/api/authorisation_groups/${id}/${collaborationId}`, {}, {}, false);
-}
-
-export function createAuthorisationGroup(authorisationGroup) {
-    return postPutJson("/api/authorisation_groups", authorisationGroup, "post");
-}
-
-export function updateAuthorisationGroup(authorisationGroup) {
-    return postPutJson("/api/authorisation_groups", authorisationGroup, "put");
-}
-
-export function deleteAuthorisationGroup(id) {
-    return fetchDelete(`/api/authorisation_groups/${id}`)
-}
-
-export function myAuthorisationGroups() {
-    return fetchJson("/api/authorisation_groups")
-}
-
-export function authorisationGroupsByCollaboration(collaboration_id) {
-    return fetchJson(`/api/authorisation_groups/all/${collaboration_id}`)
-}
-
-//AuthorisationGroupServices
-export function addAuthorisationGroupServices({authorisationGroupId, collaborationId, serviceIds}) {
-    serviceIds = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
-    return postPutJson("/api/authorisation_group_services", {
-        authorisation_group_id: authorisationGroupId,
-        collaboration_id: collaborationId,
-        service_ids: serviceIds
-    }, "put")
-}
-
-export function deleteAuthorisationGroupServices(authorisationGroupId, serviceId, collaborationId) {
-    return fetchDelete(`/api/authorisation_group_services/${authorisationGroupId}/${serviceId}/${collaborationId}`)
-}
-
-export function preFlightDeleteAuthorisationGroupService({authorisation_group_id, service_id, collaboration_id}) {
-    const query = queryParam(arguments);
-    return fetchJson(`/api/authorisation_group_services/delete_pre_flight${query}`);
-}
-
-//AuthorisationGroupMembers
-export function addAuthorisationGroupMembers({authorisationGroupId, collaborationId, memberIds}) {
-    memberIds = Array.isArray(memberIds) ? memberIds : [memberIds];
-    return postPutJson("/api/authorisation_group_members", {
-        authorisation_group_id: authorisationGroupId,
-        collaboration_id: collaborationId,
-        members_ids: memberIds
-    }, "put")
-}
-
-export function deleteAuthorisationGroupMembers(authorisationGroupId, memberId, collaborationId) {
-    return fetchDelete(`/api/authorisation_group_members/${authorisationGroupId}/${memberId}/${collaborationId}`)
-}
-
-export function preFlightDeleteAuthorisationGroupMember({authorisation_group_id, collaboration_membership_id, collaboration_id}) {
-    const query = queryParam(arguments);
-    return fetchJson(`/api/authorisation_group_members/delete_pre_flight${query}`);
-}
-
-//AuthorisationGroupInvitations
-export function addAuthorisationGroupInvitations({authorisationGroupId, collaborationId, invitationIds}) {
-    invitationIds = Array.isArray(invitationIds) ? invitationIds : [invitationIds];
-    return postPutJson("/api/authorisation_group_invitations", {
-        authorisation_group_id: authorisationGroupId,
-        collaboration_id: collaborationId,
-        invitations_ids: invitationIds
-    }, "put")
-}
-
-export function deleteAuthorisationGroupInvitations(authorisationGroupId, invitationId, collaborationId) {
-    return fetchDelete(`/api/authorisation_group_invitations/${authorisationGroupId}/${invitationId}/${collaborationId}`)
-}
-
-//UserServiceProfiles
-export function userServiceProfileById(id) {
-    return fetchJson(`/api/user_service_profiles/${id}`);
-}
-
-export function myUserServiceProfiles() {
-    return fetchJson("/api/user_service_profiles")
-}
-
-export function updateUserServiceProfiles(profile) {
-    return postPutJson("/api/user_service_profiles", profile, "put");
-}
 
 //ApiKeys
 export function apiKeyValue() {

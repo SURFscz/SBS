@@ -289,8 +289,6 @@ def attribute_aggregation():
 
     for collaboration_membership in user.collaboration_memberships:
         is_member_of.append(collaboration_membership.collaboration.name)
-        for authorisation_group in collaboration_membership.authorisation_groups:
-            is_member_of.append(authorisation_group.short_name)
 
     return is_member_of, 200
 
