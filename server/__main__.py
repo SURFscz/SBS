@@ -14,10 +14,6 @@ from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
 from server.api.api_key import api_key_api
-from server.api.authorisation_group import authorisation_group_api
-from server.api.authorisation_group_invitations import authorisation_group_invitations_api
-from server.api.authorisation_group_members import authorisation_group_members_api
-from server.api.authorisation_group_services import authorisation_group_services_api
 from server.api.base import base_api
 from server.api.collaboration import collaboration_api
 from server.api.collaboration_membership import collaboration_membership_api
@@ -30,7 +26,6 @@ from server.api.organisation_invitation import organisation_invitations_api
 from server.api.organisation_membership import organisation_membership_api
 from server.api.service import service_api
 from server.api.user import user_api
-from server.api.user_service_profile import user_service_profile_api
 from server.db.db import db, db_migrations
 from server.templates import invitation_role
 
@@ -93,7 +88,6 @@ app.register_blueprint(base_api)
 app.register_blueprint(user_api)
 app.register_blueprint(service_api)
 app.register_blueprint(collaboration_api)
-app.register_blueprint(user_service_profile_api)
 app.register_blueprint(organisation_api)
 app.register_blueprint(join_request_api)
 app.register_blueprint(organisation_invitations_api)
@@ -101,11 +95,7 @@ app.register_blueprint(invitations_api)
 app.register_blueprint(organisation_membership_api)
 app.register_blueprint(collaboration_membership_api)
 app.register_blueprint(collaborations_services_api)
-app.register_blueprint(authorisation_group_api)
-app.register_blueprint(authorisation_group_services_api)
-app.register_blueprint(authorisation_group_members_api)
 app.register_blueprint(api_key_api)
-app.register_blueprint(authorisation_group_invitations_api)
 
 app.register_error_handler(404, page_not_found)
 

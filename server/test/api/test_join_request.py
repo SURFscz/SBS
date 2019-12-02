@@ -3,7 +3,7 @@ from sqlalchemy.orm import joinedload
 
 from server.db.db import JoinRequest, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_ai_computing_uuid, james_name, uu_disabled_join_request_name
+from server.test.seed import collaboration_ai_computing_uuid, uu_disabled_join_request_name
 
 
 class TestJoinRequest(AbstractTest):
@@ -85,17 +85,6 @@ class TestJoinRequest(AbstractTest):
             self.assertListEqual(["peter@example.org"], mail_msg.recipients)
             self.assertTrue("has been <strong>accepted</strong>" in mail_msg.html)
             self.assertEqual(3, JoinRequest.query.count())
-
-    def test_accept_join_request_with_authorisation_group_auto_provision_members(self):
-        user = self.find_entity_by_name(User, james_name)
-        self.assertEqual(0, len(user.user_service_profiles))
-
-        join_request_hash = self._join_request_by_user("urn:james").hash
-        self.login("urn:john")
-        self.put("/api/join_requests/accept", body={"hash": join_request_hash})
-
-        user = self.find_entity_by_name(User, james_name)
-        self.assertEqual(3, len(user.user_service_profiles))
 
     def test_accept_join_request_already_member(self):
         join_request_hash = self._join_request_by_user("urn:john").hash

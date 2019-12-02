@@ -5,8 +5,7 @@ from flask import session, g as request_context, request as current_request, cur
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
 
-from server.db.db import CollaborationMembership, OrganisationMembership, \
-    AuthorisationGroup, UserServiceProfile
+from server.db.db import CollaborationMembership, OrganisationMembership
 
 
 def is_admin_user(uid):
@@ -125,36 +124,6 @@ def confirm_collaboration_member(collaboration_id):
                    .filter(CollaborationMembership.user_id == user_id) \
                    .filter(CollaborationMembership.collaboration_id == collaboration_id) \
                    .count() > 0
-
-    confirm_write_access(override_func=override_func)
-
-
-def confirm_collaboration_admin_or_authorisation_group_member(collaboration_id, authorisation_group_id):
-    def override_func():
-        user_id = current_user_id()
-        collaboration_admin = is_collaboration_admin(user_id, collaboration_id)
-        if not collaboration_admin:
-            count = AuthorisationGroup.query \
-                .options(load_only("id")) \
-                .join(AuthorisationGroup.collaboration_memberships) \
-                .filter(AuthorisationGroup.id == authorisation_group_id) \
-                .filter(CollaborationMembership.user_id == user_id) \
-                .filter(AuthorisationGroup.collaboration_id == collaboration_id) \
-                .count()
-            return count > 0
-        return collaboration_admin
-
-    confirm_write_access(override_func=override_func)
-
-
-def confirm_owner_of_user_service_profile():
-    def override_func():
-        user_id = current_user_id()
-        count = UserServiceProfile.query \
-            .options(load_only("id")) \
-            .filter(UserServiceProfile.user_id == user_id) \
-            .count()
-        return count > 0
 
     confirm_write_access(override_func=override_func)
 

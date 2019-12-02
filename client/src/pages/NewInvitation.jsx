@@ -4,7 +4,6 @@ import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 
 import {
-    authorisationGroupsByCollaboration,
     collaborationById,
     collaborationInvitations,
     collaborationInvitationsPreview
@@ -65,14 +64,11 @@ class NewInvitation extends React.Component {
         const params = this.props.match.params;
         const collaborationId = params.collaboration_id;
         if (collaborationId) {
-            Promise.all([collaborationById(collaborationId),
-                authorisationGroupsByCollaboration(collaborationId)])
-
+            collaborationById(collaborationId)
                 .then(res =>
                     this.setState({
-                        collaboration: res[0],
-                        intended_role: res[0].collaboration_memberships.some(m => m.role === "admin") ? "member" : "admin",
-                        authorisationGroups: res[1].map(ag => ({value: ag.id, label: ag.name})),
+                        collaboration: res,
+                        intended_role: res.collaboration_memberships.some(m => m.role === "admin") ? "member" : "admin"
                     })
                 );
         } else {
