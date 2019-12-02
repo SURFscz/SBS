@@ -30,7 +30,7 @@ I18n.translations.en = {
         subTitle: "Please login..."
     },
     home: {
-        title: "My collaborations and authorisation groups",
+        title: "My organisations and collaborations",
         userServiceProfiles: "User service profiles",
         authorisationGroups: "Authorisation Groups",
         collaborations: "Collaborations",

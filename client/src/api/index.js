@@ -56,7 +56,6 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
     if (impersonator) {
         impersonation_attributes.forEach(attr =>
             contentHeaders[`X-IMPERSONATE-${attr.toUpperCase()}`] = sanitizeHeader(impersonator[attr]));
-        debugger;
     }
     const fetchOptions = Object.assign({}, {headers: contentHeaders}, options, {
         credentials: "same-origin",
