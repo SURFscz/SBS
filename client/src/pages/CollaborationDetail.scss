@@ -65,7 +65,6 @@
         max-width: $medium;
         margin: 15px auto 15px auto;
         display: flex;
-        flex-direction: row;
         justify-content: space-between;
         align-items: stretch;
 
@@ -79,7 +78,7 @@
             border: solid 1px $lightest-grey;
             box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
             padding: 15px 10px;
-            width: calc(25% - 2em);
+            width: calc(33% - 2em);
 
             @media (max-width: $tablet-max) {
                 width: 100%;

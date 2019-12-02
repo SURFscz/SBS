@@ -274,40 +274,6 @@ class CollaborationDetail extends React.Component {
         );
     };
 
-    renderAuthorisations = authorisationGroups => {
-        const showMore = authorisationGroups.length >= 6;
-        const showMoreItems = this.state.showMore.includes("authorisationGroups");
-
-        return (
-            <section className="info-block ">
-                <div className="header authorisations link" onClick={this.openAuthorisationGroups}>
-                    <span className="type">{I18n.t("collaborations.authorisations")}</span>
-                    <span className="counter">{authorisationGroups.length}</span>
-                </div>
-                <div className="content">
-                    {(showMore && !showMoreItems ? authorisationGroups.slice(0, 5) : authorisationGroups)
-                        .sort((a1, a2) => a1.name.localeCompare(a2.name))
-                        .map((authorisationGroup, i) =>
-                            <div className="collaboration-authorisations" key={i}>
-                                <a href={`/authorisationGroups/${authorisationGroup.id}`}
-                                   onClick={this.openAuthorisationGroupDetails(authorisationGroup)}>
-                                    <FontAwesomeIcon icon={"arrow-right"}/>
-                                    <span>{authorisationGroup.name}</span>
-                                </a>
-                            </div>)}
-                </div>
-                <section className="show-more">
-                    {showMore && <Button className="white"
-                                         txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                                         onClick={this.toggleShowMore("authorisationGroups")}/>}
-                    <Button className="white"
-                            txt={I18n.t("forms.manage")}
-                            onClick={this.openAuthorisationGroups}/>
-                </section>
-            </section>
-        );
-    };
-
     renderInvitations = invitations => {
         const showMore = invitations.length >= 6;
         const showMoreItems = this.state.showMore.includes("invitations");
@@ -611,7 +577,6 @@ class CollaborationDetail extends React.Component {
                     {this.renderRequests(originalCollaboration.join_requests)}
                     {this.renderInvitations(originalCollaboration.invitations)}
                     {this.renderServices(originalCollaboration)}
-                    {this.renderAuthorisations(originalCollaboration.authorisation_groups)}
                 </section>
 
                 <p className="title members">{I18n.t("collaborationDetail.members", {name: originalCollaboration.name})}</p>

@@ -21,8 +21,6 @@
         max-width: $medium;
         margin: 15px auto 15px auto;
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
         align-items: stretch;
 
         @media (max-width: $tablet-max) {
@@ -36,6 +34,11 @@
             box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
             padding: 15px 10px;
             width: calc(33% - 2em);
+
+            &:last-child {
+                margin-left: 25px;
+            }
+
 
             @media (max-width: $tablet-max) {
                 width: 100%;
@@ -64,14 +67,6 @@
                     margin-left: auto;
                 }
 
-                &.authorisations {
-                    color: $authorization;
-                }
-
-                &.user-service-profiles {
-                    color: $services;
-                }
-
                 &.collaborations {
                     color: $join-request;
                 }
@@ -92,7 +87,7 @@
                 justify-content: space-around;
             }
 
-            div.user-service-profile, div.authorisation, div.collaboration, div.organisation {
+            div.collaboration, div.organisation {
                 a {
                     display: inline-block;
                     color: $dark-grey;

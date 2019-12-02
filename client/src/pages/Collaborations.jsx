@@ -172,39 +172,6 @@ class Collaborations extends React.Component {
         );
     };
 
-    renderAuthorisations = collaborations => {
-        const authorisationGroups = collaborations.map(collaboration => collaboration.authorisation_groups)
-            .flat().filter(item => !isEmpty(item));
-        const showMore = collaborations.length >= 6;
-        const showMoreItems = this.state.showMore.includes("authorisationGroups");
-
-        return (
-            <section className="info-block ">
-                <div className="header authorisations">
-                    <span className="type">{I18n.t("collaborations.authorisations")}</span>
-                    <span className="counter">{authorisationGroups.length}</span>
-                </div>
-                <div className="content">
-                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations)
-                        .sort((s1, s2) => s1.name.localeCompare(s2.name))
-                        .map((collaboration, i) =>
-                            <div className="collaboration-authorisations" key={i}>
-                                <a href={`/collaborations/${collaboration.id}`}
-                                   onClick={this.openCollaborationAuthorisationGroups(collaboration)}>
-                                    <span>{collaboration.name}</span>
-                                    <span className="count">{`(${collaboration.authorisation_groups.length})`}</span>
-                                </a>
-                            </div>)}
-                </div>
-                {showMore && <section className="show-more">
-                    <Button className="white"
-                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                            onClick={this.toggleShowMore("authorisationGroups")}/>
-                </section>}
-            </section>
-        );
-    };
-
     renderInvitations = invitations => {
         const showMore = invitations.length >= 6;
         const showMoreItems = this.state.showMore.includes("invitations");
@@ -361,8 +328,10 @@ class Collaborations extends React.Component {
 
     render() {
         const {user} = this.props;
-        const {collaborations, sortedCollaborations, query, loadingAutoComplete, suggestions, moreToShow,
-            selected, sorted, reverse} = this.state;
+        const {
+            collaborations, sortedCollaborations, query, loadingAutoComplete, suggestions, moreToShow,
+            selected, sorted, reverse
+        } = this.state;
         const adminCollaborations = user.admin ? collaborations : collaborations.filter(coll => coll.role !== "member");
         const isOrganisationAdmin = (user.organisation_memberships || []).some(membership => membership.role === "admin");
         return (
@@ -389,7 +358,6 @@ class Collaborations extends React.Component {
                     {this.renderInvitations(adminCollaborations.map(collaboration => collaboration.invitations)
                         .flat().filter(item => !isEmpty(item)))}
                     {this.renderServices(adminCollaborations)}
-                    {this.renderAuthorisations(adminCollaborations)}
                 </section>
                 <div className="title">
                     <span>{I18n.t("collaborations.title")}</span>

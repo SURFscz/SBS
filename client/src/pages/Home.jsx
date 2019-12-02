@@ -115,7 +115,7 @@ class Home extends React.Component {
                 <div className="title">
                     <p>{I18n.t("home.title")}</p>
                 </div>
-                <section className={`info-block-container ${hasOrganisationMemberships ? "with-organisations" : ""}`}>
+                <section className={"info-block-container"}>
                     {hasOrganisationMemberships && this.renderOrganisations(user)}
                     {this.renderCollaborations(collaborations)}
                 </section>
