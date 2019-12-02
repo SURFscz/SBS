@@ -94,18 +94,20 @@ def collaboration_all():
 def collaboration_search():
     confirm_allow_impersonation()
 
+    res = []
     q = query_param("q")
-    base_query = "SELECT id, name, description, organisation_id FROM collaborations "
-    not_wild_card = q != "*"
-    if not_wild_card:
-        q = replace_full_text_search_boolean_mode_chars(q)
-        base_query += f"WHERE MATCH (name, description) AGAINST (:q IN BOOLEAN MODE) " \
-                      f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
-    sql = text(base_query)
-    if not_wild_card:
-        sql = sql.bindparams(bindparam("q", type_=String))
-    result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
-    res = [{"id": row[0], "name": row[1], "description": row[2], "organisation_id": row[3]} for row in result_set]
+    if q and len(q):
+        base_query = "SELECT id, name, description, organisation_id FROM collaborations "
+        not_wild_card = "*" not in q
+        if not_wild_card:
+            q = replace_full_text_search_boolean_mode_chars(q)
+            base_query += f"WHERE MATCH (name, description) AGAINST (:q IN BOOLEAN MODE) " \
+                          f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
+        sql = text(base_query)
+        if not_wild_card:
+            sql = sql.bindparams(bindparam("q", type_=String))
+        result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
+        res = [{"id": row[0], "name": row[1], "description": row[2], "organisation_id": row[3]} for row in result_set]
     return res, 200
 
 

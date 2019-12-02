@@ -17,19 +17,22 @@ service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 def service_search():
     confirm_read_access(override_func=is_collaboration_admin)
 
+    res = []
     q = query_param("q")
-    base_query = "SELECT id, entity_id, name, description FROM services "
-    not_wild_card = q != "*"
-    if not_wild_card:
-        q = replace_full_text_search_boolean_mode_chars(q)
-        base_query += f"WHERE MATCH (name, entity_id, description) AGAINST (:q IN BOOLEAN MODE) " \
-                      f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
-    sql = text(base_query)
-    if not_wild_card:
-        sql = sql.bindparams(bindparam("q", type_=String))
-    result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
 
-    res = [{"id": row[0], "entity_id": row[1], "name": row[2], "description": row[3]} for row in result_set]
+    if q and len(q):
+        base_query = "SELECT id, entity_id, name, description FROM services "
+        not_wild_card = "*" not in q
+        if not_wild_card:
+            q = replace_full_text_search_boolean_mode_chars(q)
+            base_query += f"WHERE MATCH (name, entity_id, description) AGAINST (:q IN BOOLEAN MODE) " \
+                          f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
+        sql = text(base_query)
+        if not_wild_card:
+            sql = sql.bindparams(bindparam("q", type_=String))
+        result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
+
+        res = [{"id": row[0], "entity_id": row[1], "name": row[2], "description": row[3]} for row in result_set]
     return res, 200
 
 
