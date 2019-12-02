@@ -199,7 +199,7 @@ def me():
             organisation_membership.organisation
         for collaboration_membership in user.collaboration_memberships:
             collaboration_membership.collaboration
-
+        user.aups
         user = {**jsonify(user).json, **is_admin}
     else:
         user = {"uid": "anonymous", "guest": True, "admin": False}

@@ -36,6 +36,7 @@ import Login from "./Login";
 import {ProtectedRoute} from "./ProtectedRoute";
 import NewApiKey from "./NewApiKey";
 import Profile from "./Profile";
+import Aup from "./Aup";
 
 addIcons();
 
@@ -268,6 +269,8 @@ class App extends React.Component {
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={Profile}
                                    refreshUser={this.refreshUserMemberships} {...props}/>}/>
+
+                        <Route render={props => <Aup currentUser={currentUser} {...props}/>}/>
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 

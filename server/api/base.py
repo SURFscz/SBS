@@ -17,7 +17,7 @@ from server.db.db import db, ApiKey
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
-white_listing = ["health", "config", "info", "api/users/me", "api/collaborations/find_by_name"]
+white_listing = ["health", "config", "info", "api/aup", "api/users/me", "api/collaborations/find_by_name"]
 external_api_listing = ["api/collaborations"]
 
 

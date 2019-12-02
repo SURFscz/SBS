@@ -24,6 +24,7 @@ I18n.translations.en = {
         services: "Services",
         profile: "Profile",
         impersonate: "Impersonate",
+        aup: "AUP"
     },
     login: {
         title: "Welcome to the Collaboration Management System",
@@ -60,9 +61,9 @@ I18n.translations.en = {
         totp_key: "TOTP key",
         totp_keyPlaceholder: "Your Google authenticator key",
         totp_keyTooltip: "Google Authenticator key",
-        tiqr_key:"Tiqr key",
-        tiqr_keyPlaceholder:"Your tiqr key",
-        tiqr_keyTooltip:"Tiqr key",
+        tiqr_key: "Tiqr key",
+        tiqr_keyPlaceholder: "Your tiqr key",
+        tiqr_keyTooltip: "Tiqr key",
         ubi_key: "Your YUBI key",
         ubi_keyPlaceholder: "Generic U2F/CTAP support",
         ubi_keyTooltip: "Generic U2F/CTAP support",
@@ -480,7 +481,7 @@ I18n.translations.en = {
         intendedRoleTooltip: "The permissions granted to all invitees.<br/><br/>CO Managers of a collaboration<br/>can edit their collaborations and<br/>invite members.<br/>Regular users can only use the services of <br/>their authorisation groups",
         invitee_email: "Invitee e-mail",
         authorisationGroupsPlaceHolder: "Select Authorisation groups",
-        authorisationGroupsTooltip : "Select the Authorisation groups where<br/>the invitees become a member<br/>after accepting this invite",
+        authorisationGroupsTooltip: "Select the Authorisation groups where<br/>the invitees become a member<br/>after accepting this invite",
         authorisationGroups: "Authorisations",
         requiredEmail: "At least one e-mail address is required for an invitation for a collaboration",
         requiredRole: "You must choose the intended role for the collaboration membership",
@@ -655,6 +656,15 @@ I18n.translations.en = {
         },
 
     },
+    aup: {
+        title1: "In ourder to use the CMS services, you need to agree to a number of rules and regulations.<br>These are explained in the document below.",
+        title2: "For more information and explanations, you can contact <a href='mailto:info@surconxt.org'>info@surconxt.org</a>.",
+        title3: "Please read the document and if agreed check the box and proceed to the validation of your personal information",
+        downloadPdf: "Download Acceptable Usage Policy (pdf)",
+        agreeWithTerms: "I agree with the Acceptable Usage Policy",
+        continueToValidation: "Store decision"
+    },
+
     autocomplete: {
         name: "Name",
         description: "Description",
