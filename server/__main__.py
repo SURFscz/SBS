@@ -14,6 +14,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
 from server.api.api_key import api_key_api
+from server.api.aup import aup_api
 from server.api.base import base_api
 from server.api.collaboration import collaboration_api
 from server.api.collaboration_membership import collaboration_membership_api
@@ -28,12 +29,7 @@ from server.api.service import service_api
 from server.api.user import user_api
 from server.db.db import db, db_migrations
 from server.templates import invitation_role
-
-
-def read_file(file_name):
-    file = f"{os.path.dirname(os.path.realpath(__file__))}/{file_name}"
-    with open(file) as f:
-        return f.read()
+from server.tools import read_file
 
 
 def _init_logging(is_test):
@@ -96,12 +92,13 @@ app.register_blueprint(organisation_membership_api)
 app.register_blueprint(collaboration_membership_api)
 app.register_blueprint(collaborations_services_api)
 app.register_blueprint(api_key_api)
+app.register_blueprint(aup_api)
 
 app.register_error_handler(404, page_not_found)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# app.config["SQLALCHEMY_ECHO"] = is_local or is_test
+app.config["SQLALCHEMY_ECHO"] = True
 
 app.config["TESTING"] = test
 app.config["MAIL_SERVER"] = config.mail.host

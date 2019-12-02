@@ -6,12 +6,12 @@ from werkzeug.exceptions import BadRequest
 
 from server.auth.security import current_user_uid
 from server.db.db import db, User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
-    Invitation, Service
+    Invitation, Service, Aup
 
 deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
                            "join_requests": JoinRequest, "collaborations": Collaboration,
                            "organisation_memberships": OrganisationMembership, "invitations": Invitation,
-                           "services": Service}
+                           "services": Service, "aups": Aup}
 
 forbidden_fields = ["created_at", "updated_at"]
 date_fields = ["start_date", "end_date", "created_at", "updated_at"]

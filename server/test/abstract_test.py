@@ -52,7 +52,8 @@ class AbstractTest(TestCase):
     def find_entity_by_name(cls, name):
         return cls.query.filter(cls.name == name).one()
 
-    def uid_header_name(self):
+    @staticmethod
+    def uid_header_name():
         return current_app.app_config.oidc_prefix + current_app.app_config.oidc_id
 
     def login(self, uid="urn:john"):

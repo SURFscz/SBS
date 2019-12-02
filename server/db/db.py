@@ -56,8 +56,8 @@ class User(Base, db.Model):
                                                cascade_backrefs=False, passive_deletes=True)
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="user",
                                                 cascade_backrefs=False, passive_deletes=True)
-    join_requests = db.relationship("JoinRequest", back_populates="user",
-                                    cascade_backrefs=False, passive_deletes=True)
+    join_requests = db.relationship("JoinRequest", back_populates="user", cascade_backrefs=False, passive_deletes=True)
+    aups = db.relationship("Aup", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
 
 
 class Organisation(Base, db.Model):
@@ -229,3 +229,13 @@ class ApiKey(Base, db.Model):
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+
+
+class Aup(Base, db.Model):
+    __tablename__ = "aups"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    au_version = db.Column("au_version", db.String(length=255), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="aups")
+    agreed_at = db.Column("agreed_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                          nullable=False)

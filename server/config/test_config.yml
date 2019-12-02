@@ -25,6 +25,11 @@ mail:
   sender_email: no-reply@surfnet.nl
   suppress_sending_mails: False
 
+aup:
+  pdf: eduTEAMS-AcceptableUsePolicy-050919-1109-5194.pdf
+  pdf_link: http://localhost:8080/static/eduTEAMS-AcceptableUsePolicy-050919-1109-5194.pdf
+  html: eduTEAMS-AcceptableUsePolicy-050919-1109-5194.html
+
 base_url: http://localhost:3000/
 wiki_link: https://wiki.surfnet.nl/display/SCZ/SCZ+Public+Space
 
