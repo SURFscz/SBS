@@ -1,9 +1,7 @@
-import datetime
-
 from flask import Blueprint, current_app, jsonify
 
 from server.api.base import json_endpoint
-from server.auth.security import current_user, current_user_id
+from server.auth.security import current_user_id
 from server.db.db import Aup
 from server.db.models import save
 from server.tools import read_file
