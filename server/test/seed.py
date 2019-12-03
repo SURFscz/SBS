@@ -5,7 +5,7 @@ import uuid
 from secrets import token_urlsafe
 
 from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
-    JoinRequest, Invitation, metadata, OrganisationInvitation, ApiKey
+    JoinRequest, Invitation, metadata, Group, OrganisationInvitation, ApiKey
 from server.db.defaults import default_expiry_date
 
 join_request_reference = "Dr. Johnson"
@@ -47,6 +47,10 @@ service_network_entity_id = "https://network"
 service_storage_name = "Storage"
 service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
+
+ai_researchers_group = "AI researchers"
+ai_researchers_group_short_name = "ai_res"
+group_science_name = "Science"
 
 
 def _persist(db, *objs):
@@ -162,6 +166,27 @@ def seed(db):
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
              jane_ai_computing, sarah_ai_computing)
 
+    group_researchers = Group(name=ai_researchers_group,
+                              short_name=ai_researchers_group_short_name,
+                              auto_provision_members=False,
+                              description="Artifical computing researchers",
+                              collaboration=ai_computing,
+                              collaboration_memberships=[john_ai_computing,
+                                                         jane_ai_computing])
+    group_developers = Group(name="AI developers",
+                             short_name="ai_dev",
+                             auto_provision_members=False,
+                             description="Artifical computing developers",
+                             collaboration=ai_computing,
+                             collaboration_memberships=[john_ai_computing])
+    group_science = Group(name=group_science_name,
+                          short_name="science",
+                          auto_provision_members=True,
+                          description="Science",
+                          collaboration=uva_research,
+                          collaboration_memberships=[roger_uva_research])
+    _persist(db, group_researchers, group_developers, group_science)
+
     db.session.commit()
 
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
@@ -178,7 +203,7 @@ def seed(db):
                             intended_role="admin")
     invitation_uva = Invitation(hash=invitation_hash_uva, invitee_email="uva@ex.org", collaboration=uva_research,
                                 expiry_date=default_expiry_date(), user=admin, message="Please join...",
-                                intended_role="member")
+                                intended_role="member", groups=[group_science])
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
                                   expiry_date=datetime.date.today() - datetime.timedelta(days=21), user=admin,
                                   intended_role="member",

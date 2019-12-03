@@ -106,6 +106,23 @@ services_collaborations_association = db.Table(
     db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
 )
 
+collaboration_memberships_groups_association = db.Table(
+    "collaboration_memberships_groups",
+    metadata,
+    db.Column("group_id", db.Integer(), db.ForeignKey("groups.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("collaboration_membership_id", db.Integer(),
+              db.ForeignKey("collaboration_memberships.id", ondelete="CASCADE"), primary_key=True),
+)
+
+groups_invitations_association = db.Table(
+    "groups_invitations",
+    metadata,
+    db.Column("group_id", db.Integer(), db.ForeignKey("groups.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("invitation_id", db.Integer(), db.ForeignKey("invitations.id", ondelete="CASCADE"), primary_key=True),
+)
+
 
 class CollaborationMembership(Base, db.Model):
     __tablename__ = "collaboration_memberships"
@@ -117,6 +134,10 @@ class CollaborationMembership(Base, db.Model):
     invitation = db.relationship("Invitation")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="collaboration_memberships")
+    groups = db.relationship("Group",
+                             secondary=collaboration_memberships_groups_association,
+                             back_populates="collaboration_memberships",
+                             lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -163,6 +184,8 @@ class Collaboration(Base, db.Model):
     services = db.relationship("Service", secondary=services_collaborations_association, lazy="select")
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
                                                 cascade="all, delete-orphan", passive_deletes=True)
+    groups = db.relationship("Group", back_populates="collaboration",
+                             cascade="all, delete-orphan", passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="collaboration",
                                     cascade="all, delete-orphan", passive_deletes=True)
     invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
@@ -171,6 +194,27 @@ class Collaboration(Base, db.Model):
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
+
+
+class Group(Base, db.Model):
+    __tablename__ = "groups"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=False)
+    short_name = db.Column("short_name", db.String(length=255), nullable=True)
+    global_urn = db.Column("global_urn", db.Text, nullable=True)
+    description = db.Column("description", db.Text(), nullable=True)
+    auto_provision_members = db.Column("auto_provision_members", db.Boolean(), nullable=True, default=False)
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
+    collaboration = db.relationship("Collaboration", back_populates="groups")
+    collaboration_memberships = db.relationship("CollaborationMembership",
+                                                secondary=collaboration_memberships_groups_association,
+                                                back_populates="groups",
+                                                lazy="select")
+    invitations = db.relationship("Invitation", secondary=groups_invitations_association, lazy="select")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
 
 class JoinRequest(Base, db.Model):
@@ -195,6 +239,9 @@ class Invitation(Base, db.Model):
     collaboration = db.relationship("Collaboration", back_populates="invitations")
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User")
+    groups = db.relationship("Group",
+                             secondary=groups_invitations_association,
+                             lazy="select")
     accepted = db.Column("accepted", db.Boolean(), nullable=True)
     denied = db.Column("denied", db.Boolean(), nullable=True)
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)

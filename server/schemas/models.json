@@ -1,4 +1,59 @@
 {
+    "groups": {
+        "type": "object",
+        "properties": {
+            "collaboration_id": {
+                "type": "integer"
+            }
+        },
+        "required": [
+            "collaboration_id"
+        ]
+    },
+    "group_invitations": {
+        "type": "object",
+        "properties": {
+            "group_id": {
+                "type": "integer"
+            },
+            "collaboration_id": {
+                "type": "integer"
+            },
+            "invitations_ids": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            }
+        },
+        "required": [
+            "collaboration_id",
+            "group_id",
+            "invitations_ids"
+        ]
+    },
+    "group_members": {
+        "type": "object",
+        "properties": {
+            "group_id": {
+                "type": "integer"
+            },
+            "collaboration_id": {
+                "type": "integer"
+            },
+            "members_ids": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            }
+        },
+        "required": [
+            "group_id",
+            "collaboration_id",
+            "members_ids"
+        ]
+    },
     "collaborations_services": {
         "type": "object",
         "properties": {

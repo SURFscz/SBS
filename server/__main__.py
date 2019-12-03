@@ -20,6 +20,9 @@ from server.api.collaboration import collaboration_api
 from server.api.collaboration_membership import collaboration_membership_api
 from server.api.collaborations_services import collaborations_services_api
 from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
+from server.api.group import group_api
+from server.api.group_invitations import group_invitations_api
+from server.api.group_members import group_members_api
 from server.api.invitation import invitations_api
 from server.api.join_request import join_request_api
 from server.api.organisation import organisation_api
@@ -91,14 +94,17 @@ app.register_blueprint(invitations_api)
 app.register_blueprint(organisation_membership_api)
 app.register_blueprint(collaboration_membership_api)
 app.register_blueprint(collaborations_services_api)
+app.register_blueprint(group_api)
+app.register_blueprint(group_members_api)
 app.register_blueprint(api_key_api)
+app.register_blueprint(group_invitations_api)
 app.register_blueprint(aup_api)
 
 app.register_error_handler(404, page_not_found)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = True
+app.config["SQLALCHEMY_ECHO"] = False
 
 app.config["TESTING"] = test
 app.config["MAIL_SERVER"] = config.mail.host
