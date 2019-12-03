@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.com/SURFscz/SBS.svg?branch=master)](https://travis-ci.com/SURFscz/SBS)
 [![codecov](https://codecov.io/gh/SURFscz/SBS/branch/master/graph/badge.svg)](https://codecov.io/gh/SURFscz/SBS)
 
-Samenwerking Beheer Systeem ↣ Collaboration Management System
+Research Access Management
 
 ### [Overview Requirements](#system-requirements)
 

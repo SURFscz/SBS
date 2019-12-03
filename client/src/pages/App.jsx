@@ -125,10 +125,10 @@ class App extends React.Component {
         }
     };
 
-    refreshUserMemberships = () => {
+    refreshUserMemberships = callback => {
         refreshUser().then(json => {
             const {impersonator} = this.state;
-            this.setState({currentUser: json, impersonator: impersonator});
+            this.setState({currentUser: json, impersonator: impersonator}, () => callback && callback());
         });
     };
 
@@ -282,7 +282,7 @@ class App extends React.Component {
                                    refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
                         <Route path="/aup" render={props =>
-                            <Aup currentUser={currentUser} {...props}/>}/>
+                            <Aup currentUser={currentUser} refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 

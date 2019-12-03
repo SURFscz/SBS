@@ -6,7 +6,7 @@ I18n.translations.en = {
     select_locale: "Select English",
 
     header: {
-        title: "Collaboration Management System",
+        title: "Research Access Management",
         links: {
             login: "Login",
             logout: "Logout",
@@ -27,7 +27,7 @@ I18n.translations.en = {
         aup: "AUP"
     },
     login: {
-        title: "Welcome to the Collaboration Management System",
+        title: "Research Access Management",
         subTitle: "Please login..."
     },
     home: {
@@ -454,7 +454,7 @@ I18n.translations.en = {
     },
     apiKeys: {
         title: "Create API key for {{organisation}}",
-        info: "With API keys the API of Collaboration Management System can be used. For more details see <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://github.com/SURFscz/SBS/wiki/External-API\"'>the wiki</a>.",
+        info: "With API keys the Application Programmer Interface (API) of the Research Access Management can be used. For more details see <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://github.com/SURFscz/SBS/wiki/External-API\"'>the wiki</a>.",
         backToOrganisationDetail: "Back to my organisation {{name}}",
         secretDisclaimer: "Copy the secret and store it somewhere safe. You can view this code only once. After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new key",
         secret: "Secret",
@@ -533,7 +533,7 @@ I18n.translations.en = {
             description: "Description"
         }
     },
-    group: {
+    groups: {
         title: "Groups within collaboration {{name}}",
         servicesTitle: "Services for group {{name}}",
         membersTitle: "Members of group {{name}}",
@@ -547,12 +547,12 @@ I18n.translations.en = {
         searchPlaceHolder: "Search for groups",
         name: "Name",
         namePlaceholder: "Name of the group",
-        shortName: "Short name",
+        short_name: "Short name",
         shortNamePlaceHolder: "Short name of the group",
         shortNameTooltip: "Assign short names to groups<br/>so that these short names can be used<br/>in the ldap services (like Linux group names)",
         autoProvisionMembers: "Auto-provision new collaboration members?",
         autoProvisionMembersTooltip: "Check to automatically add all existing and<br/>future new collaboration members to this group",
-        globalUrn: "Global urn",
+        global_urn: "Global urn",
         globalUrnTooltip: "Global unique and read-only urn<br/>based on the short names of the organisation,<br/> collaboration and this group.",
         alreadyExists: "An group with {{attribute}} {{value}} already exists.",
         required: "The {{attribute}} is required for an group ",

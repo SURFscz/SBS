@@ -93,7 +93,7 @@ class CollaborationGroups extends React.Component {
     };
 
     renderGroupTable = (groups, sorted, reverse) => {
-        const names = ["open", "name", "uri", "description", "actions"];
+        const names = ["open", "name", "short_name", "global_urn", "description", "actions"];
         return (
             <div className="groups-list">
                 <table className="groups">
@@ -102,7 +102,7 @@ class CollaborationGroups extends React.Component {
                         {names.map(name =>
                             <th key={name} className={name}
                                 onClick={this.sortTable(groups, name, sorted, reverse)}>
-                                {I18n.t(`group.${name}`)}
+                                {I18n.t(`groups.${name}`)}
                                 {name !== "actions" && headerIcon(name, sorted, reverse)}
                             </th>
                         )}
@@ -113,7 +113,8 @@ class CollaborationGroups extends React.Component {
                                                   onClick={this.openGroupDetails(group)}>
                         <td className="open"><FontAwesomeIcon icon="arrow-right"/></td>
                         <td className="name">{group.name}</td>
-                        <td className="uri">{group.uri}</td>
+                        <td className="short_name">{group.short_name}</td>
+                        <td className="global_urn">{group.global_urn}</td>
                         <td className="description">{group.description}</td>
                         <td className="actions"><FontAwesomeIcon icon="trash"
                                                                  onClick={this.delete(group)}/></td>
