@@ -1,16 +1,14 @@
 # -*- coding: future_fstrings -*-
 from flask import Blueprint, request as current_request
 from sqlalchemy import func
-from sqlalchemy import text
 from sqlalchemy.orm import load_only, contains_eager
 
+from server.api.base import json_endpoint, query_param
 from server.api.group_invitations import do_add_group_invitations
 from server.api.group_members import do_add_group_members
-from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_collaboration_admin, \
     confirm_collaboration_admin_or_group_member, current_user_id
 from server.db.db import Group, CollaborationMembership, Collaboration
-from server.db.db import db
 from server.db.models import update, save, delete
 from server.schemas import json_schema_validator
 
