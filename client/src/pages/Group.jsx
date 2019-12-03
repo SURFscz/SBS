@@ -11,7 +11,6 @@ import {
     groupById,
     groupNameExists,
     groupShortNameExists,
-    preFlightDeleteGroupMember,
     updateGroup
 } from "../api";
 import I18n from "i18n-js";
@@ -47,7 +46,6 @@ class Group extends React.Component {
             name: "",
             short_name: "",
             auto_provision_members: false,
-            uri: "",
             description: "",
             required: ["name", "short_name"],
             alreadyExists: {},
@@ -144,7 +142,7 @@ class Group extends React.Component {
             .sort((a, b) => a.invitee_email.localeCompare(b.invitee_email))
             .map(invitation => ({
                 value: invitation.id,
-                label: `${invitation.invitee_email} - ${I18n.t("group.pendingInvite")}`,
+                label: `${invitation.invitee_email} - ${I18n.t("groups.pendingInvite")}`,
                 isMember: false
             }));
         return members.concat(invitations);
@@ -195,9 +193,8 @@ class Group extends React.Component {
 
     delete = () => {
         this.setState({
-            userServiceProfilesPreFlight: [],
             confirmationDialogOpen: true,
-            confirmationDialogQuestion: I18n.t("group.deleteConfirmation", {name: this.state.group.name}),
+            confirmationDialogQuestion: I18n.t("groups.deleteConfirmation", {name: this.state.group.name}),
             leavePage: false,
             cancelDialogAction: this.closeConfirmationDialog,
             confirmationDialogAction: this.doDelete
@@ -208,7 +205,7 @@ class Group extends React.Component {
         const {group, back} = this.state;
         deleteGroup(group.id).then(() => {
             this.props.history.push(back);
-            setFlash(I18n.t("group.flash.deleted", {name: group.name}));
+            setFlash(I18n.t("groups.flash.deleted", {name: group.name}));
         });
     };
 
@@ -233,12 +230,12 @@ class Group extends React.Component {
             if (isNew) {
                 createGroup(this.state).then(() => {
                     this.gotoGroups();
-                    setFlash(I18n.t("group.flash.created", {name: name}));
+                    setFlash(I18n.t("groups.flash.created", {name: name}));
                 });
             } else {
                 updateGroup(this.state).then(() => {
                     this.gotoGroups();
-                    setFlash(I18n.t("group.flash.updated", {name: name}));
+                    setFlash(I18n.t("groups.flash.updated", {name: name}));
                 });
             }
         }
@@ -258,7 +255,7 @@ class Group extends React.Component {
             collaborationId: collaboration.id,
             memberIds: option.value
         }).then(() => {
-            this.refreshMembersAndInvitations(() => setFlash(I18n.t("group.flash.addedMember", {
+            this.refreshMembersAndInvitations(() => setFlash(I18n.t("groups.flash.addedMember", {
                 member: option.label,
                 name: groupName
             })));
@@ -266,7 +263,6 @@ class Group extends React.Component {
     };
 
     addAllMembers = () => {
-        debugger;
         const {collaboration, group, name, allMembers, sortedMembers, sortedInvitations} = this.state;
         const promises = [];
         const availableMembers = allMembers
@@ -292,7 +288,7 @@ class Group extends React.Component {
         }
         if (promises.length > 0) {
             Promise.all(promises).then(() => {
-                this.refreshMembersAndInvitations(() => setFlash(I18n.t("group.flash.addedMembers", {
+                this.refreshMembersAndInvitations(() => setFlash(I18n.t("groups.flash.addedMembers", {
                     name: groupName
                 })));
             });
@@ -300,34 +296,15 @@ class Group extends React.Component {
     };
 
     removeMember = member => () => {
-        const {collaboration, group} = this.state;
-        preFlightDeleteGroupMember({
-            group_id: group.id,
-            collaboration_membership_id: member.id,
-            collaboration_id: collaboration.id
-        }).then(json => {
-            const userServiceProfiles = json.filter(userServiceProfile => this.userServiceProfileContainsPersonalData(userServiceProfile));
-            if (isEmpty(userServiceProfiles)) {
-                this.closeConfirmationDialog();
-                this.doRemoveMember(member)();
-            } else {
-                this.setState({
-                    userServiceProfilesPreFlight: userServiceProfiles,
-                    confirmationDialogOpen: true,
-                    confirmationDialogQuestion: I18n.t("group.removeMemberConfirmation", {name: member.user.name}),
-                    leavePage: false,
-                    cancelDialogAction: this.closeConfirmationDialog,
-                    confirmationDialogAction: this.doRemoveMember(member)
-                });
-            }
-        })
+        this.closeConfirmationDialog();
+        this.doRemoveMember(member)();
     };
 
     doRemoveMember = member => () => {
         this.closeConfirmationDialog();
         const {collaboration, group} = this.state;
         deleteGroupMembers(group.id, member.id, collaboration.id).then(() => {
-            this.refreshMembersAndInvitations(() => setFlash(I18n.t("group.flash.deletedMember", {
+            this.refreshMembersAndInvitations(() => setFlash(I18n.t("groups.flash.deletedMember", {
                 member: member.user.name,
                 name: group.name
             })));
@@ -342,7 +319,7 @@ class Group extends React.Component {
             collaborationId: collaboration.id,
             invitationIds: option.value
         }).then(() => {
-            this.refreshMembersAndInvitations(() => setFlash(I18n.t("group.flash.addedInvitation", {
+            this.refreshMembersAndInvitations(() => setFlash(I18n.t("groups.flash.addedInvitation", {
                 member: option.label,
                 name: groupName
             })));
@@ -352,7 +329,7 @@ class Group extends React.Component {
     removeInvitation = invitation => () => {
         const {collaboration, group} = this.state;
         deleteGroupInvitations(group.id, invitation.id, collaboration.id).then(() => {
-            this.refreshMembersAndInvitations(() => setFlash(I18n.t("group.flash.deletedInvitation", {
+            this.refreshMembersAndInvitations(() => setFlash(I18n.t("groups.flash.deletedInvitation", {
                 invitation: invitation.invitee_email,
                 name: group.name
             })));
@@ -384,26 +361,26 @@ class Group extends React.Component {
             names.shift();
         }
 
-        const membersTitle = I18n.t("group.membersTitle", {name: groupName});
+        const membersTitle = I18n.t("groups.membersTitle", {name: groupName});
         return (
             <div className="group-members-connected">
                 <p className="title">{membersTitle}</p>
                 {adminOfCollaboration &&
-                <em className="warning">{I18n.t("group.deleteMemberWarning")}</em>}
+                <em className="warning">{I18n.t("groups.deleteMemberWarning")}</em>}
                 <table className="connected-members">
                     <thead>
                     <tr>
                         {names.map(name =>
                             <th key={name} className={name}
                                 onClick={this.sortMembersTable(connectedMembers, name, sorted, reverse)}>
-                                {I18n.t(`group.member.${name}`)}
+                                {I18n.t(`groups.member.${name}`)}
                                 {name !== "actions" && headerIcon(name, sorted, reverse)}
                                 {name === "actions" &&
                                 <span data-tip data-for="member-delete">
                                 <FontAwesomeIcon icon="info-circle"/>
                                 <ReactTooltip id="member-delete" type="light" effect="solid" data-html={true}>
                                     <p dangerouslySetInnerHTML={{
-                                        __html: I18n.t("group.deleteMemberTooltip",
+                                        __html: I18n.t("groups.deleteMemberTooltip",
                                             {name: encodeURIComponent(groupName)})
                                     }}/>
                                 </ReactTooltip>
@@ -447,7 +424,7 @@ class Group extends React.Component {
         if (!adminOfCollaboration) {
             names.shift();
         }
-        const invitationsTitle = I18n.t("group.invitationsTitle", {name: groupName});
+        const invitationsTitle = I18n.t("groups.invitationsTitle", {name: groupName});
         return (
             <div className="group-invitations-connected">
                 <p className="title">{invitationsTitle}</p>
@@ -457,14 +434,14 @@ class Group extends React.Component {
                         {names.map(name =>
                             <th key={name} className={name}
                                 onClick={this.sortInvitationsTable(sortedInvitations, name, sortedInvitationsBy, reverseInvitations)}>
-                                {I18n.t(`group.invitation.${name}`)}
+                                {I18n.t(`groups.invitation.${name}`)}
                                 {name !== "actions" && headerIcon(name, sortedInvitationsBy, reverseInvitations)}
                                 {name === "actions" &&
                                 <span data-tip data-for="invitation-delete">
                                 <FontAwesomeIcon icon="info-circle"/>
                                 <ReactTooltip id="invitation-delete" type="light" effect="solid" data-html={true}>
                                     <p dangerouslySetInnerHTML={{
-                                        __html: I18n.t("group.deleteInvitationTooltip",
+                                        __html: I18n.t("groups.deleteInvitationTooltip",
                                             {name: encodeURIComponent(groupName)})
                                     }}/>
                                 </ReactTooltip>
@@ -504,8 +481,8 @@ class Group extends React.Component {
     };
 
     groupMembers = (adminOfCollaboration, groupName,
-                            allMembers, sortedMembers, sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations,
-                            autoProvisionMembers) => {
+                    allMembers, sortedMembers, sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations,
+                    autoProvisionMembers) => {
         const availableMembers = allMembers
             .filter(member => member.isMember && !sortedMembers.find(s => s.id === member.value));
         const availableInvitations = allMembers
@@ -515,7 +492,7 @@ class Group extends React.Component {
         return (
             <div className={`group-members ${adminOfCollaboration ? "" : "no-admin"}`}>
                 {adminOfCollaboration && <Select className="services-select"
-                                                 placeholder={I18n.t("group.searchMembers", {name: groupName})}
+                                                 placeholder={I18n.t("groups.searchMembers", {name: groupName})}
                                                  onChange={this.addMemberOrInvitation}
                                                  options={availableOptions}
                                                  value={null}
@@ -527,7 +504,7 @@ class Group extends React.Component {
                           value={allMembersAreAdded}
                           readOnly={!adminOfCollaboration || allMembersAreAdded}
                           onChange={this.addAllMembers}
-                          info={I18n.t("group.addAllMembers")}
+                          info={I18n.t("groups.addAllMembers")}
                 />
                 {this.renderConnectedMembers(adminOfCollaboration, groupName, sortedMembers,
                     sortedMembersBy, reverseMembers, autoProvisionMembers)}
@@ -540,7 +517,7 @@ class Group extends React.Component {
     };
 
     groupDetails = (adminOfCollaboration, name, short_name, auto_provision_members, alreadyExists, initial, description,
-                    uri, status, isNew, disabledSubmit, group, collaboration) => {
+                    isNew, disabledSubmit, group, collaboration) => {
         return (
             <div className="group">
                 <InputField value={name}
@@ -548,62 +525,56 @@ class Group extends React.Component {
                                 name: e.target.value,
                                 alreadyExists: {...this.state.alreadyExists, name: false}
                             })}
-                            placeholder={I18n.t("group.namePlaceholder")}
+                            placeholder={I18n.t("groups.namePlaceholder")}
                             onBlur={this.validateGroupName}
-                            name={I18n.t("group.name")}
+                            name={I18n.t("groups.name")}
                             disabled={!adminOfCollaboration}/>
                 {alreadyExists.name && <span
-                    className="error">{I18n.t("group.alreadyExists", {
-                    attribute: I18n.t("group.name").toLowerCase(),
+                    className="error">{I18n.t("groups.alreadyExists", {
+                    attribute: I18n.t("groups.name").toLowerCase(),
                     value: name
                 })}</span>}
                 {(!initial && isEmpty(name)) && <span
-                    className="error">{I18n.t("group.required", {
-                    attribute: I18n.t("group.name").toLowerCase()
+                    className="error">{I18n.t("groups.required", {
+                    attribute: I18n.t("groups.name").toLowerCase()
                 })}</span>}
 
                 <InputField value={short_name}
-                            name={I18n.t("group.shortName")}
-                            placeholder={I18n.t("group.shortNamePlaceHolder")}
+                            name={I18n.t("groups.short_name")}
+                            placeholder={I18n.t("groups.shortNamePlaceHolder")}
                             onBlur={this.validateGroupShortName}
                             onChange={e => this.setState({
                                 short_name: e.target.value,
                                 alreadyExists: {...this.state.alreadyExists, short_name: false}
                             })}
-                            toolTip={I18n.t("group.shortNameTooltip")}
+                            toolTip={I18n.t("groups.shortNameTooltip")}
                             disabled={!adminOfCollaboration}/>
                 {alreadyExists.short_name && <span
-                    className="error">{I18n.t("group.alreadyExists", {
-                    attribute: I18n.t("group.shortName").toLowerCase(),
+                    className="error">{I18n.t("groups.alreadyExists", {
+                    attribute: I18n.t("groups.shortName").toLowerCase(),
                     value: short_name
                 })}</span>}
                 {(!initial && isEmpty(short_name)) && <span
-                    className="error">{I18n.t("group.required", {
-                    attribute: I18n.t("group.shortName").toLowerCase()
+                    className="error">{I18n.t("groups.required", {
+                    attribute: I18n.t("groups.shortName").toLowerCase()
                 })}</span>}
 
 
                 <InputField value={`${collaboration.organisation.short_name}:${collaboration.short_name}:${short_name}`}
-                            name={I18n.t("group.globalUrn")}
-                            toolTip={I18n.t("group.globalUrnTooltip")}
+                            name={I18n.t("groups.global_urn")}
+                            toolTip={I18n.t("groups.globalUrnTooltip")}
                             copyClipBoard={true}
                             disabled={true}/>
 
                 <InputField value={description}
-                            name={I18n.t("group.description")}
-                            placeholder={I18n.t("group.descriptionPlaceholder")}
+                            name={I18n.t("groups.description")}
+                            placeholder={I18n.t("groups.descriptionPlaceholder")}
                             onChange={e => this.setState({description: e.target.value})}
                             disabled={!adminOfCollaboration}/>
 
-                <InputField value={uri}
-                            name={I18n.t("group.uri")}
-                            placeholder={I18n.t("group.uriPlaceholder")}
-                            onChange={e => this.setState({uri: e.target.value})}
-                            disabled={!adminOfCollaboration}/>
-
                 <CheckBox name="auto_provision_members" value={auto_provision_members}
-                          info={I18n.t("group.autoProvisionMembers")}
-                          tooltip={I18n.t("group.autoProvisionMembersTooltip")}
+                          info={I18n.t("groups.autoProvisionMembers")}
+                          tooltip={I18n.t("groups.autoProvisionMembersTooltip")}
                           onChange={e => this.setState({auto_provision_members: e.target.checked})}
                           readOnly={!adminOfCollaboration}/>
 
@@ -620,9 +591,9 @@ class Group extends React.Component {
                 </section>}
                 {(adminOfCollaboration && !isNew) &&
                 <section className="actions">
-                    <Button disabled={disabledSubmit} txt={I18n.t("group.update")}
+                    <Button disabled={disabledSubmit} txt={I18n.t("groups.update")}
                             onClick={this.submit}/>
-                    <Button className="delete" txt={I18n.t("group.delete")}
+                    <Button className="delete" txt={I18n.t("groups.delete")}
                             onClick={this.delete}/>
                     <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                 </section>}
@@ -633,11 +604,11 @@ class Group extends React.Component {
     render() {
         const {
             alreadyExists, collaboration, initial, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
-            confirmationDialogQuestion, name, uri, short_name, auto_provision_members, description, status,
+            confirmationDialogQuestion, name, short_name, auto_provision_members, description,
             group, isNew, back, leavePage,
             allMembers, sortedMembers, sortedMembersBy, reverseMembers,
             sortedInvitationsBy, reverseInvitations, sortedInvitations,
-            adminOfCollaboration, userServiceProfilesPreFlight
+            adminOfCollaboration
         } = this.state;
         if (!collaboration) {
             return null;
@@ -645,23 +616,21 @@ class Group extends React.Component {
         const groupName = isEmpty(group) ? name : group.name;
 
         const disabledSubmit = !initial && !this.isValid();
-        const title = adminOfCollaboration ? I18n.t("group.backToCollaborationGroups", {name: collaboration.name}) : I18n.t("home.backToHome");
+        const title = adminOfCollaboration ? I18n.t("groups.backToCollaborationGroups", {name: collaboration.name}) : I18n.t("home.backToHome");
         let detailsTitle;
         if (adminOfCollaboration) {
-            detailsTitle = isNew ? I18n.t("group.titleNew") : I18n.t("group.titleUpdate", {name: group.name});
+            detailsTitle = isNew ? I18n.t("groups.titleNew") : I18n.t("groups.titleUpdate", {name: group.name});
         } else {
-            detailsTitle = I18n.t("group.titleReadOnly", {name: group.name});
+            detailsTitle = I18n.t("groups.titleReadOnly", {name: group.name});
         }
-        const membersTitle = I18n.t("group.membersTitle", {name: groupName});
+        const membersTitle = I18n.t("groups.membersTitle", {name: groupName});
         return (
             <div className="mod-group">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
-                                    question={confirmationDialogQuestion}
-                                    isWarning={!isEmpty(userServiceProfilesPreFlight)}
-                                    children={this.dialogChildren(userServiceProfilesPreFlight)}/>
+                                    question={confirmationDialogQuestion}/>
                 <div className="title">
                     <a href={back} onClick={e => {
                         stopEvent(e);
@@ -678,7 +647,7 @@ class Group extends React.Component {
                     <p className="title">{detailsTitle}</p>
                 </div>
                 {this.groupDetails(adminOfCollaboration, name, short_name, auto_provision_members, alreadyExists, initial,
-                    description, uri, status, isNew, disabledSubmit, group, collaboration)}
+                    description, isNew, disabledSubmit, group, collaboration)}
             </div>);
     }
     ;

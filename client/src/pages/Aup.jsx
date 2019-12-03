@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import {agreeAup, aupLinks} from "../api";
 import CheckBox from "../components/CheckBox";
 import {getParameterByName} from "../utils/QueryParameters";
+import {stopEvent} from "../utils/Utils";
 
 
 class Aup extends React.Component {
@@ -19,9 +20,12 @@ class Aup extends React.Component {
         aupLinks().then(res => this.setState({"aup": res}));
     }
 
-    agreeWith = () => agreeAup().then(() => {
-        const location = getParameterByName("state", window.location.search) || "/home";
-        window.location.href = location;
+    agreeWith = e => agreeAup().then(() => {
+        stopEvent(e);
+        this.props.refreshUser(() => {
+            const location = getParameterByName("state", window.location.search) || "/home";
+            this.props.history.push(location)
+        });
     });
 
     render() {
