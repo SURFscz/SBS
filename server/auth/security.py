@@ -5,7 +5,7 @@ from flask import session, g as request_context, request as current_request, cur
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
 
-from server.db.db import CollaborationMembership, OrganisationMembership
+from server.db.db import CollaborationMembership, OrganisationMembership, Group
 
 
 def is_admin_user(uid):
@@ -124,6 +124,24 @@ def confirm_collaboration_member(collaboration_id):
                    .filter(CollaborationMembership.user_id == user_id) \
                    .filter(CollaborationMembership.collaboration_id == collaboration_id) \
                    .count() > 0
+
+    confirm_write_access(override_func=override_func)
+
+
+def confirm_collaboration_admin_or_group_member(collaboration_id, group_id):
+    def override_func():
+        user_id = current_user_id()
+        collaboration_admin = is_collaboration_admin(user_id, collaboration_id)
+        if not collaboration_admin:
+            count = Group.query \
+                .options(load_only("id")) \
+                .join(Group.collaboration_memberships) \
+                .filter(Group.id == group_id) \
+                .filter(CollaborationMembership.user_id == user_id) \
+                .filter(Group.collaboration_id == collaboration_id) \
+                .count()
+            return count > 0
+        return collaboration_admin
 
     confirm_write_access(override_func=override_func)
 

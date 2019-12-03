@@ -4,7 +4,7 @@ from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from munch import munchify
-from sqlalchemy import text, func, bindparam, String
+from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.orm import aliased, load_only, contains_eager
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import BadRequest
@@ -13,7 +13,8 @@ from server.api.base import json_endpoint, query_param, replace_full_text_search
 from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member, confirm_authorized_api_call, \
     confirm_allow_impersonation
-from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, User, Invitation, Organisation
+from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, Group, User, Invitation, \
+    Organisation
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
@@ -136,6 +137,19 @@ def collaboration_services_by_id(collaboration_id):
     return collaboration, 200
 
 
+@collaboration_api.route("groups/<collaboration_id>", strict_slashes=False)
+@json_endpoint
+def collaboration_groups_by_id(collaboration_id):
+    confirm_collaboration_admin(collaboration_id)
+
+    query = Collaboration.query \
+        .outerjoin(Collaboration.groups) \
+        .options(contains_eager(Collaboration.groups))
+    collaboration = query.filter(Collaboration.id == collaboration_id).one()
+
+    return collaboration, 200
+
+
 # Call for LSC to get all members based on the identifier of the Collaboration
 @collaboration_api.route("/members", strict_slashes=False)
 @json_endpoint
@@ -143,13 +157,17 @@ def members():
     confirm_authorized_api_call()
 
     identifier = query_param("identifier")
+    collaboration_group = aliased(Collaboration)
     collaboration_membership = aliased(Collaboration)
 
     users = User.query \
         .options(load_only("uid", "name")) \
         .join(User.collaboration_memberships) \
         .join(collaboration_membership, CollaborationMembership.collaboration) \
-        .filter(collaboration_membership.identifier == identifier) \
+        .join(CollaborationMembership.groups) \
+        .join(collaboration_group, Group.collaboration) \
+        .filter(or_(collaboration_group.identifier == identifier,
+                    collaboration_membership.identifier == identifier)) \
         .all()
     return users, 200
 
@@ -186,10 +204,12 @@ def collaboration_by_id(collaboration_id):
 
     query = Collaboration.query \
         .join(Collaboration.organisation) \
+        .outerjoin(Collaboration.groups) \
         .outerjoin(Collaboration.invitations) \
         .outerjoin(Collaboration.join_requests) \
         .outerjoin(JoinRequest.user) \
         .outerjoin(Collaboration.services) \
+        .options(contains_eager(Collaboration.groups)) \
         .options(contains_eager(Collaboration.invitations)) \
         .options(contains_eager(Collaboration.organisation)) \
         .options(contains_eager(Collaboration.join_requests)
@@ -216,12 +236,14 @@ def my_collaborations():
     user_id = current_user_id()
     query = Collaboration.query \
         .join(Collaboration.organisation) \
+        .outerjoin(Collaboration.groups) \
         .outerjoin(Collaboration.invitations) \
         .outerjoin(Collaboration.join_requests) \
         .outerjoin(JoinRequest.user) \
         .outerjoin(Collaboration.services) \
         .options(joinedload(Collaboration.collaboration_memberships)) \
         .options(contains_eager(Collaboration.organisation)) \
+        .options(contains_eager(Collaboration.groups)) \
         .options(contains_eager(Collaboration.invitations)) \
         .options(contains_eager(Collaboration.join_requests)
                  .contains_eager(JoinRequest.user)) \
@@ -246,12 +268,18 @@ def collaboration_invites():
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
     intended_role = data["intended_role"] if "intended_role" in data else "member"
+    group_ids = data["groups"] if "groups" in data else []
+    groups = Group.query \
+        .filter(Group.collaboration_id == collaboration_id) \
+        .filter(Group.id.in_(group_ids)) \
+        .all()
+
     collaboration = Collaboration.query.get(collaboration_id)
     user = User.query.get(current_user_id())
 
     for administrator in administrators:
         invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
-                                collaboration=collaboration, user=user,
+                                collaboration=collaboration, user=user, groups=groups,
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 created_by=user.uid)
         invitation = db.session.merge(invitation)
@@ -364,7 +392,7 @@ def update_collaboration():
     confirm_collaboration_admin(data["id"])
 
     _assign_global_urn(data["organisation_id"], data)
-    # For updating references like services, memberships there are more fine-grained API methods
+    # For updating references like services, groups, memberships there are more fine-grained API methods
     return update(Collaboration, custom_json=data, allow_child_cascades=False)
 
 

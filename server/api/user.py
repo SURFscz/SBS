@@ -9,7 +9,7 @@ import tempfile
 import unicodedata
 import random
 
-from flask import Blueprint, request as current_request, session, jsonify
+from flask import Blueprint, request as current_request, session, jsonify, current_app
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Forbidden
@@ -50,10 +50,12 @@ def _store_user_in_session(user):
 
 def _user_query():
     return User.query \
+        .outerjoin(User.aups) \
         .outerjoin(User.organisation_memberships) \
         .outerjoin(OrganisationMembership.organisation) \
         .outerjoin(User.collaboration_memberships) \
         .outerjoin(CollaborationMembership.collaboration) \
+        .options(contains_eager(User.aups)) \
         .options(contains_eager(User.organisation_memberships)
                  .contains_eager(OrganisationMembership.organisation)) \
         .options(contains_eager(User.collaboration_memberships)
@@ -63,7 +65,9 @@ def _user_query():
 def _user_json_response(user):
     is_admin = {"admin": is_admin_user(user.uid), "guest": False}
     json_user = jsonify(user).json
-    return {**json_user, **is_admin}, 200
+    needs_to_agree_with_aup = \
+        current_app.app_config.aup.pdf not in list(map(lambda aup: aup.au_version, user.aups))
+    return {**json_user, **is_admin, **{"needs_to_agree_with_aup": needs_to_agree_with_aup}}, 200
 
 
 def _normalize(s):
@@ -201,6 +205,8 @@ def me():
             collaboration_membership.collaboration
         user.aups
         user = {**jsonify(user).json, **is_admin}
+        user["needs_to_agree_with_aup"] = \
+            current_app.app_config.aup.pdf not in list(map(lambda aup: aup["au_version"], user["aups"]))
     else:
         user = {"uid": "anonymous", "guest": True, "admin": False}
         session["user"] = user

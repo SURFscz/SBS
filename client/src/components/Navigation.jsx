@@ -41,15 +41,27 @@ export default class Navigation extends React.PureComponent {
         const isCollaborationAdmin = (currentUser.collaboration_memberships || []).some(membership => membership.role === "admin");
         const isOrganisationAdmin = (currentUser.organisation_memberships || []).some(membership => membership.role === "admin");
         const mayImpersonate = currentUser.admin || (impersonator && impersonator.admin);
+        const needsToAgreeWithAup = currentUser.needs_to_agree_with_aup;
+        if (needsToAgreeWithAup) {
+            return (
+                <div className="navigation-container">
+                    <div className="navigation">
+                        {this.renderItem("/aup", "aup")}
+                    </div>
+                    {this.renderSpinner()}
+                </div>
+            );
+        }
         return (
             <div className="navigation-container">
                 <div className="navigation">
                     {!currentUser.guest && this.renderItem("/home", "home")}
-                    {window.location.pathname.indexOf("registration") > -1 && this.renderItem("/registration", "registration")}
+                    {window.location.pathname.indexOf("registration") > -1 &&
+                    this.renderItem("/registration", "registration")}
                     {(currentUser.admin || isCollaborationAdmin || isOrganisationAdmin) && this.renderItem("/collaborations", "collaborations")}
                     {currentUser.admin && this.renderItem("/organisations", "organisations")}
                     {currentUser.admin && this.renderItem("/services", "services")}
-                    {this.renderItem("/aup", "aup")}
+
                     {!currentUser.guest && this.renderItem("/profile", "profile")}
                     {mayImpersonate && this.renderItem("/impersonate", "impersonate", "menu-item right")}
                 </div>

@@ -83,6 +83,11 @@ function fetchDelete(path) {
     return validFetch(path, {method: "delete"});
 }
 
+function queryParam(options) {
+    const entries = Object.entries(options[0]);
+    return entries.reduce((acc, entry) => isEmpty(entry[1]) ? acc : acc + `${entry[0]}=${entry[1]}&`, "?");
+}
+
 //Base
 export function health() {
     return fetchJson("/health");
@@ -218,8 +223,8 @@ export function collaborationServices(collaborationId, includeMemberships = fals
     return fetchJson(`/api/collaborations/services/${collaborationId}?include_memberships=${includeMemberships}`);
 }
 
-export function collaborationAuthorisationGroups(collaborationId) {
-    return fetchJson(`/api/collaborations/authorisation_groups/${collaborationId}`);
+export function collaborationGroups(collaborationId) {
+    return fetchJson(`/api/collaborations/groups/${collaborationId}`);
 }
 
 //Organisations
@@ -377,6 +382,71 @@ export function deleteCollaborationServices(collaborationId, serviceId) {
     return fetchDelete(`/api/collaborations_services/${collaborationId}/${serviceId}`)
 }
 
+// Groups
+export function groupNameExists(name, collaborationId, existingGroup = null) {
+    return fetchJson(`/api/groups/name_exists?name=${encodeURIComponent(name)}&collaboration_id=${collaborationId}&existing_group=${encodeURIComponent(existingGroup)}`);
+}
+
+export function groupShortNameExists(shortName, collaborationId, existingGroup = null) {
+    return fetchJson(`/api/groups/short_name_exists?short_name=${encodeURIComponent(shortName)}&collaboration_id=${collaborationId}&existing_group=${encodeURIComponent(existingGroup)}`);
+}
+
+export function groupById(id, collaborationId) {
+    return fetchJson(`/api/groups/${id}/${collaborationId}`, {}, {}, false);
+}
+
+export function createGroup(group) {
+    return postPutJson("/api/groups", group, "post");
+}
+
+export function updateGroup(group) {
+    return postPutJson("/api/groups", group, "put");
+}
+
+export function deleteGroup(id) {
+    return fetchDelete(`/api/groups/${id}`)
+}
+
+export function myGroups() {
+    return fetchJson("/api/groups")
+}
+
+export function groupsByCollaboration(collaboration_id) {
+    return fetchJson(`/api/groups/all/${collaboration_id}`)
+}
+
+//GroupMembers
+export function addGroupMembers({groupId, collaborationId, memberIds}) {
+    memberIds = Array.isArray(memberIds) ? memberIds : [memberIds];
+    return postPutJson("/api/group_members", {
+        group_id: groupId,
+        collaboration_id: collaborationId,
+        members_ids: memberIds
+    }, "put")
+}
+
+export function deleteGroupMembers(groupId, memberId, collaborationId) {
+    return fetchDelete(`/api/group_members/${groupId}/${memberId}/${collaborationId}`)
+}
+
+export function preFlightDeleteGroupMember({group_id, collaboration_membership_id, collaboration_id}) {
+    const query = queryParam(arguments);
+    return fetchJson(`/api/group_members/delete_pre_flight${query}`);
+}
+
+//GroupInvitations
+export function addGroupInvitations({groupId, collaborationId, invitationIds}) {
+    invitationIds = Array.isArray(invitationIds) ? invitationIds : [invitationIds];
+    return postPutJson("/api/group_invitations", {
+        group_id: groupId,
+        collaboration_id: collaborationId,
+        invitations_ids: invitationIds
+    }, "put")
+}
+
+export function deleteGroupInvitations(groupId, invitationId, collaborationId) {
+    return fetchDelete(`/api/group_invitations/${groupId}/${invitationId}/${collaborationId}`)
+}
 
 //ApiKeys
 export function apiKeyValue() {

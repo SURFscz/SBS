@@ -138,9 +138,9 @@ class Collaborations extends React.Component {
         this.props.history.push(`/collaboration-services/${collaboration.id}`);
     };
 
-    openCollaborationAuthorisationGroups = (collaboration, authorisationGroup) => e => {
+    openCollaborationGroups = (collaboration, group) => e => {
         stopEvent(e);
-        this.props.history.push(`/collaboration-authorisation-groups/${collaboration.id}`);
+        this.props.history.push(`/collaboration-groups/${collaboration.id}`);
     };
 
     renderRequests = joinRequests => {
@@ -167,6 +167,39 @@ class Collaborations extends React.Component {
                     <Button className="white"
                             txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
                             onClick={this.toggleShowMore("joinRequests")}/>
+                </section>}
+            </section>
+        );
+    };
+
+    renderGroups = collaborations => {
+        const groups = collaborations.map(collaboration => collaboration.groups)
+            .flat().filter(item => !isEmpty(item));
+        const showMore = collaborations.length >= 6;
+        const showMoreItems = this.state.showMore.includes("groups");
+
+        return (
+            <section className="info-block ">
+                <div className="header groups">
+                    <span className="type">{I18n.t("collaborations.groups")}</span>
+                    <span className="counter">{groups.length}</span>
+                </div>
+                <div className="content">
+                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations)
+                        .sort((s1, s2) => s1.name.localeCompare(s2.name))
+                        .map((collaboration, i) =>
+                            <div className="collaboration-groups" key={i}>
+                                <a href={`/collaborations/${collaboration.id}`}
+                                   onClick={this.openCollaborationGroups(collaboration)}>
+                                    <span>{collaboration.name}</span>
+                                    <span className="count">{`(${collaboration.groups.length})`}</span>
+                                </a>
+                            </div>)}
+                </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("groups")}/>
                 </section>}
             </section>
         );
@@ -358,6 +391,7 @@ class Collaborations extends React.Component {
                     {this.renderInvitations(adminCollaborations.map(collaboration => collaboration.invitations)
                         .flat().filter(item => !isEmpty(item)))}
                     {this.renderServices(adminCollaborations)}
+                    {this.renderGroups(adminCollaborations)}
                 </section>
                 <div className="title">
                     <span>{I18n.t("collaborations.title")}</span>

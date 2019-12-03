@@ -251,9 +251,9 @@ class Invitation extends React.Component {
                                                 disabled={true}/>}
 
                     <SelectField
-                        value={(invite.authorisation_groups || []).map(ag => ({value: ag.id, label: ag.name}))}
+                        value={(invite.groups || []).map(ag => ({value: ag.id, label: ag.name}))}
                         options={[]}
-                        name={I18n.t("invitation.authorisationGroups")}
+                        name={I18n.t("invitation.groups")}
                         isMulti={true}
                         disabled={true}
                     />

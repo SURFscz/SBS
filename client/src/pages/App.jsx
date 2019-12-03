@@ -28,6 +28,8 @@ import Service from "./Service";
 import Services from "./Services";
 import NewInvitation from "./NewInvitation";
 import CollaborationServices from "./CollaborationServices";
+import CollaborationGroups from "./CollaborationGroups";
+import Group from "./Group";
 import Invitation from "./Invitation";
 import Impersonate from "./Impersonate";
 import {emitter} from "../utils/Events";
@@ -149,7 +151,7 @@ class App extends React.Component {
                     </div>}
                     <Switch>
                         <Route exact path="/" render={() => {
-                            return currentUser.guest ? <Redirect to="/login"/> : <Redirect to="/home"/>
+                            return currentUser.guest ? <Redirect to="/login"/> : <Redirect to="/home"/>;
                         }}/>
 
                         <Route exact path="/login"
@@ -260,6 +262,15 @@ class App extends React.Component {
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={CollaborationServices} {...props}/>}/>
 
+                        <Route path="/collaboration-groups/:collaboration_id"
+                               render={props => <ProtectedRoute
+                                   currentUser={currentUser}
+                                   Component={CollaborationGroups} {...props}/>}/>
+
+                        <Route path="/collaboration-group-details/:collaboration_id/:id"
+                               render={props => <ProtectedRoute
+                                   currentUser={currentUser} Component={Group} {...props}/>}/>
+
                         <Route path="/impersonate"
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={Impersonate}
@@ -270,7 +281,8 @@ class App extends React.Component {
                                    currentUser={currentUser} Component={Profile}
                                    refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
-                        <Route render={props => <Aup currentUser={currentUser} {...props}/>}/>
+                        <Route path="/aup" render={props =>
+                            <Aup currentUser={currentUser} {...props}/>}/>
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 

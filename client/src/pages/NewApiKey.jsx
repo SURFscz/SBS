@@ -50,7 +50,7 @@ class NewApiKey extends React.Component {
             organisation_id: organisation.id,
             "hashed_secret": hashedSecret,
             description: description
-        }).then(res => {
+        }).then(() => {
             this.props.history.push(`/organisations/${organisation.id}`);
             setFlash(I18n.t("apiKeys.flash.created", {name: organisation.name}))
         });

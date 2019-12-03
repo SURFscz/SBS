@@ -220,16 +220,16 @@ class CollaborationDetail extends React.Component {
         this.props.history.push(`/invitations/${invitation.id}`);
     };
 
-    openAuthorisationGroupDetails = authorisationGroup => e => {
+    openGroupDetails = group => e => {
         stopEvent(e);
         const {originalCollaboration} = this.state;
-        this.props.history.push(`/collaboration-authorisation-group-details/${originalCollaboration.id}/${authorisationGroup.id}`);
+        this.props.history.push(`/collaboration-group-details/${originalCollaboration.id}/${group.id}`);
     };
 
-    openAuthorisationGroups = e => {
+    openGroups = e => {
         stopEvent(e);
         const {originalCollaboration} = this.state;
-        this.props.history.push(`/collaboration-authorisation-groups/${originalCollaboration.id}`);
+        this.props.history.push(`/collaboration-groups/${originalCollaboration.id}`);
     };
 
     openServices = e => {
@@ -270,6 +270,40 @@ class CollaborationDetail extends React.Component {
                             onClick={this.toggleShowMore("joinRequests")}/>
                 </section>}
 
+            </section>
+        );
+    };
+
+    renderGroups = groups => {
+        const showMore = groups.length >= 6;
+        const showMoreItems = this.state.showMore.includes("groups");
+
+        return (
+            <section className="info-block ">
+                <div className="header groups link" onClick={this.openGroups}>
+                    <span className="type">{I18n.t("collaborations.groups")}</span>
+                    <span className="counter">{groups.length}</span>
+                </div>
+                <div className="content">
+                    {(showMore && !showMoreItems ? groups.slice(0, 5) : groups)
+                        .sort((a1, a2) => a1.name.localeCompare(a2.name))
+                        .map((group, i) =>
+                            <div className="collaboration-groups" key={i}>
+                                <a href={`/groups/${group.id}`}
+                                   onClick={this.openGroupDetails(group)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{group.name}</span>
+                                </a>
+                            </div>)}
+                </div>
+                <section className="show-more">
+                    {showMore && <Button className="white"
+                                         txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                                         onClick={this.toggleShowMore("groups")}/>}
+                    <Button className="white"
+                            txt={I18n.t("forms.manage")}
+                            onClick={this.openGroups}/>
+                </section>
             </section>
         );
     };
@@ -577,6 +611,7 @@ class CollaborationDetail extends React.Component {
                     {this.renderRequests(originalCollaboration.join_requests)}
                     {this.renderInvitations(originalCollaboration.invitations)}
                     {this.renderServices(originalCollaboration)}
+                    {this.renderGroups(originalCollaboration.groups)}
                 </section>
 
                 <p className="title members">{I18n.t("collaborationDetail.members", {name: originalCollaboration.name})}</p>

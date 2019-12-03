@@ -75,8 +75,8 @@
                     color: $invitations;
                 }
 
-                &.authorisations {
-                    color: $authorization;
+                &.groups {
+                    color: $groups;
                 }
 
                 &.services {
@@ -97,7 +97,7 @@
                 justify-content: space-around;
             }
 
-            div.join-request, div.invitation, div.collaboration-services, div.collaboration-authorisations {
+            div.join-request, div.invitation, div.collaboration-services, div.collaboration-groups {
                 a {
                     display: inline-block;
                     color: $dark-grey;

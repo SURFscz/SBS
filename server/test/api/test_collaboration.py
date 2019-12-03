@@ -37,7 +37,7 @@ class TestCollaboration(AbstractTest):
 
     def test_members(self):
         members = self.get("/api/collaborations/members", query_data={"identifier": collaboration_ai_computing_uuid})
-        self.assertEqual(4, len(members))
+        self.assertEqual(2, len(members))
 
         member = self.find_by_name(members, john_name)
         self.assertEqual("urn:john", member["uid"])
