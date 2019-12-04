@@ -1,7 +1,8 @@
 # -*- coding: future_fstrings -*-
-from server.db.db import Invitation, CollaborationMembership, User
+from server.db.db import Invitation, CollaborationMembership, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import invitation_hash_no_way, ai_computing_name, invitation_hash_curious
+from server.test.seed import invitation_hash_no_way, ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
+    uva_research_name
 
 
 class TestInvitation(AbstractTest):
@@ -32,6 +33,12 @@ class TestInvitation(AbstractTest):
         self.assertEqual(ai_computing_name,
                          invitation["collaboration"]["name"])
 
+    def test_find_by_id_with_authorisation_groups(self):
+        invitation_id = self._invitation_id_by_hash(invitation_hash_uva)
+        self.login("urn:john")
+        invitation = self.get(f"/api/invitations/{invitation_id}", with_basic_auth=False)
+        self.assertEqual(1, len(invitation["groups"]))
+
     def test_accept(self):
         self.login("urn:james")
         self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)
@@ -40,6 +47,18 @@ class TestInvitation(AbstractTest):
             .filter(User.uid == "urn:james") \
             .one()
         self.assertEqual("admin", collaboration_membership.role)
+
+    def test_accept_with_authorisation_group_invitations(self):
+        self.login("urn:jane")
+        self.put("/api/invitations/accept", body={"hash": invitation_hash_uva}, with_basic_auth=False)
+
+        collaboration_membership = CollaborationMembership.query \
+            .join(CollaborationMembership.user) \
+            .join(CollaborationMembership.collaboration) \
+            .filter(User.uid == "urn:jane") \
+            .filter(Collaboration.name == uva_research_name) \
+            .one()
+        self.assertEqual("member", collaboration_membership.role)
 
     def test_accept_already_member(self):
         self.login("urn:jane")

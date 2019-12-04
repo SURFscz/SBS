@@ -2,6 +2,7 @@
 import datetime
 
 from flask import Blueprint, request as current_request, current_app
+from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
@@ -21,7 +22,8 @@ def _invitation_query():
         .options(joinedload(Invitation.collaboration)
                  .subqueryload(Collaboration.collaboration_memberships)
                  .subqueryload(CollaborationMembership.user)) \
-        .options(joinedload(Invitation.user))
+        .options(joinedload(Invitation.user)) \
+        .options(joinedload(Invitation.groups))
 
 
 @invitations_api.route("/find_by_hash", strict_slashes=False)
@@ -43,6 +45,16 @@ def invitations_by_id(id):
 
     confirm_collaboration_admin(invitation.collaboration.id)
     return invitation, 200
+
+
+def add_group_membership(groups, collaboration_membership):
+    if len(groups) > 0:
+        values = ",".join(list(map(lambda ag: f"({collaboration_membership.id},{ag.id})", groups)))
+        statement = f"INSERT INTO collaboration_memberships_groups " \
+                    f"(collaboration_membership_id, group_id) VALUES {values}"
+
+        db.engine.execute(text(statement))
+        db.session.commit()
 
 
 @invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)
@@ -74,6 +86,13 @@ def invitations_accept():
 
     # We need the persistent identifier of the collaboration_membership
     db.session.commit()
+
+    # ensure all authorisation group membership are added
+    groups = invitation.groups + list(
+        filter(lambda ag: ag.auto_provision_members, collaboration.groups))
+    unique_groups = list({ag.id: ag for ag in groups}.values())
+
+    add_group_membership(unique_groups, collaboration_membership)
 
     return None, 201
 
