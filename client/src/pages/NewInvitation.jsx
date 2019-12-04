@@ -4,6 +4,7 @@ import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 
 import {
+    groupsByCollaboration,
     collaborationById,
     collaborationInvitations,
     collaborationInvitationsPreview
@@ -37,7 +38,7 @@ class NewInvitation extends React.Component {
         this.state = {
             collaboration: undefined,
             administrators: administrators,
-            group: [],
+            groups: [],
             selectedGroup: [],
             fileName: null,
             email: "",
@@ -64,13 +65,15 @@ class NewInvitation extends React.Component {
         const params = this.props.match.params;
         const collaborationId = params.collaboration_id;
         if (collaborationId) {
-            collaborationById(collaborationId)
-                .then(res =>
+            Promise.all([collaborationById(collaborationId),
+                groupsByCollaboration(collaborationId)])
+                .then(res => {
                     this.setState({
-                        collaboration: res,
-                        intended_role: res.collaboration_memberships.some(m => m.role === "admin") ? "member" : "admin"
-                    })
-                );
+                        collaboration: res[0],
+                        intended_role: res[0].collaboration_memberships.some(m => m.role === "admin") ? "member" : "admin",
+                        groups: res[1].map(ag => ({value: ag.id, label: ag.name})),
+                    });
+                });
         } else {
             this.props.history.push("/404");
         }
@@ -186,7 +189,7 @@ class NewInvitation extends React.Component {
     preview = () => <div dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>;
 
     invitationForm = (email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
-                      intended_role, message, expiry_date, disabledSubmit, group, selectedGroup) =>
+                      intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup) =>
         <>
             <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                         placeholder={I18n.t("invitation.inviteesPlaceholder")}
@@ -232,12 +235,12 @@ class NewInvitation extends React.Component {
                 className="error">{I18n.t("invitation.requiredRole")}</span>}
 
             <SelectField value={selectedGroup}
-                         options={group
+                         options={groups
                              .filter(group => !selectedGroup.find(selectedGroup => selectedGroup.value === group.value))}
-                         name={I18n.t("invitation.group")}
+                         name={I18n.t("invitation.groups")}
                          isMulti={true}
-                         toolTip={I18n.t("invitation.groupTooltip")}
-                         placeholder={I18n.t("invitation.groupPlaceHolder")}
+                         toolTip={I18n.t("invitation.groupsTooltip")}
+                         placeholder={I18n.t("invitation.groupsPlaceHolder")}
                          onChange={selectedOptions => this.setState({selectedGroup: [...selectedOptions]})}/>
 
             <InputField value={message} onChange={e => this.setState({message: e.target.value})}
@@ -264,7 +267,7 @@ class NewInvitation extends React.Component {
         const {
             email, initial, administrators, expiry_date, collaboration, intended_role,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName, fileInputKey,
-            fileTypeError, fileEmails, tabs, activeTab, group, selectedGroup
+            fileTypeError, fileEmails, tabs, activeTab, groups, selectedGroup
         } = this.state;
         if (collaboration === undefined) {
             return null;
@@ -300,7 +303,7 @@ class NewInvitation extends React.Component {
 
                 {activeTab === "form" && <div className="new-collaboration-invitation">
                     {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                        administrators, intended_role, message, expiry_date, disabledSubmit, group,
+                        administrators, intended_role, message, expiry_date, disabledSubmit, groups,
                         selectedGroup)}
                 </div>}
                 {activeTab === "preview" && <div className="new-collaboration-invitation">

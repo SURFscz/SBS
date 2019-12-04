@@ -27,6 +27,11 @@ class TestService(AbstractTest):
         self.login("urn:roger")
         self.get(f"api/services/{service.id}", response_status_code=403, with_basic_auth=False)
 
+    def test_find_by_id_access_allowed(self):
+        service = self.find_entity_by_name(Service, service_mail_name)
+        self.login("urn:sarah")
+        self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
+
     def test_service_new(self):
         service = self.post("/api/services", body={"entity_id": "https://new_service", "name": "new_service"})
         self.assertIsNotNone(service["id"])

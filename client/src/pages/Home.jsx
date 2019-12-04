@@ -35,6 +35,11 @@ class Home extends React.Component {
         this.props.history.push(`/organisations/${organisation.id}`);
     };
 
+    openService = service => e => {
+        stopEvent(e);
+        this.props.history.push(`/services/${service.id}`);
+    };
+
     openCollaboration = collaboration => e => {
         stopEvent(e);
         this.props.history.push(`/collaborations/${collaboration.id}`);
@@ -72,6 +77,35 @@ class Home extends React.Component {
                     <Button className="white"
                             txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
                             onClick={this.toggleShowMore("collaborations")}/>
+                </section>}
+            </section>
+        );
+    };
+
+    renderServices = collaborations => {
+        const services = collaborations.map(collaboration => collaboration.services).flat();
+        const showMore = services.length >= 6;
+        const showMoreItems = this.state.showMore.includes("services");
+        return (
+            <section className="info-block ">
+                <div className="header services">
+                    <span className="type">{I18n.t("home.services")}</span>
+                    <span className="counter">{services.length}</span>
+                </div>
+                <div className="content">
+                    {(showMore && !showMoreItems ? services.slice(0, 5) : services).map((service, i) =>
+                        <div className="service" key={i}>
+                            <a href={`/services/${service.id}`}
+                               onClick={this.openService(service)}>
+                                <FontAwesomeIcon icon={"arrow-right"}/>
+                                <span>{service.name}</span>
+                            </a>
+                        </div>)}
+                </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("services")}/>
                 </section>}
             </section>
         );
@@ -118,6 +152,7 @@ class Home extends React.Component {
                 <section className={"info-block-container"}>
                     {hasOrganisationMemberships && this.renderOrganisations(user)}
                     {this.renderCollaborations(collaborations)}
+                    {this.renderServices(collaborations)}
                 </section>
             </div>);
     };

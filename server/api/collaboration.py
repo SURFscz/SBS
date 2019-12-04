@@ -179,7 +179,9 @@ def my_collaborations_lite():
     res = Collaboration.query \
         .join(Collaboration.collaboration_memberships) \
         .join(Collaboration.organisation) \
+        .outerjoin(Collaboration.services) \
         .options(contains_eager(Collaboration.organisation)) \
+        .options(contains_eager(Collaboration.services)) \
         .filter(CollaborationMembership.user_id == user_id) \
         .all()
     return res, 200
