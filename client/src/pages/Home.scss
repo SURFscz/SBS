@@ -33,15 +33,17 @@
             border: solid 1px $lightest-grey;
             box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
             padding: 15px 10px;
-            width: calc(33% - 2em);
+            width: calc(33% - 1em);
 
-            &:first-child {
-                margin-right: 25px;
+            &:not(:first-child) {
+                margin-left: 15px;
             }
-
 
             @media (max-width: $tablet-max) {
                 width: 100%;
+                &:not(:first-child) {
+                    margin-left: 0;
+                }
             }
 
             display: flex;
@@ -74,6 +76,10 @@
                 &.organisations {
                     color: $organisations;
                 }
+
+                &.services {
+                    color: $services;
+                }
             }
 
             div.content {
@@ -87,7 +93,7 @@
                 justify-content: space-around;
             }
 
-            div.collaboration, div.organisation {
+            div.collaboration, div.organisation, div.service {
                 a {
                     display: inline-block;
                     color: $dark-grey;

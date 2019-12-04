@@ -31,11 +31,11 @@ I18n.translations.nl = {
         subTitle: "Log a.u.b. in."
     },
     home: {
-        title: "Mijn samenwerkingen en groepen",
-        userServiceProfiles: "Mijn dienstprofielen",
+        title: "Mijn lidmaatschappen",
         groups: "Groepen",
         collaborations: "Samenwerkingen",
         organisations: "Organisaties",
+        services: "Diensten",
         backToHome: "Terug naar de startpagina"
     },
     forms: {
