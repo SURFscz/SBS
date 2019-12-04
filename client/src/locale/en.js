@@ -9,8 +9,8 @@ I18n.translations.en = {
         title: "Research Access Management",
         links: {
             login: "Login",
-            logout: "Logout",
             help: "Help",
+            logout: "Logout",
             helpUrl: "https://github.com/SURFscz/SBS/wiki"
         },
         impersonator: "You are really <em>{{impersonator}}</em>,<br/>but you are impersonating <em>{{currentUser}}</em>.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
