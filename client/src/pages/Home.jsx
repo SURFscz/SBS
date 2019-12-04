@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.scss";
 import I18n from "i18n-js";
-import { myCollaborationsLite} from "../api";
+import {myCollaborationsLite} from "../api";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Button from "../components/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -17,7 +17,7 @@ class Home extends React.Component {
     }
 
     componentDidMount = () => {
-         myCollaborationsLite()
+        myCollaborationsLite()
             .then(res => {
                 this.setState({collaborations: res});
             });
@@ -71,13 +71,13 @@ class Home extends React.Component {
                     {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations)
                         .sort((s1, s2) => s1.name.localeCompare(s2.name))
                         .map((collaboration, i) =>
-                        <div className="collaboration" key={i}>
-                            <a href={`/collaborations/${collaboration.id}`}
-                               onClick={this.openCollaboration(collaboration)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{this.renderCollaborationName(collaboration)}</span>
-                            </a>
-                        </div>)}
+                            <div className="collaboration" key={i}>
+                                <a href={`/collaborations/${collaboration.id}`}
+                                   onClick={this.openCollaboration(collaboration)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{this.renderCollaborationName(collaboration)}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"
@@ -175,21 +175,32 @@ class Home extends React.Component {
         );
     };
 
+    collaborationRequest = e => {
+        stopEvent(e);
+        this.props.history.push("new-collaboration");
+        // this.props.history.push("request-collaboration");
+    };
+
     render() {
         const {collaborations} = this.state;
         const {user} = this.props;
+        const allowedCollaborationRequest = !user.admin && isEmpty(user.organisation_memberships);
         const hasOrganisationMemberships = !isEmpty(user.organisation_memberships);
         return (
-            <div className="mod-home">
-                <div className="title">
-                    <p>{I18n.t("home.title")}</p>
+            <div className="mod-home-container">
+                <div className="mod-home">
+                    <div className="title">
+                        <p>{I18n.t("home.title")}</p>
+                    </div>
+                    <section className={"info-block-container"}>
+                        {hasOrganisationMemberships && this.renderOrganisations(user)}
+                        {this.renderCollaborations(collaborations)}
+                        {this.renderServices(collaborations)}
+                        {this.renderGroups(collaborations)}
+                    </section>
+                    {allowedCollaborationRequest &&
+                    <Button className="collaboration-request" onClick={this.collaborationRequest} txt={I18n.t("home.collaborationRequest")}/>}
                 </div>
-                <section className={"info-block-container"}>
-                    {hasOrganisationMemberships && this.renderOrganisations(user)}
-                    {this.renderCollaborations(collaborations)}
-                    {this.renderServices(collaborations)}
-                    {this.renderGroups(collaborations)}
-                </section>
             </div>);
     };
 }

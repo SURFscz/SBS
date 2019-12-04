@@ -499,13 +499,13 @@ class Group extends React.Component {
                                                  isSearchable={true}
                                                  isClearable={true}/>
                 }
-                <CheckBox className="checkbox add-all-members"
+                {adminOfCollaboration && <CheckBox className="checkbox add-all-members"
                           name="allMembersAreAdded"
                           value={allMembersAreAdded}
-                          readOnly={!adminOfCollaboration || allMembersAreAdded}
+                          readOnly={allMembersAreAdded}
                           onChange={this.addAllMembers}
                           info={I18n.t("groups.addAllMembers")}
-                />
+                />}
                 {this.renderConnectedMembers(adminOfCollaboration, groupName, sortedMembers,
                     sortedMembersBy, reverseMembers, autoProvisionMembers)}
                 {this.renderGroupInvitations(adminOfCollaboration, groupName,

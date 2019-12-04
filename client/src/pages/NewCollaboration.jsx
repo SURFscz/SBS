@@ -1,6 +1,12 @@
 import React from "react";
 import "./NewCollaboration.scss";
-import {collaborationNameExists, collaborationShortNameExists, createCollaboration, myOrganisationsLite} from "../api";
+import {
+    collaborationNameExists,
+    collaborationShortNameExists,
+    createCollaboration,
+    myOrganisationsLite,
+    organisationByUserSchacHomeOrganisation, requestCollaboration
+} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
@@ -40,22 +46,34 @@ class NewCollaboration extends React.Component {
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
-                () => this.props.history.push("/organisations")),
+                () => {
+                    this.props.history.push(this.state.isRequestCollaboration? "/home" : "/collaborations");
+                }),
             leavePage: true,
+            noOrganisations: false,
+            isRequestCollaboration: false
         };
     }
 
     componentDidMount = () => {
         myOrganisationsLite().then(json => {
             if (json.length === 0) {
-                this.props.history.push("/404");
+                organisationByUserSchacHomeOrganisation().then(json => {
+                    if (json.length == 0) {
+                        this.setState({noOrganisations: true});
+                    } else {
+                        const organisations = this.mapOrganisationsToOptions(json);
+                        this.setState({
+                            organisations: organisations,
+                            organisation: organisations[0],
+                            isRequestCollaboration: true
+                        });
+                    }
+                });
+
             } else {
                 const organisationId = getParameterByName("organisation", window.location.search);
-                const organisations = json.map(org => ({
-                    label: org.name,
-                    value: org.id,
-                    short_name: org.short_name
-                }));
+                const organisations = this.mapOrganisationsToOptions(json);
                 let organisation = {};
                 if (organisationId) {
                     const filtered = organisations.filter(org => org.value === parseInt(organisationId, 10));
@@ -72,6 +90,13 @@ class NewCollaboration extends React.Component {
             }
         });
     };
+
+    mapOrganisationsToOptions = organisations => organisations.map(org => ({
+        label: org.name,
+        value: org.id,
+        short_name: org.short_name
+    }));
+
     validateCollaborationName = e =>
         collaborationNameExists(e.target.value, this.state.organisation.value).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
@@ -96,8 +121,9 @@ class NewCollaboration extends React.Component {
         if (this.isValid()) {
             const {
                 name, short_name, description, access_type, enrollment,
-                administrators, message, accepted_user_policy, organisation
+                administrators, message, accepted_user_policy, organisation, isRequestCollaboration
             } = this.state;
+            const promise = isRequestCollaboration? requestCollaboration : createCollaboration;
             createCollaboration({
                 name, short_name, description, enrollment, access_type,
                 administrators, message, accepted_user_policy, organisation_id: organisation.value
@@ -143,14 +169,23 @@ class NewCollaboration extends React.Component {
         }
     };
 
+    renderNoOrganisations = () => (
+        <div className="mod-new-collaboration">
+            <h2 className="no-organisations" dangerouslySetInnerHTML={{__html: I18n.t("home.noOrganisations")}}/>
+        </div>
+    );
 
     render() {
         const {
             name, short_name, description, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage
+            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, noOrganisations, isRequestCollaboration
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
+        if (noOrganisations) {
+            return this.renderNoOrganisations();
+        }
+        const title = isRequestCollaboration ? I18n.t("collaboration.requestTitle") : I18n.t("collaboration.title");
         return (
             <div className="mod-new-collaboration">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -161,11 +196,11 @@ class NewCollaboration extends React.Component {
                 <div className="title">
                     <a href="/collaborations" onClick={e => {
                         stopEvent(e);
-                        this.props.history.push(`/collaborations`)
+                        this.props.history.push(isRequestCollaboration? "/home" : "/collaborations");
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("collaborationDetail.backToCollaborations")}
+                        {isRequestCollaboration ? I18n.t("collaborationDetail.backToHome") : I18n.t("collaborationDetail.backToCollaborations")}
                     </a>
-                    <p className="title">{I18n.t("collaboration.title")}</p>
+                    <p className="title">{title}</p>
                 </div>
 
                 <div className="new-collaboration">
@@ -254,23 +289,25 @@ class NewCollaboration extends React.Component {
                         className="error">{I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.organisation_name").toLowerCase()
                     })}</span>}
+                    {!isRequestCollaboration &&
+                    <div>
+                        <InputField value={email} onChange={e => this.setState({email: e.target.value})}
+                                    placeholder={I18n.t("collaboration.administratorsPlaceholder")}
+                                    name={I18n.t("collaboration.administrators")}
+                                    toolTip={I18n.t("collaboration.administratorsTooltip")}
+                                    onBlur={this.addEmail}
+                                    onEnter={this.addEmail}/>
 
-                    <InputField value={email} onChange={e => this.setState({email: e.target.value})}
-                                placeholder={I18n.t("collaboration.administratorsPlaceholder")}
-                                name={I18n.t("collaboration.administrators")}
-                                toolTip={I18n.t("collaboration.administratorsTooltip")}
-                                onBlur={this.addEmail}
-                                onEnter={this.addEmail}/>
-
-                    <section className="email-tags">
-                        {administrators.map(mail =>
-                            <div key={mail} className="email-tag">
-                                <span>{mail}</span>
-                                {(disabled || mail === this.props.user.email) ?
-                                    <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :
-                                    <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>}
-                            </div>)}
-                    </section>
+                        <section className="email-tags">
+                            {administrators.map(mail =>
+                                <div key={mail} className="email-tag">
+                                    <span>{mail}</span>
+                                    {(disabled || mail === this.props.user.email) ?
+                                        <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :
+                                        <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>}
+                                </div>)}
+                        </section>
+                    </div>}
 
                     <InputField value={message} onChange={e => this.setState({message: e.target.value})}
 
@@ -280,7 +317,7 @@ class NewCollaboration extends React.Component {
                                 multiline={true}/>
 
                     <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("forms.submit")} onClick={this.submit}/>
+                        <Button disabled={disabledSubmit} txt={isRequestCollaboration ? I18n.t("forms.request") : I18n.t("forms.submit")} onClick={this.submit}/>
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>
                 </div>

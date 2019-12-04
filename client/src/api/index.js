@@ -100,12 +100,12 @@ export function config() {
 //Users
 export function me(config) {
     const headers = (config.local) ? {
-        // "OIDC_CLAIM_cmuid": "urn:john",
-        "OIDC_CLAIM_cmuid": "urn:mary",
+        "OIDC_CLAIM_cmuid": "urn:john",
+        // "OIDC_CLAIM_cmuid": "urn:roger",
         "OIDC_CLAIM_Nickname": "jëhny",
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
         "OIDC_CLAIM_Eduperson-Affiliation": "librarywalkin",
-        "OIDC_CLAIM_Schac-Home-Organisation": "scz.lab.surf.nl",
+        "OIDC_CLAIM_Schac-Home-Organisation": "scz.lab.example.org",
         "OIDC_CLAIM_Family-Name": "Doe",
         "OIDC_CLAIM_Given-Name": "John",
         "OIDC_CLAIM_Email": "jdoe@example.org"
@@ -191,6 +191,10 @@ export function createCollaboration(collaboration) {
     return postPutJson("/api/collaborations", collaboration, "post");
 }
 
+export function requestCollaboration(collaboration) {
+    return postPutJson("/api/collaborations/request", collaboration, "post");
+}
+
 export function collaborationNameExists(name, organisationId, existingCollaboration = null) {
     return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&organisation_id=${organisationId}&existing_collaboration=${encodeURIComponent(existingCollaboration)}`);
 }
@@ -230,6 +234,9 @@ export function collaborationGroups(collaborationId) {
 //Organisations
 export function myOrganisationsLite() {
     return fetchJson(`/api/organisations/mine_lite`);
+}
+export function organisationByUserSchacHomeOrganisation() {
+    return fetchJson(`/api/organisations/find_by_schac_home_organisation`);
 }
 
 export function myOrganisations() {

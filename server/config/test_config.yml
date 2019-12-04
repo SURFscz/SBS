@@ -24,6 +24,7 @@ mail:
   sender_name: OpenConext
   sender_email: no-reply@surfnet.nl
   suppress_sending_mails: False
+  info_email: scz-support@surfnet.nl
 
 aup:
   pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf

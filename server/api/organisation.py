@@ -145,7 +145,9 @@ def organisations_by_schac_home_organisation():
         .filter(Organisation.schac_home_organisation == schac_home_organisation) \
         .all()
 
-    return list(map(lambda organisation: {"id": organisation.id, "name": organisation.name}, organisations)), 200
+    return list(map(lambda organisation: {"id": organisation.id,
+                                          "name": organisation.name,
+                                          "short_name": organisation.short_name}, organisations)), 200
 
 
 @organisation_api.route("/invites-preview", methods=["POST"], strict_slashes=False)
