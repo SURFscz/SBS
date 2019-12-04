@@ -6,7 +6,7 @@ I18n.translations.nl = {
     select_locale: "Selecteer Nederlands",
 
     header: {
-        title: "Samenwerking Beheer Systeem",
+        title: "Research Access Management",
         links: {
             login: "Login",
             help: "Help",
@@ -27,7 +27,7 @@ I18n.translations.nl = {
         aup: "AUP"
     },
     login: {
-        title: "Welkom bij het Samenwerking Beheer Systeem",
+        title: "Welkom bij het Research Access Management",
         subTitle: "Log a.u.b. in."
     },
     home: {
@@ -317,6 +317,9 @@ I18n.translations.nl = {
         shortNameTooltip: "Ken korte namen toe aan organisaties<br/>zodat deze korte namen kunnen worden gebruikt<br/>in LDAP services (zoals Linux directory namen).",
         description: "Beschrijving",
         descriptionPlaceholder: "De beschrijving van de organisatie is zichtbaar voor iedereen",
+        schacHomeOrganisation: "Schac Home",
+        schacHomeOrganisationPlaceholder: "De Schac Home Organisation van de organisatie",
+        schacHomeOrganisationTooltip: "De home organisatie van een persoon<br/>gebaseerd op de domein naam van de instelling.",
         created: "Aangemaakt op",
         message: "Bericht",
         messagePlaceholder: "Bericht voor de beheerders",
