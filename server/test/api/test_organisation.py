@@ -47,7 +47,6 @@ class TestOrganisation(AbstractTest):
                                  with_basic_auth=False)
         self.assertEqual(1, len(organisations))
 
-
     def test_organisation_by_id_with_api_user(self):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}",
