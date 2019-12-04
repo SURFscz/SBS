@@ -2,7 +2,7 @@
 
 from server.db.db import Organisation, OrganisationInvitation
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import uuc_name
+from server.test.seed import uuc_name, schac_home_organisation
 
 
 class TestOrganisation(AbstractTest):
@@ -40,6 +40,13 @@ class TestOrganisation(AbstractTest):
                                  headers=API_AUTH_HEADER,
                                  with_basic_auth=False)
         self.assertEqual(2, len(organisations))
+
+    def test_organisations_by_schac_home_organisation(self):
+        self.login("urn:roger", schac_home_organisation)
+        organisations = self.get("/api/organisations/find_by_schac_home_organisation",
+                                 with_basic_auth=False)
+        self.assertEqual(1, len(organisations))
+
 
     def test_organisation_by_id_with_api_user(self):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id

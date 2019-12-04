@@ -178,10 +178,12 @@ def my_collaborations_lite():
     user_id = current_user_id()
     res = Collaboration.query \
         .join(Collaboration.collaboration_memberships) \
+        .join(Collaboration.groups) \
         .join(Collaboration.organisation) \
         .outerjoin(Collaboration.services) \
         .options(contains_eager(Collaboration.organisation)) \
         .options(contains_eager(Collaboration.services)) \
+        .options(contains_eager(Collaboration.groups)) \
         .filter(CollaborationMembership.user_id == user_id) \
         .all()
     return res, 200

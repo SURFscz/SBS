@@ -31,6 +31,7 @@ class OrganisationDetail extends React.Component {
             name: "",
             short_name: "",
             description: "",
+            schac_home_organisation: "",
             members: [],
             filteredMembers: [],
             invitations: [],
@@ -79,6 +80,7 @@ class OrganisationDetail extends React.Component {
                         name: json.name,
                         short_name: json.short_name,
                         description: json.description,
+                        schac_home_organisation: json.schac_home_organisation,
                         members: members,
                         filteredMembers: members,
                         collaborations: collaborations,
@@ -467,7 +469,7 @@ class OrganisationDetail extends React.Component {
         );
     };
 
-    organisationDetails = (name, short_name, alreadyExists, initial, description, originalOrganisation, user, disabledSubmit) => {
+    organisationDetails = (name, short_name, alreadyExists, initial, description, schac_home_organisation, originalOrganisation, user, disabledSubmit) => {
         return <div className="organisation-detail">
             <InputField value={name} onChange={e => {
                 this.setState({
@@ -514,6 +516,13 @@ class OrganisationDetail extends React.Component {
                         placeholder={I18n.t("organisation.descriptionPlaceholder")}
                         name={I18n.t("organisation.description")}/>
 
+            <InputField value={schac_home_organisation}
+                        onChange={e => this.setState({schac_home_organisation: e.target.value})}
+                        placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
+                        disabled={!user.admin}
+                        name={I18n.t("organisation.schacHomeOrganisation")}
+                        toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
+
             <InputField value={moment(originalOrganisation.created_at * 1000).format("LLLL")}
                         disabled={true}
                         name={I18n.t("organisation.created")}/>
@@ -530,7 +539,7 @@ class OrganisationDetail extends React.Component {
 
     render() {
         const {
-            name, short_name, description, originalOrganisation, initial, alreadyExists, filteredMembers, query,
+            name, short_name, description, schac_home_organisation, originalOrganisation, initial, alreadyExists, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             inviteReverse, inviteSorted, invitations, adminOfOrganisation, apiKeys,
             filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted, collaborationsQuery
@@ -580,7 +589,7 @@ class OrganisationDetail extends React.Component {
                     <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
                 </div>
                 {this.organisationDetails(name, short_name, alreadyExists, initial,
-                    description, originalOrganisation, user, disabledSubmit)}
+                    description, schac_home_organisation, originalOrganisation, user, disabledSubmit)}
             </div>)
     }
 
