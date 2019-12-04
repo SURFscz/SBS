@@ -24,6 +24,7 @@ I18n.translations.nl = {
         services: "Diensten",
         profile: "Profiel",
         impersonate: "Impersonate",
+        aup: "AUP"
     },
     login: {
         title: "Welkom bij het Samenwerking Beheer Systeem",
@@ -32,7 +33,7 @@ I18n.translations.nl = {
     home: {
         title: "Mijn samenwerkingen en groepen",
         userServiceProfiles: "Mijn dienstprofielen",
-        groupen: "Groepen",
+        groups: "Groepen",
         collaborations: "Samenwerkingen",
         organisations: "Organisaties",
         backToHome: "Terug naar de startpagina"
@@ -377,7 +378,6 @@ I18n.translations.nl = {
             actions: "",
             link: ""
         },
-
         apiKeys: "API-sleutels van {{name}}",
         collaborations: "Samenwerkingen van {{name}}",
         newCollaboration: "Nieuwe samenwerking",
@@ -393,7 +393,8 @@ I18n.translations.nl = {
             memberDeleted: "Lidmaatschap van {{name}} is verwijderd.",
             apiKeyDeleted: "API-sleutel is verwijderd.",
             collaborationDeleted: "Samenwerking {{name}} is verwijderd.",
-        }, tabs: {
+        },
+        tabs: {
             form: "Uitnodiging details",
             preview: "Uitnodiging preview",
         }
@@ -468,7 +469,6 @@ I18n.translations.nl = {
         },
         submit: "Opslaan"
     },
-
     invitation: {
         title: "Uitnodiging om lid te worden van samenwerking {{collaboration}}",
         createTitle: "Verstuur uitnodigingen om lid te worden van samenwerking {{collaboration}}",
@@ -534,7 +534,7 @@ I18n.translations.nl = {
             description: "Beschrijving"
         }
     },
-    group: {
+    groups: {
         title: "Groepen in samenwerking {{name}}",
         servicesTitle: "Diensten voor groep {{name}}",
         membersTitle: "Leden van groep {{name}}",
@@ -548,12 +548,12 @@ I18n.translations.nl = {
         searchPlaceHolder: "Zoek groepen",
         name: "Naam",
         namePlaceholder: "Naam van de groep",
-        shortName: "Korte naam",
+        short_name: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de groep",
         shortNameTooltip: "Ken korte namen toe aan de groepen,<br/>zodat die namen bruikbaar zijn in de<br/>via ldap te koppelen diensten (zoals Linux groepsnamen).",
         autoProvisionMembers: "Maak nieuwe leden van de samenwerking automatisch lid?",
         autoProvisionMembersTooltip: "Check om automatisch alle bestaande leden<br/>en nieuwe leden toe te voegen aan deze groep",
-        globalUrn: "Globale urn",
+        global_urn: "Globale urn",
         globalUrnTooltip: "Globale unieke en niet aanpasbare urn<br/>gebaseerd op de korte naam van de organsatie,<br/>samenwerking en deze groep.",
         alreadyExists: "Een groep met {{attribute}} {{value}} bestaat al.",
         required: "{{attribute}} is een verplicht veld voor een groep",
@@ -625,38 +625,15 @@ I18n.translations.nl = {
             actions: ""
         },
     },
-    userServiceProfile: {
-        title: "Mijn dienstprofielen",
-        titleUpdate: "Werk mijn dientprofiel {{name}} bij",
-        backToServices: "Terug naar mijn dienstprofielen",
-        status: "Status",
-        statusPlaceholder: "De status van de dienstprofielen",
-        statusValues: {
-            active: "Actief",
-            in_active: "Inactief"
-        },
-        open: "",
-        service__name: "Dienst",
-        group__name: "Groep",
-        group__collaboration__name: "Samenwerking",
-        name: "Naam",
-        namePlaceholder: "De naam voor dit dienstprofiel",
-        email: "E-mail",
-        emailPlaceholder: "Uw e-mailadres voor dit dienstprofiel",
-        address: "Adres",
-        addressPlaceholder: "Uw adres voor dit dienstprofiel",
-        identifier: "Identifier",
-        identifierPlaceholder: "De identifier voor dit dienstprofiel",
-        identifierTooltip: "Uw unieke identifier binnen<br/> de context van dit<br/>dienstprofiel",
-        telephone_number: "Mobiel",
-        role: "Rol",
-        searchPlaceHolder: "Zoek in uw dienstprofielen",
-        update: "Bijwerken",
-        flash: {
-            updated: "Dienstprofiel {{name}} bijgewerkt",
-        },
-
-    },
+    aup: {
+        title1: "Om onze CMS-services te gebruiken, moet u akkoord gaan met een aantal regels en voorschriften. <br> Deze worden uitgelegd in het onderstaande document.",
+        title2: "Voor meer informatie en uitleg kunt u contact opnemen met <a href='mailto:info@surconxt.org'> info@surconxt.org </a>.",
+        title3: "Lees het document en vink indien overeengekomen het vakje aan en ga door met de validatie van uw persoonlijke gegevens",
+        downloadPdf: "Download acceptabel gebruiksbeleid (pdf)",
+        agreeWithTerms: "Ik ga akkoord met het beleid voor acceptabel gebruik",
+        continueToValidation: "Doorgaan",
+        agreed: "Uw overeenkomst met {{name}} is opgeslagen."
+    },
     autocomplete: {
         name: "Name",
         description: "Beschrijving",
