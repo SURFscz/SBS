@@ -36,10 +36,13 @@ I18n.translations.en = {
         collaborations: "Collaborations",
         organisations: "Organisations",
         services: "Services",
-        backToHome: "Back to home"
+        backToHome: "Back to home",
+        collaborationRequest: "Request for new Collaboration",
+        noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution where you logged in. This is not the case. Please contact <a href='mailto:scz-support@surfnet.nl'>scz-support@surfnet.nl</a> for more information"
     },
     forms: {
         submit: "Add",
+        request: "Request",
         cancel: "Cancel",
         showMore: "More",
         hideSome: "Less",
@@ -170,6 +173,7 @@ I18n.translations.en = {
     },
     collaboration: {
         title: "Add new collaboration",
+        requestTitle: "Request a new collaboration",
         actions: "",
         name: "Name",
         namePlaceHolder: "The unique name of a collaboration",
@@ -219,7 +223,7 @@ I18n.translations.en = {
     collaborationDetail: {
         title: "Details collaboration {{name}}",
         backToCollaborations: "Back to my collaborations",
-        backToHome: "Back to my dashboard",
+        backToHome: "Back to home",
         backToCollaborationDetail: "Back to my collaboration {{name}}",
         update: "Update",
         delete: "Delete",

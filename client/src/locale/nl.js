@@ -36,7 +36,9 @@ I18n.translations.nl = {
         collaborations: "Samenwerkingen",
         organisations: "Organisaties",
         services: "Diensten",
-        backToHome: "Terug naar de startpagina"
+        backToHome: "Terug naar de startpagina",
+        collaborationRequest: "Verzoek een nieuwe Samenwerking",
+        noOrganisations: "Voor het verzoek om een nieuwe samenwerking is het een vereiste dat er voor de instelling waarmee je bent ingelogd een organisatie is aangemaakt. Neem contact op <a href='mailto:scz-support@surfnet.nl'>scz-support@surfnet.nl</a> voor meer informatie"
     },
     forms: {
         submit: "Toevoegen",
