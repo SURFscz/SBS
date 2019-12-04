@@ -624,40 +624,8 @@ I18n.translations.en = {
             actions: ""
         },
     },
-    userServiceProfile: {
-        title: "My user service profiles",
-        titleUpdate: "Update user service profile {{name}}",
-        backToServices: "Back to my service profiles",
-        status: "Status",
-        statusPlaceholder: "The status of the user service profile",
-        statusValues: {
-            active: "Active",
-            in_active: "In-active"
-        },
-        open: "",
-        service__name: "Service",
-        group__name: "Group",
-        group__collaboration__name: "Collaboration",
-        name: "Name",
-        namePlaceholder: "Your name to use for this user service profile",
-        email: "E-mail",
-        emailPlaceholder: "Your e-mail address to use for this user service profile",
-        address: "Address",
-        addressPlaceholder: "Your address to use for this user service profile",
-        identifier: "Identifier",
-        identifierPlaceholder: "Your identifier to use for this user service profile",
-        identifierTooltip: "Your unique identifier within<br/> the context of this<br/>user service profile",
-        telephone_number: "Telephone number",
-        role: "Role",
-        searchPlaceHolder: "Search in your user service profiles...",
-        update: "Update",
-        flash: {
-            updated: "User service profile {{name}} was successfully updated",
-        },
-
-    },
     aup: {
-        title1: "In ourder to use the CMS services, you need to agree to a number of rules and regulations.<br>These are explained in the document below.",
+        title1: "In o rder to use the CMS services, you need to agree to a number of rules and regulations.<br>These are explained in the document below.",
         title2: "For more information and explanations, you can contact <a href='mailto:info@surconxt.org'>info@surconxt.org</a>.",
         title3: "Please read the document and if agreed check the box and proceed to the validation of your personal information",
         downloadPdf: "Download Acceptable Usage Policy (pdf)",
@@ -665,7 +633,6 @@ I18n.translations.en = {
         continueToValidation: "Store decision",
         agreed: "Your agreement with {{name}} has been saved."
     },
-
     autocomplete: {
         name: "Name",
         description: "Description",
@@ -690,7 +657,6 @@ I18n.translations.en = {
         stay: "Stay",
         leave: "Leave"
     },
-
     error_dialog: {
         title: "Unexpected error",
         body: "This is embarrassing; an unexpected error has occurred. It has been logged and reported. Please try again...",
