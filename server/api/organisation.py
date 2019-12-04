@@ -134,6 +134,21 @@ def my_organisations():
     return organisations, 200
 
 
+@organisation_api.route("/find_by_schac_home_organisation", strict_slashes=False)
+@json_endpoint
+def organisations_by_schac_home_organisation():
+    user_uid = current_user_uid();
+    schac_home_organisation = User.query.filter(User.id == current_user_id()).one().schac_home_organisation
+    if not schac_home_organisation:
+        return [], 200
+
+    organisations = Organisation.query \
+        .filter(Organisation.schac_home_organisation == schac_home_organisation) \
+        .all()
+
+    return list(map(lambda organisation: {"id": organisation.id, "name": organisation.name}, organisations)), 200
+
+
 @organisation_api.route("/invites-preview", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def organisation_invites_preview():

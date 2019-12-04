@@ -16,6 +16,8 @@ john_name = "John Doe"
 james_name = "James Byrd"
 sarah_name = "Sarah Cross"
 
+schac_home_organisation = "scz.lab.example.org"
+
 organisation_invitation_hash = token_urlsafe()
 organisation_invitation_expired_hash = token_urlsafe()
 
@@ -77,9 +79,11 @@ def seed(db):
                         "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
                         "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
-    mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org")
+    mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org",
+                schac_home_organisation=schac_home_organisation)
     admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org")
-    roger = User(uid="urn:roger", name=roger_name, email="roger@example.org")
+    roger = User(uid="urn:roger", name=roger_name, email="roger@example.org",
+                 schac_home_organisation=schac_home_organisation)
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org")
     james = User(uid="urn:james", name=james_name, email="james@example.org",
                  ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
@@ -98,7 +102,8 @@ def seed(db):
                        description="Unincorporated Urban Community",
                        created_by="urn:admin", updated_by="urnadmin")
     uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam",
-                       created_by="urn:admin", updated_by="urnadmin", short_name="uva")
+                       created_by="urn:admin", updated_by="urnadmin", short_name="uva",
+                       schac_home_organisation=schac_home_organisation)
     _persist(db, uuc, uva)
 
     api_key = ApiKey(hashed_secret=uuc_hashed_secret, organisation=uuc, created_by="urn:admin", updated_by="urn:admin")

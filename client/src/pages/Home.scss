@@ -80,6 +80,9 @@
                 &.services {
                     color: $services;
                 }
+                &.groups {
+                    color: $groups;
+                }
             }
 
             div.content {
@@ -93,7 +96,7 @@
                 justify-content: space-around;
             }
 
-            div.collaboration, div.organisation, div.service {
+            div.collaboration, div.organisation, div.service, div.group {
                 a {
                     display: inline-block;
                     color: $dark-grey;

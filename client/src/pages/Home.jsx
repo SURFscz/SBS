@@ -40,6 +40,12 @@ class Home extends React.Component {
         this.props.history.push(`/services/${service.id}`);
     };
 
+    openGroup = (collaborations, group) => e => {
+        stopEvent(e);
+        const collaboration_id = collaborations.find(collaboration => collaboration.groups.find(g => g.id === group.id)).id;
+        this.props.history.push(`/collaboration-group-details/${collaboration_id}/${group.id}`);
+    };
+
     openCollaboration = collaboration => e => {
         stopEvent(e);
         this.props.history.push(`/collaborations/${collaboration.id}`);
@@ -111,6 +117,35 @@ class Home extends React.Component {
         );
     };
 
+    renderGroups = collaborations => {
+        const groups = collaborations.map(collaboration => collaboration.groups).flat();
+        const showMore = groups.length >= 6;
+        const showMoreItems = this.state.showMore.includes("groups");
+        return (
+            <section className="info-block ">
+                <div className="header groups">
+                    <span className="type">{I18n.t("home.groups")}</span>
+                    <span className="counter">{groups.length}</span>
+                </div>
+                <div className="content">
+                    {(showMore && !showMoreItems ? groups.slice(0, 5) : groups).map((group, i) =>
+                        <div className="group" key={i}>
+                            <a href={`/groups/${group.id}`}
+                               onClick={this.openGroup(collaborations, group)}>
+                                <FontAwesomeIcon icon={"arrow-right"}/>
+                                <span>{group.name}</span>
+                            </a>
+                        </div>)}
+                </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("group")}/>
+                </section>}
+            </section>
+        );
+    };
+
     renderOrganisations = user => {
         const organisations = user.organisation_memberships.map(organisationMembership => organisationMembership.organisation);
         const showMore = organisations.length >= 6;
@@ -153,6 +188,7 @@ class Home extends React.Component {
                     {hasOrganisationMemberships && this.renderOrganisations(user)}
                     {this.renderCollaborations(collaborations)}
                     {this.renderServices(collaborations)}
+                    {this.renderGroups(collaborations)}
                 </section>
             </div>);
     };

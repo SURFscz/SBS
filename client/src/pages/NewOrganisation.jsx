@@ -23,10 +23,11 @@ class NewOrganisation extends React.Component {
             name: "",
             description: "",
             short_name: "",
+            schac_home_organisation: "",
             administrators: [],
             email: "",
             message: "",
-            required: ["name", "short_name"],
+            required: ["name", "short_name", "schac_home_organisation"],
             alreadyExists: {},
             initial: true,
             confirmationDialogOpen: false,
@@ -64,8 +65,8 @@ class NewOrganisation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, short_name, administrators, message, description} = this.state;
-            createOrganisation({name, short_name, administrators, message, description}).then(res => {
+            const {name, short_name, administrators, message,schac_home_organisation, description} = this.state;
+            createOrganisation({name, short_name, schac_home_organisation, administrators, message, description}).then(res => {
                 this.props.history.push("/organisations");
                 setFlash(I18n.t("organisation.flash.created", {name: res.name}))
             });
@@ -110,7 +111,8 @@ class NewOrganisation extends React.Component {
     render() {
         const {
             name, description, email, initial, alreadyExists, administrators,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, short_name
+            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, short_name,
+            schac_home_organisation
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         //TODO based on the params of the path
@@ -174,6 +176,11 @@ class NewOrganisation extends React.Component {
                     <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                                 placeholder={I18n.t("organisation.descriptionPlaceholder")}
                                 name={I18n.t("organisation.description")}/>
+
+                    <InputField value={schac_home_organisation} onChange={e => this.setState({schac_home_organisation: e.target.value})}
+                                placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
+                                name={I18n.t("organisation.schacHomeOrganisation")}
+                                toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
 
                     <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                                 placeholder={I18n.t("organisation.administratorsPlaceholder")}
