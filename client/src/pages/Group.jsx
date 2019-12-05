@@ -55,8 +55,7 @@ class Group extends React.Component {
             confirmationDialogQuestion: undefined,
             leavePage: true,
             confirmationDialogAction: () => true,
-            cancelDialogAction: () => true,
-            back: "/collaborations",
+            cancelDialogAction: () => true
         };
     }
 
@@ -74,7 +73,6 @@ class Group extends React.Component {
                 this.props.history.push("/404");
                 return;
             }
-            const back = (isEmpty(member) || member.role !== "admin") && !user.admin ? "/home" : `/collaboration-groups/${params.collaboration_id}`;
             const adminOfCollaboration = (!isEmpty(member) && member.role === "admin") || user.admin;
             if (params.id !== "new") {
                 const collDetail = adminOfCollaboration ? collaborationServices : collaborationLiteById;
@@ -96,7 +94,6 @@ class Group extends React.Component {
                             sortedMembers: sortObjects(group.collaboration_memberships, sortedMembersBy, reverseMembers),
                             sortedInvitations: sortObjects(group.invitations, sortedInvitationsBy, reverseInvitations),
                             isNew: false,
-                            back: back,
                             adminOfCollaboration: adminOfCollaboration
                         })
                     });
@@ -108,7 +105,6 @@ class Group extends React.Component {
                             collaboration: collaboration,
                             collaboration_id: collaboration.id,
                             allMembers: allMembers,
-                            back: back,
                             adminOfCollaboration: adminOfCollaboration
                         })
                     });
@@ -177,9 +173,8 @@ class Group extends React.Component {
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
     gotoGroups = () => {
-        const {back} = this.state;
         this.setState({confirmationDialogOpen: false},
-            () => this.props.history.push(back));
+            () => this.props.history.goBack());
     };
 
     cancel = () => {
@@ -202,9 +197,9 @@ class Group extends React.Component {
     };
 
     doDelete = () => {
-        const {group, back} = this.state;
+        const {group} = this.state;
         deleteGroup(group.id).then(() => {
-            this.props.history.push(back);
+            this.props.history.goBack();
             setFlash(I18n.t("groups.flash.deleted", {name: group.name}));
         });
     };
@@ -605,7 +600,7 @@ class Group extends React.Component {
         const {
             alreadyExists, collaboration, initial, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
             confirmationDialogQuestion, name, short_name, auto_provision_members, description,
-            group, isNew, back, leavePage,
+            group, isNew, leavePage,
             allMembers, sortedMembers, sortedMembersBy, reverseMembers,
             sortedInvitationsBy, reverseInvitations, sortedInvitations,
             adminOfCollaboration
@@ -616,7 +611,6 @@ class Group extends React.Component {
         const groupName = isEmpty(group) ? name : group.name;
 
         const disabledSubmit = !initial && !this.isValid();
-        const title = adminOfCollaboration ? I18n.t("groups.backToCollaborationGroups", {name: collaboration.name}) : I18n.t("home.backToHome");
         let detailsTitle;
         if (adminOfCollaboration) {
             detailsTitle = isNew ? I18n.t("groups.titleNew") : I18n.t("groups.titleUpdate", {name: group.name});
@@ -632,11 +626,11 @@ class Group extends React.Component {
                                     leavePage={leavePage}
                                     question={confirmationDialogQuestion}/>
                 <div className="title">
-                    <a href={back} onClick={e => {
+                    <a href="/back" onClick={e => {
                         stopEvent(e);
-                        this.props.history.push(back)
+                        this.props.history.goBack();
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {title}
+                        {I18n.t("forms.back")}
                     </a>
                     {!isNew && <p className="title">{membersTitle}</p>}
                 </div>

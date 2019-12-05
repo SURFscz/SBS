@@ -25,20 +25,32 @@
 
         div.card {
             background-color: white;
-            width: calc(25% - 1em);
+            width: 100%;
             padding: 2px;
-            box-shadow: 1px 2px 2px 0 rgba(0,0,0,0.3);
+            box-shadow: 1px 2px 2px 0 rgba(0, 0, 0, 0.3);
+
+            &:not(:first-child) {
+                margin-left: 15px;
+            }
+
+            @media (max-width: $tablet-max) {
+                &:not(:first-child) {
+                    margin-left: 0;
+                }
+            }
 
             div.title {
-                padding: 10px 10px 20px 10px;
+                padding: 10px 10px 20px 15px;
                 font-size: 20px;
                 border-bottom: solid 1px $blue;
             }
 
             div.features {
                 padding: 10px 10px 20px 10px;
+
                 td {
                     padding: 4px 2px;
+
                     svg {
                         color: $green;
                         margin-right: 10px;

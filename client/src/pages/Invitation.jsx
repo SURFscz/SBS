@@ -75,8 +75,7 @@ class Invitation extends React.Component {
             const member = (this.props.user.collaboration_memberships || []).find(membership => membership.collaboration_id === invite.collaboration.id);
             if (member) {
                 this.props.history.push(`/collaborations/${invite.collaboration.id}`);
-            }
-            else {
+            } else {
                 this.props.history.push(`/home`);
             }
         });
@@ -205,7 +204,8 @@ class Invitation extends React.Component {
             I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")});
 
         const aup = invite.collaboration.accepted_user_policy;
-        const acceptButton = <Button cancelButton={intentToDeny} disabled={disabledSubmit} txt={I18n.t("invitation.accept")}
+        const acceptButton = <Button cancelButton={intentToDeny} disabled={disabledSubmit}
+                                     txt={I18n.t("invitation.accept")}
                                      onClick={this.accept}/>;
         const declineButton = <Button cancelButton={!intentToDeny} txt={I18n.t("invitation.decline")}
                                       onClick={this.decline}/>;
@@ -217,11 +217,11 @@ class Invitation extends React.Component {
                                     leavePage={leavePage}
                                     question={confirmationQuestion}/>
                 <div className="title">
-                    {isAdminLink && <a href="/collaborations" onClick={e => {
+                    {isAdminLink && <a href="/back" onClick={e => {
                         stopEvent(e);
-                        this.gotoCollaborations();
+                        this.props.history.goBack();
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("collaborationDetail.backToCollaborationDetail", {name: invite.collaboration.name})}
+                        {I18n.t("forms.back")}
                     </a>}
                     {!errorSituation &&
                     <p className="title">{I18n.t("invitation.title", {collaboration: invite.collaboration.name})}</p>}

@@ -100,7 +100,7 @@ class NewInvitation extends React.Component {
                 groups: selectedGroup.map(ag => ag.value),
                 expiry_date: expiry_date.getTime() / 1000
             }).then(res => {
-                this.props.history.push(`/collaborations/${collaboration.id}`);
+                this.props.history.goBack();
                 setFlash(I18n.t("invitation.flash.created", {name: collaboration.name}))
             });
         }
@@ -280,11 +280,11 @@ class NewInvitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
                 <div className="title">
-                    <a href={`/collaborations/${collaboration.id}`} onClick={e => {
+                    <a href={`/back`} onClick={e => {
                         stopEvent(e);
-                        this.props.history.push(`/collaborations/${collaboration.id}`)
+                        this.props.history.goBack();
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("collaborationDetail.backToCollaborationDetail", {name: collaboration.name})}
+                        {I18n.t("forms.back")}
                     </a>
                     <p className="title">{I18n.t("invitation.createTitle", {collaboration: collaboration.name})}</p>
                 </div>

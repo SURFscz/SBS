@@ -100,8 +100,8 @@ export function config() {
 //Users
 export function me(config) {
     const headers = (config.local) ? {
-        // "OIDC_CLAIM_cmuid": "urn:john",
-        "OIDC_CLAIM_cmuid": "urn:james",
+        "OIDC_CLAIM_cmuid": "urn:john",
+        // "OIDC_CLAIM_cmuid": "urn:james2",
         "OIDC_CLAIM_Nickname": "jëhny",
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
         "OIDC_CLAIM_Eduperson-Affiliation": "librarywalkin",
@@ -192,10 +192,6 @@ export function createCollaboration(collaboration) {
     return postPutJson("/api/collaborations", collaboration, "post");
 }
 
-export function requestCollaboration(collaboration) {
-    return postPutJson("/api/collaborations/request", collaboration, "post");
-}
-
 export function collaborationNameExists(name, organisationId, existingCollaboration = null) {
     return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&organisation_id=${organisationId}&existing_collaboration=${encodeURIComponent(existingCollaboration)}`);
 }
@@ -236,6 +232,7 @@ export function collaborationGroups(collaborationId) {
 export function myOrganisationsLite() {
     return fetchJson(`/api/organisations/mine_lite`);
 }
+
 export function organisationByUserSchacHomeOrganisation() {
     return fetchJson(`/api/organisations/find_by_schac_home_organisation`);
 }
@@ -471,12 +468,28 @@ export function deleteApiKey(id) {
 
 //Aup
 export function aupLinks() {
-  return fetchJson("/api/aup");
+    return fetchJson("/api/aup");
 }
 
 export function agreeAup() {
-  return postPutJson("/api/aup/agree", {}, "post");
+    return postPutJson("/api/aup/agree", {}, "post");
 }
 
+//CollaborationRequest
+export function collaborationRequestById(id) {
+    return fetchJson(`/api/collaboration_requests/${id}`);
+}
+
+export function requestCollaboration(collaboration) {
+    return postPutJson("/api/collaboration_requests", collaboration, "post");
+}
+
+export function approveRequestCollaboration(id) {
+    return postPutJson(`/api/collaboration_requests/approve/${id}`, {}, "put");
+}
+
+export function denyRequestCollaboration(id) {
+    return postPutJson(`/api/collaboration_requests/deny/${id}`, {}, "put");
+}
 
 

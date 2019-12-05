@@ -105,6 +105,11 @@ class Organisations extends React.Component {
         this.props.history.push(`/organisation-invitations/${invitation.id}`);
     };
 
+    openCollaborationRequest = collaborationRequest => e => {
+        stopEvent(e);
+        this.props.history.push(`/collaboration-requests/${collaborationRequest.id}`);
+
+    };
     renderCollaborations = organisations => {
         const collaborations = organisations.map(organisation => organisation.collaborations)
             .flat().filter(item => item !== undefined);
@@ -154,18 +159,50 @@ class Organisations extends React.Component {
                     {(showMore && !showMoreItems ? organisations.slice(0, 5) : organisations)
                         .sort((s1, s2) => s1.name.localeCompare(s2.name))
                         .map((organisation, i) =>
-                        <div className="organisation-members" key={i}>
-                            <a href={`/organisations/${organisation.id}`}
-                               onClick={this.openOrganisation(organisation)}>
-                                <span>{organisation.name}</span>
-                                <span className="count">{`(${organisation.organisation_memberships.length})`}</span>
-                            </a>
-                        </div>)}
+                            <div className="organisation-members" key={i}>
+                                <a href={`/organisations/${organisation.id}`}
+                                   onClick={this.openOrganisation(organisation)}>
+                                    <span>{organisation.name}</span>
+                                    <span className="count">{`(${organisation.organisation_memberships.length})`}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"
                             txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
                             onClick={this.toggleShowMore("members")}/>
+                </section>}
+            </section>
+        );
+    };
+
+    renderCollaborationRequests = organisations => {
+        const collaborationRequests = organisations.map(organisation => organisation.collaboration_requests)
+            .flat().filter(item => !isEmpty(item));
+        const showMore = collaborationRequests.length >= 6;
+        const showMoreItems = this.state.showMore.includes("collaborationRequests");
+        return (
+            <section className="info-block ">
+                <div className="header collaboration-requests">
+                    <span className="type">{I18n.t("organisations.collaborationRequests")}</span>
+                    <span className="counter">{collaborationRequests.length}</span>
+                </div>
+                <div className="content">
+                    {(showMore && !showMoreItems ? collaborationRequests.slice(0, 5) : collaborationRequests)
+                        .sort((i1, i2) => i1.name.localeCompare(i2.name))
+                        .map((cr, i) =>
+                            <div className="collaboration-requests" key={i}>
+                                <a href={`/collaboration-requests/${cr.id}`}
+                                   onClick={this.openCollaborationRequest(cr)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{cr.name}</span>
+                                </a>
+                            </div>)}
+                </div>
+                {showMore && <section className="show-more">
+                    <Button className="white"
+                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
+                            onClick={this.toggleShowMore("collaborationRequests")}/>
                 </section>}
             </section>
         );
@@ -186,13 +223,13 @@ class Organisations extends React.Component {
                     {(showMore && !showMoreItems ? invitations.slice(0, 5) : invitations)
                         .sort((i1, i2) => i1.invitee_email.localeCompare(i2.invitee_email))
                         .map((invitation, i) =>
-                        <div className="organisation-invitations" key={i}>
-                            <a href={`/organisation-invitations/${invitation.id}`}
-                               onClick={this.openInvitation(invitation)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{invitation.invitee_email}</span>
-                            </a>
-                        </div>)}
+                            <div className="organisation-invitations" key={i}>
+                                <a href={`/organisation-invitations/${invitation.id}`}
+                                   onClick={this.openInvitation(invitation)}>
+                                    <FontAwesomeIcon icon={"arrow-right"}/>
+                                    <span>{invitation.invitee_email}</span>
+                                </a>
+                            </div>)}
                 </div>
                 {showMore && <section className="show-more">
                     <Button className="white"
@@ -313,9 +350,10 @@ class Organisations extends React.Component {
                     <span>{I18n.t("organisations.dashboard")}</span>
                 </div>
                 <section className="info-block-container">
+                    {this.renderCollaborationRequests(organisations)}
+                    {this.renderOrganisationInvitations(organisations)}
                     {this.renderCollaborations(organisations)}
                     {this.renderMembers(organisations)}
-                    {this.renderOrganisationInvitations(organisations)}
                 </section>
                 <div className="title">
                     <span>{I18n.t("organisations.title")}</span>

@@ -63,15 +63,17 @@ class OrganisationInvitation extends React.Component {
 
     gotoOrganisations = () => this.setState({confirmationDialogOpen: false},
         () => {
-            const {organisationInvitation} = this.state;
+            const {organisationInvitation, isAdminLink} = this.state;
+            if (isAdminLink) {
+                this.props.history.goBack();
+                return;
+            }
             const member = (this.props.user.organisation_memberships || []).find(membership => membership.organisation_id === organisationInvitation.organisation.id);
             if (member) {
                 this.props.history.push(`/organisations/${organisationInvitation.organisation.id}`);
-            }
-            else if(this.props.user.organisation_memberships.length) {
+            } else if (this.props.user.organisation_memberships.length) {
                 this.props.history.push(`/organisations`);
-            }
-            else {
+            } else {
                 this.props.history.push(`/home`);
             }
         });
@@ -98,7 +100,7 @@ class OrganisationInvitation extends React.Component {
     doDecline = () => {
         const {organisationInvitation} = this.state;
         organisationInvitationDecline(organisationInvitation).then(res => {
-            this.gotoOrganisations();
+            this.props.history.push("/home");
             setFlash(I18n.t("organisationInvitation.flash.inviteDeclined", {name: organisationInvitation.organisation.name}));
         });
     };
@@ -116,7 +118,7 @@ class OrganisationInvitation extends React.Component {
     doDelete = () => {
         const {organisationInvitation} = this.state;
         organisationInvitationDelete(organisationInvitation.id).then(res => {
-            this.gotoOrganisations();
+            this.props.history.goBack();
             setFlash(I18n.t("organisationInvitation.flash.inviteDeleted", {name: organisationInvitation.organisation.name}));
         });
     };
@@ -134,7 +136,7 @@ class OrganisationInvitation extends React.Component {
     doResend = () => {
         const {organisationInvitation} = this.state;
         organisationInvitationResend(organisationInvitation).then(res => {
-            this.gotoOrganisations();
+            this.props.history.goBack();
             setFlash(I18n.t("organisationInvitation.flash.inviteResend", {name: organisationInvitation.organisation.name}));
         });
     };
@@ -177,8 +179,6 @@ class OrganisationInvitation extends React.Component {
         }
     };
 
-    requiredMarker = () => <sup className="required-marker">*</sup>;
-
     administrators = organisationInvitation => organisationInvitation.organisation.organisation_memberships
         .filter(m => m.role === "admin")
         .map(m => `${m.user.name} <${m.user.email}>`)
@@ -202,11 +202,11 @@ class OrganisationInvitation extends React.Component {
                                     leavePage={leavePage}
                                     question={confirmationQuestion}/>
                 <div className="title">
-                    {isAdminLink && <a href="/organisations" onClick={e => {
+                    {isAdminLink && <a href="/#" onClick={e => {
                         stopEvent(e);
-                        this.gotoOrganisations();
+                        this.props.history.goBack();
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("organisationInvitation.backToOrganisationDetail", {name: organisationInvitation.organisation.name})}
+                        {I18n.t("forms.back")}
                     </a>}
                     {!errorSituation &&
                     <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>}

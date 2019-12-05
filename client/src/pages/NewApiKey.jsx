@@ -51,7 +51,7 @@ class NewApiKey extends React.Component {
             "hashed_secret": hashedSecret,
             description: description
         }).then(() => {
-            this.props.history.push(`/organisations/${organisation.id}`);
+            this.props.history.goBack();
             setFlash(I18n.t("apiKeys.flash.created", {name: organisation.name}))
         });
     };
@@ -73,9 +73,9 @@ class NewApiKey extends React.Component {
                 <div className="title">
                     <a href={`/organisations${organisation.id}`} onClick={e => {
                         stopEvent(e);
-                        this.props.history.push(`/organisations/${organisation.id}`)
+                        this.props.history.goBack();
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("apiKeys.backToOrganisationDetail", {name: organisation.name})}
+                        {I18n.t("forms.back")}
                     </a>
                     <p className="title">{I18n.t("apiKeys.title", {organisation: organisation.name})}</p>
                 </div>
