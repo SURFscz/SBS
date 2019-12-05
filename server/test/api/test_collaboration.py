@@ -316,3 +316,8 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(400, response.status_code)
         data = response.json
         self.assertEqual(data["error"], "duplicate entry")
+
+    def test_collaboration_groups_by_id(self):
+        collaboration_id = self._find_by_name_id()["id"]
+        collaboration = self.get(f"/api/collaborations/groups/{collaboration_id}")
+        self.assertEqual(2, len(collaboration["groups"]))

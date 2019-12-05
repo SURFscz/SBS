@@ -116,13 +116,14 @@ def approve_join_request():
     if collaboration.is_member(user_id):
         raise Conflict(f"User {join_request.user.name} is already a member of {collaboration.name}")
 
-    mail_accepted_declined_join_request({"salutation": f"Dear {join_request.user.name}",
-                                         "base_url": current_app.app_config.base_url,
-                                         "administrator": current_user_name(),
-                                         "join_request": join_request},
-                                        join_request,
-                                        True,
-                                        [join_request.user.email])
+    mail_accepted_declined_join_request({
+        "salutation": f"Dear {join_request.user.name}",
+        "base_url": current_app.app_config.base_url,
+        "administrator": current_user_name(),
+        "join_request": join_request},
+        join_request,
+        True,
+        [join_request.user.email])
 
     collaboration_membership = CollaborationMembership(user_id=user_id,
                                                        collaboration=collaboration,

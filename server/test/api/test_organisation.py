@@ -47,6 +47,12 @@ class TestOrganisation(AbstractTest):
                                  with_basic_auth=False)
         self.assertEqual(1, len(organisations))
 
+    def test_organisations_by_schac_home_organisation_none(self):
+        self.login("urn:roger")
+        organisations = self.get("/api/organisations/find_by_schac_home_organisation",
+                                 with_basic_auth=False)
+        self.assertEqual(0, len(organisations))
+
     def test_organisation_by_id_with_api_user(self):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}",

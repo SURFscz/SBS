@@ -18,6 +18,7 @@ from server.api.aup import aup_api
 from server.api.base import base_api
 from server.api.collaboration import collaboration_api
 from server.api.collaboration_membership import collaboration_membership_api
+from server.api.collaboration_request import collaboration_request_api
 from server.api.collaborations_services import collaborations_services_api
 from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
 from server.api.group import group_api
@@ -99,6 +100,7 @@ app.register_blueprint(group_members_api)
 app.register_blueprint(api_key_api)
 app.register_blueprint(group_invitations_api)
 app.register_blueprint(aup_api)
+app.register_blueprint(collaboration_request_api)
 
 app.register_error_handler(404, page_not_found)
 

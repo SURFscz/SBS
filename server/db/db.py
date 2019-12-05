@@ -56,6 +56,8 @@ class User(Base, db.Model):
                                                cascade_backrefs=False, passive_deletes=True)
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="user",
                                                 cascade_backrefs=False, passive_deletes=True)
+    collaboration_requests = db.relationship("CollaborationRequest", back_populates="requester",
+                                             cascade_backrefs=False, passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="user", cascade_backrefs=False, passive_deletes=True)
     aups = db.relationship("Aup", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
 
@@ -73,6 +75,9 @@ class Organisation(Base, db.Model):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
                                      passive_deletes=True)
+    collaboration_requests = db.relationship("CollaborationRequest", back_populates="organisation",
+                                             cascade="all, delete-orphan",
+                                             passive_deletes=True)
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="organisation",
                                                cascade="all, delete-orphan", passive_deletes=True)
     organisation_invitations = db.relationship("OrganisationInvitation", back_populates="organisation",
@@ -287,3 +292,21 @@ class Aup(Base, db.Model):
     user = db.relationship("User", back_populates="aups")
     agreed_at = db.Column("agreed_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                           nullable=False)
+
+
+class CollaborationRequest(Base, db.Model):
+    __tablename__ = "collaboration_requests"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=False)
+    short_name = db.Column("short_name", db.String(length=255), nullable=True)
+    description = db.Column("description", db.Text(), nullable=True)
+    message = db.Column("message", db.Text(), nullable=True)
+    accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
+    organisation = db.relationship("Organisation", back_populates="collaboration_requests")
+    requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    requester = db.relationship("User", back_populates="collaboration_requests")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)

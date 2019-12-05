@@ -5,7 +5,7 @@ import uuid
 from secrets import token_urlsafe
 
 from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
-    JoinRequest, Invitation, metadata, Group, OrganisationInvitation, ApiKey
+    JoinRequest, Invitation, metadata, Group, OrganisationInvitation, ApiKey, CollaborationRequest
 from server.db.defaults import default_expiry_date
 
 join_request_reference = "Dr. Johnson"
@@ -125,7 +125,9 @@ def seed(db):
     organisation_membership_john = OrganisationMembership(role="admin", user=john, organisation=uuc)
     organisation_membership_mary = OrganisationMembership(role="admin", user=mary, organisation=uuc)
     organisation_membership_harry = OrganisationMembership(role="admin", user=harry, organisation=uuc)
-    _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry)
+    organisation_membership_jane = OrganisationMembership(role="admin", user=jane, organisation=uva)
+    _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry,
+             organisation_membership_jane)
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email)
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service")
@@ -215,5 +217,9 @@ def seed(db):
                                   message="Let me please join as I really, really, really \n really, "
                                           "really, really \n want to...")
     _persist(db, invitation, invitation_uva, invitation_noway)
+
+    collaboration_request = CollaborationRequest(name="New Collaboration", short_name="new_collaboration",
+                                                 message="For research", organisation=uuc, requester=peter)
+    _persist(db, collaboration_request)
 
     db.session.commit()
