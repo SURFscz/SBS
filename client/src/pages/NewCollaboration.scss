@@ -2,13 +2,20 @@
 
 .mod-new-collaboration {
     background-color: $background;
-    margin-bottom: $medium-padding;
+    max-width: $medium;
+    margin: 0 auto;
+
+    h2.no-organisations {
+        font-size: 18px;
+        line-height: 22px;
+        color: $dark-grey;
+        padding: 25px 0 5px 0;
+
+    }
 
     div.title {
         font-size: 22px;
         color: $dark-grey;
-        max-width: $medium;
-        margin: 0 auto;
         padding: 10px 0 5px 0;
 
         p {
