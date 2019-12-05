@@ -81,7 +81,7 @@ def deny_request(collaboration_request_id):
     mail_accepted_declined_collaboration_request({"salutation": f"Dear {user.name}",
                                                   "base_url": current_app.app_config.base_url,
                                                   "administrator": current_user_name(),
-                                                  "collaboration": collaboration_request.collaboration,
+                                                  "collaboration": {"name": collaboration_request.name},
                                                   "organisation": collaboration_request.organisation},
                                                  collaboration_request.name,
                                                  False,
