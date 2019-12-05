@@ -196,7 +196,7 @@ I18n.translations.nl = {
         enrollmentPlaceholder: "Lidmaatschapsproces van een samenwerking",
         enrollmentTooltip: "Bepaalt het proces waarmee<br/>leden toegang krijgen tot<br/>deze samenwerking",
         message: "Bericht",
-        messagePlaceholder: "Boodschap aan de mensen die u beheerders maakt van deze samenwerking",
+        messagePlaceholder: "Boodschap aan de beheerders van deze samenwerking",
         messageTooltip: "De boodschap nemen we op in de <br/>e-mail waarmee beheerders worden uitgenodigd.",
         organisation_name: "Organisatie",
         organisationPlaceholder: "Kies de organisatie voor deze samenwerking",

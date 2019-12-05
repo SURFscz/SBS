@@ -58,8 +58,22 @@ class TestGroup(AbstractTest):
     def test_group_by_id(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         group_id = self.find_entity_by_name(Group, ai_researchers_group).id
-        group = self.get(f"/api/groups/{group_id}/{collaboration_id}")
+        self.login("urn:admin")
+        group = self.get(f"/api/groups/{group_id}/{collaboration_id}", with_basic_auth=False)
         self.assertTrue(len(group["collaboration_memberships"]) > 0)
+
+    def test_group_by_id_regular_member(self):
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        group_id = self.find_entity_by_name(Group, ai_researchers_group).id
+        self.login("urn:jane")
+        group = self.get(f"/api/groups/{group_id}/{collaboration_id}", with_basic_auth=False)
+        self.assertTrue(len(group["collaboration_memberships"]) > 0)
+
+    def test_group_by_id_forbidden(self):
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        group_id = self.find_entity_by_name(Group, ai_researchers_group).id
+        self.login("urn:peter")
+        self.get(f"/api/groups/{group_id}/{collaboration_id}", with_basic_auth=False, response_status_code=403)
 
     def test_save_group(self):
         self._do_test_save_group(False, 0, 0)

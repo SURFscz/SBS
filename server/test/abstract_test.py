@@ -58,11 +58,12 @@ class AbstractTest(TestCase):
 
     def login(self, uid="urn:john", schac_home_organisation=None):
         with requests.Session():
+            headers = {self.uid_header_name(): uid}
+            if schac_home_organisation:
+                headers["OIDC_CLAIM_SCHAC_HOME_ORGANISATION"] = schac_home_organisation
             self.client.get("/api/users/me",
-                            environ_overrides={self.uid_header_name(): uid,
-                                               "OIDC_CLAIM_SCHAC_HOME_ORGANISATION": schac_home_organisation},
-                            headers={self.uid_header_name(): uid,
-                                     "OIDC_CLAIM_SCHAC_HOME_ORGANISATION": schac_home_organisation})
+                            environ_overrides=headers,
+                            headers=headers)
 
     def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True, headers={}):
         with requests.Session():

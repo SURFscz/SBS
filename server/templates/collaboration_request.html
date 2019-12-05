@@ -1,0 +1,29 @@
+{% extends "mail_layout.html" %}
+{% block title %}SURFNET Collaboration request{% endblock %}
+{% block content %}
+
+<p>{{ salutation }},</p>
+
+<p>The user {{ user.name }} has requested to create a new collaboration {{ collaboration_request.name }}.</p>
+<p>The motivation for this request:</p>
+<p>{{ collaboration_request.message }}</p>
+{% if collaboration_request.message is defined and collaboration_request.message != None and collaboration_request.message|length %}
+<p>The user has provided the following motivation :</p>
+<p>{{ collaboration_request.message }}</p>
+{% else %}
+<p>The user has not provided any motivation.</p>
+{% endif %}
+<table cellpadding="10" width="90%" align="center"
+       style="margin-bottom:1em;margin-left:auto;margin-right:auto;margin-top:1em;">
+    <tr>
+        <td bgcolor="#D9EDF7"
+            style="mso-line-height-rule:exactly;line-height:18px;font-size:13px;font-family:Arial, sans-serif;border-radius:4px 4px 4px 4px;color:#333333;border-style:solid;border-width:1px;border-color:#4FB3CF;"
+            align="center" width="100%">
+            <span lang="en"><a href="{{base_url}}/organisation/{{collaboration_request.organisation_id}}"
+                               style="color:#0088CC;">Login to process this request.</a></span>
+            <br/>
+        </td>
+    </tr>
+</table>
+
+{% endblock %}

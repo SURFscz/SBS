@@ -61,6 +61,16 @@ def mail_collaboration_join_request(context, collaboration, recipients, preview=
     )
 
 
+def mail_collaboration_request(context, collaboration_request, recipients, preview=False):
+    return _do_send_mail(
+        subject=f"Request for new collaboration {collaboration_request.name}",
+        recipients=recipients,
+        template="collaboration_request",
+        context=context,
+        preview=preview
+    )
+
+
 def mail_organisation_invitation(context, organisation, recipients, preview=False):
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])}}
     return _do_send_mail(
@@ -89,6 +99,17 @@ def mail_accepted_declined_join_request(context, join_request, accepted, recipie
         subject=f"Join request for collaboration {join_request.collaboration.name} has been {part}",
         recipients=recipients,
         template=f"join_request_{part}",
+        context=context,
+        preview=preview
+    )
+
+
+def mail_accepted_declined_collaboration_request(context, collaboration_name, accepted, recipients, preview=False):
+    part = "accepted" if accepted else "declined"
+    return _do_send_mail(
+        subject=f"Collaboration request for collaboration {collaboration_name} has been {part}",
+        recipients=recipients,
+        template=f"collaboration_request_{part}",
         context=context,
         preview=preview
     )

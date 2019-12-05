@@ -337,7 +337,7 @@ def save_collaboration():
     elif "external_api_organisation" in request_context:
         organisation = request_context.external_api_organisation
         admins = list(filter(lambda mem: mem.role == "admin", organisation.organisation_memberships))
-        _assign_global_urn_to_organisation(organisation, data)
+        assign_global_urn_to_organisation(organisation, data)
         user = admins[0].user if len(admins) > 0 else User.query.filter(
             User.uid == current_app.app_config.admin_users[0].uid).one()
         data["organisation_id"] = organisation.id
@@ -379,47 +379,13 @@ def save_collaboration():
     return res
 
 
-@collaboration_api.route("/request", methods=["POST"], strict_slashes=False)
-@json_endpoint
-def request_collaboration():
-    data = current_request.get_json()
-    user = User.query.get(current_user_id())
-    organisation = Organisation.query.filter(Organisation.schac_home_organisation == user.schac_home_organisation).one()
-    _assign_global_urn(data["organisation_id"], data)
-
-    organisation.organisation_memberships
-    administrators = data["administrators"] if "administrators" in data else []
-    message = data["message"] if "message" in data else None
-    data["identifier"] = str(uuid.uuid4())
-    res = save(Collaboration, custom_json=data)
-
-    administrators = list(filter(lambda admin: admin != user.email, administrators))
-    collaboration = res[0]
-    for administrator in administrators:
-        invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
-                                collaboration=collaboration, user=user, intended_role="admin",
-                                expiry_date=default_expiry_date(),
-                                created_by=user.uid)
-        invitation = db.session.merge(invitation)
-        mail_collaboration_invitation({
-            "salutation": "Dear",
-            "invitation": invitation,
-            "base_url": current_app.app_config.base_url
-        }, collaboration, [administrator])
-
-    admin_collaboration_membership = CollaborationMembership(role="admin", user=user, collaboration=collaboration,
-                                                             created_by=user.uid, updated_by=user.uid)
-    db.session.merge(admin_collaboration_membership)
-    return res
-
-
 def _assign_global_urn(organisation_id, data):
     organisation = Organisation.query \
         .filter(Organisation.id == organisation_id).one()
-    _assign_global_urn_to_organisation(organisation, data)
+    assign_global_urn_to_organisation(organisation, data)
 
 
-def _assign_global_urn_to_organisation(organisation, data):
+def assign_global_urn_to_organisation(organisation, data):
     data["global_urn"] = f"{organisation.short_name}:{data['short_name']}"
 
 
