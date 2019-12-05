@@ -48,7 +48,8 @@ I18n.translations.nl = {
         today: "Vandaag",
         manage: "Overzicht",
         invalidInput: "Foutieve waarde voor {{name}}",
-        request: "Verstuur"
+        request: "Verstuur",
+        back: "Terug"
     },
     explain: {
         title: "Uitleg {{subject}}",
@@ -198,6 +199,8 @@ I18n.translations.nl = {
         message: "Bericht",
         messagePlaceholder: "Boodschap aan de beheerders van deze samenwerking",
         messageTooltip: "De boodschap nemen we op in de <br/>e-mail waarmee beheerders worden uitgenodigd.",
+        motivation: "Motivatiw",
+        motivationPlaceholder: "Motivatie voor de nieuwe samenwerking",
         organisation_name: "Organisatie",
         organisationPlaceholder: "Kies de organisatie voor deze samenwerking",
         organisationTooltip: "Iedere samenwerking hoort bij<br/>precies 1 organisatie",
@@ -634,14 +637,14 @@ I18n.translations.nl = {
         },
     },
     aup: {
-        title1: "Om onze CMS-services te gebruiken, moet u akkoord gaan met een aantal regels en voorschriften. <br> Deze worden uitgelegd in het onderstaande document.",
-        title2: "Voor meer informatie en uitleg kunt u contact opnemen met <a href='mailto:info@surconxt.org'> info@surconxt.org </a>.",
-        title3: "Lees het document en vink indien overeengekomen het vakje aan en ga door met de validatie van uw persoonlijke gegevens",
-        downloadPdf: "Download acceptabel gebruiksbeleid (pdf)",
-        agreeWithTerms: "Ik ga akkoord met het beleid voor acceptabel gebruik",
-        continueToValidation: "Doorgaan",
-        agreed: "Uw overeenkomst met {{name}} is opgeslagen."
-    },
+        title1: "Om onze CMS-services te gebruiken, moet u akkoord gaan met een aantal regels en voorschriften. <br> Deze worden uitgelegd in het onderstaande document.",
+        title2: "Voor meer informatie en uitleg kunt u contact opnemen met <a href='mailto:info@surconxt.org'> info@surconxt.org </a>.",
+        title3: "Lees het document en vink indien overeengekomen het vakje aan en ga door met de validatie van uw persoonlijke gegevens",
+        downloadPdf: "Download acceptabel gebruiksbeleid (pdf)",
+        agreeWithTerms: "Ik ga akkoord met het beleid voor acceptabel gebruik",
+        continueToValidation: "Doorgaan",
+        agreed: "Uw overeenkomst met {{name}} is opgeslagen."
+    },
     autocomplete: {
         name: "Name",
         description: "Beschrijving",

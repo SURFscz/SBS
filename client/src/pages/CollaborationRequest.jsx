@@ -1,7 +1,7 @@
 import React from "react";
-import "./NewCollaboration.scss";
+import "./CollaborationRequest.scss";
 import {
-    collaborationNameExists,
+    collaborationNameExists, collaborationRequestById,
     collaborationShortNameExists,
     createCollaboration,
     myOrganisationsLite,
@@ -19,29 +19,11 @@ import {collaborationAccessTypes} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 
-class NewCollaboration extends React.Component {
+class CollaborationRequest extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.accessTypeOptions = collaborationAccessTypes.map(type => ({
-            value: type,
-            label: I18n.t(`accessTypes.${type}`)
-        }));
         this.state = {
-            name: "",
-            short_name: "",
-            description: "",
-            access_type: this.accessTypeOptions[0].value,
-            administrators: [this.props.user.email],
-            message: "",
-            email: "",
-            accepted_user_policy: "",
-            enrollment: "",
-            status: "",
-            required: ["name", "short_name", "organisation"],
-            alreadyExists: {},
-            organisation: {},
-            organisations: [],
             initial: true,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
@@ -50,46 +32,22 @@ class NewCollaboration extends React.Component {
                     this.props.history.goBack();
                 }),
             leavePage: true,
-            noOrganisations: false,
-            isRequestCollaboration: false
+            required: ["name", "short_name", "organisation"],
+            collaborationRequest: {}
         };
     }
 
     componentDidMount = () => {
-        myOrganisationsLite().then(json => {
-            if (json.length === 0) {
-                organisationByUserSchacHomeOrganisation().then(json => {
-                    if (json.length === 0) {
-                        this.setState({noOrganisations: true});
-                    } else {
-                        const organisations = this.mapOrganisationsToOptions(json);
-                        this.setState({
-                            organisations: organisations,
-                            organisation: organisations[0],
-                            isRequestCollaboration: true,
-                            required: this.state.required.concat("message")
-                        });
-                    }
+        const params = this.props.match.params;
+        if (params.id) {
+            Promise.all([collaborationRequestById(params.id), myOrganisationsLite()])
+                .then(json => {
+                    const organisations = this.mapOrganisationsToOptions(json[1]);
+                    this.setState({collaborationRequest: json[0], organisations: organisations})
                 });
-
-            } else {
-                const organisationId = getParameterByName("organisation", window.location.search);
-                const organisations = this.mapOrganisationsToOptions(json);
-                let organisation = {};
-                if (organisationId) {
-                    const filtered = organisations.filter(org => org.value === parseInt(organisationId, 10));
-                    if (filtered.length > 0) {
-                        organisation = filtered[0];
-                    }
-                } else {
-                    organisation = organisations[0];
-                }
-                this.setState({
-                    organisations: organisations,
-                    organisation: organisation
-                });
-            }
-        });
+        } else {
+            this.props.history.push("/404");
+        }
     };
 
     mapOrganisationsToOptions = organisations => organisations.map(org => ({
@@ -334,4 +292,4 @@ class NewCollaboration extends React.Component {
     };
 }
 
-export default NewCollaboration;
+export default CollaborationRequest;

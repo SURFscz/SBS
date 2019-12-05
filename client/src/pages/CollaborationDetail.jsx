@@ -240,8 +240,7 @@ class CollaborationDetail extends React.Component {
 
     openServiceDetails = (collaboration, service) => e => {
         stopEvent(e);
-        const back = encodeURIComponent(`/collaborations/${collaboration.id}`)
-        this.props.history.push(`/services/${service.id}?back=${back}`);
+        this.props.history.push(`/services/${service.id}`);
     };
 
     renderRequests = joinRequests => {
@@ -590,14 +589,13 @@ class CollaborationDetail extends React.Component {
             label: originalCollaboration.organisation.name,
             short_name: originalCollaboration.organisation.short_name
         };
-        const back = isAdmin ? "/collaborations" : "/home";
         return (<div className="mod-collaboration-detail">
             <div className="title">
-                <a href={back} onClick={e => {
+                <a href="/#" onClick={e => {
                     stopEvent(e);
-                    this.props.history.push(back)
+                    this.props.history.goBack();
                 }}><FontAwesomeIcon
-                    icon="arrow-left"/>{isAdmin ? I18n.t("collaborationDetail.backToCollaborations") : I18n.t("collaborationDetail.backToHome")}
+                    icon="arrow-left"/>{I18n.t("forms.back")}
                 </a>
             </div>
             {isAdmin && <section>

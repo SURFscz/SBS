@@ -17,7 +17,6 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import SelectField from "../components/SelectField";
 import {serviceStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {getParameterByName} from "../utils/QueryParameters";
 import moment from "moment";
 import {validEmailRegExp} from "../validations/regExps";
 
@@ -49,7 +48,6 @@ class Service extends React.Component {
             leavePage: false,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => true,
-            back: "/services"
         };
     }
 
@@ -57,13 +55,11 @@ class Service extends React.Component {
         const params = this.props.match.params;
         if (params.id) {
             if (params.id !== "new") {
-                const back = getParameterByName("back", window.location.search);
                 serviceById(params.id)
                     .then(json => this.setState({
                         ...json,
                         service: json,
-                        isNew: false,
-                        back: isEmpty(back) ? this.state.back : back
+                        isNew: false
                     }));
             } else {
                 const isAdmin = this.props.user.admin;
@@ -96,7 +92,7 @@ class Service extends React.Component {
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
     gotoServices = () => this.setState({confirmationDialogOpen: false},
-        () => this.props.history.push(`/services`));
+        () => this.props.history.goBack());
 
     cancel = () => {
         this.setState({
@@ -158,7 +154,7 @@ class Service extends React.Component {
         const {
             alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
             entity_id, description, address, identity_type, uri, accepted_user_policy, contact_email, status,
-            confirmationDialogAction, leavePage, isNew, back, invalidInputs
+            confirmationDialogAction, leavePage, isNew, invalidInputs
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const isAdmin = this.props.user.admin;
@@ -172,11 +168,11 @@ class Service extends React.Component {
                                     leavePage={leavePage}
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
                 <div className="title">
-                    {isAdmin && <a href={back} onClick={e => {
+                    {isAdmin && <a href="/back" onClick={e => {
                         stopEvent(e);
-                        this.props.history.push(back)
+                        this.props.history.goBack();
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {back.indexOf("collaborations") > -1 ? I18n.t("collaborationDetail.backToCollaborations") : I18n.t("service.backToServices")}
+                        {I18n.t("forms.back")}
                     </a>}
                     <p className="title">{title}</p>
                 </div>

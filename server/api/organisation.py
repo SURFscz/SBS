@@ -124,11 +124,13 @@ def my_organisations():
         .outerjoin(Organisation.collaborations) \
         .outerjoin(Collaboration.collaboration_memberships) \
         .outerjoin(Organisation.organisation_invitations) \
+        .outerjoin(Organisation.collaboration_requests) \
         .options(contains_eager(Organisation.organisation_memberships).
                  contains_eager(OrganisationMembership.user)) \
         .options(contains_eager(Organisation.collaborations).
                  contains_eager(Collaboration.collaboration_memberships)) \
         .options(contains_eager(Organisation.organisation_invitations)) \
+        .options(contains_eager(Organisation.collaboration_requests)) \
         .filter(OrganisationMembership.user_id == user_id) \
         .all()
     return organisations, 200

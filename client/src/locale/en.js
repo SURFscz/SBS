@@ -48,7 +48,8 @@ I18n.translations.en = {
         hideSome: "Less",
         today: "Today",
         manage: "Overview",
-        invalidInput: "Invalid input for {{name}}"
+        invalidInput: "Invalid input for {{name}}",
+        back: "Back"
     },
     explain: {
         title: "Explanation {{subject}}",
@@ -197,6 +198,8 @@ I18n.translations.en = {
         enrollmentTooltip: "Determines the process<br/>through which members enroll at<br/>this collaboration",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
+        motivation: "Motivation",
+        motivationPlaceholder: "Motivation for the new collaboration",
         messageTooltip: "The message will be included in the<br/>e-mail invitation to the administrators.",
         organisation_name: "Organisation",
         organisationPlaceholder: "Select the organisation for this collaboration...",
@@ -256,6 +259,7 @@ I18n.translations.en = {
         members: "Members",
         collaborations: "Collaborations",
         invitations: "Invitations",
+        collaborationRequests: "Collaboration requests",
         add: "Create new Organisation",
         searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS...",
         deleteConfirmation: "Are you sure you want to delete Service {{name}}?"
@@ -640,6 +644,9 @@ I18n.translations.en = {
         agreeWithTerms: "I agree with the Acceptable Usage Policy",
         continueToValidation: "Store decision",
         agreed: "Your agreement with {{name}} has been saved."
+    },
+    collaborationRequest: {
+        title: "{{requester}} has requested "
     },
     autocomplete: {
         name: "Name",

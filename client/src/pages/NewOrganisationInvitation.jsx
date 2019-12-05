@@ -232,11 +232,11 @@ class NewOrganisationInvitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
                 <div className="title">
-                    <a href={`/organisations${organisation.id}`} onClick={e => {
+                    <a href={`/back`} onClick={e => {
                         stopEvent(e);
-                        this.props.history.push(`/organisations/${organisation.id}`)
+                        this.props.history.goBack()
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("organisationDetail.backToOrganisationDetail", {name: organisation.name})}
+                        {I18n.t("forms.back")}
                     </a>
                     <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
                 </div>

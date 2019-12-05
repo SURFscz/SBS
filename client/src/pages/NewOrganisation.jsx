@@ -67,7 +67,7 @@ class NewOrganisation extends React.Component {
         if (this.isValid()) {
             const {name, short_name, administrators, message,schac_home_organisation, description} = this.state;
             createOrganisation({name, short_name, schac_home_organisation, administrators, message, description}).then(res => {
-                this.props.history.push("/organisations");
+                this.props.history.goBack();
                 setFlash(I18n.t("organisation.flash.created", {name: res.name}))
             });
         }
@@ -125,11 +125,11 @@ class NewOrganisation extends React.Component {
                                     question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
                                     leavePage={leavePage}/>
                 <div className="title">
-                    <a href="/organisations" onClick={e => {
+                    <a href="/back" onClick={e => {
                         stopEvent(e);
-                        this.props.history.push(`/organisations`)
+                        this.props.history.goBack();
                     }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("organisationDetail.backToOrganisations")}
+                        {I18n.t("forms.back")}
                     </a>
                     <p className="title">{I18n.t("organisation.title")}</p>
                 </div>

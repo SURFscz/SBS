@@ -161,9 +161,9 @@ class CollaborationGroups extends React.Component {
             <div className="title">
                 <a href={`/collaborations/${collaboration.id}`} onClick={e => {
                     stopEvent(e);
-                    this.props.history.push(`/collaborations/${collaboration.id}`);
+                    this.props.history.goBack();
                 }}><FontAwesomeIcon icon="arrow-left"/>
-                    {I18n.t("collaborationDetail.backToCollaborationDetail", {name: collaboration.name})}
+                    {I18n.t("forms.back")}
                 </a>
                 <p className="title">{I18n.t("groups.title", {name: collaboration.name})}</p>
             </div>

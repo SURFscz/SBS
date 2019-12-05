@@ -551,18 +551,12 @@ class OrganisationDetail extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-organisation-detail">
-                {!user.admin && <div className="title">
-                    <a href="/home" onClick={e => {
+                <div className="title">
+                    <a href="/back" onClick={e => {
                         stopEvent(e);
-                        this.props.history.push("/home")
-                    }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("home.backToHome")}</a>
-                </div>}
-                {user.admin && <div className="title">
-                    <a href="/organisations" onClick={e => {
-                        stopEvent(e);
-                        this.props.history.push("/organisations")
-                    }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("organisationDetail.backToOrganisations")}</a>
-                </div>}
+                        this.props.history.goBack();
+                    }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("forms.back")}</a>
+                </div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}

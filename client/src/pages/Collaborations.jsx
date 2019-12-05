@@ -189,7 +189,7 @@ class Collaborations extends React.Component {
                         .sort((s1, s2) => s1.name.localeCompare(s2.name))
                         .map((collaboration, i) =>
                             <div className="collaboration-groups" key={i}>
-                                <a href={`/collaborations/${collaboration.id}`}
+                                <a href={`/collaboration-groups/${collaboration.id}`}
                                    onClick={this.openCollaborationGroups(collaboration)}>
                                     <span>{collaboration.name}</span>
                                     <span className="count">{`(${collaboration.groups.length})`}</span>

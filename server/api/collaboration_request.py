@@ -3,6 +3,7 @@ import uuid
 
 from flask import Blueprint, request as current_request, current_app
 from munch import munchify
+from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
 from server.api.collaboration import assign_global_urn_to_organisation
@@ -12,6 +13,20 @@ from server.db.models import save
 from server.mail import mail_collaboration_request, mail_accepted_declined_collaboration_request
 
 collaboration_request_api = Blueprint("collaboration_request_api", __name__, url_prefix="/api/collaboration_requests")
+
+
+@collaboration_request_api.route("/<collaboration_request_id>", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def collaboration_request_by_id(collaboration_request_id):
+    res = CollaborationRequest.query \
+        .join(CollaborationRequest.organisation) \
+        .join(CollaborationRequest.requester) \
+        .options(contains_eager(CollaborationRequest.organisation)) \
+        .options(contains_eager(CollaborationRequest.requester)) \
+        .filter(CollaborationRequest.id == collaboration_request_id) \
+        .one()
+    confirm_organisation_admin(res.organisation_id)
+    return res, 200
 
 
 @collaboration_request_api.route("/", methods=["POST"], strict_slashes=False)
@@ -39,7 +54,10 @@ def request_collaboration():
 def approve_request(collaboration_request_id):
     collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
     confirm_organisation_admin(collaboration_request.organisation_id)
+    # client_data = current_request.get_json()
+    # attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy"]
 
+    # take the data from client_data if present else from collaboration_request
     data = {
         "identifier": str(uuid.uuid4()),
         "name": collaboration_request.name,

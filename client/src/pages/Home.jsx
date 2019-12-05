@@ -189,7 +189,11 @@ class Home extends React.Component {
         return (
             <div className="mod-home-container">
                 <div className="mod-home">
-                    <div className="title">
+                    {allowedCollaborationRequest && <div className="actions">
+                        <Button className="collaboration-request" onClick={this.collaborationRequest}
+                                txt={I18n.t("home.collaborationRequest")}/>
+                    </div>}
+                    <div className={`title ${allowedCollaborationRequest ? "" : "top"}`}>
                         <p>{I18n.t("home.title")}</p>
                     </div>
                     <section className={"info-block-container"}>
@@ -198,8 +202,6 @@ class Home extends React.Component {
                         {this.renderServices(collaborations)}
                         {this.renderGroups(collaborations)}
                     </section>
-                    {allowedCollaborationRequest &&
-                    <Button className="collaboration-request" onClick={this.collaborationRequest} txt={I18n.t("home.collaborationRequest")}/>}
                 </div>
             </div>);
     };
