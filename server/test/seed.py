@@ -8,6 +8,8 @@ from server.db.db import User, Organisation, OrganisationMembership, Service, Co
     JoinRequest, Invitation, metadata, Group, OrganisationInvitation, ApiKey, CollaborationRequest
 from server.db.defaults import default_expiry_date
 
+collaboration_request_name = "New Collaboration"
+
 join_request_reference = "Dr. Johnson"
 
 the_boss_name = "The Boss"
@@ -218,7 +220,7 @@ def seed(db):
                                           "really, really \n want to...")
     _persist(db, invitation, invitation_uva, invitation_noway)
 
-    collaboration_request = CollaborationRequest(name="New Collaboration", short_name="new_collaboration",
+    collaboration_request = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
                                                  message="For research", organisation=uuc, requester=peter)
     _persist(db, collaboration_request)
 
