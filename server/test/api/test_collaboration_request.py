@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 from server.db.db import Organisation, CollaborationRequest, CollaborationMembership
 from server.test.abstract_test import AbstractTest
 from server.test.seed import schac_home_organisation, amsterdam_uva_name, collaboration_request_name
