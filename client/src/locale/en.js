@@ -217,7 +217,8 @@ I18n.translations.en = {
         admin: "CO Manager",
         member: "Regular user",
         flash: {
-            created: "Collaboration {{name}} was successfully created"
+            created: "Collaboration {{name}} was successfully created",
+            requested: "Collaboration {{name}} was successfully requested"
         }
     },
     collaborationDetail: {

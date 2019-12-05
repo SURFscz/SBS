@@ -38,7 +38,7 @@ I18n.translations.nl = {
         services: "Diensten",
         backToHome: "Terug naar de startpagina",
         collaborationRequest: "Verzoek een nieuwe Samenwerking",
-        noOrganisations: "Voor het verzoek om een nieuwe samenwerking is het een vereiste dat er voor de instelling waarmee je bent ingelogd een organisatie is aangemaakt. Neem contact op <a href='mailto:scz-support@surfnet.nl'>scz-support@surfnet.nl</a> voor meer informatie"
+        noOrganisations: "Voor het verzoek om een nieuwe samenwerking is het een vereiste dat er voor de instelling waarmee je bent ingelogd een organisatie is aangemaakt. Dit is niet het geval. Neem contact op <a href='mailto:scz-support@surfnet.nl'>scz-support@surfnet.nl</a> voor meer informatie."
     },
     forms: {
         submit: "Toevoegen",
@@ -47,7 +47,8 @@ I18n.translations.nl = {
         hideSome: "Minder",
         today: "Vandaag",
         manage: "Overzicht",
-        invalidInput: "Foutieve waarde voor {{name}}"
+        invalidInput: "Foutieve waarde voor {{name}}",
+        request: "Verstuur"
     },
     explain: {
         title: "Uitleg {{subject}}",
@@ -172,6 +173,7 @@ I18n.translations.nl = {
     },
     collaboration: {
         title: "Nieuwe samenwerking toevoegen",
+        requestTitle: "Nieuwe samenwerking aanvragen",
         actions: "",
         name: "Naam",
         namePlaceHolder: "De unieke naam van de samenwerking",
@@ -215,7 +217,8 @@ I18n.translations.nl = {
         admin: "CO-Beheerder",
         member: "Normale gebruiker",
         flash: {
-            created: "Samenwerking {{name}} is met succes aangemaakt."
+            created: "Samenwerking {{name}} is met succes aangemaakt.",
+            requested: "Samenwerking {{name}} is met succes aangevraagd."
         }
     },
     collaborationDetail: {

@@ -59,7 +59,7 @@ class NewCollaboration extends React.Component {
         myOrganisationsLite().then(json => {
             if (json.length === 0) {
                 organisationByUserSchacHomeOrganisation().then(json => {
-                    if (json.length == 0) {
+                    if (json.length === 0) {
                         this.setState({noOrganisations: true});
                     } else {
                         const organisations = this.mapOrganisationsToOptions(json);
@@ -124,12 +124,12 @@ class NewCollaboration extends React.Component {
                 administrators, message, accepted_user_policy, organisation, isRequestCollaboration
             } = this.state;
             const promise = isRequestCollaboration? requestCollaboration : createCollaboration;
-            createCollaboration({
+            promise({
                 name, short_name, description, enrollment, access_type,
                 administrators, message, accepted_user_policy, organisation_id: organisation.value
             }).then(res => {
                 this.props.history.push("/home");
-                setFlash(I18n.t("collaboration.flash.created", {name: res.name}));
+                setFlash(I18n.t(isRequestCollaboration ? "collaboration.flash.requested" : "collaboration.flash.created", {name: res.name}));
                 this.props.refreshUser();
             });
         }
