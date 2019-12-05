@@ -259,6 +259,7 @@ I18n.translations.nl = {
         members: "Leden",
         collaborations: "Samenwerkingen",
         invitations: "Uitnodigingen",
+        collaborationRequests: "Collaboration requests",
         add: "Nieuwe organisatie",
         searchPlaceHolder: "DOORZOEK ALLE ORGANISATIES",
         deleteConfirmation: "Weet u zeker dat u Dienst {{name}} wilt verwijderen?"
@@ -645,6 +646,10 @@ I18n.translations.nl = {
         continueToValidation: "Doorgaan",
         agreed: "Uw overeenkomst met {{name}} is opgeslagen."
     },
+    collaborationRequest: {
+        title: "{{requester}} has requested "
+    },
+
     autocomplete: {
         name: "Name",
         description: "Beschrijving",
@@ -669,7 +674,6 @@ I18n.translations.nl = {
         stay: "Blijf",
         leave: "Verlaat deze pagina"
     },
-
     error_dialog: {
         title: "Onverwachte fout",
         body: "Dit is gênant; er is een onverwachte fout opgetreden. De fout is gerapporteerd. Probeer het nogmaals.",
