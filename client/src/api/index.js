@@ -484,8 +484,8 @@ export function requestCollaboration(collaboration) {
     return postPutJson("/api/collaboration_requests", collaboration, "post");
 }
 
-export function approveRequestCollaboration(id) {
-    return postPutJson(`/api/collaboration_requests/approve/${id}`, {}, "put");
+export function approveRequestCollaboration(body) {
+    return postPutJson(`/api/collaboration_requests/approve/${body.id}`, body, "put");
 }
 
 export function denyRequestCollaboration(id) {

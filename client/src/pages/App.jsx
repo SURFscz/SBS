@@ -39,6 +39,7 @@ import {ProtectedRoute} from "./ProtectedRoute";
 import NewApiKey from "./NewApiKey";
 import Profile from "./Profile";
 import Aup from "./Aup";
+import CollaborationRequest from "./CollaborationRequest";
 
 addIcons();
 
@@ -246,6 +247,11 @@ class App extends React.Component {
                                                                 redirectToLogin={true}
                                                                 refreshUser={this.refreshUserMemberships}
                                                                 Component={Invitation}
+                                                                {...props}/>}/>
+                        <Route exact path="/collaboration-requests/:id"
+                               render={props => <ProtectedRoute currentUser={currentUser}
+                                                                redirectToLogin={true}
+                                                                Component={CollaborationRequest}
                                                                 {...props}/>}/>
 
                         <Route path="/new-organisation"

@@ -17,7 +17,7 @@ forbidden_fields = ["created_at", "updated_at"]
 date_fields = ["start_date", "end_date", "created_at", "updated_at"]
 
 
-def _flatten(l):
+def flatten(l):
     return [item for sublist in l for item in sublist]
 
 
@@ -104,7 +104,7 @@ def cleanse_json(json_dict, cls=None, allow_child_cascades=True):
     for forbidden in forbidden_fields:
         if forbidden in json_dict:
             del json_dict[forbidden]
-        for rel in _flatten(filter(lambda i: isinstance(i, list), json_dict.values())):
+        for rel in flatten(filter(lambda i: isinstance(i, list), json_dict.values())):
             cleanse_json(rel, allow_child_cascades=allow_child_cascades)
 
 
@@ -114,7 +114,7 @@ def parse_date_fields(json_dict):
             val = json_dict[date_field]
             if isinstance(val, float) or isinstance(val, int):
                 json_dict[date_field] = datetime.datetime.fromtimestamp(val / 1e3)
-        for rel in _flatten(filter(lambda i: isinstance(i, list), json_dict.values())):
+        for rel in flatten(filter(lambda i: isinstance(i, list), json_dict.values())):
             parse_date_fields(rel)
 
 

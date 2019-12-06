@@ -1,10 +1,17 @@
 # -*- coding: future_fstrings -*-
 from server.db.db import Organisation, CollaborationRequest, CollaborationMembership
 from server.test.abstract_test import AbstractTest
-from server.test.seed import schac_home_organisation, amsterdam_uva_name, collaboration_request_name
+from server.test.seed import schac_home_organisation, amsterdam_uva_name, collaboration_request_name, uuc_name
 
 
 class TestCollaborationRequest(AbstractTest):
+
+    def test_collaboration_request_by_id(self):
+        collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
+        res = self.get(f"/api/collaboration_requests/{collaboration_request.id}")
+
+        self.assertEqual("urn:peter", res["requester"]["uid"])
+        self.assertEqual(uuc_name, res["organisation"]["name"])
 
     def test_request_collaboration(self):
         organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
@@ -27,7 +34,12 @@ class TestCollaborationRequest(AbstractTest):
 
         with self.app.mail.record_messages() as outbox:
             self.login("urn:harry")
-            res = self.put(f"/api/collaboration_requests/approve/{collaboration_request.id}", with_basic_auth=False)
+            res = self.put(f"/api/collaboration_requests/approve/{collaboration_request.id}",
+                           body={
+                               "name": collaboration_request.name,
+                               "short_name": collaboration_request.short_name,
+                               "organisation_id": collaboration_request.organisation_id
+                           }, with_basic_auth=False)
 
             deleted = CollaborationRequest.query.filter(CollaborationRequest.name == collaboration_request_name).all()
             self.assertEqual(0, len(deleted))
