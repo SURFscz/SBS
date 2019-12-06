@@ -647,9 +647,15 @@ I18n.translations.nl = {
         agreed: "Uw overeenkomst met {{name}} is opgeslagen."
     },
     collaborationRequest: {
-        title: "{{requester}} has requested "
+        title: "{{requester}} heeft een verzoek gedaan om een nieuwe samenwerking '{{name}}' te maken .",
+        denyConfirmation: "Weet je zeker dat je dit verzoek wilt afkeuren?",
+        approve: "Goedkeuren",
+        deny: "Afkeuren",
+        flash: {
+            approved: "Samenwerking {{name}} is aangemaakt en het veeroek daartoe is verwijderd",
+            denied: "Het verzoek om samenwerking {{name}} aan te maken is verwijderd",
+        }
     },
-
     autocomplete: {
         name: "Name",
         description: "Beschrijving",

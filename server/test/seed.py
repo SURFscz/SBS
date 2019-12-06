@@ -79,7 +79,8 @@ def seed(db):
                         "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
                         "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
                         "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
-                        "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
+                        "jxEpu8soL okke@Mikes-MBP-2.fritz.box",
+                address="Postal 1234AA")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org",
                 schac_home_organisation=schac_home_organisation)

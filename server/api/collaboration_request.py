@@ -54,18 +54,13 @@ def request_collaboration():
 def approve_request(collaboration_request_id):
     collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
     confirm_organisation_admin(collaboration_request.organisation_id)
-    # client_data = current_request.get_json()
-    # attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy"]
+    client_data = current_request.get_json()
+    attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy"]
 
-    # take the data from client_data if present else from collaboration_request
-    data = {
-        "identifier": str(uuid.uuid4()),
-        "name": collaboration_request.name,
-        "description": collaboration_request.description,
-        "short_name": collaboration_request.short_name,
-        "organisation_id": collaboration_request.organisation_id,
-        "accepted_user_policy": collaboration_request.accepted_user_policy
-    }
+    # take the data from client_data as it can be different
+    data = {"identifier": str(uuid.uuid4())}
+    for attr in attributes:
+        data[attr] = client_data.get(attr, None)
     assign_global_urn_to_organisation(collaboration_request.organisation, data)
 
     res = save(Collaboration, custom_json=data)

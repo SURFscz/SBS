@@ -646,7 +646,14 @@ I18n.translations.en = {
         agreed: "Your agreement with {{name}} has been saved."
     },
     collaborationRequest: {
-        title: "{{requester}} has requested "
+        title: "{{requester}} has requested to create a new Collaboration '{{name}}'.",
+        denyConfirmation: "Are you sure you want to deny this Collaboration request?",
+        approve: "Approve",
+        deny: "Deny",
+        flash: {
+            approved: "Collaboration {{name}} has been created and the Collaboration Request has been deleted",
+            denied: "Collaboration Request for {{name}} has been deleted",
+        }
     },
     autocomplete: {
         name: "Name",
