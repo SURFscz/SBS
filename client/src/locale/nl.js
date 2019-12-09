@@ -49,7 +49,8 @@ I18n.translations.nl = {
         manage: "Overzicht",
         invalidInput: "Foutieve waarde voor {{name}}",
         request: "Verstuur",
-        back: "Terug"
+        back: "Terug",
+        reset: "Reset"
     },
     explain: {
         title: "Uitleg {{subject}}",

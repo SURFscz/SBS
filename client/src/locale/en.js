@@ -51,7 +51,6 @@ I18n.translations.en = {
         invalidInput: "Invalid input for {{name}}",
         back: "Back",
         reset: "Reset"
-
     },
     explain: {
         title: "Explanation {{subject}}",
