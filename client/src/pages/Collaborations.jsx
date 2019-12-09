@@ -9,6 +9,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import Autocomplete from "../components/Autocomplete";
 import {headerIcon} from "../forms/helpers";
 import ReactTooltip from "react-tooltip";
+import BackLink from "../components/BackLink";
 
 class Collaborations extends React.Component {
 
@@ -62,7 +63,6 @@ class Collaborations extends React.Component {
     newCollaboration = () => {
         this.props.history.push("new-collaboration");
     };
-
 
     onSearchKeyDown = e => {
         const {suggestions, selected} = this.state;
@@ -369,6 +369,7 @@ class Collaborations extends React.Component {
         const isOrganisationAdmin = (user.organisation_memberships || []).some(membership => membership.role === "admin");
         return (
             <div className="mod-collaborations">
+                <BackLink history={this.props.history}/>
                 {user.admin &&
                 this.renderSearch(user, query, loadingAutoComplete, suggestions, moreToShow, selected, isOrganisationAdmin)}
                 {user.admin && <div className="title">

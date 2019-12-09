@@ -8,6 +8,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Button from "../components/Button";
 import Autocomplete from "../components/Autocomplete";
 import {headerIcon} from "../forms/helpers";
+import BackLink from "../components/BackLink";
 
 
 class Organisations extends React.Component {
@@ -345,6 +346,7 @@ class Organisations extends React.Component {
         const {user} = this.props;
         return (
             <div className="mod-organisations">
+                <BackLink history={this.props.history}/>
                 {this.renderSearch(organisations, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}
                 <div className="title">
                     <span>{I18n.t("organisations.dashboard")}</span>

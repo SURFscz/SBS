@@ -58,15 +58,24 @@ class Home extends React.Component {
         return `${name} ${shortNameOrgValid}`;
     };
 
+    renderHeader = (name, collection, allowedLink) => {
+        return <div className={`header ${name} ${allowedLink ? 'link' : ''}`}
+                    onClick={() => allowedLink && this.props.history.push(`/${name}`)}>
+            {allowedLink && <FontAwesomeIcon icon={"arrow-right"}/>}
+            <span className="type">{I18n.t(`home.${name}`)}</span>
+            <span className="counter">{collection.length}</span>
+        </div>
+
+    };
+
     renderCollaborations = collaborations => {
         const showMore = collaborations.length >= 6;
         const showMoreItems = this.state.showMore.includes("collaborations");
+        const {user} = this.props;
+        const linkAllowed = user.admin || user.collaboration_memberships.find(membership => membership.role === "admin");
         return (
             <section className="info-block ">
-                <div className="header collaborations">
-                    <span className="type">{I18n.t("home.collaborations")}</span>
-                    <span className="counter">{collaborations.length}</span>
-                </div>
+                {this.renderHeader("collaborations", collaborations, linkAllowed)}
                 <div className="content">
                     {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations)
                         .sort((s1, s2) => s1.name.localeCompare(s2.name))
@@ -94,10 +103,7 @@ class Home extends React.Component {
         const showMoreItems = this.state.showMore.includes("services");
         return (
             <section className="info-block ">
-                <div className="header services">
-                    <span className="type">{I18n.t("home.services")}</span>
-                    <span className="counter">{services.length}</span>
-                </div>
+                {this.renderHeader("services", services, this.props.user.admin)}
                 <div className="content">
                     {(showMore && !showMoreItems ? services.slice(0, 5) : services).map((service, i) =>
                         <div className="service" key={i}>
@@ -123,10 +129,7 @@ class Home extends React.Component {
         const showMoreItems = this.state.showMore.includes("groups");
         return (
             <section className="info-block ">
-                <div className="header groups">
-                    <span className="type">{I18n.t("home.groups")}</span>
-                    <span className="counter">{groups.length}</span>
-                </div>
+                {this.renderHeader("groups", groups, false)}
                 <div className="content">
                     {(showMore && !showMoreItems ? groups.slice(0, 5) : groups).map((group, i) =>
                         <div className="group" key={i}>
@@ -150,12 +153,10 @@ class Home extends React.Component {
         const organisations = user.organisation_memberships.map(organisationMembership => organisationMembership.organisation);
         const showMore = organisations.length >= 6;
         const showMoreItems = this.state.showMore.includes("organisations");
+        const linkAllowed = user.admin || !isEmpty(user.organisation_memberships);
         return (
             <section className="info-block ">
-                <div className="header organisations">
-                    <span className="type">{I18n.t("home.organisations")}</span>
-                    <span className="counter">{organisations.length}</span>
-                </div>
+                {this.renderHeader("organisations", organisations, linkAllowed)}
                 <div className="content">
                     {(showMore && !showMoreItems ? organisations.slice(0, 5) : organisations).map((organisation, i) =>
                         <div className="organisation" key={i}>
@@ -178,13 +179,17 @@ class Home extends React.Component {
     collaborationRequest = e => {
         stopEvent(e);
         this.props.history.push("new-collaboration");
-        // this.props.history.push("request-collaboration");
+    };
+
+    newCollaboration = () => {
+        this.props.history.push("new-collaboration");
     };
 
     render() {
         const {collaborations} = this.state;
         const {user} = this.props;
         const allowedCollaborationRequest = !user.admin && isEmpty(user.organisation_memberships);
+        const allowedNewCollaboration = !user.admin && user.organisation_memberships.find(m => m.role === "admin");
         const hasOrganisationMemberships = !isEmpty(user.organisation_memberships);
         return (
             <div className="mod-home-container">
@@ -192,6 +197,10 @@ class Home extends React.Component {
                     {allowedCollaborationRequest && <div className="actions">
                         <Button className="collaboration-request" onClick={this.collaborationRequest}
                                 txt={I18n.t("home.collaborationRequest")}/>
+                    </div>}
+                    {allowedNewCollaboration && <div className="actions">
+                        <Button className="collaboration-request" onClick={this.newCollaboration}
+                                txt={I18n.t("home.collaborationNew")}/>
                     </div>}
                     <div className={`title ${allowedCollaborationRequest ? "" : "top"}`}>
                         <p>{I18n.t("home.title")}</p>

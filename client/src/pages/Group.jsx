@@ -360,8 +360,6 @@ class Group extends React.Component {
         return (
             <div className="group-members-connected">
                 <p className="title">{membersTitle}</p>
-                {adminOfCollaboration &&
-                <em className="warning">{I18n.t("groups.deleteMemberWarning")}</em>}
                 <table className="connected-members">
                     <thead>
                     <tr>

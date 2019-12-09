@@ -10,7 +10,8 @@ from sqlalchemy.orm import load_only
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid, \
     is_application_admin, confirm_authorized_api_call, confirm_organisation_admin, confirm_allow_impersonation
-from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User
+from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User, \
+    CollaborationRequest
 from server.db.defaults import default_expiry_date
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
@@ -93,9 +94,13 @@ def my_organisations_lite():
 @json_endpoint
 def organisation_by_id(id):
     query = Organisation.query \
-        .options(joinedload(Organisation.organisation_memberships).subqueryload(OrganisationMembership.user)) \
-        .options(joinedload(Organisation.organisation_invitations).subqueryload(OrganisationInvitation.user)) \
+        .options(joinedload(Organisation.organisation_memberships)
+                 .subqueryload(OrganisationMembership.user)) \
+        .options(joinedload(Organisation.organisation_invitations)
+                 .subqueryload(OrganisationInvitation.user)) \
         .options(joinedload(Organisation.api_keys)) \
+        .options(joinedload(Organisation.collaboration_requests)
+                 .subqueryload(CollaborationRequest.requester)) \
         .options(joinedload(Organisation.collaborations)) \
         .filter(Organisation.id == id)
 
