@@ -41,18 +41,23 @@ class CollaborationRequest extends React.Component {
     componentDidMount = () => {
         const params = this.props.match.params;
         if (params.id) {
-            Promise.all([collaborationRequestById(params.id), myOrganisationsLite()])
-                .then(json => {
-                    const collaborationRequest = json[0];
-                    const organisations = this.mapOrganisationsToOptions(json[1]);
-                    collaborationRequest.organisation = organisations.find(org => org.value = collaborationRequest.organisation.id);
-                    this.setState({collaborationRequest: collaborationRequest,
-                        originalRequestedName: collaborationRequest.name, organisations: organisations})
-                });
+            this.initState(params.id);
         } else {
             this.props.history.push("/404");
         }
     };
+
+    initState = id =>
+        Promise.all([collaborationRequestById(id), myOrganisationsLite()])
+            .then(json => {
+                const collaborationRequest = json[0];
+                const organisations = this.mapOrganisationsToOptions(json[1]);
+                collaborationRequest.organisation = organisations.find(org => org.value = collaborationRequest.organisation.id);
+                this.setState({
+                    collaborationRequest: collaborationRequest,
+                    originalRequestedName: collaborationRequest.name, organisations: organisations
+                })
+            });
 
     mapOrganisationsToOptions = organisations => organisations.map(org => ({
         label: org.name,
@@ -69,6 +74,11 @@ class CollaborationRequest extends React.Component {
         collaborationShortNameExists(e.target.value, this.state.collaborationRequest.organisation.value).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
+
+    reset = e => {
+        stopEvent(e);
+        this.initState(this.state.collaborationRequest.id)
+    };
 
     cancel = () => {
         this.setState({
@@ -227,6 +237,7 @@ class CollaborationRequest extends React.Component {
                             <Button className="delete" txt={I18n.t("collaborationRequest.deny")}
                                     onClick={this.submit(false)}/>
                             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                            <Button cancelButton={true} txt={I18n.t("forms.reset")} onClick={this.reset}/>
                         </section>
                     </div>
                 </div>
