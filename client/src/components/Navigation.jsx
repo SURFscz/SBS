@@ -7,6 +7,7 @@ import spinner from "../utils/Spin.js";
 import {NavLink} from "react-router-dom";
 
 import "./Navigation.scss";
+import NewDropDown from "./NewDropDown";
 
 export default class Navigation extends React.PureComponent {
 
@@ -22,11 +23,8 @@ export default class Navigation extends React.PureComponent {
         spinner.onStop = () => this.setState({loading: false});
     }
 
-    renderItem(href, value, className = "menu-item") {
-        return (
-            <NavLink activeClassName="active" className={className} to={href}>{I18n.t("navigation." + value)}</NavLink>
-        );
-    }
+    renderItem = (href, value) => <NavLink activeClassName="active" className="menu-item"
+                                           to={href}>{I18n.t("navigation." + value)}</NavLink>;
 
     renderSpinner = () =>
         this.state.loading ? <div className="spinner">
@@ -38,9 +36,10 @@ export default class Navigation extends React.PureComponent {
 
     render() {
         const {currentUser, impersonator} = this.props;
-        const isCollaborationAdmin = (currentUser.collaboration_memberships || []).some(membership => membership.role === "admin");
+        // const isCollaborationAdmin = (currentUser.collaboration_memberships || []).some(membership => membership.role === "admin");
         const isOrganisationAdmin = (currentUser.organisation_memberships || []).some(membership => membership.role === "admin");
         const mayImpersonate = currentUser.admin || (impersonator && impersonator.admin);
+        const mayCreateSomething = currentUser.admin || isOrganisationAdmin;
         const needsToAgreeWithAup = currentUser.needs_to_agree_with_aup;
         if (needsToAgreeWithAup) {
             return (
@@ -58,12 +57,15 @@ export default class Navigation extends React.PureComponent {
                     {!currentUser.guest && this.renderItem("/home", "home")}
                     {window.location.pathname.indexOf("registration") > -1 &&
                     this.renderItem("/registration", "registration")}
-                    {(currentUser.admin || isCollaborationAdmin || isOrganisationAdmin) && this.renderItem("/collaborations", "collaborations")}
-                    {currentUser.admin && this.renderItem("/organisations", "organisations")}
-                    {currentUser.admin && this.renderItem("/services", "services")}
+                    {/*{(currentUser.admin || isCollaborationAdmin) && this.renderItem("/collaborations", "collaborations")}*/}
+                    {/*{currentUser.admin && this.renderItem("/organisations", "organisations")}*/}
+                    {/*{currentUser.admin && this.renderItem("/services", "services")}*/}
 
                     {!currentUser.guest && this.renderItem("/profile", "profile")}
-                    {mayImpersonate && this.renderItem("/impersonate", "impersonate", "menu-item right")}
+                    <div className="menu-item-right">
+                        {mayImpersonate && this.renderItem("/impersonate", "impersonate")}
+                        {mayCreateSomething && <NewDropDown currentUser={currentUser}/>}
+                    </div>
                 </div>
                 {this.renderSpinner()}
             </div>

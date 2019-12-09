@@ -100,6 +100,7 @@ export function config() {
 //Users
 export function me(config) {
     const headers = (config.local) ? {
+        // "OIDC_CLAIM_cmuid": "urn:roger",
         "OIDC_CLAIM_cmuid": "urn:john",
         // "OIDC_CLAIM_cmuid": "urn:james2",
         "OIDC_CLAIM_Nickname": "jëhny",

@@ -30,6 +30,12 @@ I18n.translations.en = {
         title: "Research Access Management",
         subTitle: "Please login..."
     },
+    newDropDown: {
+        organisation: "Organisation",
+        collaboration: "Collaboration",
+        collaborationRequest: "Collaboration request",
+        service: "Service"
+    },
     home: {
         title: "My memberships",
         groups: "Groups",
@@ -38,6 +44,7 @@ I18n.translations.en = {
         services: "Services",
         backToHome: "Back to home",
         collaborationRequest: "Request for new Collaboration",
+        collaborationNew: "New Collaboration",
         noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution where you logged in. This is not the case. Please contact <a href='mailto:scz-support@surfnet.nl'>scz-support@surfnet.nl</a> for more information"
     },
     forms: {
@@ -361,10 +368,12 @@ I18n.translations.en = {
         back: "Back to my organisations",
         members: "Members of {{name}}",
         invitations: "Invitations for {{name}}",
+        collaborationRequests: "Collaboration requests for {{name}}",
         searchPlaceHolder: "Search for members",
         invite: "Invite new members",
         newApiKey: "Add new API key",
         noInvitations: "No pending invitations",
+        noCollaborationRequests: "No pending collaboration requests",
         member: {
             user__name: "Name",
             user__email: "E-mail",
@@ -380,6 +389,12 @@ I18n.translations.en = {
             expiry_date: "Expires",
             noExpires: "N/A",
             message: "Message",
+        },
+        collaborationRequest: {
+            name: "Name",
+            short_name: "Short name",
+            requester__name: "User",
+            message: "Motivation"
         },
         collaboration: {
             name: "Name",

@@ -168,12 +168,12 @@ class Service extends React.Component {
                                     leavePage={leavePage}
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
                 <div className="title">
-                    {isAdmin && <a href="/back" onClick={e => {
+                    <a href="/back" onClick={e => {
                         stopEvent(e);
                         this.props.history.goBack();
                     }}><FontAwesomeIcon icon="arrow-left"/>
                         {I18n.t("forms.back")}
-                    </a>}
+                    </a>
                     <p className="title">{title}</p>
                 </div>
 

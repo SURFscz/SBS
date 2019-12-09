@@ -43,6 +43,9 @@ class OrganisationDetail extends React.Component {
             reverse: false,
             inviteSorted: "invitee_email",
             inviteReverse: false,
+            collaborationRequests: [],
+            collaborationRequestSorted : "name",
+            collaborationRequestReverse: false,
             query: "",
             collaborations: [],
             filteredCollaborations: [],
@@ -66,7 +69,7 @@ class OrganisationDetail extends React.Component {
                 .then(json => {
                     const {
                         sorted, reverse, inviteSorted, inviteReverse, sortedCollaborationAttribute,
-                        reverseCollaborationSorted
+                        reverseCollaborationSorted, collaborationRequestSorted, collaborationRequestReverse
                     } = this.state;
                     const members = sortObjects(json.organisation_memberships, sorted, reverse);
                     const collaborations = sortObjects(json.collaborations, sortedCollaborationAttribute, reverseCollaborationSorted);
@@ -86,6 +89,7 @@ class OrganisationDetail extends React.Component {
                         collaborations: collaborations,
                         filteredCollaborations: collaborations,
                         invitations: sortObjects(json.organisation_invitations, inviteSorted, inviteReverse),
+                        collaborationRequests: sortObjects(json.collaboration_requests, collaborationRequestSorted, collaborationRequestReverse),
                         adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id),
                         apiKeys: json.api_keys
                     })
@@ -226,6 +230,11 @@ class OrganisationDetail extends React.Component {
         this.props.history.push(`/organisation-invitations/${invitation.id}`);
     };
 
+    openCollaborationRequest = cr => e => {
+        stopEvent(e);
+        this.props.history.push(`/collaboration-requests/${cr.id}`);
+    };
+
     openCollaboration = collaboration => e => {
         stopEvent(e);
         this.props.history.push(`/collaborations/${collaboration.id}`);
@@ -246,6 +255,12 @@ class OrganisationDetail extends React.Component {
         this.setState({invitations: sortedInvitations, inviteSorted: name, inviteReverse: reversed});
     };
 
+    sortCollaborationRequestsTable = (collaborationRequests, name, sorted, reverse) => () => {
+        const reversed = (sorted === name ? !reverse : false);
+        const sortedCollaborationRequests = sortObjects(collaborationRequests, name, reversed);
+        this.setState({collaborationRequests: sortedCollaborationRequests, collaborationRequestSorted: name, collaborationRequestReverse: reversed});
+    };
+
     sortCollaborationsTable = (collaborations, name, sorted, reverse) => () => {
         if (name === "actions") {
             return;
@@ -259,7 +274,53 @@ class OrganisationDetail extends React.Component {
         });
     };
 
-    renderInvitations = (reverse, sorted, invitations) => {
+    // renderCollaborationRequests = (reverse, sorted, collaborationRequests) => {
+    //     if (collaborationRequests.length === 0) {
+    //         return <section className="invitations-container">
+    //             <p>{I18n.t("organisationDetail.noCollaborationRequests")}</p>
+    //         </section>
+    //     }
+    //     const names = ["name", "short_name", "requester__name", "message"];
+    //     return (
+    //         <section className="invitations-container">
+    //             <table className="collaboration-requests">
+    //                 <thead>
+    //                 <tr>
+    //                     {names.map(name =>
+    //                         <th key={name} className={name}
+    //                             onClick={this.sortCollaborationRequestsTable((collaborationRequests, name, sorted, reverse)}>
+    //                             {I18n.t(`organisationDetail.collaborationRequest.${name}`)}
+    //                             {headerIcon(name, sorted, reverse)}
+    //                         </th>
+    //                     )}
+    //                 </tr>
+    //                 </thead>
+    //                 <tbody>
+    //                 {collaborationRequests.map((cr) => <tr key={cr.id} onClick={this.openCollaborationRequest(cr)}>
+    //                     <td className="actions"><FontAwesomeIcon icon="arrow-right"/></td>
+    //                     <td className="name">{cr.name}</td>
+    //                     <td className="shortName">{invite.user.name}</td>
+    //                     <td className="requester">{invite.expiry_date ? moment(invite.expiry_date * 1000).format("LL") : I18n.t("organisationDetail.invitation.noExpires")}</td>
+    //                     <td className="message tooltip-cell">
+    //                         <span>{cr.message}</span>
+    //                         {!isEmpty(cr.message) &&
+    //                         <span className="tooltip-container">
+    //                             <span data-tip data-for={`invite_${cr.id}`}>
+    //                                 <FontAwesomeIcon icon="info-circle"/>
+    //                             </span>
+    //                             <ReactTooltip id={`cr${cr.id}`} type="info" effect="solid" data-html={true}>
+    //                                 <p dangerouslySetInnerHTML={{__html: escapeHtmlTooltip(cr.message)}}/>{}
+    //                             </ReactTooltip>
+    //                         </span>}
+    //                     </td>
+    //                 </tr>)}
+    //                 </tbody>
+    //             </table>
+    //         </section>
+    //     );
+    // };
+
+        renderInvitations = (reverse, sorted, invitations) => {
         if (invitations.length === 0) {
             return <section className="invitations-container">
                 <p>{I18n.t("organisationDetail.noInvitations")}</p>
@@ -303,7 +364,6 @@ class OrganisationDetail extends React.Component {
                 </table>
             </section>
         );
-
     };
 
     searchMembers = e => {
@@ -566,6 +626,10 @@ class OrganisationDetail extends React.Component {
                     <p className="title organisation-invitations">{I18n.t("organisationDetail.invitations", {name: originalOrganisation.name})}</p>
                 </div>
                 {this.renderInvitations(inviteReverse, inviteSorted, invitations)}
+                {/*<div className="title">*/}
+                {/*    <p className="title organisation-invitations">{I18n.t("organisationDetail.collaborationRequests", {name: originalOrganisation.name})}</p>*/}
+                {/*</div>*/}
+                {/*{this.renderCollaborationRequests(originalOrganisation)}*/}
                 <div className="title">
                     <p className="title members">{I18n.t("organisationDetail.members", {name: originalOrganisation.name})}</p>
                 </div>
