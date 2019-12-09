@@ -49,7 +49,9 @@ I18n.translations.en = {
         today: "Today",
         manage: "Overview",
         invalidInput: "Invalid input for {{name}}",
-        back: "Back"
+        back: "Back",
+        reset: "Reset"
+
     },
     explain: {
         title: "Explanation {{subject}}",
