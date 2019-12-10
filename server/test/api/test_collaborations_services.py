@@ -47,7 +47,7 @@ class TestCollaborationsServices(AbstractTest):
         }, response_status_code=400)
 
         self.assertTrue(res["error"])
-        self.assertEqual("allowed_organisations", res["message"])
+        self.assertEqual("not_allowed_organisation", res["message"])
 
     def test_add_collaborations_no_automatic_connection_allowed(self):
         self.login("urn:john")
@@ -60,7 +60,7 @@ class TestCollaborationsServices(AbstractTest):
         }, response_status_code=400)
 
         self.assertTrue(res["error"])
-        self.assertEqual("automatic_connection_allowed", res["message"])
+        self.assertEqual("automatic_connection_not_allowed", res["message"])
 
     def test_delete_all_services(self):
         self.login("urn:john")

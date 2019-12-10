@@ -60,11 +60,8 @@
             "collaboration_id": {
                 "type": "integer"
             },
-            "service_ids": {
-                "type": "array",
-                "items": {
-                    "type": "integer"
-                }
+            "service_id": {
+                "type": "integer"
             }
         },
         "required": [

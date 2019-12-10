@@ -14,7 +14,7 @@ export default class Explain extends React.Component {
                 <section className="container">
                     <section className="header">
                         <p>{I18n.t("explain.title", {subject: subject})}</p>
-                        <FontAwesomeIcon icon="window-close" onClick={close}/>
+                        <FontAwesomeIcon icon="times" onClick={close}/>
                     </section>
                     {children}
                 </section>

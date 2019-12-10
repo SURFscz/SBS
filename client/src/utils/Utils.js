@@ -6,6 +6,7 @@ export function stopEvent(e) {
         e.preventDefault();
         e.stopPropagation();
     }
+    return true;
 }
 
 export function isEmpty(obj) {

@@ -12,6 +12,8 @@ import Select from "react-select";
 import {setFlash} from "../utils/Flash";
 import {headerIcon} from "../forms/helpers";
 import ReactTooltip from "react-tooltip";
+import Explain from "../components/Explain";
+import ServicesExplanation from "../components/explanations/Services";
 
 class CollaborationServices extends React.Component {
 
@@ -22,7 +24,11 @@ class CollaborationServices extends React.Component {
             sortedServices: [],
             allServices: [],
             sorted: "name",
-            reverse: false
+            reverse: false,
+            errorService: undefined,
+            notAllowedOrganisation: false,
+            automaticConnectionNotAllowed: false,
+            showExplanation: false
         };
     }
 
@@ -67,15 +73,30 @@ class CollaborationServices extends React.Component {
         this.props.history.push(`/services/${service.id}`);
     };
 
+    closeExplanation = () => this.setState({showExplanation: false});
+
     addService = option => {
-        if(option) {
+        if (option) {
             const {collaboration} = this.state;
-            addCollaborationServices({collaborationId: collaboration.id, serviceIds: option.value}).then(() => {
-                this.refresh(() => setFlash(I18n.t("collaborationServices.flash.added", {
+            addCollaborationServices(collaboration.id, option.value)
+                .then(() => this.refresh(() => setFlash(I18n.t("collaborationServices.flash.added", {
                     service: option.label,
                     name: collaboration.name
-                })));
-            });
+                }))))
+                .catch(e => {
+                    if (e.response && e.response.json && e.response.status === 400) {
+                        e.response.json().then(res => {
+                            if (res.message && res.message.indexOf("automatic_connection_not_allowed") > -1) {
+                                this.setState({automaticConnectionNotAllowed: true, errorService: option});
+                            }
+                            if (res.message && res.message.indexOf("not_allowed_organisation") > -1) {
+                                this.setState({notAllowedOrganisation: true, errorService: option});
+                            }
+                        });
+                    } else {
+                        throw e;
+                    }
+                });
         }
     };
 
@@ -116,8 +137,10 @@ class CollaborationServices extends React.Component {
                                 <span data-tip data-for="service-delete">
                                 <FontAwesomeIcon icon="info-circle"/>
                                 <ReactTooltip id="service-delete" type="light" effect="solid" data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("collaborationServices.deleteServiceTooltip",
-                                            {name: encodeURIComponent(collaboration.name)})}}/>
+                                    <p dangerouslySetInnerHTML={{
+                                        __html: I18n.t("collaborationServices.deleteServiceTooltip",
+                                            {name: encodeURIComponent(collaboration.name)})
+                                    }}/>
                                 </ReactTooltip>
                             </span>}
                             </th>
@@ -142,9 +165,30 @@ class CollaborationServices extends React.Component {
         );
     };
 
+    renderAutomaticConnectionNotAllowed = (errorService, collaboration) => <div className="service-connection-request">
+        <p>TODO</p>
+        <p>{errorService.label}</p>
+        <p>{collaboration.name}</p>
+    </div>;
+
+    renderNotAllowedOrganisation = (errorService, collaboration) => <div className="error">
+                        <span className="error">{I18n.t("collaborationServices.notAllowedOrganisation", {
+                            service: errorService.label,
+                            collaboration: collaboration.name,
+                            organisation: collaboration.organisation.name
+                        })}</span>
+        <a className="close" href="/close"
+           onClick={e => stopEvent(e) && this.setState({notAllowedOrganisation: false})}>
+            <FontAwesomeIcon icon="times"/>
+        </a>
+    </div>;
+
+
     render() {
         const {
-            collaboration, sortedServices, allServices, sorted, reverse
+            collaboration, sortedServices, allServices, sorted, reverse, errorService,
+            notAllowedOrganisation, automaticConnectionNotAllowed, showExplanation
+
         } = this.state;
         if (collaboration === undefined) {
             return null;
@@ -153,6 +197,13 @@ class CollaborationServices extends React.Component {
         //TODO render an explanation info which explains the purpose of the page. preferably inline like was done with teams
         return (
             <div className="mod-collaboration-services">
+                <Explain
+                    close={this.closeExplanation}
+                    subject={I18n.t("explain.services")}
+                    isVisible={showExplanation}>
+                    <ServicesExplanation/>
+                </Explain>
+
                 <div className="title">
                     <a href={`/collaborations/${collaboration.id}`} onClick={e => {
                         stopEvent(e);
@@ -161,6 +212,12 @@ class CollaborationServices extends React.Component {
                         {I18n.t("forms.back")}
                     </a>
                     <p className="title">{I18n.t("collaborationServices.title", {name: collaboration.name})}</p>
+                    <FontAwesomeIcon className="help" icon="question-circle"
+                                     id="impersonate_close_explanation"
+                                     onClick={() => this.setState({showExplanation: true})}/>
+
+                    {notAllowedOrganisation &&
+                    this.renderNotAllowedOrganisation(errorService, collaboration)}
                 </div>
                 <div className="collaboration-services">
                     <Select className="services-select"
@@ -172,9 +229,12 @@ class CollaborationServices extends React.Component {
                             isClearable={true}
                     />
                     {this.renderConnectedServices(collaboration, sortedServices, sorted, reverse)}
+                    {automaticConnectionNotAllowed &&
+                    this.renderAutomaticConnectionNotAllowed(errorService, collaboration)}
                 </div>
             </div>);
     };
+
 }
 
 export default CollaborationServices;

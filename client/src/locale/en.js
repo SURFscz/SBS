@@ -61,7 +61,8 @@ I18n.translations.en = {
     },
     explain: {
         title: "Explanation {{subject}}",
-        impersonate: "Impersonate"
+        impersonate: "Impersonate",
+        services: "Services"
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -548,11 +549,10 @@ I18n.translations.en = {
         connectedServices: "Connected services to {{name}}",
         searchServices: "Search, select and add services to the available services within collaboration {{name}}",
         deleteServiceTooltip: "Make this service unavailable in<br/> the collaboration {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for groups within<br/>  this collaboration",
+        notAllowedOrganisation: "Service '{{service}}' can not be added to collaboration '{{collaboration}}'. The service configuration excludes it from organisation '{{organisation}}'",
         flash: {
             "added": "Successfully added service {{service}} to collaboration {{name}}",
-            "deleted": "Successfully deleted service {{service}} from collaboration {{name}}",
-            "addedAll": "Successfully added all services to collaboration {{name}}",
-            "deletedAll": "Successfully deleted all services from collaboration {{name}}",
+            "deleted": "Successfully deleted service {{service}} from collaboration {{name}}"
         },
         service: {
             open: "",
