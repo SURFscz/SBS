@@ -107,6 +107,7 @@ def json_endpoint(f):
         except Exception as e:
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
                                error=True)
+            response.status_code = 500
             ctx_logger("base").exception(response)
             if isinstance(e, NoResultFound):
                 response.status_code = 404
@@ -114,8 +115,6 @@ def json_endpoint(f):
                 response.status_code = e.code
             elif isinstance(e, ValidationError):
                 response.status_code = 400
-            else:
-                response.status_code = 500
             _add_custom_header(response)
             if response.status_code == 401:
                 response.headers.set("WWW-Authenticate", "Basic realm=\"Please login\"")
