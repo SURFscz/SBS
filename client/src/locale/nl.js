@@ -548,11 +548,10 @@ I18n.translations.nl = {
         connectedServices: "Met {{name}} gekoppelde diensten",
         searchServices: "Zoek, kies en voeg diensten toe aan samenwerking {{name}}",
         deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor<br/> samenwerking {{name}}.<br/><br/><strong>LET OP</strong>: de dienst zelf wordt niet verwijderd.<br/>  Hij is alleen niet beschikbaar<br/>voor groepen van<br/> deze samenwerking.",
+        notAllowedOrganisation: "Service '{{service}}' kan niet toegoegd worden aan collaboratie '{{collaboration}}'. De configuratie van de service laat een koppeling met organisation '{{organisation}}' niet toe.",
         flash: {
             "added": "{{service}} is toegevoegd aan samenwerking {{name}}.",
             "deleted": "{{service}} is onbeschikbaar gemaakt voor samenwerking {{name}}.",
-            "addedAll": "Alle diensten zijn gekoppeld aan samenwerking {{name}}.",
-            "deletedAll": "Alle diensten zijn ontkoppeld van samenwerking {{name}}.",
         },
         service: {
             open: "",

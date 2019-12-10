@@ -15,16 +15,16 @@ collaborations_services_api = Blueprint("collaborations_services_api", __name__,
 def connect_service_collaboration(service_id, collaboration_id, force=False):
     # Ensure that the connection is allowed
     service = Service.query.get(service_id)
-    if not force and not service.automatic_connection_allowed:
-        raise BadRequest("automatic_connection_allowed")
-
     if service.allowed_organisations:
         organisation_id = Collaboration.query.get(collaboration_id).organisation_id
         if organisation_id not in list(map(lambda org: org.id, service.allowed_organisations)):
-            raise BadRequest("allowed_organisations")
+            raise BadRequest("not_allowed_organisation")
+
+    if not force and not service.automatic_connection_allowed:
+        raise BadRequest("automatic_connection_not_allowed")
 
     statement = f"REPLACE into services_collaborations (service_id, collaboration_id) " \
-                f"VALUES ({service_id},{collaboration_id})"
+                f"VALUES ({int(service_id)},{int(collaboration_id)})"
     sql = text(statement)
     result_set = db.engine.execute(sql)
     return result_set

@@ -376,11 +376,11 @@ export function updateCollaborationMembershipRole(collaborationId, userId, role)
 }
 
 //CollaborationServices
-export function addCollaborationServices({collaborationId, serviceId}) {
+export function addCollaborationServices(collaborationId, serviceId) {
     return postPutJson(`/api/collaborations_services`, {
         collaboration_id: collaborationId,
         service_id: serviceId
-    }, "put")
+    }, "put", false)
 }
 
 export function deleteCollaborationServices(collaborationId, serviceId) {

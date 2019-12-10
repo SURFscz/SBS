@@ -13,10 +13,25 @@
 
         p {
             padding: 10px 0 10px 0;
+
+            &.title {
+                display: inline-block;
+            }
+        }
+
+        svg.help {
+            color: $blue;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 0 10px 5px;
+
+            &:hover {
+                color: darken($blue, 10%);
+            }
         }
 
         a {
-            display: inline-block;
+            display: block;
             font-size: 16px;
             text-transform: uppercase;
             text-decoration: none;
@@ -31,6 +46,27 @@
                 margin-right: 10px;
             }
         }
+
+        div.error {
+            padding: 25px;
+            margin: 10px 0;
+            background-color: white;
+            color: $red;
+            font-size: 18px;
+            width: 100%;
+            position: relative;
+
+            a.close {
+                text-decoration: none;
+                position: absolute;
+                right: 0;
+                top: -6px;
+                color: $dark-grey;
+                padding: 6px;
+            }
+
+        }
+
     }
 
     .collaboration-services {
@@ -115,7 +151,7 @@
                         color: $blue;
 
                         &:hover {
-                             color: darken($blue, 15%);
+                            color: darken($blue, 15%);
                         }
 
                     }
