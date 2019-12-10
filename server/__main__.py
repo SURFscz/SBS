@@ -30,6 +30,7 @@ from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
 from server.api.organisation_membership import organisation_membership_api
 from server.api.service import service_api
+from server.api.service_connection_request import service_connection_request_api
 from server.api.user import user_api
 from server.db.db import db, db_migrations
 from server.templates import invitation_role
@@ -101,6 +102,7 @@ app.register_blueprint(api_key_api)
 app.register_blueprint(group_invitations_api)
 app.register_blueprint(aup_api)
 app.register_blueprint(collaboration_request_api)
+app.register_blueprint(service_connection_request_api)
 
 app.register_error_handler(404, page_not_found)
 

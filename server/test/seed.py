@@ -5,7 +5,8 @@ import uuid
 from secrets import token_urlsafe
 
 from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
-    JoinRequest, Invitation, metadata, Group, OrganisationInvitation, ApiKey, CollaborationRequest
+    JoinRequest, Invitation, metadata, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
+    ServiceConnectionRequest
 from server.db.defaults import default_expiry_date
 
 collaboration_request_name = "New Collaboration"
@@ -55,6 +56,9 @@ service_cloud_name = "Cloud"
 ai_researchers_group = "AI researchers"
 ai_researchers_group_short_name = "ai_res"
 group_science_name = "Science"
+
+network_service_connection_request_hash = token_urlsafe()
+wiki_service_connection_request_hash = token_urlsafe()
 
 
 def _persist(db, *objs):
@@ -231,5 +235,15 @@ def seed(db):
     collaboration_request = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
                                                  message="For research", organisation=uuc, requester=peter)
     _persist(db, collaboration_request)
+
+    service_connection_request_network = ServiceConnectionRequest(message="AI computing needs network",
+                                                                  hash=network_service_connection_request_hash,
+                                                                  requester=admin, collaboration=ai_computing,
+                                                                  service=network)
+    service_connection_request_wiki = ServiceConnectionRequest(message="UVA research needs wiki",
+                                                               hash=wiki_service_connection_request_hash,
+                                                               requester=sarah, collaboration=uva_research,
+                                                               service=wiki)
+    _persist(db, service_connection_request_network, service_connection_request_wiki)
 
     db.session.commit()

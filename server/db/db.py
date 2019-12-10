@@ -322,3 +322,20 @@ class CollaborationRequest(Base, db.Model):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+
+class ServiceConnectionRequest(Base, db.Model):
+    __tablename__ = "service_connection_requests"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    message = db.Column("message", db.Text(), nullable=True)
+    hash = db.Column("hash", db.String(length=512), nullable=False)
+    requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    requester = db.relationship("User")
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    service = db.relationship("Service")
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
+    collaboration = db.relationship("Collaboration")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
