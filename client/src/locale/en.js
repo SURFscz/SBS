@@ -31,10 +31,10 @@ I18n.translations.en = {
         subTitle: "Please login..."
     },
     newDropDown: {
-        organisation: "Organisation",
-        collaboration: "Collaboration",
-        collaborationRequest: "Collaboration request",
-        service: "Service"
+        organisation: "New organisation",
+        collaboration: "New collaboration",
+        collaborationRequest: "Request new collaboration",
+        service: "New service"
     },
     home: {
         title: "My memberships",
@@ -393,7 +393,7 @@ I18n.translations.en = {
         collaborationRequest: {
             name: "Name",
             short_name: "Short name",
-            requester__name: "User",
+            requester__name: "Requester",
             message: "Motivation"
         },
         collaboration: {

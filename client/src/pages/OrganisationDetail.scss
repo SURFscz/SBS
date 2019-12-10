@@ -107,7 +107,7 @@
         }
     }
 
-    .invitations-container, .api-keys-container {
+    .invitations-container, .api-keys-container, .collaboration-requests-container {
         background-color: white;
         padding: $medium-padding;
         max-width: $medium;
@@ -126,7 +126,7 @@
         }
     }
 
-    table.members, table.invitations, table.api-keys, table.collaborations {
+    table.members, table.invitations, table.api-keys, table.collaborations, table.collaboration-requests {
         width: 100%;
 
         th {
@@ -244,6 +244,51 @@
 
                 }
 
+                &.actions {
+                    width: 35px;
+                    text-align: left;
+                    color: $blue;
+                }
+
+            }
+        }
+    }
+
+    table.collaboration-requests {
+        th.name {
+            width: 20%;
+        }
+
+        th.shortName {
+            width: 20%;
+        }
+
+        th.requester {
+            width: 20%;
+        }
+
+        th.message {
+            width: 35%;
+        }
+
+        td.message span {
+            display: inline-block;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        tbody {
+            tr {
+                cursor: pointer;
+
+                &:hover {
+                    color: $blue;
+                }
+            }
+
+            td {
                 &.actions {
                     width: 35px;
                     text-align: left;
