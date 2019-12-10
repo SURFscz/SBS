@@ -211,6 +211,8 @@ class NewOrganisationInvitation extends React.Component {
             <section className="actions">
                 <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")}
                         onClick={this.submit}/>
+                <Button className="preview" txt={I18n.t("organisationDetail.preview")}
+                        onClick={() => this.setState({activeTab: "preview"}, this.tabChanged)}/>
                 <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
             </section>
         </>;

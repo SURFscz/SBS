@@ -1,0 +1,14 @@
+{% extends "mail_layout.html" %}
+{% block title %}SURFNET New service connection request accepted{% endblock %}
+{% block content %}
+
+<p>{{ salutation }},</p>
+<p>Your <strong>request</strong> to have access to service {{ service.name }} for collaboration
+    <a href="{{ base_url }}/collaborations/{{ collaboration.id }}" style="color:#0088CC;">
+        <strong>{{ collaboration.name }}</strong></a> has been <strong>accepted</strong> by the
+    contact person {{ service.contact_email }} of the service.</p>
+
+</p>
+{% endblock %}
+
+

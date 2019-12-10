@@ -56,9 +56,6 @@ def add_audit_trail_data(cls, json_dict):
 
 
 def save(cls, custom_json=None, allow_child_cascades=True):
-    if not request.is_json and custom_json is None:
-        return None, 415
-
     json_dict = request.get_json() if custom_json is None else custom_json
 
     add_audit_trail_data(cls, json_dict)
@@ -69,9 +66,6 @@ def save(cls, custom_json=None, allow_child_cascades=True):
 
 
 def update(cls, custom_json=None, allow_child_cascades=True):
-    if not request.is_json and custom_json is None:
-        return None, 415
-
     json_dict = request.get_json() if custom_json is None else custom_json
     json_dict = transform_json(cls, json_dict, allow_child_cascades=allow_child_cascades)
     add_audit_trail_data(cls, json_dict)

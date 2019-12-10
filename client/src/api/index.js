@@ -376,11 +376,10 @@ export function updateCollaborationMembershipRole(collaborationId, userId, role)
 }
 
 //CollaborationServices
-export function addCollaborationServices({collaborationId, serviceIds}) {
-    serviceIds = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
+export function addCollaborationServices({collaborationId, serviceId}) {
     return postPutJson(`/api/collaborations_services`, {
         collaboration_id: collaborationId,
-        service_ids: serviceIds
+        service_id: serviceId
     }, "put")
 }
 
@@ -493,4 +492,20 @@ export function denyRequestCollaboration(id) {
     return postPutJson(`/api/collaboration_requests/deny/${id}`, {}, "put");
 }
 
+//ServiceConnectionRequest
+export function requestServiceConnection(body) {
+    return postPutJson(`/api/service_connection_requests`, body, "post");
+}
+
+export function serviceConnectionRequestByHash(hash) {
+    return fetchJson(`/api/service_connection_requests/find_by_hash/${hash}`);
+}
+
+export function approveServiceConnectionRequestByHash(hash) {
+    return postPutJson(`/api/service_connection_requests/approve/${hash}`, {}, "put");
+}
+
+export function denyServiceConnectionRequestByHash(hash) {
+    return postPutJson(`/api/service_connection_requests/deny/${hash}`, {}, "put");
+}
 

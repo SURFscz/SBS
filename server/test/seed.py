@@ -52,13 +52,15 @@ service_network_entity_id = "https://network"
 service_storage_name = "Storage"
 service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
+service_wiki_name = "Wiki"
+service_ssh_uva_name = "SSH UvA"
 
 ai_researchers_group = "AI researchers"
 ai_researchers_group_short_name = "ai_res"
 group_science_name = "Science"
 
 network_service_connection_request_hash = token_urlsafe()
-wiki_service_connection_request_hash = token_urlsafe()
+ssh_service_connection_request_hash = token_urlsafe()
 
 
 def _persist(db, *objs):
@@ -144,18 +146,26 @@ def seed(db):
                     public_visible=True, automatic_connection_allowed=True)
     storage = Service(entity_id="https://storage", name=service_storage_name, description="SURF Storage Service",
                       public_visible=True, automatic_connection_allowed=True)
-    wiki = Service(entity_id="https://wiki", name="Wiki", description="No more wiki's please",
+    wiki = Service(entity_id="https://wiki", name=service_wiki_name, description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
                        "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
-                   public_visible=True, automatic_connection_allowed=False)
+                   public_visible=True, automatic_connection_allowed=False,
+                   contact_email="help@wiki.com")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address", status="active",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
-                      contact_email="help@example.org",
-                      public_visible=False, automatic_connection_allowed=False,
+                      contact_email="help@network.com",
+                      public_visible=False, automatic_connection_allowed=True,
                       allowed_organisations=[uuc])
-    _persist(db, mail, wireless, cloud, storage, wiki, network)
+    service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
+                              description="Uva SSH access", status="active",
+                              uri="https://uri/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
+                              contact_email="help@ssh.com",
+                              public_visible=False, automatic_connection_allowed=False,
+                              allowed_organisations=[uva])
+
+    _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva)
 
     ai_computing = Collaboration(name=ai_computing_name,
                                  identifier=collaboration_ai_computing_uuid,
@@ -236,14 +246,14 @@ def seed(db):
                                                  message="For research", organisation=uuc, requester=peter)
     _persist(db, collaboration_request)
 
-    service_connection_request_network = ServiceConnectionRequest(message="AI computing needs network",
+    service_connection_request_network = ServiceConnectionRequest(message="AI computing needs storage",
                                                                   hash=network_service_connection_request_hash,
                                                                   requester=admin, collaboration=ai_computing,
-                                                                  service=network)
-    service_connection_request_wiki = ServiceConnectionRequest(message="UVA research needs wiki",
-                                                               hash=wiki_service_connection_request_hash,
+                                                                  service=storage)
+    service_connection_request_wiki = ServiceConnectionRequest(message="UVA research needs ssh",
+                                                               hash=ssh_service_connection_request_hash,
                                                                requester=sarah, collaboration=uva_research,
-                                                               service=wiki)
+                                                               service=service_ssh_uva)
     _persist(db, service_connection_request_network, service_connection_request_wiki)
 
     db.session.commit()

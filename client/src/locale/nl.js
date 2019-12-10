@@ -425,8 +425,8 @@ I18n.translations.nl = {
         tabs: {
             form: "Uitnodiging details",
             preview: "Uitnodiging preview",
-        }
-
+        },
+        preview: "Preview"
     },
     joinRequest: {
         title: "Verzoek van {{requester}} om lid te worden van {{collaboration}}",

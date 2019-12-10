@@ -90,8 +90,10 @@ class NewInvitation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {administrators, message, collaboration, expiry_date, fileEmails, intended_role,
-            selectedGroup} = this.state;
+            const {
+                administrators, message, collaboration, expiry_date, fileEmails, intended_role,
+                selectedGroup
+            } = this.state;
             collaborationInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
@@ -258,6 +260,8 @@ class NewInvitation extends React.Component {
             <section className="actions">
                 <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
                         onClick={this.submit}/>
+                <Button className="preview" txt={I18n.t("organisationDetail.preview")}
+                        onClick={() => this.setState({activeTab: "preview"}, this.tabChanged)}/>
                 <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
             </section>
         </>;
