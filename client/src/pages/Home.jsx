@@ -176,33 +176,14 @@ class Home extends React.Component {
         );
     };
 
-    collaborationRequest = e => {
-        stopEvent(e);
-        this.props.history.push("new-collaboration");
-    };
-
-    newCollaboration = () => {
-        this.props.history.push("new-collaboration");
-    };
-
     render() {
         const {collaborations} = this.state;
         const {user} = this.props;
-        const allowedCollaborationRequest = !user.admin && isEmpty(user.organisation_memberships);
-        const allowedNewCollaboration = !user.admin && user.organisation_memberships.find(m => m.role === "admin");
         const hasOrganisationMemberships = !isEmpty(user.organisation_memberships);
         return (
             <div className="mod-home-container">
                 <div className="mod-home">
-                    {allowedCollaborationRequest && <div className="actions">
-                        <Button className="collaboration-request" onClick={this.collaborationRequest}
-                                txt={I18n.t("home.collaborationRequest")}/>
-                    </div>}
-                    {allowedNewCollaboration && <div className="actions">
-                        <Button className="collaboration-request" onClick={this.newCollaboration}
-                                txt={I18n.t("home.collaborationNew")}/>
-                    </div>}
-                    <div className={`title ${allowedCollaborationRequest ? "" : "top"}`}>
+                    <div className="title top">
                         <p>{I18n.t("home.title")}</p>
                     </div>
                     <section className={"info-block-container"}>

@@ -30,6 +30,12 @@ I18n.translations.nl = {
         title: "Welkom bij het Research Access Management",
         subTitle: "Log a.u.b. in."
     },
+    newDropDown: {
+        organisation: "New organisation",
+        collaboration: "New collaboration",
+        collaborationRequest: "Request new collaboration",
+        service: "New service"
+    },
     home: {
         title: "Mijn lidmaatschappen",
         groups: "Groepen",
@@ -38,17 +44,18 @@ I18n.translations.nl = {
         services: "Diensten",
         backToHome: "Terug naar de startpagina",
         collaborationRequest: "Verzoek een nieuwe Samenwerking",
+        collaborationNew: "New Collaboration",
         noOrganisations: "Voor het verzoek om een nieuwe samenwerking is het een vereiste dat er voor de instelling waarmee je bent ingelogd een organisatie is aangemaakt. Dit is niet het geval. Neem contact op <a href='mailto:scz-support@surfnet.nl'>scz-support@surfnet.nl</a> voor meer informatie."
     },
     forms: {
         submit: "Toevoegen",
+        request: "Verstuur",
         cancel: "Annuleren",
         showMore: "Meer",
         hideSome: "Minder",
         today: "Vandaag",
         manage: "Overzicht",
         invalidInput: "Foutieve waarde voor {{name}}",
-        request: "Verstuur",
         back: "Terug",
         reset: "Reset"
     },
@@ -361,10 +368,12 @@ I18n.translations.nl = {
         back: "Terug naar mijn organisaties",
         members: "Leden van {{name}}",
         invitations: "Uitnodigingen voor {{name}}",
+        collaborationRequests: "Collaboratie verxoeken voor {{name}}",
         searchPlaceHolder: "Zoek leden",
         invite: "Nodig uit",
         newApiKey: "Voeg een nieuwe API-sleutel toe",
         noInvitations: "Geen openstaande uitnodigingen",
+        noCollaborationRequests: "Geen openstaande collaboratie verzoeken",
         member: {
             user__name: "Naam",
             user__email: "E-mail",
@@ -380,6 +389,12 @@ I18n.translations.nl = {
             expiry_date: "Verloopt",
             noExpires: "N/A",
             message: "Bericht",
+        },
+        collaborationRequest: {
+            name: "Naam",
+            short_name: "Korte naam",
+            requester__name: "Aanvrager",
+            message: "Motivatie"
         },
         collaboration: {
             name: "Naam",

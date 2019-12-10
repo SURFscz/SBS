@@ -8,6 +8,7 @@ import {NavLink} from "react-router-dom";
 
 import "./Navigation.scss";
 import NewDropDown from "./NewDropDown";
+import {isEmpty} from "../utils/Utils";
 
 export default class Navigation extends React.PureComponent {
 
@@ -37,9 +38,10 @@ export default class Navigation extends React.PureComponent {
     render() {
         const {currentUser, impersonator} = this.props;
         // const isCollaborationAdmin = (currentUser.collaboration_memberships || []).some(membership => membership.role === "admin");
-        const isOrganisationAdmin = (currentUser.organisation_memberships || []).some(membership => membership.role === "admin");
+        const memberships = currentUser.organisation_memberships || [];
+        const isOrganisationAdmin = memberships.some(membership => membership.role === "admin");
         const mayImpersonate = currentUser.admin || (impersonator && impersonator.admin);
-        const mayCreateSomething = currentUser.admin || isOrganisationAdmin;
+        const mayCreateSomething = currentUser.admin || isOrganisationAdmin || isEmpty(memberships);
         const needsToAgreeWithAup = currentUser.needs_to_agree_with_aup;
         if (needsToAgreeWithAup) {
             return (

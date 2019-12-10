@@ -1,8 +1,44 @@
 @import "../stylesheets/vars.scss";
 
 .new-drop-down {
+    position: relative;
+    cursor: pointer;
+
     svg {
-        color: $yellow;
+        color: white;
         font-size: 24px;
+
+        &.fa-plus {
+            margin-right: 5px;
+        }
+    }
+
+    ul {
+        font-size: 18px;
+        text-align: right;
+        position: absolute;
+        z-index: 2;
+        padding-top: 15px;
+        list-style: none;
+        min-width: 275px;
+        top: 30px;
+        right: 0;
+        background: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+        opacity: .95;
+        text-transform: none;
+        li {
+            padding: 8px 15px 8px 0;
+            border-bottom: 1px solid $lightest-grey;
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+        a {
+            text-decoration: none;
+            color: $dark-grey;
+        }
     }
 }
