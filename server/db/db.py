@@ -150,6 +150,15 @@ class CollaborationMembership(Base, db.Model):
                            nullable=False)
 
 
+organisations_services = db.Table(
+    "organisations_services",
+    metadata,
+    db.Column("organisation_id", db.Integer(), db.ForeignKey("organisations.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
+)
+
+
 class Service(Base, db.Model):
     __tablename__ = "services"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
@@ -161,8 +170,11 @@ class Service(Base, db.Model):
     uri = db.Column("uri", db.String(length=255), nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
+    public_visible = db.Column("public_visible", db.Boolean(), nullable=True, default=True)
+    automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
     status = db.Column("status", db.String(length=255), nullable=True)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
+    allowed_organisations = db.relationship("Organisation", secondary=organisations_services, lazy="select")
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),

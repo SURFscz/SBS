@@ -132,18 +132,25 @@ def seed(db):
     _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry,
              organisation_membership_jane)
 
-    mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email)
-    wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service")
-    cloud = Service(entity_id="https://cloud", name=service_cloud_name, description="SARA Cloud Service")
-    storage = Service(entity_id="https://storage", name=service_storage_name, description="SURF Storage Service")
+    mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
+                   public_visible=True, automatic_connection_allowed=True)
+    wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
+                       public_visible=True, automatic_connection_allowed=True)
+    cloud = Service(entity_id="https://cloud", name=service_cloud_name, description="SARA Cloud Service",
+                    public_visible=True, automatic_connection_allowed=True)
+    storage = Service(entity_id="https://storage", name=service_storage_name, description="SURF Storage Service",
+                      public_visible=True, automatic_connection_allowed=True)
     wiki = Service(entity_id="https://wiki", name="Wiki", description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
-                       "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem")
+                       "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
+                   public_visible=True, automatic_connection_allowed=False)
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address", status="active",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
-                      contact_email="help@example.org")
+                      contact_email="help@example.org",
+                      public_visible=False, automatic_connection_allowed=False,
+                      allowed_organisations=[uuc])
     _persist(db, mail, wireless, cloud, storage, wiki, network)
 
     ai_computing = Collaboration(name=ai_computing_name,

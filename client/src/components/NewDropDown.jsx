@@ -68,7 +68,7 @@ export default class NewDropDown extends React.PureComponent {
         }
         return (
             <div className="new-drop-down" onClick={this.handleToggle}
-                 //onBlur={() => setTimeout(() => this.setState({dropDownActive: false}), 250)}
+                 onBlur={() => setTimeout(() => this.setState({dropDownActive: false}), 250)}
                  tabIndex="1">
                 <FontAwesomeIcon icon="plus"/>
                 {this.renderDropDownIndicator()}
