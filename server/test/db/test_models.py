@@ -1,13 +1,12 @@
 # -*- coding: future_fstrings -*-
 import datetime
 
-import requests
 from flask import g as request_context
 from munch import munchify
 
 from server.db.db import Collaboration
 from server.db.models import transform_json, add_audit_trail_data, parse_date_fields
-from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
+from server.test.abstract_test import AbstractTest
 
 
 class TestModels(AbstractTest):
