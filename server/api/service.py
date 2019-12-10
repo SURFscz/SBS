@@ -5,7 +5,7 @@ from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin
-from server.db.db import Service, db, Collaboration, CollaborationMembership
+from server.db.db import Service, db, Collaboration, CollaborationMembership, Organisation
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
 
@@ -94,10 +94,18 @@ def save_service():
     confirm_write_access()
 
     data = current_request.get_json()
-    if data:
-        data["status"] = "active"
+    allowed_organisations = data.get("allowed_organisations", None)
+    data["status"] = "active"
 
-    return save(Service, custom_json=data)
+    res = save(Service, custom_json=data, allow_child_cascades=False)
+    service = res[0]
+
+    if allowed_organisations:
+        for organisation_id in allowed_organisations:
+            service.allowed_organisations.append(Organisation.query.get(organisation_id))
+        db.session.merge(service)
+
+    return res
 
 
 @service_api.route("/", methods=["PUT"], strict_slashes=False)

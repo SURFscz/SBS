@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
-from server.db.db import Service
+from server.db.db import Service, Organisation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_mail_name, service_network_entity_id
+from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name
 
 
 class TestService(AbstractTest):
@@ -36,6 +36,17 @@ class TestService(AbstractTest):
         service = self.post("/api/services", body={"entity_id": "https://new_service", "name": "new_service"})
         self.assertIsNotNone(service["id"])
         self.assertEqual("new_service", service["name"])
+
+    def test_service_new_with_allowed_organisations(self):
+        uva_id = self.find_entity_by_name(Organisation, amsterdam_uva_name).id
+        uuc_id = self.find_entity_by_name(Organisation, uuc_name).id
+        service = self.post("/api/services", body={"entity_id": "https://new_service", "name": "new_service",
+                                                   "allowed_organisations": [uva_id, uuc_id]})
+        self.assertIsNotNone(service["id"])
+        self.assertEqual("new_service", service["name"])
+
+        service = self.find_entity_by_name(Service, "new_service")
+        self.assertEqual(2, len(service.allowed_organisations))
 
     def test_service_update(self):
         mail = self._find_by_name()

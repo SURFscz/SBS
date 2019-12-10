@@ -425,7 +425,8 @@ I18n.translations.en = {
         tabs: {
             form: "Invitation details",
             preview: "Invitation preview",
-        }
+        },
+        preview: "Preview"
     },
     joinRequest: {
         title: "Join request from {{requester}} for collaboration {{collaboration}}",

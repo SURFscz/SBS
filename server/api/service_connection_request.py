@@ -1,23 +1,121 @@
 # -*- coding: future_fstrings -*-
+from secrets import token_urlsafe
 
-from flask import Blueprint
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager
+from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
-from server.db.db import ServiceConnectionRequest
+from server.api.collaborations_services import connect_service_collaboration
+from server.auth.security import confirm_collaboration_admin, current_user_id, current_user_uid, current_user_name
+from server.db.db import ServiceConnectionRequest, Service, Collaboration, db
+from server.mail import mail_service_connection_request, mail_accepted_declined_service_connection_request
 
 service_connection_request_api = Blueprint("service_connection_request_api", __name__,
                                            url_prefix="/api/service_connection_requests")
 
 
-@service_connection_request_api.route("/find_by_hash/<service_connection_request_hash>", strict_slashes=False)
-@json_endpoint
-def service_connection_request_by_hash(service_connection_request_hash):
-    service_connection_request = ServiceConnectionRequest.query.join(ServiceConnectionRequest.service).join(
-        ServiceConnectionRequest.collaboration).join(ServiceConnectionRequest.requester).options(
-        contains_eager(ServiceConnectionRequest.service)).options(
-        contains_eager(ServiceConnectionRequest.collaboration)).options(
-        contains_eager(ServiceConnectionRequest.requester)).filter(
-        ServiceConnectionRequest.hash == service_connection_request_hash).one()
+def _service_connection_request_by_hash(hash):
+    return ServiceConnectionRequest.query \
+        .join(ServiceConnectionRequest.service) \
+        .join(ServiceConnectionRequest.collaboration) \
+        .join(ServiceConnectionRequest.requester) \
+        .options(contains_eager(ServiceConnectionRequest.service)) \
+        .options(contains_eager(ServiceConnectionRequest.collaboration)) \
+        .options(contains_eager(ServiceConnectionRequest.requester)) \
+        .filter(ServiceConnectionRequest.hash == hash) \
+        .one()
 
-    return service_connection_request, 200
+
+def _do_service_connection_request(hash, approved):
+    service_connection_request = _service_connection_request_by_hash(hash)
+    service = service_connection_request.service
+    collaboration = service_connection_request.collaboration
+
+    if approved:
+        connect_service_collaboration(service.id, collaboration.id, force=True)
+
+    db.session.delete(service_connection_request)
+
+    requester = service_connection_request.requester
+    context = {"salutation": f"Dear {service.contact_email},",
+               "base_url": current_app.app_config.base_url,
+               "service": service,
+               "collaboration": collaboration}
+    mail_accepted_declined_service_connection_request(context, service.name, collaboration.name, approved,
+                                                      [requester.email])
+    return {}, 201
+
+
+@service_connection_request_api.route("/", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def request_service_connection():
+    data = current_request.get_json()
+    service = Service.query.get(int(data["service_id"]))
+    collaboration = Collaboration.query.get(int(data["collaboration_id"]))
+
+    confirm_collaboration_admin(collaboration.id)
+
+    existing_request = ServiceConnectionRequest.query \
+        .filter(ServiceConnectionRequest.collaboration_id == collaboration.id) \
+        .filter(ServiceConnectionRequest.service_id == service.id) \
+        .all()
+    if existing_request:
+        raise BadRequest(f"outstanding_service_connection_request: {service.name} and {collaboration.name}")
+
+    user_uid = current_user_uid()
+    service_connection_request = ServiceConnectionRequest(message=data.get("message"), hash=token_urlsafe(),
+                                                          requester_id=current_user_id(), service=service,
+                                                          collaboration=collaboration, created_by=user_uid,
+                                                          updated_by=user_uid)
+    saved_service_connection_request = db.session.merge(service_connection_request)
+    db.session.commit()
+
+    if service.contact_email:
+        context = {"salutation": f"Dear {service.contact_email},",
+                   "base_url": current_app.app_config.base_url,
+                   "requester": current_user_name(),
+                   "service_connection_request": service_connection_request,
+                   "service": service,
+                   "collaboration": collaboration}
+        mail_service_connection_request(context, service.name, collaboration.name, [service.contact_email])
+
+    return saved_service_connection_request, 201
+
+
+@service_connection_request_api.route("/find_by_hash/<hash>", strict_slashes=False)
+@json_endpoint
+def service_connection_request_by_hash(hash):
+    return _service_connection_request_by_hash(hash), 200
+
+
+@service_connection_request_api.route("/approve/<hash>", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def approve_service_connection_request(hash):
+    return _do_service_connection_request(hash, True)
+
+
+@service_connection_request_api.route("/deny/<hash>", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def deny_service_connection_request(hash):
+    return _do_service_connection_request(hash, False)
+
+
+@service_connection_request_api.route("/resend/<hash>", strict_slashes=False)
+@json_endpoint
+def resend_service_connection_request(hash):
+    service_connection_request = _service_connection_request_by_hash(hash)
+    service = service_connection_request.service
+    collaboration = service_connection_request.collaboration
+
+    confirm_collaboration_admin(collaboration.id)
+
+    if service.contact_email:
+        context = {"salutation": f"Dear {service.contact_email},",
+                   "base_url": current_app.app_config.base_url,
+                   "requester": current_user_name(),
+                   "service_connection_request": service_connection_request,
+                   "service": service,
+                   "collaboration": collaboration}
+        mail_service_connection_request(context, service.name, collaboration.name, [service.contact_email])
+    return {}, 200

@@ -38,7 +38,7 @@ def request_collaboration():
     data["requester_id"] = user.id
     res = save(CollaborationRequest, custom_json=data)
 
-    context = {"salutation": f"Dear {organisation.name} organisation admin",
+    context = {"salutation": f"Dear {organisation.name} organisation admin,",
                "base_url": current_app.app_config.base_url,
                "collaboration_request": data,
                "user": user}

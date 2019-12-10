@@ -113,3 +113,25 @@ def mail_accepted_declined_collaboration_request(context, collaboration_name, ac
         context=context,
         preview=preview
     )
+
+
+def mail_service_connection_request(context, service_name, collaboration_name, recipients, preview=False):
+    return _do_send_mail(
+        subject=f"Request for new service {service_name} connection to collaboration {collaboration_name}",
+        recipients=recipients,
+        template="service_connection_request",
+        context=context,
+        preview=preview
+    )
+
+
+def mail_accepted_declined_service_connection_request(context, service_name, collaboration_name, accepted, recipients,
+                                                      preview=False):
+    part = "accepted" if accepted else "declined"
+    return _do_send_mail(
+        subject=f"Service {service_name} connection request for collaboration {collaboration_name} has been {part}",
+        recipients=recipients,
+        template=f"service_connection_request_{part}",
+        context=context,
+        preview=preview
+    )

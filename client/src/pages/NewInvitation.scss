@@ -134,7 +134,7 @@
         section.actions {
             margin: $medium-margin 0;
 
-            a.cancel {
+            a.cancel, a.preview {
                 margin-left: 25px;
             }
         }
