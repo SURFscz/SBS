@@ -27,7 +27,7 @@ export default class NewDropDown extends React.PureComponent {
     renderAllowedActions = allowedActions => {
         return (
             <ul className="allowed-actions">
-                {allowedActions.map(action => <li>
+                {allowedActions.map((action, i) => <li key={i}>
                     <Link to={action.path}>{I18n.t(`newDropDown.${action.name}`)}</Link>
                 </li>)}
             </ul>

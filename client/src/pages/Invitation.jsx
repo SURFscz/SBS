@@ -165,7 +165,7 @@ class Invitation extends React.Component {
                         e.response.json().then(res => {
                             if (res.message && res.message.indexOf("already a member") > -1) {
                                 this.setState({errorOccurred: true}, () =>
-                                    setFlash(I18n.t("organisationInvitation.flash.alreadyMember"), "error"));
+                                    setFlash(I18n.t("invitation.flash.alreadyMember"), "error"));
                             }
                         });
                     } else {

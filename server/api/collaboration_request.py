@@ -9,6 +9,7 @@ from server.api.base import json_endpoint
 from server.api.collaboration import assign_global_urn_to_organisation
 from server.auth.security import current_user_id, confirm_organisation_admin, current_user_name
 from server.db.db import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db
+from server.db.defaults import cleanse_short_name
 from server.db.models import save
 from server.mail import mail_collaboration_request, mail_accepted_declined_collaboration_request
 
@@ -35,7 +36,10 @@ def request_collaboration():
     data = current_request.get_json()
     user = User.query.get(current_user_id())
     organisation = Organisation.query.filter(Organisation.schac_home_organisation == user.schac_home_organisation).one()
+
     data["requester_id"] = user.id
+    cleanse_short_name(data)
+
     res = save(CollaborationRequest, custom_json=data)
 
     context = {"salutation": f"Dear {organisation.name} organisation admin,",

@@ -85,6 +85,7 @@ def service_by_id(service_id):
         .options(contains_eager(Service.collaborations)
                  .contains_eager(Collaboration.organisation)) \
         .filter(Service.id == service_id).one()
+    service.allowed_organisations
     return service, 200
 
 
@@ -100,19 +101,37 @@ def save_service():
     res = save(Service, custom_json=data, allow_child_cascades=False)
     service = res[0]
 
-    if allowed_organisations:
-        for organisation_id in allowed_organisations:
-            service.allowed_organisations.append(Organisation.query.get(organisation_id))
-        db.session.merge(service)
+    _add_allowed_organisations(allowed_organisations, service)
 
     return res
+
+
+def _add_allowed_organisations(allowed_organisations, service):
+    service.allowed_organisations.clear()
+    if allowed_organisations:
+        for value in allowed_organisations:
+            organisation_id = value["organisation_id"]
+            service.allowed_organisations.append(Organisation.query.get(organisation_id))
+            service.public_visible = False
+    else:
+        service.public_visible = True
+    db.session.merge(service)
 
 
 @service_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_service():
     confirm_write_access()
-    return update(Service, allow_child_cascades=False)
+
+    data = current_request.get_json()
+    allowed_organisations = data.get("allowed_organisations", None)
+
+    res = update(Service, allow_child_cascades=False)
+    service = res[0]
+
+    _add_allowed_organisations(allowed_organisations, service)
+
+    return res
 
 
 @service_api.route("/<service_id>", methods=["DELETE"], strict_slashes=False)

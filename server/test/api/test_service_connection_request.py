@@ -2,10 +2,27 @@
 from server.db.db import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ssh_service_connection_request_hash, sarah_name, uva_research_name, service_wiki_name, \
-    ai_computing_name, service_ssh_uva_name
+    ai_computing_name, service_ssh_uva_name, network_service_connection_request_hash
 
 
 class TestServiceConnectionRequest(AbstractTest):
+
+    def test_service_request_connections_by_collaboration(self):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+
+        self.login("urn:admin")
+        res = self.get(f"/api/service_connection_requests/by_collaboration/{collaboration.id}", with_basic_auth=False)
+
+        self.assertEqual(1, len(res))
+        self.assertEqual(collaboration.id, res[0]["collaboration_id"])
+        self.assertEqual(network_service_connection_request_hash, res[0]["hash"])
+
+    def test_delete_service_request_connection(self):
+        self.login("urn:sarah")
+        req = self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}")
+        self.delete("/api/service_connection_requests", req["id"], with_basic_auth=False)
+        self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}",
+                 response_status_code=404)
 
     def test_service_connection_request(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
@@ -74,8 +91,10 @@ class TestServiceConnectionRequest(AbstractTest):
 
     def test_resend_service_connection_request(self):
         with self.app.mail.record_messages() as outbox:
-            self.login("urn:john")
-            self.get(f"/api/service_connection_requests/resend/{ssh_service_connection_request_hash}")
+            self.login("urn:sarah")
+            req = self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}")
+
+            self.get(f"/api/service_connection_requests/resend/{req['id']}")
 
             mail_msg = outbox[0]
             self.assertEqual("Request for new service SSH UvA connection to collaboration UVA UCC research",

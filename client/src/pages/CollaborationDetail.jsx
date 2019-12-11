@@ -22,6 +22,7 @@ import {setFlash} from "../utils/Flash";
 import Select from "react-select";
 import {headerIcon} from "../forms/helpers";
 import CheckBox from "../components/CheckBox";
+import {sanitizeShortName} from "../validations/regExps";
 
 
 class CollaborationDetail extends React.Component {
@@ -485,7 +486,7 @@ class CollaborationDetail extends React.Component {
                         placeholder={I18n.t("collaboration.shortNamePlaceHolder")}
                         onBlur={this.validateCollaborationShortName}
                         onChange={e => this.setState({
-                            short_name: e.target.value,
+                            short_name: sanitizeShortName(e.target.value),
                             alreadyExists: {...this.state.alreadyExists, short_name: false}
                         })}
                         toolTip={I18n.t("collaboration.shortNameTooltip")}

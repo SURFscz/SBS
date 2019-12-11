@@ -13,7 +13,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {validEmailRegExp} from "../validations/regExps";
+import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
 
 class NewOrganisation extends React.Component {
 
@@ -159,7 +159,7 @@ class NewOrganisation extends React.Component {
                                 placeholder={I18n.t("organisation.shortNamePlaceHolder")}
                                 onBlur={this.validateOrganisationShortName}
                                 onChange={e => this.setState({
-                                    short_name: e.target.value,
+                                    short_name: sanitizeShortName(e.target.value),
                                     alreadyExists: {...this.state.alreadyExists, short_name: false}
                                 })}
                                 toolTip={I18n.t("organisation.shortNameTooltip")}/>
@@ -177,10 +177,15 @@ class NewOrganisation extends React.Component {
                                 placeholder={I18n.t("organisation.descriptionPlaceholder")}
                                 name={I18n.t("organisation.description")}/>
 
-                    <InputField value={schac_home_organisation} onChange={e => this.setState({schac_home_organisation: e.target.value})}
+                    <InputField value={schac_home_organisation}
+                                onChange={e => this.setState({schac_home_organisation: e.target.value})}
                                 placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
                                 name={I18n.t("organisation.schacHomeOrganisation")}
                                 toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
+                    {(!initial && isEmpty(schac_home_organisation)) && <span
+                        className="error">{I18n.t("organisation.required", {
+                        attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase()
+                    })}</span>}
 
                     <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                                 placeholder={I18n.t("organisation.administratorsPlaceholder")}

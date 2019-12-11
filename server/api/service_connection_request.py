@@ -9,20 +9,25 @@ from server.api.base import json_endpoint
 from server.api.collaborations_services import connect_service_collaboration
 from server.auth.security import confirm_collaboration_admin, current_user_id, current_user_uid, current_user_name
 from server.db.db import ServiceConnectionRequest, Service, Collaboration, db
+from server.db.models import delete
 from server.mail import mail_service_connection_request, mail_accepted_declined_service_connection_request
 
 service_connection_request_api = Blueprint("service_connection_request_api", __name__,
                                            url_prefix="/api/service_connection_requests")
 
 
-def _service_connection_request_by_hash(hash):
+def _service_connection_request_query():
     return ServiceConnectionRequest.query \
         .join(ServiceConnectionRequest.service) \
         .join(ServiceConnectionRequest.collaboration) \
         .join(ServiceConnectionRequest.requester) \
         .options(contains_eager(ServiceConnectionRequest.service)) \
         .options(contains_eager(ServiceConnectionRequest.collaboration)) \
-        .options(contains_eager(ServiceConnectionRequest.requester)) \
+        .options(contains_eager(ServiceConnectionRequest.requester))
+
+
+def _service_connection_request_by_hash(hash):
+    return _service_connection_request_query() \
         .filter(ServiceConnectionRequest.hash == hash) \
         .one()
 
@@ -38,13 +43,33 @@ def _do_service_connection_request(hash, approved):
     db.session.delete(service_connection_request)
 
     requester = service_connection_request.requester
-    context = {"salutation": f"Dear {service.contact_email},",
+    context = {"salutation": f"Dear {service_connection_request.requester.name},",
                "base_url": current_app.app_config.base_url,
                "service": service,
                "collaboration": collaboration}
     mail_accepted_declined_service_connection_request(context, service.name, collaboration.name, approved,
                                                       [requester.email])
     return {}, 201
+
+
+@service_connection_request_api.route("/by_collaboration/<collaboration_id>", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def service_request_connections_by_collaboration(collaboration_id):
+    confirm_collaboration_admin(collaboration_id)
+
+    return _service_connection_request_query() \
+               .filter(ServiceConnectionRequest.collaboration_id == collaboration_id) \
+               .all(), 200
+
+
+@service_connection_request_api.route("/<service_connection_request_id>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+def delete_service_request_connection(service_connection_request_id):
+    service_connection_request = ServiceConnectionRequest.query.get(service_connection_request_id)
+
+    confirm_collaboration_admin(service_connection_request.collaboration_id)
+
+    return delete(ServiceConnectionRequest, service_connection_request_id)
 
 
 @service_connection_request_api.route("/", methods=["POST"], strict_slashes=False)
@@ -71,6 +96,12 @@ def request_service_connection():
     saved_service_connection_request = db.session.merge(service_connection_request)
     db.session.commit()
 
+    _do_mail_request(collaboration, service, service_connection_request)
+
+    return saved_service_connection_request, 201
+
+
+def _do_mail_request(collaboration, service, service_connection_request):
     if service.contact_email:
         context = {"salutation": f"Dear {service.contact_email},",
                    "base_url": current_app.app_config.base_url,
@@ -79,8 +110,6 @@ def request_service_connection():
                    "service": service,
                    "collaboration": collaboration}
         mail_service_connection_request(context, service.name, collaboration.name, [service.contact_email])
-
-    return saved_service_connection_request, 201
 
 
 @service_connection_request_api.route("/find_by_hash/<hash>", strict_slashes=False)
@@ -101,21 +130,14 @@ def deny_service_connection_request(hash):
     return _do_service_connection_request(hash, False)
 
 
-@service_connection_request_api.route("/resend/<hash>", strict_slashes=False)
+@service_connection_request_api.route("/resend/<service_connection_request_id>", strict_slashes=False)
 @json_endpoint
-def resend_service_connection_request(hash):
-    service_connection_request = _service_connection_request_by_hash(hash)
+def resend_service_connection_request(service_connection_request_id):
+    service_connection_request = ServiceConnectionRequest.query.get(service_connection_request_id)
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
 
     confirm_collaboration_admin(collaboration.id)
 
-    if service.contact_email:
-        context = {"salutation": f"Dear {service.contact_email},",
-                   "base_url": current_app.app_config.base_url,
-                   "requester": current_user_name(),
-                   "service_connection_request": service_connection_request,
-                   "service": service,
-                   "collaboration": collaboration}
-        mail_service_connection_request(context, service.name, collaboration.name, [service.contact_email])
+    _do_mail_request(collaboration, service, service_connection_request)
     return {}, 200

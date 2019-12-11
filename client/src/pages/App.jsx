@@ -40,6 +40,7 @@ import NewApiKey from "./NewApiKey";
 import Profile from "./Profile";
 import Aup from "./Aup";
 import CollaborationRequest from "./CollaborationRequest";
+import ServiceConnectionRequest from "./ServiceConnectionRequest";
 
 addIcons();
 
@@ -210,6 +211,9 @@ class App extends React.Component {
                         <Route exact path="/join-requests/:hash"
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={JoinRequest} {...props}/>}/>
+
+                        <Route path="/service-connection-requests/:hash"
+                               render={props => <ServiceConnectionRequest {...props}/>}/>
 
                         <Route exact path="/organisation-invitations/:id"
                                render={props => <ProtectedRoute currentUser={currentUser}

@@ -9,6 +9,7 @@ from server.api.group_members import do_add_group_members
 from server.auth.security import confirm_collaboration_admin, \
     confirm_collaboration_admin_or_group_member, current_user_id
 from server.db.db import Group, CollaborationMembership, Collaboration
+from server.db.defaults import cleanse_short_name
 from server.db.models import update, save, delete
 from server.schemas import json_schema_validator
 
@@ -124,6 +125,7 @@ def save_group():
     confirm_collaboration_admin(collaboration_id)
 
     _assign_global_urn(collaboration_id, data)
+    cleanse_short_name(data)
 
     res = save(Group, custom_json=data, allow_child_cascades=False)
 
@@ -149,6 +151,7 @@ def update_group():
     confirm_collaboration_admin(collaboration_id)
 
     _assign_global_urn(collaboration_id, data)
+    cleanse_short_name(data)
 
     res = update(Group, custom_json=data, allow_child_cascades=False)
 

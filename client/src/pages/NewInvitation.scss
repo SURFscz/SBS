@@ -1,4 +1,6 @@
 @import "../stylesheets/vars.scss";
+@import "../stylesheets/vars.scss";
+@import "../stylesheets/vars.scss";
 
 .mod-new-collaboration-invitation {
     background-color: $background;
@@ -134,7 +136,7 @@
         section.actions {
             margin: $medium-margin 0;
 
-            a.cancel, a.preview {
+            a:not(:first-child) {
                 margin-left: 25px;
             }
         }

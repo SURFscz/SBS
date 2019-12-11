@@ -1,6 +1,8 @@
 # -*- coding: future_fstrings -*-
+import re
 from datetime import datetime, date, time, timedelta
 from collections.abc import Iterable
+
 full_text_search_autocomplete_limit = 16
 
 
@@ -26,3 +28,8 @@ def calculate_expiry_period(invitation, today=datetime.today()):
     if diff.days == 1:
         return "1 day"
     return f"{diff.days} days"
+
+
+def cleanse_short_name(data):
+    if "short_name" in data:
+        data["short_name"] = re.sub(r"[^a-zA-Z_\-0-9]+", "", data["short_name"])[:14]
