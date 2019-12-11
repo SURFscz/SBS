@@ -16,6 +16,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import SelectField from "../components/SelectField";
+import {sanitizeShortName} from "../validations/regExps";
 
 class CollaborationRequest extends React.Component {
 
@@ -136,7 +137,8 @@ class CollaborationRequest extends React.Component {
 
     updateState = attributeName => e => {
         const {collaborationRequest, alreadyExists} = this.state;
-        const newState = {...collaborationRequest, [attributeName]: e.target.value};
+        const value = attributeName === "short_name" ? sanitizeShortName(e.target.value) : e.target.value;
+        const newState = {...collaborationRequest, [attributeName]: value};
         this.setState({collaborationRequest: newState, alreadyExists: {...alreadyExists, [attributeName]: false}});
     };
 

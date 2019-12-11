@@ -38,7 +38,7 @@ export default class Flash extends React.PureComponent {
                     {messages.map((message, index) => <p key={index}>{message}</p>)}
                 </div>
                 <a className="close" href="/close" onClick={clearFlash}>
-                    <FontAwesomeIcon icon="window-close"/>
+                    <FontAwesomeIcon icon="times"/>
                 </a>
             </div>
         );

@@ -54,7 +54,7 @@ I18n.translations.en = {
         showMore: "More",
         hideSome: "Less",
         today: "Today",
-        manage: "Overview",
+        manage: "Configure",
         invalidInput: "Invalid input for {{name}}",
         back: "Back",
         reset: "Reset"
@@ -301,9 +301,15 @@ I18n.translations.en = {
         accepted_user_policy: "AUP",
         accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the service",
         accepted_user_policyTooltip: "An acceptable use policy (AUP)<br/>is a document stipulating constraints<br/>and practices that a user<br/>must agree to for access<br/>to a corporate network or<br/>the Internet.",
+        automaticConnectionAllowed:"Automatic connection allowed?",
+        automaticConnectionAllowedTooltip: "Can collaborations use this service<br/>without explicit permission of the Service?",
+        allowedOrganisations: "Allowed organisations",
+        allowedOrganisationsPlaceholder: "Search and add organisations",
+        allowedOrganisationsTooltip: "If any organisation is added<br/>then automatically all other organisations<br/>are not allowed to use this service.<br/><br/>If this Service can be used><br/>by all collaborations then just don't><br/>add organisations.",
         contact_email: "E-mail contact",
         contact_emailPlaceholder: "The e-mail address of the contact person of this service",
         contact_emailTooltip: "This e-mail address will be<br/>used as primary contact.",
+        contactEmailRequired: "Contact e-mail is required if automatic connection is not allowed for a Service",
         status: {
             name: "Status",
             active: "Active",
@@ -427,7 +433,8 @@ I18n.translations.en = {
             form: "Invitation details",
             preview: "Invitation preview",
         },
-        preview: "Preview"
+        preview: "Preview",
+        details: "Details"
     },
     joinRequest: {
         title: "Join request from {{requester}} for collaboration {{collaboration}}",
@@ -541,7 +548,8 @@ I18n.translations.en = {
             inviteAccepted: "Invitation for collaboration {{name}} was accepted",
             inviteDeleted: "Invitation for organisation {{name}} was deleted",
             inviteResend: "Invitation for organisation {{name}} was resend",
-            created: "Invitations for collaboration {{name}} were successfully created"
+            created: "Invitations for collaboration {{name}} were successfully created",
+            alreadyMember: "The invitation could not be accepted because you are already a member of this collaboration",
         },
     },
     collaborationServices: {
@@ -550,9 +558,14 @@ I18n.translations.en = {
         searchServices: "Search, select and add services to the available services within collaboration {{name}}",
         deleteServiceTooltip: "Make this service unavailable in<br/> the collaboration {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for groups within<br/>  this collaboration",
         notAllowedOrganisation: "Service '{{service}}' can not be added to collaboration '{{collaboration}}'. The service configuration excludes it from organisation '{{organisation}}'",
+        automaticConnectionNotAllowed: "Service '{{service}}' can not be automatically added to collaboration '{{collaboration}}'. The service configuration dictates that a service connect request must be submitted. Please add your motivation and submit this form.",
+        motivation: "Motivation",
+        motivationPlaceholder: "Your motivation to request a service connection",
+        send: "Send",
         flash: {
-            "added": "Successfully added service {{service}} to collaboration {{name}}",
-            "deleted": "Successfully deleted service {{service}} from collaboration {{name}}"
+            added: "Successfully added service {{service}} to collaboration {{name}}",
+            deleted: "Successfully deleted service {{service}} from collaboration {{name}}",
+            send: "Successfully send service connection requets for {{service}}",
         },
         service: {
             open: "",
@@ -560,7 +573,21 @@ I18n.translations.en = {
             name: "Name",
             entity_id: "Entity ID",
             description: "Description"
-        }
+        },
+        serviceConnectionRequest: {
+            actions: "",
+            resend: "",
+            service: "Service",
+            requester: "Requester",
+            created_at: "Created",
+            message: "Message"
+        },
+        resendTooltip: "Resend the Service Connection request.<br/>The mail to approve or deny the request is send to the Service contact",
+        actionsTooltip: "Delete the Service Connection request.<br/>The request can not be approved or denied anymore.",
+        serviceConnectionRequests: "Service Connection Requests",
+        noServiceRequestConnections: "There are no outstanding Service Connection requests",
+        serviceConnectionRequestResend: "Successfully resend request to connect service {{service}} to collaboration {{collaboration}}",
+        serviceConnectionRequestDeleted: "Successfully deleted request to connect service {{service}} to collaboration {{collaboration}}",
     },
     groups: {
         title: "Groups within collaboration {{name}}",
@@ -672,6 +699,24 @@ I18n.translations.en = {
             denied: "Collaboration Request for {{name}} has been deleted",
         }
     },
+    serviceConnectionRequest: {
+        title: "Service Connection request",
+        subTitle: "Request from {{requester}} to allow access for collaboration {{collaboration}} to service {{service}}",
+        message: " Motivation",
+        messageTooltip: "The motivation from {{name}} for this request",
+        service: "Service",
+        collaboration: "Collaboration",
+        requester: "Requester",
+        decline: "Decline",
+        accept: "Accept",
+        declineConfirmation: "Are you sure you want to decline this request?",
+        flash: {
+            declined: "Service Connect request for service {{name}} was declined",
+            accepted: "Service Connect request for service {{name}} was accepted",
+            notFound: "This request has already been accepted / declined."
+        }
+    },
+
     autocomplete: {
         name: "Name",
         description: "Description",

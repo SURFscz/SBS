@@ -12,7 +12,7 @@ from server.auth.security import confirm_write_access, current_user_id, is_admin
     is_application_admin, confirm_authorized_api_call, confirm_organisation_admin, confirm_allow_impersonation
 from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User, \
     CollaborationRequest
-from server.db.defaults import default_expiry_date
+from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation
@@ -215,7 +215,9 @@ def organisation_invites():
 def save_organisation():
     confirm_write_access()
     data = current_request.get_json()
+
     _clear_api_keys(data)
+    cleanse_short_name(data)
 
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
@@ -258,7 +260,10 @@ def update_organisation():
     confirm_write_access(override_func=override_func)
 
     data = current_request.get_json()
+
     _clear_api_keys(data)
+    cleanse_short_name(data)
+
     return update(Organisation, custom_json=data, allow_child_cascades=False)
 
 

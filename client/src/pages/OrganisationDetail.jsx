@@ -21,6 +21,7 @@ import moment from "moment";
 import Select from 'react-select';
 import {setFlash} from "../utils/Flash";
 import {headerIcon} from "../forms/helpers";
+import {sanitizeShortName} from "../validations/regExps";
 
 class OrganisationDetail extends React.Component {
 
@@ -557,7 +558,7 @@ class OrganisationDetail extends React.Component {
 
             <InputField value={short_name}
                         onChange={e => this.setState({
-                            short_name: e.target.value,
+                            short_name: sanitizeShortName(e.target.value),
                             alreadyExists: {...this.state.alreadyExists, short_name: false}
                         })}
                         placeholder={I18n.t("organisation.shortNamePlaceHolder")}

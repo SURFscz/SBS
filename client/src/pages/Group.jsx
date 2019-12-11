@@ -27,6 +27,7 @@ import ReactTooltip from "react-tooltip";
 import Select from "react-select";
 import moment from "moment";
 import CheckBox from "../components/CheckBox";
+import {sanitizeShortName} from "../validations/regExps";
 
 class Group extends React.Component {
 
@@ -537,7 +538,7 @@ class Group extends React.Component {
                             placeholder={I18n.t("groups.shortNamePlaceHolder")}
                             onBlur={this.validateGroupShortName}
                             onChange={e => this.setState({
-                                short_name: e.target.value,
+                                short_name: sanitizeShortName(e.target.value),
                                 alreadyExists: {...this.state.alreadyExists, short_name: false}
                             })}
                             toolTip={I18n.t("groups.shortNameTooltip")}

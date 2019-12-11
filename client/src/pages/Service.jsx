@@ -1,7 +1,7 @@
 import React from "react";
 import {
     createService,
-    deleteService,
+    deleteService, searchOrganisations,
     serviceById,
     serviceEntityIdExists,
     serviceNameExists,
@@ -19,6 +19,7 @@ import {serviceStatuses} from "../forms/constants";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import {validEmailRegExp} from "../validations/regExps";
+import CheckBox from "../components/CheckBox";
 
 class Service extends React.Component {
 
@@ -37,6 +38,9 @@ class Service extends React.Component {
             identity_type: "",
             uri: "",
             accepted_user_policy: "",
+            automatic_connection_allowed: true,
+            allowed_organisations: [],
+            organisations: [],
             contact_email: "",
             status: this.statusOptions[0].value,
             required: ["name", "entity_id"],
@@ -55,22 +59,35 @@ class Service extends React.Component {
         const params = this.props.match.params;
         if (params.id) {
             if (params.id !== "new") {
-                serviceById(params.id)
-                    .then(json => this.setState({
-                        ...json,
-                        service: json,
-                        isNew: false
-                    }));
+                Promise.all([serviceById(params.id), searchOrganisations("*")])
+                    .then(res => {
+                        this.setState({
+                            ...res[0],
+                            service: res[0],
+                            isNew: false,
+                            allowed_organisations: this.mapOrganisationsToOptions(res[0].allowed_organisations),
+                            organisations: this.mapOrganisationsToOptions(res[1])
+                        })
+                    });
             } else {
                 const isAdmin = this.props.user.admin;
                 if (!isAdmin) {
                     this.props.history.push("/404");
+                } else {
+                    searchOrganisations("*")
+                        .then(r => this.setState({organisations: this.mapOrganisationsToOptions(r)}))
                 }
             }
         } else {
             this.props.history.push("/404");
         }
     };
+
+    mapOrganisationsToOptions = organisations => organisations.map(org => ({
+        label: org.name,
+        value: org.id,
+        organisation_id: org.id
+    }));
 
     validateServiceName = e =>
         serviceNameExists(e.target.value, this.state.isNew ? null : this.state.service.name).then(json => {
@@ -92,7 +109,7 @@ class Service extends React.Component {
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
     gotoServices = () => this.setState({confirmationDialogOpen: false},
-        () => this.props.history.goBack());
+        () => this.props.history.push("/services"));
 
     cancel = () => {
         this.setState({
@@ -117,11 +134,12 @@ class Service extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, invalidInputs} = this.state;
+        const {required, alreadyExists, invalidInputs, contact_email, automatic_connection_allowed} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) ||
             required.some(attr => isEmpty(this.state[attr])) ||
             Object.keys(invalidInputs).some(key => invalidInputs[key]);
-        return !inValid;
+        const contactEmailRequired = !automatic_connection_allowed && isEmpty(contact_email);
+        return !inValid && !contactEmailRequired;
     };
 
     submit = () => {
@@ -151,15 +169,18 @@ class Service extends React.Component {
     };
 
     render() {
+        //status,address, identity_type
         const {
             alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
-            entity_id, description, address, identity_type, uri, accepted_user_policy, contact_email, status,
-            confirmationDialogAction, leavePage, isNew, invalidInputs
+            entity_id, description, uri, accepted_user_policy, contact_email,
+            confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed, organisations,
+            allowed_organisations
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const isAdmin = this.props.user.admin;
         const title = isAdmin ? (isNew ? I18n.t("service.titleNew") : I18n.t("service.titleUpdate", {name: service.name}))
             : I18n.t("service.titleReadOnly", {name: service.name});
+        const contactEmailRequired = !automatic_connection_allowed && isEmpty(contact_email);
         return (
             <div className="mod-service">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -230,27 +251,34 @@ class Service extends React.Component {
                                 externalLink={true}
                                 disabled={!isAdmin}/>
 
-                    <InputField value={identity_type}
-                                name={I18n.t("service.identity_type")}
-                                placeholder={I18n.t("service.identity_typePlaceholder")}
-                                onChange={e => this.setState({identity_type: e.target.value})}
-                                toolTip={I18n.t("service.identity_typeTooltip")}
-                                disabled={!isAdmin}/>
+                    {/*<InputField value={identity_type}*/}
+                    {/*            name={I18n.t("service.identity_type")}*/}
+                    {/*            placeholder={I18n.t("service.identity_typePlaceholder")}*/}
+                    {/*            onChange={e => this.setState({identity_type: e.target.value})}*/}
+                    {/*            toolTip={I18n.t("service.identity_typeTooltip")}*/}
+                    {/*            disabled={!isAdmin}/>*/}
 
-                    <SelectField value={this.statusOptions.find(option => status === option.value)}
-                                 options={this.statusOptions}
-                                 name={I18n.t("service.status.name")}
-                                 clearable={false}
-                                 placeholder={I18n.t("service.statusPlaceholder")}
-                                 disabled={!isAdmin}
-                                 onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}
-                    />
+                    {/*<SelectField value={this.statusOptions.find(option => status === option.value)}*/}
+                    {/*             options={this.statusOptions}*/}
+                    {/*             name={I18n.t("service.status.name")}*/}
+                    {/*             clearable={false}*/}
+                    {/*             placeholder={I18n.t("service.statusPlaceholder")}*/}
+                    {/*             disabled={!isAdmin}*/}
+                    {/*             onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}*/}
+                    {/*/>*/}
 
-                    <InputField value={address}
-                                name={I18n.t("service.address")}
-                                placeholder={I18n.t("service.addressPlaceholder")}
-                                onChange={e => this.setState({address: e.target.value})}
-                                disabled={!isAdmin}/>
+                    {/*<InputField value={address}*/}
+                    {/*            name={I18n.t("service.address")}*/}
+                    {/*            placeholder={I18n.t("service.addressPlaceholder")}*/}
+                    {/*            onChange={e => this.setState({address: e.target.value})}*/}
+                    {/*            disabled={!isAdmin}/>*/}
+
+                    <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
+                              info={I18n.t("service.automaticConnectionAllowed")}
+                              tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
+                              onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}
+                              readOnly={!isAdmin}/>
+
 
                     <InputField value={contact_email}
                                 name={I18n.t("service.contact_email")}
@@ -269,6 +297,18 @@ class Service extends React.Component {
                     {invalidInputs["email"] && <span
                         className="error">{I18n.t("forms.invalidInput", {name: "email"})}</span>}
 
+                    {(!initial && contactEmailRequired) && <span
+                        className="error">{I18n.t("service.contactEmailRequired")}</span>}
+
+                    <SelectField value={allowed_organisations}
+                                 options={organisations}
+                                 name={I18n.t("service.allowedOrganisations")}
+                                 placeholder={I18n.t("service.allowedOrganisationsPlaceholder")}
+                                 toolTip={I18n.t("service.allowedOrganisationsTooltip")}
+                                 isMulti={true}
+                                 onChange={selectedOptions => this.setState({allowed_organisations: isEmpty(selectedOptions) ? [] : [...selectedOptions]})}
+                    />
+
                     <InputField value={accepted_user_policy}
                                 name={I18n.t("service.accepted_user_policy")}
                                 placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
@@ -282,17 +322,17 @@ class Service extends React.Component {
 
                     {(isNew && isAdmin) &&
                     <section className="actions">
+                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                         <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
                                 onClick={this.submit}/>
-                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>}
                     {(!isNew && isAdmin) &&
                     <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
-                                onClick={this.submit}/>
+                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                         <Button className="delete" txt={I18n.t("service.delete")}
                                 onClick={this.delete}/>
-                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                        <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
+                                onClick={this.submit}/>
                     </section>}
 
                 </div>

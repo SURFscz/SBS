@@ -176,6 +176,10 @@ class TestUser(AbstractTest):
         short_names = [generate_unique_username(munchify({"given_name": n[0], "family_name": n[1]})) for n in names]
         self.assertListEqual(["jdoe3", "cdoemanchi4", "u3", "paa"], short_names)
 
+    def test_generate_unique_username_random(self):
+        username = generate_unique_username(munchify({"given_name": "John", "family_name": "Doe"}), 1)
+        self.assertEqual(14, len(username))
+
     def test_attributes(self):
         res = self.get("/api/users/attributes",
                        query_data={"uid": "urn:john", "service_entity_id": "https://network"})

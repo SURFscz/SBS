@@ -14,7 +14,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {validEmailRegExp} from "../validations/regExps";
+import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
 import {collaborationAccessTypes} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
@@ -228,7 +228,7 @@ class NewCollaboration extends React.Component {
 
                         <InputField value={short_name} onChange={e => {
                             this.setState({
-                                short_name: e.target.value,
+                                short_name: sanitizeShortName(e.target.value),
                                 alreadyExists: {...this.state.alreadyExists, short_name: false}
                             })
                         }}

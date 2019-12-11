@@ -77,13 +77,13 @@ def _normalize(s):
     return re.sub("[^a-zA-Z]", "", normalized)
 
 
-def generate_unique_username(user: User):
+def generate_unique_username(user: User, max_count=10000):
     username = f"{_normalize(user.given_name)[0:1]}{_normalize(user.family_name)[0:11]}"[0:10].lower()
     if len(username) == 0:
         username = "u"
     counter = 2
     generated_user_name = username
-    while True and counter < 10000:
+    while True and counter < max_count:
         if User.query.filter(User.username == generated_user_name).count() == 0:
             return generated_user_name
         generated_user_name = f"{username}{counter}"

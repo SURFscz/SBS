@@ -493,6 +493,18 @@ export function denyRequestCollaboration(id) {
 }
 
 //ServiceConnectionRequest
+export function serviceConnectionRequests(collaborationId) {
+    return postPutJson(`/api/service_connection_requests/by_collaboration/${collaborationId}`);
+}
+
+export function resendServiceConnectionRequest(serviceConnectionRequestId) {
+    return postPutJson(`/api/service_connection_requests/resend/${serviceConnectionRequestId}`);
+}
+
+export function deleteServiceConnectionRequest(serviceConnectionRequestId) {
+    return fetchDelete(`/api/service_connection_requests/${serviceConnectionRequestId}`);
+}
+
 export function requestServiceConnection(body) {
     return postPutJson(`/api/service_connection_requests`, body, "post");
 }

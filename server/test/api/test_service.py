@@ -40,8 +40,9 @@ class TestService(AbstractTest):
     def test_service_new_with_allowed_organisations(self):
         uva_id = self.find_entity_by_name(Organisation, amsterdam_uva_name).id
         uuc_id = self.find_entity_by_name(Organisation, uuc_name).id
+        allowed_organisations = [{"organisation_id": uva_id}, {"organisation_id": uuc_id}]
         service = self.post("/api/services", body={"entity_id": "https://new_service", "name": "new_service",
-                                                   "allowed_organisations": [uva_id, uuc_id]})
+                                                   "allowed_organisations": allowed_organisations})
         self.assertIsNotNone(service["id"])
         self.assertEqual("new_service", service["name"])
 

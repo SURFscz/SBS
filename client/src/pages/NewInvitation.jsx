@@ -188,7 +188,13 @@ class NewInvitation extends React.Component {
         }
     };
 
-    preview = () => <div dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>;
+    preview = disabledSubmit => (
+        <div>
+            <div dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
+            {this.renderActions(disabledSubmit, false)}
+        </div>
+    );
+
 
     invitationForm = (email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
                       intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup) =>
@@ -257,15 +263,20 @@ class NewInvitation extends React.Component {
                        name={I18n.t("invitation.expiryDate")}
                        toolTip={I18n.t("invitation.expiryDateTooltip")}/>
 
-            <section className="actions">
-                <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
-                        onClick={this.submit}/>
-                <Button className="preview" txt={I18n.t("organisationDetail.preview")}
-                        onClick={() => this.setState({activeTab: "preview"}, this.tabChanged)}/>
-                <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-            </section>
+            {this.renderActions(disabledSubmit, true)}
         </>;
 
+    renderActions = (disabledSubmit, showPreview) => (
+        <section className="actions">
+            <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+            {showPreview && <Button cancelButton={true}  className="preview" txt={I18n.t("organisationDetail.preview")}
+                                    onClick={() => this.setState({activeTab: "preview"}, this.tabChanged)}/>}
+            {!showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.details")}
+                                     onClick={() => this.setState({activeTab: "form"}, this.tabChanged)}/>}
+            <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
+                    onClick={this.submit}/>
+        </section>
+    );
 
     render() {
         const {
@@ -311,7 +322,7 @@ class NewInvitation extends React.Component {
                         selectedGroup)}
                 </div>}
                 {activeTab === "preview" && <div className="new-collaboration-invitation">
-                    {this.preview()}
+                    {this.preview(disabledSubmit)}
                 </div>}
 
             </div>);

@@ -5,8 +5,7 @@ from secrets import token_urlsafe
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
-from sqlalchemy.orm import aliased, load_only, contains_eager
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import aliased, load_only, contains_eager, joinedload
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
@@ -15,7 +14,7 @@ from server.auth.security import confirm_collaboration_admin, confirm_organisati
     confirm_allow_impersonation
 from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, Group, User, Invitation, \
     Organisation
-from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit
+from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name
 from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
 
@@ -357,6 +356,8 @@ def save_collaboration():
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
     data["identifier"] = str(uuid.uuid4())
+    cleanse_short_name(data)
+
     res = save(Collaboration, custom_json=data)
 
     administrators = list(filter(lambda admin: admin != user.email, administrators))
@@ -395,6 +396,7 @@ def update_collaboration():
     data = current_request.get_json()
     confirm_collaboration_admin(data["id"])
 
+    cleanse_short_name(data)
     _assign_global_urn(data["organisation_id"], data)
     # For updating references like services, groups, memberships there are more fine-grained API methods
     return update(Collaboration, custom_json=data, allow_child_cascades=False)
