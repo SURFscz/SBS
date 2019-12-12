@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """user acceptance profile
 
 Revision ID: 8d3cad68dadd

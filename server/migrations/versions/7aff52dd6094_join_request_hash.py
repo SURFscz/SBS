@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """join_request hash
 
 Revision ID: 7aff52dd6094

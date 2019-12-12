@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """Sanitize short_name colums
 
 Revision ID: 19e47af16e81

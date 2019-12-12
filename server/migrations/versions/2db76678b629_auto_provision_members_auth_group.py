@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """auto_provision_members_auth_group
 
 Revision ID: 2db76678b629

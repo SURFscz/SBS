@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """collaboration_memberships allow null user
 
 Revision ID: 886b6e662a00
