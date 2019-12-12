@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """Service defaults
 
 Revision ID: 58862ee48741

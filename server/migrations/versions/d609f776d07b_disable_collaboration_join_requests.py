@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """disable collaboration join requests
 
 Revision ID: d609f776d07b

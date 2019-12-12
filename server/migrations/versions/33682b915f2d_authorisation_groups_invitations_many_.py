@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """authorisation_groups_invitations many-to-many
 
 Revision ID: 33682b915f2d

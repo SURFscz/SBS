@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """short unique username for users
 
 Revision ID: 7abfb528d0c1

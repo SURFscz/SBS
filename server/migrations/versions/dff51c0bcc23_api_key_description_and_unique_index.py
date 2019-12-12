@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """api_key description and unique index
 
 Revision ID: dff51c0bcc23

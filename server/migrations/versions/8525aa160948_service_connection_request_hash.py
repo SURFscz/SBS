@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """Service Connection Request hash
 
 Revision ID: 8525aa160948

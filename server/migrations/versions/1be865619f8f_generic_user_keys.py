@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """generic user keys
 
 Revision ID: 1be865619f8f

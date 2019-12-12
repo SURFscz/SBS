@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """defeault short name
 
 Revision ID: 1170eb905326

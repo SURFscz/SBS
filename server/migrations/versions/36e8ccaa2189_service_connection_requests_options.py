@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """Service Connection Requests Options
 
 Revision ID: 36e8ccaa2189

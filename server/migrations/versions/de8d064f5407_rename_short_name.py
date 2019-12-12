@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 """rename short_name
 
 Revision ID: de8d064f5407
