@@ -14,7 +14,9 @@ export default function ServicesExplanation() {
         <section key={3} className="details">
             If the <span className="strong">Service</span> is configured to have limited access to specific <span
             className="strong">Organisations </span>
-            you can not add the service to your <span className="strong">Collaboration</span>.
+            you can not add the service to your <span className="strong">Collaboration</span> unless the
+            <span className="strong"> Collaboration</span> belongs to the <span className="strong">Organisation </span>
+            that is granted access to the <span className="strong">Service</span>.
         </section>,
         <section key={4} className="details">
             Please contact

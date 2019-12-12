@@ -302,10 +302,10 @@ I18n.translations.en = {
         accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the service",
         accepted_user_policyTooltip: "An acceptable use policy (AUP)<br/>is a document stipulating constraints<br/>and practices that a user<br/>must agree to for access<br/>to a corporate network or<br/>the Internet.",
         automaticConnectionAllowed:"Automatic connection allowed?",
-        automaticConnectionAllowedTooltip: "Can collaborations use this service<br/>without explicit permission of the Service?",
+        automaticConnectionAllowedTooltip: "Can collaborations use this service<br/>without explicit permission of the Service contact person?",
         allowedOrganisations: "Allowed organisations",
         allowedOrganisationsPlaceholder: "Search and add organisations",
-        allowedOrganisationsTooltip: "If any organisation is added<br/>then automatically all other organisations<br/>are not allowed to use this service.<br/><br/>If this Service can be used><br/>by all collaborations then just don't><br/>add organisations.",
+        allowedOrganisationsTooltip: "If any organisation is added<br/>then automatically all other organisations<br/>are not allowed to use this service.<br/><br/>If this Service can be used><br/>by all collaborations then just don't<br/>add organisations.",
         contact_email: "E-mail contact",
         contact_emailPlaceholder: "The e-mail address of the contact person of this service",
         contact_emailTooltip: "This e-mail address will be<br/>used as primary contact.",
@@ -716,7 +716,6 @@ I18n.translations.en = {
             notFound: "This request has already been accepted / declined."
         }
     },
-
     autocomplete: {
         name: "Name",
         description: "Description",

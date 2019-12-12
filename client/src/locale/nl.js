@@ -27,7 +27,7 @@ I18n.translations.nl = {
         aup: "AUP"
     },
     login: {
-        title: "Welkom bij het Research Access Management",
+        title: "Research Access Management",
         subTitle: "Log a.u.b. in."
     },
     newDropDown: {
@@ -61,7 +61,8 @@ I18n.translations.nl = {
     },
     explain: {
         title: "Uitleg {{subject}}",
-        impersonate: "Impersonate"
+        impersonate: "Impersonate",
+        services: "Services"
     },
     user: {
         titleUpdate: "Werk je gebruikersprofiel bij",
@@ -300,9 +301,15 @@ I18n.translations.nl = {
         accepted_user_policy: "AUP",
         accepted_user_policyPlaceholder: "De Acceptable Use Policy (AUP) van de dienst",
         accepted_user_policyTooltip: "Een acceptable use policy (AUP)<br/>is een document waarin staat wat een gebruiker<br/>wel en niet mag/hoort te doen<br/>en waarmee hij akkoord moet gaan<br/>om toegang te krijgen tot een dienst<br/>of systeem.",
+        automaticConnectionAllowed:"Automatische connectie toegestaan?",
+        automaticConnectionAllowedTooltip: "Kunnen collaboraties deze service gebruiken<br/>zonder expliciete toestemming van de Service eigenaar?",
+        allowedOrganisations: "Organisaties",
+        allowedOrganisationsPlaceholder: "Zoek organisaties",
+        allowedOrganisationsTooltip: "Als een organisatie is toegevoegd<br/>dan zijn alle andere organisaties automatisch<br/>uitgesloten van het gebruik van deze service.<br/><br/>Als deze service door alle collaboraties kan worden gebruikt<br/>voeg dan geen organisaties toe.",
         contact_email: "E-mail contact",
         contact_emailPlaceholder: "Het e-mailadres van de contact persoon van deze dienst",
         contact_emailTooltip: "Dit e-mailadres wordt gebruikt<br/>om met de contactpersoon van de dienst te communiceren.",
+        contactEmailRequired: "Contact e-mail is verplicht als automatische connectie miet toegestaan is voor een service",
         status: {
             name: "Status",
             active: "Actief",
@@ -426,7 +433,8 @@ I18n.translations.nl = {
             form: "Uitnodiging details",
             preview: "Uitnodiging preview",
         },
-        preview: "Preview"
+        preview: "Preview",
+        details: "Details"
     },
     joinRequest: {
         title: "Verzoek van {{requester}} om lid te worden van {{collaboration}}",
@@ -540,7 +548,8 @@ I18n.translations.nl = {
             inviteAccepted: "Uitnodiging voor samenwerking {{name}} is geaccepteerd.",
             inviteDeleted: "Uitnodiging voor samenwerking {{name}} is verwijderd.",
             inviteResend: "Uitnodiging voor samenwerking {{name}} opnieuw verstuurd.",
-            created: "Uitnodigingen voor samenwerking {{name}} zijn aangemaakt."
+            created: "Uitnodigingen voor samenwerking {{name}} zijn aangemaakt.",
+            alreadyMember: "U bent al lid van de samenwerking {{name}} en daarom kan u deze uitnodiging niet accepteren.",
         },
     },
     collaborationServices: {
@@ -549,9 +558,14 @@ I18n.translations.nl = {
         searchServices: "Zoek, kies en voeg diensten toe aan samenwerking {{name}}",
         deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor<br/> samenwerking {{name}}.<br/><br/><strong>LET OP</strong>: de dienst zelf wordt niet verwijderd.<br/>  Hij is alleen niet beschikbaar<br/>voor groepen van<br/> deze samenwerking.",
         notAllowedOrganisation: "Service '{{service}}' kan niet toegoegd worden aan collaboratie '{{collaboration}}'. De configuratie van de service laat een koppeling met organisation '{{organisation}}' niet toe.",
+        automaticConnectionNotAllowed: "Service '{{service}}' kan niet automatisch worden toegevoegd aan de collaboratie '{{collaboration}}'. De service is zo geconfigureerd dat er eerst een  service connect verzoek moet worden gedaan. Voeg je motivatie voor de koppeling hieronder in en verstuur het formulier.",
+        motivation: "Motivatie",
+        motivationPlaceholder: "Je motivatie om deze service te gebruiken",
+        send: "Send",
         flash: {
-            "added": "{{service}} is toegevoegd aan samenwerking {{name}}.",
-            "deleted": "{{service}} is onbeschikbaar gemaakt voor samenwerking {{name}}.",
+            added: "{{service}} is toegevoegd aan samenwerking {{name}}.",
+            deleted: "{{service}} is onbeschikbaar gemaakt voor samenwerking {{name}}.",
+            send: "Service connect verzoek is voor {{service}} is verzonden",
         },
         service: {
             open: "",
@@ -559,7 +573,21 @@ I18n.translations.nl = {
             name: "Naam",
             entity_id: "Entity ID",
             description: "Beschrijving"
-        }
+        },
+        serviceConnectionRequest: {
+            actions: "",
+            resend: "",
+            service: "Service",
+            requester: "Aanvrager",
+            created_at: "Datum",
+            message: "Motivatie"
+        },
+        resendTooltip: "Resend the Service Connection request.<br/>The mail to approve or deny the request is send to the Service contact",
+        actionsTooltip: "Delete the Service Connection request.<br/>The request can not be approved or denied anymore.",
+        serviceConnectionRequests: "Service Connection Requests",
+        noServiceRequestConnections: "There are no outstanding Service Connection requests",
+        serviceConnectionRequestResend: "Successfully resend request to connect service {{service}} to collaboration {{collaboration}}",
+        serviceConnectionRequestDeleted: "Successfully deleted request to connect service {{service}} to collaboration {{collaboration}}",
     },
     groups: {
         title: "Groepen in samenwerking {{name}}",
@@ -669,6 +697,23 @@ I18n.translations.nl = {
         flash: {
             approved: "Samenwerking {{name}} is aangemaakt en het veeroek daartoe is verwijderd",
             denied: "Het verzoek om samenwerking {{name}} aan te maken is verwijderd",
+        }
+    },
+    serviceConnectionRequest: {
+        title: "Service Connection request",
+        subTitle: "Request from {{requester}} to allow access for collaboration {{collaboration}} to service {{service}}",
+        message: " Motivation",
+        messageTooltip: "The motivation from {{name}} for this request",
+        service: "Service",
+        collaboration: "Collaboration",
+        requester: "Requester",
+        decline: "Decline",
+        accept: "Accept",
+        declineConfirmation: "Are you sure you want to decline this request?",
+        flash: {
+            declined: "Service Connect request for service {{name}} was declined",
+            accepted: "Service Connect request for service {{name}} was accepted",
+            notFound: "This request has already been accepted / declined."
         }
     },
     autocomplete: {

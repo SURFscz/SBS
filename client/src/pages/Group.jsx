@@ -585,11 +585,11 @@ class Group extends React.Component {
                 </section>}
                 {(adminOfCollaboration && !isNew) &&
                 <section className="actions">
-                    <Button disabled={disabledSubmit} txt={I18n.t("groups.update")}
-                            onClick={this.submit}/>
+                    <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     <Button className="delete" txt={I18n.t("groups.delete")}
                             onClick={this.delete}/>
-                    <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                    <Button disabled={disabledSubmit} txt={I18n.t("groups.update")}
+                            onClick={this.submit}/>
                 </section>}
 
             </div>);

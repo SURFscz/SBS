@@ -187,7 +187,8 @@ class OrganisationDetail extends React.Component {
             updateOrganisation({id: originalOrganisation.id, name, description})
                 .then(() => {
                     this.props.history.push(`/organisations/${originalOrganisation.id}`);
-                    setFlash(I18n.t("organisationDetail.flash.updated", {name: name}))
+                    window.scrollTo(0, 0);
+                    setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
                 });
         }
     };
@@ -593,10 +594,10 @@ class OrganisationDetail extends React.Component {
                         name={I18n.t("organisation.created")}/>
             {user.admin &&
             <section className="actions">
-                <Button disabled={disabledSubmit} txt={I18n.t("organisationDetail.update")}
-                        onClick={this.update}/>
                 <Button className="delete" txt={I18n.t("organisationDetail.delete")}
                         onClick={this.delete}/>
+                <Button disabled={disabledSubmit} txt={I18n.t("organisationDetail.update")}
+                        onClick={this.update}/>
             </section>}
 
         </div>;
