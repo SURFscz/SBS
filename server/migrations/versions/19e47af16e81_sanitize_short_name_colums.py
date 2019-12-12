@@ -17,9 +17,16 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    tables = ["collaborations", "groups", "organisations", "collaboration_requests"]
-    for table in tables:
-        conn.execute(text(f"UPDATE `{table}` SET short_name = REGEXP_REPLACE(short_name, '[^a-zA-Z_0-9]+', '')"))
+    result = conn.execute("SELECT VERSION() AS version")
+    supports_regexp_replace = False
+    for row in result:
+        version = row["version"]
+        if version.startswith("8"):
+            supports_regexp_replace = True
+    if supports_regexp_replace:
+        tables = ["collaborations", "groups", "organisations", "collaboration_requests"]
+        for table in tables:
+            conn.execute(text(f"UPDATE `{table}` SET short_name = REGEXP_REPLACE(short_name, '[^a-zA-Z_0-9]+', '')"))
 
 
 def downgrade():
