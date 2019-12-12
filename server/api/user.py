@@ -2,12 +2,12 @@
 import itertools
 import json
 import os
+import random
 import re
 import string
 import subprocess
 import tempfile
 import unicodedata
-import random
 
 from flask import Blueprint, request as current_request, session, jsonify, current_app
 from sqlalchemy import text, or_, bindparam, String
@@ -89,7 +89,7 @@ def generate_unique_username(user: User, max_count=10000):
         generated_user_name = f"{username}{counter}"
         counter = counter + 1
     # Try remembering that...
-    return "".join(random.choices(string.ascii_lowercase, k=14))
+    return "".join(random.sample(string.ascii_lowercase, k=14))
 
 
 # Endpoint for SATOSA
