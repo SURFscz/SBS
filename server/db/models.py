@@ -5,7 +5,8 @@ from flask import request, session, g as request_context
 from werkzeug.exceptions import BadRequest
 
 from server.auth.security import current_user_uid
-from server.db.db import db, User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
+from server.db.db import db
+from server.db.domain import User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
     Invitation, Service, Aup
 
 deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
@@ -79,10 +80,10 @@ def update(cls, custom_json=None, allow_child_cascades=True):
 
 
 def delete(cls, primary_key):
-    pk = list({k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys())[0]
-    row_count = cls.query.filter(cls.__dict__[pk] == primary_key).delete()
+    instance = cls.query.get(primary_key)
+    db.session.delete(instance)
     db.session.commit()
-    return (None, 204) if row_count > 0 else (None, 404)
+    return None, 204
 
 
 def cleanse_json(json_dict, cls=None, allow_child_cascades=True):

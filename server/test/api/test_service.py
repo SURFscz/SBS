@@ -1,5 +1,5 @@
 # -*- coding: future_fstrings -*-
-from server.db.db import Service, Organisation
+from server.db.domain import Service, Organisation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name
 

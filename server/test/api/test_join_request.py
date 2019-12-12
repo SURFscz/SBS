@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 from sqlalchemy.orm import joinedload
 
-from server.db.db import JoinRequest, User, Collaboration
+from server.db.domain import JoinRequest, User, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import collaboration_ai_computing_uuid, uu_disabled_join_request_name
 

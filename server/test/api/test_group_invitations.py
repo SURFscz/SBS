@@ -1,5 +1,5 @@
 # -*- coding: future_fstrings -*-
-from server.db.db import Group, Collaboration, Invitation
+from server.db.domain import Group, Collaboration, Invitation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_researchers_group, ai_computing_name, invitation_hash_curious
 

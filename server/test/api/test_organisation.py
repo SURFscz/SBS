@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
 
-from server.db.db import Organisation, OrganisationInvitation
+from server.db.domain import Organisation, OrganisationInvitation
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import uuc_name, schac_home_organisation
 

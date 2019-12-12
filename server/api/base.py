@@ -13,7 +13,8 @@ from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
 from server.api.context_logger import CustomAdapter
 from server.auth.security import secure_hash
-from server.db.db import db, ApiKey
+from server.db.domain import ApiKey
+from server.db.db import db
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 

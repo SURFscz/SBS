@@ -7,7 +7,7 @@ from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_collaboration_admin, confirm_write_access, current_user_id
-from server.db.db import Invitation, CollaborationMembership, Collaboration, db
+from server.db.domain import Invitation, CollaborationMembership, Collaboration, db
 from server.db.defaults import default_expiry_date
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation

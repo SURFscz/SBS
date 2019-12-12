@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 import json
 
-from server.db.db import Collaboration, Organisation, Invitation
+from server.db.domain import Collaboration, Organisation, Invitation
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
     ai_computing_short_name

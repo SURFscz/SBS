@@ -18,7 +18,8 @@ from server.api.base import json_endpoint, query_param, replace_full_text_search
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
 from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_hash_user, add_user_claims, \
     get_user_uid, attribute_saml_mapping, is_member_of_saml
-from server.db.db import User, OrganisationMembership, CollaborationMembership, db, Service, Collaboration
+from server.db.domain import User, OrganisationMembership, CollaborationMembership, Service, Collaboration
+from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, flatten
 

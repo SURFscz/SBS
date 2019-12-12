@@ -5,7 +5,7 @@ from werkzeug.exceptions import Forbidden
 from server.auth.security import is_admin_user, is_application_admin, confirm_allow_impersonation, \
     confirm_write_access, \
     confirm_collaboration_admin, confirm_collaboration_member, confirm_organisation_admin, current_user_name
-from server.db.db import CollaborationMembership, Collaboration, User, OrganisationMembership, Organisation
+from server.db.domain import CollaborationMembership, Collaboration, User, OrganisationMembership, Organisation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_computing_name, the_boss_name, uuc_name
 
