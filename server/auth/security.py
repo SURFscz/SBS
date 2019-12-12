@@ -5,7 +5,7 @@ from flask import session, g as request_context, request as current_request, cur
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
 
-from server.db.db import CollaborationMembership, OrganisationMembership, Group
+from server.db.domain import CollaborationMembership, OrganisationMembership, Group
 
 
 def is_admin_user(uid):

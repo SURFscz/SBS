@@ -12,8 +12,9 @@ from server.api.base import json_endpoint, query_param, replace_full_text_search
 from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member, confirm_authorized_api_call, \
     confirm_allow_impersonation
-from server.db.db import Collaboration, CollaborationMembership, JoinRequest, db, Group, User, Invitation, \
+from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation
+from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name
 from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation

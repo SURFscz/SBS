@@ -10,8 +10,9 @@ from sqlalchemy.orm import load_only
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid, \
     is_application_admin, confirm_authorized_api_call, confirm_organisation_admin, confirm_allow_impersonation
-from server.db.db import Organisation, db, OrganisationMembership, Collaboration, OrganisationInvitation, User, \
+from server.db.domain import Organisation, OrganisationMembership, Collaboration, OrganisationInvitation, User, \
     CollaborationRequest
+from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.models import update, save, delete

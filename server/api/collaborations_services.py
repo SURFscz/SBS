@@ -4,7 +4,8 @@ from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_collaboration_admin
-from server.db.db import db, Service, Collaboration
+from server.db.domain import Service, Collaboration
+from server.db.db import db
 from server.schemas import json_schema_validator
 
 collaborations_services_api = Blueprint("collaborations_services_api", __name__,

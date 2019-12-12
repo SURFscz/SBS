@@ -5,7 +5,7 @@ from unittest import TestCase
 
 from munch import munchify
 
-from server.db.db import Invitation
+from server.db.domain import Invitation
 from server.db.defaults import default_expiry_date, calculate_expiry_period
 
 

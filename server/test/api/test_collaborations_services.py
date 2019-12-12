@@ -1,5 +1,5 @@
 # -*- coding: future_fstrings -*-
-from server.db.db import Service, Collaboration
+from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, ai_computing_name, service_cloud_name, uva_research_name, \
     service_network_name, service_wiki_name

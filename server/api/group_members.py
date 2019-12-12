@@ -4,7 +4,8 @@ from flask import Blueprint, request as current_request
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_collaboration_admin
-from server.db.db import db, Group, CollaborationMembership
+from server.db.domain import Group, CollaborationMembership
+from server.db.db import db
 from server.schemas import json_schema_validator
 
 group_members_api = Blueprint("group_members_api", __name__,

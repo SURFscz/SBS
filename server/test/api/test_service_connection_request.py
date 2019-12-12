@@ -1,5 +1,5 @@
 # -*- coding: future_fstrings -*-
-from server.db.db import Collaboration, Service, ServiceConnectionRequest
+from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ssh_service_connection_request_hash, sarah_name, uva_research_name, service_wiki_name, \
     ai_computing_name, service_ssh_uva_name, network_service_connection_request_hash

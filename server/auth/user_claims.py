@@ -2,7 +2,7 @@
 from flask import current_app
 
 from server.api.base import ctx_logger
-from server.db.db import User
+from server.db.domain import User
 
 oidc_claim_name = "name"
 

@@ -5,7 +5,8 @@ from munch import munchify
 
 from server.api.user import generate_unique_username
 from server.auth.user_claims import claim_attribute_mapping
-from server.db.db import Organisation, Collaboration, User, db
+from server.db.domain import Organisation, Collaboration, User
+from server.db.db import db
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name
 from flask import current_app

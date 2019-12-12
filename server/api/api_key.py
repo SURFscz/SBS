@@ -6,7 +6,7 @@ from werkzeug.exceptions import SecurityError
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_organisation_admin, secure_hash
-from server.db.db import ApiKey
+from server.db.domain import ApiKey
 from server.db.models import update, save, delete
 
 MIN_SECRET_LENGT = 43

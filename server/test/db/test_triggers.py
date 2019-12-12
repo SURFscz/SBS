@@ -2,7 +2,8 @@
 from sqlalchemy import text
 from sqlalchemy.exc import DatabaseError
 
-from server.db.db import Group, db, User
+from server.db.db import db
+from server.db.domain import Group, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_researchers_group, roger_name
 

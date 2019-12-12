@@ -144,7 +144,7 @@ with app.app_context():
 db_migrations(config.database.uri)
 
 from server.api.user import generate_unique_username  # noqa: E402
-from server.db.db import User  # noqa: E711
+from server.db.domain import User  # noqa: E711
 
 if not test:
     with app.app_context():

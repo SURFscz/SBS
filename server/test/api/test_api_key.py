@@ -1,5 +1,5 @@
 # -*- coding: future_fstrings -*-
-from server.db.db import Organisation, ApiKey
+from server.db.domain import Organisation, ApiKey
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name
 

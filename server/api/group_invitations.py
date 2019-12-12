@@ -4,7 +4,8 @@ from flask import Blueprint, request as current_request
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_collaboration_admin
-from server.db.db import db, Group, Invitation
+from server.db.domain import Group, Invitation
+from server.db.db import db
 
 group_invitations_api = Blueprint("group_invitations_api", __name__,
                                   url_prefix="/api/group_invitations")

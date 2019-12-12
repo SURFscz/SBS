@@ -7,7 +7,7 @@ from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_organisation_admin, current_user_id
-from server.db.db import OrganisationInvitation, Organisation, OrganisationMembership, db
+from server.db.domain import OrganisationInvitation, Organisation, OrganisationMembership, db
 from server.db.models import delete
 from server.mail import mail_organisation_invitation
 

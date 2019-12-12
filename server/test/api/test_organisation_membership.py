@@ -1,5 +1,5 @@
 # -*- coding: future_fstrings -*-
-from server.db.db import Organisation, User
+from server.db.domain import Organisation, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name
 
@@ -7,6 +7,7 @@ from server.test.seed import uuc_name
 class TestOrganisationMembership(AbstractTest):
 
     def test_delete_organisation_membership(self):
+        self.login("urn:john")
         organisation = self.find_entity_by_name(Organisation, uuc_name)
         user = self.find_entity_by_name(User, "Harry Doe")
 

@@ -4,10 +4,13 @@ import hashlib
 import uuid
 from secrets import token_urlsafe
 
-from server.db.db import User, Organisation, OrganisationMembership, Service, Collaboration, CollaborationMembership, \
-    JoinRequest, Invitation, metadata, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
-    ServiceConnectionRequest
+from sqlalchemy import text
+
+from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date
+from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
+    CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
+    ServiceConnectionRequest
 
 collaboration_request_name = "New Collaboration"
 
@@ -76,6 +79,9 @@ def seed(db):
     tables = reversed(metadata.sorted_tables)
     for table in tables:
         db.session.execute(table.delete())
+
+    db.session.execute(text("DELETE FROM audit_logs"))
+
     db.session.commit()
 
     john = User(uid="urn:john", name=john_name, email="john@example.org", username="john",
@@ -141,11 +147,11 @@ def seed(db):
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
                    public_visible=True, automatic_connection_allowed=True)
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
-                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email,)
+                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email, )
     cloud = Service(entity_id="https://cloud", name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True)
     storage = Service(entity_id="https://storage", name=service_storage_name, description="SURF Storage Service",
-                      public_visible=True, automatic_connection_allowed=True, contact_email=john.email,)
+                      public_visible=True, automatic_connection_allowed=True, contact_email=john.email, )
     wiki = Service(entity_id="https://wiki", name=service_wiki_name, description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
