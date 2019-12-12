@@ -1,6 +1,5 @@
 # -*- coding: future_fstrings -*-
 from flask import Blueprint, request as current_request
-from sqlalchemy import text
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
@@ -23,11 +22,10 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
     if not force and not service.automatic_connection_allowed:
         raise BadRequest("automatic_connection_not_allowed")
 
-    statement = f"REPLACE into services_collaborations (service_id, collaboration_id) " \
-                f"VALUES ({int(service_id)},{int(collaboration_id)})"
-    sql = text(statement)
-    result_set = db.engine.execute(sql)
-    return result_set
+    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration.services.append(service)
+    db.session.merge(collaboration)
+    return 1
 
 
 @collaborations_services_api.route("/", methods=["PUT"], strict_slashes=False)
@@ -41,8 +39,8 @@ def add_collaborations_services():
 
     service_id = int(data["service_id"])
 
-    result_set = connect_service_collaboration(service_id, collaboration_id)
-    return (None, 201) if result_set.rowcount > 0 else (None, 404)
+    count = connect_service_collaboration(service_id, collaboration_id)
+    return (None, 201) if count > 0 else (None, 404)
 
 
 @collaborations_services_api.route("/delete_all_services/<collaboration_id>", methods=["DELETE"], strict_slashes=False)
@@ -50,10 +48,10 @@ def add_collaborations_services():
 def delete_all_services(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
 
-    statement = f"DELETE from services_collaborations WHERE collaboration_id = {int(collaboration_id)}"
-    sql = text(statement)
-    result_set = db.engine.execute(sql)
-    return (None, 204) if result_set.rowcount > 0 else (None, 404)
+    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration.services = []
+    db.session.merge(collaboration)
+    return None, 204
 
 
 @collaborations_services_api.route("/<collaboration_id>/<service_id>", methods=["DELETE"], strict_slashes=False)
@@ -61,8 +59,7 @@ def delete_all_services(collaboration_id):
 def delete_collaborations_services(collaboration_id, service_id):
     confirm_collaboration_admin(collaboration_id)
 
-    statement = f"DELETE from services_collaborations WHERE service_id = {int(service_id)}" \
-                f" AND collaboration_id = {int(collaboration_id)}"
-    sql = text(statement)
-    result_set = db.engine.execute(sql)
-    return (None, 204) if result_set.rowcount > 0 else (None, 404)
+    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration.services.remove(Service.query.get(service_id))
+    db.session.merge(collaboration)
+    return None, 204
