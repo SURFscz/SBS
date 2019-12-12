@@ -2,7 +2,6 @@
 import datetime
 
 from flask import Blueprint, request as current_request, current_app
-from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
@@ -47,16 +46,6 @@ def invitations_by_id(id):
     return invitation, 200
 
 
-def add_group_membership(groups, collaboration_membership):
-    if len(groups) > 0:
-        values = ",".join(list(map(lambda ag: f"({collaboration_membership.id},{ag.id})", groups)))
-        statement = f"INSERT INTO collaboration_memberships_groups " \
-                    f"(collaboration_membership_id, group_id) VALUES {values}"
-
-        db.engine.execute(text(statement))
-        db.session.commit()
-
-
 @invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def invitations_accept():
@@ -92,8 +81,10 @@ def invitations_accept():
         filter(lambda ag: ag.auto_provision_members, collaboration.groups))
     unique_groups = list({ag.id: ag for ag in groups}.values())
 
-    add_group_membership(unique_groups, collaboration_membership)
+    for group in unique_groups:
+        collaboration_membership.groups.append(group)
 
+    db.session.merge(collaboration_membership)
     return None, 201
 
 
