@@ -62,12 +62,8 @@
         section.actions {
             margin: $medium-margin 0;
 
-            a.cancel, a.delete {
-                margin-left: 25px;
-            }
-
-            a.white {
-                margin-left: 25px;
+           a:not(:first-child) {
+                margin-left: 15px;
             }
         }
 
@@ -190,19 +186,3 @@
     }
 
 }
-
-.ReactModalPortal .ReactModal__Overlay {
-    section.user-service-profiles-pre-flight {
-        text-align: left;
-        margin: 10px 10px 15px 25px;
-        font-size: 14px;
-
-        ul.user-service-profile {
-            li:first-child {
-                font-weight: bold;
-                margin-top: 10px;
-            }
-        }
-    }
-}
-
