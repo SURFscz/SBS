@@ -14,6 +14,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
 from server.api.api_key import api_key_api
+from server.api.audit_log import audit_log_api
 from server.api.aup import aup_api
 from server.api.base import base_api
 from server.api.collaboration import collaboration_api
@@ -103,12 +104,13 @@ app.register_blueprint(group_invitations_api)
 app.register_blueprint(aup_api)
 app.register_blueprint(collaboration_request_api)
 app.register_blueprint(service_connection_request_api)
+app.register_blueprint(audit_log_api)
 
 app.register_error_handler(404, page_not_found)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = False
+app.config["SQLALCHEMY_ECHO"] = True
 
 app.config["TESTING"] = test
 app.config["MAIL_SERVER"] = config.mail.host
