@@ -115,21 +115,26 @@
                     }
                 }
 
-                &.name{
+                &.name {
                     width: 25%;
                 }
+
                 &.service {
                     width: 15%;
                 }
+
                 &.requester {
                     width: 15%;
                 }
+
                 &.entity_id {
                     width: 25%;
                 }
+
                 &.created_at {
-                  width: 15%;
+                    width: 15%;
                 }
+
                 &.description, &.message {
                     width: 40%;
                 }
@@ -146,7 +151,6 @@
 
             tbody {
                 tr {
-                    cursor: pointer;
 
                     &:nth-child(odd) {
                         background-color: $lightest-grey;
@@ -161,6 +165,7 @@
                 &.open {
                     svg {
                         color: $blue;
+                        cursor: pointer;
 
                         &:hover {
                             color: darken($blue, 15%);
@@ -172,6 +177,7 @@
 
                 &.actions {
                     text-align: left;
+                    cursor: pointer;
 
                     svg {
                         color: $red;
@@ -181,12 +187,14 @@
 
                 &.resend {
                     text-align: left;
+                    cursor: pointer;
 
                     svg {
                         color: $blue;
                         margin-left: 20px;
                     }
                 }
+
                 &.role {
                     padding-left: 25px;
                 }

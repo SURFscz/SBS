@@ -55,7 +55,7 @@
         section.actions {
             margin: $medium-margin 0 0 0;
 
-            a.delete {
+            a:not(:first-child) {
                 margin-left: 25px;
             }
         }
@@ -121,6 +121,7 @@
         p.usage {
             margin: 0 0 18px 5px;
         }
+
         a.button {
             margin-top: 25px;
         }
@@ -335,24 +336,31 @@
             }
 
         }
+
         th.name {
             width: 10%;
         }
+
         th.description {
             width: 25%;
         }
+
         th.short_name {
             width: 10%;
         }
+
         th.global_urn {
             width: 15%;
         }
+
         th.accepted_user_policy {
             width: 15%;
         }
+
         th.created_at {
             width: 15%;
         }
+
         th.actions {
             width: 10%;
             cursor: default;

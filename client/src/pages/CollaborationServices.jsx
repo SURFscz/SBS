@@ -181,9 +181,9 @@ class CollaborationServices extends React.Component {
                         <td className="actions">
                             <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>
                         </td>
-                        <td onClick={this.openService(service)} className="name">{service.name}</td>
-                        <td onClick={this.openService(service)} className="entity_id">{service.entity_id}</td>
-                        <td onClick={this.openService(service)} className="description">{service.description}</td>
+                        <td className="name">{service.name}</td>
+                        <td className="entity_id">{service.entity_id}</td>
+                        <td className="description">{service.description}</td>
                     </tr>)}
                     </tbody>
                 </table>

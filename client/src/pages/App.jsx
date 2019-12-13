@@ -190,6 +190,7 @@ class App extends React.Component {
                         <Route exact path="/collaborations/:id"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}
+                                                                refreshUser={this.refreshUserMemberships}
                                                                 Component={CollaborationDetail} {...props}/>}/>
 
                         <Route exact path="/organisations"
@@ -198,7 +199,9 @@ class App extends React.Component {
 
                         <Route exact path="/organisations/:id"
                                render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={OrganisationDetail} {...props}/>}/>
+                                   currentUser={currentUser}
+                                   refreshUser={this.refreshUserMemberships}
+                                   Component={OrganisationDetail} {...props}/>}/>
 
                         <Route exact path="/services"
                                render={props => <ProtectedRoute
