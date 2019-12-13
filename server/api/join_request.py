@@ -132,7 +132,8 @@ def approve_join_request():
                                                        updated_by=current_user_uid())
 
     collaboration.collaboration_memberships.append(collaboration_membership)
-    collaboration.join_requests.remove(join_request)
+    db.session.delete(join_request)
+    # collaboration.join_requests.remove(join_request)
 
     # We need the persistent identifier of the collaboration_membership
     db.session.commit()

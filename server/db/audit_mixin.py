@@ -61,7 +61,7 @@ def find_subject(mapper, target):
 
 
 def target_state(mapper, target):
-    return {attr.key: getattr(target, attr.key) for attr in mapper.column_attrs}
+    return dynamicExtendedJSONEncoder.encode({attr.key: getattr(target, attr.key) for attr in mapper.column_attrs})
 
 
 class AuditMixin(JsonSerializableBase):
@@ -93,14 +93,14 @@ class AuditMixin(JsonSerializableBase):
         state_after = target_state(mapper, target)
         subject_id = find_subject(mapper, target)
         target.create_audit(connection, subject_id, target.__tablename__, target.id, ACTION_CREATE,
-                            state_after=dynamicExtendedJSONEncoder.encode(state_after))
+                            state_after=state_after)
 
     @staticmethod
     def audit_delete(mapper, connection, target):
         state_before = target_state(mapper, target)
         subject_id = find_subject(mapper, target)
         target.create_audit(connection, subject_id, target.__tablename__, target.id, ACTION_DELETE,
-                            state_before=dynamicExtendedJSONEncoder.encode(state_before))
+                            state_before=state_before)
 
     @staticmethod
     def audit_update(mapper, connection, target):

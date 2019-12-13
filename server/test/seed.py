@@ -46,6 +46,7 @@ collaboration_uva_researcher_uuid = str(uuid.uuid4())
 uva_research_name = "UVA UCC research"
 
 uu_disabled_join_request_name = "UU"
+join_request_peter_hash = token_urlsafe()
 
 service_mail_name = "Mail Services"
 service_mail_entity_id = "https://mail"
@@ -228,7 +229,8 @@ def seed(db):
 
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
                                     collaboration=ai_computing, hash=token_urlsafe())
-    join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing, hash=token_urlsafe())
+    join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing,
+                                     hash=join_request_peter_hash)
     join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=token_urlsafe())
     join_request_uva_research = JoinRequest(message="Please...", user=james, collaboration=uva_research,
                                             hash=token_urlsafe())
