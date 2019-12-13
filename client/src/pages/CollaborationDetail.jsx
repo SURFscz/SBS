@@ -142,6 +142,7 @@ class CollaborationDetail extends React.Component {
             .then(() => {
                 this.props.history.push("/collaborations");
                 setFlash(I18n.t("collaborationDetail.flash.deleted", {name: originalCollaboration.name}));
+                this.props.refreshUser();
             });
     };
 

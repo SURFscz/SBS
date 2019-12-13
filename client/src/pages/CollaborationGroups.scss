@@ -134,15 +134,8 @@
 
             tbody {
                 tr {
-                    cursor: pointer;
-
-                    &:hover {
-                        color: $blue;
-
-                        td.open {
-                            color: darken($blue, 15%);
-                        }
-
+                    td.open {
+                        color: darken($blue, 15%);
                     }
 
                     &:nth-child(odd) {
@@ -159,10 +152,14 @@
                     width: 35px;
                     text-align: left;
                     color: $blue;
+                    cursor: pointer;
+
                 }
 
                 &.actions {
                     text-align: right;
+                    z-index: 3;
+                    cursor: pointer;
 
                     svg {
                         color: $red;
