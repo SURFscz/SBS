@@ -71,4 +71,44 @@
 
     }
 
+    .tabs {
+        max-width: $medium;
+        margin: 0 auto;
+
+        display: flex;
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            border-top-width: 2px;
+            border-top-style: solid;
+            cursor: pointer;
+
+            &:not(.active) {
+                background: $light-grey;
+                border-color: $light-grey;
+
+                h2 {
+                    color: $dark-grey;
+                }
+            }
+
+            &.single-tab {
+                padding-bottom: 10px;
+            }
+
+            &.active {
+                background: white;
+                border-color: $blue;
+
+                h2 {
+                    color: $blue;
+                    font-weight: bold;
+                }
+            }
+        }
+
+    }
+
+
 }

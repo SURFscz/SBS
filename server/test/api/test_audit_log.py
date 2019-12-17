@@ -10,7 +10,7 @@ class TestAuditLog(AbstractTest):
         self.put("/api/join_requests/accept", body={"hash": join_request_peter_hash})
 
         self.login("urn:peter")
-        res = self.get("/api/audit_log/me")
+        res = self.get("/api/audit_logs/me")
         audit_log_join_request = list(filter(lambda audit_log: audit_log["target_type"] == "join_requests", res))[0]
         collaboration_membership_audit_log = \
             list(filter(lambda audit_log: audit_log["target_type"] == "collaboration_memberships", res))[0]

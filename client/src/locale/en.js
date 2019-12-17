@@ -163,6 +163,10 @@ I18n.translations.en = {
         organisations: "Organisations",
         sbs: "Application",
         collaborations: "Collaborations",
+        tabs: {
+            form: "Keys",
+            history: "History"
+        },
     },
     collaborations: {
         dashboard: "Dashboard",
@@ -301,7 +305,7 @@ I18n.translations.en = {
         accepted_user_policy: "AUP",
         accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the service",
         accepted_user_policyTooltip: "An acceptable use policy (AUP)<br/>is a document stipulating constraints<br/>and practices that a user<br/>must agree to for access<br/>to a corporate network or<br/>the Internet.",
-        automaticConnectionAllowed:"Automatic connection allowed?",
+        automaticConnectionAllowed: "Automatic connection allowed?",
         automaticConnectionAllowedTooltip: "Can collaborations use this service<br/>without explicit permission of the Service contact person?",
         allowedOrganisations: "Allowed organisations",
         allowedOrganisationsPlaceholder: "Search and add organisations",
@@ -606,6 +610,7 @@ I18n.translations.en = {
         short_name: "Short name",
         shortNamePlaceHolder: "Short name of the group",
         shortNameTooltip: "Assign short names to groups<br/>so that these short names can be used<br/>in the ldap services (like Linux group names)",
+        collaboration: "Collaboration",
         autoProvisionMembers: "Auto-provision new collaboration members?",
         autoProvisionMembersTooltip: "Check to automatically add all existing and<br/>future new collaboration members to this group",
         global_urn: "Global urn",
@@ -726,7 +731,16 @@ I18n.translations.en = {
         link: "Link",
         noResults: "No results",
         resultsLimited: "More entries matched than can be shown, please narrow your search ..."
-
+    },
+    history: {
+        changes: "Changes",
+        detail: "Detail",
+        actions: {
+            "1": "create",
+            "2": "update",
+            "3": "delete"
+        },
+        overview: "Change - {{action}} - at {{date}} in {{collection}}."
     },
     inputField: {
         fileImport: "File import",

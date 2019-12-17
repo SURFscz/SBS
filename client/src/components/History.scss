@@ -1,0 +1,46 @@
+@import "../stylesheets/vars.scss";
+
+.history-container {
+
+    background-color: $background;
+
+    .history {
+        max-width: $medium;
+        margin: 0 auto;
+        background-color: white;
+        padding: 6px 20px 0 20px;
+        display: flex;
+        width: 100%;
+
+        ul.logs {
+            width: 50%;
+            list-style: none;
+            padding: 15px;
+            li {
+                display: block;
+                padding: 15px 5px;
+                border-bottom: 1px solid $light-grey;
+
+                &.selected {
+                    background-color: $light-blue;
+                }
+
+                &:not(.selected):hover {
+                    color: $blue;
+                    cursor: pointer;
+                }
+
+            }
+
+        }
+
+        .details {
+            width: 50%;
+        }
+
+    }
+}
+
+
+
+

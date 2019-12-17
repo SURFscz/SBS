@@ -1,5 +1,5 @@
 import React from "react";
-import {health, updateUser} from "../api";
+import {auditLogsProfile, updateUser} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./Profile.scss";
@@ -9,6 +9,7 @@ import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {validPublicSSH2KeyRegExp, validPublicSSHKeyRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
+import History from "../components/History";
 
 class Profile extends React.Component {
 
@@ -29,13 +30,15 @@ class Profile extends React.Component {
             totp_key: user.totp_key || "",
             tiqr_key: user.tiqr_key || "",
             ubi_key: user.ubi_key || "",
-            id: user.id
+            id: user.id,
+            tabs: ["form", "history"],
+            activeTab: "form",
+            auditLogs: []
         };
     }
 
     componentDidMount = () => {
-        // needed for router to recognize the navigation
-        health();
+        auditLogsProfile().then(json => this.setState({auditLogs: json}));
     };
 
 
@@ -109,11 +112,57 @@ class Profile extends React.Component {
             reader.readAsText(file);
         }
     };
+    renderForm = (ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, totp_key, tiqr_key, ubi_key, disabledSubmit) =>
+        (<div className="user-profile">
+            <InputField value={ssh_key}
+                        name={I18n.t("user.ssh_key")}
+                        placeholder={I18n.t("user.ssh_keyPlaceholder")}
+                        onChange={e => this.setState({ssh_key: e.target.value})}
+                        toolTip={I18n.t("user.ssh_keyTooltip")}
+                        onBlur={this.validateSSHKey}
+                        fileUpload={true}
+                        fileName={fileName}
+                        fileInputKey={fileInputKey}
+                        onFileRemoval={this.onFileRemoval}
+                        onFileUpload={this.onFileUpload}
+                        acceptFileFormat=".pub"/>
+            {fileTypeError &&
+            <span
+                className="error">{I18n.t("user.sshKeyError")}</span>}
+            {showConvertSSHKey &&
+            <CheckBox name="convertSSHKey" value={convertSSHKey}
+                      info={I18n.t("user.sshConvertInfo")}
+                      onChange={e => this.setState({convertSSHKey: e.target.checked})}/>}
+
+
+            <InputField value={totp_key}
+                        name={I18n.t("user.totp_key")}
+                        placeholder={I18n.t("user.totp_key")}
+                        toolTip={I18n.t("user.totp_keyTooltip")}
+                        onChange={e => this.setState({totp_key: e.target.value})}/>
+            <InputField value={tiqr_key}
+                        name={I18n.t("user.tiqr_key")}
+                        placeholder={I18n.t("user.tiqr_keyPlaceholder")}
+                        toolTip={I18n.t("user.tiqr_keyTooltip")}
+                        onChange={e => this.setState({tiqr_key: e.target.value})}/>
+            <InputField value={ubi_key}
+                        name={I18n.t("user.ubi_key")}
+                        placeholder={I18n.t("user.ubi_keyPlaceholder")}
+                        toolTip={I18n.t("user.ubi_keyTooltip")}
+                        onChange={e => this.setState({ubi_key: e.target.value})}/>
+
+            <section className="actions">
+                <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
+                        onClick={this.submit}/>
+                <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+            </section>
+
+        </div>);
 
     render() {
         const {
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
-            initial, convertSSHKey, ssh_key, totp_key, tiqr_key, ubi_key
+            initial, convertSSHKey, ssh_key, totp_key, tiqr_key, ubi_key, tabs, activeTab, auditLogs
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const title = I18n.t("user.titleUpdate");
@@ -127,55 +176,25 @@ class Profile extends React.Component {
                 <div className="title">
                     <p className="title">{title}</p>
                 </div>
+                <div className="tabs">
+                    {tabs.map(tab => {
+                        const className = tab === activeTab ? "tab active" : "tab";
 
-                <div className="user-profile">
-                    <InputField value={ssh_key}
-                                name={I18n.t("user.ssh_key")}
-                                placeholder={I18n.t("user.ssh_keyPlaceholder")}
-                                onChange={e => this.setState({ssh_key: e.target.value})}
-                                toolTip={I18n.t("user.ssh_keyTooltip")}
-                                onBlur={this.validateSSHKey}
-                                fileUpload={true}
-                                fileName={fileName}
-                                fileInputKey={fileInputKey}
-                                onFileRemoval={this.onFileRemoval}
-                                onFileUpload={this.onFileUpload}
-                                acceptFileFormat=".pub"/>
-                    {fileTypeError &&
-                    <span
-                        className="error">{I18n.t("user.sshKeyError")}</span>}
-                    {showConvertSSHKey &&
-                    <CheckBox name="convertSSHKey" value={convertSSHKey}
-                              info={I18n.t("user.sshConvertInfo")}
-                              onChange={e => this.setState({convertSSHKey: e.target.checked})}/>}
-
-
-                    <InputField value={totp_key}
-                                name={I18n.t("user.totp_key")}
-                                placeholder={I18n.t("user.totp_key")}
-                                toolTip={I18n.t("user.totp_keyTooltip")}
-                                onChange={e => this.setState({totp_key: e.target.value})}/>
-                    <InputField value={tiqr_key}
-                                name={I18n.t("user.tiqr_key")}
-                                placeholder={I18n.t("user.tiqr_keyPlaceholder")}
-                                toolTip={I18n.t("user.tiqr_keyTooltip")}
-                                onChange={e => this.setState({tiqr_key: e.target.value})}/>
-                    <InputField value={ubi_key}
-                                name={I18n.t("user.ubi_key")}
-                                placeholder={I18n.t("user.ubi_keyPlaceholder")}
-                                toolTip={I18n.t("user.ubi_keyTooltip")}
-                                onChange={e => this.setState({ubi_key: e.target.value})}/>
-
-                    <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
-                                onClick={this.submit}/>
-                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                    </section>
-
+                        return (
+                            <div className={className} key={tab}
+                                 onClick={() => this.setState({activeTab: tab})}>
+                                <h2>{I18n.t(`profile.tabs.${tab}`)}</h2>
+                            </div>
+                        );
+                    })}
                 </div>
+                {activeTab === "form" &&
+                this.renderForm(ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, totp_key, tiqr_key, ubi_key, disabledSubmit)}
+                {activeTab === "history" && <History auditLogs={auditLogs}/>}
+
             </div>);
-    }
-    ;
+    };
+
 }
 
 export default Profile;
