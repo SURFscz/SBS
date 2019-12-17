@@ -4,6 +4,7 @@ from flask_jsontools.formatting import JsonSerializableBase
 from sqlalchemy import MetaData
 from sqlalchemy import event, inspect
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm.attributes import get_history
 
 from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
@@ -15,6 +16,13 @@ ACTION_DELETE = 3
 
 dynamicExtendedJSONEncoder = DynamicExtendedJSONEncoder()
 
+relationship_configuration = {
+    "groups": ["collaboration_memberships", "invitations"],
+    "collaborations": ["services", "collaboration_memberships"],
+    "organisation": ["organisation_memberships"],
+    "service": ["allowed_organisations"]
+}
+
 
 class AuditLog(JsonSerializableBase, db.Model):
     __tablename__ = "audit_logs"
@@ -23,17 +31,20 @@ class AuditLog(JsonSerializableBase, db.Model):
     subject_id = db.Column("subject_id", db.Integer())
     target_type = db.Column("target_type", db.String(100), nullable=False)
     target_id = db.Column("target_id", db.Integer())
+    parent_name = db.Column("parent_name", db.String(100), nullable=True)
     action = db.Column("action", db.Integer())
     state_before = db.Column("state_before", db.Text())
     state_after = db.Column("state_after", db.Text())
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
-    def __init__(self, current_user_id, subject_id, target_type, target_id, action, state_before, state_after):
+    def __init__(self, current_user_id, subject_id, target_type, target_id, parent_name, action, state_before,
+                 state_after):
         self.user_id = current_user_id
         self.subject_id = subject_id
         self.target_type = target_type
         self.target_id = target_id
+        self.parent_name = parent_name
         self.action = action
         self.state_before = state_before
         self.state_after = state_after
@@ -45,6 +56,7 @@ class AuditLog(JsonSerializableBase, db.Model):
             subject_id=self.subject_id,
             target_type=self.target_type,
             target_id=self.target_id,
+            parent_name=self.parent_name,
             action=self.action,
             state_before=self.state_before,
             state_after=self.state_after
@@ -67,15 +79,16 @@ def target_state(mapper, target):
 class AuditMixin(JsonSerializableBase):
 
     @staticmethod
-    def create_audit(connection, subject_id, object_type, object_id, action, **kwargs):
+    def create_audit(connection, subject_id, target_type, target_id, parent_name, action, **kwargs):
         from server.auth.security import current_user_id
 
         if session and "user" in session and "id" in session["user"]:
             audit = AuditLog(
                 current_user_id(),
                 subject_id,
-                object_type,
-                object_id,
+                target_type,
+                target_id,
+                parent_name,
                 action,
                 kwargs.get("state_before"),
                 kwargs.get("state_after")
@@ -88,18 +101,42 @@ class AuditMixin(JsonSerializableBase):
         event.listen(cls, "after_delete", cls.audit_delete)
         event.listen(cls, "after_update", cls.audit_update)
 
+        table_name = cls.__dict__["__tablename__"]
+        if table_name in relationship_configuration:
+            for relation in relationship_configuration[table_name]:
+                event.listen(cls.__dict__[relation], "append", cls.audit_relationship_append, retval=False)
+                event.listen(cls.__dict__[relation], "remove", cls.audit_relationship_remove, retval=False)
+
+    @staticmethod
+    def audit_relationship_append(target, value, _):
+        mapper = class_mapper(value.__class__)
+        state_after = target_state(mapper, value)
+        subject_id = find_subject(mapper, value)
+        connection = db.get_engine().connect()
+        target.create_audit(connection, subject_id, value.__tablename__, target.id, target.__tablename__, ACTION_CREATE,
+                            state_after=state_after)
+
+    @staticmethod
+    def audit_relationship_remove(target, value, _):
+        mapper = class_mapper(value.__class__)
+        state_after = target_state(mapper, value)
+        subject_id = find_subject(mapper, value)
+        connection = db.get_engine().connect()
+        target.create_audit(connection, subject_id, value.__tablename__, target.id, target.__tablename__, ACTION_DELETE,
+                            state_after=state_after)
+
     @staticmethod
     def audit_insert(mapper, connection, target):
         state_after = target_state(mapper, target)
         subject_id = find_subject(mapper, target)
-        target.create_audit(connection, subject_id, target.__tablename__, target.id, ACTION_CREATE,
+        target.create_audit(connection, subject_id, target.__tablename__, target.id, None, ACTION_CREATE,
                             state_after=state_after)
 
     @staticmethod
     def audit_delete(mapper, connection, target):
         state_before = target_state(mapper, target)
         subject_id = find_subject(mapper, target)
-        target.create_audit(connection, subject_id, target.__tablename__, target.id, ACTION_DELETE,
+        target.create_audit(connection, subject_id, target.__tablename__, target.id, None, ACTION_DELETE,
                             state_before=state_before)
 
     @staticmethod
@@ -114,7 +151,7 @@ class AuditMixin(JsonSerializableBase):
                 state_before[attr.key] = get_history(target, attr.key)[2].pop()
                 state_after[attr.key] = getattr(target, attr.key)
         if state_before and state_after:
-            target.create_audit(connection, find_subject(mapper, target), target.__tablename__, target.id,
+            target.create_audit(connection, find_subject(mapper, target), target.__tablename__, target.id, None,
                                 ACTION_UPDATE,
                                 state_before=dynamicExtendedJSONEncoder.encode(state_before),
                                 state_after=dynamicExtendedJSONEncoder.encode(state_after))

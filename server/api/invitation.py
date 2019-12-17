@@ -82,7 +82,8 @@ def invitations_accept():
     unique_groups = list({ag.id: ag for ag in groups}.values())
 
     for group in unique_groups:
-        collaboration_membership.groups.append(group)
+        group.collaboration_memberships.append(collaboration_membership)
+        # collaboration_membership.groups.append(group)
 
     db.session.merge(collaboration_membership)
     return None, 201
