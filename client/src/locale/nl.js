@@ -611,6 +611,7 @@ I18n.translations.nl = {
         short_name: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de groep",
         shortNameTooltip: "Ken korte namen toe aan de groepen,<br/>zodat die namen bruikbaar zijn in de<br/>via ldap te koppelen diensten (zoals Linux groepsnamen).",
+        collaboration: "Collaboratie",
         autoProvisionMembers: "Maak nieuwe leden van de samenwerking automatisch lid?",
         autoProvisionMembersTooltip: "Check om automatisch alle bestaande leden<br/>en nieuwe leden toe te voegen aan deze groep",
         global_urn: "Globale urn",
