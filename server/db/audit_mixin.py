@@ -119,11 +119,11 @@ class AuditMixin(JsonSerializableBase):
     @staticmethod
     def audit_relationship_remove(target, value, _):
         mapper = class_mapper(value.__class__)
-        state_after = target_state(mapper, value)
+        state_before = target_state(mapper, value)
         subject_id = find_subject(mapper, value)
         connection = db.get_engine().connect()
         target.create_audit(connection, subject_id, value.__tablename__, target.id, target.__tablename__, ACTION_DELETE,
-                            state_after=state_after)
+                            state_before=state_before)
 
     @staticmethod
     def audit_insert(mapper, connection, target):

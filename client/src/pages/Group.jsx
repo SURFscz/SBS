@@ -494,11 +494,11 @@ class Group extends React.Component {
                                                  isClearable={true}/>
                 }
                 {adminOfCollaboration && <CheckBox className="checkbox add-all-members"
-                          name="allMembersAreAdded"
-                          value={allMembersAreAdded}
-                          readOnly={allMembersAreAdded}
-                          onChange={this.addAllMembers}
-                          info={I18n.t("groups.addAllMembers")}
+                                                   name="allMembersAreAdded"
+                                                   value={allMembersAreAdded}
+                                                   readOnly={allMembersAreAdded}
+                                                   onChange={this.addAllMembers}
+                                                   info={I18n.t("groups.addAllMembers")}
                 />}
                 {this.renderConnectedMembers(adminOfCollaboration, groupName, sortedMembers,
                     sortedMembersBy, reverseMembers, autoProvisionMembers)}
@@ -565,6 +565,11 @@ class Group extends React.Component {
                             placeholder={I18n.t("groups.descriptionPlaceholder")}
                             onChange={e => this.setState({description: e.target.value})}
                             disabled={!adminOfCollaboration}/>
+
+                <InputField value={collaboration.name}
+                            name={I18n.t("groups.collaboration")}
+                            disabled={true}
+                />
 
                 <CheckBox name="auto_provision_members" value={auto_provision_members}
                           info={I18n.t("groups.autoProvisionMembers")}

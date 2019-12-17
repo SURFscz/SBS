@@ -163,6 +163,11 @@ I18n.translations.nl = {
         organisations: "Organisaties",
         sbs: "Applicatie",
         collaborations: "Samenwerkingen",
+        tabs: {
+            form: "Keys",
+            history: "Historie"
+        },
+
     },
     collaborations: {
         dashboard: "Dashboard",
@@ -301,7 +306,7 @@ I18n.translations.nl = {
         accepted_user_policy: "AUP",
         accepted_user_policyPlaceholder: "De Acceptable Use Policy (AUP) van de dienst",
         accepted_user_policyTooltip: "Een acceptable use policy (AUP)<br/>is een document waarin staat wat een gebruiker<br/>wel en niet mag/hoort te doen<br/>en waarmee hij akkoord moet gaan<br/>om toegang te krijgen tot een dienst<br/>of systeem.",
-        automaticConnectionAllowed:"Automatische connectie toegestaan?",
+        automaticConnectionAllowed: "Automatische connectie toegestaan?",
         automaticConnectionAllowedTooltip: "Kunnen collaboraties deze service gebruiken<br/>zonder expliciete toestemming van de Service eigenaar?",
         allowedOrganisations: "Organisaties",
         allowedOrganisationsPlaceholder: "Zoek organisaties",
@@ -728,6 +733,17 @@ I18n.translations.nl = {
         resultsLimited: "Meer resultaten dan we kunnen tonen; pas uw zoekopdracht aan."
 
     },
+    history: {
+        changes: "Veranderingen",
+        detail: "Detail",
+        actions: {
+            "1": "create",
+            "2": "update",
+            "3": "delete"
+        },
+        overview: "Actie - {{action}} - op   {{date}} in {{collection}}."
+    },
+
     inputField: {
         fileImport: "Bestand inlezen",
     },

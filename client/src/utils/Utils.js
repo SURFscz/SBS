@@ -71,3 +71,18 @@ export function pseudoGuid() {
     return (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
 }
 
+export function escapeDeep(obj) {
+  if (!isEmpty(obj)) {
+    Object.keys(obj).forEach(key => {
+      const val = obj[key];
+      if (typeof (val) === "string" || val instanceof String) {
+        obj[key] = escape(val);
+      } else if (typeof (val) === "object" || val instanceof Object) {
+        escapeDeep(val);
+      }
+    });
+
+  }
+}
+
+

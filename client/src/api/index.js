@@ -521,3 +521,7 @@ export function denyServiceConnectionRequestByHash(hash) {
     return postPutJson(`/api/service_connection_requests/deny/${hash}`, {}, "put");
 }
 
+//AuditLog
+export function auditLogsProfile() {
+    return fetchJson("/api/audit_logs/profile");
+}
