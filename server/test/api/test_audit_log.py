@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import json
 
 from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE
