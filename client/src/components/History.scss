@@ -16,6 +16,7 @@
             width: 50%;
             list-style: none;
             padding: 15px;
+
             li {
                 display: block;
                 padding: 15px 5px;
@@ -36,8 +37,12 @@
 
         .details {
             width: 50%;
+            padding: 25px 0;
         }
 
+        p.none {
+            padding: 25px 5px;
+        }
     }
 }
 

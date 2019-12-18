@@ -19,18 +19,25 @@ export default class History extends React.PureComponent {
     }
 
 
-    renderAuditLogs = (auditLogs, selected) => (<ul className="logs">
-            {auditLogs.map(log =>
-                <li key={log.id} onClick={() => this.setState({selected: log})}
-                    className={`${log.id === selected.id ? "selected" : ""}`}>
-                {I18n.t("history.overview", {
-                    action: I18n.t(`history.actions.${log.action}`),
-                    date: moment(log.created_at * 1000).format("LLLL"),
-                    collection: log.target_type
-                })}
-                {}
-            </li>)}
-        </ul>);
+    renderAuditLogs = (auditLogs, selected) => {
+        if (isEmpty(auditLogs)) {
+            return  <p className="none">{I18n.t("history.none")}</p>
+        }
+        return (
+            <ul className="logs">
+                {auditLogs.map(log =>
+                    <li key={log.id} onClick={() => this.setState({selected: log})}
+                        className={`${log.id === selected.id ? "selected" : ""}`}>
+                        {I18n.t("history.overview", {
+                            action: I18n.t(`history.actions.${log.action}`),
+                            date: moment(log.created_at * 1000).format("LLLL"),
+                            collection: log.target_type
+                        })}
+                        {}
+                    </li>)}
+            </ul>
+        );
+    }
 
     renderDiff = (beforeState, afterState) => {
         beforeState = JSON.parse(beforeState);
