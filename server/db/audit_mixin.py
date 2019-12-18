@@ -31,6 +31,7 @@ class AuditLog(JsonSerializableBase, db.Model):
     subject_id = db.Column("subject_id", db.Integer())
     target_type = db.Column("target_type", db.String(100), nullable=False)
     target_id = db.Column("target_id", db.Integer())
+    parent_id = db.Column("parent_id", db.Integer())
     parent_name = db.Column("parent_name", db.String(100), nullable=True)
     action = db.Column("action", db.Integer())
     state_before = db.Column("state_before", db.Text())
@@ -38,12 +39,13 @@ class AuditLog(JsonSerializableBase, db.Model):
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
-    def __init__(self, current_user_id, subject_id, target_type, target_id, parent_name, action, state_before,
-                 state_after):
+    def __init__(self, current_user_id, subject_id, target_type, target_id, parent_id, parent_name, action,
+                 state_before, state_after):
         self.user_id = current_user_id
         self.subject_id = subject_id
         self.target_type = target_type
         self.target_id = target_id
+        self.parent_id = parent_id
         self.parent_name = parent_name
         self.action = action
         self.state_before = state_before
@@ -56,6 +58,7 @@ class AuditLog(JsonSerializableBase, db.Model):
             subject_id=self.subject_id,
             target_type=self.target_type,
             target_id=self.target_id,
+            parent_id=self.parent_id,
             parent_name=self.parent_name,
             action=self.action,
             state_before=self.state_before,
@@ -76,10 +79,29 @@ def target_state(mapper, target):
     return dynamicExtendedJSONEncoder.encode({attr.key: getattr(target, attr.key) for attr in mapper.column_attrs})
 
 
+parent_configuration = {
+    "organisation_memberships": ("organisation_id", "organisations"),
+    "collaboration_memberships": ("collaboration_id", "collaborations"),
+    "groups": ("collaboration_id", "collaborations"),
+    "collaborations": ("organisation_id", "organisations"),
+    "join_requests": ("collaboration_id", "collaborations"),
+    "invitations": ("collaboration_id", "collaborations"),
+    "organisation_invitations": ("organisation_id", "organisations"),
+    "api_keys": ("organisation_id", "organisations"),
+    "collaboration_requests": ("organisation_id", "organisations"),
+    "service_connection_requests": ("collaboration_id", "collaborations"),
+}
+
+
+def parent_info(target):
+    conf = parent_configuration.get(target.__tablename__)
+    return (getattr(target, conf[0]), conf[1]) if conf else (None, None)
+
+
 class AuditMixin(JsonSerializableBase):
 
     @staticmethod
-    def create_audit(connection, subject_id, target_type, target_id, parent_name, action, **kwargs):
+    def create_audit(connection, subject_id, target_type, target_id, parent_id, parent_name, action, **kwargs):
         from server.auth.security import current_user_id
 
         if session and "user" in session and "id" in session["user"]:
@@ -88,6 +110,7 @@ class AuditMixin(JsonSerializableBase):
                 subject_id,
                 target_type,
                 target_id,
+                parent_id,
                 parent_name,
                 action,
                 kwargs.get("state_before"),
@@ -113,8 +136,8 @@ class AuditMixin(JsonSerializableBase):
         state_after = target_state(mapper, value)
         subject_id = find_subject(mapper, value)
         connection = db.get_engine().connect()
-        target.create_audit(connection, subject_id, value.__tablename__, target.id, target.__tablename__, ACTION_CREATE,
-                            state_after=state_after)
+        target.create_audit(connection, subject_id, value.__tablename__, value.id, target.id, target.__tablename__,
+                            ACTION_CREATE, state_after=state_after)
 
     @staticmethod
     def audit_relationship_remove(target, value, _):
@@ -122,21 +145,25 @@ class AuditMixin(JsonSerializableBase):
         state_before = target_state(mapper, value)
         subject_id = find_subject(mapper, value)
         connection = db.get_engine().connect()
-        target.create_audit(connection, subject_id, value.__tablename__, target.id, target.__tablename__, ACTION_DELETE,
-                            state_before=state_before)
+        target.create_audit(connection, subject_id, value.__tablename__, value.id, target.id, target.__tablename__,
+                            ACTION_DELETE, state_before=state_before)
 
     @staticmethod
     def audit_insert(mapper, connection, target):
         state_after = target_state(mapper, target)
         subject_id = find_subject(mapper, target)
-        target.create_audit(connection, subject_id, target.__tablename__, target.id, None, ACTION_CREATE,
+        # connection, subject_id, target_type, target_id, parent_id, parent_name, action
+        pi = parent_info(target)
+        target.create_audit(connection, subject_id, target.__tablename__, target.id, pi[0], pi[1], ACTION_CREATE,
                             state_after=state_after)
 
     @staticmethod
     def audit_delete(mapper, connection, target):
         state_before = target_state(mapper, target)
         subject_id = find_subject(mapper, target)
-        target.create_audit(connection, subject_id, target.__tablename__, target.id, None, ACTION_DELETE,
+        # connection, subject_id, target_type, target_id, parent_id, parent_name, action
+        pi = parent_info(target)
+        target.create_audit(connection, subject_id, target.__tablename__, target.id, pi[0], pi[1], ACTION_DELETE,
                             state_before=state_before)
 
     @staticmethod
@@ -150,8 +177,10 @@ class AuditMixin(JsonSerializableBase):
             if hist.has_changes():
                 state_before[attr.key] = get_history(target, attr.key)[2].pop()
                 state_after[attr.key] = getattr(target, attr.key)
+        # connection, subject_id, target_type, target_id, parent_id, parent_name, action
+        pi = parent_info(target)
         if state_before and state_after:
-            target.create_audit(connection, find_subject(mapper, target), target.__tablename__, target.id, None,
+            target.create_audit(connection, find_subject(mapper, target), target.__tablename__, target.id, pi[0], pi[1],
                                 ACTION_UPDATE,
                                 state_before=dynamicExtendedJSONEncoder.encode(state_before),
                                 state_after=dynamicExtendedJSONEncoder.encode(state_after))

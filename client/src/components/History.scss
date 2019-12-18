@@ -43,6 +43,42 @@
         p.none {
             padding: 25px 5px;
         }
+
+        table.changes {
+            width: 100%;
+
+            th {
+                text-align: left;
+                padding: 5px;
+                border-bottom: 1px solid $lighter-grey;
+
+                &.key {
+                    width: 30%;
+                }
+
+                &.old-value {
+                    width: 35%;
+                }
+
+                &.new-value {
+                    width: 35%;
+                }
+            }
+
+            tbody {
+                tr {
+                    &:nth-child(odd) {
+                        background-color: $lightest-grey;
+                    }
+                }
+
+                td {
+                    word-break: break-all;
+                    padding: 5px;
+                }
+            }
+        }
+
     }
 }
 

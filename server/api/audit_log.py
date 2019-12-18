@@ -2,27 +2,53 @@
 from flask import Blueprint
 
 from server.api.base import json_endpoint
-from server.auth.security import current_user_id
+from server.auth.security import current_user_id, is_collaboration_admin, confirm_read_access
 from server.db.audit_mixin import AuditLog
-from server.db.domain import User
+from server.db.domain import User, Organisation, Collaboration
 
 audit_log_api = Blueprint("audit_log_api", __name__, url_prefix="/api/audit_logs")
+
+table_names_cls_mapping = {
+    "organisations": Organisation,
+    "collaborations": Collaboration,
+}
 
 
 @audit_log_api.route("/me", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def me():
     user_id = current_user_id()
-    return AuditLog.query \
-               .filter(AuditLog.subject_id == user_id) \
-               .all(), 200
+    audit_logs = AuditLog.query \
+        .filter((
+                    (AuditLog.target_id == user_id) & (AuditLog.target_type == User.__tablename__)) | (
+                    AuditLog.subject_id == user_id)) \
+        .all()
+    return _add_references(audit_logs), 200
 
 
-@audit_log_api.route("/profile", methods=["GET"], strict_slashes=False)
+@audit_log_api.route("/info/<query_id>", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def profile():
-    user_id = current_user_id()
-    return AuditLog.query \
-               .filter(AuditLog.target_id == user_id) \
-               .filter(AuditLog.target_type == User.__tablename__) \
-               .all(), 200
+def info(query_id):
+    confirm_read_access(override_func=is_collaboration_admin)
+    audit_logs = AuditLog.query \
+        .filter((AuditLog.parent_id == query_id) | (AuditLog.target_id == query_id)) \
+        .all()
+
+    return _add_references(audit_logs), 200
+
+
+def _add_references(audit_logs):
+    result = {"audit_logs": audit_logs}
+    for audit_log in audit_logs:
+        parent_name = audit_log.parent_name
+        if parent_name in table_names_cls_mapping:
+            cls = table_names_cls_mapping[parent_name]
+            result[parent_name] = result.get(parent_name, []) + cls.query \
+                .filter(cls.id == audit_log.parent_id) \
+                .all()
+        if audit_log.user_id or audit_log.subject_id:
+            users = User.query \
+                .filter((User.id == audit_log.user_id) | (User.id == audit_log.subject_id)) \
+                .all()
+            result["users"] = result.get("users", []) + users
+    return result
