@@ -1,5 +1,5 @@
 import React from "react";
-import {auditLogsProfile, updateUser} from "../api";
+import {auditLogsMe, updateUser} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./Profile.scss";
@@ -33,12 +33,12 @@ class Profile extends React.Component {
             id: user.id,
             tabs: ["form", "history"],
             activeTab: "form",
-            auditLogs: []
+            auditLogs: {"audit_logs":[]}
         };
     }
 
     componentDidMount = () => {
-        auditLogsProfile().then(json => this.setState({auditLogs: json}));
+        auditLogsMe().then(json => this.setState({auditLogs: json}));
     };
 
 

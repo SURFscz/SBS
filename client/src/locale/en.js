@@ -741,7 +741,10 @@ I18n.translations.en = {
             "3": "delete"
         },
         overview: "Change - {{action}} - at {{date}} in {{collection}}.",
-        none: "No history"
+        none: "No history",
+        key: "Attribute",
+        oldValue: "Old value",
+        newValue: "New value"
     },
     inputField: {
         fileImport: "File import",

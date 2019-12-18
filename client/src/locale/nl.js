@@ -743,7 +743,10 @@ I18n.translations.nl = {
             "3": "delete"
         },
         overview: "Actie - {{action}} - op   {{date}} in {{collection}}.",
-        none: "Geen historie"
+        none: "Geen historie",
+        key: "Attribuut",
+        oldValue: "Oude waarde",
+        newValue: "Nieuwe waarde"
     },
 
     inputField: {

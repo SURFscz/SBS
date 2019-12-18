@@ -522,6 +522,6 @@ export function denyServiceConnectionRequestByHash(hash) {
 }
 
 //AuditLog
-export function auditLogsProfile() {
-    return fetchJson("/api/audit_logs/profile");
+export function auditLogsMe() {
+    return fetchJson("/api/audit_logs/me");
 }
