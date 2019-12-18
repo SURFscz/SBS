@@ -65,4 +65,4 @@ class TestAuditLog(AbstractTest):
         res = self.get(f"/api/audit_logs/info/{service_cloud_id}")
 
         self.assertEqual(3, len(res))
-        self.assertListEqual(["audit_logs", "collaborations", "users"], list(res.keys()))
+        self.assertListEqual(sorted(["audit_logs", "collaborations", "users"]), sorted(list(res.keys())))
