@@ -309,7 +309,7 @@ I18n.translations.en = {
         automaticConnectionAllowedTooltip: "Can collaborations use this service<br/>without explicit permission of the Service contact person?",
         allowedOrganisations: "Allowed organisations",
         allowedOrganisationsPlaceholder: "Search and add organisations",
-        allowedOrganisationsTooltip: "If any organisation is added<br/>then automatically all other organisations<br/>are not allowed to use this service.<br/><br/>If this Service can be used><br/>by all collaborations then just don't<br/>add organisations.",
+        allowedOrganisationsTooltip: "If any organisation is added<br/>then automatically all other organisations<br/>are not allowed to use this service.<br/><br/>If this Service can be used<br/>by all collaborations then just don't<br/>add organisations.",
         contact_email: "E-mail contact",
         contact_emailPlaceholder: "The e-mail address of the contact person of this service",
         contact_emailTooltip: "This e-mail address will be<br/>used as primary contact.",
@@ -740,7 +740,8 @@ I18n.translations.en = {
             "2": "update",
             "3": "delete"
         },
-        overview: "Change - {{action}} - at {{date}} in {{collection}}."
+        overview: "Change - {{action}} - at {{date}} in {{collection}}.",
+        none: "No history"
     },
     inputField: {
         fileImport: "File import",

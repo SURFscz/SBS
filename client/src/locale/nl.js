@@ -735,14 +735,15 @@ I18n.translations.nl = {
 
     },
     history: {
-        changes: "Veranderingen",
+        changes: "Historie",
         detail: "Detail",
         actions: {
             "1": "create",
             "2": "update",
             "3": "delete"
         },
-        overview: "Actie - {{action}} - op   {{date}} in {{collection}}."
+        overview: "Actie - {{action}} - op   {{date}} in {{collection}}.",
+        none: "Geen historie"
     },
 
     inputField: {
