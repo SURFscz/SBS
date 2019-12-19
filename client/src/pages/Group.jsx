@@ -2,6 +2,7 @@ import React from "react";
 import {
     addGroupInvitations,
     addGroupMembers,
+    auditLogsInfo,
     collaborationLiteById,
     collaborationServices,
     createGroup,
@@ -19,7 +20,7 @@ import "./Group.scss";
 import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {isEmpty, sortObjects, stopEvent} from "../utils/Utils";
+import {isEmpty, sortObjects} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {headerIcon} from "../forms/helpers";
 import ReactTooltip from "react-tooltip";
@@ -28,6 +29,9 @@ import Select from "react-select";
 import moment from "moment";
 import CheckBox from "../components/CheckBox";
 import {sanitizeShortName} from "../validations/regExps";
+import BackLink from "../components/BackLink";
+import Tabs from "../components/Tabs";
+import History from "../components/History";
 
 class Group extends React.Component {
 
@@ -56,7 +60,8 @@ class Group extends React.Component {
             confirmationDialogQuestion: undefined,
             leavePage: true,
             confirmationDialogAction: () => true,
-            cancelDialogAction: () => true
+            cancelDialogAction: () => true,
+            auditLogs: {"audit_logs": []}
         };
     }
 
@@ -96,7 +101,7 @@ class Group extends React.Component {
                             sortedInvitations: sortObjects(group.invitations, sortedInvitationsBy, reverseInvitations),
                             isNew: false,
                             adminOfCollaboration: adminOfCollaboration
-                        })
+                        }, () => this.fetchAuditLogs(group.id))
                     });
             } else {
                 collaborationServices(params.collaboration_id, true)
@@ -114,6 +119,8 @@ class Group extends React.Component {
             this.props.history.push("/404");
         }
     };
+
+    fetchAuditLogs = groupId => auditLogsInfo(groupId).then(json => this.setState({auditLogs: json}));
 
     refreshMembersAndInvitations = callBack => {
         const params = this.props.match.params;
@@ -225,12 +232,11 @@ class Group extends React.Component {
             const {name, isNew} = this.state;
             if (isNew) {
                 createGroup(this.state).then(() => {
-                    this.gotoGroups();
                     setFlash(I18n.t("groups.flash.created", {name: name}));
                 });
             } else {
                 updateGroup(this.state).then(() => {
-                    this.gotoGroups();
+                    this.fetchAuditLogs(this.state.id)
                     setFlash(I18n.t("groups.flash.updated", {name: name}));
                 });
             }
@@ -357,7 +363,7 @@ class Group extends React.Component {
             names.shift();
         }
 
-        const membersTitle = I18n.t("groups.membersTitle", {name: groupName});
+        const membersTitle = I18n.t("groups.membersSubTitle");
         return (
             <div className="group-members-connected">
                 <p className="title">{membersTitle}</p>
@@ -600,6 +606,19 @@ class Group extends React.Component {
             </div>);
     };
 
+    groupDetailsTab = (isNew, membersTitle, adminOfCollaboration, groupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations, group, detailsTitle, name, short_name, auto_provision_members, alreadyExists, initial, description, disabledSubmit, collaboration) => (
+        <>
+            {!isNew && <p className="title">{membersTitle}</p>}
+            {!isNew && this.groupMembers(adminOfCollaboration, groupName,
+                allMembers, sortedMembers, sortedMembersBy, reverseMembers,
+                sortedInvitations, sortedInvitationsBy, reverseInvitations, group.auto_provision_members)}
+            <div className="title">
+                <p className="title">{detailsTitle}</p>
+            </div>
+            {this.groupDetails(adminOfCollaboration, name, short_name, auto_provision_members, alreadyExists, initial,
+                description, isNew, disabledSubmit, group, collaboration)}
+        </>);
+
     render() {
         const {
             alreadyExists, collaboration, initial, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
@@ -607,7 +626,7 @@ class Group extends React.Component {
             group, isNew, leavePage,
             allMembers, sortedMembers, sortedMembersBy, reverseMembers,
             sortedInvitationsBy, reverseInvitations, sortedInvitations,
-            adminOfCollaboration
+            adminOfCollaboration, auditLogs
         } = this.state;
         if (!collaboration) {
             return null;
@@ -629,23 +648,18 @@ class Group extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={confirmationDialogQuestion}/>
-                <div className="title">
-                    <a href="/back" onClick={e => {
-                        stopEvent(e);
-                        this.props.history.goBack();
-                    }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("forms.back")}
-                    </a>
-                    {!isNew && <p className="title">{membersTitle}</p>}
-                </div>
-                {!isNew && this.groupMembers(adminOfCollaboration, groupName,
-                    allMembers, sortedMembers, sortedMembersBy, reverseMembers,
-                    sortedInvitations, sortedInvitationsBy, reverseInvitations, group.auto_provision_members)}
-                <div className="title">
-                    <p className="title">{detailsTitle}</p>
-                </div>
-                {this.groupDetails(adminOfCollaboration, name, short_name, auto_provision_members, alreadyExists, initial,
-                    description, isNew, disabledSubmit, group, collaboration)}
+                <BackLink history={this.props.history}/>
+                <Tabs className="white">
+                    <div label="form">
+                        {this.groupDetailsTab(isNew, membersTitle, adminOfCollaboration, groupName, allMembers, sortedMembers,
+                            sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations,
+                            group, detailsTitle, name, short_name, auto_provision_members, alreadyExists, initial, description,
+                            disabledSubmit, collaboration)}
+                    </div>
+                    {adminOfCollaboration && <div label="history">
+                        <History auditLogs={auditLogs}/>
+                    </div>}
+                </Tabs>
             </div>);
     }
     ;

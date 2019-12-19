@@ -7,6 +7,7 @@ import "./Tabs.scss";
 class Tabs extends React.Component {
     static propTypes = {
         children: PropTypes.instanceOf(Array).isRequired,
+        className: PropTypes.string,
     };
 
     constructor(props) {

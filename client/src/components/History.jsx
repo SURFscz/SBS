@@ -13,10 +13,27 @@ export default class History extends React.PureComponent {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            selected: this.props.auditLogs.audit_logs[0]
+            selected: this.convertReference(this.props.auditLogs.audit_logs[0])
         };
         this.differ = new DiffPatcher();
     }
+
+    convertReference = auditLog => {
+        if (auditLog) {
+            auditLog.stateBefore = JSON.parse(auditLog.state_before || "{}");
+            auditLog.stateAfter = JSON.parse(auditLog.state_after || "{}");
+            [auditLog.stateBefore, auditLog.stateAfter].forEach(state => {
+                escapeDeep(state);
+                ignoreInDiff.forEach(ignore => delete state[ignore]);
+            });
+        }
+        return auditLog;
+    };
+
+    convertReferences = auditLogs => {
+        const auditLogRecords = auditLogs.audit_logs;
+        return auditLogRecords.map(this.convertReference);
+    };
 
 
     renderAuditLogs = (auditLogs, selected) => {
@@ -30,7 +47,7 @@ export default class History extends React.PureComponent {
                         className={`${log.id === selected.id ? "selected" : ""}`}>
                         {I18n.t("history.overview", {
                             action: I18n.t(`history.actions.${log.action}`),
-                            date: moment(log.created_at * 1000).format("LLLL"),
+                            date: moment(log.created_at * 1000).format("L"),
                             collection: log.target_type
                         })}
                         {}
@@ -58,13 +75,9 @@ export default class History extends React.PureComponent {
         if (isEmpty(auditLog)) {
             return null;
         }
-        const beforeState = JSON.parse(auditLog.state_before || "{}");
-        const afterState = JSON.parse(auditLog.state_after || "{}");
+        const beforeState = auditLog.stateBefore;
+        const afterState = auditLog.stateAfter;
 
-        [beforeState, afterState].forEach(state => {
-            escapeDeep(state);
-            ignoreInDiff.forEach(ignore => delete state[ignore]);
-        });
         const delta = this.differ.diff(beforeState, afterState);
         return (
             <div className="details">
@@ -90,8 +103,7 @@ export default class History extends React.PureComponent {
 
     render() {
         const {auditLogs} = this.props;
-        //TODO - there are also references to other objects
-        const auditLogEntries = auditLogs.audit_logs;
+        const auditLogEntries = this.convertReferences(auditLogs);
         const {selected} = this.state;
         return (
             <div className="history-container">

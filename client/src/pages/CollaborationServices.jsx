@@ -323,7 +323,7 @@ class CollaborationServices extends React.Component {
                 </Explain>
 
                 <div className="title">
-                    <BackLink/>
+                    <BackLink history={this.props.history}/>
                     <p className="title">{I18n.t("collaborationServices.title", {name: collaboration.name})}</p>
                     <FontAwesomeIcon className="help" icon="question-circle"
                                      id="impersonate_close_explanation"

@@ -17,7 +17,6 @@
         }
     }
 
-
     &.active {
         background: $lightest-grey;
         border-color: $blue;
@@ -28,6 +27,9 @@
         }
     }
 
+    &.active.white {
+        background: white;
+    }
 }
 
 

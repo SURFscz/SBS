@@ -1,6 +1,7 @@
 import React from "react";
 import ReactTooltip from "react-tooltip";
 import {
+    auditLogsInfo,
     deleteApiKey,
     deleteCollaboration,
     deleteOrganisation,
@@ -22,6 +23,9 @@ import Select from 'react-select';
 import {setFlash} from "../utils/Flash";
 import {headerIcon} from "../forms/helpers";
 import {sanitizeShortName} from "../validations/regExps";
+import BackLink from "../components/BackLink";
+import Tabs from "../components/Tabs";
+import History from "../components/History";
 
 class OrganisationDetail extends React.Component {
 
@@ -93,15 +97,15 @@ class OrganisationDetail extends React.Component {
                         collaborationRequests: sortObjects(json.collaboration_requests, collaborationRequestSorted, collaborationRequestReverse),
                         adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id),
                         apiKeys: json.api_keys
-                    })
-                }, () => {
-                    this.props.history.push("/404");
-                    return;
-                });
+                    }, () => this.fetchAuditLogs(json.id));
+                })
+                .catch(() => this.props.history.push("/404"));
         } else {
             this.props.history.push("/404");
         }
     };
+
+    fetchAuditLogs = collaborationId => auditLogsInfo(collaborationId).then(json => this.setState({auditLogs: json}));
 
     update = () => {
         const {initial} = this.state;
@@ -186,7 +190,7 @@ class OrganisationDetail extends React.Component {
             const {name, description, originalOrganisation} = this.state;
             updateOrganisation({id: originalOrganisation.id, name, description})
                 .then(() => {
-                    this.props.history.push(`/organisations/${originalOrganisation.id}`);
+                    this.fetchAuditLogs(originalOrganisation.id);
                     window.scrollTo(0, 0);
                     setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
                 });
@@ -288,7 +292,7 @@ class OrganisationDetail extends React.Component {
         }
         const names = ["name", "short_name", "requester__name", "message"];
         return (
-                    <section className="collaboration-requests-container">
+            <section className="collaboration-requests-container">
                 <table className="collaboration-requests">
                     <thead>
                     <tr>
@@ -603,13 +607,52 @@ class OrganisationDetail extends React.Component {
         </div>;
     };
 
+    renderDetails = (confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion, leavePage,
+                     originalOrganisation, inviteReverse, inviteSorted, invitations, collaborationRequestReverse,
+                     collaborationRequestSorted, collaborationRequests, filteredMembers, user, sorted, reverse, query,
+                     adminOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
+                     collaborationsQuery, name, short_name, alreadyExists, initial, description, schac_home_organisation, disabledSubmit) => (
+        <>
+            <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                cancel={cancelDialogAction}
+                                confirm={confirmationDialogAction}
+                                question={confirmationQuestion}
+                                leavePage={leavePage}/>
+            <div className="title">
+                <p className="title organisation-invitations">{I18n.t("organisationDetail.invitations", {name: originalOrganisation.name})}</p>
+            </div>
+            {this.renderInvitations(inviteReverse, inviteSorted, invitations)}
+            <div className="title">
+                <p className="title organisation-invitations">{I18n.t("organisationDetail.collaborationRequests", {name: originalOrganisation.name})}</p>
+            </div>
+            {this.renderCollaborationRequests(collaborationRequestReverse, collaborationRequestSorted, collaborationRequests)}
+            <div className="title">
+                <p className="title members">{I18n.t("organisationDetail.members", {name: originalOrganisation.name})}</p>
+            </div>
+            {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfOrganisation)}
+            <div className="title">
+                <p>{I18n.t("organisationDetail.apiKeys", {name: originalOrganisation.name})}</p>
+            </div>
+            {this.organisationApiKeys(user, adminOfOrganisation, apiKeys)}
+            <div className="title">
+                <p>{I18n.t("organisationDetail.collaborations", {name: originalOrganisation.name})}</p>
+            </div>
+            {this.renderCollaborations(filteredCollaborations, user, sortedCollaborationAttribute,
+                reverseCollaborationSorted, collaborationsQuery, adminOfOrganisation)}
+            <div className="title">
+                <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
+            </div>
+            {this.organisationDetails(name, short_name, alreadyExists, initial,
+                description, schac_home_organisation, originalOrganisation, user, disabledSubmit)}
+        </>);
+
     render() {
         const {
             name, short_name, description, schac_home_organisation, originalOrganisation, initial, alreadyExists, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             inviteReverse, inviteSorted, invitations, adminOfOrganisation, apiKeys,
             filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted, collaborationsQuery,
-            collaborationRequests, collaborationRequestSorted, collaborationRequestReverse
+            collaborationRequests, collaborationRequestSorted, collaborationRequestReverse, auditLogs
 
         } = this.state;
         if (!originalOrganisation) {
@@ -619,45 +662,24 @@ class OrganisationDetail extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-organisation-detail">
-                <div className="title">
-                    <a href="/back" onClick={e => {
-                        stopEvent(e);
-                        this.props.history.goBack();
-                    }}><FontAwesomeIcon icon="arrow-left"/>{I18n.t("forms.back")}</a>
-                </div>
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    confirm={confirmationDialogAction}
-                                    question={confirmationQuestion}
-                                    leavePage={leavePage}/>
-                <div className="title">
-                    <p className="title organisation-invitations">{I18n.t("organisationDetail.invitations", {name: originalOrganisation.name})}</p>
-                </div>
-                {this.renderInvitations(inviteReverse, inviteSorted, invitations)}
-                <div className="title">
-                    <p className="title organisation-invitations">{I18n.t("organisationDetail.collaborationRequests", {name: originalOrganisation.name})}</p>
-                </div>
-                {this.renderCollaborationRequests(collaborationRequestReverse, collaborationRequestSorted, collaborationRequests)}
-                <div className="title">
-                    <p className="title members">{I18n.t("organisationDetail.members", {name: originalOrganisation.name})}</p>
-                </div>
-                {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfOrganisation)}
-                <div className="title">
-                    <p>{I18n.t("organisationDetail.apiKeys", {name: originalOrganisation.name})}</p>
-                </div>
-                {this.organisationApiKeys(user, adminOfOrganisation, apiKeys)}
-                <div className="title">
-                    <p>{I18n.t("organisationDetail.collaborations", {name: originalOrganisation.name})}</p>
-                </div>
-                {this.renderCollaborations(filteredCollaborations, user, sortedCollaborationAttribute,
-                    reverseCollaborationSorted, collaborationsQuery, adminOfOrganisation)}
-                <div className="title">
-                    <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
-                </div>
-                {this.organisationDetails(name, short_name, alreadyExists, initial,
-                    description, schac_home_organisation, originalOrganisation, user, disabledSubmit)}
+                <BackLink history={this.props.history}/>
+                <Tabs className="white">
+                    <div label="form">
+                        {this.renderDetails(confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
+                            leavePage, originalOrganisation, inviteReverse, inviteSorted, invitations, collaborationRequestReverse,
+                            collaborationRequestSorted, collaborationRequests, filteredMembers, user, sorted, reverse, query,
+                            adminOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
+                            collaborationsQuery, name, short_name, alreadyExists, initial, description, schac_home_organisation, disabledSubmit)}
+                    </div>
+                    <div label="history">
+                        <History auditLogs={auditLogs}/>
+                    </div>
+                </Tabs>
+
+
             </div>)
     }
+
 
 }
 

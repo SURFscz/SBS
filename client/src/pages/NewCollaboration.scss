@@ -1,13 +1,12 @@
 @import "../stylesheets/vars.scss";
 
 .mod-new-collaboration-container {
-    background-color: $background;
+    margin: 0 auto;
     max-width: $medium;
     width: 100%;
 }
 
 .mod-new-collaboration {
-    margin: 0 auto;
 
     h2.no-organisations {
         font-size: 18px;

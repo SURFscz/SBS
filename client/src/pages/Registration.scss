@@ -1,12 +1,11 @@
 @import "../stylesheets/vars.scss";
 
 .mod-registration {
-    background-color: white;
+    max-width: $medium;
+    margin: 0 auto;
     padding: 35px 0 65px 0;
 
     .step-container {
-        max-width: $medium;
-        margin: 0 auto;
         padding: 0 $medium-padding;
         display: flex;
         flex-direction: row;
@@ -33,7 +32,7 @@
                 z-index: 9;
                 color: $blue;
                 font-size: 22px;
-                background-color: white;
+                background-color: $lightest-grey;
             }
 
             svg.fa-check {
@@ -109,8 +108,7 @@
     }
 
     .step-form {
-        max-width: $medium;
-        margin: 40px auto;
+        margin: 40px 0;
         padding: 0 $medium-padding;
 
         p.form-title {

@@ -1,11 +1,12 @@
 @import "../stylesheets/vars.scss";
 
 .history-container {
+    max-width: $medium;
+    margin: 0 auto;
+    width: 100%;
 
     .history {
-        max-width: $medium;
-        margin: 0 auto;
-        background-color: white;
+        background-color: $lightest-grey;
         padding: 6px 20px 0 20px;
         display: flex;
         width: 100%;

@@ -176,6 +176,7 @@ class NewInvitation extends React.Component {
     };
 
     tabChanged = activeTab => {
+        this.setState({activeTab: activeTab});
         if (activeTab === "invitation_preview") {
             const {administrators, message, collaboration, intended_role, expiry_date, fileEmails} = this.state;
             collaborationInvitationsPreview({
@@ -184,7 +185,8 @@ class NewInvitation extends React.Component {
                 intended_role: intended_role,
                 expiry_date: expiry_date.getTime() / 1000,
                 collaboration_id: collaboration.id
-            }).then(res => this.setState({htmlPreview: res.html.replace(/class="link" href/g, "nope")}));
+            }).then(res =>
+                this.setState({htmlPreview: res.html.replace(/class="link" href/g, "nope")}));
         }
     };
 
@@ -270,9 +272,9 @@ class NewInvitation extends React.Component {
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
             {showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.preview")}
-                                    onClick={() => this.setState({activeTab: "invitation_preview"})}/>}
+                                    onClick={() =>  this.tabChanged("invitation_preview")}/>}
             {!showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.details")}
-                                     onClick={() => this.setState({activeTab: "invitation_form"})}/>}
+                                     onClick={() => this.tabChanged("invitation_form")}/>}
             <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
                     onClick={this.submit}/>
         </section>

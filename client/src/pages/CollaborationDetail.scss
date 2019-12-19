@@ -58,7 +58,8 @@
         section.actions {
             margin: $medium-margin 0 0 0;
 
-            a.delete {
+
+            a:not(:first-child) {
                 margin-left: 25px;
             }
         }
@@ -225,10 +226,10 @@
     }
 
     .invitations-container {
-        background-color: white;
+        background-color: $lightest-grey;
         padding: $medium-padding;
         border-radius: $br;
-        margin: 0 auto 10px auto;
+        margin-bottom: 25px;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         position: relative;
 
