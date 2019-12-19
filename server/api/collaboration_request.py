@@ -71,7 +71,8 @@ def approve_request(collaboration_request_id):
     collaboration = res[0]
 
     user = collaboration_request.requester
-    admin_collaboration_membership = CollaborationMembership(role="admin", user=user, collaboration=collaboration,
+    admin_collaboration_membership = CollaborationMembership(role="admin", user_id=user.id,
+                                                             collaboration_id=collaboration.id,
                                                              created_by=user.uid, updated_by=user.uid)
     db.session.merge(admin_collaboration_membership)
 
