@@ -1,12 +1,12 @@
 @import "../stylesheets/vars.scss";
 
 .mod-new-collaboration-container {
+    background-color: $background;
+    max-width: $medium;
     width: 100%;
 }
 
 .mod-new-collaboration {
-    background-color: $background;
-    max-width: $medium;
     margin: 0 auto;
 
     h2.no-organisations {
@@ -46,8 +46,8 @@
 
     .new-collaboration {
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-        margin: 0 auto 25px auto;
-        background-color: white;
+        margin-bottom: 25px;
+        background-color: $lightest-grey;
         padding: $medium-padding;
 
         .error {

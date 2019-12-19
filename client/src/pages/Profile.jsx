@@ -10,6 +10,7 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import {validPublicSSH2KeyRegExp, validPublicSSHKeyRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import History from "../components/History";
+import Tabs from "../components/Tabs";
 
 class Profile extends React.Component {
 
@@ -31,9 +32,7 @@ class Profile extends React.Component {
             tiqr_key: user.tiqr_key || "",
             ubi_key: user.ubi_key || "",
             id: user.id,
-            tabs: ["form", "history"],
-            activeTab: "form",
-            auditLogs: {"audit_logs":[]}
+            auditLogs: {"audit_logs": []}
         };
     }
 
@@ -162,7 +161,7 @@ class Profile extends React.Component {
     render() {
         const {
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
-            initial, convertSSHKey, ssh_key, totp_key, tiqr_key, ubi_key, tabs, activeTab, auditLogs
+            initial, convertSSHKey, ssh_key, totp_key, tiqr_key, ubi_key, auditLogs
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const title = I18n.t("user.titleUpdate");
@@ -176,22 +175,14 @@ class Profile extends React.Component {
                 <div className="title">
                     <p className="title">{title}</p>
                 </div>
-                <div className="tabs">
-                    {tabs.map(tab => {
-                        const className = tab === activeTab ? "tab active" : "tab";
-
-                        return (
-                            <div className={className} key={tab}
-                                 onClick={() => this.setState({activeTab: tab})}>
-                                <h2>{I18n.t(`profile.tabs.${tab}`)}</h2>
-                            </div>
-                        );
-                    })}
-                </div>
-                {activeTab === "form" &&
-                this.renderForm(ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, totp_key, tiqr_key, ubi_key, disabledSubmit)}
-                {activeTab === "history" && <History auditLogs={auditLogs}/>}
-
+                <Tabs>
+                    <div label="form">
+                        {this.renderForm(ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, totp_key, tiqr_key, ubi_key, disabledSubmit)}
+                    </div>
+                    <div label="history">
+                        <History auditLogs={auditLogs}/>
+                    </div>
+                </Tabs>
             </div>);
     };
 

@@ -1,13 +1,13 @@
 @import "../stylesheets/vars.scss";
 
 .mod-collaborations {
-    background-color: $background;
+    max-width: $medium;
+    width: 100%;
     padding: $medium-padding 0;
 
     div.title {
         font-size: 22px;
         color: $dark-grey;
-        max-width: $medium;
         margin: 0 auto;
         padding: 25px 0 15px 0;
         display: flex;
@@ -42,7 +42,7 @@
 
         .info-block {
             border-radius: $br;
-            background-color: white;
+            background-color: $lightest-grey;
             border: solid 1px $lightest-grey;
             box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
             padding: 15px 10px;

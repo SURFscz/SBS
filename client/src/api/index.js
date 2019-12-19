@@ -525,3 +525,7 @@ export function denyServiceConnectionRequestByHash(hash) {
 export function auditLogsMe() {
     return fetchJson("/api/audit_logs/me");
 }
+
+export function auditLogsInfo(objectId) {
+    return fetchJson(`/api/audit_logs/info/${objectId}`);
+}

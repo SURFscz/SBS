@@ -1,12 +1,12 @@
 @import "../stylesheets/vars.scss";
 
 .mod-home-container {
+    margin: 0 auto;
+    max-width: $medium;
     width: 100%;
 
     .mod-home {
-        max-width: $medium;
-        margin: 0 auto;
-        background-color: $background;
+        width: 100%;
         padding: 0;
 
 
@@ -25,7 +25,6 @@
         }
 
         .info-block-container {
-            //max-width: $medium;
             margin: 15px auto 15px auto;
             display: flex;
             align-items: stretch;
@@ -36,8 +35,9 @@
 
             .info-block {
                 border-radius: $br;
-                background-color: white;
+                background-color: $lightest-grey;
                 border: solid 1px $lightest-grey;
+
                 box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
                 padding: 15px 10px;
                 width: 100%;

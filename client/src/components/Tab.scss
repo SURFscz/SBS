@@ -1,0 +1,33 @@
+@import "../stylesheets/vars.scss";
+
+
+.tab {
+    flex: 1;
+    padding: 20px;
+    border-top-width: 2px;
+    border-top-style: solid;
+    cursor: pointer;
+
+    &:not(.active) {
+        background: $light-grey;
+        border-color: $light-grey;
+
+        h2 {
+            color: $dark-grey;
+        }
+    }
+
+
+    &.active {
+        background: $lightest-grey;
+        border-color: $blue;
+
+        h2 {
+            color: $blue;
+            font-weight: bold;
+        }
+    }
+
+}
+
+

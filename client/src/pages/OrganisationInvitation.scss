@@ -1,13 +1,13 @@
 @import "../stylesheets/vars.scss";
 
 .mod-organisation-invitation {
-    background-color: $background;
+    max-width: $medium;
+    margin: 0 auto;
+    width: 100%;
 
     div.title {
         font-size: 22px;
         color: $dark-grey;
-        max-width: $medium;
-        margin: 0 auto;
         padding: 10px 0 5px 0;
 
         p {
@@ -35,8 +35,8 @@
     .organisation-invitation {
         max-width: $medium;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-        margin: 0 auto 25px auto;
-        background-color: white;
+        margin-bottom: 25px;
+        background-color: $lightest-grey;
         padding: $medium-padding;
 
         .error {
@@ -66,10 +66,9 @@
         section.actions {
             margin: $medium-margin 0;
 
-            a.cancel, a.white, a.delete {
+            a:not(:first-child) {
                 margin-left: 25px;
             }
-
         }
 
     }

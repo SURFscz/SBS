@@ -162,11 +162,7 @@ I18n.translations.en = {
         organisation: "Organisation",
         organisations: "Organisations",
         sbs: "Application",
-        collaborations: "Collaborations",
-        tabs: {
-            form: "Keys",
-            history: "History"
-        },
+        collaborations: "Collaborations"
     },
     collaborations: {
         dashboard: "Dashboard",
@@ -432,10 +428,6 @@ I18n.translations.en = {
             memberDeleted: "Membership of {{name}} was successfully deleted",
             apiKeyDeleted: "API key was successfully deleted",
             collaborationDeleted: "Collaboration {{name}} was successfully deleted",
-        },
-        tabs: {
-            form: "Invitation details",
-            preview: "Invitation preview",
         },
         preview: "Preview",
         details: "Details"
@@ -757,6 +749,12 @@ I18n.translations.en = {
         leavePageSub: "Changes that you made will not be saved.",
         stay: "Stay",
         leave: "Leave"
+    },
+    tabs: {
+        invitation_form: "Invitation details",
+        invitation_preview: "Invitation preview",
+        form: "Details",
+        history: "History"
     },
     error_dialog: {
         title: "Unexpected error",
