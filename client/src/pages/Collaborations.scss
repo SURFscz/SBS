@@ -1,6 +1,7 @@
 @import "../stylesheets/vars.scss";
 
 .mod-collaborations {
+    margin: 0 auto;
     max-width: $medium;
     width: 100%;
     padding: $medium-padding 0;
@@ -8,7 +9,6 @@
     div.title {
         font-size: 22px;
         color: $dark-grey;
-        margin: 0 auto;
         padding: 25px 0 15px 0;
         display: flex;
         position: relative;
@@ -29,8 +29,6 @@
     }
 
     .info-block-container {
-        max-width: $medium;
-        margin: 0 auto;
         display: flex;
 
         @media (max-width: $tablet-max) {
@@ -138,11 +136,10 @@
     }
 
     .collaboration-search {
-        background-color: white;
+        background-color: $lightest-grey;
         padding: $medium-padding 0;
-        max-width: $medium;
         border-radius: $br;
-        margin: 15px auto 10px auto;
+        margin: 15px 0;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         position: relative;
 
@@ -184,11 +181,10 @@
     }
 
     .collaboration-list {
-        background-color: white;
+        background-color: $lightest-grey;
         padding: $medium-padding;
-        max-width: $medium;
         border-radius: $br;
-        margin: 10px auto;
+        margin: 10px 0;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         position: relative;
 

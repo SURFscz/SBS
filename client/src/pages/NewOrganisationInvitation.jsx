@@ -145,8 +145,9 @@ class NewOrganisationInvitation extends React.Component {
         }
     };
 
-    tabChanged = tab => {
-        if (tab === "invitation_preview") {
+    tabChanged = activeTab => {
+        this.setState({activeTab: activeTab});
+        if (activeTab === "invitation_preview") {
             const {administrators, message, organisation, expiry_date, fileEmails} = this.state;
             organisationInvitationsPreview({
                 administrators: administrators.concat(fileEmails),
@@ -220,9 +221,9 @@ class NewOrganisationInvitation extends React.Component {
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
             {showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.preview")}
-                                    onClick={() => this.setState({activeTab: "invitation_form"}, this.tabChanged)}/>}
+                                    onClick={() => this.tabChanged("invitation_preview")}/>}
             {!showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.details")}
-                                     onClick={() => this.setState({activeTab: "invitation_form"}, this.tabChanged)}/>}
+                                     onClick={() => this.tabChanged("invitation_form")}/>}
             <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")}
                     onClick={this.submit}/>
         </section>

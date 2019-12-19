@@ -102,7 +102,7 @@ export function me(config) {
     const headers = (config.local) ? {
         // "OIDC_CLAIM_cmuid": "urn:roger",
         "OIDC_CLAIM_cmuid": "urn:john",
-        // "OIDC_CLAIM_cmuid": "urn:james2",
+        // "OIDC_CLAIM_cmuid": "urn:okke",
         "OIDC_CLAIM_Nickname": "jëhny",
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
         "OIDC_CLAIM_Eduperson-Affiliation": "librarywalkin",

@@ -26,6 +26,7 @@ import CheckBox from "../components/CheckBox";
 import {sanitizeShortName} from "../validations/regExps";
 import Tabs from "../components/Tabs";
 import History from "../components/History";
+import BackLink from "../components/BackLink";
 
 
 class CollaborationDetail extends React.Component {
@@ -125,9 +126,9 @@ class CollaborationDetail extends React.Component {
             const {name, originalCollaboration} = this.state;
             updateCollaboration(this.state)
                 .then(() => {
-                    this.props.history.push(`/collaborations/${originalCollaboration.id}`);
+                    this.fetchAuditLogs(originalCollaboration.id);
                     window.scrollTo(0, 0);
-                    setFlash(I18n.t("collaborationDetail.flash.updated", {name: name}))
+                    setFlash(I18n.t("collaborationDetail.flash.updated", {name: name}));
                 });
         }
     };
@@ -571,10 +572,10 @@ class CollaborationDetail extends React.Component {
             />
             {isAdmin &&
             <section className="actions">
-                <Button disabled={disabledSubmit} txt={I18n.t("collaborationDetail.update")}
-                        onClick={this.update}/>
                 <Button className="delete" txt={I18n.t("collaborationDetail.delete")}
                         onClick={this.delete}/>
+                <Button disabled={disabledSubmit} txt={I18n.t("collaborationDetail.update")}
+                        onClick={this.update}/>
             </section>}
         </div>;
     };
@@ -626,15 +627,8 @@ class CollaborationDetail extends React.Component {
         };
         return (
             <div className="mod-collaboration-detail">
-                <div className="title">
-                    <a href="/#" onClick={e => {
-                        stopEvent(e);
-                        this.props.history.goBack();
-                    }}><FontAwesomeIcon
-                        icon="arrow-left"/>{I18n.t("forms.back")}
-                    </a>
-                </div>
-                <Tabs>
+                <BackLink history={this.props.history}/>
+                <Tabs className="white">
                     <div label="form">
                         {this.renderDetails(isAdmin, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
                             confirmationQuestion, leavePage, originalCollaboration, filteredMembers, user, sorted, reverse, query,

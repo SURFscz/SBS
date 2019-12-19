@@ -737,7 +737,27 @@ I18n.translations.nl = {
         none: "Geen historie",
         key: "Attribuut",
         oldValue: "Oude waarde",
-        newValue: "Nieuwe waarde"
+        newValue: "Nieuwe waarde",
+        tables: {
+            "api_keys": "API key",
+            "aups": "Accepted User Policy",
+            "collaboration_memberships": "Collaboration membership",
+            "collaboration_memberships_groups": "Group membership",
+            "collaboration_requests": "Collaboratie request",
+            "collaborations": "Collaboration",
+            "groups": "Group",
+            "groups_invitations": "Group invitation",
+            "invitations": "Invitation",
+            "join_requests": "Join request",
+            "organisation_invitations": "Organisation invitation",
+            "organisation_memberships": "Organisation memebership",
+            "organisations": "Organisation",
+            "organisations_services": "Organisation service",
+            "service_connection_requests": "Service connection request",
+            "services": "Service",
+            "services_collaborations": "Collaboration service",
+            "users": "User",
+        }
     },
     inputField: {
         fileImport: "Bestand inlezen",
