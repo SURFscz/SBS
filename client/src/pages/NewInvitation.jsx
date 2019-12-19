@@ -23,6 +23,7 @@ import DateField from "../components/DateField";
 import {collaborationRoles} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
+import Tabs from "../components/Tabs";
 
 class NewInvitation extends React.Component {
 
@@ -54,9 +55,8 @@ class NewInvitation extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
                 () => this.props.history.push(`/collaborations/${this.props.match.params.collaboration_id}`)),
             leavePage: true,
-            tabs: ["form", "preview"],
-            activeTab: "form",
-            htmlPreview: ""
+            htmlPreview: "",
+            activeTab: "invitation_form"
 
         };
     }
@@ -175,8 +175,8 @@ class NewInvitation extends React.Component {
         }
     };
 
-    tabChanged = () => {
-        if (this.state.activeTab === "preview") {
+    tabChanged = activeTab => {
+        if (activeTab === "invitation_preview") {
             const {administrators, message, collaboration, intended_role, expiry_date, fileEmails} = this.state;
             collaborationInvitationsPreview({
                 administrators: administrators.concat(fileEmails),
@@ -269,10 +269,10 @@ class NewInvitation extends React.Component {
     renderActions = (disabledSubmit, showPreview) => (
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-            {showPreview && <Button cancelButton={true}  className="preview" txt={I18n.t("organisationDetail.preview")}
-                                    onClick={() => this.setState({activeTab: "preview"}, this.tabChanged)}/>}
+            {showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.preview")}
+                                    onClick={() => this.setState({activeTab: "invitation_preview"})}/>}
             {!showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.details")}
-                                     onClick={() => this.setState({activeTab: "form"}, this.tabChanged)}/>}
+                                     onClick={() => this.setState({activeTab: "invitation_form"})}/>}
             <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
                     onClick={this.submit}/>
         </section>
@@ -282,7 +282,7 @@ class NewInvitation extends React.Component {
         const {
             email, initial, administrators, expiry_date, collaboration, intended_role,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName, fileInputKey,
-            fileTypeError, fileEmails, tabs, activeTab, groups, selectedGroup
+            fileTypeError, fileEmails, activeTab, groups, selectedGroup
         } = this.state;
         if (collaboration === undefined) {
             return null;
@@ -303,28 +303,20 @@ class NewInvitation extends React.Component {
                     </a>
                     <p className="title">{I18n.t("invitation.createTitle", {collaboration: collaboration.name})}</p>
                 </div>
-                <div className="tabs">
-                    {tabs.map(tab => {
-                        const className = tab === activeTab ? "tab active" : "tab";
-
-                        return (
-                            <div className={className} key={tab}
-                                 onClick={() => this.setState({activeTab: tab}, this.tabChanged)}>
-                                <h2>{I18n.t(`organisationDetail.tabs.${tab}`)}</h2>
-                            </div>
-                        );
-                    })}
-                </div>
-
-                {activeTab === "form" && <div className="new-collaboration-invitation">
-                    {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                        administrators, intended_role, message, expiry_date, disabledSubmit, groups,
-                        selectedGroup)}
-                </div>}
-                {activeTab === "preview" && <div className="new-collaboration-invitation">
-                    {this.preview(disabledSubmit)}
-                </div>}
-
+                <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged} key={activeTab}>
+                    <div label="invitation_form">
+                        <div className="new-collaboration-invitation">
+                            {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                                administrators, intended_role, message, expiry_date, disabledSubmit, groups,
+                                selectedGroup)}
+                        </div>
+                    </div>
+                    <div label="invitation_preview">
+                        <div className="new-collaboration-invitation">
+                            {this.preview(disabledSubmit)}
+                        </div>
+                    </div>
+                </Tabs>
             </div>);
     };
 

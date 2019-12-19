@@ -1,5 +1,6 @@
 import React from "react";
 import {
+    auditLogsInfo,
     collaborationById,
     collaborationLiteById,
     collaborationNameExists, collaborationShortNameExists,
@@ -23,6 +24,8 @@ import Select from "react-select";
 import {headerIcon} from "../forms/helpers";
 import CheckBox from "../components/CheckBox";
 import {sanitizeShortName} from "../validations/regExps";
+import Tabs from "../components/Tabs";
+import History from "../components/History";
 
 
 class CollaborationDetail extends React.Component {
@@ -62,8 +65,8 @@ class CollaborationDetail extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: I18n.t("collaborationDetail.deleteConfirmation"),
             leavePage: false,
-            showMore: []
-
+            showMore: [],
+            auditLogs: {"audit_logs": []}
         }
     }
 
@@ -88,7 +91,7 @@ class CollaborationDetail extends React.Component {
                             members: members,
                             filteredMembers: members,
                             adminOfCollaboration: true
-                        })
+                        }, () => this.fetchAuditLogs(collaboration_id))
                     });
             } else {
                 collaborationLiteById(collaboration_id)
@@ -105,6 +108,8 @@ class CollaborationDetail extends React.Component {
             this.props.history.push("/404");
         }
     };
+
+    fetchAuditLogs = collaborationId => auditLogsInfo(collaborationId).then(json => this.setState({auditLogs: json}));
 
     update = () => {
         const {initial} = this.state;
@@ -574,33 +579,8 @@ class CollaborationDetail extends React.Component {
         </div>;
     };
 
-    render() {
-        const {
-            originalCollaboration, name, short_name, description, accepted_user_policy, access_type, initial, alreadyExists,
-            identifier, enrollment, filteredMembers, query, disable_join_requests,
-            confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
-            adminOfCollaboration
-        } = this.state;
-        if (!originalCollaboration) {
-            return null;
-        }
-        const {user, config} = this.props;
-        const isAdmin = user.admin || adminOfCollaboration;
-        const disabledSubmit = !initial && !this.isValid();
-        const organisation = {
-            value: originalCollaboration.organisation.id,
-            label: originalCollaboration.organisation.name,
-            short_name: originalCollaboration.organisation.short_name
-        };
-        return (<div className="mod-collaboration-detail">
-            <div className="title">
-                <a href="/#" onClick={e => {
-                    stopEvent(e);
-                    this.props.history.goBack();
-                }}><FontAwesomeIcon
-                    icon="arrow-left"/>{I18n.t("forms.back")}
-                </a>
-            </div>
+    renderDetails = (isAdmin, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion, leavePage, originalCollaboration, filteredMembers, user, sorted, reverse, query, adminOfCollaboration, name, short_name, alreadyExists, initial, description, accepted_user_policy, enrollment, access_type, identifier, organisation, disabledSubmit, config, disable_join_requests) => (
+        <div>
             {isAdmin && <section>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
@@ -624,8 +604,50 @@ class CollaborationDetail extends React.Component {
             {this.collaborationDetails(name, short_name, alreadyExists, initial, description, accepted_user_policy,
                 enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
                 config, disable_join_requests)}
-        </div>)
+        </div>);
+
+    render() {
+        const {
+            originalCollaboration, name, short_name, description, accepted_user_policy, access_type, initial, alreadyExists,
+            identifier, enrollment, filteredMembers, query, disable_join_requests,
+            confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
+            adminOfCollaboration, auditLogs
+        } = this.state;
+        if (!originalCollaboration) {
+            return null;
+        }
+        const {user, config} = this.props;
+        const isAdmin = user.admin || adminOfCollaboration;
+        const disabledSubmit = !initial && !this.isValid();
+        const organisation = {
+            value: originalCollaboration.organisation.id,
+            label: originalCollaboration.organisation.name,
+            short_name: originalCollaboration.organisation.short_name
+        };
+        return (
+            <div className="mod-collaboration-detail">
+                <div className="title">
+                    <a href="/#" onClick={e => {
+                        stopEvent(e);
+                        this.props.history.goBack();
+                    }}><FontAwesomeIcon
+                        icon="arrow-left"/>{I18n.t("forms.back")}
+                    </a>
+                </div>
+                <Tabs>
+                    <div label="form">
+                        {this.renderDetails(isAdmin, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
+                            confirmationQuestion, leavePage, originalCollaboration, filteredMembers, user, sorted, reverse, query,
+                            adminOfCollaboration, name, short_name, alreadyExists, initial, description, accepted_user_policy,
+                            enrollment, access_type, identifier, organisation, disabledSubmit, config, disable_join_requests)}
+                    </div>
+                    {isAdmin && <div label="history">
+                        <History auditLogs={auditLogs}/>
+                    </div>}
+                </Tabs>
+            </div>)
     }
+
 
 }
 

@@ -1,13 +1,13 @@
 @import "../stylesheets/vars.scss";
 
 .mod-user-profile {
-    background-color: $background;
+    max-width: $medium;
+    margin: 0 auto;
+    width: 100%;
 
     div.title {
         font-size: 22px;
         color: $dark-grey;
-        max-width: $medium;
-        margin: 0 auto;
         padding: 10px 0 5px 0;
 
         p {
@@ -33,10 +33,9 @@
     }
 
     div.user-profile {
-        max-width: $medium;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-        margin: 0 auto 25px auto;
-        background-color: white;
+        margin-bottom: 25px;
+        background-color: $lightest-grey;
         padding: $medium-padding;
 
         .error {
@@ -62,51 +61,13 @@
         section.actions {
             margin: $medium-margin 0;
 
-            a.cancel, a.white, a.delete {
+            a:not(:first-child) {
                 margin-left: 25px;
             }
 
+
         }
 
-
-    }
-
-    .tabs {
-        max-width: $medium;
-        margin: 0 auto;
-
-        display: flex;
-
-        .tab {
-            flex: 1;
-            padding: 20px;
-            border-top-width: 2px;
-            border-top-style: solid;
-            cursor: pointer;
-
-            &:not(.active) {
-                background: $light-grey;
-                border-color: $light-grey;
-
-                h2 {
-                    color: $dark-grey;
-                }
-            }
-
-            &.single-tab {
-                padding-bottom: 10px;
-            }
-
-            &.active {
-                background: white;
-                border-color: $blue;
-
-                h2 {
-                    color: $blue;
-                    font-weight: bold;
-                }
-            }
-        }
 
     }
 

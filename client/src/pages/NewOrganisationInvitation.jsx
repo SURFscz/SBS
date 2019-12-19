@@ -16,6 +16,7 @@ import {validEmailRegExp} from "../validations/regExps";
 import "./NewOrganisationInvitation.scss"
 import DateField from "../components/DateField";
 import {getParameterByName} from "../utils/QueryParameters";
+import Tabs from "../components/Tabs";
 
 class NewOrganisationInvitation extends React.Component {
 
@@ -40,8 +41,7 @@ class NewOrganisationInvitation extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
                 () => this.props.history.push(`/organisations/${this.props.match.params.organisation_id}`)),
             leavePage: true,
-            tabs: ["form", "preview"],
-            activeTab: "form",
+            activeTab: "invitation_form",
             htmlPreview: ""
         };
     }
@@ -145,8 +145,8 @@ class NewOrganisationInvitation extends React.Component {
         }
     };
 
-    tabChanged = () => {
-        if (this.state.activeTab === "preview") {
+    tabChanged = tab => {
+        if (tab === "invitation_preview") {
             const {administrators, message, organisation, expiry_date, fileEmails} = this.state;
             organisationInvitationsPreview({
                 administrators: administrators.concat(fileEmails),
@@ -220,9 +220,9 @@ class NewOrganisationInvitation extends React.Component {
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
             {showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.preview")}
-                                    onClick={() => this.setState({activeTab: "preview"}, this.tabChanged)}/>}
+                                    onClick={() => this.setState({activeTab: "invitation_form"}, this.tabChanged)}/>}
             {!showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.details")}
-                                    onClick={() => this.setState({activeTab: "form"}, this.tabChanged)}/>}
+                                     onClick={() => this.setState({activeTab: "invitation_form"}, this.tabChanged)}/>}
             <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")}
                     onClick={this.submit}/>
         </section>
@@ -232,7 +232,7 @@ class NewOrganisationInvitation extends React.Component {
         const {
             email, initial, administrators, expiry_date, organisation,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
-            fileTypeError, fileEmails, fileInputKey, tabs, activeTab
+            fileTypeError, fileEmails, fileInputKey, activeTab
         } = this.state;
         if (organisation === undefined) {
             return null;
@@ -253,24 +253,20 @@ class NewOrganisationInvitation extends React.Component {
                     </a>
                     <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
                 </div>
-                <div className="tabs">
-                    {tabs.map(tab => {
-                        const className = tab === activeTab ? "tab active" : "tab";
+                <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged} key={activeTab}>
+                    <div label="invitation_form">
+                        <div className="new-organisation-invitation">
+                            {this.invitationForm(message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                                administrators, expiry_date, disabledSubmit)}
+                        </div>
+                    </div>
+                    <div label="invitation_preview">
+                        <div className="new-organisation-invitation">
+                            {this.preview(disabledSubmit)}
+                        </div>
+                    </div>
+                </Tabs>
 
-                        return (
-                            <div className={className} key={tab}
-                                 onClick={() => this.setState({activeTab: tab}, this.tabChanged)}>
-                                <h2>{I18n.t(`organisationDetail.tabs.${tab}`)}</h2>
-                            </div>
-                        );
-                    })}
-                </div>
-                {activeTab === "form" && <div className="new-organisation-invitation">
-                    {this.invitationForm(message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date, disabledSubmit)}
-                </div>}
-                {activeTab === "preview" && <div className="new-organisation-invitation">
-                    {this.preview(disabledSubmit)}
-                </div>}
             </div>);
     };
 

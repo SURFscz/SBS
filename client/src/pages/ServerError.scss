@@ -1,15 +1,13 @@
 @import "../stylesheets/vars.scss";
 
 .mod-server-error {
-
-    background-color: $background;
-    margin-bottom: $medium-padding;
+    max-width: $medium;
+    margin: 20px auto;
+    width: 100%;
 
     div.title {
         font-size: 20px;
         color: $dark-grey;
-        max-width: $medium;
-        margin: 20px auto;
         padding: 10px 0 5px 0;
 
         p {
@@ -19,10 +17,9 @@
     }
 
     .content {
-        max-width: $medium;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         margin: 0 auto 25px auto;
-        background-color: white;
+        background-color: $lightest-grey;
         display: flex;
         flex-direction: column;
         justify-content: center;

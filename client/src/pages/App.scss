@@ -4,8 +4,8 @@
     display: flex;
     position: relative;
     min-height: 100vh;
+    width: 100%;
     flex-direction: column;
-    background-color: $background;
 
     .__react_component_tooltip {
         text-align: center;

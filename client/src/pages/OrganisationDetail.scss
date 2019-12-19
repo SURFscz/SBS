@@ -2,14 +2,14 @@
 
 .mod-organisation-detail {
 
-    background-color: $background;
+    max-width: $medium;
+    width: 100%;
+    margin: 0 auto;
     padding: 0;
 
     .title {
         font-size: 22px;
         color: $dark-grey;
-        max-width: $medium;
-        margin: 0 auto;
         padding: 10px 0 5px 0;
 
         p {
@@ -35,10 +35,9 @@
     }
 
     .organisation-detail {
-        max-width: $medium;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-        margin: 0 auto 15px auto;
-        background-color: white;
+        margin-bottom: 25px;
+        background-color: $lightest-grey;
         padding: 10px $medium-padding 30px $medium-padding;
 
 
@@ -62,7 +61,7 @@
     }
 
     .members-search, .collaborations-search {
-        background-color: white;
+        background-color: $lightest-grey;
         padding: $medium-padding;
         max-width: $medium;
         border-radius: $br;
@@ -108,9 +107,8 @@
     }
 
     .invitations-container, .api-keys-container, .collaboration-requests-container {
-        background-color: white;
+        background-color: $lightest-grey;
         padding: $medium-padding;
-        max-width: $medium;
         border-radius: $br;
         margin: 0 auto 10px auto;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);

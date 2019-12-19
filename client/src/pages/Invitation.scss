@@ -1,13 +1,13 @@
 @import "../stylesheets/vars.scss";
 
 .mod-invitation {
-    background-color: $background;
+    max-width: $medium;
+    margin: 0 auto;
+    width: 100%;
 
     div.title {
         font-size: 22px;
         color: $dark-grey;
-        max-width: $medium;
-        margin: 0 auto;
         padding: 10px 0 5px 0;
 
         p {
@@ -33,10 +33,9 @@
     }
 
     .invitation {
-        max-width: $medium;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         margin: 0 auto;
-        background-color: white;
+        background-color: $lightest-grey;
         padding: $medium-padding;
 
         .error {

@@ -163,11 +163,6 @@ I18n.translations.nl = {
         organisations: "Organisaties",
         sbs: "Applicatie",
         collaborations: "Samenwerkingen",
-        tabs: {
-            form: "Keys",
-            history: "Historie"
-        },
-
     },
     collaborations: {
         dashboard: "Dashboard",
@@ -433,10 +428,6 @@ I18n.translations.nl = {
             memberDeleted: "Lidmaatschap van {{name}} is verwijderd.",
             apiKeyDeleted: "API-sleutel is verwijderd.",
             collaborationDeleted: "Samenwerking {{name}} is verwijderd.",
-        },
-        tabs: {
-            form: "Uitnodiging details",
-            preview: "Uitnodiging preview",
         },
         preview: "Preview",
         details: "Details"
@@ -748,7 +739,6 @@ I18n.translations.nl = {
         oldValue: "Oude waarde",
         newValue: "Nieuwe waarde"
     },
-
     inputField: {
         fileImport: "Bestand inlezen",
     },
@@ -760,6 +750,12 @@ I18n.translations.nl = {
         leavePageSub: "Wijzigingen die niet zijn opgeslagen worden niet bewaard.",
         stay: "Blijf",
         leave: "Verlaat deze pagina"
+    },
+    tabs: {
+        invitation_form: "Uitnodiging details",
+        invitation_preview: "Uitnodiging preview",
+        form: "Details",
+        history: "Historie"
     },
     error_dialog: {
         title: "Onverwachte fout",
