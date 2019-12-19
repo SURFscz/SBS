@@ -180,7 +180,7 @@ class Service extends React.Component {
                         contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations,
                         accepted_user_policy, isNew, service, disabledSubmit) => (
         <div className="service">
-            <p className="title">{title}</p>
+            {!isNew && <p className="title">{title}</p>}
             <InputField value={name} onChange={e => this.setState({
                 name: e.target.value,
                 alreadyExists: {...this.state.alreadyExists, name: false}
@@ -340,13 +340,14 @@ class Service extends React.Component {
                                     leavePage={leavePage}
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
                 <BackLink history={this.props.history}/>
-                <Tabs className="white">
+                {isNew && <p className="title">{title}</p>}
+                <Tabs>
                     <div label="form">
                         {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                             contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,
                             isNew, service, disabledSubmit)}
                     </div>
-                    {isAdmin && <div label="history">
+                    {(isAdmin && !isNew) && <div label="history">
                         <History auditLogs={auditLogs}/>
                     </div>}
                 </Tabs>

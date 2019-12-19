@@ -172,9 +172,7 @@ class Profile extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={true}/>
-                <div className="title">
-                    <p className="title">{title}</p>
-                </div>
+                <p className="title">{title}</p>
                 <Tabs>
                     <div label="form">
                         {this.renderForm(ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, totp_key, tiqr_key, ubi_key, disabledSubmit)}
