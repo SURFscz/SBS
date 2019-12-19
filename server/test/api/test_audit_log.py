@@ -2,10 +2,10 @@
 import json
 
 from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE
-from server.db.domain import User, Collaboration, Service
+from server.db.domain import User, Collaboration, Service, Organisation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import join_request_peter_hash, roger_name, service_cloud_name, ai_computing_name, \
-    service_mail_name
+    service_mail_name, invitation_hash_curious, organisation_invitation_hash, uuc_name
 
 
 class TestAuditLog(AbstractTest):
@@ -66,3 +66,25 @@ class TestAuditLog(AbstractTest):
 
         self.assertEqual(3, len(res))
         self.assertListEqual(sorted(["audit_logs", "collaborations", "users"]), sorted(list(res.keys())))
+
+    def test_collaboration(self):
+        self.login("urn:james")
+        self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        res = self.get(f"/api/audit_logs/info/{collaboration_id}")
+
+        self.assertEqual(2, len(res["audit_logs"]))
+        self.assertEqual(ACTION_DELETE, self.audit_log_by_target_type("invitations", res)[0]["action"])
+        self.assertEqual(ACTION_CREATE, self.audit_log_by_target_type("collaboration_memberships", res)[0]["action"])
+
+    def test_organisation(self):
+        self.login("urn:sarah")
+        self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
+                 with_basic_auth=False)
+
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        res = self.get(f"/api/audit_logs/info/{organisation_id}")
+
+        self.assertEqual(2, len(res["audit_logs"]))
+        self.assertEqual(ACTION_DELETE, self.audit_log_by_target_type("organisation_invitations", res)[0]["action"])
+        self.assertEqual(ACTION_CREATE, self.audit_log_by_target_type("organisation_memberships", res)[0]["action"])

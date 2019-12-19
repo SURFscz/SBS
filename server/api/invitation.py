@@ -65,27 +65,21 @@ def invitations_accept():
 
     role = invitation.intended_role if invitation.intended_role else "member"
     collaboration_membership = CollaborationMembership(user_id=user_id,
-                                                       collaboration=collaboration,
+                                                       collaboration_id=collaboration.id,
                                                        role=role,
                                                        created_by=invitation.user.uid,
                                                        updated_by=invitation.user.uid)
-
-    collaboration.collaboration_memberships.append(collaboration_membership)
-    collaboration.invitations.remove(invitation)
-
-    # We need the persistent identifier of the collaboration_membership
-    db.session.commit()
+    collaboration_membership = db.session.merge(collaboration_membership)
+    # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
+    delete(Invitation, invitation.id)
 
     # ensure all authorisation group membership are added
-    groups = invitation.groups + list(
-        filter(lambda ag: ag.auto_provision_members, collaboration.groups))
-    unique_groups = list({ag.id: ag for ag in groups}.values())
+    groups = invitation.groups + list(filter(lambda ag: ag.auto_provision_members, collaboration.groups))
 
-    for group in unique_groups:
+    for group in set(list({ag.id: ag for ag in groups}.values())):
         group.collaboration_memberships.append(collaboration_membership)
-        # collaboration_membership.groups.append(group)
+        db.session.merge(group)
 
-    db.session.merge(collaboration_membership)
     return None, 201
 
 

@@ -199,7 +199,7 @@ def organisation_invites():
 
     for administrator in administrators:
         invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
-                                            organisation=organisation, user=user,
+                                            organisation_id=organisation.id, user_id=user.id,
                                             expiry_date=default_expiry_date(json_dict=data),
                                             created_by=user.uid)
         invitation = db.session.merge(invitation)
@@ -228,7 +228,7 @@ def save_organisation():
     for administrator in administrators:
         organisation = res[0]
         invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
-                                            organisation=organisation, user=user,
+                                            organisation_id=organisation.id, user_id=user.id,
                                             expiry_date=default_expiry_date(),
                                             created_by=user.uid)
         invitation = db.session.merge(invitation)

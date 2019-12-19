@@ -90,8 +90,8 @@ def request_service_connection():
 
     user_uid = current_user_uid()
     service_connection_request = ServiceConnectionRequest(message=data.get("message"), hash=token_urlsafe(),
-                                                          requester_id=current_user_id(), service=service,
-                                                          collaboration=collaboration, created_by=user_uid,
+                                                          requester_id=current_user_id(), service_id=service.id,
+                                                          collaboration_id=collaboration.id, created_by=user_uid,
                                                           updated_by=user_uid)
     saved_service_connection_request = db.session.merge(service_connection_request)
     db.session.commit()

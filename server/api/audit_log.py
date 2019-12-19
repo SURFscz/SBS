@@ -37,18 +37,25 @@ def info(query_id):
     return _add_references(audit_logs), 200
 
 
+def _contains_id(result, key, id):
+    coll = result.get(key, [])
+    return any(elem.id == id for elem in coll)
+
+
 def _add_references(audit_logs):
     result = {"audit_logs": audit_logs}
     for audit_log in audit_logs:
         parent_name = audit_log.parent_name
-        if parent_name in table_names_cls_mapping:
+        if parent_name in table_names_cls_mapping and not _contains_id(result, parent_name, audit_log.parent_id):
             cls = table_names_cls_mapping[parent_name]
-            result[parent_name] = result.get(parent_name, []) + cls.query \
-                .filter(cls.id == audit_log.parent_id) \
-                .all()
+            parents = cls.query.filter(cls.id == audit_log.parent_id).all()
+            result[parent_name] = result.get(parent_name, []) + parents
+
         if audit_log.user_id or audit_log.subject_id:
-            users = User.query \
-                .filter((User.id == audit_log.user_id) | (User.id == audit_log.subject_id)) \
-                .all()
-            result["users"] = result.get("users", []) + users
+            if not _contains_id(result, "users", audit_log.user_id):
+                users = User.query.filter(User.id == audit_log.user_id).all()
+                result["users"] = result.get("users", []) + users
+            if not _contains_id(result, "users", audit_log.subject_id):
+                users = User.query.filter(User.id == audit_log.subject_id).all()
+                result["users"] = result.get("users", []) + users
     return result

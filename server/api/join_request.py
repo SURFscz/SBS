@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
-from flask import Blueprint, request as current_request, current_app
 from secrets import token_urlsafe
+
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Conflict
 
@@ -89,9 +90,10 @@ def new_join_request():
     join_request = JoinRequest(message=client_data["motivation"],
                                reference=client_data["reference"] if "reference" in client_data else None,
                                user_id=user_id,
-                               collaboration=collaboration,
+                               collaboration_id=collaboration.id,
                                hash=token_urlsafe())
     join_request = db.session.merge(join_request)
+    db.session.commit()
 
     mail_collaboration_join_request({
         "salutation": "Dear",
@@ -100,6 +102,7 @@ def new_join_request():
         "base_url": current_app.app_config.base_url,
         "join_request": join_request
     }, collaboration, admin_emails)
+
     return join_request, 201
 
 
@@ -126,17 +129,13 @@ def approve_join_request():
         [join_request.user.email])
 
     collaboration_membership = CollaborationMembership(user_id=user_id,
-                                                       collaboration=collaboration,
+                                                       collaboration_id=collaboration.id,
                                                        role="member",
                                                        created_by=current_user_uid(),
                                                        updated_by=current_user_uid())
 
-    collaboration.collaboration_memberships.append(collaboration_membership)
-    db.session.delete(join_request)
-    # collaboration.join_requests.remove(join_request)
-
-    # We need the persistent identifier of the collaboration_membership
-    db.session.commit()
+    db.session.merge(collaboration_membership)
+    delete(JoinRequest, join_request.id)
 
     return None, 201
 
