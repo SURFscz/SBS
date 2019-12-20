@@ -636,7 +636,7 @@ class CollaborationDetail extends React.Component {
                             enrollment, access_type, identifier, organisation, disabledSubmit, config, disable_join_requests)}
                     </div>
                     {isAdmin && <div label="history">
-                        <History auditLogs={auditLogs}/>
+                        <History auditLogs={auditLogs} className="white"/>
                     </div>}
                 </Tabs>
             </div>)

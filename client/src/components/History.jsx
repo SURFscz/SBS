@@ -8,17 +8,24 @@ import {escapeDeep, isEmpty} from "../utils/Utils";
 
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at"];
 
+const collectionMapping = {
+    organisation_id: "organisations",
+    collaboration_id: "collaborations",
+    user_id: "users"
+};
+
 export default class History extends React.PureComponent {
 
     constructor(props, context) {
         super(props, context);
+        const {auditLogs} = this.props;
         this.state = {
-            selected: this.convertReference(this.props.auditLogs.audit_logs[0])
+            selected: this.convertReference(auditLogs, auditLogs.audit_logs[0])
         };
         this.differ = new DiffPatcher();
     }
 
-    convertReference = auditLog => {
+    convertReference = (auditLogs, auditLog) => {
         if (auditLog) {
             auditLog.stateBefore = JSON.parse(auditLog.state_before || "{}");
             auditLog.stateAfter = JSON.parse(auditLog.state_after || "{}");
@@ -26,13 +33,28 @@ export default class History extends React.PureComponent {
                 escapeDeep(state);
                 ignoreInDiff.forEach(ignore => delete state[ignore]);
             });
+            Object.keys(auditLog).forEach(key => {
+                this.addReference(auditLogs, auditLog, key);
+            });
         }
         return auditLog;
     };
 
+    addReference = (auditLogs, auditLog, key) => {
+        if (collectionMapping[key]) {
+            const references = auditLogs[collectionMapping[key]];
+            if (references) {
+                const reference = references.find(ref => ref.id === auditLog[key]);
+                if (reference) {
+                    auditLog[key.replace(/_id/, "")] = reference;
+                }
+            }
+        }
+    };
+
     convertReferences = auditLogs => {
         const auditLogRecords = auditLogs.audit_logs;
-        return auditLogRecords.map(this.convertReference);
+        return auditLogRecords.map(auditLog => this.convertReference(auditLogs, auditLog));
     };
 
 
@@ -47,8 +69,9 @@ export default class History extends React.PureComponent {
                         className={`${log.id === selected.id ? "selected" : ""}`}>
                         {I18n.t("history.overview", {
                             action: I18n.t(`history.actions.${log.action}`),
+                            collection: I18n.t(`history.tables.${log.target_type}`),
                             date: moment(log.created_at * 1000).format("L"),
-                            collection: log.target_type
+                            user: (log.user || {name: "Unknown"}).name
                         })}
                         {}
                     </li>)}
@@ -81,33 +104,45 @@ export default class History extends React.PureComponent {
         const delta = this.differ.diff(beforeState, afterState);
         return (
             <div className="details">
+                {(auditLog.parent_name && [1, 3].includes(auditLog.action)) &&
+                <p className="info">{I18n.t(auditLog.action === 1 ? "history.parentNew" : "history.parentDeleted", {
+                    collection: I18n.t(`history.tables.${auditLog.target_type}`),
+                    parent: I18n.t(`history.tables.${auditLog.parent_name}`)
+                })}</p>}
+                {(auditLog.parent_name && auditLog.action === 2) &&
+                <p className="info">{I18n.t("history.parentUpdated", {
+                    collection: I18n.t(`history.tables.${auditLog.target_type}`),
+                    parent: I18n.t(`history.tables.${auditLog.parent_name}`)
+                })}</p>}
+
                 <table className="changes" cellSpacing="0">
                     <thead>
                     <tr>
                         <th className="key">{I18n.t("history.key")}</th>
-                        <th className="old-value">{I18n.t("history.oldValue")}</th>
-                        <th className="new-value">{I18n.t("history.newValue")}</th>
+                        {auditLog.action !== 1 && <th className="old-value">{I18n.t("history.oldValue")}</th>}
+                        {auditLog.action !== 3 && <th className="new-value">{I18n.t("history.newValue")}</th>}
                     </tr>
                     </thead>
                     <tbody>
                     {Object.keys(delta).map(key => <tr key={key}>
                         <td>{key}</td>
-                        <td>{this.getAuditLogValue(auditLog, delta[key], true)}</td>
-                        <td>{this.getAuditLogValue(auditLog, delta[key], false)}</td>
+                        {auditLog.action !== 1 && <td>{this.getAuditLogValue(auditLog, delta[key], true)}</td>}
+                        {auditLog.action !== 3 && <td>{this.getAuditLogValue(auditLog, delta[key], false)}</td>}
                     </tr>)}
                     </tbody>
                 </table>
+
             </div>
         );
     };
 
     render() {
-        const {auditLogs} = this.props;
+        const {auditLogs, className = ""} = this.props;
         const auditLogEntries = this.convertReferences(auditLogs);
         const {selected} = this.state;
         return (
             <div className="history-container">
-                <div className="history">
+                <div className={`history ${className}`}>
                     {this.renderAuditLogs(auditLogEntries, selected)}
                     {this.renderDetail(selected)}
                 </div>

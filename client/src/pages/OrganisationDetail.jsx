@@ -672,7 +672,7 @@ class OrganisationDetail extends React.Component {
                             collaborationsQuery, name, short_name, alreadyExists, initial, description, schac_home_organisation, disabledSubmit)}
                     </div>
                     <div label="history">
-                        <History auditLogs={auditLogs}/>
+                        <History auditLogs={auditLogs} className="white"/>
                     </div>
                 </Tabs>
 
