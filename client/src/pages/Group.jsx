@@ -127,10 +127,12 @@ class Group extends React.Component {
         groupById(params.id, params.collaboration_id)
             .then(json => {
                 const {sortedMembersBy, reverseMembers, sortedInvitationsBy, reverseInvitations} = this.state;
+                window.scrollTo(0, 0);
                 this.setState({
                     sortedMembers: sortObjects(json.collaboration_memberships, sortedMembersBy, reverseMembers),
                     sortedInvitations: sortObjects(json.invitations, sortedInvitationsBy, reverseInvitations)
-                }, callBack())
+                }, callBack());
+                this.fetchAuditLogs(params.id);
             });
     };
 
@@ -172,7 +174,7 @@ class Group extends React.Component {
 
     validateGroupShortName = e => {
         const {isNew, collaboration, group} = this.state;
-        groupShortNameExists(e.target.value, collaboration.id, isNew ? null : group.name).then(json => {
+        groupShortNameExists(e.target.value, collaboration.id, isNew ? null : group.short_name).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
     };
@@ -551,12 +553,12 @@ class Group extends React.Component {
                             disabled={!adminOfCollaboration}/>
                 {alreadyExists.short_name && <span
                     className="error">{I18n.t("groups.alreadyExists", {
-                    attribute: I18n.t("groups.shortName").toLowerCase(),
+                    attribute: I18n.t("groups.short_name").toLowerCase(),
                     value: short_name
                 })}</span>}
                 {(!initial && isEmpty(short_name)) && <span
                     className="error">{I18n.t("groups.required", {
-                    attribute: I18n.t("groups.shortName").toLowerCase()
+                    attribute: I18n.t("groups.short_name").toLowerCase()
                 })}</span>}
 
 
@@ -656,7 +658,7 @@ class Group extends React.Component {
                             group, detailsTitle, name, short_name, auto_provision_members, alreadyExists, initial, description,
                             disabledSubmit, collaboration)}
                     </div>
-                    {adminOfCollaboration && <div label="history">
+                    {(adminOfCollaboration && !isNew) && <div label="history">
                         <History auditLogs={auditLogs}/>
                     </div>}
                 </Tabs>
