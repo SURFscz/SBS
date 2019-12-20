@@ -208,7 +208,7 @@ I18n.translations.nl = {
         message: "Bericht",
         messagePlaceholder: "Boodschap aan de beheerders van deze samenwerking",
         messageTooltip: "De boodschap nemen we op in de <br/>e-mail waarmee beheerders worden uitgenodigd.",
-        motivation: "Motivatiw",
+        motivation: "Motivatie",
         motivationPlaceholder: "Motivatie voor de nieuwe samenwerking",
         organisation_name: "Organisatie",
         organisationPlaceholder: "Kies de organisatie voor deze samenwerking",
@@ -739,6 +739,9 @@ I18n.translations.nl = {
         key: "Attribuut",
         oldValue: "Oude waarde",
         newValue: "Nieuwe waarde",
+        parentNew: "Nieuwe {{collection}} toegevoegd aan {{parent}}",
+        parentUpdated: "Bestaande {{collection}} is aangepast en is gelinkt aan {{parent}}",
+        parentDeleted: "Bestaande {{collection}} verwijderd uit {{parent}}",
         tables: {
             "api_keys": "API key",
             "aups": "Accepted User Policy",
