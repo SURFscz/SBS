@@ -11,6 +11,10 @@
         display: flex;
         width: 100%;
 
+        &.white {
+            background-color: white;
+        }
+
         ul.logs {
             width: 50%;
             list-style: none;
@@ -37,6 +41,10 @@
         .details {
             width: 50%;
             padding: 25px 0;
+        }
+
+        p.info {
+            margin-bottom: 25px;
         }
 
         p.none {

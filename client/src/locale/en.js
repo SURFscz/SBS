@@ -729,15 +729,18 @@ I18n.translations.en = {
         changes: "Changes",
         detail: "Detail",
         actions: {
-            "1": "create",
-            "2": "update",
-            "3": "delete"
+            "1": "New",
+            "2": "Updated",
+            "3": "Deleted"
         },
-        overview: "Change - {{action}} - at {{date}} in {{collection}}.",
+        overview: "{{action}} {{collection}} at {{date}} by {{user}}.",
         none: "No history",
         key: "Attribute",
         oldValue: "Old value",
         newValue: "New value",
+        parentNew: "New {{collection}} added to {{parent}}",
+        parentUpdated: "Existing {{collection}} was updated and is linked to {{parent}}",
+        parentDeleted: "Existing {{collection}} deleted from {{parent}}",
         tables: {
             "api_keys": "API key",
             "aups": "Accepted User Policy",

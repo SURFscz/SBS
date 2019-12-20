@@ -659,7 +659,7 @@ class Group extends React.Component {
                             disabledSubmit, collaboration)}
                     </div>
                     {(adminOfCollaboration && !isNew) && <div label="history">
-                        <History auditLogs={auditLogs}/>
+                        <History auditLogs={auditLogs} className="white"/>
                     </div>}
                 </Tabs>
             </div>);
