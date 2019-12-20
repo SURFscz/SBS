@@ -13,6 +13,19 @@ table_names_cls_mapping = {
     "collaborations": Collaboration,
 }
 
+# TODO Add dedicated endpoints for the various queries
+# As a user, I want to be able to see which changes where made to my profile, CO memberships and group memberships, in
+# order to track why I can or cannot access a service (anymore)
+
+# As a CO admin, I want to be able to see which changes were made to the details of my CO and the group memberships and
+# within my CO and by whom in order to determine why a user has access and who had access in the past
+
+# As a CO admin, I want to be able to see whihc changes were made to profiles of users in my CO, in order to be able to
+# determine if a user still should have access (for example if an affiliation or email address changes)
+
+# As an Organization admin, I want to to able to see which changes where made to the COs in my organization, and to the
+# (admin) members of my Organization, in order to keep track of what is happening in my Organization.
+
 
 @audit_log_api.route("/me", methods=["GET"], strict_slashes=False)
 @json_endpoint
@@ -38,8 +51,7 @@ def info(query_id):
 
 
 def _contains_id(result, key, id):
-    coll = result.get(key, [])
-    return any(elem.id == id for elem in coll)
+    return any(elem.id == id for elem in result.get(key)) if key in result else False
 
 
 def _add_references(audit_logs):

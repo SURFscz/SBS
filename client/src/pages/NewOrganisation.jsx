@@ -107,7 +107,6 @@ class NewOrganisation extends React.Component {
         }
     };
 
-
     render() {
         const {
             name, description, email, initial, alreadyExists, administrators,
@@ -115,7 +114,6 @@ class NewOrganisation extends React.Component {
             schac_home_organisation
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
-        //TODO based on the params of the path
         const disabled = false;
         return (
             <div className="mod-new-organisation">
