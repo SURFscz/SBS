@@ -20,7 +20,7 @@ table_names_cls_mapping = {
 # As a CO admin, I want to be able to see which changes were made to the details of my CO and the group memberships and
 # within my CO and by whom in order to determine why a user has access and who had access in the past
 
-# As a CO admin, I want to be able to see whihc changes were made to profiles of users in my CO, in order to be able to
+# As a CO admin, I want to be able to see which changes were made to profiles of users in my CO, in order to be able to
 # determine if a user still should have access (for example if an affiliation or email address changes)
 
 # As an Organization admin, I want to to able to see which changes where made to the COs in my organization, and to the
