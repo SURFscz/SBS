@@ -79,29 +79,45 @@ export default class History extends React.PureComponent {
         );
     };
 
-    getAuditLogValue = (auditLog, values, oldValue) => {
+    auditLogReference = (value, key, auditLogs) => {
+        const auditLogReferences = {
+          "organisation_id": "organisations" ,
+          "collaboration_id": "collaborations",
+          "user_id": "users"
+        };
+        if (auditLogReferences[key]) {
+            const refs = auditLogs[auditLogReferences[key]] || [];
+            const reference = refs.find(ref => ref.id === value);
+            if (reference) {
+                return `${value} - name: ${reference.name}`;
+            }
+        }
+        return value;
+    };
+
+    getAuditLogValue = (auditLog, values, oldValue, key, auditLogs) => {
         if (auditLog.action === 1) {
             //create
-            return oldValue ? "" : values[0]
+            return oldValue ? "" : this.auditLogReference(values[0], key, auditLogs);
         }
         if (auditLog.action === 2) {
             //update
-            return oldValue ? values[0] : values[1];
+            return oldValue ? this.auditLogReference(values[0], key, auditLogs) : this.auditLogReference(values[1], key, auditLogs);
         }
         if (auditLog.action === 3) {
             //delete
-            return oldValue ? values[0] : "";
+            return oldValue ? this.auditLogReference(values[0], key, auditLogs) : "";
         }
     };
 
-    renderDetail = auditLog => {
+    renderDetail = (auditLog, auditLogs) => {
         if (isEmpty(auditLog)) {
             return null;
         }
         const beforeState = auditLog.stateBefore;
         const afterState = auditLog.stateAfter;
 
-        const delta = this.differ.diff(beforeState, afterState);
+        const delta = this.differ.diff(beforeState, afterState) || {};
         return (
             <div className="details">
                 {(auditLog.parent_name && [1, 3].includes(auditLog.action)) &&
@@ -126,8 +142,8 @@ export default class History extends React.PureComponent {
                     <tbody>
                     {Object.keys(delta).map(key => <tr key={key}>
                         <td>{key}</td>
-                        {auditLog.action !== 1 && <td>{this.getAuditLogValue(auditLog, delta[key], true)}</td>}
-                        {auditLog.action !== 3 && <td>{this.getAuditLogValue(auditLog, delta[key], false)}</td>}
+                        {auditLog.action !== 1 && <td>{this.getAuditLogValue(auditLog, delta[key], true, key, auditLogs)}</td>}
+                        {auditLog.action !== 3 && <td>{this.getAuditLogValue(auditLog, delta[key], false, key, auditLogs)}</td>}
                     </tr>)}
                     </tbody>
                 </table>
@@ -144,7 +160,7 @@ export default class History extends React.PureComponent {
             <div className="history-container">
                 <div className={`history ${className}`}>
                     {this.renderAuditLogs(auditLogEntries, selected)}
-                    {this.renderDetail(selected)}
+                    {this.renderDetail(selected, auditLogs)}
                 </div>
             </div>);
     }

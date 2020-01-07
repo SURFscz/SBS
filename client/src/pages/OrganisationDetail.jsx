@@ -187,8 +187,8 @@ class OrganisationDetail extends React.Component {
 
     doUpdate = () => {
         if (this.isValid()) {
-            const {name, description, originalOrganisation} = this.state;
-            updateOrganisation({id: originalOrganisation.id, name, description})
+            const {name, description, originalOrganisation, schac_home_organisation, short_name} = this.state;
+            updateOrganisation({id: originalOrganisation.id, name, description, schac_home_organisation, short_name})
                 .then(() => {
                     this.fetchAuditLogs(originalOrganisation.id);
                     window.scrollTo(0, 0);
