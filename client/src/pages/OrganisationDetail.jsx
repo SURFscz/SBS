@@ -83,6 +83,7 @@ class OrganisationDetail extends React.Component {
                         this.props.history.push("/404");
                         return;
                     }
+                    const adminOfOrganisation = json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id);
                     this.setState({
                         originalOrganisation: json,
                         name: json.name,
@@ -95,7 +96,7 @@ class OrganisationDetail extends React.Component {
                         filteredCollaborations: collaborations,
                         invitations: sortObjects(json.organisation_invitations, inviteSorted, inviteReverse),
                         collaborationRequests: sortObjects(json.collaboration_requests, collaborationRequestSorted, collaborationRequestReverse),
-                        adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id),
+                        adminOfOrganisation: adminOfOrganisation,
                         apiKeys: json.api_keys
                     }, () => {
                         if ((member && member.admin) || user.admin) {
@@ -544,7 +545,8 @@ class OrganisationDetail extends React.Component {
         );
     };
 
-    organisationDetails = (name, short_name, alreadyExists, initial, description, schac_home_organisation, originalOrganisation, user, disabledSubmit) => {
+    organisationDetails = (adminOfOrganisation, name, short_name, alreadyExists, initial, description,
+                           schac_home_organisation, originalOrganisation, user, disabledSubmit) => {
         return <div className="organisation-detail">
             <InputField value={name} onChange={e => {
                 this.setState({
@@ -554,7 +556,7 @@ class OrganisationDetail extends React.Component {
             }}
                         placeholder={I18n.t("organisation.namePlaceHolder")}
                         onBlur={this.validateOrganisationName}
-                        disabled={!user.admin}
+                        disabled={!user.admin && !adminOfOrganisation}
                         name={I18n.t("organisation.name")}/>
             {alreadyExists.name && <span
                 className="error">{I18n.t("organisation.alreadyExists", {
@@ -572,7 +574,7 @@ class OrganisationDetail extends React.Component {
                             alreadyExists: {...this.state.alreadyExists, short_name: false}
                         })}
                         placeholder={I18n.t("organisation.shortNamePlaceHolder")}
-                        disabled={!user.admin}
+                        disabled={!user.admin && !adminOfOrganisation}
                         onBlur={this.validateOrganisationShortName}
                         name={I18n.t("organisation.shortName")}/>
             {alreadyExists.short_name && <span
@@ -587,7 +589,7 @@ class OrganisationDetail extends React.Component {
 
             <InputField value={description}
                         onChange={e => this.setState({description: e.target.value})}
-                        disabled={!user.admin}
+                        disabled={!user.admin && !adminOfOrganisation}
                         placeholder={I18n.t("organisation.descriptionPlaceholder")}
                         name={I18n.t("organisation.description")}/>
 
@@ -601,10 +603,10 @@ class OrganisationDetail extends React.Component {
             <InputField value={moment(originalOrganisation.created_at * 1000).format("LLLL")}
                         disabled={true}
                         name={I18n.t("organisation.created")}/>
-            {user.admin &&
+            {(user.admin || adminOfOrganisation) &&
             <section className="actions">
-                <Button className="delete" txt={I18n.t("organisationDetail.delete")}
-                        onClick={this.delete}/>
+                {user.admin && <Button className="delete" txt={I18n.t("organisationDetail.delete")}
+                                       onClick={this.delete}/>}
                 <Button disabled={disabledSubmit} txt={I18n.t("organisationDetail.update")}
                         onClick={this.update}/>
             </section>}
@@ -647,7 +649,7 @@ class OrganisationDetail extends React.Component {
             <div className="title">
                 <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
             </div>
-            {this.organisationDetails(name, short_name, alreadyExists, initial,
+            {this.organisationDetails(adminOfOrganisation, name, short_name, alreadyExists, initial,
                 description, schac_home_organisation, originalOrganisation, user, disabledSubmit)}
         </>);
 

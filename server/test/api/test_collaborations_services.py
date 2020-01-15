@@ -1,8 +1,10 @@
 # -*- coding: future_fstrings -*-
+import json
+
 from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, ai_computing_name, service_cloud_name, uva_research_name, \
-    service_network_name, service_wiki_name
+    service_network_name, service_wiki_name, uuc_secret
 
 
 class TestCollaborationsServices(AbstractTest):
@@ -71,3 +73,38 @@ class TestCollaborationsServices(AbstractTest):
         self.delete("/api/collaborations_services/delete_all_services", primary_key=collaboration_id)
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(0, len(collaboration["services"]))
+
+    def test_connect_collaboration_service(self):
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}")
+        self.assertEqual(2, len(collaboration["services"]))
+
+        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
+        res = self.client.put("/api/collaborations_services/connect_collaboration_service",
+                              headers={"Authorization": f"Bearer {uuc_secret}"},
+                              data=json.dumps({
+                                  "collaboration_id": collaboration_id,
+                                  "service_entity_id": service_cloud.entity_id
+                              }), content_type="application/json")
+        self.assertEqual("connected", res.json["status"])
+
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}")
+        self.assertEqual(3, len(collaboration["services"]))
+
+    def test_connect_collaboration_service_collaboration_not_in_organisation(self):
+        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
+        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
+
+        res = self.client.put("/api/collaborations_services/connect_collaboration_service",
+                              headers={"Authorization": f"Bearer {uuc_secret}"},
+                              data=json.dumps({
+                                  "collaboration_id": collaboration_id,
+                                  "service_entity_id": service_cloud.entity_id
+                              }), content_type="application/json")
+        self.assertEqual(res.status_code, 403)
+        error_dict = res.json
+        self.assertTrue("is not part of organisation" in error_dict["message"])
+
+    def test_connect_collaboration_service_collaboration_no_external_api_call(self):
+        res = self.put("/api/collaborations_services/connect_collaboration_service", response_status_code=403)
+        self.assertEqual("Not a valid external API call", res["message"])

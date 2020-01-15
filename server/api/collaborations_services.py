@@ -1,11 +1,11 @@
 # -*- coding: future_fstrings -*-
-from flask import Blueprint, request as current_request
-from werkzeug.exceptions import BadRequest
+from flask import Blueprint, request as current_request, g as request_context
+from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_collaboration_admin
-from server.db.domain import Service, Collaboration
+from server.auth.security import confirm_collaboration_admin, external_api_call
 from server.db.db import db
+from server.db.domain import Service, Collaboration
 from server.schemas import json_schema_validator
 
 collaborations_services_api = Blueprint("collaborations_services_api", __name__,
@@ -42,6 +42,35 @@ def add_collaborations_services():
 
     count = connect_service_collaboration(service_id, collaboration_id)
     return (None, 201) if count > 0 else (None, 404)
+
+
+@collaborations_services_api.route("/connect_collaboration_service", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def connect_collaboration_service():
+    external_api_call()
+    organisation = request_context.external_api_organisation
+
+    data = current_request.get_json()
+    collaboration_id = int(data["collaboration_id"])
+
+    if not any(coll.id == collaboration_id for coll in organisation.collaborations):
+        raise Forbidden(f"Collaboration {collaboration_id} is not part of organisation {organisation.name}")
+
+    service_entity_id = data["service_entity_id"]
+    service = Service.query.filter(Service.entity_id == service_entity_id).one()
+
+    count = connect_service_collaboration(service.id, collaboration_id)
+    collaboration = list(filter(lambda coll: coll.id == collaboration_id, organisation.collaborations))[0]
+    return ({
+                "collaboration_id": collaboration.id,
+                "collaboration_name": collaboration.name,
+                "collaboration_urn": collaboration.global_urn,
+                "organisation_name": organisation.name,
+                "service_id": service.id,
+                "service_name": service.name,
+                "service_entity_id": service.entity_id,
+                "status": "connected"
+            }, 201) if count > 0 else (None, 404)
 
 
 @collaborations_services_api.route("/delete_all_services/<collaboration_id>", methods=["DELETE"], strict_slashes=False)
