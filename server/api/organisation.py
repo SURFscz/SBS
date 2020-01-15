@@ -261,6 +261,9 @@ def update_organisation():
     confirm_write_access(override_func=override_func)
 
     data = current_request.get_json()
+    if not is_application_admin():
+        if "schac_home_organisation" in data:
+            del data["schac_home_organisation"]
 
     _clear_api_keys(data)
     cleanse_short_name(data)

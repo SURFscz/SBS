@@ -40,17 +40,17 @@ def request_collaboration():
     data["requester_id"] = user.id
     cleanse_short_name(data)
 
-    res = save(CollaborationRequest, custom_json=data)
+    collaboration_request = save(CollaborationRequest, custom_json=data)[0]
 
     context = {"salutation": f"Dear {organisation.name} organisation admin,",
                "base_url": current_app.app_config.base_url,
-               "collaboration_request": data,
+               "collaboration_request": collaboration_request,
                "user": user}
     recipients = list(map(lambda membership: membership.user.email, organisation.organisation_memberships))
     if recipients:
         mail_collaboration_request(context, munchify(data), recipients)
 
-    return res
+    return collaboration_request, 201
 
 
 @collaboration_request_api.route("/approve/<collaboration_request_id>", methods=["PUT"], strict_slashes=False)
