@@ -12,6 +12,7 @@ class Home extends React.Component {
         super(props, context);
         this.state = {
             collaborations: [],
+            groups: [],
             showMore: []
         };
     }
@@ -19,7 +20,12 @@ class Home extends React.Component {
     componentDidMount = () => {
         myCollaborationsLite()
             .then(res => {
-                this.setState({collaborations: res});
+                const collaborationMemberships = res.map(coll => (coll.collaboration_memberships || [])).flat();
+                const groupsFromMemberships = collaborationMemberships.map(collaborationMembership => (collaborationMembership.groups || [])).flat();
+                const groupIds = [...new Set(groupsFromMemberships.map(group => group.id))];
+                const groups = groupsFromMemberships.filter(group => groupIds.includes(group.id));
+
+                this.setState({collaborations: res, groups: groups});
             });
     };
 
@@ -40,10 +46,9 @@ class Home extends React.Component {
         this.props.history.push(`/services/${service.id}`);
     };
 
-    openGroup = (collaborations, group) => e => {
+    openGroup = (group) => e => {
         stopEvent(e);
-        const collaboration_id = collaborations.find(collaboration => collaboration.groups.find(g => g.id === group.id)).id;
-        this.props.history.push(`/collaboration-group-details/${collaboration_id}/${group.id}`);
+        this.props.history.push(`/collaboration-group-details/${group.collaboration_id}/${group.id}`);
     };
 
     openCollaboration = collaboration => e => {
@@ -123,8 +128,7 @@ class Home extends React.Component {
         );
     };
 
-    renderGroups = collaborations => {
-        const groups = collaborations.map(collaboration => collaboration.groups).flat();
+    renderGroups = groups => {
         const showMore = groups.length >= 6;
         const showMoreItems = this.state.showMore.includes("groups");
         return (
@@ -134,7 +138,7 @@ class Home extends React.Component {
                     {(showMore && !showMoreItems ? groups.slice(0, 5) : groups).map((group, i) =>
                         <div className="group" key={i}>
                             <a href={`/groups/${group.id}`}
-                               onClick={this.openGroup(collaborations, group)}>
+                               onClick={this.openGroup(group)}>
                                 <FontAwesomeIcon icon={"arrow-right"}/>
                                 <span>{group.name}</span>
                             </a>
@@ -177,7 +181,7 @@ class Home extends React.Component {
     };
 
     render() {
-        const {collaborations} = this.state;
+        const {collaborations, groups} = this.state;
         const {user} = this.props;
         const hasOrganisationMemberships = !isEmpty(user.organisation_memberships) || user.admin;
         return (
@@ -190,7 +194,7 @@ class Home extends React.Component {
                         {hasOrganisationMemberships && this.renderOrganisations(user)}
                         {this.renderCollaborations(collaborations)}
                         {this.renderServices(collaborations)}
-                        {this.renderGroups(collaborations)}
+                        {this.renderGroups(groups)}
                     </section>
                 </div>
             </div>);

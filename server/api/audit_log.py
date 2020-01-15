@@ -2,9 +2,10 @@
 from flask import Blueprint
 
 from server.api.base import json_endpoint
-from server.auth.security import current_user_id, is_collaboration_admin, confirm_read_access
+from server.auth.security import current_user_id, confirm_read_access, confirm_group_member, \
+    is_organisation_admin, is_current_user_collaboration_admin
 from server.db.audit_mixin import AuditLog
-from server.db.domain import User, Organisation, Collaboration
+from server.db.domain import User, Organisation, Collaboration, Group
 
 audit_log_api = Blueprint("audit_log_api", __name__, url_prefix="/api/audit_logs")
 
@@ -12,6 +13,7 @@ table_names_cls_mapping = {
     "organisations": Organisation,
     "collaborations": Collaboration,
 }
+
 
 # TODO Add dedicated endpoints for the various queries
 # As a user, I want to be able to see which changes where made to my profile, CO memberships and group memberships, in
@@ -39,10 +41,18 @@ def me():
     return _add_references(audit_logs), 200
 
 
-@audit_log_api.route("/info/<query_id>", methods=["GET"], strict_slashes=False)
+@audit_log_api.route("/info/<query_id>/<collection_name>", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def info(query_id):
-    confirm_read_access(override_func=is_collaboration_admin)
+def info(query_id, collection_name):
+    def groups_permission(group_id):
+        return confirm_group_member(group_id) or is_current_user_collaboration_admin(
+            Group.query.get(group_id).collaboration_id)
+
+    override_func = is_current_user_collaboration_admin if collection_name == "collaborations" \
+        else groups_permission if collection_name == "groups" \
+        else is_organisation_admin if collection_name == "organisations" else None
+    confirm_read_access(query_id, override_func=override_func)
+
     audit_logs = AuditLog.query \
         .filter((AuditLog.parent_id == query_id) | (AuditLog.target_id == query_id)) \
         .all()

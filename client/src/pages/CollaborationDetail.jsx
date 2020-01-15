@@ -110,7 +110,7 @@ class CollaborationDetail extends React.Component {
         }
     };
 
-    fetchAuditLogs = collaborationId => auditLogsInfo(collaborationId).then(json => this.setState({auditLogs: json}));
+    fetchAuditLogs = collaborationId => auditLogsInfo(collaborationId, "collaborations").then(json => this.setState({auditLogs: json}));
 
     update = () => {
         const {initial} = this.state;
@@ -282,7 +282,14 @@ class CollaborationDetail extends React.Component {
         );
     };
 
-    renderGroups = groups => {
+    renderGroups = collaboration => {
+        const groupsFromMemberships = collaboration.collaboration_memberships.reduce((acc, collaboration_membership) => {
+            return acc.concat(collaboration_membership.groups || []);
+        }, []);
+        const allGroups = (collaboration.groups || []).concat(groupsFromMemberships);
+        const groupIds = [...new Set(allGroups.map(group => group.id))];
+        const groups = allGroups.filter(group => groupIds.includes(group.id));
+        debugger;
         const showMore = groups.length >= 6;
         const showMoreItems = this.state.showMore.includes("groups");
 
@@ -593,7 +600,7 @@ class CollaborationDetail extends React.Component {
                     {this.renderRequests(originalCollaboration.join_requests)}
                     {this.renderInvitations(originalCollaboration.invitations)}
                     {this.renderServices(originalCollaboration)}
-                    {this.renderGroups(originalCollaboration.groups)}
+                    {this.renderGroups(originalCollaboration)}
                 </section>
 
                 <p className="title members">{I18n.t("collaborationDetail.members", {name: originalCollaboration.name})}</p>

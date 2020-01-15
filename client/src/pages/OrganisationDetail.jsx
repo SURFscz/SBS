@@ -97,7 +97,11 @@ class OrganisationDetail extends React.Component {
                         collaborationRequests: sortObjects(json.collaboration_requests, collaborationRequestSorted, collaborationRequestReverse),
                         adminOfOrganisation: json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id),
                         apiKeys: json.api_keys
-                    }, () => this.fetchAuditLogs(json.id));
+                    }, () => {
+                        if ((member && member.admin) || user.admin) {
+                            this.fetchAuditLogs(json.id)
+                        }
+                    });
                 })
                 .catch(() => this.props.history.push("/404"));
         } else {
@@ -105,7 +109,8 @@ class OrganisationDetail extends React.Component {
         }
     };
 
-    fetchAuditLogs = collaborationId => auditLogsInfo(collaborationId).then(json => this.setState({auditLogs: json}));
+    fetchAuditLogs = collaborationId => auditLogsInfo(collaborationId, "organisations")
+        .then(json => this.setState({auditLogs: json}));
 
     update = () => {
         const {initial} = this.state;
@@ -671,12 +676,11 @@ class OrganisationDetail extends React.Component {
                             adminOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
                             collaborationsQuery, name, short_name, alreadyExists, initial, description, schac_home_organisation, disabledSubmit)}
                     </div>
+                    {(adminOfOrganisation || user.admin) &&
                     <div label="history">
                         <History auditLogs={auditLogs} className="white"/>
-                    </div>
+                    </div>}
                 </Tabs>
-
-
             </div>)
     }
 

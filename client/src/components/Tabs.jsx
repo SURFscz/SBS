@@ -46,7 +46,9 @@ class Tabs extends React.Component {
                     })}
                 </div>}
                 {filteredChildren.map(child => {
-                    if (child.props.label !== activeTab) return undefined;
+                    if (child.props.label !== activeTab) {
+                        return undefined;
+                    }
                     return child.props.children;
                 })}
             </div>

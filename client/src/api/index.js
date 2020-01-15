@@ -526,6 +526,6 @@ export function auditLogsMe() {
     return fetchJson("/api/audit_logs/me");
 }
 
-export function auditLogsInfo(objectId) {
-    return fetchJson(`/api/audit_logs/info/${objectId}`);
+export function auditLogsInfo(objectId, collectionNames) {
+    return fetchJson(`/api/audit_logs/info/${objectId}/${collectionNames}`);
 }
