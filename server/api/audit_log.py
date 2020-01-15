@@ -23,6 +23,8 @@ def me():
         .filter((
                     (AuditLog.target_id == user_id) & (AuditLog.target_type == User.__tablename__)) | (
                     AuditLog.subject_id == user_id)) \
+        .order_by(desc(AuditLog.created_at)) \
+        .limit(100) \
         .all()
     return _add_references(audit_logs), 200
 
@@ -41,7 +43,7 @@ def info(query_id, collection_name):
 
     audit_logs = AuditLog.query \
         .filter((AuditLog.parent_id == query_id) | (AuditLog.target_id == query_id)) \
-        .order_by(desc(AuditLog.created_at))\
+        .order_by(desc(AuditLog.created_at)) \
         .limit(100) \
         .all()
 
