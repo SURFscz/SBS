@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
 from flask import Blueprint
-
+from sqlalchemy import desc
 from server.api.base import json_endpoint
 from server.auth.security import current_user_id, confirm_read_access, confirm_group_member, \
     is_organisation_admin, is_current_user_collaboration_admin
@@ -13,20 +13,6 @@ table_names_cls_mapping = {
     "organisations": Organisation,
     "collaborations": Collaboration,
 }
-
-
-# TODO Add dedicated endpoints for the various queries
-# As a user, I want to be able to see which changes where made to my profile, CO memberships and group memberships, in
-# order to track why I can or cannot access a service (anymore)
-
-# As a CO admin, I want to be able to see which changes were made to the details of my CO and the group memberships and
-# within my CO and by whom in order to determine why a user has access and who had access in the past
-
-# As a CO admin, I want to be able to see which changes were made to profiles of users in my CO, in order to be able to
-# determine if a user still should have access (for example if an affiliation or email address changes)
-
-# As an Organization admin, I want to to able to see which changes where made to the COs in my organization, and to the
-# (admin) members of my Organization, in order to keep track of what is happening in my Organization.
 
 
 @audit_log_api.route("/me", methods=["GET"], strict_slashes=False)
@@ -55,6 +41,8 @@ def info(query_id, collection_name):
 
     audit_logs = AuditLog.query \
         .filter((AuditLog.parent_id == query_id) | (AuditLog.target_id == query_id)) \
+        .order_by(desc(AuditLog.created_at))\
+        .limit(100) \
         .all()
 
     return _add_references(audit_logs), 200

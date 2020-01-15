@@ -753,7 +753,7 @@ I18n.translations.en = {
             "invitations": "Invitation",
             "join_requests": "Join request",
             "organisation_invitations": "Organisation invitation",
-            "organisation_memberships": "Organisation memebership",
+            "organisation_memberships": "Organisation membership",
             "organisations": "Organisation",
             "organisations_services": "Organisation service",
             "service_connection_requests": "Service connection request",
