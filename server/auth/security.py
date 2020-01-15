@@ -80,6 +80,10 @@ def confirm_write_access(*args, override_func=None):
         raise Forbidden()
 
 
+def is_current_user_collaboration_admin(collaboration_id):
+    return is_collaboration_admin(current_user_id(), collaboration_id)
+
+
 def is_collaboration_admin(user_id=None, collaboration_id=None):
     user_id = user_id if user_id else current_user_id()
     query = CollaborationMembership.query \
@@ -91,7 +95,8 @@ def is_collaboration_admin(user_id=None, collaboration_id=None):
     return count > 0
 
 
-def _is_organisation_admin(user_id, organisation_id):
+def is_organisation_admin(organisation_id):
+    user_id = current_user_id()
     count = OrganisationMembership.query \
         .options(load_only("user_id")) \
         .filter(OrganisationMembership.user_id == user_id) \
@@ -102,8 +107,7 @@ def _is_organisation_admin(user_id, organisation_id):
 
 def confirm_organisation_admin(organisation_id):
     def override_func():
-        user_id = current_user_id()
-        return _is_organisation_admin(user_id, organisation_id)
+        return is_organisation_admin(organisation_id)
 
     confirm_write_access(override_func=override_func)
 
@@ -128,19 +132,23 @@ def confirm_collaboration_member(collaboration_id):
     confirm_write_access(override_func=override_func)
 
 
+def confirm_group_member(group_id):
+    user_id = current_user_id()
+    count = Group.query \
+        .options(load_only("id")) \
+        .join(Group.collaboration_memberships) \
+        .filter(Group.id == group_id) \
+        .filter(CollaborationMembership.user_id == user_id) \
+        .count()
+    return count > 0
+
+
 def confirm_collaboration_admin_or_group_member(collaboration_id, group_id):
     def override_func():
         user_id = current_user_id()
         collaboration_admin = is_collaboration_admin(user_id, collaboration_id)
         if not collaboration_admin:
-            count = Group.query \
-                .options(load_only("id")) \
-                .join(Group.collaboration_memberships) \
-                .filter(Group.id == group_id) \
-                .filter(CollaborationMembership.user_id == user_id) \
-                .filter(Group.collaboration_id == collaboration_id) \
-                .count()
-            return count > 0
+            return confirm_group_member(group_id)
         return collaboration_admin
 
     confirm_write_access(override_func=override_func)

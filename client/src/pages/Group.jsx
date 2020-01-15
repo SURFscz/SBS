@@ -120,7 +120,7 @@ class Group extends React.Component {
         }
     };
 
-    fetchAuditLogs = groupId => auditLogsInfo(groupId).then(json => this.setState({auditLogs: json}));
+    fetchAuditLogs = groupId => auditLogsInfo(groupId, "groups").then(json => this.setState({auditLogs: json}));
 
     refreshMembersAndInvitations = callBack => {
         const params = this.props.match.params;
@@ -234,11 +234,13 @@ class Group extends React.Component {
             const {name, isNew} = this.state;
             if (isNew) {
                 createGroup(this.state).then(() => {
+                    window.scrollTo(0, 0);
                     setFlash(I18n.t("groups.flash.created", {name: name}));
                 });
             } else {
                 updateGroup(this.state).then(() => {
-                    this.fetchAuditLogs(this.state.id)
+                    this.fetchAuditLogs(this.state.id);
+                    window.scrollTo(0, 0);
                     setFlash(I18n.t("groups.flash.updated", {name: name}));
                 });
             }

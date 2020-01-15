@@ -88,7 +88,7 @@ class Service extends React.Component {
         }
     };
 
-    fetchAuditLogs = serviceId => auditLogsInfo(serviceId).then(json => this.setState({auditLogs: json}));
+    fetchAuditLogs = serviceId => auditLogsInfo(serviceId, "services").then(json => this.setState({auditLogs: json}));
 
     mapOrganisationsToOptions = organisations => organisations.map(org => ({
         label: org.name,
