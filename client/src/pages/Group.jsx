@@ -154,16 +154,7 @@ class Group extends React.Component {
         return members.concat(invitations);
     };
 
-    sortedCollaborationServices = collaboration => (collaboration.services || [])
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map(service => ({
-            value: service.id,
-            label: this.serviceToOption(service)
-        }));
-
     memberToOption = member => `${member.user.name} - ${member.user.email}`;
-
-    serviceToOption = service => `${service.name} - ${service.entity_id}`;
 
     validateGroupName = e => {
         const {isNew, collaboration, group} = this.state;
@@ -234,7 +225,7 @@ class Group extends React.Component {
             const {name, isNew} = this.state;
             if (isNew) {
                 createGroup(this.state).then(() => {
-                    window.scrollTo(0, 0);
+                    this.gotoGroups();
                     setFlash(I18n.t("groups.flash.created", {name: name}));
                 });
             } else {
@@ -665,8 +656,7 @@ class Group extends React.Component {
                     </div>}
                 </Tabs>
             </div>);
-    }
-    ;
+    };
 
 }
 
