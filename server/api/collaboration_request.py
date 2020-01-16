@@ -6,10 +6,10 @@ from munch import munchify
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
-from server.api.collaboration import assign_global_urn_to_collaboration, save_collaboration, do_save_collaboration
+from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
 from server.auth.security import current_user_id, confirm_organisation_admin, current_user_name
-from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db
 from server.db.defaults import cleanse_short_name
+from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db
 from server.db.models import save
 from server.mail import mail_collaboration_request, mail_accepted_declined_collaboration_request, \
     mail_automatic_collaboration_request
