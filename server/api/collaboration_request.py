@@ -6,12 +6,13 @@ from munch import munchify
 from sqlalchemy.orm import contains_eager
 
 from server.api.base import json_endpoint
-from server.api.collaboration import assign_global_urn_to_organisation
+from server.api.collaboration import assign_global_urn_to_collaboration, save_collaboration, do_save_collaboration
 from server.auth.security import current_user_id, confirm_organisation_admin, current_user_name
 from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db
 from server.db.defaults import cleanse_short_name
 from server.db.models import save
-from server.mail import mail_collaboration_request, mail_accepted_declined_collaboration_request
+from server.mail import mail_collaboration_request, mail_accepted_declined_collaboration_request, \
+    mail_automatic_collaboration_request
 
 collaboration_request_api = Blueprint("collaboration_request_api", __name__, url_prefix="/api/collaboration_requests")
 
@@ -40,17 +41,34 @@ def request_collaboration():
     data["requester_id"] = user.id
     cleanse_short_name(data)
 
-    collaboration_request = save(CollaborationRequest, custom_json=data)[0]
+    auto_create = organisation.collaboration_creation_allowed
+    entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
+    auto_aff = user.entitlement and entitlement in user.entitlement
 
-    context = {"salutation": f"Dear {organisation.name} organisation admin,",
-               "base_url": current_app.app_config.base_url,
-               "collaboration_request": collaboration_request,
-               "user": user}
     recipients = list(map(lambda membership: membership.user.email, organisation.organisation_memberships))
-    if recipients:
-        mail_collaboration_request(context, munchify(data), recipients)
+    if auto_create or auto_aff:
+        collaboration = do_save_collaboration(data, organisation, user)[0]
+        context = {"salutation": f"Dear {organisation.name} organisation admin,",
+                   "base_url": current_app.app_config.base_url,
+                   "collaboration": collaboration,
+                   "collaboration_request": data,
+                   "organisation": organisation,
+                   "collaboration_creation_allowed_entitlement": entitlement,
+                   "user": user}
+        if recipients:
+            mail_automatic_collaboration_request(context, collaboration, organisation, recipients)
+        return collaboration, 201
+    else:
+        collaboration_request = save(CollaborationRequest, custom_json=data)[0]
 
-    return collaboration_request, 201
+        context = {"salutation": f"Dear {organisation.name} organisation admin,",
+                   "base_url": current_app.app_config.base_url,
+                   "collaboration_request": collaboration_request,
+                   "user": user}
+        if recipients:
+            mail_collaboration_request(context, munchify(data), recipients)
+
+        return collaboration_request, 201
 
 
 @collaboration_request_api.route("/approve/<collaboration_request_id>", methods=["PUT"], strict_slashes=False)
@@ -65,7 +83,7 @@ def approve_request(collaboration_request_id):
     data = {"identifier": str(uuid.uuid4())}
     for attr in attributes:
         data[attr] = client_data.get(attr, None)
-    assign_global_urn_to_organisation(collaboration_request.organisation, data)
+    assign_global_urn_to_collaboration(collaboration_request.organisation, data)
 
     res = save(Collaboration, custom_json=data)
     collaboration = res[0]

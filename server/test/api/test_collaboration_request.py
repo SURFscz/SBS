@@ -1,7 +1,8 @@
 # -*- coding: future_fstrings -*-
-from server.db.domain import Organisation, CollaborationRequest, CollaborationMembership
+from server.db.domain import Organisation, CollaborationRequest, CollaborationMembership, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import schac_home_organisation, amsterdam_uva_name, collaboration_request_name, uuc_name
+from server.test.seed import schac_home_organisation, amsterdam_uva_name, collaboration_request_name, uuc_name, \
+    schac_home_organisation_uuc
 
 
 class TestCollaborationRequest(AbstractTest):
@@ -28,6 +29,44 @@ class TestCollaborationRequest(AbstractTest):
             self.assertEqual("urn:roger", collaboration_request.requester.uid)
             mail_msg = outbox[0]
             self.assertEqual("Request for new collaboration New Collaboration", mail_msg.subject)
+
+    def test_request_collaboration_collaboration_creation_allowed(self):
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        self.login("urn:roger", schac_home_organisation_uuc)
+        data = {
+            "name": "New Collaboration",
+            "short_name": "new_collaboration_short",
+            "message": "pretty please",
+            "organisation_id": organisation.id
+        }
+        with self.app.mail.record_messages() as outbox:
+            self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
+            collaboration = self.find_entity_by_name(Collaboration, data["name"])
+            # Max length short_name
+            self.assertEqual("new_collaborat", collaboration.short_name)
+            mail_msg = outbox[0]
+            self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name}", mail_msg.subject)
+            self.assertTrue("automatically approve Collaboration requests" in mail_msg.html)
+
+    def test_request_collaboration_collaboration_creation_allowed_entitlement(self):
+        organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        self.login("urn:harry",
+                   schac_home_organisation,
+                   {"OIDC_CLAIM_EDUPERSON_ENTITLEMENT": "urn:mace:surf.nl:sram:allow-create-co"})
+        data = {
+            "name": "New Collaboration",
+            "short_name": "new_collaboration_short",
+            "message": "pretty please",
+            "organisation_id": organisation.id
+        }
+        with self.app.mail.record_messages() as outbox:
+            self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
+            collaboration = self.find_entity_by_name(Collaboration, data["name"])
+            # Max length short_name
+            self.assertEqual("new_collaborat", collaboration.short_name)
+            mail_msg = outbox[0]
+            self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name}", mail_msg.subject)
+            print(mail_msg.html)
 
     def test_request_collaboration_approve(self):
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)

@@ -13,9 +13,9 @@ class User(Base, db.Model):
     nick_name = db.Column("nick_name", db.String(length=255), nullable=True)
     edu_members = db.Column("edu_members", db.Text(), nullable=True)
     address = db.Column("address", db.String(length=255), nullable=True)
-    affiliation = db.Column("affiliation", db.String(length=255), nullable=True)
-    scoped_affiliation = db.Column("scoped_affiliation", db.String(length=255), nullable=True)
-    entitlement = db.Column("entitlement", db.String(length=255), nullable=True)
+    affiliation = db.Column("affiliation", db.Text(), nullable=True)
+    scoped_affiliation = db.Column("scoped_affiliation", db.Text(), nullable=True)
+    entitlement = db.Column("entitlement", db.Text(), nullable=True)
     schac_home_organisation = db.Column("schac_home_organisation", db.String(length=255), nullable=True)
     family_name = db.Column("family_name", db.String(length=255), nullable=True)
     given_name = db.Column("given_name", db.String(length=255), nullable=True)
@@ -47,6 +47,8 @@ class Organisation(Base, db.Model):
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    collaboration_creation_allowed = db.Column("collaboration_creation_allowed", db.Boolean(), nullable=True,
+                                               default=False)
     collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
                                      passive_deletes=True)
     collaboration_requests = db.relationship("CollaborationRequest", back_populates="organisation",

@@ -71,6 +71,16 @@ def mail_collaboration_request(context, collaboration_request, recipients, previ
     )
 
 
+def mail_automatic_collaboration_request(context, collaboration, organisation, recipients, preview=False):
+    return _do_send_mail(
+        subject=f"New collaboration {collaboration.name} created in {organisation.name}",
+        recipients=recipients,
+        template="automatic_collaboration_request",
+        context=context,
+        preview=preview
+    )
+
+
 def mail_organisation_invitation(context, organisation, recipients, preview=False):
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])}}
     return _do_send_mail(

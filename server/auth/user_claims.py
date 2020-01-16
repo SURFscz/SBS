@@ -25,6 +25,8 @@ claim_attribute_mapping = {
 
 is_member_of_saml = "urn:mace:dir:attribute-def:isMemberOf"
 
+multi_value_attributes = ["edu_members", "affiliation", "scoped_affiliation", "entitlement"]
+
 attribute_saml_mapping = {
     "uid": "urn:mace:dir:attribute-def:uid",
     "name": "urn:mace:dir:attribute-def:cn",

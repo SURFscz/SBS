@@ -17,7 +17,7 @@ from werkzeug.exceptions import Forbidden
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, ctx_logger
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
 from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_hash_user, add_user_claims, \
-    get_user_uid, attribute_saml_mapping, is_member_of_saml
+    get_user_uid, attribute_saml_mapping, is_member_of_saml, multi_value_attributes
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, Service, Collaboration
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -119,20 +119,19 @@ def attributes():
     for k, v in attribute_saml_mapping.items():
         val = getattr(user, k)
         if val:
-            val = val.split(",") if "," in val else [val]
-            result.setdefault(v, []).extend(val)
+            result[v] = val.split(",") if k in multi_value_attributes else [val]
 
     collaboration_names = list(map(lambda cm: cm.collaboration.short_name, user.collaboration_memberships))
     cfg = current_app.app_config
     if cfg.get("generate_multiple_eppn", False):
         eppns = list(map(lambda co: f"{user.username}@{co}.{cfg.base_scope}", set(collaboration_names)))
-        result.setdefault("urn:mace:dir:attribute-def:eduPersonPrincipalName", []).extend(eppns)
+        result["urn:mace:dir:attribute-def:eduPersonPrincipalName"] = eppns
 
     groups = flatten(list(map(lambda cm: cm.collaboration.groups, user.collaboration_memberships)))
 
     group_short_names = list(map(lambda group: group.short_name, groups))
     is_member_of = list(set(group_short_names + collaboration_names))
-    result.setdefault(is_member_of_saml, []).extend(is_member_of)
+    result[is_member_of_saml] = is_member_of
     result = {k: list(set(v)) for k, v in result.items()}
 
     logger.info(f"Returning attributes for user {uid} and service_entity_id {service_entity_id}")

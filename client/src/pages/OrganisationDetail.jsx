@@ -26,6 +26,7 @@ import {sanitizeShortName} from "../validations/regExps";
 import BackLink from "../components/BackLink";
 import Tabs from "../components/Tabs";
 import History from "../components/History";
+import CheckBox from "../components/CheckBox";
 
 class OrganisationDetail extends React.Component {
 
@@ -37,6 +38,7 @@ class OrganisationDetail extends React.Component {
             short_name: "",
             description: "",
             schac_home_organisation: "",
+            collaboration_creation_allowed: false,
             members: [],
             filteredMembers: [],
             invitations: [],
@@ -90,6 +92,7 @@ class OrganisationDetail extends React.Component {
                         short_name: json.short_name,
                         description: json.description,
                         schac_home_organisation: json.schac_home_organisation,
+                        collaboration_creation_allowed: json.collaboration_creation_allowed,
                         members: members,
                         filteredMembers: members,
                         collaborations: collaborations,
@@ -193,8 +196,14 @@ class OrganisationDetail extends React.Component {
 
     doUpdate = () => {
         if (this.isValid()) {
-            const {name, description, originalOrganisation, schac_home_organisation, short_name} = this.state;
-            updateOrganisation({id: originalOrganisation.id, name, description, schac_home_organisation, short_name})
+            const {
+                name, description, originalOrganisation, schac_home_organisation, collaboration_creation_allowed,
+                short_name
+            } = this.state;
+            updateOrganisation({
+                id: originalOrganisation.id, name, description, schac_home_organisation,
+                collaboration_creation_allowed, short_name
+            })
                 .then(() => {
                     this.fetchAuditLogs(originalOrganisation.id);
                     window.scrollTo(0, 0);
@@ -546,7 +555,7 @@ class OrganisationDetail extends React.Component {
     };
 
     organisationDetails = (adminOfOrganisation, name, short_name, alreadyExists, initial, description,
-                           schac_home_organisation, originalOrganisation, user, disabledSubmit) => {
+                           schac_home_organisation, collaboration_creation_allowed, originalOrganisation, user, disabledSubmit) => {
         return <div className="organisation-detail">
             <InputField value={name} onChange={e => {
                 this.setState({
@@ -600,6 +609,14 @@ class OrganisationDetail extends React.Component {
                         name={I18n.t("organisation.schacHomeOrganisation")}
                         toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
 
+            <CheckBox name={"collaboration_creation_allowed"}
+                      value={collaboration_creation_allowed}
+                      info={I18n.t("organisation.collaborationCreationAllowed")}
+                      disabled={!user.admin && !adminOfOrganisation}
+                      tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
+                      onChange={e => this.setState({collaboration_creation_allowed: e.target.checked})}/>
+
+
             <InputField value={moment(originalOrganisation.created_at * 1000).format("LLLL")}
                         disabled={true}
                         name={I18n.t("organisation.created")}/>
@@ -618,7 +635,8 @@ class OrganisationDetail extends React.Component {
                      originalOrganisation, inviteReverse, inviteSorted, invitations, collaborationRequestReverse,
                      collaborationRequestSorted, collaborationRequests, filteredMembers, user, sorted, reverse, query,
                      adminOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
-                     collaborationsQuery, name, short_name, alreadyExists, initial, description, schac_home_organisation, disabledSubmit) => (
+                     collaborationsQuery, name, short_name, alreadyExists, initial, description, schac_home_organisation,
+                     collaboration_creation_allowed, disabledSubmit) => (
         <>
             <ConfirmationDialog isOpen={confirmationDialogOpen}
                                 cancel={cancelDialogAction}
@@ -650,12 +668,12 @@ class OrganisationDetail extends React.Component {
                 <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
             </div>
             {this.organisationDetails(adminOfOrganisation, name, short_name, alreadyExists, initial,
-                description, schac_home_organisation, originalOrganisation, user, disabledSubmit)}
+                description, schac_home_organisation, collaboration_creation_allowed, originalOrganisation, user, disabledSubmit)}
         </>);
 
     render() {
         const {
-            name, short_name, description, schac_home_organisation, originalOrganisation, initial, alreadyExists, filteredMembers, query,
+            name, short_name, description, schac_home_organisation, collaboration_creation_allowed, originalOrganisation, initial, alreadyExists, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             inviteReverse, inviteSorted, invitations, adminOfOrganisation, apiKeys,
             filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted, collaborationsQuery,
@@ -676,7 +694,8 @@ class OrganisationDetail extends React.Component {
                             leavePage, originalOrganisation, inviteReverse, inviteSorted, invitations, collaborationRequestReverse,
                             collaborationRequestSorted, collaborationRequests, filteredMembers, user, sorted, reverse, query,
                             adminOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
-                            collaborationsQuery, name, short_name, alreadyExists, initial, description, schac_home_organisation, disabledSubmit)}
+                            collaborationsQuery, name, short_name, alreadyExists, initial, description, schac_home_organisation,
+                            collaboration_creation_allowed, disabledSubmit)}
                     </div>
                     {(adminOfOrganisation || user.admin) &&
                     <div label="history">
