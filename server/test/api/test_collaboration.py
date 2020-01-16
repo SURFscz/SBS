@@ -302,7 +302,8 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertEqual(data["error"], "duplicate entry")
+        self.assertEqual(data["message"],
+                         "Collaboration with name 'AI computing' already exists within organisation 'UUC'.")
 
     def test_api_call_existing_short_name(self):
         response = self.client.post("/api/collaborations",
@@ -315,7 +316,8 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
         data = response.json
-        self.assertEqual(data["error"], "duplicate entry")
+        self.assertEqual(data["message"],
+                         "Collaboration with short_name 'ai_computing' already exists within organisation 'UUC'.")
 
     def test_collaboration_groups_by_id(self):
         collaboration_id = self._find_by_name_id()["id"]

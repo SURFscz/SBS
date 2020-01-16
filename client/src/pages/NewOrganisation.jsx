@@ -14,6 +14,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
+import CheckBox from "../components/CheckBox";
 
 class NewOrganisation extends React.Component {
 
@@ -24,6 +25,7 @@ class NewOrganisation extends React.Component {
             description: "",
             short_name: "",
             schac_home_organisation: "",
+            collaboration_creation_allowed: false,
             administrators: [],
             email: "",
             message: "",
@@ -111,7 +113,7 @@ class NewOrganisation extends React.Component {
         const {
             name, description, email, initial, alreadyExists, administrators,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, short_name,
-            schac_home_organisation
+            schac_home_organisation, collaboration_creation_allowed
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
@@ -184,6 +186,12 @@ class NewOrganisation extends React.Component {
                         className="error">{I18n.t("organisation.required", {
                         attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase()
                     })}</span>}
+
+                    <CheckBox name={"collaboration_creation_allowed"}
+                              value={collaboration_creation_allowed}
+                              info={I18n.t("organisation.collaborationCreationAllowed")}
+                              tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
+                              onChange={e => this.setState({collaboration_creation_allowed: e.target.checked})}/>
 
                     <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                                 placeholder={I18n.t("organisation.administratorsPlaceholder")}

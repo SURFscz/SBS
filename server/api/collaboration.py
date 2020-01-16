@@ -329,38 +329,37 @@ def collaboration_invites_preview():
 @json_endpoint
 def save_collaboration():
     data = current_request.get_json()
-    data["status"] = "active"
     if "organisation_id" in data:
         confirm_organisation_admin(data["organisation_id"])
+        organisation = Organisation.query.get(data["organisation_id"])
         user = User.query.get(current_user_id())
-        _assign_global_urn(data["organisation_id"], data)
     elif "external_api_organisation" in request_context:
         organisation = request_context.external_api_organisation
         admins = list(filter(lambda mem: mem.role == "admin", organisation.organisation_memberships))
-        assign_global_urn_to_organisation(organisation, data)
         user = admins[0].user if len(admins) > 0 else User.query.filter(
             User.uid == current_app.app_config.admin_users[0].uid).one()
         data["organisation_id"] = organisation.id
-        if _do_name_exists(data["name"], organisation.id):
-            return {"status": 400,
-                    "error": "duplicate entry",
-                    "message": f"Collaboration with name '{data['name']}' already exists within "
-                               f"organisation '{organisation.name}'."}, 400
-        if _do_short_name_exists(data["short_name"], organisation.id):
-            return {"status": 400,
-                    "error": "duplicate entry",
-                    "message": f"Collaboration with short_name '{data['short_name']}' already exists within "
-                               f"organisation '{organisation.name}'."}, 400
     else:
         raise BadRequest("Neither organization in POST data nor associated with an API key")
 
+    res = do_save_collaboration(data, organisation, user)
+    return res
+
+
+def do_save_collaboration(data, organisation, user):
+    data["status"] = "active"
+    _assign_global_urn(data["organisation_id"], data)
+    if _do_name_exists(data["name"], organisation.id):
+        raise BadRequest(f"Collaboration with name '{data['name']}' already exists within "
+                         f"organisation '{organisation.name}'.")
+    if _do_short_name_exists(data["short_name"], organisation.id):
+        raise BadRequest(f"Collaboration with short_name '{data['short_name']}' already exists within "
+                         f"organisation '{organisation.name}'.")
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
     data["identifier"] = str(uuid.uuid4())
     cleanse_short_name(data)
-
     res = save(Collaboration, custom_json=data)
-
     administrators = list(filter(lambda admin: admin != user.email, administrators))
     collaboration = res[0]
     for administrator in administrators:
@@ -374,7 +373,6 @@ def save_collaboration():
             "invitation": invitation,
             "base_url": current_app.app_config.base_url
         }, collaboration, [administrator])
-
     admin_collaboration_membership = CollaborationMembership(role="admin", user_id=user.id,
                                                              collaboration_id=collaboration.id,
                                                              created_by=user.uid, updated_by=user.uid)
@@ -383,12 +381,11 @@ def save_collaboration():
 
 
 def _assign_global_urn(organisation_id, data):
-    organisation = Organisation.query \
-        .filter(Organisation.id == organisation_id).one()
-    assign_global_urn_to_organisation(organisation, data)
+    organisation = Organisation.query.get(organisation_id)
+    assign_global_urn_to_collaboration(organisation, data)
 
 
-def assign_global_urn_to_organisation(organisation, data):
+def assign_global_urn_to_collaboration(organisation, data):
     data["global_urn"] = f"{organisation.short_name}:{data['short_name']}"
 
 

@@ -23,6 +23,7 @@ james_name = "James Byrd"
 sarah_name = "Sarah Cross"
 
 schac_home_organisation = "scz.lab.example.org"
+schac_home_organisation_uuc = "schac_home_organisation_uuc"
 
 organisation_invitation_hash = token_urlsafe()
 organisation_invitation_expired_hash = token_urlsafe()
@@ -110,13 +111,15 @@ def seed(db):
                          "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
                          "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org")
-    jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org")
+    jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org",
+                entitlement="urn:mace:surf.nl:sram:allow-create-co")
 
     _persist(db, john, mary, peter, admin, roger, harry, james, sarah, jane)
 
     uuc = Organisation(name=uuc_name, short_name="uuc",
                        description="Unincorporated Urban Community",
-                       created_by="urn:admin", updated_by="urnadmin")
+                       created_by="urn:admin", updated_by="urnadmin",
+                       collaboration_creation_allowed=True, schac_home_organisation=schac_home_organisation_uuc)
     uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam",
                        created_by="urn:admin", updated_by="urnadmin", short_name="uva",
                        schac_home_organisation=schac_home_organisation)
