@@ -344,6 +344,8 @@ I18n.translations.nl = {
         schacHomeOrganisation: "Schac Home",
         schacHomeOrganisationPlaceholder: "De Schac Home Organisation van de organisatie",
         schacHomeOrganisationTooltip: "De home organisatie van een persoon<br/>gebaseerd op de domein naam van de instelling.",
+        collaborationCreationAllowed: "Automatisch aanvragen voor nieuwe CO goedkeuren",
+        collaborationCreationAllowedTooltip: "Iedereen kan <br/> collaboraties voor zijn instelling <br/> aanmaken.",
         created: "Aangemaakt op",
         message: "Bericht",
         messagePlaceholder: "Bericht voor de beheerders",
