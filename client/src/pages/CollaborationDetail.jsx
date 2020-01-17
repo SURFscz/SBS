@@ -1,6 +1,6 @@
 import React from "react";
 import {
-    auditLogsInfo,
+    auditLogsInfo, collaborationAccessAllowed,
     collaborationById,
     collaborationLiteById,
     collaborationNameExists, collaborationShortNameExists,
@@ -73,38 +73,34 @@ class CollaborationDetail extends React.Component {
 
     componentDidMount = () => {
         const params = this.props.match.params;
-        const {user} = this.props;
         if (params.id) {
             const collaboration_id = parseInt(params.id, 10);
-            const member = (user.collaboration_memberships || []).find(membership => membership.collaboration_id === collaboration_id);
-            if (isEmpty(member) && !user.admin) {
-                this.props.history.push("/404");
-                return;
-            }
-            if (user.admin || member.role === "admin") {
-                collaborationById(collaboration_id)
-                    .then(json => {
-                        const {sorted, reverse} = this.state;
-                        const members = sortObjects(json.collaboration_memberships, sorted, reverse);
-                        this.setState({
-                            ...json,
-                            originalCollaboration: json,
-                            members: members,
-                            filteredMembers: members,
-                            adminOfCollaboration: true
-                        }, () => this.fetchAuditLogs(collaboration_id))
-                    });
-            } else {
-                collaborationLiteById(collaboration_id)
-                    .then(json => {
-                        this.setState({
-                            ...json,
-                            originalCollaboration: json,
-                            adminOfCollaboration: false
-                        })
-                    });
-
-            }
+            collaborationAccessAllowed(collaboration_id)
+                .then(json => {
+                    if (json.access === "full") {
+                        collaborationById(collaboration_id)
+                            .then(json => {
+                                const {sorted, reverse} = this.state;
+                                const members = sortObjects(json.collaboration_memberships, sorted, reverse);
+                                this.setState({
+                                    ...json,
+                                    originalCollaboration: json,
+                                    members: members,
+                                    filteredMembers: members,
+                                    adminOfCollaboration: true
+                                }, () => this.fetchAuditLogs(collaboration_id))
+                            });
+                    } else {
+                        collaborationLiteById(collaboration_id)
+                            .then(json => {
+                                this.setState({
+                                    ...json,
+                                    originalCollaboration: json,
+                                    adminOfCollaboration: false
+                                })
+                            });
+                    }
+                }).catch(() => this.props.history.push("/404"));
         } else {
             this.props.history.push("/404");
         }
@@ -289,7 +285,6 @@ class CollaborationDetail extends React.Component {
         const allGroups = (collaboration.groups || []).concat(groupsFromMemberships);
         const groupIds = [...new Set(allGroups.map(group => group.id))];
         const groups = allGroups.filter(group => groupIds.includes(group.id));
-        debugger;
         const showMore = groups.length >= 6;
         const showMoreItems = this.state.showMore.includes("groups");
 

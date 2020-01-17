@@ -3,7 +3,7 @@ from flask import Blueprint
 from sqlalchemy import desc
 from server.api.base import json_endpoint
 from server.auth.security import current_user_id, confirm_read_access, confirm_group_member, \
-    is_organisation_admin, is_current_user_collaboration_admin
+    is_organisation_admin, is_current_user_collaboration_admin, is_current_user_organisation_admin
 from server.db.audit_mixin import AuditLog
 from server.db.domain import User, Organisation, Collaboration, Group
 
@@ -33,10 +33,15 @@ def me():
 @json_endpoint
 def info(query_id, collection_name):
     def groups_permission(group_id):
+        coll_id = Group.query.get(group_id).collaboration_id
         return confirm_group_member(group_id) or is_current_user_collaboration_admin(
-            Group.query.get(group_id).collaboration_id)
+            coll_id) or is_current_user_organisation_admin(coll_id)
 
-    override_func = is_current_user_collaboration_admin if collection_name == "collaborations" \
+    def collaboration_permission(collaboration_id):
+        return is_current_user_collaboration_admin(collaboration_id) or is_current_user_organisation_admin(
+            collaboration_id)
+
+    override_func = collaboration_permission if collection_name == "collaborations" \
         else groups_permission if collection_name == "groups" \
         else is_organisation_admin if collection_name == "organisations" else None
     confirm_read_access(query_id, override_func=override_func)

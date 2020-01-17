@@ -5,7 +5,7 @@ from flask import session, g as request_context, request as current_request, cur
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
 
-from server.db.domain import CollaborationMembership, OrganisationMembership, Group
+from server.db.domain import CollaborationMembership, OrganisationMembership, Group, Collaboration
 
 
 def is_admin_user(uid):
@@ -89,25 +89,31 @@ def is_current_user_collaboration_admin(collaboration_id):
     return is_collaboration_admin(current_user_id(), collaboration_id)
 
 
+def is_current_user_organisation_admin(collaboration_id):
+    return is_organisation_admin(Collaboration.query.get(collaboration_id).organisation_id)
+
+
 def is_collaboration_admin(user_id=None, collaboration_id=None):
     user_id = user_id if user_id else current_user_id()
     query = CollaborationMembership.query \
         .options(load_only("id")) \
-        .filter(CollaborationMembership.user_id == user_id).filter(CollaborationMembership.role == "admin")
+        .filter(CollaborationMembership.user_id == user_id) \
+        .filter(CollaborationMembership.role == "admin")
     if collaboration_id:
         query = query.filter(CollaborationMembership.collaboration_id == collaboration_id)
     count = query.count()
     return count > 0
 
 
-def is_organisation_admin(organisation_id):
+def is_organisation_admin(organisation_id=None):
     user_id = current_user_id()
-    count = OrganisationMembership.query \
+    query = OrganisationMembership.query \
         .options(load_only("user_id")) \
         .filter(OrganisationMembership.user_id == user_id) \
-        .filter(OrganisationMembership.role == "admin") \
-        .filter(OrganisationMembership.organisation_id == organisation_id).count()
-    return count > 0
+        .filter(OrganisationMembership.role == "admin")
+    if organisation_id:
+        query = query.filter(OrganisationMembership.organisation_id == organisation_id)
+    return query.count() > 0
 
 
 def confirm_organisation_admin(organisation_id):
@@ -120,7 +126,8 @@ def confirm_organisation_admin(organisation_id):
 def confirm_collaboration_admin(collaboration_id):
     def override_func():
         user_id = current_user_id()
-        return is_collaboration_admin(user_id, collaboration_id)
+        return is_collaboration_admin(user_id, collaboration_id) or is_organisation_admin(
+            Collaboration.query.get(collaboration_id).organisation_id)
 
     confirm_write_access(override_func=override_func)
 
@@ -153,7 +160,7 @@ def confirm_collaboration_admin_or_group_member(collaboration_id, group_id):
         user_id = current_user_id()
         collaboration_admin = is_collaboration_admin(user_id, collaboration_id)
         if not collaboration_admin:
-            return confirm_group_member(group_id)
+            return confirm_group_member(group_id) or is_current_user_organisation_admin(collaboration_id)
         return collaboration_admin
 
     confirm_write_access(override_func=override_func)

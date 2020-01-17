@@ -4,7 +4,8 @@ from werkzeug.exceptions import Forbidden
 
 from server.auth.security import is_admin_user, is_application_admin, confirm_allow_impersonation, \
     confirm_write_access, \
-    confirm_collaboration_admin, confirm_collaboration_member, confirm_organisation_admin, current_user_name
+    confirm_collaboration_admin, confirm_collaboration_member, confirm_organisation_admin, current_user_name, \
+    is_current_user_organisation_admin
 from server.db.domain import CollaborationMembership, Collaboration, User, OrganisationMembership, Organisation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_computing_name, the_boss_name, uuc_name
@@ -96,3 +97,10 @@ class TestSecurity(AbstractTest):
             confirm_allow_impersonation()
 
         self.assertRaises(Forbidden, do_test_impersonation_forbidden)
+
+    def test_is_current_user_organisation_admin(self):
+        mary_id = self.find_entity_by_name(User, "Mary Doe").id
+        ai_computing_name_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        with self.app.app_context():
+            session["user"] = {"uid": "urn:mary", "admin": False, "id": mary_id}
+            self.assertTrue(is_current_user_organisation_admin(ai_computing_name_id))

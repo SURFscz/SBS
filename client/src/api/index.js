@@ -106,9 +106,9 @@ export function me(config) {
         "OIDC_CLAIM_Nickname": "jëhny",
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
         "OIDC_CLAIM_Eduperson-Affiliation": "librarywalkin",
-        "OIDC_CLAIM_Eduperson-Entitlement": "some-entitlement",
-        "OIDC_CLAIM_Schac-Home-Organisation": "scz.lab.example.org",
-        // "OIDC_CLAIM_Schac-Home-Organisation": "scz.lab.example.nope",
+        "OIDC_CLAIM_Eduperson-Entitlement": "some-entitlement-test,second-entitlement",
+        // "OIDC_CLAIM_Schac-Home-Organisation": "scz.lab.example.org",
+        "OIDC_CLAIM_Schac-Home-Organisation": "schac_home_organisation_uuc",
         "OIDC_CLAIM_Family-Name": "Doe",
         "OIDC_CLAIM_Given-Name": "John",
         "OIDC_CLAIM_Email": "jdoe@example.org"
@@ -172,6 +172,10 @@ export function deleteService(id) {
 //Collaborations
 export function collaborationByName(name) {
     return fetchJson(`/api/collaborations/find_by_name?name=${encodeURIComponent(name)}`, {}, {}, false);
+}
+
+export function collaborationAccessAllowed(id) {
+    return fetchJson(`/api/collaborations/access_allowed/${id}`, {}, {}, false);
 }
 
 export function collaborationById(id) {
@@ -388,7 +392,7 @@ export function deleteCollaborationServices(collaborationId, serviceId) {
     return fetchDelete(`/api/collaborations_services/${collaborationId}/${serviceId}`)
 }
 
-// Groups
+//Groups
 export function groupNameExists(name, collaborationId, existingGroup = null) {
     return fetchJson(`/api/groups/name_exists?name=${encodeURIComponent(name)}&collaboration_id=${collaborationId}&existing_group=${encodeURIComponent(existingGroup)}`);
 }
@@ -415,6 +419,10 @@ export function deleteGroup(id) {
 
 export function myGroups() {
     return fetchJson("/api/groups")
+}
+
+export function groupAccessAllowed(id, collaborationId) {
+    return fetchJson(`/api/groups/access_allowed/${id}/${collaborationId}`, {}, {}, false);
 }
 
 export function groupsByCollaboration(collaboration_id) {

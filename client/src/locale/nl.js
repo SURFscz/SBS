@@ -152,6 +152,7 @@ I18n.translations.nl = {
         email: "E-mail",
         uid: "UID",
         affiliation: "Affiliation",
+        entitlement: "Entitlements",
         nick_name: "Roepnaam",
         schac_home_organisation: "Instellingsafkorting",
         edu_members: "EDU lidmaatschap",
