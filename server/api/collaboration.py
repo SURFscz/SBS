@@ -6,7 +6,7 @@ from flask import Blueprint, request as current_request, current_app, g as reque
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.orm import aliased, load_only, contains_eager, joinedload
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
@@ -201,12 +201,23 @@ def collaboration_lite_by_id(collaboration_id):
     return collaboration, 200
 
 
+@collaboration_api.route("/access_allowed/<collaboration_id>", strict_slashes=False)
+@json_endpoint
+def collaboration_access_allowed(collaboration_id):
+    try:
+        confirm_collaboration_admin(collaboration_id)
+        return {"access": "full"}, 200
+    except Forbidden:
+        confirm_collaboration_member(collaboration_id)
+        return {"access": "lite"}, 200
+
+
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_by_id(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
 
-    query = Collaboration.query \
+    collaboration = Collaboration.query \
         .join(Collaboration.organisation) \
         .outerjoin(Collaboration.groups) \
         .outerjoin(Collaboration.invitations) \
@@ -218,15 +229,8 @@ def collaboration_by_id(collaboration_id):
         .options(contains_eager(Collaboration.organisation)) \
         .options(contains_eager(Collaboration.join_requests)
                  .contains_eager(JoinRequest.user)) \
-        .options(contains_eager(Collaboration.services))
-
-    if not request_context.is_authorized_api_call and not is_application_admin():
-        user_id = current_user_id()
-        query = query \
-            .join(Collaboration.collaboration_memberships) \
-            .filter(CollaborationMembership.user_id == user_id)
-
-    collaboration = query.filter(Collaboration.id == collaboration_id).one()
+        .options(contains_eager(Collaboration.services)) \
+        .filter(Collaboration.id == collaboration_id).one()
 
     for membership in collaboration.collaboration_memberships:
         membership.user

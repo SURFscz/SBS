@@ -323,3 +323,29 @@ class TestCollaboration(AbstractTest):
         collaboration_id = self._find_by_name_id()["id"]
         collaboration = self.get(f"/api/collaborations/groups/{collaboration_id}")
         self.assertEqual(2, len(collaboration["groups"]))
+
+    def test_access_allowed_super_user(self):
+        self.login("urn:john")
+        data = self.get(f"/api/collaborations/access_allowed/{self.find_entity_by_name(Collaboration, ai_computing_name).id}")
+        self.assertEqual("full", data["access"])
+
+    def _access_allowed(self, urn, response_status_code=200):
+        self.login(urn)
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        return self.get(f"/api/collaborations/access_allowed/{collaboration_id}",
+                        response_status_code=response_status_code)
+
+    def test_access_allowed_organisation_admin(self):
+        data = self._access_allowed("urn:mary")
+        self.assertEqual("full", data["access"])
+
+    def test_access_allowed_collaboration_admin(self):
+        data = self._access_allowed("urn:admin")
+        self.assertEqual("full", data["access"])
+
+    def test_access_allowed_collaboration_member(self):
+        data = self._access_allowed("urn:sarah")
+        self.assertEqual("lite", data["access"])
+
+    def test_no_access_allowed(self):
+        self._access_allowed("urn:roger", response_status_code=403)

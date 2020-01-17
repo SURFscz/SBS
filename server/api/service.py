@@ -4,7 +4,8 @@ from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
-from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin
+from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
+    is_organisation_admin
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -76,7 +77,7 @@ def service_by_id(service_id):
             .filter(CollaborationMembership.user_id == user_id) \
             .filter(Service.id == service_id) \
             .count()
-        return count > 0
+        return count > 0 or is_organisation_admin()
 
     confirm_read_access(override_func=_user_service)
 

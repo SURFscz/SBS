@@ -7,7 +7,7 @@
 <p>The user {{ user.name }} has created a new collaboration {{ collaboration.name }} linked to
     organisation {{ organisation.name }}.</p>
 <p>The explanation for this new collaboration:</p>
-<p>{{ collaboration_request.message }}</p>
+<p>{{ message }}</p>
 
 {% if organisation.collaboration_creation_allowed %}
 <p>The Collaboration is created without a Collaboration request, because the Organisation is configured

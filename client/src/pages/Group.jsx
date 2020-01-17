@@ -8,7 +8,7 @@ import {
     createGroup,
     deleteGroup,
     deleteGroupInvitations,
-    deleteGroupMembers,
+    deleteGroupMembers, groupAccessAllowed,
     groupById,
     groupNameExists,
     groupShortNameExists,
@@ -67,54 +67,50 @@ class Group extends React.Component {
 
     componentDidMount = () => {
         const params = this.props.match.params;
-        const {user} = this.props;
         if (params.id && params.collaboration_id) {
+            const group_id = parseInt(params.id, 10);
             const collaboration_id = parseInt(params.collaboration_id, 10);
-            const member = (user.collaboration_memberships || []).find(membership => membership.collaboration_id === collaboration_id);
-            if (isEmpty(member) && !user.admin) {
-                this.props.history.push("/404");
-                return;
-            }
-            if (!user.admin && (isEmpty(member) || member.role !== "admin") && params.id === "new") {
-                this.props.history.push("/404");
-                return;
-            }
-            const adminOfCollaboration = (!isEmpty(member) && member.role === "admin") || user.admin;
-            if (params.id !== "new") {
-                const collDetail = adminOfCollaboration ? collaborationServices : collaborationLiteById;
-                Promise.all([collDetail(params.collaboration_id), groupById(params.id, params.collaboration_id)])
-                    .then(res => {
-                        const {
-                            sortedMembersBy, reverseMembers,
-                            sortedInvitationsBy, reverseInvitations
-                        } = this.state;
-                        const collaboration = res[0];
-                        const group = res[1];
-                        const allMembers = this.sortedCollaborationMembers(collaboration);
-                        this.setState({
-                            ...group,
-                            collaboration: collaboration,
-                            collaboration_id: collaboration.id,
-                            group: group,
-                            allMembers: allMembers,
-                            sortedMembers: sortObjects(group.collaboration_memberships, sortedMembersBy, reverseMembers),
-                            sortedInvitations: sortObjects(group.invitations, sortedInvitationsBy, reverseInvitations),
-                            isNew: false,
-                            adminOfCollaboration: adminOfCollaboration
-                        }, () => this.fetchAuditLogs(group.id))
-                    });
-            } else {
-                collaborationServices(params.collaboration_id, true)
-                    .then(collaboration => {
-                        const allMembers = this.sortedCollaborationMembers(collaboration);
-                        this.setState({
-                            collaboration: collaboration,
-                            collaboration_id: collaboration.id,
-                            allMembers: allMembers,
-                            adminOfCollaboration: adminOfCollaboration
-                        })
-                    });
-            }
+            groupAccessAllowed(group_id, collaboration_id)
+                .then(json => {
+                    if (json.access === "lite" && params.id === "new") {
+                        this.props.history.push("/404");
+                    } else {
+                        if (params.id !== "new") {
+                            const collDetail = json.access === "full" ? collaborationServices : collaborationLiteById;
+                            Promise.all([collDetail(collaboration_id), groupById(group_id, collaboration_id)])
+                                .then(res => {
+                                    const {
+                                        sortedMembersBy, reverseMembers,
+                                        sortedInvitationsBy, reverseInvitations
+                                    } = this.state;
+                                    const collaboration = res[0];
+                                    const group = res[1];
+                                    const allMembers = this.sortedCollaborationMembers(collaboration);
+                                    this.setState({
+                                        ...group,
+                                        collaboration: collaboration,
+                                        collaboration_id: collaboration.id,
+                                        group: group,
+                                        allMembers: allMembers,
+                                        sortedMembers: sortObjects(group.collaboration_memberships, sortedMembersBy, reverseMembers),
+                                        sortedInvitations: sortObjects(group.invitations, sortedInvitationsBy, reverseInvitations),
+                                        isNew: false,
+                                        adminOfCollaboration: json.access === "full"
+                                    }, () => this.fetchAuditLogs(group.id))
+                                });
+                        } else {
+                            collaborationLiteById(collaboration_id, true)
+                                .then(collaboration => {
+                                    this.setState({
+                                        collaboration: collaboration,
+                                        collaboration_id: collaboration.id,
+                                        allMembers: [],
+                                        adminOfCollaboration: json.access === "full"
+                                    })
+                                });
+                        }
+                    }
+                }).catch(() => this.props.history.push("/404"))
         } else {
             this.props.history.push("/404");
         }

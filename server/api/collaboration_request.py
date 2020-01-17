@@ -40,7 +40,7 @@ def request_collaboration():
 
     data["requester_id"] = user.id
     cleanse_short_name(data)
-
+    message = data["message"]
     auto_create = organisation.collaboration_creation_allowed
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
     auto_aff = user.entitlement and entitlement in user.entitlement
@@ -51,7 +51,7 @@ def request_collaboration():
         context = {"salutation": f"Dear {organisation.name} organisation admin,",
                    "base_url": current_app.app_config.base_url,
                    "collaboration": collaboration,
-                   "collaboration_request": data,
+                   "message": message,
                    "organisation": organisation,
                    "collaboration_creation_allowed_entitlement": entitlement,
                    "user": user}
