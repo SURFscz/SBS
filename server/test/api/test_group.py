@@ -1,7 +1,8 @@
 # -*- coding: future_fstrings -*-
 from server.db.domain import Collaboration, Group
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_researchers_group, ai_computing_name, ai_researchers_group_short_name
+from server.test.seed import ai_researchers_group, ai_computing_name, ai_researchers_group_short_name, \
+    group_science_name, uva_research_name
 
 
 class TestGroup(AbstractTest):
@@ -132,3 +133,23 @@ class TestGroup(AbstractTest):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         groups = self.get(f"/api/groups/all/{collaboration_id}")
         self.assertEqual(2, len(groups))
+
+    def test_group_access_allowed_admin(self):
+        self.login("urn:admin")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        group_id = "not_used"
+        res = self.get(f"api/groups/access_allowed/{group_id}>/{collaboration_id}")
+        self.assertEqual("full", res["access"])
+
+    def test_group_access_allowed_member(self):
+        self.login("urn:roger")
+        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
+        group_id = self.find_entity_by_name(Group, group_science_name).id
+        res = self.get(f"api/groups/access_allowed/{group_id}>/{collaboration_id}")
+        self.assertEqual("lite", res["access"])
+
+    def test_group_access_allowed_none(self):
+        self.login("urn:peter")
+        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
+        group_id = self.find_entity_by_name(Group, group_science_name).id
+        self.get(f"api/groups/access_allowed/{group_id}>/{collaboration_id}", response_status_code=403)

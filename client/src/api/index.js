@@ -263,6 +263,10 @@ export function organisationById(id) {
     return fetchJson(`/api/organisations/${id}`, {}, {}, false);
 }
 
+export function organisationByIdLite(id) {
+    return fetchJson(`/api/organisations/lite/${id}`, {}, {}, false);
+}
+
 export function searchOrganisations(q) {
     return fetchJson(`/api/organisations/search?q=${encodeURIComponent(q)}`);
 }

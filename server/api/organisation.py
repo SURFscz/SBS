@@ -9,7 +9,8 @@ from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid, \
-    is_application_admin, confirm_authorized_api_call, confirm_organisation_admin, confirm_allow_impersonation
+    is_application_admin, confirm_authorized_api_call, confirm_organisation_admin, confirm_allow_impersonation, \
+    is_collaboration_admin
 from server.db.domain import Organisation, OrganisationMembership, Collaboration, OrganisationInvitation, User, \
     CollaborationRequest
 from server.db.db import db
@@ -91,9 +92,20 @@ def my_organisations_lite():
     return organisations, 200
 
 
-@organisation_api.route("/<id>", strict_slashes=False)
+@organisation_api.route("/lite/<organisation_id>", strict_slashes=False)
 @json_endpoint
-def organisation_by_id(id):
+def organisation_by_id_lite(organisation_id):
+    def override_func():
+        return is_collaboration_admin(organisation_id=organisation_id)
+
+    confirm_write_access(override_func=override_func)
+    organisation = Organisation.query.get(organisation_id)
+    return organisation, 200
+
+
+@organisation_api.route("/<organisation_id>", strict_slashes=False)
+@json_endpoint
+def organisation_by_id(organisation_id):
     query = Organisation.query \
         .options(joinedload(Organisation.organisation_memberships)
                  .subqueryload(OrganisationMembership.user)) \
@@ -103,7 +115,7 @@ def organisation_by_id(id):
         .options(joinedload(Organisation.collaboration_requests)
                  .subqueryload(CollaborationRequest.requester)) \
         .options(joinedload(Organisation.collaborations)) \
-        .filter(Organisation.id == id)
+        .filter(Organisation.id == organisation_id)
 
     if not request_context.is_authorized_api_call:
         user_uid = current_user_uid()

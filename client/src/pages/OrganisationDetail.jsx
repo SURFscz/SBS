@@ -27,6 +27,7 @@ import BackLink from "../components/BackLink";
 import Tabs from "../components/Tabs";
 import History from "../components/History";
 import CheckBox from "../components/CheckBox";
+import EmailMembers from "../components/EmailMembers";
 
 class OrganisationDetail extends React.Component {
 
@@ -102,7 +103,7 @@ class OrganisationDetail extends React.Component {
                         adminOfOrganisation: adminOfOrganisation,
                         apiKeys: json.api_keys
                     }, () => {
-                        if ((member && member.admin) || user.admin) {
+                        if ((member && member.role === "admin") || user.admin) {
                             this.fetchAuditLogs(json.id)
                         }
                     });
@@ -651,9 +652,9 @@ class OrganisationDetail extends React.Component {
                 <p className="title organisation-invitations">{I18n.t("organisationDetail.collaborationRequests", {name: originalOrganisation.name})}</p>
             </div>
             {this.renderCollaborationRequests(collaborationRequestReverse, collaborationRequestSorted, collaborationRequests)}
-            <div className="title">
-                <p className="title members">{I18n.t("organisationDetail.members", {name: originalOrganisation.name})}</p>
-            </div>
+            <EmailMembers allowEmailLink={adminOfOrganisation || user.admin}
+                          members={this.state.members}
+                          title={I18n.t("organisationDetail.members", {name: originalOrganisation.name})}/>
             {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfOrganisation)}
             <div className="title">
                 <p>{I18n.t("organisationDetail.apiKeys", {name: originalOrganisation.name})}</p>

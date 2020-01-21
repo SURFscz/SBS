@@ -197,7 +197,8 @@ def collaboration_lite_by_id(collaboration_id):
     collaboration = Collaboration.query \
         .join(Collaboration.organisation) \
         .options(contains_eager(Collaboration.organisation)) \
-        .filter(Collaboration.id == collaboration_id).one()
+        .filter(Collaboration.id == collaboration_id) \
+        .one()
     return collaboration, 200
 
 

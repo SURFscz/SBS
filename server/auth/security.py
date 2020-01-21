@@ -5,7 +5,7 @@ from flask import session, g as request_context, request as current_request, cur
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
 
-from server.db.domain import CollaborationMembership, OrganisationMembership, Group, Collaboration
+from server.db.domain import CollaborationMembership, OrganisationMembership, Group, Collaboration, Organisation
 
 
 def is_admin_user(uid):
@@ -93,7 +93,7 @@ def is_current_user_organisation_admin(collaboration_id):
     return is_organisation_admin(Collaboration.query.get(collaboration_id).organisation_id)
 
 
-def is_collaboration_admin(user_id=None, collaboration_id=None):
+def is_collaboration_admin(user_id=None, collaboration_id=None, organisation_id=None):
     user_id = user_id if user_id else current_user_id()
     query = CollaborationMembership.query \
         .options(load_only("id")) \
@@ -101,6 +101,11 @@ def is_collaboration_admin(user_id=None, collaboration_id=None):
         .filter(CollaborationMembership.role == "admin")
     if collaboration_id:
         query = query.filter(CollaborationMembership.collaboration_id == collaboration_id)
+    if organisation_id:
+        query = query \
+            .join(CollaborationMembership.collaboration) \
+            .join(Collaboration.organisation) \
+            .filter(Organisation.id == organisation_id)
     count = query.count()
     return count > 0
 

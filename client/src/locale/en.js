@@ -377,6 +377,8 @@ I18n.translations.en = {
         title: "Details organisation {{name}}",
         back: "Back to my organisations",
         members: "Members of {{name}}",
+        mailMembers: "Mail all members",
+        mailMembersTooltip: "Mail all members of this organisation",
         invitations: "Invitations for {{name}}",
         collaborationRequests: "Collaboration requests for {{name}}",
         searchPlaceHolder: "Search for members",

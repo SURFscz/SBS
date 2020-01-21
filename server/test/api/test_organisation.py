@@ -2,7 +2,7 @@
 
 from server.db.domain import Organisation, OrganisationInvitation
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import uuc_name, schac_home_organisation
+from server.test.seed import uuc_name, schac_home_organisation, amsterdam_uva_name
 
 
 class TestOrganisation(AbstractTest):
@@ -66,6 +66,17 @@ class TestOrganisation(AbstractTest):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
+
+    def test_my_organisation_by_id_lite_(self):
+        self.login("urn:sarah")
+        organisation_id = self.find_entity_by_name(Organisation, amsterdam_uva_name).id
+        res = self.get(f"/api/organisations/lite/{organisation_id}")
+        self.assertEqual(amsterdam_uva_name, res["name"])
+
+    def test_my_organisation_by_id_lite_forbidden(self):
+        self.login("urn:admin")
+        organisation_id = self.find_entity_by_name(Organisation, amsterdam_uva_name).id
+        self.get(f"/api/organisations/lite/{organisation_id}", response_status_code=403)
 
     def test_organisation_crud(self):
         self.login()
