@@ -41,6 +41,7 @@ import Profile from "./Profile";
 import Aup from "./Aup";
 import CollaborationRequest from "./CollaborationRequest";
 import ServiceConnectionRequest from "./ServiceConnectionRequest";
+import OrganisationDetailLite from "./OrganisationDetailLite";
 
 addIcons();
 
@@ -202,6 +203,11 @@ class App extends React.Component {
                                    currentUser={currentUser}
                                    refreshUser={this.refreshUserMemberships}
                                    Component={OrganisationDetail} {...props}/>}/>
+
+                        <Route exact path="/organisations-lite/:id"
+                               render={props => <ProtectedRoute
+                                   currentUser={currentUser}
+                                   Component={OrganisationDetailLite} {...props}/>}/>
 
                         <Route exact path="/services"
                                render={props => <ProtectedRoute

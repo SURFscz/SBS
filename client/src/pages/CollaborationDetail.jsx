@@ -1,9 +1,11 @@
 import React from "react";
 import {
-    auditLogsInfo, collaborationAccessAllowed,
+    auditLogsInfo,
+    collaborationAccessAllowed,
     collaborationById,
     collaborationLiteById,
-    collaborationNameExists, collaborationShortNameExists,
+    collaborationNameExists,
+    collaborationShortNameExists,
     deleteCollaboration,
     deleteCollaborationMembership,
     updateCollaboration,
@@ -16,7 +18,6 @@ import I18n from "i18n-js";
 import moment from "moment";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import InputField from "../components/InputField";
-import SelectField from "../components/SelectField";
 import {collaborationAccessTypes, collaborationRoles} from "../forms/constants";
 import Button from "../components/Button";
 import {setFlash} from "../utils/Flash";
@@ -27,6 +28,7 @@ import {sanitizeShortName} from "../validations/regExps";
 import Tabs from "../components/Tabs";
 import History from "../components/History";
 import BackLink from "../components/BackLink";
+import EmailMembers from "../components/EmailMembers";
 
 
 class CollaborationDetail extends React.Component {
@@ -565,12 +567,12 @@ class CollaborationDetail extends React.Component {
                         disabled={true}
                         name={I18n.t("organisation.created")}/>
 
-            <SelectField value={organisation}
-                         options={[organisation]}
-                         name={I18n.t("collaboration.organisation_name")}
-                         placeholder={I18n.t("collaboration.organisationPlaceholder")}
-                         toolTip={I18n.t("collaboration.organisationTooltip")}
-                         disabled={true}
+            <InputField value={organisation.label}
+                        name={I18n.t("collaboration.organisation_name")}
+                        toolTip={I18n.t("collaboration.organisationTooltip")}
+                        link={isAdmin ? `/organisations-lite/${organisation.value}` : null}
+                        history={this.props.history}
+                        disabled={true}
             />
             {isAdmin &&
             <section className="actions">
@@ -597,8 +599,9 @@ class CollaborationDetail extends React.Component {
                     {this.renderServices(originalCollaboration)}
                     {this.renderGroups(originalCollaboration)}
                 </section>
-
-                <p className="title members">{I18n.t("collaborationDetail.members", {name: originalCollaboration.name})}</p>
+                <EmailMembers allowEmailLink={true}
+                              members={this.state.members}
+                              title={I18n.t("collaborationDetail.members", {name: originalCollaboration.name})}/>
                 {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfCollaboration)}
             </section>}
             <div className="title">

@@ -32,6 +32,7 @@ import {sanitizeShortName} from "../validations/regExps";
 import BackLink from "../components/BackLink";
 import Tabs from "../components/Tabs";
 import History from "../components/History";
+import EmailMembers from "../components/EmailMembers";
 
 class Group extends React.Component {
 
@@ -75,8 +76,9 @@ class Group extends React.Component {
                     if (json.access === "lite" && params.id === "new") {
                         this.props.history.push("/404");
                     } else {
+                        const adminOfCollaboration = json.access === "full";
                         if (params.id !== "new") {
-                            const collDetail = json.access === "full" ? collaborationServices : collaborationLiteById;
+                            const collDetail = adminOfCollaboration ? collaborationServices : collaborationLiteById;
                             Promise.all([collDetail(collaboration_id), groupById(group_id, collaboration_id)])
                                 .then(res => {
                                     const {
@@ -95,7 +97,7 @@ class Group extends React.Component {
                                         sortedMembers: sortObjects(group.collaboration_memberships, sortedMembersBy, reverseMembers),
                                         sortedInvitations: sortObjects(group.invitations, sortedInvitationsBy, reverseInvitations),
                                         isNew: false,
-                                        adminOfCollaboration: json.access === "full"
+                                        adminOfCollaboration: adminOfCollaboration
                                     }, () => this.fetchAuditLogs(group.id))
                                 });
                         } else {
@@ -105,7 +107,7 @@ class Group extends React.Component {
                                         collaboration: collaboration,
                                         collaboration_id: collaboration.id,
                                         allMembers: [],
-                                        adminOfCollaboration: json.access === "full"
+                                        adminOfCollaboration: adminOfCollaboration
                                     })
                                 });
                         }
@@ -597,9 +599,15 @@ class Group extends React.Component {
             </div>);
     };
 
-    groupDetailsTab = (isNew, membersTitle, adminOfCollaboration, groupName, allMembers, sortedMembers, sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations, group, detailsTitle, name, short_name, auto_provision_members, alreadyExists, initial, description, disabledSubmit, collaboration) => (
+    groupDetailsTab = (isNew, membersTitle, adminOfCollaboration, groupName, allMembers, sortedMembers,
+                       sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations,
+                       group, detailsTitle, name, short_name, auto_provision_members, alreadyExists, initial,
+                       description, disabledSubmit, collaboration) => (
         <>
-            {!isNew && <p className="title">{membersTitle}</p>}
+            {!isNew && <EmailMembers allowEmailLink={true}
+                                     members={sortedMembers}
+                                     title={membersTitle}/>}
+
             {!isNew && this.groupMembers(adminOfCollaboration, groupName,
                 allMembers, sortedMembers, sortedMembersBy, reverseMembers,
                 sortedInvitations, sortedInvitationsBy, reverseInvitations, group.auto_provision_members)}

@@ -101,8 +101,9 @@ def group_access_allowed(group_id, collaboration_id):
         confirm_collaboration_admin(collaboration_id)
         return {"access": "full"}, 200
     except Forbidden:
-        confirm_group_member(group_id)
-        return {"access": "lite"}, 200
+        if confirm_group_member(group_id):
+            return {"access": "lite"}, 200
+        raise Forbidden()
 
 
 @group_api.route("/<group_id>/<collaboration_id>", strict_slashes=False)

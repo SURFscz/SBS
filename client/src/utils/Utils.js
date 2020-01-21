@@ -72,17 +72,21 @@ export function pseudoGuid() {
 }
 
 export function escapeDeep(obj) {
-  if (!isEmpty(obj)) {
-    Object.keys(obj).forEach(key => {
-      const val = obj[key];
-      if (typeof (val) === "string" || val instanceof String) {
-        obj[key] = escape(val);
-      } else if (typeof (val) === "object" || val instanceof Object) {
-        escapeDeep(val);
-      }
-    });
+    if (!isEmpty(obj)) {
+        Object.keys(obj).forEach(key => {
+            const val = obj[key];
+            if (typeof (val) === "string" || val instanceof String) {
+                obj[key] = escape(val);
+            } else if (typeof (val) === "object" || val instanceof Object) {
+                escapeDeep(val);
+            }
+        });
 
-  }
+    }
+}
+
+export function emailMembersLink(members) {
+    return encodeURI(members.map(m => `"${m.user.name}" <${m.user.email}>`).join(","));
 }
 
 
