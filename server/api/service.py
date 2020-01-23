@@ -2,7 +2,7 @@
 from flask import Blueprint, request as current_request
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only, contains_eager
-
+import urllib.parse
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin
@@ -64,6 +64,17 @@ def entity_id_exists():
         .filter(func.lower(Service.entity_id) != func.lower(existing_service)) \
         .first()
     return org is not None, 200
+
+
+@service_api.route("/find_by_entity_id", strict_slashes=False)
+@json_endpoint
+def service_by_entity_id():
+    entity_id = urllib.parse.unquote(query_param("entity_id"))
+    return Service.query \
+               .outerjoin(Service.allowed_organisations) \
+               .options(contains_eager(Service.allowed_organisations)) \
+               .filter(Service.entity_id == entity_id) \
+               .one(), 200
 
 
 @service_api.route("/<service_id>", strict_slashes=False)

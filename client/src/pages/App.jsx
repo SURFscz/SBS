@@ -42,6 +42,7 @@ import Aup from "./Aup";
 import CollaborationRequest from "./CollaborationRequest";
 import ServiceConnectionRequest from "./ServiceConnectionRequest";
 import OrganisationDetailLite from "./OrganisationDetailLite";
+import ServiceRequest from "./ServiceRequest";
 
 addIcons();
 
@@ -216,6 +217,10 @@ class App extends React.Component {
                         <Route exact path="/services/:id"
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={Service} {...props}/>}/>
+
+                        <Route exact path="/service-request/:entityid"
+                               render={props => <ProtectedRoute
+                                   currentUser={currentUser} Component={ServiceRequest} {...props}/>}/>
 
                         <Route exact path="/join-requests/:hash"
                                render={props => <ProtectedRoute

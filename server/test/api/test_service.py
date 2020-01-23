@@ -1,7 +1,8 @@
 # -*- coding: future_fstrings -*-
 from server.db.domain import Service, Organisation
 from server.test.abstract_test import AbstractTest
-from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name
+from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name, \
+    service_network_name
 
 
 class TestService(AbstractTest):
@@ -31,6 +32,12 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, service_mail_name)
         self.login("urn:sarah")
         self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
+
+    def test_find_by_entity_id(self):
+        res = self.get(f"api/services/find_by_entity_id", query_data={"entity_id": service_network_entity_id})
+
+        self.assertEqual(res["name"], service_network_name)
+        self.assertEqual(uuc_name, res["allowed_organisations"][0]["name"])
 
     def test_service_new(self):
         service = self.post("/api/services", body={"entity_id": "https://new_service", "name": "new_service"})
