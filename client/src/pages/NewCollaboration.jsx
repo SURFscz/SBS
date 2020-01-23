@@ -172,8 +172,10 @@ class NewCollaboration extends React.Component {
     };
 
     renderNoOrganisations = () => (
-        <div className="mod-new-collaboration">
-            <h2 className="no-organisations" dangerouslySetInnerHTML={{__html: I18n.t("home.noOrganisations")}}/>
+        <div className="mod-new-collaboration-container">
+            <div className="mod-new-collaboration">
+                <h2 className="no-organisations" dangerouslySetInnerHTML={{__html: I18n.t("home.noOrganisations")}}/>
+            </div>
         </div>
     );
 

@@ -766,6 +766,9 @@ I18n.translations.nl = {
             "users": "User",
         }
     },
+    serviceRequest: {
+        title: "Service {{ name }} is niet gekoppeld aan één van de collaboraties"
+    },
     inputField: {
         fileImport: "Bestand inlezen",
     },

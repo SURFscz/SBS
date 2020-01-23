@@ -153,6 +153,10 @@ export function serviceById(id) {
     return fetchJson(`/api/services/${id}`, {}, {}, false);
 }
 
+export function serviceByEntityId(entityid) {
+    return fetchJson(`/api/services/find_by_entity_id?entity_id=${encodeURIComponent(entityid)}`, {}, {}, false);
+}
+
 export function searchServices(q) {
     return fetchJson(`/api/services/search?q=${encodeURIComponent(q)}`);
 }

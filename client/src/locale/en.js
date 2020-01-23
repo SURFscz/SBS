@@ -62,7 +62,8 @@ I18n.translations.en = {
     explain: {
         title: "Explanation {{subject}}",
         impersonate: "Impersonate",
-        services: "Services"
+        services: "Services",
+        serviceRequest: "Service request"
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -766,6 +767,25 @@ I18n.translations.en = {
             "services_collaborations": "Collaboration service",
             "users": "User",
         }
+    },
+    serviceRequest: {
+        title: "Service {{name}} is not linked to any of your collaborations",
+        titleAlreadyLinked: "Service {{name}} is already linked to your collaboration {{collaboration}}",
+        subTitle: "These are all the collaborations you are a member of. Choose one or more to link service {{name}} to in order for you to have access to this service.",
+        subTitleAlreadyLinked: "The service {{name}} redirected you this page too connect one of your collaborations. However you already have access to this service. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
+        noCollaborations: "You are not a member of any collaboration. To use service {{name}} you need to be a member of at least one collaboration",
+        collaboration: {
+            name: "Name",
+            role: "Role",
+            organisation: "Organisation",
+            actions: "Link",
+            linkNotAllowed: "You can not link this<br/>Service to this Collaboration,<br/>because the Organisation of this<br/>Collaboration is not allowed to link"
+        },
+        role: {
+            admin: "Admin",
+            member: "Member"
+        },
+        link: "Link collaboration(s)"
     },
     inputField: {
         fileImport: "File import",
