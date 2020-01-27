@@ -8,7 +8,7 @@
     div.title {
         font-size: 22px;
         color: $dark-grey;
-        padding: 10px 0 5px 0;
+        padding: 20px 0;
 
         p {
             padding: 10px 0 10px 0;
@@ -30,6 +30,18 @@
         }
     }
 
+    .result-feedback {
+        padding: 40px 0;
+        a.button {
+        margin-top: 40px;
+        }
+
+    }
+    .error {
+        margin: 25px 0;
+        color: $red;
+    }
+
     .service-request {
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         margin: 0 auto 15px auto;
@@ -43,53 +55,28 @@
 
         th {
             text-align: left;
-            cursor: pointer;
             padding: 5px;
 
-            &.actions, &.resend {
-                width: 6%;
-                cursor: default;
-                font-weight: normal;
-
-                svg.fa-info-circle {
-                    cursor: pointer;
-                    margin-left: 20px;
-                    color: $blue;
-                }
-            }
-
             &.name {
-                width: 25%;
+                width: 35%;
             }
 
-            &.service {
+            &.role {
                 width: 15%;
             }
 
-            &.requester {
-                width: 15%;
-            }
-
-            &.entity_id {
-                width: 25%;
-            }
-
-            &.created_at {
-                width: 15%;
-            }
-
-            &.description, &.message {
+            &.organisation {
                 width: 40%;
             }
 
-            svg {
-                margin-left: 15px;
-                color: $lighter-grey;
-
-                &.current, &.reverse {
-                    color: $blue;
-                }
+            &.actions {
+                width: 5%;
             }
+
+            &.tooltips {
+                width: 5%;
+            }
+
         }
 
         tbody {
@@ -105,6 +92,9 @@
             vertical-align: middle;
             padding: 5px;
 
+            .tooltip-container {
+                color: $blue;
+            }
         }
     }
 

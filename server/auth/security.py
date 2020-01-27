@@ -61,7 +61,7 @@ def confirm_allow_impersonation():
     return True
 
 
-def external_api_call():
+def confirm_external_api_call():
     if "external_api_organisation" not in request_context:
         raise Forbidden("Not a valid external API call")
 

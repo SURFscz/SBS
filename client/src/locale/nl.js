@@ -289,6 +289,8 @@ I18n.translations.nl = {
         entity_id: "Entity ID",
         entity_idPlaceHolder: "De unieke entity ID van een dienst",
         entity_idTooltip: "De unieke entity ID van de <br/>dienst koppelt de dienst<br/>aan de externe dienstaanbieder.",
+        service_request: "Service Request URL",
+        service_requestTooltip: "The URL for a Service to request a connection<br/>between a Collaboration and this Service<br/>if the User does not have access<br/>to this Service",
         description: "Beschrijving",
         descriptionPlaceholder: "De beschrijving van de dienst",
         address: "Adres",
@@ -767,7 +769,34 @@ I18n.translations.nl = {
         }
     },
     serviceRequest: {
-        title: "Service {{ name }} is niet gekoppeld aan één van de collaboraties"
+        title: "Service {{name}} is not linked to any of your collaborations",
+        subTitle: "These are all the collaborations you are a member of. Choose one or more to link service <strong>{{name}}</strong> to in order for you to have access to this service.",
+        titleAlreadyLinked: "Service {{name}} is already linked to your collaboration {{collaboration}}",
+        subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this Service. However you already have access to this service. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
+        titleLinkNotAllowed: "Service {{name}} can not be linked to any of your collaborations",
+        subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
+        noCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
+        collaboration: {
+            name: "Name",
+            role: "Role",
+            organisation: "Organisation",
+            actions: "Link",
+            tooltips: "",
+            linkNotAllowed: "You can not link this<br/>Service to this Collaboration,<br/>because the Organisation of this<br/>Collaboration is not allowed to link",
+            alreadyLinked: "You can not link this Service to this Collaboration,<br/>because the Service is already available in this Collaboration",
+        },
+        role: {
+            admin: "Admin",
+            member: "Member"
+        },
+        backToService: "Back to service",
+        link: "Link collaboration(s)",
+        motivation: "Service {{serviceName}} redirected the user {{userName}} to connect a collaboration to this service",
+        result: {
+            completed: "The Service {{serviceName}} is now accessibly for you. Click the button below to go to this service.",
+            requested: "Access to Service {{serviceName}} has been requested. Until the request is granted you can not access this service.",
+        },
+        outstandingServiceConnectionRequest: "Error occurred. There is already an outstanding service connection request for {{details}}"
     },
     inputField: {
         fileImport: "Bestand inlezen",

@@ -62,6 +62,7 @@ export function valueForSort(attribute, obj) {
 export function escapeHtmlTooltip(msg) {
     msg = escape(msg);
     msg = msg.replace(/\n/g, "<br/>");
+    msg = msg.replace(/%20/g, " ");
     return msg;
 }
 

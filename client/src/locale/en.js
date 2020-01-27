@@ -290,6 +290,8 @@ I18n.translations.en = {
         entity_id: "Entity ID",
         entity_idPlaceHolder: "The unique entity ID of the service",
         entity_idTooltip: "The unique entity ID of the <br/>Service links the Service<br/>to the external Service Provider",
+        service_request: "Service Request URL",
+        service_requestTooltip: "The URL for a Service to request a connection<br/>between a Collaboration and this Service<br/>if the User does not have access to this Service",
         description: "Description",
         descriptionPlaceholder: "The description of the service",
         address: "Address",
@@ -770,22 +772,33 @@ I18n.translations.en = {
     },
     serviceRequest: {
         title: "Service {{name}} is not linked to any of your collaborations",
+        subTitle: "These are all the collaborations you are a member of. Choose one or more to link service <strong>{{name}}</strong> to in order for you to have access to this service.",
         titleAlreadyLinked: "Service {{name}} is already linked to your collaboration {{collaboration}}",
-        subTitle: "These are all the collaborations you are a member of. Choose one or more to link service {{name}} to in order for you to have access to this service.",
-        subTitleAlreadyLinked: "The service {{name}} redirected you this page too connect one of your collaborations. However you already have access to this service. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
-        noCollaborations: "You are not a member of any collaboration. To use service {{name}} you need to be a member of at least one collaboration",
+        subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this Service. However you already have access to this service. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
+        titleLinkNotAllowed: "Service {{name}} can not be linked to any of your collaborations",
+        subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
+        noCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
         collaboration: {
             name: "Name",
             role: "Role",
             organisation: "Organisation",
             actions: "Link",
-            linkNotAllowed: "You can not link this<br/>Service to this Collaboration,<br/>because the Organisation of this<br/>Collaboration is not allowed to link"
+            tooltips: "",
+            linkNotAllowed: "You can not link this<br/>Service to this Collaboration,<br/>because the Organisation of this<br/>Collaboration is not allowed to link",
+            alreadyLinked: "You can not link this Service to this Collaboration,<br/>because the Service is already available in this Collaboration",
         },
         role: {
             admin: "Admin",
             member: "Member"
         },
-        link: "Link collaboration(s)"
+        backToService: "Back to service",
+        link: "Link collaboration(s)",
+        motivation: "Service {{serviceName}} redirected the user {{userName}} to connect a collaboration to this service",
+        result: {
+            completed: "The Service {{serviceName}} is now accessibly for you. Click the button below to go to this service.",
+            requested: "Access to Service {{serviceName}} has been requested. Until the request is granted you can not access this service.",
+        },
+        outstandingServiceConnectionRequest: "Error occurred. There is already an outstanding service connection request for {{details}}"
     },
     inputField: {
         fileImport: "File import",

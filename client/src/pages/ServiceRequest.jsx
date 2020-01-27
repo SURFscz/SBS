@@ -2,17 +2,24 @@ import React from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {addCollaborationServices, myCollaborationsLite, serviceByEntityId} from "../api";
+import {
+    addCollaborationServices,
+    myCollaborationsLite,
+    requestServiceConnection,
+    serviceByEntityId,
+    serviceConnectionRequestsOutstanding
+} from "../api";
 import I18n from "i18n-js";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import "./ServiceRequest.scss"
-import {setFlash} from "../utils/Flash";
 import Explain from "../components/Explain";
-import BackLink from "../components/BackLink";
 import ServicesRequestExplanation from "../components/explanations/ServicesRequest";
 import CheckBox from "../components/CheckBox";
 import Button from "../components/Button";
+import ReactTooltip from "react-tooltip";
+import {escapeHtmlTooltip, isEmpty, stopEvent} from "../utils/Utils";
+import {getParameterByName} from "../utils/QueryParameters";
 
 class ServiceRequest extends React.Component {
 
@@ -20,9 +27,13 @@ class ServiceRequest extends React.Component {
         super(props, context);
         this.state = {
             service: {},
+            serviceName: "",
             collaborations: [],
             showExplanation: false,
-            alreadyLinked: false
+            alreadyLinked: false,
+            finished: false,
+            collaborationAdminLinked: false,
+            outstandingServiceConnectionRequestDetails: null
         };
     }
 
@@ -36,71 +47,93 @@ class ServiceRequest extends React.Component {
                     const collaborations = res[1];
                     collaborations.forEach(collaboration => {
                         collaboration.alreadyLinked = collaboration.services.some(ser => ser.id === service.id);
-                        collaboration.linkNotAllowed = service.allowed_organisations &&
+                        collaboration.linkNotAllowed = service.allowed_organisations.length > 0 &&
                             service.allowed_organisations.every(org => org.id !== collaboration.organisation.id);
                     });
-                    this.setState({
-                        service,
-                        collaborations,
-                        alreadyLinked: collaborations.some(coll => coll.alreadyLinked)
+                    serviceConnectionRequestsOutstanding(service.id).then(res => {
+                        collaborations.forEach(collaboration => {
+                            collaboration.outstandingServiceConnectionRequest = res.some(d => d.collaboration_id === collaboration.id);
+                        });
+                        this.setState({
+                            service,
+                            collaborations,
+                            serviceName: escapeHtmlTooltip(service.name),
+                            alreadyLinked: collaborations.some(coll => coll.alreadyLinked)
+                        });
                     });
-                })
+                });
         } else {
             this.props.history.push("/404");
         }
     };
 
-    addService = option => {
-        if (option) {
-            const {collaboration} = this.state;
-            addCollaborationServices(collaboration.id, option.value)
-                .then(() => this.refresh(() => setFlash(I18n.t("collaborationServices.flash.added", {
-                    service: option.label,
-                    name: collaboration.name
-                }))))
-                .catch(e => {
-                    if (e.response && e.response.json && e.response.status === 400) {
-                        e.response.json().then(res => {
-                            if (res.message && res.message.indexOf("automatic_connection_not_allowed") > -1) {
-                                this.setState({
-                                    automaticConnectionNotAllowed: true,
-                                    notAllowedOrganisation: false,
-                                    errorService: option
-                                });
-                            }
-                            if (res.message && res.message.indexOf("not_allowed_organisation") > -1) {
-                                this.setState({
-                                    notAllowedOrganisation: true,
-                                    automaticConnectionNotAllowed: false,
-                                    errorService: option
-                                });
-                            }
-                        });
+    backToService = () => {
+        const {service} = this.state;
+        const redirectUri = getParameterByName("redirectUri");
+        window.location.href = isEmpty(redirectUri) ? service.uri : redirectUri;
+    };
+
+    displayBackToService = () => {
+        const {service} = this.state;
+        const redirectUri = getParameterByName("redirectUri");
+        const defaultRedirectUri = isEmpty(redirectUri) && !isEmpty(service.uri);
+        const validRedirectUri = !isEmpty(redirectUri) && redirectUri.startsWith(service.uri);
+        return defaultRedirectUri || validRedirectUri;
+    };
+
+    submit = e => {
+        stopEvent(e);
+        const {service, collaborations, serviceName} = this.state;
+        const {user} = this.props;
+        const selectedCollaborations = collaborations.filter(coll => coll.requestToLink);
+        const collaborationAdminLinked = selectedCollaborations.some(coll => this.roleOfUserInCollaboration(coll, user) === "admin");
+        const promises = selectedCollaborations.map(coll => {
+            return this.roleOfUserInCollaboration(coll, user) === "admin" ?
+                requestServiceConnection({
+                    message: I18n.t("serviceRequest.motivation", {serviceName, userName: user.name}),
+                    service_id: service.id,
+                    collaboration_id: coll.id
+                }, false) : addCollaborationServices(coll.id, service.id);
+        });
+        Promise.all(promises)
+            .then(() => {
+                this.setState({finished: true, collaborationAdminLinked: collaborationAdminLinked});
+            }).catch(e => {
+            if (e.response && e.response.json && e.response.status === 400) {
+                e.response.json().then(res => {
+                    if (res.message && res.message.indexOf("outstanding_service_connection_request") > -1) {
+                        const cleanMsg = res.message.replace("outstanding_service_connection_request: ", "");
+                        this.setState({outstandingServiceConnectionRequestDetails: cleanMsg});
                     } else {
                         throw e;
                     }
-                });
-        }
+                })
+            }
+        });
     };
 
     closeExplanation = () => this.setState({showExplanation: false});
 
-    toggleCollaborationRequestLink = e => collaboration => {
+    toggleCollaborationRequestLink = collaboration => e => {
         const {collaborations} = this.state;
         collaborations.find(coll => coll.id === collaboration.id).requestToLink = e.target.checked;
         this.setState({collaborations: [...collaborations]});
     };
 
+    roleOfUserInCollaboration = (collaboration, user) =>
+        user.collaboration_memberships.find(cm => cm.collaboration_id === collaboration.id).role;
+
     renderRole = (collaboration, user) =>
-        I18n.t(`serviceRequest.role.${user.collaboration_memberships.find(cm => cm.collaboration_id === collaboration.id).role}`);
+        I18n.t(`serviceRequest.role.${this.roleOfUserInCollaboration(collaboration, user)}`);
 
     renderCollaborations = (collaborations, user) => {
-        const headers = ["name", "role", "organisation", "actions"];
+        const headers = ["name", "role", "organisation", "actions", "tooltips"];
         return (
             <table className="table-collaborations">
                 <thead>
                 <tr>
-                    {headers.map(header => <th key={header}>{I18n.t(`serviceRequest.collaboration.${header}`)}</th>)}
+                    {headers.map(header => <th key={header}
+                                               className={header}>{I18n.t(`serviceRequest.collaboration.${header}`)}</th>)}
                 </tr>
                 </thead>
                 <tbody>
@@ -109,11 +142,30 @@ class ServiceRequest extends React.Component {
                     <td>{this.renderRole(coll, user)}</td>
                     <td>{coll.organisation.name}</td>
                     <td>
-                        <CheckBox name={coll.name} value={coll.alreadyLinked || coll.requestToLink}
+                        <CheckBox name={coll.name} value={coll.alreadyLinked || coll.requestToLink || false}
                                   readOnly={coll.alreadyLinked || coll.linkNotAllowed}
-                                  onChange={this.toggleCollaborationRequestLink}
-                                  tooltip={coll.linkNotAllowed ? I18n.t("serviceRequest.collaboration.linkNotAllowed") : null}
+                                  onChange={this.toggleCollaborationRequestLink(coll)}
                         />
+                    </td>
+                    <td>{coll.linkNotAllowed &&
+                    <span className="tooltip-container">
+                                <span data-tip data-for={`coll_${coll.id}`}>
+                                    <FontAwesomeIcon icon="info-circle"/>
+                                </span>
+                                <ReactTooltip id={`coll_${coll.id}`} type="info" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.collaboration.linkNotAllowed")}}/>
+                                </ReactTooltip>
+                            </span>}
+                        {coll.alreadyLinked &&
+                        <span className="tooltip-container">
+                                <span data-tip data-for={`coll_${coll.id}`}>
+                                    <FontAwesomeIcon icon="info-circle"/>
+                                </span>
+                                <ReactTooltip id={`coll_${coll.id}`} type="info" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.collaboration.alreadyLinked")}}/>
+                                </ReactTooltip>
+                            </span>}
+
                     </td>
                 </tr>)}
                 </tbody>
@@ -123,19 +175,36 @@ class ServiceRequest extends React.Component {
     };
 
     render() {
-        const {collaborations, service, showExplanation, alreadyLinked} = this.state;
+        const {
+            collaborations, showExplanation, alreadyLinked, serviceName, finished,
+            collaborationAdminLinked, outstandingServiceConnectionRequestDetails
+        } = this.state;
         const {user} = this.props;
-        const name = service.name;
-        const disabledSubmit = collaborations.find(coll => coll.requestToLink);
+        if (finished) {
+            const msg = collaborationAdminLinked ? I18n.t("serviceRequest.result.completed", {serviceName}) :
+                I18n.t("serviceRequest.result.requested", {serviceName});
+            return (
+                <div className="mod-service-request">
+                    <div className="result-feedback">
+                        <p dangerouslySetInnerHTML={{__html: msg}}/>
+                        <Button txt={I18n.t("serviceRequest.backToService")}
+                                onClick={this.backToService}/>
+                    </div>
+                </div>);
+        }
+        const enableSubmit = collaborations.some(coll => coll.requestToLink && !coll.alreadyLinked);
+        const linkNotAllowed = collaborations.every(coll => coll.linkNotAllowed);
         const title = alreadyLinked ?
             I18n.t("serviceRequest.titleAlreadyLinked", {
-                name: name,
+                name: serviceName,
                 collaboration: collaborations.find(coll => coll.alreadyLinked).name
             })
-            : I18n.t("serviceRequest.title", {name: name});
+            : linkNotAllowed ? I18n.t("serviceRequest.titleLinkNotAllowed", {name: serviceName})
+                : I18n.t("serviceRequest.title", {name: serviceName});
         const subTitle = alreadyLinked ?
-            I18n.t("serviceRequest.subTitleAlreadyLinked", {name: name})
-            : I18n.t("serviceRequest.subTitle", {name: name});
+            I18n.t("serviceRequest.subTitleAlreadyLinked", {name: serviceName})
+            : linkNotAllowed ? I18n.t("serviceRequest.subTitleLinkNotAllowed", {name: serviceName})
+                : I18n.t("serviceRequest.subTitle", {name: serviceName});
         const noCollaborations = collaborations.length === 0;
         return (
             <div className="mod-service-request">
@@ -143,25 +212,34 @@ class ServiceRequest extends React.Component {
                     close={this.closeExplanation}
                     subject={I18n.t("explain.serviceRequest")}
                     isVisible={showExplanation}>
-                    <ServicesRequestExplanation name={name}/>
+                    <ServicesRequestExplanation name={escapeHtmlTooltip(serviceName)}/>
                 </Explain>
 
                 <div className="title">
-                    <BackLink history={this.props.history}/>
-                    <p className="title">{title}</p>
+                    <p className="title" dangerouslySetInnerHTML={{__html: title}}/>
                     <FontAwesomeIcon className="help"
                                      icon="question-circle"
                                      id="service_request_close_explanation"
-                                     onClick={() => this.setState({showExplanation: true})}/>
+                                     onClick={() => this.setState({showExplanation: !showExplanation})}/>
 
                 </div>
-                {noCollaborations && <p>{I18n.t("serviceRequest.noCollaborations", {name})}</p>}
+                {noCollaborations &&
+                <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.noCollaborations", {name: serviceName})}}/>}
                 {!noCollaborations && <div className="service-request">
-                    <p className="sub-title">{subTitle}</p>
+                    <p className="sub-title" dangerouslySetInnerHTML={{__html: subTitle}}/>
                     {this.renderCollaborations(collaborations, user)}
+                    {outstandingServiceConnectionRequestDetails &&
+                    <div className="error">
+                            <span>{I18n.t("serviceRequest.outstandingServiceConnectionRequest", {
+                                details: outstandingServiceConnectionRequestDetails
+                            })}</span>
+                    </div>
+                    }
                     <section className="actions">
-                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                        <Button disabled={disabledSubmit} txt={I18n.t("serviceRequest.link")}
+                        {this.displayBackToService() &&
+                        <Button className="white" txt={I18n.t("serviceRequest.backToService")}
+                                onClick={this.backToService}/>}
+                        <Button disabled={!enableSubmit} txt={I18n.t("serviceRequest.link")}
                                 onClick={this.submit}/>
                     </section>
                 </div>}
