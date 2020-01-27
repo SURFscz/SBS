@@ -2,7 +2,7 @@
 from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ssh_service_connection_request_hash, sarah_name, uva_research_name, service_wiki_name, \
-    ai_computing_name, service_ssh_uva_name, network_service_connection_request_hash
+    ai_computing_name, service_ssh_uva_name, network_service_connection_request_hash, service_storage_name
 
 
 class TestServiceConnectionRequest(AbstractTest):
@@ -16,6 +16,13 @@ class TestServiceConnectionRequest(AbstractTest):
         self.assertEqual(1, len(res))
         self.assertEqual(collaboration.id, res[0]["collaboration_id"])
         self.assertEqual(network_service_connection_request_hash, res[0]["hash"])
+
+    def test_service_request_connections_by_service(self):
+        service = self.find_entity_by_name(Service, service_storage_name)
+        res = self.get(f"/api/service_connection_requests/by_service/{service.id}")
+
+        self.assertEqual(1, len(res))
+        self.assertListEqual(["collaboration_id","id"], list(res[0].keys()))
 
     def test_delete_service_request_connection(self):
         self.login("urn:sarah")

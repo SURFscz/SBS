@@ -219,6 +219,14 @@ class Service extends React.Component {
                 attribute: I18n.t("service.entity_id").toLowerCase()
             })}</span>}
 
+            {(isAdmin && !isNew) && <InputField value={`/service-request/${encodeURIComponent(entity_id)}`}
+                        name={I18n.t("service.service_request")}
+                        toolTip={I18n.t("service.service_requestTooltip")}
+                        link={`/service-request/${encodeURIComponent(entity_id)}`}
+                        history={this.props.history}
+                        disabled={true}
+            />}
+
             <InputField value={description}
                         name={I18n.t("service.description")}
                         placeholder={I18n.t("service.descriptionPlaceholder")}

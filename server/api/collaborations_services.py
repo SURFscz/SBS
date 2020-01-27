@@ -3,7 +3,7 @@ from flask import Blueprint, request as current_request, g as request_context
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_collaboration_admin, external_api_call
+from server.auth.security import confirm_collaboration_admin, confirm_external_api_call
 from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.schemas import json_schema_validator
@@ -47,7 +47,7 @@ def add_collaborations_services():
 @collaborations_services_api.route("/connect_collaboration_service", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def connect_collaboration_service():
-    external_api_call()
+    confirm_external_api_call()
     organisation = request_context.external_api_organisation
 
     data = current_request.get_json()

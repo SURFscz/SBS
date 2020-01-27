@@ -2,7 +2,7 @@
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app
-from sqlalchemy.orm import contains_eager
+from sqlalchemy.orm import contains_eager, load_only
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
@@ -56,9 +56,18 @@ def _do_service_connection_request(hash, approved):
 @json_endpoint
 def service_request_connections_by_collaboration(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
-
     return _service_connection_request_query() \
                .filter(ServiceConnectionRequest.collaboration_id == collaboration_id) \
+               .all(), 200
+
+
+@service_connection_request_api.route("/by_service/<service_id>", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def service_request_connections_by_service(service_id):
+    # Avoid security risk, only return id
+    return ServiceConnectionRequest.query \
+               .options(load_only("collaboration_id")) \
+               .filter(ServiceConnectionRequest.service_id == service_id) \
                .all(), 200
 
 

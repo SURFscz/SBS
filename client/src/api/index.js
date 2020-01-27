@@ -100,7 +100,7 @@ export function config() {
 //Users
 export function me(config) {
     const headers = (config.local) ? {
-        // "OIDC_CLAIM_cmuid": "urn:roger",
+        // "OIDC_CLAIM_cmuid": "urn:jane",
         "OIDC_CLAIM_cmuid": "urn:john",
         // "OIDC_CLAIM_cmuid": "urn:okke",
         "OIDC_CLAIM_Nickname": "jëhny",
@@ -514,6 +514,10 @@ export function serviceConnectionRequests(collaborationId) {
     return postPutJson(`/api/service_connection_requests/by_collaboration/${collaborationId}`);
 }
 
+export function serviceConnectionRequestsOutstanding(serviceId) {
+    return postPutJson(`/api/service_connection_requests/by_service/${serviceId}`);
+}
+
 export function resendServiceConnectionRequest(serviceConnectionRequestId) {
     return postPutJson(`/api/service_connection_requests/resend/${serviceConnectionRequestId}`);
 }
@@ -522,8 +526,8 @@ export function deleteServiceConnectionRequest(serviceConnectionRequestId) {
     return fetchDelete(`/api/service_connection_requests/${serviceConnectionRequestId}`);
 }
 
-export function requestServiceConnection(body) {
-    return postPutJson(`/api/service_connection_requests`, body, "post");
+export function requestServiceConnection(body, showErrorDialog = true) {
+    return postPutJson(`/api/service_connection_requests`, body, "post", showErrorDialog);
 }
 
 export function serviceConnectionRequestByHash(hash) {

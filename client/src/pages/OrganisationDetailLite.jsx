@@ -19,7 +19,6 @@ class OrganisationDetailLite extends React.Component {
     componentDidMount = () => {
         const params = this.props.match.params;
         if (params.id) {
-            debugger;
             organisationByIdLite(params.id)
                 .then(json => this.setState({organisation: json}))
                 .catch(() => this.props.history.push("/404"));
