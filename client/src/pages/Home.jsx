@@ -103,7 +103,9 @@ class Home extends React.Component {
     };
 
     renderServices = collaborations => {
-        const services = collaborations.map(collaboration => collaboration.services).flat();
+        const allServices = collaborations.map(collaboration => collaboration.services).flat();
+        const distinctServiceIdentifiers = [...new Set(allServices.map(s => s.id))];
+        const services = distinctServiceIdentifiers.map(id => allServices.find(s => s.id === id));
         const showMore = services.length >= 6;
         const showMoreItems = this.state.showMore.includes("services");
         return (
