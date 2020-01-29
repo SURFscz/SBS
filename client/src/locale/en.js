@@ -786,6 +786,7 @@ I18n.translations.en = {
             tooltips: "",
             linkNotAllowed: "You can not link this<br/>Service to this Collaboration,<br/>because the Organisation of this<br/>Collaboration is not allowed to link",
             alreadyLinked: "You can not link this Service to this Collaboration,<br/>because the Service is already available in this Collaboration",
+            outstandingServiceConnectionRequest: "You can not link this Service to this Collaboration,<br/>because there is already an outstanding request<br/>to connect the Service to this Collaboration"
         },
         role: {
             admin: "Admin",

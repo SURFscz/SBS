@@ -62,7 +62,8 @@ I18n.translations.nl = {
     explain: {
         title: "Uitleg {{subject}}",
         impersonate: "Impersonate",
-        services: "Services"
+        services: "Services",
+        serviceRequest: "Service request"
     },
     user: {
         titleUpdate: "Werk je gebruikersprofiel bij",
@@ -379,6 +380,8 @@ I18n.translations.nl = {
         title: "Beschrijving organisatie {{name}}",
         back: "Terug naar mijn organisaties",
         members: "Leden van {{name}}",
+        mailMembers: "Mail all members",
+        mailMembersTooltip: "Mail all members of this organisation",
         invitations: "Uitnodigingen voor {{name}}",
         collaborationRequests: "Collaboratie verxoeken voor {{name}}",
         searchPlaceHolder: "Zoek leden",
@@ -784,6 +787,7 @@ I18n.translations.nl = {
             tooltips: "",
             linkNotAllowed: "You can not link this<br/>Service to this Collaboration,<br/>because the Organisation of this<br/>Collaboration is not allowed to link",
             alreadyLinked: "You can not link this Service to this Collaboration,<br/>because the Service is already available in this Collaboration",
+            outstandingServiceConnectionRequest: "You can not link this Service to this Collaboration,<br/>because there is already an outstanding request<br/>to connect the Service to this Collaboration"
         },
         role: {
             admin: "Admin",

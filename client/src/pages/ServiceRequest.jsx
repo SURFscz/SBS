@@ -32,6 +32,7 @@ class ServiceRequest extends React.Component {
             showExplanation: false,
             alreadyLinked: false,
             finished: false,
+            redirectUriMismatch: false,
             collaborationAdminLinked: false,
             outstandingServiceConnectionRequestDetails: null
         };
@@ -58,6 +59,7 @@ class ServiceRequest extends React.Component {
                             service,
                             collaborations,
                             serviceName: escapeHtmlTooltip(service.name),
+                            displayBackToService: this.displayBackToService(service),
                             alreadyLinked: collaborations.some(coll => coll.alreadyLinked)
                         });
                     });
@@ -73,8 +75,7 @@ class ServiceRequest extends React.Component {
         window.location.href = isEmpty(redirectUri) ? service.uri : redirectUri;
     };
 
-    displayBackToService = () => {
-        const {service} = this.state;
+    displayBackToService = service => {
         const redirectUri = getParameterByName("redirectUri");
         const defaultRedirectUri = isEmpty(redirectUri) && !isEmpty(service.uri);
         const validRedirectUri = !isEmpty(redirectUri) && redirectUri.startsWith(service.uri);
@@ -143,26 +144,35 @@ class ServiceRequest extends React.Component {
                     <td>{coll.organisation.name}</td>
                     <td>
                         <CheckBox name={coll.name} value={coll.alreadyLinked || coll.requestToLink || false}
-                                  readOnly={coll.alreadyLinked || coll.linkNotAllowed}
+                                  readOnly={coll.alreadyLinked || coll.linkNotAllowed || coll.outstandingServiceConnectionRequest}
                                   onChange={this.toggleCollaborationRequestLink(coll)}
                         />
                     </td>
                     <td>{coll.linkNotAllowed &&
                     <span className="tooltip-container">
-                                <span data-tip data-for={`coll_${coll.id}`}>
+                                <span data-tip data-for={`coll_lna${coll.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
-                                <ReactTooltip id={`coll_${coll.id}`} type="info" effect="solid" data-html={true}>
+                                <ReactTooltip id={`coll_lna${coll.id}`} type="info" effect="solid" data-html={true}>
                                     <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.collaboration.linkNotAllowed")}}/>
                                 </ReactTooltip>
                             </span>}
                         {coll.alreadyLinked &&
                         <span className="tooltip-container">
-                                <span data-tip data-for={`coll_${coll.id}`}>
+                                <span data-tip data-for={`coll_al${coll.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
-                                <ReactTooltip id={`coll_${coll.id}`} type="info" effect="solid" data-html={true}>
+                                <ReactTooltip id={`coll_al${coll.id}`} type="info" effect="solid" data-html={true}>
                                     <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.collaboration.alreadyLinked")}}/>
+                                </ReactTooltip>
+                            </span>}
+                        {(coll.outstandingServiceConnectionRequest && this.roleOfUserInCollaboration(coll, user) === "member") &&
+                        <span className="tooltip-container">
+                                <span data-tip data-for={`coll_osr${coll.id}`}>
+                                    <FontAwesomeIcon icon="info-circle"/>
+                                </span>
+                                <ReactTooltip id={`coll_osr${coll.id}`} type="info" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.collaboration.outstandingServiceConnectionRequest")}}/>
                                 </ReactTooltip>
                             </span>}
 
@@ -176,7 +186,7 @@ class ServiceRequest extends React.Component {
 
     render() {
         const {
-            collaborations, showExplanation, alreadyLinked, serviceName, finished,
+            collaborations, showExplanation, alreadyLinked, serviceName, finished, service,
             collaborationAdminLinked, outstandingServiceConnectionRequestDetails
         } = this.state;
         const {user} = this.props;
@@ -193,7 +203,7 @@ class ServiceRequest extends React.Component {
                 </div>);
         }
         const enableSubmit = collaborations.some(coll => coll.requestToLink && !coll.alreadyLinked);
-        const linkNotAllowed = collaborations.every(coll => coll.linkNotAllowed);
+        const linkNotAllowed = collaborations.every(coll => coll.linkNotAllowed || coll.outstandingServiceConnectionRequest);
         const title = alreadyLinked ?
             I18n.t("serviceRequest.titleAlreadyLinked", {
                 name: serviceName,
@@ -236,7 +246,7 @@ class ServiceRequest extends React.Component {
                     </div>
                     }
                     <section className="actions">
-                        {this.displayBackToService() &&
+                        {this.displayBackToService(service) &&
                         <Button className="white" txt={I18n.t("serviceRequest.backToService")}
                                 onClick={this.backToService}/>}
                         <Button disabled={!enableSubmit} txt={I18n.t("serviceRequest.link")}
