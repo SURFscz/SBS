@@ -22,7 +22,7 @@ class TestServiceConnectionRequest(AbstractTest):
         res = self.get(f"/api/service_connection_requests/by_service/{service.id}")
 
         self.assertEqual(1, len(res))
-        self.assertListEqual(["collaboration_id", "id"], list(res[0].keys()))
+        self.assertListEqual(["collaboration_id", "id"], list(sorted(res[0].keys())))
 
     def test_delete_service_request_connection(self):
         self.login("urn:sarah")
