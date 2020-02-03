@@ -54,6 +54,10 @@ service_mail_entity_id = "https://mail"
 
 service_network_name = "Network Services"
 service_network_entity_id = "https://network"
+service_wiki_entity_id = "https://wiki"
+service_storage_entity_id = "https://storage"
+service_cloud_entity_id = "https://cloud"
+
 service_storage_name = "Storage"
 service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
@@ -101,7 +105,7 @@ def seed(db):
     admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org")
     roger = User(uid="urn:roger", name=roger_name, email="roger@example.org",
                  schac_home_organisation=schac_home_organisation)
-    harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org")
+    harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry")
     james = User(uid="urn:james", name=james_name, email="james@example.org",
                  ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                          "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
@@ -152,11 +156,12 @@ def seed(db):
                    public_visible=True, automatic_connection_allowed=True)
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
                        public_visible=True, automatic_connection_allowed=True, contact_email=john.email, )
-    cloud = Service(entity_id="https://cloud", name=service_cloud_name, description="SARA Cloud Service",
-                    public_visible=True, automatic_connection_allowed=True, white_listed=True)
-    storage = Service(entity_id="https://storage", name=service_storage_name, description="SURF Storage Service",
-                      public_visible=True, automatic_connection_allowed=True, contact_email=john.email, )
-    wiki = Service(entity_id="https://wiki", name=service_wiki_name, description="No more wiki's please",
+    cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
+                    public_visible=True, automatic_connection_allowed=True)
+    storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, description="SURF Storage Service",
+                      public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
+                      white_listed=True)
+    wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
                        "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",

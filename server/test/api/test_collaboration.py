@@ -4,7 +4,8 @@ import json
 from server.db.domain import Collaboration, Organisation, Invitation
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
-    ai_computing_short_name
+    ai_computing_short_name, service_network_entity_id, service_wiki_entity_id, service_storage_entity_id, \
+    service_cloud_entity_id
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -85,6 +86,32 @@ class TestCollaboration(AbstractTest):
                       "name": "new_collaboration",
                       "organisation_id": organisation_id
                   },
+                  with_basic_auth=False,
+                  response_status_code=403)
+
+    def test_collaboration_restricted_access_api(self):
+        res = self.post("/api/collaborations/restricted",
+                        body={
+                            "name": "new_collaboration",
+                            "administrator": "harry",
+                            "short_name": "short_org_name",
+                            "connected_services": [service_network_entity_id,
+                                                   service_wiki_entity_id,
+                                                   service_storage_entity_id,
+                                                   service_cloud_entity_id]
+                        },
+                        with_basic_auth=False,
+                        headers=API_AUTH_HEADER,
+                        response_status_code=201)
+
+        self.assertEqual("uuc:short_org_name", res["global_urn"])
+        self.assertListEqual([service_cloud_entity_id, service_storage_entity_id],
+                             list(map(lambda s: s["entity_id"], res["services"])))
+
+    def test_collaboration_restricted_access_api_forbidden(self):
+        self.login("urn:harry")
+        self.post("/api/collaborations/restricted",
+                  body={},
                   with_basic_auth=False,
                   response_status_code=403)
 

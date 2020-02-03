@@ -12,10 +12,10 @@ from server.api.base import json_endpoint, query_param, replace_full_text_search
 from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member, confirm_authorized_api_call, \
     confirm_allow_impersonation
-from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
-    Organisation
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name
+from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
+    Organisation, Service
 from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
 
@@ -351,6 +351,46 @@ def save_collaboration():
     return res
 
 
+@collaboration_api.route("/restricted", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def save_restricted_collaboration():
+    if "api_user" not in request_context:
+        raise Forbidden()
+
+    data = current_request.get_json()
+    administrator = data["administrator"]
+    admin = User.query.filter(User.username == administrator).one()
+
+    restricted_co_config = current_app.app_config.restricted_co
+
+    organisations = Organisation.query \
+        .filter(Organisation.schac_home_organisation == admin.schac_home_organisation) \
+        .all()
+    organisation = organisations[0] if organisations else Organisation.query.filter(
+        Organisation.schac_home_organisation == restricted_co_config.default_organisation).one()
+
+    data["organisation_id"] = organisation.id
+    data["services_restricted"] = True
+
+    # do_save_collaboration sanitizes the JSON so we need to define upfront
+    connected_services = data.get("connected_services")
+
+    res = do_save_collaboration(data, organisation, admin)
+
+    if connected_services:
+        collaboration = res[0]
+        applied_connected_services = []
+        services = Service.query.filter(Service.entity_id.in_(connected_services)).all()
+        for service in services:
+            if service.white_listed or service.entity_id in restricted_co_config.services_white_list:
+                collaboration.services.append(service)
+                applied_connected_services.append(service.entity_id)
+
+        db.session.merge(collaboration)
+
+    return collaboration, 201
+
+
 def do_save_collaboration(data, organisation, user):
     data["status"] = "active"
     _assign_global_urn(data["organisation_id"], data)
@@ -364,7 +404,8 @@ def do_save_collaboration(data, organisation, user):
     message = data["message"] if "message" in data else None
     data["identifier"] = str(uuid.uuid4())
     cleanse_short_name(data)
-    res = save(Collaboration, custom_json=data)
+    res = save(Collaboration, custom_json=data, allow_child_cascades=False)
+
     administrators = list(filter(lambda admin: admin != user.email, administrators))
     collaboration = res[0]
     for administrator in administrators:

@@ -19,7 +19,10 @@ base_scope: "test.sbs.local"
 generate_multiple_eppn: True
 collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
 
-services_white_list: ["https://cloud"]
+restricted_co:
+  services_white_list: ["https://cloud"]
+  default_organisation: "schac_home_organisation_uuc"
+
 
 mail:
   host: localhost
