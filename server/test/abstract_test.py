@@ -7,6 +7,7 @@ import requests
 from flask import current_app
 from flask_testing import TestCase
 
+from server.db.domain import Collaboration
 from server.test.seed import seed
 
 # See api_users in config/test_config.yml
@@ -94,3 +95,11 @@ class AbstractTest(TestCase):
                                           headers=BASIC_AUTH_HEADER if with_basic_auth else {},
                                           content_type="application/json")
             self.assertEqual(response_status_code, response.status_code)
+
+    def mark_collaboration_service_restricted(self, collaboration_id):
+        db = self.app.db
+        with self.app.app_context():
+            collaboration = db.session.query(Collaboration).get(collaboration_id)
+            collaboration.services_restricted = True
+            db.session.add(collaboration)
+            db.session.commit()

@@ -96,6 +96,19 @@ class TestCollaboration(AbstractTest):
         collaboration = self.put("/api/collaborations", body=collaboration)
         self.assertEqual("changed", collaboration["name"])
 
+    def test_collaboration_update_restricted_service(self):
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+
+        self.login("urn:admin")
+        self.mark_collaboration_service_restricted(collaboration_id)
+
+        collaboration_json = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
+        collaboration_json["services_restricted"] = False
+        self.put("/api/collaborations", body=collaboration_json)
+
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        self.assertTrue(collaboration.services_restricted)
+
     def test_collaboration_delete(self):
         collaboration = self._find_by_name_id()
         self.delete("/api/collaborations", primary_key=collaboration["id"])
@@ -326,7 +339,8 @@ class TestCollaboration(AbstractTest):
 
     def test_access_allowed_super_user(self):
         self.login("urn:john")
-        data = self.get(f"/api/collaborations/access_allowed/{self.find_entity_by_name(Collaboration, ai_computing_name).id}")
+        data = self.get(
+            f"/api/collaborations/access_allowed/{self.find_entity_by_name(Collaboration, ai_computing_name).id}")
         self.assertEqual("full", data["access"])
 
     def _access_allowed(self, urn, response_status_code=200):

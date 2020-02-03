@@ -145,7 +145,7 @@ class CollaborationServices extends React.Component {
         this.setState({sortedServices: sortedServices, sorted: name, reverse: reversed});
     };
 
-    renderConnectedServices = (collaboration, connectedServices, sorted, reverse, isAdmin) => {
+    renderConnectedServices = (collaboration, connectedServices, sorted, reverse, allowedToConfigureServices) => {
         const names = ["open", "actions", "name", "entity_id", "description"];
         return (
 
@@ -179,7 +179,7 @@ class CollaborationServices extends React.Component {
                             {<FontAwesomeIcon icon={"arrow-right"}/>}
                         </td>
                         <td className="actions">
-                            {isAdmin && <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>}
+                            {allowedToConfigureServices && <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>}
                         </td>
                         <td className="name">{service.name}</td>
                         <td className="entity_id">{service.entity_id}</td>
@@ -209,7 +209,7 @@ class CollaborationServices extends React.Component {
                 })))));
     };
 
-    renderServiceRequestConnections = (serviceConnectionRequests, isAdmin) => {
+    renderServiceRequestConnections = (serviceConnectionRequests, allowedToConfigureServices) => {
         const names = ["actions", "resend", "service", "requester", "created_at", "message"];
         return (
             <div className="service-request-connections">
@@ -239,10 +239,10 @@ class CollaborationServices extends React.Component {
                     <tbody>
                     {serviceConnectionRequests.map(req => <tr key={req.id}>
                         <td className="actions">
-                            {isAdmin && <FontAwesomeIcon icon="trash" onClick={() => this.removeServiceConnectionRequest(req)}/>}
+                            {allowedToConfigureServices && <FontAwesomeIcon icon="trash" onClick={() => this.removeServiceConnectionRequest(req)}/>}
                         </td>
                         <td className="resend">
-                            {isAdmin && <FontAwesomeIcon icon="envelope" onClick={() => this.resend(req)}/>}
+                            {allowedToConfigureServices && <FontAwesomeIcon icon="envelope" onClick={() => this.resend(req)}/>}
                         </td>
                         <td className="service">{req.service.name}</td>
                         <td className="requester">{req.requester.name}</td>
@@ -314,6 +314,7 @@ class CollaborationServices extends React.Component {
         }
         const availableServices = allServices.filter(service => !sortedServices.find(s => s.id === service.value));
         const {user} = this.props;
+        const allowedToConfigureServices = user.admin || !collaboration.services_restricted;
         return (
             <div className="mod-collaboration-services">
                 <Explain
@@ -335,7 +336,7 @@ class CollaborationServices extends React.Component {
                     {automaticConnectionNotAllowed &&
                     this.renderAutomaticConnectionNotAllowed(errorService, collaboration, message)}
                 </div>
-                {!user.admin && <div>
+                {!allowedToConfigureServices && <div className="service-restricted">
                     <p>
                     {I18n.t("collaborationServices.serviceRestrictedInfo")}
                 </p>
@@ -350,8 +351,8 @@ class CollaborationServices extends React.Component {
                             isSearchable={true}
                             isClearable={true}
                     />
-                    {this.renderConnectedServices(collaboration, sortedServices, sorted, reverse, user.admin)}
-                    {this.renderServiceRequestConnections(serviceConnectionRequests, user.admin)}
+                    {this.renderConnectedServices(collaboration, sortedServices, sorted, reverse, allowedToConfigureServices)}
+                    {this.renderServiceRequestConnections(serviceConnectionRequests, allowedToConfigureServices)}
                 </div>
             </div>);
     };
