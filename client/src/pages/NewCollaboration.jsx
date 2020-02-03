@@ -18,6 +18,7 @@ import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
 import {collaborationAccessTypes} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
+import CheckBox from "../components/CheckBox";
 
 class NewCollaboration extends React.Component {
 
@@ -36,6 +37,8 @@ class NewCollaboration extends React.Component {
             message: "",
             email: "",
             accepted_user_policy: "",
+            services_restricted: false,
+            disable_join_requests: false,
             enrollment: "",
             status: "",
             required: ["name", "short_name", "organisation"],
@@ -122,12 +125,14 @@ class NewCollaboration extends React.Component {
         if (this.isValid()) {
             const {
                 name, short_name, description, access_type, enrollment,
-                administrators, message, accepted_user_policy, organisation, isRequestCollaboration
+                administrators, message, accepted_user_policy, organisation, isRequestCollaboration,
+                services_restricted, disable_join_requests
             } = this.state;
             const promise = isRequestCollaboration ? requestCollaboration : createCollaboration;
             promise({
                 name, short_name, description, enrollment, access_type,
-                administrators, message, accepted_user_policy, organisation_id: organisation.value
+                administrators, message, accepted_user_policy, organisation_id: organisation.value,
+                services_restricted, disable_join_requests
             }).then(res => {
                 this.props.history.goBack();
                 const isCollCreated = res.identifier;
@@ -182,7 +187,8 @@ class NewCollaboration extends React.Component {
     render() {
         const {
             name, short_name, description, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, noOrganisations, isRequestCollaboration
+            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, noOrganisations, isRequestCollaboration,
+            services_restricted, disable_join_requests
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
@@ -277,6 +283,17 @@ class NewCollaboration extends React.Component {
                         {/*             placeholder={I18n.t("collaboration.accessTypePlaceholder")}*/}
                         {/*             onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}*/}
                         {/*/>*/}
+                        {!isRequestCollaboration && <CheckBox name="disable_join_requests"
+                                                              value={disable_join_requests}
+                                                              info={I18n.t("collaboration.disableJoinRequests")}
+                                                              tooltip={I18n.t("collaboration.disableJoinRequestsTooltip")}
+                                                              onChange={() => this.setState({disable_join_requests: !disable_join_requests})}/>}
+
+                        {!isRequestCollaboration && <CheckBox name="services_restricted"
+                                                              value={services_restricted}
+                                                              info={I18n.t("collaboration.servicesRestricted")}
+                                                              tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
+                                                              onChange={() => this.setState({services_restricted: !services_restricted})}/>}
 
                         <SelectField value={organisation}
                                      options={organisations}

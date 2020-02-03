@@ -3,7 +3,7 @@ from flask import Blueprint, request as current_request, g as request_context
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_collaboration_admin, confirm_external_api_call
+from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_write_access
 from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.schemas import json_schema_validator
@@ -24,6 +24,9 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
         raise BadRequest("automatic_connection_not_allowed")
 
     collaboration = Collaboration.query.get(collaboration_id)
+    if collaboration.services_restricted:
+        confirm_write_access()
+
     collaboration.services.append(service)
     db.session.merge(collaboration)
     return 1
@@ -79,6 +82,9 @@ def delete_all_services(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
 
     collaboration = Collaboration.query.get(collaboration_id)
+    if collaboration.services_restricted:
+        confirm_write_access()
+
     collaboration.services = []
     db.session.merge(collaboration)
     return None, 204
@@ -90,6 +96,9 @@ def delete_collaborations_services(collaboration_id, service_id):
     confirm_collaboration_admin(collaboration_id)
 
     collaboration = Collaboration.query.get(collaboration_id)
+    if collaboration.services_restricted:
+        confirm_write_access()
+
     collaboration.services.remove(Service.query.get(service_id))
     db.session.merge(collaboration)
     return None, 204

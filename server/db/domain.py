@@ -149,6 +149,7 @@ class Service(Base, db.Model):
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
     public_visible = db.Column("public_visible", db.Boolean(), nullable=True, default=True)
     automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
+    white_listed = db.Column("white_listed", db.Boolean(), nullable=True, default=False)
     status = db.Column("status", db.String(length=255), nullable=True)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
@@ -186,6 +187,7 @@ class Collaboration(Base, db.Model):
     invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
                                   passive_deletes=True)
     disable_join_requests = db.Column("disable_join_requests", db.Boolean(), nullable=True, default=False)
+    services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0

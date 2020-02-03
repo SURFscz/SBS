@@ -153,7 +153,7 @@ def seed(db):
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
                        public_visible=True, automatic_connection_allowed=True, contact_email=john.email, )
     cloud = Service(entity_id="https://cloud", name=service_cloud_name, description="SARA Cloud Service",
-                    public_visible=True, automatic_connection_allowed=True)
+                    public_visible=True, automatic_connection_allowed=True, white_listed=True)
     storage = Service(entity_id="https://storage", name=service_storage_name, description="SURF Storage Service",
                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email, )
     wiki = Service(entity_id="https://wiki", name=service_wiki_name, description="No more wiki's please",

@@ -102,8 +102,8 @@ def collaboration_search():
         if not_wild_card:
             q = replace_full_text_search_boolean_mode_chars(q)
             base_query += f"WHERE MATCH (name, description) AGAINST (:q IN BOOLEAN MODE) " \
-                          f"AND id > 0 LIMIT {full_text_search_autocomplete_limit}"
-        sql = text(base_query)
+                          f"AND id > 0 ORDER BY NAME LIMIT {full_text_search_autocomplete_limit}"
+        sql = text(base_query if not_wild_card else base_query + " ORDER BY NAME")
         if not_wild_card:
             sql = sql.bindparams(bindparam("q", type_=String))
         result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
