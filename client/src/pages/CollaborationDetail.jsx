@@ -473,6 +473,9 @@ class CollaborationDetail extends React.Component {
                             access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
                             config, disable_join_requests, services_restricted) => {
         const joinRequestUrl = `${config.base_url}/registration?collaboration=${encodeURIComponent(originalCollaboration.name)}`;
+        const {user} = this.props;
+        const isPlatformAdmin = user.admin;
+
         return <div className="collaboration-detail">
             <InputField value={name} onChange={e => {
                 this.setState({
@@ -549,7 +552,7 @@ class CollaborationDetail extends React.Component {
                       info={I18n.t("collaboration.servicesRestricted")}
                       tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
                       onChange={() => this.setState({services_restricted: !services_restricted})}
-                      readOnly={!isAdmin}/>
+                      readOnly={!isPlatformAdmin}/>
 
             {/*<InputField value={enrollment}*/}
             {/*            onChange={e => this.setState({enrollment: e.target.value})}*/}

@@ -192,6 +192,7 @@ class NewCollaboration extends React.Component {
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
+        const {user} = this.props;
         if (noOrganisations) {
             return this.renderNoOrganisations();
         }
@@ -293,6 +294,7 @@ class NewCollaboration extends React.Component {
                                                               value={services_restricted}
                                                               info={I18n.t("collaboration.servicesRestricted")}
                                                               tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
+                                                              readOnly={!user.admin}
                                                               onChange={() => this.setState({services_restricted: !services_restricted})}/>}
 
                         <SelectField value={organisation}

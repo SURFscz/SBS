@@ -4,11 +4,32 @@ from flask import Blueprint, current_app
 
 from server.api.base import json_endpoint, query_param, ctx_logger
 from server.auth.security import confirm_read_access
-from server.auth.user_claims import attribute_saml_mapping, is_member_of_saml, multi_value_attributes
+
 from server.db.domain import User, CollaborationMembership, Service, Collaboration
 from server.db.models import flatten
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
+
+# Independent mapping, so different attribute names can be send back
+custom_saml_mapping = {
+    "multi_value_attributes": ["edu_members", "affiliation", "scoped_affiliation", "entitlement"],
+    "attribute_saml_mapping": {
+        "uid": "urn:mace:dir:attribute-def:uid",
+        "name": "urn:mace:dir:attribute-def:cn",
+        "address": "urn:mace:dir:attribute-def:postalAddress",
+        "nick_name": "urn:mace:dir:attribute-def:displayName",
+        "username": "urn:mace:dir:attribute-def:shortName",
+        "edu_members": "urn:mace:dir:attribute-def:isMemberOf",
+        "affiliation": "urn:mace:dir:attribute-def:eduPersonAffiliation",
+        "scoped_affiliation": "urn:mace:dir:attribute-def:eduPersonScopedAffiliation",
+        "entitlement": "urn:mace:dir:attribute-def:eduPersonEntitlement",
+        "schac_home_organisation": "urn:mace:terena.org:attribute-def:schacHomeOrganization",
+        "family_name": "urn:mace:dir:attribute-def:sn",
+        "given_name": "urn:mace:dir:attribute-def:givenName",
+        "email": "urn:mace:dir:attribute-def:mail",
+        "ssh_key": "urn:oid:1.3.6.1.4.1.24552.1.1.1.13"
+    }
+}
 
 
 # Endpoint for SATOSA
@@ -34,10 +55,10 @@ def attributes():
 
     result = {}
     user = User.query.filter(User.uid == uid).one()
-    for k, v in attribute_saml_mapping.items():
+    for k, v in custom_saml_mapping["attribute_saml_mapping"].items():
         val = getattr(user, k)
         if val:
-            result[v] = val.split(",") if k in multi_value_attributes else [val]
+            result[v] = val.split(",") if k in custom_saml_mapping["multi_value_attributes"] else [val]
 
     collaboration_names = list(map(lambda cm: cm.collaboration.short_name, user.collaboration_memberships))
     cfg = current_app.app_config
@@ -49,7 +70,7 @@ def attributes():
 
     group_short_names = list(map(lambda group: group.short_name, groups))
     is_member_of = list(set(group_short_names + collaboration_names))
-    result[is_member_of_saml] = is_member_of
+    result[custom_saml_mapping["attribute_saml_mapping"]["edu_members"]] = is_member_of
     result = {k: list(set(v)) for k, v in result.items()}
 
     logger.info(f"Returning attributes for user {uid} and service_entity_id {service_entity_id}")
