@@ -393,17 +393,12 @@ def save_restricted_collaboration():
 
 def do_save_collaboration(data, organisation, user):
     data["status"] = "active"
-    _assign_global_urn(data["organisation_id"], data)
-    if _do_name_exists(data["name"], organisation.id):
-        raise BadRequest(f"Collaboration with name '{data['name']}' already exists within "
-                         f"organisation '{organisation.name}'.")
-    if _do_short_name_exists(data["short_name"], organisation.id):
-        raise BadRequest(f"Collaboration with short_name '{data['short_name']}' already exists within "
-                         f"organisation '{organisation.name}'.")
+    _validate_collaboration(data, organisation)
+
     administrators = data["administrators"] if "administrators" in data else []
+
     message = data["message"] if "message" in data else None
     data["identifier"] = str(uuid.uuid4())
-    cleanse_short_name(data)
     res = save(Collaboration, custom_json=data, allow_child_cascades=False)
 
     administrators = list(filter(lambda admin: admin != user.email, administrators))
@@ -426,6 +421,19 @@ def do_save_collaboration(data, organisation, user):
     return res
 
 
+def _validate_collaboration(data, organisation, new_collaboration=True):
+    if _do_name_exists(data["name"], organisation.id,
+                       existing_collaboration="" if new_collaboration else data["name"]):
+        raise BadRequest(f"Collaboration with name '{data['name']}' already exists within "
+                         f"organisation '{organisation.name}'.")
+    if _do_short_name_exists(data["short_name"], organisation.id,
+                             existing_collaboration="" if new_collaboration else data["short_name"]):
+        raise BadRequest(f"Collaboration with short_name '{data['short_name']}' already exists within "
+                         f"organisation '{organisation.name}'.")
+    cleanse_short_name(data)
+    _assign_global_urn(data["organisation_id"], data)
+
+
 def _assign_global_urn(organisation_id, data):
     organisation = Organisation.query.get(organisation_id)
     assign_global_urn_to_collaboration(organisation, data)
@@ -441,8 +449,8 @@ def update_collaboration():
     data = current_request.get_json()
     confirm_collaboration_admin(data["id"])
 
-    cleanse_short_name(data)
-    _assign_global_urn(data["organisation_id"], data)
+    organisation = Organisation.query.get(data["organisation_id"])
+    _validate_collaboration(data, organisation, new_collaboration=False)
 
     if not is_application_admin() and "services_restricted" in data:
         del data["services_restricted"]
