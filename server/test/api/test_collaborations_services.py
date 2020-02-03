@@ -13,6 +13,14 @@ class TestCollaborationsServices(AbstractTest):
         service = Service.query.filter(Service.name == name).one()
         return self.get(f"api/services/{service.id}")
 
+    def _mark_collaboration_service_restricted(self, collaboration_id):
+        db = self.app.db
+        with self.app.app_context():
+            collaboration = db.session.query(Collaboration).get(collaboration_id)
+            collaboration.services_restricted = True
+            db.session.add(collaboration)
+            db.session.commit()
+
     def test_delete_collaborations_services(self):
         service_mail = self._find_service_by_name(service_mail_name)
         self.assertTrue(len(service_mail["collaborations"]) > 0)
@@ -22,6 +30,15 @@ class TestCollaborationsServices(AbstractTest):
                                       headers=BASIC_AUTH_HEADER,
                                       content_type="application/json")
         self.assertEqual(204, response.status_code)
+
+    def test_delete_collaborations_services_forbidden(self):
+        self.login("urn:admin")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        self._mark_collaboration_service_restricted(collaboration_id)
+        service_id = self.find_entity_by_name(Service, service_mail_name).id
+
+        self.delete(f"api/collaborations_services/{collaboration_id}/{service_id}",
+                    with_basic_auth=False, response_status_code=403)
 
     def test_add_collaborations_services(self):
         self.login("urn:john")
@@ -37,6 +54,17 @@ class TestCollaborationsServices(AbstractTest):
         })
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(3, len(collaboration["services"]))
+
+    def test_add_collaborations_services_forbidden(self):
+        self.login("urn:admin")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        self._mark_collaboration_service_restricted(collaboration_id)
+        service_cloud_id = self.find_entity_by_name(Service, service_cloud_name).id
+
+        self.put("/api/collaborations_services/", body={
+            "collaboration_id": collaboration_id,
+            "service_id": service_cloud_id
+        }, with_basic_auth=False, response_status_code=403)
 
     def test_add_collaborations_not_correct_organisation_services(self):
         self.login("urn:john")
@@ -70,9 +98,18 @@ class TestCollaborationsServices(AbstractTest):
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(2, len(collaboration["services"]))
 
-        self.delete("/api/collaborations_services/delete_all_services", primary_key=collaboration_id)
+        self.delete("/api/collaborations_services/delete_all_services", primary_key=collaboration_id,
+                    with_basic_auth=False)
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(0, len(collaboration["services"]))
+
+    def test_delete_all_services_forbidden(self):
+        self.login("urn:admin")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        self._mark_collaboration_service_restricted(collaboration_id)
+
+        self.delete("/api/collaborations_services/delete_all_services", primary_key=collaboration_id,
+                    with_basic_auth=False, response_status_code=403)
 
     def test_connect_collaboration_service(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
@@ -90,6 +127,20 @@ class TestCollaborationsServices(AbstractTest):
 
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(3, len(collaboration["services"]))
+
+    def test_connect_collaboration_service_forbidden(self):
+        self.login("urn:admin")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        self._mark_collaboration_service_restricted(collaboration_id)
+
+        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
+        self.put("/api/collaborations_services/connect_collaboration_service",
+                 with_basic_auth=False,
+                 body=json.dumps({
+                     "collaboration_id": collaboration_id,
+                     "service_entity_id": service_cloud.entity_id
+                 }),
+                 response_status_code=403)
 
     def test_connect_collaboration_service_collaboration_not_in_organisation(self):
         collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id

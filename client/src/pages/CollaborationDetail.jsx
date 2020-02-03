@@ -53,6 +53,7 @@ class CollaborationDetail extends React.Component {
             access_type: "",
             identifier: "",
             disable_join_requests: false,
+            services_restricted: false,
             enrollment: "",
             members: [],
             filteredMembers: [],
@@ -470,7 +471,7 @@ class CollaborationDetail extends React.Component {
 
     collaborationDetails = (name, short_name, alreadyExists, initial, description, accepted_user_policy, enrollment,
                             access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
-                            config, disable_join_requests) => {
+                            config, disable_join_requests, services_restricted) => {
         const joinRequestUrl = `${config.base_url}/registration?collaboration=${encodeURIComponent(originalCollaboration.name)}`;
         return <div className="collaboration-detail">
             <InputField value={name} onChange={e => {
@@ -543,6 +544,13 @@ class CollaborationDetail extends React.Component {
                       onChange={() => this.setState({disable_join_requests: !disable_join_requests})}
                       readOnly={!isAdmin}/>
 
+            <CheckBox name="services_restricted"
+                      value={services_restricted}
+                      info={I18n.t("collaboration.servicesRestricted")}
+                      tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
+                      onChange={() => this.setState({services_restricted: !services_restricted})}
+                      readOnly={!isAdmin}/>
+
             {/*<InputField value={enrollment}*/}
             {/*            onChange={e => this.setState({enrollment: e.target.value})}*/}
             {/*            placeholder={I18n.t("collaboration.enrollmentPlaceholder")}*/}
@@ -584,7 +592,10 @@ class CollaborationDetail extends React.Component {
         </div>;
     };
 
-    renderDetails = (isAdmin, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion, leavePage, originalCollaboration, filteredMembers, user, sorted, reverse, query, adminOfCollaboration, name, short_name, alreadyExists, initial, description, accepted_user_policy, enrollment, access_type, identifier, organisation, disabledSubmit, config, disable_join_requests) => (
+    renderDetails = (isAdmin, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
+                     leavePage, originalCollaboration, filteredMembers, user, sorted, reverse, query, adminOfCollaboration,
+                     name, short_name, alreadyExists, initial, description, accepted_user_policy, enrollment, access_type,
+                     identifier, organisation, disabledSubmit, config, disable_join_requests, services_restricted) => (
         <div>
             {isAdmin && <section>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -609,13 +620,13 @@ class CollaborationDetail extends React.Component {
             </div>
             {this.collaborationDetails(name, short_name, alreadyExists, initial, description, accepted_user_policy,
                 enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
-                config, disable_join_requests)}
+                config, disable_join_requests, services_restricted)}
         </div>);
 
     render() {
         const {
             originalCollaboration, name, short_name, description, accepted_user_policy, access_type, initial, alreadyExists,
-            identifier, enrollment, filteredMembers, query, disable_join_requests,
+            identifier, enrollment, filteredMembers, query, disable_join_requests, services_restricted,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             adminOfCollaboration, auditLogs
         } = this.state;
@@ -638,7 +649,8 @@ class CollaborationDetail extends React.Component {
                         {this.renderDetails(isAdmin, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
                             confirmationQuestion, leavePage, originalCollaboration, filteredMembers, user, sorted, reverse, query,
                             adminOfCollaboration, name, short_name, alreadyExists, initial, description, accepted_user_policy,
-                            enrollment, access_type, identifier, organisation, disabledSubmit, config, disable_join_requests)}
+                            enrollment, access_type, identifier, organisation, disabledSubmit, config, disable_join_requests,
+                            services_restricted)}
                     </div>
                     {isAdmin && <div label="history">
                         <History auditLogs={auditLogs} className="white"/>

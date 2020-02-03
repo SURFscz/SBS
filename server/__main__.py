@@ -33,6 +33,7 @@ from server.api.organisation_membership import organisation_membership_api
 from server.api.service import service_api
 from server.api.service_connection_request import service_connection_request_api
 from server.api.user import user_api
+from server.api.user_saml import user_saml_api
 from server.db.db import db, db_migrations
 from server.templates import invitation_role
 from server.tools import read_file
@@ -88,6 +89,7 @@ app.secret_key = config.secret_key
 
 app.register_blueprint(base_api)
 app.register_blueprint(user_api)
+app.register_blueprint(user_saml_api)
 app.register_blueprint(service_api)
 app.register_blueprint(collaboration_api)
 app.register_blueprint(organisation_api)

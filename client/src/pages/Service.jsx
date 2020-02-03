@@ -43,6 +43,7 @@ class Service extends React.Component {
             uri: "",
             accepted_user_policy: "",
             automatic_connection_allowed: true,
+            white_listed: false,
             allowed_organisations: [],
             organisations: [],
             contact_email: "",
@@ -162,23 +163,22 @@ class Service extends React.Component {
         if (this.isValid()) {
             const {name, isNew} = this.state;
             if (isNew) {
-                createService(this.state).then(() => {
-                    window.scrollTo(0, 0);
-                    setFlash(I18n.t("service.flash.created", {name: name}));
-                });
+                createService(this.state).then(() => this.afterUpdate(name, "created"));
             } else {
-                updateService(this.state).then(() => {
-                    this.fetchAuditLogs(this.state.id);
-                    window.scrollTo(0, 0);
-                    setFlash(I18n.t("service.flash.updated", {name: name}));
-                });
+                updateService(this.state).then(() => this.afterUpdate(name, "updated"));
             }
         }
     };
 
+    afterUpdate = (name, action) => {
+        window.scrollTo(0, 0);
+        setFlash(I18n.t(`service.flash.${action}`, {name: name}));
+        this.props.history.push("/services");
+    };
+
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                         contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations,
-                        accepted_user_policy, isNew, service, disabledSubmit) => (
+                        accepted_user_policy, isNew, service, disabledSubmit, white_listed) => (
         <div className="service">
             {!isNew && <p className="title">{title}</p>}
             <InputField value={name} onChange={e => this.setState({
@@ -269,6 +269,11 @@ class Service extends React.Component {
                       onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}
                       readOnly={!isAdmin}/>
 
+            <CheckBox name="white_listed" value={white_listed}
+                      info={I18n.t("service.whiteListed")}
+                      tooltip={I18n.t("service.whiteListedTooltip")}
+                      onChange={e => this.setState({white_listed: e.target.checked})}
+                      readOnly={!isAdmin}/>
 
             <InputField value={contact_email}
                         name={I18n.t("service.contact_email")}
@@ -333,7 +338,7 @@ class Service extends React.Component {
             alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
             entity_id, description, uri, accepted_user_policy, contact_email,
             confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed, organisations,
-            allowed_organisations, auditLogs
+            allowed_organisations, auditLogs, white_listed
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const isAdmin = this.props.user.admin;
@@ -353,7 +358,7 @@ class Service extends React.Component {
                     <div label="form">
                         {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                             contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,
-                            isNew, service, disabledSubmit)}
+                            isNew, service, disabledSubmit, white_listed)}
                     </div>
                     {(isAdmin && !isNew) && <div label="history">
                         <History auditLogs={auditLogs}/>

@@ -145,7 +145,7 @@ class CollaborationServices extends React.Component {
         this.setState({sortedServices: sortedServices, sorted: name, reverse: reversed});
     };
 
-    renderConnectedServices = (collaboration, connectedServices, sorted, reverse) => {
+    renderConnectedServices = (collaboration, connectedServices, sorted, reverse, isAdmin) => {
         const names = ["open", "actions", "name", "entity_id", "description"];
         return (
 
@@ -179,7 +179,7 @@ class CollaborationServices extends React.Component {
                             {<FontAwesomeIcon icon={"arrow-right"}/>}
                         </td>
                         <td className="actions">
-                            <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>
+                            {isAdmin && <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>}
                         </td>
                         <td className="name">{service.name}</td>
                         <td className="entity_id">{service.entity_id}</td>
@@ -209,7 +209,7 @@ class CollaborationServices extends React.Component {
                 })))));
     };
 
-    renderServiceRequestConnections = serviceConnectionRequests => {
+    renderServiceRequestConnections = (serviceConnectionRequests, isAdmin) => {
         const names = ["actions", "resend", "service", "requester", "created_at", "message"];
         return (
             <div className="service-request-connections">
@@ -239,10 +239,10 @@ class CollaborationServices extends React.Component {
                     <tbody>
                     {serviceConnectionRequests.map(req => <tr key={req.id}>
                         <td className="actions">
-                            <FontAwesomeIcon icon="trash" onClick={() => this.removeServiceConnectionRequest(req)}/>
+                            {isAdmin && <FontAwesomeIcon icon="trash" onClick={() => this.removeServiceConnectionRequest(req)}/>}
                         </td>
                         <td className="resend">
-                            <FontAwesomeIcon icon="envelope" onClick={() => this.resend(req)}/>
+                            {isAdmin && <FontAwesomeIcon icon="envelope" onClick={() => this.resend(req)}/>}
                         </td>
                         <td className="service">{req.service.name}</td>
                         <td className="requester">{req.requester.name}</td>
@@ -313,6 +313,7 @@ class CollaborationServices extends React.Component {
             return null;
         }
         const availableServices = allServices.filter(service => !sortedServices.find(s => s.id === service.value));
+        const {user} = this.props;
         return (
             <div className="mod-collaboration-services">
                 <Explain
@@ -334,17 +335,23 @@ class CollaborationServices extends React.Component {
                     {automaticConnectionNotAllowed &&
                     this.renderAutomaticConnectionNotAllowed(errorService, collaboration, message)}
                 </div>
+                {!user.admin && <div>
+                    <p>
+                    {I18n.t("collaborationServices.serviceRestrictedInfo")}
+                </p>
+                </div>}
                 <div className="collaboration-services">
                     <Select className="services-select"
                             placeholder={I18n.t("collaborationServices.searchServices", {name: collaboration.name})}
                             onChange={this.addService}
                             options={availableServices}
                             value={null}
+                            isDisabled={!user.admin}
                             isSearchable={true}
                             isClearable={true}
                     />
-                    {this.renderConnectedServices(collaboration, sortedServices, sorted, reverse)}
-                    {this.renderServiceRequestConnections(serviceConnectionRequests)}
+                    {this.renderConnectedServices(collaboration, sortedServices, sorted, reverse, user.admin)}
+                    {this.renderServiceRequestConnections(serviceConnectionRequests, user.admin)}
                 </div>
             </div>);
     };

@@ -19,6 +19,10 @@ export default function ServicesExplanation() {
             that is granted access to the <span className="strong">Service</span>.
         </section>,
         <section key={4} className="details">
+            If the <span className="strong">Collaboration</span> is configured to be restricted in the <span className="strong">Services</span> to be used
+            then only the platform admin can configure <span className="strong">Services</span> for the <span className="strong">Collaboration</span>.
+        </section>,
+        <section key={5} className="details">
             Please contact
             <a href="mailto:scz-support@surfnet.nl"> scz-support@surfnet.nl</a> if you think if a <span
             className="strong">Service</span> is not correct configured.
