@@ -13,14 +13,6 @@ class TestCollaborationsServices(AbstractTest):
         service = Service.query.filter(Service.name == name).one()
         return self.get(f"api/services/{service.id}")
 
-    def _mark_collaboration_service_restricted(self, collaboration_id):
-        db = self.app.db
-        with self.app.app_context():
-            collaboration = db.session.query(Collaboration).get(collaboration_id)
-            collaboration.services_restricted = True
-            db.session.add(collaboration)
-            db.session.commit()
-
     def test_delete_collaborations_services(self):
         service_mail = self._find_service_by_name(service_mail_name)
         self.assertTrue(len(service_mail["collaborations"]) > 0)
@@ -34,7 +26,7 @@ class TestCollaborationsServices(AbstractTest):
     def test_delete_collaborations_services_forbidden(self):
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self._mark_collaboration_service_restricted(collaboration_id)
+        self.mark_collaboration_service_restricted(collaboration_id)
         service_id = self.find_entity_by_name(Service, service_mail_name).id
 
         self.delete(f"api/collaborations_services/{collaboration_id}/{service_id}",
@@ -58,7 +50,7 @@ class TestCollaborationsServices(AbstractTest):
     def test_add_collaborations_services_forbidden(self):
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self._mark_collaboration_service_restricted(collaboration_id)
+        self.mark_collaboration_service_restricted(collaboration_id)
         service_cloud_id = self.find_entity_by_name(Service, service_cloud_name).id
 
         self.put("/api/collaborations_services/", body={
@@ -106,7 +98,7 @@ class TestCollaborationsServices(AbstractTest):
     def test_delete_all_services_forbidden(self):
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self._mark_collaboration_service_restricted(collaboration_id)
+        self.mark_collaboration_service_restricted(collaboration_id)
 
         self.delete("/api/collaborations_services/delete_all_services", primary_key=collaboration_id,
                     with_basic_auth=False, response_status_code=403)
@@ -131,7 +123,7 @@ class TestCollaborationsServices(AbstractTest):
     def test_connect_collaboration_service_forbidden(self):
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self._mark_collaboration_service_restricted(collaboration_id)
+        self.mark_collaboration_service_restricted(collaboration_id)
 
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
         self.put("/api/collaborations_services/connect_collaboration_service",

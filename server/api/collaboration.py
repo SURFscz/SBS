@@ -402,6 +402,10 @@ def update_collaboration():
 
     cleanse_short_name(data)
     _assign_global_urn(data["organisation_id"], data)
+
+    if not is_application_admin() and "services_restricted" in data:
+        del data["services_restricted"]
+
     # For updating references like services, groups, memberships there are more fine-grained API methods
     return update(Collaboration, custom_json=data, allow_child_cascades=False)
 

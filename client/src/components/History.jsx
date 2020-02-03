@@ -81,9 +81,9 @@ export default class History extends React.PureComponent {
 
     auditLogReference = (value, key, auditLogs) => {
         const auditLogReferences = {
-          "organisation_id": "organisations" ,
-          "collaboration_id": "collaborations",
-          "user_id": "users"
+            "organisation_id": "organisations",
+            "collaboration_id": "collaborations",
+            "user_id": "users"
         };
         if (auditLogReferences[key]) {
             const refs = auditLogs[auditLogReferences[key]] || [];
@@ -95,19 +95,19 @@ export default class History extends React.PureComponent {
         return value;
     };
 
-    getAuditLogValue = (auditLog, values, oldValue, key, auditLogs) => {
+    getAuditLogValue = (auditLog, values, isOldValue, key, auditLogs) => {
+        let result = "";
         if (auditLog.action === 1) {
             //create
-            return oldValue ? "" : this.auditLogReference(values[0], key, auditLogs);
-        }
-        if (auditLog.action === 2) {
+            result = isOldValue ? "" : this.auditLogReference(values[0], key, auditLogs);
+        } else if (auditLog.action === 2) {
             //update
-            return oldValue ? this.auditLogReference(values[0], key, auditLogs) : this.auditLogReference(values[1], key, auditLogs);
-        }
-        if (auditLog.action === 3) {
+            result = isOldValue ? this.auditLogReference(values[0], key, auditLogs) : this.auditLogReference(values[1], key, auditLogs);
+        } else if (auditLog.action === 3) {
             //delete
-            return oldValue ? this.auditLogReference(values[0], key, auditLogs) : "";
+            result = isOldValue ? this.auditLogReference(values[0], key, auditLogs) : "";
         }
+        return (result !== null && result !== undefined) ? result.toString() : "";
     };
 
     renderDetail = (auditLog, auditLogs) => {
@@ -142,8 +142,10 @@ export default class History extends React.PureComponent {
                     <tbody>
                     {Object.keys(delta).map(key => <tr key={key}>
                         <td>{key}</td>
-                        {auditLog.action !== 1 && <td>{this.getAuditLogValue(auditLog, delta[key], true, key, auditLogs)}</td>}
-                        {auditLog.action !== 3 && <td>{this.getAuditLogValue(auditLog, delta[key], false, key, auditLogs)}</td>}
+                        {auditLog.action !== 1 &&
+                        <td>{this.getAuditLogValue(auditLog, delta[key], true, key, auditLogs)}</td>}
+                        {auditLog.action !== 3 &&
+                        <td>{this.getAuditLogValue(auditLog, delta[key], false, key, auditLogs)}</td>}
                     </tr>)}
                     </tbody>
                 </table>
@@ -157,7 +159,7 @@ export default class History extends React.PureComponent {
         const auditLogEntries = this.convertReferences(auditLogs);
         const {selected} = this.state;
         return (
-            <div className="history-container">
+            <div className={`history-container ${className}`}>
                 <div className={`history ${className}`}>
                     {this.renderAuditLogs(auditLogEntries, selected)}
                     {this.renderDetail(selected, auditLogs)}
