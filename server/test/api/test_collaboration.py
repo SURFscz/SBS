@@ -108,6 +108,13 @@ class TestCollaboration(AbstractTest):
         self.assertListEqual([service_cloud_entity_id, service_storage_entity_id],
                              list(map(lambda s: s["entity_id"], res["services"])))
 
+        collaboration = self.find_entity_by_name(Collaboration, res["name"])
+        self.assertEqual(1, len(collaboration.collaboration_memberships))
+
+        admin = collaboration.collaboration_memberships[0]
+        self.assertEqual("admin", admin.role)
+        self.assertEqual("urn:harry", admin.user.uid)
+
     def test_collaboration_restricted_access_api_forbidden(self):
         self.login("urn:harry")
         self.post("/api/collaborations/restricted",
