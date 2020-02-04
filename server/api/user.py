@@ -292,12 +292,7 @@ def attribute_aggregation():
     users_eppn_match = list(filter(lambda u: u.uid == edu_person_principal_name, users))
     user = users[0] if len(users) == 1 else users_eppn_match[0] if len(users_eppn_match) == 1 else users[0]
 
-    is_member_of = []
-
-    for collaboration_membership in user.collaboration_memberships:
-        is_member_of.append(collaboration_membership.collaboration.name)
-
-    return is_member_of, 200
+    return [cm.collaboration.name for cm in user.collaboration_memberships], 200
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
