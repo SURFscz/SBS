@@ -143,6 +143,8 @@ def deny_service_connection_request(hash):
 @json_endpoint
 def resend_service_connection_request(service_connection_request_id):
     service_connection_request = ServiceConnectionRequest.query.get(service_connection_request_id)
+    if not service_connection_request:
+        return {}, 404
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
 

@@ -218,6 +218,12 @@ class App extends React.Component {
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={Service} {...props}/>}/>
 
+                        <Route exact path="/new-service"
+                               render={props => <ProtectedRoute
+                                   currentUser={currentUser}
+                                   isNew={true}
+                                   Component={Service} {...props}/>}/>
+
                         <Route exact path="/service-request/:entityid"
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={ServiceRequest} {...props}/>}/>

@@ -106,3 +106,6 @@ class TestServiceConnectionRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertEqual("Request for new service SSH UvA connection to collaboration UVA UCC research",
                              mail_msg.subject)
+
+    def test_resend_service_connection_request_404(self):
+        self.get("/api/service_connection_requests/resend/9999", response_status_code=404)

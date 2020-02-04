@@ -33,14 +33,15 @@
             &:last-child {
                 border-bottom: none;
             }
+
+            a {
+                display: inline-block;
+                width: 100%;
+                padding: 10px 15px;
+                text-decoration: none;
+                color: $dark-grey;
+            }
         }
 
-        a {
-            display: inline-block;
-            width: 100%;
-            padding: 10px 15px;
-            text-decoration: none;
-            color: $dark-grey;
-        }
     }
 }
