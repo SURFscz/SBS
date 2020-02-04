@@ -288,7 +288,7 @@ def collaboration_invites():
 
     for administrator in administrators:
         invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
-                                collaboration_id=collaboration_id, user_id=user.id, groups=groups,
+                                collaboration_id=collaboration_id, user=user, groups=groups,
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 created_by=user.uid)
         invitation = db.session.merge(invitation)
@@ -405,7 +405,7 @@ def do_save_collaboration(data, organisation, user):
     collaboration = res[0]
     for administrator in administrators:
         invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
-                                collaboration_id=collaboration.id, user_id=user.id, intended_role="admin",
+                                collaboration_id=collaboration.id, user=user, intended_role="admin",
                                 expiry_date=default_expiry_date(),
                                 created_by=user.uid)
         invitation = db.session.merge(invitation)
