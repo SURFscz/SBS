@@ -347,7 +347,7 @@ class CollaborationServices extends React.Component {
                             onChange={this.addService}
                             options={availableServices}
                             value={null}
-                            isDisabled={!user.admin}
+                            isDisabled={!allowedToConfigureServices}
                             isSearchable={true}
                             isClearable={true}
                     />

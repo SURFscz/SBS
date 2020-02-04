@@ -412,7 +412,8 @@ def do_save_collaboration(data, organisation, user):
         mail_collaboration_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url
+            "base_url": current_app.app_config.base_url,
+            "wiki_link": current_app.app_config.wiki_link
         }, collaboration, [administrator])
     admin_collaboration_membership = CollaborationMembership(role="admin", user_id=user.id,
                                                              collaboration_id=collaboration.id,

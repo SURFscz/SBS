@@ -28,7 +28,6 @@
         text-transform: none;
 
         li {
-            padding: 10px 15px;
             border-bottom: 2px solid $lightest-grey;
 
             &:last-child {
@@ -37,6 +36,9 @@
         }
 
         a {
+            display: inline-block;
+            width: 100%;
+            padding: 10px 15px;
             text-decoration: none;
             color: $dark-grey;
         }
