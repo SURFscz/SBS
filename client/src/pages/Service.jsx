@@ -33,7 +33,10 @@ class Service extends React.Component {
             value: type,
             label: I18n.t(`service.status.${type}`)
         }));
-        this.state = {
+        this.state = this.initialState();
+    }
+
+    initialState = () => ({
             service: {},
             name: "",
             entity_id: "",
@@ -58,13 +61,27 @@ class Service extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => true,
             auditLogs: {"audit_logs": []}
-        };
-    }
+        });
 
-    componentDidMount = () => {
+    UNSAFE_componentWillReceiveProps = nextProps => {
+        if (nextProps.isNew) {
+            this.setState(this.initialState(), () => this.componentDidMount(true))
+        }
+    };
+
+    componentDidMount = (forceNew) => {
         const params = this.props.match.params;
-        if (params.id) {
-            if (params.id !== "new") {
+        const {isNew} = this.props;
+        if (params.id || isNew) {
+            if (isNew || forceNew) {
+                const isAdmin = this.props.user.admin;
+                if (!isAdmin) {
+                    this.props.history.push("/404");
+                } else {
+                    searchOrganisations("*")
+                        .then(r => this.setState({organisations: this.mapOrganisationsToOptions(r)}))
+                }
+            } else {
                 Promise.all([serviceById(params.id), searchOrganisations("*")])
                     .then(res => {
                         this.setState({
@@ -75,14 +92,6 @@ class Service extends React.Component {
                             organisations: this.mapOrganisationsToOptions(res[1])
                         }, () => this.props.user.admin && this.fetchAuditLogs(res[0].id))
                     });
-            } else {
-                const isAdmin = this.props.user.admin;
-                if (!isAdmin) {
-                    this.props.history.push("/404");
-                } else {
-                    searchOrganisations("*")
-                        .then(r => this.setState({organisations: this.mapOrganisationsToOptions(r)}))
-                }
             }
         } else {
             this.props.history.push("/404");
@@ -220,11 +229,11 @@ class Service extends React.Component {
             })}</span>}
 
             {(isAdmin && !isNew) && <InputField value={`/service-request/${encodeURIComponent(entity_id)}`}
-                        name={I18n.t("service.service_request")}
-                        toolTip={I18n.t("service.service_requestTooltip")}
-                        link={`/service-request/${encodeURIComponent(entity_id)}`}
-                        history={this.props.history}
-                        disabled={true}
+                                                name={I18n.t("service.service_request")}
+                                                toolTip={I18n.t("service.service_requestTooltip")}
+                                                link={`/service-request/${encodeURIComponent(entity_id)}`}
+                                                history={this.props.history}
+                                                disabled={true}
             />}
 
             <InputField value={description}

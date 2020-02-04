@@ -519,7 +519,7 @@ export function serviceConnectionRequestsOutstanding(serviceId) {
 }
 
 export function resendServiceConnectionRequest(serviceConnectionRequestId) {
-    return postPutJson(`/api/service_connection_requests/resend/${serviceConnectionRequestId}`);
+    return fetchJson(`/api/service_connection_requests/resend/${serviceConnectionRequestId}`,{}, {},false);
 }
 
 export function deleteServiceConnectionRequest(serviceConnectionRequestId) {

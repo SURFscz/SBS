@@ -197,7 +197,15 @@ class CollaborationServices extends React.Component {
                 {
                     service: req.service.name,
                     collaboration: req.collaboration.name
-                })));
+                })))
+            .catch(e => {
+                if (e.response && e.response.json && e.response.status === 404) {
+                    //Already accepted
+                    this.componentDidMount();
+                } else {
+                    throw e;
+                }
+            });
     };
 
     removeServiceConnectionRequest = req => {

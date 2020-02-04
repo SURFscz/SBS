@@ -70,7 +70,7 @@ class Services extends React.Component {
         this.props.history.push(`/services/${service.id}`);
     };
 
-    newService = () => this.props.history.push("services/new");
+    newService = () => this.props.history.push("/new-service");
 
     onBlurSearch = suggestions => () => {
         if (!isEmpty(suggestions)) {
