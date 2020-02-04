@@ -15,6 +15,7 @@ import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
+import BackLink from "../components/BackLink";
 
 class NewOrganisation extends React.Component {
 
@@ -67,8 +68,15 @@ class NewOrganisation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, short_name, administrators, message,schac_home_organisation, description} = this.state;
-            createOrganisation({name, short_name, schac_home_organisation, administrators, message, description}).then(res => {
+            const {name, short_name, administrators, message, schac_home_organisation, description} = this.state;
+            createOrganisation({
+                name,
+                short_name,
+                schac_home_organisation,
+                administrators,
+                message,
+                description
+            }).then(res => {
                 this.props.history.goBack();
                 setFlash(I18n.t("organisation.flash.created", {name: res.name}))
             });
@@ -124,15 +132,8 @@ class NewOrganisation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
                                     leavePage={leavePage}/>
-                <div className="title">
-                    <a href="/back" onClick={e => {
-                        stopEvent(e);
-                        this.props.history.goBack();
-                    }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("forms.back")}
-                    </a>
-                    <p className="title">{I18n.t("organisation.title")}</p>
-                </div>
+                <BackLink history={this.props.history}/>
+                <p className="title">{I18n.t("organisation.title")}</p>
 
                 <div className="new-organisation">
                     <InputField value={name} onChange={e => {

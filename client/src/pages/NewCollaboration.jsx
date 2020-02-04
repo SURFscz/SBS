@@ -19,6 +19,7 @@ import {collaborationAccessTypes} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import CheckBox from "../components/CheckBox";
+import BackLink from "../components/BackLink";
 
 class NewCollaboration extends React.Component {
 
@@ -205,16 +206,8 @@ class NewCollaboration extends React.Component {
                                         confirm={confirmationDialogAction}
                                         question={leavePage ? undefined : I18n.t("collaboration.deleteConfirmation")}
                                         leavePage={leavePage}/>
-                    <div className="title">
-                        <a href="/collaborations" onClick={e => {
-                            stopEvent(e);
-                            this.props.history.goBack();
-                        }}><FontAwesomeIcon icon="arrow-left"/>
-                            {I18n.t("forms.back")}
-                        </a>
-                        <p className="title">{title}</p>
-                    </div>
-
+                    <BackLink history={this.props.history}/>
+                    <p className="title">{title}</p>
                     <div className="new-collaboration">
                         <InputField value={name} onChange={e => {
                             this.setState({

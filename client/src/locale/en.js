@@ -184,7 +184,7 @@ I18n.translations.en = {
         on_acceptance: "On acceptance"
     },
     collaboration: {
-        title: "Add new collaboration",
+        title: "Create new collaboration",
         requestTitle: "Request a new collaboration",
         actions: "",
         name: "Name",
@@ -220,7 +220,7 @@ I18n.translations.en = {
         accepted_user_policy: "AUP",
         acceptedUserPolicyPlaceholder: "The URL of the Acceptable Use Policy",
         role: "Role",
-        newTitle: "Add new collaboration",
+        newTitle: "Create new collaboration",
         subTitle: "Enter / edit the collaboration details. You will become an administrator of the new collaboration.",
         alreadyExists: "An collaboration with {{attribute}} {{value}} already exists in organisation {{organisation}}.",
         required: "The {{attribute}} is required for a collaboration",
@@ -338,7 +338,7 @@ I18n.translations.en = {
         }
     },
     organisation: {
-        title: "Add new organisation",
+        title: "Create new organisation",
         subTitle: "Enter / edit the organisation details.",
         actions: "",
         name: "Name",
