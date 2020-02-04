@@ -258,7 +258,7 @@ class Invitation extends React.Component {
                         disabled={true}
                     />
 
-                    <DateField {moment(invite.expiry_date * 1000).toDate()}
+                    <DateField value={moment(invite.expiry_date * 1000).toDate()}
                                name={I18n.t("invitation.expiryDate")}
                                toolTip={I18n.t("invitation.expiryDateTooltip")}
                                disabled={true}/>
