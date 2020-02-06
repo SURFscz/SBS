@@ -228,8 +228,8 @@ class Group extends React.Component {
                 });
             } else {
                 updateGroup(this.state).then(() => {
-                    this.fetchAuditLogs(this.state.id);
                     window.scrollTo(0, 0);
+                    this.componentDidMount();
                     setFlash(I18n.t("groups.flash.updated", {name: name}));
                 });
             }
