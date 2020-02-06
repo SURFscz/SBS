@@ -14,9 +14,9 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import SelectField from "../components/SelectField";
 import {sanitizeShortName} from "../validations/regExps";
+import BackLink from "../components/BackLink";
 
 class CollaborationRequest extends React.Component {
 
@@ -58,7 +58,7 @@ class CollaborationRequest extends React.Component {
                     collaborationRequest: collaborationRequest,
                     originalRequestedName: collaborationRequest.name, organisations: organisations
                 })
-            });
+            }).catch(e => this.props.history.push("/"));
 
     mapOrganisationsToOptions = organisations => organisations.map(org => ({
         label: org.name,
@@ -111,7 +111,7 @@ class CollaborationRequest extends React.Component {
                 confirmationDialogAction: () => this.setState({confirmationDialogOpen: false},
                     () => {
                         denyRequestCollaboration(this.state.collaborationRequest.id).then(r => {
-                            this.props.history.goBack();
+                            this.props.history.push("/");
                             setFlash(I18n.t("collaborationRequest.flash.denied", {name: this.state.collaborationRequest.name}));
                         });
                     })
@@ -120,7 +120,7 @@ class CollaborationRequest extends React.Component {
             const {collaborationRequest} = this.state;
             collaborationRequest.organisation_id = collaborationRequest.organisation.value;
             approveRequestCollaboration(collaborationRequest).then(res => {
-                this.props.history.goBack();
+                this.props.history.push("/")
                 setFlash(I18n.t("collaborationRequest.flash.approved", {name: collaborationRequest.name}));
             });
         }
@@ -156,18 +156,11 @@ class CollaborationRequest extends React.Component {
                                         confirm={confirmationDialogAction}
                                         question={dialogQuestion}
                                         leavePage={leavePage}/>
-                    <div className="title">
-                        <a href="/back" onClick={e => {
-                            stopEvent(e);
-                            this.props.history.goBack();
-                        }}><FontAwesomeIcon icon="arrow-left"/>
-                            {I18n.t("forms.back")}
-                        </a>
-                        <p className="title">{I18n.t("collaborationRequest.title", {
-                            requester: collaborationRequest.requester.name,
-                            name: originalRequestedName
-                        })}</p>
-                    </div>
+                    <BackLink history={this.props.history}/>
+                    <p className="title">{I18n.t("collaborationRequest.title", {
+                        requester: collaborationRequest.requester.name,
+                        name: originalRequestedName
+                    })}</p>
 
                     <div className="collaboration-request">
                         <InputField

@@ -17,6 +17,7 @@ import "./NewOrganisationInvitation.scss"
 import DateField from "../components/DateField";
 import {getParameterByName} from "../utils/QueryParameters";
 import Tabs from "../components/Tabs";
+import BackLink from "../components/BackLink";
 
 class NewOrganisationInvitation extends React.Component {
 
@@ -245,15 +246,9 @@ class NewOrganisationInvitation extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <div className="title">
-                    <a href={`/back`} onClick={e => {
-                        stopEvent(e);
-                        this.props.history.goBack()
-                    }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("forms.back")}
-                    </a>
-                    <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
-                </div>
+                <BackLink history={this.props.history}/>
+                <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
+
                 <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged} key={activeTab}>
                     <div label="invitation_form">
                         <div className="new-organisation-invitation">

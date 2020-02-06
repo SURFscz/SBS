@@ -6,12 +6,11 @@ import {apiKeyValue, createApiKey, organisationById} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
-import {stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import "./NewApiKey.scss"
+import BackLink from "../components/BackLink";
 
 class NewApiKey extends React.Component {
 
@@ -70,15 +69,8 @@ class NewApiKey extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <div className="title">
-                    <a href={`/organisations${organisation.id}`} onClick={e => {
-                        stopEvent(e);
-                        this.props.history.goBack();
-                    }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("forms.back")}
-                    </a>
-                    <p className="title">{I18n.t("apiKeys.title", {organisation: organisation.name})}</p>
-                </div>
+                <BackLink history={this.props.history}/>
+                <p className="title">{I18n.t("apiKeys.title", {organisation: organisation.name})}</p>
                 <div className="new-api-key">
                     <p>{I18n.t("apiKeys.secretDisclaimer")}</p>
                     <InputField value={hashedSecret}

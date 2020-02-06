@@ -14,11 +14,10 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
-import {stopEvent} from "../utils/Utils";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import DateField from "../components/DateField";
 import SelectField from "../components/SelectField";
+import BackLink from "../components/BackLink";
 
 class Invitation extends React.Component {
 
@@ -216,16 +215,9 @@ class Invitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={confirmationQuestion}/>
-                <div className="title">
-                    {isAdminLink && <a href="/back" onClick={e => {
-                        stopEvent(e);
-                        this.props.history.goBack();
-                    }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("forms.back")}
-                    </a>}
-                    {!errorSituation &&
-                    <p className="title">{I18n.t("invitation.title", {collaboration: invite.collaboration.name})}</p>}
-                </div>
+                {isAdminLink && <BackLink history={this.props.history}/>}
+                {!errorSituation &&
+                <p className="title">{I18n.t("invitation.title", {collaboration: invite.collaboration.name})}</p>}
 
                 <div className="invitation">
                     {isExpired &&

@@ -8,10 +8,9 @@
     div.title {
         font-size: 22px;
         color: $dark-grey;
-        padding: 10px 0 5px 0;
 
         p {
-            padding: 10px 0 10px 0;
+            padding-bottom: 20px;
 
             &.title {
                 display: inline-block;
@@ -31,7 +30,7 @@
 
         div.error, div.warning {
             padding: 25px;
-            margin: 10px 0;
+            margin-bottom: 10px;
             background-color: $lightest-grey;
             font-size: 16px;
             width: 100%;
@@ -179,21 +178,23 @@
 
                 &.actions {
                     text-align: left;
-                    cursor: pointer;
+
 
                     svg {
                         color: $red;
                         margin-left: 20px;
+                        cursor: pointer;
                     }
                 }
 
                 &.resend {
                     text-align: left;
-                    cursor: pointer;
+
 
                     svg {
                         color: $blue;
                         margin-left: 20px;
+                        cursor: pointer;
                     }
                 }
 

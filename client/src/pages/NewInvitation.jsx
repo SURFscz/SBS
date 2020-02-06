@@ -4,10 +4,10 @@ import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 
 import {
-    groupsByCollaboration,
     collaborationById,
     collaborationInvitations,
-    collaborationInvitationsPreview
+    collaborationInvitationsPreview,
+    groupsByCollaboration
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
@@ -24,6 +24,7 @@ import {collaborationRoles} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import Tabs from "../components/Tabs";
+import BackLink from "../components/BackLink";
 
 class NewInvitation extends React.Component {
 
@@ -272,7 +273,7 @@ class NewInvitation extends React.Component {
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
             {showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.preview")}
-                                    onClick={() =>  this.tabChanged("invitation_preview")}/>}
+                                    onClick={() => this.tabChanged("invitation_preview")}/>}
             {!showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.details")}
                                      onClick={() => this.tabChanged("invitation_form")}/>}
             <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
@@ -296,15 +297,9 @@ class NewInvitation extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <div className="title">
-                    <a href={`/back`} onClick={e => {
-                        stopEvent(e);
-                        this.props.history.goBack();
-                    }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("forms.back")}
-                    </a>
-                    <p className="title">{I18n.t("invitation.createTitle", {collaboration: collaboration.name})}</p>
-                </div>
+                <BackLink history={this.props.history}/>
+                <p className="title">{I18n.t("invitation.createTitle", {collaboration: collaboration.name})}</p>
+
                 <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged} key={activeTab}>
                     <div label="invitation_form">
                         <div className="new-collaboration-invitation">
