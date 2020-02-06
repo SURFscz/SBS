@@ -6,8 +6,7 @@ import InputField from "../components/InputField";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import Button from "../components/Button";
-import {stopEvent} from "../utils/Utils";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import BackLink from "../components/BackLink";
 
 class JoinRequest extends React.Component {
 
@@ -106,18 +105,11 @@ class JoinRequest extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("joinRequest.declineConfirmation")}
                                     leavePage={leavePage}/>
-                {joinRequestFound && <div className="title">
-                    <a href={`/back`} onClick={e => {
-                        stopEvent(e);
-                        this.props.history.goBack();
-                    }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("forms.back")}
-                    </a>
-                    <p className="title">{I18n.t("joinRequest.title", {
-                        collaboration: joinRequest.collaboration.name,
-                        requester: joinRequest.user.name
-                    })}</p>
-                </div>}
+                {joinRequestFound && <BackLink history={this.props.history}/>}
+                <p className="title">{I18n.t("joinRequest.title", {
+                    collaboration: joinRequest.collaboration.name,
+                    requester: joinRequest.user.name
+                })}</p>
                 <div className="join-request-container">
                     <InputField name={I18n.t("joinRequest.message")} value={joinRequest.message} disabled={true}
                                 toolTip={I18n.t("joinRequest.messageTooltip", {name: joinRequest.user.name})}/>

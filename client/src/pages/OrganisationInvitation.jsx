@@ -14,9 +14,8 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
-import {stopEvent} from "../utils/Utils";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
+import BackLink from "../components/BackLink";
 
 class OrganisationInvitation extends React.Component {
 
@@ -118,7 +117,7 @@ class OrganisationInvitation extends React.Component {
     doDelete = () => {
         const {organisationInvitation} = this.state;
         organisationInvitationDelete(organisationInvitation.id).then(res => {
-            this.props.history.goBack();
+            this.props.history.push("/");
             setFlash(I18n.t("organisationInvitation.flash.inviteDeleted", {name: organisationInvitation.organisation.name}));
         });
     };
@@ -201,16 +200,9 @@ class OrganisationInvitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={confirmationQuestion}/>
-                <div className="title">
-                    {isAdminLink && <a href="/#" onClick={e => {
-                        stopEvent(e);
-                        this.props.history.goBack();
-                    }}><FontAwesomeIcon icon="arrow-left"/>
-                        {I18n.t("forms.back")}
-                    </a>}
-                    {!errorSituation &&
-                    <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>}
-                </div>
+                {isAdminLink && <BackLink history={this.props.history}/>}
+                {!errorSituation &&
+                <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>}
 
                 <div className="organisation-invitation">
                     {isExpired &&

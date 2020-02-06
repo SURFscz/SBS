@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import {headerIcon} from "../forms/helpers";
 import {setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import BackLink from "../components/BackLink";
 
 
 class CollaborationGroups extends React.Component {
@@ -110,7 +111,8 @@ class CollaborationGroups extends React.Component {
                     </thead>
                     <tbody>
                     {groups.map((group, i) => <tr key={i}>
-                        <td className="open" onClick={this.openGroupDetails(group)}><FontAwesomeIcon icon="arrow-right"/></td>
+                        <td className="open" onClick={this.openGroupDetails(group)}><FontAwesomeIcon
+                            icon="arrow-right"/></td>
                         <td className="name">{group.name}</td>
                         <td className="short_name">{group.short_name}</td>
                         <td className="global_urn">{group.global_urn}</td>
@@ -152,24 +154,18 @@ class CollaborationGroups extends React.Component {
             return null;
         }
         return (<div className="mod-collaboration-groups">
-            <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                cancel={cancelDialogAction}
-                                confirm={confirmationDialogAction}
-                                question={confirmationQuestion}/>
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationQuestion}/>
 
-            <div className="title">
-                <a href={`/collaborations/${collaboration.id}`} onClick={e => {
-                    stopEvent(e);
-                    this.props.history.goBack();
-                }}><FontAwesomeIcon icon="arrow-left"/>
-                    {I18n.t("forms.back")}
-                </a>
+                <BackLink history={this.props.history}/>
                 <p className="title">{I18n.t("groups.title", {name: collaboration.name})}</p>
+                <div className="collaboration-groups">
+                    {this.renderGroups(filteredGroups, sorted, reverse, query)}
+                </div>
             </div>
-            <div className="collaboration-groups">
-                {this.renderGroups(filteredGroups, sorted, reverse, query)}
-            </div>
-        </div>)
+        )
     }
 }
 
