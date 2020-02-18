@@ -150,6 +150,11 @@ class Service(Base, db.Model):
     public_visible = db.Column("public_visible", db.Boolean(), nullable=True, default=True)
     automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
     white_listed = db.Column("white_listed", db.Boolean(), nullable=True, default=False)
+    research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
+                                               nullable=True,
+                                               default=False)
+    code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
+    sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
     status = db.Column("status", db.String(length=255), nullable=True)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")

@@ -158,7 +158,8 @@ def seed(db):
                        public_visible=True, automatic_connection_allowed=True, contact_email=john.email, )
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True)
-    storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, description="SURF Storage Service",
+    storage = Service(entity_id=service_storage_entity_id, name=service_storage_name,
+                      description="SURF Storage Service",
                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
                       white_listed=True)
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
@@ -178,7 +179,8 @@ def seed(db):
                               uri="https://uri/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
                               contact_email="help@ssh.com",
                               public_visible=False, automatic_connection_allowed=False,
-                              allowed_organisations=[uva])
+                              allowed_organisations=[uva], research_scholarship_compliant=True,
+                              code_of_conduct_compliant=True, sirtfi_compliant=True)
 
     _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva)
 
