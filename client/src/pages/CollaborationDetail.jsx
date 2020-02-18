@@ -164,17 +164,15 @@ class CollaborationDetail extends React.Component {
 
     changeMemberRole = member => selectedOption => {
         const {originalCollaboration} = this.state;
-        const {user} = this.props;
-        if (user.id === member.user.id) {
-            updateCollaborationMembershipRole(originalCollaboration.id, member.user.id, selectedOption.value)
-                .then(() => {
-                    this.componentDidMount();
-                    setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
-                        name: member.user.name,
-                        role: selectedOption.value
-                    }));
-                });
-        }
+        updateCollaborationMembershipRole(originalCollaboration.id, member.user.id, selectedOption.value)
+            .then(() => {
+                this.componentDidMount();
+                window.scrollTo(0, 0);
+                setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
+                    name: member.user.name,
+                    role: selectedOption.value
+                }));
+            });
     };
 
     doDeleteMember = member => () => {
@@ -183,6 +181,7 @@ class CollaborationDetail extends React.Component {
         deleteCollaborationMembership(originalCollaboration.id, member.user.id)
             .then(() => {
                 this.componentDidMount();
+                window.scrollTo(0, 0);
                 setFlash(I18n.t("collaborationDetail.flash.memberDeleted", {name: member.user.name}));
             });
     };
