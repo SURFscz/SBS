@@ -7,6 +7,7 @@ from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_organisation_admin, current_user_id
+from server.db.defaults import default_expiry_date
 from server.db.domain import OrganisationInvitation, Organisation, OrganisationMembership, db
 from server.db.models import delete
 from server.mail import mail_organisation_invitation
@@ -92,6 +93,9 @@ def organisation_invitations_resend():
         .one()
 
     confirm_organisation_admin(organisation_invitation.organisation_id)
+
+    organisation_invitation.expiry_date = default_expiry_date()
+    organisation_invitation = db.session.merge(organisation_invitation)
 
     mail_organisation_invitation({
         "salutation": "Dear",
