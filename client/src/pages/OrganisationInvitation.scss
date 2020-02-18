@@ -9,6 +9,10 @@
         font-size: 22px;
         color: $dark-grey;
         padding-bottom: 20px;
+
+        &.top {
+            margin-top: 25px;
+        }
     }
 
     .organisation-invitation {

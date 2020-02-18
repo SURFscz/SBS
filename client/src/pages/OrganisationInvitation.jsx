@@ -202,7 +202,9 @@ class OrganisationInvitation extends React.Component {
                                     question={confirmationQuestion}/>
                 {isAdminLink && <BackLink history={this.props.history}/>}
                 {!errorSituation &&
-                <p className="title">{I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}</p>}
+                <p className={`title ${isAdminLink ? '' : ' top'}`}>
+                    {I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}
+                </p>}
 
                 <div className="organisation-invitation">
                     {isExpired &&

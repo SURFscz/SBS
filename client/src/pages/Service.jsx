@@ -37,31 +37,34 @@ class Service extends React.Component {
     }
 
     initialState = () => ({
-            service: {},
-            name: "",
-            entity_id: "",
-            description: "",
-            address: "",
-            identity_type: "",
-            uri: "",
-            accepted_user_policy: "",
-            automatic_connection_allowed: true,
-            white_listed: false,
-            allowed_organisations: [],
-            organisations: [],
-            contact_email: "",
-            status: this.statusOptions[0].value,
-            required: ["name", "entity_id"],
-            alreadyExists: {},
-            initial: true,
-            isNew: true,
-            invalidInputs: {},
-            confirmationDialogOpen: false,
-            leavePage: false,
-            confirmationDialogAction: () => true,
-            cancelDialogAction: () => true,
-            auditLogs: {"audit_logs": []}
-        });
+        service: {},
+        name: "",
+        entity_id: "",
+        description: "",
+        address: "",
+        identity_type: "",
+        uri: "",
+        accepted_user_policy: "",
+        automatic_connection_allowed: true,
+        white_listed: false,
+        research_scholarship_compliant: false,
+        code_of_conduct_compliant: false,
+        sirtfi_compliant: false,
+        allowed_organisations: [],
+        organisations: [],
+        contact_email: "",
+        status: this.statusOptions[0].value,
+        required: ["name", "entity_id"],
+        alreadyExists: {},
+        initial: true,
+        isNew: true,
+        invalidInputs: {},
+        confirmationDialogOpen: false,
+        leavePage: false,
+        confirmationDialogAction: () => true,
+        cancelDialogAction: () => true,
+        auditLogs: {"audit_logs": []}
+    });
 
     UNSAFE_componentWillReceiveProps = nextProps => {
         if (nextProps.isNew) {
@@ -187,7 +190,8 @@ class Service extends React.Component {
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                         contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations,
-                        accepted_user_policy, isNew, service, disabledSubmit, white_listed) => (
+                        accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+                        research_scholarship_compliant) => (
         <div className="service">
             {!isNew && <p className="title">{title}</p>}
             <InputField value={name} onChange={e => this.setState({
@@ -324,6 +328,24 @@ class Service extends React.Component {
                                    disabled={true}
                                    name={I18n.t("organisation.created")}/>}
 
+            <CheckBox name="sirtfi_compliant" value={sirtfi_compliant}
+                      info={I18n.t("service.sirtfiCompliant")}
+                      tooltip={I18n.t("service.sirtfiCompliantTooltip")}
+                      onChange={e => this.setState({sirtfi_compliant: e.target.checked})}
+                      readOnly={!isAdmin}/>
+
+            <CheckBox name="code_of_conduct_compliant" value={code_of_conduct_compliant}
+                      info={I18n.t("service.codeOfConductCompliant")}
+                      tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
+                      onChange={e => this.setState({code_of_conduct_compliant: e.target.checked})}
+                      readOnly={!isAdmin}/>
+
+            <CheckBox name="research_scholarship_compliant" value={research_scholarship_compliant}
+                      info={I18n.t("service.researchScholarshipCompliant")}
+                      tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
+                      onChange={e => this.setState({research_scholarship_compliant: e.target.checked})}
+                      readOnly={!isAdmin}/>
+
             {(isNew && isAdmin) &&
             <section className="actions">
                 <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
@@ -347,7 +369,8 @@ class Service extends React.Component {
             alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
             entity_id, description, uri, accepted_user_policy, contact_email,
             confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed, organisations,
-            allowed_organisations, auditLogs, white_listed
+            allowed_organisations, auditLogs, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+            research_scholarship_compliant
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const isAdmin = this.props.user.admin;
@@ -367,7 +390,8 @@ class Service extends React.Component {
                     <div label="form">
                         {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                             contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,
-                            isNew, service, disabledSubmit, white_listed)}
+                            isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+                            research_scholarship_compliant)}
                     </div>
                     {(isAdmin && !isNew) && <div label="history">
                         <History auditLogs={auditLogs}/>
