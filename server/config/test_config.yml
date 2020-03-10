@@ -10,6 +10,9 @@ api_users:
   - name: "sysread"
     password: "secret"
     scopes: [read]
+  - name: "research_cloud"
+    password: "secret"
+    scopes: ["restricted_co"]
 
 oidc_id: "CMUID"
 oidc_prefix: "HTTP_OIDC_CLAIM_"
