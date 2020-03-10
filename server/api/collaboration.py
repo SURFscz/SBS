@@ -354,7 +354,8 @@ def save_collaboration():
 @collaboration_api.route("/restricted", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_restricted_collaboration():
-    if "api_user" not in request_context:
+    api_user = "api_user" in request_context
+    if not api_user or (api_user and "restricted_co" not in request_context.api_user.scopes):
         raise Forbidden()
 
     data = current_request.get_json()
