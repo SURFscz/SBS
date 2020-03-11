@@ -698,10 +698,10 @@ I18n.translations.nl = {
         },
     },
     aup: {
-        title1: "Om onze CMS-services te gebruiken, moet u akkoord gaan met een aantal regels en voorschriften. <br> Deze worden uitgelegd in het onderstaande document.",
-        title2: "Voor meer informatie en uitleg kunt u contact opnemen met <a href='mailto:info@surconxt.org'> info@surconxt.org </a>.",
-        title3: "Lees het document en vink indien overeengekomen het vakje aan en ga door met de validatie van uw persoonlijke gegevens",
-        downloadPdf: "Download acceptabel gebruiksbeleid (pdf)",
+        title1: "Om SURF Research Access Management te kunnen gebruiken, moet u akkoord gaan met de onderstaande Acceptable Use Policy.",
+        title2: "Lees het document en vink indien akkoord het vakje aan en ga door met de controle van uw persoonlijke gegevens.",
+        title3: "Voor het geval u vragen of opmerkingen heeft, vermelden we onderin de tekst hoe u contact op kunt nemen.",
+        downloadPdf: "Download beleid acceptabel gebruik (pdf)",
         agreeWithTerms: "Ik ga akkoord met het beleid voor acceptabel gebruik",
         continueToValidation: "Doorgaan",
         agreed: "Uw overeenkomst met {{name}} is opgeslagen."
