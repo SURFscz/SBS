@@ -69,7 +69,7 @@ I18n.translations.en = {
         titleUpdate: "Update your user profile keys",
         ssh_key: "SSH public key",
         ssh_keyPlaceholder: "Your public SSH key to login on the service",
-        ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP for this service.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a mac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
+        ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP of services you<br/>are entitled access to.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a mac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Invalid SSH key",
         sshConvertInfo: "Convert this RFC 4716 SSH format to the OpenSSH key file format when saving the profile?",
         totp_key: "TOTP key",
