@@ -10,7 +10,7 @@ user_service_profile_claims = ["name", "email", "address"]
 
 claim_attribute_mapping = {
     oidc_claim_name: "name",
-    "sub": "uid",
+    "eduperson_principal_name": "uid",
     "address_street_address": "address",
     "nickname": "nick_name",
     "edumember_is_member_of": "edu_members",
