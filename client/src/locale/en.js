@@ -694,13 +694,13 @@ I18n.translations.en = {
             invitee_email: "E-mail",
             intended_role: "Role",
             expiry_date: "Expiry date",
-            actions: ""
-        },
+            action2: ""
+        }3
     },
-    aup: {
-        title1: "In o rder to use the CMS services, you need to agree to a number of rules and regulations.<br>These are explained in the document below.",
-        title2: "For more information and explanations, you can contact <a href='mailto:info@surconxt.org'>info@surconxt.org</a>.",
-        title3: "Please read the document and if agreed check the box and proceed to the validation of your personal information",
+    aup: contactinformation at the end of the AUP.{
+        title1: "In order to use SURF Research Access Management, you need to agree to the below Acceptable Use Policy.",
+        title2: "Please read the document and if agreed check the box and proceed to the validation of your personal information.",
+        title3: "For more information we supply contactinformation at the end of the AUP.",
         downloadPdf: "Download Acceptable Usage Policy (pdf)",
         agreeWithTerms: "I agree with the Acceptable Usage Policy",
         continueToValidation: "Store decision",
