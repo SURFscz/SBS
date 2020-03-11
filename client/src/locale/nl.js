@@ -69,7 +69,7 @@ I18n.translations.nl = {
         titleUpdate: "Werk je gebruikersprofiel bij",
         ssh_key: "SSH public key",
         ssh_keyPlaceholder: "Uw publieke SSH sleutel om in te loggen op de dienst",
-        ssh_keyTooltip: "Uw publieke SSH sleutel<br/>zal worden uitgewisseld<br/>met de (LDAP van) deze dienst.<br/><br/>U kunt uw publieke SSH sleutel ook uploaden.<br/>Om verborgen bestanden op een Mac te tonen<br/>drukt u op <code>CMD-SHIFT-PERIOD</code>",
+        ssh_keyTooltip: "Uw publieke SSH sleutel<br/>zal worden uitgewisseld<br/>met de (LDAP van) diensten<br/>waar u toegang toe heeft.<br/><br/>U kunt uw publieke SSH sleutel ook uploaden.<br/>Om verborgen bestanden op een Mac te tonen<br/>drukt u op <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Ongeldige SSH sleutel",
         sshConvertInfo: "Dit RFC 4716 SSH-formaat converteren naar het bestandsformaat <code>OpenSSH-key</code> bij het opslaan van het profiel?",
         totp_key: "TOTP sleutel",
