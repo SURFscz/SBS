@@ -40,20 +40,20 @@ stages:
 #############################################################
 # default stage "test" expanded with multiple python versions
 #############################################################
-python:
-  - '3.7'
-  - '3.5'
-  - '3.8-dev'
-matrix:
-  allow_failures:
-  - python: '3.8-dev'
-cache:
-  pip: true
-install:
-  - 'pip install -r ./server/requirements/test.txt'
-script:
-  - *mysql_init
-  - 'pytest server/test'
+#python:
+#  - '3.7'
+#  - '3.5'
+#  - '3.8-dev'
+#matrix:
+#  allow_failures:
+#  - python: '3.8-dev'
+#cache:
+#  pip: true
+#install:
+#  - 'pip install -r ./server/requirements/test.txt'
+#script:
+#  - *mysql_init
+#  - 'pytest server/test'
 
 
 #############################################################
