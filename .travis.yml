@@ -62,6 +62,11 @@ stages:
 jobs:
   include:
     - stage: 'flake8'
+      language: 'python'
+      python:
+        - '3.7'
+        - '3.5'
+        - '3.8-dev'
       services: false
       install:
         - 'pip install flake8'
@@ -70,6 +75,8 @@ jobs:
       after_success: false
 
     - stage: 'coverage'
+      language: 'python'
+      python:
       install:
         - 'pip install -r ./server/requirements/test.txt'
         - 'pip install codecov'
@@ -79,12 +86,10 @@ jobs:
       after_success:
         - 'codecov --token=$CODECOV_TOKEN'
 
-    - stage: 'python server'
+    - &server
+      python: '3.5'
+      stage: 'python server'
       language: 'python'
-      python:
-        - '3.7'
-        - '3.5'
-        - '3.8-dev'
       cache:
         pip: true
       install:
@@ -93,7 +98,13 @@ jobs:
         - *mysql_init
         - 'pytest server/test'
 
+    - <<: *server
+      python: '3.7'
+    - <<: *server
+      python: '3.8-dev'
+
     - stage: 'build client'
+      language: 'js'
       cache:
         yarn: true
         directories:
