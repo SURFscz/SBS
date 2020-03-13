@@ -33,9 +33,9 @@ notifications:
 
 stages:
   - 'flake8'
-  - 'test'
+  - 'server'
   - 'coverage'
-  - 'build'
+  - 'client'
 
 #############################################################
 # other stages
@@ -55,18 +55,6 @@ jobs:
         - 'flake8 ./server/'
       after_success: false
 
-    - stage: 'coverage'
-      language: 'python'
-      python:
-      install:
-        - 'pip install -r ./server/requirements/test.txt'
-        - 'pip install codecov'
-      script:
-        - *mysql_init
-        - 'pytest --cov=server server/test'
-      after_success:
-        - 'codecov --token=$CODECOV_TOKEN'
-
     - &server
       python: '3.5'
       stage: 'python server'
@@ -83,6 +71,18 @@ jobs:
       python: '3.7'
     - <<: *server
       python: '3.8'
+
+    - stage: 'coverage'
+      language: 'python'
+      python: 'python-3.7'
+      install:
+        - 'pip install -r ./server/requirements/test.txt'
+        - 'pip install codecov'
+      script:
+        - *mysql_init
+        - 'pytest --cov=server server/test'
+      after_success:
+        - 'codecov --token=$CODECOV_TOKEN'
 
     - stage: 'build client'
       language: 'js'
