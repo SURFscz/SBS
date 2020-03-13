@@ -15,6 +15,7 @@ BASIC_AUTH_HEADER = {"Authorization": f"Basic {b64encode(b'sysadmin:secret').dec
 API_AUTH_HEADER = {"Authorization": f"Basic {b64encode(b'sysread:secret').decode('ascii')}"}
 RESTRICTED_CO_API_AUTH_HEADER = {"Authorization": f"Basic {b64encode(b'research_cloud:secret').decode('ascii')}"}
 
+
 # The database is cleared and seeded before every test
 class AbstractTest(TestCase):
 

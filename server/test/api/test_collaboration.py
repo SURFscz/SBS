@@ -123,7 +123,7 @@ class TestCollaboration(AbstractTest):
                   headers=API_AUTH_HEADER,
                   response_status_code=403)
 
-    def test_collaboration_restricted_access_api_forbidden(self):
+    def test_collaboration_restricted_access_api_forbidden_2(self):
         self.login("urn:harry")
         self.post("/api/collaborations/restricted",
                   body={},
