@@ -32,6 +32,8 @@ notifications:
     "
 
 jobs:
+  allow_failures:
+    - python: '3.8'
   include:
     - stage: 'flake8'
       language: 'python'
@@ -62,9 +64,6 @@ jobs:
       python: '3.7'
     - <<: *server
       python: '3.8'
-      matrix:
-        allow_failures:
-          - python: '3.8'
 
     - stage: 'coverage'
       language: 'python'
