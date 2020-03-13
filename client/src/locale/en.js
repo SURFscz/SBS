@@ -695,7 +695,7 @@ I18n.translations.en = {
             intended_role: "Role",
             expiry_date: "Expiry date",
             action2: ""
-        }3
+        },
     },
     aup: contactinformation at the end of the AUP.{
         title1: "In order to use SURF Research Access Management, you need to agree to the below Acceptable Use Policy.",
