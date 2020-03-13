@@ -31,37 +31,16 @@ notifications:
       GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
     "
 
-stages:
-  - 'flake8'
-  - 'test'
-  - 'coverage'
-  - 'build'
-
-#############################################################
-# default stage "test" expanded with multiple python versions
-#############################################################
-python:
-  - '3.7'
-  - '3.5'
-  - '3.8-dev'
-matrix:
-  allow_failures:
-  - python: '3.8-dev'
-cache:
-  pip: true
-install:
-  - 'pip install -r ./server/requirements/test.txt'
-script:
-  - *mysql_init
-  - 'pytest server/test'
-
-
-#############################################################
-# other stages
-#############################################################
 jobs:
+  allow_failures:
+    - python: '3.8'
   include:
-    - stage: 'flake8'
+    - stage: 'Server flake8'
+      language: 'python'
+      python:
+        - '3.7'
+        - '3.5'
+        - '3.8'
       services: false
       install:
         - 'pip install flake8'
@@ -69,7 +48,26 @@ jobs:
         - 'flake8 ./server/'
       after_success: false
 
-    - stage: 'coverage'
+    - &server
+      python: '3.5'
+      stage: 'Server tests'
+      language: 'python'
+      cache:
+        pip: true
+      install:
+        - 'pip install -r ./server/requirements/test.txt'
+      script:
+        - *mysql_init
+        - 'pytest server/test'
+
+    - <<: *server
+      python: '3.7'
+    - <<: *server
+      python: '3.8'
+
+    - stage: 'Server coverage'
+      language: 'python'
+      python: '3.7'
       install:
         - 'pip install -r ./server/requirements/test.txt'
         - 'pip install codecov'
@@ -79,7 +77,9 @@ jobs:
       after_success:
         - 'codecov --token=$CODECOV_TOKEN'
 
-    - stage: 'build'
+    - stage: 'Client build'
+      language: 'js'
+      node_js: '12'
       cache:
         yarn: true
         directories:
