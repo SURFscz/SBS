@@ -79,7 +79,21 @@ jobs:
       after_success:
         - 'codecov --token=$CODECOV_TOKEN'
 
-    - stage: 'build'
+    - stage: 'python server'
+      language: 'python'
+      python:
+        - '3.7'
+        - '3.5'
+        - '3.8-dev'
+      cache:
+        pip: true
+      install:
+        - 'pip install -r ./server/requirements/test.txt'
+      script:
+        - *mysql_init
+        - 'pytest server/test'
+
+    - stage: 'build client'
       cache:
         yarn: true
         directories:
