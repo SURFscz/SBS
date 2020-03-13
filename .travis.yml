@@ -31,15 +31,6 @@ notifications:
       GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
     "
 
-stages:
-  - 'flake8'
-  - 'server'
-  - 'coverage'
-  - 'client'
-
-#############################################################
-# other stages
-#############################################################
 jobs:
   include:
     - stage: 'flake8'
@@ -77,7 +68,7 @@ jobs:
 
     - stage: 'coverage'
       language: 'python'
-      python: 'python-3.7'
+      python: '3.7'
       install:
         - 'pip install -r ./server/requirements/test.txt'
         - 'pip install codecov'
