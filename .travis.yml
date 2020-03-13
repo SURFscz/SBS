@@ -79,6 +79,7 @@ jobs:
 
     - stage: 'build client'
       language: 'js'
+      node_js: '12'
       cache:
         yarn: true
         directories:
