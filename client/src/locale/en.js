@@ -697,7 +697,7 @@ I18n.translations.en = {
             action2: ""
         },
     },
-    aup: contactinformation at the end of the AUP.{
+    aup: {
         title1: "In order to use SURF Research Access Management, you need to agree to the below Acceptable Use Policy.",
         title2: "Please read the document and if agreed check the box and proceed to the validation of your personal information.",
         title3: "For more information we supply contactinformation at the end of the AUP.",
