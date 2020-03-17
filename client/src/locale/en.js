@@ -694,7 +694,7 @@ I18n.translations.en = {
             invitee_email: "E-mail",
             intended_role: "Role",
             expiry_date: "Expiry date",
-            action2: ""
+            actions: ""
         },
     },
     aup: {
