@@ -2,7 +2,7 @@
 
 from server.db.domain import Organisation, OrganisationInvitation
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import uuc_name, schac_home_organisation, amsterdam_uva_name
+from server.test.seed import uuc_name, schac_home_organisation, amsterdam_uva_name, schac_home_organisation_uuc
 
 
 class TestOrganisation(AbstractTest):
@@ -127,6 +127,25 @@ class TestOrganisation(AbstractTest):
 
         res = self.get("/api/organisations/short_name_exists", query_data={"short_name": "xyc",
                                                                            "existing_organisation": "xyc"})
+        self.assertEqual(False, res)
+
+    def test_organisation_schac_home_exists(self):
+        res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": schac_home_organisation_uuc})
+        self.assertEqual(True, res)
+
+        res = self.get("/api/organisations/schac_home_exists",
+                       query_data={"schac_home": schac_home_organisation_uuc,
+                                   "existing_organisation": schac_home_organisation_uuc})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": "xyc"})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": "xyc",
+                                                                           "existing_organisation": "xyc"})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": ""})
         self.assertEqual(False, res)
 
     def test_my_organisations_lite_super_user(self):

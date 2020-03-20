@@ -251,12 +251,12 @@ export function myOrganisations() {
     return fetchJson(`/api/organisations`);
 }
 
-export function organisationNameExists(name, existingOrganisation = null) {
-    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
+export function organisationSchacHomeOrganisationExists(schacHome, existingOrganisation = null) {
+    return fetchJson(`/api/organisations/schac_home_exists?schac_home=${encodeURIComponent(schacHome)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
 }
 
-export function organisationIdentifierExists(identifier, existingOrganisation = null) {
-    return fetchJson(`/api/organisations/identifier_exists?identifier=${encodeURIComponent(identifier)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
+export function organisationNameExists(name, existingOrganisation = null) {
+    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
 }
 
 export function organisationShortNameExists(short_name, existingOrganisation = null) {

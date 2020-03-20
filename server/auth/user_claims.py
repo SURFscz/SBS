@@ -1,15 +1,15 @@
 # -*- coding: future_fstrings -*-
+import re
+
 from flask import current_app
 
 from server.api.base import ctx_logger
 from server.db.domain import User
 
-oidc_claim_name = "name"
-
 user_service_profile_claims = ["name", "email", "address"]
 
 claim_attribute_mapping = {
-    oidc_claim_name: "name",
+    "name": "name",
     "cmuid": "uid",
     "address_street_address": "address",
     "nickname": "nick_name",
@@ -80,9 +80,12 @@ def claim_attribute_hash_user(user: User):
 def add_user_claims(request_headers, uid, user):
     for key, attr in claim_attribute_mapping.items():
         setattr(user, attr, _get_value(request_headers, _get_header_key(key)))
-    if _get_header_key(oidc_claim_name) not in request_headers:
+    if not user.name:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
         user.name = name if name else user.nick_name if user.nick_name else uid
+    if not user.schac_home_organisation and user.scoped_affiliation:
+        parts = re.split("[@|.]", user.scoped_affiliation)[-2:]
+        user.schac_home_organisation = ".".join(parts)
 
 
 def get_user_uid(request_headers):

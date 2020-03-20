@@ -180,3 +180,28 @@ class TestUser(AbstractTest):
     def test_generate_unique_username_random(self):
         username = generate_unique_username(munchify({"given_name": "John", "family_name": "Doe"}), 1)
         self.assertEqual(14, len(username))
+
+    def test_provision_me_scoped_affiliation(self):
+        environ_overrides = {
+            self.uid_header_name(): "uid:new",
+            f"{current_app.app_config.oidc_prefix}EDUPERSON_SCOPED_AFFILIATION": "employee@surf.nl"
+        }
+        user = self.client.get("/api/users/me", environ_overrides=environ_overrides).json
+        self.assertEqual(user["schac_home_organisation"], "surf.nl")
+
+    def test_provision_me_scoped_affiliation_parse(self):
+        environ_overrides = {
+            self.uid_header_name(): "uid:new",
+            f"{current_app.app_config.oidc_prefix}EDUPERSON_SCOPED_AFFILIATION": "employee@bla.bla.surf.nl"
+        }
+        user = self.client.get("/api/users/me", environ_overrides=environ_overrides).json
+        self.assertEqual(user["schac_home_organisation"], "surf.nl")
+
+    def test_provision_me_scoped_affiliation_and_schac_home(self):
+        environ_overrides = {
+            self.uid_header_name(): "uid:new",
+            f"{current_app.app_config.oidc_prefix}EDUPERSON_SCOPED_AFFILIATION": "employee@bla.bla.surf.nl",
+            f"{current_app.app_config.oidc_prefix}SCHAC_HOME_ORGANISATION": "example.org"
+        }
+        user = self.client.get("/api/users/me", environ_overrides=environ_overrides).json
+        self.assertEqual(user["schac_home_organisation"], "example.org")
