@@ -338,37 +338,59 @@ def save_collaboration():
         confirm_organisation_admin(data["organisation_id"])
         organisation = Organisation.query.get(data["organisation_id"])
         user = User.query.get(current_user_id())
-    elif "external_api_organisation" in request_context:
+    else:
+        raise BadRequest("No organisation_id in POST data")
+
+    res = do_save_collaboration(data, organisation, user)
+    return res
+
+
+@collaboration_api.route("/v1", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def save_collaboration_api():
+    data = current_request.get_json()
+    if "external_api_organisation" in request_context:
         organisation = request_context.external_api_organisation
         admins = list(filter(lambda mem: mem.role == "admin", organisation.organisation_memberships))
         user = admins[0].user if len(admins) > 0 else User.query.filter(
             User.uid == current_app.app_config.admin_users[0].uid).one()
         data["organisation_id"] = organisation.id
     else:
-        raise BadRequest("Neither organization in POST data nor associated with an API key")
+        raise Forbidden("Not associated with an API key")
 
     res = do_save_collaboration(data, organisation, user)
     return res
 
 
-@collaboration_api.route("/restricted", methods=["POST"], strict_slashes=False)
+@collaboration_api.route("/v1/restricted", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_restricted_collaboration():
     api_user = "api_user" in request_context
     if not api_user or (api_user and "restricted_co" not in request_context.api_user.scopes):
-        raise Forbidden()
+        raise Forbidden("Not a valid API user")
 
     data = current_request.get_json()
     administrator = data["administrator"]
-    admin = User.query.filter(User.username == administrator).one()
+    admins = User.query.filter(User.username == administrator).all()
+    if len(admins) == 0:
+        raise BadRequest(f"Administrator {administrator} is not a valid user")
 
+    admin = admins[0]
     restricted_co_config = current_app.app_config.restricted_co
 
     organisations = Organisation.query \
         .filter(Organisation.schac_home_organisation == admin.schac_home_organisation) \
         .all()
-    organisation = organisations[0] if organisations else Organisation.query.filter(
-        Organisation.schac_home_organisation == restricted_co_config.default_organisation).one()
+
+    if not organisations:
+        organisations = Organisation.query \
+            .filter(Organisation.schac_home_organisation == restricted_co_config.default_organisation).all()
+
+    if len(organisations) == 0:
+        raise BadRequest(f"Default organisation for restricted co "
+                         f"{restricted_co_config.default_organisation} does not exists")
+
+    organisation = organisations[0]
 
     data["organisation_id"] = organisation.id
     data["services_restricted"] = True

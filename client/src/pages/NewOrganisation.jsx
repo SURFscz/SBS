@@ -1,8 +1,8 @@
 import React from "react";
 import {
     createOrganisation,
-    organisationIdentifierExists,
     organisationNameExists,
+    organisationSchacHomeOrganisationExists,
     organisationShortNameExists
 } from "../api";
 import I18n from "i18n-js";
@@ -30,7 +30,7 @@ class NewOrganisation extends React.Component {
             administrators: [],
             email: "",
             message: "",
-            required: ["name", "short_name", "schac_home_organisation"],
+            required: ["name", "short_name"],
             alreadyExists: {},
             initial: true,
             confirmationDialogOpen: false,
@@ -46,14 +46,14 @@ class NewOrganisation extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
-    validateOrganisationTenantIdentifier = e =>
-        organisationIdentifierExists(e.target.value).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, tenant: json}});
-        });
-
     validateOrganisationShortName = e =>
         organisationShortNameExists(e.target.value).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
+        });
+
+    validateOrganisationSchacHome = e =>
+        organisationSchacHomeOrganisationExists(e.target.value).then(json => {
+            this.setState({alreadyExists: {...this.state.alreadyExists, schac_home_organisation: json}});
         });
 
     cancel = () => {
@@ -179,15 +179,19 @@ class NewOrganisation extends React.Component {
                                 name={I18n.t("organisation.description")}/>
 
                     <InputField value={schac_home_organisation}
-                                onChange={e => this.setState({schac_home_organisation: e.target.value})}
+                                onChange={e => this.setState({
+                                    schac_home_organisation: e.target.value,
+                                    alreadyExists: {...this.state.alreadyExists, schac_home_organisation: false}
+                                })}
                                 placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
                                 name={I18n.t("organisation.schacHomeOrganisation")}
+                                onBlur={this.validateOrganisationSchacHome}
                                 toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
-                    {(!initial && isEmpty(schac_home_organisation)) && <span
-                        className="error">{I18n.t("organisation.required", {
-                        attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase()
+                    {alreadyExists.schac_home_organisation && <span
+                        className="error">{I18n.t("organisation.alreadyExists", {
+                        attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase(),
+                        value: schac_home_organisation
                     })}</span>}
-
                     <CheckBox name={"collaboration_creation_allowed"}
                               value={collaboration_creation_allowed}
                               info={I18n.t("organisation.collaborationCreationAllowed")}

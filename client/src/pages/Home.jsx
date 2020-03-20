@@ -183,7 +183,7 @@ class Home extends React.Component {
     };
 
     render() {
-        const {collaborations, groups} = this.state;
+        const {collaborations} = this.state;
         const {user} = this.props;
         const hasOrganisationMemberships = !isEmpty(user.organisation_memberships) || user.admin;
         return (
@@ -196,7 +196,6 @@ class Home extends React.Component {
                         {hasOrganisationMemberships && this.renderOrganisations(user)}
                         {this.renderCollaborations(collaborations)}
                         {this.renderServices(collaborations)}
-                        {this.renderGroups(groups)}
                     </section>
                 </div>
             </div>);

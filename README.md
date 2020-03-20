@@ -73,7 +73,7 @@ flake8 ./server/
 ```
 To generate coverage reports:
 ```
-pytest --cov=server --cov-report html:htmlcov server/test
+pytest --disable-warnings --cov=server --cov-report html:htmlcov server/test
 open htmlcov/index.html
 ```
 To run all JavaScript tests:

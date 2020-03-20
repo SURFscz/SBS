@@ -4,6 +4,7 @@ import uuid
 from flask import Blueprint, request as current_request, current_app
 from munch import munchify
 from sqlalchemy.orm import contains_eager
+from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
 from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
@@ -36,10 +37,18 @@ def collaboration_request_by_id(collaboration_request_id):
 def request_collaboration():
     data = current_request.get_json()
     user = User.query.get(current_user_id())
-    organisation = Organisation.query.filter(Organisation.schac_home_organisation == user.schac_home_organisation).one()
+    organisations = Organisation.query \
+        .filter(Organisation.schac_home_organisation == user.schac_home_organisation) \
+        .all()
+    if len(organisations) == 0:
+        raise BadRequest(f"User schac_home_organisation {user.schac_home_organisation} does not have a "
+                         f"corresponding organisation with the same schac_home")
 
+    organisation = organisations[0]
     data["requester_id"] = user.id
+
     cleanse_short_name(data)
+
     message = data["message"]
     auto_create = organisation.collaboration_creation_allowed
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement

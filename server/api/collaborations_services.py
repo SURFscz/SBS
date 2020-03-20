@@ -47,9 +47,9 @@ def add_collaborations_services():
     return (None, 201) if count > 0 else (None, 404)
 
 
-@collaborations_services_api.route("/connect_collaboration_service", methods=["PUT"], strict_slashes=False)
+@collaborations_services_api.route("/v1/connect_collaboration_service", methods=["PUT"], strict_slashes=False)
 @json_endpoint
-def connect_collaboration_service():
+def connect_collaboration_service_api():
     confirm_external_api_call()
     organisation = request_context.external_api_organisation
 

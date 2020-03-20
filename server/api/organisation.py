@@ -11,11 +11,11 @@ from server.api.base import json_endpoint, query_param, replace_full_text_search
 from server.auth.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid, \
     is_application_admin, confirm_authorized_api_call, confirm_organisation_admin, confirm_allow_impersonation, \
     is_collaboration_admin
-from server.db.domain import Organisation, OrganisationMembership, Collaboration, OrganisationInvitation, User, \
-    CollaborationRequest
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
+from server.db.domain import Organisation, OrganisationMembership, Collaboration, OrganisationInvitation, User, \
+    CollaborationRequest
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation
 
@@ -42,6 +42,20 @@ def short_name_exists():
     org = Organisation.query.options(load_only("id")) \
         .filter(func.lower(Organisation.short_name) == func.lower(short_name)) \
         .filter(func.lower(Organisation.short_name) != func.lower(existing_organisation)) \
+        .first()
+    return org is not None, 200
+
+
+@organisation_api.route("/schac_home_exists", strict_slashes=False)
+@json_endpoint
+def schac_home_exists():
+    schac_home = query_param("schac_home")
+    if not schac_home:
+        return False, 200
+    existing_organisation = query_param("existing_organisation", required=False, default="")
+    org = Organisation.query.options(load_only("id")) \
+        .filter(func.lower(Organisation.schac_home_organisation) == func.lower(schac_home)) \
+        .filter(func.lower(Organisation.schac_home_organisation) != func.lower(existing_organisation)) \
         .first()
     return org is not None, 200
 

@@ -109,7 +109,7 @@ class TestCollaborationsServices(AbstractTest):
         self.assertEqual(2, len(collaboration["services"]))
 
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
-        res = self.client.put("/api/collaborations_services/connect_collaboration_service",
+        res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
                               headers={"Authorization": f"Bearer {uuc_secret}"},
                               data=json.dumps({
                                   "collaboration_id": collaboration_id,
@@ -126,7 +126,7 @@ class TestCollaborationsServices(AbstractTest):
         self.mark_collaboration_service_restricted(collaboration_id)
 
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
-        self.put("/api/collaborations_services/connect_collaboration_service",
+        self.put("/api/collaborations_services/v1/connect_collaboration_service",
                  with_basic_auth=False,
                  body=json.dumps({
                      "collaboration_id": collaboration_id,
@@ -138,7 +138,7 @@ class TestCollaborationsServices(AbstractTest):
         collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
 
-        res = self.client.put("/api/collaborations_services/connect_collaboration_service",
+        res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
                               headers={"Authorization": f"Bearer {uuc_secret}"},
                               data=json.dumps({
                                   "collaboration_id": collaboration_id,
@@ -149,5 +149,5 @@ class TestCollaborationsServices(AbstractTest):
         self.assertTrue("is not part of organisation" in error_dict["message"])
 
     def test_connect_collaboration_service_collaboration_no_external_api_call(self):
-        res = self.put("/api/collaborations_services/connect_collaboration_service", response_status_code=403)
+        res = self.put("/api/collaborations_services/v1/connect_collaboration_service", response_status_code=403)
         self.assertEqual("Not a valid external API call", res["message"])

@@ -8,6 +8,7 @@ import {
     deleteOrganisationMembership,
     organisationById,
     organisationNameExists,
+    organisationSchacHomeOrganisationExists,
     organisationShortNameExists,
     updateOrganisation
 } from "../api";
@@ -245,6 +246,11 @@ class OrganisationDetail extends React.Component {
     validateOrganisationShortName = e =>
         organisationShortNameExists(e.target.value, this.state.originalOrganisation.short_name).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
+        });
+
+    validateOrganisationSchacHome = e =>
+        organisationSchacHomeOrganisationExists(e.target.value, this.state.originalOrganisation.schac_home_organisation).then(json => {
+            this.setState({alreadyExists: {...this.state.alreadyExists, schac_home_organisation: json}});
         });
 
     openInvitation = invitation => e => {
@@ -604,11 +610,21 @@ class OrganisationDetail extends React.Component {
                         name={I18n.t("organisation.description")}/>
 
             <InputField value={schac_home_organisation}
-                        onChange={e => this.setState({schac_home_organisation: e.target.value})}
+                        onChange={e => this.setState({
+                            schac_home_organisation: e.target.value,
+                            alreadyExists: {...this.state.alreadyExists, schac_home_organisation: false}
+                        })}
                         placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
                         disabled={!user.admin}
                         name={I18n.t("organisation.schacHomeOrganisation")}
+                        onBlur={this.validateOrganisationSchacHome}
                         toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
+            {alreadyExists.schac_home_organisation && <span
+                className="error">{I18n.t("organisation.alreadyExists", {
+                attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase(),
+                value: schac_home_organisation
+            })}</span>}
+
 
             <CheckBox name={"collaboration_creation_allowed"}
                       value={collaboration_creation_allowed}

@@ -90,7 +90,7 @@ class TestCollaboration(AbstractTest):
                   response_status_code=403)
 
     def test_collaboration_restricted_access_api(self):
-        res = self.post("/api/collaborations/restricted",
+        res = self.post("/api/collaborations/v1/restricted",
                         body={
                             "name": "new_collaboration",
                             "administrator": "harry",
@@ -115,17 +115,17 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("admin", admin.role)
         self.assertEqual("urn:harry", admin.user.uid)
 
-    def test_collaboration_restricted_access_api_forbidden(self):
+    def test_collaboration_restricted_access_api_forbidden_withoutt_correct_scope(self):
         self.login("urn:harry")
-        self.post("/api/collaborations/restricted",
+        self.post("/api/collaborations/v1/restricted",
                   body={},
                   with_basic_auth=False,
                   headers=API_AUTH_HEADER,
                   response_status_code=403)
 
-    def test_collaboration_restricted_access_api_forbidden_2(self):
+    def test_collaboration_restricted_access_api_forbidden_without_api_user(self):
         self.login("urn:harry")
-        self.post("/api/collaborations/restricted",
+        self.post("/api/collaborations/v1/restricted",
                   body={},
                   with_basic_auth=False,
                   response_status_code=403)
@@ -333,7 +333,7 @@ class TestCollaboration(AbstractTest):
         self.get(f"/api/collaborations/lite/{collaboration_id}", response_status_code=403)
 
     def test_api_call(self):
-        response = self.client.post("/api/collaborations",
+        response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {uuc_secret}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
@@ -347,7 +347,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("john@example.org", admin.user.email)
 
     def test_api_call_existing_name(self):
-        response = self.client.post("/api/collaborations",
+        response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {uuc_secret}"},
                                     data=json.dumps({
                                         "name": ai_computing_name,
@@ -361,7 +361,7 @@ class TestCollaboration(AbstractTest):
                          "Collaboration with name 'AI computing' already exists within organisation 'UUC'.")
 
     def test_api_call_existing_short_name(self):
-        response = self.client.post("/api/collaborations",
+        response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {uuc_secret}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",

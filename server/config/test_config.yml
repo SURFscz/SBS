@@ -26,7 +26,6 @@ restricted_co:
   services_white_list: ["https://cloud"]
   default_organisation: "schac_home_organisation_uuc"
 
-
 mail:
   host: localhost
   port: 1025

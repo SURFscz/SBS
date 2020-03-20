@@ -392,8 +392,7 @@ class Collaborations extends React.Component {
                     {this.renderInvitations(adminCollaborations.map(collaboration => collaboration.invitations)
                         .flat().filter(item => !isEmpty(item)))}
                     {this.renderServices(adminCollaborations)}
-                    {this.renderGroups(adminCollaborations)}
-                </section>
+                    </section>
                 <div className="title">
                     <span>{I18n.t("collaborations.title")}</span>
                     {(isOrganisationAdmin && !user.admin) && <Button onClick={this.newCollaboration}
