@@ -14,20 +14,20 @@ user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 custom_saml_mapping = {
     "multi_value_attributes": ["edu_members", "affiliation", "scoped_affiliation", "entitlement"],
     "attribute_saml_mapping": {
-        "uid": "urn:mace:dir:attribute-def:uid",
-        "name": "urn:mace:dir:attribute-def:cn",
-        "address": "urn:mace:dir:attribute-def:postalAddress",
-        "nick_name": "urn:mace:dir:attribute-def:displayName",
-        "username": "urn:mace:dir:attribute-def:shortName",
-        "edu_members": "urn:mace:dir:attribute-def:isMemberOf",
-        "affiliation": "urn:mace:dir:attribute-def:eduPersonAffiliation",
-        "scoped_affiliation": "urn:mace:dir:attribute-def:eduPersonScopedAffiliation",
-        "entitlement": "urn:mace:dir:attribute-def:eduPersonEntitlement",
-        "schac_home_organisation": "urn:mace:terena.org:attribute-def:schacHomeOrganization",
-        "family_name": "urn:mace:dir:attribute-def:sn",
-        "given_name": "urn:mace:dir:attribute-def:givenName",
-        "email": "urn:mace:dir:attribute-def:mail",
-        "ssh_key": "urn:oid:1.3.6.1.4.1.24552.1.1.1.13"
+        "uid": "uid",
+        "name": "cn",
+        "address": "postalAddress",
+        "nick_name": "displayName",
+        "username": "uid",
+        "edu_members": "isMemberOf",
+        "affiliation": "eduPersonAffiliation",
+        "scoped_affiliation": "eduPersonScopedAffiliation",
+        "entitlement": "eduPersonEntitlement",
+        "schac_home_organisation": "schacHomeOrganization",
+        "family_name": "sn",
+        "given_name": "givenName",
+        "email": "mail",
+        "ssh_key": "sshKey"
     }
 }
 
