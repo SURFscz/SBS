@@ -14,7 +14,7 @@ user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 custom_saml_mapping = {
     "multi_value_attributes": ["edu_members", "affiliation", "scoped_affiliation", "entitlement"],
     "attribute_saml_mapping": {
-        "uid": "uid",
+        "uid": "sbs_id",
         "name": "cn",
         "address": "postalAddress",
         "nick_name": "displayName",
