@@ -191,177 +191,181 @@ class Service extends React.Component {
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                         contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations,
                         accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                        research_scholarship_compliant) => (
-        <div className="service">
-            {!isNew && <p className="title">{title}</p>}
-            <InputField value={name} onChange={e => this.setState({
-                name: e.target.value,
-                alreadyExists: {...this.state.alreadyExists, name: false}
-            })}
-                        placeholder={I18n.t("service.namePlaceHolder")}
-                        onBlur={this.validateServiceName}
-                        name={I18n.t("service.name")}
-                        disabled={!isAdmin}/>
-            {alreadyExists.name && <span
-                className="error">{I18n.t("service.alreadyExists", {
-                attribute: I18n.t("service.name").toLowerCase(),
-                value: name
-            })}</span>}
-            {(!initial && isEmpty(name)) && <span
-                className="error">{I18n.t("service.required", {
-                attribute: I18n.t("service.name").toLowerCase()
-            })}</span>}
+                        research_scholarship_compliant, config) => {
+        const redirectUri = uri || entity_id || "https://redirectUri";
+        const serviceRequestUrl = `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(redirectUri)}`;
+        return (
+            <div className="service">
+                {!isNew && <p className="title">{title}</p>}
+                <InputField value={name} onChange={e => this.setState({
+                    name: e.target.value,
+                    alreadyExists: {...this.state.alreadyExists, name: false}
+                })}
+                            placeholder={I18n.t("service.namePlaceHolder")}
+                            onBlur={this.validateServiceName}
+                            name={I18n.t("service.name")}
+                            disabled={!isAdmin}/>
+                {alreadyExists.name && <span
+                    className="error">{I18n.t("service.alreadyExists", {
+                    attribute: I18n.t("service.name").toLowerCase(),
+                    value: name
+                })}</span>}
+                {(!initial && isEmpty(name)) && <span
+                    className="error">{I18n.t("service.required", {
+                    attribute: I18n.t("service.name").toLowerCase()
+                })}</span>}
 
-            <InputField value={entity_id} onChange={e => this.setState({
-                entity_id: e.target.value,
-                alreadyExists: {...this.state.alreadyExists, entity_id: false}
-            })}
-                        placeholder={I18n.t("service.entity_idPlaceHolder")}
-                        onBlur={this.validateServiceEntityId}
-                        name={I18n.t("service.entity_id")}
-                        toolTip={I18n.t("service.entity_idTooltip")}
-                        copyClipBoard={true}
-                        disabled={!isAdmin}/>
-            {alreadyExists.entity_id && <span
-                className="error">{I18n.t("service.alreadyExists", {
-                attribute: I18n.t("service.entity_id").toLowerCase(),
-                value: entity_id
-            })}</span>}
-            {(!initial && isEmpty(entity_id)) && <span
-                className="error">{I18n.t("service.required", {
-                attribute: I18n.t("service.entity_id").toLowerCase()
-            })}</span>}
+                <InputField value={entity_id} onChange={e => this.setState({
+                    entity_id: e.target.value,
+                    alreadyExists: {...this.state.alreadyExists, entity_id: false}
+                })}
+                            placeholder={I18n.t("service.entity_idPlaceHolder")}
+                            onBlur={this.validateServiceEntityId}
+                            name={I18n.t("service.entity_id")}
+                            toolTip={I18n.t("service.entity_idTooltip")}
+                            copyClipBoard={true}
+                            disabled={!isAdmin}/>
+                {alreadyExists.entity_id && <span
+                    className="error">{I18n.t("service.alreadyExists", {
+                    attribute: I18n.t("service.entity_id").toLowerCase(),
+                    value: entity_id
+                })}</span>}
+                {(!initial && isEmpty(entity_id)) && <span
+                    className="error">{I18n.t("service.required", {
+                    attribute: I18n.t("service.entity_id").toLowerCase()
+                })}</span>}
 
-            {(isAdmin && !isNew) && <InputField value={`/service-request/${encodeURIComponent(entity_id)}`}
-                                                name={I18n.t("service.service_request")}
-                                                toolTip={I18n.t("service.service_requestTooltip")}
-                                                link={`/service-request/${encodeURIComponent(entity_id)}`}
-                                                history={this.props.history}
-                                                disabled={true}
-            />}
+                {(isAdmin && !isNew) && <InputField value={serviceRequestUrl}
+                                                    name={I18n.t("service.service_request")}
+                                                    toolTip={I18n.t("service.service_requestTooltip")}
+                                                    copyClipBoard={true}
+                                                    history={this.props.history}
+                                                    disabled={true}
+                />}
 
-            <InputField value={description}
-                        name={I18n.t("service.description")}
-                        placeholder={I18n.t("service.descriptionPlaceholder")}
-                        onChange={e => this.setState({description: e.target.value})}
-                        disabled={!isAdmin}/>
+                <InputField value={description}
+                            name={I18n.t("service.description")}
+                            placeholder={I18n.t("service.descriptionPlaceholder")}
+                            onChange={e => this.setState({description: e.target.value})}
+                            disabled={!isAdmin}/>
 
-            <InputField value={uri}
-                        name={I18n.t("service.uri")}
-                        placeholder={I18n.t("service.uriPlaceholder")}
-                        onChange={e => this.setState({uri: e.target.value})}
-                        toolTip={I18n.t("service.uriTooltip")}
-                        externalLink={true}
-                        disabled={!isAdmin}/>
+                <InputField value={uri}
+                            name={I18n.t("service.uri")}
+                            placeholder={I18n.t("service.uriPlaceholder")}
+                            onChange={e => this.setState({uri: e.target.value})}
+                            toolTip={I18n.t("service.uriTooltip")}
+                            externalLink={true}
+                            disabled={!isAdmin}/>
 
-            {/*<InputField value={identity_type}*/}
-            {/*            name={I18n.t("service.identity_type")}*/}
-            {/*            placeholder={I18n.t("service.identity_typePlaceholder")}*/}
-            {/*            onChange={e => this.setState({identity_type: e.target.value})}*/}
-            {/*            toolTip={I18n.t("service.identity_typeTooltip")}*/}
-            {/*            disabled={!isAdmin}/>*/}
+                {/*<InputField value={identity_type}*/}
+                {/*            name={I18n.t("service.identity_type")}*/}
+                {/*            placeholder={I18n.t("service.identity_typePlaceholder")}*/}
+                {/*            onChange={e => this.setState({identity_type: e.target.value})}*/}
+                {/*            toolTip={I18n.t("service.identity_typeTooltip")}*/}
+                {/*            disabled={!isAdmin}/>*/}
 
-            {/*<SelectField value={this.statusOptions.find(option => status === option.value)}*/}
-            {/*             options={this.statusOptions}*/}
-            {/*             name={I18n.t("service.status.name")}*/}
-            {/*             clearable={false}*/}
-            {/*             placeholder={I18n.t("service.statusPlaceholder")}*/}
-            {/*             disabled={!isAdmin}*/}
-            {/*             onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}*/}
-            {/*/>*/}
+                {/*<SelectField value={this.statusOptions.find(option => status === option.value)}*/}
+                {/*             options={this.statusOptions}*/}
+                {/*             name={I18n.t("service.status.name")}*/}
+                {/*             clearable={false}*/}
+                {/*             placeholder={I18n.t("service.statusPlaceholder")}*/}
+                {/*             disabled={!isAdmin}*/}
+                {/*             onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}*/}
+                {/*/>*/}
 
-            {/*<InputField value={address}*/}
-            {/*            name={I18n.t("service.address")}*/}
-            {/*            placeholder={I18n.t("service.addressPlaceholder")}*/}
-            {/*            onChange={e => this.setState({address: e.target.value})}*/}
-            {/*            disabled={!isAdmin}/>*/}
+                {/*<InputField value={address}*/}
+                {/*            name={I18n.t("service.address")}*/}
+                {/*            placeholder={I18n.t("service.addressPlaceholder")}*/}
+                {/*            onChange={e => this.setState({address: e.target.value})}*/}
+                {/*            disabled={!isAdmin}/>*/}
 
-            <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
-                      info={I18n.t("service.automaticConnectionAllowed")}
-                      tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
-                      onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}
-                      readOnly={!isAdmin}/>
+                <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
+                          info={I18n.t("service.automaticConnectionAllowed")}
+                          tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
+                          onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}
+                          readOnly={!isAdmin}/>
 
-            <CheckBox name="white_listed" value={white_listed}
-                      info={I18n.t("service.whiteListed")}
-                      tooltip={I18n.t("service.whiteListedTooltip")}
-                      onChange={e => this.setState({white_listed: e.target.checked})}
-                      readOnly={!isAdmin}/>
+                <CheckBox name="white_listed" value={white_listed}
+                          info={I18n.t("service.whiteListed")}
+                          tooltip={I18n.t("service.whiteListedTooltip")}
+                          onChange={e => this.setState({white_listed: e.target.checked})}
+                          readOnly={!isAdmin}/>
 
-            <InputField value={contact_email}
-                        name={I18n.t("service.contact_email")}
-                        placeholder={I18n.t("service.contact_emailPlaceholder")}
-                        onChange={e => this.setState({
-                            contact_email: e.target.value,
-                            invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
-                                ...invalidInputs,
-                                email: false
-                            }
-                        })}
-                        toolTip={I18n.t("service.contact_emailTooltip")}
-                        onBlur={this.validateEmail}
-                        disabled={!isAdmin}/>
+                <InputField value={contact_email}
+                            name={I18n.t("service.contact_email")}
+                            placeholder={I18n.t("service.contact_emailPlaceholder")}
+                            onChange={e => this.setState({
+                                contact_email: e.target.value,
+                                invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
+                                    ...invalidInputs,
+                                    email: false
+                                }
+                            })}
+                            toolTip={I18n.t("service.contact_emailTooltip")}
+                            onBlur={this.validateEmail}
+                            disabled={!isAdmin}/>
 
-            {invalidInputs["email"] && <span
-                className="error">{I18n.t("forms.invalidInput", {name: "email"})}</span>}
+                {invalidInputs["email"] && <span
+                    className="error">{I18n.t("forms.invalidInput", {name: "email"})}</span>}
 
-            {(!initial && contactEmailRequired) && <span
-                className="error">{I18n.t("service.contactEmailRequired")}</span>}
+                {(!initial && contactEmailRequired) && <span
+                    className="error">{I18n.t("service.contactEmailRequired")}</span>}
 
-            <SelectField value={allowed_organisations}
-                         options={organisations}
-                         name={I18n.t("service.allowedOrganisations")}
-                         placeholder={I18n.t("service.allowedOrganisationsPlaceholder")}
-                         toolTip={I18n.t("service.allowedOrganisationsTooltip")}
-                         isMulti={true}
-                         onChange={selectedOptions => this.setState({allowed_organisations: isEmpty(selectedOptions) ? [] : [...selectedOptions]})}
-            />
+                <SelectField value={allowed_organisations}
+                             options={organisations}
+                             name={I18n.t("service.allowedOrganisations")}
+                             placeholder={I18n.t("service.allowedOrganisationsPlaceholder")}
+                             toolTip={I18n.t("service.allowedOrganisationsTooltip")}
+                             isMulti={true}
+                             onChange={selectedOptions => this.setState({allowed_organisations: isEmpty(selectedOptions) ? [] : [...selectedOptions]})}
+                />
 
-            <InputField value={accepted_user_policy}
-                        name={I18n.t("service.accepted_user_policy")}
-                        placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
-                        onChange={e => this.setState({accepted_user_policy: e.target.value})}
-                        toolTip={I18n.t("service.accepted_user_policyTooltip")}
-                        disabled={!isAdmin}/>
+                <InputField value={accepted_user_policy}
+                            name={I18n.t("service.accepted_user_policy")}
+                            placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
+                            onChange={e => this.setState({accepted_user_policy: e.target.value})}
+                            toolTip={I18n.t("service.accepted_user_policyTooltip")}
+                            disabled={!isAdmin}/>
 
-            {!isNew && <InputField value={moment(service.created_at * 1000).format("LLLL")}
-                                   disabled={true}
-                                   name={I18n.t("organisation.created")}/>}
+                {!isNew && <InputField value={moment(service.created_at * 1000).format("LLLL")}
+                                       disabled={true}
+                                       name={I18n.t("organisation.created")}/>}
 
-            <CheckBox name="sirtfi_compliant" value={sirtfi_compliant}
-                      info={I18n.t("service.sirtfiCompliant")}
-                      tooltip={I18n.t("service.sirtfiCompliantTooltip")}
-                      onChange={e => this.setState({sirtfi_compliant: e.target.checked})}
-                      readOnly={!isAdmin}/>
+                <CheckBox name="sirtfi_compliant" value={sirtfi_compliant}
+                          info={I18n.t("service.sirtfiCompliant")}
+                          tooltip={I18n.t("service.sirtfiCompliantTooltip")}
+                          onChange={e => this.setState({sirtfi_compliant: e.target.checked})}
+                          readOnly={!isAdmin}/>
 
-            <CheckBox name="code_of_conduct_compliant" value={code_of_conduct_compliant}
-                      info={I18n.t("service.codeOfConductCompliant")}
-                      tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
-                      onChange={e => this.setState({code_of_conduct_compliant: e.target.checked})}
-                      readOnly={!isAdmin}/>
+                <CheckBox name="code_of_conduct_compliant" value={code_of_conduct_compliant}
+                          info={I18n.t("service.codeOfConductCompliant")}
+                          tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
+                          onChange={e => this.setState({code_of_conduct_compliant: e.target.checked})}
+                          readOnly={!isAdmin}/>
 
-            <CheckBox name="research_scholarship_compliant" value={research_scholarship_compliant}
-                      info={I18n.t("service.researchScholarshipCompliant")}
-                      tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
-                      onChange={e => this.setState({research_scholarship_compliant: e.target.checked})}
-                      readOnly={!isAdmin}/>
+                <CheckBox name="research_scholarship_compliant" value={research_scholarship_compliant}
+                          info={I18n.t("service.researchScholarshipCompliant")}
+                          tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
+                          onChange={e => this.setState({research_scholarship_compliant: e.target.checked})}
+                          readOnly={!isAdmin}/>
 
-            {(isNew && isAdmin) &&
-            <section className="actions">
-                <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
-                        onClick={this.submit}/>
-            </section>}
-            {(!isNew && isAdmin) &&
-            <section className="actions">
-                <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                <Button className="delete" txt={I18n.t("service.delete")}
-                        onClick={this.delete}/>
-                <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
-                        onClick={this.submit}/>
-            </section>}
+                {(isNew && isAdmin) &&
+                <section className="actions">
+                    <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                    <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
+                            onClick={this.submit}/>
+                </section>}
+                {(!isNew && isAdmin) &&
+                <section className="actions">
+                    <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                    <Button className="delete" txt={I18n.t("service.delete")}
+                            onClick={this.delete}/>
+                    <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
+                            onClick={this.submit}/>
+                </section>}
 
-        </div>);
+            </div>);
+    }
 
     render() {
         //status,address, identity_type
@@ -373,7 +377,8 @@ class Service extends React.Component {
             research_scholarship_compliant
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
-        const isAdmin = this.props.user.admin;
+        const {user, config} = this.props;
+        const isAdmin = user.admin;
         const title = isAdmin ? (isNew ? I18n.t("service.titleNew") : I18n.t("service.titleUpdate", {name: service.name}))
             : I18n.t("service.titleReadOnly", {name: service.name});
         const contactEmailRequired = !automatic_connection_allowed && isEmpty(contact_email);
@@ -391,7 +396,7 @@ class Service extends React.Component {
                         {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                             contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,
                             isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                            research_scholarship_compliant)}
+                            research_scholarship_compliant, config)}
                     </div>
                     {(isAdmin && !isNew) && <div label="history">
                         <History auditLogs={auditLogs}/>

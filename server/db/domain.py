@@ -197,6 +197,12 @@ class Collaboration(Base, db.Model):
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
 
+    def is_admin(self, user_id):
+        for membership in self.collaboration_memberships:
+            if membership.user_id == user_id and membership.role == "admin":
+                return True
+        return False
+
 
 class Group(Base, db.Model):
     __tablename__ = "groups"

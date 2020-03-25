@@ -87,8 +87,11 @@ def request_service_connection():
     data = current_request.get_json()
     service = Service.query.get(int(data["service_id"]))
     collaboration = Collaboration.query.get(int(data["collaboration_id"]))
+    user_id = current_user_id()
+    is_admin = collaboration.is_admin(user_id)
 
-    confirm_collaboration_admin(collaboration.id)
+    if is_admin:
+        confirm_collaboration_admin(collaboration.id)
 
     existing_request = ServiceConnectionRequest.query \
         .filter(ServiceConnectionRequest.collaboration_id == collaboration.id) \
@@ -105,20 +108,25 @@ def request_service_connection():
     saved_service_connection_request = db.session.merge(service_connection_request)
     db.session.commit()
 
-    _do_mail_request(collaboration, service, service_connection_request)
+    _do_mail_request(collaboration, service, service_connection_request, is_admin)
 
     return saved_service_connection_request, 201
 
 
-def _do_mail_request(collaboration, service, service_connection_request):
+def _do_mail_request(collaboration, service, service_connection_request, is_admin):
     if service.contact_email:
-        context = {"salutation": f"Dear {service.contact_email},",
+        context = {"salutation": f"Dear {service.contact_email}",
                    "base_url": current_app.app_config.base_url,
                    "requester": current_user_name(),
                    "service_connection_request": service_connection_request,
                    "service": service,
                    "collaboration": collaboration}
-        mail_service_connection_request(context, service.name, collaboration.name, [service.contact_email])
+        recipients = []
+        for membership in collaboration.collaboration_memberships:
+            if membership.role == "admin":
+                recipients.append(membership.user.email)
+        recipients = recipients if is_admin else [service.contact_email]
+        mail_service_connection_request(context, service.name, collaboration.name, recipients)
 
 
 @service_connection_request_api.route("/find_by_hash/<hash>", strict_slashes=False)
@@ -147,8 +155,11 @@ def resend_service_connection_request(service_connection_request_id):
         return {}, 404
     service = service_connection_request.service
     collaboration = service_connection_request.collaboration
+    user_id = current_user_id()
+    is_admin = collaboration.is_admin(user_id)
 
-    confirm_collaboration_admin(collaboration.id)
+    if is_admin:
+        confirm_collaboration_admin(collaboration.id)
 
-    _do_mail_request(collaboration, service, service_connection_request)
+    _do_mail_request(collaboration, service, service_connection_request, is_admin)
     return {}, 200

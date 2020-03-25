@@ -155,10 +155,10 @@ class App extends React.Component {
                     </div>}
                     <Switch>
                         <Route exact path="/" render={() => {
-                            return currentUser.guest ? <Redirect to="/login"/> : <Redirect to="/home"/>;
+                            return currentUser.guest ? <Redirect to="/landing"/> : <Redirect to="/home"/>;
                         }}/>
 
-                        <Route exact path="/login"
+                        <Route exact path="/landing"
                                render={props => {
                                    if (currentUser.guest) {
                                        return <Login user={currentUser} {...props}/>;
@@ -215,16 +215,17 @@ class App extends React.Component {
                                    currentUser={currentUser} Component={Services} {...props}/>}/>
 
                         <Route exact path="/services/:id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Service} {...props}/>}/>
+                               render={props => <ProtectedRoute config={config}
+                                                                currentUser={currentUser}
+                                                                Component={Service} {...props}/>}/>
 
                         <Route exact path="/new-service"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser}
-                                   isNew={true}
-                                   Component={Service} {...props}/>}/>
+                               render={props => <ProtectedRoute config={config}
+                                                                currentUser={currentUser}
+                                                                isNew={true}
+                                                                Component={Service} {...props}/>}/>
 
-                        <Route exact path="/service-request/:entityid"
+                        <Route exact path="/service-request"
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={ServiceRequest} {...props}/>}/>
 
