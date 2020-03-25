@@ -4,7 +4,7 @@
 
     margin: 0;
     list-style: none;
-    border: 1px solid $primary-green;
+    border: 1px solid $primary-orange;
     border-radius: $br;
 
     li {
@@ -29,7 +29,7 @@
 
         a {
             font-weight: normal;
-            color: $primary-green;
+            color: $primary-orange;
             text-decoration: none;
 
             &:hover {
@@ -39,7 +39,7 @@
         }
 
         &.active {
-            background-color: $primary-green;
+            background-color: $primary-orange;
 
             &:hover {
                 background-color: darken($primary-green, 10%);

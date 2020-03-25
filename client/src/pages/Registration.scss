@@ -53,7 +53,7 @@
 
             &.done {
                 background-color: lighten($primary-green, 5%);
-                border: 2px solid $primary-green;
+                border: 2px solid $primary-orange;
                 color: white;
             }
 
@@ -124,7 +124,7 @@
 
         section.form-element {
             padding: 2px 25px 2px 25px;
-            border-left: 3px solid $primary-green;
+            border-left: 3px solid $primary-orange;
             margin: 25px 0;
 
             &.invalid {
