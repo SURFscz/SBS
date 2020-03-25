@@ -39,9 +39,10 @@ class ServiceRequest extends React.Component {
     }
 
     componentDidMount = () => {
-        const params = this.props.match.params;
-        if (params.entityid) {
-            Promise.all([serviceByEntityId(params.entityid), myCollaborationsLite()])
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const entityId = urlSearchParams.get("entityID");
+        if (entityId) {
+            Promise.all([serviceByEntityId(entityId), myCollaborationsLite()])
                 .then(res => {
                     // Mark collaborations as already linked if the service is already connected
                     const service = res[0];
@@ -88,12 +89,15 @@ class ServiceRequest extends React.Component {
         const {user} = this.props;
         const selectedCollaborations = collaborations.filter(coll => coll.requestToLink);
         const collaborationAdminLinked = selectedCollaborations.some(coll => this.roleOfUserInCollaboration(coll, user) === "admin");
+        const noAutomaticConnectionAllowed = !service.automatic_connection_allowed;
         const promises = selectedCollaborations.map(coll => {
-            return this.roleOfUserInCollaboration(coll, user) === "admin" ?
+            const isMember = this.roleOfUserInCollaboration(coll, user) !== "admin";
+            return (isMember || noAutomaticConnectionAllowed)?
                 requestServiceConnection({
                     message: I18n.t("serviceRequest.motivation", {serviceName, userName: user.name}),
                     service_id: service.id,
-                    collaboration_id: coll.id
+                    collaboration_id: coll.id,
+                    member: isMember
                 }, false) : addCollaborationServices(coll.id, service.id);
         });
         Promise.all(promises)

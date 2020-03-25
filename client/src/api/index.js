@@ -100,7 +100,7 @@ export function config() {
 //Users
 export function me(config) {
     const headers = (config.local) ? {
-          // "OIDC_CLAIM_cmuid": "urn:jane",
+         // "OIDC_CLAIM_cmuid": "urn:jane",
          "OIDC_CLAIM_cmuid": "urn:john",
         // "OIDC_CLAIM_cmuid": "urn:okke",
         "OIDC_CLAIM_Nickname": "jëhny",
@@ -527,7 +527,7 @@ export function deleteServiceConnectionRequest(serviceConnectionRequestId) {
 }
 
 export function requestServiceConnection(body, showErrorDialog = true) {
-    return postPutJson(`/api/service_connection_requests`, body, "post", showErrorDialog);
+    return postPutJson("/api/service_connection_requests", body, "post", showErrorDialog);
 }
 
 export function serviceConnectionRequestByHash(hash) {
