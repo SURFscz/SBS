@@ -76,7 +76,7 @@ export default class Header extends React.PureComponent {
                             <NavLink to="/impersonate">
                             <span data-tip data-for="impersonator">
                                 <FontAwesomeIcon icon="user-secret"/></span>
-                                <ReactTooltip id="impersonator" type="light" effect="solid" data-html={true}>
+                                <ReactTooltip id="impersonator" type="light" effect="solid" data-html={true} place="bottom">
                                     <p dangerouslySetInnerHTML={{
                                         __html: I18n.t("header.impersonator", {
                                             currentUser: currentUser.name,

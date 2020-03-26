@@ -253,6 +253,7 @@ I18n.translations.nl = {
             deleted: "Samenwerking {{name}} is verwijderd.",
             memberDeleted: "{{name}} is geen lid meer van deze samenwerking.",
             memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
+            meAdded: "Je bent toegevoegd als lid van {{name}}"
         },
         infoBlocks: "Dashboard {{name}}",
         searchPlaceHolder: "Zoek leden",
@@ -266,7 +267,7 @@ I18n.translations.nl = {
             actions: ""
         },
         invite: "Uitnodigen",
-
+        addMe: "Voeg mij toe"
     },
     organisations: {
         dashboard: "Dashboard",

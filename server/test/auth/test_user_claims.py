@@ -18,7 +18,7 @@ class TestUserClaims(AbstractTest):
         return "".join(random.choice(chars) for x in range(12))
 
     def test_claim_attribute_hash_headers(self):
-        headers = {_get_header_key(key): self._random_str() for key in claim_attribute_mapping.keys()}
+        headers = {_get_header_key(key): self._random_str() for key in claim_attribute_mapping().keys()}
         hash_headers = claim_attribute_hash_headers(headers)
 
         user = User()
@@ -29,11 +29,11 @@ class TestUserClaims(AbstractTest):
         self.assertEqual(hash_headers, hash_user)
 
     def test_claim_attribute_hash_headers_none_value(self):
-        headers = {_get_header_key(key): None for key in claim_attribute_mapping.keys()}
+        headers = {_get_header_key(key): None for key in claim_attribute_mapping().keys()}
         hash_headers = claim_attribute_hash_headers(headers)
 
         user = User()
-        for attr in claim_attribute_mapping.values():
+        for attr in claim_attribute_mapping().values():
             setattr(user, attr, None)
         hash_user = claim_attribute_hash_user(user)
 

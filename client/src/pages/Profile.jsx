@@ -112,8 +112,12 @@ class Profile extends React.Component {
             reader.readAsText(file);
         }
     };
-    renderForm = (ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, totp_key, tiqr_key, ubi_key, disabledSubmit) =>
-        (<div className="user-profile">
+
+    renderForm = (user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit) => {
+        const attributes = ["name", "username", "email", "uid", "affiliation", "scoped_affiliation", "entitlement",
+            "nick_name", "schac_home_organisation", "edu_members"];
+
+        return (<div className="user-profile">
             <InputField value={ssh_key}
                         name={I18n.t("user.ssh_key")}
                         placeholder={I18n.t("user.ssh_keyPlaceholder")}
@@ -134,23 +138,12 @@ class Profile extends React.Component {
                       info={I18n.t("user.sshConvertInfo")}
                       onChange={e => this.setState({convertSSHKey: e.target.checked})}/>}
 
-
-            <InputField value={totp_key}
-                        name={I18n.t("user.totp_key")}
-                        placeholder={I18n.t("user.totp_key")}
-                        toolTip={I18n.t("user.totp_keyTooltip")}
-                        onChange={e => this.setState({totp_key: e.target.value})}/>
-            <InputField value={tiqr_key}
-                        name={I18n.t("user.tiqr_key")}
-                        placeholder={I18n.t("user.tiqr_keyPlaceholder")}
-                        toolTip={I18n.t("user.tiqr_keyTooltip")}
-                        onChange={e => this.setState({tiqr_key: e.target.value})}/>
-            <InputField value={ubi_key}
-                        name={I18n.t("user.ubi_key")}
-                        placeholder={I18n.t("user.ubi_keyPlaceholder")}
-                        toolTip={I18n.t("user.ubi_keyTooltip")}
-                        onChange={e => this.setState({ubi_key: e.target.value})}/>
-
+            {attributes.map(attribute =>
+                <InputField value={user[attribute]}
+                            name={`${I18n.t(`profile.${attribute}`)}`}
+                            disabled={true}
+                />)
+            }
             <section className="actions">
                 <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
                         onClick={this.submit}/>
@@ -158,12 +151,15 @@ class Profile extends React.Component {
             </section>
 
         </div>);
+    };
 
     render() {
         const {
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
-            initial, convertSSHKey, ssh_key, totp_key, tiqr_key, ubi_key, auditLogs
+            initial, convertSSHKey, ssh_key, auditLogs
         } = this.state;
+                const {user} = this.props;
+
         const disabledSubmit = !initial && !this.isValid();
         const title = I18n.t("user.titleUpdate");
         const showConvertSSHKey = !isEmpty(ssh_key) && validPublicSSH2KeyRegExp.test(ssh_key);
@@ -173,11 +169,11 @@ class Profile extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={true}/>
-                <BackLink history={this.props.history} />
+                <BackLink history={this.props.history}/>
                 <p className="title">{title}</p>
                 <Tabs>
                     <div label="form">
-                        {this.renderForm(ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, totp_key, tiqr_key, ubi_key, disabledSubmit)}
+                        {this.renderForm(user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit)}
                     </div>
                     <div label="history">
                         <History auditLogs={auditLogs}/>

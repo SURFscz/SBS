@@ -8,20 +8,29 @@ from server.db.domain import User
 
 user_service_profile_claims = ["name", "email", "address"]
 
-claim_attribute_mapping = {
-    "name": "name",
-    "cmuid": "uid",
-    "address_street_address": "address",
-    "nickname": "nick_name",
-    "edumember_is_member_of": "edu_members",
-    "eduperson_affiliation": "affiliation",
-    "eduperson_scoped_affiliation": "scoped_affiliation",
-    "eduperson_entitlement": "entitlement",
-    "schac_home_organisation": "schac_home_organisation",
-    "family_name": "family_name",
-    "given_name": "given_name",
-    "email": "email",
-}
+claim_attribute_mapping_value = None
+
+
+def claim_attribute_mapping():
+    global claim_attribute_mapping_value
+
+    if not claim_attribute_mapping_value:
+        claim_attribute_mapping_value = {
+            "name": "name",
+            current_app.app_config.oidc_id.lower(): "uid",
+            "address_street_address": "address",
+            "nickname": "nick_name",
+            "edumember_is_member_of": "edu_members",
+            "eduperson_affiliation": "affiliation",
+            "eduperson_scoped_affiliation": "scoped_affiliation",
+            "eduperson_entitlement": "entitlement",
+            "schac_home_organisation": "schac_home_organisation",
+            "family_name": "family_name",
+            "given_name": "given_name",
+            "email": "email",
+        }
+    return claim_attribute_mapping_value
+
 
 is_member_of_saml = "urn:mace:dir:attribute-def:isMemberOf"
 
@@ -68,17 +77,18 @@ def _get_value(request_headers, key):
 
 
 def claim_attribute_hash_headers(headers):
-    claims = {_get_header_key(key): _get_value(headers, _get_header_key(key)) for key in claim_attribute_mapping.keys()}
+    claims = {_get_header_key(key): _get_value(headers, _get_header_key(key)) for key in
+              claim_attribute_mapping().keys()}
     return hash(frozenset(claims.items()))
 
 
 def claim_attribute_hash_user(user: User):
-    claims = {_get_header_key(key): getattr(user, value) for key, value in claim_attribute_mapping.items()}
+    claims = {_get_header_key(key): getattr(user, value) for key, value in claim_attribute_mapping().items()}
     return hash(frozenset(claims.items()))
 
 
 def add_user_claims(request_headers, uid, user):
-    for key, attr in claim_attribute_mapping.items():
+    for key, attr in claim_attribute_mapping().items():
         setattr(user, attr, _get_value(request_headers, _get_header_key(key)))
     if not user.name:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()

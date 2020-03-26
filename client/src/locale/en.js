@@ -253,6 +253,7 @@ I18n.translations.en = {
             deleted: "Collaboration {{name}} was successfully deleted",
             memberDeleted: "Membership of {{name}} was successfully deleted",
             memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
+            meAdded: "Successfully added you as member of {{name}}"
         },
         infoBlocks: "Dashboard {{name}}",
         searchPlaceHolder: "Search for members",
@@ -266,6 +267,7 @@ I18n.translations.en = {
             actions: ""
         },
         invite: "Invite new members",
+        addMe: "Add me"
 
     },
     organisations: {

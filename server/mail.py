@@ -125,11 +125,12 @@ def mail_accepted_declined_collaboration_request(context, collaboration_name, ac
     )
 
 
-def mail_service_connection_request(context, service_name, collaboration_name, recipients, preview=False):
+def mail_service_connection_request(context, service_name, collaboration_name, recipients, is_admin, preview=False):
+    template = "service_connection_request_collaboration_admin" if is_admin else "service_connection_request"
     return _do_send_mail(
         subject=f"Request for new service {service_name} connection to collaboration {collaboration_name}",
         recipients=recipients,
-        template="service_connection_request",
+        template=template,
         context=context,
         preview=preview
     )
