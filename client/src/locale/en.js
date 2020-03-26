@@ -153,6 +153,8 @@ I18n.translations.en = {
         email: "E-mail",
         uid: "UID",
         affiliation: "Affiliations",
+        username: "Username",
+        scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Nick name",
         schac_home_organisation: "Institute abbreviation",

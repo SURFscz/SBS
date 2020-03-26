@@ -24,7 +24,7 @@ export default class Navigation extends React.PureComponent {
         spinner.onStop = () => this.setState({loading: false});
     }
 
-    renderItem = (href, value) => <NavLink activeClassName="active" className="menu-item"
+    renderItem = (href, value) => <NavLink activeClassName="active" className="menu-item title-header"
                                            to={href}>{I18n.t("navigation." + value)}</NavLink>;
 
     renderSpinner = () =>

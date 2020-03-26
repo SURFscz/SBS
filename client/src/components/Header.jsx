@@ -1,7 +1,8 @@
 import React from "react";
 import I18n from "i18n-js";
 import {Link, NavLink} from "react-router-dom";
-import logo from "../images/surflogo.png";
+// import logo from "../images/surflogo.png";
+import logo from "../images/logo-surf-orange.svg";
 import "./Header.scss";
 import {isEmpty, pseudoGuid, stopEvent} from "../utils/Utils";
 import LanguageSelector from "./LanguageSelector";
@@ -62,7 +63,7 @@ export default class Header extends React.PureComponent {
                 <div className="header">
                     <Link to="/"><img className="logo" src={logo} alt=""/></Link>
 
-                    <p className="title first">{I18n.t("header.title")}</p>
+                    <h1 className="title first">{I18n.t("header.title")}</h1>
                     <ul className="links">
                         {displayLogin && <li className="login">
                             <a href="/login" onClick={this.login}>{I18n.t("header.links.login")}</a>
