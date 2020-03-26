@@ -9,7 +9,7 @@ import "./EmailMembers.scss";
 export default function EmailMembers({title, members, allowEmailLink}) {
     return (
         <div className="mail-members-container">
-            <p className="mail-members-title">{title}</p>
+            <p className="mail-members-title title-header">{title}</p>
             {allowEmailLink && <span className="mail-members">
                    <a target="_blank" href={`mailto:${emailMembersLink(members)}`} rel="noopener noreferrer">
                     <span data-tip data-for="mail-members"> <FontAwesomeIcon icon="envelope"/></span>

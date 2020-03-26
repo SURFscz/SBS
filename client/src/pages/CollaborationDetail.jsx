@@ -618,7 +618,7 @@ class CollaborationDetail extends React.Component {
                 {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfCollaboration)}
             </section>}
             <div className="title">
-                <p>{I18n.t("collaborationDetail.title", {name: originalCollaboration.name})}</p>
+                <p className="title-header">{I18n.t("collaborationDetail.title", {name: originalCollaboration.name})}</p>
             </div>
             {this.collaborationDetails(name, short_name, alreadyExists, initial, description, accepted_user_policy,
                 enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,

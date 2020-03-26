@@ -26,8 +26,9 @@ export default function UserProfile({currentUser}) {
 
     const showOrganisations = organisationAdmins.length > 0 || organisationMembers.length > 0;
     const showCollaborations = collaborationAdmins.length > 0 || collaborationMembers.length > 0;
-    const attributes = ["name", "email", "uid", "affiliation", "entitlement", "nick_name", "schac_home_organisation", "edu_members"];
-    const splitAttributes = ["edu_members", "affiliation", "entitlement"];
+    const attributes = ["name", "username", "email", "uid", "affiliation","scoped_affiliation", "entitlement",
+        "nick_name", "schac_home_organisation", "edu_members"];
+    const splitAttributes = ["edu_members", "affiliation", "scoped_affiliation", "entitlement"];
     return (
         <ul className="user-profile">
             {attributes.map((attr, index) => addUserAttribute(currentUser, attr, index, splitAttributes.includes(attr)))}
@@ -38,7 +39,7 @@ export default function UserProfile({currentUser}) {
                 </li>
                 {collaborationAdmins.concat(collaborationMembers).map((membership, index) =>
                     <li key={index}>
-                        <span>{membership.collaboration.name}</span>
+                        <span>{`${membership.collaboration.name} - ${membership.collaboration.short_name} `}</span>
                         <span className="value">{I18n.t(`profile.${membership.role}`)}</span>
                     </li>
                 )}
@@ -52,7 +53,7 @@ export default function UserProfile({currentUser}) {
                 </li>
                 {organisationAdmins.concat(organisationMembers).map((membership, index) =>
                     <li key={index}>
-                        <span>{membership.organisation.name}</span>
+                        <span>{`${membership.organisation.name} - ${membership.organisation.short_name} `}</span>
                         <span className="value">{I18n.t(`profile.${membership.role}`)}</span>
                     </li>
                 )}
