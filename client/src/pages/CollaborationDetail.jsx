@@ -6,6 +6,7 @@ import {
     collaborationLiteById,
     collaborationNameExists,
     collaborationShortNameExists,
+    createCollaborationMembershipRole,
     deleteCollaboration,
     deleteCollaborationMembership,
     updateCollaboration,
@@ -70,7 +71,8 @@ class CollaborationDetail extends React.Component {
             confirmationQuestion: I18n.t("collaborationDetail.deleteConfirmation"),
             leavePage: false,
             showMore: [],
-            auditLogs: {"audit_logs": []}
+            auditLogs: {"audit_logs": []},
+            addedMe: false
         }
     }
 
@@ -215,6 +217,17 @@ class CollaborationDetail extends React.Component {
         const {query} = this.state;
         const email = isEmpty(query) ? "" : `?email=${encodeURIComponent(query)}`;
         this.props.history.push(`/new-invite/${this.state.originalCollaboration.id}${(email)}`);
+    };
+
+    addMe = e => {
+        stopEvent(e);
+        createCollaborationMembershipRole(this.state.originalCollaboration.id)
+            .then(() => {
+                this.setState({addedMe: true});
+                this.componentDidMount();
+                window.scrollTo(0, 0);
+                setFlash(I18n.t("collaborationDetail.flash.meAdded", {name: this.state.originalCollaboration.name}));
+            });
     };
 
     openJoinRequest = joinRequest => e => {
@@ -444,8 +457,14 @@ class CollaborationDetail extends React.Component {
     };
 
 
-    renderMembers = (members, user, sorted, reverse, query, adminOfCollaboration) => {
+    renderMembers = (members, user, sorted, reverse, query, adminOfCollaboration, originalCollaboration, addedMe) => {
         const isAdmin = user.admin || adminOfCollaboration;
+
+        const alreadyMember = user.collaboration_memberships.some(cm => cm.collaboration_id === originalCollaboration.id);
+        const organisationAdmin = user.organisation_memberships.some(om => om.organisation_id === originalCollaboration.organisation_id
+            && om.role === "admin");
+        const showAddMe = !addedMe && !alreadyMember && (user.admin || organisationAdmin);
+
         const adminClassName = isAdmin ? "with-button" : "";
 
         return (
@@ -457,6 +476,10 @@ class CollaborationDetail extends React.Component {
                            value={query}
                            placeholder={I18n.t("collaborationDetail.searchPlaceHolder")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
+                    {showAddMe &&
+                    <Button onClick={this.addMe}
+                            txt={I18n.t("collaborationDetail.addMe")}/>
+                    }
                     {isAdmin &&
                     <Button onClick={this.invite}
                             txt={I18n.t("collaborationDetail.invite")}/>
@@ -597,7 +620,7 @@ class CollaborationDetail extends React.Component {
     renderDetails = (isAdmin, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
                      leavePage, originalCollaboration, filteredMembers, user, sorted, reverse, query, adminOfCollaboration,
                      name, short_name, alreadyExists, initial, description, accepted_user_policy, enrollment, access_type,
-                     identifier, organisation, disabledSubmit, config, disable_join_requests, services_restricted) => (
+                     identifier, organisation, disabledSubmit, config, disable_join_requests, services_restricted, addedMe) => (
         <div>
             {isAdmin && <section>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -615,7 +638,7 @@ class CollaborationDetail extends React.Component {
                 <EmailMembers allowEmailLink={true}
                               members={this.state.members}
                               title={I18n.t("collaborationDetail.members", {name: originalCollaboration.name})}/>
-                {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfCollaboration)}
+                {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfCollaboration, originalCollaboration, addedMe)}
             </section>}
             <div className="title">
                 <p className="title-header">{I18n.t("collaborationDetail.title", {name: originalCollaboration.name})}</p>
@@ -630,7 +653,7 @@ class CollaborationDetail extends React.Component {
             originalCollaboration, name, short_name, description, accepted_user_policy, access_type, initial, alreadyExists,
             identifier, enrollment, filteredMembers, query, disable_join_requests, services_restricted,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
-            adminOfCollaboration, auditLogs
+            adminOfCollaboration, auditLogs, addedMe
         } = this.state;
         if (!originalCollaboration) {
             return null;
@@ -652,7 +675,7 @@ class CollaborationDetail extends React.Component {
                             confirmationQuestion, leavePage, originalCollaboration, filteredMembers, user, sorted, reverse, query,
                             adminOfCollaboration, name, short_name, alreadyExists, initial, description, accepted_user_policy,
                             enrollment, access_type, identifier, organisation, disabledSubmit, config, disable_join_requests,
-                            services_restricted)}
+                            services_restricted, addedMe)}
                     </div>
                     {isAdmin && <div label="history">
                         <History auditLogs={auditLogs} className="white"/>

@@ -170,6 +170,18 @@ class App extends React.Component {
                                    return <Redirect to={decodeURIComponent(state)}/>
                                }}/>
 
+                        <Route exact path="/login"
+                               render={props => {
+                                   if (currentUser.guest) {
+                                       return <Login user={currentUser} {...props}/>;
+                                   }
+                                   const state = getParameterByName("state", window.location.search);
+                                   if (isEmpty(state)) {
+                                       return <Redirect to="/home"/>;
+                                   }
+                                   return <Redirect to={decodeURIComponent(state)}/>
+                               }}/>
+
                         <Route path="/registration"
                                render={props => <Registration user={currentUser}
                                                               collaboration={getParameterByName("collaboration", window.location.search)}
@@ -178,7 +190,7 @@ class App extends React.Component {
                         <Route path="/home"
                                render={props => {
                                    if (currentUser.guest) {
-                                       return <Redirect to="/login"/>;
+                                       return <Redirect to="/landing"/>;
                                    }
                                    return <ProtectedRoute
                                        currentUser={currentUser}

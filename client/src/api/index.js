@@ -388,6 +388,12 @@ export function updateCollaborationMembershipRole(collaborationId, userId, role)
     }, "put")
 }
 
+export function createCollaborationMembershipRole(collaborationId) {
+    return postPutJson("/api/collaboration_memberships", {
+        collaborationId: collaborationId
+    }, "post")
+}
+
 //CollaborationServices
 export function addCollaborationServices(collaborationId, serviceId) {
     return postPutJson(`/api/collaborations_services`, {

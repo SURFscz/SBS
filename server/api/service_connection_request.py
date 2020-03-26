@@ -90,9 +90,6 @@ def request_service_connection():
     user_id = current_user_id()
     is_admin = collaboration.is_admin(user_id)
 
-    if is_admin:
-        confirm_collaboration_admin(collaboration.id)
-
     existing_request = ServiceConnectionRequest.query \
         .filter(ServiceConnectionRequest.collaboration_id == collaboration.id) \
         .filter(ServiceConnectionRequest.service_id == service.id) \
@@ -126,7 +123,7 @@ def _do_mail_request(collaboration, service, service_connection_request, is_admi
             if membership.role == "admin":
                 recipients.append(membership.user.email)
         recipients = recipients if is_admin else [service.contact_email]
-        mail_service_connection_request(context, service.name, collaboration.name, recipients)
+        mail_service_connection_request(context, service.name, collaboration.name, recipients, is_admin)
 
 
 @service_connection_request_api.route("/find_by_hash/<hash>", strict_slashes=False)

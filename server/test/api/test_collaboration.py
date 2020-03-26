@@ -115,7 +115,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("admin", admin.role)
         self.assertEqual("urn:harry", admin.user.uid)
 
-    def test_collaboration_restricted_access_api_forbidden_withoutt_correct_scope(self):
+    def test_collaboration_restricted_access_api_forbidden_without_correct_scope(self):
         self.login("urn:harry")
         self.post("/api/collaborations/v1/restricted",
                   body={},
@@ -129,6 +129,17 @@ class TestCollaboration(AbstractTest):
                   body={},
                   with_basic_auth=False,
                   response_status_code=403)
+
+    def test_collaboration_restricted_invalid_admini(self):
+        res = self.post("/api/collaborations/v1/restricted",
+                        body={
+                            "name": "new_collaboration",
+                            "administrator": "nope"
+                        },
+                        with_basic_auth=False,
+                        headers=RESTRICTED_CO_API_AUTH_HEADER,
+                        response_status_code=400)
+        self.assertEqual("Administrator nope is not a valid user", res["message"])
 
     def test_collaboration_update(self):
         collaboration_id = self._find_by_name_id()["id"]
@@ -373,6 +384,19 @@ class TestCollaboration(AbstractTest):
         data = response.json
         self.assertEqual(data["message"],
                          "Collaboration with short_name 'ai_computing' already exists within organisation 'UUC'.")
+
+    def test_api_call_no_api(self):
+        self.login("urn:john")
+        response = self.client.post("/api/collaborations/v1",
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "administrators": ["the@ex.org"],
+                                        "short_name": ai_computing_short_name
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(403, response.status_code)
+        data = response.json
+        self.assertEqual(data["message"], "Not associated with an API key")
 
     def test_collaboration_groups_by_id(self):
         collaboration_id = self._find_by_name_id()["id"]
