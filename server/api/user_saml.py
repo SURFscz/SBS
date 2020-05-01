@@ -6,7 +6,6 @@ from server.api.base import json_endpoint, query_param, ctx_logger
 from server.auth.security import confirm_read_access
 
 from server.db.domain import User, CollaborationMembership, Service, Collaboration
-from server.db.models import flatten
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 
@@ -14,25 +13,14 @@ user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 custom_saml_mapping = {
     "multi_value_attributes": ["edu_members", "affiliation", "scoped_affiliation", "entitlement"],
     "attribute_saml_mapping": {
-        "uid": "sbs_id",
-        "name": "cn",
-        "address": "postalAddress",
-        "nick_name": "displayName",
+        "uid": "cuid",
         "username": "uid",
-        "edu_members": "isMemberOf",
-        "affiliation": "eduPersonAffiliation",
-        "scoped_affiliation": "eduPersonScopedAffiliation",
-        "entitlement": "eduPersonEntitlement",
-        "schac_home_organisation": "schacHomeOrganization",
-        "family_name": "sn",
-        "given_name": "givenName",
-        "email": "mail",
-        "ssh_key": "sshKey"
+        "ssh_key": "sshKey",
     }
 }
 
 
-# Endpoint for SATOSA
+# Endpoint for SATOSA/eduteams
 @user_saml_api.route("/attributes", strict_slashes=False)
 @json_endpoint
 def attributes():
@@ -53,6 +41,7 @@ def attributes():
         logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
         return {}, 200
 
+    # gather regular user attributes
     result = {}
     user = User.query.filter(User.uid == uid).one()
     for k, v in custom_saml_mapping["attribute_saml_mapping"].items():
