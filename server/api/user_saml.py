@@ -16,6 +16,9 @@ custom_saml_mapping = {
         "uid": "cuid",
         "username": "uid",
         "ssh_key": "sshKey",
+    },
+    "custom_attribute_saml_mapping": {
+        "memberships": "eduPersonEntitlement",
     }
 }
 
@@ -49,14 +52,28 @@ def attributes():
         if val:
             result[v] = val.split(",") if k in custom_saml_mapping["multi_value_attributes"] else [val]
 
-    collaboration_names = list(map(lambda cm: cm.collaboration.short_name, user.collaboration_memberships))
+    # gather groups and collaborations
+    #
+    # we're (partially) adhering to AARC's Guidelines on expressing group membership and role information
+    # (see https://aarc-project.eu/guidelines/aarc-g002/)
+    # Which prescribes group/co membership need to be expressed as entitlements of the form
+    # <NAMESPACE>:group:<GROUP>[:<SUBGROUP>*][:role=<ROLE>]#<GROUP-AUTHORITY>
+    # The namespace is defined in the config file (variable entitlement_group_namespace)
+    # COs map to GROUP and Groups map to SUBGROUP
+    # We don't use roles, so we omit those.
+    # Also, we omit the GROUP-AUTHORITY (and are therefore not completely compliant), as it complicates parsing the
+    # entitlement, will confuse Services, and  the spec fails to make clear what the usecase is, exactly.
     cfg = current_app.app_config
+    namespace = cfg.get("entitlement_group_namespace", "urn:bla")
 
-    groups = flatten(list(map(lambda cm: cm.collaboration.groups, user.collaboration_memberships)))
+    memberships = set()
+    for cm in user.collaboration_memberships:
+        memberships.add(f"{namespace}:group:{cm.collaboration.short_name}")
+        for g in cm.collaboration.groups:
+            memberships.add(f"{namespace}:group:{cm.collaboration.short_name}:{g.short_name}")
+    membership_attribute = custom_saml_mapping['custom_attribute_saml_mapping']['memberships']
+    result[membership_attribute] = memberships
 
-    group_short_names = list(map(lambda group: group.short_name, groups))
-    is_member_of = list(set(group_short_names + collaboration_names))
-    result[custom_saml_mapping["attribute_saml_mapping"]["edu_members"]] = is_member_of
     result = {k: list(set(v)) for k, v in result.items()}
 
     logger.info(f"Returning attributes for user {uid} and service_entity_id {service_entity_id}")
