@@ -52,7 +52,7 @@ class TestCollaborationRequest(AbstractTest):
         organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
         self.login("urn:harry",
                    schac_home_organisation,
-                   {"OIDC_CLAIM_EDUPERSON_ENTITLEMENT": "urn:mace:surf.nl:sram:allow-create-co"})
+                   {"OIDC_CLAIM_EDUPERSON_ENTITLEMENT": "urn:example:sbs:allow-create-co"})
         data = {
             "name": "New Collaboration",
             "short_name": "new_collaboration_short",

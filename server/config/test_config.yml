@@ -20,7 +20,7 @@ oidc_uppercase: True
 
 base_scope: "test.sbs.local"
 generate_multiple_eppn: True
-collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
+collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
 restricted_co:
   services_white_list: ["https://cloud"]
