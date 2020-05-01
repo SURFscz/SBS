@@ -62,9 +62,6 @@ def attributes():
 
     collaboration_names = list(map(lambda cm: cm.collaboration.short_name, user.collaboration_memberships))
     cfg = current_app.app_config
-    if cfg.get("generate_multiple_eppn", False):
-        eppns = list(map(lambda co: f"{user.username}@{co}.{cfg.base_scope}", set(collaboration_names)))
-        result["urn:mace:dir:attribute-def:eduPersonPrincipalName"] = eppns
 
     groups = flatten(list(map(lambda cm: cm.collaboration.groups, user.collaboration_memberships)))
 
