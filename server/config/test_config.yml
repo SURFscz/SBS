@@ -14,7 +14,7 @@ api_users:
     password: "secret"
     scopes: ["restricted_co"]
 
-oidc_id: "CMUID"
+oidc_id: "SUB"
 oidc_prefix: "HTTP_OIDC_CLAIM_"
 oidc_uppercase: True
 
