@@ -363,7 +363,7 @@ I18n.translations.en = {
         schacHomeOrganisationPlaceholder: "The Schac Home Organisation of the organisation",
         schacHomeOrganisationTooltip: "A person's home organization based<br/>on the domain name of the institution.",
         collaborationCreationAllowed: "Automatically approve CO creation requests",
-        collaborationCreationAllowedTooltip: "Any person can create<br/>Collaborations for their home<br/>institution.",
+        collaborationCreationAllowedTooltip: "Any person can create<br/>Collaborations for their home<br/>institution.<br/><br/>This feature requires a Schac Home organization.",
         created: "Created at",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",

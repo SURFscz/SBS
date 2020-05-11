@@ -195,6 +195,7 @@ class NewOrganisation extends React.Component {
                     <CheckBox name={"collaboration_creation_allowed"}
                               value={collaboration_creation_allowed}
                               info={I18n.t("organisation.collaborationCreationAllowed")}
+                              readOnly={isEmpty(schac_home_organisation)}
                               tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
                               onChange={e => this.setState({collaboration_creation_allowed: e.target.checked})}/>
 
