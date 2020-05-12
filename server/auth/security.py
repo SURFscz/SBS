@@ -8,7 +8,7 @@ from werkzeug.exceptions import Forbidden
 from server.db.domain import CollaborationMembership, OrganisationMembership, Group, Collaboration, Organisation
 
 
-def is_admin_user(uid):
+def is_admin_user(uid, needs_to_be_confirmed=False):
     admin_users = current_app.app_config.admin_users
     return len(list(filter(lambda u: u.uid == uid, admin_users))) == 1
 
@@ -36,6 +36,8 @@ def _get_impersonated_session():
 
 
 def is_application_admin():
+    if current_app.app_config.feature.admin_users_upgrade:
+        return _get_impersonated_session()["user"]["admin"] and _get_impersonated_session()["user"]["confirmed_admin"]
     return _get_impersonated_session()["user"]["admin"]
 
 
@@ -56,7 +58,10 @@ def current_user_name():
 
 
 def confirm_allow_impersonation():
+    admin_users_upgrade = current_app.app_config.feature.admin_users_upgrade
     if "user" not in session or "admin" not in session["user"] or not session["user"]["admin"]:
+        raise Forbidden()
+    if admin_users_upgrade and "confirmed_admin" not in session["user"] and not session["user"]["confirmed_admin"]:
         raise Forbidden()
     return True
 

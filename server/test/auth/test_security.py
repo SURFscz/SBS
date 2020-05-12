@@ -15,7 +15,7 @@ class TestSecurity(AbstractTest):
 
     def test_is_admin(self):
         with self.app.app_context():
-            session["user"] = {"uid": "urn:john", "admin": True}
+            session["user"] = {"uid": "urn:john", "admin": True, "confirmed_admin": True}
 
             self.assertTrue(is_admin_user("urn:john"))
             self.assertTrue(is_application_admin())

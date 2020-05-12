@@ -34,6 +34,7 @@ class User(Base, db.Model):
                                              cascade_backrefs=False, passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="user", cascade_backrefs=False, passive_deletes=True)
     aups = db.relationship("Aup", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
+    confirmed_super_user = db.Column("confirmed_super_user", db.Boolean(), nullable=True, default=False)
 
 
 class Organisation(Base, db.Model):

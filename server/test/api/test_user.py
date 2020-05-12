@@ -9,7 +9,7 @@ from server.auth.user_claims import claim_attribute_mapping
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name
+from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, mike_name
 
 
 class TestUser(AbstractTest):
@@ -205,3 +205,21 @@ class TestUser(AbstractTest):
         }
         user = self.client.get("/api/users/me", environ_overrides=environ_overrides).json
         self.assertEqual(user["schac_home_organisation"], "example.org")
+
+    def test_upgrade_super_account(self):
+        headers = {self.uid_header_name(): "urn:mike"}
+        res = self.client.get("/api/users/upgrade_super_user",
+                              environ_overrides=headers,
+                              headers=headers)
+        self.assertEqual(302, res.status_code)
+        self.assertEqual("http://localhost:3000", res.location)
+
+        mike = self.find_entity_by_name(User, mike_name)
+        self.assertEqual(True, mike.confirmed_super_user)
+
+    def test_upgrade_super_account_forbidden(self):
+        headers = {self.uid_header_name(): "urn:sarah"}
+        res = self.client.get("/api/users/upgrade_super_user",
+                              environ_overrides=headers,
+                              headers=headers)
+        self.assertEqual(403, res.status_code)
