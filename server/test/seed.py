@@ -19,6 +19,7 @@ join_request_reference = "Dr. Johnson"
 the_boss_name = "The Boss"
 roger_name = "Roger Doe"
 john_name = "John Doe"
+mike_name = "Mike Doe"
 james_name = "James Byrd"
 sarah_name = "Sarah Cross"
 
@@ -98,7 +99,9 @@ def seed(db):
                         "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
                         "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
                         "jxEpu8soL okke@Mikes-MBP-2.fritz.box",
-                address="Postal 1234AA")
+                address="Postal 1234AA", confirmed_super_user=True)
+    unconfirmed_super_user_mike = User(uid="urn:mike", name=mike_name, email="mike@example.org", username="mike",
+                                       confirmed_super_user=False)
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org",
                 schac_home_organisation=schac_home_organisation)
@@ -118,7 +121,7 @@ def seed(db):
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co")
 
-    _persist(db, john, mary, peter, admin, roger, harry, james, sarah, jane)
+    _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, jane)
 
     uuc = Organisation(name=uuc_name, short_name="uuc",
                        description="Unincorporated Urban Community",

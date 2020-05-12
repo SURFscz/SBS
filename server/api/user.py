@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 import unicodedata
 
-from flask import Blueprint, request as current_request, session, jsonify, current_app
+from flask import Blueprint, request as current_request, session, jsonify, current_app, redirect
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Forbidden
@@ -38,7 +38,7 @@ def _log_headers():
 
 def _store_user_in_session(user):
     # The session is stored as a cookie in the browser. We therefore minimize the content
-    is_admin = {"admin": is_admin_user(user.uid), "guest": False}
+    is_admin = {"admin": is_admin_user(user.uid), "guest": False, "confirmed_admin": user.confirmed_super_user}
     session_data = {
         "id": user.id,
         "uid": user.uid,
@@ -169,11 +169,16 @@ def _user_name(user):
     return user
 
 
+def _current_request_headers():
+    request_headers = current_request.environ.copy()
+    request_headers.update(current_request.headers)
+    return request_headers
+
+
 @user_api.route("/me", strict_slashes=False)
 @json_endpoint
 def me():
-    request_headers = current_request.environ.copy()
-    request_headers.update(current_request.headers)
+    request_headers = _current_request_headers()
     uid = get_user_uid(request_headers)
     if uid:
         users = User.query.filter(User.uid == uid).all()
@@ -293,6 +298,28 @@ def attribute_aggregation():
     user = users[0] if len(users) == 1 else users_eppn_match[0] if len(users_eppn_match) == 1 else users[0]
 
     return [cm.collaboration.name for cm in user.collaboration_memberships], 200
+
+
+@user_api.route("/upgrade_super_user", methods=["GET"], strict_slashes=False)
+def upgrade_super_user():
+    session.modified = True
+    request_headers = _current_request_headers()
+    uid = get_user_uid(request_headers)
+    user = User.query.filter(User.uid == uid).one()
+
+    if not is_admin_user(user.uid):
+        raise Forbidden("Must be admin user")
+
+    user.confirmed_super_user = True
+    user = db.session.merge(user)
+    db.session.commit()
+
+    _store_user_in_session(user)
+
+    response = redirect(current_app.app_config.feature.admin_users_upgrade_redirect_url)
+    response.headers.set("x-session-alive", "true")
+    response.headers["server"] = ""
+    return response
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)

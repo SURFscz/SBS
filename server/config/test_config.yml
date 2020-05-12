@@ -45,4 +45,9 @@ wiki_link: https://wiki.surfnet.nl/display/SCZ/SCZ+Public+Space
 admin_users:
   - uid: "urn:john"
   - uid: "urn:rocky"
+  - uid: "urn:mike"
 
+feature:
+  admin_users_upgrade: True
+  admin_users_upgrade_url: http://localhost:8080/api/users/upgrade_super_user
+  admin_users_upgrade_redirect_url: http://localhost:3000
