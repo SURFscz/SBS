@@ -20,10 +20,17 @@ class TestUser(AbstractTest):
         self.assertEqual(user["admin"], False)
 
     def test_provision_me_identity_header(self):
-        user = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "uid:new"}).json
+        headers = {self.uid_header_name(): "uid:new",
+                   self.application_ui_header_name().upper(): "123456789",
+                   f"{current_app.app_config.oidc_prefix}EDUPERSON_PRINCIPAL_NAME": "john.doe"}
+        user = self.client.get("/api/users/me",
+                               headers=headers,
+                               environ_overrides=headers).json
         self.assertEqual(user["guest"], False)
         self.assertEqual(user["admin"], False)
         self.assertEqual(user["uid"], "uid:new")
+        self.assertEqual(user["application_uid"], "123456789")
+        self.assertEqual(user["eduperson_principal_name"], "john.doe")
 
     def test_me_existing_user(self):
         user = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "urn:john"}).json
@@ -207,7 +214,7 @@ class TestUser(AbstractTest):
         self.assertEqual(user["schac_home_organisation"], "example.org")
 
     def test_upgrade_super_account(self):
-        headers = {self.uid_header_name(): "urn:mike"}
+        headers = {f"{current_app.app_config.oidc_prefix}EDUPERSON_PRINCIPAL_NAME": "mike_application_uid"}
         res = self.client.get("/api/users/upgrade_super_user",
                               environ_overrides=headers,
                               headers=headers)
@@ -218,7 +225,7 @@ class TestUser(AbstractTest):
         self.assertEqual(True, mike.confirmed_super_user)
 
     def test_upgrade_super_account_forbidden(self):
-        headers = {self.uid_header_name(): "urn:sarah"}
+        headers = {f"{current_app.app_config.oidc_prefix}EDUPERSON_PRINCIPAL_NAME": "sarah_application_uid"}
         res = self.client.get("/api/users/upgrade_super_user",
                               environ_overrides=headers,
                               headers=headers)

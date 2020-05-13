@@ -5,11 +5,12 @@ from flask import session, g as request_context, request as current_request, cur
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden
 
-from server.db.domain import CollaborationMembership, OrganisationMembership, Group, Collaboration, Organisation
+from server.db.domain import CollaborationMembership, OrganisationMembership, Group, Collaboration, Organisation, User
 
 
-def is_admin_user(uid, needs_to_be_confirmed=False):
+def is_admin_user(user):
     admin_users = current_app.app_config.admin_users
+    uid = user.uid if isinstance(user, User) else user["uid"]
     return len(list(filter(lambda u: u.uid == uid, admin_users))) == 1
 
 
@@ -29,16 +30,18 @@ def _get_impersonated_session():
                 "uid": impersonate_uid,
                 "name": impersonate_name,
                 "email": impersonate_mail,
-                "admin": is_admin_user(impersonate_uid)
+                "admin": is_admin_user({"uid": impersonate_uid}),
+                "confirmed_admin": False
             }
         }
     return session
 
 
 def is_application_admin():
+    impersonated_session = _get_impersonated_session()
     if current_app.app_config.feature.admin_users_upgrade:
-        return _get_impersonated_session()["user"]["admin"] and _get_impersonated_session()["user"]["confirmed_admin"]
-    return _get_impersonated_session()["user"]["admin"]
+        return impersonated_session["user"]["admin"] and impersonated_session["user"]["confirmed_admin"]
+    return impersonated_session["user"]["admin"]
 
 
 def current_user():

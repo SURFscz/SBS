@@ -17,7 +17,7 @@ from werkzeug.exceptions import Forbidden
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, ctx_logger
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
 from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_hash_user, add_user_claims, \
-    get_user_uid
+    get_user_uid, get_user_eppn
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import User, OrganisationMembership, CollaborationMembership
@@ -38,15 +38,15 @@ def _log_headers():
 
 def _store_user_in_session(user):
     # The session is stored as a cookie in the browser. We therefore minimize the content
-    is_admin = {"admin": is_admin_user(user.uid), "guest": False, "confirmed_admin": user.confirmed_super_user}
+    res = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
     session_data = {
         "id": user.id,
         "uid": user.uid,
         "name": user.name,
         "email": user.email
     }
-    session["user"] = {**session_data, **is_admin}
-    return is_admin
+    session["user"] = {**session_data, **res}
+    return res
 
 
 def _user_query():
@@ -64,7 +64,7 @@ def _user_query():
 
 
 def _user_json_response(user):
-    is_admin = {"admin": is_admin_user(user.uid), "guest": False}
+    is_admin = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
     needs_to_agree_with_aup = \
         current_app.app_config.aup.pdf not in list(map(lambda aup: aup.au_version, user.aups))
@@ -151,7 +151,7 @@ def user_search():
             user_info["uid"] = g["uid"]
             user_info["name"] = g["name"]
             user_info["email"] = g["email"]
-            user_info["admin"] = is_admin_user(g["uid"])
+            user_info["admin"] = is_admin_user(g)
             if g["organisation_name"] is not None and g["organisation_name"] not in [item["name"] for item in
                                                                                      user_info["organisations"]]:
                 user_info["organisations"].append({"name": g["organisation_name"], "role": g["organisation_role"]})
@@ -304,10 +304,11 @@ def attribute_aggregation():
 def upgrade_super_user():
     session.modified = True
     request_headers = _current_request_headers()
-    uid = get_user_uid(request_headers)
-    user = User.query.filter(User.uid == uid).one()
 
-    if not is_admin_user(user.uid):
+    eppn = get_user_eppn(request_headers)
+    user = User.query.filter(User.application_uid == eppn).one()
+
+    if not is_admin_user(user):
         raise Forbidden("Must be admin user")
 
     user.confirmed_super_user = True

@@ -43,6 +43,7 @@ import CollaborationRequest from "./CollaborationRequest";
 import ServiceConnectionRequest from "./ServiceConnectionRequest";
 import OrganisationDetailLite from "./OrganisationDetailLite";
 import ServiceRequest from "./ServiceRequest";
+import Confirmation from "./Confirmation";
 
 addIcons();
 
@@ -94,6 +95,15 @@ class App extends React.Component {
         }
     };
 
+    markUserAdmin = user => {
+        const {config} = this.state;
+        if (config.admin_users_upgrade && user.admin && !user.confirmed_super_user) {
+            user.admin = false;
+            user.needsSuperUserConfirmation = true;
+        }
+        return user;
+    }
+
     componentDidMount() {
         emitter.addListener("impersonation", this.impersonate);
         const location = window.location;
@@ -103,7 +113,7 @@ class App extends React.Component {
             config().then(res => {
                 this.setState({config: res}, () => me(res).then(currentUser => {
                     if (currentUser && currentUser.uid) {
-                        this.setState({currentUser: currentUser, loading: false});
+                        this.setState({currentUser: this.markUserAdmin(currentUser), loading: false});
                     } else {
                         this.handleBackendDown();
                     }
@@ -119,12 +129,13 @@ class App extends React.Component {
     impersonate = selectedUser => {
         if (isEmpty(selectedUser)) {
             me(this.state.config).then(currentUser => {
-                this.setState({currentUser: currentUser, impersonator: null, loading: false});
+                this.setState({currentUser: this.markUserAdmin(currentUser), impersonator: null, loading: false});
             });
         } else {
             other(selectedUser.uid).then(user => {
                 const {currentUser, impersonator} = this.state;
-                this.setState({currentUser: user, impersonator: impersonator || currentUser});
+                const newUser = this.markUserAdmin(user);
+                this.setState({currentUser: newUser, impersonator: impersonator || currentUser});
             });
         }
     };
@@ -318,6 +329,11 @@ class App extends React.Component {
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={Impersonate}
                                    impersonator={impersonator} {...props}/>}/>
+
+                        <Route path="/confirmation"
+                               render={props => <ProtectedRoute
+                                   currentUser={currentUser} Component={Confirmation}
+                                   config={config} {...props}/>}/>
 
                         <Route path="/profile"
                                render={props => <ProtectedRoute

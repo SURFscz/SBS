@@ -43,7 +43,6 @@ export default class NewDropDown extends React.PureComponent {
         const organisationMemberships = currentUser.organisation_memberships || [];
         const organisationAdmin = organisationMemberships.find(membership => membership.role === "admin");
         const allowedCollaborationRequest = !currentUser.admin && isEmpty(organisationMemberships);
-
         if (currentUser.admin) {
             allowedActions.push({
                 name: "organisation",

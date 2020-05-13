@@ -17,7 +17,7 @@ class TestSecurity(AbstractTest):
         with self.app.app_context():
             session["user"] = {"uid": "urn:john", "admin": True, "confirmed_admin": True}
 
-            self.assertTrue(is_admin_user("urn:john"))
+            self.assertTrue(is_admin_user({"uid": "urn:john"}))
             self.assertTrue(is_application_admin())
 
             confirm_allow_impersonation()

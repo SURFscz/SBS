@@ -101,7 +101,7 @@ def seed(db):
                         "jxEpu8soL okke@Mikes-MBP-2.fritz.box",
                 address="Postal 1234AA", confirmed_super_user=True)
     unconfirmed_super_user_mike = User(uid="urn:mike", name=mike_name, email="mike@example.org", username="mike",
-                                       confirmed_super_user=False)
+                                       confirmed_super_user=False, application_uid="mike_application_uid")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org",
                 schac_home_organisation=schac_home_organisation)
@@ -117,7 +117,7 @@ def seed(db):
                          "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
                          "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
                          "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
-    sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org")
+    sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid")
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co")
 
