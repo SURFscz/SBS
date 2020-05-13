@@ -8,8 +8,8 @@ from sqlalchemy.orm import joinedload, contains_eager
 from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
-from server.auth.security import confirm_write_access, current_user_id, is_admin_user, current_user_uid, \
-    is_application_admin, confirm_authorized_api_call, confirm_organisation_admin, confirm_allow_impersonation, \
+from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
+    confirm_authorized_api_call, confirm_organisation_admin, confirm_allow_impersonation, \
     is_collaboration_admin
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
@@ -132,8 +132,7 @@ def organisation_by_id(organisation_id):
         .filter(Organisation.id == organisation_id)
 
     if not request_context.is_authorized_api_call:
-        user_uid = current_user_uid()
-        is_admin = is_admin_user(user_uid)
+        is_admin = is_application_admin()
 
         if not is_admin:
             user_id = current_user_id()

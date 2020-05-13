@@ -18,7 +18,6 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    # No alembic equivalent for fulltext index
     conn.execute(text("ALTER TABLE users ADD COLUMN address VARCHAR(255)"))
 
 

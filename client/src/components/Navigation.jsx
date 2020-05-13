@@ -60,6 +60,7 @@ export default class Navigation extends React.PureComponent {
                     this.renderItem("/registration", "registration")}
                     {!currentUser.guest && this.renderItem("/profile", "profile")}
                     <div className="menu-item-right">
+                        {currentUser.needsSuperUserConfirmation && this.renderItem("/confirmation", "confirmation")}
                         {mayImpersonate && this.renderItem("/impersonate", "impersonate")}
                         {mayCreateSomething && <NewDropDown currentUser={currentUser}/>}
                     </div>

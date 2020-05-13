@@ -58,6 +58,10 @@ class AbstractTest(TestCase):
     def uid_header_name():
         return current_app.app_config.oidc_prefix + current_app.app_config.oidc_id
 
+    @staticmethod
+    def application_ui_header_name():
+        return current_app.app_config.oidc_prefix + current_app.app_config.voperson_application_uid
+
     def login(self, uid="urn:john", schac_home_organisation=None, extra_headers={}):
         with requests.Session():
             headers = {self.uid_header_name(): uid}

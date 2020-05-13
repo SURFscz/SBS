@@ -24,7 +24,8 @@ I18n.translations.nl = {
         services: "Diensten",
         profile: "Profiel",
         impersonate: "Impersonate",
-        aup: "AUP"
+        aup: "AUP",
+        confirmation: "Admin confirmatie"
     },
     login: {
         title: "Research Access Management",
@@ -815,6 +816,11 @@ I18n.translations.nl = {
             requested: "Access to Service {{serviceName}} has been requested. Until the request is granted you can not access this service.",
         },
         outstandingServiceConnectionRequest: "Error occurred. There is already an outstanding service connection request for {{details}}"
+    },
+    confirmation: {
+        title: "Upgrade to platform admin",
+        info: "You are configured as platform admin, but you'll need to verify this with a stronger verification. Click on the button below to start the upgrade of your account.",
+        confirmAccount: "Start verification"
     },
     inputField: {
         fileImport: "Bestand inlezen",

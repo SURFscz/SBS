@@ -22,6 +22,8 @@ def claim_attribute_mapping():
             "nickname": "nick_name",
             "edumember_is_member_of": "edu_members",
             "eduperson_affiliation": "affiliation",
+            current_app.app_config.voperson_application_uid.lower(): "application_uid",
+            current_app.app_config.eduperson_principal_name.lower(): "eduperson_principal_name",
             "eduperson_scoped_affiliation": "scoped_affiliation",
             "eduperson_entitlement": "entitlement",
             "schac_home_organisation": "schac_home_organisation",
@@ -35,25 +37,6 @@ def claim_attribute_mapping():
 is_member_of_saml = "urn:mace:dir:attribute-def:isMemberOf"
 
 multi_value_attributes = ["edu_members", "affiliation", "scoped_affiliation", "entitlement"]
-
-attribute_saml_mapping = {
-    "uid": "urn:mace:dir:attribute-def:uid",
-    "name": "urn:mace:dir:attribute-def:cn",
-    "address": "urn:mace:dir:attribute-def:postalAddress",
-    "nick_name": "urn:mace:dir:attribute-def:displayName",
-    "username": "urn:mace:dir:attribute-def:shortName",
-    "edu_members": is_member_of_saml,
-    "affiliation": "urn:mace:dir:attribute-def:eduPersonAffiliation",
-    "scoped_affiliation": "urn:mace:dir:attribute-def:eduPersonScopedAffiliation",
-    "entitlement": "urn:mace:dir:attribute-def:eduPersonEntitlement",
-    "schac_home_organisation": "urn:mace:terena.org:attribute-def:schacHomeOrganization",
-    "family_name": "urn:mace:dir:attribute-def:sn",
-    "given_name": "urn:mace:dir:attribute-def:givenName",
-    "email": "urn:mace:dir:attribute-def:mail",
-    "ssh_key": "urn:oid:1.3.6.1.4.1.24552.1.1.1.13"
-}
-
-user_service_profile_saml_mapping = {**attribute_saml_mapping}
 
 
 def _get_header_key(key):
@@ -101,3 +84,8 @@ def add_user_claims(request_headers, uid, user):
 def get_user_uid(request_headers):
     uid_key = _get_header_key(current_app.app_config.oidc_id)
     return _get_value(request_headers, uid_key)
+
+
+def get_user_eppn(request_headers):
+    eduperson_principal_name_key = _get_header_key(current_app.app_config.eduperson_principal_name)
+    return _get_value(request_headers, eduperson_principal_name_key)

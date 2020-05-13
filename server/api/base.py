@@ -137,7 +137,9 @@ def config():
     base_url = current_app.app_config.base_url
     base_url = base_url[:-1] if base_url.endswith("/") else base_url
     return {"local": current_app.config["LOCAL"],
-            "base_url": base_url}, 200
+            "base_url": base_url,
+            "admin_users_upgrade": current_app.app_config.feature.admin_users_upgrade,
+            "admin_users_upgrade_url": current_app.app_config.feature.admin_users_upgrade_url}, 200
 
 
 @base_api.route("/info", strict_slashes=False)

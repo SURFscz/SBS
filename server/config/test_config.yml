@@ -17,6 +17,8 @@ api_users:
 oidc_id: "CMUID"
 oidc_prefix: "HTTP_OIDC_CLAIM_"
 oidc_uppercase: True
+voperson_application_uid: "voperson_application_uid"
+eduperson_principal_name: "eduperson_principal_name"
 
 base_scope: "test.sbs.local"
 generate_multiple_eppn: True

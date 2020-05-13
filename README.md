@@ -68,7 +68,7 @@ See the [Wiki](https://github.com/SURFscz/SBS/wiki) for the API documentation an
 
 To run all Python tests and validate syntax / formatting:
 ```
-pytest server/test
+pytest --disable-warnings server/test
 flake8 ./server/
 ```
 To generate coverage reports:
