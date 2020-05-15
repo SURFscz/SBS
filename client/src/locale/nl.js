@@ -29,7 +29,9 @@ I18n.translations.nl = {
     },
     login: {
         title: "Research Access Management",
-        subTitle: "Log a.u.b. in."
+        subTitle: "Please login...",
+        suspended: "Your user account has been suspended. Contact your collaboration administrator to resolve this",
+        successfullyActivated: "You have successfully re-activated your account"
     },
     newDropDown: {
         organisation: "New organisation",
@@ -410,6 +412,7 @@ I18n.translations.nl = {
             user__name: "Naam",
             user__email: "E-mail",
             user__uid: "UID",
+            user__suspended: "Suspended",
             role: "Rol",
             created_at: "Sinds",
             actions: ""
@@ -447,12 +450,14 @@ I18n.translations.nl = {
         deleteMemberConfirmation: "Weet u zeker dat u het organisatie lidmaatschap van {{name}} wil verwijderen?",
         deleteApiKeyConfirmation: "Weet u zeker dat u deze API-sleutel wilt verwijderen?",
         deleteCollaborationConfirmation: "Weet u zeker dat u collaboration {{name}} wil verwijderen?",
+        activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
         flash: {
             updated: "Organisatie {{name}} is bijgewerkt.",
             deleted: "Organisatie {{name}} is verwijderd.",
             memberDeleted: "Lidmaatschap van {{name}} is verwijderd.",
             apiKeyDeleted: "API-sleutel is verwijderd.",
             collaborationDeleted: "Samenwerking {{name}} is verwijderd.",
+            memberActivated: "Member {{name}} has been sent an email with an activation link"
         },
         preview: "Preview",
         details: "Details"
