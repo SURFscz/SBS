@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
-
 from server.test.abstract_test import AbstractTest
+from server.test.seed import john_name
 
 
 class TestUserSaml(AbstractTest):
@@ -31,6 +31,11 @@ class TestUserSaml(AbstractTest):
         self.assertDictEqual({}, res)
 
     def test_attributes_no_user(self):
-        res = self.get("/api/users/attributes",
-                       query_data={"uid": "nope", "service_entity_id": "https://network"})
-        self.assertDictEqual({}, res)
+        self.get("/api/users/attributes", response_status_code=404,
+                 query_data={"uid": "nope", "service_entity_id": "https://network"})
+
+    def test_attributes_user_suspended(self):
+        self.mark_user_suspended(john_name)
+
+        self.get("/api/users/attributes", response_status_code=404,
+                 query_data={"uid": "urn:john", "service_entity_id": "https://network"})

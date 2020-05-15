@@ -7,7 +7,8 @@ import requests
 from flask import current_app
 from flask_testing import TestCase
 
-from server.db.domain import Collaboration
+from server.db.db import db
+from server.db.domain import Collaboration, User
 from server.test.seed import seed
 
 # See api_users in config/test_config.yml
@@ -108,3 +109,9 @@ class AbstractTest(TestCase):
             collaboration.services_restricted = True
             db.session.add(collaboration)
             db.session.commit()
+
+    def mark_user_suspended(self, user_name):
+        john = self.find_entity_by_name(User, user_name)
+        john.suspended = True
+        db.session.merge(john)
+        db.session.commit()

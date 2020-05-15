@@ -1,6 +1,4 @@
 # -*- coding: future_fstrings -*-
-import random
-import string
 
 from flask import current_app
 
@@ -9,11 +7,6 @@ from server.test.abstract_test import AbstractTest
 
 
 class TestUserClaims(AbstractTest):
-
-    @staticmethod
-    def _random_str():
-        chars = string.ascii_uppercase + string.digits
-        return "".join(random.choice(chars) for x in range(12))
 
     def test_iso_8859_to_utf8_conversion(self):
         res = _get_value({"key": "VeÅ\x99ejnÃ©"}, "key")

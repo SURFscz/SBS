@@ -47,6 +47,11 @@ class TestUser(AbstractTest):
         self.assertEqual(user["organisation_memberships"][0]["organisation"]["name"], uuc_name)
         self.assertIsNotNone(user["collaboration_memberships"][0]["collaboration_id"], uuc_name)
 
+    def test_me_user_suspended(self):
+        self.mark_user_suspended(john_name)
+        res = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "urn:john"})
+        self.assertEqual(409, res.status_code)
+
     def test_search(self):
         self.login("urn:john")
         res = self.get("/api/users/search", query_data={"q": "roger"})

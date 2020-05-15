@@ -104,3 +104,18 @@ class TestSecurity(AbstractTest):
         with self.app.app_context():
             session["user"] = {"uid": "urn:mary", "admin": False, "id": mary_id}
             self.assertTrue(is_current_user_organisation_admin(ai_computing_name_id))
+
+    def test_is_application_admin_without_admin_users_upgrade(self):
+        with self.app.app_context():
+            session["user"] = {"uid": "urn:nope", "admin": True}
+        self.app.app_config.feature.admin_users_upgrade = False
+        self.assertEqual(True, is_application_admin())
+        self.app.app_config.feature.admin_users_upgrade = True
+
+    def test_impersonation_forbidden_with_admin_users_upgrade(self):
+        def do_test_impersonation_forbidden():
+            with self.app.app_context():
+                session["user"] = {"uid": "urn:nope", "admin": True, "confirmed_admin": False}
+            confirm_allow_impersonation()
+
+        self.assertRaises(Forbidden, do_test_impersonation_forbidden)

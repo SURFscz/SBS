@@ -1,11 +1,27 @@
+# -*- coding: future_fstrings -*-
 import atexit
 import datetime
 import logging
+from secrets import token_urlsafe
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from server.db.db import db
-from server.db.domain import User
+from server.db.domain import User, SuspendNotification
+from server.mail import mail_suspend_notification
+
+
+def _create_suspend_notification(user, retention, app, is_primary):
+    suspend_notification = SuspendNotification(user=user, sent_at=datetime.datetime.utcnow(),
+                                               hash=token_urlsafe(), is_primary=is_primary,
+                                               is_admin_initiated=False)
+    db.session.merge(suspend_notification)
+    mail_suspend_notification({"salutation": f"Dear {user.name}",
+                               "base_url": app.app_config.base_url,
+                               "retention": retention,
+                               "suspend_notification": suspend_notification
+                               },
+                              [user.email], is_primary, False)
 
 
 def suspend_users(app):
@@ -19,17 +35,19 @@ def suspend_users(app):
         for user in users:
             suspend_notifications = user.suspend_notifications
             if len(suspend_notifications) == 0:
-                # Send first notification
-                print("Send first notification and create SuspendNotification")
+                _create_suspend_notification(user, retention, app, True)
             elif len(suspend_notifications) == 1:
                 suspend_notification = suspend_notifications[0]
+                days = retention.reminder_expiry_period_days - retention.reminder_resent_period_days
+                if suspend_notification.sent_at < current_time - datetime.timedelta(days=days):
+                    _create_suspend_notification(user, retention, app, False)
+            else:
+                suspend_notification = list(filter(lambda sn: not sn.is_primary, suspend_notifications))[0]
                 days = retention.reminder_resent_period_days
                 if suspend_notification.sent_at < current_time - datetime.timedelta(days=days):
-                    # Send second notification
-                    print("Send first notification and create SuspendNotification")
+                    user.suspended = True
+                    db.session.merge(user)
 
-                print("")
-            db.session.merge(user)
         if len(users) > 0:
             db.session.commit()
 
@@ -45,3 +63,4 @@ def start_scheduling(app):
 
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
+    return scheduler

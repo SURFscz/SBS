@@ -61,10 +61,10 @@ def current_user_name():
 
 
 def confirm_allow_impersonation():
-    admin_users_upgrade = current_app.app_config.feature.admin_users_upgrade
     if "user" not in session or "admin" not in session["user"] or not session["user"]["admin"]:
         raise Forbidden()
-    if admin_users_upgrade and "confirmed_admin" not in session["user"] and not session["user"]["confirmed_admin"]:
+    admin_users_upgrade = current_app.app_config.feature.admin_users_upgrade
+    if admin_users_upgrade and ("confirmed_admin" not in session["user"] or not session["user"]["confirmed_admin"]):
         raise Forbidden()
     return True
 
