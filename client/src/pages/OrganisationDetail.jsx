@@ -1,6 +1,7 @@
 import React from "react";
 import ReactTooltip from "react-tooltip";
 import {
+    activateUserForOrganisation,
     auditLogsInfo,
     deleteApiKey,
     deleteCollaboration,
@@ -125,6 +126,25 @@ class OrganisationDetail extends React.Component {
         } else {
             this.doUpdate();
         }
+    };
+
+    doActivateMember = member => () => {
+        this.setState({confirmationDialogOpen: false});
+        const {originalOrganisation} = this.state;
+        activateUserForOrganisation(originalOrganisation.id, member.user.id)
+            .then(() => {
+                this.componentDidMount();
+                window.scrollTo(0, 0);
+                setFlash(I18n.t("organisationDetail.flash.memberActivated", {name: member.user.name}));
+            });
+    };
+
+    activateMember = member => () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("organisationDetail.activateMemberConfirmation", {name: member.user.name}),
+            confirmationDialogAction: this.doActivateMember(member)
+        });
     };
 
     deleteMember = member => () => {
@@ -442,7 +462,7 @@ class OrganisationDetail extends React.Component {
     };
 
     renderMemberTable = (members, user, sorted, reverse) => {
-        const names = ["user__name", "user__email", "user__uid", "role", "created_at", "actions"];
+        const names = ["user__name", "user__email", "user__uid", "role", "user__suspended", "created_at", "actions"];
         const role = {value: "admin", label: "Admin"};
         const numberOfAdmins = members.filter(member => member.role === "admin").length;
         return (
@@ -464,8 +484,13 @@ class OrganisationDetail extends React.Component {
                     <td className="email">{member.user.email}</td>
                     <td className="uid">{member.user.uid}</td>
                     <td className="role"><Select value={role} options={[role]}/></td>
+                    <td className="suspended">
+                        <CheckBox name="suspended" value={member.user.suspended} readOnly={true}/>
+                    </td>
                     <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
                     <td className="actions">
+                        {member.user.suspended &&
+                        <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>}
                         {numberOfAdmins > 1 && <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
                     </td>
                 </tr>)}

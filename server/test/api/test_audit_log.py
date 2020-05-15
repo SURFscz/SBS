@@ -108,4 +108,4 @@ class TestAuditLog(AbstractTest):
         self.assertEqual(1, len(audit_log_groups))
 
         audit_log_collaboration_memberships = self.audit_log_by_target_type("collaboration_memberships", res)
-        self.assertEqual(2, len(audit_log_collaboration_memberships))
+        self.assertEqual(3, len(audit_log_collaboration_memberships))

@@ -64,6 +64,7 @@ def attributes():
     result = {}
     user.last_accessed_date = datetime.now()
     user.last_login_date = datetime.now()
+    user.suspend_notifications = []
     user = db.session.merge(user)
     db.session.commit()
 

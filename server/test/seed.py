@@ -23,9 +23,6 @@ mike_name = "Mike Doe"
 james_name = "James Byrd"
 sarah_name = "Sarah Cross"
 
-suspend_notification1_hash = token_urlsafe()
-suspend_notification2_hash = token_urlsafe()
-
 schac_home_organisation = "scz.lab.example.org"
 schac_home_organisation_uuc = "schac_home_organisation_uuc"
 
@@ -138,24 +135,31 @@ def seed(db, app_config):
     user_two_suspend = User(uid="urn:two_suspend", name="two_suspend", email="two_suspend@example.org",
                             last_login_date=retention_date, last_accessed_date=retention_date)
 
+    last_login_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 30)
+    user_suspended = User(uid="urn:suspended", name="suspended", email="suspended@example.org",
+                          last_login_date=last_login_date, last_accessed_date=last_login_date,
+                          suspended=True)
+
     _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, jane,
-             user_inactive, user_one_suspend, user_two_suspend)
+             user_inactive, user_one_suspend, user_two_suspend, user_suspended)
 
     resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
     user_one_suspend_notification1 = SuspendNotification(user=user_one_suspend, sent_at=resend_suspension_date,
-                                                         is_primary=True, is_admin_initiated=False,
-                                                         hash=suspend_notification1_hash)
+                                                         is_primary=True)
 
     resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
     user_two_suspend_notification1 = SuspendNotification(user=user_two_suspend, sent_at=resend_suspension_date,
-                                                         is_primary=True, is_admin_initiated=False,
-                                                         hash=suspend_notification2_hash)
+                                                         is_primary=True)
     resend_suspension_date = current_time - datetime.timedelta(retention.reminder_expiry_period_days + 1)
     user_two_suspend_notification2 = SuspendNotification(user=user_two_suspend, sent_at=resend_suspension_date,
-                                                         is_primary=False, is_admin_initiated=False,
-                                                         hash=suspend_notification2_hash)
+                                                         is_primary=False)
+    user_suspended_notification1 = SuspendNotification(user=user_suspended, sent_at=resend_suspension_date,
+                                                         is_primary=True)
+    user_suspended_notification2 = SuspendNotification(user=user_suspended, sent_at=resend_suspension_date,
+                                                         is_primary=False)
 
-    _persist(db, user_one_suspend_notification1, user_two_suspend_notification1, user_two_suspend_notification2)
+    _persist(db, user_one_suspend_notification1, user_two_suspend_notification1, user_two_suspend_notification2,
+             user_suspended_notification1, user_suspended_notification2)
 
     uuc = Organisation(name=uuc_name, short_name="uuc",
                        description="Unincorporated Urban Community",
@@ -248,8 +252,10 @@ def seed(db, app_config):
     roger_uva_research = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
     peter_uva_research = CollaborationMembership(role="member", user=peter, collaboration=uva_research)
     sarah_uva_research = CollaborationMembership(role="admin", user=sarah, collaboration=uva_research)
+    user_two_suspend_uva_research = CollaborationMembership(role="member", user=user_two_suspend,
+                                                            collaboration=uva_research)
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
-             jane_ai_computing, sarah_ai_computing)
+             jane_ai_computing, sarah_ai_computing, user_two_suspend_uva_research)
 
     group_researchers = Group(name=ai_researchers_group,
                               short_name=ai_researchers_group_short_name,

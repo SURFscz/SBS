@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.scss";
+import I18n from "i18n-js";
 import Header from "../components/Header";
 import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import NotFound from "../pages/NotFound";
@@ -44,6 +45,7 @@ import ServiceConnectionRequest from "./ServiceConnectionRequest";
 import OrganisationDetailLite from "./OrganisationDetailLite";
 import ServiceRequest from "./ServiceRequest";
 import Confirmation from "./Confirmation";
+import {setFlash} from "../utils/Flash";
 
 addIcons();
 
@@ -114,10 +116,20 @@ class App extends React.Component {
                 this.setState({config: res}, () => me(res).then(currentUser => {
                     if (currentUser && currentUser.uid) {
                         this.setState({currentUser: this.markUserAdmin(currentUser), loading: false});
+                        if (currentUser.successfully_activated) {
+                            setFlash(I18n.t("login.successfullyActivated"))
+                        }
                     } else {
                         this.handleBackendDown();
                     }
-                }).catch(() => this.handleBackendDown()));
+                }).catch(e => {
+                    if (e.response && e.response.status === 409) {
+                        this.setState({currentUser: {"uid": "anonymous", "guest": true, "admin": false}, loading: false});
+                        setFlash(I18n.t("login.suspended"), "error");
+                    } else {
+                        this.handleBackendDown();
+                    }
+                }));
             }).catch(() => this.handleBackendDown());
         }
     }
