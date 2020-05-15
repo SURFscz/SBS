@@ -59,4 +59,3 @@ retention:
   allowed_inactive_period_days: 90
   reminder_expiry_period_days: 14
   reminder_resent_period_days: 7
-  reminder_max: 2
