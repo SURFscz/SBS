@@ -1,5 +1,6 @@
 import React from "react";
 import {
+    activateUserForCollaboration,
     auditLogsInfo,
     collaborationAccessAllowed,
     collaborationById,
@@ -153,15 +154,32 @@ class CollaborationDetail extends React.Component {
             });
     };
 
-    deleteMember = member => () => {
-        const {user} = this.props;
-        if (user.id === member.user.id) {
-            this.setState({
-                confirmationDialogOpen: true,
-                confirmationQuestion: I18n.t("collaborationDetail.deleteMemberConfirmation", {name: member.user.name}),
-                confirmationDialogAction: this.doDeleteMember(member)
+
+    doActivateMember = member => () => {
+        this.setState({confirmationDialogOpen: false});
+        const {originalCollaboration} = this.state;
+        activateUserForCollaboration(originalCollaboration.id, member.user.id)
+            .then(() => {
+                this.componentDidMount();
+                window.scrollTo(0, 0);
+                setFlash(I18n.t("collaborationDetail.flash.memberActivated", {name: member.user.name}));
             });
-        }
+    };
+
+    activateMember = member => () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("collaborationDetail.activateMemberConfirmation", {name: member.user.name}),
+            confirmationDialogAction: this.doActivateMember(member)
+        });
+    };
+
+    deleteMember = member => () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("collaborationDetail.deleteMemberConfirmation", {name: member.user.name}),
+            confirmationDialogAction: this.doDeleteMember(member)
+        });
     };
 
     changeMemberRole = member => selectedOption => {
@@ -417,7 +435,7 @@ class CollaborationDetail extends React.Component {
     };
 
     renderMemberTable = (members, user, sorted, reverse, adminOfCollaboration) => {
-        const names = ["user__name", "user__email", "user__uid", "role", "created_at", "actions"];
+        const names = ["user__name", "user__email", "user__uid", "role", "user__suspended", "created_at", "actions"];
         const numberOfAdmins = members.filter(member => member.role === "admin").length;
         return (
             <table className="members">
@@ -445,8 +463,13 @@ class CollaborationDetail extends React.Component {
                             onChange={this.changeMemberRole(member)}
                             isDisabled={!adminOfCollaboration || (member.role === "admin" && numberOfAdmins < 2) || member.user.id === user.id}/>
                     </td>
+                    <td className="suspended">
+                        <CheckBox name="suspended" value={member.user.suspended} readOnly={true}/>
+                    </td>
                     <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
                     <td className="actions">
+                        {member.user.suspended &&
+                        <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>}
                         {(adminOfCollaboration && (member.role === "member" || (member.role === "admin" && numberOfAdmins > 1 && member.user.id !== user.id))) &&
                         <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
                     </td>

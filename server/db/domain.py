@@ -311,9 +311,7 @@ class SuspendNotification(Base, db.Model):
     user = db.relationship("User", back_populates="suspend_notifications")
     sent_at = db.Column("sent_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                         nullable=False)
-    hash = db.Column("hash", db.String(length=255), nullable=False)
     is_primary = db.Column("is_primary", db.Boolean(), nullable=True, default=False)
-    is_admin_initiated = db.Column("is_admin_initiated", db.Boolean(), nullable=True, default=False)
 
 
 class CollaborationRequest(Base, db.Model):

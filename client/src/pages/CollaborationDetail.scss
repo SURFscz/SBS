@@ -243,24 +243,28 @@
             cursor: pointer;
             padding: 5px;
 
-            &.name {
+            &.user__name {
                 width: 15%;
             }
 
-            &.email {
+            &.user__email {
                 width: 15%;
             }
 
-            &.uid {
-                width: 25%;
+            &.user__uid {
+                width: 20%;
             }
 
             &.role {
                 width: 15%;
             }
 
-            &.since {
-                width: 20%;
+            &.user__suspended {
+                width: 10%;
+            }
+
+            &.created_at {
+                width: 15%;
             }
 
             &.actions {
@@ -290,13 +294,24 @@
             vertical-align: middle;
             padding: 5px;
 
+            &.suspended {
+                div.checkbox label {
+                    margin: 0 auto;
+                }
+            }
+
             &.actions {
                 text-align: right;
 
-                svg {
+                svg.fa-trash {
                     color: $red;
                     cursor: pointer;
                     margin-right: 10px;
+                }
+                svg.fa-user-lock {
+                    color: $green;
+                    cursor: pointer;
+                    margin-right: 25px;
                 }
             }
 

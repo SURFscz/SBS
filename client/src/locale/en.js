@@ -29,7 +29,9 @@ I18n.translations.en = {
     },
     login: {
         title: "Research Access Management",
-        subTitle: "Please login..."
+        subTitle: "Please login...",
+        suspended: "Your user account has been suspended. Contact your collaboration administrator to resolve this",
+        successfullyActivated: "You have successfully re-activated your account"
     },
     newDropDown: {
         organisation: "New organisation",
@@ -249,12 +251,14 @@ I18n.translations.en = {
         delete: "Delete",
         deleteConfirmation: "Are you sure you want to delete this collaboration?",
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership for {{name}}?",
+        activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
         flash: {
             updated: "Collaboration {{name}} was successfully updated",
             deleted: "Collaboration {{name}} was successfully deleted",
             memberDeleted: "Membership of {{name}} was successfully deleted",
             memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
-            meAdded: "Successfully added you as member of {{name}}"
+            meAdded: "Successfully added you as member of {{name}}",
+            memberActivated: "Member {{name}} has been sent an email with an activation link"
         },
         infoBlocks: "Dashboard {{name}}",
         searchPlaceHolder: "Search for members",
@@ -263,6 +267,7 @@ I18n.translations.en = {
             user__name: "Name",
             user__email: "E-mail",
             user__uid: "UID",
+            user__suspended: "Suspended",
             role: "Role",
             created_at: "Since",
             actions: ""
@@ -408,6 +413,7 @@ I18n.translations.en = {
             user__name: "Name",
             user__email: "E-mail",
             user__uid: "UID",
+            user__suspended: "Suspended",
             role: "Role",
             created_at: "Since",
             actions: ""
@@ -445,12 +451,14 @@ I18n.translations.en = {
         deleteMemberConfirmation: "Are you sure you want to delete the organisation membership for {{name}}?",
         deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
         deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}?",
+        activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
         flash: {
             updated: "Organisation {{name}} was successfully updated",
             deleted: "Organisation {{name}} was successfully deleted",
             memberDeleted: "Membership of {{name}} was successfully deleted",
             apiKeyDeleted: "API key was successfully deleted",
             collaborationDeleted: "Collaboration {{name}} was successfully deleted",
+            memberActivated: "Member {{name}} has been sent an email with an activation link"
         },
         preview: "Preview",
         details: "Details"

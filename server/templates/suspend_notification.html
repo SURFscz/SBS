@@ -3,12 +3,24 @@
 {% block content %}
 
 <p>{{ salutation }},</p>
-<p>This is a reminder that you have not logged in for {{ retention.allowed_inactive_period_days + retention.reminder_resent_period_days }} days.
-    Your user account wll be suspended if you do not login at
-    <a href="{{ base_url }}/login/{{ suspend_notification.hash }}" style="color:#0088CC;">.
-<p>If you let your user account be suspended you will not be able to use your services connected to your collaborations.</p>
-<p>This reminder will expire after {{ retention.reminder_expiry_period_days - retention.reminder_resent_period_days }} days.</p>
+<p>You have not logged in for {{ retention.allowed_inactive_period_days }} days. Please login using the following link to prevent your account to be suspended:</p>
+
+<table cellpadding="10" width="90%" align="center"
+       style="margin-bottom:1em;margin-left:auto;margin-right:auto;margin-top:1em;">
+    <tr>
+        <td width="6%"></td>
+        <td bgcolor="#D9EDF7"
+            class="invitation-link"
+            style="mso-line-height-rule:exactly;line-height:18px;font-size:13px;font-family:Arial, sans-serif;border-radius:4px 4px 4px 4px;color:#333333;border-style:solid;border-width:1px;border-color:#4FB3CF;;margin:5px"
+            align="center" width="47%">
+            <span><a class="link" href="{{ base_url }}/login"
+                     style="color:#0088CC;display: inline-block;margin-right: 5px">Login</a></span>
+            <br/>
+        </td>
+    </tr>
+</table>
+
+<p>If your user account is suspended you will not be able to use your services connected to your collaborations. This
+    reminder will expire after {{ retention.reminder_expiry_period_days }} days.</p>
 
 {% endblock %}
-
-

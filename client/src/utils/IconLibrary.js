@@ -26,6 +26,7 @@ import {
     faSearch,
     faTimes,
     faTrash,
+    faUserLock,
     faUserSecret,
     faWindowClose,
 } from '@fortawesome/free-solid-svg-icons'
@@ -34,6 +35,6 @@ export function addIcons() {
     library.add(faLightbulb, faCalendarAlt, faArrowLeft, faCopy, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faInfo,
         faCircle, faCheck, faDoorClosed,
         faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
-        faQuestion, faQuestionCircle, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret,
+        faQuestion, faQuestionCircle, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret, faUserLock
     );
 }

@@ -167,16 +167,20 @@
     }
 
     table.members {
-        th.name {
+        th.user__name {
             width: 15%;
         }
 
-        th.email {
+        th.user__email {
             width: 15%;
         }
 
-        th.uid {
+        th.user__uid {
             width: 25%;
+        }
+
+        th.user__suspended {
+            width: 10%;
         }
 
         th.role {
@@ -196,13 +200,25 @@
             cursor: default;
         }
 
+        td.suspended {
+            div.checkbox label {
+                margin: 0 auto;
+            }
+        }
+
         td.actions {
             text-align: right;
 
-            svg {
+            svg.fa-trash {
                 color: $red;
                 cursor: pointer;
                 margin-right: 10px;
+            }
+
+            svg.fa-user-lock {
+                color: $green;
+                cursor: pointer;
+                margin-right: 25px;
             }
         }
     }

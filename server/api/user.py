@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import datetime
 import itertools
 import json
 import os
@@ -8,7 +9,6 @@ import string
 import subprocess
 import tempfile
 import unicodedata
-from datetime import datetime
 
 from flask import Blueprint, request as current_request, session, jsonify, current_app, redirect
 from sqlalchemy import text, or_, bindparam, String
@@ -16,12 +16,14 @@ from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, ctx_logger
-from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
+from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
+    confirm_collaboration_admin, confirm_organisation_admin
 from server.auth.user_claims import add_user_claims, \
     get_user_uid, get_user_eppn
+from server.cron.schedule import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
-from server.db.domain import User, OrganisationMembership, CollaborationMembership
+from server.db.domain import User, OrganisationMembership, CollaborationMembership, SuspendNotification
 from server.db.models import update
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
@@ -188,7 +190,7 @@ def me():
             add_user_claims(request_headers, uid, user)
             user = _user_name(user)
             # last_login_date is set later in this method
-            user.last_accessed_date = datetime.now()
+            user.last_accessed_date = datetime.datetime.now()
             logger.info(f"Provisioning new user {user.uid}")
         else:
             if user.suspended:
@@ -202,7 +204,11 @@ def me():
             logger.info(f"Updating user {user.uid} with new claims / updated at")
             add_user_claims(request_headers, uid, user)
 
-        user.last_login_date = datetime.now()
+        user.last_login_date = datetime.datetime.now()
+
+        suspend_notifications_count = SuspendNotification.query.filter(SuspendNotification.user_id == user.id).count()
+
+        user.suspend_notifications = []
         user = db.session.merge(user)
         db.session.commit()
 
@@ -217,11 +223,13 @@ def me():
         user = {**jsonify(user).json, **is_admin}
         user["needs_to_agree_with_aup"] = \
             current_app.app_config.aup.pdf not in list(map(lambda aup: aup["au_version"], user["aups"]))
+        user["successfully_activated"] = suspend_notifications_count > 0
     else:
         user = {"uid": "anonymous", "guest": True, "admin": False}
         session["user"] = user
 
     _log_headers()
+
     return user, 200
 
 
@@ -231,6 +239,26 @@ def refresh():
     user_id = current_user_id()
     user = _user_query().filter(User.id == user_id).one()
     return _user_json_response(user)
+
+
+@user_api.route("/activate", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def activate():
+    body = current_request.get_json()
+    if "collaboration_id" in body:
+        confirm_collaboration_admin(body["collaboration_id"])
+    else:
+        confirm_organisation_admin(body["organisation_id"])
+    user = User.query.get(body["user_id"])
+
+    user.suspended = False
+    retention = current_app.app_config.retention
+    user.last_login_date = datetime.datetime.now() - datetime.timedelta(days=retention.allowed_inactive_period_days)
+    user.suspend_notifications = []
+    db.session.merge(user)
+
+    create_suspend_notification(user, retention, current_app, True)
+    return {}, 201
 
 
 @user_api.route("/", methods=["PUT"], strict_slashes=False)

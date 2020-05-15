@@ -249,12 +249,14 @@ I18n.translations.nl = {
         delete: "Verwijderen",
         deleteConfirmation: "Weet u zeker dat u deze samenwerking wilt verwijderen?",
         deleteMemberConfirmation: "Weet u zeker dat u {{name}} als lid voor deze samenwerking wilt verwijderen?",
+        activateMemberConfirmation: "Are you sure you want to re-activate this user {{name}}?",
         flash: {
             updated: "Samenwerking {{name}} is bijgewerkt.",
             deleted: "Samenwerking {{name}} is verwijderd.",
             memberDeleted: "{{name}} is geen lid meer van deze samenwerking.",
             memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
-            meAdded: "Je bent toegevoegd als lid van {{name}}"
+            meAdded: "Je bent toegevoegd als lid van {{name}}",
+            memberActivated: "Member {{name}} has been sent an email with an activation link"
         },
         infoBlocks: "Dashboard {{name}}",
         searchPlaceHolder: "Zoek leden",
@@ -263,6 +265,7 @@ I18n.translations.nl = {
             user__name: "Naam",
             user__email: "E-mail",
             user__uid: "UID",
+            user__suspended: "Suspended",
             role: "Rol",
             created_at: "Sinds",
             actions: ""

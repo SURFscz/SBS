@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import datetime
 import uuid
 
 from flask import current_app
@@ -9,7 +10,8 @@ from server.auth.user_claims import claim_attribute_mapping
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, mike_name
+from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, mike_name, \
+    uva_research_name
 
 
 class TestUser(AbstractTest):
@@ -51,6 +53,33 @@ class TestUser(AbstractTest):
         self.mark_user_suspended(john_name)
         res = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "urn:john"})
         self.assertEqual(409, res.status_code)
+
+    def test_me_user_with_suspend_notifactions(self):
+        res = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "urn:two_suspend"})
+        self.assertEquals(True, res.json["successfully_activated"])
+
+    def test_activate_by_organisation_admin(self):
+        organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
+        self.do_test_activate("urn:mary", {"organisation_id": organisation_id})
+
+    def test_activate_by_collaboration_admin(self):
+        collaboration_id = Collaboration.query.filter(Collaboration.name == uva_research_name).one().id
+        self.do_test_activate("urn:sarah", {"collaboration_id": collaboration_id})
+
+    def do_test_activate(self, login_urn, object_dict):
+        user = User.query.filter(User.name == "suspended").one()
+        self.assertEqual(True, user.suspended)
+        self.assertEqual(2, len(user.suspend_notifications))
+
+        self.login(login_urn)
+        self.put("/api/users/activate", body={**object_dict, "user_id": user.id})
+
+        user = User.query.filter(User.name == "suspended").one()
+        self.assertEqual(False, user.suspended)
+        retention = current_app.app_config.retention
+        retention_date = datetime.datetime.now() - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
+        self.assertTrue(user.last_login_date > retention_date)
+        self.assertEqual(1, len(user.suspend_notifications))
 
     def test_search(self):
         self.login("urn:john")
