@@ -1,0 +1,33 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURFNET Collaboration invite{% endblock %}
+{% block content %}
+{{ invitation.user.name }} invited you to join collaboration
+{{ invitation.collaboration.name }} as{{ invitation_role(invitation.intended_role) }}.
+{% if invitation.intended_role == "admin" %}
+As a CO manager you are responsible for managing users and authorizations for this collaboration.
+More information about administrative duties can be found at the {{ wiki_link }}.
+{% endif %}
+Please read below what steps you must take to accept this invitation.
+{% if invitation.message is defined and invitation.message != None and invitation.message|length %}
+Personal Message from {{ invitation.user.name }}:
+"{{ invitation.message }}"
+{% endif %}
+Accept invitation:
+To accept this invitation, please click 'Login to accept this invitation'. After logging in with your institutional account
+you can review and accept the invitation and join the collaboration.
+
+If you do not want to accept this invitation, please click 'Decline this invitation' or simply ignore this email.
+The invitation automatically expires after {{ expiry_period }}.
+
+Accept link:
+{{ base_url }}/invitations/accept/{{ invitation.hash }}
+
+Deny link:
+{{ base_url }}/invitations/deny/{{ invitation.hash }}
+
+Need help?
+
+{{ invitation.user.name }} invited you to join this collaboration.
+Please contact {{ invitation.user.email }}
+    if you have any questions about this invitation.
+{% endblock %}

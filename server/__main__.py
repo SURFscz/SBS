@@ -34,6 +34,7 @@ from server.api.service import service_api
 from server.api.service_connection_request import service_connection_request_api
 from server.api.user import user_api
 from server.api.user_saml import user_saml_api
+from server.cron.schedule import start_scheduling
 from server.db.db import db, db_migrations
 from server.templates import invitation_role
 from server.tools import read_file
@@ -156,7 +157,12 @@ if not test:
         for user in users:
             user.username = generate_unique_username(user)
             db.session.merge(user)
+        if len(users) > 0:
             db.session.commit()
+
+if not test:
+    # Start scheduling
+    start_scheduling(app)
 
 # WSGI production mode dictates that no flask app is actually running
 if is_local:

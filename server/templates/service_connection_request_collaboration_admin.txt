@@ -1,0 +1,14 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURFNET Service Connection request{% endblock %}
+{% block content %}
+
+{{ salutation }},
+
+The user {{ requester }} has requested access to the service {{ service.name }} for the collaboration {{ collaboration.name }}.You receive this email, because you are an admin of this collaboration.
+The motivation for this request:
+{{ service_connection_request.message }}
+
+Click on this link to process this request:
+{{base_url}}/service-connection-requests/{{service_connection_request.hash}}
+
+{% endblock %}

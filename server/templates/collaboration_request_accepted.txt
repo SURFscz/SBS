@@ -1,0 +1,15 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURFNET New collaboration request accepted{% endblock %}
+{% block content %}
+
+{{ salutation }},
+Your request to create collaboration {{ collaboration.name }} has been accepted by the
+    administrator {{administrator}} of the organisation {{ organisation.name }}.
+
+Login to view the collaboration:
+
+{{ base_url }}/collaborations/{{ collaboration.id }}
+
+{% endblock %}
+
+

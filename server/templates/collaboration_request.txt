@@ -1,0 +1,14 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURFNET Collaboration request{% endblock %}
+{% block content %}
+
+{{ salutation }},
+
+The user {{ user.name }} has requested to create a new collaboration {{ collaboration_request.name }}.
+The motivation for this request:
+{{ collaboration_request.message }}
+
+Login to process this request:
+
+{{base_url}}/collaboration-requests/{{collaboration_request.id}}
+{% endblock %}

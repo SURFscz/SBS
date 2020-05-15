@@ -37,6 +37,11 @@ class User(Base, db.Model):
     confirmed_super_user = db.Column("confirmed_super_user", db.Boolean(), nullable=True, default=False)
     eduperson_principal_name = db.Column("eduperson_principal_name", db.String(length=255), nullable=True)
     application_uid = db.Column("application_uid", db.String(length=255), nullable=True)
+    last_accessed_date = db.Column("last_accessed_date", db.DateTime(timezone=True), nullable=False)
+    last_login_date = db.Column("last_login_date", db.DateTime(timezone=True), nullable=False)
+    suspended = db.Column("suspended", db.Boolean(), nullable=True, default=False)
+    suspend_notifications = db.relationship("SuspendNotification", back_populates="user", cascade="all, delete-orphan",
+                                            passive_deletes=True)
 
 
 class Organisation(Base, db.Model):
@@ -297,6 +302,18 @@ class Aup(Base, db.Model):
     user = db.relationship("User", back_populates="aups")
     agreed_at = db.Column("agreed_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                           nullable=False)
+
+
+class SuspendNotification(Base, db.Model):
+    __tablename__ = "suspend_notifications"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="suspend_notifications")
+    sent_at = db.Column("sent_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                        nullable=False)
+    hash = db.Column("hash", db.String(length=255), nullable=False)
+    is_primary = db.Column("is_primary", db.Boolean(), nullable=True, default=False)
+    is_admin_initiated = db.Column("is_admin_initiated", db.Boolean(), nullable=True, default=False)
 
 
 class CollaborationRequest(Base, db.Model):

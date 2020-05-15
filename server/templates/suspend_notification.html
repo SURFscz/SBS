@@ -1,0 +1,14 @@
+{% extends "mail_layout.html" %}
+{% block title %}SURFNET Inactive notofication{% endblock %}
+{% block content %}
+
+<p>{{ salutation }},</p>
+<p>This is a reminder that you have not logged in for {{ retention.allowed_inactive_period_days + retention.reminder_resent_period_days }} days.
+    Your user account wll be suspended if you do not login at
+    <a href="{{ base_url }}/login/{{ suspend_notification.hash }}" style="color:#0088CC;">.
+<p>If you let your user account be suspended you will not be able to use your services connected to your collaborations.</p>
+<p>This reminder will expire after {{ retention.reminder_expiry_period_days - retention.reminder_resent_period_days }} days.</p>
+
+{% endblock %}
+
+

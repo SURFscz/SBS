@@ -1,10 +1,12 @@
 # -*- coding: future_fstrings -*-
 
+from datetime import datetime
+
 from flask import Blueprint, current_app
 
 from server.api.base import json_endpoint, query_param, ctx_logger
 from server.auth.security import confirm_read_access
-
+from server.db.db import db
 from server.db.domain import User, CollaborationMembership, Service, Collaboration
 from server.db.models import flatten
 
@@ -41,6 +43,7 @@ def attributes():
 
     uid = query_param("uid")
     service_entity_id = query_param("service_entity_id")
+
     services = Service.query \
         .join(Service.collaborations) \
         .join(Collaboration.collaboration_memberships) \
@@ -53,8 +56,17 @@ def attributes():
         logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
         return {}, 200
 
-    result = {}
     user = User.query.filter(User.uid == uid).one()
+    if user.suspended:
+        logger.info(f"Returning error for user {uid} and service_entity_id {service_entity_id} as user is suspended")
+        return {"error": f"user {uid} is suspended"}, 409
+
+    result = {}
+    user.last_accessed_date = datetime.now()
+    user.last_login_date = datetime.now()
+    user = db.session.merge(user)
+    db.session.commit()
+
     for k, v in custom_saml_mapping["attribute_saml_mapping"].items():
         val = getattr(user, k)
         if val:

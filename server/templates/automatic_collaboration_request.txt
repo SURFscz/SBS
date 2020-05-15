@@ -1,0 +1,22 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURFNET Collaboration notification{% endblock %}
+{% block content %}
+
+{{ salutation }},
+
+The user {{ user.name }} has created a new collaboration {{ collaboration.name }} linked to
+    organisation {{ organisation.name }}.
+The explanation for this new collaboration:
+{{ message }}
+
+{% if organisation.collaboration_creation_allowed %}
+The Collaboration is created without a Collaboration request, because the Organisation is configured
+to automatically approve Collaboration requests</p>
+{% else %}
+The Collaboration is created without a Collaboration request, because the user {{ user.name }} has the
+entitlement {{ collaboration_creation_allowed_entitlement }}.
+{% endif %}
+
+Click <a href="{{base_url}}/collaborations/{{ collaboration.id }}">this link</a> to login and view the new Collaboration
+
+{% endblock %}

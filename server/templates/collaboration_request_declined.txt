@@ -1,0 +1,12 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURFNET Collaboration join-request declined{% endblock %}
+{% block content %}
+
+{{ salutation }},
+Your request to create collaboration {{ collaboration.name }} has been declined by the
+administrator {{ administrator }} of the organisation {{ organisation.name }}.
+
+
+{% endblock %}
+
+

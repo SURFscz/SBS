@@ -22,7 +22,7 @@ class AbstractTest(TestCase):
     def setUp(self):
         db = self.app.db
         with self.app.app_context():
-            seed(db)
+            seed(db, self.app.app_config)
 
     def create_app(self):
         return AbstractTest.app
