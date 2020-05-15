@@ -130,7 +130,7 @@ class TestCollaboration(AbstractTest):
                   with_basic_auth=False,
                   response_status_code=403)
 
-    def test_collaboration_restricted_invalid_admini(self):
+    def test_collaboration_restricted_invalid_admin(self):
         res = self.post("/api/collaborations/v1/restricted",
                         body={
                             "name": "new_collaboration",
@@ -140,6 +140,21 @@ class TestCollaboration(AbstractTest):
                         headers=RESTRICTED_CO_API_AUTH_HEADER,
                         response_status_code=400)
         self.assertEqual("Administrator nope is not a valid user", res["message"])
+
+    def test_collaboration_restricted_no_default_schac(self):
+        default_organisation = self.app.app_config.restricted_co.default_organisation
+        self.app.app_config.restricted_co.default_organisation = "bogus"
+        self.post("/api/collaborations/v1/restricted",
+                        body={
+                            "name": "new_collaboration",
+                            "administrator": "harry",
+                            "short_name": "short_org_name",
+                            "connected_services": []
+                        },
+                        with_basic_auth=False,
+                        headers=RESTRICTED_CO_API_AUTH_HEADER,
+                        response_status_code=400)
+        self.app.app_config.restricted_co.default_organisation = default_organisation
 
     def test_collaboration_update(self):
         collaboration_id = self._find_by_name_id()["id"]

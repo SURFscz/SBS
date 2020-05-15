@@ -44,6 +44,11 @@ def attributes():
     uid = query_param("uid")
     service_entity_id = query_param("service_entity_id")
 
+    user = User.query.filter(User.uid == uid).one()
+    if user.suspended:
+        logger.info(f"Returning error for user {uid} and service_entity_id {service_entity_id} as user is suspended")
+        return {"error": f"user {uid} is suspended"}, 404
+
     services = Service.query \
         .join(Service.collaborations) \
         .join(Collaboration.collaboration_memberships) \
@@ -55,11 +60,6 @@ def attributes():
     if len(services) == 0:
         logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
         return {}, 200
-
-    user = User.query.filter(User.uid == uid).one()
-    if user.suspended:
-        logger.info(f"Returning error for user {uid} and service_entity_id {service_entity_id} as user is suspended")
-        return {"error": f"user {uid} is suspended"}, 409
 
     result = {}
     user.last_accessed_date = datetime.now()

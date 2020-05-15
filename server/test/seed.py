@@ -130,7 +130,8 @@ def seed(db, app_config):
     retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
 
     user_inactive = User(uid="urn:inactive", name="inactive", email="inactive@example.org",
-                         last_login_date=retention_date, last_accessed_date=retention_date)
+                         last_login_date=retention_date, last_accessed_date=retention_date,
+                         schac_home_organisation="not.exists")
     user_one_suspend = User(uid="urn:one_suspend", name="one_suspend", email="one_suspend@example.org",
                             last_login_date=retention_date, last_accessed_date=retention_date)
 

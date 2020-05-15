@@ -1,4 +1,4 @@
-{% extends "mail_layout.html" %}
+{% extends "mail_layout.txt" %}
 {% block title %}SURFNET Inactive notofication{% endblock %}
 {% block content %}
 
