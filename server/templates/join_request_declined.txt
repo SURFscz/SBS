@@ -1,0 +1,14 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURFNET Collaboration join-request declined{% endblock %}
+{% block content %}
+
+{{ salutation }},
+Your request to join collaboration {{ join_request.collaboration.name }} has been declined by the
+    administrator {{administrator}} of the collaboration.
+
+Login to view the join request:
+
+{{ base_url }}/collaborations/{{ join_request.collaboration.id }}
+{% endblock %}
+
+

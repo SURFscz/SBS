@@ -35,6 +35,7 @@ def _do_send_mail(subject, recipients, template, context, preview):
                   sender=(mail_ctx.get("sender_name", "SURFnet"), mail_ctx.get("sender_email", "no-reply@surfnet.nl")),
                   recipients=recipients)
     msg.html = render_template(f"{template}.html", **context)
+    msg.body = render_template(f"{template}.txt", **context)
     suppress_mail = "suppress_sending_mails" in mail_ctx and mail_ctx.suppress_sending_mails
     if not preview and not suppress_mail:
         mail = current_app.mail

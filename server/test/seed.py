@@ -10,7 +10,7 @@ from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
-    ServiceConnectionRequest
+    ServiceConnectionRequest, SuspendNotification
 
 collaboration_request_name = "New Collaboration"
 
@@ -22,6 +22,9 @@ john_name = "John Doe"
 mike_name = "Mike Doe"
 james_name = "James Byrd"
 sarah_name = "Sarah Cross"
+
+suspend_notification1_hash = token_urlsafe()
+suspend_notification2_hash = token_urlsafe()
 
 schac_home_organisation = "scz.lab.example.org"
 schac_home_organisation_uuc = "schac_home_organisation_uuc"
@@ -82,7 +85,7 @@ def _persist(db, *objs):
         db.session.add(obj)
 
 
-def seed(db):
+def seed(db, app_config):
     tables = reversed(metadata.sorted_tables)
     for table in tables:
         db.session.execute(table.delete())
@@ -121,7 +124,37 @@ def seed(db):
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co")
 
-    _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, jane)
+    # User seed for suspend testing
+    retention = app_config.retention
+    current_time = datetime.datetime.utcnow()
+    retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
+
+    user_inactive = User(uid="urn:inactive", name="inactive", email="inactive@example.org",
+                         last_login_date=retention_date, last_accessed_date=retention_date)
+    user_one_suspend = User(uid="urn:one_suspend", name="one_suspend", email="one_suspend@example.org",
+                            last_login_date=retention_date, last_accessed_date=retention_date)
+
+    user_two_suspend = User(uid="urn:two_suspend", name="two_suspend", email="two_suspend@example.org",
+                            last_login_date=retention_date, last_accessed_date=retention_date)
+
+    _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, jane,
+             user_inactive, user_one_suspend, user_two_suspend)
+
+    resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
+    user_one_suspend_notification1 = SuspendNotification(user=user_one_suspend, sent_at=resend_suspension_date,
+                                                         is_primary=True, is_admin_initiated=False,
+                                                         hash=suspend_notification1_hash)
+
+    resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
+    user_two_suspend_notification1 = SuspendNotification(user=user_two_suspend, sent_at=resend_suspension_date,
+                                                         is_primary=True, is_admin_initiated=False,
+                                                         hash=suspend_notification2_hash)
+    resend_suspension_date = current_time - datetime.timedelta(retention.reminder_expiry_period_days + 1)
+    user_two_suspend_notification2 = SuspendNotification(user=user_two_suspend, sent_at=resend_suspension_date,
+                                                         is_primary=False, is_admin_initiated=False,
+                                                         hash=suspend_notification2_hash)
+
+    _persist(db, user_one_suspend_notification1, user_two_suspend_notification1, user_two_suspend_notification2)
 
     uuc = Organisation(name=uuc_name, short_name="uuc",
                        description="Unincorporated Urban Community",

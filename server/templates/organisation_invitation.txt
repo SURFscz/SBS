@@ -1,0 +1,34 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURFNET Organisation invite{% endblock %}
+{% block content %}
+
+{{ invitation.user.name }} invited you to join organisation
+{{ invitation.organisation.name }}.
+Please read below what steps you must take to accept this invitation.
+
+{% if invitation.message is defined and invitation.message != None and invitation.message|length %}
+
+Personal Message from {{ invitation.user.name }}:
+
+    "{{ invitation.message }}"
+
+{% endif %}
+
+Accept invitation:
+To accept this invitation, please click 'Login to accept this invitation'. After logging in with your institutional
+account you can review and accept the invitation and become a member of the organisation.
+
+If you do not want to accept this invitation, please click 'Decline this invitation' or simply ignore this email.
+The invitation automatically expires after {{ expiry_period }}.
+
+Login to accept this invitation:
+{{ base_url }}/organisation-invitations/accept/{{ invitation.hash }}
+
+Decline this invitation:
+{{ base_url }}/organisation-invitations/deny/{{ invitation.hash }}
+
+
+Need help?{{ invitation.user.name }} invited you to join this organisation.
+    Please contact {{ invitation.user.email }} if you have any questions about this invitation.
+
+{% endblock %}

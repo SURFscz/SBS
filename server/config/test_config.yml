@@ -53,3 +53,10 @@ feature:
   admin_users_upgrade: True
   admin_users_upgrade_url: http://localhost:8080/api/users/upgrade_super_user
   admin_users_upgrade_redirect_url: http://localhost:3000
+
+# The retention config determines how long users may be inactive, how long the reminder magic link is valid and when do we resent the magic link
+retention:
+  allowed_inactive_period_days: 90
+  reminder_expiry_period_days: 14
+  reminder_resent_period_days: 7
+  reminder_max: 2

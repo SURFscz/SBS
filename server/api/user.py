@@ -8,6 +8,7 @@ import string
 import subprocess
 import tempfile
 import unicodedata
+from datetime import datetime
 
 from flask import Blueprint, request as current_request, session, jsonify, current_app, redirect
 from sqlalchemy import text, or_, bindparam, String
@@ -16,7 +17,7 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, ctx_logger
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access
-from server.auth.user_claims import claim_attribute_hash_headers, claim_attribute_hash_user, add_user_claims, \
+from server.auth.user_claims import add_user_claims, \
     get_user_uid, get_user_eppn
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -164,8 +165,6 @@ def user_search():
 
 def _user_name(user):
     user.username = generate_unique_username(user)
-    user = db.session.merge(user)
-    db.session.commit()
     return user
 
 
@@ -188,20 +187,24 @@ def me():
             user = User(uid=uid, created_by="system", updated_by="system")
             add_user_claims(request_headers, uid, user)
             user = _user_name(user)
+            # last_login_date is set later in this method
+            user.last_accessed_date = datetime.now()
             logger.info(f"Provisioning new user {user.uid}")
         else:
-            hash_headers = claim_attribute_hash_headers(request_headers)
-            hash_user = claim_attribute_hash_user(user)
-            if hash_user != hash_headers:
-                logger.info(f"Updating user {user.uid} with new claims")
-                add_user_claims(request_headers, uid, user)
-                user = db.session.merge(user)
-                db.session.commit()
+            if user.suspended:
+                logger.info(
+                    f"Returning error for user {uid} as user is suspended")
+                return {"error": f"user {uid} is suspended"}, 409
+
             if not user.username:
                 user = _user_name(user)
                 logger.info(f"Updating user {user.uid} with new username {user.username}")
-            else:
-                logger.info(f"Not updating user {user.uid} as the claims are not changed")
+            logger.info(f"Updating user {user.uid} with new claims / updated at")
+            add_user_claims(request_headers, uid, user)
+
+        user.last_login_date = datetime.now()
+        user = db.session.merge(user)
+        db.session.commit()
 
         is_admin = _store_user_in_session(user)
 
@@ -210,6 +213,7 @@ def me():
         for collaboration_membership in user.collaboration_memberships:
             collaboration_membership.collaboration
         user.aups
+        user.suspend_notifications
         user = {**jsonify(user).json, **is_admin}
         user["needs_to_agree_with_aup"] = \
             current_app.app_config.aup.pdf not in list(map(lambda aup: aup["au_version"], user["aups"]))

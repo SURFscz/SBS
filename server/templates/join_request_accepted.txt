@@ -1,0 +1,15 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURFNET Collaboration join-request accepted{% endblock %}
+{% block content %}
+
+{{ salutation }},
+Your request</strong> to join collaboration {{ join_request.collaboration.name }} has been accepted by the
+    administrator {{administrator}} of the collaboration.
+
+Login to view the collaboration:
+
+{{ base_url }}/collaborations/{{ join_request.collaboration.id }}
+
+{% endblock %}
+
+

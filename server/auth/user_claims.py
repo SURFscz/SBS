@@ -4,7 +4,6 @@ import re
 from flask import current_app
 
 from server.api.base import ctx_logger
-from server.db.domain import User
 
 user_service_profile_claims = ["name", "email", "address"]
 
@@ -57,17 +56,6 @@ def _get_value(request_headers, key):
     res = bytes(s, "iso-8859-1").decode("utf-8")
     logger.debug(f"Returning {res} for key {key} with original value {s}")
     return res
-
-
-def claim_attribute_hash_headers(headers):
-    claims = {_get_header_key(key): _get_value(headers, _get_header_key(key)) for key in
-              claim_attribute_mapping().keys()}
-    return hash(frozenset(claims.items()))
-
-
-def claim_attribute_hash_user(user: User):
-    claims = {_get_header_key(key): getattr(user, value) for key, value in claim_attribute_mapping().items()}
-    return hash(frozenset(claims.items()))
 
 
 def add_user_claims(request_headers, uid, user):
