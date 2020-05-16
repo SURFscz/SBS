@@ -18,8 +18,8 @@ forbidden_fields = ["created_at", "updated_at"]
 date_fields = ["start_date", "end_date", "created_at", "updated_at", "last_accessed_date", "last_login_date"]
 
 
-def flatten(l):
-    return [item for sublist in l for item in sublist]
+def flatten(coll):
+    return [item for sublist in coll for item in sublist]
 
 
 def validate(cls, json_dict, is_new_instance=True):

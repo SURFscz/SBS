@@ -125,8 +125,8 @@ class TestGroup(AbstractTest):
 
     def test_delete_group(self):
         group_id = self.find_entity_by_name(Group, ai_researchers_group).id
-        self.delete(f"/api/groups", primary_key=group_id)
-        self.delete(f"/api/groups", primary_key=group_id, response_status_code=404)
+        self.delete("/api/groups", primary_key=group_id)
+        self.delete("/api/groups", primary_key=group_id, response_status_code=404)
 
     def test_groups_by_collaboration(self):
         self.login("urn:admin")

@@ -29,7 +29,7 @@ def suspend_users(app):
         retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days)
 
         users = User.query \
-            .filter(User.last_login_date < retention_date, User.suspended == False).all()  # noqa: E402
+            .filter(User.last_login_date < retention_date, User.suspended == False).all()  # noqa: E712
         for user in users:
             suspend_notifications = user.suspend_notifications
             if len(suspend_notifications) == 0:

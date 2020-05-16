@@ -197,7 +197,7 @@ class TestUser(AbstractTest):
         body = {"ssh_key": ssh2_pub,
                 "convertSSHKey": True,
                 "id": user.id}
-        res = self.put(f"/api/users", body=body)
+        res = self.put("/api/users", body=body)
         self.assertTrue(res["ssh_key"].startswith("ssh-rsa"))
 
     def test_update_user_service_profile_ssh_key_conversion_not_default(self):
@@ -205,7 +205,7 @@ class TestUser(AbstractTest):
         self.login("urn:john")
         ssh2_pub = self.read_file("ssh2.pub")
         body = {"ssh_key": ssh2_pub, "id": user.id}
-        res = self.put(f"/api/users", body=body)
+        res = self.put("/api/users", body=body)
         self.assertTrue(res["ssh_key"].startswith("---- BEGIN SSH2 PUBLIC KEY ----"))
 
     def test_generate_unique_username(self):

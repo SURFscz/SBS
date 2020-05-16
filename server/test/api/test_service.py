@@ -34,7 +34,7 @@ class TestService(AbstractTest):
         self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
 
     def test_find_by_entity_id(self):
-        res = self.get(f"api/services/find_by_entity_id", query_data={"entity_id": service_network_entity_id})
+        res = self.get("api/services/find_by_entity_id", query_data={"entity_id": service_network_entity_id})
 
         self.assertEqual(res["name"], service_network_name)
         self.assertEqual(uuc_name, res["allowed_organisations"][0]["name"])

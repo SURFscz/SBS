@@ -121,8 +121,8 @@ def user_search():
     not_wild_card = q != "*"
     if not_wild_card:
         q = replace_full_text_search_boolean_mode_chars(q)
-        base_query += f"AND MATCH (u.name, u.email) AGAINST (:q IN BOOLEAN MODE) " \
-                      f"AND u.id > 0 "
+        base_query += "AND MATCH (u.name, u.email) AGAINST (:q IN BOOLEAN MODE) " \
+                      "AND u.id > 0 "
 
     if organisation_id:
         base_query += f"AND om.organisation_id = {int(organisation_id)} "
@@ -131,10 +131,10 @@ def user_search():
         base_query += f"AND cm.collaboration_id = {int(collaboration_id)} "
 
     if organisation_admins:
-        base_query += f"AND om.role = 'admin'"
+        base_query += "AND om.role = 'admin'"
 
     if collaboration_admins:
-        base_query += f"AND cm.role = 'admin'"
+        base_query += "AND cm.role = 'admin'"
 
     base_query += f" ORDER BY u.name  LIMIT {full_text_search_autocomplete_limit}"
 
