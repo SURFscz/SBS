@@ -23,7 +23,7 @@ from server.auth.user_claims import add_user_claims, \
 from server.cron.schedule import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
-from server.db.domain import User, OrganisationMembership, CollaborationMembership, SuspendNotification
+from server.db.domain import User, OrganisationMembership, CollaborationMembership
 from server.db.models import update
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
@@ -206,7 +206,7 @@ def me():
 
         user.last_login_date = datetime.datetime.now()
 
-        suspend_notifications_count = SuspendNotification.query.filter(SuspendNotification.user_id == user.id).count()
+        suspend_notifications_count = len(user.suspend_notifications)
 
         user.suspend_notifications = []
         user = db.session.merge(user)
@@ -219,7 +219,6 @@ def me():
         for collaboration_membership in user.collaboration_memberships:
             collaboration_membership.collaboration
         user.aups
-        user.suspend_notifications
         user = {**jsonify(user).json, **is_admin}
         user["needs_to_agree_with_aup"] = \
             current_app.app_config.aup.pdf not in list(map(lambda aup: aup["au_version"], user["aups"]))
