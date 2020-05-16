@@ -149,11 +149,11 @@ with app.app_context():
 db_migrations(config.database.uri)
 
 from server.api.user import generate_unique_username  # noqa: E402
-from server.db.domain import User  # noqa: E711
+from server.db.domain import User  # noqa: E402
 
 if not test:
     with app.app_context():
-        users = User.query.filter(User.username == None).all()  # noqa: E402
+        users = User.query.filter(User.username == None).all()  # noqa: E711
         for user in users:
             user.username = generate_unique_username(user)
             db.session.merge(user)
