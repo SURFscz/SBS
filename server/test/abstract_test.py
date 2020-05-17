@@ -111,7 +111,7 @@ class AbstractTest(TestCase):
             db.session.commit()
 
     def mark_user_suspended(self, user_name):
-        john = self.find_entity_by_name(User, user_name)
-        john.suspended = True
-        db.session.merge(john)
+        user = self.find_entity_by_name(User, user_name)
+        user.suspended = True
+        db.session.merge(user)
         db.session.commit()
