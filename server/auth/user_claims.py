@@ -14,22 +14,22 @@ def claim_attribute_mapping():
     global claim_attribute_mapping_value
 
     if not claim_attribute_mapping_value:
-        claim_attribute_mapping_value = {
-            "name": "name",
-            current_app.app_config.oidc_id.lower(): "uid",
-            "address_street_address": "address",
-            "nickname": "nick_name",
-            "edumember_is_member_of": "edu_members",
-            "eduperson_affiliation": "affiliation",
-            current_app.app_config.voperson_application_uid.lower(): "application_uid",
-            current_app.app_config.eduperson_principal_name.lower(): "eduperson_principal_name",
-            "eduperson_scoped_affiliation": "scoped_affiliation",
-            "eduperson_entitlement": "entitlement",
-            "schac_home_organisation": "schac_home_organisation",
-            "family_name": "family_name",
-            "given_name": "given_name",
-            "email": "email",
-        }
+        claim_attribute_mapping_value = [
+            {"name": "name"},
+            {current_app.app_config.oidc_id.lower(): "uid"},
+            {"address_street_address": "address"},
+            {"nickname": "nick_name"},
+            {"edumember_is_member_of": "edu_members"},
+            {"eduperson_affiliation": "affiliation"},
+            {current_app.app_config.voperson_application_uid.lower(): "application_uid"},
+            {current_app.app_config.eduperson_principal_name.lower(): "eduperson_principal_name"},
+            {"eduperson_scoped_affiliation": "scoped_affiliation"},
+            {"eduperson_entitlement": "entitlement"},
+            {"schac_home_organisation": "schac_home_organisation"},
+            {"family_name": "family_name"},
+            {"given_name": "given_name"},
+            {"email": "email"},
+        ]
     return claim_attribute_mapping_value
 
 
@@ -59,8 +59,9 @@ def _get_value(request_headers, key):
 
 
 def add_user_claims(request_headers, uid, user):
-    for key, attr in claim_attribute_mapping().items():
-        setattr(user, attr, _get_value(request_headers, _get_header_key(key)))
+    for claim in claim_attribute_mapping():
+        for key, attr in claim.items():
+            setattr(user, attr, _get_value(request_headers, _get_header_key(key)))
     if not user.name:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
         user.name = name if name else user.nick_name if user.nick_name else uid

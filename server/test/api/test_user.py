@@ -149,9 +149,14 @@ class TestUser(AbstractTest):
         self.assertEqual(201, response.status_code)
 
     def test_provisioning_with_diacritics(self):
-        headers = {"OIDC_CLAIM_" + key: "Ã«Ã¤Ã¦Å¡" for key in claim_attribute_mapping().keys()}
+        headers = {}
+        for claim in claim_attribute_mapping():
+            key = "OIDC_CLAIM_" + next(iter(claim))
+            headers[key] = "Ã«Ã¤Ã¦Å¡"
+        headers["OIDC_CLAIM_CMUID"] = "urn.test"
         user = self.client.get("api/users/me", headers=headers).json
         self.assertEqual("ëäæš", user["email"])
+        self.assertEqual("urn.test", user["uid"])
 
     def test_update(self):
         roger = self.find_entity_by_name(User, roger_name)
