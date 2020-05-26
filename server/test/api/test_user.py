@@ -156,7 +156,6 @@ class TestUser(AbstractTest):
         headers["OIDC_CLAIM_CMUID"] = "urn.test"
         user = self.client.get("api/users/me", headers=headers).json
         self.assertEqual("ëäæš", user["email"])
-        self.assertEqual("urn.test", user["uid"])
 
     def test_update(self):
         roger = self.find_entity_by_name(User, roger_name)
