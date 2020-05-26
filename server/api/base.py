@@ -93,6 +93,21 @@ def _audit_trail():
         ctx_logger("base").info(f"Path {current_request.path} {method} {msg}")
 
 
+def _service_status(body):
+    method = current_request.method
+    path = current_request.path
+    if method in _audit_trail_methods:
+        if isinstance(body, db.Model):
+            subject = body.id
+        else:
+            parts = path.rsplit('/', 1)
+            path = parts[0]
+            subject = parts[-1]
+        method = method.lower()
+        topic = f"sbs{path}/{method}"
+        current_app.mqtt.publish(topic, subject, qos=1, retain=False)
+
+
 def json_endpoint(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -104,6 +119,7 @@ def json_endpoint(f):
             _audit_trail()
             _add_custom_header(response)
             db.session.commit()
+            _service_status(body)
             return response, status
         except Exception as e:
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
