@@ -14,7 +14,8 @@ class mqttClient(client.Client):
         super(mqttClient, self).__init__(client_id, clean_session=False, *args, **kwargs)
         self.username_pw_set(user, password=password)
         if self.enabled:
-            self.connect(host, keepalive=60)
+            self.connect(host)
+            self.loop_start()
 
     def publish(self, *args, **kwargs):
         if self.enabled:
