@@ -2,23 +2,20 @@
 import paho.mqtt.client as client
 
 
-class mqttClient(client.Client):
+class MqttClient(client.Client):
     enabled = False
 
     def __init__(self, app, *args, **kwargs):
-        self.enabled = app.app_config.service_bus.enabled
-        host = app.app_config.service_bus.host
-        client_id = app.app_config.service_bus.client_id
-        user = app.app_config.service_bus.user
-        password = app.app_config.service_bus.password
-        super(mqttClient, self).__init__(client_id, clean_session=False, *args, **kwargs)
-        self.username_pw_set(user, password=password)
+        service_bus_conf = app.app_config.service_bus
+        self.enabled = service_bus_conf.enabled
         if self.enabled:
-            self.connect(host)
+            super(MqttClient, self).__init__(service_bus_conf.client_id, clean_session=False, *args, **kwargs)
+            self.username_pw_set(service_bus_conf.user, password=service_bus_conf.password)
+            self.connect(service_bus_conf.host)
             self.loop_start()
 
     def publish(self, *args, **kwargs):
         if self.enabled:
-            return super(mqttClient, self).publish(*args, **kwargs)
+            return super(MqttClient, self).publish(*args, **kwargs)
 
         return False
