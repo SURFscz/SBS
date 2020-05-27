@@ -5,8 +5,7 @@ import paho.mqtt.client as client
 class MqttClient(client.Client):
     enabled = False
 
-    def __init__(self, app, *args, **kwargs):
-        service_bus_conf = app.app_config.service_bus
+    def __init__(self, service_bus_conf, *args, **kwargs):
         self.enabled = service_bus_conf.enabled
         if self.enabled:
             super(MqttClient, self).__init__(service_bus_conf.client_id, clean_session=False, *args, **kwargs)
