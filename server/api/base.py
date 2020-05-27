@@ -95,8 +95,8 @@ def _audit_trail():
 
 def _service_status(body):
     method = current_request.method
-    path = current_request.path
     if method in _audit_trail_methods:
+        path = current_request.path
         if isinstance(body, db.Model):
             subject = body.id
         else:
@@ -105,7 +105,8 @@ def _service_status(body):
             subject = parts[-1]
         method = method.lower()
         topic = f"sbs{path}/{method}"
-        current_app.mqtt.publish(topic, subject, qos=1, retain=False)
+        # See https://www.eclipse.org/paho/files/mqttdoc/MQTTClient/html/qos.html
+        current_app.mqtt.publish(topic, subject, qos=0, retain=False)
 
 
 def json_endpoint(f):
