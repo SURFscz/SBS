@@ -37,5 +37,5 @@ class TestMqtt(AbstractTest):
             "client_id": "sbs_test"
         })
         mqtt_client = MqttClient(config_service_bus)
-        mqtt_client.publish("test", "1", qos=1, retain=False)
+        mqtt_client.publish("test", "1", qos=0, retain=False)
         self.broker.shutdown()
