@@ -1,6 +1,8 @@
 # -*- coding: future_fstrings -*-
 import paho.mqtt.client as client
 
+from server.api.base import ctx_logger
+
 
 class MqttClient(client.Client):
     enabled = False
@@ -15,6 +17,9 @@ class MqttClient(client.Client):
 
     def publish(self, *args, **kwargs):
         if self.enabled:
-            return super(MqttClient, self).publish(*args, **kwargs)
-
+            try:
+                return super(MqttClient, self).publish(*args, **kwargs)
+            except Exception as e:
+                logger = ctx_logger("mqtt_client")
+                logger.error(f"Exception {e} in MqttClient.publish")
         return False
