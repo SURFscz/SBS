@@ -106,7 +106,7 @@ def _service_status(body):
         method = method.lower()
         topic = f"sbs{path}/{method}"
         # See https://www.eclipse.org/paho/files/mqttdoc/MQTTClient/html/qos.html
-        current_app.mqtt.publish(topic, subject, qos=0, retain=False)
+        current_app.mqtt.publish(topic, subject, qos=1, retain=False)
 
 
 def json_endpoint(f):
