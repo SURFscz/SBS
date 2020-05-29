@@ -80,7 +80,8 @@ def invitations_accept():
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
 
-    return None, 201
+    res = {'collaboration_id': collaboration.id, 'user_id': user_id}
+    return res, 201
 
 
 @invitations_api.route("/decline", methods=["PUT"], strict_slashes=False)

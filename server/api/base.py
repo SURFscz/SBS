@@ -92,20 +92,20 @@ def _audit_trail():
         msg = json.dumps(current_request.json) if method != "DELETE" else ""
         ctx_logger("base").info(f"Path {current_request.path} {method} {msg}")
 
-
+import copy
 def _service_status(body):
     method = current_request.method
     path = current_request.path
-    if method in _audit_trail_methods:
+    endpoint = path.rsplit('/', 1)[-1]
+    if method in _audit_trail_methods and endpoint != 'error':
         if isinstance(body, db.Model):
-            subject = body.id
+            r = jsonify(body).get_data()
         else:
-            parts = path.rsplit('/', 1)
-            path = parts[0]
-            subject = parts[-1]
+            r = json.dumps(body)
+        msg = r
         method = method.lower()
         topic = f"sbs{path}/{method}"
-        current_app.mqtt.publish(topic, subject, qos=1, retain=False)
+        current_app.mqtt.publish(topic, msg, qos=1, retain=False)
 
 
 def json_endpoint(f):

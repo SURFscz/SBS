@@ -34,7 +34,9 @@ def add_group_members():
     data = current_request.get_json()
     count = do_add_group_members(data, True)
 
-    return (None, 201) if count > 0 else (None, 404)
+    res = data
+
+    return (res, 201) if count > 0 else (None, 404)
 
 
 @group_members_api.route("/delete_all_members/<group_id>/<collaboration_id>",
@@ -47,7 +49,8 @@ def delete_all_group_members(group_id, collaboration_id):
     group.collaboration_memberships = []
     db.session.merge(group)
 
-    return None, 204
+    group = Group.query.get(group_id)
+    return group, 204
 
 
 @group_members_api.route("/<group_id>/<collaboration_membership_id>/<collaboration_id>",
@@ -60,4 +63,4 @@ def delete_group_members(group_id, collaboration_membership_id, collaboration_id
     group.collaboration_memberships.remove(CollaborationMembership.query.get(collaboration_membership_id))
     db.session.merge(group)
 
-    return None, 204
+    return group, 204
