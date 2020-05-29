@@ -44,7 +44,9 @@ def add_collaborations_services():
     service_id = int(data["service_id"])
 
     count = connect_service_collaboration(service_id, collaboration_id)
-    return (None, 201) if count > 0 else (None, 404)
+    res = { 'collaboration_id': collaboration_id, 'service_id': service_id }
+
+    return (res, 201) if count > 0 else (None, 404)
 
 
 @collaborations_services_api.route("/v1/connect_collaboration_service", methods=["PUT"], strict_slashes=False)

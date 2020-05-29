@@ -137,7 +137,8 @@ def approve_join_request():
     db.session.merge(collaboration_membership)
     delete(JoinRequest, join_request.id)
 
-    return None, 201
+    res = { 'collaboration_id': collaboration.id, 'user_id': user_id }
+    return res, 201
 
 
 @join_request_api.route("/decline", methods=["PUT"], strict_slashes=False)

@@ -83,7 +83,7 @@ def delete(cls, primary_key):
     instance = cls.query.get(primary_key)
     db.session.delete(instance)
     db.session.commit()
-    return None, 204
+    return instance, 204
 
 
 def cleanse_json(json_dict, cls=None, allow_child_cascades=True):
