@@ -103,4 +103,7 @@ def delete_collaborations_services(collaboration_id, service_id):
 
     collaboration.services.remove(Service.query.get(service_id))
     db.session.merge(collaboration)
-    return None, 204
+
+    res = { 'collaboration_id': collaboration_id, 'service_id': service_id }
+
+    return res, 204
