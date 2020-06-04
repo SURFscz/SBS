@@ -137,7 +137,7 @@ def approve_join_request():
     db.session.merge(collaboration_membership)
     delete(JoinRequest, join_request.id)
 
-    res = { 'collaboration_id': collaboration.id, 'user_id': user_id }
+    res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201
 
 
