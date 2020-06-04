@@ -27,7 +27,7 @@ def delete_collaboration_membership(collaboration_id, user_id):
 
     logger.info(f"Deleted {len(memberships)} collaboration memberships of {user_id}")
 
-    res = { 'collaboration_id': collaboration_id, 'user_id': user_id }
+    res = {'collaboration_id': collaboration_id, 'user_id': user_id}
 
     return (res, 204) if len(memberships) > 0 else (None, 404)
 

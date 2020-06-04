@@ -92,7 +92,7 @@ def _audit_trail():
         msg = json.dumps(current_request.json) if method != "DELETE" else ""
         ctx_logger("base").info(f"Path {current_request.path} {method} {msg}")
 
-import copy
+
 def _service_status(body):
     method = current_request.method
     path = current_request.path

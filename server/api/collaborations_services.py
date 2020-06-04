@@ -44,7 +44,7 @@ def add_collaborations_services():
     service_id = int(data["service_id"])
 
     count = connect_service_collaboration(service_id, collaboration_id)
-    res = { 'collaboration_id': collaboration_id, 'service_id': service_id }
+    res = {'collaboration_id': collaboration_id, 'service_id': service_id}
 
     return (res, 201) if count > 0 else (None, 404)
 
@@ -104,6 +104,6 @@ def delete_collaborations_services(collaboration_id, service_id):
     collaboration.services.remove(Service.query.get(service_id))
     db.session.merge(collaboration)
 
-    res = { 'collaboration_id': collaboration_id, 'service_id': service_id }
+    res = {'collaboration_id': collaboration_id, 'service_id': service_id}
 
     return res, 204
