@@ -105,7 +105,7 @@ def _service_status(body):
         msg = r
         method = method.lower()
         topic = f"sbs{path}/{method}"
-        current_app.mqtt.publish(topic, msg, qos=1, retain=False)
+        current_app.mqtt.publish(topic, msg)
 
 
 def json_endpoint(f):
