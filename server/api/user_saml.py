@@ -8,7 +8,6 @@ from server.api.base import json_endpoint, query_param, ctx_logger
 from server.auth.security import confirm_read_access
 from server.db.db import db
 from server.db.domain import User, CollaborationMembership, Service, Collaboration
-from server.db.models import flatten
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 
@@ -16,25 +15,17 @@ user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 custom_saml_mapping = {
     "multi_value_attributes": ["edu_members", "affiliation", "scoped_affiliation", "entitlement"],
     "attribute_saml_mapping": {
-        "uid": "urn:mace:dir:attribute-def:uid",
-        "name": "urn:mace:dir:attribute-def:cn",
-        "address": "urn:mace:dir:attribute-def:postalAddress",
-        "nick_name": "urn:mace:dir:attribute-def:displayName",
-        "username": "urn:mace:dir:attribute-def:shortName",
-        "edu_members": "urn:mace:dir:attribute-def:isMemberOf",
-        "affiliation": "urn:mace:dir:attribute-def:eduPersonAffiliation",
-        "scoped_affiliation": "urn:mace:dir:attribute-def:eduPersonScopedAffiliation",
-        "entitlement": "urn:mace:dir:attribute-def:eduPersonEntitlement",
-        "schac_home_organisation": "urn:mace:terena.org:attribute-def:schacHomeOrganization",
-        "family_name": "urn:mace:dir:attribute-def:sn",
-        "given_name": "urn:mace:dir:attribute-def:givenName",
-        "email": "urn:mace:dir:attribute-def:mail",
-        "ssh_key": "urn:oid:1.3.6.1.4.1.24552.1.1.1.13"
+        "uid": "cuid",
+        "username": "uid",
+        "ssh_key": "sshKey",
+    },
+    "custom_attribute_saml_mapping": {
+        "memberships": "eduPersonEntitlement",
     }
 }
 
 
-# Endpoint for SATOSA
+# Endpoint for SATOSA/eduteams
 @user_saml_api.route("/attributes", strict_slashes=False)
 @json_endpoint
 def attributes():
@@ -61,6 +52,7 @@ def attributes():
         logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
         return {}, 200
 
+    # gather regular user attributes
     result = {}
     user.last_accessed_date = datetime.now()
     user.last_login_date = datetime.now()
@@ -73,17 +65,28 @@ def attributes():
         if val:
             result[v] = val.split(",") if k in custom_saml_mapping["multi_value_attributes"] else [val]
 
-    collaboration_names = list(map(lambda cm: cm.collaboration.short_name, user.collaboration_memberships))
+    # gather groups and collaborations
+    #
+    # we're (partially) adhering to AARC's Guidelines on expressing group membership and role information
+    # (see https://aarc-project.eu/guidelines/aarc-g002/)
+    # Which prescribes group/co membership need to be expressed as entitlements of the form
+    # <NAMESPACE>:group:<GROUP>[:<SUBGROUP>*][:role=<ROLE>]#<GROUP-AUTHORITY>
+    # The namespace is defined in the config file (variable entitlement_group_namespace)
+    # COs map to GROUP and Groups map to SUBGROUP
+    # We don't use roles, so we omit those.
+    # Also, we omit the GROUP-AUTHORITY (and are therefore not completely compliant), as it complicates parsing the
+    # entitlement, will confuse Services, and  the spec fails to make clear what the usecase is, exactly.
     cfg = current_app.app_config
-    if cfg.get("generate_multiple_eppn", False):
-        eppns = list(map(lambda co: f"{user.username}@{co}.{cfg.base_scope}", set(collaboration_names)))
-        result["urn:mace:dir:attribute-def:eduPersonPrincipalName"] = eppns
+    namespace = cfg.get("entitlement_group_namespace", "urn:bla")
 
-    groups = flatten(list(map(lambda cm: cm.collaboration.groups, user.collaboration_memberships)))
+    memberships = set()
+    for cm in user.collaboration_memberships:
+        memberships.add(f"{namespace}:group:{cm.collaboration.short_name}")
+        for g in cm.collaboration.groups:
+            memberships.add(f"{namespace}:group:{cm.collaboration.short_name}:{g.short_name}")
+    membership_attribute = custom_saml_mapping['custom_attribute_saml_mapping']['memberships']
+    result[membership_attribute] = memberships
 
-    group_short_names = list(map(lambda group: group.short_name, groups))
-    is_member_of = list(set(group_short_names + collaboration_names))
-    result[custom_saml_mapping["attribute_saml_mapping"]["edu_members"]] = is_member_of
     result = {k: list(set(v)) for k, v in result.items()}
 
     logger.info(f"Returning attributes for user {uid} and service_entity_id {service_entity_id}")

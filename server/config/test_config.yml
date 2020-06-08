@@ -14,15 +14,15 @@ api_users:
     password: "secret"
     scopes: ["restricted_co"]
 
-oidc_id: "CMUID"
+oidc_id: "SUB"
 oidc_prefix: "HTTP_OIDC_CLAIM_"
 oidc_uppercase: True
 voperson_application_uid: "voperson_application_uid"
 eduperson_principal_name: "eduperson_principal_name"
 
 base_scope: "test.sbs.local"
-generate_multiple_eppn: True
-collaboration_creation_allowed_entitlement: "urn:mace:surf.nl:sram:allow-create-co"
+entitlement_group_namespace: "urn:example:sbs"
+collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
 restricted_co:
   services_white_list: ["https://cloud"]
