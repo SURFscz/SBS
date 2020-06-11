@@ -188,7 +188,8 @@ def me():
         if not user:
             user = User(uid=uid, created_by="system", updated_by="system")
             add_user_claims(request_headers, uid, user)
-            user = _user_name(user)
+            if not user.username:
+                user = _user_name(user)
             # last_login_date is set later in this method
             user.last_accessed_date = datetime.datetime.now()
             logger.info(f"Provisioning new user {user.uid}")
@@ -197,12 +198,12 @@ def me():
                 logger.info(
                     f"Returning error for user {uid} as user is suspended")
                 return {"error": f"user {uid} is suspended"}, 409
+            logger.info(f"Updating user {user.uid} with new claims / updated at")
+            add_user_claims(request_headers, uid, user)
 
             if not user.username:
                 user = _user_name(user)
                 logger.info(f"Updating user {user.uid} with new username {user.username}")
-            logger.info(f"Updating user {user.uid} with new claims / updated at")
-            add_user_claims(request_headers, uid, user)
 
         user.last_login_date = datetime.datetime.now()
 
