@@ -29,6 +29,7 @@ def claim_attribute_mapping():
             {"family_name": "family_name"},
             {"given_name": "given_name"},
             {"email": "email"},
+            {"uid": "username"}
         ]
     return claim_attribute_mapping_value
 

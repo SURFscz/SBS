@@ -98,11 +98,7 @@ def _service_status(body):
     path = current_request.path
     endpoint = path.rsplit('/', 1)[-1]
     if method in _audit_trail_methods and endpoint != 'error':
-        if isinstance(body, db.Model):
-            r = jsonify(body).get_data()
-        else:
-            r = json.dumps(body)
-        msg = r
+        msg = jsonify(body).get_data() if isinstance(body, db.Model) else json.dumps(body)
         method = method.lower()
         topic = f"sbs{path}/{method}"
         current_app.mqtt.publish(topic, msg)
