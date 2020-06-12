@@ -41,8 +41,6 @@ class TestUser(AbstractTest):
                                                self.uid_header_name(): "urn:john",
                                                f"{current_app.app_config.oidc_prefix}NAME": "urn:john"
                                            }).json
-        self.assertDictEqual(user, not_changed_user)
-
         self.assertEqual(user["guest"], False)
         self.assertEqual(user["uid"], "urn:john")
 

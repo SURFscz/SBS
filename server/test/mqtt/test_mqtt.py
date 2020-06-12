@@ -29,7 +29,9 @@ class TestMqtt(AbstractTest):
 
     def test_publish(self):
         # TODO - for some reason the broker does not ack the publish msg
-        # asyncio.get_event_loop().run_until_complete(self.start_broker())
+        loop = asyncio.get_event_loop()
+        loop.set_debug(True)
+        # loop.run_until_complete(self.start_broker())
         config_service_bus = munchify({
             "enabled": True,
             "user": "anonymous",
@@ -38,7 +40,7 @@ class TestMqtt(AbstractTest):
             "client_id": "sbs_test"
         })
         mqtt_client = MqttClient(config_service_bus)
-        res = mqtt_client.publish("test", "1", keepalive=1)
+        res = mqtt_client.publish("test", "1", qos=0)
         # self.assertTrue(res)
 
         # wildcards are not allowed, but exceptions should be caught
