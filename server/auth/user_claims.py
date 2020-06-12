@@ -23,7 +23,7 @@ def claim_attribute_mapping():
             {"eduperson_affiliation": "affiliation"},
             {current_app.app_config.voperson_application_uid.lower(): "application_uid"},
             {current_app.app_config.eduperson_principal_name.lower(): "eduperson_principal_name"},
-            {"eduperson_scoped_affiliation": "scoped_affiliation"},
+            {current_app.app_config.eduperson_scoped_affiliation.lower(): "scoped_affiliation"},
             {"eduperson_entitlement": "entitlement"},
             {"schac_home_organisation": "schac_home_organisation"},
             {"family_name": "family_name"},
