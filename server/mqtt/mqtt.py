@@ -16,12 +16,12 @@ class MqttClient():
         self.client_id = service_bus_conf['client_id']
         self.auth = {'username': service_bus_conf['user'], 'password': service_bus_conf['password']}
 
-    def publish(self, topic, msg, keepalive=60):
+    def publish(self, topic, msg, qos=1):
         res = False
         if self.enabled:
             try:
-                publish.single(topic, payload=msg, hostname=self.host, retain=False, qos=1,
-                               client_id=self.client_id, auth=self.auth, keepalive=keepalive)
+                publish.single(topic, payload=msg, hostname=self.host, retain=False, qos=qos,
+                               client_id=self.client_id, auth=self.auth)
                 res = True
             except Exception as e:
                 logger = ctx_logger("mqtt_client")
