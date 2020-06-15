@@ -304,6 +304,18 @@ def other():
     return _user_json_response(user)
 
 
+# Endpoint for plsc/ldap sync
+@user_api.route("/user", strict_slashes=False)
+@json_endpoint
+def user():
+    confirm_read_access()
+    #logger = ctx_logger("users/user api")
+
+    uid = query_param("uid")
+    user = _user_query().filter(User.uid == uid).one()
+    return _user_json_response(user)
+
+
 @user_api.route("/attribute_aggregation", strict_slashes=False)
 @json_endpoint
 # End point used by the SBS attribute aggregator in the github.com:OpenConext/OpenConext-attribute-aggregation project
