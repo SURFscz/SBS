@@ -307,13 +307,22 @@ def other():
 # Endpoint for plsc/ldap sync
 @user_api.route("/user", strict_slashes=False)
 @json_endpoint
-def user():
+def user_endpoint():
     confirm_read_access()
-    #logger = ctx_logger("users/user api")
 
     uid = query_param("uid")
-    user = _user_query().filter(User.uid == uid).one()
-    return _user_json_response(user)
+    the_user = User.query \
+        .join(User.collaboration_memberships) \
+        .join(CollaborationMembership.collaboration) \
+        .join(CollaborationMembership.groups) \
+        .options(contains_eager(User.collaboration_memberships)
+                 .contains_eager(CollaborationMembership.collaboration)) \
+        .options(contains_eager(User.collaboration_memberships)
+                 .contains_eager(CollaborationMembership.groups)) \
+        .filter(User.uid == uid) \
+        .one()
+
+    return _user_json_response(the_user)
 
 
 @user_api.route("/attribute_aggregation", strict_slashes=False)
