@@ -311,10 +311,11 @@ def user_endpoint():
     confirm_read_access()
 
     uid = query_param("uid")
+
     the_user = User.query \
         .join(User.collaboration_memberships) \
         .join(CollaborationMembership.collaboration) \
-        .join(CollaborationMembership.groups) \
+        .outerjoin(CollaborationMembership.groups) \
         .options(contains_eager(User.collaboration_memberships)
                  .contains_eager(CollaborationMembership.collaboration)) \
         .options(contains_eager(User.collaboration_memberships)
