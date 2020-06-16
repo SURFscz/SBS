@@ -126,18 +126,18 @@ class TestUser(AbstractTest):
 
     def test_users_user_not_allowed(self):
         self.login("urn:mary")
-        self.get("/api/users/user", query_data={"uid": "urn:mary"},  with_basic_auth=False, response_status_code=403)
+        self.get("/api/users/user", query_data={"uid": "urn:mary"}, with_basic_auth=False, response_status_code=403)
         self.get("/api/users/user", query_data={"uid": "urn:peter"}, with_basic_auth=False, response_status_code=403)
 
     def test_users_user_without_groups(self):
-        res = self.get("/api/users/user", query_data={"uid": "urn:sarah"},  response_status_code=200)
+        res = self.get("/api/users/user", query_data={"uid": "urn:sarah"}, response_status_code=200)
         self.assertEqual("Sarah Cross", res.get("name"))
         self.assertEqual(2, len(res["collaboration_memberships"]))
         self.assertEqual(0, len(res["collaboration_memberships"][0]["groups"]))
         self.assertEqual(0, len(res["collaboration_memberships"][1]["groups"]))
 
     def test_users_user_with_groups(self):
-        res = self.get("/api/users/user", query_data={"uid": "urn:roger"},  response_status_code=200)
+        res = self.get("/api/users/user", query_data={"uid": "urn:roger"}, response_status_code=200)
         self.assertEqual("Roger Doe", res.get("name"))
         self.assertEqual(1, len(res["collaboration_memberships"]))
         self.assertEqual(1, len(res["collaboration_memberships"][0]["groups"]))
