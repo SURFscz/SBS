@@ -161,11 +161,11 @@ def seed(db, app_config):
     _persist(db, user_one_suspend_notification1, user_two_suspend_notification1, user_two_suspend_notification2,
              user_suspended_notification1, user_suspended_notification2)
 
-    uuc = Organisation(name=uuc_name, short_name="uuc",
+    uuc = Organisation(name=uuc_name, short_name="uuc", identifier=str(uuid.uuid4()),
                        description="Unincorporated Urban Community",
                        created_by="urn:admin", updated_by="urnadmin",
                        collaboration_creation_allowed=True, schac_home_organisation=schac_home_organisation_uuc)
-    uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam",
+    uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam", identifier=str(uuid.uuid4()),
                        created_by="urn:admin", updated_by="urnadmin", short_name="uva",
                        schac_home_organisation=schac_home_organisation)
     _persist(db, uuc, uva)
@@ -259,6 +259,7 @@ def seed(db, app_config):
 
     group_researchers = Group(name=ai_researchers_group,
                               short_name=ai_researchers_group_short_name,
+                              identifier=str(uuid.uuid4()),
                               auto_provision_members=False,
                               description="Artifical computing researchers",
                               collaboration=ai_computing,
@@ -266,12 +267,14 @@ def seed(db, app_config):
                                                          jane_ai_computing])
     group_developers = Group(name="AI developers",
                              short_name="ai_dev",
+                             identifier=str(uuid.uuid4()),
                              auto_provision_members=False,
                              description="Artifical computing developers",
                              collaboration=ai_computing,
                              collaboration_memberships=[john_ai_computing])
     group_science = Group(name=group_science_name,
                           short_name="science",
+                          identifier=str(uuid.uuid4()),
                           auto_provision_members=True,
                           description="Science",
                           collaboration=uva_research,
