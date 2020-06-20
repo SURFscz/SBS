@@ -476,6 +476,12 @@ def update_collaboration():
     organisation = Organisation.query.get(data["organisation_id"])
     _validate_collaboration(data, organisation, new_collaboration=False)
 
+    collaboration = Collaboration.query.get(data["id"])
+    if collaboration.short_name != data["short_name"]:
+        for group in collaboration.groups:
+            group.global_urn = f"{organisation.short_name}:{data['short_name']}:{group.short_name}"
+            db.session.merge(group)
+
     if not is_application_admin() and "services_restricted" in data:
         del data["services_restricted"]
 

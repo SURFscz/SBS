@@ -4,9 +4,10 @@ import time
 from unittest import TestCase
 
 from munch import munchify
+from werkzeug.exceptions import BadRequest
 
+from server.db.defaults import default_expiry_date, calculate_expiry_period, cleanse_short_name
 from server.db.domain import Invitation
-from server.db.defaults import default_expiry_date, calculate_expiry_period
 
 
 class TestDefaults(TestCase):
@@ -64,3 +65,9 @@ class TestDefaults(TestCase):
         invitation = Invitation(expiry_date=today + datetime.timedelta(days=1))
         period = calculate_expiry_period(invitation, today=today)
         self.assertEqual("1 day", period)
+
+    def test_cleanse_short_name(self):
+        def raises_bad_request():
+            cleanse_short_name({})
+
+        self.assertRaises(BadRequest, raises_bad_request)
