@@ -222,11 +222,11 @@ class OrganisationDetail extends React.Component {
         if (this.isValid()) {
             const {
                 name, description, originalOrganisation, schac_home_organisation, collaboration_creation_allowed,
-                short_name
+                short_name, identifier
             } = this.state;
             updateOrganisation({
                 id: originalOrganisation.id, name, description, schac_home_organisation,
-                collaboration_creation_allowed, short_name
+                collaboration_creation_allowed, short_name, identifier
             })
                 .then(() => {
                     this.fetchAuditLogs(originalOrganisation.id);
