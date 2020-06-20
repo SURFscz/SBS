@@ -39,6 +39,12 @@ class OrganisationDetailLite extends React.Component {
             <InputField value={organisation.short_name}
                         name={I18n.t("organisation.shortName")}
                         disabled={true}/>
+            <InputField value={organisation.identifier}
+                        name={I18n.t("organisation.identifier")}
+                        toolTip={I18n.t("organisation.identifierTooltip")}
+                        disabled={true}
+                        copyClipBoard={true}/>
+
             <InputField value={organisation.description}
                         name={I18n.t("organisation.description")}
                         disabled={true}/>

@@ -1,4 +1,6 @@
 # -*- coding: future_fstrings -*-
+import uuid
+
 from flask import Blueprint, request as current_request
 from sqlalchemy import func
 from sqlalchemy.orm import load_only, contains_eager
@@ -139,6 +141,7 @@ def save_group():
 
     _assign_global_urn(collaboration_id, data)
     cleanse_short_name(data)
+    data["identifier"] = str(uuid.uuid4())
 
     res = save(Group, custom_json=data, allow_child_cascades=False)
 

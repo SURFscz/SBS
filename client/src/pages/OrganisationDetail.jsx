@@ -39,6 +39,7 @@ class OrganisationDetail extends React.Component {
             originalOrganisation: null,
             name: "",
             short_name: "",
+            identifier: "",
             description: "",
             schac_home_organisation: "",
             collaboration_creation_allowed: false,
@@ -93,6 +94,7 @@ class OrganisationDetail extends React.Component {
                         originalOrganisation: json,
                         name: json.name,
                         short_name: json.short_name,
+                        identifier: json.identifier,
                         description: json.description,
                         schac_home_organisation: json.schac_home_organisation,
                         collaboration_creation_allowed: json.collaboration_creation_allowed,
@@ -586,7 +588,7 @@ class OrganisationDetail extends React.Component {
         );
     };
 
-    organisationDetails = (adminOfOrganisation, name, short_name, alreadyExists, initial, description,
+    organisationDetails = (adminOfOrganisation, name, short_name, identifier, alreadyExists, initial, description,
                            schac_home_organisation, collaboration_creation_allowed, originalOrganisation, user, disabledSubmit) => {
         return <div className="organisation-detail">
             <InputField value={name} onChange={e => {
@@ -627,6 +629,12 @@ class OrganisationDetail extends React.Component {
                 className="error">{I18n.t("organisation.required", {
                 attribute: I18n.t("organisation.shortName").toLowerCase()
             })}</span>}
+
+            <InputField value={identifier}
+                        name={I18n.t("organisation.identifier")}
+                        toolTip={I18n.t("organisation.identifierTooltip")}
+                        disabled={true}
+                        copyClipBoard={true}/>
 
             <InputField value={description}
                         onChange={e => this.setState({description: e.target.value})}
@@ -677,7 +685,7 @@ class OrganisationDetail extends React.Component {
                      originalOrganisation, inviteReverse, inviteSorted, invitations, collaborationRequestReverse,
                      collaborationRequestSorted, collaborationRequests, filteredMembers, user, sorted, reverse, query,
                      adminOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
-                     collaborationsQuery, name, short_name, alreadyExists, initial, description, schac_home_organisation,
+                     collaborationsQuery, name, short_name, identifier, alreadyExists, initial, description, schac_home_organisation,
                      collaboration_creation_allowed, disabledSubmit) => (
         <>
             <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -709,13 +717,13 @@ class OrganisationDetail extends React.Component {
             <div className="title">
                 <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
             </div>
-            {this.organisationDetails(adminOfOrganisation, name, short_name, alreadyExists, initial,
+            {this.organisationDetails(adminOfOrganisation, name, short_name, identifier, alreadyExists, initial,
                 description, schac_home_organisation, collaboration_creation_allowed, originalOrganisation, user, disabledSubmit)}
         </>);
 
     render() {
         const {
-            name, short_name, description, schac_home_organisation, collaboration_creation_allowed, originalOrganisation, initial, alreadyExists, filteredMembers, query,
+            name, short_name, identifier, description, schac_home_organisation, collaboration_creation_allowed, originalOrganisation, initial, alreadyExists, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             inviteReverse, inviteSorted, invitations, adminOfOrganisation, apiKeys,
             filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted, collaborationsQuery,
@@ -736,7 +744,7 @@ class OrganisationDetail extends React.Component {
                             leavePage, originalOrganisation, inviteReverse, inviteSorted, invitations, collaborationRequestReverse,
                             collaborationRequestSorted, collaborationRequests, filteredMembers, user, sorted, reverse, query,
                             adminOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
-                            collaborationsQuery, name, short_name, alreadyExists, initial, description, schac_home_organisation,
+                            collaborationsQuery, name, short_name, identifier, alreadyExists, initial, description, schac_home_organisation,
                             collaboration_creation_allowed, disabledSubmit)}
                     </div>
                     {(adminOfOrganisation || user.admin) &&

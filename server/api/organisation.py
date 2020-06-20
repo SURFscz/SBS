@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import uuid
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app, g as request_context
@@ -243,6 +244,7 @@ def save_organisation():
 
     _clear_api_keys(data)
     cleanse_short_name(data)
+    data["identifier"] = str(uuid.uuid4())
 
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
