@@ -91,6 +91,20 @@ class TestOrganisation(AbstractTest):
         self.delete("/api/organisations", primary_key=organisation["id"])
         self.assertEqual(2, Organisation.query.count())
 
+    def test_organisation_update_short_name(self):
+        self.login()
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
+        organisation["short_name"] = "changed!!!!"
+        organisation = self.put("/api/organisations", body=organisation)
+        self.assertEqual("changed", organisation["short_name"])
+
+        collaborations = self.find_entity_by_name(Organisation, uuc_name).collaborations
+        for collaboration in collaborations:
+            self.assertTrue("changed" in collaboration.global_urn)
+            for group in collaboration.groups:
+                self.assertTrue("changed" in group.global_urn)
+
     def test_organisation_forbidden(self):
         self.login("urn:peter")
         self.post("/api/organisations", with_basic_auth=False,

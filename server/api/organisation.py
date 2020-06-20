@@ -294,6 +294,15 @@ def update_organisation():
     _clear_api_keys(data)
     cleanse_short_name(data)
 
+    organisation = Organisation.query.get(data["id"])
+    if organisation.short_name != data["short_name"]:
+        for collaboration in organisation.collaborations:
+            collaboration.global_urn = f"{data['short_name']}:{collaboration.short_name}"
+            db.session.merge(collaboration)
+            for group in collaboration.groups:
+                group.global_urn = f"{data['short_name']}:{collaboration.short_name}:{group.short_name}"
+                db.session.merge(group)
+
     return update(Organisation, custom_json=data, allow_child_cascades=False)
 
 

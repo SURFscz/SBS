@@ -11,8 +11,8 @@ from server.api.group_invitations import do_add_group_invitations
 from server.api.group_members import do_add_group_members
 from server.auth.security import confirm_collaboration_admin, \
     confirm_collaboration_admin_or_group_member, current_user_id, confirm_group_member
-from server.db.domain import Group, CollaborationMembership, Collaboration
 from server.db.defaults import cleanse_short_name
+from server.db.domain import Group, CollaborationMembership, Collaboration
 from server.db.models import update, save, delete
 from server.schemas import json_schema_validator
 

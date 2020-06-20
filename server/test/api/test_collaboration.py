@@ -145,15 +145,15 @@ class TestCollaboration(AbstractTest):
         default_organisation = self.app.app_config.restricted_co.default_organisation
         self.app.app_config.restricted_co.default_organisation = "bogus"
         self.post("/api/collaborations/v1/restricted",
-                        body={
-                            "name": "new_collaboration",
-                            "administrator": "harry",
-                            "short_name": "short_org_name",
-                            "connected_services": []
-                        },
-                        with_basic_auth=False,
-                        headers=RESTRICTED_CO_API_AUTH_HEADER,
-                        response_status_code=400)
+                  body={
+                      "name": "new_collaboration",
+                      "administrator": "harry",
+                      "short_name": "short_org_name",
+                      "connected_services": []
+                  },
+                  with_basic_auth=False,
+                  headers=RESTRICTED_CO_API_AUTH_HEADER,
+                  response_status_code=400)
         self.app.app_config.restricted_co.default_organisation = default_organisation
 
     def test_collaboration_update(self):
@@ -163,6 +163,17 @@ class TestCollaboration(AbstractTest):
         collaboration["name"] = "changed"
         collaboration = self.put("/api/collaborations", body=collaboration)
         self.assertEqual("changed", collaboration["name"])
+
+    def test_collaboration_update_short_name(self):
+        collaboration_id = self._find_by_name_id()["id"]
+        self.login()
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
+        collaboration["short_name"] = "changed"
+        self.put("/api/collaborations", body=collaboration)
+
+        groups = self.find_entity_by_name(Collaboration, ai_computing_name).groups
+        for group in groups:
+            self.assertTrue("changed" in group.global_urn)
 
     def test_collaboration_update_restricted_service(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
