@@ -154,9 +154,9 @@ def seed(db, app_config):
     user_two_suspend_notification2 = SuspendNotification(user=user_two_suspend, sent_at=resend_suspension_date,
                                                          is_primary=False)
     user_suspended_notification1 = SuspendNotification(user=user_suspended, sent_at=resend_suspension_date,
-                                                         is_primary=True)
+                                                       is_primary=True)
     user_suspended_notification2 = SuspendNotification(user=user_suspended, sent_at=resend_suspension_date,
-                                                         is_primary=False)
+                                                       is_primary=False)
 
     _persist(db, user_one_suspend_notification1, user_two_suspend_notification1, user_two_suspend_notification2,
              user_suspended_notification1, user_suspended_notification2)
@@ -227,17 +227,21 @@ def seed(db, app_config):
 
     ai_computing = Collaboration(name=ai_computing_name,
                                  identifier=collaboration_ai_computing_uuid,
+                                 global_urn=f"ucc:{ai_computing_short_name}",
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
                                  organisation=uuc, services=[mail, network], enrollment="Form",
                                  join_requests=[], invitations=[], access_type="open",
                                  short_name=ai_computing_short_name,
                                  accepted_user_policy="https://www.google.nl")
-    uva_research = Collaboration(name=uva_research_name,
+    uva_research = Collaboration(name=uva_research_name, short_name="research",
+                                 global_urn="uva:research",
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",
                                  organisation=uva, services=[cloud, storage, wiki],
                                  join_requests=[], invitations=[])
     uu_disabled_join_request = Collaboration(name=uu_disabled_join_request_name,
+                                             short_name="uu_short",
+                                             global_urn="uva:uu_short",
                                              identifier=str(uuid.uuid4()),
                                              description="UU", disable_join_requests=True, organisation=uva,
                                              services=[],
@@ -259,6 +263,7 @@ def seed(db, app_config):
 
     group_researchers = Group(name=ai_researchers_group,
                               short_name=ai_researchers_group_short_name,
+                              global_urn="uuc:ai_computing:ai_res",
                               identifier=str(uuid.uuid4()),
                               auto_provision_members=False,
                               description="Artifical computing researchers",
@@ -267,6 +272,7 @@ def seed(db, app_config):
                                                          jane_ai_computing])
     group_developers = Group(name="AI developers",
                              short_name="ai_dev",
+                             global_urn="uuc:ai_computing:ai_dev",
                              identifier=str(uuid.uuid4()),
                              auto_provision_members=False,
                              description="Artifical computing developers",
@@ -274,6 +280,7 @@ def seed(db, app_config):
                              collaboration_memberships=[john_ai_computing])
     group_science = Group(name=group_science_name,
                           short_name="science",
+                          global_urn="uva:research:science",
                           identifier=str(uuid.uuid4()),
                           auto_provision_members=True,
                           description="Science",
