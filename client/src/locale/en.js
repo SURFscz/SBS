@@ -11,7 +11,7 @@ I18n.translations.en = {
             login: "Login",
             help: "Help",
             logout: "Logout",
-            helpUrl: "https://github.com/SURFscz/SBS/wiki"
+            helpUrl: "https://wiki.surfnet.nl/display/sram"
         },
         impersonator: "You are really <em>{{impersonator}}</em>,<br/>but you are impersonating <em>{{currentUser}}</em>.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
 
@@ -48,7 +48,7 @@ I18n.translations.en = {
         backToHome: "Back to home",
         collaborationRequest: "Request for new Collaboration",
         collaborationNew: "New Collaboration",
-        noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution where you logged in. This is not the case. Please contact <a href='mailto:scz-support@surfnet.nl'>scz-support@surfnet.nl</a> for more information"
+        noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution where you logged in. This is not the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information"
     },
     forms: {
         submit: "Add",
@@ -798,10 +798,10 @@ I18n.translations.en = {
         title: "Service {{name}} is not linked to any of your collaborations",
         subTitle: "These are all the collaborations you are a member of. Choose one or more to link service <strong>{{name}}</strong> to in order for you to have access to this service.",
         titleAlreadyLinked: "Service {{name}} is already linked to your collaboration {{collaboration}}",
-        subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this Service. However you already have access to this service. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
+        subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this Service. However you already have access to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         titleLinkNotAllowed: "Service {{name}} can not be linked to any of your collaborations",
-        subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
-        noCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:scz-support@surfnet.nl\">scz-support@surfnet.nl</a> to resolve this issue.",
+        subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        noCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         collaboration: {
             name: "Name",
             role: "Role",
@@ -859,10 +859,10 @@ I18n.translations.en = {
         loginLink: "LOGIN"
     },
     footer: {
-        product: "Powered by SCZ",
-        productLink: "https://wiki.surfnet.nl/display/SCZ/Science+Collaboration+Zone+Home",
+        product: "Powered by SRAM",
+        productLink: "https://wiki.surfnet.nl/display/sram",
         privacy: "Terms & Privacy",
-        privacyLink: "https://wiki.surfnet.nl/display/SCZ/SCZ+Privacy+Policy"
+        privacyLink: "https://wiki.surfnet.nl/display/SRAM/SRAM+-+Privacy+Policy"
     }
 };
 
