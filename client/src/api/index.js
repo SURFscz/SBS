@@ -107,7 +107,7 @@ export function me(config) {
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
         "OIDC_CLAIM_Eduperson-Affiliation": "librarywalkin",
         "OIDC_CLAIM_Eduperson-Entitlement": "some-entitlement-test,second-entitlement",
-        // "OIDC_CLAIM_Schac-Home-Organisation": "scz.lab.example.org",
+        // "OIDC_CLAIM_Schac-Home-Organisation": "sram.lab.example.org",
         "OIDC_CLAIM_Schac-Home-Organisation": "schac_home_organisation_uuc",
         "OIDC_CLAIM_Family-Name": "Doe",
         "OIDC_CLAIM_Given-Name": "John",
