@@ -52,7 +52,7 @@ export default function InfoNl() {
             </ul>
             <p className="footer">For more information on for instance features, you can check out our wiki. You can
                 also send us
-                an email: <a href="mailto:scz-support@surfnet.nl">scz-support@surfnet.nl</a>.</p>
+                an email: <a href="mailto:sram-support@surf.nl">sram-support@surf.nl</a>.</p>
         </section>
     );
 }
