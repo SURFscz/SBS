@@ -24,7 +24,7 @@ export default function ServicesExplanation() {
         </section>,
         <section key={5} className="details">
             Please contact
-            <a href="mailto:scz-support@surfnet.nl"> scz-support@surfnet.nl</a> if you think if a <span
+            <a href="mailto:sram-support@surf.nl"> sram-support@surf.nl</a> if you think if a <span
             className="strong">Service</span> is not correct configured.
         </section>]
 
