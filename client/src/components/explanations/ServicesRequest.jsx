@@ -17,7 +17,7 @@ export default function ServicesRequestExplanation({name}) {
         </section>,
         <section key={4} className="details">
             Please contact
-            <a href="mailto:scz-support@surfnet.nl"> scz-support@surfnet.nl</a> if you have any questions.
+            <a href="mailto:sram-support@surf.nl"> sram-support@surf.nl</a> if you have any questions.
         </section>]
 
 }
