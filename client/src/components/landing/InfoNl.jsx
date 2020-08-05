@@ -51,6 +51,6 @@ export default function InfoNl() {
                     gedeeltelijk beheerd door <a href="https://eduteams.org/" rel="noopener noreferrer" target="_blank">GÉANT eduTEAMS</a></li>
             </ ul>
             <p className="footer"> Voor meer informatie over bijvoorbeeld functies, kunt u onze wiki bekijken. Of stuur ons
-                een e-mail: <a href="mailto:scz-support@surfnet.nl">scz-support@surfnet.nl</a>.</p></section>
+                een e-mail: <a href="mailto:sram-support@surf.nl">sram-support@surf.nl</a>.</p></section>
     );
 }
