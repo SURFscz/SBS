@@ -32,10 +32,10 @@ restricted_co:
 mail:
   host: localhost
   port: 1025
-  sender_name: OpenConext
-  sender_email: no-reply@surfnet.nl
+  sender_name: SURF_ResearchAccessManagement
+  sender_email: no-reply@surf.nl
   suppress_sending_mails: False
-  info_email: scz-support@surfnet.nl
+  info_email: sram-support@surf.nl
 
 aup:
   pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
@@ -43,7 +43,7 @@ aup:
   html: SURFresearch-Access-Management-AUP-01122019-0001.html
 
 base_url: http://localhost:3000/
-wiki_link: https://wiki.surfnet.nl/display/SCZ/SCZ+Public+Space
+wiki_link: https://wiki.surfnet.nl/display/sram
 
 admin_users:
   - uid: "urn:john"
