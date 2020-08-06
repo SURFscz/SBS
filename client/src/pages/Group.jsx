@@ -51,6 +51,7 @@ class Group extends React.Component {
             reverseInvitations: false,
             name: "",
             short_name: "",
+            identifier: "",
             auto_provision_members: false,
             description: "",
             required: ["name", "short_name"],
@@ -509,7 +510,7 @@ class Group extends React.Component {
 
     };
 
-    groupDetails = (adminOfCollaboration, name, short_name, auto_provision_members, alreadyExists, initial, description,
+    groupDetails = (adminOfCollaboration, name, short_name, identifier, auto_provision_members, alreadyExists, initial, description,
                     isNew, disabledSubmit, group, collaboration) => {
         return (
             <div className="group">
@@ -559,6 +560,12 @@ class Group extends React.Component {
                             copyClipBoard={true}
                             disabled={true}/>
 
+                {!isNew && <InputField value={identifier}
+                            name={I18n.t("groups.identifier")}
+                            toolTip={I18n.t("groups.identifierTooltip")}
+                            disabled={true}
+                            copyClipBoard={true}/>}
+
                 <InputField value={description}
                             name={I18n.t("groups.description")}
                             placeholder={I18n.t("groups.descriptionPlaceholder")}
@@ -601,7 +608,7 @@ class Group extends React.Component {
 
     groupDetailsTab = (isNew, membersTitle, adminOfCollaboration, groupName, allMembers, sortedMembers,
                        sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations,
-                       group, detailsTitle, name, short_name, auto_provision_members, alreadyExists, initial,
+                       group, detailsTitle, name, short_name, identifier, auto_provision_members, alreadyExists, initial,
                        description, disabledSubmit, collaboration) => (
         <>
             {!isNew && <EmailMembers allowEmailLink={true}
@@ -614,14 +621,14 @@ class Group extends React.Component {
             <div className="title">
                 <p className="title">{detailsTitle}</p>
             </div>
-            {this.groupDetails(adminOfCollaboration, name, short_name, auto_provision_members, alreadyExists, initial,
+            {this.groupDetails(adminOfCollaboration, name, short_name, identifier, auto_provision_members, alreadyExists, initial,
                 description, isNew, disabledSubmit, group, collaboration)}
         </>);
 
     render() {
         const {
             alreadyExists, collaboration, initial, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
-            confirmationDialogQuestion, name, short_name, auto_provision_members, description,
+            confirmationDialogQuestion, name, short_name, identifier, auto_provision_members, description,
             group, isNew, leavePage,
             allMembers, sortedMembers, sortedMembersBy, reverseMembers,
             sortedInvitationsBy, reverseInvitations, sortedInvitations,
@@ -652,7 +659,7 @@ class Group extends React.Component {
                     <div label="form">
                         {this.groupDetailsTab(isNew, membersTitle, adminOfCollaboration, groupName, allMembers, sortedMembers,
                             sortedMembersBy, reverseMembers, sortedInvitations, sortedInvitationsBy, reverseInvitations,
-                            group, detailsTitle, name, short_name, auto_provision_members, alreadyExists, initial, description,
+                            group, detailsTitle, name, short_name, identifier, auto_provision_members, alreadyExists, initial, description,
                             disabledSubmit, collaboration)}
                     </div>
                     {(adminOfCollaboration && !isNew) && <div label="history">

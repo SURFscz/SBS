@@ -48,6 +48,7 @@ class Organisation(Base, db.Model):
     __tablename__ = "organisations"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
+    identifier = db.Column("identifier", db.String(length=255), nullable=False)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     schac_home_organisation = db.Column("schac_home_organisation", db.String(length=255), nullable=True)
@@ -216,6 +217,7 @@ class Group(Base, db.Model):
     __tablename__ = "groups"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
+    identifier = db.Column("identifier", db.String(length=255), nullable=False)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
     global_urn = db.Column("global_urn", db.Text, nullable=True)
     description = db.Column("description", db.Text(), nullable=True)

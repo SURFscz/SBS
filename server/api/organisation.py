@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import uuid
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app, g as request_context
@@ -9,8 +10,7 @@ from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_authorized_api_call, confirm_organisation_admin, confirm_allow_impersonation, \
-    is_collaboration_admin
+    confirm_authorized_api_call, confirm_organisation_admin, is_collaboration_admin, confirm_read_access
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -71,7 +71,7 @@ def organisation_all():
 @organisation_api.route("/search", strict_slashes=False)
 @json_endpoint
 def organisation_search():
-    confirm_write_access(override_func=confirm_allow_impersonation)
+    confirm_read_access(override_func=lambda: True)
 
     res = []
     q = query_param("q")
@@ -244,6 +244,7 @@ def save_organisation():
 
     _clear_api_keys(data)
     cleanse_short_name(data)
+    data["identifier"] = str(uuid.uuid4())
 
     administrators = data["administrators"] if "administrators" in data else []
     message = data["message"] if "message" in data else None
@@ -292,6 +293,15 @@ def update_organisation():
 
     _clear_api_keys(data)
     cleanse_short_name(data)
+
+    organisation = Organisation.query.get(data["id"])
+    if organisation.short_name != data["short_name"]:
+        for collaboration in organisation.collaborations:
+            collaboration.global_urn = f"{data['short_name']}:{collaboration.short_name}"
+            db.session.merge(collaboration)
+            for group in collaboration.groups:
+                group.global_urn = f"{data['short_name']}:{collaboration.short_name}:{group.short_name}"
+                db.session.merge(group)
 
     return update(Organisation, custom_json=data, allow_child_cascades=False)
 
