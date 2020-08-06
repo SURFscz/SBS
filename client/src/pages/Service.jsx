@@ -72,7 +72,7 @@ class Service extends React.Component {
         }
     };
 
-    componentDidMount = (forceNew) => {
+    componentDidMount = forceNew => {
         const params = this.props.match.params;
         const {isNew} = this.props;
         if (params.id || isNew) {
@@ -317,6 +317,7 @@ class Service extends React.Component {
                              placeholder={I18n.t("service.allowedOrganisationsPlaceholder")}
                              toolTip={I18n.t("service.allowedOrganisationsTooltip")}
                              isMulti={true}
+                             disabled={!isAdmin}
                              onChange={selectedOptions => this.setState({allowed_organisations: isEmpty(selectedOptions) ? [] : [...selectedOptions]})}
                 />
 
