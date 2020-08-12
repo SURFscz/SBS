@@ -18,6 +18,7 @@ from server.db.domain import Collaboration, CollaborationMembership, JoinRequest
     Organisation, Service
 from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
+from server.api.base import ctx_logger
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
@@ -378,9 +379,15 @@ def save_restricted_collaboration():
     admin = admins[0]
     restricted_co_config = current_app.app_config.restricted_co
 
-    organisations = Organisation.query \
-        .filter(Organisation.schac_home_organisation == admin.schac_home_organisation) \
-        .all()
+    organisations = []
+    logger = ctx_logger("collaboration_api_restricted")
+
+    if admin.schac_home_organisation:
+        organisations = Organisation.query \
+            .filter(Organisation.schac_home_organisation == admin.schac_home_organisation) \
+            .all()
+    else:
+        logger.info(f"Admin user {admin.username} has no schac_home_organisation, fallback to configured default org")
 
     if not organisations:
         organisations = Organisation.query \
