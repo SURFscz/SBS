@@ -29,7 +29,7 @@ def claim_attribute_mapping():
             {"family_name": "family_name"},
             {"given_name": "given_name"},
             {"email": "email"},
-            {"uid": "username"}
+            {current_app.app_config.eduperson_principal_name.lower(): "username"}
         ]
     return claim_attribute_mapping_value
 
@@ -69,6 +69,11 @@ def add_user_claims(request_headers, uid, user):
     if not user.schac_home_organisation and user.scoped_affiliation:
         parts = re.split("[@|.]", user.scoped_affiliation)[-2:]
         user.schac_home_organisation = ".".join(parts)
+    if user.username:
+        # We need to parse the user.username if present to remove the @domain
+        index = user.username.find("@")
+        index = index if index > 0 else len(user.username)
+        user.username = user.username[0:index]
 
 
 def get_user_uid(request_headers):

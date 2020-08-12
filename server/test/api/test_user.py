@@ -33,6 +33,28 @@ class TestUser(AbstractTest):
         self.assertEqual(user["uid"], "uid:new")
         self.assertEqual(user["application_uid"], "123456789")
         self.assertEqual(user["eduperson_principal_name"], "john.doe")
+        self.assertEqual(user["username"], "john.doe")
+
+    def test_provision_me_user_name(self):
+        headers = {self.uid_header_name(): "uid:new",
+                   self.application_ui_header_name().upper(): "123456789",
+                   f"{current_app.app_config.oidc_prefix}EDUPERSON_PRINCIPAL_NAME": "john.doe@example.com"}
+        user = self.client.get("/api/users/me",
+                               headers=headers,
+                               environ_overrides=headers).json
+        self.assertEqual(user["eduperson_principal_name"], "john.doe@example.com")
+        self.assertEqual(user["username"], "john.doe")
+
+    def test_provision_me_generated_user_name(self):
+        headers = {self.uid_header_name(): "uid:new",
+                   self.application_ui_header_name().upper(): "123456789",
+                   f"{current_app.app_config.oidc_prefix}GIVEN_NAME": "mary",
+                   f"{current_app.app_config.oidc_prefix}FAMILY_NAME": "poppins"}
+        user = self.client.get("/api/users/me",
+                               headers=headers,
+                               environ_overrides=headers).json
+        self.assertIsNone(user.get("eduperson_principal_name"))
+        self.assertEqual(user["username"], "mpoppins")
 
     def test_me_existing_user(self):
         user = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "urn:john"}).json
