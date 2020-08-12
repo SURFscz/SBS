@@ -78,9 +78,15 @@ class TestInvitation(AbstractTest):
 
     def test_delete(self):
         invitation_id = Invitation.query.filter(Invitation.hash == invitation_hash_curious).one().id
-        self.delete("/api/invitations", primary_key=invitation_id)
+        self.login("urn:admin")
+        self.delete("/api/invitations", primary_key=invitation_id, with_basic_auth=False)
         invitations = Invitation.query.filter(Invitation.hash == invitation_hash_curious).all()
         self.assertEqual(0, len(invitations))
+
+    def test_delete_forbidden(self):
+        invitation_id = Invitation.query.filter(Invitation.hash == invitation_hash_curious).one().id
+        self.login("urn:jane")
+        self.delete("/api/invitations", primary_key=invitation_id, with_basic_auth=False, response_status_code=403)
 
     def test_resend(self):
         invitation_id = Invitation.query.filter(Invitation.hash == invitation_hash_curious).one().id

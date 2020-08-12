@@ -94,11 +94,11 @@ class AbstractTest(TestCase):
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
             return response.json
 
-    def delete(self, url, primary_key=None, with_basic_auth=True, response_status_code=204):
+    def delete(self, url, primary_key=None, with_basic_auth=True, response_status_code=204, headers={}):
         primary_key_part = f"/{primary_key}" if primary_key else ""
         with requests.Session():
             response = self.client.delete(f"{url}{primary_key_part}",
-                                          headers=BASIC_AUTH_HEADER if with_basic_auth else {},
+                                          headers=BASIC_AUTH_HEADER if with_basic_auth else headers,
                                           content_type="application/json")
             self.assertEqual(response_status_code, response.status_code)
 
