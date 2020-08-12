@@ -6,9 +6,9 @@ from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_collaboration_admin, confirm_write_access, current_user_id
-from server.db.domain import Invitation, CollaborationMembership, Collaboration, db
+from server.auth.security import confirm_collaboration_admin, current_user_id
 from server.db.defaults import default_expiry_date
+from server.db.domain import Invitation, CollaborationMembership, Collaboration, db
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
 
@@ -116,8 +116,9 @@ def invitations_resend():
     return None, 201
 
 
-@invitations_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
+@invitations_api.route("/<invitation_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
-def delete_invitation(id):
-    confirm_write_access()
-    return delete(Invitation, id)
+def delete_invitation(invitation_id):
+    invitation = Invitation.query.get(invitation_id)
+    confirm_collaboration_admin(invitation.collaboration_id)
+    return delete(Invitation, invitation_id)
