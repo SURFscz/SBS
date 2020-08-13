@@ -8,7 +8,8 @@ import {
     createGroup,
     deleteGroup,
     deleteGroupInvitations,
-    deleteGroupMembers, groupAccessAllowed,
+    deleteGroupMembers,
+    groupAccessAllowed,
     groupById,
     groupNameExists,
     groupShortNameExists,
@@ -28,7 +29,7 @@ import ReactTooltip from "react-tooltip";
 import Select from "react-select";
 import moment from "moment";
 import CheckBox from "../components/CheckBox";
-import {sanitizeShortName} from "../validations/regExps";
+import {sanitizeShortName, shortNameDisabled} from "../validations/regExps";
 import BackLink from "../components/BackLink";
 import Tabs from "../components/Tabs";
 import History from "../components/History";
@@ -512,6 +513,7 @@ class Group extends React.Component {
 
     groupDetails = (adminOfCollaboration, name, short_name, identifier, auto_provision_members, alreadyExists, initial, description,
                     isNew, disabledSubmit, group, collaboration) => {
+        const {user} = this.props;
         return (
             <div className="group">
                 <InputField value={name}
@@ -542,7 +544,7 @@ class Group extends React.Component {
                                 alreadyExists: {...this.state.alreadyExists, short_name: false}
                             })}
                             toolTip={I18n.t("groups.shortNameTooltip")}
-                            disabled={!adminOfCollaboration}/>
+                            disabled={shortNameDisabled(user, isNew, adminOfCollaboration)}/>
                 {alreadyExists.short_name && <span
                     className="error">{I18n.t("groups.alreadyExists", {
                     attribute: I18n.t("groups.short_name").toLowerCase(),
@@ -561,10 +563,10 @@ class Group extends React.Component {
                             disabled={true}/>
 
                 {!isNew && <InputField value={identifier}
-                            name={I18n.t("groups.identifier")}
-                            toolTip={I18n.t("groups.identifierTooltip")}
-                            disabled={true}
-                            copyClipBoard={true}/>}
+                                       name={I18n.t("groups.identifier")}
+                                       toolTip={I18n.t("groups.identifierTooltip")}
+                                       disabled={true}
+                                       copyClipBoard={true}/>}
 
                 <InputField value={description}
                             name={I18n.t("groups.description")}

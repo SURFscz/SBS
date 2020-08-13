@@ -23,10 +23,10 @@ from server.api.base import ctx_logger
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 
-@collaboration_api.route("/find_by_name", strict_slashes=False)
+@collaboration_api.route("/find_by_identifier", strict_slashes=False)
 @json_endpoint
-def collaboration_by_name():
-    name = query_param("name")
+def collaboration_by_identifier():
+    identifier = query_param("identifier")
 
     collaboration = Collaboration. \
         query \
@@ -34,7 +34,7 @@ def collaboration_by_name():
         .outerjoin(CollaborationMembership.user) \
         .options(contains_eager(Collaboration.collaboration_memberships)
                  .contains_eager(CollaborationMembership.user)) \
-        .filter(Collaboration.name == name).one()
+        .filter(Collaboration.identifier == identifier).one()
 
     admins = list(filter(lambda m: m.role == "admin", collaboration.collaboration_memberships))
     admin_email = admins[0].user.email if len(admins) > 0 else None
@@ -289,7 +289,7 @@ def collaboration_invites():
 
     for administrator in administrators:
         invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
-                                collaboration_id=collaboration_id, user=user, groups=groups,
+                                collaboration=collaboration, user=user, groups=groups,
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 created_by=user.uid)
         invitation = db.session.merge(invitation)

@@ -26,7 +26,7 @@ import {setFlash} from "../utils/Flash";
 import Select from "react-select";
 import {headerIcon} from "../forms/helpers";
 import CheckBox from "../components/CheckBox";
-import {sanitizeShortName} from "../validations/regExps";
+import {sanitizeShortName, shortNameDisabled} from "../validations/regExps";
 import Tabs from "../components/Tabs";
 import History from "../components/History";
 import BackLink from "../components/BackLink";
@@ -551,7 +551,7 @@ class CollaborationDetail extends React.Component {
                             alreadyExists: {...this.state.alreadyExists, short_name: false}
                         })}
                         toolTip={I18n.t("collaboration.shortNameTooltip")}
-                        disabled={!isAdmin}/>
+                        disabled={shortNameDisabled(user, false , isAdmin)}/>
             {alreadyExists.short_name && <span
                 className="error">{I18n.t("collaboration.alreadyExists", {
                 attribute: I18n.t("collaboration.shortName").toLowerCase(),
@@ -598,20 +598,6 @@ class CollaborationDetail extends React.Component {
                       tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
                       onChange={() => this.setState({services_restricted: !services_restricted})}
                       readOnly={!isPlatformAdmin}/>
-
-            {/*<InputField value={enrollment}*/}
-            {/*            onChange={e => this.setState({enrollment: e.target.value})}*/}
-            {/*            placeholder={I18n.t("collaboration.enrollmentPlaceholder")}*/}
-            {/*            toolTip={I18n.t("collaboration.enrollmentTooltip")}*/}
-            {/*            name={I18n.t("collaboration.enrollment")}*/}
-            {/*            disabled={!isAdmin}/>*/}
-
-            {/*<SelectField value={this.accessTypeOptions.find(option => option.value === access_type)}*/}
-            {/*             options={this.accessTypeOptions}*/}
-            {/*             name={I18n.t("collaboration.access_type")}*/}
-            {/*             placeholder={I18n.t("collaboration.accessTypePlaceholder")}*/}
-            {/*             onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}*/}
-            {/*             disabled={!isAdmin}/>*/}
 
             <InputField value={identifier}
                         name={I18n.t("collaboration.identifier")}

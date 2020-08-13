@@ -115,7 +115,7 @@ I18n.translations.en = {
         continue: "Continue",
         requiredCollaboration: "Invalid request: collaboration needs to be specified.",
         noJoinRequestCollaboration: "Collaboration {{name}} has disabled join requests. You can not request memberships",
-        unknownCollaboration: "The collaboration with the name {{collaboration}} does not exists",
+        unknownCollaboration: "The collaboration with the identifer {{collaboration}} does not exists",
         step1: {
             title: "Link your account",
             sub: "Select organisation",
@@ -515,7 +515,7 @@ I18n.translations.en = {
             inviteAccepted: "Invitation for organisation {{name}} was accepted",
             created: "Invitions for organisation {{name}} are created",
             alreadyMember: "The invitation could not be accepted because you are already a member of this organization",
-            notFound: "This invitation has already been accepted / declined."
+            notFound: "Invitation has already been accepted / declined. If you think there is a problem check with your CO admin (or with SRAM support at sram-support@surf.nl)"
         },
     },
     apiKeys: {
