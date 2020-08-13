@@ -1,4 +1,6 @@
 # -*- coding: future_fstrings -*-
+import ipaddress
+
 from flask import Blueprint, request as current_request
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only, contains_eager
@@ -99,6 +101,7 @@ def service_by_id(service_id):
                  .contains_eager(Collaboration.organisation)) \
         .filter(Service.id == service_id).one()
     service.allowed_organisations
+    service.ip_networks
     return service, 200
 
 
@@ -109,10 +112,17 @@ def save_service():
 
     data = current_request.get_json()
     allowed_organisations = data.get("allowed_organisations", None)
+
+    ip_networks = data.get("ip_networks", None)
+    if ip_networks:
+        for ip_network in ip_networks:
+            ipaddress.ip_network(ip_network["network_value"], False)
+
     data["status"] = "active"
 
-    res = save(Service, custom_json=data, allow_child_cascades=False)
+    res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
+    service.ip_networks
 
     _add_allowed_organisations(allowed_organisations, service)
 
