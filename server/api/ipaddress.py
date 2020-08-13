@@ -19,16 +19,13 @@ def info():
     # Any not valid address will throw ValueException
     ip_network = ipaddress.ip_network(address, False)
     _is4 = ip_network.version == 4
-
-    if "/" in address:
-        index = address.index("/")
-        prefix = int(address[index + 1:])
-        if (_is4 and prefix < max_allowed_ipv4_sub_mask) or (not _is4 and prefix < max_allowed_ipv6_prefix):
-            return {
-                       "error": True,
-                       "version": ip_network.version,
-                       "max": max_allowed_ipv4_sub_mask if _is4 else max_allowed_ipv6_prefix
-                   }, 200
+    prefix = ip_network.prefixlen
+    if (_is4 and prefix < max_allowed_ipv4_sub_mask) or (not _is4 and prefix < max_allowed_ipv6_prefix):
+        return {
+                   "error": True,
+                   "version": ip_network.version,
+                   "max": max_allowed_ipv4_sub_mask if _is4 else max_allowed_ipv6_prefix
+               }, 200
 
     return {
                "version": ip_network.version,

@@ -56,7 +56,7 @@ def add_audit_trail_data(cls, json_dict):
             add_audit_trail_data(deserialization_mapping[rel], child)
 
 
-def save(cls, custom_json=None, allow_child_cascades=True, allowed_child_collections = []):
+def save(cls, custom_json=None, allow_child_cascades=True, allowed_child_collections=[]):
     json_dict = request.get_json() if custom_json is None else custom_json
 
     add_audit_trail_data(cls, json_dict)
