@@ -7,12 +7,12 @@ from werkzeug.exceptions import BadRequest
 from server.auth.security import current_user_uid
 from server.db.db import db
 from server.db.domain import User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
-    Invitation, Service, Aup
+    Invitation, Service, Aup, IpNetwork
 
 deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
                            "join_requests": JoinRequest, "collaborations": Collaboration,
                            "organisation_memberships": OrganisationMembership, "invitations": Invitation,
-                           "services": Service, "aups": Aup}
+                           "services": Service, "aups": Aup, "ip_networks": IpNetwork}
 
 forbidden_fields = ["created_at", "updated_at"]
 date_fields = ["start_date", "end_date", "created_at", "updated_at", "last_accessed_date", "last_login_date"]
@@ -56,11 +56,12 @@ def add_audit_trail_data(cls, json_dict):
             add_audit_trail_data(deserialization_mapping[rel], child)
 
 
-def save(cls, custom_json=None, allow_child_cascades=True):
+def save(cls, custom_json=None, allow_child_cascades=True, allowed_child_collections = []):
     json_dict = request.get_json() if custom_json is None else custom_json
 
     add_audit_trail_data(cls, json_dict)
-    json_dict = transform_json(cls, json_dict, allow_child_cascades=allow_child_cascades)
+    json_dict = transform_json(cls, json_dict, allow_child_cascades=allow_child_cascades,
+                               allowed_child_collections=allowed_child_collections)
 
     validate(cls, json_dict)
     return _merge(cls, json_dict), 201
@@ -86,11 +87,13 @@ def delete(cls, primary_key):
     return instance, 204
 
 
-def cleanse_json(json_dict, cls=None, allow_child_cascades=True):
+def cleanse_json(json_dict, cls=None, allow_child_cascades=True, allowed_child_collections=[]):
     if cls:
         column_names = cls.__table__.columns._data.keys()
         if allow_child_cascades:
             column_names += list(cls.__dict__.keys())
+        elif allowed_child_collections:
+            column_names += allowed_child_collections
         # Need to avoid RuntimeError: dictionary changed size during iteration
         for k in list(json_dict.keys()):
             if k not in column_names:
@@ -100,7 +103,8 @@ def cleanse_json(json_dict, cls=None, allow_child_cascades=True):
         if forbidden in json_dict:
             del json_dict[forbidden]
         for rel in flatten(filter(lambda i: isinstance(i, list), json_dict.values())):
-            cleanse_json(rel, allow_child_cascades=allow_child_cascades)
+            cleanse_json(rel, allow_child_cascades=allow_child_cascades,
+                         allowed_child_collections=[])
 
 
 def parse_date_fields(json_dict):
@@ -113,7 +117,7 @@ def parse_date_fields(json_dict):
             parse_date_fields(rel)
 
 
-def transform_json(cls, json_dict, allow_child_cascades=True):
+def transform_json(cls, json_dict, allow_child_cascades=True, allowed_child_collections=[]):
     def _contains_list(coll):
         return len(list(filter(lambda item: isinstance(item, list), coll))) > 0
 
@@ -126,7 +130,8 @@ def transform_json(cls, json_dict, allow_child_cascades=True):
             return item[0], list(map(lambda i: cls(**_do_transform(i.items())), item[1]))
         return item
 
-    cleanse_json(json_dict, cls=cls, allow_child_cascades=allow_child_cascades)
+    cleanse_json(json_dict, cls=cls, allow_child_cascades=allow_child_cascades,
+                 allowed_child_collections=allowed_child_collections)
     parse_date_fields(json_dict)
 
     if _contains_list(json_dict.values()):

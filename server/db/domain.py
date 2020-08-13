@@ -167,6 +167,7 @@ class Service(Base, db.Model):
     status = db.Column("status", db.String(length=255), nullable=True)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
+    ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -349,3 +350,14 @@ class ServiceConnectionRequest(Base, db.Model):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+
+class IpNetwork(Base, db.Model):
+    __tablename__ = "ip_networks"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    network_value = db.Column("network_value", db.Text(), nullable=False)
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)

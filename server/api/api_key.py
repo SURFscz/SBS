@@ -9,7 +9,7 @@ from server.auth.security import confirm_organisation_admin, secure_hash
 from server.db.domain import ApiKey
 from server.db.models import update, save, delete
 
-MIN_SECRET_LENGT = 43
+MIN_SECRET_LENGTH = 43
 
 api_key_api = Blueprint("api_key_api", __name__, url_prefix="/api/api_keys")
 
@@ -23,8 +23,8 @@ def _hash_secret_key():
     data = current_request.get_json()
     _check_organisation_admin(data)
     secret = data["hashed_secret"]
-    if len(secret) < MIN_SECRET_LENGT:
-        raise SecurityError(f"minimal length of secret for API key is {MIN_SECRET_LENGT}")
+    if len(secret) < MIN_SECRET_LENGTH:
+        raise SecurityError(f"minimal length of secret for API key is {MIN_SECRET_LENGTH}")
     data["hashed_secret"] = secure_hash(secret)
     return data
 
