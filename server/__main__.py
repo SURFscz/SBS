@@ -26,6 +26,7 @@ from server.api.group import group_api
 from server.api.group_invitations import group_invitations_api
 from server.api.group_members import group_members_api
 from server.api.invitation import invitations_api
+from server.api.ipaddress import ipaddress_api
 from server.api.join_request import join_request_api
 from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
@@ -36,9 +37,9 @@ from server.api.user import user_api
 from server.api.user_saml import user_saml_api
 from server.cron.schedule import start_scheduling
 from server.db.db import db, db_migrations
+from server.mqtt.mqtt import MqttClient
 from server.templates import invitation_role
 from server.tools import read_file
-from server.mqtt.mqtt import MqttClient
 
 
 def _init_logging(is_test):
@@ -109,6 +110,7 @@ app.register_blueprint(aup_api)
 app.register_blueprint(collaboration_request_api)
 app.register_blueprint(service_connection_request_api)
 app.register_blueprint(audit_log_api)
+app.register_blueprint(ipaddress_api)
 
 app.register_error_handler(404, page_not_found)
 

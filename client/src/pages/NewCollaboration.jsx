@@ -5,7 +5,8 @@ import {
     collaborationShortNameExists,
     createCollaboration,
     myOrganisationsLite,
-    organisationByUserSchacHomeOrganisation, requestCollaboration
+    organisationByUserSchacHomeOrganisation,
+    requestCollaboration
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";

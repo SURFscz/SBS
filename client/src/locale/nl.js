@@ -115,7 +115,7 @@ I18n.translations.nl = {
         continue: "Ga door",
         requiredCollaboration: "Ongeldig verzoek. Samenwerking dient gespecificieerd te worden.",
         noJoinRequestCollaboration: "Samenwerking {{name}} ondersteunt geen verzoeken voor lidmaatschap.",
-        unknownCollaboration: "De samenwerking met de naam {{collaboration}} bestaat niet.",
+        unknownCollaboration: "De samenwerking met de identifer {{collaboration}} bestaat niet.",
         step1: {
             title: "Koppel uw account",
             sub: "Kies organisatie",
@@ -514,7 +514,7 @@ I18n.translations.nl = {
             inviteAccepted: "Uitnodiging voor organisatie {{name}} is geaccepteerd.",
             created: "Uitnodiging(en) voor organisatie {{name}} aangemaakt.",
             alreadyMember: "De uitnodiging kon niet worden geaccepteerd omdat je al lid bent van deze organisatie.",
-            notFound: "Deze uitnodiging is reeds geaccepteerd of afgewezen."
+            notFound: "Deze uitnodiging is reeds geaccepteerd of afgewezen. Als je denkt dat er een probleem is, neem dan contact op met je CO-beheerder (of met SRAM-ondersteuning op sram-support@surf.nl)"
         },
     },
     apiKeys: {

@@ -617,7 +617,7 @@ class OrganisationDetail extends React.Component {
                             alreadyExists: {...this.state.alreadyExists, short_name: false}
                         })}
                         placeholder={I18n.t("organisation.shortNamePlaceHolder")}
-                        disabled={!user.admin && !adminOfOrganisation}
+                        disabled={!user.admin}
                         onBlur={this.validateOrganisationShortName}
                         name={I18n.t("organisation.shortName")}/>
             {alreadyExists.short_name && <span

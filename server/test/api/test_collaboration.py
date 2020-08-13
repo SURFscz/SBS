@@ -11,12 +11,14 @@ from server.test.seed import uuc_secret, uuc_name
 
 class TestCollaboration(AbstractTest):
 
-    def _find_by_name_id(self, name=ai_computing_name, with_basic_auth=False):
-        return self.get("/api/collaborations/find_by_name", query_data={"name": name},
+    def _find_by_identifier(self, with_basic_auth=False):
+        return self.get("/api/collaborations/find_by_identifier",
+                        query_data={"identifier": collaboration_ai_computing_uuid},
                         with_basic_auth=with_basic_auth)
 
-    def test_find_by_name_id(self):
-        collaboration = self.get("/api/collaborations/find_by_name", query_data={"name": uva_research_name},
+    def test_find_by_identifier(self):
+        collaboration = self.get("/api/collaborations/find_by_identifier",
+                                 query_data={"identifier": collaboration_ai_computing_uuid},
                                  with_basic_auth=False)
         self.assertSetEqual({"id", "name", "admin_email", "disable_join_requests", "accepted_user_policy"},
                             set(collaboration.keys()))
@@ -115,6 +117,20 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("admin", admin.role)
         self.assertEqual("urn:harry", admin.user.uid)
 
+    def test_collaboration_restricted_access_api_with_schac_home(self):
+        res = self.post("/api/collaborations/v1/restricted",
+                        body={
+                            "name": "new_collaboration",
+                            "administrator": "mdoe",
+                            "short_name": "short_collab_name",
+                            "connected_services": [service_cloud_entity_id]
+                        },
+                        with_basic_auth=False,
+                        headers=RESTRICTED_CO_API_AUTH_HEADER,
+                        response_status_code=201)
+
+        self.assertEqual("uva:short_collab_name", res["global_urn"])
+
     def test_collaboration_restricted_access_api_forbidden_without_correct_scope(self):
         self.login("urn:harry")
         self.post("/api/collaborations/v1/restricted",
@@ -157,7 +173,7 @@ class TestCollaboration(AbstractTest):
         self.app.app_config.restricted_co.default_organisation = default_organisation
 
     def test_collaboration_update(self):
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         self.login()
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         collaboration["name"] = "changed"
@@ -165,7 +181,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual("changed", collaboration["name"])
 
     def test_collaboration_update_short_name(self):
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         self.login()
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         collaboration["short_name"] = "changed"
@@ -189,18 +205,18 @@ class TestCollaboration(AbstractTest):
         self.assertTrue(collaboration.services_restricted)
 
     def test_collaboration_delete(self):
-        collaboration = self._find_by_name_id()
+        collaboration = self._find_by_identifier()
         self.delete("/api/collaborations", primary_key=collaboration["id"])
         self.assertEqual(2, Collaboration.query.count())
 
     def test_collaboration_delete_no_admin(self):
-        collaboration = self._find_by_name_id()
+        collaboration = self._find_by_identifier()
         self.login("urn:peter")
         response = self.client.delete(f"/api/collaborations/{collaboration['id']}")
         self.assertEqual(403, response.status_code)
 
     def test_collaboration_by_id_forbidden(self):
-        collaboration = self._find_by_name_id(with_basic_auth=True)
+        collaboration = self._find_by_identifier(with_basic_auth=True)
         self.login("urn:peter")
         self.get(f"/api/collaborations/{collaboration['id']}", response_status_code=403, with_basic_auth=False)
 
@@ -213,7 +229,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(3, len(collaborations))
 
     def test_collaboration_by_id(self):
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         self.login()
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         self.assertEqual(collaboration_id, collaboration["id"])
@@ -221,7 +237,7 @@ class TestCollaboration(AbstractTest):
         self.assertTrue(len(collaboration["collaboration_memberships"]) >= 4)
 
     def test_collaboration_by_id_api_call(self):
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         collaboration = self.get(f"/api/collaborations/{collaboration_id}",
                                  headers=API_AUTH_HEADER,
                                  with_basic_auth=False)
@@ -300,7 +316,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(False, res)
 
     def test_collaboration_services_by_id(self):
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         collaboration = self.get(f"/api/collaborations/services/{collaboration_id}",
                                  query_data={"include_memberships": True})
 
@@ -313,7 +329,7 @@ class TestCollaboration(AbstractTest):
     def test_collaboration_invites(self):
         pre_count = Invitation.query.count()
         self.login("urn:john")
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         mail = self.app.mail
         with mail.record_messages() as outbox:
             self.put("/api/collaborations/invites", body={
@@ -330,7 +346,7 @@ class TestCollaboration(AbstractTest):
 
     def test_collaboration_invites_preview(self):
         self.login("urn:john")
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         res = self.post("/api/collaborations/invites-preview", body={
             "collaboration_id": collaboration_id,
             "message": "Please join",
@@ -341,7 +357,7 @@ class TestCollaboration(AbstractTest):
 
     def test_collaboration_invites_preview_member(self):
         self.login("urn:john")
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         res = self.post("/api/collaborations/invites-preview", body={
             "collaboration_id": collaboration_id
         })
@@ -359,13 +375,13 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(0, len(collaborations))
 
     def test_collaboration_lite_by_id(self):
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         self.login("urn:jane")
         collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
         self.assertEqual(ai_computing_name, collaboration["name"])
 
     def test_collaboration_lite_no_member(self):
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         self.login("urn:harry")
         self.get(f"/api/collaborations/lite/{collaboration_id}", response_status_code=403)
 
@@ -425,7 +441,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(data["message"], "Not associated with an API key")
 
     def test_collaboration_groups_by_id(self):
-        collaboration_id = self._find_by_name_id()["id"]
+        collaboration_id = self._find_by_identifier()["id"]
         collaboration = self.get(f"/api/collaborations/groups/{collaboration_id}")
         self.assertEqual(2, len(collaboration["groups"]))
 

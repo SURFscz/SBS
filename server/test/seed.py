@@ -103,7 +103,7 @@ def seed(db, app_config):
     unconfirmed_super_user_mike = User(uid="urn:mike", name=mike_name, email="mike@example.org", username="mike",
                                        confirmed_super_user=False, application_uid="mike_application_uid")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
-    mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org",
+    mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
                 schac_home_organisation=schac_home_organisation)
     admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org")
     roger = User(uid="urn:roger", name=roger_name, email="roger@example.org",

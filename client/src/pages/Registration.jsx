@@ -1,5 +1,5 @@
 import React from "react";
-import {collaborationByName, joinRequestAlreadyMember, joinRequestForCollaboration} from "../api";
+import {collaborationByIdentifier, joinRequestAlreadyMember, joinRequestForCollaboration} from "../api";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import I18n from "i18n-js";
 import "./Registration.scss";
@@ -32,7 +32,7 @@ class Registration extends React.Component {
         if (!collaboration) {
             setFlash(I18n.t("registration.requiredCollaboration"), "error");
         } else {
-            collaborationByName(collaboration)
+            collaborationByIdentifier(collaboration)
                 .then(res => {
                     if (res.disable_join_requests) {
                         setFlash(I18n.t("registration.noJoinRequestCollaboration", {name: collaboration}), "error");
@@ -158,7 +158,7 @@ class Registration extends React.Component {
                            {collaboration: encodeURIComponent(collaborationName)})}}/>
                 {adminEmail && <p className="contact"
                                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact",
-                                          {mail: encodeURIComponent(adminEmail)})}}/>}
+                                          {mail: adminEmail})}}/>}
             </div>
         );
     };

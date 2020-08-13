@@ -224,7 +224,7 @@ def organisation_invites():
 
     for administrator in administrators:
         invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
-                                            organisation_id=organisation.id, user_id=user.id,
+                                            organisation=organisation, user=user,
                                             expiry_date=default_expiry_date(json_dict=data),
                                             created_by=user.uid)
         invitation = db.session.merge(invitation)

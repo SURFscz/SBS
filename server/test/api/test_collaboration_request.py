@@ -35,7 +35,7 @@ class TestCollaborationRequest(AbstractTest):
         self.login("urn:roger", schac_home_organisation_uuc)
         data = {
             "name": "New Collaboration",
-            "short_name": "new_collaboration_short",
+            "short_name": "new_COLLABORATION_short_but_still_to_long_for_not_getting_trimmed",
             "message": "pretty please",
             "organisation_id": organisation.id
         }
@@ -43,7 +43,7 @@ class TestCollaborationRequest(AbstractTest):
             self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
             collaboration = self.find_entity_by_name(Collaboration, data["name"])
             # Max length short_name
-            self.assertEqual("new_collaborat", collaboration.short_name)
+            self.assertEqual("new_collaboration_short_but_stil", collaboration.short_name)
             mail_msg = outbox[0]
             self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name}", mail_msg.subject)
             self.assertTrue("automatically approve Collaboration requests" in mail_msg.html)
@@ -55,15 +55,15 @@ class TestCollaborationRequest(AbstractTest):
                    {"OIDC_CLAIM_EDUPERSON_ENTITLEMENT": "urn:example:sbs:allow-create-co"})
         data = {
             "name": "New Collaboration",
-            "short_name": "new_collaboration_short",
+            "short_name": "NEW_COLLABORATION_SHORT",
             "message": "pretty please",
             "organisation_id": organisation.id
         }
         with self.app.mail.record_messages() as outbox:
             self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
             collaboration = self.find_entity_by_name(Collaboration, data["name"])
-            # Max length short_name
-            self.assertEqual("new_collaborat", collaboration.short_name)
+
+            self.assertEqual("new_collaboration_short", collaboration.short_name)
             mail_msg = outbox[0]
             self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name}", mail_msg.subject)
 
