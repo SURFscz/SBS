@@ -113,10 +113,7 @@ def save_service():
     data = current_request.get_json()
     allowed_organisations = data.get("allowed_organisations", None)
 
-    ip_networks = data.get("ip_networks", None)
-    if ip_networks:
-        for ip_network in ip_networks:
-            ipaddress.ip_network(ip_network["network_value"], False)
+    _validate_ip_networks(data)
 
     data["status"] = "active"
 
@@ -127,6 +124,13 @@ def save_service():
     _add_allowed_organisations(allowed_organisations, service)
 
     return res
+
+
+def _validate_ip_networks(data):
+    ip_networks = data.get("ip_networks", None)
+    if ip_networks:
+        for ip_network in ip_networks:
+            ipaddress.ip_network(ip_network["network_value"], False)
 
 
 def _add_allowed_organisations(allowed_organisations, service):
@@ -149,8 +153,11 @@ def update_service():
     data = current_request.get_json()
     allowed_organisations = data.get("allowed_organisations", None)
 
-    res = update(Service, allow_child_cascades=False)
+    _validate_ip_networks(data)
+
+    res = update(Service, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
+    service.ip_networks
 
     _add_allowed_organisations(allowed_organisations, service)
 
