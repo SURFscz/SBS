@@ -33,6 +33,7 @@ from server.api.organisation_invitation import organisation_invitations_api
 from server.api.organisation_membership import organisation_membership_api
 from server.api.service import service_api
 from server.api.service_connection_request import service_connection_request_api
+from server.api.system import system_api
 from server.api.user import user_api
 from server.api.user_saml import user_saml_api
 from server.cron.schedule import start_scheduling
@@ -111,6 +112,7 @@ app.register_blueprint(collaboration_request_api)
 app.register_blueprint(service_connection_request_api)
 app.register_blueprint(audit_log_api)
 app.register_blueprint(ipaddress_api)
+app.register_blueprint(system_api)
 
 app.register_error_handler(404, page_not_found)
 

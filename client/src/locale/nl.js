@@ -23,6 +23,7 @@ I18n.translations.nl = {
         organisations: "Organisaties",
         services: "Diensten",
         profile: "Profiel",
+        system: "System",
         impersonate: "Impersonate",
         aup: "AUP",
         confirmation: "Admin confirmatie"
