@@ -881,7 +881,14 @@ I18n.translations.nl = {
         productLink: "https://wiki.surfnet.nl/display/sram",
         privacy: "Terms & Privacy",
         privacyLink: "https://wiki.surfnet.nl/display/SRAM/SRAM+-+Privacy+Policy"
+    },
+    system: {
+        title: "System maintenance",
+        runDailyJobsInfo: "Run the job to suspend all users that have not logged in for the configured period",
+        runDailyJobs: "Trigger",
+        runDailyJobsInfoResults: "The following users have received a mail or have been suspended"
     }
+
 };
 
 export default I18n.translations.nl;
