@@ -46,6 +46,7 @@ import OrganisationDetailLite from "./OrganisationDetailLite";
 import ServiceRequest from "./ServiceRequest";
 import Confirmation from "./Confirmation";
 import {setFlash} from "../utils/Flash";
+import System from "./System";
 
 addIcons();
 
@@ -351,6 +352,10 @@ class App extends React.Component {
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={Profile}
                                    refreshUser={this.refreshUserMemberships} {...props}/>}/>
+
+                        <Route path="/system"
+                               render={props => <ProtectedRoute
+                                   currentUser={currentUser} Component={System}/>}/>
 
                         <Route path="/aup" render={props =>
                             <Aup currentUser={currentUser} refreshUser={this.refreshUserMemberships} {...props}/>}/>

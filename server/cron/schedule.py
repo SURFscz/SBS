@@ -28,26 +28,36 @@ def suspend_users(app):
         current_time = datetime.datetime.utcnow()
         retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days)
 
+        results = {
+            "first_suspend_notification": [],
+            "second_suspend_notification": [],
+            "suspended": [],
+        }
         users = User.query \
             .filter(User.last_login_date < retention_date, User.suspended == False).all()  # noqa: E712
         for user in users:
             suspend_notifications = user.suspend_notifications
             if len(suspend_notifications) == 0:
                 create_suspend_notification(user, retention, app, True)
+                results["first_suspend_notification"].append(user.email)
             elif len(suspend_notifications) == 1:
                 suspend_notification = suspend_notifications[0]
                 days = retention.reminder_expiry_period_days - retention.reminder_resent_period_days
                 if suspend_notification.sent_at < current_time - datetime.timedelta(days=days):
                     create_suspend_notification(user, retention, app, False)
+                    results["second_suspend_notification"].append(user.email)
             else:
                 suspend_notification = list(filter(lambda sn: not sn.is_primary, suspend_notifications))[0]
                 days = retention.reminder_resent_period_days
                 if suspend_notification.sent_at < current_time - datetime.timedelta(days=days):
                     user.suspended = True
                     db.session.merge(user)
+                    results["suspended"].append(user.email)
 
         if len(users) > 0:
             db.session.commit()
+
+        return results
 
 
 def start_scheduling(app):

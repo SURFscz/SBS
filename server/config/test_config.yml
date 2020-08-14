@@ -6,7 +6,7 @@ secret_key: secret
 api_users:
   - name: "sysadmin"
     password: "secret"
-    scopes: [read, write]
+    scopes: [read, write, system]
   - name: "sysread"
     password: "secret"
     scopes: [read]
