@@ -63,10 +63,13 @@ class TestService(AbstractTest):
         self.assertEqual(2, len(service.allowed_organisations))
 
     def test_service_update(self):
-        mail = self._find_by_name()
-        mail["name"] = "changed"
-        service = self.put("/api/services", body=mail)
+        service = self._find_by_name()
+        service["name"] = "changed"
+        service["ip_networks"] = [{"network_value": "192.0.2.0/24"}]
+
+        service = self.put("/api/services", body=service)
         self.assertEqual("changed", service["name"])
+        self.assertEqual(1, len(service["ip_networks"]))
 
     def test_service_delete(self):
         pre_count = Service.query.count()

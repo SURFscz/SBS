@@ -67,10 +67,12 @@ def save(cls, custom_json=None, allow_child_cascades=True, allowed_child_collect
     return _merge(cls, json_dict), 201
 
 
-def update(cls, custom_json=None, allow_child_cascades=True):
+def update(cls, custom_json=None, allow_child_cascades=True, allowed_child_collections=[]):
     json_dict = request.get_json() if custom_json is None else custom_json
-    json_dict = transform_json(cls, json_dict, allow_child_cascades=allow_child_cascades)
+
     add_audit_trail_data(cls, json_dict)
+    json_dict = transform_json(cls, json_dict, allow_child_cascades=allow_child_cascades,
+                               allowed_child_collections=allowed_child_collections)
 
     pk = list({k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys())[0]
 
