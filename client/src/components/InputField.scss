@@ -56,6 +56,12 @@
             border-top-right-radius: 0;
         }
 
+        &.stand-alone {
+            border-left: 1px solid $lighter-grey;
+            border-bottom-left-radius: $br;
+            border-top-left-radius: $br;
+        }
+
     }
 
     label.file-upload {

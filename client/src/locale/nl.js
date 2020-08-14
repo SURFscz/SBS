@@ -251,6 +251,7 @@ I18n.translations.nl = {
         delete: "Verwijderen",
         deleteConfirmation: "Weet u zeker dat u deze samenwerking wilt verwijderen?",
         deleteMemberConfirmation: "Weet u zeker dat u {{name}} als lid voor deze samenwerking wilt verwijderen?",
+        deleteYourselfMemberConfirmation: "Weet je zeker dat je deze samenwerking wilt verlaten? Je kan dit niet terugdraaien.",
         activateMemberConfirmation: "Are you sure you want to re-activate this user {{name}}?",
         flash: {
             updated: "Samenwerking {{name}} is bijgewerkt.",
@@ -318,6 +319,17 @@ I18n.translations.nl = {
         accepted_user_policyTooltip: "Een acceptable use policy (AUP)<br/>is een document waarin staat wat een gebruiker<br/>wel en niet mag/hoort te doen<br/>en waarmee hij akkoord moet gaan<br/>om toegang te krijgen tot een dienst<br/>of systeem.",
         automaticConnectionAllowed: "Automatische connectie toegestaan?",
         automaticConnectionAllowedTooltip: "Kunnen collaboraties deze service gebruiken<br/>zonder expliciete toestemming van de Service eigenaar?",
+        network: "ACL IP-ranges",
+        networkTooltip: "Configureer de ACL IP-ranges voor deze service.<br/><br/>Je kan IPv4 en IPv6 network ranges toevoegen. " +
+            "Bijvoorbeeld:<br/><br/><ul>" +
+            "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
+            "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
+            "<li>IPv6 range 2001:db8:f00f:bab::/64. Maximal allowed subnet size for IPv6 is a /64</li>" +
+            "</ul> ",
+        networkPlaceholder: "IPv4 or IPv6 address with an optional subnet size",
+        networkError: "Subnet size {{prefix}} is not allowed. Max prefix allowed for IPv{{version}} is {{max}}",
+        networkSyntaxError: "De prefix {prefix} is niet toegestaan. Max prefix toegestaan voor IPv{version} is {max}",
+        networkInfo: "Lower bound IP: {lower}, higher bound IP: {higher}, # addresses: {num_addresses}, version: IPv{version}",
         whiteListed: "Whitelisted?",
         whiteListedTooltip: "Can this Service directly be connect<br/>to new restricted Collaborations created by the API?<br/><br/>Note that it also possible to configure<br/>this in the Server configuration file.",
         sirtfiCompliant: "Sirtfi compliant?",
@@ -796,6 +808,7 @@ I18n.translations.nl = {
             "services": "Service",
             "services_collaborations": "Collaboration service",
             "users": "User",
+            "ip_networks": "IP network"
         }
     },
     serviceRequest: {

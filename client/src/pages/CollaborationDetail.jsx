@@ -177,7 +177,9 @@ class CollaborationDetail extends React.Component {
     deleteMember = member => () => {
         this.setState({
             confirmationDialogOpen: true,
-            confirmationQuestion: I18n.t("collaborationDetail.deleteMemberConfirmation", {name: member.user.name}),
+            confirmationQuestion:
+                member.user.id === this.props.user.id ? I18n.t("collaborationDetail.deleteYourselfMemberConfirmation")
+                    : I18n.t("collaborationDetail.deleteMemberConfirmation", {name: member.user.name}),
             confirmationDialogAction: this.doDeleteMember(member)
         });
     };
@@ -200,9 +202,14 @@ class CollaborationDetail extends React.Component {
         const {originalCollaboration} = this.state;
         deleteCollaborationMembership(originalCollaboration.id, member.user.id)
             .then(() => {
-                this.componentDidMount();
-                window.scrollTo(0, 0);
-                setFlash(I18n.t("collaborationDetail.flash.memberDeleted", {name: member.user.name}));
+                if (member.user.id === this.props.user.id) {
+                    //admin user has deleted him/herself
+                    this.props.history.push("/")
+                } else {
+                    this.componentDidMount();
+                    window.scrollTo(0, 0);
+                    setFlash(I18n.t("collaborationDetail.flash.memberDeleted", {name: member.user.name}));
+                }
             });
     };
 
@@ -436,7 +443,6 @@ class CollaborationDetail extends React.Component {
 
     renderMemberTable = (members, user, sorted, reverse, adminOfCollaboration) => {
         const names = ["user__name", "user__email", "user__uid", "role", "user__suspended", "created_at", "actions"];
-        const numberOfAdmins = members.filter(member => member.role === "admin").length;
         return (
             <table className="members">
                 <thead>
@@ -451,7 +457,7 @@ class CollaborationDetail extends React.Component {
                 </tr>
                 </thead>
                 <tbody>
-                {members.map((member, i) => <tr key={i}>
+                {members.map((member, i) => <tr key={i} className={member.user.id === user.id ? "member-me" : ""}>
                     <td className="name">{member.user.name}</td>
                     <td className="email">{member.user.email}</td>
                     <td className="uid">{member.user.uid}</td>
@@ -461,7 +467,7 @@ class CollaborationDetail extends React.Component {
                             value={this.roleOptions.find(option => option.value === member.role)}
                             options={this.roleOptions}
                             onChange={this.changeMemberRole(member)}
-                            isDisabled={!adminOfCollaboration || (member.role === "admin" && numberOfAdmins < 2) || member.user.id === user.id}/>
+                            isDisabled={!adminOfCollaboration}/>
                     </td>
                     <td className="suspended">
                         <CheckBox name="suspended" value={member.user.suspended} readOnly={true}/>
@@ -470,7 +476,7 @@ class CollaborationDetail extends React.Component {
                     <td className="actions">
                         {member.user.suspended &&
                         <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>}
-                        {(adminOfCollaboration && (member.role === "member" || (member.role === "admin" && numberOfAdmins > 1 && member.user.id !== user.id))) &&
+                        {adminOfCollaboration &&
                         <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
                     </td>
                 </tr>)}
@@ -551,7 +557,7 @@ class CollaborationDetail extends React.Component {
                             alreadyExists: {...this.state.alreadyExists, short_name: false}
                         })}
                         toolTip={I18n.t("collaboration.shortNameTooltip")}
-                        disabled={shortNameDisabled(user, false , isAdmin)}/>
+                        disabled={shortNameDisabled(user, false, isAdmin)}/>
             {alreadyExists.short_name && <span
                 className="error">{I18n.t("collaboration.alreadyExists", {
                 attribute: I18n.t("collaboration.shortName").toLowerCase(),

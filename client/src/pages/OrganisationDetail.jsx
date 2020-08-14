@@ -350,15 +350,16 @@ class OrganisationDetail extends React.Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {collaborationRequests.map((cr) => <tr key={cr.id} onClick={this.openCollaborationRequest(cr)}>
-                        <td className="actions"><FontAwesomeIcon icon="arrow-right"/></td>
-                        <td className="name">{cr.name}</td>
-                        <td className="shortName">{cr.short_name}</td>
-                        <td className="requester">{cr.requester.name}</td>
-                        <td className="message tooltip-cell">
-                            <span>{cr.message}</span>
-                            {!isEmpty(cr.message) &&
-                            <span className="tooltip-container">
+                    {collaborationRequests.map((cr) =>
+                        <tr key={cr.id} onClick={this.openCollaborationRequest(cr)}>
+                            <td className="actions"><FontAwesomeIcon icon="arrow-right"/></td>
+                            <td className="name">{cr.name}</td>
+                            <td className="shortName">{cr.short_name}</td>
+                            <td className="requester">{cr.requester.name}</td>
+                            <td className="message tooltip-cell">
+                                <span>{cr.message}</span>
+                                {!isEmpty(cr.message) &&
+                                <span className="tooltip-container">
                                 <span data-tip data-for={`cr_${cr.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
@@ -366,8 +367,8 @@ class OrganisationDetail extends React.Component {
                                     <p dangerouslySetInnerHTML={{__html: escapeHtmlTooltip(cr.message)}}/>{}
                                 </ReactTooltip>
                             </span>}
-                        </td>
-                    </tr>)}
+                            </td>
+                        </tr>)}
                     </tbody>
                 </table>
             </section>
@@ -481,21 +482,22 @@ class OrganisationDetail extends React.Component {
                 </tr>
                 </thead>
                 <tbody>
-                {members.map((member, i) => <tr key={i}>
-                    <td className="name">{member.user.name}</td>
-                    <td className="email">{member.user.email}</td>
-                    <td className="uid">{member.user.uid}</td>
-                    <td className="role"><Select value={role} options={[role]}/></td>
-                    <td className="suspended">
-                        <CheckBox name="suspended" value={member.user.suspended} readOnly={true}/>
-                    </td>
-                    <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
-                    <td className="actions">
-                        {member.user.suspended &&
-                        <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>}
-                        {numberOfAdmins > 1 && <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
-                    </td>
-                </tr>)}
+                {members.map((member, i) =>
+                    <tr key={i} className={member.user.id === user.id ? "member-me" : ""}>
+                        <td className="name">{member.user.name}</td>
+                        <td className="email">{member.user.email}</td>
+                        <td className="uid">{member.user.uid}</td>
+                        <td className="role"><Select value={role} options={[role]}/></td>
+                        <td className="suspended">
+                            <CheckBox name="suspended" value={member.user.suspended} readOnly={true}/>
+                        </td>
+                        <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
+                        <td className="actions">
+                            {member.user.suspended &&
+                            <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>}
+                            {numberOfAdmins > 1 && <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
+                        </td>
+                    </tr>)}
                 </tbody>
             </table>
         );
