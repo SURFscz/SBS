@@ -16,14 +16,14 @@ export default function InputField({
     placeholder = disabled ? "" : placeholder;
     return (
         <div className="input-field">
-            <label htmlFor={name}>{name} {toolTip &&
+            {name && <label htmlFor={name}>{name} {toolTip &&
             <span className="tool-tip-section">
                 <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
                 <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
                     <p dangerouslySetInnerHTML={{__html: toolTip}}/>
                 </ReactTooltip>
             </span>}
-            </label>
+            </label>}
             {!multiline &&
             <input type="text"
                    disabled={disabled}
@@ -31,7 +31,7 @@ export default function InputField({
                    onChange={onChange}
                    onBlur={onBlur}
                    placeholder={placeholder}
-                   className={`${fileUpload ? "file-upload" : ""}`}
+                   className={`${fileUpload ? "file-upload" : ""} ${!name ? "stand-alone" : ""}`}
                    onKeyDown={e => {
                        if (onEnter && e.keyCode === 13) {//enter
                            onEnter(e);

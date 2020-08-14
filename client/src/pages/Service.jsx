@@ -3,6 +3,7 @@ import {
     auditLogsInfo,
     createService,
     deleteService,
+    ipNetworks,
     searchOrganisations,
     serviceById,
     serviceEntityIdExists,
@@ -24,6 +25,8 @@ import CheckBox from "../components/CheckBox";
 import BackLink from "../components/BackLink";
 import Tabs from "../components/Tabs";
 import History from "../components/History";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ReactTooltip from "react-tooltip";
 
 class Service extends React.Component {
 
@@ -54,6 +57,7 @@ class Service extends React.Component {
         organisations: [],
         contact_email: "",
         status: this.statusOptions[0].value,
+        ip_networks: [],
         required: ["name", "entity_id"],
         alreadyExists: {},
         initial: true,
@@ -93,7 +97,14 @@ class Service extends React.Component {
                             isNew: false,
                             allowed_organisations: this.mapOrganisationsToOptions(res[0].allowed_organisations),
                             organisations: this.mapOrganisationsToOptions(res[1])
-                        }, () => this.props.user.admin && this.fetchAuditLogs(res[0].id))
+                        }, () => {
+                            Promise.all(this.state.service.ip_networks.map(n => ipNetworks(n.network_value, n.id)))
+                                .then(res => {
+                                    this.setState({"ip_networks": res},
+                                        () => this.props.user.admin && this.fetchAuditLogs(this.state.service.id));
+                                })
+
+                        });
                     });
             }
         } else {
@@ -126,6 +137,40 @@ class Service extends React.Component {
         this.setState({invalidInputs: {...invalidInputs, email: inValid}});
     };
 
+    validateIpAddress = index => e => {
+        const currentIpNetwork = this.state.ip_networks[index];
+        const address = e.target.value;
+        ipNetworks(address, currentIpNetwork.id)
+            .then(res => {
+                    const {ip_networks} = this.state;
+                    ip_networks.splice(index, 1, res);
+                    const updatedIpNetworks = [...ip_networks];
+                    this.setState({ip_networks: updatedIpNetworks});
+                }
+            );
+    }
+
+    saveIpAddress = index => e => {
+        const {ip_networks} = this.state;
+        const network = ip_networks[index];
+        network.network_value = e.target.value;
+        ip_networks.splice(index, 1, network)
+        const updatedIpNetworks = [...ip_networks];
+        this.setState({ip_networks: updatedIpNetworks});
+    }
+
+    addIpAddress = () => {
+        const {ip_networks} = this.state;
+        ip_networks.push({network_value: ""});
+        this.setState({ip_networks: [...ip_networks]});
+    }
+
+    deleteIpAddress = index => {
+        const {ip_networks} = this.state;
+        ip_networks.splice(index, 1);
+        this.setState({ip_networks: [...ip_networks]});
+    }
+
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
     gotoServices = () => this.setState({confirmationDialogOpen: false},
@@ -154,12 +199,14 @@ class Service extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, invalidInputs, contact_email, automatic_connection_allowed} = this.state;
+        const {required, alreadyExists, invalidInputs, contact_email, automatic_connection_allowed, ip_networks}
+            = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) ||
             required.some(attr => isEmpty(this.state[attr])) ||
             Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const contactEmailRequired = !automatic_connection_allowed && isEmpty(contact_email);
-        return !inValid && !contactEmailRequired;
+        const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error)
+        return !inValid && !contactEmailRequired && !invalidIpNetworks;
     };
 
     submit = () => {
@@ -173,12 +220,24 @@ class Service extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, isNew} = this.state;
-            if (isNew) {
-                createService(this.state).then(() => this.afterUpdate(name, "created"));
-            } else {
-                updateService(this.state).then(() => this.afterUpdate(name, "updated"));
-            }
+            const {name, isNew, ip_networks} = this.state;
+            const strippedIpNetworks = ip_networks
+                .map(network => ({network_value: network.network_value, id: network.id}));
+            // Prevent deletion / re-creation of existing IP Network
+            strippedIpNetworks.forEach(network => {
+                if (isEmpty(network.id)) {
+                    delete network.id;
+                } else {
+                    network.id = parseInt(network.id, 10)
+                }
+            });
+            this.setState({ip_networks: strippedIpNetworks}, () => {
+                if (isNew) {
+                    createService(this.state).then(() => this.afterUpdate(name, "created"));
+                } else {
+                    updateService(this.state).then(() => this.afterUpdate(name, "updated"));
+                }
+            });
         }
     };
 
@@ -188,10 +247,46 @@ class Service extends React.Component {
         this.props.history.push("/services");
     };
 
+    renderIpNetworks = (ip_networks, isAdmin) => {
+        return (<div className="ip-networks">
+            <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
+                <span className="tool-tip-section">
+                                <span data-tip data-for={I18n.t("service.network")}><FontAwesomeIcon
+                                    icon="info-circle"/></span>
+                                <ReactTooltip id={I18n.t("service.network")} type="light" effect="solid"
+                                              data-html={true}>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("service.networkTooltip")}}/>
+                                </ReactTooltip>
+                            </span>
+            </label>
+            <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>
+
+            {ip_networks.map((network, i) =>
+                <div className="network-container" key={i}>
+                    <div className="network">
+                        <InputField value={network.network_value}
+                                    onChange={this.saveIpAddress(i)}
+                                    onBlur={this.validateIpAddress(i)}
+                                    placeholder={I18n.t("service.networkPlaceholder")}
+                                    disabled={!isAdmin}
+                        />
+                        <span className="trash"><FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/></span>
+                    </div>
+                    {(network.error && !network.syntax) && <span
+                        className="error">{I18n.t("service.networkError", network)}</span>}
+                    {network.syntax && <span
+                        className="error">{I18n.t("service.networkSyntaxError")}</span>}
+                    {network.higher && <span
+                        className="network-info">{I18n.t("service.networkInfo", network)}</span>}
+                </div>
+            )}
+        </div>);
+    }
+
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                         contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations,
                         accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                        research_scholarship_compliant, config) => {
+                        research_scholarship_compliant, config, ip_networks) => {
         const redirectUri = uri || entity_id || "https://redirectUri";
         const serviceRequestUrl = `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(redirectUri)}`;
         return (
@@ -328,6 +423,8 @@ class Service extends React.Component {
                             toolTip={I18n.t("service.accepted_user_policyTooltip")}
                             disabled={!isAdmin}/>
 
+                {this.renderIpNetworks(ip_networks, isAdmin)}
+
                 {!isNew && <InputField value={moment(service.created_at * 1000).format("LLLL")}
                                        disabled={true}
                                        name={I18n.t("organisation.created")}/>}
@@ -375,7 +472,7 @@ class Service extends React.Component {
             entity_id, description, uri, accepted_user_policy, contact_email,
             confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed, organisations,
             allowed_organisations, auditLogs, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-            research_scholarship_compliant
+            research_scholarship_compliant, ip_networks
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const {user, config} = this.props;
@@ -397,7 +494,7 @@ class Service extends React.Component {
                         {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                             contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,
                             isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                            research_scholarship_compliant, config)}
+                            research_scholarship_compliant, config, ip_networks)}
                     </div>
                     {(isAdmin && !isNew) && <div label="history">
                         <History auditLogs={auditLogs}/>

@@ -27,6 +27,83 @@
             margin-top: 15px;
         }
 
+        div.ip-networks {
+            margin-top: 15px;
+
+            label.title {
+                display: inline-block;
+                padding: 14px 34px 14px 14px;
+                margin: 5px 0;
+                min-width: 210px;
+                border: 1px solid $lighter-grey;
+                background-color: $background;
+                border-bottom-left-radius: $br;
+                border-top-left-radius: $br;
+                color: $dark-green;
+                position: relative;
+
+            }
+
+            span.tool-tip-section {
+                position: absolute;
+                right: 0;
+                top: 0;
+                font-size: 14px;
+                color: $blue;
+                cursor: pointer;
+                padding: 0 4px;
+
+                &:hover {
+                    color: darken($blue, 10%);
+                }
+            }
+
+            span.add-network {
+                color: $green;
+                cursor: pointer;
+                padding: 0 4px;
+                font-size: 22px;
+                display: inline-block;
+                margin-left: 25px;
+
+                &:hover {
+                    color: darken($green, 10%);
+                }
+            }
+
+            .network-container {
+                margin: 15px 0 15px 25px;
+            }
+
+            .network {
+                position: relative;
+
+                span.trash {
+                    position: absolute;
+                    right: 14px;
+                    top: 14px;
+                    color: $red;
+                    cursor: pointer;
+                    padding: 0 4px;
+                    font-size: 22px;
+                    display: inline-block;
+                    margin-left: 25px;
+
+                    &:hover {
+                        color: darken($red, 10%);
+                    }
+
+                }
+            }
+
+            span.network-info {
+                font-style: italic;
+                font-size: 14px;
+                display: inline-block;
+                margin-top: 2px;
+            }
+        }
+
         .required-marker {
             color: $red;
             font-size: 18px;

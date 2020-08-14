@@ -287,6 +287,9 @@
                 &:nth-child(odd) {
                     background-color: $lightest-grey;
                 }
+                &.member-me {
+                    font-weight: bold;
+                }
             }
         }
 

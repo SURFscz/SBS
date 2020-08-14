@@ -20,7 +20,7 @@ relationship_configuration = {
     "groups": ["collaboration_memberships", "invitations"],
     "collaborations": ["services", "collaboration_memberships", "invitations"],
     "organisation": ["organisation_memberships", "organisation_invitations"],
-    "service": ["allowed_organisations"]
+    "service": ["allowed_organisations", "ip_networks"]
 }
 
 
@@ -90,6 +90,7 @@ parent_configuration = {
     "api_keys": ("organisation_id", "organisations"),
     "collaboration_requests": ("organisation_id", "organisations"),
     "service_connection_requests": ("collaboration_id", "collaborations"),
+    "ip_networks": ("service_id", "services"),
 }
 
 

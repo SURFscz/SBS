@@ -101,8 +101,8 @@ export function config() {
 export function me(config) {
     const headers = (config.local) ? {
         // "OIDC_CLAIM_cmuid": "urn:two_suspend",
-        "OIDC_CLAIM_sub": "urn:john",
-        // "OIDC_CLAIM_sub": "urn:mary",
+        // "OIDC_CLAIM_sub": "urn:john",
+        "OIDC_CLAIM_sub": "urn:sarah",
         "OIDC_CLAIM_Nickname": "jëhny",
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
         "OIDC_CLAIM_Eduperson-Affiliation": "librarywalkin",
@@ -563,4 +563,9 @@ export function auditLogsMe() {
 
 export function auditLogsInfo(objectId, collectionNames) {
     return fetchJson(`/api/audit_logs/info/${objectId}/${collectionNames}`);
+}
+
+//IP-networks
+export function ipNetworks(address, id) {
+    return fetchJson(`/api/ipaddress/info?address=${address}&id=${id}`, {}, {}, false);
 }

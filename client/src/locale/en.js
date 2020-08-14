@@ -251,6 +251,7 @@ I18n.translations.en = {
         delete: "Delete",
         deleteConfirmation: "Are you sure you want to delete this collaboration?",
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership for {{name}}?",
+        deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You won't be able to redo this.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
         flash: {
             updated: "Collaboration {{name}} was successfully updated",
@@ -317,6 +318,17 @@ I18n.translations.en = {
         accepted_user_policy: "AUP",
         accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the service",
         accepted_user_policyTooltip: "An acceptable use policy (AUP)<br/>is a document stipulating constraints<br/>and practices that a user<br/>must agree to for access<br/>to a corporate network or<br/>the Internet.",
+        network: "ACL IP-ranges",
+        networkTooltip: "Configure the ACL IP-ranges for this service.<br/><br/>You can add IPv4 and IPv6 network ranges. " +
+            "For example:<br/><br/><ul>" +
+            "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
+            "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
+            "<li>IPv6 range 2001:db8:f00f:bab::/64. Maximal allowed subnet size for IPv6 is a /64</li>" +
+            "</ul> ",
+        networkPlaceholder: "IPv4 or IPv6 address with an optional subnet size",
+        networkError: "Subnet size {{prefix}} is not allowed. Max prefix allowed for IPv{{version}} is {{max}}",
+        networkSyntaxError: "This is not a valid IPv4 or IPv6 address.",
+        networkInfo: "Lower bound IP: {{lower}}, higher bound IP: {{higher}}, # addresses: {{num_addresses}}, version: IPv{{version}}",
         automaticConnectionAllowed: "Automatic connection allowed?",
         automaticConnectionAllowedTooltip: "Can collaborations use this service<br/>without explicit permission of the Service contact person?",
         whiteListed: "Whitelisted?",
@@ -796,6 +808,7 @@ I18n.translations.en = {
             "services": "Service",
             "services_collaborations": "Collaboration service",
             "users": "User",
+            "ip_networks": "IP network"
         }
     },
     serviceRequest: {
