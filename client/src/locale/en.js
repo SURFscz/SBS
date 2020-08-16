@@ -215,6 +215,9 @@ I18n.translations.en = {
         enrollment: "Enrollment",
         enrollmentPlaceholder: "The enrollment of a collaboration",
         enrollmentTooltip: "Determines the process<br/>through which members enroll at<br/>this collaboration",
+        currentUserAdmin: "Do you want to an administrator of this collaboration?",
+        currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
+        oneAdministratorIsRequired: "There has to be at least one administrator for a collaboration. Either add yourself or invite someone",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
         motivation: "Motivation",
@@ -884,7 +887,7 @@ I18n.translations.en = {
     },
     system : {
         title: "System maintenance",
-        runDailyJobsInfo: "Run the job to suspend all users that have not logged in for the configured period",
+        runDailyJobsInfo: "Run the daily cron job to send notification mails and potentially suspend users that have not logged in for the configured period",
         runDailyJobs: "Trigger",
         runDailyJobsInfoResults: "The following users have received a mail or have been suspended"
     }

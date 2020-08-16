@@ -215,6 +215,9 @@ I18n.translations.nl = {
         enrollment: "Lidmaatschapsproces",
         enrollmentPlaceholder: "Lidmaatschapsproces van een samenwerking",
         enrollmentTooltip: "Bepaalt het proces waarmee<br/>leden toegang krijgen tot<br/>deze samenwerking",
+        currentUserAdmin: "Do you want to an administrator of this collaboration?",
+        currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
+        oneAdministratorIsRequired: "There has to be at least one administrator for a collaboration. Either add yourself or invite someone",
         message: "Bericht",
         messagePlaceholder: "Boodschap aan de beheerders van deze samenwerking",
         messageTooltip: "De boodschap nemen we op in de <br/>e-mail waarmee beheerders worden uitgenodigd.",
@@ -884,7 +887,7 @@ I18n.translations.nl = {
     },
     system: {
         title: "System maintenance",
-        runDailyJobsInfo: "Run the job to suspend all users that have not logged in for the configured period",
+        runDailyJobsInfo: "Run the daily cron job to send notification mails and potentially suspend users that have not logged in for the configured period",
         runDailyJobs: "Trigger",
         runDailyJobsInfoResults: "The following users have received a mail or have been suspended"
     }
