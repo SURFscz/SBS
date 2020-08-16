@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 import json
 
-from server.db.domain import Collaboration, Organisation, Invitation
+from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER, RESTRICTED_CO_API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
     ai_computing_short_name, service_network_entity_id, service_wiki_entity_id, service_storage_entity_id, \
@@ -62,13 +62,56 @@ class TestCollaboration(AbstractTest):
                                           "name": "new_collaboration",
                                           "organisation_id": organisation_id,
                                           "administrators": ["the@ex.org", "that@ex.org"],
-                                          "short_name": "new_short_name"
+                                          "short_name": "new_short_name",
+                                          "current_user_admin": False
                                       }, with_basic_auth=False)
 
             self.assertIsNotNone(collaboration["id"])
             self.assertIsNotNone(collaboration["identifier"])
             self.assertEqual("uuc:new_short_name", collaboration["global_urn"])
             self.assertEqual(2, len(outbox))
+
+            count = self._collaboration_membership_count(collaboration)
+            self.assertEqual(0, count)
+
+    def test_collaboration_new_with_current_user_admin(self):
+        organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
+        self.login("urn:john")
+        collaboration = self.post("/api/collaborations",
+                                  body={
+                                      "name": "new_collaboration",
+                                      "organisation_id": organisation_id,
+                                      "administrators": ["the@ex.org", "that@ex.org"],
+                                      "short_name": "new_short_name",
+                                      "current_user_admin": True
+                                  }, with_basic_auth=False)
+
+        count = self._collaboration_membership_count(collaboration)
+        self.assertEqual(1, count)
+
+    def test_collaboration_new_with_default_current_user_admin(self):
+        organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
+        self.login("urn:john")
+        collaboration = self.post("/api/collaborations",
+                                  body={
+                                      "name": "new_collaboration",
+                                      "organisation_id": organisation_id,
+                                      # We leave this empty to enforce current user becomes admin
+                                      "administrators": [],
+                                      "short_name": "new_short_name",
+                                      "current_user_admin": False
+                                  }, with_basic_auth=False)
+
+        count = self._collaboration_membership_count(collaboration)
+        self.assertEqual(1, count)
+
+    @staticmethod
+    def _collaboration_membership_count(collaboration):
+        return CollaborationMembership.query \
+            .join(CollaborationMembership.user) \
+            .filter(CollaborationMembership.collaboration_id == collaboration["id"]) \
+            .filter(User.uid == "urn:john") \
+            .count()
 
     def test_collaboration_no_organisation_context(self):
         self.login("urn:john")
@@ -396,8 +439,10 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(201, response.status_code)
         collaboration = AbstractTest.find_entity_by_name(Collaboration, "new_collaboration")
-        admin = list(filter(lambda m: m.role == "admin", collaboration.collaboration_memberships))[0]
-        self.assertEqual("john@example.org", admin.user.email)
+        self.assertEqual(0, len(collaboration.collaboration_memberships))
+
+        count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
+        self.assertEqual(2, count)
 
     def test_api_call_existing_name(self):
         response = self.client.post("/api/collaborations/v1",

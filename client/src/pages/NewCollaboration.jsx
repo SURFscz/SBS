@@ -35,7 +35,7 @@ class NewCollaboration extends React.Component {
             short_name: "",
             description: "",
             access_type: this.accessTypeOptions[0].value,
-            administrators: [this.props.user.email],
+            administrators: [],
             message: "",
             email: "",
             accepted_user_policy: "",
@@ -56,7 +56,8 @@ class NewCollaboration extends React.Component {
                 }),
             leavePage: true,
             noOrganisations: false,
-            isRequestCollaboration: false
+            isRequestCollaboration: false,
+            current_user_admin: false
         };
     }
 
@@ -118,9 +119,10 @@ class NewCollaboration extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists} = this.state;
+        const {required, alreadyExists, current_user_admin, administrators} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
-        return !inValid;
+        const requiredAdmin = current_user_admin || administrators.length > 0;
+        return !inValid && requiredAdmin;
     };
 
     doSubmit = () => {
@@ -128,13 +130,13 @@ class NewCollaboration extends React.Component {
             const {
                 name, short_name, description, access_type, enrollment,
                 administrators, message, accepted_user_policy, organisation, isRequestCollaboration,
-                services_restricted, disable_join_requests
+                services_restricted, disable_join_requests, current_user_admin
             } = this.state;
             const promise = isRequestCollaboration ? requestCollaboration : createCollaboration;
             promise({
                 name, short_name, description, enrollment, access_type,
                 administrators, message, accepted_user_policy, organisation_id: organisation.value,
-                services_restricted, disable_join_requests
+                services_restricted, disable_join_requests, current_user_admin
             }).then(res => {
                 this.props.history.goBack();
                 const isCollCreated = res.identifier;
@@ -178,6 +180,14 @@ class NewCollaboration extends React.Component {
         }
     };
 
+    flipCurrentUserAdmin = e => {
+        const checked = e.target.checked;
+        const {administrators} = this.state;
+        const newAdministrators = checked ? [...administrators, this.props.user.email] :
+            administrators.filter(email => email !== this.props.user.email);
+        this.setState({administrators: newAdministrators, current_user_admin: checked})
+    }
+
     renderNoOrganisations = () => (
         <div className="mod-new-collaboration-container">
             <div className="mod-new-collaboration">
@@ -190,7 +200,7 @@ class NewCollaboration extends React.Component {
         const {
             name, short_name, description, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, noOrganisations, isRequestCollaboration,
-            services_restricted, disable_join_requests
+            services_restricted, disable_join_requests, current_user_admin
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
@@ -327,6 +337,13 @@ class NewCollaboration extends React.Component {
                                     </div>)}
                             </section>
                         </div>}
+                        {(!initial && !current_user_admin && administrators.length === 0) &&
+                        <span className="error">{I18n.t("collaboration.oneAdministratorIsRequired")}</span>}
+
+                        <CheckBox name={I18n.t("collaboration.currentUserAdmin")} value={current_user_admin}
+                                  onChange={this.flipCurrentUserAdmin}
+                                  info={I18n.t("collaboration.currentUserAdmin")}
+                                  tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>
 
                         <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                                     placeholder={I18n.t("collaboration.messagePlaceholder")}

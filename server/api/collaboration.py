@@ -8,6 +8,7 @@ from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.orm import aliased, load_only, contains_eager, joinedload
 from werkzeug.exceptions import BadRequest, Forbidden
 
+from server.api.base import ctx_logger
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member, confirm_authorized_api_call, \
@@ -18,7 +19,6 @@ from server.db.domain import Collaboration, CollaborationMembership, JoinRequest
     Organisation, Service
 from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
-from server.api.base import ctx_logger
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
@@ -341,8 +341,10 @@ def save_collaboration():
         user = User.query.get(current_user_id())
     else:
         raise BadRequest("No organisation_id in POST data")
-
-    res = do_save_collaboration(data, organisation, user)
+    current_user_admin = data.get("current_user_admin", False)
+    if "current_user_admin" in data:
+        del data["current_user_admin"]
+    res = do_save_collaboration(data, organisation, user, current_user_admin)
     return res
 
 
@@ -359,7 +361,7 @@ def save_collaboration_api():
     else:
         raise Forbidden("Not associated with an API key")
 
-    res = do_save_collaboration(data, organisation, user)
+    res = do_save_collaboration(data, organisation, user, current_user_admin=False)
     return res
 
 
@@ -405,7 +407,7 @@ def save_restricted_collaboration():
     # do_save_collaboration sanitizes the JSON so we need to define upfront
     connected_services = data.get("connected_services")
 
-    res = do_save_collaboration(data, organisation, admin)
+    res = do_save_collaboration(data, organisation, admin, current_user_admin=True)
 
     if connected_services:
         collaboration = res[0]
@@ -421,7 +423,7 @@ def save_restricted_collaboration():
     return collaboration, 201
 
 
-def do_save_collaboration(data, organisation, user):
+def do_save_collaboration(data, organisation, user, current_user_admin=True):
     data["status"] = "active"
     _validate_collaboration(data, organisation)
 
@@ -445,10 +447,12 @@ def do_save_collaboration(data, organisation, user):
             "base_url": current_app.app_config.base_url,
             "wiki_link": current_app.app_config.wiki_link
         }, collaboration, [administrator])
-    admin_collaboration_membership = CollaborationMembership(role="admin", user_id=user.id,
-                                                             collaboration_id=collaboration.id,
-                                                             created_by=user.uid, updated_by=user.uid)
-    db.session.merge(admin_collaboration_membership)
+
+    if current_user_admin or len(administrators) == 0:
+        admin_collaboration_membership = CollaborationMembership(role="admin", user_id=user.id,
+                                                                 collaboration_id=collaboration.id,
+                                                                 created_by=user.uid, updated_by=user.uid)
+        db.session.merge(admin_collaboration_membership)
     return res
 
 

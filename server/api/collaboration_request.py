@@ -56,7 +56,7 @@ def request_collaboration():
 
     recipients = list(map(lambda membership: membership.user.email, organisation.organisation_memberships))
     if auto_create or auto_aff:
-        collaboration = do_save_collaboration(data, organisation, user)[0]
+        collaboration = do_save_collaboration(data, organisation, user, current_user_admin=True)[0]
         context = {"salutation": f"Dear {organisation.name} organisation admin,",
                    "base_url": current_app.app_config.base_url,
                    "collaboration": collaboration,
