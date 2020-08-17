@@ -1,16 +1,17 @@
 # -*- coding: future_fstrings -*-
 import ipaddress
+import urllib.parse
 
 from flask import Blueprint, request as current_request
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only, contains_eager
-import urllib.parse
+
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
-    is_organisation_admin, is_current_user_organisation_admin_or_manager
-from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership
+    is_organisation_admin
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
+from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership
 from server.db.models import update, save, delete
 
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
@@ -22,9 +23,9 @@ def service_search():
     def is_org_member():
         user_id = current_user_id()
         return OrganisationMembership.query \
-            .options(load_only("id")) \
-            .filter(OrganisationMembership.user_id == user_id) \
-            .count() > 0
+                   .options(load_only("id")) \
+                   .filter(OrganisationMembership.user_id == user_id) \
+                   .count() > 0
 
     def override_func():
         return is_collaboration_admin() or is_org_member()

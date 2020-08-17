@@ -111,7 +111,7 @@ class CollaborationRequest extends React.Component {
                 confirmationDialogAction: () => this.setState({confirmationDialogOpen: false},
                     () => {
                         denyRequestCollaboration(this.state.collaborationRequest.id).then(r => {
-                            this.props.history.push("/");
+                            this.props.history.push(`/organisations/${this.state.collaborationRequest.organisation_id}`);
                             setFlash(I18n.t("collaborationRequest.flash.denied", {name: this.state.collaborationRequest.name}));
                         });
                     })
@@ -120,7 +120,7 @@ class CollaborationRequest extends React.Component {
             const {collaborationRequest} = this.state;
             collaborationRequest.organisation_id = collaborationRequest.organisation.value;
             approveRequestCollaboration(collaborationRequest).then(res => {
-                this.props.history.push("/")
+                this.props.history.push(`/organisations/${collaborationRequest.organisation_id}`);
                 setFlash(I18n.t("collaborationRequest.flash.approved", {name: collaborationRequest.name}));
             });
         }

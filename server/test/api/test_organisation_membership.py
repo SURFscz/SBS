@@ -39,4 +39,3 @@ class TestOrganisationMembership(AbstractTest):
         collaboration_membership = OrganisationMembership.query.join(OrganisationMembership.user).filter(
             User.uid == "urn:harry").one()
         self.assertEqual("admin", collaboration_membership.role)
-

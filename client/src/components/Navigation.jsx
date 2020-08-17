@@ -39,8 +39,9 @@ export default class Navigation extends React.PureComponent {
         const {currentUser, impersonator} = this.props;
         const memberships = currentUser.organisation_memberships || [];
         const isOrganisationAdmin = memberships.some(membership => membership.role === "admin");
+        const isOrganisationManager = memberships.some(membership => membership.role === "manager");
         const mayImpersonate = currentUser.admin || (impersonator && impersonator.admin);
-        const mayCreateSomething = currentUser.admin || isOrganisationAdmin || (isEmpty(memberships) && !currentUser.guest);
+        const mayCreateSomething = currentUser.admin || isOrganisationAdmin || isOrganisationManager || (isEmpty(memberships) && !currentUser.guest);
         const needsToAgreeWithAup = currentUser.needs_to_agree_with_aup;
         if (needsToAgreeWithAup) {
             return (

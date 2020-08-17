@@ -231,6 +231,7 @@ class TestOrganisation(AbstractTest):
             self.assertEqual(pre_count + 2, post_count)
 
         memberships = self.find_entity_by_name(Organisation, "new_organisation").organisation_memberships
+        self.assertEqual(0, len(memberships))
 
     def test_organisation_invites_preview(self):
         self.login("urn:john")
