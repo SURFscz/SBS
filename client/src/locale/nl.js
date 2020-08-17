@@ -889,7 +889,9 @@ I18n.translations.nl = {
         title: "System maintenance",
         runDailyJobsInfo: "Run the daily cron job to send notification mails and potentially suspend users that have not logged in for the configured period",
         runDailyJobs: "Trigger",
-        runDailyJobsInfoResults: "The following users have received a mail or have been suspended"
+        first_suspend_notification: "First suspend notification email send to:",
+        second_suspend_notification: "Second suspend notification email send to:",
+        suspended: "Users who are marked as suspended:"
     }
 
 };

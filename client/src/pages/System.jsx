@@ -32,17 +32,16 @@ class System extends React.Component {
 
     renderDailyCronResults = () => {
         const {suspendedUsers} = this.state;
+
         return (
             <div className="results">
                 {!isEmpty(suspendedUsers) && <div className="results">
-                    <p className="sub-title">{I18n.t("system.runDailyJobsInfoResults")}</p>
-                    {}
                     {Object.keys(suspendedUsers).map(key =>
                         <div key={key}>
-                            <p className="category">{key}</p>
-                            <ul>
+                            <p className="category">{I18n.t(`system.${key}`)}</p>
+                            {!isEmpty(suspendedUsers[key]) && <ul>
                                 {suspendedUsers[key].map(email => <li>{email}</li>)}
-                            </ul>
+                            </ul>}
                             {isEmpty(suspendedUsers[key]) && <span>None</span>}
                         </div>)}
                 </div>}
