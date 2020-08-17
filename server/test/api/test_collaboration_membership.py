@@ -30,7 +30,7 @@ class TestCollaborationMembership(AbstractTest):
         self.assertEqual("admin", collaboration_membership.role)
 
     def test_create_collaboration_membership(self):
-        self.login("urn:harry")
+        self.login("urn:mary")
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
         self.post("/api/collaboration_memberships",
                   body={"collaborationId": collaboration.id},
@@ -39,7 +39,7 @@ class TestCollaborationMembership(AbstractTest):
         collaboration_membership = CollaborationMembership \
             .query \
             .join(CollaborationMembership.user) \
-            .filter(User.uid == "urn:harry") \
+            .filter(User.uid == "urn:mary") \
             .filter(CollaborationMembership.collaboration_id == collaboration.id) \
             .one()
         self.assertEqual("admin", collaboration_membership.role)

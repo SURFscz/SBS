@@ -321,8 +321,6 @@ I18n.translations.nl = {
         accepted_user_policy: "AUP",
         accepted_user_policyPlaceholder: "De Acceptable Use Policy (AUP) van de dienst",
         accepted_user_policyTooltip: "Een acceptable use policy (AUP)<br/>is een document waarin staat wat een gebruiker<br/>wel en niet mag/hoort te doen<br/>en waarmee hij akkoord moet gaan<br/>om toegang te krijgen tot een dienst<br/>of systeem.",
-        automaticConnectionAllowed: "Automatische connectie toegestaan?",
-        automaticConnectionAllowedTooltip: "Kunnen collaboraties deze service gebruiken<br/>zonder expliciete toestemming van de Service eigenaar?",
         network: "ACL IP-ranges",
         networkTooltip: "Configureer de ACL IP-ranges voor deze service.<br/><br/>Je kan IPv4 en IPv6 network ranges toevoegen. " +
             "Bijvoorbeeld:<br/><br/><ul>" +
@@ -334,6 +332,8 @@ I18n.translations.nl = {
         networkError: "Subnet size {{prefix}} is not allowed. Max prefix allowed for IPv{{version}} is {{max}}",
         networkSyntaxError: "De prefix {prefix} is niet toegestaan. Max prefix toegestaan voor IPv{version} is {max}",
         networkInfo: "Lower bound IP: {lower}, higher bound IP: {higher}, # addresses: {num_addresses}, version: IPv{version}",
+        automaticConnectionAllowed: "Automatische connectie toegestaan?",
+        automaticConnectionAllowedTooltip: "Kunnen collaboraties deze service gebruiken<br/>zonder expliciete toestemming van de Service eigenaar?",
         whiteListed: "Whitelisted?",
         whiteListedTooltip: "Can this Service directly be connect<br/>to new restricted Collaborations created by the API?<br/><br/>Note that it also possible to configure<br/>this in the Server configuration file.",
         sirtfiCompliant: "Sirtfi compliant?",
@@ -404,6 +404,16 @@ I18n.translations.nl = {
         admin: "Beheerder",
         manager: "Manager",
         member: "Lid",
+        organisationRoles: {
+            admin: "Organisatie Admin",
+            manager: "Organisatie Manager",
+            undefined: ""
+        },
+        organisationShortRoles: {
+            admin: "Admin",
+            manager: "Manager",
+            undefined: ""
+        },
         yourself: "{{name}} (jijzelf dus)",
         anotherAdmin: "We raden aan meerdere beheerders uit te nodigen.",
         deleteConfirmation: "Weet u zeker dat u deze organisatie wil verwijderen?",
@@ -439,11 +449,13 @@ I18n.translations.nl = {
             actions: "",
             invitee_email: "E-mail genodigde",
             user__name: "Uitgenodigd door",
+            intended_role: "Role",
             expiry_date: "Verloopt",
             noExpires: "N/A",
             message: "Bericht",
         },
         collaborationRequest: {
+            actions: "",
             name: "Naam",
             short_name: "Korte naam",
             requester__name: "Aanvrager",
@@ -475,7 +487,8 @@ I18n.translations.nl = {
             memberDeleted: "Lidmaatschap van {{name}} is verwijderd.",
             apiKeyDeleted: "API-sleutel is verwijderd.",
             collaborationDeleted: "Samenwerking {{name}} is verwijderd.",
-            memberActivated: "Member {{name}} has been sent an email with an activation link"
+            memberActivated: "Member {{name}} has been sent an email with an activation link",
+            memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
         },
         preview: "Preview",
         details: "Details"
@@ -506,6 +519,7 @@ I18n.translations.nl = {
         organisationDescription: "Beschrijving",
         organisationAdministrators: "Beheerders",
         requiredAdministrator: "Er is minimaal 1 e-mailadres van een beheerder nodig voor een uitnodiging.",
+        role: "Rol",
         expiryDate: "Verloopdatum",
         expiryDateTooltip: "De verloopdatum van de uitnodiging<br/>Na die datum werkt de uitnodiging niet meer.",
         message: "Bericht",
@@ -560,6 +574,8 @@ I18n.translations.nl = {
         inviteesTooltip: "Deze tekst nemen we op in de <br/>e-mail waarmee we deelnemers<br/>uitnodigen",
         intendedRole: "CO Beheersrechten",
         intendedRoleTooltip: "De beheersrechten die alle genodigden krijgen.<br/><br/>CO-Beheerders van een samenwerking<br/>kunnen de gegevens van de samenwerking<br/> wijzigen en leden uitnodigen.<br/>Normale gebruikers kunnen alleen diensten gebruiken <br/>van groepen waar ze lid van zijn.",
+        intendedRoleOrganisation: "Org Beheersrechten",
+        intendedRoleTooltipOrganisation: "De beheersrechten die alle genodigden krijgen.<br/><br/>Admins van een organisatie<br/>kunnen de gegevens van de organisatie wijzigen en<br/>leden uitnodigen.<br/><br/>Managers kunnen samenwerkingen beheren.",
         invitee_email: "E-mail genodigde",
         groupsPlaceHolder: "Selecteer Autorisatiegroepen",
         groupsTooltip: "Selecteer de groepen waar<br/>de genodigde lid van wordt<br/>nadat deze uitnodiging is geaccepteerd.",

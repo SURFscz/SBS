@@ -11,7 +11,8 @@ import {
     organisationNameExists,
     organisationSchacHomeOrganisationExists,
     organisationShortNameExists,
-    updateOrganisation
+    updateOrganisation,
+    updateOrganisationMembershipRole
 } from "../api";
 import "./OrganisationDetail.scss";
 import I18n from "i18n-js";
@@ -64,6 +65,7 @@ class OrganisationDetail extends React.Component {
             reverseCollaborationSorted: false,
             collaborationsQuery: "",
             adminOfOrganisation: false,
+            managerOfOrganisation: false,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
@@ -90,6 +92,7 @@ class OrganisationDetail extends React.Component {
                         return;
                     }
                     const adminOfOrganisation = json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id);
+                    const managerOfOrganisation = json.organisation_memberships.some(member => member.role === "manager" && member.user_id === user.id);
                     this.setState({
                         originalOrganisation: json,
                         name: json.name,
@@ -105,6 +108,7 @@ class OrganisationDetail extends React.Component {
                         invitations: sortObjects(json.organisation_invitations, inviteSorted, inviteReverse),
                         collaborationRequests: sortObjects(json.collaboration_requests, collaborationRequestSorted, collaborationRequestReverse),
                         adminOfOrganisation: adminOfOrganisation,
+                        managerOfOrganisation: managerOfOrganisation,
                         apiKeys: json.api_keys
                     }, () => {
                         if ((member && member.role === "admin") || user.admin) {
@@ -156,6 +160,20 @@ class OrganisationDetail extends React.Component {
             confirmationDialogAction: this.doDeleteMember(member)
         });
     };
+
+    changeMemberRole = member => selectedOption => {
+        const {originalOrganisation} = this.state;
+        updateOrganisationMembershipRole(originalOrganisation.id, member.user.id, selectedOption.value)
+            .then(() => {
+                this.componentDidMount();
+                window.scrollTo(0, 0);
+                setFlash(I18n.t("organisationDetail.flash.memberUpdated", {
+                    name: member.user.name,
+                    role: selectedOption.value
+                }));
+            });
+    };
+
 
     doDeleteMember = member => () => {
         this.setState({confirmationDialogOpen: false});
@@ -334,7 +352,7 @@ class OrganisationDetail extends React.Component {
                 <p>{I18n.t("organisationDetail.noCollaborationRequests")}</p>
             </section>
         }
-        const names = ["name", "short_name", "requester__name", "message"];
+        const names = ["actions", "name", "short_name", "requester__name", "message"];
         return (
             <section className="collaboration-requests-container">
                 <table className="collaboration-requests">
@@ -375,37 +393,50 @@ class OrganisationDetail extends React.Component {
         );
     };
 
+    renderNoInvitations = () => (<div>
+        <div className="title">
+            <p className="title organisation-invitations">{I18n.t("organisationDetail.invitations", {name: this.state.originalOrganisation.name})}</p>
+        </div>
+        <section className="invitations-container">
+            <p>{I18n.t("organisationDetail.noInvitations")}</p>
+        </section>
+    </div>);
+
     renderInvitations = (reverse, sorted, invitations) => {
         if (invitations.length === 0) {
-            return <section className="invitations-container">
-                <p>{I18n.t("organisationDetail.noInvitations")}</p>
-            </section>
+            return this.renderNoInvitations();
         }
-        const names = ["actions", "invitee_email", "user__name", "expiry_date", "message"];
+        const names = ["actions", "invitee_email", "user__name", "intended_role", "expiry_date", "message"];
         return (
-            <section className="invitations-container">
-                <table className="invitations">
-                    <thead>
-                    <tr>
-                        {names.map(name =>
-                            <th key={name} className={name}
-                                onClick={this.sortInvitationsTable(invitations, name, sorted, reverse)}>
-                                {I18n.t(`organisationDetail.invitation.${name}`)}
-                                {headerIcon(name, sorted, reverse)}
-                            </th>
-                        )}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {invitations.map((invite) => <tr key={invite.id} onClick={this.openInvitation(invite)}>
-                        <td className="actions"><FontAwesomeIcon icon="arrow-right"/></td>
-                        <td className="invitee">{invite.invitee_email}</td>
-                        <td className="invitedBy">{invite.user.name}</td>
-                        <td className="expires">{invite.expiry_date ? moment(invite.expiry_date * 1000).format("LL") : I18n.t("organisationDetail.invitation.noExpires")}</td>
-                        <td className="message tooltip-cell">
-                            <span>{invite.message}</span>
-                            {!isEmpty(invite.message) &&
-                            <span className="tooltip-container">
+            <div>
+                <div className="title">
+                    <p className="title organisation-invitations">{I18n.t("organisationDetail.invitations", {name: this.state.originalOrganisation.name})}</p>
+                </div>
+
+                <section className="invitations-container">
+                    <table className="invitations">
+                        <thead>
+                        <tr>
+                            {names.map(name =>
+                                <th key={name} className={name}
+                                    onClick={this.sortInvitationsTable(invitations, name, sorted, reverse)}>
+                                    {I18n.t(`organisationDetail.invitation.${name}`)}
+                                    {headerIcon(name, sorted, reverse)}
+                                </th>
+                            )}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {invitations.map((invite) => <tr key={invite.id} onClick={this.openInvitation(invite)}>
+                            <td className="actions"><FontAwesomeIcon icon="arrow-right"/></td>
+                            <td className="invitee">{invite.invitee_email}</td>
+                            <td className="invitedBy">{invite.user.name}</td>
+                            <td className="intendedRole">{I18n.t(`organisation.organisationRoles.${invite.intended_role}`)}</td>
+                            <td className="expires">{invite.expiry_date ? moment(invite.expiry_date * 1000).format("LL") : I18n.t("organisationDetail.invitation.noExpires")}</td>
+                            <td className="message tooltip-cell">
+                                <span>{invite.message}</span>
+                                {!isEmpty(invite.message) &&
+                                <span className="tooltip-container">
                                 <span data-tip data-for={`invite_${invite.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
@@ -413,11 +444,12 @@ class OrganisationDetail extends React.Component {
                                     <p dangerouslySetInnerHTML={{__html: escapeHtmlTooltip(invite.message)}}/>{}
                                 </ReactTooltip>
                             </span>}
-                        </td>
-                    </tr>)}
-                    </tbody>
-                </table>
-            </section>
+                            </td>
+                        </tr>)}
+                        </tbody>
+                    </table>
+                </section>
+            </div>
         );
     };
 
@@ -458,15 +490,19 @@ class OrganisationDetail extends React.Component {
                             txt={I18n.t("organisationDetail.invite")}/>
                     }
                 </div>
-                {this.renderMemberTable(members, user, sorted, reverse)}
+                {this.renderMemberTable(members, user, sorted, reverse, adminOfOrganisation)}
             </section>
 
         );
     };
 
-    renderMemberTable = (members, user, sorted, reverse) => {
+    renderMemberTable = (members, user, sorted, reverse, adminOfOrganisation) => {
         const names = ["user__name", "user__email", "user__uid", "role", "user__suspended", "created_at", "actions"];
-        const role = {value: "admin", label: "Admin"};
+        const roles = [
+            {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
+            {value: "manager", label: I18n.t(`organisation.organisationShortRoles.manager`)}
+        ];
+        const isAdmin = user.admin || adminOfOrganisation;
         const numberOfAdmins = members.filter(member => member.role === "admin").length;
         return (
             <table className="members">
@@ -487,15 +523,18 @@ class OrganisationDetail extends React.Component {
                         <td className="name">{member.user.name}</td>
                         <td className="email">{member.user.email}</td>
                         <td className="uid">{member.user.uid}</td>
-                        <td className="role"><Select value={role} options={[role]}/></td>
+                        <td className="role">
+                            <Select value={roles.find(role => role.value === member.role)} options={roles}
+                                    isDisabled={!isAdmin}/>
+                        </td>
                         <td className="suspended">
                             <CheckBox name="suspended" value={member.user.suspended} readOnly={true}/>
                         </td>
                         <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
                         <td className="actions">
-                            {member.user.suspended &&
+                            {(isAdmin && member.user.suspended) &&
                             <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>}
-                            {numberOfAdmins > 1 && <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
+                            {(isAdmin && numberOfAdmins > 1) && <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
                         </td>
                     </tr>)}
                 </tbody>
@@ -503,8 +542,8 @@ class OrganisationDetail extends React.Component {
         );
     };
 
-    organisationApiKeys = (user, adminOfOrganisation, apiKeys) => {
-        const isAdmin = user.admin || adminOfOrganisation;
+    organisationApiKeys = (user, adminOfOrganisation, managerOfOrganisation, apiKeys) => {
+        const isAllowedApiKey = user.admin || adminOfOrganisation || managerOfOrganisation;
         return (
             <div className="api-keys-container">
                 <p className="usage" dangerouslySetInnerHTML={{__html: I18n.t("apiKeys.info")}}/>
@@ -526,7 +565,7 @@ class OrganisationDetail extends React.Component {
                     </tbody>
                 </table>}
 
-                {isAdmin &&
+                {isAllowedApiKey &&
                 <Button onClick={this.addApiKey}
                         txt={I18n.t("organisationDetail.newApiKey")}/>
                 }
@@ -534,9 +573,9 @@ class OrganisationDetail extends React.Component {
         );
     };
 
-    renderCollaborations = (collaborations, user, sorted, reverse, query, adminOfOrganisation) => {
-        const isAdmin = user.admin || adminOfOrganisation;
-        const adminClassName = isAdmin ? "with-button" : "";
+    renderCollaborations = (collaborations, user, sorted, reverse, query, adminOfOrganisation, managerOfOrganisation) => {
+        const isAllowedCollaborations = user.admin || adminOfOrganisation || managerOfOrganisation;
+        const adminClassName = isAllowedCollaborations ? "with-button" : "";
         return (
             <section className="collaborations-search">
                 <div className="search">
@@ -546,7 +585,7 @@ class OrganisationDetail extends React.Component {
                            value={query}
                            placeholder={I18n.t("organisationDetail.searchPlaceHolderCollaborations")}/>
                     {<FontAwesomeIcon icon="search" className={adminClassName}/>}
-                    {isAdmin &&
+                    {isAllowedCollaborations &&
                     <Button onClick={this.newCollaboration}
                             txt={I18n.t("organisationDetail.newCollaboration")}/>
                     }
@@ -686,7 +725,7 @@ class OrganisationDetail extends React.Component {
     renderDetails = (confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion, leavePage,
                      originalOrganisation, inviteReverse, inviteSorted, invitations, collaborationRequestReverse,
                      collaborationRequestSorted, collaborationRequests, filteredMembers, user, sorted, reverse, query,
-                     adminOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
+                     adminOfOrganisation, managerOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
                      collaborationsQuery, name, short_name, identifier, alreadyExists, initial, description, schac_home_organisation,
                      collaboration_creation_allowed, disabledSubmit) => (
         <>
@@ -695,27 +734,24 @@ class OrganisationDetail extends React.Component {
                                 confirm={confirmationDialogAction}
                                 question={confirmationQuestion}
                                 leavePage={leavePage}/>
-            <div className="title">
-                <p className="title organisation-invitations">{I18n.t("organisationDetail.invitations", {name: originalOrganisation.name})}</p>
-            </div>
-            {this.renderInvitations(inviteReverse, inviteSorted, invitations)}
+            {adminOfOrganisation && this.renderInvitations(inviteReverse, inviteSorted, invitations)}
             <div className="title">
                 <p className="title organisation-invitations">{I18n.t("organisationDetail.collaborationRequests", {name: originalOrganisation.name})}</p>
             </div>
             {this.renderCollaborationRequests(collaborationRequestReverse, collaborationRequestSorted, collaborationRequests)}
-            <EmailMembers allowEmailLink={adminOfOrganisation || user.admin}
+            <EmailMembers allowEmailLink={managerOfOrganisation || adminOfOrganisation || user.admin}
                           members={this.state.members}
                           title={I18n.t("organisationDetail.members", {name: originalOrganisation.name})}/>
             {this.renderMembers(filteredMembers, user, sorted, reverse, query, adminOfOrganisation)}
             <div className="title">
                 <p>{I18n.t("organisationDetail.apiKeys", {name: originalOrganisation.name})}</p>
             </div>
-            {this.organisationApiKeys(user, adminOfOrganisation, apiKeys)}
+            {this.organisationApiKeys(user, adminOfOrganisation, managerOfOrganisation, apiKeys)}
             <div className="title">
                 <p>{I18n.t("organisationDetail.collaborations", {name: originalOrganisation.name})}</p>
             </div>
             {this.renderCollaborations(filteredCollaborations, user, sortedCollaborationAttribute,
-                reverseCollaborationSorted, collaborationsQuery, adminOfOrganisation)}
+                reverseCollaborationSorted, collaborationsQuery, adminOfOrganisation, managerOfOrganisation)}
             <div className="title">
                 <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
             </div>
@@ -727,7 +763,7 @@ class OrganisationDetail extends React.Component {
         const {
             name, short_name, identifier, description, schac_home_organisation, collaboration_creation_allowed, originalOrganisation, initial, alreadyExists, filteredMembers, query,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
-            inviteReverse, inviteSorted, invitations, adminOfOrganisation, apiKeys,
+            inviteReverse, inviteSorted, invitations, adminOfOrganisation, managerOfOrganisation, apiKeys,
             filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted, collaborationsQuery,
             collaborationRequests, collaborationRequestSorted, collaborationRequestReverse, auditLogs
 
@@ -745,7 +781,7 @@ class OrganisationDetail extends React.Component {
                         {this.renderDetails(confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
                             leavePage, originalOrganisation, inviteReverse, inviteSorted, invitations, collaborationRequestReverse,
                             collaborationRequestSorted, collaborationRequests, filteredMembers, user, sorted, reverse, query,
-                            adminOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
+                            adminOfOrganisation, managerOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
                             collaborationsQuery, name, short_name, identifier, alreadyExists, initial, description, schac_home_organisation,
                             collaboration_creation_allowed, disabledSubmit)}
                     </div>

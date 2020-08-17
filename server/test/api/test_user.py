@@ -129,7 +129,7 @@ class TestUser(AbstractTest):
 
         res = self.get("/api/users/search", query_data={"q": "*",
                                                         "organisation_admins": True})
-        self.assertEqual(4, len(res))
+        self.assertEqual(3, len(res))
 
     def test_other_not_allowed(self):
         self.get("/api/users/other", query_data={"uid": "urn:mary"}, response_status_code=403)

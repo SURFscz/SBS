@@ -226,6 +226,10 @@ class OrganisationInvitation extends React.Component {
                                 name={I18n.t("organisationInvitation.inviter")}
                                 disabled={true}/>
 
+                    <InputField value={I18n.t(`organisation.organisationRoles.${organisationInvitation.intended_role}`)}
+                                name={I18n.t("organisationInvitation.role")}
+                                disabled={true}/>
+
                     <InputField value={organisationInvitation.message}
                                 name={I18n.t("organisationInvitation.message")}
                                 toolTip={I18n.t("organisationInvitation.messageTooltip", {name: organisationInvitation.user.name})}

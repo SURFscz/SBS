@@ -3,8 +3,8 @@ from flask import Blueprint, request as current_request
 
 from server.api.base import ctx_logger
 from server.api.base import json_endpoint
-from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, current_user_uid, \
-    current_user_id
+from server.auth.security import confirm_collaboration_admin, current_user_uid, \
+    current_user_id, confirm_organisation_admin_or_manager
 from server.db.domain import CollaborationMembership, db, Collaboration
 
 collaboration_membership_api = Blueprint("collaboration_membership_api", __name__,
@@ -59,7 +59,7 @@ def create_collaboration_membership_role():
     collaboration_id = client_data["collaborationId"]
     collaboration = Collaboration.query.get(collaboration_id)
 
-    confirm_organisation_admin(collaboration.organisation_id)
+    confirm_organisation_admin_or_manager(collaboration.organisation_id)
 
     user_id = current_user_id()
     collaboration_membership = CollaborationMembership(user_id=user_id,

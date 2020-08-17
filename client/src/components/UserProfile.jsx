@@ -18,7 +18,7 @@ function addUserAttribute(user, attribute, index, split = false) {
 export default function UserProfile({currentUser}) {
     const organisationMemberships = currentUser.organisation_memberships || [];
     const organisationAdmins = organisationMemberships.filter(membership => membership.role === "admin");
-    const organisationMembers = organisationMemberships.filter(membership => membership.role === "member");
+    const organisationMembers = organisationMemberships.filter(membership => membership.role === "manager");
 
     const collaborationMemberships = currentUser.collaboration_memberships || [];
     const collaborationAdmins = collaborationMemberships.filter(membership => membership.role === "admin");

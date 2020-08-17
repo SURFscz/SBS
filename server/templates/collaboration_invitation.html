@@ -3,7 +3,7 @@
 {% block content %}
 <p>
     {{ invitation.user.name }} invited you to join collaboration
-    <strong>{{ invitation.collaboration.name }}</strong>  as{{ invitation_role(invitation.intended_role) }}.
+    <strong>{{ invitation.collaboration.name }}</strong> as{{ invitation_role(invitation.intended_role) }}.
     {% if invitation.intended_role == "admin" %}
     <p/>
     As a CO manager you are responsible for managing users and authorizations for this collaboration.

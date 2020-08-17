@@ -70,9 +70,10 @@ class Invitation extends React.Component {
 
     gotoCollaborations = () => this.setState({confirmationDialogOpen: false},
         () => {
-            const {invite} = this.state;
-            const member = (this.props.user.collaboration_memberships || []).find(membership => membership.collaboration_id === invite.collaboration.id);
-            if (member) {
+            const {invite, isAdminLink} = this.state;
+            const {user} = this.props;
+            const member = (user.collaboration_memberships || []).find(membership => membership.collaboration_id === invite.collaboration.id);
+            if (member || isAdminLink) {
                 this.props.history.push(`/collaborations/${invite.collaboration.id}`);
             } else {
                 this.props.history.push(`/home`);

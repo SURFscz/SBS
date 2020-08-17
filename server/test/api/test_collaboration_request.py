@@ -75,7 +75,7 @@ class TestCollaborationRequest(AbstractTest):
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
 
         with self.app.mail.record_messages() as outbox:
-            self.login("urn:harry")
+            self.login("urn:mary")
             res = self.put(f"/api/collaboration_requests/approve/{collaboration_request.id}",
                            body={
                                "name": collaboration_request.name,
@@ -101,7 +101,7 @@ class TestCollaborationRequest(AbstractTest):
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
 
         with self.app.mail.record_messages() as outbox:
-            self.login("urn:harry")
+            self.login("urn:mary")
             self.put(f"/api/collaboration_requests/deny/{collaboration_request.id}", with_basic_auth=False)
 
             deleted = CollaborationRequest.query.filter(CollaborationRequest.name == collaboration_request_name).all()

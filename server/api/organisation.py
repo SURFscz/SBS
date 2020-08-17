@@ -101,7 +101,7 @@ def my_organisations_lite():
             .join(Organisation.organisation_memberships) \
             .join(OrganisationMembership.user) \
             .filter(OrganisationMembership.user_id == user_id) \
-            .filter(OrganisationMembership.role == "admin")
+            .filter(OrganisationMembership.role.in_(["admin", "manager"]))
     organisations = query.all()
     return organisations, 200
 
@@ -138,7 +138,7 @@ def organisation_by_id(organisation_id):
             user_id = current_user_id()
             query = query \
                 .join(OrganisationMembership.user) \
-                .filter(OrganisationMembership.role == "admin") \
+                .filter(OrganisationMembership.role.in_(["admin", "manager"])) \
                 .filter(OrganisationMembership.user_id == user_id)
 
     organisation = query.one()
@@ -187,7 +187,8 @@ def organisations_by_schac_home_organisation():
 @json_endpoint
 def organisation_invites_preview():
     data = current_request.get_json()
-    message = data["message"] if "message" in data else None
+    message = data.get("message", None)
+    intended_role = data.get("intended_role", "manager")
 
     organisation = Organisation.query.get(data["organisation_id"])
     confirm_organisation_admin(organisation.id)
@@ -196,6 +197,7 @@ def organisation_invites_preview():
     invitation = munchify({
         "user": user,
         "organisation": organisation,
+        "intended_role": intended_role,
         "message": message,
         "hash": token_urlsafe(),
         "expiry_date": default_expiry_date(data)
@@ -216,14 +218,16 @@ def organisation_invites():
 
     confirm_organisation_admin(organisation_id)
 
-    administrators = data["administrators"] if "administrators" in data else []
-    message = data["message"] if "message" in data else None
+    administrators = data.get("administrators", [])
+    intended_role = data.get("intended_role", "manager")
+    message = data.get("message", None)
 
     organisation = Organisation.query.get(organisation_id)
     user = User.query.get(current_user_id())
 
     for administrator in administrators:
-        invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+        invitation = OrganisationInvitation(hash=token_urlsafe(), intended_role=intended_role,
+                                            message=message, invitee_email=administrator,
                                             organisation=organisation, user=user,
                                             expiry_date=default_expiry_date(json_dict=data),
                                             created_by=user.uid)
@@ -246,8 +250,9 @@ def save_organisation():
     cleanse_short_name(data)
     data["identifier"] = str(uuid.uuid4())
 
-    administrators = data["administrators"] if "administrators" in data else []
-    message = data["message"] if "message" in data else None
+    administrators = data.get("administrators", [])
+    intended_role = data.get("intended_role", "manager")
+    message = data.get("message", None)
 
     res = save(Organisation, custom_json=data)
     user = User.query.get(current_user_id())
@@ -255,6 +260,7 @@ def save_organisation():
         organisation = res[0]
         invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
                                             organisation_id=organisation.id, user_id=user.id,
+                                            intended_role=intended_role,
                                             expiry_date=default_expiry_date(),
                                             created_by=user.uid)
         invitation = db.session.merge(invitation)

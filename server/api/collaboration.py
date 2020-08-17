@@ -10,9 +10,9 @@ from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import ctx_logger
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
-from server.auth.security import confirm_collaboration_admin, confirm_organisation_admin, is_application_admin, \
+from server.auth.security import confirm_collaboration_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member, confirm_authorized_api_call, \
-    confirm_allow_impersonation
+    confirm_allow_impersonation, confirm_organisation_admin_or_manager
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
@@ -275,10 +275,11 @@ def collaboration_invites():
     collaboration_id = data["collaboration_id"]
     confirm_collaboration_admin(collaboration_id)
 
-    administrators = data["administrators"] if "administrators" in data else []
-    message = data["message"] if "message" in data else None
-    intended_role = data["intended_role"] if "intended_role" in data else "member"
-    group_ids = data["groups"] if "groups" in data else []
+    administrators = data.get("administrators", [])
+    message = data.get("message", None)
+    intended_role = data.get("intended_role", "member")
+    group_ids = data.get("groups", [])
+
     groups = Group.query \
         .filter(Group.collaboration_id == collaboration_id) \
         .filter(Group.id.in_(group_ids)) \
@@ -306,8 +307,8 @@ def collaboration_invites():
 @json_endpoint
 def collaboration_invites_preview():
     data = current_request.get_json()
-    message = data["message"] if "message" in data else None
-    intended_role = data["intended_role"] if "intended_role" in data else "member"
+    message = data.get("message", None)
+    intended_role = data.get("intended_role", "member")
 
     collaboration = Collaboration.query.get(int(data["collaboration_id"]))
     confirm_collaboration_admin(collaboration.id)
@@ -336,7 +337,7 @@ def collaboration_invites_preview():
 def save_collaboration():
     data = current_request.get_json()
     if "organisation_id" in data:
-        confirm_organisation_admin(data["organisation_id"])
+        confirm_organisation_admin_or_manager(data["organisation_id"])
         organisation = Organisation.query.get(data["organisation_id"])
         user = User.query.get(current_user_id())
     else:
@@ -427,9 +428,9 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
     data["status"] = "active"
     _validate_collaboration(data, organisation)
 
-    administrators = data["administrators"] if "administrators" in data else []
+    administrators = data.get("administrators", [])
+    message = data.get("message", None)
 
-    message = data["message"] if "message" in data else None
     data["identifier"] = str(uuid.uuid4())
     res = save(Collaboration, custom_json=data, allow_child_cascades=False)
 

@@ -64,7 +64,7 @@ def organisation_invitations_accept():
     user_uid = organisation_invitation.user.uid
     organisation_membership = OrganisationMembership(user_id=user_id,
                                                      organisation_id=organisation.id,
-                                                     role="admin",
+                                                     role=organisation_invitation.intended_role,
                                                      created_by=user_uid,
                                                      updated_by=user_uid)
 

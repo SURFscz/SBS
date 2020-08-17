@@ -1,5 +1,5 @@
 # -*- coding: future_fstrings -*-
-from flask import Blueprint
+from flask import Blueprint, request as current_request
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_organisation_admin
@@ -21,3 +21,23 @@ def delete_organisation_membership(organisation_id, user_id):
     for membership in memberships:
         db.session.delete(membership)
     return (None, 204) if len(memberships) > 0 else (None, 404)
+
+
+@organisation_membership_api.route("/", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def update_organisation_membership_role():
+    client_data = current_request.get_json()
+    organisation_id = client_data["organisationId"]
+    user_id = client_data["userId"]
+    role = client_data["role"]
+
+    confirm_organisation_admin(organisation_id)
+
+    organisation_membership = OrganisationMembership.query \
+        .filter(OrganisationMembership.organisation_id == organisation_id) \
+        .filter(OrganisationMembership.user_id == user_id) \
+        .one()
+    organisation_membership.role = role
+
+    db.session.merge(organisation_membership)
+    return organisation_membership, 201

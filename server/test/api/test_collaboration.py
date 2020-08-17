@@ -105,6 +105,21 @@ class TestCollaboration(AbstractTest):
         count = self._collaboration_membership_count(collaboration)
         self.assertEqual(1, count)
 
+    def test_create_collaboration_as_org_manager(self):
+        organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
+        self.login("urn:harry")
+        self.post("/api/collaborations", body={"name": "new_collaboration",
+                                               "organisation_id": organisation_id,
+                                               "administrators": [],
+                                               "short_name": "new_short_name",
+                                               "current_user_admin": False
+                                               }, with_basic_auth=False)
+        members = self.find_entity_by_name(Collaboration, "new_collaboration").collaboration_memberships
+
+        self.assertEqual(1, len(members))
+        self.assertEqual("admin", members[0].role)
+        self.assertEqual("urn:harry", members[0].user.uid)
+
     @staticmethod
     def _collaboration_membership_count(collaboration):
         return CollaborationMembership.query \
@@ -425,7 +440,7 @@ class TestCollaboration(AbstractTest):
 
     def test_collaboration_lite_no_member(self):
         collaboration_id = self._find_by_identifier()["id"]
-        self.login("urn:harry")
+        self.login("urn:roger")
         self.get(f"/api/collaborations/lite/{collaboration_id}", response_status_code=403)
 
     def test_api_call(self):
