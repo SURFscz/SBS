@@ -166,6 +166,7 @@ I18n.translations.en = {
         superUser: "Super User",
         role: "Role",
         member: "Member",
+        manager: "Manager",
         admin: "Admin",
         organisation: "Organisation",
         organisations: "Organisations",
@@ -405,6 +406,16 @@ I18n.translations.en = {
         admin: "CO Manager",
         manager: "Manager",
         member: "Member",
+        organisationRoles: {
+            admin: "Organisation Admin",
+            manager: "Organisation Manager",
+            undefined: ""
+        },
+        organisationShortRoles: {
+            admin: "Admin",
+            manager: "Manager",
+            undefined: ""
+        },
         yourself: "{{name}} (it's You)",
         anotherAdmin: "It is highly recommended to invite administrators.",
         deleteConfirmation: "Are you sure you want to delete this organisation?",
@@ -440,11 +451,13 @@ I18n.translations.en = {
             actions: "",
             invitee_email: "Invitee e-mail",
             user__name: "Invited by",
+            intended_role: "Role",
             expiry_date: "Expires",
             noExpires: "N/A",
             message: "Message",
         },
         collaborationRequest: {
+            actions: "",
             name: "Name",
             short_name: "Short name",
             requester__name: "Requester",
@@ -476,7 +489,8 @@ I18n.translations.en = {
             memberDeleted: "Membership of {{name}} was successfully deleted",
             apiKeyDeleted: "API key was successfully deleted",
             collaborationDeleted: "Collaboration {{name}} was successfully deleted",
-            memberActivated: "Member {{name}} has been sent an email with an activation link"
+            memberActivated: "Member {{name}} has been sent an email with an activation link",
+            memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
         },
         preview: "Preview",
         details: "Details"
@@ -507,6 +521,7 @@ I18n.translations.en = {
         organisationDescription: "Description",
         organisationAdministrators: "Administrators",
         requiredAdministrator: "At least one administrator e-mail address is required for an invitation for an organisation",
+        role: "Intended role",
         expiryDate: "Expiry date",
         expiryDateTooltip: "The expiry date of the invitation<br/>After this date the invitation can<br/>not be accepted anymore",
         message: "Message",
@@ -561,6 +576,8 @@ I18n.translations.en = {
         inviteesTooltip: "This personal message is<br/>included in the e-mail sent <br/>to the persons you invite",
         intendedRole: "CO Permissions",
         intendedRoleTooltip: "The permissions granted to all invitees.<br/><br/>CO Managers of a collaboration<br/>can edit their collaborations and<br/>invite members.<br/>Regular users can only use the services of <br/>their groups",
+        intendedRoleOrganisation: "Org Permissions",
+        intendedRoleTooltipOrganisation: "The permissions granted to all invitees.<br/><br/>Administrators of a organisation<br/>can edit their organisation and<br/>invite members.<br/><br/>Managers can can create,<br/>approve and manage collaborations",
         invitee_email: "Invitee e-mail",
         groupsPlaceHolder: "Select Groups",
         groupsTooltip: "Select the Groups where<br/>the invitees become a member<br/>after accepting this invite",

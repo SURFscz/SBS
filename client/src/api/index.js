@@ -101,8 +101,9 @@ export function config() {
 export function me(config) {
     const headers = (config.local) ? {
         // "OIDC_CLAIM_cmuid": "urn:two_suspend",
-        "OIDC_CLAIM_sub": "urn:john",
-        // "OIDC_CLAIM_sub": "urn:mary",
+        // "OIDC_CLAIM_sub": "urn:john",
+        "OIDC_CLAIM_sub": "urn:harry",
+        // "OIDC_CLAIM_sub": "urn:jane",
         "OIDC_CLAIM_Nickname": "jëhny",
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
         "OIDC_CLAIM_Eduperson-Affiliation": "librarywalkin",
@@ -381,6 +382,14 @@ export function invitationDelete(invitationId) {
 //Organisation Memberships
 export function deleteOrganisationMembership(organisationId, userId) {
     return fetchDelete(`/api/organisation_memberships/${organisationId}/${userId}`)
+}
+
+export function updateOrganisationMembershipRole(organisationId, userId, role) {
+    return postPutJson("/api/organisation_memberships", {
+        organisationId: organisationId,
+        userId: userId,
+        role: role
+    }, "put")
 }
 
 //Collaboration Memberships

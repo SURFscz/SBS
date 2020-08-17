@@ -246,7 +246,7 @@ def refresh():
 def activate():
     body = current_request.get_json()
     if "collaboration_id" in body:
-        confirm_collaboration_admin(body["collaboration_id"])
+        confirm_collaboration_admin(body["collaboration_id"], org_manager_allowed=False)
     else:
         confirm_organisation_admin(body["organisation_id"])
     user = User.query.get(body["user_id"])

@@ -64,6 +64,17 @@ class TestOrganisation(AbstractTest):
         organisation = self.get(f"/api/organisations/{organisation_id}")
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
 
+    def test_organisation_by_id_manager(self):
+        self.login("urn:harry")
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation = self.get(f"/api/organisations/{organisation_id}")
+        self.assertTrue(len(organisation["organisation_memberships"]) > 0)
+
+    def test_organisation_by_id_404(self):
+        self.login("urn:sarah")
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        self.get(f"/api/organisations/{organisation_id}", response_status_code=404)
+
     def test_my_organisation_by_id_lite_(self):
         self.login("urn:sarah")
         organisation_id = self.find_entity_by_name(Organisation, amsterdam_uva_name).id
@@ -212,11 +223,14 @@ class TestOrganisation(AbstractTest):
             self.post("/api/organisations",
                       body={"name": "new_organisation",
                             "administrators": ["new@example.org", "pop@example.org"],
+                            "intended_role": "manager",
                             "short_name": "https://ti1"},
                       with_basic_auth=False)
             self.assertEqual(2, len(outbox))
             post_count = OrganisationInvitation.query.count()
             self.assertEqual(pre_count + 2, post_count)
+
+        memberships = self.find_entity_by_name(Organisation, "new_organisation").organisation_memberships
 
     def test_organisation_invites_preview(self):
         self.login("urn:john")

@@ -8,7 +8,8 @@ from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
 from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
-from server.auth.security import current_user_id, confirm_organisation_admin, current_user_name
+from server.auth.security import current_user_id, current_user_name, \
+    confirm_organisation_admin_or_manager
 from server.db.defaults import cleanse_short_name
 from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db
 from server.db.models import save
@@ -28,7 +29,7 @@ def collaboration_request_by_id(collaboration_request_id):
         .options(contains_eager(CollaborationRequest.requester)) \
         .filter(CollaborationRequest.id == collaboration_request_id) \
         .one()
-    confirm_organisation_admin(res.organisation_id)
+    confirm_organisation_admin_or_manager(res.organisation_id)
     return res, 200
 
 
@@ -84,7 +85,7 @@ def request_collaboration():
 @json_endpoint
 def approve_request(collaboration_request_id):
     collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
-    confirm_organisation_admin(collaboration_request.organisation_id)
+    confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
     client_data = current_request.get_json()
     attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy"]
 
@@ -120,7 +121,7 @@ def approve_request(collaboration_request_id):
 @json_endpoint
 def deny_request(collaboration_request_id):
     collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
-    confirm_organisation_admin(collaboration_request.organisation_id)
+    confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
 
     user = collaboration_request.requester
     mail_accepted_declined_collaboration_request({"salutation": f"Dear {user.name}",

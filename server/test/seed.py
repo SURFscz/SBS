@@ -176,6 +176,7 @@ def seed(db, app_config):
                                                            expiry_date=datetime.date.today() + datetime.timedelta(
                                                                days=14),
                                                            invitee_email="roger@example.org", organisation=uuc,
+                                                           intended_role="admin",
                                                            user=john)
     organisation_invitation_pass = OrganisationInvitation(message="Let me please join as I "
                                                                   "really, really, really \n really, "
@@ -183,12 +184,13 @@ def seed(db, app_config):
                                                           hash=organisation_invitation_expired_hash,
                                                           expiry_date=datetime.date.today() - datetime.timedelta(
                                                               days=21),
+                                                          intended_role="admin",
                                                           invitee_email="pass@example.org", organisation=uuc, user=john)
     _persist(db, organisation_invitation_roger, organisation_invitation_pass)
 
     organisation_membership_john = OrganisationMembership(role="admin", user=john, organisation=uuc)
     organisation_membership_mary = OrganisationMembership(role="admin", user=mary, organisation=uuc)
-    organisation_membership_harry = OrganisationMembership(role="admin", user=harry, organisation=uuc)
+    organisation_membership_harry = OrganisationMembership(role="manager", user=harry, organisation=uuc)
     organisation_membership_jane = OrganisationMembership(role="admin", user=jane, organisation=uva)
     _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry,
              organisation_membership_jane)
