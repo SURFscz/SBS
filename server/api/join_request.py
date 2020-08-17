@@ -7,7 +7,7 @@ from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_write_access, confirm_collaboration_admin, current_user_id, current_user, \
-    current_user_name, current_user_uid
+    current_user_name, current_user_uid, is_current_user_organisation_admin_or_manager
 from server.db.domain import CollaborationMembership, Collaboration, JoinRequest, db
 from server.db.models import delete
 from server.mail import mail_collaboration_join_request, mail_accepted_declined_join_request
@@ -31,7 +31,11 @@ def _ensure_access_to_join_request(join_request_id):
         .filter(JoinRequest.id == join_request_id) \
         .filter(CollaborationMembership.role == "admin") \
         .count()
-    return count > 0
+
+    if count > 0:
+        return True
+
+    return is_current_user_organisation_admin_or_manager(JoinRequest.query.get(join_request_id).collaboration_id)
 
 
 def _get_join_request(join_request_hash):

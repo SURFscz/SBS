@@ -8,7 +8,7 @@ from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
-    is_organisation_admin
+    is_organisation_admin_or_manager
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership
@@ -17,16 +17,17 @@ from server.db.models import update, save, delete
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
 
+def is_org_member():
+    user_id = current_user_id()
+    return OrganisationMembership.query \
+               .options(load_only("id")) \
+               .filter(OrganisationMembership.user_id == user_id) \
+               .count() > 0
+
+
 @service_api.route("/search", strict_slashes=False)
 @json_endpoint
 def service_search():
-    def is_org_member():
-        user_id = current_user_id()
-        return OrganisationMembership.query \
-                   .options(load_only("id")) \
-                   .filter(OrganisationMembership.user_id == user_id) \
-                   .count() > 0
-
     def override_func():
         return is_collaboration_admin() or is_org_member()
 
@@ -101,7 +102,7 @@ def service_by_id(service_id):
             .filter(CollaborationMembership.user_id == user_id) \
             .filter(Service.id == service_id) \
             .count()
-        return count > 0 or is_organisation_admin()
+        return count > 0 or is_organisation_admin_or_manager()
 
     confirm_read_access(override_func=_user_service)
 
