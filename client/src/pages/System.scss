@@ -78,11 +78,16 @@
 
             ul {
                 list-style: initial;
-                margin: 10px;
+                margin: 10px 0 25px 10px;
 
                 li {
                     margin-left: 40px;
                 }
+            }
+
+            span {
+                display: inline-block;
+                margin: 10px 0 25px 10px;
             }
         }
     }
