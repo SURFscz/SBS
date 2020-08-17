@@ -9,11 +9,9 @@ export default class NewDropDown extends React.PureComponent {
 
     constructor(props, context) {
         super(props, context);
-
         this.state = {
             dropDownActive: false
         };
-
     }
 
     handleToggle = e => {
@@ -42,6 +40,7 @@ export default class NewDropDown extends React.PureComponent {
 
         const organisationMemberships = currentUser.organisation_memberships || [];
         const organisationAdmin = organisationMemberships.find(membership => membership.role === "admin");
+        const organisationManager = organisationMemberships.find(membership => membership.role === "manager");
         const allowedCollaborationRequest = !currentUser.admin && isEmpty(organisationMemberships);
         if (currentUser.admin) {
             allowedActions.push({
@@ -53,7 +52,7 @@ export default class NewDropDown extends React.PureComponent {
                 path: "/new-service"
             })
         }
-        if (currentUser.admin || organisationAdmin) {
+        if (currentUser.admin || organisationAdmin || organisationManager) {
             allowedActions.push({
                 name: "collaboration",
                 path: "/new-collaboration"
