@@ -7,7 +7,11 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import {validPublicSSH2KeyRegExp, validPublicSSHKeyRegExp} from "../validations/regExps";
+import {
+    validPublicSSH2KeyRegExp,
+    validPublicSSHEd25519KeyRegExp,
+    validPublicSSHKeyRegExp
+} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import History from "../components/History";
 import Tabs from "../components/Tabs";
@@ -84,7 +88,8 @@ class Profile extends React.Component {
 
     validateSSHKey = e => {
         const sshKey = e.target.value;
-        const isValid = isEmpty(sshKey) || validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey);
+        const isValid = isEmpty(sshKey) || validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey)
+            || validPublicSSHEd25519KeyRegExp.test(sshKey);
         this.setState({fileTypeError: !isValid, fileInputKey: new Date().getMilliseconds()});
     };
 
@@ -103,7 +108,7 @@ class Profile extends React.Component {
             const reader = new FileReader();
             reader.onload = () => {
                 const sshKey = reader.result.toString();
-                if (validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey)) {
+                if (validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey) || validPublicSSHEd25519KeyRegExp.test(sshKey)) {
                     this.setState({fileName: file.name, fileTypeError: false, ssh_key: sshKey});
                 } else {
                     this.setState({fileName: file.name, fileTypeError: true, ssh_key: ""});
@@ -158,7 +163,7 @@ class Profile extends React.Component {
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
             initial, convertSSHKey, ssh_key, auditLogs
         } = this.state;
-                const {user} = this.props;
+        const {user} = this.props;
 
         const disabledSubmit = !initial && !this.isValid();
         const title = I18n.t("user.titleUpdate");
