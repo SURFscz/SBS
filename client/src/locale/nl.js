@@ -166,6 +166,7 @@ I18n.translations.nl = {
         superUser: "Super-User",
         role: "Rol",
         member: "Lid",
+        manager: "Manager",
         admin: "Beheerder",
         organisation: "Organisatie",
         organisations: "Organisaties",

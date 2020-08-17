@@ -109,3 +109,9 @@ class TestJoinRequest(AbstractTest):
         self.login("urn:peter")
         join_request = self.get(f"/api/join_requests/{join_request_hash}")
         self.assertEqual("urn:peter", join_request["user"]["uid"])
+
+    def test_join_request_by_hash_org_manager(self):
+        join_request_hash = self._join_request_by_user("urn:peter").hash
+        self.login("urn:harry")
+        join_request = self.get(f"/api/join_requests/{join_request_hash}")
+        self.assertEqual("urn:peter", join_request["user"]["uid"])
