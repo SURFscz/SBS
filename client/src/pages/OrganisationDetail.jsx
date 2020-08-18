@@ -58,6 +58,9 @@ class OrganisationDetail extends React.Component {
             collaborationRequests: [],
             collaborationRequestSorted: "name",
             collaborationRequestReverse: false,
+            services: [],
+            servicesSorted: "name",
+            servicesReverse: false,
             query: "",
             collaborations: [],
             filteredCollaborations: [],
@@ -82,10 +85,12 @@ class OrganisationDetail extends React.Component {
                 .then(json => {
                     const {
                         sorted, reverse, inviteSorted, inviteReverse, sortedCollaborationAttribute,
-                        reverseCollaborationSorted, collaborationRequestSorted, collaborationRequestReverse
+                        reverseCollaborationSorted, collaborationRequestSorted, collaborationRequestReverse,
+                        servicesSorted, servicesReverse
                     } = this.state;
                     const members = sortObjects(json.organisation_memberships, sorted, reverse);
                     const collaborations = sortObjects(json.collaborations, sortedCollaborationAttribute, reverseCollaborationSorted);
+                    const services = sortObjects(json.services, servicesSorted, servicesReverse);
                     const member = (user.organisation_memberships || []).find(membership => membership.organisation_id === json.id);
                     if (isEmpty(member) && !user.admin) {
                         this.props.history.push("/404");
@@ -104,6 +109,7 @@ class OrganisationDetail extends React.Component {
                         members: members,
                         filteredMembers: members,
                         collaborations: collaborations,
+                        services: services,
                         filteredCollaborations: collaborations,
                         invitations: sortObjects(json.organisation_invitations, inviteSorted, inviteReverse),
                         collaborationRequests: sortObjects(json.collaboration_requests, collaborationRequestSorted, collaborationRequestReverse),
@@ -303,6 +309,16 @@ class OrganisationDetail extends React.Component {
         this.props.history.push(`/collaboration-requests/${cr.id}`);
     };
 
+    openService = service => e => {
+        stopEvent(e);
+        this.props.history.push(`/services/${service.id}`);
+    };
+
+    configureServices = e => {
+        stopEvent(e);
+        this.props.history.push(`/organisation-services/${this.state.originalOrganisation.id}`);
+    };
+
     openCollaboration = collaboration => e => {
         stopEvent(e);
         this.props.history.push(`/collaborations/${collaboration.id}`);
@@ -330,6 +346,16 @@ class OrganisationDetail extends React.Component {
             collaborationRequests: sortedCollaborationRequests,
             collaborationRequestSorted: name,
             collaborationRequestReverse: reversed
+        });
+    };
+
+    sortServicesTable = (services, name, sorted, reverse) => () => {
+        const reversed = (sorted === name ? !reverse : false);
+        const sortedServices = sortObjects(services, name, reversed);
+        this.setState({
+            services: sortedServices,
+            servicesSorted: name,
+            servicesReverse: reversed
         });
     };
 
@@ -389,6 +415,41 @@ class OrganisationDetail extends React.Component {
                         </tr>)}
                     </tbody>
                 </table>
+            </section>
+        );
+    };
+
+    renderServices = (services, sorted, reverse, adminOfOrganisation) => {
+        const noServices = services.length === 0;
+        const names = ["actions", "name", "entity_id", "description"];
+        return (
+            <section className="services-container">
+                {noServices && <p>{I18n.t("organisationDetail.noServices")}</p>}
+                {!noServices && <table className="services">
+                    <thead>
+                    <tr>
+                        {names.map(name =>
+                            <th key={name} className={name}
+                                onClick={this.sortServicesTable(services, name, sorted, reverse)}>
+                                {I18n.t(`organisationDetail.service.${name}`)}
+                                {headerIcon(name, sorted, reverse)}
+                            </th>
+                        )}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {services.map((service) =>
+                        <tr key={service.id} onClick={this.openService(service)}>
+                            <td className="actions"><FontAwesomeIcon icon="arrow-right"/></td>
+                            <td className="name">{service.name}</td>
+                            <td className="entity_id">{service.entity_id}</td>
+                            <td className="description">{service.description}</td>
+                        </tr>)}
+                    </tbody>
+                </table>}
+                {adminOfOrganisation && <Button onClick={this.configureServices}
+                                                txt={I18n.t("organisationDetail.configureServices")}/>
+                }
             </section>
         );
     };
@@ -534,7 +595,8 @@ class OrganisationDetail extends React.Component {
                         <td className="actions">
                             {(isAdmin && member.user.suspended) &&
                             <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>}
-                            {(isAdmin && numberOfAdmins > 1) && <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
+                            {(isAdmin && numberOfAdmins > 1) &&
+                            <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
                         </td>
                     </tr>)}
                 </tbody>
@@ -727,7 +789,7 @@ class OrganisationDetail extends React.Component {
                      collaborationRequestSorted, collaborationRequests, filteredMembers, user, sorted, reverse, query,
                      adminOfOrganisation, managerOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
                      collaborationsQuery, name, short_name, identifier, alreadyExists, initial, description, schac_home_organisation,
-                     collaboration_creation_allowed, disabledSubmit) => (
+                     collaboration_creation_allowed, disabledSubmit, services, servicesSorted, servicesReverse) => (
         <>
             <ConfirmationDialog isOpen={confirmationDialogOpen}
                                 cancel={cancelDialogAction}
@@ -753,6 +815,10 @@ class OrganisationDetail extends React.Component {
             {this.renderCollaborations(filteredCollaborations, user, sortedCollaborationAttribute,
                 reverseCollaborationSorted, collaborationsQuery, adminOfOrganisation, managerOfOrganisation)}
             <div className="title">
+                <p>{I18n.t("organisationDetail.services", {name: originalOrganisation.name})}</p>
+            </div>
+            {this.renderServices(services, servicesSorted, servicesReverse, adminOfOrganisation)}
+            <div className="title">
                 <p>{I18n.t("organisationDetail.title", {name: originalOrganisation.name})}</p>
             </div>
             {this.organisationDetails(adminOfOrganisation, name, short_name, identifier, alreadyExists, initial,
@@ -765,8 +831,8 @@ class OrganisationDetail extends React.Component {
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             inviteReverse, inviteSorted, invitations, adminOfOrganisation, managerOfOrganisation, apiKeys,
             filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted, collaborationsQuery,
-            collaborationRequests, collaborationRequestSorted, collaborationRequestReverse, auditLogs
-
+            collaborationRequests, collaborationRequestSorted, collaborationRequestReverse, auditLogs,
+            services, servicesSorted, servicesReverse
         } = this.state;
         if (!originalOrganisation) {
             return null;
@@ -783,7 +849,7 @@ class OrganisationDetail extends React.Component {
                             collaborationRequestSorted, collaborationRequests, filteredMembers, user, sorted, reverse, query,
                             adminOfOrganisation, managerOfOrganisation, apiKeys, filteredCollaborations, sortedCollaborationAttribute, reverseCollaborationSorted,
                             collaborationsQuery, name, short_name, identifier, alreadyExists, initial, description, schac_home_organisation,
-                            collaboration_creation_allowed, disabledSubmit)}
+                            collaboration_creation_allowed, disabledSubmit, services, servicesSorted, servicesReverse)}
                     </div>
                     {(adminOfOrganisation || user.admin) &&
                     <div label="history">

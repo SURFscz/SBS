@@ -47,6 +47,7 @@ import ServiceRequest from "./ServiceRequest";
 import Confirmation from "./Confirmation";
 import {setFlash} from "../utils/Flash";
 import System from "./System";
+import OrganisationServices from "./OrganisationServices";
 
 addIcons();
 
@@ -271,6 +272,10 @@ class App extends React.Component {
 
                         <Route path="/service-connection-requests/:hash"
                                render={props => <ServiceConnectionRequest {...props}/>}/>
+
+                        <Route path="/organisation-services/:organisation_id"
+                               render={props => <ProtectedRoute
+                                   currentUser={currentUser} Component={OrganisationServices} {...props}/>}/>
 
                         <Route exact path="/organisation-invitations/:id"
                                render={props => <ProtectedRoute currentUser={currentUser}

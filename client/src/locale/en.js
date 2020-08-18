@@ -473,8 +473,17 @@ I18n.translations.en = {
             actions: "",
             link: ""
         },
+        service: {
+            name: "Name",
+            entity_id: "Entity ID",
+            description: "Description",
+            actions: "",
+        },
         apiKeys: "API Keys of {{name}}",
         collaborations: "Collaborations of {{name}}",
+        services: "Services connected to {{name}}",
+        noServices: "There are no default services for this organisation",
+        configureServices: "Configure Services",
         newCollaboration: "Create new collaboration",
         searchPlaceHolderCollaborations: "Search for collaborations",
         update: "Update",
@@ -652,6 +661,25 @@ I18n.translations.en = {
         serviceConnectionRequestResend: "Successfully resend request to connect service {{service}} to collaboration {{collaboration}}",
         serviceConnectionRequestDeleted: "Successfully deleted request to connect service {{service}} to collaboration {{collaboration}}",
         serviceRestrictedInfo: "This Collaboration is service restricted. Only the platform admin can configure services to be used by this Collaboration.",
+    },
+    organisationServices: {
+        title: "Services for Organisation {{name}}",
+        connectedServices: "Connected services to {{name}}",
+        noServices: "This organisation has no services connected.",
+        searchServices: "Search, select and add services to the available services within organisation {{name}}",
+        deleteServiceTooltip: "Make this service unavailable in<br/> the organisation {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for the members of<br/>the collaborations<br/>on this organisation",
+        notAllowedOrganisation: "Service '{{service}}' can not be added to organisation '{{organisation}}'. The service configuration excludes it from this organisation.",
+        flash: {
+            added: "Successfully added service {{service}} to organisation {{name}}",
+            deleted: "Successfully deleted service {{service}} from organisation {{name}}"
+        },
+        service: {
+            open: "",
+            actions: "",
+            name: "Name",
+            entity_id: "Entity ID",
+            description: "Description"
+        }
     },
     groups: {
         title: "Groups within collaboration {{name}}",

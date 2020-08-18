@@ -146,6 +146,17 @@ def organisation_by_id(organisation_id):
     return organisation, 200
 
 
+@organisation_api.route("/services/<organisation_id>", strict_slashes=False)
+@json_endpoint
+def organisation_services(organisation_id):
+    confirm_organisation_admin(organisation_id)
+
+    return Organisation.query \
+               .options(joinedload(Organisation.services)) \
+               .filter(Organisation.id == organisation_id) \
+               .one(), 200
+
+
 @organisation_api.route("/", strict_slashes=False)
 @json_endpoint
 def my_organisations():

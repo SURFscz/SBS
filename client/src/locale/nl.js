@@ -472,9 +472,18 @@ I18n.translations.nl = {
             actions: "",
             link: ""
         },
+        service: {
+            name: "Naam",
+            entity_id: "Entity ID",
+            description: "Omschrijving",
+            actions: "",
+        },
         apiKeys: "API-sleutels van {{name}}",
         collaborations: "Samenwerkingen van {{name}}",
         newCollaboration: "Nieuwe samenwerking",
+        services: "Diensten gekoppeld aan {{name}}",
+        noServices: "Er zijn geen default diensten voor deze organisatie.",
+        configureServices: "Configureer diensten",
         searchPlaceHolderCollaborations: "Zoek voor samenwerkingen",
         update: "Bijwerken",
         delete: "Verwijderen",
@@ -648,10 +657,28 @@ I18n.translations.nl = {
         resendTooltip: "Resend the Service Connection request.<br/>The mail to approve or deny the request is send to the Service contact",
         actionsTooltip: "Delete the Service Connection request.<br/>The request can not be approved or denied anymore.",
         serviceConnectionRequests: "Service Connection Requests",
-        noServiceRequestConnections: "There are no outstanding Service Connection requests",
         serviceConnectionRequestResend: "Successfully resend request to connect service {{service}} to collaboration {{collaboration}}",
         serviceConnectionRequestDeleted: "Successfully deleted request to connect service {{service}} to collaboration {{collaboration}}",
         serviceRestrictedInfo: "This Collaboration is service restricted. Only the platform admin can configure services to be used by this Collaboration.",
+    },
+    organisationServices: {
+        title: "Diensten voor organisatie {{name}}",
+        connectedServices: "Gekoppelde diensten aan {{name}}",
+        noServices: "Deze organisatie heeft geen gekoppelde diensten.",
+                searchServices: "Zoek, kies en voeg diensten toe aan organisatie {{name}}",
+        deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor<br/> samenwerking {{name}}.<br/><br/><strong>LET OP</strong>: de dienst zelf wordt niet verwijderd.<br/>  Hij is alleen niet beschikbaar<br/>voor de samenwerkingen van<br/> deze organisatie.",
+        notAllowedOrganisation: "Service '{{service}}' kan niet toegoegd worden aan organisatie '{{organisatie}}'. De configuratie van de service laat deze koppeling niet toe.",
+        flash: {
+            added: "{{service}} is toegevoegd aan organisatie {{name}}.",
+            deleted: "{{service}} is onbeschikbaar gemaakt voor organisatie {{name}}.",
+        },
+        service: {
+            open: "",
+            actions: "",
+            name: "Naam",
+            entity_id: "Entity ID",
+            description: "Omschrijving"
+        }
     },
     groups: {
         title: "Groepen in samenwerking {{name}}",
