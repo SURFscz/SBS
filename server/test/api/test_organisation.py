@@ -86,6 +86,13 @@ class TestOrganisation(AbstractTest):
         organisation_id = self.find_entity_by_name(Organisation, amsterdam_uva_name).id
         self.get(f"/api/organisations/lite/{organisation_id}", response_status_code=403)
 
+    def test_organisation_services(self):
+        self.login("urn:mary")
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation = self.get(f"/api/organisations/services/{organisation_id}")
+        self.assertEqual(1, len(organisation["services"]))
+
+
     def test_organisation_crud(self):
         self.login()
         organisation = self.post("/api/organisations", body={"name": "new_organisation",

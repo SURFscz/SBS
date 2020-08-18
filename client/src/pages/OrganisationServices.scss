@@ -1,0 +1,202 @@
+@import "../stylesheets/vars.scss";
+
+.mod-organisation-services {
+    max-width: $medium;
+    width: 100%;
+    margin: 0 auto;
+
+    div.title {
+        font-size: 22px;
+        color: $dark-grey;
+
+        p {
+            padding-bottom: 20px;
+
+            &.title {
+                display: inline-block;
+            }
+        }
+
+        svg.help {
+            color: $blue;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 0 10px 5px;
+
+            &:hover {
+                color: darken($blue, 10%);
+            }
+        }
+
+        div.error, div.warning {
+            padding: 25px;
+            margin-bottom: 10px;
+            background-color: $lightest-grey;
+            font-size: 16px;
+            width: 100%;
+            position: relative;
+
+            a.close {
+                text-decoration: none;
+                position: absolute;
+                right: 4px;
+                top: 0;
+                color: $dark-grey;
+                padding: 6px;
+            }
+
+        }
+
+        div.error {
+            color: $red;
+        }
+
+        div.warning {
+            color: $dark-grey;
+
+            span.warning {
+                display: inline-block;
+                margin-bottom: 25px;
+            }
+
+            section.actions {
+                margin: $medium-margin 0 0 0;
+
+                a.blue {
+                    margin-left: 25px;
+                }
+            }
+
+        }
+
+    }
+
+    div.service-restricted {
+        margin: 5px 0 25px 0;
+        color: $red;
+    }
+
+    .organisation-services {
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+        margin: 0 auto 15px auto;
+        background-color: $lightest-grey;
+        padding: $medium-padding;
+
+        div.checkbox {
+            margin-bottom: 20px;
+        }
+    }
+
+    .organisation-services-connected {
+        padding: 15px 5px;
+
+        p.title {
+            color: $dark-grey;
+            font-size: 18px;
+            margin: 15px 0;
+        }
+
+        table.connected-services {
+            width: 100%;
+
+            th {
+                text-align: left;
+                cursor: pointer;
+                padding: 5px;
+
+                &.actions, &.resend {
+                    width: 6%;
+                    cursor: default;
+                    font-weight: normal;
+
+                    svg.fa-info-circle {
+                        cursor: pointer;
+                        margin-left: 20px;
+                        color: $blue;
+                    }
+                }
+
+                &.name {
+                    width: 25%;
+                }
+
+                &.entity_id {
+                    width: 25%;
+                }
+
+                &.description {
+                    width: 40%;
+                }
+
+                svg {
+                    margin-left: 15px;
+                    color: $lighter-grey;
+
+                    &.current, &.reverse {
+                        color: $blue;
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+
+                    &:nth-child(odd) {
+                        background-color: $lightest-grey;
+                    }
+                }
+            }
+
+            td {
+                vertical-align: middle;
+                padding: 5px;
+
+                &.open {
+                    svg {
+                        color: $blue;
+                        cursor: pointer;
+
+                        &:hover {
+                            color: darken($blue, 15%);
+                        }
+
+                    }
+
+                }
+
+                &.actions {
+                    text-align: left;
+
+
+                    svg {
+                        color: $red;
+                        margin-left: 20px;
+                        cursor: pointer;
+                    }
+                }
+
+                &.resend {
+                    text-align: left;
+
+
+                    svg {
+                        color: $blue;
+                        margin-left: 20px;
+                        cursor: pointer;
+                    }
+                }
+
+                &.role {
+                    padding-left: 25px;
+                }
+
+                .tooltip-container {
+                    margin-left: 15px;
+                    color: $blue;
+                }
+            }
+        }
+
+    }
+
+}

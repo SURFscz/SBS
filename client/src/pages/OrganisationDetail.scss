@@ -111,7 +111,7 @@
         }
     }
 
-    .invitations-container, .api-keys-container, .collaboration-requests-container {
+    .invitations-container, .api-keys-container, .collaboration-requests-container, .services-container {
         background-color: $lightest-grey;
         padding: $medium-padding;
         border-radius: $br;
@@ -130,7 +130,13 @@
         }
     }
 
-    table.members, table.invitations, table.api-keys, table.collaborations, table.collaboration-requests {
+    .services-container  {
+        a.button {
+            margin-top: 25px;
+        }
+    }
+
+    table.members, table.invitations, table.api-keys, table.collaborations, table.collaboration-requests, table.services  {
         width: 100%;
 
         th {
@@ -343,6 +349,39 @@
                 color: $red;
                 cursor: pointer;
                 margin-right: 10px;
+            }
+        }
+    }
+
+    table.services {
+        th.name {
+            width: 30%;
+        }
+
+        th.entity_id {
+            width: 30%;
+        }
+
+        th.description {
+            width: 40%;
+        }
+
+        tbody {
+            tr {
+                cursor: pointer;
+
+                &:hover {
+                    color: $blue;
+                }
+            }
+
+            td {
+                &.actions {
+                    width: 35px;
+                    text-align: left;
+                    color: $blue;
+                }
+
             }
         }
     }
