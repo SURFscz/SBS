@@ -102,7 +102,6 @@ export function me(config) {
     const headers = (config.local) ? {
         // "OIDC_CLAIM_cmuid": "urn:two_suspend",
         // "OIDC_CLAIM_sub": "urn:john",
-        // "OIDC_CLAIM_sub": "urn:harry",
         "OIDC_CLAIM_sub": "urn:mary",
         "OIDC_CLAIM_Nickname": "jëhny",
         "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
@@ -168,6 +167,10 @@ export function serviceByEntityId(entityid) {
 
 export function searchServices(q) {
     return fetchJson(`/api/services/search?q=${encodeURIComponent(q)}`);
+}
+
+export function myServices() {
+    return fetchJson("/api/services/my_services");
 }
 
 export function createService(service) {

@@ -126,6 +126,7 @@ def organisation_by_id(organisation_id):
         .options(joinedload(Organisation.organisation_invitations)
                  .subqueryload(OrganisationInvitation.user)) \
         .options(joinedload(Organisation.api_keys)) \
+        .options(joinedload(Organisation.services)) \
         .options(joinedload(Organisation.collaboration_requests)
                  .subqueryload(CollaborationRequest.requester)) \
         .options(joinedload(Organisation.collaborations)) \

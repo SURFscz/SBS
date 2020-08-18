@@ -44,6 +44,15 @@ class User(Base, db.Model):
                                             passive_deletes=True)
 
 
+services_organisations_association = db.Table(
+    "services_organisations",
+    metadata,
+    db.Column("organisation_id", db.Integer(), db.ForeignKey("organisations.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
+)
+
+
 class Organisation(Base, db.Model):
     __tablename__ = "organisations"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
@@ -60,6 +69,7 @@ class Organisation(Base, db.Model):
                                                default=False)
     collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
                                      passive_deletes=True)
+    services = db.relationship("Service", secondary=services_organisations_association, lazy="select")
     collaboration_requests = db.relationship("CollaborationRequest", back_populates="organisation",
                                              cascade="all, delete-orphan",
                                              passive_deletes=True)
@@ -167,6 +177,7 @@ class Service(Base, db.Model):
     status = db.Column("status", db.String(length=255), nullable=True)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
+    organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select")
     ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)

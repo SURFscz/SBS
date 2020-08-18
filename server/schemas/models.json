@@ -67,5 +67,21 @@
         "required": [
             "collaboration_id"
         ]
+    },
+    "organisations_services": {
+        "type": "object",
+        "properties": {
+            "organisation_id": {
+                "type": "integer"
+            },
+            "service_id": {
+                "type": "integer"
+            }
+        },
+        "required": [
+            "organisation_id",
+            "service_id"
+        ]
     }
+
 }

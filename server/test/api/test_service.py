@@ -2,7 +2,7 @@
 from server.db.domain import Service, Organisation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name, \
-    service_network_name
+    service_network_name, uuc_scheduler_name
 
 
 class TestService(AbstractTest):
@@ -38,6 +38,12 @@ class TestService(AbstractTest):
 
         self.assertEqual(res["name"], service_network_name)
         self.assertEqual(uuc_name, res["allowed_organisations"][0]["name"])
+
+    def test_my_services(self):
+        self.login("urn:sarah")
+        res = self.get("api/services/my_services")
+        self.assertEqual(1, len(res))
+        self.assertEqual(uuc_scheduler_name, res[0]["name"])
 
     def test_service_new(self):
         service = self.post("/api/services", body={

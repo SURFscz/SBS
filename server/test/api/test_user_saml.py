@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
 from server.test.abstract_test import AbstractTest
-from server.test.seed import john_name
+from server.test.seed import john_name, uuc_scheduler_entity_id
 
 
 class TestUserSaml(AbstractTest):
@@ -19,6 +19,16 @@ class TestUserSaml(AbstractTest):
             "urn:example:sbs:group:ai_computing:ai_dev",
             "urn:example:sbs:group:ai_computing:ai_res"
         })
+
+    def test_attributes_service_linked_to_organisation(self):
+        res = self.get("/api/users/attributes",
+                       query_data={"uid": "urn:sarah", "service_entity_id": uuc_scheduler_entity_id})
+        self.assertListEqual(res["cuid"], ["urn:sarah"])
+
+    def test_attributes_service_linked_to_organisation(self):
+        res = self.get("/api/users/attributes",
+                       query_data={"uid": "urn:mary", "service_entity_id": uuc_scheduler_entity_id})
+        self.assertListEqual(res["cuid"], ["urn:mary"])
 
     def test_attributes_no_service(self):
         res = self.get("/api/users/attributes",

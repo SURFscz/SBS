@@ -147,11 +147,12 @@ class CollaborationServices extends React.Component {
 
     renderConnectedServices = (collaboration, connectedServices, sorted, reverse, allowedToConfigureServices) => {
         const names = ["open", "actions", "name", "entity_id", "description"];
+        const hasServices = !isEmpty(connectedServices);
         return (
 
             <div className="collaboration-services-connected">
                 <p className="title">{I18n.t("collaborationServices.connectedServices", {name: collaboration.name})}</p>
-                <table className="connected-services">
+                {hasServices && <table className="connected-services">
                     <thead>
                     <tr>
                         {names.map(name =>
@@ -186,7 +187,8 @@ class CollaborationServices extends React.Component {
                         <td className="description">{service.description}</td>
                     </tr>)}
                     </tbody>
-                </table>
+                </table>}
+                {!hasServices && <p>{I18n.t("collaborationServices.noServices")}</p>}
             </div>
         );
     };
@@ -219,12 +221,13 @@ class CollaborationServices extends React.Component {
 
     renderServiceRequestConnections = (serviceConnectionRequests, allowedToConfigureServices) => {
         const names = ["actions", "resend", "service", "requester", "created_at", "message"];
+        const hasRequests = !isEmpty(serviceConnectionRequests);
         return (
             <div className="service-request-connections">
                 <p className="title">{I18n.t("collaborationServices.serviceConnectionRequests")}</p>
-                {isEmpty(serviceConnectionRequests) &&
-                <em>{I18n.t("collaborationServices.noServiceRequestConnections")}</em>}
-                {!isEmpty(serviceConnectionRequests) && <table className="table-service-request-connections">
+                {!hasRequests &&
+                <p>{I18n.t("collaborationServices.noServiceConnectRequests")}</p>}
+                {hasRequests && <table className="table-service-request-connections">
                     <thead>
                     <tr>
                         {names.map(name =>

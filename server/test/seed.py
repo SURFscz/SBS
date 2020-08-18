@@ -58,12 +58,14 @@ service_network_entity_id = "https://network"
 service_wiki_entity_id = "https://wiki"
 service_storage_entity_id = "https://storage"
 service_cloud_entity_id = "https://cloud"
+uuc_scheduler_entity_id = "uuc_scheduler_entity_id"
 
 service_storage_name = "Storage"
 service_wireless_name = "Wireless"
 service_cloud_name = "Cloud"
 service_wiki_name = "Wiki"
 service_ssh_uva_name = "SSH UvA"
+uuc_scheduler_name = "uuc_scheduler_name"
 
 ai_researchers_group = "AI researchers"
 ai_researchers_group_short_name = "ai_res"
@@ -225,7 +227,13 @@ def seed(db, app_config):
                               allowed_organisations=[uva], research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True)
 
-    _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva)
+    uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=uuc_scheduler_name, description="UUC Scheduler Service",
+                            public_visible=True, automatic_connection_allowed=False, allowed_organisations=[uuc])
+
+    _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler)
+
+    uuc.services.append(uuc_scheduler)
+    db.session.merge(uuc)
 
     ai_computing = Collaboration(name=ai_computing_name,
                                  identifier=collaboration_ai_computing_uuid,

@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.scss";
 import I18n from "i18n-js";
-import {myCollaborationsLite} from "../api";
+import {myCollaborationsLite, myServices} from "../api";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Button from "../components/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -13,19 +13,21 @@ class Home extends React.Component {
         this.state = {
             collaborations: [],
             groups: [],
+            services: [],
             showMore: []
         };
     }
 
     componentDidMount = () => {
-        myCollaborationsLite()
-            .then(res => {
-                const collaborationMemberships = res.map(coll => (coll.collaboration_memberships || [])).flat();
+        Promise.all([myCollaborationsLite(), myServices()])
+            .then(results => {
+                const collaborations = results[0];
+                const collaborationMemberships = collaborations.map(coll => (coll.collaboration_memberships || [])).flat();
                 const groupsFromMemberships = collaborationMemberships.map(collaborationMembership => (collaborationMembership.groups || [])).flat();
                 const groupIds = [...new Set(groupsFromMemberships.map(group => group.id))];
                 const groups = groupsFromMemberships.filter(group => groupIds.includes(group.id));
 
-                this.setState({collaborations: res, groups: groups});
+                this.setState({collaborations: collaborations, groups: groups, services: results[1]});
             });
     };
 
@@ -102,8 +104,9 @@ class Home extends React.Component {
         );
     };
 
-    renderServices = collaborations => {
-        const allServices = collaborations.map(collaboration => collaboration.services).flat();
+    renderServices = (collaborations, organisationServices) => {
+        const allServices = collaborations.map(collaboration => collaboration.services)
+            .flat().concat(organisationServices);
         const distinctServiceIdentifiers = [...new Set(allServices.map(s => s.id))];
         const services = distinctServiceIdentifiers.map(id => allServices.find(s => s.id === id));
         const showMore = services.length >= 6;
@@ -183,7 +186,7 @@ class Home extends React.Component {
     };
 
     render() {
-        const {collaborations} = this.state;
+        const {collaborations, services} = this.state;
         const {user} = this.props;
         const hasOrganisationMemberships = !isEmpty(user.organisation_memberships) || user.admin;
         return (
@@ -195,7 +198,7 @@ class Home extends React.Component {
                     <section className={"info-block-container"}>
                         {hasOrganisationMemberships && this.renderOrganisations(user)}
                         {this.renderCollaborations(collaborations)}
-                        {this.renderServices(collaborations)}
+                        {this.renderServices(collaborations, services)}
                     </section>
                 </div>
             </div>);
