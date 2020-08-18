@@ -251,15 +251,17 @@ class Service extends React.Component {
         return (<div className="ip-networks">
             <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
                 <span className="tool-tip-section">
-                                <span data-tip data-for={I18n.t("service.network")}><FontAwesomeIcon
-                                    icon="info-circle"/></span>
+                                <span data-tip data-for={I18n.t("service.network")}>
+                                    <FontAwesomeIcon icon="info-circle"/>
+                                </span>
                                 <ReactTooltip id={I18n.t("service.network")} type="light" effect="solid"
                                               data-html={true}>
                                     <p dangerouslySetInnerHTML={{__html: I18n.t("service.networkTooltip")}}/>
                                 </ReactTooltip>
                             </span>
             </label>
-            <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>
+            {isAdmin &&
+            <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>}
 
             {ip_networks.map((network, i) =>
                 <div className="network-container" key={i}>
@@ -269,8 +271,14 @@ class Service extends React.Component {
                                     onBlur={this.validateIpAddress(i)}
                                     placeholder={I18n.t("service.networkPlaceholder")}
                                     disabled={!isAdmin}
+                                    onEnter={e => {
+                                        this.validateIpAddress(i);
+                                        e.target.blur()
+                                    }}
                         />
-                        <span className="trash"><FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/></span>
+                        {isAdmin && <span className="trash">
+                            <FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/>
+                        </span>}
                     </div>
                     {(network.error && !network.syntax) && <span
                         className="error">{I18n.t("service.networkError", network)}</span>}
@@ -351,28 +359,6 @@ class Service extends React.Component {
                             toolTip={I18n.t("service.uriTooltip")}
                             externalLink={true}
                             disabled={!isAdmin}/>
-
-                {/*<InputField value={identity_type}*/}
-                {/*            name={I18n.t("service.identity_type")}*/}
-                {/*            placeholder={I18n.t("service.identity_typePlaceholder")}*/}
-                {/*            onChange={e => this.setState({identity_type: e.target.value})}*/}
-                {/*            toolTip={I18n.t("service.identity_typeTooltip")}*/}
-                {/*            disabled={!isAdmin}/>*/}
-
-                {/*<SelectField value={this.statusOptions.find(option => status === option.value)}*/}
-                {/*             options={this.statusOptions}*/}
-                {/*             name={I18n.t("service.status.name")}*/}
-                {/*             clearable={false}*/}
-                {/*             placeholder={I18n.t("service.statusPlaceholder")}*/}
-                {/*             disabled={!isAdmin}*/}
-                {/*             onChange={selectedOption => this.setState({status: selectedOption ? selectedOption.value : null})}*/}
-                {/*/>*/}
-
-                {/*<InputField value={address}*/}
-                {/*            name={I18n.t("service.address")}*/}
-                {/*            placeholder={I18n.t("service.addressPlaceholder")}*/}
-                {/*            onChange={e => this.setState({address: e.target.value})}*/}
-                {/*            disabled={!isAdmin}/>*/}
 
                 <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
                           info={I18n.t("service.automaticConnectionAllowed")}

@@ -7,7 +7,7 @@ from flask import Blueprint, current_app
 from server.api.base import json_endpoint, query_param, ctx_logger
 from server.auth.security import confirm_read_access
 from server.db.db import db
-from server.db.domain import User, CollaborationMembership, Service, Collaboration
+from server.db.domain import User, CollaborationMembership, Service, Collaboration, Organisation, OrganisationMembership
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 
@@ -40,6 +40,7 @@ def attributes():
         logger.info(f"Returning error for user {uid} and service_entity_id {service_entity_id} as user is suspended")
         return {"error": f"user {uid} is suspended"}, 404
 
+    # Service connected to a collaboration where the user is a member of
     services = Service.query \
         .join(Service.collaborations) \
         .join(Collaboration.collaboration_memberships) \
@@ -47,6 +48,27 @@ def attributes():
         .filter(User.uid == uid) \
         .filter(Service.entity_id == service_entity_id) \
         .all()
+
+    if len(services) == 0:
+        # Service connected to a organisation which has a collaboration where the user is a member of
+        services = Service.query \
+            .join(Service.organisations) \
+            .join(Organisation.collaborations) \
+            .join(Collaboration.collaboration_memberships) \
+            .join(CollaborationMembership.user) \
+            .filter(User.uid == uid) \
+            .filter(Service.entity_id == service_entity_id) \
+            .all()
+
+    if len(services) == 0:
+        # Service connected to a organisation where the user is a member of
+        services = Service.query \
+            .join(Service.organisations) \
+            .join(Organisation.organisation_memberships) \
+            .join(OrganisationMembership.user) \
+            .filter(User.uid == uid) \
+            .filter(Service.entity_id == service_entity_id) \
+            .all()
 
     if len(services) == 0:
         logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")

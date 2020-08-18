@@ -358,12 +358,12 @@ class Group extends React.Component {
         if (!adminOfCollaboration) {
             names.shift();
         }
-
+        const hasMembers = !isEmpty(connectedMembers);
         const membersTitle = I18n.t("groups.membersSubTitle");
         return (
             <div className="group-members-connected">
                 <p className="title">{membersTitle}</p>
-                <table className="connected-members">
+                {hasMembers && <table className="connected-members">
                     <thead>
                     <tr>
                         {names.map(name =>
@@ -409,7 +409,8 @@ class Group extends React.Component {
                             </tr>)
                     })}
                     </tbody>
-                </table>
+                </table>}
+                {!hasMembers && <p>{I18n.t("groups.noMembers")}</p>}
             </div>
         );
     };
@@ -420,11 +421,12 @@ class Group extends React.Component {
         if (!adminOfCollaboration) {
             names.shift();
         }
+        const hasInvites = !isEmpty(sortedInvitations);
         const invitationsTitle = I18n.t("groups.invitationsTitle", {name: groupName});
         return (
             <div className="group-invitations-connected">
                 <p className="title">{invitationsTitle}</p>
-                <table className="connected-invitations">
+                {hasInvites&& <table className="connected-invitations">
                     <thead>
                     <tr>
                         {names.map(name =>
@@ -471,7 +473,8 @@ class Group extends React.Component {
                             </tr>)
                     })}
                     </tbody>
-                </table>
+                </table>}
+                {!hasInvites && <p>{I18n.t("groups.noInvites")}</p>}
             </div>
         );
     };

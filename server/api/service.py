@@ -11,7 +11,7 @@ from server.auth.security import confirm_write_access, current_user_id, confirm_
     is_organisation_admin_or_manager
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
-from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership
+from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, User
 from server.db.models import update, save, delete
 
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
@@ -89,6 +89,30 @@ def service_by_entity_id():
                .options(contains_eager(Service.allowed_organisations)) \
                .filter(Service.entity_id == entity_id) \
                .one(), 200
+
+
+@service_api.route("/my_services", strict_slashes=False)
+@json_endpoint
+def my_services():
+    user_id = current_user_id()
+    services = Service.query \
+        .join(Service.organisations) \
+        .join(Organisation.collaborations) \
+        .join(Collaboration.collaboration_memberships) \
+        .join(CollaborationMembership.user) \
+        .filter(User.id == user_id) \
+        .all()
+
+    services_from_org_membership = Service.query \
+        .join(Service.organisations) \
+        .join(Organisation.organisation_memberships) \
+        .join(OrganisationMembership.user) \
+        .filter(User.id == user_id) \
+        .all()
+
+    all_services = services + services_from_org_membership
+    seen = set()
+    return [seen.add(service.id) or service for service in all_services if service.id not in seen], 200
 
 
 @service_api.route("/<service_id>", strict_slashes=False)

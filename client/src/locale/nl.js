@@ -616,6 +616,8 @@ I18n.translations.nl = {
     collaborationServices: {
         title: "Diensten voor samenwerking {{name}}",
         connectedServices: "Met {{name}} gekoppelde diensten",
+        noServices: "Deze samenwerking heeft geen gekoppelde diensten.",
+        noServiceConnectRequests: "Deze samenwwerking heeft geen openstaande Service connect verzoeken.",
         searchServices: "Zoek, kies en voeg diensten toe aan samenwerking {{name}}",
         deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor<br/> samenwerking {{name}}.<br/><br/><strong>LET OP</strong>: de dienst zelf wordt niet verwijderd.<br/>  Hij is alleen niet beschikbaar<br/>voor groepen van<br/> deze samenwerking.",
         notAllowedOrganisation: "Service '{{service}}' kan niet toegoegd worden aan collaboratie '{{collaboration}}'. De configuratie van de service laat een koppeling met organisation '{{organisation}}' niet toe.",
@@ -657,7 +659,9 @@ I18n.translations.nl = {
         membersTitle: "Leden van groep {{name}}",
         membersSubTitle: "Leden van deze groep",
         invitationsTitle: "Openstaande uitnodigingen die lid worden van deze groep",
+        noMembers: "Deze groep heeft geen leden.",
         pendingInvite: "Openstaande uitnodiging",
+        noInvites: "Deze groep heeft geen openstaande uitnodigingen.",
         titleNew: "Maak nieuwe groep",
         titleUpdate: "Werk groep {{name}} bij",
         titleReadOnly: "Autorisatiegroep {{name}}",
