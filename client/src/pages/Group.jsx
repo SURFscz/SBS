@@ -75,7 +75,6 @@ class Group extends React.Component {
             const collaboration_id = parseInt(params.collaboration_id, 10);
             groupAccessAllowed(group_id, collaboration_id)
                 .then(json => {
-                    debugger;
                     if (json.access === "lite" && params.id === "new") {
                         this.props.history.push("/404");
                     } else {

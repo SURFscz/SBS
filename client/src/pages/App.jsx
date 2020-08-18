@@ -126,7 +126,10 @@ class App extends React.Component {
                     }
                 }).catch(e => {
                     if (e.response && e.response.status === 409) {
-                        this.setState({currentUser: {"uid": "anonymous", "guest": true, "admin": false}, loading: false});
+                        this.setState({
+                            currentUser: {"uid": "anonymous", "guest": true, "admin": false},
+                            loading: false
+                        });
                         setFlash(I18n.t("login.suspended"), "error");
                     } else {
                         this.handleBackendDown();
@@ -178,198 +181,200 @@ class App extends React.Component {
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>
                     </div>}
-                    <Switch>
-                        <Route exact path="/" render={() => {
-                            return currentUser.guest ? <Redirect to="/landing"/> : <Redirect to="/home"/>;
-                        }}/>
+                    <div className="page-container">
+                        <Switch>
+                            <Route exact path="/" render={() => {
+                                return currentUser.guest ? <Redirect to="/landing"/> : <Redirect to="/home"/>;
+                            }}/>
 
-                        <Route exact path="/landing"
-                               render={props => {
-                                   if (currentUser.guest) {
-                                       return <Login user={currentUser} {...props}/>;
-                                   }
-                                   const state = getParameterByName("state", window.location.search);
-                                   if (isEmpty(state)) {
-                                       return <Redirect to="/home"/>;
-                                   }
-                                   return <Redirect to={decodeURIComponent(state)}/>
-                               }}/>
+                            <Route exact path="/landing"
+                                   render={props => {
+                                       if (currentUser.guest) {
+                                           return <Login user={currentUser} {...props}/>;
+                                       }
+                                       const state = getParameterByName("state", window.location.search);
+                                       if (isEmpty(state)) {
+                                           return <Redirect to="/home"/>;
+                                       }
+                                       return <Redirect to={decodeURIComponent(state)}/>
+                                   }}/>
 
-                        <Route exact path="/login"
-                               render={props => {
-                                   if (currentUser.guest) {
-                                       return <Login user={currentUser} {...props}/>;
-                                   }
-                                   const state = getParameterByName("state", window.location.search);
-                                   if (isEmpty(state)) {
-                                       return <Redirect to="/home"/>;
-                                   }
-                                   return <Redirect to={decodeURIComponent(state)}/>
-                               }}/>
+                            <Route exact path="/login"
+                                   render={props => {
+                                       if (currentUser.guest) {
+                                           return <Login user={currentUser} {...props}/>;
+                                       }
+                                       const state = getParameterByName("state", window.location.search);
+                                       if (isEmpty(state)) {
+                                           return <Redirect to="/home"/>;
+                                       }
+                                       return <Redirect to={decodeURIComponent(state)}/>
+                                   }}/>
 
-                        <Route path="/registration"
-                               render={props => <Registration user={currentUser}
-                                                              collaboration={getParameterByName("collaboration", window.location.search)}
-                                                              {...props}/>}/>
+                            <Route path="/registration"
+                                   render={props => <Registration user={currentUser}
+                                                                  collaboration={getParameterByName("collaboration", window.location.search)}
+                                                                  {...props}/>}/>
 
-                        <Route path="/home"
-                               render={props => {
-                                   if (currentUser.guest) {
-                                       return <Redirect to="/landing"/>;
-                                   }
-                                   return <ProtectedRoute
+                            <Route path="/home"
+                                   render={props => {
+                                       if (currentUser.guest) {
+                                           return <Redirect to="/landing"/>;
+                                       }
+                                       return <ProtectedRoute
+                                           currentUser={currentUser}
+                                           Component={Home} {...props}/>
+                                   }}/>
+
+                            <Route exact path="/collaborations"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={Collaborations} {...props}/>}/>
+
+                            <Route exact path="/collaborations/:id"
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser}
+                                                                    refreshUser={this.refreshUserMemberships}
+                                                                    Component={CollaborationDetail} {...props}/>}/>
+
+                            <Route exact path="/organisations"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={Organisations} {...props}/>}/>
+
+                            <Route exact path="/organisations/:id"
+                                   render={props => <ProtectedRoute
                                        currentUser={currentUser}
-                                       Component={Home} {...props}/>
-                               }}/>
+                                       refreshUser={this.refreshUserMemberships}
+                                       Component={OrganisationDetail} {...props}/>}/>
 
-                        <Route exact path="/collaborations"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Collaborations} {...props}/>}/>
+                            <Route exact path="/organisations-lite/:id"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser}
+                                       Component={OrganisationDetailLite} {...props}/>}/>
 
-                        <Route exact path="/collaborations/:id"
-                               render={props => <ProtectedRoute config={config}
-                                                                currentUser={currentUser}
-                                                                refreshUser={this.refreshUserMemberships}
-                                                                Component={CollaborationDetail} {...props}/>}/>
+                            <Route exact path="/services"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={Services} {...props}/>}/>
 
-                        <Route exact path="/organisations"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Organisations} {...props}/>}/>
+                            <Route exact path="/services/:id"
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser}
+                                                                    Component={Service} {...props}/>}/>
 
-                        <Route exact path="/organisations/:id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser}
-                                   refreshUser={this.refreshUserMemberships}
-                                   Component={OrganisationDetail} {...props}/>}/>
+                            <Route exact path="/new-service"
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser}
+                                                                    isNew={true}
+                                                                    Component={Service} {...props}/>}/>
 
-                        <Route exact path="/organisations-lite/:id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser}
-                                   Component={OrganisationDetailLite} {...props}/>}/>
+                            <Route exact path="/service-request"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={ServiceRequest} {...props}/>}/>
 
-                        <Route exact path="/services"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Services} {...props}/>}/>
+                            <Route exact path="/join-requests/:hash"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={JoinRequest} {...props}/>}/>
 
-                        <Route exact path="/services/:id"
-                               render={props => <ProtectedRoute config={config}
-                                                                currentUser={currentUser}
-                                                                Component={Service} {...props}/>}/>
+                            <Route path="/service-connection-requests/:hash"
+                                   render={props => <ServiceConnectionRequest {...props}/>}/>
 
-                        <Route exact path="/new-service"
-                               render={props => <ProtectedRoute config={config}
-                                                                currentUser={currentUser}
-                                                                isNew={true}
-                                                                Component={Service} {...props}/>}/>
+                            <Route path="/organisation-services/:organisation_id"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={OrganisationServices} {...props}/>}/>
 
-                        <Route exact path="/service-request"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={ServiceRequest} {...props}/>}/>
+                            <Route exact path="/organisation-invitations/:id"
+                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                                                    Component={OrganisationInvitation} {...props}/>}/>
 
-                        <Route exact path="/join-requests/:hash"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={JoinRequest} {...props}/>}/>
+                            <Route exact path="/organisation-invitations/:action/:hash"
+                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                                                    refreshUser={this.refreshUserMemberships}
+                                                                    redirectToLogin={true}
+                                                                    Component={OrganisationInvitation}
+                                                                    {...props}/>}/>
 
-                        <Route path="/service-connection-requests/:hash"
-                               render={props => <ServiceConnectionRequest {...props}/>}/>
+                            <Route exact path="/new-organisation-invite/:organisation_id"
+                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                                                    Component={NewOrganisationInvitation}
+                                                                    {...props}/>}/>
 
-                        <Route path="/organisation-services/:organisation_id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={OrganisationServices} {...props}/>}/>
+                            <Route exact path="/new-api-key/:organisation_id"
+                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                                                    Component={NewApiKey}
+                                                                    {...props}/>}/>
 
-                        <Route exact path="/organisation-invitations/:id"
-                               render={props => <ProtectedRoute currentUser={currentUser}
-                                                                Component={OrganisationInvitation} {...props}/>}/>
+                            <Route exact path="/new-invite/:collaboration_id"
+                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                                                    Component={NewInvitation}
+                                                                    {...props}/>}/>
 
-                        <Route exact path="/organisation-invitations/:action/:hash"
-                               render={props => <ProtectedRoute currentUser={currentUser}
-                                                                refreshUser={this.refreshUserMemberships}
-                                                                redirectToLogin={true}
-                                                                Component={OrganisationInvitation}
-                                                                {...props}/>}/>
+                            <Route exact path="/invitations/:id"
+                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                                                    Component={Invitation}
+                                                                    {...props}/>}/>
 
-                        <Route exact path="/new-organisation-invite/:organisation_id"
-                               render={props => <ProtectedRoute currentUser={currentUser}
-                                                                Component={NewOrganisationInvitation}
-                                                                {...props}/>}/>
+                            <Route exact path="/invitations/:action/:hash"
+                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                                                    redirectToLogin={true}
+                                                                    refreshUser={this.refreshUserMemberships}
+                                                                    Component={Invitation}
+                                                                    {...props}/>}/>
+                            <Route exact path="/collaboration-requests/:id"
+                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                                                    redirectToLogin={true}
+                                                                    Component={CollaborationRequest}
+                                                                    {...props}/>}/>
 
-                        <Route exact path="/new-api-key/:organisation_id"
-                               render={props => <ProtectedRoute currentUser={currentUser}
-                                                                Component={NewApiKey}
-                                                                {...props}/>}/>
+                            <Route path="/new-organisation"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={NewOrganisation} {...props}/>}/>
 
-                        <Route exact path="/new-invite/:collaboration_id"
-                               render={props => <ProtectedRoute currentUser={currentUser}
-                                                                Component={NewInvitation}
-                                                                {...props}/>}/>
+                            <Route path="/new-collaboration"
+                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                                                    Component={NewCollaboration}
+                                                                    refreshUser={this.refreshUserMemberships}
+                                                                    {...props}/>}/>
 
-                        <Route exact path="/invitations/:id"
-                               render={props => <ProtectedRoute currentUser={currentUser}
-                                                                Component={Invitation}
-                                                                {...props}/>}/>
+                            <Route path="/collaboration-services/:collaboration_id"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={CollaborationServices} {...props}/>}/>
 
-                        <Route exact path="/invitations/:action/:hash"
-                               render={props => <ProtectedRoute currentUser={currentUser}
-                                                                redirectToLogin={true}
-                                                                refreshUser={this.refreshUserMemberships}
-                                                                Component={Invitation}
-                                                                {...props}/>}/>
-                        <Route exact path="/collaboration-requests/:id"
-                               render={props => <ProtectedRoute currentUser={currentUser}
-                                                                redirectToLogin={true}
-                                                                Component={CollaborationRequest}
-                                                                {...props}/>}/>
+                            <Route path="/collaboration-groups/:collaboration_id"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser}
+                                       Component={CollaborationGroups} {...props}/>}/>
 
-                        <Route path="/new-organisation"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={NewOrganisation} {...props}/>}/>
+                            <Route path="/collaboration-group-details/:collaboration_id/:id"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={Group} {...props}/>}/>
 
-                        <Route path="/new-collaboration"
-                               render={props => <ProtectedRoute currentUser={currentUser}
-                                                                Component={NewCollaboration}
-                                                                refreshUser={this.refreshUserMemberships}
-                                                                {...props}/>}/>
+                            <Route path="/impersonate"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={Impersonate}
+                                       impersonator={impersonator} {...props}/>}/>
 
-                        <Route path="/collaboration-services/:collaboration_id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={CollaborationServices} {...props}/>}/>
+                            <Route path="/confirmation"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={Confirmation}
+                                       config={config} {...props}/>}/>
 
-                        <Route path="/collaboration-groups/:collaboration_id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser}
-                                   Component={CollaborationGroups} {...props}/>}/>
+                            <Route path="/profile"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={Profile}
+                                       refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
-                        <Route path="/collaboration-group-details/:collaboration_id/:id"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Group} {...props}/>}/>
+                            <Route path="/system"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={System}/>}/>
 
-                        <Route path="/impersonate"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Impersonate}
-                                   impersonator={impersonator} {...props}/>}/>
+                            <Route path="/aup" render={props =>
+                                <Aup currentUser={currentUser} refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
-                        <Route path="/confirmation"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Confirmation}
-                                   config={config} {...props}/>}/>
+                            <Route path="/error" render={props => <ServerError {...props}/>}/>
 
-                        <Route path="/profile"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Profile}
-                                   refreshUser={this.refreshUserMemberships} {...props}/>}/>
-
-                        <Route path="/system"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={System}/>}/>
-
-                        <Route path="/aup" render={props =>
-                            <Aup currentUser={currentUser} refreshUser={this.refreshUserMemberships} {...props}/>}/>
-
-                        <Route path="/error" render={props => <ServerError {...props}/>}/>
-
-                        <Route render={props => <NotFound currentUser={currentUser} {...props}/>}/>
-                    </Switch>
-                    <Footer/>
+                            <Route render={props => <NotFound currentUser={currentUser} {...props}/>}/>
+                        </Switch>
+                        <Footer/>
+                    </div>
                 </div>
             </Router>
 

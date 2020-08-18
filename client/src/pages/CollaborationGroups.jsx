@@ -110,9 +110,10 @@ class CollaborationGroups extends React.Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {groups.map((group, i) => <tr key={i}>
-                        <td className="open" onClick={this.openGroupDetails(group)}><FontAwesomeIcon
-                            icon="arrow-right"/></td>
+                    {groups.map((group, i) => <tr key={i} onClick={this.openGroupDetails(group)}>
+                        <td className="open" >
+                            <FontAwesomeIcon icon="arrow-right"/>
+                        </td>
                         <td className="name">{group.name}</td>
                         <td className="short_name">{group.short_name}</td>
                         <td className="global_urn">{group.global_urn}</td>

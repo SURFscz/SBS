@@ -96,7 +96,8 @@ class OrganisationDetail extends React.Component {
                         this.props.history.push("/404");
                         return;
                     }
-                    const adminOfOrganisation = json.organisation_memberships.some(member => member.role === "admin" && member.user_id === user.id);
+                    const adminOfOrganisation = json.organisation_memberships
+                        .some(member => member.role === "admin" && member.user_id === user.id) || user.admin;
                     const managerOfOrganisation = json.organisation_memberships.some(member => member.role === "manager" && member.user_id === user.id);
                     this.setState({
                         originalOrganisation: json,
@@ -191,7 +192,9 @@ class OrganisationDetail extends React.Component {
             });
     };
 
-    deleteCollaboration = collaboration => () => {
+    deleteCollaboration = collaboration => e => {
+        e.cancelBubble = true;
+        e.stopPropagation();
         this.setState({
             confirmationDialogOpen: true,
             confirmationQuestion: I18n.t("organisationDetail.deleteCollaborationConfirmation", {name: collaboration.name}),
@@ -537,21 +540,24 @@ class OrganisationDetail extends React.Component {
     renderMembers = (members, user, sorted, reverse, query, adminOfOrganisation) => {
         const isAdmin = user.admin || adminOfOrganisation;
         const adminClassName = isAdmin ? "with-button" : "";
+        const hasMembers = !isEmpty(members);
         return (
             <section className="members-search">
+                {!hasMembers && <p>{I18n.t("organisationDetail.noMembers")}</p>}
+
                 <div className="search">
-                    <input type="text"
-                           className={adminClassName}
-                           onChange={this.searchMembers}
-                           value={query}
-                           placeholder={I18n.t("organisationDetail.searchPlaceHolder")}/>
-                    {<FontAwesomeIcon icon="search" className={adminClassName}/>}
+                    {hasMembers && <input type="text"
+                                          className={adminClassName}
+                                          onChange={this.searchMembers}
+                                          value={query}
+                                          placeholder={I18n.t("organisationDetail.searchPlaceHolder")}/>}
+                    {hasMembers && <FontAwesomeIcon icon="search" className={adminClassName}/>}
                     {isAdmin &&
-                    <Button onClick={this.invite}
+                    <Button onClick={this.invite} className={hasMembers ? "" : "no-members"}
                             txt={I18n.t("organisationDetail.invite")}/>
                     }
                 </div>
-                {this.renderMemberTable(members, user, sorted, reverse, adminOfOrganisation)}
+                {hasMembers && this.renderMemberTable(members, user, sorted, reverse, adminOfOrganisation)}
             </section>
 
         );
@@ -638,21 +644,23 @@ class OrganisationDetail extends React.Component {
     renderCollaborations = (collaborations, user, sorted, reverse, query, adminOfOrganisation, managerOfOrganisation) => {
         const isAllowedCollaborations = user.admin || adminOfOrganisation || managerOfOrganisation;
         const adminClassName = isAllowedCollaborations ? "with-button" : "";
+        const hasCollaborations = !isEmpty(collaborations);
         return (
             <section className="collaborations-search">
+                {!hasCollaborations && <p>{I18n.t("organisationDetail.noCollaborations")}</p>}
                 <div className="search">
-                    <input type="text"
+                    {hasCollaborations && <input type="text"
                            className={adminClassName}
                            onChange={this.searchCollaborations}
                            value={query}
-                           placeholder={I18n.t("organisationDetail.searchPlaceHolderCollaborations")}/>
-                    {<FontAwesomeIcon icon="search" className={adminClassName}/>}
+                           placeholder={I18n.t("organisationDetail.searchPlaceHolderCollaborations")}/>}
+                    {hasCollaborations && <FontAwesomeIcon icon="search" className={adminClassName}/>}
                     {isAllowedCollaborations &&
-                    <Button onClick={this.newCollaboration}
+                    <Button onClick={this.newCollaboration} className={hasCollaborations ? "" : "no-members"}
                             txt={I18n.t("organisationDetail.newCollaboration")}/>
                     }
                 </div>
-                {this.renderCollaborationsTable(collaborations, user, sorted, reverse)}
+                {hasCollaborations && this.renderCollaborationsTable(collaborations, user, sorted, reverse)}
             </section>
 
         );
@@ -682,8 +690,8 @@ class OrganisationDetail extends React.Component {
                     <td className="global_urn">{coll.global_urn}</td>
                     <td className="accepted_user_policy">{coll.accepted_user_policy}</td>
                     <td className="since">{moment(coll.created_at * 1000).format("LL")}</td>
-                    <td className="actions">
-                        {<FontAwesomeIcon icon="trash" onClick={this.deleteCollaboration(coll)}/>}
+                    <td className="actions" onClick={this.deleteCollaboration(coll)}>
+                        {<FontAwesomeIcon icon="trash" />}
                     </td>
                 </tr>)}
                 </tbody>
