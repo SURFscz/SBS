@@ -92,7 +92,6 @@ class TestOrganisation(AbstractTest):
         organisation = self.get(f"/api/organisations/services/{organisation_id}")
         self.assertEqual(1, len(organisation["services"]))
 
-
     def test_organisation_crud(self):
         self.login()
         organisation = self.post("/api/organisations", body={"name": "new_organisation",
