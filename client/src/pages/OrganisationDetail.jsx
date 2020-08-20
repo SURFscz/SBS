@@ -170,6 +170,10 @@ class OrganisationDetail extends React.Component {
 
     changeMemberRole = member => selectedOption => {
         const {originalOrganisation} = this.state;
+        const currentRole = originalOrganisation.organisation_memberships.find(m => m.user.id === member.user.id).role;
+        if (currentRole === selectedOption.value) {
+            return;
+        }
         updateOrganisationMembershipRole(originalOrganisation.id, member.user.id, selectedOption.value)
             .then(() => {
                 this.componentDidMount();
@@ -591,8 +595,11 @@ class OrganisationDetail extends React.Component {
                         <td className="email">{member.user.email}</td>
                         <td className="uid">{member.user.uid}</td>
                         <td className="role">
-                            <Select value={roles.find(role => role.value === member.role)} options={roles}
-                                    isDisabled={!isAdmin}/>
+                            <Select
+                                value={roles.find(option => option.value === member.role)}
+                                options={roles}
+                                onChange={this.changeMemberRole(member)}
+                                isDisabled={!isAdmin}/>
                         </td>
                         <td className="suspended">
                             <CheckBox name="suspended" value={member.user.suspended} readOnly={true}/>
@@ -650,10 +657,10 @@ class OrganisationDetail extends React.Component {
                 {!hasCollaborations && <p>{I18n.t("organisationDetail.noCollaborations")}</p>}
                 <div className="search">
                     {hasCollaborations && <input type="text"
-                           className={adminClassName}
-                           onChange={this.searchCollaborations}
-                           value={query}
-                           placeholder={I18n.t("organisationDetail.searchPlaceHolderCollaborations")}/>}
+                                                 className={adminClassName}
+                                                 onChange={this.searchCollaborations}
+                                                 value={query}
+                                                 placeholder={I18n.t("organisationDetail.searchPlaceHolderCollaborations")}/>}
                     {hasCollaborations && <FontAwesomeIcon icon="search" className={adminClassName}/>}
                     {isAllowedCollaborations &&
                     <Button onClick={this.newCollaboration} className={hasCollaborations ? "" : "no-members"}
@@ -691,7 +698,7 @@ class OrganisationDetail extends React.Component {
                     <td className="accepted_user_policy">{coll.accepted_user_policy}</td>
                     <td className="since">{moment(coll.created_at * 1000).format("LL")}</td>
                     <td className="actions" onClick={this.deleteCollaboration(coll)}>
-                        {<FontAwesomeIcon icon="trash" />}
+                        {<FontAwesomeIcon icon="trash"/>}
                     </td>
                 </tr>)}
                 </tbody>
