@@ -186,6 +186,10 @@ class CollaborationDetail extends React.Component {
 
     changeMemberRole = member => selectedOption => {
         const {originalCollaboration} = this.state;
+        const currentRole = originalCollaboration.collaboration_memberships.find(m => m.user.id === member.user.id).role;
+        if (currentRole === selectedOption.value) {
+            return;
+        }
         updateCollaborationMembershipRole(originalCollaboration.id, member.user.id, selectedOption.value)
             .then(() => {
                 this.componentDidMount();
