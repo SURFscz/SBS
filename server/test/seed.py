@@ -37,6 +37,8 @@ collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
 ai_computing_short_name = "ai_computing"
 
+uuc_teachers_name = "UUC Teachers"
+
 uuc_name = "UUC"
 uuc_secret = token_urlsafe()
 uuc_hashed_secret = hashlib.sha256(bytes(uuc_secret, "utf-8")).hexdigest()
@@ -112,6 +114,7 @@ def seed(db, app_config):
                  schac_home_organisation=schac_home_organisation)
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry")
     james = User(uid="urn:james", name=james_name, email="james@example.org",
+                 schac_home_organisation=schac_home_organisation_uuc,
                  ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                          "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
                          "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
@@ -120,6 +123,7 @@ def seed(db, app_config):
                          "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
                          "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid")
+    betty = User(uid="urn:betty", name="betty", email="betty@uuc.org")
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co")
 
@@ -142,7 +146,7 @@ def seed(db, app_config):
                           last_login_date=last_login_date, last_accessed_date=last_login_date,
                           suspended=True)
 
-    _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, jane,
+    _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, betty, jane,
              user_inactive, user_one_suspend, user_two_suspend, user_suspended)
 
     resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
@@ -227,7 +231,8 @@ def seed(db, app_config):
                               allowed_organisations=[uva], research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True)
 
-    uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=uuc_scheduler_name, description="UUC Scheduler Service",
+    uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=uuc_scheduler_name,
+                            description="UUC Scheduler Service",
                             public_visible=True, automatic_connection_allowed=False, allowed_organisations=[uuc])
 
     _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler)
@@ -249,6 +254,15 @@ def seed(db, app_config):
                                  description="University of Amsterdam Research - Urban Crowd Control",
                                  organisation=uva, services=[cloud, storage, wiki],
                                  join_requests=[], invitations=[])
+    uuc_teachers = Collaboration(name=uuc_teachers_name,
+                                 identifier=str(uuid.uuid4()),
+                                 global_urn=f"ucc:{uuc_teachers_name}",
+                                 description="UUC Teachers",
+                                 organisation=uuc, services=[], enrollment="Form",
+                                 join_requests=[], invitations=[], access_type="open",
+                                 short_name="uuc_teachers_short_name",
+                                 accepted_user_policy="https://www.uuc.nl/teachers")
+
     uu_disabled_join_request = Collaboration(name=uu_disabled_join_request_name,
                                              short_name="uu_short",
                                              global_urn="uva:uu_short",
@@ -256,12 +270,14 @@ def seed(db, app_config):
                                              description="UU", disable_join_requests=True, organisation=uva,
                                              services=[],
                                              join_requests=[], invitations=[])
-    _persist(db, ai_computing, uva_research, uu_disabled_join_request)
+    _persist(db, ai_computing, uva_research, uu_disabled_join_request, uuc_teachers)
 
     john_ai_computing = CollaborationMembership(role="member", user=john, collaboration=ai_computing)
     admin_ai_computing = CollaborationMembership(role="admin", user=admin, collaboration=ai_computing)
     jane_ai_computing = CollaborationMembership(role="member", user=jane, collaboration=ai_computing)
     sarah_ai_computing = CollaborationMembership(role="member", user=sarah, collaboration=ai_computing)
+
+    betty_uuc_teachers = CollaborationMembership(role="member", user=betty, collaboration=uuc_teachers)
 
     roger_uva_research = CollaborationMembership(role="member", user=roger, collaboration=uva_research)
     peter_uva_research = CollaborationMembership(role="member", user=peter, collaboration=uva_research)
@@ -269,7 +285,7 @@ def seed(db, app_config):
     user_two_suspend_uva_research = CollaborationMembership(role="member", user=user_two_suspend,
                                                             collaboration=uva_research)
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
-             jane_ai_computing, sarah_ai_computing, user_two_suspend_uva_research)
+             jane_ai_computing, sarah_ai_computing, user_two_suspend_uva_research, betty_uuc_teachers)
 
     group_researchers = Group(name=ai_researchers_group,
                               short_name=ai_researchers_group_short_name,

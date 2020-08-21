@@ -49,7 +49,7 @@ I18n.translations.nl = {
         backToHome: "Terug naar de startpagina",
         collaborationRequest: "Verzoek een nieuwe Samenwerking",
         collaborationNew: "New Collaboration",
-        noOrganisations: "Voor het verzoek om een nieuwe samenwerking is het een vereiste dat er voor de instelling waarmee je bent ingelogd een organisatie is aangemaakt. Dit is niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie."
+        noOrganisations: "Voor het verzoek om een nieuwe samenwerking is het een vereiste dat er voor de instelling '{{schac_home}}' waarmee je bent ingelogd een organisatie is aangemaakt. Dit is niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie."
     },
     forms: {
         submit: "Toevoegen",
@@ -224,6 +224,7 @@ I18n.translations.nl = {
         messageTooltip: "De boodschap nemen we op in de <br/>e-mail waarmee beheerders worden uitgenodigd.",
         motivation: "Motivatie",
         motivationPlaceholder: "Motivatie voor de nieuwe samenwerking",
+        motivationTooltip: "Motivatie voor de nieuwe samenwerking.",
         organisation_name: "Organisatie",
         organisationPlaceholder: "Kies de organisatie voor deze samenwerking",
         organisationTooltip: "Iedere samenwerking hoort bij<br/>precies 1 organisatie",

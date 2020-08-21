@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
 from server.test.abstract_test import AbstractTest
-from server.test.seed import john_name, uuc_scheduler_entity_id
+from server.test.seed import john_name, uuc_scheduler_entity_id, service_network_entity_id
 
 
 class TestUserSaml(AbstractTest):
@@ -29,6 +29,16 @@ class TestUserSaml(AbstractTest):
         res = self.get("/api/users/attributes",
                        query_data={"uid": "urn:mary", "service_entity_id": uuc_scheduler_entity_id})
         self.assertListEqual(res["cuid"], ["urn:mary"])
+
+    def test_attributes_service_linked_to_organisation_collaboration_membership(self):
+        res = self.get("/api/users/attributes",
+                       query_data={"uid": "urn:betty", "service_entity_id": uuc_scheduler_entity_id})
+        self.assertListEqual(res["cuid"], ["urn:betty"])
+
+    def test_attributes_service_not_connected(self):
+        res = self.get("/api/users/attributes",
+                       query_data={"uid": "urn:betty", "service_entity_id": service_network_entity_id})
+        self.assertDictEqual({}, res)
 
     def test_attributes_no_service(self):
         res = self.get("/api/users/attributes",

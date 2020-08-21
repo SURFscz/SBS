@@ -49,7 +49,7 @@ I18n.translations.en = {
         backToHome: "Back to home",
         collaborationRequest: "Request for new Collaboration",
         collaborationNew: "New Collaboration",
-        noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution where you logged in. This is not the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information"
+        noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution named '{{schac_home}}' where you logged in. This is not the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information"
     },
     forms: {
         submit: "Add",
@@ -223,6 +223,7 @@ I18n.translations.en = {
         messagePlaceholder: "Personal message to the administrators",
         motivation: "Motivation",
         motivationPlaceholder: "Motivation for the new collaboration",
+        motivationTooltip: "Your motivation for the new collaboration.",
         messageTooltip: "The message will be included in the<br/>e-mail invitation to the administrators.",
         organisation_name: "Organisation",
         organisationPlaceholder: "Select the organisation for this collaboration...",

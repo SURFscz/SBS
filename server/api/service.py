@@ -7,8 +7,7 @@ from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
-from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
-    is_organisation_admin_or_manager
+from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, User
@@ -23,6 +22,49 @@ def is_org_member():
                .options(load_only("id")) \
                .filter(OrganisationMembership.user_id == user_id) \
                .count() > 0
+
+
+# Services connected to a collaboration where the user is a member of
+def services_from_collaboration_memberships(user_id, service_id=None, count_only=False):
+    query = Service.query \
+        .join(Service.collaborations) \
+        .join(Collaboration.collaboration_memberships) \
+        .join(CollaborationMembership.user) \
+        .filter(User.id == user_id)
+
+    if service_id:
+        query = query.filter(Service.id == service_id)
+
+    return query.count() if count_only else query.all()
+
+
+# Services connected to a organisation which has a collaboration where the user is a member of
+def services_from_organisation_collaboration_memberships(user_id, service_id=None, count_only=False):
+    query = Service.query \
+        .join(Service.organisations) \
+        .join(Organisation.collaborations) \
+        .join(Collaboration.collaboration_memberships) \
+        .join(CollaborationMembership.user) \
+        .filter(User.id == user_id)
+
+    if service_id:
+        query = query.filter(Service.id == service_id)
+
+    return query.count() if count_only else query.all()
+
+
+# Services connected to a organisation where the user is a member of
+def services_from_organisation_memberships(user_id, service_id=None, count_only=False):
+    query = Service.query \
+        .join(Service.organisations) \
+        .join(Organisation.organisation_memberships) \
+        .join(OrganisationMembership.user) \
+        .filter(User.id == user_id)
+
+    if service_id:
+        query = query.filter(Service.id == service_id)
+
+    return query.count() if count_only else query.all()
 
 
 @service_api.route("/search", strict_slashes=False)
@@ -95,22 +137,12 @@ def service_by_entity_id():
 @json_endpoint
 def my_services():
     user_id = current_user_id()
-    services = Service.query \
-        .join(Service.organisations) \
-        .join(Organisation.collaborations) \
-        .join(Collaboration.collaboration_memberships) \
-        .join(CollaborationMembership.user) \
-        .filter(User.id == user_id) \
-        .all()
+    from_coll_memberships = services_from_collaboration_memberships(user_id)
+    from_org_coll_memberships = services_from_organisation_collaboration_memberships(user_id)
+    from_org_memberships = services_from_organisation_memberships(user_id)
 
-    services_from_org_membership = Service.query \
-        .join(Service.organisations) \
-        .join(Organisation.organisation_memberships) \
-        .join(OrganisationMembership.user) \
-        .filter(User.id == user_id) \
-        .all()
-
-    all_services = services + services_from_org_membership
+    all_services = from_coll_memberships + from_org_coll_memberships + from_org_memberships
+    # Now make the result unique as there can be overlaps
     seen = set()
     return [seen.add(service.id) or service for service in all_services if service.id not in seen], 200
 
@@ -120,13 +152,16 @@ def my_services():
 def service_by_id(service_id):
     def _user_service():
         user_id = current_user_id()
-        count = Service.query \
-            .join(Service.collaborations) \
-            .join(Collaboration.collaboration_memberships) \
-            .filter(CollaborationMembership.user_id == user_id) \
-            .filter(Service.id == service_id) \
-            .count()
-        return count > 0 or is_organisation_admin_or_manager()
+        count = services_from_collaboration_memberships(user_id, service_id, True)
+        if count > 0:
+            return True
+
+        count = services_from_organisation_collaboration_memberships(user_id, service_id, True)
+        if count > 0:
+            return True
+
+        count = services_from_organisation_memberships(user_id, service_id, True)
+        return count > 0
 
     confirm_read_access(override_func=_user_service)
 

@@ -93,9 +93,9 @@ app = Flask(__name__)
 app.secret_key = config.secret_key
 
 app.register_blueprint(base_api)
+app.register_blueprint(service_api)
 app.register_blueprint(user_api)
 app.register_blueprint(user_saml_api)
-app.register_blueprint(service_api)
 app.register_blueprint(collaboration_api)
 app.register_blueprint(organisation_api)
 app.register_blueprint(join_request_api)

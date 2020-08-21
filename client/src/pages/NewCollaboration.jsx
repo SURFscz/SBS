@@ -101,7 +101,8 @@ class NewCollaboration extends React.Component {
     mapOrganisationsToOptions = organisations => organisations.map(org => ({
         label: org.name,
         value: org.id,
-        short_name: org.short_name
+        short_name: org.short_name,
+        collaboration_creation_allowed: org.collaboration_creation_allowed
     }));
 
     validateCollaborationName = e =>
@@ -188,10 +189,11 @@ class NewCollaboration extends React.Component {
         this.setState({administrators: newAdministrators, current_user_admin: checked})
     }
 
-    renderNoOrganisations = () => (
+    renderNoOrganisations = user => (
         <div className="mod-new-collaboration-container">
             <div className="mod-new-collaboration">
-                <h2 className="no-organisations" dangerouslySetInnerHTML={{__html: I18n.t("home.noOrganisations")}}/>
+                <h2 className="no-organisations"
+                    dangerouslySetInnerHTML={{__html: I18n.t("home.noOrganisations", {schac_home: user.schac_home_organisation})}}/>
             </div>
         </div>
     );
@@ -206,7 +208,7 @@ class NewCollaboration extends React.Component {
         const disabled = false;
         const {user} = this.props;
         if (noOrganisations) {
-            return this.renderNoOrganisations();
+            return this.renderNoOrganisations(user);
         }
         const title = isRequestCollaboration ? I18n.t("collaboration.requestTitle") : I18n.t("collaboration.title");
         return (
@@ -340,13 +342,14 @@ class NewCollaboration extends React.Component {
                         {(!initial && !current_user_admin && administrators.length === 0) &&
                         <span className="error">{I18n.t("collaboration.oneAdministratorIsRequired")}</span>}
 
-                        <CheckBox name={I18n.t("collaboration.currentUserAdmin")} value={current_user_admin}
+                        <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
+                                  value={current_user_admin}
                                   onChange={this.flipCurrentUserAdmin}
                                   info={I18n.t("collaboration.currentUserAdmin")}
                                   tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>
 
                         <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                    placeholder={I18n.t("collaboration.messagePlaceholder")}
+                                    placeholder={isRequestCollaboration ? I18n.t("collaboration.motivationPlaceholder"):I18n.t("collaboration.messagePlaceholder")}
                                     name={isRequestCollaboration ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
                                     toolTip={isRequestCollaboration ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
                                     multiline={true}/>

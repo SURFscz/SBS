@@ -263,9 +263,10 @@ class TestCollaboration(AbstractTest):
         self.assertTrue(collaboration.services_restricted)
 
     def test_collaboration_delete(self):
+        pre_count = Collaboration.query.count()
         collaboration = self._find_by_identifier()
         self.delete("/api/collaborations", primary_key=collaboration["id"])
-        self.assertEqual(2, Collaboration.query.count())
+        self.assertEqual(pre_count - 1, Collaboration.query.count())
 
     def test_collaboration_delete_no_admin(self):
         collaboration = self._find_by_identifier()
@@ -284,7 +285,7 @@ class TestCollaboration(AbstractTest):
 
     def test_collaboration_all(self):
         collaborations = self.get("/api/collaborations/all")
-        self.assertEqual(3, len(collaborations))
+        self.assertEqual(4, len(collaborations))
 
     def test_collaboration_by_id(self):
         collaboration_id = self._find_by_identifier()["id"]
