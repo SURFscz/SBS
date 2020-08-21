@@ -33,6 +33,11 @@ class TestService(AbstractTest):
         self.login("urn:sarah")
         self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
 
+    def test_find_by_id_access_allowed_through_organisation_collaboration_memberships(self):
+        service = self.find_entity_by_name(Service, uuc_scheduler_name)
+        self.login("urn:betty")
+        self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
+
     def test_find_by_entity_id(self):
         res = self.get("api/services/find_by_entity_id", query_data={"entity_id": service_network_entity_id})
 
@@ -42,8 +47,7 @@ class TestService(AbstractTest):
     def test_my_services(self):
         self.login("urn:sarah")
         res = self.get("api/services/my_services")
-        self.assertEqual(1, len(res))
-        self.assertEqual(uuc_scheduler_name, res[0]["name"])
+        self.assertEqual(6, len(res))
 
     def test_service_new(self):
         service = self.post("/api/services", body={

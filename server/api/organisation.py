@@ -192,6 +192,7 @@ def organisations_by_schac_home_organisation():
 
     return list(map(lambda organisation: {"id": organisation.id,
                                           "name": organisation.name,
+                                          "collaboration_creation_allowed": organisation.collaboration_creation_allowed,
                                           "short_name": organisation.short_name}, organisations)), 200
 
 
