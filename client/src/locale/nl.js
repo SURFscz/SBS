@@ -193,6 +193,7 @@ I18n.translations.nl = {
     collaboration: {
         title: "Nieuwe samenwerking toevoegen",
         requestTitle: "Nieuwe samenwerking aanvragen",
+        requestTitleCreationAllowed: "Nieuwe samenwerking aanvragen - organisatie {{name}} is geconfigureerd om automatisch samenwerkings verzoeken goed te keuren",
         actions: "",
         name: "Naam",
         namePlaceHolder: "De unieke naam van de samenwerking",
