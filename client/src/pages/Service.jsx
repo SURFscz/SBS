@@ -338,12 +338,12 @@ class Service extends React.Component {
                     attribute: I18n.t("service.entity_id").toLowerCase()
                 })}</span>}
 
-                {(isAdmin && !isNew) && <InputField value={serviceRequestUrl}
-                                                    name={I18n.t("service.service_request")}
-                                                    toolTip={I18n.t("service.service_requestTooltip")}
-                                                    copyClipBoard={true}
-                                                    history={this.props.history}
-                                                    disabled={true}
+                {!isNew && <InputField value={serviceRequestUrl}
+                                       name={I18n.t("service.service_request")}
+                                       toolTip={I18n.t("service.service_requestTooltip")}
+                                       copyClipBoard={true}
+                                       history={this.props.history}
+                                       disabled={true}
                 />}
 
                 <InputField value={description}

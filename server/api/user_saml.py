@@ -51,17 +51,17 @@ def attributes():
     user_id = user.id
 
     # Services connected to a collaboration where the user is a member of
-    services = services_from_collaboration_memberships(user_id, service_id)
+    count = services_from_collaboration_memberships(user_id, service_id, True)
 
-    if len(services) == 0:
+    if count == 0:
         # Services connected to a organisation which has a collaboration where the user is a member of
-        services = services_from_organisation_collaboration_memberships(user_id, service_id)
+        count = services_from_organisation_collaboration_memberships(user_id, service_id, True)
 
-    if len(services) == 0:
+    if count == 0:
         # Services connected to a organisation where the user is a member of
-        services = services_from_organisation_memberships(user_id, service_id)
+        count = services_from_organisation_memberships(user_id, service_id, True)
 
-    if len(services) == 0:
+    if count == 0:
         logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
         return {}, 200
 

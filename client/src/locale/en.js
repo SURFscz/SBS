@@ -193,6 +193,7 @@ I18n.translations.en = {
     collaboration: {
         title: "Create new collaboration",
         requestTitle: "Request a new collaboration",
+        requestTitleCreationAllowed: "Request a new collaboration - organisation {{name}} is configured to automatic approve collaborations requests",
         actions: "",
         name: "Name",
         namePlaceHolder: "The unique name of a collaboration",

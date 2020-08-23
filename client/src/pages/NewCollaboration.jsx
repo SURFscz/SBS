@@ -73,6 +73,7 @@ class NewCollaboration extends React.Component {
                             organisations: organisations,
                             organisation: organisations[0],
                             isRequestCollaboration: true,
+                            current_user_admin: true,
                             required: this.state.required.concat("message")
                         });
                     }
@@ -210,7 +211,8 @@ class NewCollaboration extends React.Component {
         if (noOrganisations) {
             return this.renderNoOrganisations(user);
         }
-        const title = isRequestCollaboration ? I18n.t("collaboration.requestTitle") : I18n.t("collaboration.title");
+        const title = !isRequestCollaboration ? I18n.t("collaboration.title") : !organisation.collaboration_creation_allowed ?
+            I18n.t("collaboration.requestTitle") : I18n.t("collaboration.requestTitleCreationAllowed", {name: organisation.label});
         return (
             <div className="mod-new-collaboration-container">
                 <div className="mod-new-collaboration">
@@ -345,6 +347,7 @@ class NewCollaboration extends React.Component {
                         <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
                                   value={current_user_admin}
                                   onChange={this.flipCurrentUserAdmin}
+                                  readOnly={isRequestCollaboration}
                                   info={I18n.t("collaboration.currentUserAdmin")}
                                   tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>
 

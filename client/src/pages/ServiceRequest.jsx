@@ -88,11 +88,13 @@ class ServiceRequest extends React.Component {
         const {service, collaborations, serviceName} = this.state;
         const {user} = this.props;
         const selectedCollaborations = collaborations.filter(coll => coll.requestToLink);
-        const collaborationAdminLinked = selectedCollaborations.some(coll => this.roleOfUserInCollaboration(coll, user) === "admin");
         const noAutomaticConnectionAllowed = !service.automatic_connection_allowed;
+        const collaborationAdminLinked = selectedCollaborations.some(coll => this.roleOfUserInCollaboration(coll, user) === "admin" || user.admin)
+                && !noAutomaticConnectionAllowed;
         const promises = selectedCollaborations.map(coll => {
-            const isMember = this.roleOfUserInCollaboration(coll, user) !== "admin";
-            return (isMember || noAutomaticConnectionAllowed)?
+            const isMember = this.roleOfUserInCollaboration(coll, user) !== "admin" && !user.admin;
+            const requestIsRequired = isMember || noAutomaticConnectionAllowed
+            return requestIsRequired ?
                 requestServiceConnection({
                     message: I18n.t("serviceRequest.motivation", {serviceName, userName: user.name}),
                     service_id: service.id,
@@ -102,7 +104,10 @@ class ServiceRequest extends React.Component {
         });
         Promise.all(promises)
             .then(() => {
-                this.setState({finished: true, collaborationAdminLinked: collaborationAdminLinked});
+                this.setState({
+                    finished: true,
+                    collaborationAdminLinked: collaborationAdminLinked
+                });
             }).catch(e => {
             if (e.response && e.response.json && e.response.status === 400) {
                 e.response.json().then(res => {
