@@ -44,8 +44,8 @@ def attributes():
 
     services_by_entity_id = Service.query.filter(Service.entity_id == service_entity_id).all()
     if len(services_by_entity_id) == 0:
-        logger.info(f"Returning empty dict as attributes for user {uid} and "
-                    f"service_entity_id {service_entity_id} because service does not exists")
+        logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} "
+                    f"because service does not exists")
         return {}, 200
     service_id = services_by_entity_id[0].id
     user_id = user.id
@@ -62,7 +62,8 @@ def attributes():
         count = services_from_organisation_memberships(user_id, service_id, True)
 
     if count == 0:
-        logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id}")
+        logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} "
+                    f"because user has no access to the service")
         return {}, 200
 
     # gather regular user attributes
