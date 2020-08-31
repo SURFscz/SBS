@@ -78,7 +78,6 @@ class NewCollaboration extends React.Component {
                         });
                     }
                 });
-
             } else {
                 const organisationId = getParameterByName("organisation", window.location.search);
                 const organisations = this.mapOrganisationsToOptions(json);
@@ -121,10 +120,9 @@ class NewCollaboration extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, current_user_admin, administrators} = this.state;
+        const {required, alreadyExists} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
-        const requiredAdmin = current_user_admin || administrators.length > 0;
-        return !inValid && requiredAdmin;
+        return !inValid;
     };
 
     doSubmit = () => {
@@ -341,9 +339,6 @@ class NewCollaboration extends React.Component {
                                     </div>)}
                             </section>
                         </div>}
-                        {(!initial && !current_user_admin && administrators.length === 0) &&
-                        <span className="error">{I18n.t("collaboration.oneAdministratorIsRequired")}</span>}
-
                         <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
                                   value={current_user_admin}
                                   onChange={this.flipCurrentUserAdmin}
@@ -352,7 +347,7 @@ class NewCollaboration extends React.Component {
                                   tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>
 
                         <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                    placeholder={isRequestCollaboration ? I18n.t("collaboration.motivationPlaceholder"):I18n.t("collaboration.messagePlaceholder")}
+                                    placeholder={isRequestCollaboration ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
                                     name={isRequestCollaboration ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
                                     toolTip={isRequestCollaboration ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
                                     multiline={true}/>

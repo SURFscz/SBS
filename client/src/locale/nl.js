@@ -219,7 +219,6 @@ I18n.translations.nl = {
         enrollmentTooltip: "Bepaalt het proces waarmee<br/>leden toegang krijgen tot<br/>deze samenwerking",
         currentUserAdmin: "Do you want to an administrator of this collaboration?",
         currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
-        oneAdministratorIsRequired: "There has to be at least one administrator for a collaboration. Either add yourself or invite someone",
         message: "Bericht",
         messagePlaceholder: "Boodschap aan de beheerders van deze samenwerking",
         messageTooltip: "De boodschap nemen we op in de <br/>e-mail waarmee beheerders worden uitgenodigd.",
@@ -270,6 +269,7 @@ I18n.translations.nl = {
         },
         infoBlocks: "Dashboard {{name}}",
         searchPlaceHolder: "Zoek leden",
+        noMembers: "Samenwerking {{name}} heeft geen leden.",
         members: "Leden van {{name}}",
         member: {
             user__name: "Naam",

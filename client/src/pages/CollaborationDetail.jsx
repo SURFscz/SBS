@@ -499,16 +499,16 @@ class CollaborationDetail extends React.Component {
         const showAddMe = !addedMe && !alreadyMember && (user.admin || organisationAdmin);
 
         const adminClassName = isAdmin ? "with-button" : "";
-
+        const hasMembers = !isEmpty(members);
         return (
             <section className="members-search">
                 <div className="search">
-                    <input type="text"
+                    {hasMembers && <input type="text"
                            className={adminClassName}
                            onChange={this.searchMembers}
                            value={query}
-                           placeholder={I18n.t("collaborationDetail.searchPlaceHolder")}/>
-                    {<FontAwesomeIcon icon="search" className={adminClassName}/>}
+                           placeholder={I18n.t("collaborationDetail.searchPlaceHolder")}/>}
+                    {hasMembers && <FontAwesomeIcon icon="search" className={adminClassName}/>}
                     {showAddMe &&
                     <Button onClick={this.addMe}
                             txt={I18n.t("collaborationDetail.addMe")}/>
@@ -518,7 +518,8 @@ class CollaborationDetail extends React.Component {
                             txt={I18n.t("collaborationDetail.invite")}/>
                     }
                 </div>
-                {this.renderMemberTable(members, user, sorted, reverse, adminOfCollaboration)}
+                {hasMembers && this.renderMemberTable(members, user, sorted, reverse, adminOfCollaboration)}
+                {!hasMembers && <p>{I18n.t("collaborationDetail.noMembers", {name: originalCollaboration.name})}</p>}
             </section>
 
         );

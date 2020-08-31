@@ -219,7 +219,6 @@ I18n.translations.en = {
         enrollmentTooltip: "Determines the process<br/>through which members enroll at<br/>this collaboration",
         currentUserAdmin: "Do you want to an administrator of this collaboration?",
         currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
-        oneAdministratorIsRequired: "There has to be at least one administrator for a collaboration. Either add yourself or invite someone",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
         motivation: "Motivation",
@@ -270,6 +269,7 @@ I18n.translations.en = {
         },
         infoBlocks: "Dashboard {{name}}",
         searchPlaceHolder: "Search for members",
+        noMembers: "Collaboration {{name}} has no members.",
         members: "Members of {{name}}",
         member: {
             user__name: "Name",
