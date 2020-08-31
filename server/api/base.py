@@ -3,10 +3,12 @@ import json
 import logging
 import os
 import re
+import urllib.parse
+import uuid
 from functools import wraps
 from pathlib import Path
 
-from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
+from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context, redirect
 from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
@@ -18,13 +20,13 @@ from server.db.domain import ApiKey
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
-white_listing = ["health", "config", "info", "api/aup", "api/users/me", "api/collaborations/find_by_identifier",
-                 "/api/service_connection_requests/find_by_hash", "api/service_connection_requests/approve",
-                 "api/service_connection_requests/deny"]
+white_listing = ["health", "config", "info", "api/aup", "login", "api/users/redirect", "api/users/me",
+                 "api/collaborations/find_by_identifier", "/api/service_connection_requests/find_by_hash",
+                 "api/service_connection_requests/approve", "api/service_connection_requests/deny"]
 external_api_listing = ["api/collaborations", "api/collaborations_services"]
 
 
-def auth_filter(config):
+def auth_filter(app_config):
     url = current_request.base_url
 
     if "user" in session and "guest" in session["user"] and not session["user"]["guest"]:
@@ -35,6 +37,7 @@ def auth_filter(config):
     for u in white_listing:
         if u in url:
             is_whitelisted_url = True
+            session["destination_url"] = url
 
     is_external_api_url = False
     for u in external_api_listing:
@@ -42,7 +45,7 @@ def auth_filter(config):
             is_external_api_url = True
 
     auth = current_request.authorization
-    is_authorized_api_call = bool(auth and len(get_user(config, auth)) > 0)
+    is_authorized_api_call = bool(auth and len(get_user(app_config, auth)) > 0)
 
     if not (is_whitelisted_url or is_authorized_api_call):
         authorization_header = current_request.headers.get("Authorization")
@@ -56,7 +59,7 @@ def auth_filter(config):
 
     request_context.is_authorized_api_call = is_authorized_api_call
     if is_authorized_api_call:
-        request_context.api_user = get_user(config, auth)[0]
+        request_context.api_user = get_user(app_config, auth)[0]
 
 
 def query_param(key, required=True, default=None):
@@ -70,8 +73,9 @@ def replace_full_text_search_boolean_mode_chars(input_param):
     return re.sub("[\\W]", " ", input_param)
 
 
-def get_user(config, auth):
-    return list(filter(lambda user: user.name == auth.username and user.password == auth.password, config.api_users))
+def get_user(app_config, auth):
+    return list(
+        filter(lambda user: user.name == auth.username and user.password == auth.password, app_config.api_users))
 
 
 def ctx_logger(name=None):
@@ -162,3 +166,23 @@ def info():
         with open(str(file)) as f:
             return {"git": f.read()}, 200
     return {"git": "nope"}, 200
+
+
+@base_api.route("/login", strict_slashes=False)
+def login():
+    oidc_config = current_app.app_config.oidc
+    state = query_param("state")
+    # This is required as eduTeams can not redirect to a dynamic URI
+    session["original_destination"] = state
+    params = {
+        "state": state,
+        "client_id": oidc_config.client_id,
+        "nonce": str(uuid.uuid4()),
+        "response_mode": "query",
+        "response_type": "code",
+        "scope": "openid profile",
+        "redirect_uri": oidc_config.redirect_uri
+    }
+    args = urllib.parse.urlencode(params)
+    authorization_endpoint = f"{oidc_config.authorization_endpoint}?{args}"
+    return redirect(authorization_endpoint)

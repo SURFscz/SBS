@@ -449,7 +449,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
             "wiki_link": current_app.app_config.wiki_link
         }, collaboration, [administrator])
 
-    if current_user_admin or len(administrators) == 0:
+    if current_user_admin:
         admin_collaboration_membership = CollaborationMembership(role="admin", user_id=user.id,
                                                                  collaboration_id=collaboration.id,
                                                                  created_by=user.uid, updated_by=user.uid)

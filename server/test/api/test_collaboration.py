@@ -89,36 +89,20 @@ class TestCollaboration(AbstractTest):
         count = self._collaboration_membership_count(collaboration)
         self.assertEqual(1, count)
 
-    def test_collaboration_new_with_default_current_user_admin(self):
+    def test_collaboration_without_default_current_user_admin(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
         self.login("urn:john")
         collaboration = self.post("/api/collaborations",
                                   body={
                                       "name": "new_collaboration",
                                       "organisation_id": organisation_id,
-                                      # We leave this empty to enforce current user becomes admin
                                       "administrators": [],
                                       "short_name": "new_short_name",
                                       "current_user_admin": False
                                   }, with_basic_auth=False)
 
         count = self._collaboration_membership_count(collaboration)
-        self.assertEqual(1, count)
-
-    def test_create_collaboration_as_org_manager(self):
-        organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
-        self.login("urn:harry")
-        self.post("/api/collaborations", body={"name": "new_collaboration",
-                                               "organisation_id": organisation_id,
-                                               "administrators": [],
-                                               "short_name": "new_short_name",
-                                               "current_user_admin": False
-                                               }, with_basic_auth=False)
-        members = self.find_entity_by_name(Collaboration, "new_collaboration").collaboration_memberships
-
-        self.assertEqual(1, len(members))
-        self.assertEqual("admin", members[0].role)
-        self.assertEqual("urn:harry", members[0].user.uid)
+        self.assertEqual(0, count)
 
     @staticmethod
     def _collaboration_membership_count(collaboration):

@@ -21,6 +21,15 @@ voperson_application_uid: "voperson_application_uid"
 eduperson_principal_name: "eduperson_principal_name"
 eduperson_scoped_affiliation: "eduperson_scoped_affiliation"
 
+oidc:
+  client_id: sram
+  client_secret: secret
+  authorization_endpoint: http://localhost:9001/authorize
+  token_endpoint: http://localhost:9001/token
+  userinfo_endpoint: http://localhost:9001/userinfo
+  #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
+  redirect_uri: http://localhost:8080/api/users/redirect
+
 base_scope: "test.sbs.local"
 entitlement_group_namespace: "urn:example:sbs"
 collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"

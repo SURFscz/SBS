@@ -2,20 +2,23 @@
 import datetime
 import itertools
 import json
-import os
 import random
 import re
 import string
 import subprocess
 import tempfile
 import unicodedata
+import urllib.parse
 
-from flask import Blueprint, request as current_request, session, jsonify, current_app, redirect
+import requests
+from flask import Blueprint, current_app, redirect
+from flask import request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import Forbidden
 
-from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, ctx_logger
+from server.api.base import json_endpoint, query_param, ctx_logger
+from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin
 from server.auth.user_claims import add_user_claims, \
@@ -27,16 +30,6 @@ from server.db.domain import User, OrganisationMembership, CollaborationMembersh
 from server.db.models import update
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
-
-
-def _log_headers():
-    logger = ctx_logger("user")
-    for k, v in current_request.environ.items():
-        logger.debug(f"ENV {k} value {v}")
-    for k, v in current_request.headers.items():
-        logger.debug(f"Header {k} value {v}")
-    for k, v in os.environ.items():
-        logger.debug(f"OS environ {k} value {v}")
 
 
 def _store_user_in_session(user):
@@ -170,16 +163,59 @@ def _user_name(user):
     return user
 
 
-def _current_request_headers():
-    request_headers = current_request.environ.copy()
-    request_headers.update(current_request.headers)
-    return request_headers
+@user_api.route("/resume-session", strict_slashes=False)
+@json_endpoint
+def redirect():
+    logger = ctx_logger("oidc")
+
+    oidc_config = current_app.app_config.oidc
+    code = query_param("code", required=False, default=None)
+    if not code:
+        # This implies that we are the not actually in a redirect callback, but at the redirect from eduTeams
+        logger.debug("Redirect to login in resume-session to start OIDC flow")
+        state = session["original_destination"]
+        return redirect(f"/login?state={state}")
+
+    payload = {
+        "code": code,
+        "grant_type": "authorization_code",
+        "scope": "openid profile",
+        "redirect_uri": oidc_config.redirect_uri
+    }
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cache-Control": "no-cache",
+        "Accept": "application/json, application/json;charset=UTF-8"
+    }
+    response = requests.post(oidc_config.token_endpoint, data=urllib.parse.urlencode(payload),
+                             headers=headers, auth=(oidc_config.client_id, oidc_config.client_secret))
+    if response.status_code != 200:
+        error_msg = f"Server error: Token endpoint error (http {response.status_code}"
+        logger.error(error_msg)
+        return redirect("/error")
+
+    token_json = response.json()
+    access_token = token_json["access_token"]
+
+    headers = {
+        "Accept": "application/json, application/json;charset=UTF-8",
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    response = requests.get(oidc_config.userinfo_endpoint, headers=headers)
+    if response.status_code != 200:
+        error_msg = f"Server error: User info endpoint error (http {response.status_code}"
+        logger.error(error_msg)
+        return redirect("/error")
+
+    user_json = response.json()
 
 
 @user_api.route("/me", strict_slashes=False)
 @json_endpoint
 def me():
-    request_headers = _current_request_headers()
+    if "user" in session and not session["user"]["guest"]:
+        # TODO - here we assume that a user is already proviosend
     uid = get_user_uid(request_headers)
     if uid:
         users = User.query.filter(User.uid == uid).all()
