@@ -6,7 +6,6 @@ from flask import current_app
 from munch import munchify
 
 from server.api.user import generate_unique_username
-from server.auth.user_claims import claim_attribute_mapping
 from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User
 from server.test.abstract_test import AbstractTest
@@ -21,63 +20,27 @@ class TestUser(AbstractTest):
         self.assertEqual(user["guest"], True)
         self.assertEqual(user["admin"], False)
 
-    def test_provision_me_identity_header(self):
-        headers = {self.uid_header_name(): "uid:new",
-                   self.application_ui_header_name().upper(): "123456789",
-                   f"{current_app.app_config.oidc_prefix}EDUPERSON_PRINCIPAL_NAME": "john.doe"}
-        user = self.client.get("/api/users/me",
-                               headers=headers,
-                               environ_overrides=headers).json
-        self.assertEqual(user["guest"], False)
-        self.assertEqual(user["admin"], False)
-        self.assertEqual(user["uid"], "uid:new")
-        self.assertEqual(user["application_uid"], "123456789")
-        self.assertEqual(user["eduperson_principal_name"], "john.doe")
-        self.assertEqual(user["username"], "john.doe")
-
-    def test_provision_me_user_name(self):
-        headers = {self.uid_header_name(): "uid:new",
-                   self.application_ui_header_name().upper(): "123456789",
-                   f"{current_app.app_config.oidc_prefix}EDUPERSON_PRINCIPAL_NAME": "john.doe@example.com"}
-        user = self.client.get("/api/users/me",
-                               headers=headers,
-                               environ_overrides=headers).json
-        self.assertEqual(user["eduperson_principal_name"], "john.doe@example.com")
-        self.assertEqual(user["username"], "john.doe")
-
     def test_provision_me_generated_user_name(self):
-        headers = {self.uid_header_name(): "uid:new",
-                   self.application_ui_header_name().upper(): "123456789",
-                   f"{current_app.app_config.oidc_prefix}GIVEN_NAME": "mary",
-                   f"{current_app.app_config.oidc_prefix}FAMILY_NAME": "poppins"}
-        user = self.client.get("/api/users/me",
-                               headers=headers,
-                               environ_overrides=headers).json
-        self.assertIsNone(user.get("eduperson_principal_name"))
+        self.login("uid:new", user_info={"given_name": "mary", "family_name": "poppins"})
+        user = self.client.get("/api/users/me").json
+
         self.assertEqual(user["username"], "mpoppins")
 
     def test_me_existing_user(self):
-        user = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "urn:john"}).json
-        not_changed_user = self.client.get("/api/users/me",
-                                           environ_overrides={
-                                               self.uid_header_name(): "urn:john",
-                                               f"{current_app.app_config.oidc_prefix}NAME": "urn:john"
-                                           }).json
-        self.assertEqual(user["id"], not_changed_user["id"])
-
-        self.assertEqual(user["guest"], False)
-        self.assertEqual(user["uid"], "urn:john")
-
-        self.assertEqual(user["organisation_memberships"][0]["organisation"]["name"], uuc_name)
-        self.assertIsNotNone(user["collaboration_memberships"][0]["collaboration_id"], uuc_name)
+        self.login("urn:john")
+        user = self.client.get("/api/users/me", ).json
+        not_changed_user = self.client.get("/api/users/me").json
+        self.assertDictEqual(user, not_changed_user)
 
     def test_me_user_suspended(self):
         self.mark_user_suspended(john_name)
-        res = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "urn:john"})
+        self.login("urn:john")
+        res = self.client.get("/api/users/me")
         self.assertEqual(409, res.status_code)
 
     def test_me_user_with_suspend_notifactions(self):
-        res = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "urn:two_suspend"})
+        self.login("urn:two_suspend")
+        res = self.client.get("/api/users/me")
         self.assertEquals(True, res.json["successfully_activated"])
 
     def test_activate_by_organisation_admin(self):
@@ -165,20 +128,6 @@ class TestUser(AbstractTest):
         self.get("/api/users/attribute_aggregation", query_data={"edu_person_principal_name": "nope"},
                  response_status_code=404)
 
-    def test_error(self):
-        self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "uid"})
-        response = self.client.post("/api/users/error")
-        self.assertEqual(201, response.status_code)
-
-    def test_provisioning_with_diacritics(self):
-        headers = {}
-        for claim in claim_attribute_mapping():
-            key = "OIDC_CLAIM_" + next(iter(claim))
-            headers[key] = "Ã«Ã¤Ã¦Å¡"
-        headers["OIDC_CLAIM_CMUID"] = "urn.test"
-        user = self.client.get("api/users/me", headers=headers).json
-        self.assertEqual("ëäæš", user["email"])
-
     def test_update(self):
         roger = self.find_entity_by_name(User, roger_name)
 
@@ -248,45 +197,16 @@ class TestUser(AbstractTest):
         username = generate_unique_username(munchify({"given_name": "John", "family_name": "Doe"}), 1)
         self.assertEqual(14, len(username))
 
-    def test_provision_me_scoped_affiliation(self):
-        environ_overrides = {
-            self.uid_header_name(): "uid:new",
-            f"{current_app.app_config.oidc_prefix}EDUPERSON_SCOPED_AFFILIATION": "employee@surf.nl"
-        }
-        user = self.client.get("/api/users/me", environ_overrides=environ_overrides).json
-        self.assertEqual(user["schac_home_organisation"], "surf.nl")
-
-    def test_provision_me_scoped_affiliation_parse(self):
-        environ_overrides = {
-            self.uid_header_name(): "uid:new",
-            f"{current_app.app_config.oidc_prefix}EDUPERSON_SCOPED_AFFILIATION": "employee@bla.bla.surf.nl"
-        }
-        user = self.client.get("/api/users/me", environ_overrides=environ_overrides).json
-        self.assertEqual(user["schac_home_organisation"], "surf.nl")
-
-    def test_provision_me_scoped_affiliation_and_schac_home(self):
-        environ_overrides = {
-            self.uid_header_name(): "uid:new",
-            f"{current_app.app_config.oidc_prefix}EDUPERSON_SCOPED_AFFILIATION": "employee@bla.bla.surf.nl",
-            f"{current_app.app_config.oidc_prefix}SCHAC_HOME_ORGANISATION": "example.org"
-        }
-        user = self.client.get("/api/users/me", environ_overrides=environ_overrides).json
-        self.assertEqual(user["schac_home_organisation"], "example.org")
-
     def test_upgrade_super_account(self):
-        headers = {f"{current_app.app_config.oidc_prefix}EDUPERSON_PRINCIPAL_NAME": "mike_application_uid"}
-        res = self.client.get("/api/users/upgrade_super_user",
-                              environ_overrides=headers,
-                              headers=headers)
+        self.login("urn:mike")
+        res = self.client.get("/api/users/upgrade_super_user")
         self.assertEqual(302, res.status_code)
         self.assertEqual("http://localhost:3000", res.location)
 
-        mike = self.find_entity_by_name(User, mike_name)
+        mike = User.query.filter(User.uid == "urn:mike").one()
         self.assertEqual(True, mike.confirmed_super_user)
 
     def test_upgrade_super_account_forbidden(self):
-        headers = {f"{current_app.app_config.oidc_prefix}EDUPERSON_PRINCIPAL_NAME": "sarah_application_uid"}
-        res = self.client.get("/api/users/upgrade_super_user",
-                              environ_overrides=headers,
-                              headers=headers)
+        self.login("urn:sarah")
+        res = self.client.get("/api/users/upgrade_super_user")
         self.assertEqual(403, res.status_code)

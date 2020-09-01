@@ -4,6 +4,7 @@ import os
 from base64 import b64encode
 
 import requests
+import responses
 from flask import current_app
 from flask_testing import TestCase
 
@@ -55,23 +56,15 @@ class AbstractTest(TestCase):
     def find_entity_by_name(cls, name):
         return cls.query.filter(cls.name == name).one()
 
-    @staticmethod
-    def uid_header_name():
-        return current_app.app_config.oidc_prefix + current_app.app_config.oidc_id
-
-    @staticmethod
-    def application_ui_header_name():
-        return current_app.app_config.oidc_prefix + current_app.app_config.voperson_application_uid
-
-    def login(self, uid="urn:john", schac_home_organisation=None, extra_headers={}):
+    @responses.activate
+    def login(self, uid="urn:john", schac_home_organisation=None, user_info={}):
+        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
+                      json={"access_token": "some_token"}, status=200)
+        json_body = {"sub": uid, "schac_home_organization": schac_home_organisation}
+        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
+                      json={**json_body, **user_info}, status=200)
         with requests.Session():
-            headers = {self.uid_header_name(): uid}
-            if schac_home_organisation:
-                headers["OIDC_CLAIM_SCHAC_HOME_ORGANISATION"] = schac_home_organisation
-            headers = {**headers, **extra_headers}
-            self.client.get("/api/users/me",
-                            environ_overrides=headers,
-                            headers=headers)
+            self.client.get("/api/users/resume-session?code=123456")
 
     def get(self, url, query_data={}, response_status_code=200, with_basic_auth=True, headers={}):
         with requests.Session():

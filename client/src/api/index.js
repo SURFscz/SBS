@@ -98,6 +98,10 @@ export function config() {
 }
 
 //Users
+export function authorizationUrl() {
+    return fetchJson("/api/users/authorization");
+}
+
 export function me(config) {
     const headers = (config.local) ? {
         // "OIDC_CLAIM_cmuid": "urn:two_suspend",

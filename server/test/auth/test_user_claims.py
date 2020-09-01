@@ -1,28 +1,23 @@
 # -*- coding: future_fstrings -*-
+import unittest
 
-from flask import current_app
-
-from server.auth.user_claims import _get_value
-from server.test.abstract_test import AbstractTest
+from server.auth.user_claims import add_user_claims
+from server.db.domain import User
 
 
-class TestUserClaims(AbstractTest):
+class TestUserClaims(unittest.TestCase):
 
-    def test_iso_8859_to_utf8_conversion(self):
-        res = _get_value({"key": "VeÅ\x99ejnÃ©"}, "key")
-        self.assertEqual("Veřejné", res)
+    def test_add_user_claims(self):
+        user = User()
+        add_user_claims({}, "urn:johny", user)
+        self.assertEqual("urn:johny", user.name)
 
-    def test_iso_8859_to_utf8_conversion_with_none(self):
-        res = _get_value({"key": None}, "key")
-        self.assertIsNone(res)
+    def test_add_user_claims_affiliation(self):
+        user = User()
+        add_user_claims({"eduperson_scoped_affiliation": ["teacher@sub.uni.org"]}, "urn:johny", user)
+        self.assertEqual("uni.org", user.schac_home_organisation)
 
-    def test_encoding_bug(self):
-        res = _get_value({"key": "Ã«Ã¤Ã¦Å¡"}, "key")
-        self.assertEqual("ëäæš", res)
-
-    def test_local_config(self):
-        local = current_app.config["LOCAL"]
-        current_app.config["LOCAL"] = 1
-        res = _get_value({"key": "Ã«Ã¤Ã¦Å¡"}, "key")
-        self.assertEqual("Ã«Ã¤Ã¦Å¡", res)
-        current_app.config["LOCAL"] = local
+    def test_add_user_claims_user_name(self):
+        user = User()
+        add_user_claims({"eduperson_principal_name": "john@example.org"}, "urn:johny", user)
+        self.assertEqual("john", user.username)

@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 import unicodedata
 import urllib.parse
+import uuid
 
 import requests
 from flask import Blueprint, current_app, redirect
@@ -21,8 +22,7 @@ from server.api.base import json_endpoint, query_param, ctx_logger
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin
-from server.auth.user_claims import add_user_claims, \
-    get_user_uid, get_user_eppn
+from server.auth.user_claims import add_user_claims
 from server.cron.schedule import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -42,7 +42,6 @@ def _store_user_in_session(user):
         "email": user.email
     }
     session["user"] = {**session_data, **res}
-    return res
 
 
 def _user_query():
@@ -163,9 +162,31 @@ def _user_name(user):
     return user
 
 
+@user_api.route("/authorization", strict_slashes=False)
+def authorization():
+    oidc_config = current_app.app_config.oidc
+    state = query_param("state", required=False, default=None)
+    if state:
+        # This is required as eduTeams can not redirect to a dynamic URI
+        session["original_destination"] = state
+    else:
+        state = session["original_destination"]
+    params = {
+        "state": state,
+        "client_id": oidc_config.client_id,
+        "nonce": str(uuid.uuid4()),
+        "response_mode": "query",
+        "response_type": "code",
+        "scope": "openid profile",
+        "redirect_uri": oidc_config.redirect_uri
+    }
+    args = urllib.parse.urlencode(params)
+    authorization_endpoint = f"{oidc_config.authorization_endpoint}?{args}"
+    return {"authorization_endpoint": authorization_endpoint}, 200
+
+
 @user_api.route("/resume-session", strict_slashes=False)
-@json_endpoint
-def redirect():
+def resume_session():
     logger = ctx_logger("oidc")
 
     oidc_config = current_app.app_config.oidc
@@ -173,8 +194,8 @@ def redirect():
     if not code:
         # This implies that we are the not actually in a redirect callback, but at the redirect from eduTeams
         logger.debug("Redirect to login in resume-session to start OIDC flow")
-        state = session["original_destination"]
-        return redirect(f"/login?state={state}")
+        endpoint = authorization()["authorization_endpoint"]
+        return redirect(endpoint)
 
     payload = {
         "code": code,
@@ -208,65 +229,68 @@ def redirect():
         logger.error(error_msg)
         return redirect("/error")
 
-    user_json = response.json()
+    user_info_json = response.json()
+    uid = user_info_json["sub"]
+    users = User.query.filter(User.uid == uid).all()
+    user = users[0] if len(users) > 0 else None
+    logger = ctx_logger("user")
+    if not user:
+        user = User(uid=uid, created_by="system", updated_by="system")
+        add_user_claims(user_info_json, uid, user)
+        if not user.username:
+            user = _user_name(user)
+        # last_login_date is set later in this method
+        user.last_accessed_date = datetime.datetime.now()
+        logger.info(f"Provisioning new user {user.uid}")
+    else:
+        logger.info(f"Updating user {user.uid} with new claims / updated at")
+        add_user_claims(user_info_json, uid, user)
+
+        if not user.username:
+            user = _user_name(user)
+            logger.info(f"Updating user {user.uid} with new username {user.username}")
+
+    user.last_login_date = datetime.datetime.now()
+
+    user = db.session.merge(user)
+    db.session.commit()
+
+    _store_user_in_session(user)
+    location = session["original_destination"] if "original_destination" in session else current_app.app_config.base_url
+    return redirect(location)
 
 
 @user_api.route("/me", strict_slashes=False)
 @json_endpoint
 def me():
     if "user" in session and not session["user"]["guest"]:
-        # TODO - here we assume that a user is already proviosend
-    uid = get_user_uid(request_headers)
-    if uid:
-        users = User.query.filter(User.uid == uid).all()
-        user = users[0] if len(users) > 0 else None
-        logger = ctx_logger("user")
-        if not user:
-            user = User(uid=uid, created_by="system", updated_by="system")
-            add_user_claims(request_headers, uid, user)
-            if not user.username:
-                user = _user_name(user)
-            # last_login_date is set later in this method
-            user.last_accessed_date = datetime.datetime.now()
-            logger.info(f"Provisioning new user {user.uid}")
-        else:
-            if user.suspended:
-                logger.info(
-                    f"Returning error for user {uid} as user is suspended")
-                return {"error": f"user {uid} is suspended"}, 409
-            logger.info(f"Updating user {user.uid} with new claims / updated at")
-            add_user_claims(request_headers, uid, user)
+        user_from_session = session["user"]
+        user_from_db = User.query.get(user_from_session["id"])
+        if user_from_db.suspended:
+            logger = ctx_logger("user")
+            logger.info(
+                f"Returning error for user {user_from_db.uid} as user is suspended")
+            return {"error": f"user {user_from_db.uid} is suspended"}, 409
 
-            if not user.username:
-                user = _user_name(user)
-                logger.info(f"Updating user {user.uid} with new username {user.username}")
-
-        user.last_login_date = datetime.datetime.now()
-
-        suspend_notifications_count = len(user.suspend_notifications)
-
-        user.suspend_notifications = []
-        user = db.session.merge(user)
-        db.session.commit()
-
-        is_admin = _store_user_in_session(user)
-
-        for organisation_membership in user.organisation_memberships:
+        for organisation_membership in user_from_db.organisation_memberships:
             organisation_membership.organisation
-        for collaboration_membership in user.collaboration_memberships:
+        for collaboration_membership in user_from_db.collaboration_memberships:
             collaboration_membership.collaboration
-        user.aups
-        user = {**jsonify(user).json, **is_admin}
+        user_from_db.aups
+
+        user = {**jsonify(user_from_db).json, **user_from_session}
         user["needs_to_agree_with_aup"] = \
             current_app.app_config.aup.pdf not in list(map(lambda aup: aup["au_version"], user["aups"]))
-        user["successfully_activated"] = suspend_notifications_count > 0
+
+        if len(user_from_db.suspend_notifications) > 0:
+            user["successfully_activated"] = True
+            user_from_db.suspend_notifications = []
+            db.session.merge(user_from_db)
+            db.session.commit()
+
+        return user, 200
     else:
-        user = {"uid": "anonymous", "guest": True, "admin": False}
-        session["user"] = user
-
-    _log_headers()
-
-    return user, 200
+        return {"uid": "anonymous", "guest": True, "admin": False}, 200
 
 
 @user_api.route("/refresh", strict_slashes=False)
@@ -371,10 +395,8 @@ def attribute_aggregation():
 @user_api.route("/upgrade_super_user", methods=["GET"], strict_slashes=False)
 def upgrade_super_user():
     session.modified = True
-    request_headers = _current_request_headers()
 
-    eppn = get_user_eppn(request_headers)
-    user = User.query.filter(User.application_uid == eppn).one()
+    user = User.query.filter(User.id == current_user_id()).one()
 
     if not is_admin_user(user):
         raise Forbidden("Must be admin user")

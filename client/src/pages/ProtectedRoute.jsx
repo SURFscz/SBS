@@ -1,5 +1,6 @@
 import React from "react";
 import {Redirect, Route} from "react-router-dom";
+import {login} from "../utils/Login";
 
 export function ProtectedRoute({currentUser, Component, redirectToLogin = true, ...res}) {
     if (!currentUser.guest) {
@@ -9,7 +10,7 @@ export function ProtectedRoute({currentUser, Component, redirectToLogin = true, 
             <Route render={props => <Component user={currentUser} {...res} {...props}/>}/>;
 
     } else if (redirectToLogin) {
-        setTimeout(() => window.location.href = `/login?state=${encodeURIComponent(res.location.pathname)}`, 5);
+        setTimeout(login, 5);
         return null;
     }
     return <Redirect to={`/404?state=${encodeURIComponent(res.location.pathname)}`}/>;

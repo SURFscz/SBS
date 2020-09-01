@@ -11,5 +11,5 @@ class TestAup(AbstractTest):
     def test_agree(self):
         self.login()
         self.post("/api/aup/agree", with_basic_auth=False)
-        user = self.client.get("/api/users/me", environ_overrides={self.uid_header_name(): "urn:john"}).json
+        user = self.client.get("/api/users/me").json
         self.assertEqual(1, len(user["aups"]))

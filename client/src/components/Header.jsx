@@ -10,6 +10,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserProfile from "./UserProfile";
 import ReactTooltip from "react-tooltip";
 import {getParameterByName} from "../utils/QueryParameters";
+import {login, logout} from "../utils/Login";
 
 export default class Header extends React.PureComponent {
 
@@ -40,21 +41,6 @@ export default class Header extends React.PureComponent {
 
     renderDropDown = currentUser => this.state.dropDownActive ? <UserProfile currentUser={currentUser}/> : null;
 
-    login = e => {
-        stopEvent(e);
-        const state = getParameterByName("state", window.location.search);
-        const guid = pseudoGuid();
-        const queryParameter = isEmpty(state) ? `?guid=${guid}` : `?guid=${guid}&state=${encodeURIComponent(state)}`;
-        window.location.href = `/login${queryParameter}`;
-    };
-
-    logout = e => {
-        stopEvent(e);
-        const baseUrl = this.props.config.base_url;
-        const guid = pseudoGuid();
-        window.location.href = `/redirect_uri?logout=${baseUrl}&guid=${guid}`;
-    };
-
     render() {
         const {currentUser, impersonator} = this.props;
         const displayLogin = currentUser.guest;
@@ -66,10 +52,10 @@ export default class Header extends React.PureComponent {
                     <h1 className="title first">{I18n.t("header.title")}</h1>
                     <ul className="links">
                         {displayLogin && <li className="login">
-                            <a href="/login" onClick={this.login}>{I18n.t("header.links.login")}</a>
+                            <a href="/login" onClick={login}>{I18n.t("header.links.login")}</a>
                         </li>}
                         {!displayLogin && <li className="login">
-                            <a href="/logout" onClick={this.logout}>{I18n.t("header.links.logout")}</a>
+                            <a href="/logout" onClick={logout}>{I18n.t("header.links.logout")}</a>
                         </li>}
 
                         {impersonator && <li className="impersonator border-left">
