@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import CheckBox from "../components/CheckBox";
 import {isEmpty, pseudoGuid} from "../utils/Utils";
 import {setFlash} from "../utils/Flash";
+import {login} from "../utils/Login";
 
 class Registration extends React.Component {
 
@@ -74,7 +75,7 @@ class Registration extends React.Component {
             {this.state.collaborationName &&
             <Button className="start" onClick={() => {
                 const currentUrl = `${this.props.location.pathname}?collaboration=${this.props.collaboration}`;
-                window.location.href = `/login?state=${encodeURIComponent(currentUrl)}&guid=${pseudoGuid()}`;
+                login(null, currentUrl);
             }} txt={I18n.t("registration.start")}/>
             }
         </div>);

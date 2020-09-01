@@ -3,12 +3,10 @@ import json
 import logging
 import os
 import re
-import urllib.parse
-import uuid
 from functools import wraps
 from pathlib import Path
 
-from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context, redirect
+from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
@@ -20,9 +18,10 @@ from server.db.domain import ApiKey
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
-white_listing = ["health", "config", "info", "api/aup", "login", "api/users/redirect", "api/users/me",
-                 "api/collaborations/find_by_identifier", "/api/service_connection_requests/find_by_hash",
-                 "api/service_connection_requests/approve", "api/service_connection_requests/deny"]
+white_listing = ["health", "config", "info", "api/users/authorization", "api/aup", "api/users/resume-session",
+                 "api/users/me", "api/collaborations/find_by_identifier",
+                 "api/service_connection_requests/find_by_hash", "api/service_connection_requests/approve",
+                 "api/service_connection_requests/deny"]
 external_api_listing = ["api/collaborations", "api/collaborations_services"]
 
 
@@ -166,23 +165,3 @@ def info():
         with open(str(file)) as f:
             return {"git": f.read()}, 200
     return {"git": "nope"}, 200
-
-
-@base_api.route("/login", strict_slashes=False)
-def login():
-    oidc_config = current_app.app_config.oidc
-    state = query_param("state")
-    # This is required as eduTeams can not redirect to a dynamic URI
-    session["original_destination"] = state
-    params = {
-        "state": state,
-        "client_id": oidc_config.client_id,
-        "nonce": str(uuid.uuid4()),
-        "response_mode": "query",
-        "response_type": "code",
-        "scope": "openid profile",
-        "redirect_uri": oidc_config.redirect_uri
-    }
-    args = urllib.parse.urlencode(params)
-    authorization_endpoint = f"{oidc_config.authorization_endpoint}?{args}"
-    return redirect(authorization_endpoint)
