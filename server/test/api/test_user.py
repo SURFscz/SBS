@@ -1,16 +1,13 @@
 # -*- coding: future_fstrings -*-
 import datetime
-import uuid
+from urllib import parse
 
+import responses
 from flask import current_app
-from munch import munchify
 
-from server.api.user import generate_unique_username
-from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, mike_name, \
-    uva_research_name
+from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name
 
 
 class TestUser(AbstractTest):
@@ -183,20 +180,6 @@ class TestUser(AbstractTest):
         res = self.put("/api/users", body=body)
         self.assertTrue(res["ssh_key"].startswith("---- BEGIN SSH2 PUBLIC KEY ----"))
 
-    def test_generate_unique_username(self):
-        # we don't want this in the normal seed
-        for username in ["jdoe", "jdoe2", "cdoemanchi", "cdoemanchi2", "cdoemanchi3", "u", "u2"]:
-            db.session.merge(User(uid=str(uuid.uuid4()), username=username, created_by="test", updated_by="test",
-                                  name="name"))
-        db.session.commit()
-        names = [("John2", "Doe,"), ("Cinderella!", "Doemanchinice"), (None, "髙橋 大"), ("påré", "ÄÄ")]
-        short_names = [generate_unique_username(munchify({"given_name": n[0], "family_name": n[1]})) for n in names]
-        self.assertListEqual(["jdoe3", "cdoemanchi4", "u3", "paa"], short_names)
-
-    def test_generate_unique_username_random(self):
-        username = generate_unique_username(munchify({"given_name": "John", "family_name": "Doe"}), 1)
-        self.assertEqual(14, len(username))
-
     def test_upgrade_super_account(self):
         self.login("urn:mike")
         res = self.client.get("/api/users/upgrade_super_user")
@@ -210,3 +193,33 @@ class TestUser(AbstractTest):
         self.login("urn:sarah")
         res = self.client.get("/api/users/upgrade_super_user")
         self.assertEqual(403, res.status_code)
+
+    def test_authorization(self):
+        res = self.get("/api/users/authorization", query_data={"state": "http://localhost/redirect"})
+        self.assertTrue(res["authorization_endpoint"].startswith("http://localhost:9001/authorize?state="))
+
+        res = self.get("/api/users/authorization")
+        query_dict = dict(parse.parse_qs(parse.urlsplit(res["authorization_endpoint"]).query))
+        self.assertListEqual(["http://localhost/redirect"], query_dict["state"])
+
+    def test_resume_session_dead_end(self):
+        res = self.get("/api/users/resume-session", response_status_code=302)
+        query_dict = dict(parse.parse_qs(parse.urlsplit(res.location).query))
+        self.assertListEqual(["http://localhost:3000"], query_dict["state"])
+
+    @responses.activate
+    def test_resume_session_token_error(self):
+        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint, status=500)
+        res = self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=302)
+        self.assertEqual("http://localhost:3000/error", res.location)
+
+    @responses.activate
+    def test_resume_session_user_info_error(self):
+        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
+                      json={"access_token": "some_token"}, status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint, status=500)
+        res = self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=302)
+        self.assertEqual("http://localhost:3000/error", res.location)
+
+    def test_error(self):
+        self.post("/api/users/error", body={"error":"403"}, response_status_code=201)

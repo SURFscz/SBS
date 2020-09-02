@@ -4,12 +4,11 @@ import {Link, NavLink} from "react-router-dom";
 // import logo from "../images/surflogo.png";
 import logo from "../images/logo-surf-orange.svg";
 import "./Header.scss";
-import {isEmpty, pseudoGuid, stopEvent} from "../utils/Utils";
+import {stopEvent} from "../utils/Utils";
 import LanguageSelector from "./LanguageSelector";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserProfile from "./UserProfile";
 import ReactTooltip from "react-tooltip";
-import {getParameterByName} from "../utils/QueryParameters";
 import {login, logout} from "../utils/Login";
 
 export default class Header extends React.PureComponent {
@@ -62,7 +61,8 @@ export default class Header extends React.PureComponent {
                             <NavLink to="/impersonate">
                             <span data-tip data-for="impersonator">
                                 <FontAwesomeIcon icon="user-secret"/></span>
-                                <ReactTooltip id="impersonator" type="light" effect="solid" data-html={true} place="bottom">
+                                <ReactTooltip id="impersonator" type="light" effect="solid" data-html={true}
+                                              place="bottom">
                                     <p dangerouslySetInnerHTML={{
                                         __html: I18n.t("header.impersonator", {
                                             currentUser: currentUser.name,

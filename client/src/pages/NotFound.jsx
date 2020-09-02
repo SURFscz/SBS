@@ -1,8 +1,6 @@
 import React from "react";
 import I18n from "i18n-js";
 import "./NotFound.scss";
-import {isEmpty, pseudoGuid, stopEvent} from "../utils/Utils";
-import {getParameterByName} from "../utils/QueryParameters";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Planet} from 'react-kawaii'
 import {login} from "../utils/Login";

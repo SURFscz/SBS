@@ -98,26 +98,18 @@ export function config() {
 }
 
 //Users
-export function authorizationUrl() {
-    return fetchJson("/api/users/authorization");
+export function authorizationUrl(state) {
+    return fetchJson(`/api/users/authorization?state=${encodeURIComponent(state)}`);
 }
 
 export function me(config) {
-    const headers = (config.local) ? {
-        // "OIDC_CLAIM_cmuid": "urn:two_suspend",
-        "OIDC_CLAIM_sub": "urn:john",
-        // "OIDC_CLAIM_sub": "urn:betty",
-        "OIDC_CLAIM_Nickname": "jëhny",
-        "OIDC_CLAIM_Edumember-Is-Member-Of": "Release 0.6:CO:members:all,Release 0.6:CO:members:active",
-        "OIDC_CLAIM_Eduperson-Affiliation": "librarywalkin",
-        "OIDC_CLAIM_Eduperson-Entitlement": "some-entitlement-test,second-entitlement",
-        // "OIDC_CLAIM_Schac-Home-Organisation": "sram.lab.example.org",
-        "OIDC_CLAIM_Schac-Home-Organisation": "schac_home_organisation_uuc",
-        "OIDC_CLAIM_Family-Name": "Doe",
-        "OIDC_CLAIM_Given-Name": "John",
-        "OIDC_CLAIM_Email": "jdoe@example.org"
-    } : {};
-    return fetchJson("/api/users/me", {}, headers, false);
+    if (config.local) {
+        const sub = "urn:john";
+        //Need to mock a login
+        return postPutJson("/api/mock", {sub}, "PUT").then(() => fetchJson("/api/users/me"));
+    } else {
+        return fetchJson("/api/users/me");
+    }
 }
 
 export function refreshUser() {

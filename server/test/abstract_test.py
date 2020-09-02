@@ -71,7 +71,7 @@ class AbstractTest(TestCase):
             response = self.client.get(url, headers={**BASIC_AUTH_HEADER, **headers} if with_basic_auth else headers,
                                        query_string=query_data)
             self.assertEqual(response_status_code, response.status_code, msg=str(response.json))
-            return response.json if hasattr(response, "json") else None
+            return response if response_status_code == 302 else response.json if hasattr(response, "json") else None
 
     def post(self, url, body={}, headers={}, response_status_code=201, with_basic_auth=True):
         return self._do_call(body, self.client.post, headers, response_status_code, url, with_basic_auth)
