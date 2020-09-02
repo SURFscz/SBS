@@ -28,6 +28,7 @@ from server.api.group_members import group_members_api
 from server.api.invitation import invitations_api
 from server.api.ipaddress import ipaddress_api
 from server.api.join_request import join_request_api
+from server.api.mock_user import mock_user_api
 from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
 from server.api.organisation_membership import organisation_membership_api
@@ -115,6 +116,7 @@ app.register_blueprint(audit_log_api)
 app.register_blueprint(ipaddress_api)
 app.register_blueprint(system_api)
 app.register_blueprint(organisations_services_api)
+app.register_blueprint(mock_user_api)
 
 app.register_error_handler(404, page_not_found)
 
@@ -157,7 +159,7 @@ with app.app_context():
 
 db_migrations(config.database.uri)
 
-from server.api.user import generate_unique_username  # noqa: E402
+from server.auth.user_claims import generate_unique_username  # noqa: E402
 from server.db.domain import User  # noqa: E402
 
 if not test:

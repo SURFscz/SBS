@@ -5,7 +5,7 @@ import I18n from "i18n-js";
 import "./Registration.scss";
 import Button from "../components/Button";
 import CheckBox from "../components/CheckBox";
-import {isEmpty, pseudoGuid} from "../utils/Utils";
+import {isEmpty} from "../utils/Utils";
 import {setFlash} from "../utils/Flash";
 import {login} from "../utils/Login";
 
@@ -111,7 +111,8 @@ class Registration extends React.Component {
                        placeholder={I18n.t("registration.step2.referencePlaceholder", {collaboration: collaborationName})}
                        onChange={e => this.setState({reference: e.target.value})}/>
             </section>
-            <section className={`form-element ${((acceptedTerms || !collaborationAup) && personalDataConfirmation) ? "" : "invalid"}`}>
+            <section
+                className={`form-element ${((acceptedTerms || !collaborationAup) && personalDataConfirmation) ? "" : "invalid"}`}>
                 <CheckBox name="personalDataConfirmation"
                           className={`checkbox ${!personalDataConfirmation ? "required" : ""}`}
                           value={personalDataConfirmation}
@@ -155,11 +156,15 @@ class Registration extends React.Component {
             <div className="step-form 3">
                 <p className="form-title">{I18n.t("registration.formEndedTitle", {collaboration: collaborationName})}</p>
                 <p className="info"
-                   dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.info",
-                           {collaboration: encodeURIComponent(collaborationName)})}}/>
+                   dangerouslySetInnerHTML={{
+                       __html: I18n.t("registration.step3.info",
+                           {collaboration: encodeURIComponent(collaborationName)})
+                   }}/>
                 {adminEmail && <p className="contact"
-                                  dangerouslySetInnerHTML={{__html: I18n.t("registration.step3.contact",
-                                          {mail: adminEmail})}}/>}
+                                  dangerouslySetInnerHTML={{
+                                      __html: I18n.t("registration.step3.contact",
+                                          {mail: adminEmail})
+                                  }}/>}
             </div>
         );
     };
