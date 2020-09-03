@@ -27,8 +27,10 @@ polyfill();
     if (isEmpty(parameterByName)) {
         parameterByName = navigator.language.toLowerCase().substring(0, 2);
     }
-
-    I18n.locale = parameterByName || "en";
+    if (["nl", "en"].indexOf(parameterByName) === -1) {
+        parameterByName = "en";
+    }
+    I18n.locale = parameterByName;
     moment.locale(I18n.locale);
 
 })();

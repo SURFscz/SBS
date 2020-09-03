@@ -373,8 +373,8 @@ class App extends React.Component {
 
                             <Route render={props => <NotFound currentUser={currentUser} {...props}/>}/>
                         </Switch>
-                        <Footer/>
                     </div>
+                    <Footer/>
                 </div>
             </Router>
 

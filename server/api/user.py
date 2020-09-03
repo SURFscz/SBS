@@ -377,6 +377,12 @@ def upgrade_super_user():
     return response
 
 
+@user_api.route("/logout", strict_slashes=False)
+def logout():
+    session.clear()
+    return {}, 200
+
+
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def error():
