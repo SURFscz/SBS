@@ -196,7 +196,7 @@ class TestUser(AbstractTest):
 
     def test_authorization(self):
         res = self.get("/api/users/authorization", query_data={"state": "http://localhost/redirect"})
-        self.assertTrue(res["authorization_endpoint"].startswith("http://localhost:9001/authorize?state="))
+        self.assertTrue("authorization_endpoint" in res)
 
         res = self.get("/api/users/authorization")
         query_dict = dict(parse.parse_qs(parse.urlsplit(res["authorization_endpoint"]).query))
