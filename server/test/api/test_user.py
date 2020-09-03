@@ -221,5 +221,11 @@ class TestUser(AbstractTest):
         res = self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=302)
         self.assertEqual("http://localhost:3000/error", res.location)
 
+    def test_logout(self):
+        self.login("urn:john");
+        self.get("/api/users/logout", with_basic_auth=False);
+        res = self.get("/api/users/me", with_basic_auth=False);
+        self.assertTrue(res["guest"])
+
     def test_error(self):
-        self.post("/api/users/error", body={"error":"403"}, response_status_code=201)
+        self.post("/api/users/error", body={"error": "403"}, response_status_code=201)

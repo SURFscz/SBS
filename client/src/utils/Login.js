@@ -1,6 +1,6 @@
-import {pseudoGuid, stopEvent} from "./Utils";
+import {stopEvent} from "./Utils";
 import {getParameterByName} from "./QueryParameters";
-import {authorizationUrl} from "../api";
+import {authorizationUrl, logoutUser} from "../api";
 
 export function login(e, currentUrl = window.location.href) {
     stopEvent(e);
@@ -12,8 +12,6 @@ export function login(e, currentUrl = window.location.href) {
 
 export function logout(e) {
     stopEvent(e);
-    const baseUrl = this.props.config.base_url;
-    const guid = pseudoGuid();
-    window.location.href = `/redirect_uri?logout=${baseUrl}&guid=${guid}`;
+    logoutUser().then(() => window.location.href = "/landing")
 }
 

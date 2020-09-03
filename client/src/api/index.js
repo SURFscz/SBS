@@ -103,7 +103,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local) {
+    if (config.local && true) {
         const sub = "urn:john";
         //Need to mock a login
         return postPutJson("/api/mock", {sub}, "PUT").then(() => fetchJson("/api/users/me"));
@@ -142,6 +142,10 @@ export function activateUserForCollaboration(collaborationId, organisationId, us
 
 export function activateUserForOrganisation(organisationId, userId) {
     return postPutJson("/api/users/activate", {organisation_id: organisationId, user_id: userId}, "put");
+}
+
+export function logoutUser() {
+    return fetchJson("/api/users/logout");
 }
 
 //Services
