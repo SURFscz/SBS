@@ -103,12 +103,14 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && true) {
-        const sub = "urn:john";
+    if (config.local && false) {
+        let sub = "urn:john";
+        //sub = "urn:suspended";
         //Need to mock a login
-        return postPutJson("/api/mock", {sub}, "PUT").then(() => fetchJson("/api/users/me"));
+        return postPutJson("/api/mock", {sub}, "PUT")
+            .then(() => fetchJson("/api/users/me",{},{}, false));
     } else {
-        return fetchJson("/api/users/me");
+        return fetchJson("/api/users/me",{},{}, false);
     }
 }
 

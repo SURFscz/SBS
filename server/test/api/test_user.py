@@ -222,9 +222,9 @@ class TestUser(AbstractTest):
         self.assertEqual("http://localhost:3000/error", res.location)
 
     def test_logout(self):
-        self.login("urn:john");
-        self.get("/api/users/logout", with_basic_auth=False);
-        res = self.get("/api/users/me", with_basic_auth=False);
+        self.login("urn:john")
+        self.get("/api/users/logout", with_basic_auth=False)
+        res = self.get("/api/users/me", with_basic_auth=False)
         self.assertTrue(res["guest"])
 
     def test_error(self):

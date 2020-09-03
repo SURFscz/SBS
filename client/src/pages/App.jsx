@@ -125,6 +125,7 @@ class App extends React.Component {
                         this.handleBackendDown();
                     }
                 }).catch(e => {
+                    debugger;
                     if (e.response && e.response.status === 409) {
                         this.setState({
                             currentUser: {"uid": "anonymous", "guest": true, "admin": false},
