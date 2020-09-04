@@ -24,8 +24,8 @@
         }
 
         &:not(:first-child):not(:last-child) {
-            border-left: 1px $primary-green solid;
-            border-right: 1px $primary-green solid;
+            border-left: 1px darken($primary-orange, 10%) solid;
+            border-right: 1px darken($primary-orange, 10%) solid;
         }
 
         a {
@@ -34,7 +34,7 @@
             text-decoration: none;
 
             &:hover {
-                color: darken($primary-green, 10%);
+                color: darken($primary-orange, 10%);
 
             }
         }
@@ -43,7 +43,7 @@
             background-color: $primary-orange;
 
             &:hover {
-                background-color: darken($primary-green, 10%);
+                background-color: darken($primary-orange, 10%);
 
             }
 
