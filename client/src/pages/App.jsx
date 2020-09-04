@@ -117,7 +117,8 @@ class App extends React.Component {
             config().then(res => {
                 this.setState({config: res}, () => me(res).then(currentUser => {
                     if (currentUser && currentUser.uid) {
-                        this.setState({currentUser: this.markUserAdmin(currentUser), loading: false});
+                        const user = this.markUserAdmin(currentUser);
+                        this.setState({currentUser: user, loading: false});
                         if (currentUser.successfully_activated) {
                             setFlash(I18n.t("login.successfullyActivated"))
                         }

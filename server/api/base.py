@@ -22,7 +22,7 @@ white_listing = ["health", "config", "info", "api/users/authorization", "api/aup
                  "api/users/me", "api/collaborations/find_by_identifier",
                  "api/service_connection_requests/find_by_hash", "api/service_connection_requests/approve",
                  "api/service_connection_requests/deny", "/api/mock"]
-external_api_listing = ["api/collaborations", "api/collaborations_services"]
+external_api_listing = ["api/collaborations/v1", "api/collaborations_services/v1", "api/invitations/v1"]
 
 
 def auth_filter(app_config):
