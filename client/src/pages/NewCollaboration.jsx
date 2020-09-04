@@ -16,7 +16,6 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
-import {collaborationAccessTypes} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import CheckBox from "../components/CheckBox";
@@ -26,23 +25,16 @@ class NewCollaboration extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.accessTypeOptions = collaborationAccessTypes.map(type => ({
-            value: type,
-            label: I18n.t(`accessTypes.${type}`)
-        }));
         this.state = {
             name: "",
             short_name: "",
             description: "",
-            access_type: this.accessTypeOptions[0].value,
             administrators: [],
             message: "",
             email: "",
             accepted_user_policy: "",
             services_restricted: false,
             disable_join_requests: false,
-            enrollment: "",
-            status: "",
             required: ["name", "short_name", "organisation"],
             alreadyExists: {},
             organisation: {},
@@ -128,13 +120,13 @@ class NewCollaboration extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {
-                name, short_name, description, access_type, enrollment,
+                name, short_name, description,
                 administrators, message, accepted_user_policy, organisation, isRequestCollaboration,
                 services_restricted, disable_join_requests, current_user_admin
             } = this.state;
             const promise = isRequestCollaboration ? requestCollaboration : createCollaboration;
             promise({
-                name, short_name, description, enrollment, access_type,
+                name, short_name, description,
                 administrators, message, accepted_user_policy, organisation_id: organisation.value,
                 services_restricted, disable_join_requests, current_user_admin
             }).then(res => {
@@ -278,18 +270,6 @@ class NewCollaboration extends React.Component {
                                     placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
                                     name={I18n.t("collaboration.accepted_user_policy")}/>
 
-                        {/*<InputField value={enrollment}*/}
-                        {/*            onChange={e => this.setState({enrollment: e.target.value})}*/}
-                        {/*            placeholder={I18n.t("collaboration.enrollmentPlaceholder")}*/}
-                        {/*            toolTip={I18n.t("collaboration.enrollmentTooltip")}*/}
-                        {/*            name={I18n.t("collaboration.enrollment")}/>*/}
-
-                        {/*<SelectField value={this.accessTypeOptions.find(option => option.value === access_type)}*/}
-                        {/*             options={this.accessTypeOptions}*/}
-                        {/*             name={I18n.t("collaboration.access_type")}*/}
-                        {/*             placeholder={I18n.t("collaboration.accessTypePlaceholder")}*/}
-                        {/*             onChange={selectedOption => this.setState({access_type: selectedOption ? selectedOption.value : null})}*/}
-                        {/*/>*/}
                         {!isRequestCollaboration && <CheckBox name="disable_join_requests"
                                                               value={disable_join_requests}
                                                               info={I18n.t("collaboration.disableJoinRequests")}

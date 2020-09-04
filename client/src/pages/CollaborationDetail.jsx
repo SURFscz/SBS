@@ -20,7 +20,7 @@ import I18n from "i18n-js";
 import moment from "moment";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import InputField from "../components/InputField";
-import {collaborationAccessTypes, collaborationRoles} from "../forms/constants";
+import {collaborationRoles} from "../forms/constants";
 import Button from "../components/Button";
 import {setFlash} from "../utils/Flash";
 import Select from "react-select";
@@ -37,10 +37,6 @@ class CollaborationDetail extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.accessTypeOptions = collaborationAccessTypes.map(type => ({
-            value: type,
-            label: I18n.t(`accessTypes.${type}`)
-        }));
         this.roleOptions = collaborationRoles.map(role => ({
             value: role,
             label: I18n.t(`profile.${role}`)
@@ -52,11 +48,9 @@ class CollaborationDetail extends React.Component {
             short_name: "",
             description: "",
             accepted_user_policy: "",
-            access_type: "",
             identifier: "",
             disable_join_requests: false,
             services_restricted: false,
-            enrollment: "",
             members: [],
             filteredMembers: [],
             required: ["name", "short_name"],
@@ -504,10 +498,10 @@ class CollaborationDetail extends React.Component {
             <section className="members-search">
                 <div className="search">
                     {hasMembers && <input type="text"
-                           className={adminClassName}
-                           onChange={this.searchMembers}
-                           value={query}
-                           placeholder={I18n.t("collaborationDetail.searchPlaceHolder")}/>}
+                                          className={adminClassName}
+                                          onChange={this.searchMembers}
+                                          value={query}
+                                          placeholder={I18n.t("collaborationDetail.searchPlaceHolder")}/>}
                     {hasMembers && <FontAwesomeIcon icon="search" className={adminClassName}/>}
                     {showAddMe &&
                     <Button onClick={this.addMe}
@@ -525,8 +519,8 @@ class CollaborationDetail extends React.Component {
         );
     };
 
-    collaborationDetails = (name, short_name, alreadyExists, initial, description, accepted_user_policy, enrollment,
-                            access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
+    collaborationDetails = (name, short_name, alreadyExists, initial, description, accepted_user_policy,
+                            identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
                             config, disable_join_requests, services_restricted) => {
         const joinRequestUrl = `${config.base_url}/registration?collaboration=${encodeURIComponent(originalCollaboration.name)}`;
         const {user} = this.props;
@@ -639,7 +633,7 @@ class CollaborationDetail extends React.Component {
 
     renderDetails = (isAdmin, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
                      leavePage, originalCollaboration, filteredMembers, user, sorted, reverse, query, adminOfCollaboration,
-                     name, short_name, alreadyExists, initial, description, accepted_user_policy, enrollment, access_type,
+                     name, short_name, alreadyExists, initial, description, accepted_user_policy,
                      identifier, organisation, disabledSubmit, config, disable_join_requests, services_restricted, addedMe) => (
         <div>
             {isAdmin && <section>
@@ -664,14 +658,14 @@ class CollaborationDetail extends React.Component {
                 <p className="title-header">{I18n.t("collaborationDetail.title", {name: originalCollaboration.name})}</p>
             </div>
             {this.collaborationDetails(name, short_name, alreadyExists, initial, description, accepted_user_policy,
-                enrollment, access_type, identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
+                identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
                 config, disable_join_requests, services_restricted)}
         </div>);
 
     render() {
         const {
-            originalCollaboration, name, short_name, description, accepted_user_policy, access_type, initial, alreadyExists,
-            identifier, enrollment, filteredMembers, query, disable_join_requests, services_restricted,
+            originalCollaboration, name, short_name, description, accepted_user_policy, initial, alreadyExists,
+            identifier, filteredMembers, query, disable_join_requests, services_restricted,
             confirmationDialogOpen, confirmationDialogAction, confirmationQuestion, cancelDialogAction, leavePage, sorted, reverse,
             adminOfCollaboration, auditLogs, addedMe
         } = this.state;
@@ -694,7 +688,7 @@ class CollaborationDetail extends React.Component {
                         {this.renderDetails(isAdmin, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
                             confirmationQuestion, leavePage, originalCollaboration, filteredMembers, user, sorted, reverse, query,
                             adminOfCollaboration, name, short_name, alreadyExists, initial, description, accepted_user_policy,
-                            enrollment, access_type, identifier, organisation, disabledSubmit, config, disable_join_requests,
+                            identifier, organisation, disabledSubmit, config, disable_join_requests,
                             services_restricted, addedMe)}
                     </div>
                     {isAdmin && <div label="history">

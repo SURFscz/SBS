@@ -18,7 +18,6 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty} from "../utils/Utils";
 import SelectField from "../components/SelectField";
-import {serviceStatuses} from "../forms/constants";
 import moment from "moment";
 import {validEmailRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
@@ -32,10 +31,6 @@ class Service extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.statusOptions = serviceStatuses.map(type => ({
-            value: type,
-            label: I18n.t(`service.status.${type}`)
-        }));
         this.state = this.initialState();
     }
 
@@ -56,7 +51,6 @@ class Service extends React.Component {
         allowed_organisations: [],
         organisations: [],
         contact_email: "",
-        status: this.statusOptions[0].value,
         ip_networks: [],
         required: ["name", "entity_id"],
         alreadyExists: {},

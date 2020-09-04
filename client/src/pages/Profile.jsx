@@ -33,9 +33,6 @@ class Profile extends React.Component {
             fileInputKey: new Date().getMilliseconds(),
             convertSSHKey: true,
             ssh_key: user.ssh_key || "",
-            totp_key: user.totp_key || "",
-            tiqr_key: user.tiqr_key || "",
-            ubi_key: user.ubi_key || "",
             id: user.id,
             auditLogs: {"audit_logs": []}
         };
