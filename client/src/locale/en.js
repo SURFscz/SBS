@@ -178,6 +178,7 @@ I18n.translations.en = {
         dashboardAdmin: "Admin dashboard for my Collaborations",
         dashboardAdminTooltip: "This is an aggregated view<br/>of all collaborations where<br/>you are one of the administrators.",
         title: "My Collaborations",
+        noCollaborations: "You are not a member of any collaboration",
         requests: "Join Requests",
         groups: "Groups",
         invitations: "Invitations",
@@ -287,6 +288,7 @@ I18n.translations.en = {
     organisations: {
         dashboard: "Dashboard",
         title: "My Organisations",
+        noOrganisations: "You are not a member of any organisation",
         members: "Members",
         collaborations: "Collaborations",
         invitations: "Invitations",
