@@ -166,10 +166,11 @@ def resume_session():
         endpoint = authorization()[0]["authorization_endpoint"]
         return redirect(endpoint)
 
+    scopes = " ".join(oidc_config.scopes)
     payload = {
         "code": code,
         "grant_type": "authorization_code",
-        "scope": "openid profile",
+        "scope": scopes,
         "redirect_uri": oidc_config.redirect_uri
     }
     headers = {

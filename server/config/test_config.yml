@@ -22,6 +22,20 @@ oidc:
   userinfo_endpoint: http://localhost:9001/userinfo
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
   redirect_uri: http://localhost:8080/api/users/resume-session
+  scopes:
+    - profile
+    - eduperson_scoped_affiliation
+    - voperson_external_affiliation
+    - email
+    - ssh_public_key
+    - eduperson_orcid
+    - uid
+    - voperson_external_id
+    - eduperson_entitlement
+    - eduperon_assurance
+    - openid
+    - eduperson_principal_name
+    - voperson_id
 
 base_scope: "test.sbs.local"
 entitlement_group_namespace: "urn:example:sbs"
@@ -51,6 +65,7 @@ admin_users:
   - uid: "urn:john"
   - uid: "urn:rocky"
   - uid: "urn:mike"
+  - uid: "900613f87a9c8539b15729264ccc50af20c865ba@acc.sram.eduteams.org"
 
 feature:
   admin_users_upgrade: True
