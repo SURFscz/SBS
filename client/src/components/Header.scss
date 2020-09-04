@@ -14,6 +14,10 @@
         display: flex;
         align-items: center;
 
+        @media (max-width: $tablet-max) {
+            padding-bottom: 10px;
+        }
+
         img.logo {
             height: 65px;
             margin: 10px 0;
@@ -27,6 +31,7 @@
         h1.title {
             font-size: 36px;
             color: $primary-orange;
+            line-height: 36px;
 
             &.first {
                 margin-left: 20px;
@@ -37,11 +42,23 @@
             }
         }
 
+        a.welcome-link {
+            display: flex;
+        }
+
         ul.links {
             margin-left: auto;
             display: flex;
             align-items: center;
             list-style: none;
+
+            li.user-profile {
+
+                border-right: 1px solid $primary-orange;
+                border-left: 1px solid $primary-orange;
+                padding-left: 15px;
+
+            }
 
             li.user-profile, li.login, li.help {
                 display: inline-block;
