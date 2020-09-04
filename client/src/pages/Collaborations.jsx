@@ -305,9 +305,10 @@ class Collaborations extends React.Component {
 
     renderCollaborations = (collaborations, user, sorted, reverse) => {
         const names = ["actions", "name", "role", "description", "access_type", "enrollment", "organisation_name", "accepted_user_policy"];
+        const hasCollaborations = !isEmpty(collaborations);
         return (
             <section className="collaboration-list">
-                <table>
+                {hasCollaborations && <table>
                     <thead>
                     <tr>
                         {names.map(name =>
@@ -322,7 +323,8 @@ class Collaborations extends React.Component {
                     <tbody>
                     {collaborations.map(collaboration => this.renderCollaborationRow(collaboration, user, names))}
                     </tbody>
-                </table>
+                </table>}
+                {!hasCollaborations && <p>{I18n.t("collaborations.noCollaborations")}</p>}
             </section>
         );
     };
@@ -392,7 +394,7 @@ class Collaborations extends React.Component {
                     {this.renderInvitations(adminCollaborations.map(collaboration => collaboration.invitations)
                         .flat().filter(item => !isEmpty(item)))}
                     {this.renderServices(adminCollaborations)}
-                    </section>
+                </section>
                 <div className="title">
                     <span>{I18n.t("collaborations.title")}</span>
                     {(isOrganisationAdmin && !user.admin) && <Button onClick={this.newCollaboration}

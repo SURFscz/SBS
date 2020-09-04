@@ -274,9 +274,10 @@ class Organisations extends React.Component {
 
     renderOrganisations = (organisations, user, sorted, reverse) => {
         const names = ["actions", "name", "role", "description"];
+        const hasOrganisations = !isEmpty(organisations);
         return (
             <section className="organisation-list">
-                <table>
+                {hasOrganisations && <table>
                     <thead>
                     <tr>
                         {names.map(name =>
@@ -291,7 +292,8 @@ class Organisations extends React.Component {
                     <tbody>
                     {organisations.map(organisation => this.renderOrganisationRow(organisation, user, names))}
                     </tbody>
-                </table>
+                </table>}
+                {!hasOrganisations && <p>{I18n.t("organisations.noOrganisations")}</p>}
             </section>
         );
     };

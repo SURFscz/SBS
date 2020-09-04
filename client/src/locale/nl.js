@@ -178,6 +178,7 @@ I18n.translations.nl = {
         dashboardAdmin: "Admin dashboard voor mijn Samenwerkingen",
         dashboardAdminTooltip: "Dit is een overzicht over<br/>alle samenwerkingen waar u<br/>een van de beheerders van bent.",
         title: "Mijn Samenwerkingen",
+        noCollaborations: "Je bent geen lid van een samenwerking",
         requests: "Lidmaatschapsverzoeken",
         groups: "Autorisatie-groepen",
         invitations: "Uitnodigingen",
@@ -286,6 +287,7 @@ I18n.translations.nl = {
     organisations: {
         dashboard: "Dashboard",
         title: "Mijn Organisaties",
+        noOrganisations: "Je bent geen lid van een organisatie",
         members: "Leden",
         collaborations: "Samenwerkingen",
         invitations: "Uitnodigingen",
