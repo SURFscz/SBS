@@ -165,7 +165,7 @@ I18n.translations.en = {
         collaborations: "Collaborations"
     },
     collaborations: {
-        dashboard: "Dashboard",
+        dashboard: "Dashboard for your collaborations",
         dashboardAdmin: "Admin dashboard for my Collaborations",
         dashboardAdminTooltip: "This is an aggregated view<br/>of all collaborations where<br/>you are one of the administrators.",
         title: "My Collaborations",
@@ -254,7 +254,7 @@ I18n.translations.en = {
             meAdded: "Successfully added you as member of {{name}}",
             memberActivated: "Member {{name}} has been sent an email with an activation link"
         },
-        infoBlocks: "Dashboard {{name}}",
+        infoBlocks: "Dashboard collaboration {{name}}",
         searchPlaceHolder: "Search for members",
         noMembers: "Collaboration {{name}} has no members.",
         members: "Members of {{name}}",
@@ -272,7 +272,7 @@ I18n.translations.en = {
 
     },
     organisations: {
-        dashboard: "Dashboard",
+        dashboard: "Dashboard mine organisations",
         title: "My Organisations",
         noOrganisations: "You are not a member of any organisation",
         members: "Members",
