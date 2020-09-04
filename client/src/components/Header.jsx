@@ -23,7 +23,7 @@ export default class Header extends React.PureComponent {
     renderProfileLink(currentUser) {
         return (
             <a href="/profile" className="welcome-link" onClick={this.handleToggle}>
-                {currentUser.name}
+                <span>{currentUser.name}</span>
                 {this.renderDropDownIndicator()}
             </a>
         );
@@ -73,11 +73,11 @@ export default class Header extends React.PureComponent {
                             </NavLink>
                         </li>}
                         {!currentUser.guest &&
-                        <li className="user-profile border-left">
+                        <li className="user-profile">
                             {this.renderProfileLink(currentUser)}
                             {this.renderDropDown(currentUser)}
                         </li>}
-                        <li className="help border-left">
+                        <li className="help">
                             <a href={I18n.t("header.links.helpUrl")} rel="noopener noreferrer"
                                target="_blank">{I18n.t("header.links.help")}</a>
                         </li>

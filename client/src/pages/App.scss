@@ -23,5 +23,12 @@
     .select-disabled__single-value {
         color: $dark-grey;
     }
+
+    .page-container {
+        @media (max-width: $medium) {
+            padding: 0 15px;
+        }
+
+    }
 }
 
