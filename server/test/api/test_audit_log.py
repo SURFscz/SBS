@@ -31,9 +31,6 @@ class TestAuditLog(AbstractTest):
         self.login("urn:roger")
 
         body = {"ssh_key": "ssh_value",
-                "ubi_key": "ubi_value",
-                "tiqr_key": "tiqr_value",
-                "totp_key": "totp_value",
                 "id": roger.id}
 
         self.put("/api/users", body, with_basic_auth=False)
@@ -46,7 +43,7 @@ class TestAuditLog(AbstractTest):
         state_after = json.loads(audit_logs[0]["state_after"])
 
         self.assertIsNone(state_before["ssh_key"])
-        for k in ["ssh", "ubi", "tiqr", "totp"]:
+        for k in ["ssh"]:
             self.assertEqual(f"{k}_value", state_after[f"{k}_key"])
 
     def test_services_info(self):

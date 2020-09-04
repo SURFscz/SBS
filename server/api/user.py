@@ -302,7 +302,7 @@ def update_user():
     user = User.query.get(user_id)
     custom_json = jsonify(user).json
     user_json = current_request.get_json()
-    for attr in ["ssh_key", "ubi_key", "tiqr_key", "totp_key"]:
+    for attr in ["ssh_key"]:
         custom_json[attr] = user_json.get(attr)
 
     if "ssh_key" in user_json:

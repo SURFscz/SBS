@@ -304,7 +304,7 @@ class Collaborations extends React.Component {
     };
 
     renderCollaborations = (collaborations, user, sorted, reverse) => {
-        const names = ["actions", "name", "role", "description", "access_type", "enrollment", "organisation_name", "accepted_user_policy"];
+        const names = ["actions", "name", "role", "description","organisation_name", "accepted_user_policy"];
         const hasCollaborations = !isEmpty(collaborations);
         return (
             <section className="collaboration-list">

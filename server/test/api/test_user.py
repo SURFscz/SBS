@@ -131,9 +131,6 @@ class TestUser(AbstractTest):
         self.login("urn:roger")
 
         body = {"ssh_key": "ssh_key",
-                "ubi_key": "ubi_key",
-                "tiqr_key": "tiqr_key",
-                "totp_key": "totp_key",
                 "id": roger.id,
                 "email": "bogus"}
 
@@ -155,11 +152,11 @@ class TestUser(AbstractTest):
         self.login("urn:john")
 
         body = {"id": james.id,
-                "ubi_key": "bogus"}
+                "ssh_key": "bogus"}
 
         self.put("/api/users", body, headers={"X-IMPERSONATE-ID": 999}, with_basic_auth=False)
         james = self.find_entity_by_name(User, james_name)
-        self.assertEqual("bogus", james.ubi_key)
+        self.assertEqual("bogus", james.ssh_key)
 
     def test_update_user_service_profile_ssh_key_conversion(self):
         user = self.find_entity_by_name(User, john_name)

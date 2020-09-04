@@ -218,13 +218,13 @@ def seed(db, app_config):
                    public_visible=True, automatic_connection_allowed=False,
                    contact_email="help@wiki.com")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
-                      description="Network enabling service SSH access", address="Some address", status="active",
+                      description="Network enabling service SSH access", address="Some address",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
                       contact_email="help@network.com",
                       public_visible=False, automatic_connection_allowed=True,
                       allowed_organisations=[uuc])
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
-                              description="Uva SSH access", status="active",
+                              description="Uva SSH access",
                               uri="https://uri/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
                               contact_email="help@ssh.com",
                               public_visible=False, automatic_connection_allowed=False,
@@ -244,8 +244,8 @@ def seed(db, app_config):
                                  identifier=collaboration_ai_computing_uuid,
                                  global_urn=f"ucc:{ai_computing_short_name}",
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
-                                 organisation=uuc, services=[mail, network], enrollment="Form",
-                                 join_requests=[], invitations=[], access_type="open",
+                                 organisation=uuc, services=[mail, network],
+                                 join_requests=[], invitations=[],
                                  short_name=ai_computing_short_name,
                                  accepted_user_policy="https://www.google.nl")
     uva_research = Collaboration(name=uva_research_name, short_name="research",
@@ -258,8 +258,8 @@ def seed(db, app_config):
                                  identifier=str(uuid.uuid4()),
                                  global_urn=f"ucc:{uuc_teachers_name}",
                                  description="UUC Teachers",
-                                 organisation=uuc, services=[], enrollment="Form",
-                                 join_requests=[], invitations=[], access_type="open",
+                                 organisation=uuc, services=[],
+                                 join_requests=[], invitations=[],
                                  short_name="uuc_teachers_short_name",
                                  accepted_user_policy="https://www.uuc.nl/teachers")
 
