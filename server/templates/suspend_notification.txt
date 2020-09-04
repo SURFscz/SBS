@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURFNET Inactive notofication{% endblock %}
+{% block title %}SURFNET Inactive notification{% endblock %}
 {% block content %}
 
 {{ salutation }},
