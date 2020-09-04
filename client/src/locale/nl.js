@@ -165,8 +165,8 @@ I18n.translations.nl = {
         collaborations: "Samenwerkingen",
     },
     collaborations: {
-        dashboard: "Dashboard",
-        dashboardAdmin: "Admin dashboard voor mijn Samenwerkingen",
+        dashboard: "Dashboard voor je samenwerkingen",
+        dashboardAdmin: "Admin dashboard voor mijn samenwerkingen",
         dashboardAdminTooltip: "Dit is een overzicht over<br/>alle samenwerkingen waar u<br/>een van de beheerders van bent.",
         title: "Mijn Samenwerkingen",
         noCollaborations: "Je bent geen lid van een samenwerking",
@@ -254,7 +254,7 @@ I18n.translations.nl = {
             meAdded: "Je bent toegevoegd als lid van {{name}}",
             memberActivated: "Member {{name}} has been sent an email with an activation link"
         },
-        infoBlocks: "Dashboard {{name}}",
+        infoBlocks: "Dashboard samenwerking {{name}}",
         searchPlaceHolder: "Zoek leden",
         noMembers: "Samenwerking {{name}} heeft geen leden.",
         members: "Leden van {{name}}",
@@ -271,7 +271,7 @@ I18n.translations.nl = {
         addMe: "Voeg mij toe"
     },
     organisations: {
-        dashboard: "Dashboard",
+        dashboard: "Dashboard mijn organisaties",
         title: "Mijn Organisaties",
         noOrganisations: "Je bent geen lid van een organisatie",
         members: "Leden",
