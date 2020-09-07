@@ -42,10 +42,10 @@ class TestServiceConnectionRequest(AbstractTest):
             "message": "Pretty please"
         }
         with self.app.mail.record_messages() as outbox:
-            res = self.post("/api/service_connection_requests", body=data, with_basic_auth=False)
-            service_connection_request = ServiceConnectionRequest.query.get(res["id"])
-
-            self.assertEqual("urn:admin", service_connection_request.requester.uid)
+            pre_count = ServiceConnectionRequest.query.count()
+            self.post("/api/service_connection_requests", body=data, with_basic_auth=False)
+            post_count = ServiceConnectionRequest.query.count()
+            self.assertEqual(pre_count + 1, post_count)
 
             mail_msg = outbox[0]
             self.assertEqual("Request for new service Wiki connection to collaboration AI computing", mail_msg.subject)

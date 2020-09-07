@@ -15,17 +15,19 @@ class TestJoinRequest(AbstractTest):
     def test_new_join_request(self):
         collaboration_id = Collaboration.query \
             .filter(Collaboration.identifier == collaboration_ai_computing_uuid).one().id
-        self.login("urn:mary")
+        self.login("urn:betty")
         mail = self.app.mail
         with mail.record_messages() as outbox:
-            join_request = self.post("/api/join_requests",
-                                     body={"collaborationId": collaboration_id, "motivation": "please"},
-                                     with_basic_auth=False)
-            self.assertIsNotNone(join_request["id"])
+            pre_count = JoinRequest.query.count()
+            self.post("/api/join_requests",
+                      body={"collaborationId": collaboration_id, "motivation": "please"},
+                      with_basic_auth=False)
+            post_count = JoinRequest.query.count()
+            self.assertEqual(pre_count + 1, post_count)
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["boss@example.org"], mail_msg.recipients)
-            self.assertTrue(f"http://localhost:3000/join-requests/{join_request['hash']}" in mail_msg.html)
+            self.assertTrue(f"http://localhost:3000/join-requests/" in mail_msg.html)
 
     def test_new_join_request_already_member(self):
         collaboration_id = Collaboration.query \
