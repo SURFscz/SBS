@@ -107,7 +107,7 @@ def new_join_request():
         "join_request": join_request
     }, collaboration, admin_emails)
 
-    return join_request, 201
+    return {}, 201
 
 
 @join_request_api.route("/accept", methods=["PUT"], strict_slashes=False)

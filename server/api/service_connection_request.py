@@ -107,7 +107,7 @@ def request_service_connection():
 
     _do_mail_request(collaboration, service, service_connection_request, is_admin)
 
-    return saved_service_connection_request, 201
+    return {}, 201
 
 
 def _do_mail_request(collaboration, service, service_connection_request, is_admin):
