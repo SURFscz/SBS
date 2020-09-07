@@ -102,7 +102,7 @@ def request_service_connection():
                                                           requester_id=current_user_id(), service_id=service.id,
                                                           collaboration_id=collaboration.id, created_by=user_uid,
                                                           updated_by=user_uid)
-    saved_service_connection_request = db.session.merge(service_connection_request)
+    db.session.merge(service_connection_request)
     db.session.commit()
 
     _do_mail_request(collaboration, service, service_connection_request, is_admin)
