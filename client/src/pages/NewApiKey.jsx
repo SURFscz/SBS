@@ -11,6 +11,7 @@ import {setFlash} from "../utils/Flash";
 
 import "./NewApiKey.scss"
 import BackLink from "../components/BackLink";
+import {userRole} from "../utils/UserRole";
 
 class NewApiKey extends React.Component {
 
@@ -63,13 +64,17 @@ class NewApiKey extends React.Component {
         if (organisation === undefined) {
             return null;
         }
+        const {user} = this.props;
         return (
             <div className="mod-new-api-key">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <BackLink history={this.props.history}/>
+                 <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: organisation.id
+                    })}/>
                 <p className="title">{I18n.t("apiKeys.title", {organisation: organisation.name})}</p>
                 <div className="new-api-key">
                     <p>{I18n.t("apiKeys.secretDisclaimer")}</p>

@@ -20,6 +20,7 @@ import Tabs from "../components/Tabs";
 import BackLink from "../components/BackLink";
 import SelectField from "../components/SelectField";
 import {organisationRoles} from "../forms/constants";
+import {userRole} from "../utils/UserRole";
 
 class NewOrganisationInvitation extends React.Component {
 
@@ -257,6 +258,7 @@ class NewOrganisationInvitation extends React.Component {
         if (organisation === undefined) {
             return null;
         }
+        const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-new-organisation-invitation">
@@ -264,7 +266,11 @@ class NewOrganisationInvitation extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <BackLink history={this.props.history}/>
+                <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: organisation.id
+                    })}/>
+
                 <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
 
                 <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged} key={activeTab}>

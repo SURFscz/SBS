@@ -27,6 +27,7 @@ import InputField from "../components/InputField";
 import Button from "../components/Button";
 import BackLink from "../components/BackLink";
 import moment from "moment";
+import {userRole} from "../utils/UserRole";
 
 class CollaborationServices extends React.Component {
 
@@ -180,7 +181,8 @@ class CollaborationServices extends React.Component {
                             {<FontAwesomeIcon icon={"arrow-right"}/>}
                         </td>
                         <td className="actions">
-                            {allowedToConfigureServices && <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>}
+                            {allowedToConfigureServices &&
+                            <FontAwesomeIcon icon="trash" onClick={this.removeService(service)}/>}
                         </td>
                         <td className="name">{service.name}</td>
                         <td className="entity_id">{service.entity_id}</td>
@@ -250,10 +252,12 @@ class CollaborationServices extends React.Component {
                     <tbody>
                     {serviceConnectionRequests.map(req => <tr key={req.id}>
                         <td className="actions">
-                            {allowedToConfigureServices && <FontAwesomeIcon icon="trash" onClick={() => this.removeServiceConnectionRequest(req)}/>}
+                            {allowedToConfigureServices &&
+                            <FontAwesomeIcon icon="trash" onClick={() => this.removeServiceConnectionRequest(req)}/>}
                         </td>
                         <td className="resend">
-                            {allowedToConfigureServices && <FontAwesomeIcon icon="envelope" onClick={() => this.resend(req)}/>}
+                            {allowedToConfigureServices &&
+                            <FontAwesomeIcon icon="envelope" onClick={() => this.resend(req)}/>}
                         </td>
                         <td className="service">{req.service.name}</td>
                         <td className="requester">{req.requester.name}</td>
@@ -334,9 +338,12 @@ class CollaborationServices extends React.Component {
                     isVisible={showExplanation}>
                     <ServicesExplanation/>
                 </Explain>
-
+                <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: collaboration.organisation_id,
+                        collaboration_id: collaboration.id
+                    })}/>
                 <div className="title">
-                    <BackLink history={this.props.history}/>
                     <p className="title">{I18n.t("collaborationServices.title", {name: collaboration.name})}</p>
                     <FontAwesomeIcon className="help" icon="question-circle"
                                      id="impersonate_close_explanation"
@@ -349,8 +356,8 @@ class CollaborationServices extends React.Component {
                 </div>
                 {!allowedToConfigureServices && <div className="service-restricted">
                     <p>
-                    {I18n.t("collaborationServices.serviceRestrictedInfo")}
-                </p>
+                        {I18n.t("collaborationServices.serviceRestrictedInfo")}
+                    </p>
                 </div>}
                 <div className="collaboration-services">
                     <Select className="services-select"

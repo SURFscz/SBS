@@ -20,6 +20,7 @@ import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import CheckBox from "../components/CheckBox";
 import BackLink from "../components/BackLink";
+import {userRole} from "../utils/UserRole";
 
 class NewCollaboration extends React.Component {
 
@@ -211,7 +212,12 @@ class NewCollaboration extends React.Component {
                                         confirm={confirmationDialogAction}
                                         question={leavePage ? undefined : I18n.t("collaboration.deleteConfirmation")}
                                         leavePage={leavePage}/>
-                    <BackLink history={this.props.history}/>
+                    {isRequestCollaboration && <BackLink history={this.props.history}/>}
+                    {!isRequestCollaboration && <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: organisation.value
+                    })}/>}
+
                     <p className="title">{title}</p>
                     <div className="new-collaboration">
                         <InputField value={name} onChange={e => {

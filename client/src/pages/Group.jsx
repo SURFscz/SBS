@@ -34,6 +34,7 @@ import BackLink from "../components/BackLink";
 import Tabs from "../components/Tabs";
 import History from "../components/History";
 import EmailMembers from "../components/EmailMembers";
+import {userRole} from "../utils/UserRole";
 
 class Group extends React.Component {
 
@@ -643,7 +644,7 @@ class Group extends React.Component {
             return null;
         }
         const groupName = isEmpty(group) ? name : group.name;
-
+        const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         let detailsTitle;
         if (adminOfCollaboration) {
@@ -659,7 +660,11 @@ class Group extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={confirmationDialogQuestion}/>
-                <BackLink history={this.props.history}/>
+                 <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: collaboration.organisation_id,
+                        collaboration_id: collaboration.id
+                    })}/>
                 <Tabs className="white">
                     <div label="form">
                         {this.groupDetailsTab(isNew, membersTitle, adminOfCollaboration, groupName, allMembers, sortedMembers,

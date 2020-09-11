@@ -26,6 +26,7 @@ import Tabs from "../components/Tabs";
 import History from "../components/History";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
+import {userRole} from "../utils/UserRole";
 
 class Service extends React.Component {
 
@@ -467,7 +468,7 @@ class Service extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
-                <BackLink history={this.props.history}/>
+                <BackLink history={this.props.history} fullAccess={isAdmin} role={userRole(user)}/>
                 {isNew && <p className="title">{title}</p>}
                 <Tabs>
                     <div label="form">

@@ -28,7 +28,7 @@ class Tab extends Component {
 
         return (
             <div className={className} onClick={this.onClick}>
-                <h2> {I18n.t(`tabs.${label}`)} </h2>
+                <h2>{I18n.t(`tabs.${label}`)}</h2>
             </div>
         );
     }

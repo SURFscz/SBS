@@ -17,6 +17,7 @@ import {setFlash} from "../utils/Flash";
 import SelectField from "../components/SelectField";
 import {sanitizeShortName} from "../validations/regExps";
 import BackLink from "../components/BackLink";
+import {userRole} from "../utils/UserRole";
 
 class CollaborationRequest extends React.Component {
 
@@ -147,6 +148,7 @@ class CollaborationRequest extends React.Component {
             collaborationRequest, initial, alreadyExists, confirmationDialogOpen, confirmationDialogAction,
             cancelDialogAction, leavePage, organisations, dialogQuestion, originalRequestedName
         } = this.state;
+        const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-collaboration-request-container">
@@ -156,7 +158,10 @@ class CollaborationRequest extends React.Component {
                                         confirm={confirmationDialogAction}
                                         question={dialogQuestion}
                                         leavePage={leavePage}/>
-                    <BackLink history={this.props.history}/>
+                    <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: collaborationRequest.organisation_id
+                    })}/>
                     <p className="title">{I18n.t("collaborationRequest.title", {
                         requester: collaborationRequest.requester.name,
                         name: originalRequestedName

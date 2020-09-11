@@ -16,6 +16,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import BackLink from "../components/BackLink";
+import {userRole} from "../utils/UserRole";
 
 class NewOrganisation extends React.Component {
 
@@ -125,6 +126,7 @@ class NewOrganisation extends React.Component {
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
+        const {user} = this.props;
         return (
             <div className="mod-new-organisation">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -132,7 +134,7 @@ class NewOrganisation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
                                     leavePage={leavePage}/>
-                <BackLink history={this.props.history}/>
+                <BackLink history={this.props.history} fullAccess={true} role={userRole(user)}/>
                 <p className="title">{I18n.t("organisation.title")}</p>
 
                 <div className="new-organisation">

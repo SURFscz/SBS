@@ -18,6 +18,7 @@ import moment from "moment";
 import DateField from "../components/DateField";
 import SelectField from "../components/SelectField";
 import BackLink from "../components/BackLink";
+import {userRole} from "../utils/UserRole";
 
 class Invitation extends React.Component {
 
@@ -198,6 +199,7 @@ class Invitation extends React.Component {
             confirmationDialogAction, leavePage, isAdminLink, isExpired, errorOccurred, personalDataConfirmation,
             intentToDeny
         } = this.state;
+        const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         const errorSituation = errorOccurred || !invite.id;
         const expiredMessage = isAdminLink ? I18n.t("invitation.expiredAdmin", {expiry_date: moment(invite.expiry_date * 1000).format("LL")}) :
@@ -216,7 +218,11 @@ class Invitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={confirmationQuestion}/>
-                {isAdminLink && <BackLink history={this.props.history}/>}
+                {isAdminLink && <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: invite.collaboration.organisation_id,
+                        collaboration_id: invite.collaboration_id,
+                    })}/>}
                 {!errorSituation &&
                 <p className="title">{I18n.t("invitation.title", {collaboration: invite.collaboration.name})}</p>}
 
