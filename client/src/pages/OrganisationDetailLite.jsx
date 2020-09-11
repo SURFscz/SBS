@@ -55,7 +55,7 @@ class OrganisationDetailLite extends React.Component {
                         toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
 
             <CheckBox name={"collaboration_creation_allowed"}
-                      value={organisation.collaboration_creation_allowed}
+                      value={organisation.collaboration_creation_allowed || false}
                       info={I18n.t("organisation.collaborationCreationAllowed")}
                       readOnly={true}
                       tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}/>
@@ -70,7 +70,7 @@ class OrganisationDetailLite extends React.Component {
         const {organisation} = this.state;
         return (
             <div className="mod-organisation-detail">
-                <BackLink history={this.props.history}/>
+                <BackLink history={this.props.history} fullAccess={false} role={I18n.t("access.coAdmin")}/>
                 <div label="form">
                     {this.organisationDetails(organisation)}
                 </div>

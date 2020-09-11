@@ -16,6 +16,7 @@ import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 import moment from "moment";
 import BackLink from "../components/BackLink";
+import {userRole} from "../utils/UserRole";
 
 class OrganisationInvitation extends React.Component {
 
@@ -192,7 +193,7 @@ class OrganisationInvitation extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         const expiredMessage = isAdminLink ? I18n.t("organisationInvitation.expiredAdmin", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")}) :
             I18n.t("organisationInvitation.expired", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")});
-
+        const {user} = this.props;
         return (
             <div className="mod-organisation-invitation">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -200,7 +201,10 @@ class OrganisationInvitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={confirmationQuestion}/>
-                {isAdminLink && <BackLink history={this.props.history}/>}
+                {isAdminLink && <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: organisationInvitation.organisation_id
+                    })}/>}
                 {!errorSituation &&
                 <p className={`title ${isAdminLink ? '' : ' top'}`}>
                     {I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}

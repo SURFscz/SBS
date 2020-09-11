@@ -1,5 +1,6 @@
 import React from "react";
 import "./Impersonate.scss";
+import {setFlash} from "../utils/Flash";
 import {searchCollaborations, searchOrganisations, searchUsers} from "../api";
 import I18n from "i18n-js";
 import {isEmpty, stopEvent} from "../utils/Utils";
@@ -61,6 +62,7 @@ class Impersonate extends React.Component {
                 selectedUser: null, query: "", initial: true, collaboration: null,
                 organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false
             });
+            setFlash(I18n.t("impersonate.flash.startedImpersonation", { name: selectedUser.name }));
         }
     };
 
@@ -70,6 +72,7 @@ class Impersonate extends React.Component {
             selectedUser: null, query: "", initial: true, collaboration: null,
             organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false
         });
+        setFlash(I18n.t("impersonate.flash.clearedImpersonation"));
     };
 
     onSearchKeyDown = e => {

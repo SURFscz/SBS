@@ -96,7 +96,11 @@ I18n.translations.en = {
         noImpersonation: "You are who you are - no impersonation",
         currentImpersonationValue: "You are impersonating {{currentUser}}, but you are really {{impersonator}}",
         startImpersonation: "Impersonate",
-        clearImpersonation: "Stop impersonating"
+        clearImpersonation: "Stop impersonating",
+        flash: {
+            startedImpersonation: "Successfully started to impersonate {{name}}.",
+            clearedImpersonation:"Successfully cleared your impersonation. You are you again."
+        }
     },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
@@ -246,6 +250,7 @@ I18n.translations.en = {
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership for {{name}}?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You won't be able to redo this.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
+        activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
         flash: {
             updated: "Collaboration {{name}} was successfully updated",
             deleted: "Collaboration {{name}} was successfully deleted",
@@ -932,6 +937,19 @@ I18n.translations.en = {
         first_suspend_notification: "First suspend notification email send to:",
         second_suspend_notification: "Second suspend notification email send to:",
         suspended: "Users who are marked as suspended:"
+    },
+    access: {
+        full: "Full",
+        limited: "Limited",
+        readOnly: "Read-only",
+        info: "{{access}} access as {{role}}",
+        platformAdmin: "platform admin",
+        orgAdmin: "organisation admin",
+        orgManager: "organisation manager",
+        coAdmin: "collaboration admin",
+        coMember: "collaboration member",
+        serviceUser: "service user",
+        user: "user"
     }
 };
 

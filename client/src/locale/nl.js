@@ -96,7 +96,12 @@ I18n.translations.nl = {
         noImpersonation: "U bent wie u bent - u doet niemand anders na.",
         currentImpersonationValue: "U ziet SBS nu als {{currentUser}}, maar u bent natuurlijk {{impersonator}}.",
         startImpersonation: "Nadoen",
-        clearImpersonation: "Stop met nadoen"
+        clearImpersonation: "Stop met nadoen"  ,
+        flash: {
+            startedImpersonation: "Met success ben je nu - tijdelijk - {{name}}.",
+            clearedImpersonation:"Met succes is je nabootsing gestopt. Je bent jezelf weer."
+        }
+
     },
     registration: {
         title: "Vraag toegang tot de resources van {{collaboration}}",
@@ -246,6 +251,7 @@ I18n.translations.nl = {
         deleteMemberConfirmation: "Weet u zeker dat u {{name}} als lid voor deze samenwerking wilt verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze samenwerking wilt verlaten? Je kan dit niet terugdraaien.",
         activateMemberConfirmation: "Are you sure you want to re-activate this user {{name}}?",
+        activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
         flash: {
             updated: "Samenwerking {{name}} is bijgewerkt.",
             deleted: "Samenwerking {{name}} is verwijderd.",
@@ -932,6 +938,19 @@ I18n.translations.nl = {
         first_suspend_notification: "First suspend notification email send to:",
         second_suspend_notification: "Second suspend notification email send to:",
         suspended: "Users who are marked as suspended:"
+    },
+    access: {
+        full: "Volledige",
+        limited: "Gelimiteerde",
+        readOnly: "Lees",
+        info: "{{access}} rechten als {{role}}",
+        platformAdmin: "platform admin",
+        orgAdmin: "organisatie admin",
+        orgManager: "organisatie manager",
+        coAdmin: "samenwerkings admin",
+        coMember: "samenwerkings member",
+        serviceUser: "dienst gebruiker",
+        user: "gebruiker"
     }
 
 };

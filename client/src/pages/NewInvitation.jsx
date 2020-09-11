@@ -25,6 +25,7 @@ import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import Tabs from "../components/Tabs";
 import BackLink from "../components/BackLink";
+import {userRole} from "../utils/UserRole";
 
 class NewInvitation extends React.Component {
 
@@ -290,6 +291,7 @@ class NewInvitation extends React.Component {
         if (collaboration === undefined) {
             return null;
         }
+        const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-new-collaboration-invitation">
@@ -297,7 +299,12 @@ class NewInvitation extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <BackLink history={this.props.history}/>
+                <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: collaboration.organisation_id,
+                        collaboration_id: collaboration.id
+                    })}/>
+
                 <p className="title">{I18n.t("invitation.createTitle", {collaboration: collaboration.name})}</p>
 
                 <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged} key={activeTab}>

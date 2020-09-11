@@ -31,6 +31,8 @@ import Tabs from "../components/Tabs";
 import History from "../components/History";
 import BackLink from "../components/BackLink";
 import EmailMembers from "../components/EmailMembers";
+import ReactTooltip from "react-tooltip";
+import {userRole} from "../utils/UserRole";
 
 
 class CollaborationDetail extends React.Component {
@@ -473,7 +475,14 @@ class CollaborationDetail extends React.Component {
                     <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
                     <td className="actions">
                         {member.user.suspended &&
-                        <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>}
+                        <span data-tip data-for={`activate-member-${i}`}>
+                                <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>
+                                <ReactTooltip id={`activate-member-${i}`} type="info" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{
+                                        __html: I18n.t("collaborationDetail.activateMemberTooltip")
+                                    }}/>
+                                </ReactTooltip>
+                            </span>}
                         {adminOfCollaboration &&
                         <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
                     </td>
@@ -682,7 +691,11 @@ class CollaborationDetail extends React.Component {
         };
         return (
             <div className="mod-collaboration-detail">
-                <BackLink history={this.props.history}/>
+                <BackLink history={this.props.history} fullAccess={isAdmin} role={userRole(user,
+                    {
+                        organisation_id: originalCollaboration.organisation.id,
+                        collaboration_id: originalCollaboration.id
+                    })}/>
                 <Tabs className="white">
                     <div label="form">
                         {this.renderDetails(isAdmin, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,

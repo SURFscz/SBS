@@ -7,6 +7,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import Button from "../components/Button";
 import BackLink from "../components/BackLink";
+import {userRole} from "../utils/UserRole";
 
 class JoinRequest extends React.Component {
 
@@ -97,6 +98,7 @@ class JoinRequest extends React.Component {
     render() {
         const {joinRequest, confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, alreadyMember} =
             this.state;
+        const {user} = this.props;
         const joinRequestFound = joinRequest.id;
         return (
             <div className="mod-join-request">
@@ -105,7 +107,11 @@ class JoinRequest extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("joinRequest.declineConfirmation")}
                                     leavePage={leavePage}/>
-                {joinRequestFound && <BackLink history={this.props.history}/>}
+                {joinRequestFound && <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: joinRequest.collaboration.organisation_id,
+                        collaboration_id: joinRequest.collaboration_id,
+                    })}/>}
                 <p className="title">{I18n.t("joinRequest.title", {
                     collaboration: joinRequest.collaboration.name,
                     requester: joinRequest.user.name

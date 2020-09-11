@@ -3,7 +3,7 @@
 .back-link {
     margin: 25px 0;
     color: $dark-grey;
-
+    display: flex;
 
     a {
         display: inline-block;
@@ -18,6 +18,19 @@
 
         svg {
             margin-right: 10px;
+        }
+    }
+
+    span.access {
+        margin-left: auto;
+        svg {
+            margin-right: 10px;
+            &.fa-lock {
+                color: $medium-grey;
+            }
+            &.fa-lock-open {
+                color: $green;
+            }
         }
     }
 }

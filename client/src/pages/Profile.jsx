@@ -16,6 +16,7 @@ import CheckBox from "../components/CheckBox";
 import History from "../components/History";
 import Tabs from "../components/Tabs";
 import BackLink from "../components/BackLink";
+import {userRole} from "../utils/UserRole";
 
 class Profile extends React.Component {
 
@@ -171,7 +172,7 @@ class Profile extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={true}/>
-                <BackLink history={this.props.history}/>
+                <BackLink history={this.props.history} limitedAccess={true} role={userRole(user)}/>
                 <p className="title">{title}</p>
                 <Tabs>
                     <div label="form">

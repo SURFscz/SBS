@@ -14,6 +14,7 @@ import Select from "react-select";
 import {addOrganisationServices, deleteOrganisationServices, organisationServices, searchServices} from "../api";
 import {setFlash} from "../utils/Flash";
 import OrganisationServicesExplanation from "../components/explanations/OrganisationServices";
+import {userRole} from "../utils/UserRole";
 
 class OrganisationServices extends React.Component {
 
@@ -187,6 +188,7 @@ class OrganisationServices extends React.Component {
         if (isEmpty(organisation)) {
             return null;
         }
+        const {user} = this.props;
         const availableServices = allServices.filter(service => !sortedServices.find(s => s.id === service.value));
         return (
             <div className="mod-organisation-services">
@@ -196,9 +198,11 @@ class OrganisationServices extends React.Component {
                     isVisible={showExplanation}>
                     <OrganisationServicesExplanation/>
                 </Explain>
-
+                <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: organisation.id
+                    })}/>
                 <div className="title">
-                    <BackLink history={this.props.history}/>
                     <p className="title">{I18n.t("organisationServices.title", {name: organisation.name})}</p>
                     <FontAwesomeIcon className="help" icon="question-circle"
                                      id="impersonate_close_explanation"

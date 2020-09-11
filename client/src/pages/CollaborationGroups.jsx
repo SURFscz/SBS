@@ -9,6 +9,7 @@ import {headerIcon} from "../forms/helpers";
 import {setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import BackLink from "../components/BackLink";
+import {userRole} from "../utils/UserRole";
 
 
 class CollaborationGroups extends React.Component {
@@ -151,6 +152,7 @@ class CollaborationGroups extends React.Component {
             collaboration, filteredGroups, sorted, reverse, query,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion
         } = this.state;
+        const {user} = this.props;
         if (!collaboration) {
             return null;
         }
@@ -160,7 +162,11 @@ class CollaborationGroups extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={confirmationQuestion}/>
 
-                <BackLink history={this.props.history}/>
+                <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
+                    {
+                        organisation_id: collaboration.organisation_id,
+                        collaboration_id: collaboration.id
+                    })}/>
                 <p className="title">{I18n.t("groups.title", {name: collaboration.name})}</p>
                 <div className="collaboration-groups">
                     {this.renderGroups(filteredGroups, sorted, reverse, query)}

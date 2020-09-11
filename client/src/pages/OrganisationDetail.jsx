@@ -31,6 +31,7 @@ import Tabs from "../components/Tabs";
 import History from "../components/History";
 import CheckBox from "../components/CheckBox";
 import EmailMembers from "../components/EmailMembers";
+import {userRole} from "../utils/UserRole";
 
 class OrganisationDetail extends React.Component {
 
@@ -607,7 +608,15 @@ class OrganisationDetail extends React.Component {
                         <td className="since">{moment(member.created_at * 1000).format("LL")}</td>
                         <td className="actions">
                             {(isAdmin && member.user.suspended) &&
-                            <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>}
+                            <span data-tip data-for={`activate-member-${i}`}>
+                                <FontAwesomeIcon icon="user-lock" onClick={this.activateMember(member)}/>
+                                <ReactTooltip id={`activate-member-${i}`} type="info" effect="solid" data-html={true}>
+                                    <p dangerouslySetInnerHTML={{
+                                        __html: I18n.t("collaborationDetail.activateMemberTooltip")
+                                    }}/>
+                                </ReactTooltip>
+                            </span>}
+
                             {(isAdmin && numberOfAdmins > 1) &&
                             <FontAwesomeIcon icon="trash" onClick={this.deleteMember(member)}/>}
                         </td>
@@ -854,9 +863,11 @@ class OrganisationDetail extends React.Component {
         }
         const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
+        const role = userRole(user, {organisation_id: originalOrganisation.id})
+        const limited = role === I18n.t("access.orgManager");
         return (
             <div className="mod-organisation-detail">
-                <BackLink history={this.props.history}/>
+                <BackLink history={this.props.history} limitedAccess={limited} fullAccess={!limited} role={role}/>
                 <Tabs className="white">
                     <div label="form">
                         {this.renderDetails(confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,

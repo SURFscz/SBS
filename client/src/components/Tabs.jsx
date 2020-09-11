@@ -12,7 +12,6 @@ class Tabs extends React.Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             activeTab: this.props.initialActiveTab || this.props.children[0].props.label
         };
