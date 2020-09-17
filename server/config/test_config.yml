@@ -77,6 +77,8 @@ retention:
   allowed_inactive_period_days: 90
   reminder_expiry_period_days: 14
   reminder_resent_period_days: 7
+  cron_hour_of_day: 7
+
 
 service_bus:
   enabled: False
