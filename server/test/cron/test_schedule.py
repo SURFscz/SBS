@@ -1,10 +1,24 @@
 # -*- coding: future_fstrings -*-
-from server.cron.schedule import suspend_users, start_scheduling
+from sqlalchemy import text
+
+from server.cron.schedule import suspend_users, start_scheduling, suspend_users_lock_name
+from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
 
 
 class TestSchedule(AbstractTest):
+
+    def test_schedule_lock(self):
+        session = db.create_session(options={})()
+        try:
+            session.execute(text(f"SELECT GET_LOCK('{suspend_users_lock_name}', 1)"))
+            mail = self.app.mail
+            with mail.record_messages() as outbox:
+                suspend_users(self.app)
+                self.assertEqual(0, len(outbox))
+        finally:
+            session.execute(text(f"SELECT RELEASE_LOCK('{suspend_users_lock_name}')"))
 
     def test_schedule(self):
         mail = self.app.mail

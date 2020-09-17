@@ -4,10 +4,13 @@ import datetime
 import logging
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from sqlalchemy import text
 
 from server.db.db import db
 from server.db.domain import User, SuspendNotification
 from server.mail import mail_suspend_notification
+
+suspend_users_lock_name = "suspend_users_lock"
 
 
 def create_suspend_notification(user, retention, app, is_primary):
@@ -22,17 +25,22 @@ def create_suspend_notification(user, retention, app, is_primary):
                               [user.email], is_primary, False)
 
 
-def suspend_users(app):
+def _result_container():
+    return {
+        "first_suspend_notification": [],
+        "second_suspend_notification": [],
+        "suspended": [],
+    }
+
+
+def _do_suspend_users(app):
     with app.app_context():
         retention = app.app_config.retention
         current_time = datetime.datetime.utcnow()
         retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days)
 
-        results = {
-            "first_suspend_notification": [],
-            "second_suspend_notification": [],
-            "suspended": [],
-        }
+        results = _result_container()
+
         users = User.query \
             .filter(User.last_login_date < retention_date, User.suspended == False).all()  # noqa: E712
         for user in users:
@@ -60,9 +68,20 @@ def suspend_users(app):
         return results
 
 
+def suspend_users(app):
+    session = db.create_session(options={})()
+    try:
+        result = session.execute(text(f"SELECT GET_LOCK('{suspend_users_lock_name}', 3)"))
+        lock_obtained = next(result, (0,))[0]
+        return _do_suspend_users(app) if lock_obtained else _result_container()
+    finally:
+        session.execute(text(f"SELECT RELEASE_LOCK('{suspend_users_lock_name}')"))
+
+
 def start_scheduling(app):
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=suspend_users, trigger="cron", kwargs={"app": app}, day="*")
+    retention = app.app_config.retention
+    scheduler.add_job(func=suspend_users, trigger="cron", kwargs={"app": app}, day="*", hour=retention.cron_hour_of_day)
     scheduler.start()
 
     logger = logging.getLogger("scheduler")
