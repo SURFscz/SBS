@@ -6,7 +6,7 @@ export function login(e, currentUrl = window.location.href) {
     stopEvent(e);
     const state = getParameterByName("state", window.location.search) || currentUrl;
     authorizationUrl(state).then(res => {
-        setTimeout(() => window.location.href = res.authorization_endpoint, 5);
+        window.location.href = res.authorization_endpoint
     });
 }
 

@@ -62,6 +62,27 @@ def _user_json_response(user):
     return {**json_user, **is_admin, **{"needs_to_agree_with_aup": needs_to_agree_with_aup}}, 200
 
 
+def _get_authorization_url(state=None):
+    oidc_config = current_app.app_config.oidc
+    if state:
+        # This is required as eduTeams can not redirect to a dynamic URI
+        session["original_destination"] = state
+    else:
+        state = session.get("original_destination", current_app.app_config.base_url)
+    params = {
+        "state": state,
+        "client_id": oidc_config.client_id,
+        "nonce": str(uuid.uuid4()),
+        "response_mode": "query",
+        "response_type": "code",
+        "scope": "openid profile",
+        "redirect_uri": oidc_config.redirect_uri
+    }
+    args = urllib.parse.urlencode(params)
+    authorization_endpoint = f"{oidc_config.authorization_endpoint}?{args}"
+    return authorization_endpoint
+
+
 @user_api.route("/search", strict_slashes=False)
 @json_endpoint
 def user_search():
@@ -132,25 +153,10 @@ def user_search():
 
 
 @user_api.route("/authorization", strict_slashes=False)
+@json_endpoint
 def authorization():
-    oidc_config = current_app.app_config.oidc
     state = query_param("state", required=False, default=None)
-    if state:
-        # This is required as eduTeams can not redirect to a dynamic URI
-        session["original_destination"] = state
-    else:
-        state = session.get("original_destination", current_app.app_config.base_url)
-    params = {
-        "state": state,
-        "client_id": oidc_config.client_id,
-        "nonce": str(uuid.uuid4()),
-        "response_mode": "query",
-        "response_type": "code",
-        "scope": "openid profile",
-        "redirect_uri": oidc_config.redirect_uri
-    }
-    args = urllib.parse.urlencode(params)
-    authorization_endpoint = f"{oidc_config.authorization_endpoint}?{args}"
+    authorization_endpoint = _get_authorization_url(state)
     return {"authorization_endpoint": authorization_endpoint}, 200
 
 
@@ -163,8 +169,8 @@ def resume_session():
     if not code:
         # This implies that we are the not actually in a redirect callback, but at the redirect from eduTeams
         logger.debug("Redirect to login in resume-session to start OIDC flow")
-        endpoint = authorization()[0]["authorization_endpoint"]
-        return redirect(endpoint)
+        authorization_endpoint = _get_authorization_url()
+        return redirect(authorization_endpoint)
 
     scopes = " ".join(oidc_config.scopes)
     payload = {
