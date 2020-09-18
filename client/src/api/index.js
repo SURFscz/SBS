@@ -103,7 +103,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && true) {
+    if (config.local && false) {
         let sub = "urn:john";
         //sub = "urn:suspended";
         //Need to mock a login
