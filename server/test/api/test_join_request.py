@@ -1,6 +1,8 @@
 # -*- coding: future_fstrings -*-
-from sqlalchemy.orm import joinedload
+import uuid
 
+from sqlalchemy.orm import joinedload
+from server.db.db import db
 from server.db.domain import JoinRequest, User, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import collaboration_ai_computing_uuid, uu_disabled_join_request_name
@@ -37,6 +39,20 @@ class TestJoinRequest(AbstractTest):
                   response_status_code=409,
                   body={"collaborationId": collaboration_id, "motivation": "please"},
                   with_basic_auth=False)
+
+    def test_new_join_request_with_existing(self):
+        collaboration = Collaboration.query \
+            .filter(Collaboration.identifier == collaboration_ai_computing_uuid).one()
+        user = User.query.filter(User.uid == "urn:betty").one()
+        join_request = JoinRequest(user_id=user.id, collaboration_id=collaboration.id, hash=str(uuid.uuid4()))
+        db.session.merge(join_request)
+        db.session.commit()
+
+        self.login("urn:betty")
+        self.post("/api/join_requests",
+                  body={"collaborationId": collaboration.id, "motivation": "please"},
+                  with_basic_auth=False)
+        self.assertEqual(1, JoinRequest.query.filter(JoinRequest.user_id == user.id).count())
 
     def test_disabled_join_requests(self):
         collaboration = self.find_entity_by_name(Collaboration, uu_disabled_join_request_name)
