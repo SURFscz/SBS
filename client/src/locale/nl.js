@@ -937,7 +937,11 @@ I18n.translations.nl = {
         runDailyJobs: "Trigger",
         first_suspend_notification: "First suspend notification email send to:",
         second_suspend_notification: "Second suspend notification email send to:",
-        suspended: "Users who are marked as suspended:"
+        suspended: "Users who are marked as suspended:",
+        runDbStatsInfo: "Get the database table counts",
+        runDbStats: "Fetch",
+        name: "Table name",
+        count: "Nbr of records"
     },
     access: {
         full: "Volledige",

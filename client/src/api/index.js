@@ -103,7 +103,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && false) {
+    if (config.local && true) {
         let sub = "urn:john";
         //sub = "urn:suspended";
         //Need to mock a login
@@ -603,4 +603,8 @@ export function ipNetworks(address, id) {
 //System
 export function suspendUsers() {
     return postPutJson("/api/system/suspend_users", {}, "PUT");
+}
+
+export function dbStats() {
+    return fetchJson("/api/system/db_stats");
 }
