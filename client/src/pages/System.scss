@@ -89,6 +89,33 @@
                 display: inline-block;
                 margin: 10px 0 25px 10px;
             }
+
+            table.table-counts {
+                width: 100%;
+                margin-top: 25px;
+
+                th {
+                    text-align: left;
+                    padding: 5px;
+                    width: 50%;
+
+                }
+
+                tbody {
+                    tr {
+                        &:nth-child(odd) {
+                            background-color: $lightest-grey;
+                        }
+                    }
+                }
+
+                td {
+                    vertical-align: middle;
+                    padding: 5px;
+
+                }
+            }
         }
     }
+
 }

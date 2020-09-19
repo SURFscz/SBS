@@ -16,3 +16,7 @@ class TestSystem(AbstractTest):
 
         two_suspend = self.find_entity_by_name(User, "two_suspend")
         self.assertTrue(two_suspend.suspended)
+
+    def test_db_stats(self):
+        res = self.get("/api/system/db_stats")
+        self.assertDictEqual({"count": 15, "name": "users"}, res[0])
