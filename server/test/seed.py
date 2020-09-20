@@ -176,7 +176,8 @@ def seed(db, app_config):
                        schac_home_organisation=schac_home_organisation)
     _persist(db, uuc, uva)
 
-    api_key = ApiKey(hashed_secret=uuc_hashed_secret, organisation=uuc, created_by="urn:admin", updated_by="urn:admin")
+    api_key = ApiKey(hashed_secret=uuc_hashed_secret, organisation=uuc, description="API access",
+                     created_by="urn:admin", updated_by="urn:admin")
     _persist(db, api_key)
     organisation_invitation_roger = OrganisationInvitation(message="Please join", hash=organisation_invitation_hash,
                                                            expiry_date=datetime.date.today() + datetime.timedelta(
