@@ -142,10 +142,11 @@ class Profile extends React.Component {
                       onChange={e => this.setState({convertSSHKey: e.target.checked})}/>}
 
             {attributes.map(attribute =>
+                <div key={attribute}>
                 <InputField value={user[attribute]}
                             name={`${I18n.t(`profile.${attribute}`)}`}
                             disabled={true}
-                />)
+                /></div>)
             }
             <section className="actions">
                 <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
