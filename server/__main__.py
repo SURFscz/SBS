@@ -177,4 +177,4 @@ if not test:
 
 # WSGI production mode dictates that no flask app is actually running
 if is_local:
-    app.run(port=8080, debug=False, host="0.0.0.0", threaded=True)
+    app.run(port=8080, debug=False, host="127.0.0.1", threaded=True)
