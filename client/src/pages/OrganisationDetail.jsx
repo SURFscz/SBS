@@ -545,7 +545,7 @@ class OrganisationDetail extends React.Component {
     renderMembers = (members, user, sorted, reverse, query, adminOfOrganisation) => {
         const isAdmin = user.admin || adminOfOrganisation;
         const adminClassName = isAdmin ? "with-button" : "";
-        const hasMembers = !isEmpty(members);
+        const hasMembers = !isEmpty(members) || !isEmpty(query);
         return (
             <section className="members-search">
                 {!hasMembers && <p>{I18n.t("organisationDetail.noMembers")}</p>}
@@ -660,7 +660,7 @@ class OrganisationDetail extends React.Component {
     renderCollaborations = (collaborations, user, sorted, reverse, query, adminOfOrganisation, managerOfOrganisation) => {
         const isAllowedCollaborations = user.admin || adminOfOrganisation || managerOfOrganisation;
         const adminClassName = isAllowedCollaborations ? "with-button" : "";
-        const hasCollaborations = !isEmpty(collaborations);
+        const hasCollaborations = !isEmpty(collaborations) || !isEmpty(query);
         return (
             <section className="collaborations-search">
                 {!hasCollaborations && <p>{I18n.t("organisationDetail.noCollaborations")}</p>}

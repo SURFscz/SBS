@@ -502,7 +502,7 @@ class CollaborationDetail extends React.Component {
         const showAddMe = !addedMe && !alreadyMember && (user.admin || organisationAdmin);
 
         const adminClassName = isAdmin ? "with-button" : "";
-        const hasMembers = !isEmpty(members);
+        const hasMembers = !isEmpty(members) || !isEmpty(query);
         return (
             <section className="members-search">
                 <div className="search">
