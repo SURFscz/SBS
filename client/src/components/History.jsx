@@ -7,7 +7,7 @@ import moment from "moment";
 import {escapeDeep, isEmpty} from "../utils/Utils";
 
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at"];
-
+const epochAttributes = ["agreed_at", "sent_at", "last_accessed_date", "last_login_date", "expiry_date"]
 const collectionMapping = {
     organisation_id: "organisations",
     collaboration_id: "collaborations",
@@ -70,7 +70,7 @@ export default class History extends React.PureComponent {
                         {I18n.t("history.overview", {
                             action: I18n.t(`history.actions.${log.action}`),
                             collection: I18n.t(`history.tables.${log.target_type}`),
-                            date: moment(log.created_at * 1000).format("L"),
+                            date: moment(log.created_at * 1000).format("LLL"),
                             user: (log.user || {name: "Unknown"}).name
                         })}
                         {}
@@ -92,7 +92,7 @@ export default class History extends React.PureComponent {
                 return `${value} - name: ${reference.name}`;
             }
         }
-        return value;
+        return (epochAttributes.indexOf(key) > -1 && !isEmpty(value)) ? new Date(value * 1000).toISOString() : value;
     };
 
     getAuditLogValue = (auditLog, values, isOldValue, key, auditLogs) => {
@@ -107,7 +107,7 @@ export default class History extends React.PureComponent {
             //delete
             result = isOldValue ? this.auditLogReference(values[0], key, auditLogs) : "";
         }
-        return (result !== null && result !== undefined) ? result.toString() : "";
+        return (isEmpty(result)) ? "" : result.toString();
     };
 
     renderDetail = (auditLog, auditLogs) => {
