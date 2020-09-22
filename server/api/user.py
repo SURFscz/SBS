@@ -69,13 +69,14 @@ def _get_authorization_url(state=None):
         session["original_destination"] = state
     else:
         state = session.get("original_destination", current_app.app_config.base_url)
+    scopes = " ".join(oidc_config.scopes)
     params = {
         "state": state,
         "client_id": oidc_config.client_id,
         "nonce": str(uuid.uuid4()),
         "response_mode": "query",
         "response_type": "code",
-        "scope": "openid profile",
+        "scope": scopes,
         "redirect_uri": oidc_config.redirect_uri
     }
     args = urllib.parse.urlencode(params)
