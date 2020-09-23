@@ -32,13 +32,14 @@ I18n.translations.nl = {
         title: "Research Access Management",
         subTitle: "Please login...",
         suspended: "Your user account has been suspended. Contact your collaboration administrator to resolve this",
-        successfullyActivated: "You have successfully re-activated your account"
+        successfullyActivated: "You have successfully re-activated your account",
+        closeBrowser: "To finish your logout you'll have to close your browser."
     },
     newDropDown: {
-        organisation: "New organisation",
-        collaboration: "New collaboration",
-        collaborationRequest: "Request new collaboration",
-        service: "New service"
+        organisation: "Nieuwe organisatie",
+        collaboration: "Nieuwe samenwerking",
+        collaborationRequest: "Aanvraag nieuwe samenwerking",
+        service: "Nieuwe dienst"
     },
     home: {
         title: "Mijn lidmaatschappen",

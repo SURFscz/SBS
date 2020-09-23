@@ -32,7 +32,8 @@ I18n.translations.en = {
         title: "Research Access Management",
         subTitle: "Please login...",
         suspended: "Your user account has been suspended. Contact your collaboration administrator to resolve this",
-        successfullyActivated: "You have successfully re-activated your account"
+        successfullyActivated: "You have successfully re-activated your account",
+        closeBrowser: "To finish your logout you'll have to close your browser."
     },
     newDropDown: {
         organisation: "New organisation",

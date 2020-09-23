@@ -12,6 +12,6 @@ export function login(e, currentUrl = window.location.href) {
 
 export function logout(e) {
     stopEvent(e);
-    logoutUser().then(() => window.location.href = "/landing")
+    logoutUser().then(() => window.location.href = "/landing?logout=true")
 }
 
