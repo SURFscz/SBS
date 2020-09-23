@@ -7,6 +7,12 @@
     width: 100%;
     padding: 0;
 
+    h1.logout-msg {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 25px;
+    }
+
     div.title {
         font-size: 22px;
         color: $dark-grey;

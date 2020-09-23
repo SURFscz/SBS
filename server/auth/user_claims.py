@@ -8,13 +8,11 @@ from server.db.domain import User
 
 claim_attribute_mapping_value = None
 
-
 def claim_attribute_mapping():
     global claim_attribute_mapping_value
     if not claim_attribute_mapping_value:
         claim_attribute_mapping_value = [
             {"sub": "uid"},
-            {"uid": "username"},
             {"name": "name"},
             {"given_name": "given_name"},
             {"email": "email"},
@@ -22,8 +20,8 @@ def claim_attribute_mapping():
             {"eduperson_affiliation": "affiliation"},
             {"eduperson_entitlement": "entitlement"},
             {"schac_home_organization": "schac_home_organisation"},
-            {"voperson_external_affiliation": "scoped_affiliation"},
-            {"voperson_external_id": "eduperson_principal_name"}
+            {"eduperson_scoped_affiliation": "scoped_affiliation"},
+            {"eduperson_principal_name": "eduperson_principal_name"}
         ]
     return claim_attribute_mapping_value
 
@@ -36,7 +34,12 @@ def _normalize(s):
 
 
 def generate_unique_username(user: User, max_count=10000):
-    username = f"{_normalize(user.given_name)[0:1]}{_normalize(user.family_name)[0:11]}"[0:10].lower()
+    if hasattr(user, "eduperson_principal_name") and user.eduperson_principal_name:
+        eduperson_principal_name = re.split("@", user.eduperson_principal_name)[0]
+        username = f"{_normalize(eduperson_principal_name)}".lower()
+    else:
+        username = f"{_normalize(user.given_name)[0:1]}{_normalize(user.family_name)[0:11]}"[0:10].lower()
+
     if len(username) == 0:
         username = "u"
     counter = 2
