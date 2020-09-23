@@ -160,6 +160,8 @@ I18n.translations.nl = {
         nick_name: "Roepnaam",
         schac_home_organisation: "Instellingsafkorting",
         edu_members: "EDU lidmaatschap",
+        eduperson_principal_name: "EPPN",
+        created_at: "Account created",
         superUser: "Super-User",
         role: "Rol",
         member: "Lid",

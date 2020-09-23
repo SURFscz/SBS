@@ -117,9 +117,12 @@ class Profile extends React.Component {
     };
 
     renderForm = (user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit) => {
-        const attributes = ["name", "username", "email", "uid", "affiliation", "scoped_affiliation", "entitlement",
-            "nick_name", "schac_home_organisation", "edu_members"];
-
+        const attributes = ["name", "created_at", "username", "email", "uid", "eduperson_principal_name",
+            "affiliation", "scoped_affiliation", "entitlement", "schac_home_organisation", "edu_members"];
+        const createdAt = user.created_at;
+        const d = new Date(0);
+        d.setUTCSeconds(createdAt);
+        const values = {"created_at": d.toUTCString()}
         return (<div className="user-profile">
             <InputField value={ssh_key}
                         name={I18n.t("user.ssh_key")}
@@ -143,7 +146,7 @@ class Profile extends React.Component {
 
             {attributes.map(attribute =>
                 <div key={attribute}>
-                <InputField value={user[attribute]}
+                <InputField value={values[attribute] || user[attribute]}
                             name={`${I18n.t(`profile.${attribute}`)}`}
                             disabled={true}
                 /></div>)
