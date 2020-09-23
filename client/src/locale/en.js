@@ -159,6 +159,8 @@ I18n.translations.en = {
         nick_name: "Nick name",
         schac_home_organisation: "Institute abbreviation",
         edu_members: "EDU memberships",
+        eduperson_principal_name: "EPPN",
+        created_at: "Account created",
         superUser: "Super User",
         role: "Role",
         member: "Member",
