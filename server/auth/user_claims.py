@@ -8,6 +8,7 @@ from server.db.domain import User
 
 claim_attribute_mapping_value = None
 
+
 def claim_attribute_mapping():
     global claim_attribute_mapping_value
     if not claim_attribute_mapping_value:
