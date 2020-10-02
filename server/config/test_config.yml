@@ -79,6 +79,8 @@ retention:
   reminder_resent_period_days: 7
   cron_hour_of_day: 7
 
+metadata:
+  idp_url: https://metadata.surfconext.nl/idps-metadata.xml
 
 service_bus:
   enabled: False

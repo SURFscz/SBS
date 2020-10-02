@@ -16,7 +16,7 @@ system_api = Blueprint("system_api", __name__, url_prefix="/api/system")
 def suspend_users_endpoint():
     confirm_write_access()
 
-    from server.cron.schedule import suspend_users
+    from server.cron.user_suspending import suspend_users
 
     return suspend_users(current_app), 201
 
