@@ -19,7 +19,8 @@ from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin
 from server.auth.user_claims import add_user_claims
-from server.cron.schedule import create_suspend_notification
+from server.cron.user_suspending import create_suspend_notification
+
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import User, OrganisationMembership, CollaborationMembership
