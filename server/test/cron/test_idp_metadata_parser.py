@@ -7,14 +7,17 @@ from server.test.abstract_test import AbstractTest
 class TestIdpMetadataParser(AbstractTest):
 
     def test_schedule(self):
-        display_name_nl = idp_display_name("https://signon.rug.nl/nidp/saml2/metadata", "nl")
+        display_name_nl = idp_display_name("rug.nl", "nl")
         self.assertEqual("Rijksuniversiteit Groningen", display_name_nl)
 
-        display_name_en = idp_display_name("https://signon.rug.nl/nidp/saml2/metadata", "en")
+        display_name_en = idp_display_name("rug.nl", "en")
         self.assertEqual("University of Groningen", display_name_en)
 
-        display_name_pt = idp_display_name("https://signon.rug.nl/nidp/saml2/metadata", "pt")
+        display_name_pt = idp_display_name("rug.nl", "pt")
         self.assertEqual("University of Groningen", display_name_pt)
 
         display_none = idp_display_name("nope")
         self.assertEqual("nope", display_none)
+
+        from server.cron.idp_metadata_parser import idp_metadata
+        self.assertEqual(315, len(idp_metadata))
