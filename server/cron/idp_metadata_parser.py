@@ -21,10 +21,12 @@ def parse_idp_metadata(app):
             scopes.append(element.text)
 
         elif event == "start" and element.tag == "DisplayName":
-            lang = element.attrib.get('{http://www.w3.org/XML/1998/namespace}lang')
+            stripped_attribs = {k.split("}", 1)[1]:v for k, v in element.attrib.items() if "}" in k}
+            # better safe then sorry - namespaces can change
+            lang = {**stripped_attribs, **element.attrib}.get("lang", "en")
             if lang == "nl":
                 display_name_nl = element.text
-            elif lang == "en":
+            else:
                 display_name_en = element.text
 
         elif event == "end" and element.tag == "EntityDescriptor" and (display_name_nl or display_name_en):
