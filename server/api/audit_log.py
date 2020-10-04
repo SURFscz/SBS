@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 from flask import Blueprint
-from sqlalchemy import desc
+from sqlalchemy import desc, or_, and_
+
 from server.api.base import json_endpoint
 from server.auth.security import current_user_id, confirm_read_access, confirm_group_member, \
     is_organisation_admin, is_current_user_collaboration_admin, is_current_user_organisation_admin_or_manager
@@ -47,7 +48,8 @@ def info(query_id, collection_name):
     confirm_read_access(query_id, override_func=override_func)
 
     audit_logs = AuditLog.query \
-        .filter((AuditLog.parent_id == query_id) | (AuditLog.target_id == query_id)) \
+        .filter(or_(and_(AuditLog.parent_id == query_id, AuditLog.parent_name == collection_name),
+                    and_(AuditLog.target_id == query_id, AuditLog.target_type == collection_name))) \
         .order_by(desc(AuditLog.created_at)) \
         .limit(100) \
         .all()

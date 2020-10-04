@@ -8,7 +8,6 @@ idp_metadata = None
 
 
 def parse_idp_metadata(app):
-    global idp_metadata
     metadata = app.app_config.metadata
     pre = request.urlopen(metadata.idp_url)
     results = {}
@@ -21,7 +20,7 @@ def parse_idp_metadata(app):
             scopes.append(element.text)
 
         elif event == "start" and element.tag == "DisplayName":
-            stripped_attribs = {k.split("}", 1)[1]:v for k, v in element.attrib.items() if "}" in k}
+            stripped_attribs = {k.split("}", 1)[1]: v for k, v in element.attrib.items() if "}" in k}
             # better safe then sorry - namespaces can change
             lang = {**stripped_attribs, **element.attrib}.get("lang", "en")
             if lang == "nl":
@@ -36,6 +35,7 @@ def parse_idp_metadata(app):
             display_name_nl = display_name_en = None
             scopes = []
 
+    global idp_metadata
     idp_metadata = results
 
 
@@ -43,4 +43,4 @@ def idp_display_name(schac_home_organization, lang="en"):
     if not idp_metadata:
         parse_idp_metadata(current_app)
     names = idp_metadata.get(schac_home_organization, {"en": schac_home_organization})
-    return names[lang] if lang in names else names["en"]
+    return names.get(lang, names["en"])
