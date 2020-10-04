@@ -304,6 +304,10 @@
                 }
             }
 
+            &.uid {
+                word-break: break-all;
+            }
+
             &.actions {
                 text-align: right;
 

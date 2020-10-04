@@ -531,7 +531,7 @@ class CollaborationDetail extends React.Component {
     collaborationDetails = (name, short_name, alreadyExists, initial, description, accepted_user_policy,
                             identifier, organisation, isAdmin, disabledSubmit, originalCollaboration,
                             config, disable_join_requests, services_restricted) => {
-        const joinRequestUrl = `${config.base_url}/registration?collaboration=${encodeURIComponent(originalCollaboration.name)}`;
+        const joinRequestUrl = `${config.base_url}/registration?collaboration=${originalCollaboration.identifier}`;
         const {user} = this.props;
         const isPlatformAdmin = user.admin;
 
