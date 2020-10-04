@@ -17,3 +17,4 @@ Werkzeug~=1.0.1
 flask-jsonschema-validator==0.0.4
 APScheduler==3.6.3
 paho-mqtt==1.5.1
+urllib3==1.25.10
