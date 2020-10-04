@@ -135,13 +135,13 @@
         }
     }
 
-    .services-container  {
+    .services-container {
         a.button {
             margin-top: 40px;
         }
     }
 
-    table.members, table.invitations, table.api-keys, table.collaborations, table.collaboration-requests, table.services  {
+    table.members, table.invitations, table.api-keys, table.collaborations, table.collaboration-requests, table.services {
         width: 100%;
 
         th {
@@ -214,6 +214,10 @@
         th.actions {
             width: 10%;
             cursor: default;
+        }
+
+        td.uid {
+            word-break: break-all;
         }
 
         td.suspended {
