@@ -132,6 +132,10 @@
                 vertical-align: middle;
                 padding: 7px;
 
+                &.uid {
+                    word-break: break-all;
+                }
+
                 &.actions {
                     text-align: left;
 
