@@ -20,4 +20,4 @@ class TestIdpMetadataParser(AbstractTest):
         self.assertEqual("nope", display_none)
 
         from server.cron.idp_metadata_parser import idp_metadata
-        self.assertEqual(315, len(idp_metadata))
+        self.assertTrue(len(idp_metadata) > 300)

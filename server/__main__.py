@@ -122,7 +122,7 @@ app.register_error_handler(404, page_not_found)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = config.database.uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = False
+app.config["SQLALCHEMY_ECHO"] = False  # Set to True for query debugging
 
 app.config["TESTING"] = test
 app.config["MAIL_SERVER"] = config.mail.host
