@@ -5,7 +5,7 @@ from server.db.domain import Collaboration, Organisation, Invitation, Collaborat
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER, RESTRICTED_CO_API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
     ai_computing_short_name, service_network_entity_id, service_wiki_entity_id, service_storage_entity_id, \
-    service_cloud_entity_id
+    service_cloud_entity_id, uuc_teachers_name
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -427,6 +427,32 @@ class TestCollaboration(AbstractTest):
         collaboration_id = self._find_by_identifier()["id"]
         self.login("urn:roger")
         self.get(f"/api/collaborations/lite/{collaboration_id}", response_status_code=403)
+
+    def test_collaboration_lite_disclose_member_information(self):
+        self.login("urn:sarah")
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
+
+        memberships = collaboration["collaboration_memberships"]
+        self.assertEqual(4, len(memberships))
+        self.assertFalse("email" in memberships[0])
+
+    def test_collaboration_lite_disclose_email_information(self):
+        self.login("urn:roger")
+        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
+        collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
+
+        memberships = collaboration["collaboration_memberships"]
+        self.assertEqual(4, len(memberships))
+        self.assertTrue("email" in memberships[0])
+
+    def test_collaboration_lite_disclose_no_information(self):
+        self.login("urn:betty")
+        collaboration_id = self.find_entity_by_name(Collaboration, uuc_teachers_name).id
+        collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
+
+        memberships = collaboration.get("collaboration_memberships")
+        self.assertIsNone(memberships)
 
     def test_api_call(self):
         response = self.client.post("/api/collaborations/v1",

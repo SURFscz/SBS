@@ -209,6 +209,8 @@ class Collaboration(Base, db.Model):
                                   passive_deletes=True)
     disable_join_requests = db.Column("disable_join_requests", db.Boolean(), nullable=True, default=False)
     services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
+    disclose_member_information = db.Column("disclose_member_information", db.Boolean(), nullable=True, default=False)
+    disclose_email_information = db.Column("disclose_email_information", db.Boolean(), nullable=True, default=False)
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
