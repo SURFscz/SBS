@@ -2,7 +2,7 @@
 import uuid
 from secrets import token_urlsafe
 
-from flask import Blueprint, request as current_request, current_app, g as request_context
+from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.orm import aliased, load_only, contains_eager, joinedload
@@ -200,6 +200,22 @@ def collaboration_lite_by_id(collaboration_id):
         .options(contains_eager(Collaboration.organisation)) \
         .filter(Collaboration.id == collaboration_id) \
         .one()
+
+    if collaboration.disclose_member_information or collaboration.disclose_email_information:
+        def disclose_member_info(member):
+            member_json = {
+                "role": member.role,
+                "name": member.user.name
+            }
+            if collaboration.disclose_email_information:
+                member_json["email"] = member.user.email
+            return member_json
+
+        json_collaboration = jsonify(collaboration).json
+        json_collaboration["collaboration_memberships"] = list(
+            map(disclose_member_info, collaboration.collaboration_memberships))
+        return json_collaboration, 200
+
     return collaboration, 200
 
 

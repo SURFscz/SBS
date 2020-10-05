@@ -248,13 +248,15 @@ def seed(db, app_config):
                                  organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[],
                                  short_name=ai_computing_short_name,
-                                 accepted_user_policy="https://www.google.nl")
+                                 accepted_user_policy="https://www.google.nl",
+                                 disclose_member_information=True)
     uva_research = Collaboration(name=uva_research_name, short_name="research",
                                  global_urn="uva:research",
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",
                                  organisation=uva, services=[cloud, storage, wiki],
-                                 join_requests=[], invitations=[])
+                                 join_requests=[], invitations=[],
+                                 disclose_email_information=True)
     uuc_teachers = Collaboration(name=uuc_teachers_name,
                                  identifier=str(uuid.uuid4()),
                                  global_urn=f"ucc:{uuc_teachers_name}",
