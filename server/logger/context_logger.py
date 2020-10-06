@@ -13,3 +13,7 @@ class CustomAdapter(logging.LoggerAdapter):
 
     def process(self, msg, kwargs):
         return f"user: {self.extra['user']}, {msg}", kwargs
+
+
+def ctx_logger(name=None):
+    return CustomAdapter(logging.getLogger(name))

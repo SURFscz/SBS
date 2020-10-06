@@ -1,11 +1,11 @@
 # -*- coding: future_fstrings -*-
 from flask import Blueprint, request as current_request
 
-from server.api.base import ctx_logger
 from server.api.base import json_endpoint
 from server.auth.security import confirm_collaboration_admin, current_user_uid, \
     current_user_id, confirm_organisation_admin_or_manager
 from server.db.domain import CollaborationMembership, db, Collaboration
+from server.logger.context_logger import ctx_logger
 
 collaboration_membership_api = Blueprint("collaboration_membership_api", __name__,
                                          url_prefix="/api/collaboration_memberships")

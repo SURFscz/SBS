@@ -1,8 +1,8 @@
 # -*- coding: future_fstrings -*-
 import json
-import logging
 import os
 import re
+import traceback
 from functools import wraps
 from pathlib import Path
 
@@ -11,10 +11,11 @@ from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
-from server.api.context_logger import CustomAdapter
-from server.auth.security import secure_hash
+from server.auth.security import secure_hash, current_user
 from server.db.db import db
 from server.db.domain import ApiKey
+from server.logger.context_logger import ctx_logger
+from server.mail import mail_error
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
@@ -77,10 +78,6 @@ def get_user(app_config, auth):
         filter(lambda user: user.name == auth.username and user.password == auth.password, app_config.api_users))
 
 
-def ctx_logger(name=None):
-    return CustomAdapter(logging.getLogger(name))
-
-
 def _add_custom_header(response):
     response.headers.set("x-session-alive", "true")
     response.headers["server"] = ""
@@ -135,6 +132,13 @@ def json_endpoint(f):
             if response.status_code == 401:
                 response.headers.set("WWW-Authenticate", "Basic realm=\"Please login\"")
             db.session.rollback()
+            mail_conf = current_app.app_config.mail
+            if mail_conf.send_exceptions and not os.environ.get("TESTING"):
+                tb = traceback.format_exc()
+                user = current_user()
+                user_id = user.get("email", user.get("name")) if "email" in user or "name" in user \
+                    else request_context.api_user.name if request_context.is_authorized_api_call else "unknown"
+                mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, tb)
             return response
 
     return wrapper

@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 import paho.mqtt.publish as publish
 
-from server.api.base import ctx_logger
+from server.logger.context_logger import ctx_logger
 
 
 class MqttClient():

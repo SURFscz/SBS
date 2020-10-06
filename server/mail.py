@@ -1,11 +1,12 @@
 # -*- coding: future_fstrings -*-
+from datetime import datetime
 from threading import Thread
 
 from flask import current_app, render_template
 from flask_mail import Message
 
-from server.api.base import ctx_logger
 from server.db.defaults import calculate_expiry_period
+from server.logger.context_logger import ctx_logger
 
 
 def _send_async_email(ctx, msg, mail):
@@ -157,3 +158,12 @@ def mail_suspend_notification(context, recipients, is_primary, preview=False):
         context=context,
         preview=preview
     )
+
+
+def mail_error(environment, current_user, recipients, tb):
+    return _do_send_mail(
+        subject=f"Error on {environment}",
+        recipients=recipients,
+        template="error_notification",
+        context={"environment": environment, "tb": tb, "date": datetime.now(), "current_user": current_user},
+        preview=False)
