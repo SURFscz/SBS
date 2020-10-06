@@ -138,7 +138,7 @@ export function reportError(error) {
     return postPutJson("/api/users/error", error, "post");
 }
 
-export function activateUserForCollaboration(collaborationId, organisationId, userId) {
+export function activateUserForCollaboration(collaborationId, userId) {
     return postPutJson("/api/users/activate", {collaboration_id: collaborationId, user_id: userId}, "put");
 }
 
