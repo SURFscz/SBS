@@ -52,6 +52,9 @@ mail:
   sender_email: no-reply@surf.nl
   suppress_sending_mails: False
   info_email: sram-support@surf.nl
+  send_exceptions: True
+  send_exceptions_recipients: ["sram-support@surf.nl"]
+  environment: local
 
 aup:
   pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf

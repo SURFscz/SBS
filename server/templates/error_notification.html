@@ -1,0 +1,10 @@
+{% extends "mail_layout.html" %}
+{% block title %}SURFNET Error notification{% endblock %}
+{% block content %}
+
+<p>Hi,</p>
+<p>Bad news. An error occurred in {{ environment }} at {{ date }} for user {{ current_user }}:</p>
+
+<code>{{ tb }}</code>
+
+{% endblock %}

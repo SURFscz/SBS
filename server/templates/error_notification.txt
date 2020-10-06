@@ -1,0 +1,13 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURFNET Error notification{% endblock %}
+{% block content %}
+
+Hi,
+Bad news. An error occurred in {{ environment }} at {{ date }}:
+
+{{ tb }}
+
+{% endblock %}
+
+
+

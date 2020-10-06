@@ -4,12 +4,13 @@ from datetime import datetime
 
 from flask import Blueprint, current_app
 
-from server.api.base import json_endpoint, query_param, ctx_logger
+from server.api.base import json_endpoint, query_param
 from server.api.service import services_from_collaboration_memberships, \
     services_from_organisation_collaboration_memberships, services_from_organisation_memberships
 from server.auth.security import confirm_read_access
 from server.db.db import db
 from server.db.domain import User, Service
+from server.logger.context_logger import ctx_logger
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
 

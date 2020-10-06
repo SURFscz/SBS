@@ -8,7 +8,6 @@ from sqlalchemy import text, or_, func, bindparam, String
 from sqlalchemy.orm import aliased, load_only, contains_eager, joinedload
 from werkzeug.exceptions import BadRequest, Forbidden
 
-from server.api.base import ctx_logger
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_collaboration_admin, is_application_admin, \
     current_user_id, confirm_collaboration_member, confirm_authorized_api_call, \
@@ -18,6 +17,7 @@ from server.db.defaults import default_expiry_date, full_text_search_autocomplet
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service
 from server.db.models import update, save, delete
+from server.logger.context_logger import ctx_logger
 from server.mail import mail_collaboration_invitation
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
