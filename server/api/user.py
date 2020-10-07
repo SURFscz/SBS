@@ -10,7 +10,6 @@ import uuid
 
 import requests
 from flask import Blueprint, current_app, redirect
-from flask import g as request_context
 from flask import request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import contains_eager
