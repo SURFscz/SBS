@@ -2,6 +2,7 @@
 import datetime
 import itertools
 import json
+import os
 import subprocess
 import tempfile
 import urllib.parse
@@ -9,6 +10,7 @@ import uuid
 
 import requests
 from flask import Blueprint, current_app, redirect
+from flask import g as request_context
 from flask import request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import contains_eager
@@ -17,7 +19,7 @@ from werkzeug.exceptions import Forbidden
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
-    confirm_collaboration_admin, confirm_organisation_admin
+    confirm_collaboration_admin, confirm_organisation_admin, current_user
 from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
@@ -25,6 +27,7 @@ from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import User, OrganisationMembership, CollaborationMembership
 from server.db.models import update
 from server.logger.context_logger import ctx_logger
+from server.mail import mail_error
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
@@ -395,5 +398,12 @@ def logout():
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def error():
-    ctx_logger("user").exception(json.dumps(current_request.json))
+    js_dump = json.dumps(current_request.json)
+    ctx_logger("user").exception(js_dump)
+    mail_conf = current_app.app_config.mail
+    if mail_conf.send_js_exceptions and not os.environ.get("TESTING"):
+        user = current_user()
+        user_id = user.get("email", user.get("name"))
+        mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, js_dump)
+
     return {}, 201
