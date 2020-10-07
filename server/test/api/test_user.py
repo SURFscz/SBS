@@ -1,5 +1,6 @@
 # -*- coding: future_fstrings -*-
 import datetime
+import os
 from urllib import parse
 
 import responses
@@ -226,3 +227,17 @@ class TestUser(AbstractTest):
 
     def test_error(self):
         self.post("/api/users/error", body={"error": "403"}, response_status_code=201)
+
+    def test_error_mail(self):
+        try:
+            del os.environ["TESTING"]
+            mail = self.app.mail
+            with mail.record_messages() as outbox:
+                self.login("urn:sarah")
+                self.post("/api/users/error", body={"weird": "msg"}, response_status_code=201)
+                self.assertEqual(1, len(outbox))
+                mail_msg = outbox[0]
+                self.assertTrue("weird" in mail_msg.html)
+                self.assertTrue("An error occurred in local" in mail_msg.html)
+        finally:
+            os.environ["TESTING"] = "1"
