@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import I18n from "i18n-js";
 import {isEmpty, sortObjects, stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-
+import ConfirmationDialog from "../components/ConfirmationDialog";
 import "./OrganisationServices.scss"
 import {headerIcon} from "../forms/helpers";
 import ReactTooltip from "react-tooltip";
@@ -30,6 +30,10 @@ class OrganisationServices extends React.Component {
             notAllowedOrganisation: false,
             showExplanation: false,
             serviceConnectionRequests: [],
+            confirmationDialogOpen: false,
+            confirmationDialogQuestion: undefined,
+            confirmationDialogAction: () => true,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
         };
     }
 
@@ -80,6 +84,16 @@ class OrganisationServices extends React.Component {
 
     closeExplanation = () => this.setState({showExplanation: false});
 
+        confirm = (action, question) => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationDialogQuestion: question,
+            confirmationDialogAction: action
+        });
+    };
+
+    closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
+
     addService = option => {
         if (option) {
             const {organisation} = this.state;
@@ -101,12 +115,14 @@ class OrganisationServices extends React.Component {
 
     removeService = service => e => {
         const {organisation} = this.state;
-        deleteOrganisationServices(organisation.id, service.id).then(() => {
+        const action = () => deleteOrganisationServices(organisation.id, service.id).then(() => {
+            this.closeConfirmationDialog();
             this.refresh(() => setFlash(I18n.t("organisationServices.flash.deleted", {
                 service: service.name,
                 name: organisation.name
             })));
         });
+        this.confirm(action, I18n.t("organisationServices.serviceDeleteConfirmation", {organisation: organisation.name}));
     };
 
     sortTable = (services, name, sorted, reverse) => () => {
@@ -183,7 +199,8 @@ class OrganisationServices extends React.Component {
     render() {
         const {
             organisation, sortedServices, allServices, sorted, reverse, errorService,
-            notAllowedOrganisation, showExplanation
+            notAllowedOrganisation, showExplanation, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
+            confirmationDialogQuestion
         } = this.state;
         if (isEmpty(organisation)) {
             return null;
@@ -192,6 +209,10 @@ class OrganisationServices extends React.Component {
         const availableServices = allServices.filter(service => !sortedServices.find(s => s.id === service.value));
         return (
             <div className="mod-organisation-services">
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationDialogQuestion}/>
                 <Explain
                     close={this.closeExplanation}
                     subject={I18n.t("explain.services")}
