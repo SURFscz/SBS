@@ -15,6 +15,7 @@ import {
 import I18n from "i18n-js";
 import {isEmpty, sortObjects, stopEvent} from "../utils/Utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 import "./CollaborationServices.scss"
 import Select from "react-select";
@@ -45,6 +46,10 @@ class CollaborationServices extends React.Component {
             showExplanation: false,
             message: "",
             serviceConnectionRequests: [],
+            confirmationDialogOpen: false,
+            confirmationDialogQuestion: undefined,
+            confirmationDialogAction: () => true,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
         };
     }
 
@@ -129,12 +134,15 @@ class CollaborationServices extends React.Component {
 
     removeService = service => e => {
         const {collaboration} = this.state;
-        deleteCollaborationServices(collaboration.id, service.id).then(() => {
+        const action = () => deleteCollaborationServices(collaboration.id, service.id).then(() => {
+            this.closeConfirmationDialog();
             this.refresh(() => setFlash(I18n.t("collaborationServices.flash.deleted", {
                 service: service.name,
                 name: collaboration.name
             })));
         });
+        this.confirm(action, I18n.t("collaborationServices.serviceDeleteConfirmation", {collaboration: collaboration.name}));
+
     };
 
     sortTable = (services, name, sorted, reverse) => () => {
@@ -196,13 +204,17 @@ class CollaborationServices extends React.Component {
     };
 
     resend = req => {
-        resendServiceConnectionRequest(req.id)
-            .then(r => setFlash(I18n.t("collaborationServices.serviceConnectionRequestResend",
-                {
-                    service: req.service.name,
-                    collaboration: req.collaboration.name
-                })))
+        const action = () => resendServiceConnectionRequest(req.id)
+            .then(() => {
+                this.closeConfirmationDialog();
+                setFlash(I18n.t("collaborationServices.serviceConnectionRequestResend",
+                    {
+                        service: req.service.name,
+                        collaboration: req.collaboration.name
+                    }))
+            })
             .catch(e => {
+                this.closeConfirmationDialog();
                 if (e.response && e.response.json && e.response.status === 404) {
                     //Already accepted
                     this.componentDidMount();
@@ -210,15 +222,30 @@ class CollaborationServices extends React.Component {
                     throw e;
                 }
             });
+        this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestResendConfirmation"));
     };
 
+    closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
+
     removeServiceConnectionRequest = req => {
-        deleteServiceConnectionRequest(req.id)
-            .then(r => this.refresh((() => setFlash(I18n.t("collaborationServices.serviceConnectionRequestDeleted",
-                {
-                    service: req.service.name,
-                    collaboration: req.collaboration.name
-                })))));
+        const action = () => deleteServiceConnectionRequest(req.id)
+            .then(() => {
+                this.closeConfirmationDialog();
+                this.refresh((() => setFlash(I18n.t("collaborationServices.serviceConnectionRequestDeleted",
+                    {
+                        service: req.service.name,
+                        collaboration: req.collaboration.name
+                    }))))
+            });
+        this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestDeleteConfirmation"));
+    };
+
+    confirm = (action, question) => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationDialogQuestion: question,
+            confirmationDialogAction: action
+        });
     };
 
     renderServiceRequestConnections = (serviceConnectionRequests, allowedToConfigureServices) => {
@@ -322,7 +349,8 @@ class CollaborationServices extends React.Component {
         const {
             collaboration, sortedServices, allServices, sorted, reverse, errorService,
             notAllowedOrganisation, automaticConnectionNotAllowed, showExplanation, message,
-            serviceConnectionRequests
+            serviceConnectionRequests, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
+            confirmationDialogQuestion
         } = this.state;
         if (collaboration === undefined) {
             return null;
@@ -332,6 +360,10 @@ class CollaborationServices extends React.Component {
         const allowedToConfigureServices = user.admin || !collaboration.services_restricted;
         return (
             <div className="mod-collaboration-services">
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationDialogQuestion}/>
                 <Explain
                     close={this.closeExplanation}
                     subject={I18n.t("explain.services")}

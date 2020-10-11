@@ -24,6 +24,12 @@ def is_org_member():
                .count() > 0
 
 
+def _services_from_query(count_only, query, service_id):
+    if service_id:
+        query = query.filter(Service.id == service_id)
+    return query.count() if count_only else query.all()
+
+
 # Services connected to a collaboration where the user is a member of
 def services_from_collaboration_memberships(user_id, service_id=None, count_only=False):
     query = Service.query \
@@ -32,10 +38,7 @@ def services_from_collaboration_memberships(user_id, service_id=None, count_only
         .join(CollaborationMembership.user) \
         .filter(User.id == user_id)
 
-    if service_id:
-        query = query.filter(Service.id == service_id)
-
-    return query.count() if count_only else query.all()
+    return _services_from_query(count_only, query, service_id)
 
 
 # Services connected to a organisation which has a collaboration where the user is a member of
@@ -47,10 +50,7 @@ def services_from_organisation_collaboration_memberships(user_id, service_id=Non
         .join(CollaborationMembership.user) \
         .filter(User.id == user_id)
 
-    if service_id:
-        query = query.filter(Service.id == service_id)
-
-    return query.count() if count_only else query.all()
+    return _services_from_query(count_only, query, service_id)
 
 
 # Services connected to a organisation where the user is a member of
@@ -61,10 +61,7 @@ def services_from_organisation_memberships(user_id, service_id=None, count_only=
         .join(OrganisationMembership.user) \
         .filter(User.id == user_id)
 
-    if service_id:
-        query = query.filter(Service.id == service_id)
-
-    return query.count() if count_only else query.all()
+    return _services_from_query(count_only, query, service_id)
 
 
 @service_api.route("/search", strict_slashes=False)

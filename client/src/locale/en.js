@@ -661,6 +661,9 @@ I18n.translations.en = {
         serviceConnectionRequestResend: "Successfully resend request to connect service {{service}} to collaboration {{collaboration}}",
         serviceConnectionRequestDeleted: "Successfully deleted request to connect service {{service}} to collaboration {{collaboration}}",
         serviceRestrictedInfo: "This Collaboration is service restricted. Only the platform admin can configure services to be used by this Collaboration.",
+        serviceDeleteConfirmation: "Are you sure you want to remove this service from collaboration {{collaboration}}",
+        serviceConnectionRequestDeleteConfirmation: "Are you sure you want to delete this Service Connection request?",
+        serviceConnectionRequestResendConfirmation: "Are you sure you want to resend the request to connect this service?",
     },
     organisationServices: {
         title: "Services for Organisation {{name}}",
@@ -679,7 +682,8 @@ I18n.translations.en = {
             name: "Name",
             entity_id: "Entity ID",
             description: "Description"
-        }
+        },
+        serviceDeleteConfirmation: "Are you sure you want to remove this service from organisation {{organisation}}",
     },
     groups: {
         title: "Groups within collaboration {{name}}",

@@ -97,10 +97,10 @@ I18n.translations.nl = {
         noImpersonation: "U bent wie u bent - u doet niemand anders na.",
         currentImpersonationValue: "U ziet SBS nu als {{currentUser}}, maar u bent natuurlijk {{impersonator}}.",
         startImpersonation: "Nadoen",
-        clearImpersonation: "Stop met nadoen"  ,
+        clearImpersonation: "Stop met nadoen",
         flash: {
             startedImpersonation: "Met success ben je nu - tijdelijk - {{name}}.",
-            clearedImpersonation:"Met succes is je nabootsing gestopt. Je bent jezelf weer."
+            clearedImpersonation: "Met succes is je nabootsing gestopt. Je bent jezelf weer."
         }
 
     },
@@ -661,6 +661,9 @@ I18n.translations.nl = {
         serviceConnectionRequestResend: "Successfully resend request to connect service {{service}} to collaboration {{collaboration}}",
         serviceConnectionRequestDeleted: "Successfully deleted request to connect service {{service}} to collaboration {{collaboration}}",
         serviceRestrictedInfo: "This Collaboration is service restricted. Only the platform admin can configure services to be used by this Collaboration.",
+        serviceDeleteConfirmation: "Are you sure you want to remove this service from collaboration {{collaboration}}",
+        serviceConnectionRequestDeleteConfirmation: "Are you sure you want to delete this Service Connection request?",
+        serviceConnectionRequestResendConfirmation: "Are you sure you want to resend the request to connect this service?",
     },
     organisationServices: {
         title: "Diensten voor organisatie {{name}}",
@@ -679,7 +682,8 @@ I18n.translations.nl = {
             name: "Naam",
             entity_id: "Entity ID",
             description: "Omschrijving"
-        }
+        },
+        serviceDeleteConfirmation: "Are you sure you want to remove this service from organisation {{organisation}}",
     },
     groups: {
         title: "Groepen in samenwerking {{name}}",
