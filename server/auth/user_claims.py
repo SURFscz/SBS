@@ -16,12 +16,11 @@ def claim_attribute_mapping():
             {"sub": "uid"},
             {"name": "name"},
             {"given_name": "given_name"},
-            {"email": "email"},
             {"family_name": "family_name"},
-            {"eduperson_affiliation": "affiliation"},
-            {"eduperson_entitlement": "entitlement"},
-            {"schac_home_organization": "schac_home_organisation"},
+            {"email": "email"},
             {"eduperson_scoped_affiliation": "scoped_affiliation"},
+            {"voperson_external_affiliation": "affiliation"},
+            {"eduperson_entitlement": "entitlement"},
             {"eduperson_principal_name": "eduperson_principal_name"}
         ]
     return claim_attribute_mapping_value
@@ -65,8 +64,10 @@ def add_user_claims(user_info_json, uid, user, replace_none_values=True):
     if not user.name:
         name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
         user.name = name if name else uid
-    if not user.schac_home_organisation and user.scoped_affiliation:
-        parts = re.split("[@|.]", user.scoped_affiliation)[-2:]
+    if "voperson_external_id" in user_info_json:
+        voperson_external_id = user_info_json["voperson_external_id"]
+        val = voperson_external_id[0] if isinstance(voperson_external_id, list) else val
+        parts = re.split("[@|.]", val)[-2:]
         user.schac_home_organisation = ".".join(parts)
     if not user.username:
         user.username = generate_unique_username(user)
