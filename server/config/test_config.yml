@@ -43,7 +43,7 @@ collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
 restricted_co:
   services_white_list: ["https://cloud"]
-  default_organisation: "schac_home_organisation_uuc"
+  default_organisation: "schac_home_organisation_uuc.org"
 
 mail:
   host: localhost
