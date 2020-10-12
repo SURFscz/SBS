@@ -66,8 +66,9 @@ def add_user_claims(user_info_json, uid, user, replace_none_values=True):
         user.name = name if name else uid
     if "voperson_external_id" in user_info_json:
         voperson_external_id = user_info_json["voperson_external_id"]
-        val = voperson_external_id[0] if isinstance(voperson_external_id, list) else val
-        parts = re.split("[@|.]", val)[-2:]
+        val = voperson_external_id[0] if isinstance(voperson_external_id, list) else voperson_external_id
+        val = re.split("@", val)[-1]
+        parts = re.split("\\.", val)[-2:]
         user.schac_home_organisation = ".".join(parts)
     if not user.username:
         user.username = generate_unique_username(user)
