@@ -60,7 +60,7 @@ class AbstractTest(TestCase):
     def login(self, uid="urn:john", schac_home_organisation=None, user_info={}):
         responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
                       json={"access_token": "some_token"}, status=200)
-        json_body = {"sub": uid, "schac_home_organization": schac_home_organisation}
+        json_body = {"sub": uid, "voperson_external_id": f"jdoe@{schac_home_organisation}"}
         responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
                       json={**json_body, **user_info}, status=200)
         with requests.Session():

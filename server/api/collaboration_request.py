@@ -42,8 +42,8 @@ def request_collaboration():
         .filter(Organisation.schac_home_organisation == user.schac_home_organisation) \
         .all()
     if len(organisations) == 0:
-        raise BadRequest(f"User schac_home_organisation {user.schac_home_organisation} does not have a "
-                         f"corresponding organisation with the same schac_home")
+        raise BadRequest(f"There is no organisation with a schac_home_organisation that equals the "
+                         f"schac_home_organisation {user.schac_home_organisation} of User {user.email}")
 
     organisation = organisations[0]
     data["requester_id"] = user.id

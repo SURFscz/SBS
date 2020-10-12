@@ -23,8 +23,8 @@ mike_name = "Mike Doe"
 james_name = "James Byrd"
 sarah_name = "Sarah Cross"
 
-schac_home_organisation = "scz.lab.example.org"
-schac_home_organisation_uuc = "schac_home_organisation_uuc"
+schac_home_organisation = "example.org"
+schac_home_organisation_uuc = "schac_home_organisation_uuc.org"
 
 organisation_invitation_hash = token_urlsafe()
 organisation_invitation_expired_hash = token_urlsafe()
