@@ -864,7 +864,8 @@ I18n.translations.en = {
             "services": "Service",
             "services_collaborations": "Collaboration service",
             "users": "User",
-            "ip_networks": "IP network"
+            "ip_networks": "IP network",
+            "suspend_notifications": "Login notifications",
         }
     },
     serviceRequest: {
