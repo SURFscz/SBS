@@ -14,10 +14,28 @@ export default class DateField extends React.PureComponent {
 
     toggle = () => this.component.setOpen(true);
 
+    validateOnBlur = e => {
+        if (e && e.target) {
+            const {onChange, maxDate = null, minDate = null} = this.props;
+            const minimalDate = minDate || moment().add(1, "day").toDate();
+            const maximalDate = maxDate || moment().add(31, "day").toDate();
+            const value = e.target.value;
+            if (value) {
+                const d = moment(value, "DD/MM/YYYY").toDate();
+                if (d > maximalDate || d < minimalDate) {
+                    onChange(moment().add(16, "days").toDate());
+                }
+            } else {
+                onChange(moment().add(16, "days").toDate());
+            }
+        }
+    }
+
     render() {
         const {
             onChange, name, value, disabled = false, maxDate = null, minDate = null, toolTip = null
         } = this.props;
+        const minimalDate = minDate || moment().add(1, "day").toDate();
         return (<div className="date-field">
                 <label className="date-field-label" htmlFor={name}>{name} {toolTip &&
                 <span className="tool-tip-section">
@@ -36,11 +54,12 @@ export default class DateField extends React.PureComponent {
                         preventOpenOnFocus
                         onChange={onChange}
                         showWeekNumbers
+                        onBlur={this.validateOnBlur}
                         weekLabel="Week"
                         disabled={disabled}
                         todayButton={I18n.t("forms.today")}
                         maxDate={maxDate}
-                        minDate={minDate || moment().add(1, "day").toDate()}
+                        minDate={minimalDate}
                     />
                     <FontAwesomeIcon onClick={this.toggle} icon="calendar-alt"/>
                 </label>
