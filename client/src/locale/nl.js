@@ -33,7 +33,8 @@ I18n.translations.nl = {
         subTitle: "Please login...",
         suspended: "Your user account has been suspended. Contact your collaboration administrator to resolve this",
         successfullyActivated: "You have successfully re-activated your account",
-        closeBrowser: "To finish your logout you'll have to close your browser."
+        closeBrowser: "To finish your logout you'll have to close your browser.",
+        closeBrowserAfterDelete: "To finish the deletion of your account you'll have to close your browser."
     },
     newDropDown: {
         organisation: "Nieuwe organisatie",
@@ -80,7 +81,9 @@ I18n.translations.nl = {
         update: "Bijwerken",
         flash: {
             updated: "Je profiel is bijgewerkt"
-        }
+        },
+        delete: "Verwijder",
+        deleteConfirmation: "Weet je zeker dat je je account wilt verwijderen? Al je lidmaatschappen worden verwijderd en er is geen manier om dit terug te draaien."
     },
     impersonate: {
         title: "Wie wilt u zijn?",

@@ -41,6 +41,12 @@ class TestUser(AbstractTest):
         res = self.client.get("/api/users/me")
         self.assertEquals(True, res.json["successfully_activated"])
 
+    def test_me_after_delete(self):
+        self.login("urn:jane")
+        User.query.filter(User.uid == "urn:jane").delete()
+        user = self.client.get("/api/users/me").json
+        self.assertEqual(user["guest"], True)
+
     def test_activate_by_organisation_admin(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
         self.do_test_activate("urn:mary", {"organisation_id": organisation_id})
@@ -224,6 +230,12 @@ class TestUser(AbstractTest):
         self.get("/api/users/logout", with_basic_auth=False)
         res = self.get("/api/users/me", with_basic_auth=False)
         self.assertTrue(res["guest"])
+
+    def test_delete(self):
+        self.login("urn:john")
+        self.delete("/api/users", with_basic_auth=False)
+        count = User.query.filter(User.uid == "urn:john").count()
+        self.assertEqual(0, count)
 
     def test_error(self):
         self.post("/api/users/error", body={"error": "403"}, response_status_code=201)
