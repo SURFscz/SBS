@@ -1,5 +1,5 @@
 import React from "react";
-import {auditLogsMe, updateUser} from "../api";
+import {auditLogsMe, deleteUser, updateUser} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./Profile.scss";
@@ -27,6 +27,9 @@ class Profile extends React.Component {
             confirmationDialogOpen: false,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => true,
+            leavePage: true,
+            confirmationQuestion: "",
+            isWarning: false,
             fileName: null,
             fileTypeError: false,
             invalidInputs: {},
@@ -54,9 +57,26 @@ class Profile extends React.Component {
             confirmationDialogOpen: true,
             leavePage: true,
             cancelDialogAction: this.gotoHome,
+            isWarning: false,
+            confirmationQuestion: "",
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false})
         });
     };
+
+    delete = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            leavePage: false,
+            isWarning: true,
+            confirmationQuestion: I18n.t("user.deleteConfirmation"),
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationDialogAction: () => this.doDelete()
+        });
+    };
+
+    doDelete = () => {
+        deleteUser().then(() => window.location.href = "/landing?delete=true")
+    }
 
     submit = () => {
         const {initial} = this.state;
@@ -146,15 +166,17 @@ class Profile extends React.Component {
 
             {attributes.map(attribute =>
                 <div key={attribute}>
-                <InputField value={values[attribute] || user[attribute]}
-                            name={`${I18n.t(`profile.${attribute}`)}`}
-                            disabled={true}
-                /></div>)
+                    <InputField value={values[attribute] || user[attribute]}
+                                name={`${I18n.t(`profile.${attribute}`)}`}
+                                disabled={true}
+                    /></div>)
             }
             <section className="actions">
+                <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                 <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
                         onClick={this.submit}/>
-                <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                <Button warningButton={true} txt={I18n.t("user.delete")}
+                        onClick={this.delete}/>
             </section>
 
         </div>);
@@ -163,7 +185,7 @@ class Profile extends React.Component {
     render() {
         const {
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
-            initial, convertSSHKey, ssh_key, auditLogs
+            initial, convertSSHKey, ssh_key, auditLogs, leavePage, confirmationQuestion, isWarning
         } = this.state;
         const {user} = this.props;
 
@@ -174,8 +196,10 @@ class Profile extends React.Component {
             <div className="mod-user-profile">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
+                                    question={confirmationQuestion}
                                     confirm={confirmationDialogAction}
-                                    leavePage={true}/>
+                                    isWarning={isWarning}
+                                    leavePage={leavePage}/>
                 <BackLink history={this.props.history} limitedAccess={true} role={userRole(user)}/>
                 <p className="title">{title}</p>
                 <Tabs>

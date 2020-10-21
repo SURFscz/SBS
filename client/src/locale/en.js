@@ -33,7 +33,8 @@ I18n.translations.en = {
         subTitle: "Please login...",
         suspended: "Your user account has been suspended. Contact your collaboration administrator to resolve this",
         successfullyActivated: "You have successfully re-activated your account",
-        closeBrowser: "To finish your logout you'll have to close your browser."
+        closeBrowser: "To finish your logout you'll have to close your browser.",
+        closeBrowserAfterDelete: "To finish the deletion of your account you'll have to close your browser."
     },
     newDropDown: {
         organisation: "New organisation",
@@ -80,7 +81,9 @@ I18n.translations.en = {
         update: "Update",
         flash: {
             updated: "Your profile has been updated"
-        }
+        },
+        delete: "Delete",
+        deleteConfirmation: "Are you sure you want to delete your account? All your memberships will be deleted and there is no way to revert this afterwards."
     },
     impersonate: {
         title: "Who do you want to be?",

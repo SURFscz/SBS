@@ -150,6 +150,10 @@ export function logoutUser() {
     return fetchJson("/api/users/logout");
 }
 
+export function deleteUser() {
+    return fetchDelete("/api/users")
+}
+
 //Services
 export function serviceNameExists(name, existingService = null) {
     return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${encodeURIComponent(existingService)}`);

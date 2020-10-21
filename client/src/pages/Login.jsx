@@ -15,10 +15,12 @@ class Login extends React.Component {
     render() {
         const {user} = this.props;
         const logout = getParameterByName("logout", window.location.search);
+        const afterDelete = getParameterByName("delete", window.location.search);
         return (
             <div className="mod-login">
                 <div className="title">
                     {logout && <h1 className="logout-msg">{I18n.t("login.closeBrowser")}</h1>}
+                    {afterDelete && <h1 className="logout-msg">{I18n.t("login.closeBrowserAfterDelete")}</h1>}
                     {user.guest &&
                     <a href="/login" onClick={login}><FontAwesomeIcon
                         icon="arrow-right"/>{I18n.t("not_found.loginLink")}

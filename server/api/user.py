@@ -24,7 +24,7 @@ from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import User, OrganisationMembership, CollaborationMembership
-from server.db.models import update
+from server.db.models import update, delete
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error
 
@@ -241,6 +241,8 @@ def me():
     if "user" in session and not session["user"]["guest"]:
         user_from_session = session["user"]
         user_from_db = User.query.get(user_from_session["id"])
+        if user_from_db is None:
+            return {"uid": "anonymous", "guest": True, "admin": False}, 200
         if user_from_db.suspended:
             logger = ctx_logger("user")
             logger.info(
@@ -390,8 +392,18 @@ def upgrade_super_user():
 
 @user_api.route("/logout", strict_slashes=False)
 def logout():
+    session["user"] = None
     session.clear()
     return {}, 200
+
+
+@user_api.route("/", strict_slashes=False, methods=["DELETE"])
+@json_endpoint
+def delete_user():
+    user_id = current_user_id()
+    session["user"] = None
+    session.clear()
+    return delete(User, user_id)
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
