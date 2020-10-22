@@ -211,8 +211,7 @@ def resume_session():
 
     user_info_json = response.json()
     uid = user_info_json["sub"]
-    users = User.query.filter(User.uid == uid).all()
-    user = users[0] if len(users) > 0 else None
+    user = User.query.filter(User.uid == uid).first()
     logger = ctx_logger("user")
     if not user:
         user = User(uid=uid, created_by="system", updated_by="system")

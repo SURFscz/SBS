@@ -12,11 +12,12 @@ class TestSystem(AbstractTest):
         res = self.put("/api/system/suspend_users")
         self.assertDictEqual({"first_suspend_notification": ["inactive@example.org"],
                               "second_suspend_notification": ["one_suspend@example.org"],
-                              "suspended": ["two_suspend@example.org"]}, res)
+                              "suspended": ["two_suspend@example.org"],
+                              "deleted": ["to_be_deleted@example.org"]}, res)
 
         two_suspend = self.find_entity_by_name(User, "two_suspend")
         self.assertTrue(two_suspend.suspended)
 
     def test_db_stats(self):
         res = self.get("/api/system/db_stats")
-        self.assertDictEqual({"count": 15, "name": "users"}, res[0])
+        self.assertDictEqual({"count": 16, "name": "users"}, res[0])

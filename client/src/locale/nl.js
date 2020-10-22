@@ -949,6 +949,7 @@ I18n.translations.nl = {
         first_suspend_notification: "First suspend notification email send to:",
         second_suspend_notification: "Second suspend notification email send to:",
         suspended: "Users who are marked as suspended:",
+        deleted: "Suspended users who are deleted:",
         runDbStatsInfo: "Get the database table counts",
         runDbStats: "Fetch",
         name: "Table name",

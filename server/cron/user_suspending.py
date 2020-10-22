@@ -27,6 +27,7 @@ def _result_container():
         "first_suspend_notification": [],
         "second_suspend_notification": [],
         "suspended": [],
+        "deleted": []
     }
 
 
@@ -59,7 +60,14 @@ def _do_suspend_users(app):
                     db.session.merge(user)
                     results["suspended"].append(user.email)
 
-        if len(users) > 0:
+        deletion_date = current_time - datetime.timedelta(days=retention.remove_suspended_users_period_days)
+        suspended_users = User.query \
+            .filter(User.last_login_date < deletion_date, User.suspended == True, ).all()  # noqa: E712
+        for user in suspended_users:
+            results["deleted"].append(user.email)
+            db.session.delete(user)
+
+        if len(users) > 0 or len(suspended_users) > 0:
             db.session.commit()
 
         return results
