@@ -114,6 +114,8 @@ export default class History extends React.PureComponent {
         if (isEmpty(auditLog)) {
             return null;
         }
+        const parent = (auditLogs[auditLog.parent_name] || []).find(parent => parent.id === auditLog.parent_id);
+        const parentName = parent ? parent.name : null;
         const beforeState = auditLog.stateBefore;
         const afterState = auditLog.stateAfter;
 
@@ -124,7 +126,7 @@ export default class History extends React.PureComponent {
                 <p className="info">{I18n.t(auditLog.action === 1 ? "history.parentNew" : "history.parentDeleted", {
                     collection: I18n.t(`history.tables.${auditLog.target_type}`),
                     parent: I18n.t(`history.tables.${auditLog.parent_name}`)
-                })}</p>}
+                })}{parentName && <span className="parent"> {parentName}</span>}</p>}
                 {(auditLog.parent_name && auditLog.action === 2) &&
                 <p className="info">{I18n.t("history.parentUpdated", {
                     collection: I18n.t(`history.tables.${auditLog.target_type}`),

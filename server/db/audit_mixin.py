@@ -18,9 +18,9 @@ dynamicExtendedJSONEncoder = DynamicExtendedJSONEncoder()
 
 relationship_configuration = {
     "groups": ["collaboration_memberships", "invitations"],
-    "collaborations": ["services", "collaboration_memberships", "invitations"],
-    "organisation": ["organisation_memberships", "organisation_invitations", "services"],
-    "service": ["allowed_organisations", "ip_networks"]
+    "collaborations": ["services"],
+    "organisations": ["services"],
+    "services": ["allowed_organisations"]
 }
 
 
