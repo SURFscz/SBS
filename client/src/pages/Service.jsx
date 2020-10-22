@@ -217,6 +217,7 @@ class Service extends React.Component {
         if (this.isValid()) {
             const {name, isNew, ip_networks} = this.state;
             const strippedIpNetworks = ip_networks
+                .filter(network => network.network_value && network.network_value.trim())
                 .map(network => ({network_value: network.network_value, id: network.id}));
             // Prevent deletion / re-creation of existing IP Network
             strippedIpNetworks.forEach(network => {
