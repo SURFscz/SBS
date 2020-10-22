@@ -23,7 +23,11 @@ class TestUserSuspending(AbstractTest):
     def test_schedule(self):
         mail = self.app.mail
         with mail.record_messages() as outbox:
-            suspend_users(self.app)
+            results = suspend_users(self.app)
+            self.assertListEqual(["inactive@example.org"], results["first_suspend_notification"])
+            self.assertListEqual(["one_suspend@example.org"], results["second_suspend_notification"])
+            self.assertListEqual(["two_suspend@example.org"], results["suspended"])
+            self.assertListEqual(["to_be_deleted@example.org"], results["deleted"])
             self.assertEqual(2, len(outbox))
 
         inactive = self.find_entity_by_name(User, "inactive")
@@ -36,3 +40,6 @@ class TestUserSuspending(AbstractTest):
 
         two_suspend = self.find_entity_by_name(User, "two_suspend")
         self.assertEqual(True, two_suspend.suspended)
+
+        to_be_deleted = self.find_entity_by_name(User, "to_be_deleted")
+        self.assertIsNone(to_be_deleted)

@@ -146,8 +146,13 @@ def seed(db, app_config):
                           last_login_date=last_login_date, last_accessed_date=last_login_date,
                           suspended=True)
 
+    deletion_date = current_time - datetime.timedelta(days=retention.remove_suspended_users_period_days + 30)
+    user_to_be_deleted = User(uid="urn:to_be_deleted", name="to_be_deleted", email="to_be_deleted@example.org",
+                              last_login_date=deletion_date, last_accessed_date=deletion_date,
+                              suspended=True)
+
     _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, betty, jane,
-             user_inactive, user_one_suspend, user_two_suspend, user_suspended)
+             user_inactive, user_one_suspend, user_two_suspend, user_suspended, user_to_be_deleted)
 
     resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
     user_one_suspend_notification1 = SuspendNotification(user=user_one_suspend, sent_at=resend_suspension_date,

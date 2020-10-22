@@ -54,7 +54,7 @@ class AbstractTest(TestCase):
 
     @staticmethod
     def find_entity_by_name(cls, name):
-        return cls.query.filter(cls.name == name).one()
+        return cls.query.filter(cls.name == name).first()
 
     @responses.activate
     def login(self, uid="urn:john", schac_home_organisation=None, user_info={}):

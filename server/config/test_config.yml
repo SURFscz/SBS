@@ -82,6 +82,7 @@ retention:
   reminder_expiry_period_days: 14
   reminder_resent_period_days: 7
   cron_hour_of_day: 7
+  remove_suspended_users_period_days: 540
 
 metadata:
   idp_url: https://metadata.surfconext.nl/idps-metadata.xml
