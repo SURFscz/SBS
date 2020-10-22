@@ -64,6 +64,13 @@ yarn analyze
 
 See the [Wiki](https://github.com/SURFscz/SBS/wiki) for the API documentation and data model.
 
+To see all routes:
+```
+source .venv/bin/activate
+cd server
+CONFIG='config/test_config.yml' FLASK_APP='__main__.py' flask routes
+```
+
 ### [Testing](#testing)
 
 To run all Python tests and validate syntax / formatting:
