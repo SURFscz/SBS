@@ -1,9 +1,9 @@
 -r base.txt
-flask-testing==0.8.0
-pytest==6.1.0
-pytest-cov==2.10.1
-flake8==3.8.4
-responses==0.12.0
 blinker==1.4
+flake8==3.8.4
+flask-testing==0.8.0
 flask-webtest==0.0.9
 hbmqtt2==0.9.7
+pytest-cov==2.10.1
+pytest==6.1.1
+responses==0.12.0
