@@ -2,13 +2,13 @@
 
 .header-container {
 
-    background: white;
+    background: $primary-orange;
     margin: 0 auto;
+    color: black;
 
     .header {
         max-width: $medium;
         margin: 0 auto 0 auto;
-        padding: 6px 20px 0 20px;
         position: relative;
         transition: margin 150ms ease-in-out;
         display: flex;
@@ -20,7 +20,7 @@
 
         img.logo {
             height: 65px;
-            margin: 10px 0;
+            margin-top: 6px;
 
             @media (max-width: $tablet-max) {
                 display: none;
@@ -30,94 +30,39 @@
 
         h1.title {
             font-size: 30px;
-            color: $primary-orange;
             line-height: 30px;
-
-            &.first {
-                margin-left: 20px;
-            }
+            margin-left: 20px;
 
             @media (max-width: $tablet-max) {
                 display: none;
             }
         }
 
-        a.welcome-link {
-            display: flex;
+        .user-profile {
+            margin-left: auto;
+            position: relative;
+            cursor: pointer;
         }
 
-        ul.links {
-            margin-left: auto;
+        .menu {
             display: flex;
             align-items: center;
-            list-style: none;
+            padding: 10px;
 
-            li.user-profile {
+            border-radius: 4px;
+            background-color: $background;
 
-                border-right: 1px solid $primary-orange;
-                border-left: 1px solid $primary-orange;
-                padding-left: 15px;
-
-            }
-
-            li.user-profile, li.login, li.help {
-                display: inline-block;
-                text-transform: uppercase;
-
-                a {
-                    text-decoration: none;
-                    color: $primary-orange;
-
-                    &:hover {
-                        color: darken($primary-orange, 10%);
-                    }
-                }
-
-                &.border-left {
-                    border-left: 1px solid $primary-orange;
-                    padding-left: 15px;
-                }
-
-                &.login {
-                    font-size: 18px;
-                    margin-right: 35px;
-                }
-
-                &.user-profile, &.help {
-                    font-size: 18px;
-                    padding: 0 35px;
-
-                    svg.fa-user-secret, svg.fa-info {
-                        margin-right: 5px;
-                    }
-
-                    svg.fa-caret-down, svg.fa-caret-up {
-                        margin-left: 10px;
-                    }
-                }
-
-                &.help {
-                    @media (max-width: $tablet-max) {
-                        display: none;
-                    }
-
+            .user {
+                display: flex;
+                flex-direction: column;
+                margin-right: 40px;
+                span.role {
+                    font-weight: bold;
                 }
             }
 
-            li.impersonator {
-                padding: 0 35px;
-                font-size: 22px;
-                cursor: pointer;
-                border-left: 1px solid $primary-orange;
-
-                svg.fa-user-secret {
-                    color: $red;
-
-                    &:hover {
-                        color: darken($red, 10%);
-                        font-size: 23px;
-                    }
-                }
+            svg.fa-angle-down, svg.fa-angle-up {
+                color: $medium-grey;
             }
         }
 

@@ -1,0 +1,28 @@
+@import "../stylesheets/vars.scss";
+
+.user-menu {
+    position: absolute;
+    display: block;
+    top: 65px;
+    right: 0;
+    min-width: 220px;
+    z-index: 99;
+    background: white;
+    border: solid 1px $lightest-grey;
+    border-radius: 4px;
+    box-shadow: 0 1px 0 1px $lighter-grey;
+
+    li {
+        padding: 15px 5px 15px 10px;
+
+        &:not(:last-child) {
+            border-bottom: 1px solid $lightest-grey;
+        }
+        a {
+        color: $dark-grey;
+            text-decoration: none;
+        }
+    }
+
+}
+

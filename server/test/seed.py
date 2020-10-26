@@ -1,6 +1,8 @@
 # -*- coding: future_fstrings -*-
+import base64
 import datetime
 import hashlib
+import os
 import uuid
 from secrets import token_urlsafe
 
@@ -75,6 +77,13 @@ group_science_name = "Science"
 
 network_service_connection_request_hash = token_urlsafe()
 ssh_service_connection_request_hash = token_urlsafe()
+
+
+def _read_image(file_name):
+    file = f"{os.path.dirname(os.path.realpath(__file__))}/images/{file_name}"
+    with open(file, "rb") as f:
+        c = f.read()
+        return base64.encodebytes(c).decode("utf-8")
 
 
 def _persist(db, *objs):
@@ -173,11 +182,11 @@ def seed(db, app_config):
              user_suspended_notification1, user_suspended_notification2)
 
     uuc = Organisation(name=uuc_name, short_name="uuc", identifier=str(uuid.uuid4()),
-                       description="Unincorporated Urban Community",
+                       description="Unincorporated Urban Community", logo=_read_image("uuc.jpeg"),
                        created_by="urn:admin", updated_by="urnadmin",
                        collaboration_creation_allowed=True, schac_home_organisation=schac_home_organisation_uuc)
     uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam", identifier=str(uuid.uuid4()),
-                       created_by="urn:admin", updated_by="urnadmin", short_name="uva",
+                       created_by="urn:admin", updated_by="urnadmin", short_name="uva", logo=_read_image("uva.jpg"),
                        schac_home_organisation=schac_home_organisation)
     _persist(db, uuc, uva)
 
@@ -208,37 +217,38 @@ def seed(db, app_config):
              organisation_membership_jane)
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
-                   public_visible=True, automatic_connection_allowed=True)
+                   public_visible=True, automatic_connection_allowed=True, logo=_read_image("email.jpeg"))
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
-                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email, )
+                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
+                       logo=_read_image("wireless.png"))
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
-                    public_visible=True, automatic_connection_allowed=True)
+                    public_visible=True, automatic_connection_allowed=True, logo=_read_image("cloud.jpg"))
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name,
-                      description="SURF Storage Service",
+                      description="SURF Storage Service", logo=_read_image("storage.jpeg"),
                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
                       white_listed=True)
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
                        "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
-                   public_visible=True, automatic_connection_allowed=False,
+                   public_visible=True, automatic_connection_allowed=False,logo=_read_image("wiki.jpeg"),
                    contact_email="help@wiki.com")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
-                      contact_email="help@network.com",
+                      contact_email="help@network.com",logo=_read_image("network.jpeg"),
                       public_visible=False, automatic_connection_allowed=True,
                       allowed_organisations=[uuc])
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
-                              contact_email="help@ssh.com",
+                              contact_email="help@ssh.com",logo=_read_image("ssh_uva.png"),
                               public_visible=False, automatic_connection_allowed=False,
                               allowed_organisations=[uva], research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True)
 
     uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=uuc_scheduler_name,
-                            description="UUC Scheduler Service",
+                            description="UUC Scheduler Service", logo=_read_image("scheduler_uuc.jpeg"),
                             public_visible=True, automatic_connection_allowed=False, allowed_organisations=[uuc])
 
     _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler)
@@ -250,6 +260,7 @@ def seed(db, app_config):
                                  identifier=collaboration_ai_computing_uuid,
                                  global_urn=f"ucc:{ai_computing_short_name}",
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
+                                 logo=_read_image("computing.jpeg"),
                                  organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[],
                                  short_name=ai_computing_short_name,
@@ -259,6 +270,7 @@ def seed(db, app_config):
                                  global_urn="uva:research",
                                  identifier=collaboration_uva_researcher_uuid,
                                  description="University of Amsterdam Research - Urban Crowd Control",
+                                 logo=_read_image("research.jpeg"),
                                  organisation=uva, services=[cloud, storage, wiki],
                                  join_requests=[], invitations=[],
                                  disclose_email_information=True)
@@ -266,6 +278,7 @@ def seed(db, app_config):
                                  identifier=str(uuid.uuid4()),
                                  global_urn=f"ucc:{uuc_teachers_name}",
                                  description="UUC Teachers",
+                                 logo=_read_image("teachers.jpeg"),
                                  organisation=uuc, services=[],
                                  join_requests=[], invitations=[],
                                  short_name="uuc_teachers_short_name",
@@ -274,6 +287,7 @@ def seed(db, app_config):
     uu_disabled_join_request = Collaboration(name=uu_disabled_join_request_name,
                                              short_name="uu_short",
                                              global_urn="uva:uu_short",
+                                             logo=_read_image("uu.png"),
                                              identifier=str(uuid.uuid4()),
                                              description="UU", disable_join_requests=True, organisation=uva,
                                              services=[],

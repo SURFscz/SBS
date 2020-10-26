@@ -1,5 +1,7 @@
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {
+    faAngleDown,
+    faAngleUp,
     faArrowDown,
     faArrowLeft,
     faArrowRight,
@@ -17,6 +19,7 @@ import {
     faExternalLinkAlt,
     faGavel,
     faInfo,
+    faHistory,
     faInfoCircle,
     faLightbulb,
     faLink,
@@ -35,7 +38,7 @@ import {
 
 export function addIcons() {
     library.add(faLightbulb, faCalendarAlt, faArrowLeft, faCopy, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faInfo,
-        faCircle, faCheck, faDoorClosed,
+        faCircle, faCheck, faDoorClosed, faAngleDown,faAngleUp, faHistory,
         faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
         faQuestion, faQuestionCircle, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret, faUserLock,
         faLock, faLockOpen
