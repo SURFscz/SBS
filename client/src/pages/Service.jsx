@@ -296,6 +296,8 @@ class Service extends React.Component {
         return (
             <div className="service">
                 {!isNew && <p className="title">{title}</p>}
+
+                {service.logo && <img src={`data:image/jpeg;base64,${service.logo}`}/>}
                 <InputField value={name} onChange={e => this.setState({
                     name: e.target.value,
                     alreadyExists: {...this.state.alreadyExists, name: false}

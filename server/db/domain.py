@@ -59,6 +59,7 @@ class Organisation(Base, db.Model):
     identifier = db.Column("identifier", db.String(length=255), nullable=False)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
+    logo = db.Column("logo", db.Text(), nullable=True)
     schac_home_organisation = db.Column("schac_home_organisation", db.String(length=255), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -160,6 +161,7 @@ class Service(Base, db.Model):
     entity_id = db.Column("entity_id", db.String(length=255), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
+    logo = db.Column("logo", db.Text(), nullable=True)
     address = db.Column("address", db.Text(), nullable=True)
     identity_type = db.Column("identity_type", db.String(length=255), nullable=True)
     uri = db.Column("uri", db.String(length=255), nullable=True)
@@ -189,6 +191,7 @@ class Collaboration(Base, db.Model):
     identifier = db.Column("identifier", db.String(length=255), nullable=False)
     name = db.Column("name", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
+    logo = db.Column("logo", db.Text(), nullable=True)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
     global_urn = db.Column("global_urn", db.Text, nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)

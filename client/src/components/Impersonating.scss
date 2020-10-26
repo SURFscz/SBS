@@ -1,0 +1,18 @@
+@import "../stylesheets/vars.scss";
+
+.impersonator {
+    padding: 0 35px;
+    font-size: 22px;
+    cursor: pointer;
+    border-left: 1px solid $primary-orange;
+
+    svg.fa-user-secret {
+        color: $red;
+
+        &:hover {
+            color: darken($red, 10%);
+            font-size: 23px;
+        }
+    }
+
+}

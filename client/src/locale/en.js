@@ -6,10 +6,13 @@ I18n.translations.en = {
     select_locale: "Select English",
 
     header: {
-        title: "Research Access Management",
+        title: "SRAM",
         links: {
             login: "Login",
+            system: "System",
+            impersonate: "Impersonate",
             help: "Help",
+            profile: "Profile",
             logout: "Logout",
             helpUrl: "https://wiki.surfnet.nl/display/sram"
         },
@@ -23,8 +26,6 @@ I18n.translations.en = {
         organisations: "Organisations",
         services: "Services",
         profile: "Profile",
-        system: "System",
-        impersonate: "Impersonate",
         aup: "AUP",
         confirmation: "Admin confirmation"
     },
@@ -959,13 +960,13 @@ I18n.translations.en = {
         limited: "Limited",
         readOnly: "Read-only",
         info: "{{access}} access as {{role}}",
-        platformAdmin: "platform admin",
-        orgAdmin: "organisation admin",
-        orgManager: "organisation manager",
-        coAdmin: "collaboration admin",
-        coMember: "collaboration member",
-        serviceUser: "service user",
-        user: "user"
+        platformAdmin: "Platform admin",
+        orgAdmin: "Organisation admin",
+        orgManager: "Organisation manager",
+        coAdmin: "Collaboration admin",
+        coMember: "Collaboration member",
+        serviceUser: "Service user",
+        user: "User"
     }
 };
 

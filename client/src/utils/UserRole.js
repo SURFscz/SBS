@@ -23,3 +23,22 @@ export function userRole(user, {organisation_id = null, collaboration_id = null,
     }
     return I18n.t("access.user");
 }
+
+export function globalUserRole(user) {
+    if (user.admin) {
+        return I18n.t("access.platformAdmin");
+    }
+    if (user.organisation_memberships.find(m => m.role === "admin")) {
+        return I18n.t("access.orgAdmin");
+    }
+    if (user.organisation_memberships.find(m => m.role === "manager")) {
+        return I18n.t("access.orgAdmin");
+    }
+    if (user.collaboration_memberships.find(m => m.role === "admin")) {
+        return I18n.t("access.coAdmin");
+    }
+    if (user.collaboration_memberships.length > 0) {
+        return I18n.t("access.coMember");
+    }
+    return I18n.t("access.user");
+}
