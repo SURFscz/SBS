@@ -24,21 +24,34 @@ export function userRole(user, {organisation_id = null, collaboration_id = null,
     return I18n.t("access.user");
 }
 
-export function globalUserRole(user) {
+export const ROLES = {
+    PLATFORM_ADMIN: "platformAdmin",
+    ORG_ADMIN: "orgAdmin",
+    ORG_MANAGER: "orgManager",
+    COLL_ADMIN: "coAdmin",
+    COLL_MEMBER: "coMember",
+    USER: "user"
+}
+
+export function rawGlobalUserRole(user) {
     if (user.admin) {
-        return I18n.t("access.platformAdmin");
+        return ROLES.PLATFORM_ADMIN;
     }
-    if (user.organisation_memberships.find(m => m.role === "admin")) {
-        return I18n.t("access.orgAdmin");
+    if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "admin")) {
+        return ROLES.ORG_ADMIN;
     }
-    if (user.organisation_memberships.find(m => m.role === "manager")) {
-        return I18n.t("access.orgAdmin");
+    if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "manager")) {
+        return ROLES.ORG_MANAGER;
     }
-    if (user.collaboration_memberships.find(m => m.role === "admin")) {
-        return I18n.t("access.coAdmin");
+    if (user.collaboration_memberships && user.collaboration_memberships.find(m => m.role === "admin")) {
+        return ROLES.COLL_ADMIN;
     }
-    if (user.collaboration_memberships.length > 0) {
-        return I18n.t("access.coMember");
+    if (user.collaboration_memberships && user.collaboration_memberships.length > 0) {
+        return ROLES.COLL_MEMBER;
     }
-    return I18n.t("access.user");
+    return ROLES.USER;
+}
+
+export function globalUserRole(user) {
+    return I18n.t(`access.${rawGlobalUserRole(user)}`);
 }

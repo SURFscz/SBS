@@ -7,12 +7,19 @@
     border-top-width: 2px;
     border-top-style: solid;
     cursor: pointer;
+    display: flex;
+    align-content: center;
+
+    svg {
+        width: 20px;
+        margin-right: 10px;
+    }
 
     &:not(.active) {
         background: $light-grey;
         border-color: $light-grey;
 
-        h2 {
+        h2, svg {
             color: $dark-grey;
         }
     }
@@ -21,7 +28,7 @@
         background: $lightest-grey;
         border-color: $blue;
 
-        h2 {
+        h2, svg {
             color: $blue;
             font-weight: bold;
         }

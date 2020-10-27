@@ -37,6 +37,20 @@ class TestOrganisation(AbstractTest):
                                  headers=API_AUTH_HEADER,
                                  with_basic_auth=False)
         self.assertEqual(2, len(organisations))
+        organisation = organisations[0]
+        self.assertFalse("collaborations_count" in organisation)
+        self.assertFalse("organisation_memberships_count" in organisation)
+
+    def test_organisations_all_include_counts(self):
+        organisations = self.get("/api/organisations/all",
+                                 query_data={"include_counts": True},
+                                 headers=API_AUTH_HEADER,
+                                 with_basic_auth=False)
+        self.assertEqual(2, len(organisations))
+
+        organisation = organisations[0]
+        self.assertEqual(2, organisation["collaborations_count"])
+        self.assertEqual(3, organisation["organisation_memberships_count"])
 
     def test_organisations_by_schac_home_organisation(self):
         self.login("urn:roger", schac_home_organisation)

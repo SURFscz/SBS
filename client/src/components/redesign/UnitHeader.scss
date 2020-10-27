@@ -1,0 +1,28 @@
+@import "../../stylesheets/vars";
+
+.unit-header-container {
+    background-color: $background;
+    padding: 15px 0;
+
+    .unit-header {
+        max-width: $medium-sub;
+
+        margin: 0 auto 0 auto;
+        display: flex;
+        align-items: center;
+
+        h1 {
+            font-size: 28px;
+            margin-left: 20px;
+        }
+
+        svg {
+            width: 60px;
+        }
+
+        .edit {
+            margin-left: auto;
+        }
+    }
+
+}

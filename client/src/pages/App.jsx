@@ -16,7 +16,7 @@ import Footer from "../components/Footer";
 import Flash from "../components/Flash";
 import {getParameterByName} from "../utils/QueryParameters";
 import CollaborationDetail from "./CollaborationDetail";
-import Organisations from "./Organisations";
+import Organisations from "../components/redesign/Organisations";
 import OrganisationDetail from "./OrganisationDetail";
 import Home from "./Home";
 import JoinRequest from "./JoinRequest";
@@ -48,6 +48,7 @@ import Confirmation from "./Confirmation";
 import {setFlash} from "../utils/Flash";
 import System from "./System";
 import OrganisationServices from "./OrganisationServices";
+import {BreadCrumb} from "../components/BreadCrumb";
 
 addIcons();
 
@@ -178,6 +179,7 @@ class App extends React.Component {
                     {currentUser && <div>
                         <Flash/>
                         <Header currentUser={currentUser} impersonator={impersonator} config={config}/>
+                        <BreadCrumb/>
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>
                     </div>}

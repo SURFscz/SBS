@@ -12,13 +12,13 @@ import requests
 from flask import Blueprint, current_app, redirect
 from flask import request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
-from sqlalchemy.orm import contains_eager
+from sqlalchemy.orm import contains_eager, joinedload
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
-    confirm_collaboration_admin, confirm_organisation_admin, current_user
+    confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access
 from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
@@ -156,6 +156,17 @@ def user_search():
     return res, 200
 
 
+@user_api.route("/platform_admins", strict_slashes=False)
+@json_endpoint
+def get_platform_admins():
+    confirm_write_access()
+    config = current_app.app_config
+    admin_users_upgrade = config.feature.admin_users_upgrade
+    admin_users = [u.uid for u in config.admin_users]
+    platform_admins = User.query.filter(User.uid.in_(admin_users)).all()
+    return {"platform_admins": platform_admins, "admin_users_upgrade": admin_users_upgrade}, 200
+
+
 @user_api.route("/authorization", strict_slashes=False)
 @json_endpoint
 def authorization():
@@ -239,7 +250,16 @@ def resume_session():
 def me():
     if "user" in session and not session["user"]["guest"]:
         user_from_session = session["user"]
-        user_from_db = User.query.get(user_from_session["id"])
+        user_from_db = User.query \
+            .options(joinedload(User.organisation_memberships)
+                     .subqueryload(OrganisationMembership.organisation)) \
+            .options(joinedload(User.collaboration_memberships)
+                     .subqueryload(CollaborationMembership.collaboration)) \
+            .options(joinedload(User.aups)) \
+            .filter(User.id == user_from_session["id"]) \
+            .one()
+
+        # user_from_db = User.query.get(user_from_session["id"])
         if user_from_db is None:
             return {"uid": "anonymous", "guest": True, "admin": False}, 200
         if user_from_db.suspended:
@@ -247,12 +267,6 @@ def me():
             logger.info(
                 f"Returning error for user {user_from_db.uid} as user is suspended")
             return {"error": f"user {user_from_db.uid} is suspended"}, 409
-
-        for organisation_membership in user_from_db.organisation_memberships:
-            organisation_membership.organisation
-        for collaboration_membership in user_from_db.collaboration_memberships:
-            collaboration_membership.collaboration
-        user_from_db.aups
 
         user = {**jsonify(user_from_db).json, **user_from_session}
         user["needs_to_agree_with_aup"] = \

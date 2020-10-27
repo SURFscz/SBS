@@ -1,206 +1,84 @@
 import React from "react";
 import "./Home.scss";
 import I18n from "i18n-js";
-import {myCollaborationsLite, myServices} from "../api";
-import {isEmpty, stopEvent} from "../utils/Utils";
-import Button from "../components/Button";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {health} from "../api";
+import {ReactComponent as Logo} from "../images/logo.svg";
+import {ReactComponent as OrganisationsIcon} from "../icons/official-building-3.svg";
+import {ReactComponent as PlatformAdminIcon} from "../icons/single-neutral-actions-key.svg";
+import {AppStore} from "../stores/AppStore";
+import {rawGlobalUserRole, ROLES} from "../utils/UserRole";
+import Tabs from "../components/Tabs";
+import Organisations from "../components/redesign/Organisations";
+import UnitHeader from "../components/redesign/UnitHeader";
+import Members from "../components/redesign/Members";
+import Collaborations from "../components/redesign/Collaborations";
 
 class Home extends React.Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
+            organisations: [],
             collaborations: [],
-            groups: [],
-            services: [],
-            showMore: []
+            platformAdmins: [],
+            tabs: [],
+            role: ROLES.USER,
+            loaded: false
         };
     }
 
     componentDidMount = () => {
-        Promise.all([myCollaborationsLite(), myServices()])
-            .then(results => {
-                const collaborations = results[0];
-                const collaborationMemberships = collaborations.map(coll => (coll.collaboration_memberships || [])).flat();
-                const groupsFromMemberships = collaborationMemberships.map(collaborationMembership => (collaborationMembership.groups || [])).flat();
-                const groupIds = [...new Set(groupsFromMemberships.map(group => group.id))];
-                const groups = groupsFromMemberships.filter(group => groupIds.includes(group.id));
+        const {user} = this.props;
+        const role = rawGlobalUserRole(user);
 
-                this.setState({collaborations: collaborations, groups: groups, services: results[1]});
+        const promises = [];
+        // if (role === ROLES.PLATFORM_ADMIN) {
+        //     promises.push(allOrganisations());
+        // } //else if (role === ROLES.)
+        health().then(() => {
+            const tabs = [];
+            tabs.push(this.getOrganisationsTab());
+            tabs.push(this.getPlatformAdminsTab());
+            this.setState({role: ROLES.PLATFORM_ADMIN, loaded: true, tabs});
+
+            AppStore.update(s => {
+                s.breadcrumb.paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
             });
+        });
     };
 
-    toggleShowMore = name => e => {
-        stopEvent(e);
-        const {showMore} = this.state;
-        const newShowMore = showMore.includes(name) ? showMore.filter(item => item !== name) : showMore.concat([name]);
-        this.setState({showMore: newShowMore});
-    };
-
-    openOrganisation = organisation => e => {
-        stopEvent(e);
-        this.props.history.push(`/organisations/${organisation.id}`);
-    };
-
-    openService = service => e => {
-        stopEvent(e);
-        this.props.history.push(`/services/${service.id}`);
-    };
-
-    openGroup = (group) => e => {
-        stopEvent(e);
-        this.props.history.push(`/collaboration-group-details/${group.collaboration_id}/${group.id}`);
-    };
-
-    openCollaboration = collaboration => e => {
-        stopEvent(e);
-        this.props.history.push(`/collaborations/${collaboration.id}`);
-    };
-
-    renderCollaborationName = collaboration => {
-        const name = collaboration.name;
-        const shortNameOrg = collaboration.organisation.short_name;
-        const shortNameOrgValid = isEmpty(shortNameOrg) ? "" : ` [${collaboration.organisation.short_name}]`;
-        return `${name} ${shortNameOrgValid}`;
-    };
-
-    renderHeader = (name, collection, allowedLink) => {
-        return <div className={`header ${name} ${allowedLink ? 'link' : ''}`}
-                    onClick={() => allowedLink && this.props.history.push(`/${name}`)}>
-            {allowedLink && <FontAwesomeIcon icon={"arrow-right"}/>}
-            <span className="type">{I18n.t(`home.${name}`)}</span>
-            <span className="counter">{collection.length}</span>
+    getOrganisationsTab = () =>
+        <div key="organisations" label={I18n.t("home.tabs.organisations")} icon={<OrganisationsIcon/>}>
+            <Organisations {...this.props}/>
         </div>
 
-    };
+    getPlatformAdminsTab = () =>
+        <div key="platformAdmins" label={I18n.t("home.tabs.platformAdmins")} icon={<PlatformAdminIcon/>}>
+            <Members {...this.props}/>
+        </div>
 
-    renderCollaborations = collaborations => {
-        const showMore = collaborations.length >= 6;
-        const showMoreItems = this.state.showMore.includes("collaborations");
-        const {user} = this.props;
-        const linkAllowed = user.admin || user.collaboration_memberships.find(membership => membership.role === "admin");
-        return (
-            <section className="info-block ">
-                {this.renderHeader("collaborations", collaborations, linkAllowed)}
-                <div className="content">
-                    {(showMore && !showMoreItems ? collaborations.slice(0, 5) : collaborations)
-                        .sort((s1, s2) => s1.name.localeCompare(s2.name))
-                        .map((collaboration, i) =>
-                            <div className="collaboration" key={i}>
-                                <a href={`/collaborations/${collaboration.id}`}
-                                   onClick={this.openCollaboration(collaboration)}>
-                                    <FontAwesomeIcon icon={"arrow-right"}/>
-                                    <span>{this.renderCollaborationName(collaboration)}</span>
-                                </a>
-                            </div>)}
-                </div>
-                {showMore && <section className="show-more">
-                    <Button className="white"
-                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                            onClick={this.toggleShowMore("collaborations")}/>
-                </section>}
-            </section>
-        );
-    };
+    getCollaborationsAdminsTab = () =>
+        <div key="collaborations" label={I18n.t("home.tabs.collaborations")} icon={<PlatformAdminIcon/>}>
+            <Collaborations {...this.props}/>
+        </div>
 
-    renderServices = (collaborations, organisationServices) => {
-        const allServices = collaborations.map(collaboration => collaboration.services)
-            .flat().concat(organisationServices);
-        const distinctServiceIdentifiers = [...new Set(allServices.map(s => s.id))];
-        const services = distinctServiceIdentifiers.map(id => allServices.find(s => s.id === id));
-        const showMore = services.length >= 6;
-        const showMoreItems = this.state.showMore.includes("services");
-        return (
-            <section className="info-block ">
-                {this.renderHeader("services", services, this.props.user.admin)}
-                <div className="content">
-                    {(showMore && !showMoreItems ? services.slice(0, 5) : services).map((service, i) =>
-                        <div className="service" key={i}>
-                            <a href={`/services/${service.id}`}
-                               onClick={this.openService(service)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{service.name}</span>
-                            </a>
-                        </div>)}
-                </div>
-                {showMore && <section className="show-more">
-                    <Button className="white"
-                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                            onClick={this.toggleShowMore("services")}/>
-                </section>}
-            </section>
-        );
-    };
-
-    renderGroups = groups => {
-        const showMore = groups.length >= 6;
-        const showMoreItems = this.state.showMore.includes("groups");
-        return (
-            <section className="info-block ">
-                {this.renderHeader("groups", groups, false)}
-                <div className="content">
-                    {(showMore && !showMoreItems ? groups.slice(0, 5) : groups).map((group, i) =>
-                        <div className="group" key={i}>
-                            <a href={`/groups/${group.id}`}
-                               onClick={this.openGroup(group)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{group.name}</span>
-                            </a>
-                        </div>)}
-                </div>
-                {showMore && <section className="show-more">
-                    <Button className="white"
-                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                            onClick={this.toggleShowMore("group")}/>
-                </section>}
-            </section>
-        );
-    };
-
-    renderOrganisations = user => {
-        const organisations = user.organisation_memberships.map(organisationMembership => organisationMembership.organisation);
-        const showMore = organisations.length >= 6;
-        const showMoreItems = this.state.showMore.includes("organisations");
-        const linkAllowed = user.admin || !isEmpty(user.organisation_memberships);
-        return (
-            <section className="info-block ">
-                {this.renderHeader("organisations", organisations, linkAllowed)}
-                <div className="content">
-                    {(showMore && !showMoreItems ? organisations.slice(0, 5) : organisations).map((organisation, i) =>
-                        <div className="organisation" key={i}>
-                            <a href={`/organisations/${organisation.id}`}
-                               onClick={this.openOrganisation(organisation)}>
-                                <FontAwesomeIcon icon={"arrow-right"}/>
-                                <span>{organisation.name}</span>
-                            </a>
-                        </div>)}
-                </div>
-                {showMore && <section className="show-more">
-                    <Button className="white"
-                            txt={showMoreItems ? I18n.t("forms.hideSome") : I18n.t("forms.showMore")}
-                            onClick={this.toggleShowMore("organisations")}/>
-                </section>}
-            </section>
-        );
-    };
+    getUnitHeaderProps = user => {
+        return {obj: {name: I18n.t("home.sram"), svg: Logo}}
+    }
 
     render() {
-        const {collaborations, services} = this.state;
+        const {tabs, role, loaded} = this.state;
+        if (!loaded) {
+            return null;
+        }
         const {user} = this.props;
-        const hasOrganisationMemberships = !isEmpty(user.organisation_memberships) || user.admin;
+        const unitHeaderProps = this.getUnitHeaderProps()
         return (
             <div className="mod-home-container">
-                <div className="mod-home">
-                    <div className="title top">
-                        <p>{I18n.t("home.title")}</p>
-                    </div>
-                    <section className={"info-block-container"}>
-                        {hasOrganisationMemberships && this.renderOrganisations(user)}
-                        {this.renderCollaborations(collaborations)}
-                        {this.renderServices(collaborations, services)}
-                    </section>
-                </div>
+                <UnitHeader props={unitHeaderProps}/>
+                <Tabs>
+                    {tabs}
+                </Tabs>
             </div>);
     };
 }

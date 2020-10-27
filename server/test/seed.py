@@ -114,7 +114,8 @@ def seed(db, app_config):
                         "jxEpu8soL okke@Mikes-MBP-2.fritz.box",
                 address="Postal 1234AA", confirmed_super_user=True)
     unconfirmed_super_user_mike = User(uid="urn:mike", name=mike_name, email="mike@example.org", username="mike",
-                                       confirmed_super_user=False, application_uid="mike_application_uid")
+                                       confirmed_super_user=False, application_uid="mike_application_uid",
+                                       schac_home_organisation="surfnet.nl")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
                 schac_home_organisation=schac_home_organisation)

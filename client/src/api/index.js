@@ -154,6 +154,10 @@ export function deleteUser() {
     return fetchDelete("/api/users")
 }
 
+export function platformAdmins() {
+     return fetchJson("/api/users/platform_admins");
+}
+
 //Services
 export function serviceNameExists(name, existingService = null) {
     return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${encodeURIComponent(existingService)}`);
@@ -267,6 +271,10 @@ export function organisationByUserSchacHomeOrganisation() {
 
 export function myOrganisations() {
     return fetchJson(`/api/organisations`);
+}
+
+export function allOrganisations() {
+    return fetchJson(`/api/organisations/all?include_counts=True`);
 }
 
 export function organisationSchacHomeOrganisationExists(schacHome, existingOrganisation = null) {
