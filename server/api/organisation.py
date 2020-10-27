@@ -2,7 +2,7 @@
 import uuid
 from secrets import token_urlsafe
 
-from flask import Blueprint, request as current_request, current_app, g as request_context
+from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from munch import munchify
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import joinedload, contains_eager
@@ -65,7 +65,15 @@ def schac_home_exists():
 def organisation_all():
     confirm_authorized_api_call()
     organisations = Organisation.query.all()
-    return organisations, 200
+    if not query_param("include_counts", required=False):
+        return organisations, 200
+
+    organisations_json = jsonify(organisations).json
+    for index, org in enumerate(organisations):
+        org_json = organisations_json[index]
+        org_json["collaborations_count"] = org.collaborations_count
+        org_json["organisation_memberships_count"] = org.organisation_memberships_count
+    return organisations_json, 200
 
 
 @organisation_api.route("/search", strict_slashes=False)

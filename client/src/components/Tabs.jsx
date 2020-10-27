@@ -21,7 +21,7 @@ class Tabs extends React.Component {
         () => this.props.tabChanged && this.props.tabChanged(tab));
 
     render() {
-        const {children, className} = this.props;
+        const {children, className = ""} = this.props;
         const {activeTab} = this.state;
 
         const filteredChildren = children.filter(child => child);
@@ -31,11 +31,12 @@ class Tabs extends React.Component {
                 {!singletonTab && <div className={`tabs ${className}`}>
 
                     {filteredChildren.map(child => {
-                        const {label} = child.props;
+                        const {label, icon} = child.props;
 
                         return (
                             <Tab
                                 activeTab={activeTab}
+                                icon={icon}
                                 key={label}
                                 label={label}
                                 onClick={this.onClickTabItem}

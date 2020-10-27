@@ -48,6 +48,8 @@ I18n.translations.nl = {
         collaborations: "Samenwerkingen",
         organisations: "Organisaties",
         services: "Diensten",
+        edit: "Edit",
+        history: "History",
         backToHome: "Terug naar de startpagina",
         collaborationRequest: "Verzoek een nieuwe Samenwerking",
         collaborationNew: "New Collaboration",

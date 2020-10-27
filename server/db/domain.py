@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from server.db.audit_mixin import Base, metadata
 from server.db.db import db
@@ -69,18 +70,28 @@ class Organisation(Base, db.Model):
                                                default=False)
     collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
                                      passive_deletes=True)
+    collaborations_dynamic = db.relationship("Collaboration", lazy="dynamic")
     services = db.relationship("Service", secondary=services_organisations_association, lazy="select")
     collaboration_requests = db.relationship("CollaborationRequest", back_populates="organisation",
                                              cascade="all, delete-orphan",
                                              passive_deletes=True)
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="organisation",
                                                cascade="all, delete-orphan", passive_deletes=True)
+    organisation_memberships_dynamic = db.relationship("OrganisationMembership", lazy="dynamic")
     organisation_invitations = db.relationship("OrganisationInvitation", back_populates="organisation",
                                                cascade="all, delete-orphan",
                                                passive_deletes=True)
     api_keys = db.relationship("ApiKey", back_populates="organisation",
                                cascade="delete, delete-orphan",
                                passive_deletes=True)
+
+    @hybrid_property
+    def collaborations_count(self):
+        return self.collaborations_dynamic.count()
+
+    @hybrid_property
+    def organisation_memberships_count(self):
+        return self.organisation_memberships_dynamic.count()
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.organisation_memberships))) > 0

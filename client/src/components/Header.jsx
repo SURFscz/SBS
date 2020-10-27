@@ -1,11 +1,10 @@
 import React from "react";
 import I18n from "i18n-js";
 import {Link} from "react-router-dom";
-// import logo from "../images/logo.png";
-import logo from "../images/logo.svg";
+import {ReactComponent as Logo} from "../images/logo.svg";
 import "./Header.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import UserMenu from "./UserMenu";
+import UserMenu from "./redesign/UserMenu";
 import {globalUserRole} from "../utils/UserRole";
 
 export default class Header extends React.PureComponent {
@@ -39,12 +38,12 @@ export default class Header extends React.PureComponent {
         return (
             <div className="header-container">
                 <div className="header">
-                    <Link to="/"><img className="logo" src={logo} alt=""/></Link>
+                    <Link className="logo" to="/"><Logo/></Link>
 
                     <h1 className="title">{I18n.t("header.title")}</h1>
                     {!currentUser.guest && <div className="user-profile">
                         {this.renderProfileLink(currentUser)}
-                        {dropDownActive && <UserMenu currentUser={currentUser}/>}
+                        {dropDownActive && <UserMenu currentUser={currentUser} close={() => this.setState({dropDownActive: false})}/>}
                     </div>}
                 </div>
             </div>

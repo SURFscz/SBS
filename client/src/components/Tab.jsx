@@ -18,7 +18,7 @@ class Tab extends Component {
     };
 
     render() {
-        let {activeTab, className = "", label} = this.props;
+        let {activeTab, className = "", label, icon} = this.props;
 
         className += " tab";
 
@@ -28,7 +28,7 @@ class Tab extends Component {
 
         return (
             <div className={className} onClick={this.onClick}>
-                <h2>{I18n.t(`tabs.${label}`)}</h2>
+                {icon && icon}<h2>{label}</h2>
             </div>
         );
     }

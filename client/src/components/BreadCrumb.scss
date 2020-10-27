@@ -1,0 +1,25 @@
+@import "../stylesheets/vars.scss";
+
+.bread-crumb-container {
+    margin: 0 auto;
+    color: black;
+    padding: 15px 0;
+
+    .bread-crumb {
+        max-width: $medium;
+        margin: 0 auto 0 auto;
+        position: relative;
+        transition: margin 150ms ease-in-out;
+        display: flex;
+        align-items: center;
+
+        a.link {
+            color: $dark-grey;
+        }
+        a.last {
+            color: black;
+            text-decoration: none;
+        }
+    }
+
+}

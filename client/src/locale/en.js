@@ -19,7 +19,7 @@ I18n.translations.en = {
         impersonator: "You are really <em>{{impersonator}}</em>,<br/>but you are impersonating <em>{{currentUser}}</em>.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
 
     },
-    navigation: {
+    breadcrumb: {
         home: "Home",
         registration: "Registration",
         collaborations: "Collaborations",
@@ -44,15 +44,20 @@ I18n.translations.en = {
         service: "New service"
     },
     home: {
-        title: "My memberships",
-        groups: "Groups",
-        collaborations: "Collaborations",
-        organisations: "Organisations",
-        services: "Services",
+        sram: "SRAM PLATFORM",
+        edit: "Edit",
+        history: "History",
         backToHome: "Back to home",
         collaborationRequest: "Request for new Collaboration",
         collaborationNew: "New Collaboration",
-        noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution named '{{schac_home}}' where you logged in. This is not the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information"
+        noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution named '{{schac_home}}' where you logged in. This is not the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
+        tabs: {
+            groups: "Groups",
+            collaborations: "Collaborations",
+            organisations: "Organisations",
+            services: "SRAM Services",
+            platformAdmins: "SRAM Admins"
+        }
     },
     forms: {
         submit: "Add",
@@ -104,7 +109,7 @@ I18n.translations.en = {
         clearImpersonation: "Stop impersonating",
         flash: {
             startedImpersonation: "Successfully started to impersonate {{name}}.",
-            clearedImpersonation:"Successfully cleared your impersonation. You are you again."
+            clearedImpersonation: "Successfully cleared your impersonation. You are you again."
         }
     },
     registration: {
@@ -284,8 +289,7 @@ I18n.translations.en = {
 
     },
     organisations: {
-        dashboard: "Dashboard mine organisations",
-        title: "My Organisations",
+        title: "Organisations ({{nbr}})",
         noOrganisations: "You are not a member of any organisation",
         members: "Members",
         collaborations: "Collaborations",
