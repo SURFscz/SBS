@@ -39,6 +39,7 @@ class Home extends React.Component {
             const tabs = [];
             tabs.push(this.getOrganisationsTab());
             tabs.push(this.getPlatformAdminsTab());
+            tabs.push(this.getCollaborationsAdminsTab());
             this.setState({role: ROLES.PLATFORM_ADMIN, loaded: true, tabs});
 
             AppStore.update(s => {
