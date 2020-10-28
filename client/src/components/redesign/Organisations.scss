@@ -1,223 +1,37 @@
-@import "../../stylesheets/vars";
+table.organisations {
 
-.mod-organisations {
-    max-width: $medium;
-    margin: 0 auto;
-    width: 100%;
-    padding-bottom: $medium-padding;
-
-    .title {
-        font-size: 22px;
-        color: $dark-grey;
-        padding: 25px 0 15px 0;
-    }
-
-    .info-block-container {
-        display: flex;
-        flex-direction: row;
-
-        @media (max-width: $tablet-max) {
-            flex-direction: column;
-        }
-
-        justify-content: space-between;
-        align-items: stretch;
-
-        .info-block {
-            border-radius: $br;
-            background-color: $lightest-grey;
-            border: solid 1px $lightest-grey;
-            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-            padding: 15px 10px;
-            width: 100%;
-
-            &:not(:first-child) {
-                margin-left: 15px;
+    thead {
+        th {
+            &.name {
+                width: 65%;
+                padding-left: 15px;
             }
 
-            @media (max-width: $tablet-max) {
-                &:not(:first-child) {
-                    margin-left: 0;
-                }
+            &.organisation_memberships_count {
+                width: 10%;
+                text-align: center;
             }
 
-            display: flex;
-            flex-direction: column;
-
-            .header {
-                text-transform: uppercase;
-                font-size: 20px;
-                padding: 10px 5px;
-                border-bottom: solid 1px $lighter-grey;
-                display: flex;
-
-                .counter {
-                    font-size: 24px;
-                    margin-left: auto;
-                }
-
-                &.organisation-members {
-                    color: $members;
-                }
-
-                &.organisation-collaborations {
-                    color: $collaborations;
-                }
-
-                &.organisation-invitations {
-                    color: $invitations;
-                }
-
-                &.collaboration-requests {
-                    color: $collaboration-requests;
-                }
-            }
-
-            div.content {
-                padding: 10px 5px;
-
-            }
-
-            section.show-more {
-                margin-top: auto;
-                padding-top: 15px;
-                display: flex;
-                justify-content: space-around;
-
-            }
-
-            div.organisation-members, div.organisation-collaborations, div.organisation-invitations,
-            div.collaboration-requests {
-                a {
-                    display: inline-block;
-                    color: $dark-grey;
-                    margin-bottom: 5px;
-                    text-decoration: none;
-
-                    &:visited {
-                        text-decoration: none;
-                    }
-
-                    svg {
-                        color: $blue;
-                        margin-right: 15px;
-                    }
-
-                    &:hover {
-                        color: $blue;
-
-                        svg {
-                            color: darken($blue, 15%);
-                        }
-                    }
-                }
-
-                span.count {
-                    display: inline-block;
-                    color: $blue;
-                    margin-left: 5px;
-                }
+            &.collaborations_count {
+                width: 10%;
+                text-align: center;
             }
         }
     }
 
-    .organisation-search {
-        background-color: $lightest-grey;
-        padding: $medium-padding 0;
-        border-radius: $br;
-        margin: 15px auto 10px auto;
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-        position: relative;
-
-        div.search {
-            display: flex;
-            padding: 0 15px;
-            position: relative;
-            min-height: 40px;
-
-            svg.fa-search {
-                position: absolute;
-                font-size: 16px;
-                color: $blue;
-                top: 12px;
-                left: 22px;
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
             }
 
-            input[type=text] {
-                flex-grow: 2;
-                border: 1px solid $lighter-grey;
-                padding-left: 45px;
-                min-height: 40px;
-                border-radius: $br;
-                font-size: 16px;
-
-                &.with-button {
-                    border-top-right-radius: 0;
-                    border-bottom-right-radius: 0;
-                }
-
-                &[disabled] {
-                    background-color: $light-grey;
-                }
+            &.organisation_memberships_count {
+                text-align: center;
             }
 
-            a.button.blue {
-                margin-left: 25px;
+            &.collaborations_count {
+                text-align: center;
             }
         }
     }
-
-    .organisation-list {
-        background-color: $lightest-grey;
-        padding: $medium-padding;
-        border-radius: $br;
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-        position: relative;
-
-        table {
-            width: 100%;
-
-            th {
-                text-align: left;
-                cursor: pointer;
-                padding: 5px;
-
-                svg {
-                    margin-left: 15px;
-                    color: $lighter-grey;
-
-                    &.current, &.reverse {
-                        color: $blue;
-                    }
-                }
-            }
-
-            tbody {
-                tr {
-                    cursor: pointer;
-
-                    &:hover {
-                        color: $blue;
-                    }
-
-                    &:nth-child(odd) {
-                        background-color: $lightest-grey;
-                    }
-                }
-            }
-
-            td {
-                vertical-align: middle;
-                padding: 5px;
-
-                &.actions {
-                    width: 35px;
-                    text-align: left;
-                    color: $blue;
-                }
-
-            }
-        }
-    }
-
 }

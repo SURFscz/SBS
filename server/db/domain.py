@@ -187,13 +187,25 @@ class Service(Base, db.Model):
     code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
     sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
+    collaborations_dynamic = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="dynamic")
+
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
     organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select")
+    organisations_dynamic = db.relationship("Organisation", secondary=services_organisations_association, lazy="dynamic")
+
     ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+    @hybrid_property
+    def collaborations_count(self):
+        return self.collaborations_dynamic.count()
+
+    @hybrid_property
+    def organisations_count(self):
+        return self.organisations_dynamic.count()
 
 
 class Collaboration(Base, db.Model):

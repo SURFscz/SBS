@@ -116,3 +116,15 @@ class TestService(AbstractTest):
         res = self.get("/api/services/entity_id_exists",
                        query_data={"entity_id": "https://xyz", "existing_service": "https://xyz"})
         self.assertEqual(False, res)
+
+    def test_services_all(self):
+        self.login("urn:sarah")
+        services = self.get("/api/services/all",
+                                 with_basic_auth=False)
+        self.assertEqual(8, len(services))
+
+        service_mail = self.find_by_name(services, service_mail_name)
+        self.assertEqual(1, service_mail["collaborations_count"])
+
+        service_uuc = self.find_by_name(services, uuc_scheduler_name)
+        self.assertEqual(1, service_uuc["organisations_count"])

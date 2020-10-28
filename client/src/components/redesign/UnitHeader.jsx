@@ -11,7 +11,7 @@ export default function UnitHeader({props}) {
     return (
         <div className="unit-header-container">
             <div className="unit-header">
-                {obj.logo && <img src={`data:image/jpeg;base64,${obj.logo}`}/>}
+                {obj.logo && <img src={`data:image/jpeg;base64,${obj.logo}`} alt={obj.name}/>}
                 {obj.svg && <obj.svg/>}
                 {obj.name && <h1>{obj.name}</h1>}
                 {mayEdit && <div className="edit">

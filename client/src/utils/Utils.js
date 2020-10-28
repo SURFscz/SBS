@@ -34,8 +34,13 @@ export function groupBy(arr, key) {
 
 export function sortObjects(objects, attribute, reverse) {
     return [...objects].sort((a, b) => {
-        const aS = valueForSort(attribute, a).toString();
-        const bs = valueForSort(attribute, b).toString();
+        const val1 = valueForSort(attribute, a);
+        const val2 = valueForSort(attribute, b);
+        if (typeof val1 === "number" && typeof val2 === "number") {
+            return val1 - val2;
+        }
+        const aS = val1.toString();
+        const bs = val2.toString();
         return aS.localeCompare(bs) * (reverse ? -1 : 1);
     });
 }

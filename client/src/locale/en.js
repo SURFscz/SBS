@@ -77,6 +77,30 @@ I18n.translations.en = {
         services: "Services",
         serviceRequest: "Service request"
     },
+    models: {
+        users: {
+            name_email: "Name / email",
+            blank: "",
+            icon: "",
+            institute: "Institution",
+            role: "Role",
+            title: "SRAM platform administrators",
+            platformAdmin: "SRAM platform admin",
+            noEntities: "There are no members yet...",
+            searchPlaceHolder: "Search administrators...",
+            new: "New Member",
+            me: "You"
+        },
+        organisations: {
+            title: "Organisations",
+            noEntities: "There are no organisations yet...",
+            searchPlaceHolder: "Search organisations...",
+            new: "New Organisation",
+            name: "Name",
+            memberCount: "# Members",
+            collaborationCount: "# Collaborations"
+        }
+    },
     user: {
         titleUpdate: "Update your user profile keys",
         ssh_key: "SSH public key",

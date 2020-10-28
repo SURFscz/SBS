@@ -2,7 +2,7 @@
 import ipaddress
 import urllib.parse
 
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, jsonify
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only, contains_eager
 
@@ -171,6 +171,23 @@ def service_by_id(service_id):
     service.allowed_organisations
     service.ip_networks
     return service, 200
+
+
+@service_api.route("/all", strict_slashes=False)
+@json_endpoint
+def all_services():
+    def override_func():
+        return is_collaboration_admin() or is_org_member()
+
+    confirm_write_access(override_func=override_func)
+
+    services = Service.query.all()
+    services_json = jsonify(services).json
+    for index, service in enumerate(services):
+        service_json = services_json[index]
+        service_json["collaborations_count"] = service.collaborations_count
+        service_json["organisations_count"] = service.organisations_count
+    return services_json, 200
 
 
 @service_api.route("/", methods=["POST"], strict_slashes=False)
