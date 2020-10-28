@@ -1,0 +1,30 @@
+table.users {
+
+    thead {
+        th {
+            &.name {
+                width: 25%;
+            }
+
+            &.member {
+                width: 25%;
+            }
+
+            &.schac_home_organisation {
+                width: 25%;
+            }
+
+            &.role {
+                width: 25%;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            &.member {
+                text-align: left;
+            }
+        }
+    }
+}

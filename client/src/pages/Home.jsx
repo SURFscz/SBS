@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.scss";
 import I18n from "i18n-js";
-import {health} from "../api";
+import {health, platformAdmins} from "../api";
 import {ReactComponent as Logo} from "../images/logo.svg";
 import {ReactComponent as OrganisationsIcon} from "../icons/official-building-3.svg";
 import {ReactComponent as PlatformAdminIcon} from "../icons/single-neutral-actions-key.svg";
@@ -12,6 +12,9 @@ import Organisations from "../components/redesign/Organisations";
 import UnitHeader from "../components/redesign/UnitHeader";
 import Members from "../components/redesign/Members";
 import Collaborations from "../components/redesign/Collaborations";
+import Entities from "../components/redesign/Entities";
+import PropTypes from "prop-types";
+import PlatformAdmins from "../components/redesign/PlatformAdmins";
 
 class Home extends React.Component {
 
@@ -29,22 +32,23 @@ class Home extends React.Component {
 
     componentDidMount = () => {
         const {user} = this.props;
-        const role = rawGlobalUserRole(user);
-
+        const tabs = [];
         const promises = [];
-        // if (role === ROLES.PLATFORM_ADMIN) {
-        //     promises.push(allOrganisations());
-        // } //else if (role === ROLES.)
-        health().then(() => {
-            const tabs = [];
-            tabs.push(this.getOrganisationsTab());
-            tabs.push(this.getPlatformAdminsTab());
+        const role = rawGlobalUserRole(user);
+        switch (role) {
+            case ROLES.PLATFORM_ADMIN:
+                tabs.push(this.getOrganisationsTab());
+                tabs.push(this.getPlatformAdminsTab());
+                promises.push(platformAdmins())
+                break;
+        }
+        Promise.all([promises]).then(res => {
+            // tabs.push(this.getPlatformAdminsTab());
             tabs.push(this.getCollaborationsAdminsTab());
-            this.setState({role: ROLES.PLATFORM_ADMIN, loaded: true, tabs});
-
             AppStore.update(s => {
                 s.breadcrumb.paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
             });
+            this.setState({role: ROLES.PLATFORM_ADMIN, loaded: true, tabs});
         });
     };
 
@@ -53,11 +57,11 @@ class Home extends React.Component {
             <Organisations {...this.props}/>
         </div>
 
-    getPlatformAdminsTab = () =>
-        <div key="platformAdmins" label={I18n.t("home.tabs.platformAdmins")} icon={<PlatformAdminIcon/>}>
-            <Members {...this.props}/>
-        </div>
-
+    getPlatformAdminsTab = () => {
+       return ( <div key="platformAdmins" label={I18n.t("home.tabs.platformAdmins")} icon={<PlatformAdminIcon/>}>
+            <PlatformAdmins {...this.props}/>
+        </div>)
+    }
     getCollaborationsAdminsTab = () =>
         <div key="collaborations" label={I18n.t("home.tabs.collaborations")} icon={<PlatformAdminIcon/>}>
             <Collaborations {...this.props}/>

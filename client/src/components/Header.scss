@@ -2,7 +2,7 @@
 
 .header-container {
 
-    background: $primary-orange;
+    background: $lighter-grey;
     margin: 0 auto;
     color: black;
 
@@ -13,6 +13,7 @@
         transition: margin 150ms ease-in-out;
         display: flex;
         align-items: center;
+        position: relative;
 
         @media (max-width: $tablet-max) {
             padding-bottom: 10px;
@@ -38,6 +39,11 @@
             }
         }
 
+        div.spinner {
+            position: absolute;
+            top: 15px;
+            right: 50%;
+        }
         .user-profile {
             margin-left: auto;
             position: relative;

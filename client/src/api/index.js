@@ -158,7 +158,7 @@ export function platformAdmins() {
      return fetchJson("/api/users/platform_admins");
 }
 
-//Services
+// Services
 export function serviceNameExists(name, existingService = null) {
     return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${encodeURIComponent(existingService)}`);
 }
@@ -181,6 +181,10 @@ export function searchServices(q) {
 
 export function myServices() {
     return fetchJson("/api/services/my_services");
+}
+
+export function allServices() {
+    return fetchJson("/api/services/all");
 }
 
 export function createService(service) {

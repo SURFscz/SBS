@@ -2,13 +2,22 @@
 
 
 .tab {
-    flex: 1;
-    padding: 20px;
+    min-width: 120px;
+    padding: 10px 20px;
+    margin: 0 20px;
     border-top-width: 2px;
     border-top-style: solid;
     cursor: pointer;
     display: flex;
     align-content: center;
+
+    &:first-child {
+        margin-left: 0;
+    }
+
+    &:last-child {
+        margin-right: 0;
+    }
 
     svg {
         width: 20px;
@@ -16,8 +25,8 @@
     }
 
     &:not(.active) {
-        background: $light-grey;
-        border-color: $light-grey;
+        background: $lighter-grey;
+        border-color: $lighter-grey;
 
         h2, svg {
             color: $dark-grey;
@@ -25,7 +34,7 @@
     }
 
     &.active {
-        background: $lightest-grey;
+        background: white;
         border-color: $blue;
 
         h2, svg {

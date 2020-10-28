@@ -6,15 +6,31 @@ import "./Header.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserMenu from "./redesign/UserMenu";
 import {globalUserRole} from "../utils/UserRole";
+import spinner from "../utils/Spin";
+import MDSpinner from "react-md-spinner";
 
 export default class Header extends React.PureComponent {
 
     constructor() {
         super();
         this.state = {
-            v: false
+            dropDownActive: false,
+            loading: false
         };
     }
+
+    componentDidMount() {
+        spinner.onStart = () => this.setState({loading: true});
+        spinner.onStop = () => this.setState({loading: false});
+    }
+
+    renderSpinner = () =>
+        this.state.loading ? <div className="spinner">
+            <MDSpinner size={24}
+                       singleColor={"#433902"}
+                       duration={1000}
+                       borderSize={4}/>
+        </div> : null;
 
     renderProfileLink(currentUser) {
         return (
@@ -41,9 +57,11 @@ export default class Header extends React.PureComponent {
                     <Link className="logo" to="/"><Logo/></Link>
 
                     <h1 className="title">{I18n.t("header.title")}</h1>
+                    {this.renderSpinner()}
                     {!currentUser.guest && <div className="user-profile">
                         {this.renderProfileLink(currentUser)}
-                        {dropDownActive && <UserMenu currentUser={currentUser} close={() => this.setState({dropDownActive: false})}/>}
+                        {dropDownActive &&
+                        <UserMenu currentUser={currentUser} close={() => this.setState({dropDownActive: false})}/>}
                     </div>}
                 </div>
             </div>
