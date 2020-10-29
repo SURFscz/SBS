@@ -58,10 +58,6 @@ class Entities extends React.Component {
         this.setState({sorted: key, reverse: reversed})
     }
 
-    sortTable = (entities, sorted, reversed) => {
-        return sortObjects(entities, sorted, reversed);
-    };
-
     getEntityValue = (entity, column) => {
         if (column.mapper) {
             return column.mapper(entity);
@@ -69,7 +65,7 @@ class Entities extends React.Component {
         return entity[column.key];
     }
 
-    renderEntities = (entities, sorted, reverse, modelName, columns) => {
+    renderEntities = (entities, sorted, reverse, modelName, columns, children) => {
         const hasEntities = !isEmpty(entities);
         return (
             <section className="entities-list">
@@ -98,21 +94,21 @@ class Entities extends React.Component {
                     )}
                     </tbody>
                 </table>}
-                {!hasEntities && <p>{I18n.t(`models.${modelName}.noEntities`)}</p>}
+                {(!hasEntities && !children) && <p className="no-entities">{I18n.t(`models.${modelName}.noEntities`)}</p>}
             </section>
         );
     };
 
     render() {
-        const {modelName, entities, showNew, searchAttributes, columns} = this.props;
+        const {modelName, entities, showNew, searchAttributes, columns, children} = this.props;
         const {query, sorted, reverse} = this.state;
-
         const filteredEntities = this.filterEntities(entities, query, searchAttributes);
-        const sortedEntities = this.sortTable(filteredEntities, sorted, reverse);
+        const sortedEntities = sortObjects(filteredEntities, sorted, reverse);
         return (
             <div className="mod-entities">
                 {this.renderSearch(modelName, entities, query, searchAttributes, showNew)}
-                {this.renderEntities(sortedEntities, sorted, reverse, modelName, columns)}
+                {this.renderEntities(sortedEntities, sorted, reverse, modelName, columns, children)}
+                {this.props.children}
             </div>);
     }
 }

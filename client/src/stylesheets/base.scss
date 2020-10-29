@@ -44,11 +44,22 @@ a {
 
 ::-webkit-input-placeholder {
     color: grey;
+    font-family: "Source Sans Pro", sans-serif;
 }
 
 ::-moz-placeholder {
     color: grey;
     opacity: 1;
+    font-family: "Source Sans Pro", sans-serif;
+}
+
+:-ms-input-placeholder {
+    color: grey;
+    font-family: "Source Sans Pro", sans-serif;
+}
+
+textarea {
+    font-family: "Source Sans Pro", sans-serif !important;
 }
 
 h1, h2, h3, .title, .title-header {

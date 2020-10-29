@@ -53,7 +53,7 @@ export default function InputField({
             </section>}
             {multiline &&
             <textarea disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
-                      placeholder={placeholder}/>}
+                      placeholder={placeholder} cols={3}/>}
             {copyClipBoard && <CopyToClipboard text={value}>
                 <section className="copy-to-clipboard">
                     <FontAwesomeIcon icon="copy" onClick={e => {

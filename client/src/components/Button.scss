@@ -1,6 +1,6 @@
 @import "../stylesheets/vars.scss";
 
-a.button {
+.button {
     display: inline-block;
     padding: 6px 15px;
     background-color: $blue;
@@ -11,6 +11,7 @@ a.button {
     text-align: center;
     cursor: pointer;
     text-decoration: none;
+    font-weight: bold;
 
     svg {
         margin-left: 25px;

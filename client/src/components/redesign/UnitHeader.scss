@@ -2,11 +2,9 @@
 
 .unit-header-container {
     background-color: $background;
-    padding: 15px 0;
+    padding: 25px 0;
 
     .unit-header {
-        max-width: $medium-sub;
-
         margin: 0 auto 0 auto;
         display: flex;
         align-items: center;
@@ -14,10 +12,13 @@
         h1 {
             font-size: 28px;
             margin-left: 20px;
+            color: $darker-grey;
         }
 
         svg {
-            width: 60px;
+            max-width: 50px;
+            max-height: 30px;
+            margin-left: 20px;
         }
 
         .edit {

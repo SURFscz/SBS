@@ -12,7 +12,7 @@ export const BreadCrumb = () => {
         <div className="bread-crumb-container">
             <div className="bread-crumb">
                 {paths.map((p, i) =>
-                    <div key={i}>
+                    <div className="path" key={i}>
                         {i !== 0 && <ChevronRight/>}
                         <Link to={p.path} className={(i + 1) === paths.length ? "last" : "link"}>{p.value}</Link>
                     </div>)}

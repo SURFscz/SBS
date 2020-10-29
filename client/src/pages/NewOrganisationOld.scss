@@ -5,20 +5,16 @@
     margin: 0 auto;
     width: 100%;
 
+    p.title {
+        font-size: 22px;
+        color: $dark-grey;
+        padding-bottom: 20px;
+    }
+
     .new-organisation {
-        display: grid;
-        grid-template-columns: [first] 1fr [second] 1fr;
-        column-gap: 50px;
-
-        .input-field, .radio-button-container, .actions {
-            grid-column-start: first;
-        }
-
-        .image-field {
-            grid-column-start: second;
-            grid-row-start: 1;
-            grid-row-end: 6;
-        }
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
+        background-color: $lightest-grey;
+        padding: $medium-padding;
 
         .error {
             color: $red;
@@ -72,11 +68,9 @@
         }
 
         section.actions {
-            margin-top: 30px;
-            padding: $medium-margin 0;
-            border-top: 2px solid $lighter-grey;
+            margin: $medium-margin 0;
 
-            a:not(:first-child) {
+            a.cancel {
                 margin-left: 25px;
             }
         }

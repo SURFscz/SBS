@@ -37,7 +37,7 @@ export function sortObjects(objects, attribute, reverse) {
         const val1 = valueForSort(attribute, a);
         const val2 = valueForSort(attribute, b);
         if (typeof val1 === "number" && typeof val2 === "number") {
-            return val1 - val2;
+            return (val1 - val2) * (reverse ? -1 : 1);
         }
         const aS = val1.toString();
         const bs = val2.toString();

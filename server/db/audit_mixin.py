@@ -14,6 +14,8 @@ ACTION_CREATE = 1
 ACTION_UPDATE = 2
 ACTION_DELETE = 3
 
+ignore_attributes = ["logo"]
+
 dynamicExtendedJSONEncoder = DynamicExtendedJSONEncoder()
 
 relationship_configuration = {
@@ -76,7 +78,9 @@ def find_subject(mapper, target):
 
 
 def target_state(mapper, target):
-    return dynamicExtendedJSONEncoder.encode({attr.key: getattr(target, attr.key) for attr in mapper.column_attrs})
+    attributes = {attr.key: getattr(target, attr.key) for attr in mapper.column_attrs
+                  if attr.key not in ignore_attributes}
+    return dynamicExtendedJSONEncoder.encode(attributes)
 
 
 parent_configuration = {
