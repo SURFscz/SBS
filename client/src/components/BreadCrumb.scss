@@ -13,9 +13,16 @@
         display: flex;
         align-items: center;
 
+        div.path {
+            display: flex;
+            align-items: center;
+
+        }
+
         a.link {
             color: $dark-grey;
         }
+
         a.last {
             color: black;
             text-decoration: none;

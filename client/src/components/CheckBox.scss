@@ -12,7 +12,7 @@ div.checkbox {
     label {
         display: inline-block;
         outline: none !important;
-
+        font-weight: bold;
         &.info {
             margin-left: 10px;
         }
@@ -67,9 +67,14 @@ div.checkbox {
     }
 
     svg.fa-info-circle {
-        color: $blue;
+        color: $lighter-grey;
         margin-left: 8px;
         font-size: 16px;
+
+        &:hover {
+            color: darken($light-blue, 20%);
+        }
+
     }
 
     em {

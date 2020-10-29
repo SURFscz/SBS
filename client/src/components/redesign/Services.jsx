@@ -1,13 +1,9 @@
 import React from "react";
-import {allServices, myServices, searchServices} from "../../api";
+import {allServices, myServices} from "../../api";
 import "./Services.scss";
-import {isEmpty, stopEvent} from "../../utils/Utils";
-import debounce from "lodash.debounce";
+import {stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Button from "../Button";
-import Autocomplete from "../Autocomplete";
-import {headerIcon} from "../../forms/helpers";
+import Entities from "./Entities";
 
 
 class Services extends React.Component {
@@ -15,191 +11,52 @@ class Services extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            services: [],
-            sortedServices: [],
-            selected: -1,
-            suggestions: [],
-            query: "",
-            loadingAutoComplete: false,
-            moreToShow: false,
-            sorted: "name",
-            reverse: false,
-            showMore: []
+            services: []
         }
     }
 
     componentDidMount = () => {
         const {user} = this.props;
         const promise = user.admin ? allServices() : myServices();
-        promise
-            .then(json => {
-                json.forEach(org => {
-                    const membership = (org.service_memberships || []).find(m => m.user_id === user.id);
-                    org.role = membership ? membership.role : "";
-                });
-                const {sorted, reverse} = this.state;
-                const services = this.sortServices(json, sorted, reverse);
-                this.setState({services: services, sortedServices: services})
+        promise.then(json => {
+                this.setState({services: json});
             });
     }
 
-    onSearchKeyDown = e => {
-        const {suggestions, selected} = this.state;
-        if (e.keyCode === 40 && selected < (suggestions.length - 1)) {//keyDown
-            stopEvent(e);
-            this.setState({selected: (selected + 1)});
-        }
-        if (e.keyCode === 38 && selected >= 0) {//keyUp
-            stopEvent(e);
-            this.setState({selected: (selected - 1)});
-        }
-        if (e.keyCode === 13 && selected >= 0) {//enter
-            stopEvent(e);
-            this.setState({selected: -1}, () => this.itemSelected(suggestions[selected]));
-        }
-        if (e.keyCode === 27) {//escape
-            stopEvent(e);
-            this.setState({selected: -1, query: "", suggestions: []});
-        }
-
-    };
-
-    search = e => {
-        const query = e.target.value;
-        this.setState({query: query, selected: -1});
-        if ((!isEmpty(query) && query.trim().length > 2) || "*" === query.trim()) {
-            this.setState({loadingAutoComplete: true});
-            this.delayedAutocomplete();
-        }
-    };
-
-    delayedAutocomplete = debounce(() =>
-        searchServices(this.state.query).then(results => this.setState({
-            suggestions: results.length > 15 ? results.slice(0, results.length - 1) : results,
-            loadingAutoComplete: false,
-            moreToShow: results.length > 15 && this.state.query !== "*"
-        })), 200);
-
-    itemSelected = service => {
-        this.props.history.push(`/services/${service.id}`);
-    };
 
     openService = service => e => {
         stopEvent(e);
         this.props.history.push(`/services/${service.id}`);
     };
 
-    sortTable = (services, name, sorted, reverse) => () => {
-        if (name === "actions") {
-            return;
-        }
-        const reversed = (sorted === name ? !reverse : false);
-        const sortedServices = this.sortServices(services, name, reversed);
-        this.setState({sortedServices: sortedServices, sorted: name, reverse: reversed});
-    };
-
-    sortServices = (services, name, reverse) => [...services].sort((a, b) => {
-        const aSafe = a[name] || "";
-        const bSafe = b[name] || "";
-        return aSafe.toString().localeCompare(bSafe.toString()) * (reverse ? -1 : 1);
-    });
-
-    getServiceValue = (service, user, name) => {
-        if (name === "actions") {
-            return <FontAwesomeIcon icon="arrow-right"/>
-        }
-        return service[name];
-    };
-
-    renderServiceRow = (service, user, names) => {
-        return (
-            <tr key={service.id} onClick={this.openService(service)}>
-                {names.map(name => <td key={name}
-                                       className={name}>{this.getServiceValue(service, user, name)}</td>)}
-            </tr>
-        );
-    };
-
-    renderServices = (services, user, sorted, reverse) => {
-        const names = ["actions", "name", "role", "description"];
-        const hasServices = !isEmpty(services);
-        return (
-            <section className="service-list">
-                {hasServices && <table>
-                    <thead>
-                    <tr>
-                        {names.map(name =>
-                            <th key={name} className={name}
-                                onClick={this.sortTable(services, name, sorted, reverse)}>
-                                {I18n.t(`service.${name}`)}
-                                {headerIcon(name, sorted, reverse)}
-                            </th>
-                        )}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {services.map(service => this.renderServiceRow(service, user, names))}
-                    </tbody>
-                </table>}
-                {!hasServices && <p>{I18n.t("services.noServices")}</p>}
-            </section>
-        );
-    };
-
-    newService = () => {
-        this.props.history.push("new-service")
-    };
-
-    onBlurSearch = suggestions => () => {
-        if (!isEmpty(suggestions)) {
-            setTimeout(() => this.setState({suggestions: [], loadingAutoComplete: true}), 250);
-        } else {
-            this.setState({suggestions: [], loadingAutoComplete: true});
-        }
-    };
-
-
-    renderSearch = (services, user, query, loadingAutoComplete, suggestions, moreToShow, selected) => {
-        const adminClassName = user.admin ? "with-button" : "";
-        const showAutoCompletes = (query.length > 1 || "*" === query.trim()) && !loadingAutoComplete;
-        const isAdmin = user.admin;
-
-        return (
-            <section className="service-search">
-                <div className="search"
-                     tabIndex="1" onBlur={this.onBlurSearch(suggestions)}>
-                    <span>{I18n.t("services.title", {nbr: services.length})}</span>
-                    <input type="text"
-                           className={adminClassName}
-                           onChange={this.search}
-                           value={query}
-                           onKeyDown={this.onSearchKeyDown}
-                           placeholder={I18n.t("services.searchPlaceHolder")}/>
-                    {<FontAwesomeIcon icon="search" className={adminClassName}/>}
-                    {isAdmin && <Button onClick={this.newService}
-                                        txt={I18n.t("service.new")}/>
-                    }
-                </div>
-                {showAutoCompletes && <Autocomplete suggestions={suggestions}
-                                                    query={query}
-                                                    selected={selected}
-                                                    itemSelected={this.itemSelected}
-                                                    moreToShow={moreToShow}
-                                                    entityName="services"/>}
-
-            </section>
-
-        );
-    };
-
     render() {
-        const {services, sortedServices, query, loadingAutoComplete, suggestions, moreToShow, selected, sorted, reverse} = this.state;
-        const {user} = this.props;
+        const {services} = this.state;
+
+        const columns = [
+            {
+                nonSortable: true,
+                key: "logo",
+                header: "",
+                mapper: service => service.logo && <img src={`data:image/jpeg;base64,${service.logo}`}/>
+            },
+            {
+                key: "name",
+                header: I18n.t("models.services.name"),
+                mapper: service => <a href="/" onClick={this.openService(service)}>{service.name}</a>,
+            },
+            {
+                key: "organisations_count",
+                header: I18n.t("models.services.organisationCount")
+            },
+            {
+                key: "collaborations_count",
+                header: I18n.t("models.services.collaborationCount")
+            }]
         return (
-            <div className="mod-services">
-                {this.renderSearch(services, user, query, loadingAutoComplete, suggestions, moreToShow, selected)}
-                {this.renderServices(sortedServices, user, sorted, reverse)}
-            </div>);
+            <Entities entities={services} modelName="services" searchAttributes={["name"]}
+                      defaultSort="name" columns={columns} showNew={true} newEntityPath={"new-service"}
+                      {...this.props}/>
+        )
     }
 }
 

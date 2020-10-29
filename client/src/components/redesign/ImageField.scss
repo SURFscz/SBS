@@ -1,0 +1,38 @@
+@import "../../stylesheets/vars.scss";
+
+.image-field {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+
+    label.info {
+        display: inline-block;
+        margin: 12px 0 6px 0;
+        min-width: 210px;
+        color: black;
+        position: relative;
+        font-weight: bold;
+    }
+
+    .file-upload {
+        display: flex;
+    }
+
+    label.file-upload-label {
+        margin-left: 25px;
+        max-height: 33px;
+    }
+
+    .preview img {
+        height: 150px;
+    }
+
+    .no-image svg {
+        width:  150px;
+        height:  150px;
+        padding: 40px;
+        border: 1px dotted $medium-grey;
+        fill: $lighter-grey;
+    }
+
+}

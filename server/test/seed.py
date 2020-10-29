@@ -232,18 +232,18 @@ def seed(db, app_config):
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
                        "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
-                   public_visible=True, automatic_connection_allowed=False,logo=_read_image("wiki.jpeg"),
+                   public_visible=True, automatic_connection_allowed=False, logo=_read_image("wiki.jpeg"),
                    contact_email="help@wiki.com")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
-                      contact_email="help@network.com",logo=_read_image("network.jpeg"),
+                      contact_email="help@network.com", logo=_read_image("network.jpeg"),
                       public_visible=False, automatic_connection_allowed=True,
                       allowed_organisations=[uuc])
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
-                              contact_email="help@ssh.com",logo=_read_image("ssh_uva.png"),
+                              contact_email="help@ssh.com", logo=_read_image("ssh_uva.png"),
                               public_visible=False, automatic_connection_allowed=False,
                               allowed_organisations=[uva], research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True)

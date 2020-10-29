@@ -2,35 +2,47 @@
 
 .input-field {
     display: flex;
+    align-items: center;
     position: relative;
-    flex-direction: column;
 
     label {
         display: inline-block;
-        margin: 12px 0 6px 0;
+        padding: 14px 34px 14px 14px;
+        margin: 5px 0;
         min-width: 210px;
-        color: black;
+        border: 1px solid $lighter-grey;
+        background-color: $background;
+        border-bottom-left-radius: $br;
+        border-top-left-radius: $br;
+        color: $dark-green;
         position: relative;
-        font-weight: bold;
+
     }
 
     span.tool-tip-section {
+        position: absolute;
+        right: 0;
+        top: 0;
         font-size: 14px;
-        color: $lighter-grey;
+        color: $blue;
         cursor: pointer;
         padding: 0 4px;
 
         &:hover {
-            color: darken($light-blue, 20%);
+            color: darken($blue, 10%);
         }
     }
 
     input[type=text], textarea {
         display: block;
         width: 100%;
-        border: 1px solid $dark-grey;
-        padding: 6px 12px;
-        border-radius: $br;
+        border-bottom: 1px solid $lighter-grey;
+        border-right: 1px solid $lighter-grey;
+        border-top: 1px solid $lighter-grey;
+        border-left: none;
+        padding: 16px 40px 16px 16px;
+        border-bottom-right-radius: $br;
+        border-top-right-radius: $br;
         font-size: 14px;
         height: 50px;
 
@@ -50,10 +62,6 @@
             border-top-left-radius: $br;
         }
 
-    }
-
-    textarea {
-        height: 70px;
     }
 
     label.file-upload {
@@ -79,8 +87,8 @@
 
     section.copy-to-clipboard {
         position: absolute;
-        right: 2px;
-        top: 40px;
+        right: 6px;
+        top: 14px;
         font-size: 18px;
         color: $blue;
         padding: 6px;

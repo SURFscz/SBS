@@ -3,7 +3,6 @@ import {allOrganisations, myOrganisations} from "../../api";
 import "./Organisations.scss";
 import {stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
-import MDSpinner from "react-md-spinner";
 import Entities from "./Entities";
 
 
@@ -63,7 +62,8 @@ class Organisations extends React.Component {
             }]
         return (
             <Entities entities={organisations} modelName="organisations" searchAttributes={["name"]}
-                      defaultSort="name" columns={columns} showNew={true} newEntityPath={"new-organisation"}/>
+                      defaultSort="name" columns={columns} showNew={true} newEntityPath={"new-organisation"}
+                      {...this.props}/>
         )
     }
 }

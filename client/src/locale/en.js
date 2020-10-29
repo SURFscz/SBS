@@ -27,7 +27,10 @@ I18n.translations.en = {
         services: "Services",
         profile: "Profile",
         aup: "AUP",
-        confirmation: "Admin confirmation"
+        confirmation: "Admin confirmation",
+        newOrganisation: "New organisation",
+        editService: "Edit organisation",
+        newService: "New service",
     },
     login: {
         title: "Research Access Management",
@@ -69,7 +72,11 @@ I18n.translations.en = {
         manage: "Configure",
         invalidInput: "Invalid input for {{name}}",
         back: "Back",
-        reset: "Reset"
+        reset: "Reset",
+        yes: "Yes",
+        upload: "Upload image",
+        image: "Image must at least be 90x90 pixels and smaller then 512KB",
+        no: "No"
     },
     explain: {
         title: "Explanation {{subject}}",
@@ -99,7 +106,17 @@ I18n.translations.en = {
             name: "Name",
             memberCount: "# Members",
             collaborationCount: "# Collaborations"
+        },
+        services: {
+            title: "Services",
+            noEntities: "There are no services yet...",
+            searchPlaceHolder: "Search services...",
+            new: "New Service",
+            name: "Name",
+            organisationCount: "Used in organisations",
+            collaborationCount: "Used in collaborations"
         }
+
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -329,7 +346,9 @@ I18n.translations.en = {
         searchPlaceHolder: "SEARCH FOR ALL SERVICES..."
     },
     service: {
-        titleNew: "Create new service",
+        about: "About the service",
+        logo: "Service logo",
+        compliancy: "Service compliancy",
         titleUpdate: "Update service {{name}}",
         titleReadOnly: "Service {{name}}",
         backToServices: "Back to services",
@@ -447,6 +466,7 @@ I18n.translations.en = {
             undefined: ""
         },
         yourself: "{{name}} (it's You)",
+        logo: "Organisation image",
         anotherAdmin: "It is highly recommended to invite administrators.",
         deleteConfirmation: "Are you sure you want to delete this organisation?",
         flash: {
@@ -983,6 +1003,7 @@ I18n.translations.en = {
         name: "Table name",
         count: "Nbr of records"
     },
+
     access: {
         full: "Full",
         limited: "Limited",

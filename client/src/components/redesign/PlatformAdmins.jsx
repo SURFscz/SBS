@@ -4,7 +4,7 @@ import I18n from "i18n-js";
 import "./Entities.scss";
 import Entities from "./Entities";
 import {platformAdmins} from "../../api";
-import {ReactComponent as PlatformAdminIcon} from "../../icons/single-neutral-actions-key.svg";
+import {ReactComponent as PlatformAdminIcon} from "../../icons/users.svg";
 import "./PlatformAdmins.scss";
 
 
@@ -59,7 +59,7 @@ class PlatformAdmins extends React.Component {
             }]
         return (
             <Entities entities={admins} modelName="users" searchAttributes={["name", "email"]}
-                      defaultSort="name" columns={columns}/>
+                      defaultSort="name" columns={columns} {...this.props}/>
         )
     }
 }

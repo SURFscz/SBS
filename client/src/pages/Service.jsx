@@ -10,6 +10,7 @@ import {
     serviceNameExists,
     updateService
 } from "../api";
+import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./Service.scss";
@@ -17,16 +18,14 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty} from "../utils/Utils";
-import SelectField from "../components/SelectField";
-import moment from "moment";
 import {validEmailRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
-import BackLink from "../components/BackLink";
-import Tabs from "../components/Tabs";
-import History from "../components/History";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
-import {userRole} from "../utils/UserRole";
+import UnitHeader from "../components/redesign/UnitHeader";
+import ImageField from "../components/redesign/ImageField";
+import {AppStore} from "../stores/AppStore";
+import RadioButton from "../components/redesign/RadioButton";
 
 class Service extends React.Component {
 
@@ -38,6 +37,7 @@ class Service extends React.Component {
     initialState = () => ({
         service: {},
         name: "",
+        logo: "",
         entity_id: "",
         description: "",
         address: "",
@@ -81,7 +81,16 @@ class Service extends React.Component {
                     this.props.history.push("/404");
                 } else {
                     searchOrganisations("*")
-                        .then(r => this.setState({organisations: this.mapOrganisationsToOptions(r)}))
+                        .then(r => {
+                            this.setState({organisations: this.mapOrganisationsToOptions(r)});
+                            AppStore.update(s => {
+                                s.breadcrumb.paths = [
+                                    {path: "/", value: I18n.t("breadcrumb.home")},
+                                    {path: "/", value: I18n.t("breadcrumb.newService")}
+                                ];
+                            });
+                        });
+
                 }
             } else {
                 Promise.all([serviceById(params.id), searchOrganisations("*")])
@@ -99,6 +108,12 @@ class Service extends React.Component {
                                         () => this.props.user.admin && this.fetchAuditLogs(this.state.service.id));
                                 })
 
+                        });
+                        AppStore.update(s => {
+                            s.breadcrumb.paths = [
+                                {path: "/", value: I18n.t("breadcrumb.home")},
+                                {path: "/", value: I18n.t("breadcrumb.editService")}
+                            ];
                         });
                     });
             }
@@ -287,17 +302,21 @@ class Service extends React.Component {
         </div>);
     }
 
+    getUnitHeaderProps = () => {
+        return {obj: {name: I18n.t("models.services.new"), svg: ServicesIcon}}
+    }
+
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                         contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations,
                         accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                        research_scholarship_compliant, config, ip_networks) => {
+                        research_scholarship_compliant, config, ip_networks, logo) => {
         const redirectUri = uri || entity_id || "https://redirectUri";
         const serviceRequestUrl = `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(redirectUri)}`;
         return (
             <div className="service">
-                {!isNew && <p className="title">{title}</p>}
 
-                {service.logo && <img src={`data:image/jpeg;base64,${service.logo}`} alt={""}/>}
+                <h1 className="section-separator">{I18n.t("service.about")}</h1>
+
                 <InputField value={name} onChange={e => this.setState({
                     name: e.target.value,
                     alreadyExists: {...this.state.alreadyExists, name: false}
@@ -315,6 +334,9 @@ class Service extends React.Component {
                     className="error">{I18n.t("service.required", {
                     attribute: I18n.t("service.name").toLowerCase()
                 })}</span>}
+
+                <ImageField name="logo" onChange={s => this.setState({logo: s})}
+                            title={I18n.t("service.logo")} value={logo}/>
 
                 <InputField value={entity_id} onChange={e => this.setState({
                     entity_id: e.target.value,
@@ -390,15 +412,16 @@ class Service extends React.Component {
                 {(!initial && contactEmailRequired) && <span
                     className="error">{I18n.t("service.contactEmailRequired")}</span>}
 
-                <SelectField value={allowed_organisations}
-                             options={organisations}
-                             name={I18n.t("service.allowedOrganisations")}
-                             placeholder={I18n.t("service.allowedOrganisationsPlaceholder")}
-                             toolTip={I18n.t("service.allowedOrganisationsTooltip")}
-                             isMulti={true}
-                             disabled={!isAdmin}
-                             onChange={selectedOptions => this.setState({allowed_organisations: isEmpty(selectedOptions) ? [] : [...selectedOptions]})}
-                />
+                {/*TODO remove*/}
+                {/*<SelectField value={allowed_organisations}*/}
+                {/*             options={organisations}*/}
+                {/*             name={I18n.t("service.allowedOrganisations")}*/}
+                {/*             placeholder={I18n.t("service.allowedOrganisationsPlaceholder")}*/}
+                {/*             toolTip={I18n.t("service.allowedOrganisationsTooltip")}*/}
+                {/*             isMulti={true}*/}
+                {/*             disabled={!isAdmin}*/}
+                {/*             onChange={selectedOptions => this.setState({allowed_organisations: isEmpty(selectedOptions) ? [] : [...selectedOptions]})}*/}
+                {/*/>*/}
 
                 <InputField value={accepted_user_policy}
                             name={I18n.t("service.accepted_user_policy")}
@@ -407,29 +430,31 @@ class Service extends React.Component {
                             toolTip={I18n.t("service.accepted_user_policyTooltip")}
                             disabled={!isAdmin}/>
 
-                {this.renderIpNetworks(ip_networks, isAdmin)}
+                {/*{this.renderIpNetworks(ip_networks, isAdmin)}*/}
 
-                {!isNew && <InputField value={moment(service.created_at * 1000).format("LLLL")}
-                                       disabled={true}
-                                       name={I18n.t("organisation.created")}/>}
+                {/*{!isNew && <InputField value={moment(service.created_at * 1000).format("LLLL")}*/}
+                {/*                       disabled={true}*/}
+                {/*                       name={I18n.t("organisation.created")}/>}*/}
 
-                <CheckBox name="sirtfi_compliant" value={sirtfi_compliant}
-                          info={I18n.t("service.sirtfiCompliant")}
-                          tooltip={I18n.t("service.sirtfiCompliantTooltip")}
-                          onChange={e => this.setState({sirtfi_compliant: e.target.checked})}
-                          readOnly={!isAdmin}/>
+                <h1 className="section-separator last">{I18n.t("service.compliancy")}</h1>
 
-                <CheckBox name="code_of_conduct_compliant" value={code_of_conduct_compliant}
-                          info={I18n.t("service.codeOfConductCompliant")}
-                          tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
-                          onChange={e => this.setState({code_of_conduct_compliant: e.target.checked})}
-                          readOnly={!isAdmin}/>
+                <RadioButton label={I18n.t("service.sirtfiCompliant")}
+                             name={"sirtfi_compliant"}
+                             value={sirtfi_compliant}
+                             tooltip={I18n.t("service.sirtfiCompliantTooltip")}
+                             onChange={val => this.setState({sirtfi_compliant: val})}/>
 
-                <CheckBox name="research_scholarship_compliant" value={research_scholarship_compliant}
-                          info={I18n.t("service.researchScholarshipCompliant")}
-                          tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
-                          onChange={e => this.setState({research_scholarship_compliant: e.target.checked})}
-                          readOnly={!isAdmin}/>
+                <RadioButton label={I18n.t("service.codeOfConductCompliant")}
+                             name={"code_of_conduct_compliant"}
+                             value={code_of_conduct_compliant}
+                             tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
+                             onChange={val => this.setState({code_of_conduct_compliant: val})}/>
+
+                <RadioButton label={I18n.t("service.researchScholarshipCompliant")}
+                             name={"research_scholarship_compliant"}
+                             value={research_scholarship_compliant}
+                             tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
+                             onChange={val => this.setState({research_scholarship_compliant: val})}/>
 
                 {(isNew && isAdmin) &&
                 <section className="actions">
@@ -456,7 +481,7 @@ class Service extends React.Component {
             entity_id, description, uri, accepted_user_policy, contact_email,
             confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed, organisations,
             allowed_organisations, auditLogs, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-            research_scholarship_compliant, ip_networks
+            research_scholarship_compliant, ip_networks, logo
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const {user, config} = this.props;
@@ -471,19 +496,13 @@ class Service extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
-                <BackLink history={this.props.history} fullAccess={isAdmin} role={userRole(user)}/>
-                {isNew && <p className="title">{title}</p>}
-                <Tabs>
-                    <div label="form">
-                        {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
-                            contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,
-                            isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                            research_scholarship_compliant, config, ip_networks)}
-                    </div>
-                    {(isAdmin && !isNew) && <div label="history">
-                        <History auditLogs={auditLogs}/>
-                    </div>}
-                </Tabs>
+
+                <UnitHeader props={this.getUnitHeaderProps()}/>
+
+                {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
+                    contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,
+                    isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+                    research_scholarship_compliant, config, ip_networks, logo)}
             </div>);
     };
 
