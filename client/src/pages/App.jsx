@@ -2,10 +2,9 @@ import React from "react";
 import "./App.scss";
 import I18n from "i18n-js";
 import Header from "../components/Header";
-import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
-import Navigation from "../components/Navigation";
 import {config, me, other, refreshUser, reportError} from "../api";
 import "../locale/en";
 import "../locale/nl";
@@ -49,6 +48,8 @@ import {setFlash} from "../utils/Flash";
 import System from "./System";
 import OrganisationServices from "./OrganisationServices";
 import {BreadCrumb} from "../components/BreadCrumb";
+import Impersonating from "../components/Impersonating";
+import Button from "../components/Button";
 
 addIcons();
 
@@ -178,7 +179,8 @@ class App extends React.Component {
                 <div className="app-container">
                     {currentUser && <div>
                         <Flash/>
-                        <Header currentUser={currentUser} impersonator={impersonator} config={config}/>
+                        <Header currentUser={currentUser} config={config}/>
+                        {impersonator && <Impersonating impersonator={impersonator} currentUser={currentUser}/>}
                         <BreadCrumb/>
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>
@@ -218,7 +220,7 @@ class App extends React.Component {
                                                                   collaboration={getParameterByName("collaboration", window.location.search)}
                                                                   {...props}/>}/>
 
-                            <Route path="/home"
+                            <Route path="/home/:tab?"
                                    render={props => {
                                        if (currentUser.guest) {
                                            return <Redirect to="/landing"/>;
@@ -327,12 +329,13 @@ class App extends React.Component {
                                                                     {...props}/>}/>
 
                             <Route path="/new-organisation"
-                                   render={props => <ProtectedRoute
+                                   render={props => <ProtectedRoute config={config}
                                        currentUser={currentUser} Component={NewOrganisation} {...props}/>}/>
 
                             <Route path="/new-collaboration"
                                    render={props => <ProtectedRoute currentUser={currentUser}
                                                                     Component={NewCollaboration}
+
                                                                     refreshUser={this.refreshUserMemberships}
                                                                     {...props}/>}/>
 

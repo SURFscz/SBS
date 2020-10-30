@@ -1,7 +1,7 @@
 import React from "react";
 import "./Impersonate.scss";
 import {setFlash} from "../utils/Flash";
-import {searchCollaborations, searchOrganisations, searchUsers} from "../api";
+import {health, searchCollaborations, searchOrganisations, searchUsers} from "../api";
 import I18n from "i18n-js";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import debounce from "lodash.debounce";
@@ -14,6 +14,11 @@ import CheckBox from "../components/CheckBox";
 import Explain from "../components/Explain";
 import ImpersonateExplanation from "../components/explanations/Impersonate";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import UnitHeader from "../components/redesign/UnitHeader";
+import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
+import {AppStore} from "../stores/AppStore";
+import {ReactComponent as HandIcon} from "../icons/toys-hand-ghost.svg";
+import spinner from "../utils/Spin";
 
 class Impersonate extends React.Component {
 
@@ -49,6 +54,13 @@ class Impersonate extends React.Component {
                     organisation_id: coll.organisation_id
                 }))
             });
+                        AppStore.update(s => {
+                s.breadcrumb.paths = [
+                    {path: "/", value: I18n.t("breadcrumb.home")},
+                    {path: "/", value: I18n.t("breadcrumb.impersonate")}
+                ];
+            });
+
         })
     };
 
@@ -62,7 +74,8 @@ class Impersonate extends React.Component {
                 selectedUser: null, query: "", initial: true, collaboration: null,
                 organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false
             });
-            setFlash(I18n.t("impersonate.flash.startedImpersonation", { name: selectedUser.name }));
+            //We need time to have the user switched
+            setTimeout(() => this.props.history.push("/home"), 1000);
         }
     };
 
@@ -72,7 +85,6 @@ class Impersonate extends React.Component {
             selectedUser: null, query: "", initial: true, collaboration: null,
             organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false
         });
-        setFlash(I18n.t("impersonate.flash.clearedImpersonation"));
     };
 
     onSearchKeyDown = e => {
@@ -163,18 +175,17 @@ class Impersonate extends React.Component {
         const showAutoCompletes = (query.length > 1 || "*" === query.trim()) && !loadingAutoComplete;
         return (
             <div className="mod-impersonate">
+                <UnitHeader obj={({name: I18n.t("impersonate.title"), icon: "user-secret"})}/>
                 <Explain
                     close={this.closeExplanation}
                     subject={I18n.t("explain.impersonate")}
                     isVisible={showExplanation}>
                     <ImpersonateExplanation/>
                 </Explain>
-                <div className="title">
-                    <p>{I18n.t("impersonate.title", {name: user.name})}</p>
-                    <FontAwesomeIcon className="help" icon="question-circle"
-                                     id="impersonate_close_explanation"
-                                     onClick={() => this.setState({showExplanation: true})}/>
-                </div>
+                <FontAwesomeIcon className="help" icon="question-circle"
+                                 id="impersonate_close_explanation"
+                                 onClick={() => this.setState({showExplanation: true})}/>
+
                 <div className="impersonate">
                     <SelectField value={organisation}
                                  options={filteredOrganisations}

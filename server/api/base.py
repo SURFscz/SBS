@@ -158,6 +158,7 @@ def config():
     return {"local": current_app.config["LOCAL"],
             "base_url": base_url,
             "admin_users_upgrade": current_app.app_config.feature.admin_users_upgrade,
+            "organisation_categories": current_app.app_config.organisation_categories,
             "admin_users_upgrade_url": current_app.app_config.feature.admin_users_upgrade_url}, 200
 
 

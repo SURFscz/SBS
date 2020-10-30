@@ -77,6 +77,21 @@
         }
     }
 
+    svg.fa-arrow-right {
+        position: absolute;
+        right: 2px;
+        top: 40px;
+        font-size: 34px;
+        color: $blue;
+        padding: 6px;
+        cursor: pointer;
+
+        &:hover {
+            color: darken($blue, 15%);
+        }
+
+    }
+
     section.copy-to-clipboard {
         position: absolute;
         right: 2px;
@@ -111,18 +126,4 @@
 
     }
 
-    svg.fa-arrow-right {
-        position: absolute;
-        right: 6px;
-        top: 14px;
-        font-size: 34px;
-        color: $blue;
-        padding: 6px;
-        cursor: pointer;
-
-        &:hover {
-            color: darken($blue, 15%);
-        }
-
-    }
 }

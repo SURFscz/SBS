@@ -7,21 +7,23 @@ class Tab extends Component {
     static propTypes = {
         activeTab: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        icon: PropTypes.object,
         className: PropTypes.string,
         onClick: PropTypes.func.isRequired,
     };
 
     onClick = () => {
-        const {label, onClick} = this.props;
-        onClick(label);
+        const {name, onClick} = this.props;
+        onClick(name);
     };
 
     render() {
-        let {activeTab, className = "", label, icon} = this.props;
+        let {activeTab, className = "", label, name, icon} = this.props;
 
         className += " tab";
 
-        if (activeTab === label) {
+        if (activeTab === name) {
             className += " active";
         }
 

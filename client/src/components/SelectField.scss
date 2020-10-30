@@ -2,43 +2,37 @@
 
 .select-field {
     display: flex;
-    align-items: center;
+    position: relative;
+    flex-direction: column;
 
     label {
         display: inline-block;
-        padding: 14px 34px 14px 14px;
-        margin: 5px 0;
+        margin: 12px 0 6px 0;
         min-width: 210px;
-        border: 1px solid $lighter-grey;
-        background-color: $background;
-        border-bottom-left-radius: $br;
-        border-top-left-radius: $br;
-        color: $dark-green;
+        color: black;
         position: relative;
-
+        font-weight: bold;
     }
 
     span.tool-tip-section {
-        position: absolute;
-        right: 0;
-        top: 0;
         font-size: 14px;
-        color: $blue;
+        color: $lighter-grey;
         cursor: pointer;
         padding: 0 4px;
+
+        &:hover {
+            color: darken($light-blue, 20%);
+        }
     }
 
     .input-select-inner {
         display: block;
         width: 100%;
-        border-bottom: 1px solid $lighter-grey;
-        border-right: 1px solid $lighter-grey;
-        border-top: 1px solid $lighter-grey;
-        border-left: none;
-        border-bottom-right-radius: $br;
-        border-top-right-radius: $br;
+        border: 1px solid $dark-grey;
+        border-radius: $br;
         font-size: 14px;
         height: 50px;
+
 
         .select-inner__control {
             height: 100%;

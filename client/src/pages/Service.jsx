@@ -302,10 +302,6 @@ class Service extends React.Component {
         </div>);
     }
 
-    getUnitHeaderProps = () => {
-        return {obj: {name: I18n.t("models.services.new"), svg: ServicesIcon}}
-    }
-
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                         contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations,
                         accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
@@ -336,7 +332,7 @@ class Service extends React.Component {
                 })}</span>}
 
                 <ImageField name="logo" onChange={s => this.setState({logo: s})}
-                            title={I18n.t("service.logo")} value={logo}/>
+                            title={I18n.t("service.logo")} value={logo} secondRow={true}/>
 
                 <InputField value={entity_id} onChange={e => this.setState({
                     entity_id: e.target.value,
@@ -496,16 +492,16 @@ class Service extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
-
-                <UnitHeader props={this.getUnitHeaderProps()}/>
+                {isNew && <UnitHeader obj={({name: I18n.t("models.services.new"), svg: ServicesIcon})}/>}
+                {!isNew && <UnitHeader obj={service}/>}
 
                 {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                     contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,
                     isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                     research_scholarship_compliant, config, ip_networks, logo)}
-            </div>);
-    };
+                    </div>);
+                    };
 
-}
+                    }
 
-export default Service;
+                    export default Service;

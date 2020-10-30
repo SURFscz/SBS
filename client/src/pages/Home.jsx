@@ -19,16 +19,16 @@ class Home extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            organisations: [],
-            collaborations: [],
-            platformAdmins: [],
             tabs: [],
             role: ROLES.USER,
-            loaded: false
+            loaded: false,
+            tab: "organisations"
         };
     }
 
     componentDidMount = () => {
+        const params = this.props.match.params;
+        const tab = params.tab || this.state.tab;
         const {user} = this.props;
         const tabs = [];
         const promises = [];
@@ -43,7 +43,8 @@ class Home extends React.Component {
         AppStore.update(s => {
             s.breadcrumb.paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
         });
-        this.setState({role: ROLES.PLATFORM_ADMIN, loaded: true, tabs});
+        this.tabChanged(tab);
+        this.setState({role: ROLES.PLATFORM_ADMIN, loaded: true, tabs, tab});
         //
         // Promise.all([promises]).then(res => {
         //     // tabs.push(this.getPlatformAdminsTab());
@@ -51,36 +52,35 @@ class Home extends React.Component {
     };
 
     getOrganisationsTab = () =>
-        <div key="organisations" label={I18n.t("home.tabs.organisations")} icon={<OrganisationsIcon/>}>
+        <div key="organisations" name="organisations" label={I18n.t("home.tabs.organisations")} icon={<OrganisationsIcon/>}>
             <Organisations {...this.props}/>
         </div>
 
     getPlatformAdminsTab = () => {
-        return (<div key="platformAdmins" label={I18n.t("home.tabs.platformAdmins")} icon={<PlatformAdminIcon/>}>
+        return (<div key="platformAdmins" name="platformAdmins" label={I18n.t("home.tabs.platformAdmins")} icon={<PlatformAdminIcon/>}>
             <PlatformAdmins {...this.props}/>
         </div>)
     }
     getServicesTab = () => {
-        return (<div key="services" label={I18n.t("home.tabs.services")} icon={<ServicesIcon/>}>
+        return (<div key="services" name="services" label={I18n.t("home.tabs.services")} icon={<ServicesIcon/>}>
             <Services {...this.props}/>
         </div>)
     }
 
-    getUnitHeaderProps = user => {
-        return {obj: {name: I18n.t("home.sram"), svg: Logo}}
+    tabChanged = name => {
+        this.props.history.replace(`/home/${name}`);
     }
 
     render() {
-        const {tabs, role, loaded} = this.state;
+        const {tabs, role, loaded, initialActiveTab} = this.state;
         if (!loaded) {
             return null;
         }
         const {user} = this.props;
-        const unitHeaderProps = this.getUnitHeaderProps()
         return (
             <div className="mod-home-container">
-                <UnitHeader props={unitHeaderProps}/>
-                <Tabs>
+                <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}/>
+                <Tabs initialActiveTab={initialActiveTab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
             </div>);

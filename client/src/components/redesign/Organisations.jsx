@@ -11,7 +11,8 @@ class Organisations extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            organisations: []
+            organisations: [],
+            loading: true
         }
     }
 
@@ -24,7 +25,7 @@ class Organisations extends React.Component {
                     const membership = (user.organisation_memberships || []).find(m => m.user_id === user.id);
                     org.role = membership ? membership.role : "";
                 });
-                this.setState({organisations: json})
+                this.setState({organisations: json, loading: false})
             });
     }
 
@@ -36,7 +37,7 @@ class Organisations extends React.Component {
 
     render() {
         const {user: currentUser} = this.props;
-        const {organisations} = this.state;
+        const {organisations, loading} = this.state;
 
         const columns = [
             {
@@ -62,7 +63,8 @@ class Organisations extends React.Component {
             }]
         return (
             <Entities entities={organisations} modelName="organisations" searchAttributes={["name"]}
-                      defaultSort="name" columns={columns} showNew={true} newEntityPath={"new-organisation"}
+                      defaultSort="name" columns={columns} showNew={true} newEntityPath={"/new-organisation"}
+                      loading={loading}
                       {...this.props}/>
         )
     }

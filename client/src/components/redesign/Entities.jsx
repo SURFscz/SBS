@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 import {isEmpty, sortObjects} from "../../utils/Utils";
 import {headerIcon} from "../../forms/helpers";
 import "./Entities.scss";
+import MDSpinner from "react-md-spinner";
 
 class Entities extends React.Component {
 
@@ -20,7 +21,8 @@ class Entities extends React.Component {
     }
 
     newEntity = () => {
-        this.props.history.push(this.props.newEntityPath);
+        const {newEntityPath} = this.props;
+        this.props.history.push(newEntityPath);
     };
 
     renderSearch = (modelName, entities, query, searchAttributes, showNew) => {
@@ -100,7 +102,10 @@ class Entities extends React.Component {
     };
 
     render() {
-        const {modelName, entities, showNew, searchAttributes, columns, children} = this.props;
+        const {modelName, entities, showNew, searchAttributes, columns, children, loading} = this.props;
+        if (loading) {
+            return <div className="mod-entities-loading"><MDSpinner/></div>;
+        }
         const {query, sorted, reverse} = this.state;
         const filteredEntities = this.filterEntities(entities, query, searchAttributes);
         const sortedEntities = sortObjects(filteredEntities, sorted, reverse);
@@ -108,7 +113,7 @@ class Entities extends React.Component {
             <div className="mod-entities">
                 {this.renderSearch(modelName, entities, query, searchAttributes, showNew)}
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, columns, children)}
-                {this.props.children}
+                <div>{this.props.children}</div>
             </div>);
     }
 }
@@ -118,9 +123,10 @@ Entities.propTypes = {
     modelName: PropTypes.string.isRequired,
     searchAttributes: PropTypes.array,
     defaultSort: PropTypes.string.isRequired,
+    loading: PropTypes.bool.isRequired,
+    columns: PropTypes.array.isRequired,
     newEntityPath: PropTypes.string,
-    showNew: PropTypes.bool,
-    columns: PropTypes.array.isRequired
+    showNew: PropTypes.bool
 };
 
 export default Entities;

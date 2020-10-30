@@ -19,8 +19,9 @@ export default class History extends React.PureComponent {
     constructor(props, context) {
         super(props, context);
         const {auditLogs} = this.props;
+        const selected = this.convertReference(auditLogs, auditLogs.audit_logs[0]);
         this.state = {
-            selected: this.convertReference(auditLogs, auditLogs.audit_logs[0])
+            selected: selected
         };
         this.differ = new DiffPatcher();
     }
@@ -159,7 +160,10 @@ export default class History extends React.PureComponent {
     render() {
         const {auditLogs, className = ""} = this.props;
         const auditLogEntries = this.convertReferences(auditLogs);
-        const {selected} = this.state;
+        let {selected} = this.state;
+        if (isEmpty(selected) && !isEmpty(auditLogEntries)) {
+            selected = auditLogEntries[0];
+        }
         return (
             <div className={`history-container ${className}`}>
                 <div className={`history ${className}`}>

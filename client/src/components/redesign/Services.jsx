@@ -1,7 +1,7 @@
 import React from "react";
 import {allServices, myServices} from "../../api";
 import "./Services.scss";
-import {stopEvent} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 
@@ -11,16 +11,22 @@ class Services extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            services: []
+            services: [],
+            loading: true
         }
     }
 
     componentDidMount = () => {
-        const {user} = this.props;
+        const {user, organisation} = this.props;
         const promise = user.admin ? allServices() : myServices();
         promise.then(json => {
-                this.setState({services: json});
-            });
+            let services = json;
+            if (organisation) {
+                services = services.filter(service => service.allowed_organisations.length === 0 ||
+                        service.allowed_organisations.some(org => org.id === organisation.id))
+            }
+            this.setState({services: services, loading: false});
+        });
     }
 
 
@@ -30,7 +36,12 @@ class Services extends React.Component {
     };
 
     render() {
-        const {services} = this.state;
+        const {services, loading} = this.state;
+        const {organisation} = this.state;
+
+        if (isEmpty(services) && !loading) {
+            return <div>TODO - No services yet</div>
+        }
 
         const columns = [
             {
@@ -47,14 +58,23 @@ class Services extends React.Component {
             {
                 key: "organisations_count",
                 header: I18n.t("models.services.organisationCount")
+            }]
+        if (organisation) {
+
+        } else {
+            columns.concat([{
+                key: "organisations_count",
+                header: I18n.t("models.services.organisationCount")
             },
             {
                 key: "collaborations_count",
                 header: I18n.t("models.services.collaborationCount")
-            }]
+            }]);
+        }
         return (
             <Entities entities={services} modelName="services" searchAttributes={["name"]}
                       defaultSort="name" columns={columns} showNew={true} newEntityPath={"new-service"}
+                      loading={loading}
                       {...this.props}/>
         )
     }

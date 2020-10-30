@@ -7,7 +7,6 @@
     margin: 0 20px;
     border-top-width: 2px;
     border-top-style: solid;
-    cursor: pointer;
     display: flex;
     align-content: center;
 
@@ -27,6 +26,7 @@
     &:not(.active) {
         background: $lighter-grey;
         border-color: $lighter-grey;
+        cursor: pointer;
 
         h2, svg {
             color: $dark-grey;

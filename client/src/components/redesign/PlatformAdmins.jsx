@@ -13,17 +13,18 @@ class PlatformAdmins extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            admins: []
+            admins: [],
+            loading: true
         };
     }
 
     componentDidMount = () => platformAdmins().then(res => {
-        this.setState({admins: res.platform_admins});
+        this.setState({admins: res.platform_admins, loading: false});
     });
 
     render() {
         const {user: currentUser} = this.props;
-        const {admins} = this.state;
+        const {admins, loading} = this.state;
 
         const columns = [
             {
@@ -59,7 +60,8 @@ class PlatformAdmins extends React.Component {
             }]
         return (
             <Entities entities={admins} modelName="users" searchAttributes={["name", "email"]}
-                      defaultSort="name" columns={columns} {...this.props}/>
+                      defaultSort="name" columns={columns} loading={loading}
+                      {...this.props}/>
         )
     }
 }

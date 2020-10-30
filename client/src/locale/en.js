@@ -16,8 +16,6 @@ I18n.translations.en = {
             logout: "Logout",
             helpUrl: "https://wiki.surfnet.nl/display/sram"
         },
-        impersonator: "You are really <em>{{impersonator}}</em>,<br/>but you are impersonating <em>{{currentUser}}</em>.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
-
     },
     breadcrumb: {
         home: "Home",
@@ -31,6 +29,7 @@ I18n.translations.en = {
         newOrganisation: "New organisation",
         editService: "Edit organisation",
         newService: "New service",
+        impersonate: "Impersonate"
     },
     login: {
         title: "Research Access Management",
@@ -59,7 +58,11 @@ I18n.translations.en = {
             collaborations: "Collaborations",
             organisations: "Organisations",
             services: "SRAM Services",
-            platformAdmins: "SRAM Admins"
+            platformAdmins: "SRAM Admins",
+            orgAdmins: "Org Admins",
+            orgServices: "Org Services",
+            orgCollaborations: "Org Collaborations",
+
         }
     },
     forms: {
@@ -76,6 +79,7 @@ I18n.translations.en = {
         yes: "Yes",
         upload: "Upload image",
         image: "Image must at least be 90x90 pixels and smaller then 512KB",
+        imageToLarge: "Image is larger then 512KB",
         no: "No"
     },
     explain: {
@@ -97,6 +101,14 @@ I18n.translations.en = {
             searchPlaceHolder: "Search administrators...",
             new: "New Member",
             me: "You"
+        },
+        orgMembers: {
+            title: "Org admin & managers",
+            noEntities: "There are no members yet...",
+            searchPlaceHolder: "Search members...",
+            status: "Status",
+            inviteSend: "Invite send {{date}}",
+            accepted: "Accepted"
         },
         organisations: {
             title: "Organisations",
@@ -151,7 +163,12 @@ I18n.translations.en = {
         flash: {
             startedImpersonation: "Successfully started to impersonate {{name}}.",
             clearedImpersonation: "Successfully cleared your impersonation. You are you again."
-        }
+        },
+        exit: "Exit view",
+        impersonator: "You are impersonating <strong>{{name}}</strong> | <strong>{{role}}</strong>",
+        impersonatorTooltip: "You are really <em>{{impersonator}}</em>,<br/>but you are impersonating <em>{{currentUser}}</em>.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
+
+
     },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
@@ -424,6 +441,7 @@ I18n.translations.en = {
         subTitle: "Enter / edit the organisation details.",
         actions: "",
         name: "Name",
+        category: "Category",
         namePlaceHolder: "The unique name of an organisation",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institute",
         shortName: "Short name",
@@ -436,7 +454,7 @@ I18n.translations.en = {
         schacHomeOrganisation: "Schac Home",
         schacHomeOrganisationPlaceholder: "The Schac Home Organisation of the organisation",
         schacHomeOrganisationTooltip: "A person's home organization based<br/>on the domain name of the institution.",
-        collaborationCreationAllowed: "Automatically approve CO creation requests",
+        collaborationCreationAllowed: "Automatically approve CO creation requests?",
         collaborationCreationAllowedTooltip: "Any person can create<br/>Collaborations for their home<br/>institution.<br/><br/>This feature requires a Schac Home organization.",
         created: "Created at",
         message: "Message",

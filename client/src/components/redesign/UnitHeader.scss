@@ -2,7 +2,7 @@
 
 .unit-header-container {
     background-color: $background;
-    padding: 25px 0;
+    padding: 25px;
 
     .unit-header {
         margin: 0 auto 0 auto;
@@ -18,11 +18,25 @@
         svg {
             max-width: 50px;
             max-height: 30px;
-            margin-left: 20px;
+        }
+
+        img {
+            max-width: 50px;
+            max-height: 50px;
         }
 
         .edit {
             margin-left: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            span {
+                display: inline-block;
+                margin-top: 15px;
+                svg {
+                    margin-right: 10px;
+                }
+            }
         }
     }
 
