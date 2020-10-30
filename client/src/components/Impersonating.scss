@@ -1,18 +1,21 @@
 @import "../stylesheets/vars.scss";
 
 .impersonator {
-    padding: 0 35px;
-    font-size: 22px;
-    cursor: pointer;
-    border-left: 1px solid $primary-orange;
+    background-color: $yellow;
+    display: flex;
+    align-items: center;
+    padding: 0 2px;
 
-    svg.fa-user-secret {
-        color: $red;
-
-        &:hover {
-            color: darken($red, 10%);
-            font-size: 23px;
-        }
+    svg {
+        width: 40px;
+        cursor: pointer;
+        margin: 4px 15px 0 15px;
+        background-color: #fedb03;
+        padding: 5px;
+        border-radius: 50%;
     }
 
+    a.button {
+        margin: 0 25px 0 auto;
+    }
 }

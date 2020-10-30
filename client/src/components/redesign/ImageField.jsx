@@ -1,24 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import I18n from "i18n-js";
 import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
 import "./ImageField.scss";
+import {isEmpty} from "../../utils/Utils";
 
-export default function ImageField({title, name, onChange, value}) {
+export default function ImageField({title, name, onChange, value, secondRow = false}) {
+
+    const [error, setError] = useState("");
 
     const internalOnChange = e => {
         const files = e.target.files;
         if (files && files[0]) {
-            const reader = new FileReader();
-            reader.onload = evt => {
-                const s = btoa(evt.target.result);
-                onChange(s);
+            const file = files[0];
+            if (file.size > 512 * 1000) {
+                setError(I18n.t("forms.imageToLarge"));
+            } else {
+                setError(I18n.t("forms.imageToLarge"));
+                const reader = new FileReader();
+                reader.onload = evt => onChange(btoa(evt.target.result));
+                reader.readAsBinaryString(files[0]);
             }
-            reader.readAsBinaryString(files[0]);
         }
     }
 
     return (
-        <div className="image-field">
+        <div className={`image-field ${secondRow ? "second-row" : ""}`}>
             <label className="info" htmlFor="">{title}</label>
             <section className="file-upload">
                 {!value && <div className="no-image">
@@ -39,6 +45,7 @@ export default function ImageField({title, name, onChange, value}) {
                        onChange={internalOnChange}/>
             </section>
             <span className="disclaimer">{I18n.t("forms.image")}</span>
+            {!isEmpty(error) && <span className="error">{error}</span>}
         </div>
     );
 }

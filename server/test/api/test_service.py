@@ -125,6 +125,8 @@ class TestService(AbstractTest):
 
         service_mail = self.find_by_name(services, service_mail_name)
         self.assertEqual(1, service_mail["collaborations_count"])
+        self.assertEqual(0, len(service_mail["allowed_organisations"]))
 
         service_uuc = self.find_by_name(services, uuc_scheduler_name)
         self.assertEqual(1, service_uuc["organisations_count"])
+        self.assertEqual(1, len(service_uuc["allowed_organisations"]))

@@ -20,11 +20,14 @@ import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import RadioButton from "../components/redesign/RadioButton";
 import ImageField from "../components/redesign/ImageField";
+import SelectField from "../components/SelectField";
 
 class NewOrganisation extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        const categoryOptions = props.config.organisation_categories.map(c => ({value: c, label: c}));
+        const category = categoryOptions[0];
         this.state = {
             name: "",
             description: "",
@@ -32,6 +35,8 @@ class NewOrganisation extends React.Component {
             schac_home_organisation: "",
             collaboration_creation_allowed: false,
             logo: "",
+            categoryOptions: categoryOptions,
+            category: category,
             administrators: [],
             email: "",
             message: "",
@@ -84,10 +89,11 @@ class NewOrganisation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, short_name, administrators, message, schac_home_organisation, description, logo} = this.state;
+            const {name, short_name, administrators, message, schac_home_organisation, description, logo, category} = this.state;
             createOrganisation({
                 name,
                 short_name,
+                category: category.label,
                 schac_home_organisation,
                 administrators,
                 message,
@@ -135,15 +141,11 @@ class NewOrganisation extends React.Component {
         }
     };
 
-    getUnitHeaderProps = () => {
-        return {obj: {name: I18n.t("models.organisations.new"), svg: OrganisationsIcon}}
-    }
-
     render() {
         const {
             name, description, email, initial, alreadyExists, administrators,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, short_name,
-            schac_home_organisation, collaboration_creation_allowed, logo
+            schac_home_organisation, collaboration_creation_allowed, logo, category, categoryOptions
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
@@ -155,7 +157,7 @@ class NewOrganisation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
                                     leavePage={leavePage}/>
-                <UnitHeader props={this.getUnitHeaderProps()}/>
+                <UnitHeader obj={({name: I18n.t("models.organisations.new"), svg: OrganisationsIcon})}/>
 
                 <div className="new-organisation">
 
@@ -199,6 +201,11 @@ class NewOrganisation extends React.Component {
 
                     <ImageField name="logo" onChange={s => this.setState({logo:s})}
                                 title={I18n.t("organisation.logo")} value={logo}/>
+
+                    <SelectField value={category}
+                                 options={categoryOptions}
+                                 name={I18n.t("organisation.category")}
+                                 onChange={e => this.setState({category: e})}/>
 
                     <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                                 placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}

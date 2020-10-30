@@ -4,6 +4,13 @@
     display: flex;
     flex-direction: column;
     margin-top: 15px;
+    grid-column-start: second;
+    grid-row-start: 1;
+    grid-row-end: 99;
+
+    &.second-row {
+        grid-row-start: 2;
+    }
 
     label.info {
         display: inline-block;
@@ -28,8 +35,8 @@
     }
 
     .no-image svg {
-        width:  150px;
-        height:  150px;
+        width: 150px;
+        height: 150px;
         padding: 40px;
         border: 1px dotted $medium-grey;
         fill: $lighter-grey;

@@ -10,14 +10,8 @@
         grid-template-columns: [first] 1fr [second] 1fr;
         column-gap: 50px;
 
-        .input-field, .radio-button-container, .actions {
+        .input-field, .select-field, .radio-button-container, .actions {
             grid-column-start: first;
-        }
-
-        .image-field {
-            grid-column-start: second;
-            grid-row-start: 1;
-            grid-row-end: 6;
         }
 
         .error {
@@ -26,7 +20,7 @@
             font-size: 14px;
         }
 
-        div.input-field {
+        div.input-field, div.select-field {
             margin-top: 15px;
         }
 

@@ -59,6 +59,7 @@ class Organisation(Base, db.Model):
     name = db.Column("name", db.String(length=255), nullable=False)
     identifier = db.Column("identifier", db.String(length=255), nullable=False)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
+    category = db.Column("category", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
     schac_home_organisation = db.Column("schac_home_organisation", db.String(length=255), nullable=True)
@@ -322,6 +323,8 @@ class OrganisationInvitation(Base, db.Model):
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
     expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
     @staticmethod
     def validate_role(role):

@@ -8,12 +8,14 @@ class Tabs extends React.Component {
     static propTypes = {
         children: PropTypes.instanceOf(Array).isRequired,
         className: PropTypes.string,
+        initialActiveTab: PropTypes.string,
+        tabChanged: PropTypes.func
     };
 
     constructor(props) {
         super(props);
         this.state = {
-            activeTab: this.props.initialActiveTab || this.props.children[0].props.label
+            activeTab: this.props.initialActiveTab || this.props.children[0].props.name
         };
     }
 
@@ -31,13 +33,14 @@ class Tabs extends React.Component {
                 {!singletonTab && <div className={`tabs ${className}`}>
 
                     {filteredChildren.map(child => {
-                        const {label, icon} = child.props;
+                        const {label, name, icon} = child.props;
 
                         return (
                             <Tab
                                 activeTab={activeTab}
                                 icon={icon}
-                                key={label}
+                                key={name}
+                                name={name}
                                 label={label}
                                 onClick={this.onClickTabItem}
                                 className={className}
@@ -46,7 +49,7 @@ class Tabs extends React.Component {
                     })}
                 </div>}
                 {filteredChildren.map(child => {
-                    if (child.props.label !== activeTab) {
+                    if (child.props.name !== activeTab) {
                         return undefined;
                     }
                     return child.props.children;

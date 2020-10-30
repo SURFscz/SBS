@@ -178,10 +178,11 @@ class AuditMixin(JsonSerializableBase):
         inspr = inspect(target)
         attrs = mapper.column_attrs
         for attr in attrs:
-            hist = getattr(inspr.attrs, attr.key).history
-            if hist.has_changes():
-                state_before[attr.key] = get_history(target, attr.key)[2].pop()
-                state_after[attr.key] = getattr(target, attr.key)
+            if attr.key not in ignore_attributes:
+                hist = getattr(inspr.attrs, attr.key).history
+                if hist.has_changes():
+                    state_before[attr.key] = get_history(target, attr.key)[2].pop()
+                    state_after[attr.key] = getattr(target, attr.key)
         # connection, subject_id, target_type, target_id, parent_id, parent_name, action
         pi = parent_info(target)
         if state_before and state_after:

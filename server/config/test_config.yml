@@ -71,6 +71,11 @@ admin_users:
   - uid: "urn:mike"
   - uid: "900613f87a9c8539b15729264ccc50af20c865ba@acc.sram.eduteams.org"
 
+organisation_categories:
+  - "Research"
+  - "University"
+  - "Medical"
+
 feature:
   admin_users_upgrade: True
   admin_users_upgrade_url: http://localhost:8080/api/users/upgrade_super_user

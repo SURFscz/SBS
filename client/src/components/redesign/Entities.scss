@@ -1,5 +1,12 @@
 @import "../../stylesheets/vars";
 
+.mod-entities-loading {
+    height: 275px;
+    display: flex;
+    span {
+        margin: auto;
+    }
+}
 .mod-entities {
 
     .entities-search {
