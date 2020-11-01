@@ -1,7 +1,7 @@
 import React from "react";
 import I18n from "i18n-js";
 import {Link} from "react-router-dom";
-import {ReactComponent as Logo} from "../images/logo.svg";
+import {ReactComponent as Logo} from "../images/logo-surf-white.svg";
 import "./Header.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserMenu from "./redesign/UserMenu";

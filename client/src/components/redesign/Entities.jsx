@@ -4,7 +4,7 @@ import I18n from "i18n-js";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Button from "../Button";
 import PropTypes from "prop-types";
-import {isEmpty, sortObjects} from "../../utils/Utils";
+import {isEmpty, sortObjects, valueForSort} from "../../utils/Utils";
 import {headerIcon} from "../../forms/helpers";
 import "./Entities.scss";
 import MDSpinner from "react-md-spinner";
@@ -21,8 +21,13 @@ class Entities extends React.Component {
     }
 
     newEntity = () => {
-        const {newEntityPath} = this.props;
-        this.props.history.push(newEntityPath);
+        const {newEntityPath, newEntityFunc} = this.props;
+        if (newEntityFunc) {
+            newEntityFunc();
+        } else {
+            this.props.history.push(newEntityPath);
+        }
+
     };
 
     renderSearch = (modelName, entities, query, searchAttributes, showNew) => {
@@ -50,8 +55,13 @@ class Entities extends React.Component {
             return entities;
         }
         query = query.toLowerCase();
-        return entities.filter(entity =>
-            searchAttributes.some(attr => entity[attr].toLowerCase().indexOf(query) > -1));
+        return entities.filter(entity => {
+            return searchAttributes.some(attr => {
+                const  val = valueForSort(attr, entity);
+                return val.toLowerCase().indexOf(query) > -1
+            });
+        });
+
     };
 
     setSorted = key => () => {
@@ -126,6 +136,7 @@ Entities.propTypes = {
     loading: PropTypes.bool.isRequired,
     columns: PropTypes.array.isRequired,
     newEntityPath: PropTypes.string,
+    newEntityFunc: PropTypes.func,
     showNew: PropTypes.bool
 };
 

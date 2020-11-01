@@ -23,7 +23,7 @@ class Services extends React.Component {
             let services = json;
             if (organisation) {
                 services = services.filter(service => service.allowed_organisations.length === 0 ||
-                        service.allowed_organisations.some(org => org.id === organisation.id))
+                    service.allowed_organisations.some(org => org.id === organisation.id))
             }
             this.setState({services: services, loading: false});
         });
@@ -37,7 +37,7 @@ class Services extends React.Component {
 
     render() {
         const {services, loading} = this.state;
-        const {organisation} = this.state;
+        const {organisation, collaboration} = this.props;
 
         if (isEmpty(services) && !loading) {
             return <div>TODO - No services yet</div>
@@ -54,26 +54,24 @@ class Services extends React.Component {
                 key: "name",
                 header: I18n.t("models.services.name"),
                 mapper: service => <a href="/" onClick={this.openService(service)}>{service.name}</a>,
-            },
-            {
-                key: "organisations_count",
-                header: I18n.t("models.services.organisationCount")
             }]
         if (organisation) {
-
+            //TODO - ensure we can select services to add to the organisation
+        } else if (collaboration) {
+            //TODO - ensure we can select services to add to the collaboration
         } else {
-            columns.concat([{
+            columns.push({
                 key: "organisations_count",
                 header: I18n.t("models.services.organisationCount")
-            },
-            {
+            });
+            columns.push({
                 key: "collaborations_count",
                 header: I18n.t("models.services.collaborationCount")
-            }]);
+            });
         }
         return (
             <Entities entities={services} modelName="services" searchAttributes={["name"]}
-                      defaultSort="name" columns={columns} showNew={true} newEntityPath={"new-service"}
+                      defaultSort="name" columns={columns} showNew={true} newEntityPath={"/new-service"}
                       loading={loading}
                       {...this.props}/>
         )

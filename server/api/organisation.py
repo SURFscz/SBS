@@ -137,7 +137,10 @@ def organisation_by_id(organisation_id):
         .options(joinedload(Organisation.services)) \
         .options(joinedload(Organisation.collaboration_requests)
                  .subqueryload(CollaborationRequest.requester)) \
-        .options(joinedload(Organisation.collaborations)) \
+        .options(joinedload(Organisation.collaborations)
+                 .subqueryload(Collaboration.collaboration_memberships)) \
+        .options(joinedload(Organisation.collaborations)
+                 .subqueryload(Collaboration.invitations)) \
         .filter(Organisation.id == organisation_id)
 
     if not request_context.is_authorized_api_call:

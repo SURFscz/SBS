@@ -257,7 +257,7 @@ def me():
                      .subqueryload(CollaborationMembership.collaboration)) \
             .options(joinedload(User.aups)) \
             .filter(User.id == user_from_session["id"]) \
-            .one()
+            .first()
 
         # user_from_db = User.query.get(user_from_session["id"])
         if user_from_db is None:

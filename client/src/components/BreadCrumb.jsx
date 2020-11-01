@@ -14,7 +14,8 @@ export const BreadCrumb = () => {
                 {paths.map((p, i) =>
                     <div className="path" key={i}>
                         {i !== 0 && <ChevronRight/>}
-                        <Link to={p.path} className={(i + 1) === paths.length ? "last" : "link"}>{p.value}</Link>
+                        {(i + 1) !== paths.length && <Link to={p.path} className={"link"}>{p.value}</Link>}
+                        {(i + 1) === paths.length && <span className={"last"}>{p.value}</span>}
                     </div>)}
             </div>
         </div>

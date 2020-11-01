@@ -5,9 +5,6 @@ import {DiffPatcher} from "jsondiffpatch";
 import "jsondiffpatch/dist/formatters-styles/html.css";
 import moment from "moment";
 import {escapeDeep, isEmpty} from "../utils/Utils";
-import {auditLogsInfo} from "../api";
-import {AppStore} from "../stores/AppStore";
-import {getParameterByName} from "../utils/QueryParameters";
 
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at"];
 const epochAttributes = ["agreed_at", "sent_at", "last_accessed_date", "last_login_date", "expiry_date"]
@@ -17,36 +14,13 @@ const collectionMapping = {
     user_id: "users"
 };
 
-
-export default class History extends React.PureComponent {
+export default class HistoryOld extends React.PureComponent {
 
     constructor(props, context) {
         super(props, context);
-        this.state = {
-            selected: null,
-            auditLogs: {audit_logs: []}
-        };
         this.differ = new DiffPatcher();
     }
 
-    componentDidMount = () => {
-        const {collection, id} = this.props.match.params;
-        auditLogsInfo(id, collection).then(res => {
-            const selected = this.convertReference(res, res.audit_logs[0]);
-            this.setState({auditLogs: res, selected: selected});
-            const name = getParameterByName("name", window.location.search);
-            const back = getParameterByName("back", window.location.search);
-            AppStore.update(s => {
-                s.breadcrumb.paths = [
-                    {path: "/", value: I18n.t("breadcrumb.home")},
-                    {path: decodeURIComponent(back), value: name},
-                    {path: `/`, value: I18n.t("breadcrumb.history")}
-                ];
-            });
-
-        });
-
-    }
 
     convertReference = (auditLogs, auditLog) => {
         if (auditLog) {
@@ -180,11 +154,15 @@ export default class History extends React.PureComponent {
     };
 
     render() {
-        const {auditLogs, selected} = this.state;
+        const {auditLogs, className = ""} = this.props;
         const auditLogEntries = this.convertReferences(auditLogs);
+        let {selected} = this.state;
+        if (isEmpty(selected) && !isEmpty(auditLogEntries)) {
+            selected = auditLogEntries[0];
+        }
         return (
-            <div className={`history-container`}>
-                <div className={`history`}>
+            <div className={`history-container ${className}`}>
+                <div className={`history ${className}`}>
                     {this.renderAuditLogs(auditLogEntries, selected)}
                     {this.renderDetail(selected, auditLogs)}
                 </div>

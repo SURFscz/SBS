@@ -72,7 +72,7 @@ class Home extends React.Component {
     }
 
     render() {
-        const {tabs, role, loaded, initialActiveTab} = this.state;
+        const {tabs, role, loaded, tab} = this.state;
         if (!loaded) {
             return null;
         }
@@ -80,7 +80,7 @@ class Home extends React.Component {
         return (
             <div className="mod-home-container">
                 <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}/>
-                <Tabs initialActiveTab={initialActiveTab} tabChanged={this.tabChanged}>
+                <Tabs initialActiveTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
             </div>);

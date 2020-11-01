@@ -1,7 +1,59 @@
 .mod-entities {
     div.impersonate {
         svg {
-            width: 25px;
+            width: 35px;
+            cursor: pointer;
+            background-color: #fedb03;
+            padding: 5px;
         }
     }
+
+    table.orgMembers {
+
+        thead {
+            th {
+                &.check {
+                    width: 20px;
+                }
+
+                &.name {
+                    width: 20%;
+                }
+
+                &.user__schac_home_organisation {
+                    width: 20%;
+                }
+
+                &.role {
+                    width: 20%;
+                }
+
+                &.status {
+                    width: 20%;
+                    text-align: center;
+                }
+
+                &.impersonate {
+                    width: 74px;
+                }
+            }
+        }
+
+        tbody {
+            td {
+                &.status {
+                    text-align: center;
+                }
+
+                &.impersonate {
+                    text-align: right;
+                }
+
+            }
+        }
+
+    }
+
 }
+
+
