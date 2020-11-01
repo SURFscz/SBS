@@ -195,20 +195,18 @@ class TestUser(AbstractTest):
 
     def test_upgrade_super_account_forbidden(self):
         self.login("urn:sarah")
-        res = self.get("/api/users/upgrade_super_user", with_basic_auth=False)
-        self.assertEqual(403, res.status_code)
+        self.get("/api/users/upgrade_super_user", with_basic_auth=False, response_status_code=403)
 
     def test_platform_admins(self):
         self.login("urn:john")
         res = self.client.get("/api/users/platform_admins").json
 
         self.assertTrue(res["admin_users_upgrade"])
-        self.assertEqual(2, res["platform_admins"])
+        self.assertEqual(2, len(res["platform_admins"]))
 
     def test_platform_admins_forbidden(self):
         self.login("urn:sarah")
-        res = self.get("/api/users/upgrade_super_user", with_basic_auth=False)
-        self.assertEqual(403, res.status_code)
+        self.get("/api/users/platform_admins", with_basic_auth=False, response_status_code=403)
 
     def test_authorization(self):
         res = self.get("/api/users/authorization", query_data={"state": "http://localhost/redirect"})

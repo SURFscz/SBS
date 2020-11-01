@@ -25,11 +25,14 @@ I18n.translations.en = {
         services: "Services",
         profile: "Profile",
         aup: "AUP",
+        history: "History",
         confirmation: "Admin confirmation",
         newOrganisation: "New organisation",
-        editService: "Edit organisation",
+        editService: "Edit service",
         newService: "New service",
-        impersonate: "Impersonate"
+        newCollaboration: "New collaboration",
+        impersonate: "Impersonate",
+        organisationInvite: "Add members"
     },
     login: {
         title: "Research Access Management",
@@ -107,8 +110,9 @@ I18n.translations.en = {
             noEntities: "There are no members yet...",
             searchPlaceHolder: "Search members...",
             status: "Status",
-            inviteSend: "Invite send {{date}}",
-            accepted: "Accepted"
+            inviteSend: "Invite sent {{date}}",
+            accepted: "Accepted",
+            new: "Add member(s)"
         },
         organisations: {
             title: "Organisations",
@@ -127,8 +131,15 @@ I18n.translations.en = {
             name: "Name",
             organisationCount: "Used in organisations",
             collaborationCount: "Used in collaborations"
+        },
+        collaborations: {
+            title: "Collaborations",
+            searchPlaceHolder: "Search collaborations...",
+            new: "New Collaboration",
+            name: "Name",
+            memberCount: "Members",
+            invitationsCount: "Invitations"
         }
-
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -257,11 +268,14 @@ I18n.translations.en = {
         on_acceptance: "On acceptance"
     },
     collaboration: {
+        about: "About the collaboration",
+        invitations: "Invite CO admins",
         title: "Create new collaboration",
         requestTitle: "Request a new collaboration",
         requestTitleCreationAllowed: "Request a new collaboration - organisation {{name}} is configured to automatic approve collaborations requests",
         actions: "",
         name: "Name",
+        logo: "Collaboration logo",
         namePlaceHolder: "The unique name of a collaboration",
         shortName: "Short name",
         shortNamePlaceHolder: "Unique short name of the collaboration",
@@ -442,6 +456,7 @@ I18n.translations.en = {
         actions: "",
         name: "Name",
         category: "Category",
+        categoryTooltip: "Categories are displayed when</br>services are linked to organisations",
         namePlaceHolder: "The unique name of an organisation",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institute",
         shortName: "Short name",
@@ -595,7 +610,7 @@ I18n.translations.en = {
     organisationInvitation: {
         title: "Invitation to join organisation {{organisation}}",
         backToOrganisationDetail: "Back to my organisation {{name}}",
-        createTitle: "Send invitations to join organisation {{organisation}}",
+        createTitle: "Invite new members to join organisation {{organisation}}",
         organisationName: "Name",
         organisationDescription: "Description",
         organisationAdministrators: "Administrators",

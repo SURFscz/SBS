@@ -104,15 +104,14 @@ class Service extends React.Component {
                         }, () => {
                             Promise.all(this.state.service.ip_networks.map(n => ipNetworks(n.network_value, n.id)))
                                 .then(res => {
-                                    this.setState({"ip_networks": res},
-                                        () => this.props.user.admin && this.fetchAuditLogs(this.state.service.id));
+                                    this.setState({"ip_networks": res});
                                 })
 
                         });
                         AppStore.update(s => {
                             s.breadcrumb.paths = [
                                 {path: "/", value: I18n.t("breadcrumb.home")},
-                                {path: "/", value: I18n.t("breadcrumb.editService")}
+                                {path: "/", value: res[0].name}
                             ];
                         });
                     });
@@ -493,7 +492,12 @@ class Service extends React.Component {
                                     leavePage={leavePage}
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
                 {isNew && <UnitHeader obj={({name: I18n.t("models.services.new"), svg: ServicesIcon})}/>}
-                {!isNew && <UnitHeader obj={service}/>}
+                {!isNew && <UnitHeader obj={service}
+                                       auditLogPath={`services/${service.id}`}
+                                       name={service.name}
+                                       history={this.props.history}
+                                       mayEdit={user.admin}
+                                       onEdit={() => this.props.history.push("/services/" + service.id)} />}
 
                 {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                     contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,

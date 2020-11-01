@@ -4,9 +4,10 @@ import "./Organisations.scss";
 import {stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
+import ToggleSwitch from "./ToggleSwitch";
 
 
-class Organisations extends React.Component {
+class ServiceOrganisations extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -16,26 +17,12 @@ class Organisations extends React.Component {
         }
     }
 
-    componentDidMount = () => {
-        const {user} = this.props;
-        const promise = user.admin ? allOrganisations() : myOrganisations();
-        promise
-            .then(json => {
-                json.forEach(org => {
-                    const membership = (user.organisation_memberships || []).find(m => m.user_id === user.id);
-                    org.role = membership ? membership.role : "";
-                });
-                this.setState({organisations: json, loading: false})
-            });
-    }
-
     openOrganisation = organisation => e => {
         stopEvent(e);
         this.props.history.push(`/organisations/${organisation.id}`);
     };
 
     render() {
-        const {user: currentUser} = this.props;
         const {organisations, loading} = this.state;
 
         const columns = [
@@ -55,14 +42,11 @@ class Organisations extends React.Component {
                 header: I18n.t("models.organisations.category")
             },
             {
-                key: "organisation_memberships_count",
-                header: I18n.t("models.organisations.memberCount"),
-                mapper: org => org.organisation_memberships_count
-            },
-            {
-                key: "collaborations_count",
-                header: I18n.t("models.organisations.collaborationCount"),
-                mapper: org => org.collaborations_count
+                key: "toggle",
+                header: I18n.t("models.services.accessAllowed"),
+                mapper: org => {
+                    return new ToggleSwitch()
+                }
             }]
         return (
             <Entities entities={organisations} modelName="organisations" searchAttributes={["name"]}

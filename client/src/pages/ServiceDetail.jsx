@@ -1,5 +1,5 @@
 import React from "react";
-import {organisationById} from "../api";
+import {organisationById, serviceById} from "../api";
 import "./OrganisationDetail.scss";
 import I18n from "i18n-js";
 import {isEmpty} from "../utils/Utils";
@@ -13,12 +13,12 @@ import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
 import Collaborations from "../components/redesign/Collaborations";
 
-class OrganisationDetail extends React.Component {
+class ServiceDetail extends React.Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            organisation: {},
+            service: {},
             loaded: false,
             tab: "admins",
             tabs: []
@@ -29,40 +29,21 @@ class OrganisationDetail extends React.Component {
         const params = this.props.match.params;
         const {user} = this.props;
         if (params.id) {
-            organisationById(params.id)
+            serviceById(params.id)
                 .then(json => {
-                    const member = (user.organisation_memberships || [])
-                        .find(membership => membership.organisation_id === json.id);
-                    if (isEmpty(member) && !user.admin) {
-                        this.props.history.push("/404");
-                        return;
-                    }
-                    const adminOfOrganisation = json.organisation_memberships
-                        .some(member => member.role === "admin" && member.user_id === user.id) || user.admin;
-                    const managerOfOrganisation = json.organisation_memberships
-                        .some(member => member.role === "manager" && member.user_id === user.id);
-                    json.collaborations.forEach(collaboration => {
-                        collaboration.invitations_count = collaboration.invitations.length;
-                        collaboration.member_count = collaboration.collaboration_memberships.length;
-                    });
-
                     const tab = params.tab || this.state.tab;
                     const tabs = [
-                        this.getOrganisationAdminsTab(json),
-                        this.getServicesTab(json),
+                        this.getOrganisationsTab(json),
                         this.getCollaborationsTab(json)
                     ];
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {path: `/organisations/${json.id}`, value: json.name}
+                            {path: "/", value: json.name}
                         ];
                     });
-
                     this.setState({
-                        organisation: json,
-                        adminOfOrganisation: adminOfOrganisation,
-                        managerOfOrganisation: managerOfOrganisation,
+                        service: json,
                         tab: tab,
                         tabs: tabs,
                         loaded: true
@@ -75,7 +56,7 @@ class OrganisationDetail extends React.Component {
         }
     };
 
-    getOrganisationAdminsTab = organisation => {
+    getOrganisationsTab = service => {
         return (<div key="admins" name="admins" label={I18n.t("home.tabs.orgAdmins")}
                      icon={<PlatformAdminIcon/>}>
             <OrganisationAdmins {...this.props} organisation={organisation}/>
@@ -126,4 +107,4 @@ class OrganisationDetail extends React.Component {
     };
 }
 
-export default OrganisationDetail;
+export default ServiceDetail;

@@ -30,10 +30,10 @@ class UserMenu extends React.Component {
             <div className="user-menu" ref={node => this.node = node}>
                 <ul>
                     {links.map(l => <li key={l}>
-                        <Link to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
+                        <Link onClick={this.props.close} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
                     </li>)}
                     {currentUser.admin && adminLinks.map(l => <li key={l}>
-                        <Link to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
+                        <Link onClick={this.props.close} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
                     </li>)}
                 </ul>
             </div>

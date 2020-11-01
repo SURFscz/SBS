@@ -1,4 +1,4 @@
-table.organisations {
+table.service-organisations {
 
     thead {
         th {
@@ -10,13 +10,8 @@ table.organisations {
                 width: 25%;
                 padding-left: 15px;
             }
-            &.organisation_memberships_count {
-                width: 15%;
-                text-align: center;
-            }
-
-            &.collaborations_count {
-                width: 15%;
+            &.toggle {
+                width: 35%;
                 text-align: center;
             }
         }
@@ -27,12 +22,7 @@ table.organisations {
             &.name {
                 padding-left: 15px;
             }
-
-            &.organisation_memberships_count {
-                text-align: center;
-            }
-
-            &.collaborations_count {
+            &.toggle {
                 text-align: center;
             }
         }

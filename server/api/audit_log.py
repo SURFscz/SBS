@@ -54,7 +54,9 @@ def info(query_id, collection_name):
         .limit(100) \
         .all()
 
-    return _add_references(audit_logs), 200
+    res = _add_references(audit_logs)
+
+    return res, 200
 
 
 def _contains_id(result, key, id):

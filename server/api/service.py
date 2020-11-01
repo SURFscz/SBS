@@ -224,8 +224,7 @@ def _add_allowed_organisations(allowed_organisations, service):
     service.allowed_organisations.clear()
     if allowed_organisations:
         for value in allowed_organisations:
-            organisation_id = value["organisation_id"]
-            service.allowed_organisations.append(Organisation.query.get(organisation_id))
+            service.allowed_organisations.append(Organisation.query.get(value["organisation_id"]))
             service.public_visible = False
     else:
         service.public_visible = True
@@ -249,6 +248,18 @@ def update_service():
     _add_allowed_organisations(allowed_organisations, service)
 
     return res
+
+
+@service_api.route("/allowed_organisations/<service_id>", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def add_allowed_organisations(service_id):
+    confirm_write_access()
+
+    service = Service.query.get(service_id)
+    data = current_request.get_json()
+    allowed_organisations = data.get("allowed_organisations", None)
+    _add_allowed_organisations(allowed_organisations, service)
+    return None, 201
 
 
 @service_api.route("/<service_id>", methods=["DELETE"], strict_slashes=False)

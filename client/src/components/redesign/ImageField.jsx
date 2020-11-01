@@ -15,7 +15,6 @@ export default function ImageField({title, name, onChange, value, secondRow = fa
             if (file.size > 512 * 1000) {
                 setError(I18n.t("forms.imageToLarge"));
             } else {
-                setError(I18n.t("forms.imageToLarge"));
                 const reader = new FileReader();
                 reader.onload = evt => onChange(btoa(evt.target.result));
                 reader.readAsBinaryString(files[0]);

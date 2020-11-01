@@ -50,6 +50,7 @@ import OrganisationServices from "./OrganisationServices";
 import {BreadCrumb} from "../components/BreadCrumb";
 import Impersonating from "../components/Impersonating";
 import Button from "../components/Button";
+import History from "../components/History";
 
 addIcons();
 
@@ -255,11 +256,20 @@ class App extends React.Component {
                                        currentUser={currentUser}
                                        Component={OrganisationDetailLite} {...props}/>}/>
 
+                            <Route exact path="/audit-logs/:collection/:id"
+                                   render={props => <ProtectedRoute
+                                       currentUser={currentUser} Component={History} {...props}/>}/>
+
                             <Route exact path="/services"
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser} Component={Services} {...props}/>}/>
 
                             <Route exact path="/services/:id"
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser}
+                                                                    Component={ServiceDetail} {...props}/>}/>
+
+                            <Route exact path="/edit-service/:id"
                                    render={props => <ProtectedRoute config={config}
                                                                     currentUser={currentUser}
                                                                     Component={Service} {...props}/>}/>

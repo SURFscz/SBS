@@ -1,4 +1,6 @@
 # -*- coding: future_fstrings -*-
+import logging
+import time
 import xml.etree.ElementTree as ET
 from urllib import request
 
@@ -8,6 +10,10 @@ idp_metadata = None
 
 
 def parse_idp_metadata(app):
+    logger = logging.getLogger("scheduler")
+    start = int(time.time() * 1000.0)
+    logger.info("Start running parse_idp_metadata job")
+
     metadata = app.app_config.metadata
     pre = request.urlopen(metadata.idp_url)
     results = {}
@@ -34,6 +40,9 @@ def parse_idp_metadata(app):
                                   "en": display_name_en or display_name_nl}
             display_name_nl = display_name_en = None
             scopes = []
+
+    end = int(time.time() * 1000.0)
+    logger.info(f"Finished running parse_idp_metadata job in {end - start} ms")
 
     global idp_metadata
     idp_metadata = results

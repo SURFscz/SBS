@@ -205,6 +205,7 @@ class NewOrganisation extends React.Component {
                     <SelectField value={category}
                                  options={categoryOptions}
                                  name={I18n.t("organisation.category")}
+                                 toolTip={I18n.t("organisation.categoryTooltip")}
                                  onChange={e => this.setState({category: e})}/>
 
                     <InputField value={description} onChange={e => this.setState({description: e.target.value})}

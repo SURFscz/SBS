@@ -9,6 +9,8 @@
 }
 .mod-entities {
 
+    margin-bottom: 25px;
+
     .entities-search {
         display: flex;
         align-items: center;
@@ -73,7 +75,7 @@
                 }
 
                 &.logo {
-                    width: 100px;
+                    width: 75px;
                 }
 
                 svg.fa-caret-up, svg.fa-caret-down {
@@ -100,6 +102,9 @@
             tr {
                 color: black;
                 border-bottom: 1px solid $lighter-grey;
+                &:last-child {
+                    border-bottom: none;
+                }
 
             }
 
@@ -127,7 +132,9 @@
                 &.logo {
                     padding: 5px 0;
                     img {
-                        padding: 5px 18px;
+                        max-width: 75px;
+                        max-height: 75px;
+                        padding: 5px 12px;
                         border: 1px dotted $lighter-grey;
                         margin-right: 5px;
                     }
@@ -149,12 +156,22 @@
     span.person-role {
         text-align: center;
         display: inline-block;
-        border-radius: 8px;
+        border-radius: 12px;
         min-width: 75px;
+        padding: 4px 15px;
+        font-weight: bold;
 
         &.me {
             background-color: $green;
             color: white;
+        }
+        &.invite {
+            background-color: $yellow;
+            color: black;
+        }
+        &.accepted {
+            background-color: $light-green;
+            color: black;
         }
     }
 

@@ -184,11 +184,11 @@ def seed(db, app_config):
 
     uuc = Organisation(name=uuc_name, short_name="uuc", identifier=str(uuid.uuid4()),
                        description="Unincorporated Urban Community", logo=_read_image("uuc.jpeg"),
-                       created_by="urn:admin", updated_by="urnadmin",
+                       created_by="urn:admin", updated_by="urnadmin", category="Research",
                        collaboration_creation_allowed=True, schac_home_organisation=schac_home_organisation_uuc)
     uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam", identifier=str(uuid.uuid4()),
                        created_by="urn:admin", updated_by="urnadmin", short_name="uva", logo=_read_image("uva.jpg"),
-                       schac_home_organisation=schac_home_organisation)
+                       schac_home_organisation=schac_home_organisation, category="University")
     _persist(db, uuc, uva)
 
     api_key = ApiKey(hashed_secret=uuc_hashed_secret, organisation=uuc, description="API access",

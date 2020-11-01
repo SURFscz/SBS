@@ -107,7 +107,7 @@ export function me(config) {
         let sub = "urn:john";
         //sub = "urn:suspended";
         //Need to mock a login
-        return postPutJson("/api/mock", {sub}, "PUT")
+        return postPutJson("/api/mock", {sub, "email": "john@example.com"}, "PUT")
             .then(() => fetchJson("/api/users/me",{},{}, false));
     } else {
         return fetchJson("/api/users/me",{},{}, false);

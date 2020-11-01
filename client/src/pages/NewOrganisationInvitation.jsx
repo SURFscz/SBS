@@ -12,15 +12,16 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
-
+import {ReactComponent as InviteIcon} from "../icons/single-neutral-question.svg";
+import {ReactComponent as EyeIcon} from "../icons/eye-icon.svg";
 import "./NewOrganisationInvitation.scss"
 import DateField from "../components/DateField";
 import {getParameterByName} from "../utils/QueryParameters";
 import Tabs from "../components/Tabs";
-import BackLink from "../components/BackLink";
 import SelectField from "../components/SelectField";
 import {organisationRoles} from "../forms/constants";
-import {userRole} from "../utils/UserRole";
+import UnitHeader from "../components/redesign/UnitHeader";
+import {AppStore} from "../stores/AppStore";
 
 class NewOrganisationInvitation extends React.Component {
 
@@ -58,7 +59,17 @@ class NewOrganisationInvitation extends React.Component {
         const params = this.props.match.params;
         if (params.organisation_id) {
             organisationById(params.organisation_id)
-                .then(json => this.setState({organisation: json}));
+                .then(json => {
+                    this.setState({organisation: json});
+                    AppStore.update(s => {
+                        s.breadcrumb.paths = [
+                            {path: "/", value: I18n.t("breadcrumb.home")},
+                            {path: `/organisations/${json.id}`, value: json.name},
+                            {path: "/", value: I18n.t("breadcrumb.organisationInvite")}
+                        ];
+                    });
+
+                });
         } else {
             this.props.history.push("/404");
         }
@@ -175,9 +186,12 @@ class NewOrganisationInvitation extends React.Component {
     );
 
 
-    invitationForm = (message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
+    invitationForm = (organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
                       disabledSubmit, intended_role) =>
         <>
+            <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
+
+
             <InputField value={email}
                         onChange={e => this.setState({email: e.target.value})}
                         placeholder={I18n.t("organisation.administratorsPlaceholder")}
@@ -266,21 +280,19 @@ class NewOrganisationInvitation extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
-                    {
-                        organisation_id: organisation.id
-                    })}/>
-
-                <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
+                <UnitHeader obj={organisation}
+                            name={organisation.name}/>
 
                 <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged} key={activeTab}>
-                    <div label="invitation_form">
+                    <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
+                         name={"invitation_form"} icon={<InviteIcon/>}>
                         <div className="new-organisation-invitation">
-                            {this.invitationForm(message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                            {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
                                 administrators, expiry_date, disabledSubmit, intended_role)}
                         </div>
                     </div>
-                    <div label="invitation_preview">
+                    <div label={I18n.t("tabs.invitation_preview")} key={"invitation_preview"}
+                         name={"invitation_preview"} icon={<EyeIcon/>}>
                         <div className="new-organisation-invitation">
                             {this.preview(disabledSubmit)}
                         </div>

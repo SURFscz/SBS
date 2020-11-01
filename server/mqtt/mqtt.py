@@ -11,10 +11,10 @@ class MqttClient():
     auth = dict()
 
     def __init__(self, service_bus_conf):
-        self.enabled = service_bus_conf['enabled']
-        self.host = service_bus_conf['host']
-        self.client_id = service_bus_conf['client_id']
-        self.auth = {'username': service_bus_conf['user'], 'password': service_bus_conf['password']}
+        self.enabled = service_bus_conf["enabled"]
+        self.host = service_bus_conf["host"]
+        self.client_id = service_bus_conf["client_id"]
+        self.auth = {"username": service_bus_conf["user"], "password": service_bus_conf["password"]}
 
     def publish(self, topic, msg, qos=1):
         res = False

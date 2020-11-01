@@ -1,5 +1,7 @@
 # -*- coding: future_fstrings -*-
 import datetime
+import logging
+import time
 
 from sqlalchemy import text
 
@@ -37,6 +39,10 @@ def _do_suspend_users(app):
         current_time = datetime.datetime.utcnow()
         retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days)
 
+        start = int(time.time() * 1000.0)
+        logger = logging.getLogger("scheduler")
+        logger.info("Start running suspend_users job")
+
         results = _result_container()
 
         users = User.query \
@@ -70,14 +76,18 @@ def _do_suspend_users(app):
         if len(users) > 0 or len(suspended_users) > 0:
             db.session.commit()
 
+        end = int(time.time() * 1000.0)
+        logger.info(f"Finished running suspend_users job in {end - start} ms")
+
         return results
 
 
 def suspend_users(app):
-    session = db.create_session(options={})()
-    try:
-        result = session.execute(text(f"SELECT GET_LOCK('{suspend_users_lock_name}', 3)"))
-        lock_obtained = next(result, (0,))[0]
-        return _do_suspend_users(app) if lock_obtained else _result_container()
-    finally:
-        session.execute(text(f"SELECT RELEASE_LOCK('{suspend_users_lock_name}')"))
+    with app.app_context():
+        session = db.create_session(options={})()
+        try:
+            result = session.execute(text(f"SELECT GET_LOCK('{suspend_users_lock_name}', 3)"))
+            lock_obtained = next(result, (0,))[0]
+            return _do_suspend_users(app) if lock_obtained else _result_container()
+        finally:
+            session.execute(text(f"SELECT RELEASE_LOCK('{suspend_users_lock_name}')"))

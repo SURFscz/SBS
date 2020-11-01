@@ -130,3 +130,7 @@ class TestService(AbstractTest):
         service_uuc = self.find_by_name(services, uuc_scheduler_name)
         self.assertEqual(1, service_uuc["organisations_count"])
         self.assertEqual(1, len(service_uuc["allowed_organisations"]))
+
+    def test_add_allowed_organisations(self):
+        service = self.find_entity_by_name(Service, service_network_name)
+        self.put("/api/services/allowed_organisations")

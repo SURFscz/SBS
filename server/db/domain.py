@@ -71,14 +71,14 @@ class Organisation(Base, db.Model):
                                                default=False)
     collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
                                      passive_deletes=True)
-    collaborations_dynamic = db.relationship("Collaboration", lazy="dynamic")
+    collaborations_dynamic = db.relationship("Collaboration", lazy="dynamic", viewonly=True)
     services = db.relationship("Service", secondary=services_organisations_association, lazy="select")
     collaboration_requests = db.relationship("CollaborationRequest", back_populates="organisation",
                                              cascade="all, delete-orphan",
                                              passive_deletes=True)
     organisation_memberships = db.relationship("OrganisationMembership", back_populates="organisation",
                                                cascade="all, delete-orphan", passive_deletes=True)
-    organisation_memberships_dynamic = db.relationship("OrganisationMembership", lazy="dynamic")
+    organisation_memberships_dynamic = db.relationship("OrganisationMembership", lazy="dynamic", viewonly=True)
     organisation_invitations = db.relationship("OrganisationInvitation", back_populates="organisation",
                                                cascade="all, delete-orphan",
                                                passive_deletes=True)
@@ -188,11 +188,13 @@ class Service(Base, db.Model):
     code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
     sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
-    collaborations_dynamic = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="dynamic")
+    collaborations_dynamic = db.relationship("Collaboration", secondary=services_collaborations_association,
+                                             lazy="dynamic", viewonly=True)
 
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
     organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select")
-    organisations_dynamic = db.relationship("Organisation", secondary=services_organisations_association, lazy="dynamic")
+    organisations_dynamic = db.relationship("Organisation", secondary=services_organisations_association,
+                                            lazy="dynamic", viewonly=True)
 
     ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)

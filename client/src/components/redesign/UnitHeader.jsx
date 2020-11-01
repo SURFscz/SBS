@@ -6,18 +6,24 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export default function UnitHeader(props) {
 
-    const {obj, mayEdit, onEdit} = props;
+    const {obj, mayEdit, onEdit, history, auditLogPath, name} = props;
+
+    const queryParam = `name=${encodeURIComponent(name)}&back=${encodeURIComponent(window.location.pathname)}`;
 
     return (
         <div className="unit-header-container">
             <div className="unit-header">
                 {obj.logo && <img src={`data:image/jpeg;base64,${obj.logo}`} alt={obj.name}/>}
                 {obj.svg && <obj.svg/>}
-                {obj.icon && <FontAwesomeIcon icon="user-secret"/>}
+                {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
                 {obj.name && <h1>{obj.name}</h1>}
                 {mayEdit && <div className="edit">
                     <Button onClick={onEdit} txt={I18n.t("home.edit")}/>
-                    <span><FontAwesomeIcon icon="history"/>{I18n.t("home.history")}</span>
+                    {(history && auditLogPath) &&
+                    <span className="history"
+                          onClick={() => history.push(`/audit-logs/${auditLogPath}?${queryParam}`)}>
+                        <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
+                    </span>}
                 </div>}
             </div>
             <div className="children">

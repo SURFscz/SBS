@@ -89,19 +89,22 @@ _audit_trail_methods = ["PUT", "POST", "DELETE"]
 def _audit_trail():
     method = current_request.method
     if method in _audit_trail_methods:
-        msg = json.dumps(current_request.json) if method != "DELETE" else ""
-        ctx_logger("base").info(f"Path {current_request.path} {method} {msg}")
+        # Prevent logo base64 logging
+        body = current_request.json if method != "DELETE" else {}
+        body.pop("logo", None)
+        ctx_logger("base").info(f"Path {current_request.path} {method} {json.dumps(body)}")
 
 
 def _service_status(body):
-    method = current_request.method
-    path = current_request.path
-    endpoint = path.rsplit('/', 1)[-1]
-    if method in _audit_trail_methods and endpoint != 'error':
-        msg = jsonify(body).get_data() if isinstance(body, db.Model) else json.dumps(body)
-        method = method.lower()
-        topic = f"sbs{path}/{method}"
-        current_app.mqtt.publish(topic, msg)
+    if current_app.app_config.service_bus.enabled:
+        method = current_request.method
+        path = current_request.path
+        endpoint = path.rsplit('/', 1)[-1]
+        if method in _audit_trail_methods and endpoint != 'error':
+            msg = jsonify(body).get_data() if isinstance(body, db.Model) else json.dumps(body)
+            method = method.lower()
+            topic = f"sbs{path}/{method}"
+            current_app.mqtt.publish(topic, msg)
 
 
 def json_endpoint(f):

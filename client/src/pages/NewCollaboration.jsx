@@ -19,8 +19,10 @@ import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import CheckBox from "../components/CheckBox";
-import BackLink from "../components/BackLink";
-import {userRole} from "../utils/UserRole";
+import UnitHeader from "../components/redesign/UnitHeader";
+import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
+import {AppStore} from "../stores/AppStore";
+import ImageField from "../components/redesign/ImageField";
 
 class NewCollaboration extends React.Component {
 
@@ -28,6 +30,7 @@ class NewCollaboration extends React.Component {
         super(props, context);
         this.state = {
             name: "",
+            logo: "",
             short_name: "",
             description: "",
             administrators: [],
@@ -62,6 +65,7 @@ class NewCollaboration extends React.Component {
                         this.setState({noOrganisations: true});
                     } else {
                         const organisations = this.mapOrganisationsToOptions(json);
+                        this.updateBreadCrumb(organisations[0]);
                         this.setState({
                             organisations: organisations,
                             organisation: organisations[0],
@@ -83,6 +87,7 @@ class NewCollaboration extends React.Component {
                 } else {
                     organisation = organisations[0];
                 }
+                this.updateBreadCrumb(organisation);
                 this.setState({
                     organisations: organisations,
                     organisation: organisation
@@ -90,6 +95,16 @@ class NewCollaboration extends React.Component {
             }
         });
     };
+
+    updateBreadCrumb = organisation => {
+        AppStore.update(s => {
+            s.breadcrumb.paths = [
+                {path: "/", value: I18n.t("breadcrumb.home")},
+                {path: `/organisations/${organisation.value}`, value: organisation.label},
+                {path: "/", value: I18n.t("breadcrumb.newCollaboration")}
+            ];
+        });
+    }
 
     mapOrganisationsToOptions = organisations => organisations.map(org => ({
         label: org.name,
@@ -121,13 +136,13 @@ class NewCollaboration extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {
-                name, short_name, description,
+                name, short_name, description, logo,
                 administrators, message, accepted_user_policy, organisation, isRequestCollaboration,
                 services_restricted, disable_join_requests, current_user_admin
             } = this.state;
             const promise = isRequestCollaboration ? requestCollaboration : createCollaboration;
             promise({
-                name, short_name, description,
+                name, short_name, description, logo,
                 administrators, message, accepted_user_policy, organisation_id: organisation.value,
                 services_restricted, disable_join_requests, current_user_admin
             }).then(res => {
@@ -176,7 +191,8 @@ class NewCollaboration extends React.Component {
     flipCurrentUserAdmin = e => {
         const checked = e.target.checked;
         const {administrators} = this.state;
-        const newAdministrators = checked ? [...administrators, this.props.user.email] :
+        const {email} = this.props.user;
+        const newAdministrators = checked ? [...administrators, email] :
             administrators.filter(email => email !== this.props.user.email);
         this.setState({administrators: newAdministrators, current_user_admin: checked})
     }
@@ -194,7 +210,7 @@ class NewCollaboration extends React.Component {
         const {
             name, short_name, description, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, noOrganisations, isRequestCollaboration,
-            services_restricted, disable_join_requests, current_user_admin
+            services_restricted, disable_join_requests, current_user_admin, logo
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
@@ -212,14 +228,12 @@ class NewCollaboration extends React.Component {
                                         confirm={confirmationDialogAction}
                                         question={leavePage ? undefined : I18n.t("collaboration.deleteConfirmation")}
                                         leavePage={leavePage}/>
-                    {isRequestCollaboration && <BackLink history={this.props.history}/>}
-                    {!isRequestCollaboration && <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
-                    {
-                        organisation_id: organisation.value
-                    })}/>}
+                    <UnitHeader obj={({name: I18n.t("models.collaborations.new"), svg: CollaborationsIcon})}/>
 
-                    <p className="title">{title}</p>
                     <div className="new-collaboration">
+
+                        <h1 className="section-separator">{I18n.t("collaboration.about")}</h1>
+
                         <InputField value={name} onChange={e => {
                             this.setState({
                                 name: e.target.value,
@@ -239,6 +253,9 @@ class NewCollaboration extends React.Component {
                             className="error">{I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.name").toLowerCase()
                         })}</span>}
+
+                        <ImageField name="logo" onChange={s => this.setState({logo: s})}
+                                    title={I18n.t("collaboration.logo")} value={logo} secondRow={true}/>
 
                         <InputField value={short_name} onChange={e => {
                             this.setState({
@@ -268,7 +285,7 @@ class NewCollaboration extends React.Component {
                                     disabled={true}/>
 
                         <InputField value={description} onChange={e => this.setState({description: e.target.value})}
-                                    placeholder={I18n.t("collaboration.descriptionPlaceholder")}
+                                    placeholder={I18n.t("collaboration.descriptionPlaceholder")} multiline={true}
                                     name={I18n.t("collaboration.description")}/>
 
                         <InputField value={accepted_user_policy}
@@ -299,7 +316,8 @@ class NewCollaboration extends React.Component {
                                              this.validateCollaborationName({target: {value: this.state.name}});
                                              this.validateCollaborationShortName({target: {value: this.state.short_name}});
                                          })}
-                                     searchable={true}
+                                     searchable={false}
+                                     disabled={true}
                         />
                         {(!initial && isEmpty(organisation)) && <span
                             className="error">{I18n.t("collaboration.required", {
@@ -307,6 +325,8 @@ class NewCollaboration extends React.Component {
                         })}</span>}
                         {!isRequestCollaboration &&
                         <div>
+                            <h1 className="section-separator">{I18n.t("collaboration.invitations")}</h1>
+
                             <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                                         placeholder={I18n.t("collaboration.administratorsPlaceholder")}
                                         name={I18n.t("collaboration.administrators")}
@@ -325,6 +345,7 @@ class NewCollaboration extends React.Component {
                                     </div>)}
                             </section>
                         </div>}
+
                         <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
                                   value={current_user_admin}
                                   onChange={this.flipCurrentUserAdmin}

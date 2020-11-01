@@ -75,7 +75,8 @@ class Impersonate extends React.Component {
                 organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false
             });
             //We need time to have the user switched
-            setTimeout(() => this.props.history.push("/home"), 1000);
+            //TODO why does this not work
+            //setTimeout(() => this.props.history.push("/home"), 1000);
         }
     };
 
@@ -175,7 +176,7 @@ class Impersonate extends React.Component {
         const showAutoCompletes = (query.length > 1 || "*" === query.trim()) && !loadingAutoComplete;
         return (
             <div className="mod-impersonate">
-                <UnitHeader obj={({name: I18n.t("impersonate.title"), icon: "user-secret"})}/>
+                <UnitHeader obj={({name: I18n.t("impersonate.title"), svg: HandIcon})}/>
                 <Explain
                     close={this.closeExplanation}
                     subject={I18n.t("explain.impersonate")}
