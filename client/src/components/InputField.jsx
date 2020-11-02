@@ -53,6 +53,11 @@ export default function InputField({
             </section>}
             {multiline &&
             <textarea disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
+                      onKeyDown={e => {
+                          if (onEnter && e.keyCode === 13) {//enter
+                              onEnter(e);
+                          }
+                      }}
                       placeholder={placeholder} cols={3}/>}
             {copyClipBoard && <CopyToClipboard text={value}>
                 <section className="copy-to-clipboard">
@@ -65,7 +70,8 @@ export default function InputField({
                 </section>
             </CopyToClipboard>}
             {(link && history) && <FontAwesomeIcon icon="arrow-right" onClick={() => history.push(link)}/>}
-            {(externalLink && value) && <a href={value} rel="noopener noreferrer" target="_blank"><FontAwesomeIcon icon="arrow-right"/></a>}
+            {(externalLink && value) &&
+            <a href={value} rel="noopener noreferrer" target="_blank"><FontAwesomeIcon icon="arrow-right"/></a>}
         </div>
     );
 }

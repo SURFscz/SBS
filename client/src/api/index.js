@@ -108,9 +108,9 @@ export function me(config) {
         //sub = "urn:suspended";
         //Need to mock a login
         return postPutJson("/api/mock", {sub, "email": "john@example.com"}, "PUT")
-            .then(() => fetchJson("/api/users/me",{},{}, false));
+            .then(() => fetchJson("/api/users/me", {}, {}, false));
     } else {
-        return fetchJson("/api/users/me",{},{}, false);
+        return fetchJson("/api/users/me", {}, {}, false);
     }
 }
 
@@ -155,7 +155,7 @@ export function deleteUser() {
 }
 
 export function platformAdmins() {
-     return fetchJson("/api/users/platform_admins");
+    return fetchJson("/api/users/platform_admins");
 }
 
 // Services
@@ -193,6 +193,10 @@ export function createService(service) {
 
 export function updateService(service) {
     return postPutJson("/api/services", service, "put");
+}
+
+export function allowedOrganisations(serviceId, allowedOrganisations = {"allowed_organisations": []}) {
+    return postPutJson(`/api/services/allowed_organisations/${serviceId}`, allowedOrganisations, "put")
 }
 
 export function deleteService(id) {

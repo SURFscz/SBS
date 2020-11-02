@@ -1,30 +1,55 @@
-table.service-organisations {
+@import "../../stylesheets/vars.scss";
 
-    thead {
-        th {
-            &.name {
-                width: 45%;
-                padding-left: 15px;
+.mod-service-container {
+    table.serviceOrganisations {
+
+        thead {
+            th {
+                &.name {
+                    width: 50%;
+                    padding-left: 15px;
+                }
+
+                &.category {
+                    width: 25%;
+                }
+
+                &.toggle {
+                    width: 25%;
+                    text-align: right;
+                }
             }
-            &.category {
-                width: 25%;
-                padding-left: 15px;
+        }
+
+        tbody {
+            td {
+                &.name {
+                    padding-left: 15px;
+                }
+
+                &.toggle {
+                    text-align: right;
+                }
             }
-            &.toggle {
-                width: 35%;
-                text-align: center;
-            }
+        }
+
+
+    }
+
+    section.actions {
+        margin-top: 30px;
+        padding: $medium-margin 0;
+        border-top: 2px solid $lighter-grey;
+        display: flex;
+        flex-direction: column;
+        a {
+            margin-left: auto;
+            margin-bottom: 10px;
+        }
+        .error {
+            color: $red;
+            margin-left: auto;
         }
     }
 
-    tbody {
-        td {
-            &.name {
-                padding-left: 15px;
-            }
-            &.toggle {
-                text-align: center;
-            }
-        }
-    }
 }

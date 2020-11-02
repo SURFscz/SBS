@@ -19,7 +19,7 @@ import Organisations from "../components/redesign/Organisations";
 import OrganisationDetail from "./OrganisationDetail";
 import Home from "./Home";
 import JoinRequest from "./JoinRequest";
-import NewOrganisation from "./NewOrganisation";
+import OrganisationForm from "./OrganisationForm";
 import {addIcons} from "../utils/IconLibrary";
 import OrganisationInvitation from "./OrganisationInvitation";
 import NewCollaboration from "./NewCollaboration";
@@ -51,6 +51,7 @@ import {BreadCrumb} from "../components/BreadCrumb";
 import Impersonating from "../components/Impersonating";
 import Button from "../components/Button";
 import History from "../components/History";
+import ServiceDetail from "./ServiceDetail";
 
 addIcons();
 
@@ -340,7 +341,11 @@ class App extends React.Component {
 
                             <Route path="/new-organisation"
                                    render={props => <ProtectedRoute config={config}
-                                       currentUser={currentUser} Component={NewOrganisation} {...props}/>}/>
+                                                                    currentUser={currentUser} Component={OrganisationForm} {...props}/>}/>
+
+                            <Route path="/edit-organisation/:id"
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser} Component={OrganisationForm} {...props}/>}/>
 
                             <Route path="/new-collaboration"
                                    render={props => <ProtectedRoute currentUser={currentUser}

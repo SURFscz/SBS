@@ -1,17 +1,14 @@
 import React from "react";
-import {organisationById, serviceById} from "../api";
-import "./OrganisationDetail.scss";
+import {searchOrganisations, serviceById} from "../api";
+import "./ServiceDetail.scss";
 import I18n from "i18n-js";
-import {isEmpty} from "../utils/Utils";
 import Tabs from "../components/Tabs";
-import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
+import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
-import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
-import Services from "../components/redesign/Services";
 import UnitHeader from "../components/redesign/UnitHeader";
-import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
 import Collaborations from "../components/redesign/Collaborations";
+import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 
 class ServiceDetail extends React.Component {
 
@@ -29,21 +26,23 @@ class ServiceDetail extends React.Component {
         const params = this.props.match.params;
         const {user} = this.props;
         if (params.id) {
-            serviceById(params.id)
-                .then(json => {
+            Promise.all([serviceById(params.id), searchOrganisations("*")])
+                .then(res => {
+                    const service = res[0];
+                    const organisations = res[1];
                     const tab = params.tab || this.state.tab;
                     const tabs = [
-                        this.getOrganisationsTab(json),
-                        this.getCollaborationsTab(json)
+                        this.getOrganisationsTab(service, organisations),
+                        this.getCollaborationsTab(service)
                     ];
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {path: "/", value: json.name}
+                            {path: "/", value: service.name}
                         ];
                     });
                     this.setState({
-                        service: json,
+                        service: service,
                         tab: tab,
                         tabs: tabs,
                         loaded: true
@@ -56,47 +55,66 @@ class ServiceDetail extends React.Component {
         }
     };
 
-    getOrganisationsTab = service => {
-        return (<div key="admins" name="admins" label={I18n.t("home.tabs.orgAdmins")}
-                     icon={<PlatformAdminIcon/>}>
-            <OrganisationAdmins {...this.props} organisation={organisation}/>
+    getOrganisationsTab = (service, organisations) => {
+        return (<div key="organisations" name="organisations" label={I18n.t("home.tabs.serviceOrganisations")}
+                     icon={<OrganisationsIcon/>}>
+            <ServiceOrganisations {...this.props} service={service} organisations={organisations}/>
         </div>)
     }
 
-    getServicesTab = organisation => {
-        return (<div key="services" name="services" label={I18n.t("home.tabs.orgServices")} icon={<ServicesIcon/>}>
-            <Services {...this.props} organisation={organisation}/>
+    getCollaborationsTab = service => {
+        return (<div key="services" name="services" label={I18n.t("home.tabs.serviceCollaborations")}
+                     icon={<ServicesIcon/>}>
+            <Collaborations {...this.props} collaborations={service.collaborations}
+                            includeCounts={false}
+                            modelName={"serviceCollaborations"}
+                            includeOrganisationName={true}/>
         </div>)
     }
 
-    getCollaborationsTab = organisation => {
-        return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.orgCollaborations")}
-                     icon={<CollaborationsIcon/>}>
-            <Collaborations {...this.props} organisation={organisation}/>
-        </div>)
+    compliancy = service => {
+        const compliancies = [];
+        if (service.sirtfi_compliant) {
+            compliancies.push("Sirtfi")
+        }
+        if (service.code_of_conduct_compliant) {
+            compliancies.push("CoCo")
+        }
+        if (service.research_scholarship_compliant) {
+            compliancies.push("R&S")
+        }
+        return compliancies.length === 0 ? I18n.t("service.none") : compliancies.join(", ");
     }
 
     render() {
-        const {tabs, organisation, loaded, tab} = this.state;
+        const {tabs, service, loaded, tab} = this.state;
         if (!loaded) {
             return null;
         }
-        const {user} = this.props;
         return (
-            <div className="mod-organisation-container">
-                <UnitHeader obj={organisation} mayEdit={true} history={this.props.history}
-                            auditLogPath={`organisations/${organisation.id}`}
-                            name={organisation.name}
-                            onEdit={() => this.props.history.push("/edit-organisation/" + organisation.id)}>
-                    <p>{organisation.description}</p>
+            <div className="mod-service-container">
+                <UnitHeader obj={service} mayEdit={true} history={this.props.history}
+                            auditLogPath={`services/${service.id}`}
+                            name={service.name}
+                            onEdit={() => this.props.history.push("/edit-service/" + service.id)}>
+                    <p>{service.description}</p>
                     <div className="org-attributes-container">
                         <div className="org-attributes">
-                            <span>{I18n.t("organisation.schacHomeOrganisation")}</span>
-                            <span>{organisation.schac_home_organisation}</span>
+                            <span>{I18n.t("service.uri")}</span>
+                            <span>{service.uri ? service.uri : I18n.t("service.none")}</span>
                         </div>
                         <div className="org-attributes">
-                            <span>{I18n.t("organisation.collaborationCreationAllowed")}</span>
-                            <span>{I18n.t(`forms.${organisation.collaboration_creation_allowed ? "yes" : "no"}`)}</span>
+                            <span>{I18n.t("service.compliancyShort")}</span>
+                            <span>{this.compliancy(service)}</span>
+                        </div>
+                        <div className="org-attributes">
+                            <span>{I18n.t("service.contact_email")}</span>
+                            <span>{service.contact_email ?
+                                <a href={`mailto:${service.contact_email}`}>{I18n.t("service.contact")}</a> : I18n.t("service.none")}</span>
+                        </div>
+                        <div className="org-attributes">
+                            <span>{I18n.t("service.whiteListed")}</span>
+                            <span>{service.white_listed ? I18n.t("forms.yes") : I18n.t("forms.no")}</span>
                         </div>
                     </div>
                 </UnitHeader>

@@ -30,7 +30,7 @@ export default function ImageField({title, name, onChange, value, secondRow = fa
                     {!value && <NotFoundIcon/>}
                 </div>}
                 {value && <div className="preview">
-                    <img src={`data:image/jpeg;base64,${value}`}/>
+                    <img src={`data:image/jpeg;base64,${value}`} alt=""/>
                 </div>}
                 <label className="file-upload-label button" htmlFor={`fileUpload_${name}`}>
                     {I18n.t("forms.upload")}

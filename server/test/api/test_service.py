@@ -133,4 +133,12 @@ class TestService(AbstractTest):
 
     def test_add_allowed_organisations(self):
         service = self.find_entity_by_name(Service, service_network_name)
-        self.put("/api/services/allowed_organisations")
+        uva = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        self.put(f"/api/services/allowed_organisations/{service.id}",
+                 body={"allowed_organisations": [{"organisation_id": uva.id}]})
+
+        service = self.find_entity_by_name(Service, service_network_name)
+        allowed_organisations = service.allowed_organisations
+
+        self.assertEqual(1, len(allowed_organisations))
+        self.assertEqual(amsterdam_uva_name, allowed_organisations[0].name)

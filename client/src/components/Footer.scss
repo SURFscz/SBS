@@ -3,7 +3,7 @@
 div.footer {
     background-color: white;
     padding: 15px;
-    border-top: 1px solid $lighter-blue;
+    border-top: 2px solid $lighter-grey;
     margin-top: auto;
 
     div.footer-inner {
@@ -11,32 +11,17 @@ div.footer {
         margin: 0 auto;
 
         display: flex;
-        align-items: flex-end;
+        justify-content: space-between;
 
-        span {
-            border-right: 1px solid $lighter-grey;
+        section.info {
+            display: flex;
+            flex-direction: column;
 
-            &:first-child {
-                margin-left: auto;
+            &.right {
+                text-align: right;
             }
-
-            &:last-child {
-                border-right: none;
-            }
-        }
-
-        a {
-            color: darken($blue, 10%);
-
-            &:visited, &:hover {
-                text-decoration: none;
-            }
-
-            text-decoration: none;
-            padding: 0 15px;
         }
 
 
     }
-
 }

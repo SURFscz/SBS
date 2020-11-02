@@ -15,8 +15,8 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 import moment from "moment";
-import BackLink from "../components/BackLink";
-import {userRole} from "../utils/UserRole";
+import UnitHeader from "../components/redesign/UnitHeader";
+import {AppStore} from "../stores/AppStore";
 
 class OrganisationInvitation extends React.Component {
 
@@ -52,6 +52,14 @@ class OrganisationInvitation extends React.Component {
                 .then(json => {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({organisationInvitation: json, isAdminLink: true, isExpired});
+                    AppStore.update(s => {
+                        s.breadcrumb.paths = [
+                            {path: "/", value: I18n.t("breadcrumb.home")},
+                            {path: `/organisations/${json.organisation.id}`, value: json.organisation.name},
+                            {path: "/", value: I18n.t("breadcrumb.organisationInvitation")}
+                        ];
+                    });
+
                 })
                 .catch(() => setFlash(I18n.t("organisationInvitation.flash.notFound"), "error"));
         } else {
@@ -201,15 +209,10 @@ class OrganisationInvitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={confirmationQuestion}/>
-                {isAdminLink && <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
-                    {
-                        organisation_id: organisationInvitation.organisation_id
-                    })}/>}
-                {!errorSituation &&
-                <p className={`title ${isAdminLink ? '' : ' top'}`}>
+                {isAdminLink && <UnitHeader obj={organisationInvitation.organisation}
+                                            name={organisationInvitation.organisation.name}>
                     {I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}
-                </p>}
-
+                </UnitHeader>}
                 <div className="organisation-invitation">
                     {isExpired &&
                     <p className="error">{expiredMessage}</p>}

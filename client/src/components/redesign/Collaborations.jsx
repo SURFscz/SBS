@@ -33,12 +33,14 @@ export default class Collaborations extends React.PureComponent {
 
     render() {
         const {loading} = this.state;
-        const {organisation} = this.props;
+        const {collaborations, includeCounts = true, includeOrganisationName = false,
+        modelName = "collaborations"} = this.props;
 
-        if (isEmpty(organisation.collaborations) && !loading) {
+        if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
             return this.noCollaborations();
         }
-
+        const {user} = this.props;
+        //TODO permissions to create collaborations
         const columns = [
             {
                 nonSortable: true,
@@ -52,19 +54,28 @@ export default class Collaborations extends React.PureComponent {
                 header: I18n.t("models.collaborations.name"),
                 mapper: collaboration => <a href="/"
                                             onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
-            },
-            {
+            }]
+        if (includeCounts) {
+            columns.push({
                 key: "member_count",
                 header: I18n.t("models.collaborations.memberCount")
-            },
-            {
+            });
+            columns.push(            {
                 key: "invitations_count",
                 header: I18n.t("models.collaborations.invitationsCount")
-            }]
+            });
+        }
+        if (includeOrganisationName) {
+            columns.push({
+                key: "organisation_name",
+                header: I18n.t("models.serviceCollaborations.organisationName"),
+                mapper: collaboration => collaboration.organisation.name
+            })
+        }
         return (
-            <Entities entities={organisation.collaborations} modelName="collaborations" searchAttributes={["name"]}
+            <Entities entities={collaborations} modelName={modelName} searchAttributes={["name"]}
                       defaultSort="name" columns={columns} showNew={true}
-                      newEntityPath={`/new-collaboration?organisation=${organisation.id}`}
+                      newEntityPath={`/new-collaboration`}
                       loading={loading}
                       {...this.props}/>
         )

@@ -32,7 +32,8 @@ I18n.translations.en = {
         newService: "New service",
         newCollaboration: "New collaboration",
         impersonate: "Impersonate",
-        organisationInvite: "Add members"
+        organisationInvite: "Add members",
+        organisationInvitation: "Invitation",
     },
     login: {
         title: "Research Access Management",
@@ -65,11 +66,13 @@ I18n.translations.en = {
             orgAdmins: "Org Admins",
             orgServices: "Org Services",
             orgCollaborations: "Org Collaborations",
-
+            serviceOrganisations: "Organisation access",
+            serviceCollaborations: "Collaborations insights"
         }
     },
     forms: {
         submit: "Add",
+        save: "Save",
         request: "Request",
         cancel: "Cancel",
         showMore: "More",
@@ -112,7 +115,8 @@ I18n.translations.en = {
             status: "Status",
             inviteSend: "Invite sent {{date}}",
             accepted: "Accepted",
-            new: "Add member(s)"
+            new: "Add member(s)",
+            remove: "Delete"
         },
         organisations: {
             title: "Organisations",
@@ -121,7 +125,8 @@ I18n.translations.en = {
             new: "New Organisation",
             name: "Name",
             memberCount: "# Members",
-            collaborationCount: "# Collaborations"
+            collaborationCount: "# Collaborations",
+            category: "Category"
         },
         services: {
             title: "Services",
@@ -139,7 +144,21 @@ I18n.translations.en = {
             name: "Name",
             memberCount: "Members",
             invitationsCount: "Invitations"
+        },
+        serviceOrganisations: {
+            searchPlaceHolder: "Search for organisations",
+            title: "Organisations",
+            new: "Toggle all on/off",
+            allowedNoneError: "At least one organisation must be selected"
+        },
+        serviceCollaborations: {
+            searchPlaceHolder: "Search for collaborations...",
+            title: "Collaborations using this service",
+            new: "New Collaboration",
+            organisationName: "Organisation",
+            noEntities: "There are no collaborations using this service",
         }
+
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -379,7 +398,11 @@ I18n.translations.en = {
     service: {
         about: "About the service",
         logo: "Service logo",
-        compliancy: "Service compliancy",
+        accessAllowed: "Access allowed",
+        compliancy: "Service compliancy" ,
+        compliancyShort: "Compliancy",
+        none: "None",
+        contact: "Contact contact-person",
         titleUpdate: "Update service {{name}}",
         titleReadOnly: "Service {{name}}",
         backToServices: "Back to services",
@@ -573,13 +596,14 @@ I18n.translations.en = {
         searchPlaceHolderCollaborations: "Search for collaborations",
         update: "Update",
         delete: "Delete",
-        deleteMemberConfirmation: "Are you sure you want to delete the organisation membership for {{name}}?",
+        deleteMemberConfirmation: "Are you sure you want to delete the checked organisation memberships / invitations?",
         deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
         deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}?",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
         flash: {
             updated: "Organisation {{name}} was successfully updated",
             deleted: "Organisation {{name}} was successfully deleted",
+            entitiesDeleted: "Membership / invitations are successfully deleted",
             memberDeleted: "Membership of {{name}} was successfully deleted",
             apiKeyDeleted: "API key was successfully deleted",
             collaborationDeleted: "Collaboration {{name}} was successfully deleted",
@@ -1018,8 +1042,12 @@ I18n.translations.en = {
         loginLink: "LOGIN"
     },
     footer: {
-        product: "Powered by SRAM",
+        tips: "Need tips or info?",
+        help: "Help & FAQ",
+        product: "Proudly powered by",
         productLink: "https://wiki.surfnet.nl/display/sram",
+        surf: "SURF",
+        surfLink: "https://surf.nl",
         privacy: "Terms & Privacy",
         privacyLink: "https://wiki.surfnet.nl/display/SRAM/SRAM+-+Privacy+Policy"
     },

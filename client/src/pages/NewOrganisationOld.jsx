@@ -7,7 +7,7 @@ import {
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
-import "./NewOrganisation.scss";
+import "./OrganisationForm.scss";
 import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";

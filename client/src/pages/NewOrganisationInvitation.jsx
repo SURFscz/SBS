@@ -68,7 +68,6 @@ class NewOrganisationInvitation extends React.Component {
                             {path: "/", value: I18n.t("breadcrumb.organisationInvite")}
                         ];
                     });
-
                 });
         } else {
             this.props.history.push("/404");
@@ -199,9 +198,10 @@ class NewOrganisationInvitation extends React.Component {
                         toolTip={I18n.t("organisation.administratorsTooltip")}
                         onBlur={this.addEmail}
                         onEnter={this.addEmail}
-                        fileUpload={true}
+                        fileUpload={false}
                         fileInputKey={fileInputKey}
                         fileName={fileName}
+                        multiline={true}
                         onFileRemoval={this.onFileRemoval}
                         onFileUpload={this.onFileUpload}/>
             {fileTypeError &&
