@@ -78,7 +78,7 @@ class OrganisationDetail extends React.Component {
     getOrganisationAdminsTab = organisation => {
         return (<div key="admins" name="admins" label={I18n.t("home.tabs.orgAdmins")}
                      icon={<PlatformAdminIcon/>}>
-            <OrganisationAdmins {...this.props} organisation={organisation}/>
+            <OrganisationAdmins {...this.props} organisation={organisation} refresh={this.componentDidMount}/>
         </div>)
     }
 
@@ -91,7 +91,7 @@ class OrganisationDetail extends React.Component {
     getCollaborationsTab = organisation => {
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.orgCollaborations")}
                      icon={<CollaborationsIcon/>}>
-            <Collaborations {...this.props} organisation={organisation}/>
+            <Collaborations {...this.props} collaborations={organisation.collaborations}/>
         </div>)
     }
 
@@ -100,7 +100,6 @@ class OrganisationDetail extends React.Component {
         if (!loaded) {
             return null;
         }
-        const {user} = this.props;
         return (
             <div className="mod-organisation-container">
                 <UnitHeader obj={organisation} mayEdit={true} history={this.props.history}

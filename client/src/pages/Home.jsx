@@ -10,7 +10,6 @@ import {rawGlobalUserRole, ROLES} from "../utils/UserRole";
 import Tabs from "../components/Tabs";
 import Organisations from "../components/redesign/Organisations";
 import UnitHeader from "../components/redesign/UnitHeader";
-import Collaborations from "../components/redesign/Collaborations";
 import PlatformAdmins from "../components/redesign/PlatformAdmins";
 import Services from "../components/redesign/Services";
 
@@ -52,12 +51,14 @@ class Home extends React.Component {
     };
 
     getOrganisationsTab = () =>
-        <div key="organisations" name="organisations" label={I18n.t("home.tabs.organisations")} icon={<OrganisationsIcon/>}>
+        <div key="organisations" name="organisations" label={I18n.t("home.tabs.organisations")}
+             icon={<OrganisationsIcon/>}>
             <Organisations {...this.props}/>
         </div>
 
     getPlatformAdminsTab = () => {
-        return (<div key="platformAdmins" name="platformAdmins" label={I18n.t("home.tabs.platformAdmins")} icon={<PlatformAdminIcon/>}>
+        return (<div key="platformAdmins" name="platformAdmins" label={I18n.t("home.tabs.platformAdmins")}
+                     icon={<PlatformAdminIcon/>}>
             <PlatformAdmins {...this.props}/>
         </div>)
     }

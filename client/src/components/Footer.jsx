@@ -7,11 +7,18 @@ export default function Footer() {
     return (
         <div className="footer">
             <div className="footer-inner">
+            <section className="info left">
+                <span>{I18n.t("footer.tips")}</span>
+                <a href={I18n.t("footer.productLink")} target="_blank"
+                         rel="noopener noreferrer">{I18n.t("footer.help")}</a>
+            </section>
                 <LanguageSelector />
-                <span><a href={I18n.t("footer.productLink")} target="_blank"
-                         rel="noopener noreferrer">{I18n.t("footer.product")}</a></span>
-                <span><a href={I18n.t("footer.privacyLink")} target="_blank"
-                         rel="noopener noreferrer">{I18n.t("footer.privacy")}</a></span>
+            <section className="info right">
+                <span>{I18n.t("footer.product")}</span>
+                <a href={I18n.t("footer.surfLink")} target="_blank"
+                         rel="noopener noreferrer">{I18n.t("footer.surf")}</a>
+            </section>
+
             </div>
         </div>
     );

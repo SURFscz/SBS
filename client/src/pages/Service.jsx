@@ -111,7 +111,8 @@ class Service extends React.Component {
                         AppStore.update(s => {
                             s.breadcrumb.paths = [
                                 {path: "/", value: I18n.t("breadcrumb.home")},
-                                {path: "/", value: res[0].name}
+                                {path: `/services/${res[0].id}`, value: res[0].name},
+                                {path: "/", value: I18n.t("home.edit")}
                             ];
                         });
                     });
@@ -496,8 +497,7 @@ class Service extends React.Component {
                                        auditLogPath={`services/${service.id}`}
                                        name={service.name}
                                        history={this.props.history}
-                                       mayEdit={user.admin}
-                                       onEdit={() => this.props.history.push("/services/" + service.id)} />}
+                                       mayEdit={false}/>}
 
                 {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
                     contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,

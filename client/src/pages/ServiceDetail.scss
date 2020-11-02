@@ -9,18 +9,18 @@
         p {
             margin: 20px 0;
         }
+
         div.org-attributes-container {
             display: flex;
         }
+
         div.org-attributes {
+            margin-right: 80px;
             span {
                 display: block;
                 &:first-child {
                     font-weight: bold;
                 }
-            }
-            &:last-child {
-                margin-left: 100px;
             }
         }
     }

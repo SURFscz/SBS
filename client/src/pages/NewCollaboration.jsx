@@ -317,7 +317,7 @@ class NewCollaboration extends React.Component {
                                              this.validateCollaborationShortName({target: {value: this.state.short_name}});
                                          })}
                                      searchable={false}
-                                     disabled={true}
+                                     disabled={organisations.length === 1}
                         />
                         {(!initial && isEmpty(organisation)) && <span
                             className="error">{I18n.t("collaboration.required", {

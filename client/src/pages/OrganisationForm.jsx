@@ -2,27 +2,27 @@ import React from "react";
 import {
     createOrganisation,
     health,
+    organisationById,
     organisationNameExists,
     organisationSchacHomeOrganisationExists,
     organisationShortNameExists
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
-import "./NewOrganisation.scss";
+import "./OrganisationForm.scss";
 import Button from "../components/Button";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
-import CheckBox from "../components/CheckBox";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import RadioButton from "../components/redesign/RadioButton";
 import ImageField from "../components/redesign/ImageField";
 import SelectField from "../components/SelectField";
 
-class NewOrganisation extends React.Component {
+class OrganisationForm extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -43,6 +43,8 @@ class NewOrganisation extends React.Component {
             required: ["name", "short_name"],
             alreadyExists: {},
             initial: true,
+            isNew: true,
+            organisation: null,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
@@ -52,28 +54,54 @@ class NewOrganisation extends React.Component {
     }
 
     componentDidMount = () => {
-        health().then(() => {
-            AppStore.update(s => {
-                s.breadcrumb.paths = [
-                    {path: "/", value: I18n.t("breadcrumb.home")},
-                    {path: "/", value: I18n.t("breadcrumb.newOrganisation")}
-                ];
+        const params = this.props.match.params;
+        if (params.id) {
+            organisationById(params.id).then(org => {
+                const category = org.category;
+                let categoryOption = null;
+                if (category) {
+                    categoryOption = {value: category, label: category};
+                }
+                this.setState({
+                    ...org,
+                    organisation: org,
+                    category: categoryOption,
+                    isNew: false
+                });
+                AppStore.update(s => {
+                    s.breadcrumb.paths = [
+                        {path: "/", value: I18n.t("breadcrumb.home")},
+                        {path: "/organisations/" + org.id, value: org.name},
+                        {path: "/", value: I18n.t("home.edit")}
+                    ];
+                });
             });
-        })
+        } else {
+            health().then(() => {
+                AppStore.update(s => {
+                    s.breadcrumb.paths = [
+                        {path: "/", value: I18n.t("breadcrumb.home")},
+                        {path: "/", value: I18n.t("breadcrumb.newOrganisation")}
+                    ];
+                });
+            });
+        }
     }
 
+    existingOrganisationName = attr => this.state.isNew ? this.state.organisation[attr] : null;
+
     validateOrganisationName = e =>
-        organisationNameExists(e.target.value).then(json => {
+        organisationNameExists(e.target.value, this.existingOrganisationName("name")).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
     validateOrganisationShortName = e =>
-        organisationShortNameExists(e.target.value).then(json => {
+        organisationShortNameExists(e.target.value, this.existingOrganisationName("short_name")).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
 
     validateOrganisationSchacHome = e =>
-        organisationSchacHomeOrganisationExists(e.target.value).then(json => {
+        organisationSchacHomeOrganisationExists(e.target.value, this.existingOrganisationName("schac_home_organisation")).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, schac_home_organisation: json}});
         });
 
@@ -145,7 +173,8 @@ class NewOrganisation extends React.Component {
         const {
             name, description, email, initial, alreadyExists, administrators,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, short_name,
-            schac_home_organisation, collaboration_creation_allowed, logo, category, categoryOptions
+            schac_home_organisation, collaboration_creation_allowed, logo, category, categoryOptions, isNew,
+            organisation
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
@@ -157,7 +186,13 @@ class NewOrganisation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
                                     leavePage={leavePage}/>
-                <UnitHeader obj={({name: I18n.t("models.organisations.new"), svg: OrganisationsIcon})}/>
+
+                {isNew && <UnitHeader obj={({name: I18n.t("models.organisations.new"), svg: OrganisationsIcon})}/>}
+                {!isNew && <UnitHeader obj={organisation}
+                                       auditLogPath={`organisations/${organisation.id}`}
+                                       name={organisation.name}
+                                       history={this.props.history}
+                                       mayEdit={false}/>}
 
                 <div className="new-organisation">
 
@@ -199,7 +234,7 @@ class NewOrganisation extends React.Component {
                         attribute: I18n.t("organisation.shortName").toLowerCase()
                     })}</span>}
 
-                    <ImageField name="logo" onChange={s => this.setState({logo:s})}
+                    <ImageField name="logo" onChange={s => this.setState({logo: s})}
                                 title={I18n.t("organisation.logo")} value={logo}/>
 
                     <SelectField value={category}
@@ -265,4 +300,4 @@ class NewOrganisation extends React.Component {
     };
 }
 
-export default NewOrganisation;
+export default OrganisationForm;

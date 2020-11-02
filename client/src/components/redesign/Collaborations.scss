@@ -1,10 +1,14 @@
-table.collaborations {
+table.collaborations, table.serviceCollaborations {
 
     thead {
         th {
             &.name {
                 width: 45%;
                 padding-left: 15px;
+            }
+
+            &.organisation_name {
+                width: 45%;
             }
 
             &.member_count {

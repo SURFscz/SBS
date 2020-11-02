@@ -8,12 +8,16 @@ import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.
 import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
 import "./PlatformAdmins.scss";
 import CheckBox from "../CheckBox";
-import {updateOrganisationMembershipRole} from "../../api";
+import {deleteOrganisationMembership, organisationInvitationDelete, updateOrganisationMembershipRole} from "../../api";
 import {setFlash} from "../../utils/Flash";
 import "./OrganisationAdmins.scss";
 import Select from "react-select";
 import {emitter} from "../../utils/Events";
 import {shortDateFromEpoch} from "../../utils/Date";
+import {stopEvent} from "../../utils/Utils";
+import Button from "../Button";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ConfirmationDialog from "../ConfirmationDialog";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
@@ -26,8 +30,24 @@ class OrganisationAdmins extends React.Component {
         super(props, context);
         this.state = {
             selectedMembers: {},
-            allSelected: false
+            allSelected: false,
+            confirmationDialogOpen: false,
+            confirmationDialogAction: () => true,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationQuestion: "",
         }
+    }
+
+    componentDidMount = () => {
+        const {organisation} = this.props;
+        const admins = organisation.organisation_memberships;
+        const invites = organisation.organisation_invitations;
+        const entities = admins.concat(invites);
+        const selectedMembers = entities.reduce((acc, entity) => {
+            acc[entity.id] = {selected: false, ref: entity};
+            return acc;
+        }, {})
+        this.setState({selectedMembers});
     }
 
     changeMemberRole = member => selectedOption => {
@@ -48,29 +68,66 @@ class OrganisationAdmins extends React.Component {
 
     onCheck = memberShip => e => {
         const {selectedMembers} = this.state;
-        selectedMembers[memberShip.id] = e.target.checked;
+        selectedMembers[memberShip.id].selected = e.target.checked;
         this.setState({selectedMembers: {...selectedMembers}});
     }
 
     allSelected = e => {
+        const {selectedMembers} = this.state;
         const val = e.target.checked;
-        let selectedMembers = {};
-        if (val) {
+        Object.keys(selectedMembers).forEach(id => selectedMembers[id].selected = val);
+        const newSelectedMembers = {...selectedMembers};
+        this.setState({allSelected: val, ...newSelectedMembers});
+    }
+
+    gotoInvitation = invitation => e => {
+        stopEvent(e);
+        this.props.history.push(`/organisation-invitations/${invitation.id}`);
+    };
+
+    remove = showConfirmation => () => {
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationDialogAction: this.remove(false),
+                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationQuestion: I18n.t("organisationDetail.deleteMemberConfirmation"),
+            });
+        } else {
+            this.setState({confirmationDialogOpen: false});
+            const {selectedMembers} = this.state;
             const {organisation} = this.props;
-            const admins = organisation.organisation_memberships;
-            const invites = organisation.organisation_invitations;
-            const entities = admins.concat(invites);
-            selectedMembers = entities.reduce((acc, item) => {
-                acc[item.id] = true;
-                return acc;
-            }, {})
+
+            const promises = Object.keys(selectedMembers)
+                .filter(id => selectedMembers[id].selected)
+                .map(id => {
+                    const ref = selectedMembers[id].ref;
+                    ref.invite ? organisationInvitationDelete(ref.id) :
+                        deleteOrganisationMembership(organisation.id, ref.user.id)
+                });
+            Promise.all(promises).then(() => {
+                this.props.refresh();
+                setFlash(I18n.t("organisationDetail.flash.entitiesDeleted"));
+            });
         }
-        this.setState({allSelected: val, selectedMembers});
+    }
+
+    actionButtons = selectedMembers => {
+        const anySelected = Object.values(selectedMembers).some(v => v.selected);
+        return (
+            <div className="admin-actions">
+                <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
+                        disabled={!anySelected}
+                        icon={<FontAwesomeIcon icon="trash"/>}/>
+            </div>);
     }
 
     render() {
         const {user: currentUser, organisation} = this.props;
-        const {selectedMembers, allSelected} = this.state;
+        const {
+            selectedMembers, allSelected, confirmationDialogOpen, cancelDialogAction,
+            confirmationDialogAction, confirmationQuestion
+        } = this.state;
         const admins = organisation.organisation_memberships;
         const invites = organisation.organisation_invitations;
         invites.forEach(invite => invite.invite = true);
@@ -86,7 +143,7 @@ class OrganisationAdmins extends React.Component {
                                   onChange={this.allSelected}/>,
                 mapper: entity => <div className="check">
                     <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
-                              value={selectedMembers[entity.id] || false}/>
+                              value={(selectedMembers[entity.id] || {}).selected || false}/>
                 </div>
             },
             {
@@ -105,7 +162,10 @@ class OrganisationAdmins extends React.Component {
                 mapper: entity =>
                     <div className="user-name-email">
                         <span className="name">{entity.invite ? "-" : entity.user.name}</span>
-                        <span className="email">{entity.invite ? entity.invitee_email : entity.user.email}</span>
+                        {entity.invite && <span className="email">
+                            <a href="" onClick={this.gotoInvitation(entity)}>{entity.invitee_email}</a>
+                        </span>}
+                        {!entity.invite && <span className="email">{entity.user.email}</span>}
                     </div>
             },
             {
@@ -142,13 +202,20 @@ class OrganisationAdmins extends React.Component {
                     </div>
             },
         ]
-        return (
-            <Entities entities={admins.concat(invites)} modelName="orgMembers"
-                      searchAttributes={["user__name", "user__email", "invitee_email"]}
-                      defaultSort="name" columns={columns} loading={false}
-                      showNew={true}
-                      newEntityPath={`/new-organisation-invite/${organisation.id}`}
-                      {...this.props}/>
+        return (<>
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationQuestion}/>
+
+                <Entities entities={admins.concat(invites)} modelName="orgMembers"
+                          searchAttributes={["user__name", "user__email", "invitee_email"]}
+                          defaultSort="name" columns={columns} loading={false}
+                          showNew={isAdmin}
+                          actions={this.actionButtons(selectedMembers)}
+                          newEntityPath={`/new-organisation-invite/${organisation.id}`}
+                          {...this.props}/>
+            </>
         )
     }
 }

@@ -112,7 +112,8 @@ class Entities extends React.Component {
     };
 
     render() {
-        const {modelName, entities, showNew, searchAttributes, columns, children, loading} = this.props;
+        const {modelName, entities, showNew, searchAttributes, columns, children, loading,
+        actions} = this.props;
         if (loading) {
             return <div className="mod-entities-loading"><MDSpinner/></div>;
         }
@@ -122,6 +123,7 @@ class Entities extends React.Component {
         return (
             <div className="mod-entities">
                 {this.renderSearch(modelName, entities, query, searchAttributes, showNew)}
+                {actions}
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, columns, children)}
                 <div>{this.props.children}</div>
             </div>);
@@ -137,7 +139,8 @@ Entities.propTypes = {
     columns: PropTypes.array.isRequired,
     newEntityPath: PropTypes.string,
     newEntityFunc: PropTypes.func,
-    showNew: PropTypes.bool
+    showNew: PropTypes.bool,
+    actions: PropTypes.elementType
 };
 
 export default Entities;
