@@ -91,6 +91,8 @@ def groups_by_collaboration(collaboration_id):
 
     groups = Group.query \
         .join(Group.collaboration) \
+        .outerjoin(Group.collaboration_memberships) \
+        .options(contains_eager(Group.collaboration_memberships)) \
         .filter(Group.collaboration_id == collaboration_id) \
         .all()
     return groups, 200

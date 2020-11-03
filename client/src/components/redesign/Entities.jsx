@@ -8,6 +8,7 @@ import {isEmpty, sortObjects, valueForSort} from "../../utils/Utils";
 import {headerIcon} from "../../forms/helpers";
 import "./Entities.scss";
 import MDSpinner from "react-md-spinner";
+import SpinnerField from "./SpinnerField";
 
 class Entities extends React.Component {
 
@@ -30,11 +31,11 @@ class Entities extends React.Component {
 
     };
 
-    renderSearch = (modelName, entities, query, searchAttributes, showNew) => {
+    renderSearch = (modelName, title, entities, query, searchAttributes, showNew) => {
         return (
             <section className="entities-search">
 
-                <h1>{`${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>
+                <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>
                 {!isEmpty(searchAttributes) &&
                 <div className="search">
                     <input type="text"
@@ -113,16 +114,16 @@ class Entities extends React.Component {
 
     render() {
         const {modelName, entities, showNew, searchAttributes, columns, children, loading,
-        actions} = this.props;
+        actions, title} = this.props;
         if (loading) {
-            return <div className="mod-entities-loading"><MDSpinner/></div>;
+            return <SpinnerField/>;
         }
         const {query, sorted, reverse} = this.state;
         const filteredEntities = this.filterEntities(entities, query, searchAttributes);
         const sortedEntities = sortObjects(filteredEntities, sorted, reverse);
         return (
             <div className="mod-entities">
-                {this.renderSearch(modelName, entities, query, searchAttributes, showNew)}
+                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew)}
                 {actions}
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, columns, children)}
                 <div>{this.props.children}</div>
@@ -138,9 +139,10 @@ Entities.propTypes = {
     loading: PropTypes.bool.isRequired,
     columns: PropTypes.array.isRequired,
     newEntityPath: PropTypes.string,
+    title: PropTypes.string,
     newEntityFunc: PropTypes.func,
     showNew: PropTypes.bool,
-    actions: PropTypes.elementType
+    actions: PropTypes.any
 };
 
 export default Entities;

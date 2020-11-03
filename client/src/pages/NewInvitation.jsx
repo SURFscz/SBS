@@ -3,12 +3,7 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {
-    collaborationById,
-    collaborationInvitations,
-    collaborationInvitationsPreview,
-    groupsByCollaboration
-} from "../api";
+import {collaborationById, collaborationInvitations, collaborationInvitationsPreview} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
@@ -24,8 +19,10 @@ import {collaborationRoles} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
 import Tabs from "../components/Tabs";
-import BackLink from "../components/BackLink";
-import {userRole} from "../utils/UserRole";
+import {AppStore} from "../stores/AppStore";
+import UnitHeader from "../components/redesign/UnitHeader";
+import {ReactComponent as InviteIcon} from "../icons/single-neutral-question.svg";
+import {ReactComponent as EyeIcon} from "../icons/eye-icon.svg";
 
 class NewInvitation extends React.Component {
 
@@ -67,14 +64,25 @@ class NewInvitation extends React.Component {
         const params = this.props.match.params;
         const collaborationId = params.collaboration_id;
         if (collaborationId) {
-            Promise.all([collaborationById(collaborationId),
-                groupsByCollaboration(collaborationId)])
-                .then(res => {
+            collaborationById(collaborationId)
+                .then(collaboration => {
                     this.setState({
-                        collaboration: res[0],
-                        intended_role: res[0].collaboration_memberships.some(m => m.role === "admin") ? "member" : "admin",
-                        groups: res[1].map(ag => ({value: ag.id, label: ag.name})),
+                        collaboration: collaboration,
+                        intended_role: collaboration.collaboration_memberships.some(m => m.role === "admin") ? "member" : "admin",
+                        groups: collaboration.groups.map(ag => ({value: ag.id, label: ag.name})),
                     });
+                    AppStore.update(s => {
+                        s.breadcrumb.paths = [
+                            {path: "/", value: I18n.t("breadcrumb.home")},
+                            {
+                                path: `/organisations/${collaboration.organisation_id}`,
+                                value: collaboration.organisation.name
+                            },
+                            {path: `/collaborations/${collaboration.id}`, value: collaboration.name},
+                            {path: "/", value: I18n.t("breadcrumb.invite")}
+                        ];
+                    });
+
                 });
         } else {
             this.props.history.push("/404");
@@ -210,7 +218,8 @@ class NewInvitation extends React.Component {
                         onBlur={this.addEmail}
                         onEnter={this.addEmail}
                         fileInputKey={fileInputKey}
-                        fileUpload={true}
+                        fileUpload={false}
+                        multiline={true}
                         fileName={fileName}
                         onFileRemoval={this.onFileRemoval}
                         onFileUpload={this.onFileUpload}/>
@@ -288,7 +297,7 @@ class NewInvitation extends React.Component {
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName, fileInputKey,
             fileTypeError, fileEmails, activeTab, groups, selectedGroup
         } = this.state;
-        if (collaboration === undefined) {
+        if (isEmpty(collaboration)) {
             return null;
         }
         const {user} = this.props;
@@ -299,23 +308,20 @@ class NewInvitation extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
-                    {
-                        organisation_id: collaboration.organisation_id,
-                        collaboration_id: collaboration.id
-                    })}/>
+                <UnitHeader obj={collaboration}
+                            name={collaboration.name}/>
 
-                <p className="title">{I18n.t("invitation.createTitle", {collaboration: collaboration.name})}</p>
-
-                <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged} key={activeTab}>
-                    <div label="invitation_form">
+                <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged}>
+                    <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
+                         name={"invitation_form"} icon={<InviteIcon/>}>
                         <div className="new-collaboration-invitation">
                             {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
                                 administrators, intended_role, message, expiry_date, disabledSubmit, groups,
                                 selectedGroup)}
                         </div>
                     </div>
-                    <div label="invitation_preview">
+                    <div label={I18n.t("tabs.invitation_preview")} key={"invitation_preview"}
+                         name={"invitation_preview"} icon={<EyeIcon/>}>
                         <div className="new-collaboration-invitation">
                             {this.preview(disabledSubmit)}
                         </div>

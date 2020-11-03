@@ -12,6 +12,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
 import Collaborations from "../components/redesign/Collaborations";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class OrganisationDetail extends React.Component {
 
@@ -25,7 +26,7 @@ class OrganisationDetail extends React.Component {
         };
     }
 
-    componentDidMount = () => {
+    componentDidMount = callBack => {
         const params = this.props.match.params;
         const {user} = this.props;
         if (params.id) {
@@ -58,7 +59,7 @@ class OrganisationDetail extends React.Component {
                             {path: `/organisations/${json.id}`, value: json.name}
                         ];
                     });
-
+                    this.tabChanged(tab, json.id);
                     this.setState({
                         organisation: json,
                         adminOfOrganisation: adminOfOrganisation,
@@ -66,7 +67,7 @@ class OrganisationDetail extends React.Component {
                         tab: tab,
                         tabs: tabs,
                         loaded: true
-                    });
+                    }, callBack);
 
                 })
                 .catch(() => this.props.history.push("/404"));
@@ -78,7 +79,8 @@ class OrganisationDetail extends React.Component {
     getOrganisationAdminsTab = organisation => {
         return (<div key="admins" name="admins" label={I18n.t("home.tabs.orgAdmins")}
                      icon={<PlatformAdminIcon/>}>
-            <OrganisationAdmins {...this.props} organisation={organisation} refresh={this.componentDidMount}/>
+            <OrganisationAdmins {...this.props} organisation={organisation}
+                                refresh={callback => this.componentDidMount(callback)}/>
         </div>)
     }
 
@@ -95,10 +97,15 @@ class OrganisationDetail extends React.Component {
         </div>)
     }
 
+    tabChanged = (name, id) => {
+        const orgId = id || this.state.organisation.id;
+        this.props.history.replace(`/organisations/${orgId}/${name}`);
+    }
+
     render() {
         const {tabs, organisation, loaded, tab} = this.state;
         if (!loaded) {
-            return null;
+            return <SpinnerField/>;
         }
         return (
             <div className="mod-organisation-container">
@@ -118,7 +125,7 @@ class OrganisationDetail extends React.Component {
                         </div>
                     </div>
                 </UnitHeader>
-                <Tabs tab={tab}>
+                <Tabs initialActiveTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
             </div>);

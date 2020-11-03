@@ -4,6 +4,28 @@
     background-color: $background;
     padding: 25px;
 
+    .children {
+        p {
+            margin: 20px 0;
+        }
+
+        div.org-attributes-container {
+            display: flex;
+        }
+
+        div.org-attributes {
+            margin-right: 80px;
+
+            span {
+                display: block;
+
+                &:first-child {
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+
     .unit-header {
         margin: 0 auto 0 auto;
         display: flex;

@@ -283,7 +283,7 @@ class NewOrganisationInvitation extends React.Component {
                 <UnitHeader obj={organisation}
                             name={organisation.name}/>
 
-                <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged} key={activeTab}>
+                <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged}>
                     <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
                          name={"invitation_form"} icon={<InviteIcon/>}>
                         <div className="new-organisation-invitation">

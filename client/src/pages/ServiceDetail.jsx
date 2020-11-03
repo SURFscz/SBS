@@ -9,6 +9,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import Collaborations from "../components/redesign/Collaborations";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class ServiceDetail extends React.Component {
 
@@ -17,7 +18,7 @@ class ServiceDetail extends React.Component {
         this.state = {
             service: {},
             loaded: false,
-            tab: "admins",
+            tab: "organisations",
             tabs: []
         };
     }
@@ -41,6 +42,7 @@ class ServiceDetail extends React.Component {
                             {path: "/", value: service.name}
                         ];
                     });
+                    this.tabChanged(tab, service.id);
                     this.setState({
                         service: service,
                         tab: tab,
@@ -63,13 +65,18 @@ class ServiceDetail extends React.Component {
     }
 
     getCollaborationsTab = service => {
-        return (<div key="services" name="services" label={I18n.t("home.tabs.serviceCollaborations")}
+        return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.serviceCollaborations")}
                      icon={<ServicesIcon/>}>
             <Collaborations {...this.props} collaborations={service.collaborations}
                             includeCounts={false}
                             modelName={"serviceCollaborations"}
                             includeOrganisationName={true}/>
         </div>)
+    }
+
+    tabChanged = (name, id) => {
+        const serviceId = id || this.state.service.id;
+        this.props.history.replace(`/services/${serviceId}/${name}`);
     }
 
     compliancy = service => {
@@ -89,7 +96,7 @@ class ServiceDetail extends React.Component {
     render() {
         const {tabs, service, loaded, tab} = this.state;
         if (!loaded) {
-            return null;
+            return <SpinnerField/>;
         }
         return (
             <div className="mod-service-container">
@@ -118,7 +125,7 @@ class ServiceDetail extends React.Component {
                         </div>
                     </div>
                 </UnitHeader>
-                <Tabs tab={tab}>
+                <Tabs initialActiveTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
             </div>);

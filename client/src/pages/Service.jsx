@@ -183,27 +183,29 @@ class Service extends React.Component {
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
-    gotoServices = () => this.setState({confirmationDialogOpen: false},
-        () => this.props.history.push("/services"));
-
     cancel = () => {
         this.setState({
-            confirmationDialogOpen: true, leavePage: true,
-            cancelDialogAction: this.gotoServices, confirmationDialogAction: this.closeConfirmationDialog
+            confirmationDialogOpen: true,
+            leavePage: true,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
+                () => this.props.history.goBack()),
+            confirmationDialogAction: this.closeConfirmationDialog
         });
     };
 
     delete = () => {
         this.setState({
-            confirmationDialogOpen: true, leavePage: false,
-            cancelDialogAction: this.closeConfirmationDialog, confirmationDialogAction: this.doDelete
+            confirmationDialogOpen: true,
+            leavePage: false,
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationDialogAction: this.doDelete
         });
     };
 
     doDelete = () => {
         const {service} = this.state;
         deleteService(service.id).then(() => {
-            this.props.history.push("/services");
+            this.props.history.push("/home/services");
             setFlash(I18n.t("service.flash.deleted", {name: service.name}));
         });
     };
@@ -244,18 +246,18 @@ class Service extends React.Component {
             });
             this.setState({ip_networks: strippedIpNetworks}, () => {
                 if (isNew) {
-                    createService(this.state).then(() => this.afterUpdate(name, "created"));
+                    createService(this.state).then(res => this.afterUpdate(name, "created", res));
                 } else {
-                    updateService(this.state).then(() => this.afterUpdate(name, "updated"));
+                    updateService(this.state).then(res => this.afterUpdate(name, "updated", res));
                 }
             });
         }
     };
 
-    afterUpdate = (name, action) => {
+    afterUpdate = (name, action, res) => {
         window.scrollTo(0, 0);
         setFlash(I18n.t(`service.flash.${action}`, {name: name}));
-        this.props.history.push("/services");
+        this.props.history.push("/services/" + res.id);
     };
 
     renderIpNetworks = (ip_networks, isAdmin) => {
@@ -503,9 +505,9 @@ class Service extends React.Component {
                     contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,
                     isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                     research_scholarship_compliant, config, ip_networks, logo)}
-                    </div>);
-                    };
+            </div>);
+    };
 
-                    }
+}
 
-                    export default Service;
+export default Service;

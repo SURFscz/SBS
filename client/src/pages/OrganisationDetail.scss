@@ -5,23 +5,4 @@
     max-width: $medium;
     width: 100%;
 
-    .unit-header-container .children {
-        p {
-            margin: 20px 0;
-        }
-        div.org-attributes-container {
-            display: flex;
-        }
-        div.org-attributes {
-            span {
-                display: block;
-                &:first-child {
-                    font-weight: bold;
-                }
-            }
-            &:last-child {
-                margin-left: 100px;
-            }
-        }
-    }
 }
