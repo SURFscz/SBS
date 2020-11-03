@@ -236,6 +236,8 @@ class Collaboration(Base, db.Model):
                                     cascade="all, delete-orphan", passive_deletes=True)
     invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
                                   passive_deletes=True)
+    service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="collaboration",
+                                                  cascade="all, delete-orphan", passive_deletes=True)
     disable_join_requests = db.Column("disable_join_requests", db.Boolean(), nullable=True, default=False)
     services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
     disclose_member_information = db.Column("disclose_member_information", db.Boolean(), nullable=True, default=False)
@@ -303,6 +305,8 @@ class Invitation(Base, db.Model):
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
     expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
     @staticmethod
     def validate_role(role):
@@ -395,7 +399,7 @@ class ServiceConnectionRequest(Base, db.Model):
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
-    collaboration = db.relationship("Collaboration")
+    collaboration = db.relationship("Collaboration", back_populates="service_connection_requests")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),

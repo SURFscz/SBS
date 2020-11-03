@@ -1,11 +1,13 @@
 import React from "react";
 import {
     createOrganisation,
+    deleteOrganisation,
     health,
     organisationById,
     organisationNameExists,
     organisationSchacHomeOrganisationExists,
-    organisationShortNameExists
+    organisationShortNameExists,
+    updateOrganisation
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
@@ -46,9 +48,9 @@ class OrganisationForm extends React.Component {
             isNew: true,
             organisation: null,
             confirmationDialogOpen: false,
+            warning: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
-            cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
-                () => this.props.history.push("/organisations")),
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             leavePage: true,
         };
     }
@@ -106,7 +108,32 @@ class OrganisationForm extends React.Component {
         });
 
     cancel = () => {
-        this.setState({confirmationDialogOpen: true});
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            warning: false,
+            cancelDialogAction: () => this.props.history.goBack(),
+            leavePage: true
+        });
+    };
+
+    delete = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("organisation.deleteConfirmation"),
+            confirmationDialogAction: this.doDelete,
+            warning: true,
+            leavePage: false
+        });
+    };
+
+    doDelete = () => {
+        this.setState({confirmationDialogOpen: false});
+        deleteOrganisation(this.state.organisation.id)
+            .then(() => {
+                this.props.history.push("/home/organisations");
+                setFlash(I18n.t("organisationDetail.flash.deleted", {name: this.state.organisation.name}));
+            });
     };
 
     isValid = () => {
@@ -117,11 +144,11 @@ class OrganisationForm extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, short_name, administrators, message, schac_home_organisation, description, logo, category} = this.state;
+            const {name, short_name, administrators, message, schac_home_organisation, description, logo, category, isNew} = this.state;
             createOrganisation({
                 name,
                 short_name,
-                category: category.label,
+                category: category !== null ? category.label : null,
                 schac_home_organisation,
                 administrators,
                 message,
@@ -135,11 +162,30 @@ class OrganisationForm extends React.Component {
     };
 
     submit = () => {
-        const {initial} = this.state;
+        const {initial, isNew} = this.state;
+        const action = isNew ? this.doSubmit : this.doUpdate;
         if (initial) {
-            this.setState({initial: false}, this.doSubmit)
+            this.setState({initial: false}, action)
         } else {
-            this.doSubmit();
+            action()
+        }
+    };
+
+    doUpdate = () => {
+        if (this.isValid()) {
+            const {
+                name, description, organisation, schac_home_organisation, collaboration_creation_allowed,
+                short_name, identifier, logo, category
+            } = this.state;
+            updateOrganisation({
+                id: organisation.id, name, description, schac_home_organisation,
+                collaboration_creation_allowed, short_name, identifier, logo,
+                category: category !== null ? category.value : null
+            })
+                .then(() => {
+                    setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
+                    this.props.history.goBack();
+                });
         }
     };
 
@@ -174,7 +220,7 @@ class OrganisationForm extends React.Component {
             name, description, email, initial, alreadyExists, administrators,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, short_name,
             schac_home_organisation, collaboration_creation_allowed, logo, category, categoryOptions, isNew,
-            organisation
+            organisation, warning
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
@@ -184,6 +230,7 @@ class OrganisationForm extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
+                                    isWarning={warning}
                                     question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
                                     leavePage={leavePage}/>
 
@@ -292,8 +339,11 @@ class OrganisationForm extends React.Component {
                     {/*            multiline={true}/>*/}
 
                     <section className="actions">
+                        {(user.admin && !isNew) &&
+                        <Button className="delete" txt={I18n.t("organisationDetail.delete")}
+                                onClick={this.delete}/>}
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                        <Button disabled={disabledSubmit} txt={I18n.t("forms.submit")} onClick={this.submit}/>
+                        <Button disabled={disabledSubmit} txt={I18n.t("forms.save")} onClick={this.submit}/>
                     </section>
                 </div>
             </div>);

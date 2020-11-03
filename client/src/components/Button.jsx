@@ -5,7 +5,7 @@ import "./Button.scss";
 export default function Button({onClick, txt, disabled = false, cancelButton = false,
                                    warningButton = false, className = "", icon = null}) {
     const disable = disabled ? "disabled" : "";
-    const cancel = cancelButton ? "cancel" : warningButton ? "orange" : "blue";
+    const cancel = cancelButton ? "cancel" : warningButton ? "delete" : "blue";
     const cn = `button ${disable} ${cancel} ${className}`;
     return (
         <a className={cn} href={`/${encodeURIComponent(txt)}`} onClick={e => {

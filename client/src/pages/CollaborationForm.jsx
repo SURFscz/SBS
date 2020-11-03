@@ -1,12 +1,15 @@
 import React from "react";
-import "./NewCollaboration.scss";
+import "./CollaborationForm.scss";
 import {
+    collaborationById,
     collaborationNameExists,
     collaborationShortNameExists,
     createCollaboration,
+    deleteCollaboration,
     myOrganisationsLite,
     organisationByUserSchacHomeOrganisation,
-    requestCollaboration
+    requestCollaboration,
+    updateCollaboration
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
@@ -24,7 +27,7 @@ import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg"
 import {AppStore} from "../stores/AppStore";
 import ImageField from "../components/redesign/ImageField";
 
-class NewCollaboration extends React.Component {
+class CollaborationForm extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -43,13 +46,13 @@ class NewCollaboration extends React.Component {
             alreadyExists: {},
             organisation: {},
             organisations: [],
+            isNew: true,
+            collaboration: null,
             initial: true,
             confirmationDialogOpen: false,
+            warning: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
-            cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
-                () => {
-                    this.props.history.goBack();
-                }),
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             leavePage: true,
             noOrganisations: false,
             isRequestCollaboration: false,
@@ -58,51 +61,73 @@ class NewCollaboration extends React.Component {
     }
 
     componentDidMount = () => {
-        myOrganisationsLite().then(json => {
-            if (json.length === 0) {
-                organisationByUserSchacHomeOrganisation().then(json => {
-                    if (json.length === 0) {
-                        this.setState({noOrganisations: true});
-                    } else {
-                        const organisations = this.mapOrganisationsToOptions(json);
-                        this.updateBreadCrumb(organisations[0]);
-                        this.setState({
-                            organisations: organisations,
-                            organisation: organisations[0],
-                            isRequestCollaboration: true,
-                            current_user_admin: true,
-                            required: this.state.required.concat("message")
-                        });
-                    }
-                });
-            } else {
-                const organisationId = getParameterByName("organisation", window.location.search);
-                const organisations = this.mapOrganisationsToOptions(json);
-                let organisation = {};
-                if (organisationId) {
-                    const filtered = organisations.filter(org => org.value === parseInt(organisationId, 10));
-                    if (filtered.length > 0) {
-                        organisation = filtered[0];
-                    }
-                } else {
-                    organisation = organisations[0];
-                }
-                this.updateBreadCrumb(organisation);
+        const params = this.props.match.params;
+        if (params.id) {
+            collaborationById(params.id).then(collaboration => {
+                const organisation = collaboration.organisation;
+                const orgOption = {label: organisation.name, value: organisation.id,
+                    short_name: organisation.short_name,};
+                this.updateBreadCrumb(orgOption, collaboration);
                 this.setState({
-                    organisations: organisations,
-                    organisation: organisation
+                    ...collaboration,
+                    collaboration: collaboration,
+                    organisation: orgOption,
+                    organisations: [orgOption],
+                    isNew: false
                 });
-            }
-        });
+            });
+        } else {
+            myOrganisationsLite().then(json => {
+                if (json.length === 0) {
+                    organisationByUserSchacHomeOrganisation().then(json => {
+                        if (json.length === 0) {
+                            this.setState({noOrganisations: true});
+                        } else {
+                            const organisations = this.mapOrganisationsToOptions(json);
+                            this.updateBreadCrumb(organisations[0]);
+                            this.setState({
+                                organisations: organisations,
+                                organisation: organisations[0],
+                                isRequestCollaboration: true,
+                                current_user_admin: true,
+                                required: this.state.required.concat("message")
+                            });
+                        }
+                    });
+                } else {
+                    const organisationId = getParameterByName("organisation", window.location.search);
+                    const organisations = this.mapOrganisationsToOptions(json);
+                    let organisation = {};
+                    if (organisationId) {
+                        const filtered = organisations.filter(org => org.value === parseInt(organisationId, 10));
+                        if (filtered.length > 0) {
+                            organisation = filtered[0];
+                        }
+                    } else {
+                        organisation = organisations[0];
+                    }
+                    this.updateBreadCrumb(organisation);
+                    this.setState({
+                        organisations: organisations,
+                        organisation: organisation
+                    });
+                }
+            });
+        }
     };
 
-    updateBreadCrumb = organisation => {
+    updateBreadCrumb = (organisation, collaboration) => {
         AppStore.update(s => {
-            s.breadcrumb.paths = [
+            const paths = [
                 {path: "/", value: I18n.t("breadcrumb.home")},
                 {path: `/organisations/${organisation.value}`, value: organisation.label},
-                {path: "/", value: I18n.t("breadcrumb.newCollaboration")}
+                collaboration ? {path: "/collaborations/" + collaboration.id, value: collaboration.name} :
+                    {path: "/", value: I18n.t("breadcrumb.newCollaboration")}
             ];
+            if (collaboration) {
+                paths.push({path: "/", value: I18n.t("breadcrumb.editCollaboration")})
+            }
+            s.breadcrumb.paths = paths;
         });
     }
 
@@ -113,18 +138,44 @@ class NewCollaboration extends React.Component {
         collaboration_creation_allowed: org.collaboration_creation_allowed
     }));
 
+    existingCollaborationName = attr => this.state.isNew ? this.state.collaboration[attr] : null;
+
     validateCollaborationName = e =>
-        collaborationNameExists(e.target.value, this.state.organisation.value).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
-        });
+        collaborationNameExists(e.target.value, this.state.organisation.value, this.existingCollaborationName("name"))
+            .then(json => this.setState({alreadyExists: {...this.state.alreadyExists, name: json}}));
 
     validateCollaborationShortName = e =>
-        collaborationShortNameExists(e.target.value, this.state.organisation.value).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
-        });
+        collaborationShortNameExists(e.target.value, this.state.organisation.value, this.existingCollaborationName("short_name"))
+            .then(json => this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}}));
 
     cancel = () => {
-        this.setState({confirmationDialogOpen: true});
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            warning: false,
+            cancelDialogAction: () => this.props.history.goBack(),
+            leavePage: true
+        });
+    };
+
+    delete = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("collaboration.deleteConfirmation"),
+            confirmationDialogAction: this.doDelete,
+            warning: true,
+            leavePage: false
+        });
+    };
+
+    doDelete = () => {
+        this.setState({confirmationDialogOpen: false});
+        const {collaboration} = this.state;
+        deleteCollaboration(collaboration.id)
+            .then(() => {
+                this.props.history.push("/organisations/" + collaboration.organisation.id);
+                setFlash(I18n.t("collaborationDetail.flash.deleted", {name: collaboration.name}));
+            });
     };
 
     isValid = () => {
@@ -155,11 +206,32 @@ class NewCollaboration extends React.Component {
     };
 
     submit = () => {
-        const {initial} = this.state;
+        const {initial, isNew} = this.state;
+        const action = isNew ? this.doSubmit : this.doUpdate;
         if (initial) {
-            this.setState({initial: false}, this.doSubmit)
+            this.setState({initial: false}, action)
         } else {
-            this.doSubmit();
+            action()
+        }
+    };
+
+    doUpdate = () => {
+        if (this.isValid()) {
+            const {
+                name, short_name, description, logo, collaboration,
+                administrators, message, accepted_user_policy, organisation,
+                services_restricted, disable_join_requests, current_user_admin
+            } = this.state;
+            updateCollaboration({
+                id: collaboration.id, name, short_name, description, logo,
+                identifier: collaboration.identifier,
+                administrators, message, accepted_user_policy, organisation_id: organisation.value,
+                services_restricted, disable_join_requests, current_user_admin
+            })
+                .then(() => {
+                    setFlash(I18n.t("collaborationDetail.flash.updated", {name: name}));
+                    this.props.history.goBack();
+                });
         }
     };
 
@@ -210,7 +282,7 @@ class NewCollaboration extends React.Component {
         const {
             name, short_name, description, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, noOrganisations, isRequestCollaboration,
-            services_restricted, disable_join_requests, current_user_admin, logo
+            services_restricted, disable_join_requests, current_user_admin, logo, warning, isNew, collaboration
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
@@ -226,9 +298,17 @@ class NewCollaboration extends React.Component {
                     <ConfirmationDialog isOpen={confirmationDialogOpen}
                                         cancel={cancelDialogAction}
                                         confirm={confirmationDialogAction}
-                                        question={leavePage ? undefined : I18n.t("collaboration.deleteConfirmation")}
+                                        isWarning={warning}
+                                        question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
                                         leavePage={leavePage}/>
-                    <UnitHeader obj={({name: I18n.t("models.collaborations.new"), svg: CollaborationsIcon})}/>
+
+                    {isNew &&
+                    <UnitHeader obj={({name: I18n.t("models.collaborations.new"), svg: CollaborationsIcon})}/>}
+                    {!isNew && <UnitHeader obj={collaboration}
+                                           auditLogPath={`collaborations/${collaboration.id}`}
+                                           name={collaboration.name}
+                                           history={this.props.history}
+                                           mayEdit={false}/>}
 
                     <div className="new-collaboration">
 
@@ -323,7 +403,7 @@ class NewCollaboration extends React.Component {
                             className="error">{I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.organisation_name").toLowerCase()
                         })}</span>}
-                        {!isRequestCollaboration &&
+                        {(!isRequestCollaboration && isNew) &&
                         <div>
                             <h1 className="section-separator">{I18n.t("collaboration.invitations")}</h1>
 
@@ -346,26 +426,29 @@ class NewCollaboration extends React.Component {
                             </section>
                         </div>}
 
-                        <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
+                        {isNew && <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
                                   value={current_user_admin}
                                   onChange={this.flipCurrentUserAdmin}
                                   readOnly={isRequestCollaboration}
                                   info={I18n.t("collaboration.currentUserAdmin")}
-                                  tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>
+                                  tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>}
 
-                        <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                        {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                                     placeholder={isRequestCollaboration ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
                                     name={isRequestCollaboration ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
                                     toolTip={isRequestCollaboration ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
-                                    multiline={true}/>
+                                    multiline={true}/>}
                         {(!initial && isEmpty(message) && isRequestCollaboration) && <span
                             className="error">{I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.motivation").toLowerCase()
                         })}</span>}
 
                         <section className="actions">
+                            {!isNew &&
+                            <Button className="delete" txt={I18n.t("collaborationDetail.delete")}
+                                    onClick={this.delete}/>}
                             <Button disabled={disabledSubmit}
-                                    txt={isRequestCollaboration ? I18n.t("forms.request") : I18n.t("forms.submit")}
+                                    txt={isRequestCollaboration ? I18n.t("forms.request") : I18n.t("forms.save")}
                                     onClick={this.submit}/>
                             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                         </section>
@@ -375,4 +458,4 @@ class NewCollaboration extends React.Component {
     };
 }
 
-export default NewCollaboration;
+export default CollaborationForm;

@@ -5,7 +5,7 @@ from secrets import token_urlsafe
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
-from sqlalchemy.orm import aliased, load_only, contains_eager, joinedload
+from sqlalchemy.orm import aliased, load_only, contains_eager, joinedload, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
@@ -15,7 +15,7 @@ from server.auth.security import confirm_collaboration_admin, is_application_adm
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
-    Organisation, Service
+    Organisation, Service, ServiceConnectionRequest
 from server.db.models import update, save, delete
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_collaboration_invitation
@@ -236,22 +236,16 @@ def collaboration_by_id(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
 
     collaboration = Collaboration.query \
-        .join(Collaboration.organisation) \
-        .outerjoin(Collaboration.groups) \
-        .outerjoin(Collaboration.invitations) \
-        .outerjoin(Collaboration.join_requests) \
-        .outerjoin(JoinRequest.user) \
-        .outerjoin(Collaboration.services) \
-        .options(contains_eager(Collaboration.groups)) \
-        .options(contains_eager(Collaboration.invitations)) \
-        .options(contains_eager(Collaboration.organisation)) \
-        .options(contains_eager(Collaboration.join_requests)
-                 .contains_eager(JoinRequest.user)) \
-        .options(contains_eager(Collaboration.services)) \
+        .options(selectinload(Collaboration.organisation).selectinload(Organisation.services)) \
+        .options(selectinload(Collaboration.collaboration_memberships).selectinload(CollaborationMembership.user)) \
+        .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)
+                 .selectinload(CollaborationMembership.user)) \
+        .options(selectinload(Collaboration.invitations)) \
+        .options(selectinload(Collaboration.join_requests).selectinload(JoinRequest.user)) \
+        .options(selectinload(Collaboration.services)) \
+        .options(selectinload(Collaboration.service_connection_requests)
+                 .selectinload(ServiceConnectionRequest.service)) \
         .filter(Collaboration.id == collaboration_id).one()
-
-    for membership in collaboration.collaboration_memberships:
-        membership.user
 
     return collaboration, 200
 

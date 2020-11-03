@@ -22,7 +22,7 @@ import JoinRequest from "./JoinRequest";
 import OrganisationForm from "./OrganisationForm";
 import {addIcons} from "../utils/IconLibrary";
 import OrganisationInvitation from "./OrganisationInvitation";
-import NewCollaboration from "./NewCollaboration";
+import CollaborationForm from "./CollaborationForm";
 import NewOrganisationInvitation from "./NewOrganisationInvitation";
 import Service from "./Service";
 import Services from "./Services";
@@ -236,7 +236,7 @@ class App extends React.Component {
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser} Component={Collaborations} {...props}/>}/>
 
-                            <Route exact path="/collaborations/:id"
+                            <Route exact path="/collaborations/:id/:tab?"
                                    render={props => <ProtectedRoute config={config}
                                                                     currentUser={currentUser}
                                                                     refreshUser={this.refreshUserMemberships}
@@ -246,7 +246,7 @@ class App extends React.Component {
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser} Component={Organisations} {...props}/>}/>
 
-                            <Route exact path="/organisations/:id"
+                            <Route exact path="/organisations/:id/:tab?"
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser}
                                        refreshUser={this.refreshUserMemberships}
@@ -265,7 +265,7 @@ class App extends React.Component {
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser} Component={Services} {...props}/>}/>
 
-                            <Route exact path="/services/:id"
+                            <Route exact path="/services/:id/:tab?"
                                    render={props => <ProtectedRoute config={config}
                                                                     currentUser={currentUser}
                                                                     Component={ServiceDetail} {...props}/>}/>
@@ -341,16 +341,26 @@ class App extends React.Component {
 
                             <Route path="/new-organisation"
                                    render={props => <ProtectedRoute config={config}
-                                                                    currentUser={currentUser} Component={OrganisationForm} {...props}/>}/>
+                                                                    currentUser={currentUser}
+                                                                    Component={OrganisationForm}
+                                                                    {...props}/>}/>
 
                             <Route path="/edit-organisation/:id"
                                    render={props => <ProtectedRoute config={config}
-                                                                    currentUser={currentUser} Component={OrganisationForm} {...props}/>}/>
+                                                                    currentUser={currentUser}
+                                                                    Component={OrganisationForm}
+                                                                    {...props}/>}/>
 
-                            <Route path="/new-collaboration"
+                            <Route exact path="/edit-collaboration/:id"
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser}
+                                                                    Component={CollaborationForm}
+                                                                    refreshUser={this.refreshUserMemberships}
+                                                                    {...props}/>}/>
+
+                             <Route path="/new-collaboration"
                                    render={props => <ProtectedRoute currentUser={currentUser}
-                                                                    Component={NewCollaboration}
-
+                                                                    Component={CollaborationForm}
                                                                     refreshUser={this.refreshUserMemberships}
                                                                     {...props}/>}/>
 

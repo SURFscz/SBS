@@ -19,6 +19,7 @@ import DateField from "../components/DateField";
 import SelectField from "../components/SelectField";
 import BackLink from "../components/BackLink";
 import {userRole} from "../utils/UserRole";
+import {AppStore} from "../stores/AppStore";
 
 class Invitation extends React.Component {
 
@@ -58,6 +59,15 @@ class Invitation extends React.Component {
                 .then(json => {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({invite: json, isAdminLink: true, isExpired});
+                                        AppStore.update(s => {
+                        s.breadcrumb.paths = [
+                            {path: "/", value: I18n.t("breadcrumb.home")},
+                            {path: `/organisations/${json.collaboration.organisation_id}`, value: json.collaboration.organisation.name},
+                            {path: `/collaborations/${json.collaboration.id}`, value: json.collaboration.name},
+                            {path: "/", value: I18n.t("breadcrumb.invitation")}
+                        ];
+                    });
+
                 })
                 .catch(() =>
                     setFlash(I18n.t("organisationInvitation.flash.notFound"), "error"));

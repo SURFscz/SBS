@@ -1,20 +1,15 @@
 @import "../../stylesheets/vars";
 
-.mod-entities-loading {
-    height: 275px;
-    display: flex;
-    span {
-        margin: auto;
-    }
-}
 .mod-entities {
 
-    margin-bottom: 25px;
+    &:last-child {
+        margin-bottom: 25px;
+    }
 
     .entities-search {
         display: flex;
         align-items: center;
-        padding: 40px 0;
+        padding: 32px 0 28px 0;
         min-height: 40px;
 
         h1 {
@@ -102,9 +97,6 @@
             tr {
                 color: black;
                 border-bottom: 1px solid $lighter-grey;
-                &:last-child {
-                    border-bottom: none;
-                }
 
             }
 

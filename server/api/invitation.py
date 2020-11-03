@@ -24,6 +24,8 @@ def _invitation_query():
         .options(joinedload(Invitation.collaboration)
                  .subqueryload(Collaboration.collaboration_memberships)
                  .subqueryload(CollaborationMembership.user)) \
+        .options(joinedload(Invitation.collaboration)
+                 .subqueryload(Collaboration.organisation)) \
         .options(joinedload(Invitation.user)) \
         .options(joinedload(Invitation.groups))
 

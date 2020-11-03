@@ -31,9 +31,12 @@ I18n.translations.en = {
         editService: "Edit service",
         newService: "New service",
         newCollaboration: "New collaboration",
+        editCollaboration: "Edit collaboration",
         impersonate: "Impersonate",
         organisationInvite: "Add members",
         organisationInvitation: "Invitation",
+        invite: "Add members",
+        invitation: "Invitation",
     },
     login: {
         title: "Research Access Management",
@@ -66,6 +69,8 @@ I18n.translations.en = {
             orgAdmins: "Org Admins",
             orgServices: "Org Services",
             orgCollaborations: "Org Collaborations",
+            coServices: "CO Services",
+            coAdmins: "CO Admins",
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights"
         }
@@ -134,8 +139,16 @@ I18n.translations.en = {
             searchPlaceHolder: "Search services...",
             new: "New Service",
             name: "Name",
+            status: "Status",
             organisationCount: "Used in organisations",
-            collaborationCount: "Used in collaborations"
+            collaborationCount: "Used in collaborations",
+            titleAvailableColl: "Available for this collaboration ({{count}})",
+            titleAvailableOrg: "Available for this organisation ({{count}})",
+            titleUsedColl: "Used by this collaboration ({{count}})",
+            titleUsedOrg: "Used by this organisation ({{count}})",
+            awaitingApproval: "Connection awaiting approval",
+            automaticConnectionAllowed: "Automatic connection allowed",
+            requiredByOrganisation: "Mandatory by organisation"
         },
         collaborations: {
             title: "Collaborations",
@@ -157,6 +170,18 @@ I18n.translations.en = {
             new: "New Collaboration",
             organisationName: "Organisation",
             noEntities: "There are no collaborations using this service",
+        },
+        coAdmins: {
+            searchPlaceHolder: "Search for admins...",
+            title: "CO Admins",
+            new: "Add CO admin(s)",
+            noEntities: "There are no admins",
+        },
+        servicesAvailable: {
+            searchPlaceHolder: "Search for services..."
+        },
+        servicesUsed: {
+            searchPlaceHolder: "Search for services..."
         }
 
     },
@@ -306,6 +331,9 @@ I18n.translations.en = {
         joinRequestUrl: "Join Request URL",
         joinRequestUrlTooltip: "URL for non-members to<br/>join this collaboration.<br/><br/>The URL can be communicated<br/>to service providers that offer<br/>their service within this collaboration",
         disableJoinRequests: "Disable Join request for this collaboration",
+        joinRequests: "Join requests",
+        disabled: "Disabled",
+        enabled: "Enabled",
         disableJoinRequestsTooltip: "When checked non-members of this<br/>collaboration can not issue a Join request.",
         servicesRestricted: "Restricted services",
         servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
@@ -351,6 +379,7 @@ I18n.translations.en = {
         delete: "Delete",
         deleteConfirmation: "Are you sure you want to delete this collaboration?",
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership for {{name}}?",
+        deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You won't be able to redo this.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
         activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
@@ -358,6 +387,7 @@ I18n.translations.en = {
             updated: "Collaboration {{name}} was successfully updated",
             deleted: "Collaboration {{name}} was successfully deleted",
             memberDeleted: "Membership of {{name}} was successfully deleted",
+            entitiesDeleted: "Membership / invitations are successfully deleted",
             memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
             meAdded: "Successfully added you as member of {{name}}",
             memberActivated: "Member {{name}} has been sent an email with an activation link"
@@ -399,7 +429,7 @@ I18n.translations.en = {
         about: "About the service",
         logo: "Service logo",
         accessAllowed: "Access allowed",
-        compliancy: "Service compliancy" ,
+        compliancy: "Service compliancy",
         compliancyShort: "Compliancy",
         none: "None",
         contact: "Contact contact-person",
@@ -508,9 +538,9 @@ I18n.translations.en = {
         administratorsTooltip: "Administrators of an organisation <br/>can create collaborations in their organisations.<br/><br/>Add e-mail addresses separated by comma, space <br/>or semi-colon or one-by-one using <br/>the enter key.",
         role: "Role",
         new: "Create new Organisation",
-        admin: "CO Manager",
+        admin: "CO Admin",
         manager: "Manager",
-        member: "Member",
+        member: "CO Member",
         organisationRoles: {
             admin: "Organisation Admin",
             manager: "Organisation Manager",

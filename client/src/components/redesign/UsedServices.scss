@@ -1,0 +1,37 @@
+@import "../../stylesheets/vars";
+
+table.servicesUsed, table.servicesAvailable {
+
+    thead {
+        th {
+            &.name {
+                width: 40%;
+                padding-left: 15px;
+            }
+
+            &.status {
+                width: 35%;
+            }
+
+            &.action {
+                width: 25%;
+                text-align: right;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.status {
+                color: $dark-grey
+            }
+            &.action {
+                text-align: right;
+            }
+        }
+    }
+}

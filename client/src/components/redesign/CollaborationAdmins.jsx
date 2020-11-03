@@ -5,9 +5,9 @@ import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
 import CheckBox from "../CheckBox";
-import {deleteOrganisationMembership, organisationInvitationDelete, updateOrganisationMembershipRole} from "../../api";
+import {deleteCollaborationMembership, invitationDelete, updateCollaborationMembershipRole} from "../../api";
 import {setFlash} from "../../utils/Flash";
-import "./OrganisationAdmins.scss";
+import "./CollaborationAdmins.scss";
 import Select from "react-select";
 import {emitter} from "../../utils/Events";
 import {shortDateFromEpoch} from "../../utils/Date";
@@ -17,11 +17,11 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 
 const roles = [
-    {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
-    {value: "manager", label: I18n.t(`organisation.organisationShortRoles.manager`)}
+    {value: "admin", label: I18n.t(`organisation.admin`)},
+    {value: "member", label: I18n.t(`organisation.member`)}
 ];
 
-class OrganisationAdmins extends React.Component {
+class CollaborationAdmins extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -36,9 +36,9 @@ class OrganisationAdmins extends React.Component {
     }
 
     componentDidMount = () => {
-        const {organisation} = this.props;
-        const admins = organisation.organisation_memberships;
-        const invites = organisation.organisation_invitations;
+        const {collaboration} = this.props;
+        const admins = collaboration.collaboration_memberships;
+        const invites = collaboration.invitations;
         const entities = admins.concat(invites);
         const selectedMembers = entities.reduce((acc, entity) => {
             acc[entity.id] = {selected: false, ref: entity};
@@ -48,15 +48,15 @@ class OrganisationAdmins extends React.Component {
     }
 
     changeMemberRole = member => selectedOption => {
-        const {organisation} = this.props;
-        const currentRole = organisation.organisation_memberships.find(m => m.user.id === member.user.id).role;
+        const {collaboration} = this.props;
+        const currentRole = collaboration.collaboration_memberships.find(m => m.user.id === member.user.id).role;
         if (currentRole === selectedOption.value) {
             return;
         }
-        updateOrganisationMembershipRole(organisation.id, member.user.id, selectedOption.value)
+        updateCollaborationMembershipRole(collaboration.id, member.user.id, selectedOption.value)
             .then(() => {
                 this.props.refresh(this.componentDidMount);
-                setFlash(I18n.t("organisationDetail.flash.memberUpdated", {
+                setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
                     name: member.user.name,
                     role: selectedOption.value
                 }));
@@ -79,7 +79,7 @@ class OrganisationAdmins extends React.Component {
 
     gotoInvitation = invitation => e => {
         stopEvent(e);
-        this.props.history.push(`/organisation-invitations/${invitation.id}`);
+        this.props.history.push(`/invitations/${invitation.id}`);
     };
 
     remove = showConfirmation => () => {
@@ -88,23 +88,23 @@ class OrganisationAdmins extends React.Component {
                 confirmationDialogOpen: true,
                 confirmationDialogAction: this.remove(false),
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
-                confirmationQuestion: I18n.t("organisationDetail.deleteMemberConfirmation"),
+                confirmationQuestion: I18n.t("collaborationDetail.deleteEntitiesConfirmation"),
             });
         } else {
             this.setState({confirmationDialogOpen: false});
             const {selectedMembers} = this.state;
-            const {organisation} = this.props;
+            const {collaboration} = this.props;
 
             const promises = Object.keys(selectedMembers)
                 .filter(id => selectedMembers[id].selected)
                 .map(id => {
                     const ref = selectedMembers[id].ref;
-                    ref.invite ? organisationInvitationDelete(ref.id) :
-                        deleteOrganisationMembership(organisation.id, ref.user.id)
+                    ref.invite ? invitationDelete(ref.id) :
+                        deleteCollaborationMembership(collaboration.id, ref.user.id)
                 });
             Promise.all(promises).then(() => {
                 this.props.refresh(this.componentDidMount);
-                setFlash(I18n.t("organisationDetail.flash.entitiesDeleted"));
+                setFlash(I18n.t("collaborationDetail.flash.entitiesDeleted"));
             });
         }
     }
@@ -120,15 +120,14 @@ class OrganisationAdmins extends React.Component {
     }
 
     render() {
-        const {user: currentUser, organisation} = this.props;
+        const {user: currentUser, collaboration} = this.props;
         const {
             selectedMembers, allSelected, confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction, confirmationQuestion
         } = this.state;
-        const admins = organisation.organisation_memberships;
-        const invites = organisation.organisation_invitations;
+        const admins = collaboration.collaboration_memberships;
+        const invites = collaboration.invitations;
         invites.forEach(invite => invite.invite = true);
-
         const isAdmin = currentUser.admin;
 
         let i = 0;
@@ -208,16 +207,16 @@ class OrganisationAdmins extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={confirmationQuestion}/>
 
-                <Entities entities={admins.concat(invites)} modelName="orgMembers"
+                <Entities entities={admins.concat(invites)} modelName="coAdmins"
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name" columns={columns} loading={false}
                           showNew={isAdmin}
                           actions={this.actionButtons(selectedMembers)}
-                          newEntityPath={`/new-organisation-invite/${organisation.id}`}
+                          newEntityPath={`/new-invite/${collaboration.id}`}
                           {...this.props}/>
             </>
         )
     }
 }
 
-export default OrganisationAdmins;
+export default CollaborationAdmins;

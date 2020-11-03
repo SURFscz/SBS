@@ -12,6 +12,7 @@ import Organisations from "../components/redesign/Organisations";
 import UnitHeader from "../components/redesign/UnitHeader";
 import PlatformAdmins from "../components/redesign/PlatformAdmins";
 import Services from "../components/redesign/Services";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class Home extends React.Component {
 
@@ -32,6 +33,7 @@ class Home extends React.Component {
         const tabs = [];
         const promises = [];
         const role = rawGlobalUserRole(user);
+        //TODO where do we go with history.props - inspect user
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
                 tabs.push(this.getOrganisationsTab());
@@ -75,7 +77,7 @@ class Home extends React.Component {
     render() {
         const {tabs, role, loaded, tab} = this.state;
         if (!loaded) {
-            return null;
+            return <SpinnerField/>;
         }
         const {user} = this.props;
         return (
