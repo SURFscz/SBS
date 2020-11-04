@@ -7,11 +7,15 @@ import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import Tabs from "../components/Tabs";
 import {ReactComponent as CoAdminIcon} from "../icons/users.svg";
-import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
+import {ReactComponent as MemberIcon} from "../icons/personal_info.svg";
+import {ReactComponent as GroupsIcon} from "../icons/groups.svg";
+
+import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
 import Services from "../components/redesign/Services";
 import SpinnerField from "../components/redesign/SpinnerField";
 import UsedServices from "../components/redesign/UsedServices";
+import Groups from "../components/redesign/Groups";
 
 
 class CollaborationDetail extends React.Component {
@@ -32,7 +36,7 @@ class CollaborationDetail extends React.Component {
         }
     }
 
-    componentDidMount = () => {
+    componentDidMount = callback => {
         const params = this.props.match.params;
         if (params.id) {
             const collaboration_id = parseInt(params.id, 10);
@@ -50,6 +54,7 @@ class CollaborationDetail extends React.Component {
                             tab: params.tab || this.state.tab,
                         }, () => this.updateAppStore(collaboration));
                         this.tabChanged(tab, collaboration.id);
+                        callback && callback();
                     });
                 }).catch(() => this.props.history.push("/404"));
         } else {
@@ -58,10 +63,10 @@ class CollaborationDetail extends React.Component {
     };
 
     getTabs = (collaboration, params) => {
-        const tab = params.tab || this.state.tab;
         const tabs = [
             this.getCollaborationAdminsTab(collaboration),
-            // this.getGroepsTab(collaboration),
+            this.getMembersTab(collaboration),
+            this.getGroupsTab(collaboration),
             this.getServicesTab(collaboration)
         ];
         return tabs;
@@ -70,14 +75,31 @@ class CollaborationDetail extends React.Component {
     getCollaborationAdminsTab = collaboration => {
         return (<div key="admins" name="admins" label={I18n.t("home.tabs.coAdmins")}
                      icon={<CoAdminIcon/>}>
-            <CollaborationAdmins {...this.props} collaboration={collaboration}
+            <CollaborationAdmins {...this.props} collaboration={collaboration}  isAdminView={true}
+                                 refresh={callback => this.componentDidMount(callback)}/>
+        </div>)
+    }
+
+    getMembersTab = collaboration => {
+        return (<div key="members" name="members" label={I18n.t("home.tabs.members")}
+                     icon={<MemberIcon/>}>
+            <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
+                                 refresh={callback => this.componentDidMount(callback)}/>
+        </div>)
+    }
+
+    getGroupsTab = collaboration => {
+        return (<div key="groups" name="groups" label={I18n.t("home.tabs.groups")}
+                     icon={<GroupsIcon/>}>
+            <Groups {...this.props} collaboration={collaboration}
                                  refresh={callback => this.componentDidMount(callback)}/>
         </div>)
     }
 
     getServicesTab = collaboration => {
         return (<div key="services" name="services" label={I18n.t("home.tabs.coServices")} icon={<ServicesIcon/>}>
-            <UsedServices {...this.props} collaboration={collaboration} refresh={callback => this.componentDidMount(callback)}/>
+            <UsedServices {...this.props} collaboration={collaboration}
+                          refresh={callback => this.componentDidMount(callback)}/>
         </div>);
     }
 

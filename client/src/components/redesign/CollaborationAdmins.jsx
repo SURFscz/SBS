@@ -21,6 +21,8 @@ const roles = [
     {value: "member", label: I18n.t(`organisation.member`)}
 ];
 
+const memberFilterValue = "members";
+
 class CollaborationAdmins extends React.Component {
 
     constructor(props, context) {
@@ -32,6 +34,9 @@ class CollaborationAdmins extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
+            filterOptions: [],
+            filterValue: {value: memberFilterValue, label: ""},
+            hideInvitees: false
         }
     }
 
@@ -43,8 +48,21 @@ class CollaborationAdmins extends React.Component {
         const selectedMembers = entities.reduce((acc, entity) => {
             acc[entity.id] = {selected: false, ref: entity};
             return acc;
-        }, {})
-        this.setState({selectedMembers});
+        }, {});
+        const filterOptions = [{
+            label: I18n.t("models.collaborations.allMembers", {count: admins.length}),
+            value: memberFilterValue
+        }];
+        const groupOptions = collaboration.groups
+            .map(group => ({
+                label: `${group.name} (${group.collaboration_memberships.length})`,
+                value: group.name
+            }));
+        this.setState({
+            selectedMembers,
+            filterValue: filterOptions[0],
+            filterOptions: filterOptions.concat(groupOptions)
+        });
     }
 
     changeMemberRole = member => selectedOption => {
@@ -109,23 +127,47 @@ class CollaborationAdmins extends React.Component {
         }
     }
 
-    actionButtons = selectedMembers => {
-        const anySelected = Object.values(selectedMembers).some(v => v.selected);
+    actionButtons = (selectedMembers) => {
+        const selected = Object.values(selectedMembers).filter(v => v.selected);
+        const hrefValue = encodeURI(selected.map(v => v.ref.invite ? v.ref.invitee_email : v.ref.user.email).join(","));
         return (
             <div className="admin-actions">
                 <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
-                        disabled={!anySelected}
+                        disabled={selected.length === 0}
                         icon={<FontAwesomeIcon icon="trash"/>}/>
+                <a href={`mailto:${hrefValue}`} className={`${selected.length === 0 ? "disabled" : ""} button`}
+                   target="_blank" rel="noopener noreferrer">
+                    {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
+                </a>
             </div>);
     }
 
+    filter = (filterOptions, filterValue, hideInvitees) => {
+        return (
+            <div className="member-filter">
+                <Select
+                    className={"member-filter-select"}
+                    value={filterValue}
+                    onChange={option => this.setState({filterValue: option})}
+                    options={filterOptions}
+                    isSearchable={false}
+                    isClearable={false}
+                />
+                <CheckBox name="hide_invitees" value={hideInvitees}
+                          onChange={e => this.setState({hideInvitees: e.target.checked})}
+                          info={I18n.t("models.collaborations.hideInvites")}/>
+            </div>
+        );
+    }
+
     render() {
-        const {user: currentUser, collaboration} = this.props;
+        const {user: currentUser, collaboration, isAdminView} = this.props;
         const {
-            selectedMembers, allSelected, confirmationDialogOpen, cancelDialogAction,
+            selectedMembers, allSelected, filterOptions, filterValue, hideInvitees,
+            confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction, confirmationQuestion
         } = this.state;
-        const admins = collaboration.collaboration_memberships;
+        const members = collaboration.collaboration_memberships;
         const invites = collaboration.invitations;
         invites.forEach(invite => invite.invite = true);
         const isAdmin = currentUser.admin;
@@ -165,6 +207,13 @@ class CollaborationAdmins extends React.Component {
                     </div>
             },
             {
+                nonSortable: true,
+                key: "member",
+                header: "",
+                mapper: entity => (!entity.invite && entity.user.id === currentUser.id) ?
+                    <span className="person-role me">{I18n.t("models.users.me")}</span> : null
+            },
+            {
                 key: "user__schac_home_organisation",
                 header: I18n.t("models.users.institute"),
                 mapper: entity => entity.invite ? "" : entity.user.schac_home_organisation
@@ -172,7 +221,7 @@ class CollaborationAdmins extends React.Component {
             {
                 key: "role",
                 header: I18n.t("models.users.role"),
-                mapper: entity => entity.invite ? null : <Select
+                mapper: entity => entity.invite ? I18n.t(`organisation.${entity.intended_role}`) : <Select
                     value={roles.find(option => option.value === entity.role)}
                     options={roles}
                     onChange={this.changeMemberRole(entity)}
@@ -201,16 +250,23 @@ class CollaborationAdmins extends React.Component {
                     </div>
             },
         ]
+        let entities = isAdminView ? members.filter(m => m.role === "admin") : members;
+        if (memberFilterValue !== filterValue.value && !isAdminView) {
+            entities = entities.filter(e => collaboration.groups.find(g => g.name === filterValue.value).collaboration_memberships.some(m => m.id === e.id));
+        }
+        const invitesFiltered = hideInvitees ? [] : isAdminView ? invites.filter(invite => invite.intended_role === "admin") : invites;
+
         return (<>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     question={confirmationQuestion}/>
 
-                <Entities entities={admins.concat(invites)} modelName="coAdmins"
+                <Entities entities={entities.concat(invitesFiltered)} modelName={isAdminView ? "coAdmins" : "members"}
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name" columns={columns} loading={false}
                           showNew={isAdmin}
+                          filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees)}
                           actions={this.actionButtons(selectedMembers)}
                           newEntityPath={`/new-invite/${collaboration.id}`}
                           {...this.props}/>

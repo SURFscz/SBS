@@ -1,4 +1,4 @@
-import {groupBy, sortObjects} from "../../utils/Utils";
+import {groupBy, removeDuplicates, sortObjects} from "../../utils/Utils";
 
 test("GroupBy", () => {
     expect({
@@ -31,4 +31,17 @@ test("Sort", () => {
     const bugfix = sortObjects(bug,"c",true).map(o => o.c);
     expect(bugfix).toEqual([4,3,1,0]);
 
+});
+
+test("Remove duplicates", () => {
+    const arr = [
+        {id: 1, name:"one"},
+        {id: 1, name:"one"},
+        {id: 2, name:"two"},
+    ];
+    const unique = removeDuplicates(arr, "id");
+    expect(unique).toEqual([
+        {id: 1, name:"one"},
+        {id: 2, name:"two"},
+    ]);
 });

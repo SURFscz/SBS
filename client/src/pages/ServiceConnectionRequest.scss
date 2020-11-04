@@ -1,12 +1,14 @@
 @import "../stylesheets/vars.scss";
 
 .mod-service-connection-request {
-    max-width: $medium;
+    max-width: $medium-sub;
     margin: 0 auto;
     width: 100%;
 
     div.title {
-        color: $dark-grey;
+        padding: $medium-padding;
+        color: black;
+        background-color: $background;
 
         p.title {
             font-size: 22px;
@@ -20,10 +22,7 @@
     }
 
     .service-connection-request-container {
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         margin-bottom: 25px;
-        background-color: $lightest-grey;
-        padding: $medium-padding;
 
         .error {
             color: $red;
@@ -36,12 +35,20 @@
         }
 
         section.actions {
-            margin: $medium-margin 0;
+            margin-top: 30px;
+            padding: $medium-margin 0;
+            border-top: 2px solid $lighter-grey;
+            display: flex;
+            justify-content: flex-end;
 
             a:not(:first-child) {
                 margin-left: 25px;
             }
 
+            a.delete {
+                margin-right: auto;
+                margin-left: 0;
+            }
         }
     }
 }

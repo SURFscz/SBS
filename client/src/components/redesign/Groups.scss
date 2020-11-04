@@ -1,21 +1,30 @@
 @import "../../stylesheets/vars";
 
-table.servicesUsed, table.servicesAvailable {
+table.groups {
 
     thead {
         th {
             &.name {
-                width: 40%;
+                width: 20%;
                 padding-left: 15px;
             }
 
-            &.status {
-                width: 35%;
+            &.description {
+                width: 40%;
             }
 
-            &.action {
-                width: 25%;
-                text-align: right;
+            &.member {
+                width: 90px;
+            }
+
+            &.memberCount {
+                width: 20%;
+                text-align: center;
+            }
+
+            &.auto_provision_members {
+                width: 20%;
+                text-align: center;
             }
         }
     }
@@ -26,26 +35,28 @@ table.servicesUsed, table.servicesAvailable {
                 padding-left: 15px;
             }
 
-            &.status {
-                color: $dark-grey
+            &.memberCount {
+                text-align: center;
             }
 
-            &.action {
-                text-align: right;
+            &.auto_provision_members {
+                text-align: center;
             }
         }
     }
 }
 
-.request-connection-service {
+.group-details-container {
     display: flex;
-    margin: 25px 0 25px 25px;
+    margin: 40px 0 25px 0;
 
-    a.back-to-services {
+    a.back-to-groups {
         display: flex;
         align-items: flex-start;
+        white-space: nowrap;
         color: $dark-grey;
         text-decoration: underline;
+        margin-right: 60px;
 
         svg {
             margin-right: 5px;
@@ -54,20 +65,31 @@ table.servicesUsed, table.servicesAvailable {
         }
     }
 
-    div.request-connection-service-form {
-        width: 50%;
+    h1 {
+        font-size: 28px;
+    }
 
+    div.group-details {
+        width: 100%;
+
+        .header {
+            display: flex;
+            align-items: center;
+            width: 100%;
+
+            a.button {
+                margin-left: auto;
+            }
+        }
+    }
+
+    div.group-form {
         h1 {
-            font-size: 28px;
             margin: 1px 0 30px 0;
         }
 
-        img {
-            width: 62px;
-            margin-bottom: 20px;
-        }
+        width: 60%;
 
-        margin-left: 60px;
         display: flex;
         flex-direction: column;
 
