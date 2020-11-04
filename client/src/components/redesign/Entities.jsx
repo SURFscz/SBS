@@ -31,11 +31,12 @@ class Entities extends React.Component {
 
     };
 
-    renderSearch = (modelName, title, entities, query, searchAttributes, showNew) => {
+    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, filters) => {
         return (
             <section className="entities-search">
 
                 <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>
+                {filters}
                 {!isEmpty(searchAttributes) &&
                 <div className="search">
                     <input type="text"
@@ -114,7 +115,7 @@ class Entities extends React.Component {
 
     render() {
         const {modelName, entities, showNew, searchAttributes, columns, children, loading,
-        actions, title} = this.props;
+        actions, title, filters} = this.props;
         if (loading) {
             return <SpinnerField/>;
         }
@@ -123,7 +124,7 @@ class Entities extends React.Component {
         const sortedEntities = sortObjects(filteredEntities, sorted, reverse);
         return (
             <div className="mod-entities">
-                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew)}
+                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters)}
                 {actions}
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, columns, children)}
                 <div>{this.props.children}</div>
@@ -132,6 +133,7 @@ class Entities extends React.Component {
 }
 
 Entities.propTypes = {
+    title: PropTypes.string,
     entities: PropTypes.array.isRequired,
     modelName: PropTypes.string.isRequired,
     searchAttributes: PropTypes.array,
@@ -139,10 +141,10 @@ Entities.propTypes = {
     loading: PropTypes.bool.isRequired,
     columns: PropTypes.array.isRequired,
     newEntityPath: PropTypes.string,
-    title: PropTypes.string,
     newEntityFunc: PropTypes.func,
     showNew: PropTypes.bool,
-    actions: PropTypes.any
+    actions: PropTypes.any,
+    filters: PropTypes.any,
 };
 
 export default Entities;

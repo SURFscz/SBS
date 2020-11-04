@@ -7,12 +7,12 @@ import Tabs from "../components/Tabs";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
-import Services from "../components/redesign/Services";
 import UnitHeader from "../components/redesign/UnitHeader";
 import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
 import Collaborations from "../components/redesign/Collaborations";
 import SpinnerField from "../components/redesign/SpinnerField";
+import UsedServices from "../components/redesign/UsedServices";
 
 class OrganisationDetail extends React.Component {
 
@@ -21,7 +21,7 @@ class OrganisationDetail extends React.Component {
         this.state = {
             organisation: {},
             loaded: false,
-            tab: "admins",
+            tab: "collaborations",
             tabs: []
         };
     }
@@ -49,9 +49,9 @@ class OrganisationDetail extends React.Component {
 
                     const tab = params.tab || this.state.tab;
                     const tabs = [
+                        this.getCollaborationsTab(json),
                         this.getOrganisationAdminsTab(json),
                         this.getServicesTab(json),
-                        this.getCollaborationsTab(json)
                     ];
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
@@ -86,8 +86,9 @@ class OrganisationDetail extends React.Component {
 
     getServicesTab = organisation => {
         return (<div key="services" name="services" label={I18n.t("home.tabs.orgServices")} icon={<ServicesIcon/>}>
-            <Services {...this.props} organisation={organisation}/>
-        </div>)
+            <UsedServices {...this.props} organisation={organisation}
+                          refresh={callback => this.componentDidMount(callback)}/>
+        </div>);
     }
 
     getCollaborationsTab = organisation => {

@@ -70,9 +70,10 @@ I18n.translations.en = {
             orgServices: "Org Services",
             orgCollaborations: "Org Collaborations",
             coServices: "CO Services",
-            coAdmins: "CO Admins",
+            coAdmins: "CO admins",
+            members: "Members",
             serviceOrganisations: "Organisation access",
-            serviceCollaborations: "Collaborations insights"
+            serviceCollaborations: "Collaborations insights",
         }
     },
     forms: {
@@ -121,7 +122,8 @@ I18n.translations.en = {
             inviteSend: "Invite sent {{date}}",
             accepted: "Accepted",
             new: "Add member(s)",
-            remove: "Delete"
+            remove: "Delete",
+            mail: "Compose mail"
         },
         organisations: {
             title: "Organisations",
@@ -148,7 +150,15 @@ I18n.translations.en = {
             titleUsedOrg: "Used by this organisation ({{count}})",
             awaitingApproval: "Connection awaiting approval",
             automaticConnectionAllowed: "Automatic connection allowed",
-            requiredByOrganisation: "Mandatory by organisation"
+            requiredByOrganisation: "Mandatory by organisation",
+            removeFromCO: "Remove from CO",
+            deleteConnectionRequest: "Delete connection request",
+            addToCO: "Add to CO",
+            removeFromOrg: "Remove from organisation",
+            addToOrg: "Add to organisation",
+            requestConnection: "Request connection",
+            backToServices: "Back to services",
+            connectionRequest: "Request connection to {{name}}",
         },
         collaborations: {
             title: "Collaborations",
@@ -156,7 +166,10 @@ I18n.translations.en = {
             new: "New Collaboration",
             name: "Name",
             memberCount: "Members",
-            invitationsCount: "Invitations"
+            invitationsCount: "Invitations",
+            allMembers: "All members ({{count}})",
+            group: "Group {{name}} ({{count}})",
+            hideInvites: "Hide invitees"
         },
         serviceOrganisations: {
             searchPlaceHolder: "Search for organisations",
@@ -174,16 +187,38 @@ I18n.translations.en = {
         coAdmins: {
             searchPlaceHolder: "Search for admins...",
             title: "CO Admins",
-            new: "Add CO admin(s)",
-            noEntities: "There are no admins",
+            new: "Add admin(s)",
+            noEntities: "There are no administrators",
+        },
+        members: {
+            searchPlaceHolder: "Search for members...",
+            title: "Members",
+            new: "Add member(s)",
+            noEntities: "There are no members",
         },
         servicesAvailable: {
-            searchPlaceHolder: "Search for services..."
+            searchPlaceHolder: "Search for services...",
+            noEntities: "No services are available to add"
         },
         servicesUsed: {
-            searchPlaceHolder: "Search for services..."
+            searchPlaceHolder: "Search for services...",
+            noEntities: "No services are being used"
+        },
+        groups: {
+            backToGroups: "Back to all groups",
+            title: "Groups",
+            searchPlaceHolder: "Search for groups...",
+            noEntities: "No groups were found",
+            new: "Create new group",
+            edit: "Edit",
+            name: "Name",
+            description: "Description",
+            member: "Member",
+            memberCount: "# Members",
+            autoProvisioning: "Auto provisioning",
+            on: "On",
+            off: "Off"
         }
-
     },
     user: {
         titleUpdate: "Update your user profile keys",

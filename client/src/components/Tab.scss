@@ -41,6 +41,9 @@
             color: $blue;
             font-weight: bold;
         }
+        svg {
+            fill: $blue;
+        }
     }
 
     &.active.white {
