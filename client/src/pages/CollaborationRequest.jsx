@@ -234,7 +234,7 @@ class CollaborationRequest extends React.Component {
                             <Button disabled={disabledSubmit}
                                     txt={I18n.t("collaborationRequest.approve")}
                                     onClick={this.submit(true)}/>
-                            <Button className="delete" txt={I18n.t("collaborationRequest.deny")}
+                            <Button warningButton={true} txt={I18n.t("collaborationRequest.deny")}
                                     onClick={this.submit(false)}/>
                             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                             <Button cancelButton={true} txt={I18n.t("forms.reset")} onClick={this.reset}/>

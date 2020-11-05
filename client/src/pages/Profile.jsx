@@ -1,5 +1,5 @@
 import React from "react";
-import {auditLogsMe, deleteUser, updateUser} from "../api";
+import {deleteUser, health, updateUser} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./Profile.scss";
@@ -13,10 +13,10 @@ import {
     validPublicSSHKeyRegExp
 } from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
-import History from "../components/History";
 import Tabs from "../components/Tabs";
-import BackLink from "../components/BackLink";
-import {userRole} from "../utils/UserRole";
+import {AppStore} from "../stores/AppStore";
+import {ReactComponent as HomeIcon} from "../icons/home.svg";
+import UnitHeader from "../components/redesign/UnitHeader";
 
 class Profile extends React.Component {
 
@@ -38,13 +38,37 @@ class Profile extends React.Component {
             convertSSHKey: true,
             ssh_key: user.ssh_key || "",
             id: user.id,
-            auditLogs: {"audit_logs": []}
+            tabs: [],
+            tab: "me"
         };
     }
 
     componentDidMount = () => {
-        auditLogsMe().then(json => this.setState({auditLogs: json}));
+        health().then(() => {
+            const {user} = this.props;
+            AppStore.update(s => {
+                s.breadcrumb.paths = [
+                    {path: "/", value: I18n.t("breadcrumb.home")},
+                    {path: "", value: user.name}
+                ];
+            });
+            this.setState({tabs: [this.getMeTab(user)]})
+        })
     };
+
+    getMeTab = user => {
+        const {
+            fileName, fileTypeError, fileInputKey,
+            initial, convertSSHKey, ssh_key,
+        } = this.state;
+        const disabledSubmit = !initial && !this.isValid();
+        const showConvertSSHKey = !isEmpty(ssh_key) && validPublicSSH2KeyRegExp.test(ssh_key);
+
+        return (<div key="me" name="me" label={I18n.t("home.tabs.me")}
+                     icon={<HomeIcon/>}>
+            {this.renderForm(user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit)}
+        </div>)
+    }
 
 
     gotoHome = e => {
@@ -172,11 +196,11 @@ class Profile extends React.Component {
                     /></div>)
             }
             <section className="actions">
+                <Button warningButton={true} txt={I18n.t("user.delete")}
+                        onClick={this.delete}/>
                 <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                 <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
                         onClick={this.submit}/>
-                <Button warningButton={true} txt={I18n.t("user.delete")}
-                        onClick={this.delete}/>
             </section>
 
         </div>);
@@ -184,14 +208,10 @@ class Profile extends React.Component {
 
     render() {
         const {
-            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, fileName, fileTypeError, fileInputKey,
-            initial, convertSSHKey, ssh_key, auditLogs, leavePage, confirmationQuestion, isWarning
+            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, leavePage, confirmationQuestion, isWarning, tabs, tab
         } = this.state;
         const {user} = this.props;
 
-        const disabledSubmit = !initial && !this.isValid();
-        const title = I18n.t("user.titleUpdate");
-        const showConvertSSHKey = !isEmpty(ssh_key) && validPublicSSH2KeyRegExp.test(ssh_key);
         return (
             <div className="mod-user-profile">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -200,15 +220,12 @@ class Profile extends React.Component {
                                     confirm={confirmationDialogAction}
                                     isWarning={isWarning}
                                     leavePage={leavePage}/>
-                <BackLink history={this.props.history} limitedAccess={true} role={userRole(user)}/>
-                <p className="title">{title}</p>
-                <Tabs>
-                    <div label="form">
-                        {this.renderForm(user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit)}
-                    </div>
-                    <div label="history">
-                        <History auditLogs={auditLogs}/>
-                    </div>
+                <UnitHeader obj={user} mayEdit={false} history={this.props.history}
+                            auditLogPath={"me/me"}
+                            name={user.name}>
+                </UnitHeader>
+                <Tabs initialActiveTab={tab}>
+                    {tabs}
                 </Tabs>
             </div>);
     };

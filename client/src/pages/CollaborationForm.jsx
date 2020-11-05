@@ -138,7 +138,7 @@ class CollaborationForm extends React.Component {
         collaboration_creation_allowed: org.collaboration_creation_allowed
     }));
 
-    existingCollaborationName = attr => this.state.isNew ? this.state.collaboration[attr] : null;
+    existingCollaborationName = attr => this.state.isNew ? null : this.state.collaboration[attr] ;
 
     validateCollaborationName = e =>
         collaborationNameExists(e.target.value, this.state.organisation.value, this.existingCollaborationName("name"))
@@ -445,7 +445,7 @@ class CollaborationForm extends React.Component {
 
                         <section className="actions">
                             {!isNew &&
-                            <Button className="delete" txt={I18n.t("collaborationDetail.delete")}
+                            <Button warningButton={true} txt={I18n.t("collaborationDetail.delete")}
                                     onClick={this.delete}/>}
                             <Button disabled={disabledSubmit}
                                     txt={isRequestCollaboration ? I18n.t("forms.request") : I18n.t("forms.save")}

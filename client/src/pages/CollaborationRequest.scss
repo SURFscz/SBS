@@ -1,4 +1,5 @@
 @import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
 
 .mod-collaboration-request-container {
     width: 100%;
@@ -29,14 +30,6 @@
 
         div.input-field, div.select-field {
             margin-top: 15px;
-        }
-
-        section.actions {
-            margin: $medium-margin 0;
-
-            a.cancel, a.delete {
-                margin-left: 25px;
-            }
         }
 
     }

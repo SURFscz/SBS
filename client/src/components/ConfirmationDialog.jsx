@@ -35,7 +35,7 @@ export default function ConfirmationDialog({
             <section className="dialog-buttons">
                 <Button txt={leavePage ? I18n.t("confirmationDialog.stay") : I18n.t("confirmationDialog.confirm")}
                         onClick={confirm}
-                        warningButton={isWarning}/>
+                        />
                 <Button cancelButton={true}
                         txt={leavePage ? I18n.t("confirmationDialog.leave") : I18n.t("confirmationDialog.cancel")}
                         onClick={cancel}/>

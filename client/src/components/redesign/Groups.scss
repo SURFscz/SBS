@@ -1,4 +1,6 @@
 @import "../../stylesheets/vars";
+@import "../../stylesheets/forms";
+@import "../../stylesheets/unit_header";
 
 table.groups {
 
@@ -66,7 +68,7 @@ table.groups {
     }
 
     h1 {
-        font-size: 28px;
+        font-size: 26px;
     }
 
     div.group-details {
@@ -74,13 +76,77 @@ table.groups {
 
         .header {
             display: flex;
-            align-items: center;
             width: 100%;
 
-            a.button {
+            div.header-actions {
                 margin-left: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            a.button {
+                margin-bottom: 15px;
+            }
+
+            span.history {
+                cursor: pointer;
+
+                svg {
+                    margin-right: 10px;
+                }
             }
         }
+
+        .description {
+            margin-bottom: 25px;
+        }
+
+        section.copy-to-clipboard {
+            font-size: 16px;
+            color: $dark-grey;
+            cursor: pointer;
+        }
+
+        .org-attributes-container {
+            padding-bottom: 20px;
+            border-bottom: 3px solid $light-grey;
+        }
+
+        .group-detail-actions {
+            margin-bottom: 20px;
+        }
+    }
+
+    table.groupMembers {
+        thead {
+            th {
+                &.name {
+                    width: 50%;
+                }
+
+                &.user__schac_home_organisation {
+                    width: 35%;
+                }
+
+                &.trash {
+                    width: 74px;
+                }
+
+            }
+        }
+
+        tbody {
+            td {
+                &.trash {
+                    text-align: right;
+                    color: $red;
+                    cursor: pointer;
+                }
+
+            }
+        }
+
     }
 
     div.group-form {
@@ -93,22 +159,8 @@ table.groups {
         display: flex;
         flex-direction: column;
 
-        section.actions {
-            margin-top: 30px;
-            padding: $medium-margin 0;
-            border-top: 2px solid $lighter-grey;
-            display: flex;
-            justify-content: flex-end;
-
-            a:not(:first-child) {
-                margin-left: 25px;
-            }
-
-            a.delete {
-                margin-right: auto;
-                margin-left: 0;
-            }
+        div.checkbox {
+           margin-top: 25px;
         }
-
     }
 }

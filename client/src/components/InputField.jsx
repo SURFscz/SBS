@@ -31,13 +31,13 @@ export default function InputField({
                    onChange={onChange}
                    onBlur={onBlur}
                    placeholder={placeholder}
-                   className={`${fileUpload ? "file-upload" : ""} ${!name ? "stand-alone" : ""}`}
+                   className={`${fileUpload ? "file-upload" : ""}`}
                    onKeyDown={e => {
                        if (onEnter && e.keyCode === 13) {//enter
                            onEnter(e);
                        }
                    }}/>}
-            {fileUpload && <section>
+            {fileUpload && <section className="file-upload-container">
                 <label className="file-upload" htmlFor={`fileUpload_${name}`}>
                     {isEmpty(fileName) ? I18n.t("inputField.fileImport") :
                         <span className="remove"><em>{fileName}</em><FontAwesomeIcon onClick={onFileRemoval}

@@ -5,7 +5,12 @@
     color: black;
     padding: 15px 0;
 
+
     .bread-crumb {
+        @media (max-width: $medium) {
+            padding: 0 15px;
+        }
+
         max-width: $medium;
         margin: 0 auto 0 auto;
         position: relative;

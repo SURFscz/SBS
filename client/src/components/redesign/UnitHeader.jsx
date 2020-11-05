@@ -17,14 +17,14 @@ export default function UnitHeader(props) {
                 {obj.svg && <obj.svg/>}
                 {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
                 {obj.name && <h1>{obj.name}</h1>}
-                {mayEdit && <div className="edit">
-                    <Button onClick={onEdit} txt={I18n.t("home.edit")}/>
+                <div className="edit">
+                    {mayEdit && <Button onClick={onEdit} txt={I18n.t("home.edit")}/>}
                     {(history && auditLogPath) &&
                     <span className="history"
                           onClick={() => history.push(`/audit-logs/${auditLogPath}?${queryParam}`)}>
                         <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
                     </span>}
-                </div>}
+                </div>
             </div>
             <div className="children">
                 {props.children}

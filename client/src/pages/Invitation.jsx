@@ -308,7 +308,7 @@ class Invitation extends React.Component {
                     <section className="actions">
                         <Button disabled={disabledSubmit} txt={I18n.t("invitation.resend")}
                                 onClick={this.resend}/>
-                        <Button className="delete" txt={I18n.t("invitation.delete")}
+                        <Button warningButton={true} txt={I18n.t("invitation.delete")}
                                 onClick={this.delete}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>}

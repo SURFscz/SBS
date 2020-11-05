@@ -15,6 +15,16 @@
         h1 {
             font-size: 22px;
         }
+        svg.help {
+            color: $blue;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 0 0 18px 8px;
+
+            &:hover {
+                color: darken($blue, 10%);
+            }
+        }
 
         .search {
             position: relative;
@@ -149,8 +159,10 @@
         display: inline-block;
         border-radius: 12px;
         min-width: 75px;
+        max-height: 28px;
         padding: 4px 15px;
         font-weight: bold;
+        margin-left: 15px;
 
         &.me {
             background-color: $green;

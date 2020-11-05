@@ -7,8 +7,8 @@ import PropTypes from "prop-types";
 import {isEmpty, sortObjects, valueForSort} from "../../utils/Utils";
 import {headerIcon} from "../../forms/helpers";
 import "./Entities.scss";
-import MDSpinner from "react-md-spinner";
 import SpinnerField from "./SpinnerField";
+import Explain from "../Explain";
 
 class Entities extends React.Component {
 
@@ -18,6 +18,7 @@ class Entities extends React.Component {
             query: "",
             sorted: props.defaultSort,
             reverse: false,
+            showExplanation: false
         }
     }
 
@@ -31,11 +32,16 @@ class Entities extends React.Component {
 
     };
 
-    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, filters) => {
+    closeExplanation = () => this.setState({showExplanation: false});
+
+    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, filters, explain) => {
         return (
             <section className="entities-search">
 
                 <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>
+                {explain && <FontAwesomeIcon className="help" icon="question-circle"
+                                             id="impersonate_close_explanation"
+                                             onClick={() => this.setState({showExplanation: true})}/>}
                 {filters}
                 {!isEmpty(searchAttributes) &&
                 <div className="search">
@@ -59,7 +65,7 @@ class Entities extends React.Component {
         query = query.toLowerCase();
         return entities.filter(entity => {
             return searchAttributes.some(attr => {
-                const  val = valueForSort(attr, entity);
+                const val = valueForSort(attr, entity);
                 return val.toLowerCase().indexOf(query) > -1
             });
         });
@@ -108,23 +114,32 @@ class Entities extends React.Component {
                     )}
                     </tbody>
                 </table>}
-                {(!hasEntities && !children) && <p className="no-entities">{I18n.t(`models.${modelName}.noEntities`)}</p>}
+                {(!hasEntities && !children) &&
+                <p className="no-entities">{I18n.t(`models.${modelName}.noEntities`)}</p>}
             </section>
         );
     };
 
     render() {
-        const {modelName, entities, showNew, searchAttributes, columns, children, loading,
-        actions, title, filters} = this.props;
+        const {
+            modelName, entities, showNew, searchAttributes, columns, children, loading,
+            actions, title, filters, explain
+        } = this.props;
         if (loading) {
             return <SpinnerField/>;
         }
-        const {query, sorted, reverse} = this.state;
+        const {query, sorted, reverse, showExplanation} = this.state;
         const filteredEntities = this.filterEntities(entities, query, searchAttributes);
         const sortedEntities = sortObjects(filteredEntities, sorted, reverse);
         return (
             <div className="mod-entities">
-                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters)}
+                {explain && <Explain
+                    close={this.closeExplanation}
+                    subject={I18n.t("explain.services")}
+                    isVisible={showExplanation}>
+                    {explain}
+                </Explain>}
+                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain)}
                 {actions}
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, columns, children)}
                 <div>{this.props.children}</div>
@@ -145,6 +160,7 @@ Entities.propTypes = {
     showNew: PropTypes.bool,
     actions: PropTypes.any,
     filters: PropTypes.any,
+    explain: PropTypes.any
 };
 
 export default Entities;

@@ -1,4 +1,5 @@
 @import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
 
 .mod-service-request {
     max-width: $medium;
@@ -8,7 +9,8 @@
     div.title {
         font-size: 22px;
         color: $dark-grey;
-        padding: 20px 0;
+        padding: 20px;
+    background-color: $background;
 
         p {
             padding: 10px 0 10px 0;
@@ -43,10 +45,7 @@
     }
 
     .service-request {
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-        margin: 0 auto 15px auto;
-        background-color: $lightest-grey;
-        padding: $medium-padding;
+        margin: 15px auto;
     }
 
     table.table-collaborations {
@@ -95,14 +94,6 @@
             .tooltip-container {
                 color: $blue;
             }
-        }
-    }
-
-    section.actions {
-        margin: $medium-margin 0;
-
-        a:not(:first-child) {
-            margin-left: 25px;
         }
     }
 

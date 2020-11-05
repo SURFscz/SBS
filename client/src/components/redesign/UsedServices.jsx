@@ -20,6 +20,8 @@ import {setFlash} from "../../utils/Flash";
 import InputField from "../InputField";
 import SpinnerField from "./SpinnerField";
 import ConfirmationDialog from "../ConfirmationDialog";
+import ServicesExplanation from "../explanations/Services";
+import OrganisationServicesExplanation from "../explanations/OrganisationServices";
 
 class UsedServices extends React.Component {
 
@@ -280,6 +282,7 @@ class UsedServices extends React.Component {
                                     question={confirmationDialogQuestion}/>
                 <Entities entities={usedServices} modelName="servicesUsed" searchAttributes={["name"]}
                           defaultSort="name" columns={columns} loading={loading} title={titleUsed}
+                          explain={forOrganisation ? <OrganisationServicesExplanation/> : <ServicesExplanation/>}
                           {...this.props}/>
                 <Entities entities={services} modelName="servicesAvailable" searchAttributes={["name"]}
                           defaultSort="name" columns={columns} loading={loading} title={titleAvailable}

@@ -1,4 +1,5 @@
 @import "../../stylesheets/vars.scss";
+@import "../../stylesheets/forms";
 
 .mod-service-container {
     table.serviceOrganisations {
@@ -36,20 +37,5 @@
 
     }
 
-    section.actions {
-        margin: 20px 0;
-        padding: $medium-margin 0;
-        border-top: 2px solid $lighter-grey;
-        display: flex;
-        flex-direction: column;
-        a {
-            margin-left: auto;
-            margin-bottom: 10px;
-        }
-        .error {
-            color: $red;
-            margin-left: auto;
-        }
-    }
 
 }
