@@ -1,4 +1,5 @@
 @import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
 
 .mod-impersonate {
     max-width: $medium;
@@ -41,13 +42,6 @@
             font-size: 14px;
         }
 
-        section.actions {
-            margin: $medium-margin 0 0 0;
-
-            a.delete {
-                margin-left: 25px;
-            }
-        }
     }
 
     .user-search {
@@ -95,16 +89,6 @@
                     background-color: $light-grey;
                 }
             }
-        }
-    }
-
-    section.actions {
-        margin-top: 30px;
-        padding: $medium-margin 0;
-        border-top: 2px solid $lighter-grey;
-
-        a:not(:first-child) {
-            margin-left: 25px;
         }
     }
 

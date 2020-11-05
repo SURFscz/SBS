@@ -1,21 +1,13 @@
 @import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
 
 .mod-user-profile {
     max-width: $medium;
     margin: 0 auto;
     width: 100%;
 
-    p.title {
-        font-size: 22px;
-        color: $dark-grey;
-        padding-bottom: 20px;
-    }
-
     div.user-profile {
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         margin-bottom: 25px;
-        background-color: $lightest-grey;
-        padding: $medium-padding;
 
         .error {
             color: $red;
@@ -36,17 +28,6 @@
         div.checkbox {
             margin-top: 10px;
         }
-
-        section.actions {
-            margin: $medium-margin 0;
-
-            a:not(:first-child) {
-                margin-left: 25px;
-            }
-
-
-        }
-
 
     }
 

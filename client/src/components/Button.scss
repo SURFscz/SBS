@@ -45,13 +45,19 @@
     }
 
     &.delete {
-        background-color: $red;
-        color: white;
+        color: $red;
         border: none;
+        background-color: $light-grey;
+        display: flex;
+        padding: 8px 14px;
+        min-width: initial;
 
+        font-size: 22px;
         &:hover {
-            background-color: darken($red, 5%);
-            color: darken(white, 10%);
+            color: darken($red, 10%);
+        }
+        svg {
+            margin: auto;
         }
     }
 

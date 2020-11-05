@@ -31,7 +31,7 @@
         border: 1px solid $dark-grey;
         padding: 6px 12px;
         border-radius: $br;
-        font-size: 14px;
+        font-size: 16px;
         height: 50px;
 
         &[disabled] {
@@ -39,28 +39,10 @@
             cursor: not-allowed;
         }
 
-        &.file-upload {
-            border-bottom-right-radius: 0;
-            border-top-right-radius: 0;
-        }
-
-        &.stand-alone {
-            border-left: 1px solid $lighter-grey;
-            border-bottom-left-radius: $br;
-            border-top-left-radius: $br;
-        }
-
     }
 
     textarea {
         height: 70px;
-    }
-
-    label.file-upload {
-        border-radius: 0 $br $br 0;
-        border-left: none;
-        cursor: pointer;
-        padding-right: 4px;
     }
 
     span.remove {
@@ -76,6 +58,24 @@
             color: $red;
         }
     }
+
+    section.file-upload-container {
+        position: absolute;
+        bottom: 1px;
+        right: 1px;
+        cursor: pointer;
+        background-color: $lighter-grey;
+        text-align: center;
+        border-left: 1px solid black;
+        label.file-upload {
+            z-index: 99;
+            cursor: pointer;
+            margin: 0;
+            padding: 14px;
+            min-width: auto;
+        }
+    }
+
 
     svg.fa-arrow-right {
         position: absolute;

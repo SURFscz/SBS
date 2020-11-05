@@ -30,7 +30,7 @@ class Tabs extends React.Component {
         const singletonTab = filteredChildren.length === 1;
         return (
             <div>
-                {!singletonTab && <div className={`tabs ${className}`}>
+                {<div className={`tabs ${className}`}>
 
                     {filteredChildren.map(child => {
                         const {label, name, icon} = child.props;

@@ -12,7 +12,6 @@ import {ReactComponent as MemberIcon} from "../icons/personal_info.svg";
 import {ReactComponent as GroupsIcon} from "../icons/groups.svg";
 
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
-import Services from "../components/redesign/Services";
 import SpinnerField from "../components/redesign/SpinnerField";
 import UsedServices from "../components/redesign/UsedServices";
 import Groups from "../components/redesign/Groups";
@@ -46,15 +45,18 @@ class CollaborationDetail extends React.Component {
                     const promise = adminOfCollaboration ? collaborationById(collaboration_id) : collaborationLiteById(collaboration_id);
                     const tab = params.tab || this.state.tab;
                     promise.then(collaboration => {
+                        debugger;
                         this.setState({
                             collaboration: collaboration,
                             adminOfCollaboration: adminOfCollaboration,
                             loaded: true,
                             tabs: this.getTabs(collaboration, params),
                             tab: params.tab || this.state.tab,
-                        }, () => this.updateAppStore(collaboration));
-                        this.tabChanged(tab, collaboration.id);
-                        callback && callback();
+                        }, () => {
+                            callback && callback();
+                            this.updateAppStore(collaboration);
+                            this.tabChanged(tab, collaboration.id);
+                        });
                     });
                 }).catch(() => this.props.history.push("/404"));
         } else {
@@ -75,7 +77,7 @@ class CollaborationDetail extends React.Component {
     getCollaborationAdminsTab = collaboration => {
         return (<div key="admins" name="admins" label={I18n.t("home.tabs.coAdmins")}
                      icon={<CoAdminIcon/>}>
-            <CollaborationAdmins {...this.props} collaboration={collaboration}  isAdminView={true}
+            <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={true}
                                  refresh={callback => this.componentDidMount(callback)}/>
         </div>)
     }
@@ -92,7 +94,7 @@ class CollaborationDetail extends React.Component {
         return (<div key="groups" name="groups" label={I18n.t("home.tabs.groups")}
                      icon={<GroupsIcon/>}>
             <Groups {...this.props} collaboration={collaboration}
-                                 refresh={callback => this.componentDidMount(callback)}/>
+                    refresh={callback => this.componentDidMount(callback)}/>
         </div>)
     }
 

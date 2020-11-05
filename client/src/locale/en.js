@@ -74,6 +74,7 @@ I18n.translations.en = {
             members: "Members",
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights",
+            me: "Profile"
         }
     },
     forms: {
@@ -212,12 +213,21 @@ I18n.translations.en = {
             new: "Create new group",
             edit: "Edit",
             name: "Name",
+            urn: "URN",
             description: "Description",
             member: "Member",
             memberCount: "# Members",
             autoProvisioning: "Auto provisioning",
             on: "On",
-            off: "Off"
+            off: "Off",
+            deleteMemberConfirmation: "Are you sure you want to delete {{name}}?"
+        },
+        groupMembers: {
+            title: "Members",
+            searchPlaceHolder: "Search for members",
+            noEntities: "No members",
+            addMembersPlaceholder: "Search and select to add members"
+
         }
     },
     user: {

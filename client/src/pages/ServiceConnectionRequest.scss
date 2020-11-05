@@ -1,4 +1,5 @@
 @import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
 
 .mod-service-connection-request {
     max-width: $medium-sub;
@@ -34,21 +35,5 @@
             margin-top: 15px;
         }
 
-        section.actions {
-            margin-top: 30px;
-            padding: $medium-margin 0;
-            border-top: 2px solid $lighter-grey;
-            display: flex;
-            justify-content: flex-end;
-
-            a:not(:first-child) {
-                margin-left: 25px;
-            }
-
-            a.delete {
-                margin-right: auto;
-                margin-left: 0;
-            }
-        }
     }
 }

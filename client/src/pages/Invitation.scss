@@ -1,4 +1,5 @@
 @import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
 
 .mod-invitation {
     max-width: $medium;
@@ -24,10 +25,6 @@
             font-size: 14px;
         }
 
-        div.input-field, div.date-field, div.select-field {
-            margin-top: 15px;
-        }
-
         .required {
             color: $red;
         }
@@ -43,13 +40,6 @@
             margin-top: 10px;
         }
 
-        section.actions {
-            margin: $medium-margin 0;
-
-            a.cancel, a.white, a.delete {
-                margin-left: 25px;
-            }
-        }
 
     }
 }

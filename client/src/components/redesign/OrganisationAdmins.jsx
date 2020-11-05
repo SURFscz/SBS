@@ -15,6 +15,7 @@ import {stopEvent} from "../../utils/Utils";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
+import UserColumn from "./UserColumn";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
@@ -156,14 +157,7 @@ class OrganisationAdmins extends React.Component {
                 nonSortable: true,
                 key: "name",
                 header: I18n.t("models.users.name_email"),
-                mapper: entity =>
-                    <div className="user-name-email">
-                        <span className="name">{entity.invite ? "-" : entity.user.name}</span>
-                        {entity.invite && <span className="email">
-                            <a href="" onClick={this.gotoInvitation(entity)}>{entity.invitee_email}</a>
-                        </span>}
-                        {!entity.invite && <span className="email">{entity.user.email}</span>}
-                    </div>
+                mapper: entity => <UserColumn entity={entity} currentUser={currentUser} gotoInvitation={this.gotoInvitation}/>
             },
             {
                 key: "user__schac_home_organisation",

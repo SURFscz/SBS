@@ -90,7 +90,7 @@ class OrganisationForm extends React.Component {
         }
     }
 
-    existingOrganisationName = attr => this.state.isNew ? this.state.organisation[attr] : null;
+    existingOrganisationName = attr => this.state.isNew ? null : this.state.organisation[attr];
 
     validateOrganisationName = e =>
         organisationNameExists(e.target.value, this.existingOrganisationName("name")).then(json => {
@@ -340,7 +340,7 @@ class OrganisationForm extends React.Component {
 
                     <section className="actions">
                         {(user.admin && !isNew) &&
-                        <Button className="delete" txt={I18n.t("organisationDetail.delete")}
+                        <Button warningButton={true} txt={I18n.t("organisationDetail.delete")}
                                 onClick={this.delete}/>}
                         <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                         <Button disabled={disabledSubmit} txt={I18n.t("forms.save")} onClick={this.submit}/>

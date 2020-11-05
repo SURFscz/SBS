@@ -1,0 +1,18 @@
+div.org-attributes-container {
+    display: flex;
+
+    div.org-attributes {
+        &:first-child {
+            margin-right: 80px;
+        }
+
+        span {
+            display: block;
+
+            &:first-child {
+                font-weight: bold;
+            }
+        }
+    }
+}
+

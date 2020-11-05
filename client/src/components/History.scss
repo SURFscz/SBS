@@ -5,30 +5,18 @@
     margin: 0 auto;
     width: 100%;
 
-    &:not(.white) {
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-    }
-
-
     .history {
-        background-color: $lightest-grey;
-        padding: 6px 20px 0 20px;
         display: flex;
         width: 100%;
-
-        &.white {
-            background-color: white;
-        }
 
         ul.logs {
             width: 50%;
             list-style: none;
-            padding: 15px;
 
             li {
                 display: block;
-                padding: 15px 5px;
-                border-bottom: 1px solid $light-grey;
+                padding: 15px;
+                border-bottom: 2px solid $light-grey;
 
                 &.selected {
                     background-color: $light-blue;
@@ -45,7 +33,7 @@
 
         .details {
             width: 50%;
-            padding: 25px 0;
+            padding: 15px;
         }
 
         p.info {
@@ -65,7 +53,7 @@
 
             th {
                 text-align: left;
-                padding: 5px;
+                padding: 10px;
                 border-bottom: 1px solid $lighter-grey;
 
                 &.key {
@@ -90,7 +78,7 @@
 
                 td {
                     word-break: break-all;
-                    padding: 5px;
+                    padding: 10px;
                 }
             }
         }

@@ -1,4 +1,5 @@
 @import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
 
 .mod-organisation-services {
     max-width: $medium;
@@ -57,14 +58,6 @@
             span.warning {
                 display: inline-block;
                 margin-bottom: 25px;
-            }
-
-            section.actions {
-                margin: $medium-margin 0 0 0;
-
-                a.blue {
-                    margin-left: 25px;
-                }
             }
 
         }

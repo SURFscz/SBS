@@ -5,9 +5,11 @@ import {DiffPatcher} from "jsondiffpatch";
 import "jsondiffpatch/dist/formatters-styles/html.css";
 import moment from "moment";
 import {escapeDeep, isEmpty} from "../utils/Utils";
-import {auditLogsInfo} from "../api";
+import {auditLogsInfo, auditLogsMe} from "../api";
 import {AppStore} from "../stores/AppStore";
 import {getParameterByName} from "../utils/QueryParameters";
+import UnitHeader from "./redesign/UnitHeader";
+import {ReactComponent as Logo} from "../images/logo.svg";
 
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at"];
 const epochAttributes = ["agreed_at", "sent_at", "last_accessed_date", "last_login_date", "expiry_date"]
@@ -31,7 +33,8 @@ export default class History extends React.PureComponent {
 
     componentDidMount = () => {
         const {collection, id} = this.props.match.params;
-        auditLogsInfo(id, collection).then(res => {
+        const promise = collection === "me" ? auditLogsMe() : auditLogsInfo(id, collection);
+        promise.then(res => {
             const selected = this.convertReference(res, res.audit_logs[0]);
             this.setState({auditLogs: res, selected: selected});
             const name = getParameterByName("name", window.location.search);
@@ -184,6 +187,7 @@ export default class History extends React.PureComponent {
         const auditLogEntries = this.convertReferences(auditLogs);
         return (
             <div className={`history-container`}>
+                <UnitHeader obj={({name: I18n.t("home.history"), icon: "history"})}/>
                 <div className={`history`}>
                     {this.renderAuditLogs(auditLogEntries, selected)}
                     {this.renderDetail(selected, auditLogs)}

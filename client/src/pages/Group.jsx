@@ -603,7 +603,7 @@ class Group extends React.Component {
                 {(adminOfCollaboration && !isNew) &&
                 <section className="actions">
                     <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                    <Button className="delete" txt={I18n.t("groups.delete")}
+                    <Button warningButton={true} txt={I18n.t("groups.delete")}
                             onClick={this.delete}/>
                     <Button disabled={disabledSubmit} txt={I18n.t("groups.update")}
                             onClick={this.submit}/>
