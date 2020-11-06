@@ -36,11 +36,14 @@ class CollaborationForm extends React.Component {
             logo: "",
             short_name: "",
             description: "",
+            website_url: "",
             administrators: [],
             message: "",
             email: "",
             accepted_user_policy: "",
             services_restricted: false,
+            disclose_email_information: true,
+            disclose_member_information: true,
             disable_join_requests: false,
             required: ["name", "short_name", "organisation"],
             alreadyExists: {},
@@ -187,15 +190,15 @@ class CollaborationForm extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {
-                name, short_name, description, logo,
+                name, short_name, description, logo, website_url,
                 administrators, message, accepted_user_policy, organisation, isRequestCollaboration,
-                services_restricted, disable_join_requests, current_user_admin
+                services_restricted, disable_join_requests, current_user_admin,disclose_member_information, disclose_email_information
             } = this.state;
             const promise = isRequestCollaboration ? requestCollaboration : createCollaboration;
             promise({
-                name, short_name, description, logo,
+                name, short_name, description, logo, website_url,
                 administrators, message, accepted_user_policy, organisation_id: organisation.value,
-                services_restricted, disable_join_requests, current_user_admin
+                services_restricted, disable_join_requests, current_user_admin, disclose_member_information, disclose_email_information
             }).then(res => {
                 this.props.history.goBack();
                 const isCollCreated = res.identifier;
@@ -218,15 +221,15 @@ class CollaborationForm extends React.Component {
     doUpdate = () => {
         if (this.isValid()) {
             const {
-                name, short_name, description, logo, collaboration,
+                name, short_name, description, website_url, logo, collaboration,
                 administrators, message, accepted_user_policy, organisation,
-                services_restricted, disable_join_requests, current_user_admin
+                services_restricted, disable_join_requests, current_user_admin, disclose_member_information, disclose_email_information
             } = this.state;
             updateCollaboration({
-                id: collaboration.id, name, short_name, description, logo,
+                id: collaboration.id, name, short_name, description, website_url, logo,
                 identifier: collaboration.identifier,
                 administrators, message, accepted_user_policy, organisation_id: organisation.value,
-                services_restricted, disable_join_requests, current_user_admin
+                services_restricted, disable_join_requests, current_user_admin, disclose_member_information, disclose_email_information
             })
                 .then(() => {
                     setFlash(I18n.t("collaborationDetail.flash.updated", {name: name}));
@@ -280,9 +283,9 @@ class CollaborationForm extends React.Component {
 
     render() {
         const {
-            name, short_name, description, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
+            name, short_name, description, website_url, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, noOrganisations, isRequestCollaboration,
-            services_restricted, disable_join_requests, current_user_admin, logo, warning, isNew, collaboration
+            services_restricted, disclose_member_information, disclose_email_information, disable_join_requests, current_user_admin, logo, warning, isNew, collaboration
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
@@ -368,6 +371,10 @@ class CollaborationForm extends React.Component {
                                     placeholder={I18n.t("collaboration.descriptionPlaceholder")} multiline={true}
                                     name={I18n.t("collaboration.description")}/>
 
+                        <InputField value={website_url} onChange={e => this.setState({website_url: e.target.value})}
+                                    placeholder={I18n.t("collaboration.websiteUrlPlaceholder")}
+                                    name={I18n.t("collaboration.websiteUrl")}/>
+
                         <InputField value={accepted_user_policy}
                                     onChange={e => this.setState({accepted_user_policy: e.target.value})}
                                     placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
@@ -386,6 +393,19 @@ class CollaborationForm extends React.Component {
                                                               readOnly={!user.admin}
                                                               onChange={() => this.setState({services_restricted: !services_restricted})}/>}
 
+                        {!isRequestCollaboration && <CheckBox name="disclose_member_information"
+                                                              value={disclose_member_information}
+                                                              info={I18n.t("collaboration.discloseMemberInformation")}
+                                                              tooltip={I18n.t("collaboration.discloseMemberInformationTooltip")}
+                                                              readOnly={!user.admin}
+                                                              onChange={() => this.setState({disclose_member_information: !disclose_member_information})}/>}
+
+                        {!isRequestCollaboration && <CheckBox name="disclose_email_information"
+                                                              value={disclose_email_information}
+                                                              info={I18n.t("collaboration.discloseEmailInformation")}
+                                                              tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
+                                                              readOnly={!user.admin}
+                                                              onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
                         <SelectField value={organisation}
                                      options={organisations}
                                      name={I18n.t("collaboration.organisation_name")}

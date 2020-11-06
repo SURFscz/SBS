@@ -74,7 +74,8 @@ I18n.translations.en = {
             members: "Members",
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights",
-            me: "Profile"
+            me: "Profile",
+            about: "About"
         }
     },
     forms: {
@@ -106,6 +107,8 @@ I18n.translations.en = {
             name_email: "Name / email",
             blank: "",
             icon: "",
+            profile: "Hi {{name}}",
+            subProfile: "You are currently logged in with your institution account via eduTeams",
             institute: "Institution",
             role: "Role",
             title: "SRAM platform administrators",
@@ -117,7 +120,7 @@ I18n.translations.en = {
         },
         orgMembers: {
             title: "Org admin & managers",
-            noEntities: "There are no members yet...",
+            noEntities: "There are no administrator or managers yet in this organisation...",
             searchPlaceHolder: "Search members...",
             status: "Status",
             inviteSend: "Invite sent {{date}}",
@@ -132,8 +135,8 @@ I18n.translations.en = {
             searchPlaceHolder: "Search organisations...",
             new: "New Organisation",
             name: "Name",
-            memberCount: "# Members",
-            collaborationCount: "# Collaborations",
+            memberCount: "Members",
+            collaborationCount: "Collaborations",
             category: "Category"
         },
         services: {
@@ -170,7 +173,8 @@ I18n.translations.en = {
             invitationsCount: "Invitations",
             allMembers: "All members ({{count}})",
             group: "Group {{name}} ({{count}})",
-            hideInvites: "Hide invitees"
+            hideInvites: "Hide invitees",
+            noCollaborations: "There are no collaborations yet within your organization. Why don't you create the first one?"
         },
         serviceOrganisations: {
             searchPlaceHolder: "Search for organisations",
@@ -216,7 +220,7 @@ I18n.translations.en = {
             urn: "URN",
             description: "Description",
             member: "Member",
-            memberCount: "# Members",
+            memberCount: "Members",
             autoProvisioning: "Auto provisioning",
             on: "On",
             off: "Off",
@@ -227,7 +231,20 @@ I18n.translations.en = {
             searchPlaceHolder: "Search for members",
             noEntities: "No members",
             addMembersPlaceholder: "Search and select to add members"
-
+        },
+        collaboration: {
+            memberHeader: "{{nbrMember}} members - {{nbrGroups}} groups",
+            noAdminsHeader: "No administrators (yet)",
+            adminsHeader: "Organized by <strong>{{name}}</strong>",
+            multipleAdminsHeader: "Organized by <strong>{{name}}</strong> and <strong>{{nbr}} others</strong>",
+            about: "What we're about",
+            services: "Where we collaborate ({{nbr}} services)",
+            servicesStart: "Click the button to start the service, or read the instructions first",
+            members: "Members ({{nbr}})",
+showMemberDetails: "Show all (details)",
+            admin: "admin",
+            more: "Show {{nbr}} more",
+            less: "Show less",
         }
     },
     user: {
@@ -382,8 +399,14 @@ I18n.translations.en = {
         disableJoinRequestsTooltip: "When checked non-members of this<br/>collaboration can not issue a Join request.",
         servicesRestricted: "Restricted services",
         servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
+        discloseMemberInformation: "Disclose member information",
+        discloseMemberInformationTooltip: "When checked we the names<br/>of members are disclosed to other members",
+        discloseEmailInformation: "Disclose email information",
+        discloseEmailInformationTooltip: "When checked we the emails<br/>of members are disclosed to other members",
         description: "Description",
         descriptionPlaceholder: "The description of the collaboration is visible to anyone",
+        websiteUrl: "Website URL",
+        websiteUrlPlaceholder: "The URL of the website is visible for members",
         currentUserAdmin: "Do you want to an administrator of this collaboration?",
         currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
         message: "Message",

@@ -18,30 +18,33 @@ import {
     faEnvelope,
     faExternalLinkAlt,
     faGavel,
-    faMailBulk,
-    faInfo,
+    faGlobe,
     faHistory,
+    faInfo,
     faInfoCircle,
     faLightbulb,
     faLink,
+    faLock,
+    faLockOpen,
+    faMailBulk,
     faPlus,
     faQuestion,
     faQuestionCircle,
     faSearch,
     faTimes,
     faTrash,
+    faUserFriends,
     faUserLock,
+    faUsers,
     faUserSecret,
-    faWindowClose,
-    faLock,
-    faLockOpen
+    faWindowClose
 } from '@fortawesome/free-solid-svg-icons'
 
 export function addIcons() {
     library.add(faLightbulb, faCalendarAlt, faArrowLeft, faCopy, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faInfo,
-        faCircle, faCheck, faDoorClosed, faAngleDown,faAngleUp, faHistory,faMailBulk,
+        faCircle, faCheck, faDoorClosed, faAngleDown, faAngleUp, faHistory, faMailBulk,
         faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
         faQuestion, faQuestionCircle, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret, faUserLock,
-        faLock, faLockOpen
+        faLock, faLockOpen, faGlobe, faUserFriends, faUsers,
     );
 }

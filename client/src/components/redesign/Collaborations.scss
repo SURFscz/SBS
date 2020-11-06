@@ -1,3 +1,26 @@
+@import "../../stylesheets/vars";
+
+.no-collaborations {
+    display: flex;
+    flex-direction: column;
+    margin: 80px auto;
+    max-width: 800px;
+    align-items: center;
+    h2 {
+        color: $dark-grey;
+        font-size: 18px;
+        margin: 25px 0;
+        text-align: center;
+        line-height: 26px;
+    }
+    svg#swinging {
+        max-height: 300px;
+    }
+    a.button {
+        min-width: 325px;
+    }
+}
+
 table.collaborations, table.serviceCollaborations {
 
     thead {

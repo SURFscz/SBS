@@ -76,14 +76,7 @@ class OrganisationInvitation extends React.Component {
                 this.props.history.goBack();
                 return;
             }
-            const member = (this.props.user.organisation_memberships || []).find(membership => membership.organisation_id === organisationInvitation.organisation.id);
-            if (member) {
-                this.props.history.push(`/organisations/${organisationInvitation.organisation.id}`);
-            } else if (this.props.user.organisation_memberships.length) {
-                this.props.history.push(`/organisations`);
-            } else {
-                this.props.history.push(`/home`);
-            }
+            this.props.history.push(`/home`);
         });
 
     cancel = () => {
@@ -209,10 +202,10 @@ class OrganisationInvitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={confirmationQuestion}/>
-                {isAdminLink && <UnitHeader obj={organisationInvitation.organisation}
+                <UnitHeader obj={organisationInvitation.organisation}
                                             name={organisationInvitation.organisation.name}>
                     {I18n.t("organisationInvitation.title", {organisation: organisationInvitation.organisation.name})}
-                </UnitHeader>}
+                </UnitHeader>
                 <div className="organisation-invitation">
                     {isExpired &&
                     <p className="error">{expiredMessage}</p>}

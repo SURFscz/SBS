@@ -8,6 +8,7 @@
     .children {
         p {
             margin: 20px 0;
+            white-space: pre-line;
         }
 
     }
@@ -20,6 +21,7 @@
         h1 {
             font-size: 28px;
             margin-left: 20px;
+            font-weight: bold;
             color: $darker-grey;
         }
 

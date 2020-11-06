@@ -74,9 +74,7 @@ class Impersonate extends React.Component {
                 selectedUser: null, query: "", initial: true, collaboration: null,
                 organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false
             });
-            //We need time to have the user switched
-            //TODO why does this not work
-            //setTimeout(() => this.props.history.push("/home"), 1000);
+            setTimeout(() => this.props.history.push("/home"), 1000);
         }
     };
 

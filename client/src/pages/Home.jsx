@@ -13,6 +13,8 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import PlatformAdmins from "../components/redesign/PlatformAdmins";
 import Services from "../components/redesign/Services";
 import SpinnerField from "../components/redesign/SpinnerField";
+import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
+import Collaborations from "../components/redesign/Collaborations";
 
 class Home extends React.Component {
 
@@ -39,6 +41,19 @@ class Home extends React.Component {
                 tabs.push(this.getOrganisationsTab());
                 tabs.push(this.getPlatformAdminsTab());
                 tabs.push(this.getServicesTab());
+                break;
+            case ROLES.ORG_ADMIN:
+            case ROLES.ORG_MANAGER:
+                const nbrOrganisations = user.organisation_memberships.length;
+                const nbrCollaborations = user.organisation_memberships.length;
+                if (nbrOrganisations === 1 && nbrCollaborations === 0) {
+                    this.props.history.push(`/organisations/${user.organisation_memberships[0].organisation_id}`);
+                } else {
+                    tabs.push(this.getOrganisationsTab());
+                    if (nbrCollaborations > 0) {
+                        tabs.push(this.getCollaborationsTab());
+                    }
+                }
                 break;
         }
         AppStore.update(s => {
@@ -70,6 +85,13 @@ class Home extends React.Component {
         </div>)
     }
 
+    getCollaborationsTab = () => {
+        return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.collaborations")}
+                     icon={<CollaborationsIcon/>}>
+            <Collaborations {...this.props} includeOrganisationName={true}/>
+        </div>)
+    }
+
     tabChanged = name => {
         this.props.history.replace(`/home/${name}`);
     }
@@ -82,8 +104,8 @@ class Home extends React.Component {
         const {user} = this.props;
         return (
             <div className="mod-home-container">
-                <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}/>
-                <Tabs initialActiveTab={tab} tabChanged={this.tabChanged}>
+                {user.admin && <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}/>}
+                <Tabs standAlone={!user.admin} initialActiveTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
             </div>);

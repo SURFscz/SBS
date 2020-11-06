@@ -143,6 +143,11 @@ table.groups {
                     color: $red;
                     cursor: pointer;
                 }
+                &.trash_disabled {
+                    text-align: right;
+                    color: $lighter-grey;
+                    cursor: not-allowed;
+                }
 
             }
         }

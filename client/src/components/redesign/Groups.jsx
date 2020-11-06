@@ -39,7 +39,7 @@ class Groups extends React.Component {
             alreadyExists: {},
             initial: true,
             createNewGroup: false,
-            selectedGroup: null,
+            selectedGroupId: null,
             editGroup: false,
             name: "",
             short_name: "",
@@ -73,18 +73,23 @@ class Groups extends React.Component {
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
-    addMember = option => {
-        const {selectedGroup, name} = this.state;
+    getSelectedGroup = () => {
+        const {selectedGroupId} = this.state;
         const {collaboration} = this.props;
-        const groupName = isEmpty(selectedGroup) ? name : selectedGroup.name;
+        return collaboration.groups.find(g => g.id === selectedGroupId);
+    }
+
+    addMember = option => {
+        const {collaboration} = this.props;
+        const selectedGroup = this.getSelectedGroup();
         this.refreshAndFlash(addGroupMembers({
             groupId: selectedGroup.id,
             collaborationId: collaboration.id,
             memberIds: option.value
         }), I18n.t("groups.flash.addedMember", {
             member: option.label,
-            name: groupName
-        }));
+            name: selectedGroup.name
+        }), () => this.componentDidMount());
     };
 
     confirm = (action, question) => {
@@ -96,19 +101,21 @@ class Groups extends React.Component {
     };
 
     cancelSideScreen = () => {
-        this.setState({selectedGroup: null, createNewGroup: false, editGroup: false});
+        this.setState({selectedGroupId: null, createNewGroup: false, editGroup: false});
     }
 
     validateGroupName = e => {
-        const {selectedGroup, createNewGroup} = this.state;
+        const { createNewGroup} = this.state;
         const {collaboration} = this.props;
+        const selectedGroup = this.getSelectedGroup();
         groupNameExists(e.target.value, collaboration.id, createNewGroup ? null : selectedGroup.name).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
     };
 
     validateGroupShortName = e => {
-        const {selectedGroup, createNewGroup} = this.state;
+        const {createNewGroup} = this.state;
+        const selectedGroup = this.getSelectedGroup();
         const {collaboration} = this.props;
         groupShortNameExists(e.target.value, collaboration.id, createNewGroup ? null : selectedGroup.short_name).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
@@ -154,9 +161,11 @@ class Groups extends React.Component {
             },
             {
                 nonSortable: true,
-                key: "trash",
+                key: selectedGroup.auto_provision_members ? "trash_disabled" : "trash",
                 header: "",
-                mapper: membership => <span onClick={() => this.removeMember(selectedGroup, membership)}>
+                mapper: membership => <span onClick={() => {
+                    !selectedGroup.auto_provision_members && this.removeMember(selectedGroup, membership)
+                }}>
                     <FontAwesomeIcon icon="trash"/></span>
             },
         ];
@@ -200,11 +209,7 @@ class Groups extends React.Component {
                     </div>
                     <CopyToClipboard text={selectedGroup.global_urn}>
                         <section className="copy-to-clipboard">
-                            <FontAwesomeIcon icon="copy" onClick={e => {
-                                const me = e.target.parentElement;
-                                me.classList.add("copied");
-                                setTimeout(() => me.classList.remove("copied"), 1250);
-                            }}/>
+                            <FontAwesomeIcon icon="copy" />
                         </section>
                     </CopyToClipboard>
                 </div>
@@ -221,7 +226,7 @@ class Groups extends React.Component {
 
     newGroupState = group => ({
         createNewGroup: group ? false : true,
-        selectedGroup: group,
+        selectedGroupId: group ? group.id : null,
         editGroup: group ? true : false,
         name: group ? group.name : "",
         short_name: group ? group.short_name : "",
@@ -356,7 +361,7 @@ class Groups extends React.Component {
 
 
     delete = () => {
-        const {selectedGroup} = this.state;
+        const selectedGroup = this.getSelectedGroup();
         const action = () => this.refreshAndFlash(deleteGroup(selectedGroup.id),
             I18n.t("groups.flash.deleted", {name: selectedGroup.name}),
             () => this.setState({
@@ -383,30 +388,27 @@ class Groups extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, createNewGroup, selectedGroup} = this.state;
+            const {name, createNewGroup} = this.state;
             const {collaboration} = this.props;
             if (createNewGroup) {
                 this.refreshAndFlash(createGroup({...this.state, collaboration_id: collaboration.id}),
                     I18n.t("groups.flash.created", {name: name}),
                     res => {
-                        const {groups} = this.props.collaboration;
-                        const selectedGroup = groups.find(g => g.id = res.id);
-                        debugger;
                         this.setState({
-                            selectedGroup: selectedGroup,
+                            selectedGroupId: res.id,
                             editGroup: false,
                             createNewGroup: false
                         })
                     });
             } else {
+                const {selectedGroupId} = this.state;
                 this.refreshAndFlash(updateGroup({
                         ...this.state,
-                        id: selectedGroup.id,
-                        collaboration_id: selectedGroup.collaboration_id
+                        id: selectedGroupId,
+                        collaboration_id: collaboration.id
                     }),
                     I18n.t("groups.flash.updated", {name: name}),
                     res => this.setState({
-                        selectedGroup: this.props.collaboration.groups.find(g => g.id = res.id),
                         editGroup: false,
                         createNewGroup: false
                     }));
@@ -416,17 +418,18 @@ class Groups extends React.Component {
 
     gotoGroup = group => e => {
         stopEvent(e);
-        this.setState({selectedGroup: group, createNewGroup: false, editGroup: false});
+        this.setState({selectedGroupId: group.id, createNewGroup: false, editGroup: false});
     }
 
     render() {
         const {
-            loading, createNewGroup, selectedGroup, editGroup
+            loading, createNewGroup, editGroup
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
-        if (createNewGroup || editGroup) {
+        const selectedGroup = this.getSelectedGroup();
+        if (createNewGroup || (editGroup && selectedGroup)) {
             return this.renderGroupForm(createNewGroup, selectedGroup);
         }
         const {collaboration, user: currentUser} = this.props;

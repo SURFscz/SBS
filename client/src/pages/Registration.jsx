@@ -74,8 +74,7 @@ class Registration extends React.Component {
             <p className="form-title">{I18n.t("registration.formTitle", {collaboration: this.state.collaborationName || ""})}</p>
             {this.state.collaborationName &&
             <Button className="start" onClick={() => {
-                const currentUrl = `${this.props.location.pathname}?collaboration=${this.props.collaboration}`;
-                login(null, currentUrl);
+                login(null);
             }} txt={I18n.t("registration.start")}/>
             }
         </div>);
