@@ -40,8 +40,8 @@ export default function InputField({
             {fileUpload && <section className="file-upload-container">
                 <label className="file-upload" htmlFor={`fileUpload_${name}`}>
                     {isEmpty(fileName) ? I18n.t("inputField.fileImport") :
-                        <span className="remove"><em>{fileName}</em><FontAwesomeIcon onClick={onFileRemoval}
-                                                                                     icon="trash"/></span>}
+                        <span className="remove"><em>{fileName}</em>
+                            <FontAwesomeIcon onClick={onFileRemoval} icon="trash"/></span>}
                 </label>
                 <input key={fileInputKey}
                        type="file"

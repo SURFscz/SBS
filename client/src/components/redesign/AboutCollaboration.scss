@@ -1,0 +1,84 @@
+@import "../../stylesheets/vars";
+
+.grid-container {
+
+}
+
+div.collaboration-about-mod {
+    padding: 32px 0;
+
+    div.about {
+        margin-bottom: 40px;
+    }
+
+    h1 {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    p {
+        white-space: pre-line;
+    }
+
+    span.info {
+        color: $dark-grey;
+        font-size: 14px;
+    }
+
+    div.details {
+        display: flex;
+
+        div.members {
+            margin: 0 40px 0 auto;
+        }
+    }
+
+    div.services {
+        width: 50%;
+    }
+
+    ul.services li {
+        margin-top: 15px;
+        display: flex;
+        padding: 10px;
+        border: 1px solid $lighter-grey;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        align-items: center;
+        cursor: pointer;
+
+        img {
+            width: 60px;
+            border-radius: 4px;
+        }
+
+        span {
+            display: inline-block;
+            margin-left: 15px;
+            padding: 10px;
+            border-left: 1px solid $medium-grey;
+        }
+
+        svg {
+            width: 52px;
+            margin: 0 15px 0 auto;
+            fill: $lighter-blue;
+            color: $lighter-blue;
+        }
+    }
+
+    .members {
+        .members-header {
+            display: flex;
+
+            a {
+                margin-left: 25px;
+            }
+        }
+
+        span.role {
+            color: $dark-grey;
+            font-size: 14px;
+        }
+    }
+}

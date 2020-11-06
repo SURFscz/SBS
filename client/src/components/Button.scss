@@ -49,12 +49,14 @@
         border: none;
         background-color: $light-grey;
         display: flex;
-        padding: 8px 14px;
         min-width: initial;
 
         font-size: 22px;
         &:hover {
             color: darken($red, 10%);
+        }
+        &:disabled {
+            color: $lighter-grey;
         }
         svg {
             margin: auto;

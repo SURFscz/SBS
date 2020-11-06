@@ -8,11 +8,24 @@
 
     div.user-profile {
         margin-bottom: 25px;
+        width: 50%;
 
         .error {
             color: $red;
             display: block;
             font-size: 14px;
+        }
+
+        .attributes {
+            display: flex;
+            flex-direction: column;
+
+            span.attribute-key {
+                margin: 12px 0 6px 0;
+                color: black;
+                font-weight: bold;
+            }
+
         }
 
         div.input-field, div.select-field {

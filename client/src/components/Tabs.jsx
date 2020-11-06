@@ -9,6 +9,7 @@ class Tabs extends React.Component {
         children: PropTypes.instanceOf(Array).isRequired,
         className: PropTypes.string,
         initialActiveTab: PropTypes.string,
+        standAlone: PropTypes.bool,
         tabChanged: PropTypes.func
     };
 
@@ -23,14 +24,13 @@ class Tabs extends React.Component {
         () => this.props.tabChanged && this.props.tabChanged(tab));
 
     render() {
-        const {children, className = ""} = this.props;
+        const {children, className = "",standAlone = false} = this.props;
         const {activeTab} = this.state;
 
         const filteredChildren = children.filter(child => child);
-        const singletonTab = filteredChildren.length === 1;
         return (
             <div>
-                {<div className={`tabs ${className}`}>
+                {<div className={`tabs ${className} ${standAlone ? " standalone" : ""}`}>
 
                     {filteredChildren.map(child => {
                         const {label, name, icon} = child.props;

@@ -5,4 +5,56 @@
     max-width: $medium;
     width: 100%;
     margin: 0 auto;
+
+    .unit-header-custom {
+        display: flex;
+        align-items: flex-start;
+
+        svg#collaborations {
+            width: 32px;
+        }
+
+        .unit-custom-right {
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .unit-middle {
+            display: flex;
+            margin-top: 15px;
+
+            img {
+                max-height: 240px;
+                border-radius: 5px;
+            }
+
+            .unit-info {
+                li {
+                    svg {
+                        margin-right: 18px;
+                        font-size: 20px;
+
+                    }
+                    padding: 8px 0 8px 16px;
+                    &:first-child {
+                        padding-top: 0;
+                    }
+
+                }
+            }
+        }
+
+        h1 {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            color: $darker-grey;
+        }
+
+        span.organisation {
+            color: $dark-grey;
+        }
+    }
 }

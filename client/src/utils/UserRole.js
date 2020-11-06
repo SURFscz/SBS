@@ -22,24 +22,38 @@ const ROLES_HIERARCHY = {
     [ROLES.USER]: 6
 }
 
-export function isUserAllowed(minimalRole, user, organisation_id, collaboration_id) {
+export function isUserAllowed(minimalRole, user, organisation_id = null, collaboration_id = null) {
     if (user.admin) {
         return true;
     }
-    const organisationMembership = user.organisation_memberships.find(m => m.organisation_id === organisation_id);
-    if (organisationMembership && organisationMembership.role === "admin") {
+    const adminOrganisationMembership = organisation_id ?
+        user.organisation_memberships.find(m => m.organisation_id === organisation_id && m.role === "admin") :
+        user.organisation_memberships.find(m => m.role === "admin");
+    if (adminOrganisationMembership) {
         return ROLES_HIERARCHY[ROLES.ORG_ADMIN] <= ROLES_HIERARCHY[minimalRole];
     }
-    if (organisationMembership && organisationMembership.role === "manager") {
+
+    const managerOrganisationMembership = organisation_id ?
+        user.organisation_memberships.find(m => m.organisation_id === organisation_id && m.role === "manager") :
+        user.organisation_memberships.find(m => m.role === "manager");
+    if (managerOrganisationMembership) {
         return ROLES_HIERARCHY[ROLES.ORG_MANAGER] <= ROLES_HIERARCHY[minimalRole];
     }
-    const collaborationMembership = user.collaboration_memberships.find(m => m.collaboration_id === collaboration_id);
-    if (collaborationMembership && collaborationMembership.role === "admin") {
+
+    const adminCollaborationMembership = collaboration_id ?
+        user.collaboration_memberships.find(m => m.collaboration_id === collaboration_id && m.role === "admin") :
+        user.collaboration_memberships.find(m => m.collaboration_id === collaboration_id);
+    if (adminCollaborationMembership) {
         return ROLES_HIERARCHY[ROLES.COLL_ADMIN] <= ROLES_HIERARCHY[minimalRole];
     }
-    if (collaborationMembership && collaborationMembership.role === "member") {
+
+    const memberCollaborationMembership = collaboration_id ?
+        user.collaboration_memberships.find(m => m.collaboration_id === collaboration_id && m.role === "member") :
+        user.collaboration_memberships.find(m => m.collaboration_id === collaboration_id);
+    if (memberCollaborationMembership) {
         return ROLES_HIERARCHY[ROLES.COLL_MEMBER] <= ROLES_HIERARCHY[minimalRole];
     }
+
     return false;
 }
 

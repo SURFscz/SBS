@@ -23,6 +23,14 @@ from server.mail import mail_collaboration_invitation
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 
+def _del_non_disclosure_info(collaboration, json_collaboration):
+    for cm in json_collaboration["collaboration_memberships"]:
+        if not collaboration.disclose_member_information:
+            del cm["user"]["name"]
+        if not collaboration.disclose_email_information:
+            del cm["user"]["email"]
+
+
 @collaboration_api.route("/find_by_identifier", strict_slashes=False)
 @json_endpoint
 def collaboration_by_identifier():
@@ -196,24 +204,18 @@ def collaboration_lite_by_id(collaboration_id):
     confirm_collaboration_member(collaboration_id)
 
     collaboration = Collaboration.query \
-        .join(Collaboration.organisation) \
-        .options(contains_eager(Collaboration.organisation)) \
-        .filter(Collaboration.id == collaboration_id) \
-        .one()
+        .options(selectinload(Collaboration.organisation).selectinload(Organisation.services)) \
+        .options(selectinload(Collaboration.collaboration_memberships).selectinload(CollaborationMembership.user)) \
+        .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)
+                 .selectinload(CollaborationMembership.user)) \
+        .options(selectinload(Collaboration.services)) \
+        .filter(Collaboration.id == collaboration_id).one()
 
-    if collaboration.disclose_member_information or collaboration.disclose_email_information:
-        def disclose_member_info(member):
-            member_json = {
-                "role": member.role,
-                "name": member.user.name
-            }
-            if collaboration.disclose_email_information:
-                member_json["email"] = member.user.email
-            return member_json
-
+    if not collaboration.disclose_member_information or not collaboration.disclose_email_information:
         json_collaboration = jsonify(collaboration).json
-        json_collaboration["collaboration_memberships"] = list(
-            map(disclose_member_info, collaboration.collaboration_memberships))
+        _del_non_disclosure_info(collaboration, json_collaboration)
+        for gr in json_collaboration["groups"]:
+            _del_non_disclosure_info(collaboration, gr)
         return json_collaboration, 200
 
     return collaboration, 200
@@ -240,6 +242,7 @@ def collaboration_by_id(collaboration_id):
         .options(selectinload(Collaboration.collaboration_memberships).selectinload(CollaborationMembership.user)) \
         .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
+        .options(selectinload(Collaboration.groups).selectinload(Group.invitations)) \
         .options(selectinload(Collaboration.invitations)) \
         .options(selectinload(Collaboration.join_requests).selectinload(JoinRequest.user)) \
         .options(selectinload(Collaboration.services)) \

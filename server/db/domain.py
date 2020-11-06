@@ -242,6 +242,7 @@ class Collaboration(Base, db.Model):
     services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
     disclose_member_information = db.Column("disclose_member_information", db.Boolean(), nullable=True, default=False)
     disclose_email_information = db.Column("disclose_email_information", db.Boolean(), nullable=True, default=False)
+    website_url = db.Column("website_url", db.String(length=512), nullable=True)
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0

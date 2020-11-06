@@ -6,4 +6,8 @@
     display: flex;
     padding: 0 calc((#{$medium} - #{$medium-sub}) / 2);
     background-color: $background;
+
+    &.standalone {
+        padding-top: 20px
+    }
 }
