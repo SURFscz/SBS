@@ -31,6 +31,9 @@
         h2, svg {
             color: $dark-grey;
         }
+        svg {
+            fill: $dark-grey;
+        }
     }
 
     &.active {

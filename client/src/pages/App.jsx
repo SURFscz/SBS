@@ -2,7 +2,7 @@ import React from "react";
 import "./App.scss";
 import I18n from "i18n-js";
 import Header from "../components/Header";
-import {BrowserRouter as Router, Redirect, Route, Switch, withRouter} from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
 import {config, me, other, refreshUser, reportError} from "../api";
@@ -49,9 +49,9 @@ import System from "./System";
 import OrganisationServices from "./OrganisationServices";
 import {BreadCrumb} from "../components/BreadCrumb";
 import Impersonating from "../components/Impersonating";
-import Button from "../components/Button";
 import History from "../components/History";
 import ServiceDetail from "./ServiceDetail";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 addIcons();
 
@@ -64,6 +64,7 @@ class App extends React.Component {
             currentUser: {},
             config: {},
             impersonator: null,
+            reloading: false,
             error: false,
             errorDialogOpen: false,
             errorDialogAction: () => this.setState({errorDialogOpen: false})
@@ -162,6 +163,11 @@ class App extends React.Component {
         }
     };
 
+    userReloading = () => {
+        this.setState({reloading: true},
+            () => setTimeout(() => this.setState({reloading: false}), 1250));
+    }
+
     refreshUserMemberships = callback => {
         refreshUser().then(json => {
             const {impersonator} = this.state;
@@ -171,7 +177,7 @@ class App extends React.Component {
 
     render() {
         const {
-            loading, errorDialogAction, errorDialogOpen, currentUser, impersonator, config
+            loading, errorDialogAction, errorDialogOpen, currentUser, impersonator, config, reloading
         } = this.state;
         if (loading) {
             return null; // render null when app is not ready yet
@@ -182,11 +188,15 @@ class App extends React.Component {
                     {currentUser && <div>
                         <Flash/>
                         <Header currentUser={currentUser} config={config}/>
-                        {impersonator && <Impersonating impersonator={impersonator} currentUser={currentUser}/>}
+                        {impersonator &&
+                        <Impersonating impersonator={impersonator} currentUser={currentUser}
+                                       userReloading={this.userReloading}/>}
                         <BreadCrumb/>
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>
                     </div>}
+                    {reloading && <SpinnerField/>}
+                    {!reloading &&
                     <div className="page-container">
                         <Switch>
                             <Route exact path="/" render={() => {
@@ -358,7 +368,7 @@ class App extends React.Component {
                                                                     refreshUser={this.refreshUserMemberships}
                                                                     {...props}/>}/>
 
-                             <Route path="/new-collaboration"
+                            <Route path="/new-collaboration"
                                    render={props => <ProtectedRoute currentUser={currentUser}
                                                                     Component={CollaborationForm}
                                                                     refreshUser={this.refreshUserMemberships}
@@ -403,7 +413,7 @@ class App extends React.Component {
 
                             <Route render={props => <NotFound currentUser={currentUser} {...props}/>}/>
                         </Switch>
-                    </div>
+                    </div>}
                     <Footer/>
                 </div>
             </Router>

@@ -10,12 +10,14 @@ import {setFlash} from "../utils/Flash";
 import "./Impersonating.scss";
 import {ReactComponent as HandIcon} from "../icons/toys-hand-ghost.svg";
 
-export default function Impersonating({impersonator, currentUser}) {
+export default function Impersonating({impersonator, currentUser, userReloading}) {
 
     const clearImpersonation = history => {
         emitter.emit("impersonation", null);
         setFlash(I18n.t("impersonate.flash.clearedImpersonation"));
-        setTimeout(() => history.push("/"), 1000);
+        //TODO move to App
+        userReloading && userReloading();
+        setTimeout(() => history.push("/"), 1250);
     }
 
     return <div className="impersonator ">

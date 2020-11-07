@@ -10,6 +10,7 @@ import Entities from "./Entities";
 import InputField from "../InputField";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
+import ApiKeysExplanation from "../explanations/ApiKeys";
 
 class ApiKeys extends React.Component {
 
@@ -146,6 +147,7 @@ class ApiKeys extends React.Component {
                 <Entities entities={organisation.api_keys} modelName="apiKeys" searchAttributes={["description"]}
                           defaultSort="description" columns={columns} loading={false}
                           showNew={true} newEntityFunc={this.fetchNewApiValue}
+                          explain={<ApiKeysExplanation/>}
                           {...this.props}/>
             </div>
         )
