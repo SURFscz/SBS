@@ -7,6 +7,11 @@
     padding: 0 calc((#{$medium} - #{$medium-sub}) / 2);
     background-color: $background;
 
+    @media (max-width: $tablet-max) {
+        padding: 0
+    }
+
+
     &.standalone {
         padding-top: 20px
     }

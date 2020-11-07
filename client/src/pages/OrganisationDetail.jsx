@@ -6,6 +6,7 @@ import {isEmpty} from "../utils/Utils";
 import Tabs from "../components/Tabs";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
+import {ReactComponent as ApiKeysIcon} from "../icons/security.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
@@ -13,6 +14,7 @@ import {AppStore} from "../stores/AppStore";
 import Collaborations from "../components/redesign/Collaborations";
 import SpinnerField from "../components/redesign/SpinnerField";
 import UsedServices from "../components/redesign/UsedServices";
+import ApiKeys from "../components/redesign/ApiKeys";
 
 class OrganisationDetail extends React.Component {
 
@@ -52,6 +54,7 @@ class OrganisationDetail extends React.Component {
                         this.getCollaborationsTab(json),
                         this.getOrganisationAdminsTab(json),
                         this.getServicesTab(json),
+                        this.getAPIKeysTab(json)
                     ];
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
@@ -87,6 +90,13 @@ class OrganisationDetail extends React.Component {
     getServicesTab = organisation => {
         return (<div key="services" name="services" label={I18n.t("home.tabs.orgServices")} icon={<ServicesIcon/>}>
             <UsedServices {...this.props} organisation={organisation}
+                          refresh={callback => this.componentDidMount(callback)}/>
+        </div>);
+    }
+
+    getAPIKeysTab = organisation => {
+        return (<div key="apikeys" name="apikeys" label={I18n.t("home.tabs.apikeys")} icon={<ApiKeysIcon/>}>
+            <ApiKeys {...this.props} organisation={organisation}
                           refresh={callback => this.componentDidMount(callback)}/>
         </div>);
     }

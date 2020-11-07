@@ -1,9 +1,5 @@
 @import "../../stylesheets/vars";
 
-.grid-container {
-
-}
-
 div.collaboration-about-mod {
     padding: 32px 0;
 
@@ -28,14 +24,30 @@ div.collaboration-about-mod {
     div.details {
         display: flex;
 
-        div.members {
-            margin: 0 40px 0 auto;
-        }
+
+    }
+
+    div.members {
+        margin: 0 auto 0 auto;
     }
 
     div.services {
         width: 50%;
     }
+
+    @media (max-width: $tablet-max) {
+        div.details {
+            flex-direction: column;
+        }
+        div.services {
+            width: 100%;
+        }
+
+        div.members {
+            margin: 0;
+        }
+    }
+
 
     ul.services li {
         margin-top: 15px;

@@ -1,0 +1,88 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/forms";
+
+table.apiKeys {
+
+    thead {
+        th {
+            &.secret {
+                width: 40%;
+            }
+
+            &.description {
+                width: 40%;
+            }
+
+            &.trash {
+                width: 40px;
+            }
+
+        }
+    }
+
+    tbody {
+        td {
+            &.trash {
+                text-align: right;
+                color: $red;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.api-key-container {
+    display: flex;
+    margin: 40px 0 25px 0;
+
+    a.back-to-api-keys {
+        display: flex;
+        align-items: flex-start;
+        white-space: nowrap;
+        color: $dark-grey;
+        text-decoration: underline;
+        margin-right: 60px;
+
+        svg {
+            margin-right: 5px;
+            fill: $dark-grey;
+            height: 22px;
+        }
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    div.new-api-key {
+        width: 100%;
+
+        .header {
+            display: flex;
+            width: 100%;
+
+            div.header-actions {
+                margin-left: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            a.button {
+                margin-bottom: 15px;
+            }
+        }
+
+        .description {
+            margin-bottom: 25px;
+        }
+
+        section.copy-to-clipboard {
+            font-size: 16px;
+            color: $dark-grey;
+            cursor: pointer;
+        }
+
+    }
+
+}
