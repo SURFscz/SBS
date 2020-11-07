@@ -25,7 +25,11 @@
     .impersonate {
         margin-bottom: 25px;
         padding: 10px 0 30px 0;
+        width: 80%;
 
+        @media (max-width: $tablet-max) {
+            width: 100%;
+        }
 
         .error {
             color: $red;

@@ -76,7 +76,8 @@ I18n.translations.en = {
             serviceCollaborations: "Collaborations insights",
             me: "Profile",
             about: "About",
-            apikeys: "API Keys"
+            apikeys: "API Keys",
+            welcome: "Welcome"
         }
     },
     forms: {

@@ -5,6 +5,7 @@ import {ReactComponent as Logo} from "../images/logo.svg";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
+import {ReactComponent as WelcomeIcon} from "../icons/home.svg";
 import {AppStore} from "../stores/AppStore";
 import {rawGlobalUserRole, ROLES} from "../utils/UserRole";
 import Tabs from "../components/Tabs";
@@ -30,11 +31,13 @@ class Home extends React.Component {
 
     componentDidMount = () => {
         const params = this.props.match.params;
-        const tab = params.tab || this.state.tab;
+        let tab = params.tab || this.state.tab;
         const {user} = this.props;
         const tabs = [];
-        const promises = [];
         const role = rawGlobalUserRole(user);
+        const nbrOrganisations = user.organisation_memberships.length;
+        const nbrCollaborations = user.collaboration_memberships.length;
+
         //TODO where do we go with history.props - inspect user
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
@@ -44,8 +47,6 @@ class Home extends React.Component {
                 break;
             case ROLES.ORG_ADMIN:
             case ROLES.ORG_MANAGER:
-                const nbrOrganisations = user.organisation_memberships.length;
-                const nbrCollaborations = user.organisation_memberships.length;
                 if (nbrOrganisations === 1 && nbrCollaborations === 0) {
                     this.props.history.push(`/organisations/${user.organisation_memberships[0].organisation_id}`);
                 } else {
@@ -55,16 +56,27 @@ class Home extends React.Component {
                     }
                 }
                 break;
+            case ROLES.COLL_ADMIN:
+            case ROLES.COLL_MEMBER:
+                if (nbrOrganisations === 0 && nbrCollaborations === 1) {
+                    this.props.history.push(`/collaborations/${user.collaboration_memberships[0].collaboration_id}`);
+                } else {
+                    tabs.push(this.getCollaborationsTab());
+                    tab = "collaborations";
+                    if (nbrOrganisations > 0) {
+                        tabs.push(this.getOrganisationsTab());
+                    }
+                }
+                break;
+            default:
+                tab = "welcome";
+                tabs.push(this.getWelcomeTab());
         }
         AppStore.update(s => {
             s.breadcrumb.paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
         });
         this.tabChanged(tab);
-        this.setState({role: ROLES.PLATFORM_ADMIN, loaded: true, tabs, tab});
-        //
-        // Promise.all([promises]).then(res => {
-        //     // tabs.push(this.getPlatformAdminsTab());
-        // });
+        this.setState({role: role, loaded: true, tabs, tab});
     };
 
     getOrganisationsTab = () =>
@@ -85,6 +97,12 @@ class Home extends React.Component {
         </div>)
     }
 
+    getWelcomeTab = () => {
+        return (<div key="welcome" name="welcome" label={I18n.t("home.tabs.welcome")}
+                     icon={<WelcomeIcon/>}>
+            <span>TODO</span>
+        </div>)
+    }
     getCollaborationsTab = () => {
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.collaborations")}
                      icon={<CollaborationsIcon/>}>

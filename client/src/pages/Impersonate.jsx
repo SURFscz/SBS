@@ -1,7 +1,6 @@
 import React from "react";
 import "./Impersonate.scss";
-import {setFlash} from "../utils/Flash";
-import {health, searchCollaborations, searchOrganisations, searchUsers} from "../api";
+import {searchCollaborations, searchOrganisations, searchUsers} from "../api";
 import I18n from "i18n-js";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import debounce from "lodash.debounce";
@@ -15,10 +14,9 @@ import Explain from "../components/Explain";
 import ImpersonateExplanation from "../components/explanations/Impersonate";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UnitHeader from "../components/redesign/UnitHeader";
-import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {AppStore} from "../stores/AppStore";
 import {ReactComponent as HandIcon} from "../icons/toys-hand-ghost.svg";
-import spinner from "../utils/Spin";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class Impersonate extends React.Component {
 
@@ -38,7 +36,8 @@ class Impersonate extends React.Component {
             moreToShow: false,
             selectedUser: null,
             initial: true,
-            showExplanation: false
+            showExplanation: false,
+            reloading: false
         };
     }
 
@@ -54,7 +53,7 @@ class Impersonate extends React.Component {
                     organisation_id: coll.organisation_id
                 }))
             });
-                        AppStore.update(s => {
+            AppStore.update(s => {
                 s.breadcrumb.paths = [
                     {path: "/", value: I18n.t("breadcrumb.home")},
                     {path: "/", value: I18n.t("breadcrumb.impersonate")}
@@ -72,9 +71,10 @@ class Impersonate extends React.Component {
             emitter.emit("impersonation", selectedUser);
             this.setState({
                 selectedUser: null, query: "", initial: true, collaboration: null,
-                organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false
+                organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false,
+                reloading: true
             });
-            setTimeout(() => this.props.history.push("/home"), 1000);
+            setTimeout(() => this.props.history.push("/home"), 1250);
         }
     };
 
@@ -167,7 +167,7 @@ class Impersonate extends React.Component {
         const {
             organisations, collaborations, suggestions, organisation, collaboration, query,
             loadingAutoComplete, selected, moreToShow, selectedUser, initial,
-            limitToCollaborationAdmins, limitToOrganisationAdmins, showExplanation
+            limitToCollaborationAdmins, limitToOrganisationAdmins, showExplanation, reloading
         } = this.state;
         const filteredCollaborations = organisation ? collaborations.filter(coll => coll.organisation_id === organisation.value) : collaborations;
         const filteredOrganisations = collaboration ? organisations.filter(org => org.value === collaboration.organisation_id) : organisations;
@@ -184,7 +184,8 @@ class Impersonate extends React.Component {
                 <FontAwesomeIcon className="help" icon="question-circle"
                                  id="impersonate_close_explanation"
                                  onClick={() => this.setState({showExplanation: true})}/>
-
+                {reloading && <SpinnerField/>}
+                {!reloading &&
                 <div className="impersonate">
                     <SelectField value={organisation}
                                  options={filteredOrganisations}
@@ -248,7 +249,7 @@ class Impersonate extends React.Component {
                                 onClick={this.clearImpersonation}/>
                     </section>
 
-                </div>
+                </div>}
             </div>);
     };
 }
