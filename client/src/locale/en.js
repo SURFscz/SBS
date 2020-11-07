@@ -75,7 +75,8 @@ I18n.translations.en = {
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights",
             me: "Profile",
-            about: "About"
+            about: "About",
+            apikeys: "API Keys"
         }
     },
     forms: {
@@ -241,10 +242,17 @@ I18n.translations.en = {
             services: "Where we collaborate ({{nbr}} services)",
             servicesStart: "Click the button to start the service, or read the instructions first",
             members: "Members ({{nbr}})",
-showMemberDetails: "Show all (details)",
+            showMemberDetails: "Show all (details)",
             admin: "admin",
             more: "Show {{nbr}} more",
             less: "Show less",
+        },
+        apiKeys: {
+            title: "API Keys",
+            new: "New API Key",
+            searchPlaceHolder: "Search for API keys",
+            noEntities: "No API keys",
+            backToApiKeys: "Back to all API keys"
         }
     },
     user: {

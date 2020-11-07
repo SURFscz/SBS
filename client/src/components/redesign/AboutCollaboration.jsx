@@ -17,6 +17,7 @@ class AboutCollaboration extends React.Component {
     }
 
     openService = service => () => {
+        debugger;
         service.uri && window.open(service.uri);
     }
 

@@ -4,6 +4,7 @@ section.actions {
     border-top: 2px solid $lighter-grey;
     display: flex;
     justify-content: flex-end;
+    position: relative;
 
     a:not(:first-child) {
         margin-left: 25px;
@@ -13,6 +14,13 @@ section.actions {
         margin-right: auto;
         margin-left: 0;
     }
+
+    span.error {
+        position: absolute;
+        top: 72px
+    }
+
+
 }
 
 div.input-field, div.date-field, div.select-field {

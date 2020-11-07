@@ -120,7 +120,7 @@ class TestService(AbstractTest):
     def test_services_all(self):
         self.login("urn:sarah")
         services = self.get("/api/services/all",
-                                 with_basic_auth=False)
+                            with_basic_auth=False)
         self.assertEqual(8, len(services))
 
         service_mail = self.find_by_name(services, service_mail_name)

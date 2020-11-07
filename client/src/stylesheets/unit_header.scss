@@ -2,7 +2,7 @@ div.org-attributes-container {
     display: flex;
 
     div.org-attributes {
-        &:first-child {
+        &:not(last-child) {
             margin-right: 80px;
         }
 

@@ -23,6 +23,9 @@
         .unit-middle {
             display: flex;
             margin-top: 15px;
+            @media (max-width: $tablet-max) {
+                flex-direction: column;
+            }
 
             img {
                 max-height: 240px;
@@ -30,13 +33,19 @@
             }
 
             .unit-info {
+                @media (max-width: $tablet-max) {
+                    margin-top: 25px;
+                }
+
                 li {
                     svg {
                         margin-right: 18px;
                         font-size: 20px;
 
                     }
+
                     padding: 8px 0 8px 16px;
+
                     &:first-child {
                         padding-top: 0;
                     }

@@ -168,7 +168,9 @@ class CollaborationDetail extends React.Component {
                                     <li><FontAwesomeIcon icon="user-friends"/><span
                                         dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/></li>
                                     {collaboration.website_url &&
-                                    <li><FontAwesomeIcon icon="globe"/><span><a href="collaboration.website_url">{collaboration.website_url}</a></span></li>}
+                                    <li><FontAwesomeIcon icon="globe"/><span>
+                                        <a href={collaboration.website_url} target="_blank">{collaboration.website_url}</a>
+                                    </span></li>}
                                 </ul>
                             </section>
                         </div>
