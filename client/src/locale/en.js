@@ -778,7 +778,7 @@ I18n.translations.en = {
         title: "Create API key for {{organisation}}",
         info: "With API keys the Application Programmer Interface (API) of the Research Access Management can be used. For more details see <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://github.com/SURFscz/SBS/wiki/External-API\"'>the wiki</a>.",
         backToOrganisationDetail: "Back to my organisation {{name}}",
-        secretDisclaimer: "Copy the secret and store it somewhere safe. You can view this code only once. After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new key",
+        secretDisclaimer: "Copy the secret and store it somewhere safe. You can view this code only once.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new key",
         secret: "Secret",
         secretValue: "One-way hashed Secret",
         secretTooltip: "The secret to use in the Authorization header",

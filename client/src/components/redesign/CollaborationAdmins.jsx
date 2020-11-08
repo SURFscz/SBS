@@ -243,7 +243,7 @@ class CollaborationAdmins extends React.Component {
                 mapper: entity => entity.invite ? null :
                     <div className="impersonate" onClick={() => {
                         emitter.emit("impersonation", entity.user);
-                        setTimeout(() => this.props.history.push("/home"), 1000);
+                        setTimeout(() => this.props.history.push("/home"), 1250);
                     }}>
                         <HandIcon/>
                     </div>
