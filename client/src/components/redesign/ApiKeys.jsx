@@ -36,7 +36,6 @@ class ApiKeys extends React.Component {
             }));
     };
 
-
     refreshAndFlash = (promise, flashMsg, callback) => {
         promise.then(res => {
             this.props.refresh(() => {
@@ -79,7 +78,7 @@ class ApiKeys extends React.Component {
                     <ChevronLeft/>{I18n.t("models.apiKeys.backToApiKeys")}
                 </a>
                 <div className="new-api-key">
-                    <p>{I18n.t("apiKeys.secretDisclaimer")}</p>
+                    <p dangerouslySetInnerHTML={{__html: I18n.t("apiKeys.secretDisclaimer")}}/>
                     <InputField value={hashedSecret}
                                 placeholder={I18n.t("organisation.messagePlaceholder")}
                                 name={I18n.t("apiKeys.secret")}
