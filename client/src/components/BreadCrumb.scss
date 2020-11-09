@@ -31,6 +31,36 @@
         span.last {
             color: black;
         }
+
+        .eye-view {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-left: auto;
+
+            svg {
+                width: 32px;
+                margin-right: 10px;
+            }
+
+            &.member {
+                color: $blue;
+
+                svg {
+                    fill: $blue;
+                }
+
+            }
+
+            &.admin {
+                color: $green;
+
+                svg {
+                    fill: $green;
+                }
+
+            }
+        }
     }
 
 }

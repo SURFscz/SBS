@@ -97,7 +97,7 @@ class OrganisationDetail extends React.Component {
     getAPIKeysTab = organisation => {
         return (<div key="apikeys" name="apikeys" label={I18n.t("home.tabs.apikeys")} icon={<ApiKeysIcon/>}>
             <ApiKeys {...this.props} organisation={organisation}
-                          refresh={callback => this.componentDidMount(callback)}/>
+                     refresh={callback => this.componentDidMount(callback)}/>
         </div>);
     }
 
@@ -110,7 +110,8 @@ class OrganisationDetail extends React.Component {
 
     tabChanged = (name, id) => {
         const orgId = id || this.state.organisation.id;
-        this.props.history.replace(`/organisations/${orgId}/${name}`);
+        this.setState({tab: name}, () =>
+            this.props.history.replace(`/organisations/${orgId}/${name}`));
     }
 
     render() {
@@ -136,7 +137,7 @@ class OrganisationDetail extends React.Component {
                         </div>
                     </div>
                 </UnitHeader>
-                <Tabs initialActiveTab={tab} tabChanged={this.tabChanged}>
+                <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
             </div>);

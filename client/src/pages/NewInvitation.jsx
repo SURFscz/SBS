@@ -311,7 +311,7 @@ class NewInvitation extends React.Component {
                 <UnitHeader obj={collaboration}
                             name={collaboration.name}/>
 
-                <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged}>
+                <Tabs activeTab={activeTab} tabChanged={this.tabChanged}>
                     <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
                          name={"invitation_form"} icon={<InviteIcon/>}>
                         <div className="new-collaboration-invitation">

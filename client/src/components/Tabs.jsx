@@ -5,29 +5,25 @@ import Tab from "./Tab";
 import "./Tabs.scss";
 
 class Tabs extends React.Component {
+
     static propTypes = {
         children: PropTypes.instanceOf(Array).isRequired,
         className: PropTypes.string,
-        initialActiveTab: PropTypes.string,
         standAlone: PropTypes.bool,
+        activeTab: PropTypes.bool,
         tabChanged: PropTypes.func
     };
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            activeTab: props.initialActiveTab || props.children[0].props.name
-        };
+    onClickTabItem = tab => {
+        const {tabChanged} = this.props;
+        tabChanged(tab);
     }
 
-    onClickTabItem = tab => this.setState({activeTab: tab},
-        () => this.props.tabChanged && this.props.tabChanged(tab));
-
     render() {
-        const {children, className = "",standAlone = false} = this.props;
-        const {activeTab} = this.state;
-
+        const {children, className = "", standAlone = false} = this.props;
+        const activeTab = this.props.activeTab || children[0].props.name
         const filteredChildren = children.filter(child => child);
+
         return (
             <div>
                 {<div className={`tabs ${className} ${standAlone ? " standalone" : ""}`}>

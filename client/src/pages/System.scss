@@ -9,21 +9,6 @@
         width: 100%;
         padding: 0;
 
-
-        .title {
-            font-size: 22px;
-            color: $dark-grey;
-            padding: 5px 0 5px 0;
-
-            &.top {
-                padding-top: 25px;
-            }
-
-            p {
-                padding: 10px 0 10px 0;
-            }
-        }
-
         .info-block-container {
             margin: 15px auto 15px auto;
             display: flex;
@@ -35,10 +20,7 @@
             }
 
             .info-block {
-                border-radius: $br;
-                background-color: $lightest-grey;
-                border: solid 1px $lightest-grey;
-                box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+                border-bottom: solid 4px $lightest-grey;
                 padding: 15px 10px;
                 width: 100%;
 

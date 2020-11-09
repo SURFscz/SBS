@@ -176,7 +176,7 @@ I18n.translations.en = {
             allMembers: "All members ({{count}})",
             group: "Group {{name}} ({{count}})",
             hideInvites: "Hide invitees",
-            noCollaborations: "There are no collaborations yet within your organization. Why don't you create the first one?"
+            noCollaborations: "There are no collaborations yet within your organization. Why don't you create the first one?",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Search for organisations",
@@ -247,6 +247,8 @@ I18n.translations.en = {
             admin: "admin",
             more: "Show {{nbr}} more",
             less: "Show less",
+            viewAsMember: "View as member",
+            viewAsAdmin: "View as admin"
         },
         apiKeys: {
             title: "API Keys",

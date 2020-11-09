@@ -7,6 +7,7 @@ import {Link} from "react-router-dom";
 export const BreadCrumb = () => {
 
     const {paths} = AppStore.useState(state => state.breadcrumb);
+    const {sideComponent} = AppStore.useState(state => state);
 
     return (
         <div className="bread-crumb-container">
@@ -17,7 +18,9 @@ export const BreadCrumb = () => {
                         {(i + 1) !== paths.length && <Link to={p.path} className={"link"}>{p.value}</Link>}
                         {(i + 1) === paths.length && <span className={"last"}>{p.value}</span>}
                     </div>)}
+                {sideComponent}
             </div>
+
         </div>
     );
 }

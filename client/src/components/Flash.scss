@@ -18,7 +18,8 @@ div.flash {
 
     &.info {
         background-color: $primary-green;
-        color: $lightest-grey;
+        color: white;
+        font-weight: bold;
     }
 
     &.warning {

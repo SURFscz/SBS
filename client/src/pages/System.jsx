@@ -4,6 +4,8 @@ import I18n from "i18n-js";
 import {dbStats, suspendUsers} from "../api";
 import Button from "../components/Button";
 import {isEmpty} from "../utils/Utils";
+import UnitHeader from "../components/redesign/UnitHeader";
+import {ReactComponent as Logo} from "../images/logo.svg";
 
 class System extends React.Component {
 
@@ -95,9 +97,7 @@ class System extends React.Component {
         return (
             <div className="mod-system-container">
                 <div className="mod-system">
-                    <div className="title top">
-                        <p>{I18n.t("system.title")}</p>
-                    </div>
+                    <UnitHeader obj={({name: I18n.t("system.title"), icon: "toolbox"})}/>
                     <section className={"info-block-container"}>
                         {this.renderDailyCron()}
                         {this.renderDailyCronResults()}

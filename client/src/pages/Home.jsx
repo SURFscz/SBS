@@ -38,7 +38,6 @@ class Home extends React.Component {
         const nbrOrganisations = user.organisation_memberships.length;
         const nbrCollaborations = user.collaboration_memberships.length;
 
-        //TODO where do we go with history.props - inspect user
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
                 tabs.push(this.getOrganisationsTab());
@@ -48,7 +47,8 @@ class Home extends React.Component {
             case ROLES.ORG_ADMIN:
             case ROLES.ORG_MANAGER:
                 if (nbrOrganisations === 1 && nbrCollaborations === 0) {
-                    this.props.history.push(`/organisations/${user.organisation_memberships[0].organisation_id}`);
+                    setTimeout(() => this.props.history.push(`/organisations/${user.organisation_memberships[0].organisation_id}`), 250);
+                    return;
                 } else {
                     tabs.push(this.getOrganisationsTab());
                     if (nbrCollaborations > 0) {
@@ -59,7 +59,8 @@ class Home extends React.Component {
             case ROLES.COLL_ADMIN:
             case ROLES.COLL_MEMBER:
                 if (nbrOrganisations === 0 && nbrCollaborations === 1) {
-                    this.props.history.push(`/collaborations/${user.collaboration_memberships[0].collaboration_id}`);
+                    setTimeout(() => this.props.history.push(`/collaborations/${user.collaboration_memberships[0].collaboration_id}`), 250);
+                    return;
                 } else {
                     tabs.push(this.getCollaborationsTab());
                     tab = "collaborations";
@@ -110,9 +111,11 @@ class Home extends React.Component {
         </div>)
     }
 
-    tabChanged = name => {
-        this.props.history.replace(`/home/${name}`);
+    tabChanged = (name) => {
+        this.setState({tab: name}, () =>
+            this.props.history.replace(`/home/${name}`));
     }
+
 
     render() {
         const {tabs, role, loaded, tab} = this.state;
@@ -123,7 +126,7 @@ class Home extends React.Component {
         return (
             <div className="mod-home-container">
                 {user.admin && <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}/>}
-                <Tabs standAlone={!user.admin} initialActiveTab={tab} tabChanged={this.tabChanged}>
+                <Tabs standAlone={!user.admin} activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
             </div>);

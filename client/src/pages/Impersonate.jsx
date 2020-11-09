@@ -68,18 +68,17 @@ class Impersonate extends React.Component {
         if (initial && isEmpty(selectedUser)) {
             this.setState({initial: false});
         } else {
-            emitter.emit("impersonation", selectedUser);
+            emitter.emit("impersonation", {user: selectedUser, callback: () => this.props.history.push("/home")});
             this.setState({
                 selectedUser: null, query: "", initial: true, collaboration: null,
                 organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false,
                 reloading: true
             });
-            setTimeout(() => this.props.history.push("/home"), 1250);
         }
     };
 
     clearImpersonation = () => {
-        emitter.emit("impersonation", null);
+        emitter.emit("impersonation", {user: null, callback: this.props.push("/home")});
         this.setState({
             selectedUser: null, query: "", initial: true, collaboration: null,
             organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false

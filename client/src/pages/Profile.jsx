@@ -57,7 +57,7 @@ class Profile extends React.Component {
                             name={user.name}>
                     <p>{I18n.t("models.users.subProfile")}</p>
                 </UnitHeader>
-                <Tabs initialActiveTab={tab}>
+                <Tabs activeTab={tab}>
                     {tabs}
                 </Tabs>
             </div>);
