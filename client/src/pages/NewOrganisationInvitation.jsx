@@ -270,7 +270,6 @@ class NewOrganisationInvitation extends React.Component {
         if (organisation === undefined) {
             return null;
         }
-        const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-new-organisation-invitation">

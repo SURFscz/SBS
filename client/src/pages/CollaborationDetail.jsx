@@ -212,7 +212,7 @@ class CollaborationDetail extends React.Component {
                                         dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/></li>
                                     {collaboration.website_url &&
                                     <li><FontAwesomeIcon icon="globe"/><span>
-                                        <a href={collaboration.website_url}
+                                        <a href={collaboration.website_url} rel="noopener noreferrer"
                                            target="_blank">{collaboration.website_url}</a>
                                     </span></li>}
                                 </ul>

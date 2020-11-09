@@ -17,8 +17,6 @@ import CheckBox from "../components/CheckBox";
 import moment from "moment";
 import DateField from "../components/DateField";
 import SelectField from "../components/SelectField";
-import BackLink from "../components/BackLink";
-import {userRole} from "../utils/UserRole";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 
@@ -60,10 +58,13 @@ class Invitation extends React.Component {
                 .then(json => {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                     this.setState({invite: json, isAdminLink: true, isExpired});
-                                        AppStore.update(s => {
+                    AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {path: `/organisations/${json.collaboration.organisation_id}`, value: json.collaboration.organisation.name},
+                            {
+                                path: `/organisations/${json.collaboration.organisation_id}`,
+                                value: json.collaboration.organisation.name
+                            },
                             {path: `/collaborations/${json.collaboration.id}`, value: json.collaboration.name},
                             {path: "/", value: I18n.t("breadcrumb.invitation")}
                         ];
@@ -210,7 +211,6 @@ class Invitation extends React.Component {
             confirmationDialogAction, leavePage, isAdminLink, isExpired, errorOccurred, personalDataConfirmation,
             intentToDeny
         } = this.state;
-        const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         const errorSituation = errorOccurred || !invite.id;
         const expiredMessage = isAdminLink ? I18n.t("invitation.expiredAdmin", {expiry_date: moment(invite.expiry_date * 1000).format("LL")}) :
@@ -229,7 +229,10 @@ class Invitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={confirmationQuestion}/>
-                <UnitHeader obj={({name: I18n.t("invitation.title", {collaboration: invite.collaboration.name}), icon: "door-open"})}/>
+                <UnitHeader obj={({
+                    name: I18n.t("invitation.title", {collaboration: invite.collaboration.name}),
+                    icon: "door-open"
+                })}/>
                 <div className="invitation">
                     {isExpired &&
                     <p className="error">{expiredMessage}</p>}
@@ -302,7 +305,7 @@ class Invitation extends React.Component {
                     <section className="actions">
                         <Button warningButton={true} txt={I18n.t("invitation.delete")}
                                 onClick={this.delete}/>
-                            <Button disabled={disabledSubmit} txt={I18n.t("invitation.resend")}
+                        <Button disabled={disabledSubmit} txt={I18n.t("invitation.resend")}
                                 onClick={this.resend}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>}

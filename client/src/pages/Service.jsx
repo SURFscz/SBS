@@ -478,7 +478,7 @@ class Service extends React.Component {
             alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
             entity_id, description, uri, accepted_user_policy, contact_email,
             confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed, organisations,
-            allowed_organisations, auditLogs, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+            allowed_organisations, white_listed, sirtfi_compliant, code_of_conduct_compliant,
             research_scholarship_compliant, ip_networks, logo
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();

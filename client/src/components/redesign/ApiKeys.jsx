@@ -11,6 +11,7 @@ import InputField from "../InputField";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 import ApiKeysExplanation from "../explanations/ApiKeys";
+import {stopEvent} from "../../utils/Utils";
 
 class ApiKeys extends React.Component {
 
@@ -55,7 +56,8 @@ class ApiKeys extends React.Component {
         });
     };
 
-    cancelSideScreen = () => {
+    cancelSideScreen = e => {
+        stopEvent(e);
         this.setState({createNewApiKey: false});
     }
 
@@ -74,7 +76,7 @@ class ApiKeys extends React.Component {
         const {description, hashedSecret} = this.state;
         return (
             <div className="api-key-container">
-                <a className={"back-to-api-keys"} onClick={this.cancelSideScreen}>
+                <a href={"/cancel"} className={"back-to-api-keys"} onClick={this.cancelSideScreen}>
                     <ChevronLeft/>{I18n.t("models.apiKeys.backToApiKeys")}
                 </a>
                 <div className="new-api-key">

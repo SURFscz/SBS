@@ -43,7 +43,7 @@ class OrganisationServices extends React.Component {
 
     getLogo = entity => {
         if (entity.logo) {
-            return <img src={`data:image/jpeg;base64,${entity.logo}`}/>
+            return <img src={`data:image/jpeg;base64,${entity.logo}`} alt=""/>
         }
         return <NotFoundIcon/>
     }

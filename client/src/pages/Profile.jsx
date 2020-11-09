@@ -14,7 +14,6 @@ class Profile extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        const {user} = this.props;
         this.state = {
             tabs: [],
             tab: "me"

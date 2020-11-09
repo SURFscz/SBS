@@ -25,7 +25,6 @@ class ServiceDetail extends React.Component {
 
     componentDidMount = () => {
         const params = this.props.match.params;
-        const {user} = this.props;
         if (params.id) {
             Promise.all([serviceById(params.id), searchOrganisations("*")])
                 .then(res => {

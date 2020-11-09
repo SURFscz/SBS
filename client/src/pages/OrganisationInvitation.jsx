@@ -71,7 +71,7 @@ class OrganisationInvitation extends React.Component {
 
     gotoOrganisations = () => this.setState({confirmationDialogOpen: false},
         () => {
-            const {organisationInvitation, isAdminLink} = this.state;
+            const { isAdminLink} = this.state;
             if (isAdminLink) {
                 this.props.history.goBack();
                 return;
@@ -194,7 +194,6 @@ class OrganisationInvitation extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         const expiredMessage = isAdminLink ? I18n.t("organisationInvitation.expiredAdmin", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")}) :
             I18n.t("organisationInvitation.expired", {expiry_date: moment(organisationInvitation.expiry_date * 1000).format("LL")});
-        const {user} = this.props;
         return (
             <div className="mod-organisation-invitation">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}

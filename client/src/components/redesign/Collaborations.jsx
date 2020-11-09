@@ -8,7 +8,7 @@ import Entities from "./Entities";
 import Button from "../Button";
 import {myCollaborationsLite} from "../../api";
 import SpinnerField from "./SpinnerField";
-import {isUserAllowed, rawGlobalUserRole, ROLES} from "../../utils/UserRole";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
 
 export default class Collaborations extends React.PureComponent {
 
@@ -58,7 +58,7 @@ export default class Collaborations extends React.PureComponent {
             return <SpinnerField/>;
         }
         const {collaborations} = standalone ? this.state : this.props;
-        const { includeCounts = true, includeOrganisationName = false, modelName = "collaborations" } = this.props;
+        const {includeCounts = true, includeOrganisationName = false, modelName = "collaborations"} = this.props;
 
         if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
             return this.noCollaborations(this.props.organisation);
@@ -72,7 +72,7 @@ export default class Collaborations extends React.PureComponent {
                 key: "logo",
                 header: "",
                 mapper: collaboration => collaboration.logo &&
-                    <img src={`data:image/jpeg;base64,${collaboration.logo}`}/>
+                    <img src={`data:image/jpeg;base64,${collaboration.logo}`} alt=""/>
             },
             {
                 key: "name",

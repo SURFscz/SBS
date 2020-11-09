@@ -37,7 +37,7 @@ class Services extends React.Component {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: service => service.logo && <img src={`data:image/jpeg;base64,${service.logo}`}/>
+                mapper: service => service.logo && <img src={`data:image/jpeg;base64,${service.logo}`} alt=""/>
             },
             {
                 key: "name",

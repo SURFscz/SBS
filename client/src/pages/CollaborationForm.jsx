@@ -293,8 +293,6 @@ class CollaborationForm extends React.Component {
         if (noOrganisations) {
             return this.renderNoOrganisations(user);
         }
-        const title = !isRequestCollaboration ? I18n.t("collaboration.title") : !organisation.collaboration_creation_allowed ?
-            I18n.t("collaboration.requestTitle") : I18n.t("collaboration.requestTitleCreationAllowed", {name: organisation.label});
         return (
             <div className="mod-new-collaboration-container">
                 <div className="mod-new-collaboration">

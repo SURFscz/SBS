@@ -9,7 +9,7 @@ export default function UserColumn({entity, currentUser, gotoInvitation}) {
                 <span className="name">{entity.invite ? "-" : entity.user.name}</span>
                 {entity.invite &&
                 <span className="email">
-                    <a href="" onClick={gotoInvitation && gotoInvitation(entity)}>{entity.invitee_email}</a>
+                    <a href="/invite" onClick={gotoInvitation && gotoInvitation(entity)}>{entity.invitee_email}</a>
                 </span>}
                 {!entity.invite && <span className="email">{entity.user.email}</span>}
 
@@ -19,3 +19,4 @@ export default function UserColumn({entity, currentUser, gotoInvitation}) {
         </div>
     );
 }
+

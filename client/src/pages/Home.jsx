@@ -118,7 +118,7 @@ class Home extends React.Component {
 
 
     render() {
-        const {tabs, role, loaded, tab} = this.state;
+        const {tabs, loaded, tab} = this.state;
         if (!loaded) {
             return <SpinnerField/>;
         }

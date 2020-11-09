@@ -41,7 +41,7 @@ class ServiceOrganisations extends React.Component {
 
     onToggleAll = () => {
         const {organisations} = this.props;
-        const {toggleAll, organisationsSelected, isInitial} = this.state;
+        const {toggleAll, organisationsSelected} = this.state;
         const allValues = Object.values(organisationsSelected);
         const allSelected = allValues.every(val => val);
         const noneSelected = allValues.every(val => !val);
@@ -101,7 +101,7 @@ class ServiceOrganisations extends React.Component {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: org => org.logo && <img src={`data:image/jpeg;base64,${org.logo}`}/>
+                mapper: org => org.logo && <img src={`data:image/jpeg;base64,${org.logo}`} alt=""/>
             },
             {
                 key: "name",
