@@ -187,11 +187,10 @@ class OrganisationAdmins extends React.Component {
                 nonSortable: true,
                 key: "impersonate",
                 header: "",
-                mapper: entity => entity.invite ? null :
-                    <div className="impersonate" onClick={() => {
-                        emitter.emit("impersonation", entity.user);
-                        setTimeout(() => this.props.history.push("/home"), 1250);
-                    }}>
+                mapper: entity => (entity.invite || !currentUser.admin) ? null :
+                    <div className="impersonate" onClick={() =>
+                        emitter.emit("impersonation",
+                            {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
                         <HandIcon/>
                     </div>
             },

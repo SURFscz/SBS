@@ -76,7 +76,8 @@ class ServiceDetail extends React.Component {
 
     tabChanged = (name, id) => {
         const serviceId = id || this.state.service.id;
-        this.props.history.replace(`/services/${serviceId}/${name}`);
+        this.setState({tab: name}, () =>
+            this.props.history.replace(`/services/${serviceId}/${name}`));
     }
 
     compliancy = service => {
@@ -125,7 +126,7 @@ class ServiceDetail extends React.Component {
                         </div>
                     </div>
                 </UnitHeader>
-                <Tabs initialActiveTab={tab} tabChanged={this.tabChanged}>
+                <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
             </div>);

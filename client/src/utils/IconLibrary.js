@@ -31,6 +31,7 @@ import {
     faQuestion,
     faQuestionCircle,
     faSearch,
+    faToolbox,
     faTimes,
     faTrash,
     faUserFriends,
@@ -44,7 +45,7 @@ export function addIcons() {
     library.add(faLightbulb, faCalendarAlt, faArrowLeft, faCopy, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faInfo,
         faCircle, faCheck, faDoorClosed, faAngleDown, faAngleUp, faHistory, faMailBulk,
         faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
-        faQuestion, faQuestionCircle, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret, faUserLock,
+        faQuestion, faQuestionCircle, faToolbox, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret, faUserLock,
         faLock, faLockOpen, faGlobe, faUserFriends, faUsers,
     );
 }

@@ -3,8 +3,8 @@ import {isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
 
 let impersonator = null;
-emitter.addListener("impersonation", selectedUser => {
-    impersonator = selectedUser;
+emitter.addListener("impersonation", res => {
+    impersonator = res.user;
 });
 
 const impersonation_attributes = ["id", "uid", "name", "email"];

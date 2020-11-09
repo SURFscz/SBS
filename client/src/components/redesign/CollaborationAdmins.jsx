@@ -16,6 +16,7 @@ import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 import UserColumn from "./UserColumn";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.admin`)},
@@ -44,7 +45,7 @@ class CollaborationAdmins extends React.Component {
     componentDidMount = () => {
         const {collaboration} = this.props;
         const admins = collaboration.collaboration_memberships;
-        const invites = collaboration.invitations;
+        const invites = collaboration.invitations || [];
         const entities = admins.concat(invites);
         const selectedMembers = entities.reduce((acc, entity) => {
             acc[entity.id] = {selected: false, ref: entity};
@@ -155,7 +156,7 @@ class CollaborationAdmins extends React.Component {
             </div>);
     }
 
-    filter = (filterOptions, filterValue, hideInvitees) => {
+    filter = (filterOptions, filterValue, hideInvitees, isAdminOfCollaboration) => {
         return (
             <div className="member-filter">
                 <Select
@@ -166,9 +167,9 @@ class CollaborationAdmins extends React.Component {
                     isSearchable={false}
                     isClearable={false}
                 />
-                <CheckBox name="hide_invitees" value={hideInvitees}
+                {isAdminOfCollaboration && <CheckBox name="hide_invitees" value={hideInvitees}
                           onChange={e => this.setState({hideInvitees: e.target.checked})}
-                          info={I18n.t("models.collaborations.hideInvites")}/>
+                          info={I18n.t("models.collaborations.hideInvites")}/>}
             </div>
         );
     }
@@ -181,9 +182,9 @@ class CollaborationAdmins extends React.Component {
             confirmationDialogAction, confirmationQuestion
         } = this.state;
         const members = collaboration.collaboration_memberships;
-        const invites = collaboration.invitations;
+        const isAdminOfCollaboration = isUserAllowed(ROLES.COLL_ADMIN, currentUser, null, collaboration.id);
+        const invites = collaboration.invitations || [];
         invites.forEach(invite => invite.invite = true);
-        const isAdmin = currentUser.admin;
 
         let i = 0;
         const columns = [
@@ -210,7 +211,8 @@ class CollaborationAdmins extends React.Component {
                 nonSortable: true,
                 key: "name",
                 header: I18n.t("models.users.name_email"),
-                mapper: entity => <UserColumn entity={entity} currentUser={currentUser} gotoInvitation={this.gotoInvitation}/>
+                mapper: entity => <UserColumn entity={entity} currentUser={currentUser}
+                                              gotoInvitation={this.gotoInvitation}/>
             },
             {
                 key: "user__schac_home_organisation",
@@ -224,7 +226,7 @@ class CollaborationAdmins extends React.Component {
                     value={roles.find(option => option.value === entity.role)}
                     options={roles}
                     onChange={this.changeMemberRole(entity)}
-                    isDisabled={!isAdmin}/>
+                    isDisabled={!isAdminOfCollaboration}/>
             },
             {
                 nonSortable: true,
@@ -240,16 +242,16 @@ class CollaborationAdmins extends React.Component {
                 nonSortable: true,
                 key: "impersonate",
                 header: "",
-                mapper: entity => entity.invite ? null :
-                    <div className="impersonate" onClick={() => {
-                        emitter.emit("impersonation", entity.user);
-                        setTimeout(() => this.props.history.push("/home"), 1250);
-                    }}>
+                mapper: entity => (entity.invite || !currentUser.admin) ? null :
+                    <div className="impersonate" onClick={() =>
+                        emitter.emit("impersonation",
+                            {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
                         <HandIcon/>
                     </div>
             },
         ]
-        const filteredEntities = this.filterEntities(isAdminView, members, filterValue, collaboration, hideInvitees, invites);
+        const filteredEntities = this.filterEntities(isAdminView, members, filterValue, collaboration, hideInvitees,
+            invites);
 
         return (<>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -260,8 +262,8 @@ class CollaborationAdmins extends React.Component {
                 <Entities entities={filteredEntities} modelName={isAdminView ? "coAdmins" : "members"}
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name" columns={columns} loading={false}
-                          showNew={isAdmin}
-                          filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees)}
+                          showNew={isAdminOfCollaboration}
+                          filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees, isAdminOfCollaboration)}
                           actions={this.actionButtons(selectedMembers, filteredEntities)}
                           newEntityPath={`/new-invite/${collaboration.id}`}
                           {...this.props}/>

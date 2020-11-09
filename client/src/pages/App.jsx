@@ -149,21 +149,22 @@ class App extends React.Component {
         emitter.removeListener("impersonation", this.impersonate);
     }
 
-    impersonate = selectedUser => {
+    impersonate = res => {
+        const {user : selectedUser, callback} = res;
         if (isEmpty(selectedUser)) {
             me(this.state.config).then(currentUser => {
-                this.setState({currentUser: this.markUserAdmin(currentUser), impersonator: null, loading: false});
+                this.setState({currentUser: this.markUserAdmin(currentUser), impersonator: null, loading: false}, callback);
             });
         } else {
             other(selectedUser.uid).then(user => {
                 const {currentUser, impersonator} = this.state;
                 const newUser = this.markUserAdmin(user);
-                this.setState({currentUser: newUser, impersonator: impersonator || currentUser});
+                this.setState({currentUser: newUser, impersonator: impersonator || currentUser}, callback);
             });
         }
     };
 
-    userReloading = () => {
+    userReloading = callback => {
         this.setState({reloading: true},
             () => setTimeout(() => this.setState({reloading: false}), 1250));
     }

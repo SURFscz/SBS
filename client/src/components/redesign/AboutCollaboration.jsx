@@ -11,19 +11,17 @@ class AboutCollaboration extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            showAll: false,
-            showMemberDetails: false
+            showAll: false
         };
     }
 
-    openService = service => () => {
-        debugger;
-        service.uri && window.open(service.uri);
+    openMembersDetails = e => {
+        stopEvent(e);
+        this.props.history.replace("members");
     }
 
-    toggleDetails = e => {
-        stopEvent(e);
-        this.setState({showMemberDetails: !this.state.showMemberDetails})
+    openService = service => () => {
+        service.uri && window.open(service.uri);
     }
 
     toggleShowMore = e => {
@@ -32,7 +30,7 @@ class AboutCollaboration extends React.Component {
     }
 
     render() {
-        const {showAll, showMemberDetails} = this.state;
+        const {showAll} = this.state;
         const {collaboration} = this.props;
         const {collaboration_memberships} = collaboration
         const memberships = collaboration_memberships
@@ -51,10 +49,12 @@ class AboutCollaboration extends React.Component {
                         {I18n.t("models.collaboration.servicesStart")}
                     </span>
                         <ul className="services">
-                            {collaboration.services.map(s =>
-                                <li key={s.id} onClick={() => this.openService(s)}>
-                                    {s.logo && <img src={`data:image/jpeg;base64,${s.logo}`} alt={s.name}/>}
-                                    <span>{s.name}</span>
+                            {collaboration.services.map(service =>
+                                <li key={service.id} onClick={this.openService(service)}
+                                    className={`${service.uri ? "uri" : ""}`}>
+                                    {service.logo &&
+                                    <img src={`data:image/jpeg;base64,${service.logo}`} alt={service.name}/>}
+                                    <span>{service.name}</span>
                                     <ServicesIcon/>
                                 </li>)}
                         </ul>
@@ -63,7 +63,7 @@ class AboutCollaboration extends React.Component {
                         <div className="members-header">
                             <h1>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships.length})}</h1>
                             <a href="/details"
-                               onClick={this.toggleDetails}>{I18n.t("models.collaboration.showMemberDetails")}</a>
+                               onClick={this.openMembersDetails}>{I18n.t("models.collaboration.showMemberDetails")}</a>
                         </div>
                         <ul>
                             {memberships.map(m => <li key={m.id}>

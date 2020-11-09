@@ -1,5 +1,5 @@
 import React from "react";
-import {collaborationAccessAllowed, collaborationById, collaborationLiteById} from "../api";
+import {collaborationAccessAllowed, collaborationById, collaborationLiteById, health} from "../api";
 import "./CollaborationDetail.scss";
 import I18n from "i18n-js";
 import {collaborationRoles} from "../forms/constants";
@@ -8,6 +8,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import Tabs from "../components/Tabs";
 import {ReactComponent as CoAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
+import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as MemberIcon} from "../icons/personal_info.svg";
 import {ReactComponent as GroupsIcon} from "../icons/groups.svg";
@@ -32,9 +33,10 @@ class CollaborationDetail extends React.Component {
         this.state = {
             collaboration: null,
             adminOfCollaboration: false,
+            showMemberView: true,
             viewAsMember: false,
             loaded: false,
-            tab: "about",//"admins",
+            tab: "admins",
             tabs: []
         }
     }
@@ -45,11 +47,10 @@ class CollaborationDetail extends React.Component {
             const collaboration_id = parseInt(params.id, 10);
             collaborationAccessAllowed(collaboration_id)
                 .then(json => {
-                    const adminOfCollaboration = false;//json.access === "full";
+                    const adminOfCollaboration = json.access === "full";
                     const promise = adminOfCollaboration ? collaborationById(collaboration_id) : collaborationLiteById(collaboration_id);
                     const tab = params.tab || this.state.tab;
                     promise.then(collaboration => {
-                        const {user} = this.props;
                         this.setState({
                             collaboration: collaboration,
                             adminOfCollaboration: adminOfCollaboration,
@@ -58,7 +59,7 @@ class CollaborationDetail extends React.Component {
                             tab: params.tab || (adminOfCollaboration ? this.state.tab : "about"),
                         }, () => {
                             callback && callback();
-                            this.updateAppStore(collaboration);
+                            this.updateAppStore(collaboration, adminOfCollaboration);
                             this.tabChanged(tab, collaboration.id);
                         });
                     });
@@ -67,6 +68,51 @@ class CollaborationDetail extends React.Component {
             this.props.history.push("/404");
         }
     };
+
+    componentWillUnmount() {
+        AppStore.update(s => {
+            s.sideComponent = null;
+        });
+    }
+
+
+    updateAppStore = (collaboration, adminOfCollaboration) => {
+        AppStore.update(s => {
+            s.breadcrumb.paths = [
+                {path: "/", value: I18n.t("breadcrumb.home")},
+                {path: `/organisations/${collaboration.organisation_id}`, value: collaboration.organisation.name},
+                {path: "/", value: collaboration.name}
+            ];
+            s.sideComponent = adminOfCollaboration ? this.eyeView() : null;
+        });
+    }
+
+    eyeView = () => {
+        const {showMemberView} = this.state;
+        return (
+            <div className={`eye-view ${showMemberView ? "admin" : "member"}`} onClick={() => {
+                health().then(() => {
+                    const {showMemberView, collaboration} = this.state;
+                    const newTab = showMemberView ? "about" : "admins";
+                    this.tabChanged(newTab, collaboration.id);
+                    this.setState({
+                            showMemberView: !showMemberView,
+                            tabs: this.getTabs(collaboration, !showMemberView),
+                            tab: newTab
+                        },
+                        () => {
+                            AppStore.update(s => {
+                                s.sideComponent = this.eyeView();
+                            });
+
+                        });
+                });
+            }}>{
+                <EyeViewIcon/>}<span>{I18n.t(`models.collaboration.${showMemberView ? "viewAsMember" : "viewAsAdmin"}`)}</span>
+            </div>
+        );
+    }
+
 
     getTabs = (collaboration, adminOfCollaboration) => {
         const tabs = adminOfCollaboration ?
@@ -123,19 +169,10 @@ class CollaborationDetail extends React.Component {
 
     tabChanged = (name, id) => {
         const collId = id || this.state.collaboration.id;
-        this.props.history.replace(`/collaborations/${collId}/${name}`);
+        this.setState({tab: name}, () =>
+            this.props.history.replace(`/collaborations/${collId}/${name}`));
     }
 
-    updateAppStore = collaboration => {
-        AppStore.update(s => {
-            s.breadcrumb.paths = [
-                {path: "/", value: I18n.t("breadcrumb.home")},
-                {path: `/organisations/${collaboration.organisation_id}`, value: collaboration.organisation.name},
-                {path: "/", value: collaboration.name}
-            ];
-        });
-
-    }
 
     getAdminHeader = collaboration => {
         const admins = collaboration.collaboration_memberships.filter(m => m.role === "admin").map(m => m.user);
@@ -169,7 +206,8 @@ class CollaborationDetail extends React.Component {
                                         dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/></li>
                                     {collaboration.website_url &&
                                     <li><FontAwesomeIcon icon="globe"/><span>
-                                        <a href={collaboration.website_url} target="_blank">{collaboration.website_url}</a>
+                                        <a href={collaboration.website_url}
+                                           target="_blank">{collaboration.website_url}</a>
                                     </span></li>}
                                 </ul>
                             </section>
@@ -210,7 +248,7 @@ class CollaborationDetail extends React.Component {
             <div className="mod-collaboration-detail">
                 {adminOfCollaboration && this.getUnitHeader(collaboration)}
                 {!adminOfCollaboration && this.getUnitHeaderForMember(collaboration)}
-                <Tabs initialActiveTab={tab} tabChanged={this.tabChanged}>
+                <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
 

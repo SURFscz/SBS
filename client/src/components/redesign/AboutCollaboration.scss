@@ -57,7 +57,10 @@ div.collaboration-about-mod {
         border-radius: 8px;
         margin-bottom: 15px;
         align-items: center;
-        cursor: pointer;
+
+        &.uri {
+            cursor: pointer;
+        }
 
         img {
             width: 60px;
