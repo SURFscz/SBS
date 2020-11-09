@@ -10,7 +10,7 @@ class Tabs extends React.Component {
         children: PropTypes.instanceOf(Array).isRequired,
         className: PropTypes.string,
         standAlone: PropTypes.bool,
-        activeTab: PropTypes.bool,
+        activeTab: PropTypes.string,
         tabChanged: PropTypes.func
     };
 

@@ -65,8 +65,12 @@ class Organisations extends React.Component {
                 mapper: org => org.collaborations_count
             }]
         return (
-            <Entities entities={organisations} modelName="organisations" searchAttributes={["name"]}
-                      defaultSort="name" columns={columns} showNew={true} newEntityPath={"/new-organisation"}
+            <Entities entities={organisations}
+                      modelName="organisations" searchAttributes={["name"]}
+                      defaultSort="name"
+                      columns={columns}
+                      showNew={currentUser.admin}
+                      newEntityPath={"/new-organisation"}
                       loading={loading}
                       {...this.props}/>
         )

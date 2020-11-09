@@ -15,6 +15,7 @@ import {
     faCircle,
     faCopy,
     faDoorClosed,
+    faDoorOpen,
     faEnvelope,
     faExternalLinkAlt,
     faGavel,
@@ -31,8 +32,8 @@ import {
     faQuestion,
     faQuestionCircle,
     faSearch,
-    faToolbox,
     faTimes,
+    faToolbox,
     faTrash,
     faUserFriends,
     faUserLock,
@@ -46,6 +47,6 @@ export function addIcons() {
         faCircle, faCheck, faDoorClosed, faAngleDown, faAngleUp, faHistory, faMailBulk,
         faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
         faQuestion, faQuestionCircle, faToolbox, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret, faUserLock,
-        faLock, faLockOpen, faGlobe, faUserFriends, faUsers,
+        faLock, faLockOpen, faGlobe, faUserFriends, faDoorOpen, faUsers,
     );
 }

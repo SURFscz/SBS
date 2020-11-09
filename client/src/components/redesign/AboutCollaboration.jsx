@@ -4,7 +4,7 @@ import "./AboutCollaboration.scss";
 import {ReactComponent as ServicesIcon} from "../../icons/services.svg";
 import {stopEvent} from "../../utils/Utils";
 
-const memberCutOff = 2;
+const memberCutOff = 10;
 
 class AboutCollaboration extends React.Component {
 
@@ -17,7 +17,8 @@ class AboutCollaboration extends React.Component {
 
     openMembersDetails = e => {
         stopEvent(e);
-        this.props.history.replace("members");
+        const {tabChanged } = this.props;
+        tabChanged("members");
     }
 
     openService = service => () => {

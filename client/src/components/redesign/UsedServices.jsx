@@ -1,10 +1,8 @@
 import React from "react";
 import {
     addCollaborationServices,
-    addOrganisationServices,
     allServices,
     deleteCollaborationServices,
-    deleteOrganisationServices,
     deleteServiceConnectionRequest,
     requestServiceConnection
 } from "../../api";
@@ -21,7 +19,6 @@ import InputField from "../InputField";
 import SpinnerField from "./SpinnerField";
 import ConfirmationDialog from "../ConfirmationDialog";
 import ServicesExplanation from "../explanations/Services";
-import OrganisationServicesExplanation from "../explanations/OrganisationServices";
 
 class UsedServices extends React.Component {
 
@@ -29,7 +26,6 @@ class UsedServices extends React.Component {
         super(props, context);
         this.state = {
             services: [],
-            forOrganisation: false,
             requestConnectionService: null,
             message: "",
             loading: true,
@@ -44,24 +40,18 @@ class UsedServices extends React.Component {
         const {organisation, collaboration} = this.props;
         allServices().then(json => {
             let services = json;
-            const forOrganisation = !isEmpty(organisation);
+            let servicesInUse = collaboration.services
+                .concat(collaboration.organisation.services)
+                .concat(collaboration.service_connection_requests.map(r => r.service));
 
-            let servicesInUse = forOrganisation ? organisation.services : collaboration.services.concat(collaboration.organisation.services);
-            if (!forOrganisation) {
-                servicesInUse = servicesInUse.concat(collaboration.service_connection_requests.map(r => r.service));
-            }
             servicesInUse = servicesInUse.map(e => e.id);
             services = services
                 .filter(service => {
-                    const orgId = forOrganisation ? organisation.id : collaboration.organisation_id;
                     return (service.allowed_organisations.length === 0 ||
-                        service.allowed_organisations.some(org => org.id === orgId)) &&
+                        service.allowed_organisations.some(org => org.id === collaboration.organisation_id)) &&
                         servicesInUse.indexOf(service.id) === -1;
                 });
-            if (forOrganisation) {
-                services = services.filter(service => service.automatic_connection_allowed);
-            }
-            this.setState({services: services, forOrganisation: forOrganisation, loading: false});
+            this.setState({services: services, loading: false});
         });
     }
 
@@ -79,16 +69,15 @@ class UsedServices extends React.Component {
         }
         return <NotFoundIcon/>
     }
+
     getServiceLink = entity => {
         const ref = entity.connectionRequest ? entity.service : entity;
         return <a href="/" onClick={this.openService(ref)}>{ref.name}</a>
     }
 
-
     getServiceStatus = service => {
-        const {forOrganisation} = this.state;
         const {collaboration} = this.props;
-        if (service.usedService && !service.connectionRequest && !forOrganisation &&
+        if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
             service.status = I18n.t("models.services.requiredByOrganisation");
         } else if (service.usedService) {
@@ -129,7 +118,7 @@ class UsedServices extends React.Component {
             I18n.t("collaborationServices.serviceConnectionRequestDeleted", {
                 service: service.name,
                 collaboration: collaboration.name
-            }),this.closeConfirmationDialog);
+            }), this.closeConfirmationDialog);
         this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestDeleteConfirmation"));
     };
 
@@ -143,9 +132,8 @@ class UsedServices extends React.Component {
 
 
     getServiceAction = service => {
-        const {forOrganisation} = this.state;
         const {organisation, collaboration} = this.props;
-        if (service.usedService && !service.connectionRequest && !forOrganisation &&
+        if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
             return null;
         }
@@ -155,39 +143,23 @@ class UsedServices extends React.Component {
                            txt={I18n.t("models.services.deleteConnectionRequest")}/>
         }
         if (service.usedService && !service.connectionRequest) {
-            return forOrganisation ?
-                <Button className={"white"}
-                        onClick={() => this.refreshAndFlash(deleteOrganisationServices(organisation.id, service.id),
-                            I18n.t("organisationServices.flash.deleted", {
-                                service: service.name,
-                                name: organisation.name
-                            }))}
-                        txt={I18n.t("models.services.removeFromOrg")}/> :
-                <Button className={"white"}
-                        onClick={() => this.refreshAndFlash(deleteCollaborationServices(collaboration.id, service.id),
-                            I18n.t("collaborationServices.flash.deleted", {
-                                service: service.name,
-                                name: collaboration.name
-                            }))}
-                        txt={I18n.t("models.services.removeFromCO")}/>
+            return <Button className={"white"}
+                           onClick={() => this.refreshAndFlash(deleteCollaborationServices(collaboration.id, service.id),
+                               I18n.t("collaborationServices.flash.deleted", {
+                                   service: service.name,
+                                   name: collaboration.name
+                               }))}
+                           txt={I18n.t("models.services.removeFromCO")}/>
 
         }
         if (!service.usedService && service.automatic_connection_allowed) {
-            return forOrganisation ?
-                <Button className={"white"}
-                        onClick={() => this.refreshAndFlash(addOrganisationServices(organisation.id, service.id),
-                            I18n.t("organisationServices.flash.added", {
-                                service: service.name,
-                                name: organisation.name
-                            }))}
-                        txt={I18n.t("models.services.addToOrg")}/> :
-                <Button className={"white"}
-                        onClick={() => this.refreshAndFlash(addCollaborationServices(collaboration.id, service.id),
-                            I18n.t("collaborationServices.flash.added", {
-                                service: service.name,
-                                name: collaboration.name
-                            }))}
-                        txt={I18n.t("models.services.addToCO")}/>;
+            return <Button className={"white"}
+                           onClick={() => this.refreshAndFlash(addCollaborationServices(collaboration.id, service.id),
+                               I18n.t("collaborationServices.flash.added", {
+                                   service: service.name,
+                                   name: collaboration.name
+                               }))}
+                           txt={I18n.t("models.services.addToCO")}/>;
         }
         if (!service.usedService && !service.automatic_connection_allowed) {
             return <Button className={"white"}
@@ -213,6 +185,7 @@ class UsedServices extends React.Component {
                                 name={I18n.t("collaborationServices.motivation")}
                                 placeholder={I18n.t("collaborationServices.motivationPlaceholder")}
                                 multiline={true}
+                                large={true}
                                 onChange={e => this.setState({message: e.target.value})}/>
                     <section className="actions">
                         <Button className="white" txt={I18n.t("forms.cancel")}
@@ -227,7 +200,7 @@ class UsedServices extends React.Component {
 
     render() {
         const {
-            services, loading, forOrganisation, requestConnectionService, message,
+            services, loading, requestConnectionService, message,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion
         } = this.state;
         if (loading) {
@@ -236,17 +209,16 @@ class UsedServices extends React.Component {
         if (requestConnectionService) {
             return this.renderRequestConnectionService(requestConnectionService, message);
         }
-        const {organisation, collaboration, user} = this.props;
-        let usedServices = forOrganisation ? organisation.services : collaboration.services.concat(collaboration.organisation.services);
+        const {collaboration} = this.props;
+        let usedServices = collaboration.services.concat(collaboration.organisation.services);
         usedServices = removeDuplicates(usedServices, "id");
-        if (!forOrganisation) {
-            const serviceConnectionRequests = collaboration.service_connection_requests;
-            serviceConnectionRequests.forEach(req => {
-                req.connectionRequest = true;
-                req.name = req.service.name;
-            });
-            usedServices = usedServices.concat(serviceConnectionRequests);
-        }
+        const serviceConnectionRequests = collaboration.service_connection_requests;
+        serviceConnectionRequests.forEach(req => {
+            req.connectionRequest = true;
+            req.name = req.service.name;
+        });
+        usedServices = usedServices.concat(serviceConnectionRequests);
+
         usedServices.forEach(s => s.usedService = true);
         const columns = [
             {
@@ -272,8 +244,8 @@ class UsedServices extends React.Component {
                 header: "",
                 mapper: this.getServiceAction
             }]
-        const titleUsed = I18n.t(`models.services.${forOrganisation ? "titleUsedOrg" : "titleUsedColl"}`, {count: usedServices.length});
-        const titleAvailable = I18n.t(`models.services.${forOrganisation ? "titleAvailableOrg" : "titleAvailableColl"}`, {count: services.length});
+        const titleUsed = I18n.t("models.services.titleUsedColl", {count: usedServices.length});
+        const titleAvailable = I18n.t("models.services.titleAvailableColl", {count: services.length});
         return (
             <div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -282,7 +254,7 @@ class UsedServices extends React.Component {
                                     question={confirmationDialogQuestion}/>
                 <Entities entities={usedServices} modelName="servicesUsed" searchAttributes={["name"]}
                           defaultSort="name" columns={columns} loading={loading} title={titleUsed}
-                          explain={forOrganisation ? <OrganisationServicesExplanation/> : <ServicesExplanation/>}
+                          explain={<ServicesExplanation/>}
                           {...this.props}/>
                 <Entities entities={services} modelName="servicesAvailable" searchAttributes={["name"]}
                           defaultSort="name" columns={columns} loading={loading} title={titleAvailable}

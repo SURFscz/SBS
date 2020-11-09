@@ -11,7 +11,7 @@ export default function InputField({
                                        toolTip = null, onBlur = () => true, onEnter = null, multiline = false,
                                        fileUpload = false, fileName = null, onFileUpload = null, onFileRemoval = null,
                                        acceptFileFormat = "text/csv", fileInputKey = null,
-                                       copyClipBoard = false, link = null, externalLink = false, history = null
+                                       copyClipBoard = false, link = null, externalLink = false, history = null, large=false
                                    }) {
     placeholder = disabled ? "" : placeholder;
     return (
@@ -52,7 +52,7 @@ export default function InputField({
                        onChange={onFileUpload}/>
             </section>}
             {multiline &&
-            <textarea disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
+            <textarea disabled={disabled} value={value} onChange={onChange} onBlur={onBlur} className={`${large ? "large" : ""}`}
                       onKeyDown={e => {
                           if (onEnter && e.keyCode === 13) {//enter
                               onEnter(e);

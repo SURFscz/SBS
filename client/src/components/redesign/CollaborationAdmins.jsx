@@ -60,6 +60,7 @@ class CollaborationAdmins extends React.Component {
                 label: `${group.name} (${group.collaboration_memberships.length})`,
                 value: group.name
             }));
+
         this.setState({
             selectedMembers,
             filterValue: filterOptions[0],
@@ -175,14 +176,15 @@ class CollaborationAdmins extends React.Component {
     }
 
     render() {
-        const {user: currentUser, collaboration, isAdminView} = this.props;
+        const {user: currentUser, collaboration, isAdminView, showMemberView} = this.props;
         const {
             selectedMembers, allSelected, filterOptions, filterValue, hideInvitees,
             confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction, confirmationQuestion
         } = this.state;
+
+        const isAdminOfCollaboration = isUserAllowed(ROLES.COLL_ADMIN, currentUser, collaboration.organisation_id, collaboration.id) && !showMemberView;
         const members = collaboration.collaboration_memberships;
-        const isAdminOfCollaboration = isUserAllowed(ROLES.COLL_ADMIN, currentUser, null, collaboration.id);
         const invites = collaboration.invitations || [];
         invites.forEach(invite => invite.invite = true);
 
@@ -250,7 +252,8 @@ class CollaborationAdmins extends React.Component {
                     </div>
             },
         ]
-        const filteredEntities = this.filterEntities(isAdminView, members, filterValue, collaboration, hideInvitees,
+        const doHideInvitees = hideInvitees || showMemberView;
+        const filteredEntities = this.filterEntities(isAdminView, members, filterValue, collaboration, doHideInvitees,
             invites);
 
         return (<>
@@ -259,13 +262,16 @@ class CollaborationAdmins extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={confirmationQuestion}/>
 
-                <Entities entities={filteredEntities} modelName={isAdminView ? "coAdmins" : "members"}
+                <Entities entities={filteredEntities}
+                          modelName={isAdminView ? "coAdmins" : "members"}
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
-                          defaultSort="name" columns={columns} loading={false}
+                          defaultSort="name"
+                          columns={isAdminOfCollaboration ? columns : columns.slice(1)}
+                          loading={false}
                           showNew={isAdminOfCollaboration}
                           filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees, isAdminOfCollaboration)}
-                          actions={this.actionButtons(selectedMembers, filteredEntities)}
-                          newEntityPath={`/new-invite/${collaboration.id}`}
+                          actions={(isAdminOfCollaboration && filteredEntities.length > 0) ? this.actionButtons(selectedMembers, filteredEntities) : null}
+                          newEntityPath={`/new-invite/${collaboration.id}?isAdminView=${isAdminView}`}
                           {...this.props}/>
             </>
         )

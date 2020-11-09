@@ -1,65 +1,31 @@
 {% extends "mail_layout.html" %}
 {% block title %}SURF Collaboration invite{% endblock %}
 {% block content %}
-<p>
-    {{ invitation.user.name }} invited you to join collaboration
-    <strong>{{ invitation.collaboration.name }}</strong> as{{ invitation_role(invitation.intended_role) }}.
-    {% if invitation.intended_role == "admin" %}
-    <p/>
-    As a CO manager you are responsible for managing users and authorizations for this collaboration.
-    More information about administrative duties can be found at the <a target="_blank" href="{{ wiki_link }}">SRAM wiki</a>.
-    <p/>
-    {% endif %}
-    Please read below what steps you must take to accept this invitation.
-</p>
 
+<div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
+    <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
+        Invitation
+    </p>
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
+        You have been invited by {{ invitation.user.name }} to join collaboration {{ invitation.collaboration.name }}.
+    </p>
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
+        Click the button below to accept
+        this invitation.</p>
+    <a class="button" href="{{ base_url }}/invitations/accept/{{ invitation.hash }}"
+       style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 15px 0;cursor:pointer;padding: 14px 26px;font-size: 18px;">
+        Join them now</a>
+</div>
 {% if invitation.message is defined and invitation.message != None and invitation.message|length %}
-<p>
-    <strong>Personal Message from {{ invitation.user.name }}:</strong>
-</p>
-<p>
-    "{{ invitation.message }}"
-</p>
-<hr/>
+<div class="mail-middle"
+     style="padding: 40px 0 40px 60px;max-width: 800px;font-style: italic; border-bottom: 3px solid #f5f5f5">
+    <p style="white-space: pre-line;margin: 0;">
+        {{ invitation.message }}
+    </p>
+</div>
 {% endif %}
-
-<p>
-    <strong>Accept invitation:</strong><br>
-    To accept this invitation, please click 'Login to accept this invitation'. After logging in with your institutional or guest account
-    you can review and accept the invitation and join the collaboration.
-</p>
-
-<p>
-    If you do not want to accept this invitation, please click 'Decline this invitation' or simply ignore this email.
-    The invitation automatically expires after {{ expiry_period }}.
-</p>
-<table cellpadding="10" width="90%" align="center"
-       style="margin-bottom:1em;margin-left:auto;margin-right:auto;margin-top:1em;">
-    <tr>
-        <td bgcolor="#D9EDF7"
-            class="invitation-link"
-            style="mso-line-height-rule:exactly;line-height:18px;font-size:13px;font-family:Arial, sans-serif;border-radius:4px 4px 4px 4px;color:#333333;border-style:solid;border-width:1px;border-color:#4FB3CF;"
-            align="center" width="47%">
-            <span><a class="link" href="{{ base_url }}/invitations/accept/{{ invitation.hash }}"
-                     style="color:#0088CC;display: inline-block;margin-right: 5px">Login to accept this invitation</a></span>
-            <br/>
-        </td>
-        <td width="6%"></td>
-        <td bgcolor="#D9EDF7"
-            class="invitation-link"
-            style="mso-line-height-rule:exactly;line-height:18px;font-size:13px;font-family:Arial, sans-serif;border-radius:4px 4px 4px 4px;color:#333333;border-style:solid;border-width:1px;border-color:#4FB3CF;"
-            align="center" width="47%">
-            <span><a class="link" href="{{ base_url }}/invitations/deny/{{ invitation.hash }}"
-                     style="color:#0088CC;display: inline-block;margin-left: 5px">Decline this invitation</a></span>
-            <br/>
-        </td>
-    </tr>
-</table>
-
-<p>
-    <strong>Need help?</strong><br>{{ invitation.user.name }} invited you to join this collaboration.
-    Please contact <a href="mailto:{{ invitation.user.email }}">{{ invitation.user.name }}</a>
-    if you have any questions about this invitation.
-</p>
+<div class="mail-end" style="padding: 30px 0 0 60px;background-color: #f5f5f5;">
+    <p style="margin: 0;">{{ invitation.user.name }} has invited you to join collaboration {{ invitation.collaboration.name }}</p>
+</div>
 
 {% endblock %}

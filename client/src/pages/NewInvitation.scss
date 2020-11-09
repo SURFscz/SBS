@@ -6,17 +6,8 @@
     width: 100%;
     margin: 0 auto;
 
-    p.title {
-        font-size: 22px;
-        color: $dark-grey;
-        padding-bottom: 20px;
-    }
-
     .new-collaboration-invitation {
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         margin-bottom: 25px;
-        background-color: $lightest-grey;
-        padding: $medium-padding;
 
         .error {
             color: $red;
@@ -69,6 +60,15 @@
         td.invitation-link {
             padding: 12px;
             text-align: center;
+        }
+
+    }
+
+    .invitation-form {
+        width: 80%;
+
+        @media (max-width: $tablet-max) {
+            width: 100%;
         }
 
     }

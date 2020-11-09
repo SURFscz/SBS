@@ -179,7 +179,7 @@ class NewOrganisationInvitation extends React.Component {
 
     preview = disabledSubmit => (
         <div>
-            <div dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
+            <div className={"preview-mail"} dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
             {this.renderActions(disabledSubmit, false)}
         </div>
     );
@@ -187,10 +187,7 @@ class NewOrganisationInvitation extends React.Component {
 
     invitationForm = (organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
                       disabledSubmit, intended_role) =>
-        <>
-            <p className="title">{I18n.t("organisationInvitation.createTitle", {organisation: organisation.name})}</p>
-
-
+        <div className={"invitation-form"}>
             <InputField value={email}
                         onChange={e => this.setState({email: e.target.value})}
                         placeholder={I18n.t("organisation.administratorsPlaceholder")}
@@ -240,6 +237,7 @@ class NewOrganisationInvitation extends React.Component {
                         placeholder={I18n.t("organisation.messagePlaceholder")}
                         name={I18n.t("organisation.message")}
                         toolTip={I18n.t("organisation.messageTooltip")}
+                        large={true}
                         multiline={true}/>
 
             <DateField value={expiry_date}
@@ -249,7 +247,7 @@ class NewOrganisationInvitation extends React.Component {
                        toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>
 
             {this.renderActions(disabledSubmit, true)}
-        </>;
+        </div>;
 
     renderActions = (disabledSubmit, showPreview) => (
         <section className="actions">
@@ -283,7 +281,7 @@ class NewOrganisationInvitation extends React.Component {
                 <UnitHeader obj={organisation}
                             name={organisation.name}/>
 
-                <Tabs initialActiveTab={activeTab} tabChanged={this.tabChanged}>
+                <Tabs activeTab={activeTab} tabChanged={this.tabChanged}>
                     <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
                          name={"invitation_form"} icon={<InviteIcon/>}>
                         <div className="new-organisation-invitation">

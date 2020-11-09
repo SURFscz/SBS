@@ -63,12 +63,13 @@ class NewInvitation extends React.Component {
     componentDidMount = () => {
         const params = this.props.match.params;
         const collaborationId = params.collaboration_id;
+        const isAdminView = getParameterByName("isAdminView", window.location.search) === "true";
         if (collaborationId) {
             collaborationById(collaborationId)
                 .then(collaboration => {
                     this.setState({
                         collaboration: collaboration,
-                        intended_role: collaboration.collaboration_memberships.some(m => m.role === "admin") ? "member" : "admin",
+                        intended_role: isAdminView ? "admin" : "member",
                         groups: collaboration.groups.map(ag => ({value: ag.id, label: ag.name})),
                     });
                     AppStore.update(s => {
@@ -196,21 +197,29 @@ class NewInvitation extends React.Component {
                 expiry_date: expiry_date.getTime() / 1000,
                 collaboration_id: collaboration.id
             }).then(res =>
-                this.setState({htmlPreview: res.html.replace(/class="link" href/g, "nope")}));
+                this.setState({htmlPreview: res.html.replace(/class="button" href/g, "nope")}));
         }
     };
 
     preview = disabledSubmit => (
         <div>
-            <div dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
+            <div className={"preview-mail"} dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
             {this.renderActions(disabledSubmit, false)}
         </div>
     );
 
+    selectedGroupsChanged = selectedOptions => {
+        if (selectedOptions === null) {
+            this.setState({selectedGroup: []});
+        } else {
+            const newSelectedOptions = Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
+            this.setState({selectedGroup: newSelectedOptions});
+        }
+    }
 
     invitationForm = (email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
                       intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup) =>
-        <>
+        <div className={"invitation-form"}>
             <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                         placeholder={I18n.t("invitation.inviteesPlaceholder")}
                         name={I18n.t("invitation.invitees")}
@@ -259,14 +268,15 @@ class NewInvitation extends React.Component {
                          options={groups
                              .filter(group => !selectedGroup.find(selectedGroup => selectedGroup.value === group.value))}
                          name={I18n.t("invitation.groups")}
-                         isMulti={true}
                          toolTip={I18n.t("invitation.groupsTooltip")}
+                         isMulti={true}
                          placeholder={I18n.t("invitation.groupsPlaceHolder")}
-                         onChange={selectedOptions => this.setState({selectedGroup: [...selectedOptions]})}/>
+                         onChange={this.selectedGroupsChanged}/>
 
             <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                         placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}
                         name={I18n.t("collaboration.message")}
+                        large={true}
                         toolTip={I18n.t("invitation.inviteesTooltip")}
                         multiline={true}/>
 
@@ -277,7 +287,7 @@ class NewInvitation extends React.Component {
                        toolTip={I18n.t("invitation.expiryDateTooltip")}/>
 
             {this.renderActions(disabledSubmit, true)}
-        </>;
+        </div>;
 
     renderActions = (disabledSubmit, showPreview) => (
         <section className="actions">

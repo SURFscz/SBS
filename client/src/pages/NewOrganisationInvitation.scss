@@ -6,15 +6,8 @@
     width: 100%;
     margin: 0 auto $medium-padding auto;
 
-    p.title {
-        font-size: 22px;
-        color: $dark-grey;
-        margin-bottom: 10px;
-    }
-
     .new-organisation-invitation {
         margin-bottom: 25px;
-        padding: $medium-padding 0;
 
         .error {
             color: $red;
@@ -70,4 +63,14 @@
         }
 
     }
+
+    .invitation-form {
+        width: 80%;
+
+        @media (max-width: $tablet-max) {
+            width: 100%;
+        }
+
+    }
+
 }

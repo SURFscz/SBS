@@ -35,7 +35,6 @@ class Groups extends React.Component {
         super(props, context);
         this.state = {
             required: ["name", "short_name"],
-            adminOfCollaboration: false,
             alreadyExists: {},
             initial: true,
             createNewGroup: false,
@@ -55,11 +54,7 @@ class Groups extends React.Component {
     }
 
     componentDidMount = callback => {
-        const {user, collaboration} = this.props;
-        this.setState({
-            loading: false,
-            adminOfCollaboration: isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id)
-        }, callback);
+        this.setState({loading: false}, callback);
     }
 
     refreshAndFlash = (promise, flashMsg, callback) => {
@@ -105,7 +100,7 @@ class Groups extends React.Component {
     }
 
     validateGroupName = e => {
-        const { createNewGroup} = this.state;
+        const {createNewGroup} = this.state;
         const {collaboration} = this.props;
         const selectedGroup = this.getSelectedGroup();
         groupNameExists(e.target.value, collaboration.id, createNewGroup ? null : selectedGroup.name).then(json => {
@@ -138,7 +133,7 @@ class Groups extends React.Component {
         );
     }
 
-    renderGroupDetails = (selectedGroup, collaboration, currentUser) => {
+    renderGroupDetails = (selectedGroup, collaboration, currentUser, mayCreateGroups) => {
         const columns = [
             {
                 nonSortable: true,
@@ -159,7 +154,9 @@ class Groups extends React.Component {
                 header: I18n.t("models.users.institute"),
                 mapper: membership => membership.user.schac_home_organisation
             },
-            {
+        ];
+        if (mayCreateGroups) {
+            columns.push({
                 nonSortable: true,
                 key: selectedGroup.auto_provision_members ? "trash_disabled" : "trash",
                 header: "",
@@ -167,12 +164,12 @@ class Groups extends React.Component {
                     !selectedGroup.auto_provision_members && this.removeMember(selectedGroup, membership)
                 }}>
                     <FontAwesomeIcon icon="trash"/></span>
-            },
-        ];
+            });
+        }
         const options = collaboration.collaboration_memberships
             .filter(m => selectedGroup.collaboration_memberships.every(c => c.id !== m.id))
             .map(m => ({value: m.id, label: m.user.name}));
-        const actions = <div className="group-detail-actions">
+        const actions = mayCreateGroups ? <div className="group-detail-actions">
             <Select
                 classNamePrefix="actions"
                 placeholder={I18n.t("models.groupMembers.addMembersPlaceholder")}
@@ -181,12 +178,13 @@ class Groups extends React.Component {
                 isSearchable={true}
                 options={options}
             />
-        </div>
+        </div> : null;
         const queryParam = `name=${encodeURIComponent(selectedGroup.name)}&back=${encodeURIComponent(window.location.pathname)}`;
         const children = (
             <div className={"group-details"}>
                 <section className="header">
                     <h1>{selectedGroup.name}</h1>
+                    {mayCreateGroups &&
                     <div className="header-actions">
                         <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
                                 txt={I18n.t("models.groups.edit")}/>
@@ -194,10 +192,10 @@ class Groups extends React.Component {
                               onClick={() => this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)}>
                         <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
                     </span>
-                    </div>
+                    </div>}
 
                 </section>
-                <p className="description">{selectedGroup.description}</p>
+                <p className={`description ${mayCreateGroups ? "" : "no-header-actions" }`}>{selectedGroup.description}</p>
                 <div className="org-attributes-container">
                     <div className="org-attributes">
                         <span>{I18n.t("models.groups.autoProvisioning")}</span>
@@ -209,15 +207,17 @@ class Groups extends React.Component {
                     </div>
                     <CopyToClipboard text={selectedGroup.global_urn}>
                         <section className="copy-to-clipboard">
-                            <FontAwesomeIcon icon="copy" />
+                            <FontAwesomeIcon icon="copy"/>
                         </section>
                     </CopyToClipboard>
                 </div>
                 <Entities entities={selectedGroup.collaboration_memberships}
                           actions={actions}
-                          modelName="groupMembers" defaultSort="user__name"
+                          modelName="groupMembers"
+                          defaultSort="user__name"
                           searchAttributes={["user__name", "user__email"]}
-                          loading={false} columns={columns}/>
+                          loading={false}
+                          columns={columns}/>
             </div>
         );
         return this.renderGroupContainer(children);
@@ -237,10 +237,10 @@ class Groups extends React.Component {
         description: group ? group.description : "",
     });
 
-    renderGroupForm = (createNewGroup, selectedGroup) => {
+    renderGroupForm = (createNewGroup, selectedGroup, adminOfCollaboration) => {
         const {collaboration, user} = this.props;
         const {
-            adminOfCollaboration, name, short_name, identifier, auto_provision_members, alreadyExists, initial, description
+            name, short_name, identifier, auto_provision_members, alreadyExists, initial, description
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const children = (
@@ -425,16 +425,18 @@ class Groups extends React.Component {
         const {
             loading, createNewGroup, editGroup
         } = this.state;
+        const {collaboration, user: currentUser} = this.props;
+        const {showMemberView} = this.props;
         if (loading) {
             return <SpinnerField/>;
         }
         const selectedGroup = this.getSelectedGroup();
+        const mayCreateGroups = isUserAllowed(ROLES.COLL_ADMIN, currentUser, collaboration.organisation_id, collaboration.id) && !showMemberView;
         if (createNewGroup || (editGroup && selectedGroup)) {
-            return this.renderGroupForm(createNewGroup, selectedGroup);
+            return this.renderGroupForm(createNewGroup, selectedGroup, mayCreateGroups);
         }
-        const {collaboration, user: currentUser} = this.props;
         if (selectedGroup) {
-            return this.renderGroupDetails(selectedGroup, collaboration, currentUser)
+            return this.renderGroupDetails(selectedGroup, collaboration, currentUser, mayCreateGroups)
         }
         const groups = collaboration.groups;
         groups.forEach(group => {
@@ -455,23 +457,31 @@ class Groups extends React.Component {
                 nonSortable: true,
                 key: "member",
                 header: "",
-                mapper: group => group.collaboration_memberships.some(cm => cm.user === currentUser.id) ?
+                mapper: group => group.collaboration_memberships.some(cm => cm.user.id === currentUser.id) ?
                     <span className="person-role me">{I18n.t("models.groups.member")}</span> : null
             },
-
             {
                 key: "memberCount",
                 header: I18n.t("models.groups.memberCount")
-            }, {
+            },
+            ]
+        if (mayCreateGroups) {
+            columns.push({
                 key: "auto_provision_members",
                 header: I18n.t("models.groups.autoProvisioning"),
                 mapper: group => I18n.t(`models.groups.${group.auto_provision_members ? "on" : "off"}`)
-            }]
+            });
+        }
         return (
             <div>
-                <Entities entities={groups} modelName="groups" searchAttributes={["name", "description"]}
-                          defaultSort="name" columns={columns} loading={loading}
-                          showNew={true} newEntityFunc={() => this.setState(this.newGroupState())}
+                <Entities entities={groups}
+                          modelName="groups"
+                          searchAttributes={["name", "description"]}
+                          defaultSort="name"
+                          columns={columns}
+                          loading={loading}
+                          showNew={mayCreateGroups}
+                          newEntityFunc={() => this.setState(this.newGroupState())}
                           {...this.props}/>
             </div>
         )

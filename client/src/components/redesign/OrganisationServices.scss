@@ -1,0 +1,31 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/forms";
+
+table.servicesUsed, table.servicesAvailable {
+
+    thead {
+        th {
+            &.name {
+                width: 75%;
+                padding-left: 15px;
+            }
+
+            &.inUse {
+                width: 25%;
+                text-align: right;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.inUse {
+                text-align: right;
+            }
+        }
+    }
+}

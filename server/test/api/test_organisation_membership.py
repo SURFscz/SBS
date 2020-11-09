@@ -11,13 +11,13 @@ class TestOrganisationMembership(AbstractTest):
         organisation = self.find_entity_by_name(Organisation, uuc_name)
         user = self.find_entity_by_name(User, "Mary Doe")
 
-        self.assertEqual(3, len(organisation.organisation_memberships))
+        self.assertEqual(4, len(organisation.organisation_memberships))
 
         self.login("urn:mary")
         self.delete("/api/organisation_memberships", primary_key=f"{organisation.id}/{user.id}", )
 
         organisation = self.find_entity_by_name(Organisation, uuc_name)
-        self.assertEqual(2, len(organisation.organisation_memberships))
+        self.assertEqual(3, len(organisation.organisation_memberships))
 
     def test_delete_organisation_membership_not_allowed(self):
         organisation = self.find_entity_by_name(Organisation, uuc_name)

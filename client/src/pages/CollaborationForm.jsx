@@ -337,7 +337,7 @@ class CollaborationForm extends React.Component {
                             attribute: I18n.t("collaboration.name").toLowerCase()
                         })}</span>}
 
-                        <ImageField name="logo" onChange={s => this.setState({logo: s})}
+                        <ImageField name="logo" onChange={s => this.setState({logo: s})} initial={initial}
                                     title={I18n.t("collaboration.logo")} value={logo} secondRow={true}/>
 
                         <InputField value={short_name} onChange={e => {
