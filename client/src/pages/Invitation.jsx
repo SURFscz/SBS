@@ -20,6 +20,7 @@ import SelectField from "../components/SelectField";
 import BackLink from "../components/BackLink";
 import {userRole} from "../utils/UserRole";
 import {AppStore} from "../stores/AppStore";
+import UnitHeader from "../components/redesign/UnitHeader";
 
 class Invitation extends React.Component {
 
@@ -228,14 +229,7 @@ class Invitation extends React.Component {
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}
                                     question={confirmationQuestion}/>
-                {isAdminLink && <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
-                    {
-                        organisation_id: invite.collaboration.organisation_id,
-                        collaboration_id: invite.collaboration_id,
-                    })}/>}
-                {!errorSituation &&
-                <p className="title">{I18n.t("invitation.title", {collaboration: invite.collaboration.name})}</p>}
-
+                <UnitHeader obj={({name: I18n.t("invitation.title", {collaboration: invite.collaboration.name}), icon: "door-open"})}/>
                 <div className="invitation">
                     {isExpired &&
                     <p className="error">{expiredMessage}</p>}
@@ -306,10 +300,10 @@ class Invitation extends React.Component {
                     </section>}
                     {isAdminLink &&
                     <section className="actions">
-                        <Button disabled={disabledSubmit} txt={I18n.t("invitation.resend")}
-                                onClick={this.resend}/>
                         <Button warningButton={true} txt={I18n.t("invitation.delete")}
                                 onClick={this.delete}/>
+                            <Button disabled={disabledSubmit} txt={I18n.t("invitation.resend")}
+                                onClick={this.resend}/>
                         <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>}
 

@@ -136,7 +136,8 @@ def seed(db, app_config):
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org")
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co")
-
+    paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org",
+                schac_home_organisation="example.com")
     # User seed for suspend testing
     retention = app_config.retention
     current_time = datetime.datetime.utcnow()
@@ -162,7 +163,7 @@ def seed(db, app_config):
                               suspended=True)
 
     _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, betty, jane,
-             user_inactive, user_one_suspend, user_two_suspend, user_suspended, user_to_be_deleted)
+             user_inactive, user_one_suspend, user_two_suspend, user_suspended, user_to_be_deleted, paul)
 
     resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
     user_one_suspend_notification1 = SuspendNotification(user=user_one_suspend, sent_at=resend_suspension_date,
@@ -214,8 +215,10 @@ def seed(db, app_config):
     organisation_membership_mary = OrganisationMembership(role="admin", user=mary, organisation=uuc)
     organisation_membership_harry = OrganisationMembership(role="manager", user=harry, organisation=uuc)
     organisation_membership_jane = OrganisationMembership(role="admin", user=jane, organisation=uva)
+    organisation_membership_paul_uuc = OrganisationMembership(role="manager", user=paul, organisation=uuc)
+    organisation_membership_paul_uva = OrganisationMembership(role="manager", user=paul, organisation=uva)
     _persist(db, organisation_membership_john, organisation_membership_mary, organisation_membership_harry,
-             organisation_membership_jane)
+             organisation_membership_jane, organisation_membership_paul_uuc, organisation_membership_paul_uva)
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
                    public_visible=True, automatic_connection_allowed=True, logo=_read_image("email.jpeg"))

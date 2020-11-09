@@ -42,7 +42,7 @@ class OrganisationForm extends React.Component {
             administrators: [],
             email: "",
             message: "",
-            required: ["name", "short_name"],
+            required: ["name", "short_name", "logo"],
             alreadyExists: {},
             initial: true,
             isNew: true,
@@ -282,7 +282,7 @@ class OrganisationForm extends React.Component {
                     })}</span>}
 
                     <ImageField name="logo" onChange={s => this.setState({logo: s})}
-                                title={I18n.t("organisation.logo")} value={logo}/>
+                                title={I18n.t("organisation.logo")} value={logo} initial={initial}/>
 
                     <SelectField value={category}
                                  options={categoryOptions}

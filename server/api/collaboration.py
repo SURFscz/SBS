@@ -25,10 +25,10 @@ collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/co
 
 def _del_non_disclosure_info(collaboration, json_collaboration):
     for cm in json_collaboration["collaboration_memberships"]:
-        if not collaboration.disclose_member_information:
-            del cm["user"]["name"]
         if not collaboration.disclose_email_information:
             del cm["user"]["email"]
+        if not collaboration.disclose_member_information:
+            del cm["user"]
 
 
 @collaboration_api.route("/find_by_identifier", strict_slashes=False)

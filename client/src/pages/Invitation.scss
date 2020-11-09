@@ -6,18 +6,8 @@
     margin: 0 auto;
     width: 100%;
 
-    p.title {
-        margin: 15px 0;
-        font-size: 22px;
-        color: $dark-grey;
-        padding-bottom: 20px;
-    }
-
     .invitation {
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         margin: 0 auto;
-        background-color: $lightest-grey;
-        padding: $medium-padding;
 
         .error {
             color: $red;

@@ -442,7 +442,8 @@ class TestCollaboration(AbstractTest):
 
         memberships = collaboration["collaboration_memberships"]
         self.assertEqual(4, len(memberships))
-        self.assertFalse("email" in memberships[0])
+        user = memberships[0]["user"]
+        self.assertTrue("email" in user)
 
     def test_collaboration_lite_disclose_email_information(self):
         self.login("urn:roger")
@@ -451,7 +452,9 @@ class TestCollaboration(AbstractTest):
 
         memberships = collaboration["collaboration_memberships"]
         self.assertEqual(4, len(memberships))
-        self.assertTrue("email" in memberships[0])
+        user = memberships[0]["user"]
+        self.assertTrue("name" in user)
+        self.assertFalse("email" in user)
 
     def test_collaboration_lite_disclose_no_information(self):
         self.login("urn:betty")
@@ -459,7 +462,7 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get(f"/api/collaborations/lite/{collaboration_id}")
 
         memberships = collaboration.get("collaboration_memberships")
-        self.assertIsNone(memberships)
+        self.assertFalse("user" in memberships[0])
 
     def test_api_call(self):
         response = self.client.post("/api/collaborations/v1",

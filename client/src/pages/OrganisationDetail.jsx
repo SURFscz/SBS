@@ -13,8 +13,8 @@ import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
 import Collaborations from "../components/redesign/Collaborations";
 import SpinnerField from "../components/redesign/SpinnerField";
-import UsedServices from "../components/redesign/UsedServices";
 import ApiKeys from "../components/redesign/ApiKeys";
+import OrganisationServices from "../components/redesign/OrganisationServices";
 
 class OrganisationDetail extends React.Component {
 
@@ -50,12 +50,7 @@ class OrganisationDetail extends React.Component {
                     });
 
                     const tab = params.tab || this.state.tab;
-                    const tabs = [
-                        this.getCollaborationsTab(json),
-                        this.getOrganisationAdminsTab(json),
-                        this.getServicesTab(json),
-                        this.getAPIKeysTab(json)
-                    ];
+                    const tabs = this.getTabs(json);
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
@@ -79,6 +74,15 @@ class OrganisationDetail extends React.Component {
         }
     };
 
+    getTabs(json) {
+        return [
+            this.getCollaborationsTab(json),
+            this.getOrganisationAdminsTab(json),
+            this.getServicesTab(json),
+            this.getAPIKeysTab(json)
+        ];
+    }
+
     getOrganisationAdminsTab = organisation => {
         return (<div key="admins" name="admins" label={I18n.t("home.tabs.orgAdmins")}
                      icon={<PlatformAdminIcon/>}>
@@ -89,8 +93,8 @@ class OrganisationDetail extends React.Component {
 
     getServicesTab = organisation => {
         return (<div key="services" name="services" label={I18n.t("home.tabs.orgServices")} icon={<ServicesIcon/>}>
-            <UsedServices {...this.props} organisation={organisation}
-                          refresh={callback => this.componentDidMount(callback)}/>
+            <OrganisationServices {...this.props} organisation={organisation}
+                                  refresh={callback => this.componentDidMount(callback)}/>
         </div>);
     }
 
@@ -104,7 +108,7 @@ class OrganisationDetail extends React.Component {
     getCollaborationsTab = organisation => {
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.orgCollaborations")}
                      icon={<CollaborationsIcon/>}>
-            <Collaborations {...this.props} collaborations={organisation.collaborations}/>
+            <Collaborations {...this.props} collaborations={organisation.collaborations} organisation={organisation}/>
         </div>)
     }
 

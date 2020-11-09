@@ -16,6 +16,7 @@ import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 import UserColumn from "./UserColumn";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
@@ -130,7 +131,7 @@ class OrganisationAdmins extends React.Component {
         const invites = organisation.organisation_invitations;
         invites.forEach(invite => invite.invite = true);
 
-        const isAdmin = currentUser.admin;
+        const isAdmin = isUserAllowed(ROLES.ORG_ADMIN, currentUser, organisation.id, null);
 
         let i = 0;
         const columns = [
@@ -195,17 +196,21 @@ class OrganisationAdmins extends React.Component {
                     </div>
             },
         ]
+        const entities = admins.concat(invites);
         return (<>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     question={confirmationQuestion}/>
 
-                <Entities entities={admins.concat(invites)} modelName="orgMembers"
+                <Entities entities={entities}
+                          modelName="orgMembers"
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
-                          defaultSort="name" columns={columns} loading={false}
+                          defaultSort="name"
+                          columns={isAdmin ? columns : columns.slice(1)}
+                          loading={false}
                           showNew={isAdmin}
-                          actions={this.actionButtons(selectedMembers)}
+                          actions={(isAdmin && entities.length > 0)? this.actionButtons(selectedMembers) : null}
                           newEntityPath={`/new-organisation-invite/${organisation.id}`}
                           {...this.props}/>
             </>

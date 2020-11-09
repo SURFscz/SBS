@@ -50,7 +50,7 @@ class TestOrganisation(AbstractTest):
 
         organisation = organisations[0]
         self.assertEqual(2, organisation["collaborations_count"])
-        self.assertEqual(3, organisation["organisation_memberships_count"])
+        self.assertEqual(4, organisation["organisation_memberships_count"])
 
     def test_organisations_by_schac_home_organisation(self):
         self.login("urn:roger", schac_home_organisation)

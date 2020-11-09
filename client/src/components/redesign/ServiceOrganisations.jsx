@@ -95,7 +95,7 @@ class ServiceOrganisations extends React.Component {
     render() {
         const {organisationsSelected, loading, error} = this.state;
         const {organisations} = this.props;
-
+        organisations.forEach(org => org.toggle = organisationsSelected[org.id]);
         const columns = [
             {
                 nonSortable: true,
@@ -113,6 +113,7 @@ class ServiceOrganisations extends React.Component {
                 header: I18n.t("models.organisations.category")
             },
             {
+
                 key: "toggle",
                 header: I18n.t("service.accessAllowed"),
                 mapper: org => this.toggle(org, organisationsSelected)

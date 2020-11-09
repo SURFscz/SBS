@@ -32,13 +32,16 @@ export default class Collaborations extends React.PureComponent {
 
     }
 
-    noCollaborations = () => {
+    noCollaborations = organisation => {
         return (
             <div className="no-collaborations">
                 <TreeSwing/>
                 <h2>{I18n.t("models.collaborations.noCollaborations")}</h2>
                 <Button txt={I18n.t("models.collaborations.new")}
-                        onClick={() => this.props.history.push("/new-collaboration")}/>
+                        onClick={() => {
+                            const organisationQueryParam = organisation ? `organisation=${organisation.id}` : "";
+                            this.props.history.push(`/new-collaboration?${organisationQueryParam}`)
+                        }}/>
 
             </div>
         )
@@ -58,7 +61,7 @@ export default class Collaborations extends React.PureComponent {
         const { includeCounts = true, includeOrganisationName = false, modelName = "collaborations" } = this.props;
 
         if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
-            return this.noCollaborations();
+            return this.noCollaborations(this.props.organisation);
         }
         const {user} = this.props;
         const mayCreateCollaborations = isUserAllowed(ROLES.ORG_MANAGER, user);
@@ -95,8 +98,12 @@ export default class Collaborations extends React.PureComponent {
             })
         }
         return (
-            <Entities entities={collaborations} modelName={modelName} searchAttributes={["name"]}
-                      defaultSort="name" columns={columns} showNew={mayCreateCollaborations}
+            <Entities entities={collaborations}
+                      modelName={modelName}
+                      searchAttributes={["name"]}
+                      defaultSort="name"
+                      columns={columns}
+                      showNew={mayCreateCollaborations}
                       newEntityPath={`/new-collaboration`}
                       loading={loading}
                       {...this.props}/>

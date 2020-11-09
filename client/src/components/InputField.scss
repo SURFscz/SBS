@@ -43,6 +43,10 @@
 
     textarea {
         height: 70px;
+
+        &.large {
+            height: 170px;
+        }
     }
 
     span.remove {

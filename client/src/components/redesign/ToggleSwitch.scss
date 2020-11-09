@@ -22,6 +22,10 @@ label.switch {
         background-color: $lighter-grey;
         transition: .4s;
 
+        &.no-animation {
+            transition: none;
+        }
+
         &::before {
             position: absolute;
             content: "";
@@ -31,6 +35,10 @@ label.switch {
             bottom: 4px;
             background-color: white;
             transition: .4s;
+
+            &.no-animation {
+                transition: none;
+            }
         }
 
         &.disabled {

@@ -1,28 +1,33 @@
-    {% extends "mail_layout.html" %}
+{% extends "mail_layout.html" %}
 {% block title %}SURFNET Collaboration join-request{% endblock %}
 {% block content %}
 
-<p>{{ salutation }},</p>
-
-<p>The user {{ user.name }} has requested access to the collaboration {{ collaboration.name }}.</p>
-<p>The motivation for this request:</p>
-<p>{{ join_request.message }}</p>
-{% if join_request.reference is defined and join_request.reference != None and join_request.reference|length %}
-<p>The user has provided the following references within the collaboration.</p>
-<p>{{ join_request.reference }}</p>
-{% else %}
-<p>The user has not provided any references within the collaboration.</p>
-{% endif %}
-<table cellpadding="10" width="90%" align="center"
-       style="margin-bottom:1em;margin-left:auto;margin-right:auto;margin-top:1em;">
-    <tr>
-        <td bgcolor="#D9EDF7"
-            style="mso-line-height-rule:exactly;line-height:18px;font-size:13px;font-family:Arial, sans-serif;border-radius:4px 4px 4px 4px;color:#333333;border-style:solid;border-width:1px;border-color:#4FB3CF;"
-            align="center" width="100%">
-            <span lang="en"><a href="{{base_url}}/join-requests/{{join_request.hash}}" style="color:#0088CC;">Login to process this request.</a></span>
-            <br/>
-        </td>
-    </tr>
-</table>
+<div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
+    <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
+        Join request
+    </p>
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
+        {{ user.name }} has requested access to the collaboration {{ collaboration.name }}.</p>
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
+        Click the button below to accept
+        this invitation.</p>
+    <a class="button" href="{{base_url}}/join-requests/{{join_request.hash}}"
+       style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 15px 0;cursor:pointer;padding: 14px 26px;font-size: 18px;">
+        Login to process this request</a>
+</div>
+<div class="mail-middle"
+     style="padding: 40px 0 40px 60px;max-width: 800px;font-style: italic; border-bottom: 3px solid #f5f5f5">
+    <p style="white-space: pre-line;margin: 0;">
+        {{ join_request.message }}
+    </p>
+</div>
+<div class="mail-end" style="padding: 30px 0 0 60px;background-color: #f5f5f5;">
+    {% if join_request.reference is defined and join_request.reference != None and join_request.reference|length %}
+    <p>The user has provided the following references within the collaboration.</p>
+    <p style="white-space: pre-line;margin: 0;">{{ join_request.reference }}</p>
+    {% else %}
+    <p style="margin: 0;">The user has not provided any references within the collaboration.</p>
+    {% endif %}
+</div>
 
 {% endblock %}

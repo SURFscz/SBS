@@ -333,7 +333,7 @@ class Service extends React.Component {
                     attribute: I18n.t("service.name").toLowerCase()
                 })}</span>}
 
-                <ImageField name="logo" onChange={s => this.setState({logo: s})}
+                <ImageField name="logo" onChange={s => this.setState({logo: s})} initial={initial}
                             title={I18n.t("service.logo")} value={logo} secondRow={true}/>
 
                 <InputField value={entity_id} onChange={e => this.setState({

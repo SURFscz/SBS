@@ -4,7 +4,7 @@ import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
 import "./ImageField.scss";
 import {isEmpty} from "../../utils/Utils";
 
-export default function ImageField({title, name, onChange, value, secondRow = false}) {
+export default function ImageField({title, name, onChange, value, secondRow = false, initial = true}) {
 
     const [error, setError] = useState("");
 
@@ -45,6 +45,7 @@ export default function ImageField({title, name, onChange, value, secondRow = fa
             </section>
             <span className="disclaimer">{I18n.t("forms.image")}</span>
             {!isEmpty(error) && <span className="error">{error}</span>}
+            {(!initial && isEmpty(value)) && <span className="error">{I18n.t("forms.imageRequired")}</span>}
         </div>
     );
 }

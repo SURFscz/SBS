@@ -19,6 +19,7 @@ import UsedServices from "../components/redesign/UsedServices";
 import Groups from "../components/redesign/Groups";
 import AboutCollaboration from "../components/redesign/AboutCollaboration";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {isUserAllowed, ROLES} from "../utils/UserRole";
 
 
 class CollaborationDetail extends React.Component {
@@ -49,17 +50,19 @@ class CollaborationDetail extends React.Component {
                 .then(json => {
                     const adminOfCollaboration = json.access === "full";
                     const promise = adminOfCollaboration ? collaborationById(collaboration_id) : collaborationLiteById(collaboration_id);
-                    const tab = params.tab || this.state.tab;
+                    const {user} = this.props;
+                    const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                     promise.then(collaboration => {
+                        const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                         this.setState({
                             collaboration: collaboration,
                             adminOfCollaboration: adminOfCollaboration,
                             loaded: true,
-                            tabs: this.getTabs(collaboration, adminOfCollaboration),
-                            tab: params.tab || (adminOfCollaboration ? this.state.tab : "about"),
+                            tabs: this.getTabs(collaboration, adminOfCollaboration, false),
+                            tab: tab,
                         }, () => {
                             callback && callback();
-                            this.updateAppStore(collaboration, adminOfCollaboration);
+                            this.updateAppStore(collaboration, adminOfCollaboration, orgManager);
                             this.tabChanged(tab, collaboration.id);
                         });
                     });
@@ -76,11 +79,14 @@ class CollaborationDetail extends React.Component {
     }
 
 
-    updateAppStore = (collaboration, adminOfCollaboration) => {
+    updateAppStore = (collaboration, adminOfCollaboration, orgManager) => {
         AppStore.update(s => {
-            s.breadcrumb.paths = [
+            s.breadcrumb.paths = orgManager ? [
                 {path: "/", value: I18n.t("breadcrumb.home")},
                 {path: `/organisations/${collaboration.organisation_id}`, value: collaboration.organisation.name},
+                {path: "/", value: collaboration.name}
+            ] : [
+                {path: "/", value: I18n.t("breadcrumb.home")},
                 {path: "/", value: collaboration.name}
             ];
             s.sideComponent = adminOfCollaboration ? this.eyeView() : null;
@@ -88,7 +94,7 @@ class CollaborationDetail extends React.Component {
     }
 
     eyeView = () => {
-        const {showMemberView} = this.state;
+        const {showMemberView, adminOfCollaboration} = this.state;
         return (
             <div className={`eye-view ${showMemberView ? "admin" : "member"}`} onClick={() => {
                 health().then(() => {
@@ -97,7 +103,7 @@ class CollaborationDetail extends React.Component {
                     this.tabChanged(newTab, collaboration.id);
                     this.setState({
                             showMemberView: !showMemberView,
-                            tabs: this.getTabs(collaboration, !showMemberView),
+                            tabs: this.getTabs(collaboration, adminOfCollaboration, showMemberView),
                             tab: newTab
                         },
                         () => {
@@ -114,17 +120,17 @@ class CollaborationDetail extends React.Component {
     }
 
 
-    getTabs = (collaboration, adminOfCollaboration) => {
-        const tabs = adminOfCollaboration ?
+    getTabs = (collaboration, adminOfCollaboration, showMemberView) => {
+        const tabs = (adminOfCollaboration && !showMemberView)?
             [
                 this.getCollaborationAdminsTab(collaboration),
-                this.getMembersTab(collaboration),
-                this.getGroupsTab(collaboration),
+                this.getMembersTab(collaboration, showMemberView),
+                this.getGroupsTab(collaboration, showMemberView),
                 this.getServicesTab(collaboration)
             ] : [
                 this.getAboutTab(collaboration),
-                this.getMembersTab(collaboration),
-                this.getGroupsTab(collaboration),
+                this.getMembersTab(collaboration, showMemberView),
+                this.getGroupsTab(collaboration, showMemberView),
             ];
         return tabs;
     }
@@ -138,18 +144,18 @@ class CollaborationDetail extends React.Component {
         </div>)
     }
 
-    getMembersTab = collaboration => {
+    getMembersTab = (collaboration, showMemberView) => {
         return (<div key="members" name="members" label={I18n.t("home.tabs.members")}
                      icon={<MemberIcon/>}>
-            <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
+            <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false} showMemberView={showMemberView}
                                  refresh={callback => this.componentDidMount(callback)}/>
         </div>)
     }
 
-    getGroupsTab = collaboration => {
+    getGroupsTab = (collaboration, showMemberView) => {
         return (<div key="groups" name="groups" label={I18n.t("home.tabs.groups")}
                      icon={<GroupsIcon/>}>
-            <Groups {...this.props} collaboration={collaboration}
+            <Groups {...this.props} collaboration={collaboration} showMemberView={showMemberView}
                     refresh={callback => this.componentDidMount(callback)}/>
         </div>)
     }
@@ -163,7 +169,7 @@ class CollaborationDetail extends React.Component {
 
     getAboutTab = collaboration => {
         return (<div key="about" name="about" label={I18n.t("home.tabs.about")} icon={<AboutIcon/>}>
-            <AboutCollaboration {...this.props} collaboration={collaboration}/>
+            <AboutCollaboration {...this.props} collaboration={collaboration} tabChanged={this.tabChanged}/>
         </div>);
     }
 
@@ -239,15 +245,15 @@ class CollaborationDetail extends React.Component {
 
     render() {
         const {
-            collaboration, loaded, tabs, tab, adminOfCollaboration
+            collaboration, loaded, tabs, tab, adminOfCollaboration, showMemberView
         } = this.state;
         if (!loaded) {
             return <SpinnerField/>;
         }
         return (
             <div className="mod-collaboration-detail">
-                {adminOfCollaboration && this.getUnitHeader(collaboration)}
-                {!adminOfCollaboration && this.getUnitHeaderForMember(collaboration)}
+                {(adminOfCollaboration && showMemberView) && this.getUnitHeader(collaboration)}
+                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMember(collaboration)}
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
