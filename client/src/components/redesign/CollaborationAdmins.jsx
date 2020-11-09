@@ -120,7 +120,7 @@ class CollaborationAdmins extends React.Component {
                 .filter(id => selectedMembers[id].selected)
                 .map(id => {
                     const ref = selectedMembers[id].ref;
-                    ref.invite ? invitationDelete(ref.id) :
+                    return ref.invite ? invitationDelete(ref.id) :
                         deleteCollaborationMembership(collaboration.id, ref.user.id)
                 });
             Promise.all(promises).then(() => {

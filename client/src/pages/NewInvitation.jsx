@@ -310,7 +310,6 @@ class NewInvitation extends React.Component {
         if (isEmpty(collaboration)) {
             return null;
         }
-        const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-new-collaboration-invitation">

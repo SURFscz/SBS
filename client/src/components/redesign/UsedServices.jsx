@@ -37,7 +37,7 @@ class UsedServices extends React.Component {
     }
 
     componentDidMount = () => {
-        const {organisation, collaboration} = this.props;
+        const {collaboration} = this.props;
         allServices().then(json => {
             let services = json;
             let servicesInUse = collaboration.services
@@ -62,10 +62,10 @@ class UsedServices extends React.Component {
 
     getLogo = entity => {
         if (entity.logo) {
-            return <img src={`data:image/jpeg;base64,${entity.logo}`}/>
+            return <img src={`data:image/jpeg;base64,${entity.logo}`} alt=""/>
         }
         if (entity.connectionRequest && entity.service.logo) {
-            return <img src={`data:image/jpeg;base64,${entity.service.logo}`}/>
+            return <img src={`data:image/jpeg;base64,${entity.service.logo}`} alt=""/>
         }
         return <NotFoundIcon/>
     }
@@ -132,7 +132,7 @@ class UsedServices extends React.Component {
 
 
     getServiceAction = service => {
-        const {organisation, collaboration} = this.props;
+        const { collaboration} = this.props;
         if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
             return null;
@@ -167,20 +167,23 @@ class UsedServices extends React.Component {
                            txt={I18n.t("models.services.requestConnection")}/>;
 
         }
-        throw "Invalid code - should not be reached";
+        throw new Error("Invalid code - should not be reached");
     }
 
-    cancelRequestConnectionService = () => this.setState({requestConnectionService: null, message: ""});
+    cancelRequestConnectionService = e => {
+        stopEvent(e);
+        this.setState({requestConnectionService: null, message: ""});
+    }
 
     renderRequestConnectionService = (requestConnectionService, message) => {
         return (
             <div className="request-connection-service">
-                <a className={"back-to-services"} onClick={this.cancelRequestConnectionService}>
+                <a href="/services" className={"back-to-services"} onClick={this.cancelRequestConnectionService}>
                     <ChevronLeft/>{I18n.t("models.services.backToServices")}
                 </a>
                 <div className={"request-connection-service-form"}>
                     <h1>{I18n.t("models.services.connectionRequest", {name: requestConnectionService.name})}</h1>
-                    <img src={`data:image/jpeg;base64,${requestConnectionService.logo}`}/>
+                    <img src={`data:image/jpeg;base64,${requestConnectionService.logo}`} alt=""/>
                     <InputField value={message}
                                 name={I18n.t("collaborationServices.motivation")}
                                 placeholder={I18n.t("collaborationServices.motivationPlaceholder")}

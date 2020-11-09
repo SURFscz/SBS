@@ -43,7 +43,7 @@ class Organisations extends React.Component {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: org => org.logo && <img src={`data:image/jpeg;base64,${org.logo}`}/>
+                mapper: org => org.logo && <img src={`data:image/jpeg;base64,${org.logo}`} alt=""/>
             },
             {
                 key: "name",

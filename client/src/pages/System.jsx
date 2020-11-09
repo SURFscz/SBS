@@ -5,7 +5,6 @@ import {dbStats, suspendUsers} from "../api";
 import Button from "../components/Button";
 import {isEmpty} from "../utils/Utils";
 import UnitHeader from "../components/redesign/UnitHeader";
-import {ReactComponent as Logo} from "../images/logo.svg";
 
 class System extends React.Component {
 

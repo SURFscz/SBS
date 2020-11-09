@@ -101,7 +101,7 @@ class OrganisationAdmins extends React.Component {
                 .filter(id => selectedMembers[id].selected)
                 .map(id => {
                     const ref = selectedMembers[id].ref;
-                    ref.invite ? organisationInvitationDelete(ref.id) :
+                    return ref.invite ? organisationInvitationDelete(ref.id) :
                         deleteOrganisationMembership(organisation.id, ref.user.id)
                 });
             Promise.all(promises).then(() => {

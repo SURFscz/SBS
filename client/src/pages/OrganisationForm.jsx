@@ -144,7 +144,7 @@ class OrganisationForm extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, short_name, administrators, message, schac_home_organisation, description, logo, category, isNew} = this.state;
+            const {name, short_name, administrators, message, schac_home_organisation, description, logo, category} = this.state;
             createOrganisation({
                 name,
                 short_name,
@@ -217,13 +217,12 @@ class OrganisationForm extends React.Component {
 
     render() {
         const {
-            name, description, email, initial, alreadyExists, administrators,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, short_name,
+            name, description, initial, alreadyExists,
+            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
             schac_home_organisation, collaboration_creation_allowed, logo, category, categoryOptions, isNew,
             organisation, warning
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
-        const disabled = false;
         const {user} = this.props;
         return (
             <div className="mod-new-organisation">

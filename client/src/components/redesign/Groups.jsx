@@ -95,7 +95,8 @@ class Groups extends React.Component {
         });
     };
 
-    cancelSideScreen = () => {
+    cancelSideScreen = e => {
+        stopEvent(e);
         this.setState({selectedGroupId: null, createNewGroup: false, editGroup: false});
     }
 
@@ -125,7 +126,7 @@ class Groups extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}/>
-                <a className={"back-to-groups"} onClick={this.cancelSideScreen}>
+                <a className={"back-to-groups"} onClick={this.cancelSideScreen} href={"/cancel"}>
                     <ChevronLeft/>{I18n.t("models.groups.backToGroups")}
                 </a>
                 {children}

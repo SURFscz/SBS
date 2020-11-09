@@ -9,7 +9,6 @@ import {auditLogsInfo, auditLogsMe} from "../api";
 import {AppStore} from "../stores/AppStore";
 import {getParameterByName} from "../utils/QueryParameters";
 import UnitHeader from "./redesign/UnitHeader";
-import {ReactComponent as Logo} from "../images/logo.svg";
 
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at"];
 const epochAttributes = ["agreed_at", "sent_at", "last_accessed_date", "last_login_date", "expiry_date"]

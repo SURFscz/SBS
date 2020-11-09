@@ -35,8 +35,7 @@ export default function ImageField({title, name, onChange, value, secondRow = fa
                 <label className="file-upload-label button" htmlFor={`fileUpload_${name}`}>
                     {I18n.t("forms.upload")}
                 </label>
-                <input name={name}
-                       type="file"
+                <input type="file"
                        id={`fileUpload_${name}`}
                        name={`fileUpload_${name}`}
                        accept="image/png, image/jpeg, image/jpg"
