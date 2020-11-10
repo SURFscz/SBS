@@ -38,14 +38,13 @@ def collaboration_request_by_id(collaboration_request_id):
 def request_collaboration():
     data = current_request.get_json()
     user = User.query.get(current_user_id())
-    organisations = Organisation.query \
+    organisation = Organisation.query \
         .filter(Organisation.schac_home_organisation == user.schac_home_organisation) \
-        .all()
-    if len(organisations) == 0:
+        .first()
+    if not organisation:
         raise BadRequest(f"There is no organisation with a schac_home_organisation that equals the "
                          f"schac_home_organisation {user.schac_home_organisation} of User {user.email}")
 
-    organisation = organisations[0]
     data["requester_id"] = user.id
 
     cleanse_short_name(data)

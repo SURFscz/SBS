@@ -274,7 +274,6 @@ class TestOrganisation(AbstractTest):
             "organisation_id": organisation_id,
             "message": "Please join"
         })
-        self.assertTrue("Personal" in res["html"])
         self.assertTrue("Please join" in res["html"])
 
     def test_organisation_no_api_keys_cascade(self):

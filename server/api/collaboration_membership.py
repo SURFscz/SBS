@@ -14,7 +14,8 @@ collaboration_membership_api = Blueprint("collaboration_membership_api", __name_
 @collaboration_membership_api.route("/<collaboration_id>/<user_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_collaboration_membership(collaboration_id, user_id):
-    confirm_collaboration_admin(collaboration_id)
+    if current_user_id() != int(user_id):
+        confirm_collaboration_admin(collaboration_id)
 
     logger = ctx_logger("collaboration_membership_api")
 

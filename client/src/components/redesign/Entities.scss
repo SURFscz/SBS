@@ -15,6 +15,7 @@
         h1 {
             font-size: 22px;
         }
+
         svg.help {
             color: $blue;
             font-size: 14px;
@@ -109,6 +110,9 @@
                 color: black;
                 border-bottom: 1px solid $lighter-grey;
 
+                &.clickable {
+                    cursor: pointer;
+                }
             }
 
             td {
@@ -133,6 +137,7 @@
 
                 &.logo {
                     padding: 5px 0;
+
                     img {
                         max-width: 75px;
                         max-height: 75px;
@@ -169,10 +174,12 @@
             background-color: $green;
             color: white;
         }
+
         &.invite {
             background-color: $yellow;
             color: black;
         }
+
         &.accepted {
             background-color: $light-green;
             color: black;

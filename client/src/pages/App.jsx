@@ -164,11 +164,6 @@ class App extends React.Component {
         }
     };
 
-    userReloading = callback => {
-        this.setState({reloading: true},
-            () => setTimeout(() => this.setState({reloading: false}), 1250));
-    }
-
     refreshUserMemberships = callback => {
         refreshUser().then(json => {
             const {impersonator} = this.state;
@@ -190,8 +185,7 @@ class App extends React.Component {
                         <Flash/>
                         <Header currentUser={currentUser} config={config}/>
                         {impersonator &&
-                        <Impersonating impersonator={impersonator} currentUser={currentUser}
-                                       userReloading={this.userReloading}/>}
+                        <Impersonating impersonator={impersonator} currentUser={currentUser}/>}
                         <BreadCrumb/>
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>

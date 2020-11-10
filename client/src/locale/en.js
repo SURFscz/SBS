@@ -243,6 +243,7 @@ I18n.translations.en = {
             multipleAdminsHeader: "Organized by <strong>{{name}}</strong> and <strong>{{nbr}} others</strong>",
             about: "What we're about",
             services: "Where we collaborate ({{nbr}} services)",
+            noServices: "There are no services available in this collaboration",
             servicesStart: "Click the button to start the service, or read the instructions first",
             members: "Members ({{nbr}})",
             showMemberDetails: "Show all details",
@@ -250,7 +251,10 @@ I18n.translations.en = {
             more: "Show {{nbr}} more",
             less: "Show less",
             viewAsMember: "View as member",
-            viewAsAdmin: "View as admin"
+            viewAsAdmin: "View as admin",
+            discloseNoMemberInformation: "This collaboration discloses no member information",
+            newCollaborationRequest: "Request collaboration",
+            leave: "Leave"
         },
         apiKeys: {
             title: "API Keys",
@@ -413,9 +417,9 @@ I18n.translations.en = {
         servicesRestricted: "Restricted services",
         servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
         discloseMemberInformation: "Disclose member information",
-        discloseMemberInformationTooltip: "When checked we the names<br/>of members are disclosed to other members",
+        discloseMemberInformationTooltip: "When checked the names<br/>of members are disclosed to other members",
         discloseEmailInformation: "Disclose email information",
-        discloseEmailInformationTooltip: "When checked we the emails<br/>of members are disclosed to other members",
+        discloseEmailInformationTooltip: "When checked the emails<br/>of members are disclosed to other members",
         description: "Description",
         descriptionPlaceholder: "The description of the collaboration is visible to anyone",
         websiteUrl: "Website URL",

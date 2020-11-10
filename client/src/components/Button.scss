@@ -24,6 +24,9 @@
     &:hover, &:visited {
         text-decoration: none;
     }
+    &.small {
+        min-width: initial;
+    }
 
     &.cancel, &.white {
         background-color: white;

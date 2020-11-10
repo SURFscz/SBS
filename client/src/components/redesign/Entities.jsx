@@ -85,7 +85,14 @@ class Entities extends React.Component {
         return entity[column.key];
     }
 
-    renderEntities = (entities, sorted, reverse, modelName, columns, children) => {
+    onRowClick = (rowLinkMapper, entity) => e => {
+        const hasValue = typeof rowLinkMapper === "function" && rowLinkMapper(entity);
+        if (hasValue) {
+            hasValue(entity)(e);
+        }
+    }
+
+    renderEntities = (entities, sorted, reverse, modelName, columns, children, rowLinkMapper) => {
         const hasEntities = !isEmpty(entities);
         return (
             <section className="entities-list">
@@ -104,7 +111,9 @@ class Entities extends React.Component {
                     </thead>
                     <tbody>
                     {entities.map((entity, index) =>
-                        <tr key={index}>
+                        <tr key={index}
+                            className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""}`}
+                            onClick={this.onRowClick(rowLinkMapper, entity)}>
                             {columns.map(column =>
                                 <td key={column.key}
                                     className={`${column.key} ${column.nonSortable ? "" : "sortable"}`}>
@@ -123,7 +132,7 @@ class Entities extends React.Component {
     render() {
         const {
             modelName, entities, showNew, searchAttributes, columns, children, loading,
-            actions, title, filters, explain
+            actions, title, filters, explain, rowLinkMapper
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -141,7 +150,7 @@ class Entities extends React.Component {
                 </Explain>}
                 {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain)}
                 {actions}
-                {this.renderEntities(sortedEntities, sorted, reverse, modelName, columns, children)}
+                {this.renderEntities(sortedEntities, sorted, reverse, modelName, columns, children, rowLinkMapper)}
                 <div>{this.props.children}</div>
             </div>);
     }
@@ -157,6 +166,7 @@ Entities.propTypes = {
     columns: PropTypes.array.isRequired,
     newEntityPath: PropTypes.string,
     newEntityFunc: PropTypes.func,
+    rowLinkMapper: PropTypes.func,
     showNew: PropTypes.bool,
     actions: PropTypes.any,
     filters: PropTypes.any,

@@ -16,6 +16,28 @@ class TestCollaborationMembership(AbstractTest):
         post_count = CollaborationMembership.query.count()
         self.assertEqual(pre_count - 1, post_count)
 
+    def test_delete_collaboration_membership_me(self):
+        self.login("urn:jane")
+        collaboration_membership = CollaborationMembership.query.join(CollaborationMembership.user).filter(
+            User.uid == "urn:jane").one()
+        self.delete("/api/collaboration_memberships", with_basic_auth=False,
+                    primary_key=f"{collaboration_membership.collaboration_id}/{collaboration_membership.user_id}")
+        collaboration_memberships = CollaborationMembership.query.join(CollaborationMembership.user) \
+            .filter(User.uid == "urn:jane").all()
+        self.assertEqual(0, len(collaboration_memberships))
+
+    def test_delete_collaboration_membership_not_allowed(self):
+        self.login("urn:jane")
+        collaboration_membership = CollaborationMembership.query \
+            .join(CollaborationMembership.user) \
+            .join(CollaborationMembership.collaboration) \
+            .filter(User.uid == "urn:sarah") \
+            .filter(Collaboration.name == ai_computing_name) \
+            .one()
+
+        self.delete("/api/collaboration_memberships", with_basic_auth=False, response_status_code=403,
+                    primary_key=f"{collaboration_membership.collaboration_id}/{collaboration_membership.user_id}")
+
     def test_update_collaboration_membership(self):
         collaboration_membership = CollaborationMembership.query.join(CollaborationMembership.user).filter(
             User.uid == "urn:jane").one()
