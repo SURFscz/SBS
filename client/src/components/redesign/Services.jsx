@@ -56,6 +56,7 @@ class Services extends React.Component {
             <Entities entities={services} modelName="services" searchAttributes={["name"]}
                       defaultSort="name" columns={columns} showNew={user.admin} newEntityPath={"/new-service"}
                       loading={loading}
+                      rowLinkMapper={() => this.openService}
                       {...this.props}/>
         )
     }

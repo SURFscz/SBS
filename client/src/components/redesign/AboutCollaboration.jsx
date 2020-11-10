@@ -2,7 +2,7 @@ import React from "react";
 import I18n from "i18n-js";
 import "./AboutCollaboration.scss";
 import {ReactComponent as ServicesIcon} from "../../icons/services.svg";
-import {stopEvent} from "../../utils/Utils";
+import {removeDuplicates, stopEvent} from "../../utils/Utils";
 
 const memberCutOff = 10;
 
@@ -17,7 +17,7 @@ class AboutCollaboration extends React.Component {
 
     openMembersDetails = e => {
         stopEvent(e);
-        const {tabChanged } = this.props;
+        const {tabChanged} = this.props;
         tabChanged("members");
     }
 
@@ -33,6 +33,7 @@ class AboutCollaboration extends React.Component {
     render() {
         const {showAll} = this.state;
         const {collaboration} = this.props;
+        const services = removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
         const {collaboration_memberships} = collaboration
         const memberships = collaboration_memberships
             .sort((m1, m2) => m1.role.localeCompare(m2.role))
@@ -44,13 +45,13 @@ class AboutCollaboration extends React.Component {
                     <p>{collaboration.description}</p>
                 </div>
                 <div className="details">
-                    <div className="services">
-                        <h1>{I18n.t("models.collaboration.services", {nbr: collaboration.services.length})}</h1>
+                    {services.length > 0 && <div className="services">
+                        <h1>{I18n.t("models.collaboration.services", {nbr: services.length})}</h1>
                         <span className="info">
                         {I18n.t("models.collaboration.servicesStart")}
-                    </span>
+                        </span>
                         <ul className="services">
-                            {collaboration.services.map(service =>
+                            {services.map(service =>
                                 <li key={service.id} onClick={this.openService(service)}
                                     className={`${service.uri ? "uri" : ""}`}>
                                     {service.logo &&
@@ -59,8 +60,11 @@ class AboutCollaboration extends React.Component {
                                     <ServicesIcon/>
                                 </li>)}
                         </ul>
-                    </div>
-                    <div className="members">
+                    </div>}
+                    {services.length === 0 && <div className="services">
+                        <h1>{I18n.t("models.collaboration.noServices")}</h1>
+                    </div>}
+                    {collaboration.disclose_member_information && <div className="members">
                         <div className="members-header">
                             <h1>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships.length})}</h1>
                             <a href="/details"
@@ -80,7 +84,12 @@ class AboutCollaboration extends React.Component {
                            onClick={this.toggleShowMore}>{I18n.t(`models.collaboration.${showAll ? "less" : "more"}`,
                             {nbr: collaboration_memberships.length - memberCutOff})}</a>}
 
-                    </div>
+                    </div>}
+                    {!collaboration.disclose_member_information && <div className="members">
+                        <div className="members-header">
+                            <h1>{I18n.t("models.collaboration.discloseNoMemberInformation")}</h1>
+                        </div>
+                    </div>}
                 </div>
             </div>
         );

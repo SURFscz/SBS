@@ -27,6 +27,17 @@ class TestOrganisationMembership(AbstractTest):
         self.delete("/api/organisation_memberships", primary_key=f"{organisation.id}/{user.id}", with_basic_auth=False,
                     response_status_code=403)
 
+    def test_delete_organisation_membership_me(self):
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        user = self.find_entity_by_name(User, "Harry Doe")
+
+        self.login("urn:harry")
+        self.delete("/api/organisation_memberships", primary_key=f"{organisation.id}/{user.id}", with_basic_auth=False)
+
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        harry_members = len(list(filter(lambda m: m.user.uid == "urn:harry", organisation.organisation_memberships)))
+        self.assertEqual(0, harry_members)
+
     def test_update_organisation_membership(self):
         organisation_membership = OrganisationMembership.query.join(OrganisationMembership.user).filter(
             User.uid == "urn:harry").one()

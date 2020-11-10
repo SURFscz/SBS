@@ -102,6 +102,7 @@ export default class Collaborations extends React.PureComponent {
                       modelName={modelName}
                       searchAttributes={["name"]}
                       defaultSort="name"
+                      rowLinkMapper={() => this.openCollaboration}
                       columns={columns}
                       showNew={mayCreateCollaborations}
                       newEntityPath={`/new-collaboration`}

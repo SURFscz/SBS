@@ -169,10 +169,45 @@ class CollaborationAdmins extends React.Component {
                     isClearable={false}
                 />
                 {isAdminOfCollaboration && <CheckBox name="hide_invitees" value={hideInvitees}
-                          onChange={e => this.setState({hideInvitees: e.target.checked})}
-                          info={I18n.t("models.collaborations.hideInvites")}/>}
+                                                     onChange={e => this.setState({hideInvitees: e.target.checked})}
+                                                     info={I18n.t("models.collaborations.hideInvites")}/>}
             </div>
         );
+    }
+
+    doDeleteMe = () => {
+        this.setState({confirmationDialogOpen: false});
+        const {collaboration, user} = this.props;
+        deleteCollaborationMembership(collaboration.id, user.id)
+            .then(() => {
+                this.props.refreshUser(() => this.props.history.push("/home"))
+            });
+    };
+
+    deleteMe = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
+            confirmationDialogAction: this.doDeleteMe
+        });
+    };
+
+    getImpersonateMapper = entity => {
+        if (entity.invite) {
+            return null;
+        }
+        const {user: currentUser} = this.props;
+        if (currentUser.admin) {
+            return <div className="impersonate" onClick={() =>
+                emitter.emit("impersonation",
+                    {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
+                <HandIcon/>
+            </div>
+        }
+        if (currentUser.id === entity.user.id) {
+            return <Button onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
+        }
+        return null;
     }
 
     render() {
@@ -244,12 +279,7 @@ class CollaborationAdmins extends React.Component {
                 nonSortable: true,
                 key: "impersonate",
                 header: "",
-                mapper: entity => (entity.invite || !currentUser.admin) ? null :
-                    <div className="impersonate" onClick={() =>
-                        emitter.emit("impersonation",
-                            {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
-                        <HandIcon/>
-                    </div>
+                mapper: this.getImpersonateMapper
             },
         ]
         const doHideInvitees = hideInvitees || showMemberView;
@@ -268,6 +298,7 @@ class CollaborationAdmins extends React.Component {
                           defaultSort="name"
                           columns={isAdminOfCollaboration ? columns : columns.slice(1)}
                           loading={false}
+                          rowLinkMapper={entity => entity.invite && this.gotoInvitation}
                           showNew={isAdminOfCollaboration}
                           filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees, isAdminOfCollaboration)}
                           actions={(isAdminOfCollaboration && filteredEntities.length > 0) ? this.actionButtons(selectedMembers, filteredEntities) : null}

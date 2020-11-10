@@ -194,18 +194,23 @@ def my_organisations():
 @organisation_api.route("/find_by_schac_home_organisation", strict_slashes=False)
 @json_endpoint
 def organisations_by_schac_home_organisation():
-    schac_home_organisation = User.query.filter(User.id == current_user_id()).one().schac_home_organisation
+    user = User.query.filter(User.id == current_user_id()).one()
+    schac_home_organisation = user.schac_home_organisation
     if not schac_home_organisation:
         return [], 200
 
-    organisations = Organisation.query \
+    org = Organisation.query \
         .filter(Organisation.schac_home_organisation == schac_home_organisation) \
-        .all()
+        .first()
 
-    return list(map(lambda organisation: {"id": organisation.id,
-                                          "name": organisation.name,
-                                          "collaboration_creation_allowed": organisation.collaboration_creation_allowed,
-                                          "short_name": organisation.short_name}, organisations)), 200
+    entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
+    auto_aff = user.entitlement and entitlement in user.entitlement
+
+    return [] if org is None else [{"id": org.id,
+                                    "name": org.name,
+                                    "collaboration_creation_allowed": org.collaboration_creation_allowed,
+                                    "collaboration_creation_allowed_entitlement": auto_aff,
+                                    "short_name": org.short_name}], 200
 
 
 @organisation_api.route("/invites-preview", methods=["POST"], strict_slashes=False)

@@ -12,12 +12,18 @@ export default class CheckBox extends React.PureComponent {
         }
     }
 
+    innerOnChange = e => {
+        e.cancelBubble = true;
+        const {onChange} = this.props;
+        onChange && onChange(e);
+    }
+
     render() {
-        const {name, value, readOnly = false, onChange = e => this, info, tooltip, className = "checkbox"} = this.props;
+        const {name, value, readOnly = false, info, tooltip, className = "checkbox"} = this.props;
         return (
             <div className={className}>
                 <input type="checkbox" id={name} name={name} checked={value}
-                       onChange={onChange} disabled={readOnly}/>
+                       onChange={this.innerOnChange} disabled={readOnly}/>
                 <label htmlFor={name}>
                     <span ref={ref => this.input = ref} tabIndex="0"><FontAwesomeIcon icon="check"/></span>
                 </label>

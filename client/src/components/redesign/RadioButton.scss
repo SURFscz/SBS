@@ -76,7 +76,6 @@
         background-color: rgba(234, 234, 234, 0.5);
     }
 
-    /* When the radio r-button is checked, add a blue background */
     .r-button input:checked ~ .checkmark {
         background-color: white;
     }
@@ -85,19 +84,16 @@
         background-color: #eef2f3;
     }
 
-    /* Create the indicator (the dot/circle - hidden when not checked) */
     .checkmark:after {
         content: "";
         position: absolute;
         display: none;
     }
 
-    /* Show the indicator (dot/circle) when checked */
     .r-button input:checked ~ .checkmark:after {
         display: block;
     }
 
-    /* Style the indicator (dot/circle) */
     .r-button .checkmark:after {
         top: 6px;
         left: 6px;

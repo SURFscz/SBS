@@ -6,7 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export default function UnitHeader(props) {
 
-    const {obj, mayEdit, onEdit, history, auditLogPath, name} = props;
+    const {obj, mayEdit, onEdit, history, auditLogPath, name, svgClick} = props;
 
     const queryParam = `name=${encodeURIComponent(name)}&back=${encodeURIComponent(window.location.pathname)}`;
 
@@ -14,7 +14,7 @@ export default function UnitHeader(props) {
         <div className="unit-header-container">
             <div className="unit-header">
                 {obj.logo && <img src={`data:image/jpeg;base64,${obj.logo}`} alt={obj.name}/>}
-                {obj.svg && <obj.svg/>}
+                {obj.svg && <obj.svg onClick={() => svgClick && svgClick()}/>}
                 {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
                 {obj.name && <h1>{obj.name}</h1>}
                 <div className="edit">

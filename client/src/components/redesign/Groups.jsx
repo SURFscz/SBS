@@ -479,6 +479,7 @@ class Groups extends React.Component {
                           modelName="groups"
                           searchAttributes={["name", "description"]}
                           defaultSort="name"
+                          rowLinkMapper={() => this.gotoGroup}
                           columns={columns}
                           loading={loading}
                           showNew={mayCreateGroups}

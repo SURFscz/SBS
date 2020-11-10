@@ -93,7 +93,7 @@ metadata:
   idp_url: https://metadata.surfconext.nl/idps-metadata.xml
 
 service_bus:
-  enabled: True
+  enabled: False
   host: "localhost"
   client_id: "sbs"
   user: "sbs"

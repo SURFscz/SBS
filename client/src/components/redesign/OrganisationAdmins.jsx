@@ -208,6 +208,7 @@ class OrganisationAdmins extends React.Component {
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name"
                           columns={isAdmin ? columns : columns.slice(1)}
+                          rowLinkMapper={entity => entity.invite && this.gotoInvitation}
                           loading={false}
                           showNew={isAdmin}
                           actions={(isAdmin && entities.length > 0)? this.actionButtons(selectedMembers) : null}

@@ -1,5 +1,11 @@
 import React from "react";
-import {collaborationAccessAllowed, collaborationById, collaborationLiteById, health} from "../api";
+import {
+    collaborationAccessAllowed,
+    collaborationById,
+    collaborationLiteById,
+    health,
+    organisationByUserSchacHomeOrganisation
+} from "../api";
 import "./CollaborationDetail.scss";
 import I18n from "i18n-js";
 import {collaborationRoles} from "../forms/constants";
@@ -20,6 +26,7 @@ import Groups from "../components/redesign/Groups";
 import AboutCollaboration from "../components/redesign/AboutCollaboration";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
+import Button from "../components/Button";
 
 
 class CollaborationDetail extends React.Component {
@@ -33,6 +40,7 @@ class CollaborationDetail extends React.Component {
 
         this.state = {
             collaboration: null,
+            schacHomeOrganisation: null,
             adminOfCollaboration: false,
             showMemberView: true,
             viewAsMember: false,
@@ -49,16 +57,20 @@ class CollaborationDetail extends React.Component {
             collaborationAccessAllowed(collaboration_id)
                 .then(json => {
                     const adminOfCollaboration = json.access === "full";
-                    const promise = adminOfCollaboration ? collaborationById(collaboration_id) : collaborationLiteById(collaboration_id);
+                    const promises = adminOfCollaboration ? [collaborationById(collaboration_id)] :
+                        [collaborationLiteById(collaboration_id), organisationByUserSchacHomeOrganisation()];
                     const {user} = this.props;
                     const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
-                    promise.then(collaboration => {
+                    Promise.all(promises).then(res => {
+                        const collaboration = res[0];
+                        const schacHomeOrganisation = adminOfCollaboration ? null : res[2][0];
                         const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                         this.setState({
                             collaboration: collaboration,
                             adminOfCollaboration: adminOfCollaboration,
+                            schacHomeOrganisation: schacHomeOrganisation,
                             loaded: true,
-                            tabs: this.getTabs(collaboration, adminOfCollaboration, false),
+                            tabs: this.getTabs(collaboration, schacHomeOrganisation, adminOfCollaboration, false),
                             tab: tab,
                         }, () => {
                             callback && callback();
@@ -98,12 +110,12 @@ class CollaborationDetail extends React.Component {
         return (
             <div className={`eye-view ${showMemberView ? "admin" : "member"}`} onClick={() => {
                 health().then(() => {
-                    const {showMemberView, collaboration} = this.state;
+                    const {showMemberView, collaboration, schacHomeOrganisation} = this.state;
                     const newTab = showMemberView ? "about" : "admins";
                     this.tabChanged(newTab, collaboration.id);
                     this.setState({
                             showMemberView: !showMemberView,
-                            tabs: this.getTabs(collaboration, adminOfCollaboration, showMemberView),
+                            tabs: this.getTabs(collaboration, schacHomeOrganisation, adminOfCollaboration, showMemberView),
                             tab: newTab
                         },
                         () => {
@@ -120,8 +132,12 @@ class CollaborationDetail extends React.Component {
     }
 
 
-    getTabs = (collaboration, adminOfCollaboration, showMemberView) => {
-        const tabs = (adminOfCollaboration && !showMemberView)?
+    getTabs = (collaboration, schacHomeOrganisation, adminOfCollaboration, showMemberView) => {
+        //Actually this collaboration is not for members to view
+        if (!adminOfCollaboration && !collaboration.disclose_member_information) {
+            return [this.getAboutTab(collaboration)];
+        }
+        const tabs = (adminOfCollaboration && !showMemberView) ?
             [
                 this.getCollaborationAdminsTab(collaboration),
                 this.getMembersTab(collaboration, showMemberView),
@@ -147,7 +163,8 @@ class CollaborationDetail extends React.Component {
     getMembersTab = (collaboration, showMemberView) => {
         return (<div key="members" name="members" label={I18n.t("home.tabs.members")}
                      icon={<MemberIcon/>}>
-            <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false} showMemberView={showMemberView}
+            <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
+                                 showMemberView={showMemberView}
                                  refresh={callback => this.componentDidMount(callback)}/>
         </div>)
     }
@@ -191,6 +208,10 @@ class CollaborationDetail extends React.Component {
         return I18n.t("models.collaboration.multipleAdminsHeader", {name: admins[0].name, nbr: admins.length - 1});
     }
 
+    createCollaboration = () => {
+        debugger;
+    }
+
     getUnitHeaderForMember(collaboration) {
         return (
             <div className="unit-header-container">
@@ -219,6 +240,10 @@ class CollaborationDetail extends React.Component {
                             </section>
                         </div>
                     </div>
+                    <div className="unit-edit">
+                        <Button onClick={this.createCollaboration} txt={I18n.t("models.collaboration.newCollaborationRequest")}/>
+                    </div>
+
                 </div>
             </div>
         );

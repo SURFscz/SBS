@@ -1,14 +1,8 @@
 # -*- coding: future_fstrings -*-
 import os
 
-from flask_jsontools.formatting import JsonSerializableBase
 from flask_migrate import command
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData
-from sqlalchemy.ext.declarative import declarative_base
-
-metadata = MetaData()
-Base = declarative_base(cls=(JsonSerializableBase,), metadata=metadata)
 
 
 class SQLAlchemyPrePing(SQLAlchemy):

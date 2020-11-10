@@ -43,6 +43,7 @@
             top: 15px;
             right: 50%;
         }
+
         .user-profile {
             margin-left: auto;
             position: relative;
@@ -57,10 +58,16 @@
             border-radius: 4px;
             background-color: $background;
 
+            @media (max-width: $tablet-max) {
+                margin: 5px 5px -2px auto;
+            }
+
+
             .user {
                 display: flex;
                 flex-direction: column;
                 margin-right: 40px;
+
                 span.role {
                     font-weight: bold;
                 }
