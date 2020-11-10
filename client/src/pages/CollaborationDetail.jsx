@@ -63,7 +63,7 @@ class CollaborationDetail extends React.Component {
                     const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                     Promise.all(promises).then(res => {
                         const collaboration = res[0];
-                        const schacHomeOrganisation = adminOfCollaboration ? null : res[2][0];
+                        const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
                         const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                         this.setState({
                             collaboration: collaboration,
@@ -208,8 +208,8 @@ class CollaborationDetail extends React.Component {
         return I18n.t("models.collaboration.multipleAdminsHeader", {name: admins[0].name, nbr: admins.length - 1});
     }
 
-    createCollaboration = () => {
-        debugger;
+    createCollaborationRequest = () => {
+        this.props.history.push("/new-collaboration");
     }
 
     getUnitHeaderForMember(collaboration) {
@@ -241,7 +241,7 @@ class CollaborationDetail extends React.Component {
                         </div>
                     </div>
                     <div className="unit-edit">
-                        <Button onClick={this.createCollaboration} txt={I18n.t("models.collaboration.newCollaborationRequest")}/>
+                        <Button onClick={this.createCollaborationRequest} txt={I18n.t("models.collaboration.newCollaborationRequest")}/>
                     </div>
 
                 </div>

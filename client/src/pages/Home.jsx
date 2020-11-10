@@ -53,7 +53,7 @@ class Home extends React.Component {
                 } else {
                     tabs.push(this.getOrganisationsTab());
                     if (nbrCollaborations > 0) {
-                        tabs.push(this.getCollaborationsTab());
+                        tabs.push(this.getCollaborationsTab(true));
                     }
                 }
                 break;
@@ -63,7 +63,7 @@ class Home extends React.Component {
                     setTimeout(() => this.props.history.push(`/collaborations/${user.collaboration_memberships[0].collaboration_id}`), 250);
                     return;
                 } else {
-                    tabs.push(this.getCollaborationsTab());
+                    tabs.push(this.getCollaborationsTab(false));
                     tab = "collaborations";
                     if (nbrOrganisations > 0) {
                         tabs.push(this.getOrganisationsTab());
@@ -105,10 +105,10 @@ class Home extends React.Component {
             <span>TODO</span>
         </div>)
     }
-    getCollaborationsTab = () => {
+    getCollaborationsTab = includeCounts=> {
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.collaborations")}
                      icon={<CollaborationsIcon/>}>
-            <Collaborations {...this.props} includeOrganisationName={true}/>
+            <Collaborations {...this.props} includeOrganisationName={true} includeCounts={includeCounts}/>
         </div>)
     }
 

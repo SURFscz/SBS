@@ -45,7 +45,7 @@ class CollaborationForm extends React.Component {
             disclose_email_information: true,
             disclose_member_information: true,
             disable_join_requests: false,
-            required: ["name", "short_name", "organisation"],
+            required: ["name", "short_name", "organisation", "logo"],
             alreadyExists: {},
             organisation: {},
             organisations: [],
@@ -58,8 +58,10 @@ class CollaborationForm extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             leavePage: true,
             noOrganisations: false,
-            isRequestCollaboration: false,
-            current_user_admin: false
+            isCollaborationRequest: false,
+            autoCreateCollaborationRequest: false,
+            current_user_admin: false,
+            loaded: false
         };
     }
 
@@ -70,29 +72,33 @@ class CollaborationForm extends React.Component {
                 const organisation = collaboration.organisation;
                 const orgOption = {label: organisation.name, value: organisation.id,
                     short_name: organisation.short_name,};
-                this.updateBreadCrumb(orgOption, collaboration);
+                this.updateBreadCrumb(orgOption, collaboration, false, false);
                 this.setState({
                     ...collaboration,
                     collaboration: collaboration,
                     organisation: orgOption,
                     organisations: [orgOption],
-                    isNew: false
+                    isNew: false,
+                    loaded: true
                 });
             });
         } else {
             myOrganisationsLite().then(json => {
                 if (json.length === 0) {
                     organisationByUserSchacHomeOrganisation().then(json => {
-                        if (json.length === 0) {
-                            this.setState({noOrganisations: true});
+                        if (isEmpty(json)) {
+                            this.setState({noOrganisations: true, loaded: true});
                         } else {
-                            const organisations = this.mapOrganisationsToOptions(json);
-                            this.updateBreadCrumb(organisations[0]);
+                            const organisations = this.mapOrganisationsToOptions([json]);
+                            const autoCreateCollaborationRequest = json.collaboration_creation_allowed || json.collaboration_creation_allowed_entitlement;
+                            this.updateBreadCrumb(null, null, autoCreateCollaborationRequest, true);
                             this.setState({
                                 organisations: organisations,
                                 organisation: organisations[0],
-                                isRequestCollaboration: true,
+                                isCollaborationRequest: true,
+                                autoCreateCollaborationRequest: autoCreateCollaborationRequest,
                                 current_user_admin: true,
+                                loaded: true,
                                 required: this.state.required.concat("message")
                             });
                         }
@@ -109,24 +115,27 @@ class CollaborationForm extends React.Component {
                     } else {
                         organisation = organisations[0];
                     }
-                    this.updateBreadCrumb(organisation);
+                    this.updateBreadCrumb(organisation, null, false, false);
                     this.setState({
                         organisations: organisations,
-                        organisation: organisation
+                        organisation: organisation,
+                        loaded: true
                     });
                 }
             });
         }
     };
 
-    updateBreadCrumb = (organisation, collaboration) => {
+    updateBreadCrumb = (organisation, collaboration, autoCreateCollaborationRequest, isCollaborationRequest) => {
+        const collaborationPath = collaboration ? {path: "/collaborations/" + collaboration.id, value: collaboration.name} :
+                    (isCollaborationRequest && !autoCreateCollaborationRequest) ? {path: "/", value: I18n.t("breadcrumb.newCollaborationRequest")} :
+                        {path: "/", value: I18n.t("breadcrumb.newCollaboration")}
         AppStore.update(s => {
-            const paths = [
-                {path: "/", value: I18n.t("breadcrumb.home")},
-                {path: `/organisations/${organisation.value}`, value: organisation.label},
-                collaboration ? {path: "/collaborations/" + collaboration.id, value: collaboration.name} :
-                    {path: "/", value: I18n.t("breadcrumb.newCollaboration")}
-            ];
+            const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
+            if (organisation) {
+                paths.push({path: `/organisations/${organisation.value}`, value: organisation.label});
+            }
+            paths.push(collaborationPath);
             if (collaboration) {
                 paths.push({path: "/", value: I18n.t("breadcrumb.editCollaboration")})
             }
@@ -191,10 +200,10 @@ class CollaborationForm extends React.Component {
         if (this.isValid()) {
             const {
                 name, short_name, description, logo, website_url,
-                administrators, message, accepted_user_policy, organisation, isRequestCollaboration,
+                administrators, message, accepted_user_policy, organisation, isCollaborationRequest,
                 services_restricted, disable_join_requests, current_user_admin,disclose_member_information, disclose_email_information
             } = this.state;
-            const promise = isRequestCollaboration ? requestCollaboration : createCollaboration;
+            const promise = isCollaborationRequest ? requestCollaboration : createCollaboration;
             promise({
                 name, short_name, description, logo, website_url,
                 administrators, message, accepted_user_policy, organisation_id: organisation.value,
@@ -283,9 +292,10 @@ class CollaborationForm extends React.Component {
 
     render() {
         const {
-            name, short_name, description, website_url, administrators, message, accepted_user_policy, organisation, organisations, email, initial, alreadyExists,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, noOrganisations, isRequestCollaboration,
-            services_restricted, disclose_member_information, disclose_email_information, disable_join_requests, current_user_admin, logo, warning, isNew, collaboration
+            name, short_name, description, website_url, administrators, message, accepted_user_policy, organisation,
+            organisations, email, initial, alreadyExists, confirmationDialogOpen, confirmationDialogAction, cancelDialogAction,
+            leavePage, noOrganisations, isCollaborationRequest, services_restricted, disclose_member_information, disclose_email_information,
+            disable_join_requests, current_user_admin, logo, warning, isNew, collaboration, loaded, autoCreateCollaborationRequest
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
@@ -293,6 +303,8 @@ class CollaborationForm extends React.Component {
         if (noOrganisations) {
             return this.renderNoOrganisations(user);
         }
+        const unitHeaderName = (!isCollaborationRequest || autoCreateCollaborationRequest) ? I18n.t("models.collaborations.new") :
+            I18n.t("models.collaborations.newCollaborationRequest")
         return (
             <div className="mod-new-collaboration-container">
                 <div className="mod-new-collaboration">
@@ -304,7 +316,7 @@ class CollaborationForm extends React.Component {
                                         leavePage={leavePage}/>
 
                     {isNew &&
-                    <UnitHeader obj={({name: I18n.t("models.collaborations.new"), svg: CollaborationsIcon})}/>}
+                    <UnitHeader obj={({name: unitHeaderName, svg: CollaborationsIcon})}/>}
                     {!isNew && <UnitHeader obj={collaboration}
                                            auditLogPath={`collaborations/${collaboration.id}`}
                                            name={collaboration.name}
@@ -378,27 +390,27 @@ class CollaborationForm extends React.Component {
                                     placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
                                     name={I18n.t("collaboration.accepted_user_policy")}/>
 
-                        {!isRequestCollaboration && <CheckBox name="disable_join_requests"
+                        {!isCollaborationRequest && <CheckBox name="disable_join_requests"
                                                               value={disable_join_requests}
                                                               info={I18n.t("collaboration.disableJoinRequests")}
                                                               tooltip={I18n.t("collaboration.disableJoinRequestsTooltip")}
                                                               onChange={() => this.setState({disable_join_requests: !disable_join_requests})}/>}
 
-                        {!isRequestCollaboration && <CheckBox name="services_restricted"
+                        {!isCollaborationRequest && <CheckBox name="services_restricted"
                                                               value={services_restricted}
                                                               info={I18n.t("collaboration.servicesRestricted")}
                                                               tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
                                                               readOnly={!user.admin}
                                                               onChange={() => this.setState({services_restricted: !services_restricted})}/>}
 
-                        {!isRequestCollaboration && <CheckBox name="disclose_member_information"
+                        {!isCollaborationRequest && <CheckBox name="disclose_member_information"
                                                               value={disclose_member_information}
                                                               info={I18n.t("collaboration.discloseMemberInformation")}
                                                               tooltip={I18n.t("collaboration.discloseMemberInformationTooltip")}
                                                               readOnly={!user.admin}
                                                               onChange={() => this.setState({disclose_member_information: !disclose_member_information})}/>}
 
-                        {!isRequestCollaboration && <CheckBox name="disclose_email_information"
+                        {!isCollaborationRequest && <CheckBox name="disclose_email_information"
                                                               value={disclose_email_information}
                                                               info={I18n.t("collaboration.discloseEmailInformation")}
                                                               tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
@@ -421,7 +433,7 @@ class CollaborationForm extends React.Component {
                             className="error">{I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.organisation_name").toLowerCase()
                         })}</span>}
-                        {(!isRequestCollaboration && isNew) &&
+                        {(!isCollaborationRequest && isNew) &&
                         <div>
                             <h1 className="section-separator">{I18n.t("collaboration.invitations")}</h1>
 
@@ -447,16 +459,16 @@ class CollaborationForm extends React.Component {
                         {isNew && <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
                                   value={current_user_admin}
                                   onChange={this.flipCurrentUserAdmin}
-                                  readOnly={isRequestCollaboration}
+                                  readOnly={isCollaborationRequest}
                                   info={I18n.t("collaboration.currentUserAdmin")}
                                   tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>}
 
                         {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                    placeholder={isRequestCollaboration ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
-                                    name={isRequestCollaboration ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
-                                    toolTip={isRequestCollaboration ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
+                                    placeholder={isCollaborationRequest ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
+                                    name={isCollaborationRequest ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
+                                    toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
                                     multiline={true}/>}
-                        {(!initial && isEmpty(message) && isRequestCollaboration) && <span
+                        {(!initial && isEmpty(message) && isCollaborationRequest) && <span
                             className="error">{I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.motivation").toLowerCase()
                         })}</span>}
@@ -466,7 +478,7 @@ class CollaborationForm extends React.Component {
                             <Button warningButton={true} txt={I18n.t("collaborationDetail.delete")}
                                     onClick={this.delete}/>}
                             <Button disabled={disabledSubmit}
-                                    txt={isRequestCollaboration ? I18n.t("forms.request") : I18n.t("forms.save")}
+                                    txt={(isCollaborationRequest && !autoCreateCollaborationRequest) ? I18n.t("forms.request") : I18n.t("forms.save")}
                                     onClick={this.submit}/>
                             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                         </section>

@@ -10,17 +10,27 @@
     width: 100%;
     margin: 0 auto;
 
-    p.title {
-        font-size: 22px;
-        color: $dark-grey;
-        padding-bottom: 20px;
-    }
-
     .collaboration-request {
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
-        margin: 0 auto 25px auto;
-        background-color: $lightest-grey;
-        padding: $medium-padding;
+
+        display: grid;
+        grid-template-columns: [first] 1fr [second] 1fr;
+        column-gap: 50px;
+
+        .input-field, .actions, div.checkbox, .select-field, span.error {
+            grid-column-start: first;
+        }
+
+        .section-separator {
+            grid-column: 1/-1;
+            color: $blue;
+            font-weight: bold;
+            border-bottom: 1px solid $blue;
+            padding: 25px 0 5px 0;
+
+            &.last {
+                margin-bottom: 10px;
+            }
+        }
 
         .error {
             color: $red;

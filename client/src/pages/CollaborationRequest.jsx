@@ -16,8 +16,8 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import SelectField from "../components/SelectField";
 import {sanitizeShortName} from "../validations/regExps";
-import BackLink from "../components/BackLink";
-import {userRole} from "../utils/UserRole";
+import UnitHeader from "../components/redesign/UnitHeader";
+import ImageField from "../components/redesign/ImageField";
 
 class CollaborationRequest extends React.Component {
 
@@ -31,7 +31,7 @@ class CollaborationRequest extends React.Component {
                 () => this.props.history.goBack()),
             dialogQuestion: I18n.t("collaborationRequest.denyConfirmation"),
             leavePage: true,
-            required: ["name", "short_name", "organisation"],
+            required: ["name", "short_name", "organisation", "logo"],
             collaborationRequest: {organisation: {}, requester: {}},
             approve: true,
             organisations: [],
@@ -120,6 +120,7 @@ class CollaborationRequest extends React.Component {
         } else if (this.isValid()) {
             const {collaborationRequest} = this.state;
             collaborationRequest.organisation_id = collaborationRequest.organisation.value;
+            debugger;
             approveRequestCollaboration(collaborationRequest).then(res => {
                 this.props.history.push(`/organisations/${collaborationRequest.organisation_id}`);
                 setFlash(I18n.t("collaborationRequest.flash.approved", {name: collaborationRequest.name}));
@@ -146,9 +147,8 @@ class CollaborationRequest extends React.Component {
     render() {
         const {
             collaborationRequest, initial, alreadyExists, confirmationDialogOpen, confirmationDialogAction,
-            cancelDialogAction, leavePage, organisations, dialogQuestion, originalRequestedName
+            cancelDialogAction, leavePage, organisations, dialogQuestion, originalRequestedName, logo
         } = this.state;
-        const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-collaboration-request-container">
@@ -158,14 +158,12 @@ class CollaborationRequest extends React.Component {
                                         confirm={confirmationDialogAction}
                                         question={dialogQuestion}
                                         leavePage={leavePage}/>
-                    <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
-                    {
-                        organisation_id: collaborationRequest.organisation_id
-                    })}/>
-                    <p className="title">{I18n.t("collaborationRequest.title", {
-                        requester: collaborationRequest.requester.name,
-                        name: originalRequestedName
-                    })}</p>
+                    <UnitHeader obj={{
+                        ...collaborationRequest, name: I18n.t("collaborationRequest.title", {
+                            requester: collaborationRequest.requester.name,
+                            name: originalRequestedName
+                        })
+                    }}/>
 
                     <div className="collaboration-request">
                         <InputField
@@ -188,6 +186,13 @@ class CollaborationRequest extends React.Component {
                             className="error">{I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.name").toLowerCase()
                         })}</span>}
+
+                        <ImageField name="logo"
+                                    onChange={this.updateState("logo")}
+                                    initial={initial}
+                                    title={I18n.t("collaboration.logo")}
+                                    value={collaborationRequest.logo}
+                                    secondRow={false}/>
 
                         <InputField value={collaborationRequest.short_name}
                                     onChange={this.updateState("short_name")}
@@ -231,13 +236,13 @@ class CollaborationRequest extends React.Component {
                                      toolTip={I18n.t("collaboration.organisationTooltip")}
                         />
                         <section className="actions">
-                            <Button disabled={disabledSubmit}
-                                    txt={I18n.t("collaborationRequest.approve")}
-                                    onClick={this.submit(true)}/>
-                            <Button warningButton={true} txt={I18n.t("collaborationRequest.deny")}
+                            <Button cancelButton={true} txt={I18n.t("collaborationRequest.deny")}
                                     onClick={this.submit(false)}/>
                             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                             <Button cancelButton={true} txt={I18n.t("forms.reset")} onClick={this.reset}/>
+                            <Button disabled={disabledSubmit}
+                                    txt={I18n.t("collaborationRequest.approve")}
+                                    onClick={this.submit(true)}/>
                         </section>
                     </div>
                 </div>

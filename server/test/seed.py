@@ -372,6 +372,7 @@ def seed(db, app_config):
     _persist(db, invitation, invitation_uva, invitation_noway)
 
     collaboration_request = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
+                                                 website_url="https://google.com", logo=_read_image("request.jpg"),
                                                  message="For research", organisation=uuc, requester=peter)
     _persist(db, collaboration_request)
 
