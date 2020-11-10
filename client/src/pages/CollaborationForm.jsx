@@ -26,6 +26,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {AppStore} from "../stores/AppStore";
 import ImageField from "../components/redesign/ImageField";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class CollaborationForm extends React.Component {
 
@@ -297,6 +298,9 @@ class CollaborationForm extends React.Component {
             leavePage, noOrganisations, isCollaborationRequest, services_restricted, disclose_member_information, disclose_email_information,
             disable_join_requests, current_user_admin, logo, warning, isNew, collaboration, loaded, autoCreateCollaborationRequest
         } = this.state;
+        if (!loaded) {
+            return <SpinnerField/>
+        }
         const disabledSubmit = !initial && !this.isValid();
         const disabled = false;
         const {user} = this.props;

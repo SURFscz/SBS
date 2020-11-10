@@ -147,7 +147,7 @@ class CollaborationRequest extends React.Component {
     render() {
         const {
             collaborationRequest, initial, alreadyExists, confirmationDialogOpen, confirmationDialogAction,
-            cancelDialogAction, leavePage, organisations, dialogQuestion, originalRequestedName, logo
+            cancelDialogAction, leavePage, organisations, dialogQuestion, originalRequestedName
         } = this.state;
         const disabledSubmit = !initial && !this.isValid();
         return (
