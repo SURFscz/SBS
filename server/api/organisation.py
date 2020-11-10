@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 import uuid
 from secrets import token_urlsafe
-
+from sqlalchemy.orm import aliased, load_only, contains_eager, joinedload, selectinload
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from munch import munchify
 from sqlalchemy import text, func, bindparam, String
@@ -130,18 +130,18 @@ def organisation_by_id_lite(organisation_id):
 @json_endpoint
 def organisation_by_id(organisation_id):
     query = Organisation.query \
-        .options(joinedload(Organisation.organisation_memberships)
-                 .subqueryload(OrganisationMembership.user)) \
-        .options(joinedload(Organisation.organisation_invitations)
-                 .subqueryload(OrganisationInvitation.user)) \
-        .options(joinedload(Organisation.api_keys)) \
-        .options(joinedload(Organisation.services)) \
-        .options(joinedload(Organisation.collaboration_requests)
-                 .subqueryload(CollaborationRequest.requester)) \
-        .options(joinedload(Organisation.collaborations)
-                 .subqueryload(Collaboration.collaboration_memberships)) \
-        .options(joinedload(Organisation.collaborations)
-                 .subqueryload(Collaboration.invitations)) \
+        .options(selectinload(Organisation.organisation_memberships)
+                 .selectinload(OrganisationMembership.user)) \
+        .options(selectinload(Organisation.organisation_invitations)
+                 .selectinload(OrganisationInvitation.user)) \
+        .options(selectinload(Organisation.api_keys)) \
+        .options(selectinload(Organisation.services)) \
+        .options(selectinload(Organisation.collaboration_requests)
+                 .selectinload(CollaborationRequest.requester)) \
+        .options(selectinload(Organisation.collaborations)
+                 .selectinload(Collaboration.collaboration_memberships)) \
+        .options(selectinload(Organisation.collaborations)
+                 .selectinload(Collaboration.invitations)) \
         .filter(Organisation.id == organisation_id)
 
     if not request_context.is_authorized_api_call:
@@ -197,20 +197,20 @@ def organisations_by_schac_home_organisation():
     user = User.query.filter(User.id == current_user_id()).one()
     schac_home_organisation = user.schac_home_organisation
     if not schac_home_organisation:
-        return [], 200
+        return None, 200
 
     org = Organisation.query \
         .filter(Organisation.schac_home_organisation == schac_home_organisation) \
         .first()
 
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
-    auto_aff = user.entitlement and entitlement in user.entitlement
+    auto_aff = bool(user.entitlement) and entitlement in user.entitlement
 
-    return [] if org is None else [{"id": org.id,
-                                    "name": org.name,
-                                    "collaboration_creation_allowed": org.collaboration_creation_allowed,
-                                    "collaboration_creation_allowed_entitlement": auto_aff,
-                                    "short_name": org.short_name}], 200
+    return None if org is None else {"id": org.id,
+                                     "name": org.name,
+                                     "collaboration_creation_allowed": org.collaboration_creation_allowed,
+                                     "collaboration_creation_allowed_entitlement": auto_aff,
+                                     "short_name": org.short_name}, 200
 
 
 @organisation_api.route("/invites-preview", methods=["POST"], strict_slashes=False)

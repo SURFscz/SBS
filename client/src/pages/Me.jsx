@@ -116,7 +116,6 @@ class Me extends React.Component {
             const file = files[0];
             const reader = new FileReader();
             reader.onload = () => {
-                debugger;
                 const sshKey = reader.result.toString();
                 if (validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey) || validPublicSSHEd25519KeyRegExp.test(sshKey)) {
                     this.setState({fileName: file.name, fileTypeError: false, ssh_key: sshKey});

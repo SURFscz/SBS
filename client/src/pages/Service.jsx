@@ -53,7 +53,7 @@ class Service extends React.Component {
         organisations: [],
         contact_email: "",
         ip_networks: [],
-        required: ["name", "entity_id"],
+        required: ["name", "entity_id", "logo"],
         alreadyExists: {},
         initial: true,
         isNew: true,

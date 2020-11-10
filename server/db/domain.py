@@ -384,6 +384,8 @@ class CollaborationRequest(Base, db.Model):
     organisation = db.relationship("Organisation", back_populates="collaboration_requests")
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     requester = db.relationship("User", back_populates="collaboration_requests")
+    logo = db.Column("logo", db.Text(), nullable=True)
+    website_url = db.Column("website_url", db.String(length=512), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),

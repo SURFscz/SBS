@@ -86,7 +86,7 @@ def approve_request(collaboration_request_id):
     collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
     confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
     client_data = current_request.get_json()
-    attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy"]
+    attributes = ["name", "short_name", "description", "organisation_id", "accepted_user_policy", "logo", "website_url"]
 
     # take the data from client_data as it can be different
     data = {"identifier": str(uuid.uuid4())}

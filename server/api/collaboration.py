@@ -192,7 +192,8 @@ def my_collaborations_lite():
         .outerjoin(CollaborationMembership.groups) \
         .options(contains_eager(Collaboration.organisation)) \
         .options(contains_eager(Collaboration.services)) \
-        .options(contains_eager(Collaboration.collaboration_memberships).contains_eager(CollaborationMembership.groups)) \
+        .options(contains_eager(Collaboration.collaboration_memberships)
+                 .contains_eager(CollaborationMembership.groups)) \
         .filter(CollaborationMembership.user_id == user_id) \
         .all()
     return res, 200
