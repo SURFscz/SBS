@@ -48,7 +48,7 @@ class Home extends React.Component {
             case ROLES.ORG_ADMIN:
             case ROLES.ORG_MANAGER:
                 if (nbrOrganisations === 1 && nbrCollaborations === 0) {
-                    setTimeout(() => this.props.history.push(`/organisations/${user.organisation_memberships[0].organisation_id}`), 250);
+                    setTimeout(() => this.props.history.push(`/organisations/${user.organisation_memberships[0].organisation_id}`), 50);
                     return;
                 } else {
                     tabs.push(this.getOrganisationsTab());
@@ -60,7 +60,7 @@ class Home extends React.Component {
             case ROLES.COLL_ADMIN:
             case ROLES.COLL_MEMBER:
                 if (nbrOrganisations === 0 && nbrCollaborations === 1) {
-                    setTimeout(() => this.props.history.push(`/collaborations/${user.collaboration_memberships[0].collaboration_id}`), 250);
+                    setTimeout(() => this.props.history.push(`/collaborations/${user.collaboration_memberships[0].collaboration_id}`), 50);
                     return;
                 } else {
                     tabs.push(this.getCollaborationsTab(false));
