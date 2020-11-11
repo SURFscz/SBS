@@ -36,10 +36,10 @@ class TestUserClaims(AbstractTest):
         add_user_claims({"given_name": "John", "family_name": "Doe"}, "urn:johny", user)
         self.assertEqual("jdoe", user.username)
 
-    def test_add_user_claims_user_name_eduperson_principal_name(self):
+    def test_add_user_claims_user_name_voperson_external_id(self):
         user = User()
         add_user_claims({"given_name": "John", "family_name": "Doe",
-                         "eduperson_principal_name": "mettens@example.com.org"}, "urn:johny", user)
+                         "voperson_external_id": "mettens@example.com.org"}, "urn:johny", user)
         self.assertEqual("mettens", user.username)
 
     def test_generate_unique_username(self):
