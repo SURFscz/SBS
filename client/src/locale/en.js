@@ -270,6 +270,26 @@ I18n.translations.en = {
             title: "Requests for collaborations",
             requester: "Requester",
             searchPlaceHolder: "Search for requests..."
+        },
+        invitation: {
+            welcome: "Welcome to SRAM. Here you can collaborate with your fellow researchers.",
+            invited: "You have been invited to join collaboration \"{{collaboration}}\" by {{inviter}}",
+            followingSteps: "Please take the following steps:",
+            steps: {
+                progress: "{{now}} of {{total}}",
+                login: "Login",
+                next: "Next: {{step}}",
+                aup: "Accept our AUP",
+                invite: "Accept the invite",
+                collaborate: "Collaborate!"
+            },
+            login: "Please login to identify yourself",
+            loginTip: "You can use your institution account to login, or use a guest account",
+            accept: "I accept these terms",
+            noAccept: "No, I don't agree",
+            acceptInvitation: "Yes, I accept the invitation",
+            declineInvitation:  "No, I decline"
+
         }
     },
     user: {
@@ -1018,7 +1038,7 @@ I18n.translations.en = {
         title1: "In order to use SURF Research Access Management, you need to agree to the below Acceptable Use Policy.",
         title2: "Please read the document and if agreed check the box and proceed to the validation of your personal information.",
         title3: "For more information we supply contactinformation at the end of the AUP.",
-        downloadPdf: "Download Acceptable Usage Policy (pdf)",
+        downloadPdf: "Download AUP (pdf)",
         agreeWithTerms: "I agree with the Acceptable Usage Policy",
         continueToValidation: "Store decision",
         agreed: "Your agreement with {{name}} has been saved."

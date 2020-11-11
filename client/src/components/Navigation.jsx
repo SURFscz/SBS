@@ -42,17 +42,6 @@ export default class Navigation extends React.PureComponent {
         const isOrganisationManager = memberships.some(membership => membership.role === "manager");
         const mayImpersonate = currentUser.admin || (impersonator && impersonator.admin);
         const mayCreateSomething = currentUser.admin || isOrganisationAdmin || isOrganisationManager || (isEmpty(memberships) && !currentUser.guest);
-        const needsToAgreeWithAup = currentUser.needs_to_agree_with_aup;
-        if (needsToAgreeWithAup) {
-            return (
-                <div className="navigation-container">
-                    <div className="navigation">
-                        {this.renderItem("/aup", "aup")}
-                    </div>
-                    {this.renderSpinner()}
-                </div>
-            );
-        }
         return (
             <div className="navigation-container">
                 <div className="navigation">

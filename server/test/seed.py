@@ -12,7 +12,7 @@ from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
-    ServiceConnectionRequest, SuspendNotification
+    ServiceConnectionRequest, SuspendNotification, Aup
 
 collaboration_request_name = "New Collaboration"
 
@@ -182,6 +182,9 @@ def seed(db, app_config):
 
     _persist(db, user_one_suspend_notification1, user_two_suspend_notification1, user_two_suspend_notification2,
              user_suspended_notification1, user_suspended_notification2)
+
+    aup = Aup(au_version=app_config.aup.pdf, user=john)
+    _persist(db, aup)
 
     uuc = Organisation(name=uuc_name, short_name="uuc", identifier=str(uuid.uuid4()),
                        description="Unincorporated Urban Community", logo=_read_image("uuc.jpeg"),
