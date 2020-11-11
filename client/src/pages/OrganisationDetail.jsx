@@ -8,6 +8,7 @@ import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as ApiKeysIcon} from "../icons/security.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
+import {ReactComponent as CollaborationRequestsIcon} from "../icons/faculty.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
@@ -15,6 +16,7 @@ import Collaborations from "../components/redesign/Collaborations";
 import SpinnerField from "../components/redesign/SpinnerField";
 import ApiKeys from "../components/redesign/ApiKeys";
 import OrganisationServices from "../components/redesign/OrganisationServices";
+import CollaborationRequests from "../components/redesign/CollaborationRequests";
 
 class OrganisationDetail extends React.Component {
 
@@ -75,12 +77,16 @@ class OrganisationDetail extends React.Component {
     };
 
     getTabs(json) {
-        return [
+        const tabs = [
             this.getCollaborationsTab(json),
             this.getOrganisationAdminsTab(json),
             this.getServicesTab(json),
             this.getAPIKeysTab(json)
         ];
+        if (json.collaboration_requests.length > 0) {
+            tabs.push(this.getCollaborationRequestsTab(json));
+        }
+        return tabs;
     }
 
     getOrganisationAdminsTab = organisation => {
@@ -110,6 +116,15 @@ class OrganisationDetail extends React.Component {
                      icon={<CollaborationsIcon/>}>
             <Collaborations {...this.props} collaborations={organisation.collaborations} organisation={organisation}/>
         </div>)
+    }
+
+    getCollaborationRequestsTab = organisation => {
+        return (<div key="collaboration_requests" name="collaboration_requests"
+                     label={I18n.t("home.tabs.collaborationRequests")}
+                     icon={<CollaborationRequestsIcon/>}>
+            <CollaborationRequests {...this.props} organisation={organisation}/>
+        </div>)
+
     }
 
     tabChanged = (name, id) => {

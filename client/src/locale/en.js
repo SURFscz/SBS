@@ -75,6 +75,7 @@ I18n.translations.en = {
             members: "Members",
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights",
+            collaborationRequests: "Coll requests",
             me: "Profile",
             about: "About",
             apikeys: "API Keys",
@@ -261,9 +262,14 @@ I18n.translations.en = {
         apiKeys: {
             title: "API Keys",
             new: "New API Key",
-            searchPlaceHolder: "Search for API keys",
+            searchPlaceHolder: "Search for API keys...",
             noEntities: "No API keys",
             backToApiKeys: "Back to all API keys"
+        },
+        collaboration_requests: {
+            title: "Requests for collaborations",
+            requester: "Requester",
+            searchPlaceHolder: "Search for requests..."
         }
     },
     user: {

@@ -3,7 +3,7 @@
 {% block content %}
 
 {{ salutation }},
-Your request</strong> to join collaboration {{ join_request.collaboration.name }} has been accepted by the
+Your request to join collaboration {{ join_request.collaboration.name }} has been accepted by the
     administrator {{administrator}} of the collaboration.
 
 Login to view the collaboration:
