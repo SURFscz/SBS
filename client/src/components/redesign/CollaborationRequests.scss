@@ -1,0 +1,27 @@
+@import "../../stylesheets/vars";
+
+table.collaboration_requests {
+
+    thead {
+        th {
+            &.name {
+                width: 40%;
+                padding-left: 15px;
+            }
+
+            &.requester {
+                width: 40%;
+            }
+
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+        }
+    }
+}
