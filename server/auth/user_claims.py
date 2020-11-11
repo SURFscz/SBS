@@ -18,10 +18,10 @@ def claim_attribute_mapping():
             {"given_name": "given_name"},
             {"family_name": "family_name"},
             {"email": "email"},
-            {"eduperson_scoped_affiliation": "scoped_affiliation"},
-            {"voperson_external_affiliation": "affiliation"},
+            {"voperson_external_affiliation": "scoped_affiliation"},
+            {"eduperson_scoped_affiliation": "affiliation"},
             {"eduperson_entitlement": "entitlement"},
-            {"eduperson_principal_name": "eduperson_principal_name"}
+            {"voperson_external_id": "eduperson_principal_name"}
         ]
     return claim_attribute_mapping_value
 
