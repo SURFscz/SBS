@@ -18,6 +18,7 @@ import SelectField from "../components/SelectField";
 import {sanitizeShortName} from "../validations/regExps";
 import UnitHeader from "../components/redesign/UnitHeader";
 import ImageField from "../components/redesign/ImageField";
+import {AppStore} from "../stores/AppStore";
 
 class CollaborationRequest extends React.Component {
 
@@ -58,7 +59,14 @@ class CollaborationRequest extends React.Component {
                 this.setState({
                     collaborationRequest: collaborationRequest,
                     originalRequestedName: collaborationRequest.name, organisations: organisations
-                })
+                });
+                AppStore.update(s => {
+                        s.breadcrumb.paths = [
+                            {path: "/", value: I18n.t("breadcrumb.home")},
+                            {path: `/organisations/${collaborationRequest.organisation.value}`, value: collaborationRequest.organisation.label},
+                            {path: "/", value: collaborationRequest.name}
+                        ];
+                    });
             }).catch(e => this.props.history.push("/"));
 
     mapOrganisationsToOptions = organisations => organisations.map(org => ({
@@ -120,7 +128,6 @@ class CollaborationRequest extends React.Component {
         } else if (this.isValid()) {
             const {collaborationRequest} = this.state;
             collaborationRequest.organisation_id = collaborationRequest.organisation.value;
-            debugger;
             approveRequestCollaboration(collaborationRequest).then(res => {
                 this.props.history.push(`/organisations/${collaborationRequest.organisation_id}`);
                 setFlash(I18n.t("collaborationRequest.flash.approved", {name: collaborationRequest.name}));

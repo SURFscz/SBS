@@ -42,13 +42,13 @@ class Invitation extends React.Component {
     }
 
     componentDidMount = () => {
-        const params = this.props.match.params;
+        const {params} = this.props.match;
         const today = moment();
         if (params.hash) {
             invitationByHash(params.hash)
                 .then(json => {
                     const isExpired = today.isAfter(moment(json.expiry_date * 1000));
-                    const intentToDeny = this.props.match.params.action === "deny";
+                    const intentToDeny = params.action === "deny";
                     this.setState({invite: json, isExpired, intentToDeny: intentToDeny});
                 })
                 .catch(() =>

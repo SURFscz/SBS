@@ -22,6 +22,7 @@ base_api = Blueprint("base_api", __name__, url_prefix="/")
 white_listing = ["health", "config", "info", "api/users/authorization", "api/aup", "api/users/resume-session",
                  "api/users/me", "api/collaborations/find_by_identifier",
                  "api/service_connection_requests/find_by_hash", "api/service_connection_requests/approve",
+                 "/api/organisation_invitations/find_by_hash", "/api/invitations/find_by_hash",
                  "api/service_connection_requests/deny", "/api/mock"]
 external_api_listing = ["api/collaborations/v1", "api/collaborations_services/v1", "api/invitations/v1"]
 

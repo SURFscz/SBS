@@ -31,6 +31,7 @@ import CollaborationServices from "./CollaborationServices";
 import CollaborationGroups from "./CollaborationGroups";
 import Group from "./Group";
 import Invitation from "./Invitation";
+import UserInvitation from "./UserInvitation";
 import Impersonate from "./Impersonate";
 import {emitter} from "../utils/Events";
 import {isEmpty, pseudoGuid} from "../utils/Utils";
@@ -150,10 +151,14 @@ class App extends React.Component {
     }
 
     impersonate = res => {
-        const {user : selectedUser, callback} = res;
+        const {user: selectedUser, callback} = res;
         if (isEmpty(selectedUser)) {
             me(this.state.config).then(currentUser => {
-                this.setState({currentUser: this.markUserAdmin(currentUser), impersonator: null, loading: false}, callback);
+                this.setState({
+                    currentUser: this.markUserAdmin(currentUser),
+                    impersonator: null,
+                    loading: false
+                }, callback);
             });
         } else {
             other(selectedUser.uid).then(user => {
@@ -333,11 +338,10 @@ class App extends React.Component {
                                                                     {...props}/>}/>
 
                             <Route exact path="/invitations/:action/:hash"
-                                   render={props => <ProtectedRoute currentUser={currentUser}
-                                                                    redirectToLogin={true}
-                                                                    refreshUser={this.refreshUserMemberships}
-                                                                    Component={Invitation}
-                                                                    {...props}/>}/>
+                                   render={props => <UserInvitation user={currentUser}
+                                                                   refreshUser={this.refreshUserMemberships}
+                                                                   {...props}/>}/>
+
                             <Route exact path="/collaboration-requests/:id"
                                    render={props => <ProtectedRoute currentUser={currentUser}
                                                                     redirectToLogin={true}
