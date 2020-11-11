@@ -2,7 +2,6 @@
     <defs>
         <style>.a{fill:none;stroke:black;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5px;}</style>
     </defs>
-    <title>toys-hand-ghost</title>
     <path class="a" d="M11.1,6a.375.375,0,0,1,.375.375"/>
     <path class="a" d="M10.72,6.375A.375.375,0,0,1,11.1,6"/>
     <path class="a" d="M11.1,6.75a.375.375,0,0,1-.375-.375"/>

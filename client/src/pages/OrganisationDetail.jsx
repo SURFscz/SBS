@@ -79,14 +79,12 @@ class OrganisationDetail extends React.Component {
     getTabs(json) {
         const tabs = [
             this.getCollaborationsTab(json),
+            json.collaboration_requests.length > 0 ? this.getCollaborationRequestsTab(json) : null,
             this.getOrganisationAdminsTab(json),
             this.getServicesTab(json),
             this.getAPIKeysTab(json)
         ];
-        if (json.collaboration_requests.length > 0) {
-            tabs.push(this.getCollaborationRequestsTab(json));
-        }
-        return tabs;
+        return tabs.filter(tab => tab !== null);
     }
 
     getOrganisationAdminsTab = organisation => {

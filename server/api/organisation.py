@@ -108,7 +108,6 @@ def my_organisations_lite():
     if not is_application_admin():
         query = query \
             .join(Organisation.organisation_memberships) \
-            .join(OrganisationMembership.user) \
             .filter(OrganisationMembership.user_id == user_id) \
             .filter(OrganisationMembership.role.in_(["admin", "manager"]))
     organisations = query.all()
