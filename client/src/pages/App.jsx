@@ -10,7 +10,6 @@ import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/ErrorDialog";
 import Registration from "./Registration";
-import Collaborations from "./Collaborations";
 import Footer from "../components/Footer";
 import Flash from "../components/Flash";
 import {getParameterByName} from "../utils/QueryParameters";
@@ -27,9 +26,6 @@ import NewOrganisationInvitation from "./NewOrganisationInvitation";
 import Service from "./Service";
 import Services from "./Services";
 import NewInvitation from "./NewInvitation";
-import CollaborationServices from "./CollaborationServices";
-import CollaborationGroups from "./CollaborationGroups";
-import Group from "./Group";
 import Invitation from "./Invitation";
 import UserInvitation from "./UserInvitation";
 import Impersonate from "./Impersonate";
@@ -53,6 +49,7 @@ import Impersonating from "../components/Impersonating";
 import History from "../components/History";
 import ServiceDetail from "./ServiceDetail";
 import SpinnerField from "../components/redesign/SpinnerField";
+import DeadEnd from "./DeadEnd";
 
 addIcons();
 
@@ -242,10 +239,6 @@ class App extends React.Component {
                                            Component={Home} {...props}/>
                                    }}/>
 
-                            <Route exact path="/collaborations"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser} Component={Collaborations} {...props}/>}/>
-
                             <Route exact path="/collaborations/:id/:tab?"
                                    render={props => <ProtectedRoute config={config}
                                                                     currentUser={currentUser}
@@ -311,10 +304,9 @@ class App extends React.Component {
                                                                     Component={OrganisationInvitation} {...props}/>}/>
 
                             <Route exact path="/organisation-invitations/:action/:hash"
-                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                   render={props => <UserInvitation user={currentUser}
+                                                                    isOrganisationInvite={true}
                                                                     refreshUser={this.refreshUserMemberships}
-                                                                    redirectToLogin={true}
-                                                                    Component={OrganisationInvitation}
                                                                     {...props}/>}/>
 
                             <Route exact path="/new-organisation-invite/:organisation_id"
@@ -339,8 +331,9 @@ class App extends React.Component {
 
                             <Route exact path="/invitations/:action/:hash"
                                    render={props => <UserInvitation user={currentUser}
-                                                                   refreshUser={this.refreshUserMemberships}
-                                                                   {...props}/>}/>
+                                                                    isOrganisationInvite={false}
+                                                                    refreshUser={this.refreshUserMemberships}
+                                                                    {...props}/>}/>
 
                             <Route exact path="/collaboration-requests/:id"
                                    render={props => <ProtectedRoute currentUser={currentUser}
@@ -373,19 +366,6 @@ class App extends React.Component {
                                                                     refreshUser={this.refreshUserMemberships}
                                                                     {...props}/>}/>
 
-                            <Route path="/collaboration-services/:collaboration_id"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser} Component={CollaborationServices} {...props}/>}/>
-
-                            <Route path="/collaboration-groups/:collaboration_id"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser}
-                                       Component={CollaborationGroups} {...props}/>}/>
-
-                            <Route path="/collaboration-group-details/:collaboration_id/:id"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser} Component={Group} {...props}/>}/>
-
                             <Route path="/impersonate"
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser} Component={Impersonate}
@@ -403,10 +383,13 @@ class App extends React.Component {
 
                             <Route path="/system"
                                    render={props => <ProtectedRoute
-                                       currentUser={currentUser} Component={System}/>}/>
+                                       currentUser={currentUser} Component={System} {...props}/>}/>
 
                             <Route path="/aup" render={props =>
                                 <Aup currentUser={currentUser} refreshUser={this.refreshUserMemberships} {...props}/>}/>
+
+                            <Route path="/dead-end"
+                                   render={props => <DeadEnd {...props}/>}/>
 
                             <Route path="/error" render={props => <ServerError {...props}/>}/>
 

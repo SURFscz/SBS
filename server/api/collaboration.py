@@ -5,7 +5,7 @@ from secrets import token_urlsafe
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
-from sqlalchemy.orm import aliased, load_only, contains_eager, joinedload, selectinload
+from sqlalchemy.orm import aliased, load_only, contains_eager, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
@@ -40,8 +40,8 @@ def collaboration_by_identifier():
         query \
         .outerjoin(Collaboration.collaboration_memberships) \
         .outerjoin(CollaborationMembership.user) \
-        .options(contains_eager(Collaboration.collaboration_memberships)
-                 .contains_eager(CollaborationMembership.user)) \
+        .options(selectinload(Collaboration.collaboration_memberships)
+                 .selectinload(CollaborationMembership.user)) \
         .filter(Collaboration.identifier == identifier).one()
 
     admins = list(filter(lambda m: m.role == "admin", collaboration.collaboration_memberships))
@@ -181,22 +181,22 @@ def members():
     return users, 200
 
 
-@collaboration_api.route("/my_lite", strict_slashes=False)
+@collaboration_api.route("/", strict_slashes=False)
 @json_endpoint
 def my_collaborations_lite():
     user_id = current_user_id()
-    res = Collaboration.query \
+    collaborations = Collaboration.query \
         .join(Collaboration.collaboration_memberships) \
-        .join(Collaboration.organisation) \
-        .outerjoin(Collaboration.services) \
-        .outerjoin(CollaborationMembership.groups) \
-        .options(contains_eager(Collaboration.organisation)) \
-        .options(contains_eager(Collaboration.services)) \
-        .options(contains_eager(Collaboration.collaboration_memberships)
-                 .contains_eager(CollaborationMembership.groups)) \
+        .options(selectinload(Collaboration.organisation)) \
         .filter(CollaborationMembership.user_id == user_id) \
         .all()
-    return res, 200
+
+    collaborations_json = jsonify(collaborations).json
+    for index, coll in enumerate(collaborations):
+        coll_json = collaborations_json[index]
+        coll_json["invitations_count"] = coll.invitations_count
+        coll_json["collaboration_memberships_count"] = coll.collaboration_memberships_count
+    return collaborations_json, 200
 
 
 @collaboration_api.route("/lite/<collaboration_id>", strict_slashes=False)
@@ -252,34 +252,6 @@ def collaboration_by_id(collaboration_id):
         .filter(Collaboration.id == collaboration_id).one()
 
     return collaboration, 200
-
-
-@collaboration_api.route("/", strict_slashes=False)
-@json_endpoint
-def my_collaborations():
-    user_id = current_user_id()
-    query = Collaboration.query \
-        .join(Collaboration.organisation) \
-        .outerjoin(Collaboration.groups) \
-        .outerjoin(Collaboration.invitations) \
-        .outerjoin(Collaboration.join_requests) \
-        .outerjoin(JoinRequest.user) \
-        .outerjoin(Collaboration.services) \
-        .options(joinedload(Collaboration.collaboration_memberships)) \
-        .options(contains_eager(Collaboration.organisation)) \
-        .options(contains_eager(Collaboration.groups)) \
-        .options(contains_eager(Collaboration.invitations)) \
-        .options(contains_eager(Collaboration.join_requests)
-                 .contains_eager(JoinRequest.user)) \
-        .options(contains_eager(Collaboration.services)) \
-        .join(Collaboration.collaboration_memberships) \
-        .filter(CollaborationMembership.user_id == user_id)
-
-    if not is_application_admin():
-        query = query.filter(CollaborationMembership.role == "admin")
-
-    res = query.all()
-    return res, 200
 
 
 @collaboration_api.route("/invites", methods=["PUT"], strict_slashes=False)

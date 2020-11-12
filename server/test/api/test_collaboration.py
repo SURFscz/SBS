@@ -300,9 +300,8 @@ class TestCollaboration(AbstractTest):
         my_collaborations = self.get("/api/collaborations")
         self.assertEqual(1, len(my_collaborations))
         collaboration = AbstractTest.find_by_name(my_collaborations, ai_computing_name)
-        self.assertTrue(len(collaboration["collaboration_memberships"]) > 0)
-        self.assertTrue(len(collaboration["join_requests"]) > 0)
-        self.assertTrue(len(collaboration["invitations"]) > 0)
+        self.assertTrue("collaboration_memberships_count" in collaboration)
+        self.assertTrue("invitations_count" in collaboration)
 
         collaboration = self.get(f"/api/collaborations/{collaboration['id']}")
         researcher = list(filter(lambda cm: cm["role"] == "member", collaboration["collaboration_memberships"]))[0]
@@ -402,7 +401,6 @@ class TestCollaboration(AbstractTest):
             "message": "Please join",
             "intended_role": "admin"
         })
-        self.assertTrue("administrative duties" in res["html"])
         self.assertTrue("Please join" in res["html"])
 
     def test_collaboration_invites_preview_member(self):
@@ -413,16 +411,6 @@ class TestCollaboration(AbstractTest):
         })
         self.assertFalse("administrative duties" in res["html"])
         self.assertFalse("Personal" in res["html"])
-
-    def test_my_collaborations_lite(self):
-        self.login("urn:jane")
-        collaborations = self.get("/api/collaborations/my_lite")
-        self.assertEqual(1, len(collaborations))
-
-    def test_my_collaborations_lite_no_member(self):
-        self.login("urn:harry")
-        collaborations = self.get("/api/collaborations/my_lite")
-        self.assertEqual(0, len(collaborations))
 
     def test_collaboration_lite_by_id(self):
         collaboration_id = self._find_by_identifier()["id"]

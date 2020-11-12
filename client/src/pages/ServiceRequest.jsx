@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import {
     addCollaborationServices,
-    myCollaborationsLite,
+    myCollaborations,
     requestServiceConnection,
     serviceByEntityId,
     serviceConnectionRequestsOutstanding
@@ -42,7 +42,7 @@ class ServiceRequest extends React.Component {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const entityId = urlSearchParams.get("entityID");
         if (entityId) {
-            Promise.all([serviceByEntityId(entityId), myCollaborationsLite()])
+            Promise.all([serviceByEntityId(entityId), myCollaborations()])
                 .then(res => {
                     // Mark collaborations as already linked if the service is already connected
                     const service = res[0];
@@ -90,7 +90,7 @@ class ServiceRequest extends React.Component {
         const selectedCollaborations = collaborations.filter(coll => coll.requestToLink);
         const noAutomaticConnectionAllowed = !service.automatic_connection_allowed;
         const collaborationAdminLinked = selectedCollaborations.some(coll => this.roleOfUserInCollaboration(coll, user) === "admin" || user.admin)
-                && !noAutomaticConnectionAllowed;
+            && !noAutomaticConnectionAllowed;
         const promises = selectedCollaborations.map(coll => {
             const isMember = this.roleOfUserInCollaboration(coll, user) !== "admin" && !user.admin;
             const requestIsRequired = isMember || noAutomaticConnectionAllowed

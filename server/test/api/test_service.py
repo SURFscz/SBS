@@ -77,14 +77,18 @@ class TestService(AbstractTest):
         service["name"] = "changed"
         service["ip_networks"] = [{"network_value": "192.0.2.0/24"}]
 
-        service = self.put("/api/services", body=service)
+        self.login("urn:john")
+        service = self.put("/api/services", body=service, with_basic_auth=False)
         self.assertEqual("changed", service["name"])
         self.assertEqual(1, len(service["ip_networks"]))
 
     def test_service_delete(self):
         pre_count = Service.query.count()
         mail = self._find_by_name()
-        self.delete("/api/services", primary_key=mail["id"])
+
+        self.login("urn:john")
+        self.delete("/api/services", primary_key=mail["id"], with_basic_auth=False)
+
         post_count = Service.query.count()
         self.assertEqual(pre_count - 1, post_count)
 

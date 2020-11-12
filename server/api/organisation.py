@@ -1,12 +1,13 @@
 # -*- coding: future_fstrings -*-
 import uuid
 from secrets import token_urlsafe
-from sqlalchemy.orm import aliased, load_only, contains_eager, joinedload, selectinload
+
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from munch import munchify
 from sqlalchemy import text, func, bindparam, String
-from sqlalchemy.orm import joinedload, contains_eager
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import load_only
+from sqlalchemy.orm import selectinload
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
@@ -14,12 +15,21 @@ from server.auth.security import confirm_write_access, current_user_id, is_appli
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
-from server.db.domain import Organisation, OrganisationMembership, Collaboration, OrganisationInvitation, User, \
+from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
     CollaborationRequest
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation
 
 organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/organisations")
+
+
+def _add_org_numbers(organisations):
+    organisations_json = jsonify(organisations).json
+    for index, org in enumerate(organisations):
+        org_json = organisations_json[index]
+        org_json["collaborations_count"] = org.collaborations_count
+        org_json["organisation_memberships_count"] = org.organisation_memberships_count
+    return organisations_json, 200
 
 
 @organisation_api.route("/name_exists", strict_slashes=False)
@@ -68,12 +78,7 @@ def organisation_all():
     if not query_param("include_counts", required=False):
         return organisations, 200
 
-    organisations_json = jsonify(organisations).json
-    for index, org in enumerate(organisations):
-        org_json = organisations_json[index]
-        org_json["collaborations_count"] = org.collaborations_count
-        org_json["organisation_memberships_count"] = org.organisation_memberships_count
-    return organisations_json, 200
+    return _add_org_numbers(organisations)
 
 
 @organisation_api.route("/search", strict_slashes=False)
@@ -137,10 +142,7 @@ def organisation_by_id(organisation_id):
         .options(selectinload(Organisation.services)) \
         .options(selectinload(Organisation.collaboration_requests)
                  .selectinload(CollaborationRequest.requester)) \
-        .options(selectinload(Organisation.collaborations)
-                 .selectinload(Collaboration.collaboration_memberships)) \
-        .options(selectinload(Organisation.collaborations)
-                 .selectinload(Collaboration.invitations)) \
+        .options(selectinload(Organisation.collaborations)) \
         .filter(Organisation.id == organisation_id)
 
     if not request_context.is_authorized_api_call:
@@ -154,7 +156,12 @@ def organisation_by_id(organisation_id):
                 .filter(OrganisationMembership.user_id == user_id)
 
     organisation = query.one()
-    return organisation, 200
+    organisation_json = jsonify(organisation).json
+    for index, coll in enumerate(organisation.collaborations):
+        coll_json = organisation_json["collaborations"][index]
+        coll_json["invitations_count"] = coll.invitations_count
+        coll_json["collaboration_memberships_count"] = coll.collaboration_memberships_count
+    return organisation_json, 200
 
 
 @organisation_api.route("/services/<organisation_id>", strict_slashes=False)
@@ -174,20 +181,9 @@ def my_organisations():
     user_id = current_user_id()
     organisations = Organisation.query \
         .join(Organisation.organisation_memberships) \
-        .join(OrganisationMembership.user) \
-        .outerjoin(Organisation.collaborations) \
-        .outerjoin(Collaboration.collaboration_memberships) \
-        .outerjoin(Organisation.organisation_invitations) \
-        .outerjoin(Organisation.collaboration_requests) \
-        .options(contains_eager(Organisation.organisation_memberships).
-                 contains_eager(OrganisationMembership.user)) \
-        .options(contains_eager(Organisation.collaborations).
-                 contains_eager(Collaboration.collaboration_memberships)) \
-        .options(contains_eager(Organisation.organisation_invitations)) \
-        .options(contains_eager(Organisation.collaboration_requests)) \
         .filter(OrganisationMembership.user_id == user_id) \
         .all()
-    return organisations, 200
+    return _add_org_numbers(organisations)
 
 
 @organisation_api.route("/find_by_schac_home_organisation", strict_slashes=False)

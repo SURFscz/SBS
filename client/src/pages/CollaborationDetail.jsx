@@ -27,6 +27,8 @@ import AboutCollaboration from "../components/redesign/AboutCollaboration";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
 import Button from "../components/Button";
+import {getParameterByName} from "../utils/QueryParameters";
+import WelcomeDialog from "../components/WelcomeDialog";
 
 
 class CollaborationDetail extends React.Component {
@@ -45,6 +47,7 @@ class CollaborationDetail extends React.Component {
             showMemberView: true,
             viewAsMember: false,
             loaded: false,
+            firstTime: false,
             tab: "admins",
             tabs: []
         }
@@ -65,11 +68,13 @@ class CollaborationDetail extends React.Component {
                         const collaboration = res[0];
                         const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
                         const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
+                        const firstTime = getParameterByName("first", window.location.search) === "true";
                         this.setState({
                             collaboration: collaboration,
                             adminOfCollaboration: adminOfCollaboration,
                             schacHomeOrganisation: schacHomeOrganisation,
                             loaded: true,
+                            firstTime: firstTime,
                             tabs: this.getTabs(collaboration, schacHomeOrganisation, adminOfCollaboration, false),
                             tab: tab,
                         }, () => {
@@ -249,8 +254,10 @@ class CollaborationDetail extends React.Component {
         );
     }
 
-    getUnitHeader(collaboration) {
-        return <UnitHeader obj={collaboration} mayEdit={true} history={this.props.history}
+    getUnitHeader = (collaboration, allowedToEdit) => {
+        return <UnitHeader obj={collaboration}
+                           mayEdit={allowedToEdit}
+                           history={allowedToEdit && this.props.history}
                            auditLogPath={`collaborations/${collaboration.id}`}
                            name={collaboration.name}
                            onEdit={() => this.props.history.push("/edit-collaboration/" + collaboration.id)}>
@@ -270,14 +277,20 @@ class CollaborationDetail extends React.Component {
 
     render() {
         const {
-            collaboration, loaded, tabs, tab, adminOfCollaboration, showMemberView
+            collaboration, loaded, tabs, tab, adminOfCollaboration, showMemberView, firstTime
         } = this.state;
         if (!loaded) {
             return <SpinnerField/>;
         }
+        const {user} = this.props;
+        const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
         return (
             <div className="mod-collaboration-detail">
-                {(adminOfCollaboration && showMemberView) && this.getUnitHeader(collaboration)}
+                {<WelcomeDialog name={collaboration.name} isOpen={firstTime}
+                                role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
+                                isOrganisation={false}
+                                close={() => this.setState({firstTime: false})} />}
+                {(adminOfCollaboration && showMemberView) && this.getUnitHeader(collaboration, allowedToEdit)}
                 {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMember(collaboration)}
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}

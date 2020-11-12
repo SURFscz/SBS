@@ -103,7 +103,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && false) {
+    if (config.local && true) {
         let sub = "urn:john";
         // sub = "urn:roger";
         // sub = "urn:betty";
@@ -160,7 +160,7 @@ export function platformAdmins() {
     return fetchJson("/api/users/platform_admins");
 }
 
-// Services
+//Services
 export function serviceNameExists(name, existingService = null) {
     return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${encodeURIComponent(existingService)}`);
 }
@@ -224,10 +224,6 @@ export function collaborationLiteById(id) {
 
 export function myCollaborations() {
     return fetchJson("/api/collaborations");
-}
-
-export function myCollaborationsLite() {
-    return fetchJson("/api/collaborations/my_lite");
 }
 
 export function createCollaboration(collaboration) {

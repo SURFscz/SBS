@@ -2,12 +2,14 @@
 import ipaddress
 import urllib.parse
 
-from flask import Blueprint, request as current_request, jsonify
+from flask import Blueprint, request as current_request, jsonify, g as request_context
 from sqlalchemy import text, func, bindparam, String
-from sqlalchemy.orm import load_only, contains_eager, joinedload
+from sqlalchemy.orm import load_only, contains_eager, joinedload, selectinload
+
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
-from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin
+from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
+    is_organisation_admin_or_manager, is_application_admin
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, User
@@ -148,6 +150,10 @@ def my_services():
 @json_endpoint
 def service_by_id(service_id):
     def _user_service():
+        # Every service may be seen by organisation admin, manager or coll admin
+        if is_collaboration_admin() or is_organisation_admin_or_manager():
+            return True
+
         user_id = current_user_id()
         count = services_from_collaboration_memberships(user_id, service_id, True)
         if count > 0:
@@ -162,15 +168,25 @@ def service_by_id(service_id):
 
     confirm_read_access(override_func=_user_service)
 
-    service = Service.query \
-        .outerjoin(Service.collaborations) \
-        .outerjoin(Collaboration.organisation) \
-        .options(contains_eager(Service.collaborations)
-                 .contains_eager(Collaboration.organisation)) \
-        .filter(Service.id == service_id).one()
-    service.allowed_organisations
-    service.ip_networks
-    return service, 200
+    query = Service.query
+
+    add_admin_info = not request_context.is_authorized_api_call and is_application_admin()
+    if add_admin_info:
+        query = query \
+            .options(selectinload(Service.collaborations).selectinload(Collaboration.organisation)) \
+            .options(selectinload(Service.organisations)) \
+            .options(selectinload(Service.allowed_organisations)) \
+            .options(selectinload(Service.ip_networks))
+
+    service = query.filter(Service.id == service_id).one()
+    service_json = jsonify(service).json
+    if add_admin_info:
+        for index, coll in enumerate(service.collaborations):
+            coll_json = service_json["collaborations"][index]
+            coll_json["invitations_count"] = coll.invitations_count
+            coll_json["collaboration_memberships_count"] = coll.collaboration_memberships_count
+
+    return service_json, 200
 
 
 @service_api.route("/all", strict_slashes=False)

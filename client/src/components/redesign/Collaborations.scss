@@ -26,15 +26,15 @@ table.collaborations, table.serviceCollaborations {
     thead {
         th {
             &.name {
-                width: 45%;
+                width: 30%;
                 padding-left: 15px;
             }
 
             &.organisation_name {
-                width: 45%;
+                width: 30%;
             }
 
-            &.member_count {
+            &.collaboration_memberships_count {
                 width: 20%;
                 text-align: center;
             }
@@ -52,7 +52,7 @@ table.collaborations, table.serviceCollaborations {
                 padding-left: 15px;
             }
 
-            &.member_count {
+            &.collaboration_memberships_count {
                 text-align: center;
             }
 

@@ -17,7 +17,7 @@ import {
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
-import "./Group.scss";
+import "./GroupOld.scss";
 import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
@@ -36,7 +36,7 @@ import History from "../components/History";
 import EmailMembers from "../components/EmailMembers";
 import {userRole} from "../utils/UserRole";
 
-class Group extends React.Component {
+class GroupOld extends React.Component {
 
     constructor(props, context) {
         super(props, context);
@@ -681,4 +681,4 @@ class Group extends React.Component {
 
 }
 
-export default Group;
+export default GroupOld;

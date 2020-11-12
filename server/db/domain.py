@@ -230,12 +230,14 @@ class Collaboration(Base, db.Model):
     services = db.relationship("Service", secondary=services_collaborations_association, lazy="select")
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
                                                 cascade="all, delete-orphan", passive_deletes=True)
+    collaboration_memberships_dynamic = db.relationship("CollaborationMembership", lazy="dynamic", viewonly=True)
     groups = db.relationship("Group", back_populates="collaboration",
                              cascade="all, delete-orphan", passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="collaboration",
                                     cascade="all, delete-orphan", passive_deletes=True)
     invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
                                   passive_deletes=True)
+    invitations_dynamic = db.relationship("Invitation", lazy="dynamic", viewonly=True)
     service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="collaboration",
                                                   cascade="all, delete-orphan", passive_deletes=True)
     disable_join_requests = db.Column("disable_join_requests", db.Boolean(), nullable=True, default=False)
@@ -243,6 +245,14 @@ class Collaboration(Base, db.Model):
     disclose_member_information = db.Column("disclose_member_information", db.Boolean(), nullable=True, default=False)
     disclose_email_information = db.Column("disclose_email_information", db.Boolean(), nullable=True, default=False)
     website_url = db.Column("website_url", db.String(length=512), nullable=True)
+
+    @hybrid_property
+    def invitations_count(self):
+        return self.invitations_dynamic.count()
+
+    @hybrid_property
+    def collaboration_memberships_count(self):
+        return self.collaboration_memberships_dynamic.count()
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0

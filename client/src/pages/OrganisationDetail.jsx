@@ -17,6 +17,9 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import ApiKeys from "../components/redesign/ApiKeys";
 import OrganisationServices from "../components/redesign/OrganisationServices";
 import CollaborationRequests from "../components/redesign/CollaborationRequests";
+import WelcomeDialog from "../components/WelcomeDialog";
+import {ROLES} from "../utils/UserRole";
+import {getParameterByName} from "../utils/QueryParameters";
 
 class OrganisationDetail extends React.Component {
 
@@ -26,7 +29,8 @@ class OrganisationDetail extends React.Component {
             organisation: {},
             loaded: false,
             tab: "collaborations",
-            tabs: []
+            tabs: [],
+            firstTime: false
         };
     }
 
@@ -46,10 +50,6 @@ class OrganisationDetail extends React.Component {
                         .some(member => member.role === "admin" && member.user_id === user.id) || user.admin;
                     const managerOfOrganisation = json.organisation_memberships
                         .some(member => member.role === "manager" && member.user_id === user.id);
-                    json.collaborations.forEach(collaboration => {
-                        collaboration.invitations_count = collaboration.invitations.length;
-                        collaboration.member_count = collaboration.collaboration_memberships.length;
-                    });
 
                     const tab = params.tab || this.state.tab;
                     const tabs = this.getTabs(json);
@@ -59,6 +59,7 @@ class OrganisationDetail extends React.Component {
                             {path: `/organisations/${json.id}`, value: json.name}
                         ];
                     });
+                    const firstTime = getParameterByName("first", window.location.search) === "true";
                     this.tabChanged(tab, json.id);
                     this.setState({
                         organisation: json,
@@ -66,6 +67,7 @@ class OrganisationDetail extends React.Component {
                         managerOfOrganisation: managerOfOrganisation,
                         tab: tab,
                         tabs: tabs,
+                        firstTime: firstTime,
                         loaded: true
                     }, callBack);
 
@@ -76,13 +78,13 @@ class OrganisationDetail extends React.Component {
         }
     };
 
-    getTabs(json) {
+    getTabs = organisation => {
         const tabs = [
-            this.getCollaborationsTab(json),
-            json.collaboration_requests.length > 0 ? this.getCollaborationRequestsTab(json) : null,
-            this.getOrganisationAdminsTab(json),
-            this.getServicesTab(json),
-            this.getAPIKeysTab(json)
+            this.getCollaborationsTab(organisation),
+            organisation.collaboration_requests.length > 0 ? this.getCollaborationRequestsTab(organisation) : null,
+            this.getOrganisationAdminsTab(organisation),
+            this.getServicesTab(organisation),
+            this.getAPIKeysTab(organisation)
         ];
         return tabs.filter(tab => tab !== null);
     }
@@ -132,13 +134,19 @@ class OrganisationDetail extends React.Component {
     }
 
     render() {
-        const {tabs, organisation, loaded, tab} = this.state;
+        const {tabs, organisation, loaded, tab, firstTime, adminOfOrganisation} = this.state;
         if (!loaded) {
             return <SpinnerField/>;
         }
         return (
             <div className="mod-organisation-container">
-                <UnitHeader obj={organisation} mayEdit={true} history={this.props.history}
+                {<WelcomeDialog name={organisation.name} isOpen={firstTime}
+                                role={adminOfOrganisation ? ROLES.ORG_ADMIN : ROLES.ORG_MANAGER}
+                                isOrganisation={true}
+                                close={() => this.setState({firstTime: false})} />}
+
+                <UnitHeader obj={organisation} mayEdit={adminOfOrganisation}
+                            history={this.props.history}
                             auditLogPath={`organisations/${organisation.id}`}
                             name={organisation.name}
                             onEdit={() => this.props.history.push("/edit-organisation/" + organisation.id)}>

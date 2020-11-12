@@ -12,4 +12,4 @@ class TestAup(AbstractTest):
         self.login()
         self.post("/api/aup/agree", with_basic_auth=False)
         user = self.client.get("/api/users/me").json
-        self.assertEqual(1, len(user["aups"]))
+        self.assertEqual(2, len(user["aups"]))

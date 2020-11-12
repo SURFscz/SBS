@@ -28,9 +28,9 @@ class TestOrganisation(AbstractTest):
     def test_my_organisations(self):
         self.login()
         organisations = self.get("/api/organisations")
-        self.assertEqual(1, len(organisations))
-        organisation = AbstractTest.find_by_name(organisations, uuc_name)
-        self.assertEqual("urn:john", organisation["organisation_memberships"][0]["user"]["uid"])
+
+        self.assertTrue("collaborations_count" in organisations[0])
+        self.assertTrue("organisation_memberships_count" in organisations[0])
 
     def test_organisations_all(self):
         organisations = self.get("/api/organisations/all",
@@ -85,6 +85,8 @@ class TestOrganisation(AbstractTest):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
         self.assertTrue(len(organisation["organisation_memberships"]) > 0)
+        self.assertTrue("invitations_count" in organisation["collaborations"][0])
+        self.assertTrue("collaboration_memberships_count" in organisation["collaborations"][0])
 
     def test_organisation_by_id_manager(self):
         self.login("urn:harry")
