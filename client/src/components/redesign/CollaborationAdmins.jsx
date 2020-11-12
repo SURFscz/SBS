@@ -259,11 +259,12 @@ class CollaborationAdmins extends React.Component {
             {
                 key: "role",
                 header: I18n.t("models.users.role"),
-                mapper: entity => entity.invite ? I18n.t(`organisation.${entity.intended_role}`) : <Select
-                    value={roles.find(option => option.value === entity.role)}
-                    options={roles}
-                    onChange={this.changeMemberRole(entity)}
-                    isDisabled={!isAdminOfCollaboration}/>
+                mapper: entity => entity.invite ? I18n.t(`organisation.${entity.intended_role}`) :
+                    <Select value={roles.find(option => option.value === entity.role)}
+                            options={roles}
+                            classNamePrefix="select-role"
+                            onChange={this.changeMemberRole(entity)}
+                            isDisabled={!isAdminOfCollaboration}/>
             },
             {
                 nonSortable: true,
