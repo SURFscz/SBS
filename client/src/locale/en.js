@@ -47,12 +47,6 @@ I18n.translations.en = {
         closeBrowser: "To finish your logout you'll have to close your browser.",
         closeBrowserAfterDelete: "To finish the deletion of your account you'll have to close your browser."
     },
-    newDropDown: {
-        organisation: "New organisation",
-        collaboration: "New collaboration",
-        collaborationRequest: "Request new collaboration",
-        service: "New service"
-    },
     home: {
         sram: "SRAM PLATFORM",
         edit: "Edit",
@@ -156,7 +150,7 @@ I18n.translations.en = {
             titleAvailableColl: "Available for this collaboration ({{count}})",
             titleAvailableOrg: "Available for this organisation ({{count}})",
             titleUsedColl: "Used by this collaboration ({{count}})",
-            titleUsedOrg: "Used by this organisation ({{count}})",
+            titleUsedOrg: "Enabled by this organisation ({{count}})",
             awaitingApproval: "Connection awaiting approval",
             automaticConnectionAllowed: "Automatic connection allowed",
             requiredByOrganisation: "Enabled by organisation",
@@ -273,7 +267,7 @@ I18n.translations.en = {
         },
         invitation: {
             welcome: "Welcome to SRAM. Here you can collaborate with your fellow researchers.",
-            invited: "You have been invited to join collaboration \"{{collaboration}}\" by {{inviter}}",
+            invited: "You have been invited to join {{type}} \"{{collaboration}}\" by {{inviter}}",
             followingSteps: "Please take the following steps:",
             steps: {
                 progress: "{{now}} of {{total}}",
@@ -288,8 +282,11 @@ I18n.translations.en = {
             accept: "I accept these terms",
             noAccept: "No, I don't agree",
             acceptInvitation: "Yes, I accept the invitation",
-            declineInvitation:  "No, I decline"
-
+            declineInvitation: "No, I decline",
+            confirmations: {
+                cancelInvitation: "Are you sure you don't want to accept the terms?",
+                declineInvitation: "Are you sure you don't want to accept the invitation?",
+            }
         }
     },
     user: {
@@ -1177,6 +1174,7 @@ I18n.translations.en = {
     error_dialog: {
         title: "Unexpected error",
         body: "This is embarrassing; an unexpected error has occurred. It has been logged and reported. Please try again...",
+        deadEnd: "Nowhere to go from here",
         ok: "Close"
     },
     not_found: {
@@ -1220,6 +1218,20 @@ I18n.translations.en = {
         coMember: "Collaboration member",
         serviceUser: "Service user",
         user: "User"
+    },
+
+    welcomeDialog: {
+        title: "Welcome to {{name}}",
+        role: "Your current role is <strong>{{role}}</strong>",
+        ok: "All good, show me the {{type}}",
+        organisation: "organisation",
+        collaboration: "collaboration"
+    },
+
+    welcome: {
+        title: "Welcome to the SRAM platform",
+        info: "You are currently not a member of any organisation or collaboration. " +
+            "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you have any questions"
     }
 };
 

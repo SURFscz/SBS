@@ -70,7 +70,7 @@
     }
 }
 
-.ReactModalPortal .ReactModal__Overlay {
+.ReactModalPortal .confirmation-dialog-overlay {
     transition: opacity 250ms ease-in-out;
 
     &--before-close {
@@ -78,7 +78,7 @@
     }
 }
 
-.ReactModalPortal .ReactModal__Content {
+.ReactModalPortal .confirmation-dialog-content {
     transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
     max-width: 400px;
 

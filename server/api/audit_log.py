@@ -4,7 +4,8 @@ from sqlalchemy import desc, or_, and_
 
 from server.api.base import json_endpoint
 from server.auth.security import current_user_id, confirm_read_access, confirm_group_member, \
-    is_organisation_admin, is_current_user_collaboration_admin, is_current_user_organisation_admin_or_manager
+    is_current_user_collaboration_admin, is_current_user_organisation_admin_or_manager, \
+    is_organisation_admin_or_manager
 from server.db.audit_mixin import AuditLog
 from server.db.domain import User, Organisation, Collaboration, Group
 
@@ -44,7 +45,7 @@ def info(query_id, collection_name):
 
     override_func = collaboration_permission if collection_name == "collaborations" \
         else groups_permission if collection_name == "groups" \
-        else is_organisation_admin if collection_name == "organisations" else None
+        else is_organisation_admin_or_manager if collection_name == "organisations" else None
     confirm_read_access(query_id, override_func=override_func)
 
     audit_logs = AuditLog.query \

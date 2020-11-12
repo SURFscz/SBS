@@ -2,7 +2,7 @@
 
 .mod-server-error {
     max-width: $medium;
-    margin: 20px auto;
+    margin: 0 auto;
     width: 100%;
 
     div.title {
@@ -17,9 +17,7 @@
     }
 
     .content {
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .1);
         margin: 0 auto 25px auto;
-        background-color: $lightest-grey;
         display: flex;
         flex-direction: column;
         justify-content: center;

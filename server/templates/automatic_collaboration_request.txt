@@ -17,6 +17,6 @@ The Collaboration is created without a Collaboration request, because the user {
 entitlement {{ collaboration_creation_allowed_entitlement }}.
 {% endif %}
 
-Click {{base_url}}/collaborations/{{ collaboration.id } to login and view the new Collaboration
+Click {{base_url}}/collaborations/{{ collaboration.id }} to login and view the new Collaboration
 
 {% endblock %}

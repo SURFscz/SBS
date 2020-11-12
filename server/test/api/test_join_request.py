@@ -101,7 +101,7 @@ class TestJoinRequest(AbstractTest):
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["peter@example.org"], mail_msg.recipients)
-            self.assertTrue("has been <strong>accepted</strong>" in mail_msg.html)
+            self.assertTrue("accepted" in mail_msg.html)
             self.assertEqual(3, JoinRequest.query.count())
 
     def test_accept_join_request_already_member(self):
@@ -119,7 +119,7 @@ class TestJoinRequest(AbstractTest):
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["peter@example.org"], mail_msg.recipients)
-            self.assertTrue("has been <strong>declined</strong>" in mail_msg.html)
+            self.assertTrue("declined" in mail_msg.html)
             self.assertEqual(3, JoinRequest.query.count())
 
     def test_join_request_by_hash(self):

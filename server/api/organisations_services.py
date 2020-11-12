@@ -3,7 +3,7 @@ from flask import Blueprint, request as current_request
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_organisation_admin
+from server.auth.security import confirm_organisation_admin, confirm_organisation_admin_or_manager
 from server.db.db import db
 from server.db.domain import Service, Organisation
 from server.schemas import json_schema_validator
@@ -20,7 +20,7 @@ def add_collaborations_services():
     organisation_id = int(data["organisation_id"])
     service_id = int(data["service_id"])
 
-    confirm_organisation_admin(organisation_id)
+    confirm_organisation_admin_or_manager(organisation_id)
     # Ensure that the connection is allowed
     service = Service.query.get(service_id)
     allowed_org_identifiers = list(map(lambda org: org.id, service.allowed_organisations))

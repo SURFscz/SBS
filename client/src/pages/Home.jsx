@@ -17,6 +17,7 @@ import Services from "../components/redesign/Services";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import Collaborations from "../components/redesign/Collaborations";
+import Welcome from "../components/redesign/Welcome";
 
 class Home extends React.Component {
 
@@ -53,7 +54,7 @@ class Home extends React.Component {
                 } else {
                     tabs.push(this.getOrganisationsTab());
                     if (nbrCollaborations > 0) {
-                        tabs.push(this.getCollaborationsTab(true));
+                        tabs.push(this.getCollaborationsTab());
                     }
                 }
                 break;
@@ -63,7 +64,7 @@ class Home extends React.Component {
                     setTimeout(() => this.props.history.push(`/collaborations/${user.collaboration_memberships[0].collaboration_id}`), 50);
                     return;
                 } else {
-                    tabs.push(this.getCollaborationsTab(false));
+                    tabs.push(this.getCollaborationsTab());
                     tab = "collaborations";
                     if (nbrOrganisations > 0) {
                         tabs.push(this.getOrganisationsTab());
@@ -102,13 +103,13 @@ class Home extends React.Component {
     getWelcomeTab = () => {
         return (<div key="welcome" name="welcome" label={I18n.t("home.tabs.welcome")}
                      icon={<WelcomeIcon/>}>
-            <span>TODO</span>
+            <Welcome />
         </div>)
     }
-    getCollaborationsTab = includeCounts=> {
+    getCollaborationsTab = ()=> {
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.collaborations")}
                      icon={<CollaborationsIcon/>}>
-            <Collaborations {...this.props} includeOrganisationName={true} includeCounts={includeCounts}/>
+            <Collaborations {...this.props} />
         </div>)
     }
 
@@ -124,9 +125,10 @@ class Home extends React.Component {
             return <SpinnerField/>;
         }
         const {user} = this.props;
+        const noMemberships = user.collaboration_memberships.length === 0 && user.organisation_memberships.length === 0;
         return (
             <div className="mod-home-container">
-                {user.admin && <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}
+                {(user.admin || noMemberships) && <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}
                                            svgClick={() => new Audio(goat).play()}/>}
                 <Tabs standAlone={!user.admin} activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}

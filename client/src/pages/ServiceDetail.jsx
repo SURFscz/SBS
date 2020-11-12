@@ -28,13 +28,14 @@ class ServiceDetail extends React.Component {
         if (params.id) {
             Promise.all([serviceById(params.id), searchOrganisations("*")])
                 .then(res => {
+                    const {user} = this.props;
                     const service = res[0];
                     const organisations = res[1];
                     const tab = params.tab || this.state.tab;
-                    const tabs = [
+                    const tabs = user.admin ? [
                         this.getOrganisationsTab(service, organisations),
                         this.getCollaborationsTab(service)
-                    ];
+                    ] : [];
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
@@ -67,9 +68,7 @@ class ServiceDetail extends React.Component {
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.serviceCollaborations")}
                      icon={<ServicesIcon/>}>
             <Collaborations {...this.props} collaborations={service.collaborations}
-                            includeCounts={false}
-                            modelName={"serviceCollaborations"}
-                            includeOrganisationName={true}/>
+                            modelName={"serviceCollaborations"}/>
         </div>)
     }
 
@@ -98,9 +97,12 @@ class ServiceDetail extends React.Component {
         if (!loaded) {
             return <SpinnerField/>;
         }
+        const {user} = this.props;
         return (
             <div className="mod-service-container">
-                <UnitHeader obj={service} mayEdit={true} history={this.props.history}
+                <UnitHeader obj={service}
+                            mayEdit={user.admin}
+                            history={user.admin && this.props.history}
                             auditLogPath={`services/${service.id}`}
                             name={service.name}
                             onEdit={() => this.props.history.push("/edit-service/" + service.id)}>
@@ -108,7 +110,9 @@ class ServiceDetail extends React.Component {
                     <div className="org-attributes-container">
                         <div className="org-attributes">
                             <span>{I18n.t("service.uri")}</span>
-                            <span>{service.uri ? service.uri : I18n.t("service.none")}</span>
+                            <span>{service.uri ?
+                                <a href={service.uri} target="_blank" rel="noopener noreferrer">{service.uri}</a> :
+                                I18n.t("service.none")}</span>
                         </div>
                         <div className="org-attributes">
                             <span>{I18n.t("service.compliancyShort")}</span>

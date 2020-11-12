@@ -6,7 +6,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Button from "../Button";
-import {myCollaborationsLite} from "../../api";
+import {myCollaborations} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 
@@ -23,7 +23,7 @@ export default class Collaborations extends React.PureComponent {
     componentDidMount = () => {
         const {collaborations} = this.props;
         if (collaborations === undefined) {
-            myCollaborationsLite().then(res => {
+            myCollaborations().then(res => {
                 this.setState({standalone: true, collaborations: res, loading: false});
             })
         } else {
@@ -58,7 +58,7 @@ export default class Collaborations extends React.PureComponent {
             return <SpinnerField/>;
         }
         const {collaborations} = standalone ? this.state : this.props;
-        const {includeCounts = true, includeOrganisationName = false, modelName = "collaborations"} = this.props;
+        const {modelName = "collaborations", organisation} = this.props;
 
         if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
             return this.noCollaborations(this.props.organisation);
@@ -79,24 +79,19 @@ export default class Collaborations extends React.PureComponent {
                 header: I18n.t("models.collaborations.name"),
                 mapper: collaboration => <a href="/"
                                             onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
-            }]
-        if (includeCounts) {
-            columns.push({
-                key: "member_count",
+            },
+            {
+                key: "collaboration_memberships_count",
                 header: I18n.t("models.collaborations.memberCount")
-            });
-            columns.push({
+            },
+            {
                 key: "invitations_count",
                 header: I18n.t("models.collaborations.invitationsCount")
-            });
-        }
-        if (includeOrganisationName) {
-            columns.push({
+            }, {
                 key: "organisation_name",
                 header: I18n.t("models.serviceCollaborations.organisationName"),
-                mapper: collaboration => collaboration.organisation.name
-            })
-        }
+                mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
+            }]
         return (
             <Entities entities={collaborations}
                       modelName={modelName}

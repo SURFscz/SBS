@@ -10,6 +10,7 @@ import {setFlash} from "../../utils/Flash";
 import SpinnerField from "./SpinnerField";
 import OrganisationServicesExplanation from "../explanations/OrganisationServices";
 import ToggleSwitch from "./ToggleSwitch";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
 
 class OrganisationServices extends React.Component {
 
@@ -29,9 +30,11 @@ class OrganisationServices extends React.Component {
         const {organisation} = this.props;
         allServices().then(services => {
             const filteredServices = services
-                .filter(service => (service.allowed_organisations.length === 0 ||
-                    service.allowed_organisations.some(org => org.id === organisation.id)) &&
+                .filter(service => {
+                    const allowed = service.allowed_organisations.some(org => org.id === organisation.id);
+                    return allowed || (service.allowed_organisations.length === 0 &&
                     service.automatic_connection_allowed);
+                });
             this.setState({services: filteredServices, loading: false});
         });
     }
@@ -50,7 +53,6 @@ class OrganisationServices extends React.Component {
     getServiceLink = entity => {
         return <a href="/" onClick={this.openService(entity)}>{entity.name}</a>
     }
-
 
     refreshAndFlash = (promise, flashMsg, callback) => {
         promise.then(() => {
@@ -74,10 +76,11 @@ class OrganisationServices extends React.Component {
         this.refreshAndFlash(promise, flashMsg);
     }
 
-    getServiceAction = (service) => {
-        const {organisation} = this.props;
+    getServiceAction = service => {
+        const {organisation, user} = this.props;
+        const allowed = isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id, null);
         const inUse = organisation.services.some(s => s.id === service.id);
-        return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={false}
+        return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={!allowed}
                              value={inUse} animate={false}/>
     }
 

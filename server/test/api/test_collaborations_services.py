@@ -14,8 +14,10 @@ class TestCollaborationsServices(AbstractTest):
         return self.get(f"api/services/{service.id}")
 
     def test_delete_collaborations_services(self):
+        self.login("urn:john")
         service_mail = self._find_service_by_name(service_mail_name)
         self.assertTrue(len(service_mail["collaborations"]) > 0)
+
         collaboration_id = service_mail["collaborations"][0]["id"]
         service_id = service_mail["id"]
         response = self.client.delete(f"api/collaborations_services/{collaboration_id}/{service_id}",

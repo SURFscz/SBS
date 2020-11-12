@@ -1,7 +1,7 @@
 import React from "react";
 import "./Home.scss";
 import I18n from "i18n-js";
-import {myCollaborationsLite, myServices} from "../api";
+import {myCollaborations, myServices} from "../api";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import Button from "../components/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -19,7 +19,7 @@ class Home extends React.Component {
     }
 
     componentDidMount = () => {
-        Promise.all([myCollaborationsLite(), myServices()])
+        Promise.all([myCollaborations(), myServices()])
             .then(results => {
                 const collaborations = results[0];
                 const collaborationMemberships = collaborations.map(coll => (coll.collaboration_memberships || [])).flat();
