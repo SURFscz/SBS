@@ -112,10 +112,10 @@ class Entities extends React.Component {
                     <tbody>
                     {entities.map((entity, index) =>
                         <tr key={index}
-                            className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""}`}
-                            onClick={this.onRowClick(rowLinkMapper, entity)}>
+                            className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""}`}>
                             {columns.map(column =>
                                 <td key={column.key}
+                                    onClick={column.key !== "check" && this.onRowClick(rowLinkMapper, entity)}
                                     className={`${column.key} ${column.nonSortable ? "" : "sortable"}`}>
                                     {this.getEntityValue(entity, column)}
                                 </td>)}
