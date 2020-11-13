@@ -14,8 +14,10 @@ export default class CheckBox extends React.PureComponent {
 
     innerOnChange = e => {
         e.cancelBubble = true;
+        e.stopPropagation();
         const {onChange} = this.props;
         onChange && onChange(e);
+        return false;
     }
 
     render() {
