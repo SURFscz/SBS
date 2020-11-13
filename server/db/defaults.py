@@ -35,4 +35,8 @@ def calculate_expiry_period(invitation, today=datetime.today()):
 def cleanse_short_name(data):
     if "short_name" not in data:
         raise BadRequest("Missing short_name in JSON")
-    data["short_name"] = re.sub(r"[^a-zA-Z_\-0-9]+", "", data["short_name"]).lower()[:32]
+    short_name = data["short_name"]
+    while short_name[0].isnumeric():
+        short_name = short_name[1:]
+
+    data["short_name"] = re.sub(r"[^a-zA-Z_0-9]+", "", short_name).lower()[:16]

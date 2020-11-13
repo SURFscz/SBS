@@ -71,3 +71,13 @@ class TestDefaults(TestCase):
             cleanse_short_name({})
 
         self.assertRaises(BadRequest, raises_bad_request)
+
+    def test_cleanse_short_name_reg(self):
+        def _test_cleansing(short_name, expected):
+            data = {"short_name": short_name}
+            cleanse_short_name(data)
+            self.assertEqual(expected, data["short_name"])
+
+        _test_cleansing("1QWERTY", "qwerty")
+        _test_cleansing("123456789012345678X", "x")
+        _test_cleansing("1ABC!D@E#F&G(HIJ)KLMNO-PQRSTUVWYZ", "abcdefghijklmnop")

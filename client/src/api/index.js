@@ -626,3 +626,7 @@ export function suspendUsers() {
 export function dbStats() {
     return fetchJson("/api/system/db_stats");
 }
+
+export function dbSeed() {
+    return fetchJson("/api/system/seed");
+}
