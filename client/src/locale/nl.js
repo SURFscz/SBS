@@ -848,7 +848,7 @@ I18n.translations.nl = {
         message: "Bericht",
         messagePlaceholder: "Bericht aan de beheerders",
         messageTooltip: "De boodschap nemen we op in de <br/>e-mail waarmee beheerders worden uitgenodigd.",
-        inviteesMessagesTooltip: "Voer e-mailadressen in, gescheiden door een komma, spatie <br/>of punt-komma of voer ze stuk-voor-stuk in<br/>met de enter toets.<br/>U kunt ook een csv file inlezen<br/>met daarin komma-gescheiden e-mailadressen.",
+        inviteesMessagesTooltip: "Voer e-mailadressen in, gescheiden door een komma, spatie <br/>of punt-komma of voer ze stuk-voor-stuk in<br/>met de enter toets.<br/>U kunt ook een csv file copy & pasten<br/>met daarin regel-gescheiden e-mailadressen.",
         inviteesMessagePlaceholder: "Bericht aan genodigden",
         inviter: "Uitnodiger",
         decline: "Afslaan",

@@ -850,7 +850,7 @@ I18n.translations.en = {
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
         messageTooltip: "The message will be included in the<br/>e-mail invitation to the administrators.",
-        inviteesMessagesTooltip: "Add e-mail addresses separated by comma, space <br/>or semi-colon or one-by-one using <br/>the enter key.<br/>You can also upload a csv file<br/>with comma-separated e-mail addresses.",
+        inviteesMessagesTooltip: "Add e-mail addresses separated by comma, space <br/>or semi-colon or one-by-one using <br/>the enter key.<br/>You can also copy & paste a csv file<br/>with line-separated e-mail addresses.",
         inviteesMessagePlaceholder: "Personal message to the invitees",
         inviter: "Inviter",
         decline: "Decline",
