@@ -26,6 +26,7 @@ I18n.translations.en = {
         profile: "Profile",
         aup: "AUP",
         history: "History",
+        system: "System",
         confirmation: "Admin confirmation",
         newOrganisation: "New organisation",
         editService: "Edit service",
@@ -1203,7 +1204,11 @@ I18n.translations.en = {
         runDbStatsInfo: "Get the database table counts",
         runDbStats: "Fetch",
         name: "Table name",
-        count: "Nbr of records"
+        count: "Nbr of records",
+        runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
+        runDbSeedInfo: "Delete all data and insert the test seed",
+        runDbSeed: "Run",
+        seedResult: "Test data is successfully inserted"
     },
 
     access: {

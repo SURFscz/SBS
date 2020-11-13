@@ -80,6 +80,7 @@ feature:
   admin_users_upgrade: True
   admin_users_upgrade_url: http://localhost:8080/api/users/upgrade_super_user
   admin_users_upgrade_redirect_url: http://localhost:3000
+  seed_allowed: True
 
 # The retention config determines how long users may be inactive, how long the reminder magic link is valid and when do we resent the magic link
 retention:

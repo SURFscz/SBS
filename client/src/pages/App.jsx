@@ -383,7 +383,7 @@ class App extends React.Component {
 
                             <Route path="/system"
                                    render={props => <ProtectedRoute
-                                       currentUser={currentUser} Component={System} {...props}/>}/>
+                                       currentUser={currentUser} Component={System} config={config} {...props}/>}/>
 
                             <Route path="/aup" render={props =>
                                 <Aup currentUser={currentUser} refreshUser={this.refreshUserMemberships} {...props}/>}/>

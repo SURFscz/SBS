@@ -84,7 +84,7 @@ class OrganisationServices extends React.Component {
 
     closeExplanation = () => this.setState({showExplanation: false});
 
-        confirm = (action, question) => {
+    confirm = (action, question) => {
         this.setState({
             confirmationDialogOpen: true,
             confirmationDialogQuestion: question,

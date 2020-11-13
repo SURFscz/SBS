@@ -157,13 +157,15 @@ def health():
 @base_api.route("/config", strict_slashes=False)
 @json_endpoint
 def config():
-    base_url = current_app.app_config.base_url
+    cfg = current_app.app_config
+    base_url = cfg.base_url
     base_url = base_url[:-1] if base_url.endswith("/") else base_url
     return {"local": current_app.config["LOCAL"],
             "base_url": base_url,
-            "admin_users_upgrade": current_app.app_config.feature.admin_users_upgrade,
-            "organisation_categories": current_app.app_config.organisation_categories,
-            "admin_users_upgrade_url": current_app.app_config.feature.admin_users_upgrade_url}, 200
+            "admin_users_upgrade": cfg.feature.admin_users_upgrade,
+            "seed_allowed": cfg.feature.seed_allowed,
+            "organisation_categories": cfg.organisation_categories,
+            "admin_users_upgrade_url": cfg.feature.admin_users_upgrade_url}, 200
 
 
 @base_api.route("/info", strict_slashes=False)
