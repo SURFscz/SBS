@@ -184,6 +184,12 @@ I18n.translations.en = {
             new: "Toggle all on/off",
             allowedNoneError: "At least one organisation must be selected"
         },
+        memberCollaborations: {
+            searchPlaceHolder: "Search for collaborations...",
+            title: "Collaborations",
+            new: "Request New Collaboration",
+            noEntities: "There are no collaborations",
+        },
         serviceCollaborations: {
             searchPlaceHolder: "Search for collaborations...",
             title: "Collaborations using this service",

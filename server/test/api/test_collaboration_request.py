@@ -43,7 +43,7 @@ class TestCollaborationRequest(AbstractTest):
             self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
             collaboration = self.find_entity_by_name(Collaboration, data["name"])
             # Max length short_name
-            self.assertEqual("new_collaboration_short_but_stil", collaboration.short_name)
+            self.assertEqual("new_collaboratio", collaboration.short_name)
             mail_msg = outbox[0]
             self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name}", mail_msg.subject)
             self.assertTrue("automatically approve Collaboration requests" in mail_msg.html)
@@ -63,7 +63,7 @@ class TestCollaborationRequest(AbstractTest):
             self.post("/api/collaboration_requests", body=data, with_basic_auth=False)
             collaboration = self.find_entity_by_name(Collaboration, data["name"])
 
-            self.assertEqual("new_collaboration_short", collaboration.short_name)
+            self.assertEqual("new_collaboratio", collaboration.short_name)
             mail_msg = outbox[0]
             self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name}", mail_msg.subject)
 

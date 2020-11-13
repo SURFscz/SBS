@@ -90,6 +90,16 @@ def _do_short_name_exists(name, organisation_id, existing_collaboration=""):
     return coll is not None
 
 
+@collaboration_api.route("/may_request_collaboration", strict_slashes=False)
+@json_endpoint
+def may_request_collaboration():
+    user = User.query.get(current_user_id())
+    sho = user.schac_home_organisation
+    if not sho:
+        return False, 200
+    return Organisation.query.filter(Organisation.schac_home_organisation == sho).count() > 0, 200
+
+
 @collaboration_api.route("/all", strict_slashes=False)
 @json_endpoint
 def collaboration_all():

@@ -171,7 +171,7 @@ class TestCollaboration(AbstractTest):
                         headers=RESTRICTED_CO_API_AUTH_HEADER,
                         response_status_code=201)
 
-        self.assertEqual("uva:short_collab_name", res["global_urn"])
+        self.assertEqual("uva:short_collab_nam", res["global_urn"])
 
     def test_collaboration_restricted_access_api_forbidden_without_correct_scope(self):
         self.login("urn:harry")
@@ -513,6 +513,21 @@ class TestCollaboration(AbstractTest):
         collaboration_id = self._find_by_identifier()["id"]
         collaboration = self.get(f"/api/collaborations/groups/{collaboration_id}")
         self.assertEqual(2, len(collaboration["groups"]))
+
+    def test_collaborations_may_request_collaboration_true(self):
+        self.login("urn:mary")
+        res = self.get("/api/collaborations/may_request_collaboration", with_basic_auth=False)
+        self.assertTrue(res)
+
+    def test_collaborations_may_request_collaboration_false(self):
+        self.login("urn:mike")
+        res = self.get("/api/collaborations/may_request_collaboration", with_basic_auth=False)
+        self.assertFalse(res)
+
+    def test_collaborations_may_request_collaboration_none(self):
+        self.login("urn:jane")
+        res = self.get("/api/collaborations/may_request_collaboration", with_basic_auth=False)
+        self.assertFalse(res)
 
     def test_access_allowed_super_user(self):
         self.login("urn:john")
