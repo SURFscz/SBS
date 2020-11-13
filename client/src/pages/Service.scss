@@ -41,48 +41,41 @@
             margin-top: 15px;
 
             label.title {
-                display: inline-block;
-                padding: 14px 34px 14px 14px;
-                margin: 5px 0;
+                display: flex;
+                align-items: center;
+                margin: 12px 0 6px 0;
                 min-width: 210px;
-                border: 1px solid $lighter-grey;
-                background-color: $background;
-                border-bottom-left-radius: $br;
-                border-top-left-radius: $br;
-                color: $dark-green;
+                color: black;
                 position: relative;
-
+                font-weight: bold;
             }
 
             span.tool-tip-section {
-                position: absolute;
-                right: 0;
-                top: 0;
                 font-size: 14px;
+                color: $lighter-grey;
+                cursor: pointer;
+                padding: 0 4px;
+
+                &:hover {
+                    color: darken($light-blue, 20%);
+                }
+            }
+
+            span.add-network {
                 color: $blue;
                 cursor: pointer;
                 padding: 0 4px;
+                font-size: 22px;
+                display: inline-block;
+                margin-left: auto;
 
                 &:hover {
                     color: darken($blue, 10%);
                 }
             }
 
-            span.add-network {
-                color: $green;
-                cursor: pointer;
-                padding: 0 4px;
-                font-size: 22px;
-                display: inline-block;
-                margin-left: 25px;
-
-                &:hover {
-                    color: darken($green, 10%);
-                }
-            }
-
             .network-container {
-                margin: 15px 0 15px 25px;
+                margin: 15px 0 15px 0;
             }
 
             .network {

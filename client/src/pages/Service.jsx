@@ -83,6 +83,7 @@ class Service extends React.Component {
                     searchOrganisations("*")
                         .then(r => {
                             this.setState({organisations: this.mapOrganisationsToOptions(r)});
+                            this.addIpAddress();
                             AppStore.update(s => {
                                 s.breadcrumb.paths = [
                                     {path: "/", value: I18n.t("breadcrumb.home")},
@@ -102,11 +103,15 @@ class Service extends React.Component {
                             allowed_organisations: this.mapOrganisationsToOptions(res[0].allowed_organisations),
                             organisations: this.mapOrganisationsToOptions(res[1])
                         }, () => {
-                            Promise.all(this.state.service.ip_networks.map(n => ipNetworks(n.network_value, n.id)))
-                                .then(res => {
-                                    this.setState({"ip_networks": res});
-                                })
-
+                            const {ip_networks} = this.state.service;
+                            if (isEmpty(ip_networks)) {
+                                this.addIpAddress();
+                            } else {
+                                Promise.all(ip_networks.map(n => ipNetworks(n.network_value, n.id)))
+                                    .then(res => {
+                                        this.setState({"ip_networks": res});
+                                    });
+                            }
                         });
                         AppStore.update(s => {
                             s.breadcrumb.paths = [
@@ -272,10 +277,9 @@ class Service extends React.Component {
                                     <p dangerouslySetInnerHTML={{__html: I18n.t("service.networkTooltip")}}/>
                                 </ReactTooltip>
                             </span>
+                {isAdmin &&
+                <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>}
             </label>
-            {isAdmin &&
-            <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>}
-
             {ip_networks.map((network, i) =>
                 <div className="network-container" key={i}>
                     <div className="network">
@@ -428,7 +432,7 @@ class Service extends React.Component {
                             toolTip={I18n.t("service.accepted_user_policyTooltip")}
                             disabled={!isAdmin}/>
 
-                {/*{this.renderIpNetworks(ip_networks, isAdmin)}*/}
+                {this.renderIpNetworks(ip_networks, isAdmin)}
 
                 {/*{!isNew && <InputField value={moment(service.created_at * 1000).format("LLLL")}*/}
                 {/*                       disabled={true}*/}
