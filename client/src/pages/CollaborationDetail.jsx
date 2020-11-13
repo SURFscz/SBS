@@ -29,6 +29,7 @@ import {isUserAllowed, ROLES} from "../utils/UserRole";
 import Button from "../components/Button";
 import {getParameterByName} from "../utils/QueryParameters";
 import WelcomeDialog from "../components/WelcomeDialog";
+import {isEmpty} from "../utils/Utils";
 
 
 class CollaborationDetail extends React.Component {
@@ -217,7 +218,8 @@ class CollaborationDetail extends React.Component {
         this.props.history.push("/new-collaboration");
     }
 
-    getUnitHeaderForMember(collaboration) {
+    getUnitHeaderForMember(collaboration, user, schacHomeOrganisation) {
+        const showRequestCollaboration = user.collaboration_memberships.length === 1 && !isEmpty(schacHomeOrganisation);
         return (
             <div className="unit-header-container">
                 <div className="unit-header-custom">
@@ -245,9 +247,9 @@ class CollaborationDetail extends React.Component {
                             </section>
                         </div>
                     </div>
-                    <div className="unit-edit">
+                    {showRequestCollaboration && <div className="unit-edit">
                         <Button onClick={this.createCollaborationRequest} txt={I18n.t("models.collaboration.newCollaborationRequest")}/>
-                    </div>
+                    </div>}
 
                 </div>
             </div>
@@ -277,7 +279,7 @@ class CollaborationDetail extends React.Component {
 
     render() {
         const {
-            collaboration, loaded, tabs, tab, adminOfCollaboration, showMemberView, firstTime
+            collaboration, loaded, tabs, tab, adminOfCollaboration, showMemberView, firstTime, schacHomeOrganisation
         } = this.state;
         if (!loaded) {
             return <SpinnerField/>;
@@ -291,7 +293,7 @@ class CollaborationDetail extends React.Component {
                                 isOrganisation={false}
                                 close={() => this.setState({firstTime: false})} />}
                 {(adminOfCollaboration && showMemberView) && this.getUnitHeader(collaboration, allowedToEdit)}
-                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMember(collaboration)}
+                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMember(collaboration, user, schacHomeOrganisation)}
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>

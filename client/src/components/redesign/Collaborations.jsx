@@ -6,7 +6,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Button from "../Button";
-import {myCollaborations} from "../../api";
+import {mayRequestCollaboration, myCollaborations} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 
@@ -16,18 +16,25 @@ export default class Collaborations extends React.PureComponent {
         super(props, context);
         this.state = {
             standalone: false,
+            showRequestCollaboration: false,
             loading: true
         }
     }
 
     componentDidMount = () => {
         const {collaborations} = this.props;
+        const promises = [mayRequestCollaboration()];
         if (collaborations === undefined) {
-            myCollaborations().then(res => {
-                this.setState({standalone: true, collaborations: res, loading: false});
+            Promise.all(promises.concat([myCollaborations()])).then(res => {
+                this.setState({
+                    standalone: true,
+                    collaborations: res[1],
+                    showRequestCollaboration: res[0],
+                    loading: false
+                });
             })
         } else {
-            this.setState({loading: false});
+            Promise.all(promises).then(res => this.setState({showRequestCollaboration: res, loading: false}))
         }
 
     }
@@ -53,7 +60,7 @@ export default class Collaborations extends React.PureComponent {
     };
 
     render() {
-        const {loading, standalone} = this.state;
+        const {loading, standalone, showRequestCollaboration} = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
@@ -94,12 +101,12 @@ export default class Collaborations extends React.PureComponent {
             }]
         return (
             <Entities entities={collaborations}
-                      modelName={modelName}
+                      modelName={mayCreateCollaborations ? modelName : showRequestCollaboration ? "memberCollaborations": modelName}
                       searchAttributes={["name"]}
                       defaultSort="name"
                       rowLinkMapper={() => this.openCollaboration}
                       columns={columns}
-                      showNew={mayCreateCollaborations}
+                      showNew={mayCreateCollaborations || showRequestCollaboration}
                       newEntityPath={`/new-collaboration`}
                       loading={loading}
                       {...this.props}/>

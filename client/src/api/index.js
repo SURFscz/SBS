@@ -266,6 +266,9 @@ export function collaborationGroups(collaborationId) {
     return fetchJson(`/api/collaborations/groups/${collaborationId}`);
 }
 
+export function mayRequestCollaboration() {
+    return fetchJson("/api/collaborations/may_request_collaboration");
+}
 //Organisations
 export function myOrganisationsLite() {
     return fetchJson(`/api/organisations/mine_lite`);
