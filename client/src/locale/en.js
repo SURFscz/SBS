@@ -333,8 +333,6 @@ I18n.translations.en = {
         exit: "Exit view",
         impersonator: "You are impersonating <strong>{{name}}</strong> | <strong>{{role}}</strong>",
         impersonatorTooltip: "You are really <em>{{impersonator}}</em>,<br/>but you are impersonating <em>{{currentUser}}</em>.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
-
-
     },
     registration: {
         title: "Request access to the resources of {{collaboration}}",
@@ -442,10 +440,10 @@ I18n.translations.en = {
         joinRequestUrl: "Join Request URL",
         joinRequestUrlTooltip: "URL for non-members to<br/>join this collaboration.<br/><br/>The URL can be communicated<br/>to service providers that offer<br/>their service within this collaboration",
         disableJoinRequests: "Disable Join request for this collaboration",
+        disableJoinRequestsTooltip: "When checked non-members of this<br/>collaboration can not issue a Join request.",
         joinRequests: "Join requests",
         disabled: "Disabled",
         enabled: "Enabled",
-        disableJoinRequestsTooltip: "When checked non-members of this<br/>collaboration can not issue a Join request.",
         servicesRestricted: "Restricted services",
         servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
         discloseMemberInformation: "Disclose member information",
@@ -460,10 +458,10 @@ I18n.translations.en = {
         currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
+        messageTooltip: "The message will be included in the<br/>e-mail invitation to the administrators.",
         motivation: "Motivation",
         motivationPlaceholder: "Motivation for the new collaboration",
         motivationTooltip: "Your motivation for the new collaboration.",
-        messageTooltip: "The message will be included in the<br/>e-mail invitation to the administrators.",
         organisation_name: "Organisation",
         organisationPlaceholder: "Select the organisation for this collaboration...",
         organisationTooltip: "Every collaboration belongs to<br/>precisely one and only one organisation",
@@ -625,9 +623,9 @@ I18n.translations.en = {
         subTitle: "Enter / edit the organisation details.",
         actions: "",
         name: "Name",
+        namePlaceHolder: "The unique name of an organisation",
         category: "Category",
         categoryTooltip: "Categories are displayed when</br>services are linked to organisations",
-        namePlaceHolder: "The unique name of an organisation",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institute",
         shortName: "Short name",
         shortNamePlaceHolder: "Short name of the organisation",
@@ -1230,7 +1228,6 @@ I18n.translations.en = {
         serviceUser: "Service user",
         user: "User"
     },
-
     welcomeDialog: {
         title: "Welcome to {{name}}",
         role: "Your current role is <strong>{{role}}</strong>",
@@ -1238,7 +1235,6 @@ I18n.translations.en = {
         organisation: "organisation",
         collaboration: "collaboration"
     },
-
     welcome: {
         title: "Welcome to the SRAM platform",
         info: "You are currently not a member of any organisation or collaboration. " +

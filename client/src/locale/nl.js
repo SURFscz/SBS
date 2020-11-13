@@ -9,24 +9,36 @@ I18n.translations.nl = {
         title: "SRAM",
         links: {
             login: "Login",
+            system: "System",
+            impersonate: "Impersonate",
             help: "Help",
+            profile: "Profile",
             logout: "Logout",
             helpUrl: "https://wiki.surfnet.nl/display/sram"
         },
-        impersonator: "U bent {{impersonator}},<br/>maar u ziet SBS nu als {{currentUser}}.<br/><br/>Op de <strong>Impersonate</strong> pagina<br/> kunt u van identiteit wisselen<br/>of weer 'uzelf' worden."
-
     },
-    navigation: {
+    breadcrumb: {
         home: "Home",
-        registration: "Registratie",
-        collaborations: "Samenwerkingen",
-        organisations: "Organisaties",
-        services: "Diensten",
-        profile: "Profiel",
-        system: "System",
-        impersonate: "Impersonate",
+        registration: "Registration",
+        collaborations: "Collaborations",
+        organisations: "Organisations",
+        services: "Services",
+        profile: "Profile",
         aup: "AUP",
-        confirmation: "Admin confirmatie"
+        history: "History",
+        system: "System",
+        confirmation: "Admin confirmation",
+        newOrganisation: "New organisation",
+        editService: "Edit service",
+        newService: "New service",
+        newCollaboration: "New collaboration",
+        newCollaborationRequest: "New collaboration request",
+        editCollaboration: "Edit collaboration",
+        impersonate: "Impersonate",
+        organisationInvite: "Add members",
+        organisationInvitation: "Invitation",
+        invite: "Add members",
+        invitation: "Invitation",
     },
     login: {
         title: "Research Access Management",
@@ -36,27 +48,38 @@ I18n.translations.nl = {
         closeBrowser: "To finish your logout you'll have to close your browser.",
         closeBrowserAfterDelete: "To finish the deletion of your account you'll have to close your browser."
     },
-    newDropDown: {
-        organisation: "Nieuwe organisatie",
-        collaboration: "Nieuwe samenwerking",
-        collaborationRequest: "Aanvraag nieuwe samenwerking",
-        service: "Nieuwe dienst"
-    },
     home: {
-        title: "Mijn lidmaatschappen",
-        groups: "Groepen",
-        collaborations: "Samenwerkingen",
-        organisations: "Organisaties",
-        services: "Diensten",
+        sram: "SRAM PLATFORM",
         edit: "Edit",
         history: "History",
-        backToHome: "Terug naar de startpagina",
-        collaborationRequest: "Verzoek een nieuwe Samenwerking",
+        backToHome: "Back to home",
+        collaborationRequest: "Request for new Collaboration",
         collaborationNew: "New Collaboration",
-        noOrganisations: "Voor het verzoek om een nieuwe samenwerking is het een vereiste dat er voor de instelling '{{schac_home}}' waarmee je bent ingelogd een organisatie is aangemaakt. Dit is niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie."
+        noOrganisations: "Voor het verzoek om een nieuwe samenwerking is het een vereiste dat er voor de instelling '{{schac_home}}' waarmee je bent ingelogd een organisatie is aangemaakt. Dit is niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie.",
+        tabs: {
+            groups: "Groups",
+            collaborations: "Collaborations",
+            organisations: "Organisations",
+            services: "SRAM Services",
+            platformAdmins: "SRAM Admins",
+            orgAdmins: "Org Admins",
+            orgServices: "Org Services",
+            orgCollaborations: "Org Collaborations",
+            coServices: "CO Services",
+            coAdmins: "CO admins",
+            members: "Members",
+            serviceOrganisations: "Organisation access",
+            serviceCollaborations: "Collaborations insights",
+            collaborationRequests: "Coll requests",
+            me: "Profile",
+            about: "About",
+            apikeys: "API Keys",
+            welcome: "Welcome"
+        }
     },
     forms: {
         submit: "Toevoegen",
+        save: "Bewaren",
         request: "Verstuur",
         cancel: "Annuleren",
         showMore: "Meer",
@@ -65,13 +88,213 @@ I18n.translations.nl = {
         manage: "Overzicht",
         invalidInput: "Foutieve waarde voor {{name}}",
         back: "Terug",
-        reset: "Reset"
+        reset: "Reset",
+        yes: "Ja",
+        upload: "Upload afbeelding",
+        image: "Afbeelding moet tenminste 90x90 pixels en kleiner dan 512KB",
+        imageToLarge: "Image is larger then 512KB",
+        imageRequired: "Image is required",
+        no: "Nee"
     },
     explain: {
         title: "Uitleg {{subject}}",
         impersonate: "Impersonate",
         services: "Services",
         serviceRequest: "Service request"
+    },
+    models: {
+        users: {
+            name_email: "Name / email",
+            blank: "",
+            icon: "",
+            profile: "Hi {{name}}",
+            subProfile: "You are currently logged in with your institution account via eduTeams",
+            institute: "Institution",
+            role: "Role",
+            title: "SRAM platform administrators",
+            platformAdmin: "SRAM platform admin",
+            noEntities: "There are no members yet...",
+            searchPlaceHolder: "Search administrators...",
+            new: "New Member",
+            me: "You"
+        },
+        orgMembers: {
+            title: "Org admin & managers",
+            noEntities: "There are no administrator or managers yet in this organisation...",
+            searchPlaceHolder: "Search members...",
+            status: "Status",
+            inviteSend: "Invite sent {{date}}",
+            accepted: "Accepted",
+            new: "Add member(s)",
+            remove: "Delete",
+            mail: "Compose mail"
+        },
+        organisations: {
+            title: "Organisations",
+            noEntities: "There are no organisations yet...",
+            searchPlaceHolder: "Search organisations...",
+            new: "New Organisation",
+            name: "Name",
+            memberCount: "Members",
+            collaborationCount: "Collaborations",
+            category: "Category"
+        },
+        services: {
+            title: "Services",
+            noEntities: "There are no services yet...",
+            searchPlaceHolder: "Search services...",
+            new: "New Service",
+            name: "Name",
+            status: "Status",
+            organisationCount: "Used in organisations",
+            collaborationCount: "Used in collaborations",
+            titleAvailableColl: "Available for this collaboration ({{count}})",
+            titleAvailableOrg: "Available for this organisation ({{count}})",
+            titleUsedColl: "Used by this collaboration ({{count}})",
+            titleUsedOrg: "Enabled by this organisation ({{count}})",
+            awaitingApproval: "Connection awaiting approval",
+            automaticConnectionAllowed: "Automatic connection allowed",
+            requiredByOrganisation: "Enabled by organisation",
+            removeFromCO: "Remove from CO",
+            deleteConnectionRequest: "Delete connection request",
+            addToCO: "Add to CO",
+            removeFromOrg: "Remove from organisation",
+            addToOrg: "Add to organisation",
+            mandatory: "Enabled for all Collaborations",
+            requestConnection: "Request connection",
+            backToServices: "Back to services",
+            connectionRequest: "Request connection to {{name}}",
+        },
+        collaborations: {
+            title: "Collaborations",
+            searchPlaceHolder: "Search collaborations...",
+            new: "New Collaboration",
+            newCollaborationRequest: "New request for collaboration",
+            name: "Name",
+            memberCount: "Members",
+            invitationsCount: "Invitations",
+            allMembers: "All members ({{count}})",
+            group: "Group {{name}} ({{count}})",
+            hideInvites: "Hide invitees",
+            noCollaborations: "There are no collaborations yet within your organization. Why don't you create the first one?",
+        },
+        serviceOrganisations: {
+            searchPlaceHolder: "Search for organisations",
+            title: "Organisations",
+            new: "Toggle all on/off",
+            allowedNoneError: "At least one organisation must be selected"
+        },
+        memberCollaborations: {
+            searchPlaceHolder: "Search for collaborations...",
+            title: "Collaborations",
+            new: "Request New Collaboration",
+            noEntities: "There are no collaborations",
+        },
+        serviceCollaborations: {
+            searchPlaceHolder: "Search for collaborations...",
+            title: "Collaborations using this service",
+            new: "New Collaboration",
+            organisationName: "Organisation",
+            noEntities: "There are no collaborations using this service",
+        },
+        coAdmins: {
+            searchPlaceHolder: "Search for admins...",
+            title: "CO Admins",
+            new: "Add admin(s)",
+            noEntities: "There are no administrators",
+        },
+        members: {
+            searchPlaceHolder: "Search for members...",
+            title: "Members",
+            new: "Add member(s)",
+            noEntities: "There are no members",
+        },
+        servicesAvailable: {
+            searchPlaceHolder: "Search for services...",
+            noEntities: "No services are available to add"
+        },
+        servicesUsed: {
+            searchPlaceHolder: "Search for services...",
+            noEntities: "No services are being used"
+        },
+        groups: {
+            backToGroups: "Back to all groups",
+            title: "Groups",
+            searchPlaceHolder: "Search for groups...",
+            noEntities: "No groups were found",
+            new: "Create new group",
+            edit: "Edit",
+            name: "Name",
+            urn: "URN",
+            description: "Description",
+            member: "Member",
+            memberCount: "Members",
+            autoProvisioning: "Auto provisioning",
+            on: "On",
+            off: "Off",
+            deleteMemberConfirmation: "Are you sure you want to delete {{name}}?"
+        },
+        groupMembers: {
+            title: "Members",
+            searchPlaceHolder: "Search for members",
+            noEntities: "No members",
+            addMembersPlaceholder: "Search and select to add members"
+        },
+        collaboration: {
+            memberHeader: "{{nbrMember}} members - {{nbrGroups}} groups",
+            noAdminsHeader: "No administrators (yet)",
+            adminsHeader: "Organized by <strong>{{name}}</strong>",
+            multipleAdminsHeader: "Organized by <strong>{{name}}</strong> and <strong>{{nbr}} others</strong>",
+            about: "What we're about",
+            services: "Where we collaborate ({{nbr}} services)",
+            noServices: "There are no services available in this collaboration",
+            servicesStart: "Click the button to start the service, or read the instructions first",
+            members: "Members ({{nbr}})",
+            showMemberDetails: "Show all details",
+            admin: "admin",
+            more: "Show {{nbr}} more",
+            less: "Show less",
+            viewAsMember: "View as member",
+            viewAsAdmin: "View as admin",
+            discloseNoMemberInformation: "This collaboration discloses no member information",
+            newCollaborationRequest: "Request collaboration",
+            leave: "Leave"
+        },
+        apiKeys: {
+            title: "API Keys",
+            new: "New API Key",
+            searchPlaceHolder: "Search for API keys...",
+            noEntities: "No API keys",
+            backToApiKeys: "Back to all API keys"
+        },
+        collaboration_requests: {
+            title: "Requests for collaborations",
+            requester: "Requester",
+            searchPlaceHolder: "Search for requests..."
+        },
+        invitation: {
+            welcome: "Welcome to SRAM. Here you can collaborate with your fellow researchers.",
+            invited: "You have been invited to join {{type}} \"{{collaboration}}\" by {{inviter}}",
+            followingSteps: "Please take the following steps:",
+            steps: {
+                progress: "{{now}} of {{total}}",
+                login: "Login",
+                next: "Next: {{step}}",
+                aup: "Accept our AUP",
+                invite: "Accept the invite",
+                collaborate: "Collaborate!"
+            },
+            login: "Please login to identify yourself",
+            loginTip: "You can use your institution account to login, or use a guest account",
+            accept: "I accept these terms",
+            noAccept: "No, I don't agree",
+            acceptInvitation: "Yes, I accept the invitation",
+            declineInvitation: "No, I decline",
+            confirmations: {
+                cancelInvitation: "Are you sure you don't want to accept the terms?",
+                declineInvitation: "Are you sure you don't want to accept the invitation?",
+            }
+        }
     },
     user: {
         titleUpdate: "Werk je gebruikersprofiel bij",
@@ -106,8 +329,10 @@ I18n.translations.nl = {
         flash: {
             startedImpersonation: "Met success ben je nu - tijdelijk - {{name}}.",
             clearedImpersonation: "Met succes is je nabootsing gestopt. Je bent jezelf weer."
-        }
-
+        },
+        exit: "Exit view",
+        impersonator: "You are impersonating <strong>{{name}}</strong> | <strong>{{role}}</strong>",
+        impersonatorTooltip: "You are really <em>{{impersonator}}</em>,<br/>but you are impersonating <em>{{currentUser}}</em>.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
     },
     registration: {
         title: "Vraag toegang tot de resources van {{collaboration}}",
@@ -196,11 +421,14 @@ I18n.translations.nl = {
         on_acceptance: "Na goedkeuring"
     },
     collaboration: {
+        about: "About the collaboration",
+        invitations: "Invite CO admins",
         title: "Nieuwe samenwerking toevoegen",
         requestTitle: "Nieuwe samenwerking aanvragen",
         requestTitleCreationAllowed: "Nieuwe samenwerking aanvragen - organisatie {{name}} is geconfigureerd om automatisch samenwerkings verzoeken goed te keuren",
         actions: "",
         name: "Naam",
+        logo: "Logo samenwerking",
         namePlaceHolder: "De unieke naam van de samenwerking",
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de samenwerking",
@@ -213,10 +441,19 @@ I18n.translations.nl = {
         joinRequestUrlTooltip: "URL voor niet-leden om<br/>zich aan te melden voor deze samenwerking.<br/><br/>De URL kan gecommuniceerd worden naar<br/>dienst-aanbieders die hun dienst<br/>via deze samenwerking aanbieden.",
         disableJoinRequests: "Niet-leden kunnen geen verzoek doen om lid te worden",
         disableJoinRequestsTooltip: "Door dit aan te vinken kunnen niet-leden van<br>deze samenwerking geen verzoek doen om lid te worden.",
+        joinRequests: "Join requests",
+        disabled: "Disabled",
+        enabled: "Enabled",
         servicesRestricted: "Restricted services",
         servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
+        discloseMemberInformation: "Disclose member information",
+        discloseMemberInformationTooltip: "When checked the names<br/>of members are disclosed to other members",
+        discloseEmailInformation: "Disclose email information",
+        discloseEmailInformationTooltip: "When checked the emails<br/>of members are disclosed to other members",
         description: "Beschrijving",
         descriptionPlaceholder: "De beschrijving van de samenwerking is voor iedereen zichtbaar",
+        websiteUrl: "Website URL",
+        websiteUrlPlaceholder: "The URL of the website is visible for members",
         currentUserAdmin: "Do you want to an administrator of this collaboration?",
         currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
         message: "Bericht",
@@ -257,6 +494,7 @@ I18n.translations.nl = {
         delete: "Verwijderen",
         deleteConfirmation: "Weet u zeker dat u deze samenwerking wilt verwijderen?",
         deleteMemberConfirmation: "Weet u zeker dat u {{name}} als lid voor deze samenwerking wilt verwijderen?",
+        deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze samenwerking wilt verlaten? Je kan dit niet terugdraaien.",
         activateMemberConfirmation: "Are you sure you want to re-activate this user {{name}}?",
         activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
@@ -264,6 +502,7 @@ I18n.translations.nl = {
             updated: "Samenwerking {{name}} is bijgewerkt.",
             deleted: "Samenwerking {{name}} is verwijderd.",
             memberDeleted: "{{name}} is geen lid meer van deze samenwerking.",
+            entitiesDeleted: "Membership / invitations are successfully deleted",
             memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
             meAdded: "Je bent toegevoegd als lid van {{name}}",
             memberActivated: "Member {{name}} has been sent an email with an activation link"
@@ -285,7 +524,6 @@ I18n.translations.nl = {
         addMe: "Voeg mij toe"
     },
     organisations: {
-        dashboard: "Dashboard mijn organisaties",
         title: "Mijn Organisaties",
         noOrganisations: "Je bent geen lid van een organisatie",
         members: "Leden",
@@ -302,7 +540,13 @@ I18n.translations.nl = {
         searchPlaceHolder: "DOORZOEK ALLE DIENSTEN"
     },
     service: {
-        titleNew: "Nieuwe dienst aanmaken",
+        about: "About the service",
+        logo: "Service logo",
+        accessAllowed: "Access allowed",
+        compliancy: "Service compliancy",
+        compliancyShort: "Compliancy",
+        none: "None",
+        contact: "Contact contact-person",
         titleUpdate: "Dienst {{name}} bijwerken",
         titleReadOnly: "Dienst {{name}}",
         backToServices: "Terug naar diensten",
@@ -379,6 +623,8 @@ I18n.translations.nl = {
         actions: "",
         name: "Naam",
         namePlaceHolder: "De unieke naam van de organisatie",
+        category: "Category",
+        categoryTooltip: "Categories are displayed when</br>services are linked to organisations",
         tenantPlaceHolder: "De unieke tenant- / organisatieidentifier die de organisatie verbindt met een instelling",
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de organisatie",
@@ -420,7 +666,7 @@ I18n.translations.nl = {
             undefined: ""
         },
         yourself: "{{name}} (jijzelf dus)",
-        anotherAdmin: "We raden aan meerdere beheerders uit te nodigen.",
+        logo: "Organisation image", anotherAdmin: "We raden aan meerdere beheerders uit te nodigen.",
         deleteConfirmation: "Weet u zeker dat u deze organisatie wil verwijderen?",
         flash: {
             created: "Organisatie {{name}} is aangemaakt."
@@ -500,6 +746,7 @@ I18n.translations.nl = {
         flash: {
             updated: "Organisatie {{name}} is bijgewerkt.",
             deleted: "Organisatie {{name}} is verwijderd.",
+            entitiesDeleted: "Lidmaatschap / uitnodigingen zijn verwijderd",
             memberDeleted: "Lidmaatschap van {{name}} is verwijderd.",
             apiKeyDeleted: "API-sleutel is verwijderd.",
             collaborationDeleted: "Samenwerking {{name}} is verwijderd.",
@@ -931,6 +1178,7 @@ I18n.translations.nl = {
     error_dialog: {
         title: "Onverwachte fout",
         body: "Dit is gênant; er is een onverwachte fout opgetreden. De fout is gerapporteerd. Probeer het nogmaals.",
+        deadEnd: "Nowhere to go from here",
         ok: "Sluiten"
     },
     not_found: {
@@ -939,8 +1187,12 @@ I18n.translations.nl = {
         loginLink: "LOGIN"
     },
     footer: {
-        product: "Powered by SRAM",
+        tips: "Need tips or info?",
+        help: "Help & FAQ",
+        product: "Proudly powered by",
         productLink: "https://wiki.surfnet.nl/display/sram",
+        surf: "SURF",
+        surfLink: "https://surf.nl",
         privacy: "Terms & Privacy",
         privacyLink: "https://wiki.surfnet.nl/display/SRAM/SRAM+-+Privacy+Policy"
     },
@@ -955,7 +1207,11 @@ I18n.translations.nl = {
         runDbStatsInfo: "Get the database table counts",
         runDbStats: "Fetch",
         name: "Table name",
-        count: "Nbr of records"
+        count: "Nbr of records",
+        runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
+        runDbSeedInfo: "Delete all data and insert the test seed",
+        runDbSeed: "Run",
+        seedResult: "Test data is successfully inserted"
     },
     access: {
         full: "Volledige",
@@ -969,8 +1225,19 @@ I18n.translations.nl = {
         coMember: "samenwerkings member",
         serviceUser: "dienst gebruiker",
         user: "gebruiker"
+    },
+    welcomeDialog: {
+        title: "Welcome to {{name}}",
+        role: "Your current role is <strong>{{role}}</strong>",
+        ok: "All good, show me the {{type}}",
+        organisation: "organisation",
+        collaboration: "collaboration"
+    },
+    welcome: {
+        title: "Welcome to the SRAM platform",
+        info: "You are currently not a member of any organisation or collaboration. " +
+            "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you have any questions"
     }
-
 };
 
 export default I18n.translations.nl;
