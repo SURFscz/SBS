@@ -17,8 +17,8 @@ import {setFlash} from "../utils/Flash";
 import SelectField from "../components/SelectField";
 import {sanitizeShortName} from "../validations/regExps";
 import UnitHeader from "../components/redesign/UnitHeader";
-import ImageField from "../components/redesign/ImageField";
 import {AppStore} from "../stores/AppStore";
+import CroppedImageField from "../components/redesign/CroppedImageField";
 
 class CollaborationRequest extends React.Component {
 
@@ -61,12 +61,15 @@ class CollaborationRequest extends React.Component {
                     originalRequestedName: collaborationRequest.name, organisations: organisations
                 });
                 AppStore.update(s => {
-                        s.breadcrumb.paths = [
-                            {path: "/", value: I18n.t("breadcrumb.home")},
-                            {path: `/organisations/${collaborationRequest.organisation.value}`, value: collaborationRequest.organisation.label},
-                            {path: "/", value: collaborationRequest.name}
-                        ];
-                    });
+                    s.breadcrumb.paths = [
+                        {path: "/", value: I18n.t("breadcrumb.home")},
+                        {
+                            path: `/organisations/${collaborationRequest.organisation.value}`,
+                            value: collaborationRequest.organisation.label
+                        },
+                        {path: "/", value: collaborationRequest.name}
+                    ];
+                });
             }).catch(e => this.props.history.push("/"));
 
     mapOrganisationsToOptions = organisations => organisations.map(org => ({
@@ -194,12 +197,10 @@ class CollaborationRequest extends React.Component {
                             attribute: I18n.t("collaboration.name").toLowerCase()
                         })}</span>}
 
-                        <ImageField name="logo"
-                                    onChange={this.updateState("logo")}
-                                    initial={initial}
-                                    title={I18n.t("collaboration.logo")}
-                                    value={collaborationRequest.logo}
-                                    secondRow={false}/>
+                        <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
+                                           isNew={false} title={I18n.t("collaboration.logo")}
+                                           value={collaborationRequest.logo}
+                                           initial={initial} secondRow={false}/>
 
                         <InputField value={collaborationRequest.short_name}
                                     onChange={this.updateState("short_name")}
