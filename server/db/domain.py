@@ -1,5 +1,6 @@
 # -*- coding: future_fstrings -*-
-from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import select, func
+from sqlalchemy.orm import column_property
 
 from server.db.audit_mixin import Base, metadata
 from server.db.db import db
@@ -47,77 +48,9 @@ class User(Base, db.Model):
 services_organisations_association = db.Table(
     "services_organisations",
     metadata,
-    db.Column("organisation_id", db.Integer(), db.ForeignKey("organisations.id", ondelete="CASCADE"),
-              primary_key=True),
-    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
-)
-
-
-class Organisation(Base, db.Model):
-    __tablename__ = "organisations"
-    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    name = db.Column("name", db.String(length=255), nullable=False)
-    identifier = db.Column("identifier", db.String(length=255), nullable=False)
-    short_name = db.Column("short_name", db.String(length=255), nullable=True)
-    category = db.Column("category", db.String(length=255), nullable=True)
-    description = db.Column("description", db.Text(), nullable=True)
-    logo = db.Column("logo", db.Text(), nullable=True)
-    schac_home_organisation = db.Column("schac_home_organisation", db.String(length=255), nullable=True)
-    created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
-                           nullable=False)
-    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    collaboration_creation_allowed = db.Column("collaboration_creation_allowed", db.Boolean(), nullable=True,
-                                               default=False)
-    collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
-                                     passive_deletes=True)
-    collaborations_dynamic = db.relationship("Collaboration", lazy="dynamic", viewonly=True)
-    services = db.relationship("Service", secondary=services_organisations_association, lazy="select")
-    collaboration_requests = db.relationship("CollaborationRequest", back_populates="organisation",
-                                             cascade="all, delete-orphan",
-                                             passive_deletes=True)
-    organisation_memberships = db.relationship("OrganisationMembership", back_populates="organisation",
-                                               cascade="all, delete-orphan", passive_deletes=True)
-    organisation_memberships_dynamic = db.relationship("OrganisationMembership", lazy="dynamic", viewonly=True)
-    organisation_invitations = db.relationship("OrganisationInvitation", back_populates="organisation",
-                                               cascade="all, delete-orphan",
-                                               passive_deletes=True)
-    api_keys = db.relationship("ApiKey", back_populates="organisation",
-                               cascade="delete, delete-orphan",
-                               passive_deletes=True)
-
-    @hybrid_property
-    def collaborations_count(self):
-        return self.collaborations_dynamic.count()
-
-    @hybrid_property
-    def organisation_memberships_count(self):
-        return self.organisation_memberships_dynamic.count()
-
-    def is_member(self, user_id):
-        return len(list(filter(lambda membership: membership.user_id == user_id, self.organisation_memberships))) > 0
-
-
-class OrganisationMembership(Base, db.Model):
-    __tablename__ = "organisation_memberships"
-    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    role = db.Column("role", db.String(length=255), nullable=False)
-    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
-    user = db.relationship("User", back_populates="organisation_memberships")
-    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
-    organisation = db.relationship("Organisation", back_populates="organisation_memberships")
-    created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
-                           nullable=False)
-
-
-services_collaborations_association = db.Table(
-    "services_collaborations",
-    metadata,
-    db.Column("collaboration_id", db.Integer(), db.ForeignKey("collaborations.id", ondelete="CASCADE"),
-              primary_key=True),
-    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True),
+    db.Column("organisation_id", db.Integer(), db.ForeignKey("organisations.id", ondelete="CASCADE")),
+    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE")),
 )
 
 collaboration_memberships_groups_association = db.Table(
@@ -167,48 +100,40 @@ organisations_services_association = db.Table(
 )
 
 
-class Service(Base, db.Model):
-    __tablename__ = "services"
+class Invitation(Base, db.Model):
+    __tablename__ = "invitations"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    entity_id = db.Column("entity_id", db.String(length=255), nullable=False)
-    name = db.Column("name", db.String(length=255), nullable=False)
-    description = db.Column("description", db.Text(), nullable=True)
-    logo = db.Column("logo", db.Text(), nullable=True)
-    address = db.Column("address", db.Text(), nullable=True)
-    identity_type = db.Column("identity_type", db.String(length=255), nullable=True)
-    uri = db.Column("uri", db.String(length=255), nullable=True)
-    accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
-    contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
-    public_visible = db.Column("public_visible", db.Boolean(), nullable=True, default=True)
-    automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
-    white_listed = db.Column("white_listed", db.Boolean(), nullable=True, default=False)
-    research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
-                                               nullable=True,
-                                               default=False)
-    code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
-    sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
-    collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
-    collaborations_dynamic = db.relationship("Collaboration", secondary=services_collaborations_association,
-                                             lazy="dynamic", viewonly=True)
-
-    allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
-    organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select")
-    organisations_dynamic = db.relationship("Organisation", secondary=services_organisations_association,
-                                            lazy="dynamic", viewonly=True)
-
-    ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
-    created_by = db.Column("created_by", db.String(length=512), nullable=True)
-    updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
+    hash = db.Column("hash", db.String(length=512), nullable=False)
+    message = db.Column("message", db.Text(), nullable=True)
+    invitee_email = db.Column("invitee_email", db.String(length=255), nullable=False)
+    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
+    collaboration = db.relationship("Collaboration", back_populates="invitations")
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User")
+    groups = db.relationship("Group",
+                             secondary=groups_invitations_association,
+                             lazy="select")
+    accepted = db.Column("accepted", db.Boolean(), nullable=True)
+    denied = db.Column("denied", db.Boolean(), nullable=True)
+    intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
+    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 
-    @hybrid_property
-    def collaborations_count(self):
-        return self.collaborations_dynamic.count()
+    @staticmethod
+    def validate_role(role):
+        if role not in ["admin", "member"]:
+            raise ValueError(f"{role} is not valid. Valid roles are admin and member")
 
-    @hybrid_property
-    def organisations_count(self):
-        return self.organisations_dynamic.count()
+
+services_collaborations_association = db.Table(
+    "services_collaborations",
+    metadata,
+    db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True),
+    db.Column("collaboration_id", db.Integer(), db.ForeignKey("collaborations.id", ondelete="CASCADE")),
+    db.Column("service_id", db.Integer(), db.ForeignKey("services.id", ondelete="CASCADE")),
+)
 
 
 class Collaboration(Base, db.Model):
@@ -230,14 +155,12 @@ class Collaboration(Base, db.Model):
     services = db.relationship("Service", secondary=services_collaborations_association, lazy="select")
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
                                                 cascade="all, delete-orphan", passive_deletes=True)
-    collaboration_memberships_dynamic = db.relationship("CollaborationMembership", lazy="dynamic", viewonly=True)
     groups = db.relationship("Group", back_populates="collaboration",
                              cascade="all, delete-orphan", passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="collaboration",
                                     cascade="all, delete-orphan", passive_deletes=True)
     invitations = db.relationship("Invitation", back_populates="collaboration", cascade="all, delete-orphan",
                                   passive_deletes=True)
-    invitations_dynamic = db.relationship("Invitation", lazy="dynamic", viewonly=True)
     service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="collaboration",
                                                   cascade="all, delete-orphan", passive_deletes=True)
     disable_join_requests = db.Column("disable_join_requests", db.Boolean(), nullable=True, default=False)
@@ -245,14 +168,12 @@ class Collaboration(Base, db.Model):
     disclose_member_information = db.Column("disclose_member_information", db.Boolean(), nullable=True, default=False)
     disclose_email_information = db.Column("disclose_email_information", db.Boolean(), nullable=True, default=False)
     website_url = db.Column("website_url", db.String(length=512), nullable=True)
-
-    @hybrid_property
-    def invitations_count(self):
-        return self.invitations_dynamic.count()
-
-    @hybrid_property
-    def collaboration_memberships_count(self):
-        return self.collaboration_memberships_dynamic.count()
+    invitations_count = column_property(select([func.count(Invitation.id)])
+                                        .where(Invitation.collaboration_id == id)
+                                        .correlate_except(Invitation))
+    collaboration_memberships_count = column_property(select([func.count(CollaborationMembership.id)])
+                                                      .where(CollaborationMembership.collaboration_id == id)
+                                                      .correlate_except(CollaborationMembership))
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
@@ -262,6 +183,91 @@ class Collaboration(Base, db.Model):
             if membership.user_id == user_id and membership.role == "admin":
                 return True
         return False
+
+
+class OrganisationMembership(Base, db.Model):
+    __tablename__ = "organisation_memberships"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    role = db.Column("role", db.String(length=255), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
+    user = db.relationship("User", back_populates="organisation_memberships")
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"), primary_key=True)
+    organisation = db.relationship("Organisation", back_populates="organisation_memberships")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+
+
+class Organisation(Base, db.Model):
+    __tablename__ = "organisations"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=False)
+    identifier = db.Column("identifier", db.String(length=255), nullable=False)
+    short_name = db.Column("short_name", db.String(length=255), nullable=True)
+    category = db.Column("category", db.String(length=255), nullable=True)
+    description = db.Column("description", db.Text(), nullable=True)
+    logo = db.Column("logo", db.Text(), nullable=True)
+    schac_home_organisation = db.Column("schac_home_organisation", db.String(length=255), nullable=True)
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    collaboration_creation_allowed = db.Column("collaboration_creation_allowed", db.Boolean(), nullable=True,
+                                               default=False)
+    collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
+                                     passive_deletes=True)
+    services = db.relationship("Service", secondary=services_organisations_association, lazy="select")
+    collaboration_requests = db.relationship("CollaborationRequest", back_populates="organisation",
+                                             cascade="all, delete-orphan",
+                                             passive_deletes=True)
+    organisation_memberships = db.relationship("OrganisationMembership", back_populates="organisation",
+                                               cascade="all, delete-orphan", passive_deletes=True)
+    organisation_invitations = db.relationship("OrganisationInvitation", back_populates="organisation",
+                                               cascade="all, delete-orphan",
+                                               passive_deletes=True)
+    api_keys = db.relationship("ApiKey", back_populates="organisation",
+                               cascade="delete, delete-orphan",
+                               passive_deletes=True)
+    collaborations_count = column_property(select([func.count(Collaboration.id)])
+                                           .where(Collaboration.organisation_id == id)
+                                           .correlate_except(Collaboration))
+    organisation_memberships_count = column_property(select([func.count(OrganisationMembership.id)])
+                                                     .where(OrganisationMembership.organisation_id == id)
+                                                     .correlate_except(OrganisationMembership))
+
+    def is_member(self, user_id):
+        return len(list(filter(lambda membership: membership.user_id == user_id, self.organisation_memberships))) > 0
+
+
+class Service(Base, db.Model):
+    __tablename__ = "services"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    entity_id = db.Column("entity_id", db.String(length=255), nullable=False)
+    name = db.Column("name", db.String(length=255), nullable=False)
+    description = db.Column("description", db.Text(), nullable=True)
+    logo = db.Column("logo", db.Text(), nullable=True)
+    address = db.Column("address", db.Text(), nullable=True)
+    identity_type = db.Column("identity_type", db.String(length=255), nullable=True)
+    uri = db.Column("uri", db.String(length=255), nullable=True)
+    accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
+    contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
+    public_visible = db.Column("public_visible", db.Boolean(), nullable=True, default=True)
+    automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
+    white_listed = db.Column("white_listed", db.Boolean(), nullable=True, default=False)
+    research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
+                                               nullable=True,
+                                               default=False)
+    code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
+    sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
+    collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
+    allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
+    organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select")
+    ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
+    created_by = db.Column("created_by", db.String(length=512), nullable=True)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
 
 class Group(Base, db.Model):
@@ -296,33 +302,6 @@ class JoinRequest(Base, db.Model):
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="join_requests")
     hash = db.Column("hash", db.String(length=512), nullable=False)
-
-
-class Invitation(Base, db.Model):
-    __tablename__ = "invitations"
-    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    hash = db.Column("hash", db.String(length=512), nullable=False)
-    message = db.Column("message", db.Text(), nullable=True)
-    invitee_email = db.Column("invitee_email", db.String(length=255), nullable=False)
-    collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
-    collaboration = db.relationship("Collaboration", back_populates="invitations")
-    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
-    user = db.relationship("User")
-    groups = db.relationship("Group",
-                             secondary=groups_invitations_association,
-                             lazy="select")
-    accepted = db.Column("accepted", db.Boolean(), nullable=True)
-    denied = db.Column("denied", db.Boolean(), nullable=True)
-    intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
-    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
-    created_by = db.Column("created_by", db.String(length=512), nullable=False)
-    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
-                           nullable=False)
-
-    @staticmethod
-    def validate_role(role):
-        if role not in ["admin", "member"]:
-            raise ValueError(f"{role} is not valid. Valid roles are admin and member")
 
 
 class OrganisationInvitation(Base, db.Model):

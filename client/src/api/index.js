@@ -283,7 +283,7 @@ export function myOrganisations() {
 }
 
 export function allOrganisations() {
-    return fetchJson(`/api/organisations/all?include_counts=True`);
+    return fetchJson(`/api/organisations/all`);
 }
 
 export function organisationSchacHomeOrganisationExists(schacHome, existingOrganisation = null) {

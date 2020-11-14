@@ -2,7 +2,7 @@
 import uuid
 from secrets import token_urlsafe
 
-from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
+from flask import Blueprint, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import joinedload
@@ -21,15 +21,6 @@ from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation
 
 organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/organisations")
-
-
-def _add_org_numbers(organisations):
-    organisations_json = jsonify(organisations).json
-    for index, org in enumerate(organisations):
-        org_json = organisations_json[index]
-        org_json["collaborations_count"] = org.collaborations_count
-        org_json["organisation_memberships_count"] = org.organisation_memberships_count
-    return organisations_json, 200
 
 
 @organisation_api.route("/name_exists", strict_slashes=False)
@@ -75,10 +66,7 @@ def schac_home_exists():
 def organisation_all():
     confirm_write_access()
     organisations = Organisation.query.all()
-    if not query_param("include_counts", required=False):
-        return organisations, 200
-
-    return _add_org_numbers(organisations)
+    return organisations, 200
 
 
 @organisation_api.route("/search", strict_slashes=False)
@@ -156,12 +144,7 @@ def organisation_by_id(organisation_id):
                 .filter(OrganisationMembership.user_id == user_id)
 
     organisation = query.one()
-    organisation_json = jsonify(organisation).json
-    for index, coll in enumerate(organisation.collaborations):
-        coll_json = organisation_json["collaborations"][index]
-        coll_json["invitations_count"] = coll.invitations_count
-        coll_json["collaboration_memberships_count"] = coll.collaboration_memberships_count
-    return organisation_json, 200
+    return organisation, 200
 
 
 @organisation_api.route("/services/<organisation_id>", strict_slashes=False)
@@ -183,7 +166,7 @@ def my_organisations():
         .join(Organisation.organisation_memberships) \
         .filter(OrganisationMembership.user_id == user_id) \
         .all()
-    return _add_org_numbers(organisations)
+    return organisations, 200
 
 
 @organisation_api.route("/find_by_schac_home_organisation", strict_slashes=False)
