@@ -1,6 +1,5 @@
 import React from "react";
 import {
-    auditLogsInfo,
     createService,
     deleteService,
     ipNetworks,
@@ -26,6 +25,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import RadioButton from "../components/redesign/RadioButton";
 import CroppedImageField from "../components/redesign/CroppedImageField";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class Service extends React.Component {
 
@@ -62,7 +62,7 @@ class Service extends React.Component {
         leavePage: false,
         confirmationDialogAction: () => true,
         cancelDialogAction: () => true,
-        auditLogs: {"audit_logs": []}
+        loaded: false
     });
 
     UNSAFE_componentWillReceiveProps = nextProps => {
@@ -82,7 +82,7 @@ class Service extends React.Component {
                 } else {
                     searchOrganisations("*")
                         .then(r => {
-                            this.setState({organisations: this.mapOrganisationsToOptions(r)});
+                            this.setState({organisations: this.mapOrganisationsToOptions(r), loaded: true});
                             this.addIpAddress();
                             AppStore.update(s => {
                                 s.breadcrumb.paths = [
@@ -101,7 +101,8 @@ class Service extends React.Component {
                             service: res[0],
                             isNew: false,
                             allowed_organisations: this.mapOrganisationsToOptions(res[0].allowed_organisations),
-                            organisations: this.mapOrganisationsToOptions(res[1])
+                            organisations: this.mapOrganisationsToOptions(res[1]),
+                            loaded: true
                         }, () => {
                             const {ip_networks} = this.state.service;
                             if (isEmpty(ip_networks)) {
@@ -126,8 +127,6 @@ class Service extends React.Component {
             this.props.history.push("/404");
         }
     };
-
-    fetchAuditLogs = serviceId => auditLogsInfo(serviceId, "services").then(json => this.setState({auditLogs: json}));
 
     mapOrganisationsToOptions = organisations => organisations.map(org => ({
         label: org.name,
@@ -484,8 +483,11 @@ class Service extends React.Component {
             entity_id, description, uri, accepted_user_policy, contact_email,
             confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed, organisations,
             allowed_organisations, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-            research_scholarship_compliant, ip_networks, logo
+            research_scholarship_compliant, ip_networks, logo, loaded
         } = this.state;
+        if (!loaded) {
+            return <SpinnerField/>
+        }
         const disabledSubmit = !initial && !this.isValid();
         const {user, config} = this.props;
         const isAdmin = user.admin;

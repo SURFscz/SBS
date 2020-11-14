@@ -3,6 +3,7 @@ import I18n from "i18n-js";
 import "./UnitHeader.scss"
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Logo from "./Logo";
 
 export default function UnitHeader(props) {
 
@@ -13,7 +14,7 @@ export default function UnitHeader(props) {
     return (
         <div className="unit-header-container">
             <div className="unit-header">
-                {obj.logo && <img src={`data:image/jpeg;base64,${obj.logo}`} alt={obj.name}/>}
+                {obj.logo && <Logo src={obj.logo}/>}
                 {obj.svg && <obj.svg onClick={() => svgClick && svgClick()}/>}
                 {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
                 {obj.name && <h1>{obj.name}</h1>}

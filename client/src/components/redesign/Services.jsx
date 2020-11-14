@@ -4,6 +4,7 @@ import "./Services.scss";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
+import Logo from "./Logo";
 
 
 class Services extends React.Component {
@@ -37,7 +38,7 @@ class Services extends React.Component {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: service => service.logo && <img src={`data:image/jpeg;base64,${service.logo}`} alt=""/>
+                mapper: service => <Logo src={service.logo}/>
             },
             {
                 key: "name",

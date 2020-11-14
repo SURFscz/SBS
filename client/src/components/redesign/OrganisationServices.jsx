@@ -5,12 +5,13 @@ import "./OrganisationServices.scss";
 import {stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
-import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
+
 import {setFlash} from "../../utils/Flash";
 import SpinnerField from "./SpinnerField";
 import OrganisationServicesExplanation from "../explanations/OrganisationServices";
 import ToggleSwitch from "./ToggleSwitch";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import Logo from "./Logo";
 
 class OrganisationServices extends React.Component {
 
@@ -44,12 +45,6 @@ class OrganisationServices extends React.Component {
         this.props.history.push(`/services/${service.id}`);
     };
 
-    getLogo = entity => {
-        if (entity.logo) {
-            return <img src={`data:image/jpeg;base64,${entity.logo}`} alt=""/>
-        }
-        return <NotFoundIcon/>
-    }
     getServiceLink = entity => {
         return <a href="/" onClick={this.openService(entity)}>{entity.name}</a>
     }
@@ -99,7 +94,7 @@ class OrganisationServices extends React.Component {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: this.getLogo
+                mapper: entity => <Logo src={entity.logo}/>
             },
             {
                 key: "name",

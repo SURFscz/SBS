@@ -4,6 +4,7 @@ import "./Organisations.scss";
 import {stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
+import Logo from "./Logo";
 
 
 class Organisations extends React.Component {
@@ -43,7 +44,7 @@ class Organisations extends React.Component {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: org => org.logo && <img src={`data:image/jpeg;base64,${org.logo}`} alt=""/>
+                mapper: org => <Logo src={org.logo}/>
             },
             {
                 key: "name",
