@@ -14,7 +14,7 @@ export default class CroppedImageField extends React.PureComponent {
         this.state = {
             error: "",
             source: null,
-            crop: {}
+            crop: {},
         }
     }
 
@@ -29,8 +29,8 @@ export default class CroppedImageField extends React.PureComponent {
                 reader.onload = evt => {
                     const {onChange} = this.props;
                     const base64 = btoa(evt.target.result);
-                    onChange(base64);
                     this.setState({source: base64});
+                    onChange(base64);
                 }
                 reader.readAsBinaryString(files[0]);
             }
@@ -49,7 +49,7 @@ export default class CroppedImageField extends React.PureComponent {
         const x = (100 - w) / 2;
         this.setState({
             crop: {
-                unit: '%',
+                unit: "%",
                 width: 100,
                 x: Math.round(x),
                 y: Math.round(y),
@@ -60,72 +60,61 @@ export default class CroppedImageField extends React.PureComponent {
     };
 
     onCropComplete = crop => {
-        this.makeClientCrop(crop);
-    };
-
-    onCropChange = (crop, percentCrop) => {
-        this.setState({crop: percentCrop});
-    };
-
-    async makeClientCrop(crop) {
         if (this.imageRef && crop.width && crop.height) {
-            const data = await this.getCroppedImg(
-                this.imageRef,
-                crop
+            const canvas = document.createElement("canvas");
+            const image = this.imageRef;
+            const scaleX = image.naturalWidth / image.width;
+            const scaleY = image.naturalHeight / image.height;
+            canvas.width = crop.width;
+            canvas.height = crop.height;
+            const ctx = canvas.getContext("2d");
+
+            ctx.drawImage(
+                image,
+                crop.x * scaleX,
+                crop.y * scaleY,
+                crop.width * scaleX,
+                crop.height * scaleY,
+                0,
+                0,
+                crop.width,
+                crop.height
             );
-            this.props.onChange(data);
-        }
-    }
 
-    getCroppedImg(image, crop) {
-        const canvas = document.createElement('canvas');
-        const scaleX = image.naturalWidth / image.width;
-        const scaleY = image.naturalHeight / image.height;
-        canvas.width = crop.width;
-        canvas.height = crop.height;
-        const ctx = canvas.getContext('2d');
-
-        ctx.drawImage(
-            image,
-            crop.x * scaleX,
-            crop.y * scaleY,
-            crop.width * scaleX,
-            crop.height * scaleY,
-            0,
-            0,
-            crop.width,
-            crop.height
-        );
-
-        return new Promise((resolve) => {
             canvas.toBlob(blob => {
                 if (!blob) {
                     return;
                 }
                 const reader = new FileReader();
                 reader.readAsDataURL(blob);
-                reader.onloadend = function () {
+                reader.onloadend = () => {
                     const base64data = reader.result;
-                    resolve(base64data.substring(base64data.indexOf(",") + 1));
+                    this.props.onChange(base64data.substring(base64data.indexOf(",") + 1));
                 }
-            }, 'image/jpeg', 1);
-        });
-    }
+            }, "image/jpeg", 1);
+
+        }
+    };
+
+    onCropChange = (crop, percentCrop) => {
+        this.setState({crop: percentCrop});
+    };
 
     render() {
         const {error, crop, source} = this.state;
+        const {title, name, value, secondRow = false, initial = false, isNew} = this.props;
 
-        const {title, name, value, secondRow = false, initial = false} = this.props;
-        const src = `data:image/jpeg;base64,${source}`;
+        const src = (!isNew && !source) ? `data:image/jpeg;base64,${value}` : `data:image/jpeg;base64,${source}`;
         const cropped = `data:image/jpeg;base64,${value}`;
         return (
             <div className={`cropped-image-field ${secondRow ? "second-row" : ""}`}>
                 <label className="info" htmlFor="">{title}</label>
                 <section className="file-upload">
-                    {!source && <div className="no-image">
+                    {(!source && isNew) && <div className="no-image">
                         {<NotFoundIcon/>}
                     </div>}
-                    {source && <div className="preview">
+                    {(!isNew || source) && <div className="preview">
+                        {source &&
                         <ReactCrop
                             src={src}
                             crop={crop}
@@ -133,10 +122,9 @@ export default class CroppedImageField extends React.PureComponent {
                             onImageLoaded={this.onImageLoaded}
                             onComplete={this.onCropComplete}
                             onChange={this.onCropChange}
-                        />
-                        {cropped && (
-                            <img className="cropped-img" alt="Crop" src={cropped}/>
-                        )}
+                        />}
+                        {source && <img className="cropped-img" alt="Crop" src={cropped}/>}
+                        {(!source && !isNew) && <img alt="" src={src}/>}
                     </div>}
                     <label className="file-upload-label button" htmlFor={`fileUpload_${name}`}>
                         {I18n.t("forms.upload")}
@@ -159,6 +147,7 @@ export default class CroppedImageField extends React.PureComponent {
 CroppedImageField.propTypes = {
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
+    isNew: PropTypes.bool.isRequired,
     title: PropTypes.string,
     value: PropTypes.string,
     secondRow: PropTypes.bool,

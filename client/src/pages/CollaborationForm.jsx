@@ -25,8 +25,8 @@ import CheckBox from "../components/CheckBox";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {AppStore} from "../stores/AppStore";
-import ImageField from "../components/redesign/ImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
+import CroppedImageField from "../components/redesign/CroppedImageField";
 
 class CollaborationForm extends React.Component {
 
@@ -71,8 +71,10 @@ class CollaborationForm extends React.Component {
         if (params.id) {
             collaborationById(params.id).then(collaboration => {
                 const organisation = collaboration.organisation;
-                const orgOption = {label: organisation.name, value: organisation.id,
-                    short_name: organisation.short_name,};
+                const orgOption = {
+                    label: organisation.name, value: organisation.id,
+                    short_name: organisation.short_name,
+                };
                 this.updateBreadCrumb(orgOption, collaboration, false, false);
                 this.setState({
                     ...collaboration,
@@ -128,9 +130,15 @@ class CollaborationForm extends React.Component {
     };
 
     updateBreadCrumb = (organisation, collaboration, autoCreateCollaborationRequest, isCollaborationRequest) => {
-        const collaborationPath = collaboration ? {path: "/collaborations/" + collaboration.id, value: collaboration.name} :
-                    (isCollaborationRequest && !autoCreateCollaborationRequest) ? {path: "/", value: I18n.t("breadcrumb.newCollaborationRequest")} :
-                        {path: "/", value: I18n.t("breadcrumb.newCollaboration")}
+        const collaborationPath = collaboration ? {
+                path: "/collaborations/" + collaboration.id,
+                value: collaboration.name
+            } :
+            (isCollaborationRequest && !autoCreateCollaborationRequest) ? {
+                    path: "/",
+                    value: I18n.t("breadcrumb.newCollaborationRequest")
+                } :
+                {path: "/", value: I18n.t("breadcrumb.newCollaboration")}
         AppStore.update(s => {
             const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
             if (organisation) {
@@ -151,7 +159,7 @@ class CollaborationForm extends React.Component {
         collaboration_creation_allowed: org.collaboration_creation_allowed
     }));
 
-    existingCollaborationName = attr => this.state.isNew ? null : this.state.collaboration[attr] ;
+    existingCollaborationName = attr => this.state.isNew ? null : this.state.collaboration[attr];
 
     validateCollaborationName = e =>
         collaborationNameExists(e.target.value, this.state.organisation.value, this.existingCollaborationName("name"))
@@ -202,13 +210,24 @@ class CollaborationForm extends React.Component {
             const {
                 name, short_name, description, logo, website_url,
                 administrators, message, accepted_user_policy, organisation, isCollaborationRequest,
-                services_restricted, disable_join_requests, current_user_admin,disclose_member_information, disclose_email_information
+                services_restricted, disable_join_requests, current_user_admin, disclose_member_information, disclose_email_information
             } = this.state;
             const promise = isCollaborationRequest ? requestCollaboration : createCollaboration;
             promise({
-                name, short_name, description, logo, website_url,
-                administrators, message, accepted_user_policy, organisation_id: organisation.value,
-                services_restricted, disable_join_requests, current_user_admin, disclose_member_information, disclose_email_information
+                name,
+                short_name,
+                description,
+                logo,
+                website_url,
+                administrators,
+                message,
+                accepted_user_policy,
+                organisation_id: organisation.value,
+                services_restricted,
+                disable_join_requests,
+                current_user_admin,
+                disclose_member_information,
+                disclose_email_information
             }).then(res => {
                 this.props.history.goBack();
                 const isCollCreated = res.identifier;
@@ -236,10 +255,22 @@ class CollaborationForm extends React.Component {
                 services_restricted, disable_join_requests, current_user_admin, disclose_member_information, disclose_email_information
             } = this.state;
             updateCollaboration({
-                id: collaboration.id, name, short_name, description, website_url, logo,
+                id: collaboration.id,
+                name,
+                short_name,
+                description,
+                website_url,
+                logo,
                 identifier: collaboration.identifier,
-                administrators, message, accepted_user_policy, organisation_id: organisation.value,
-                services_restricted, disable_join_requests, current_user_admin, disclose_member_information, disclose_email_information
+                administrators,
+                message,
+                accepted_user_policy,
+                organisation_id: organisation.value,
+                services_restricted,
+                disable_join_requests,
+                current_user_admin,
+                disclose_member_information,
+                disclose_email_information
             })
                 .then(() => {
                     setFlash(I18n.t("collaborationDetail.flash.updated", {name: name}));
@@ -351,8 +382,9 @@ class CollaborationForm extends React.Component {
                             attribute: I18n.t("collaboration.name").toLowerCase()
                         })}</span>}
 
-                        <ImageField name="logo" onChange={s => this.setState({logo: s})} initial={initial}
-                                    title={I18n.t("collaboration.logo")} value={logo} secondRow={true}/>
+                        <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
+                                           isNew={isNew} title={I18n.t("collaboration.logo")} value={logo}
+                                           initial={initial} secondRow={true}/>
 
                         <InputField value={short_name} onChange={e => {
                             this.setState({
@@ -461,17 +493,17 @@ class CollaborationForm extends React.Component {
                         </div>}
 
                         {isNew && <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
-                                  value={current_user_admin}
-                                  onChange={this.flipCurrentUserAdmin}
-                                  readOnly={isCollaborationRequest}
-                                  info={I18n.t("collaboration.currentUserAdmin")}
-                                  tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>}
+                                            value={current_user_admin}
+                                            onChange={this.flipCurrentUserAdmin}
+                                            readOnly={isCollaborationRequest}
+                                            info={I18n.t("collaboration.currentUserAdmin")}
+                                            tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>}
 
                         {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                    placeholder={isCollaborationRequest ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
-                                    name={isCollaborationRequest ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
-                                    toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
-                                    multiline={true}/>}
+                                              placeholder={isCollaborationRequest ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
+                                              name={isCollaborationRequest ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
+                                              toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
+                                              multiline={true}/>}
                         {(!initial && isEmpty(message) && isCollaborationRequest) && <span
                             className="error">{I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.motivation").toLowerCase()

@@ -23,9 +23,9 @@ import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import UnitHeader from "../components/redesign/UnitHeader";
-import ImageField from "../components/redesign/ImageField";
 import {AppStore} from "../stores/AppStore";
 import RadioButton from "../components/redesign/RadioButton";
+import CroppedImageField from "../components/redesign/CroppedImageField";
 
 class Service extends React.Component {
 
@@ -260,7 +260,6 @@ class Service extends React.Component {
     };
 
     afterUpdate = (name, action, res) => {
-        window.scrollTo(0, 0);
         setFlash(I18n.t(`service.flash.${action}`, {name: name}));
         this.props.history.push("/services/" + res.id);
     };
@@ -337,8 +336,10 @@ class Service extends React.Component {
                     attribute: I18n.t("service.name").toLowerCase()
                 })}</span>}
 
-                <ImageField name="logo" onChange={s => this.setState({logo: s})} initial={initial}
-                            title={I18n.t("service.logo")} value={logo} secondRow={true}/>
+                <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
+                                   isNew={isNew} title={I18n.t("service.logo")}
+                                   value={logo}
+                                   initial={initial} secondRow={true}/>
 
                 <InputField value={entity_id} onChange={e => this.setState({
                     entity_id: e.target.value,

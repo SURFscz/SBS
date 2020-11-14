@@ -86,7 +86,10 @@ class ServiceOrganisations extends React.Component {
                 .map(e => ({"organisation_id": e[0]}));
             const organisations = allSelected ? [] : selectedOrganisations;
             allowedOrganisations(service.id, {"allowed_organisations": organisations})
-                .then(() => setFlash(I18n.t("service.flash.updated", {name: service.name})));
+                .then(() => {
+                    window.scrollTo(0, 0);
+                    setFlash(I18n.t("service.flash.updated", {name: service.name}));
+                });
 
         }
 

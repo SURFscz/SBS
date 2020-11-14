@@ -282,7 +282,8 @@ class OrganisationForm extends React.Component {
                     })}</span>}
 
                     <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
-                                title={I18n.t("organisation.logo")} value={logo} initial={initial}/>
+                                       isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
+                                       initial={initial}/>
 
                     <SelectField value={category}
                                  options={categoryOptions}
