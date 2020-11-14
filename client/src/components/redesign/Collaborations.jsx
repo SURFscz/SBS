@@ -94,7 +94,8 @@ export default class Collaborations extends React.PureComponent {
             {
                 key: "invitations_count",
                 header: I18n.t("models.collaborations.invitationsCount")
-            }, {
+            },
+            {
                 key: "organisation_name",
                 header: I18n.t("models.serviceCollaborations.organisationName"),
                 mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
