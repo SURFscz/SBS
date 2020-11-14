@@ -12,13 +12,13 @@ import "./UsedServices.scss";
 import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
-import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
 import Button from "../Button";
 import {setFlash} from "../../utils/Flash";
 import InputField from "../InputField";
 import SpinnerField from "./SpinnerField";
 import ConfirmationDialog from "../ConfirmationDialog";
 import ServicesExplanation from "../explanations/Services";
+import Logo from "./Logo";
 
 class UsedServices extends React.Component {
 
@@ -59,16 +59,6 @@ class UsedServices extends React.Component {
         stopEvent(e);
         this.props.history.push(`/services/${service.id}`);
     };
-
-    getLogo = entity => {
-        if (entity.logo) {
-            return <img src={`data:image/jpeg;base64,${entity.logo}`} alt=""/>
-        }
-        if (entity.connectionRequest && entity.service.logo) {
-            return <img src={`data:image/jpeg;base64,${entity.service.logo}`} alt=""/>
-        }
-        return <NotFoundIcon/>
-    }
 
     getServiceLink = entity => {
         const ref = entity.connectionRequest ? entity.service : entity;
@@ -132,7 +122,7 @@ class UsedServices extends React.Component {
 
 
     getServiceAction = service => {
-        const { collaboration} = this.props;
+        const {collaboration} = this.props;
         if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
             return null;
@@ -183,7 +173,7 @@ class UsedServices extends React.Component {
                 </a>
                 <div className={"request-connection-service-form"}>
                     <h1>{I18n.t("models.services.connectionRequest", {name: requestConnectionService.name})}</h1>
-                    <img src={`data:image/jpeg;base64,${requestConnectionService.logo}`} alt=""/>
+                    <Logo src={`data:image/jpeg;base64,${requestConnectionService.logo}`}/>
                     <InputField value={message}
                                 name={I18n.t("collaborationServices.motivation")}
                                 placeholder={I18n.t("collaborationServices.motivationPlaceholder")}
@@ -228,7 +218,7 @@ class UsedServices extends React.Component {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: this.getLogo
+                mapper: entity => <Logo src={entity.connectionRequest ? entity.logo : entity.service.logo}/>
             },
             {
                 key: "name",

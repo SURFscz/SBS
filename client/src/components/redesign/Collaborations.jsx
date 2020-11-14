@@ -9,6 +9,7 @@ import Button from "../Button";
 import {mayRequestCollaboration, myCollaborations} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import Logo from "./Logo";
 
 export default class Collaborations extends React.PureComponent {
 
@@ -78,8 +79,7 @@ export default class Collaborations extends React.PureComponent {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: collaboration => collaboration.logo &&
-                    <img src={`data:image/jpeg;base64,${collaboration.logo}`} alt=""/>
+                mapper: collaboration => <Logo src={collaboration.logo}/>
             },
             {
                 key: "name",
@@ -102,7 +102,7 @@ export default class Collaborations extends React.PureComponent {
             }]
         return (
             <Entities entities={collaborations}
-                      modelName={mayCreateCollaborations ? modelName : showRequestCollaboration ? "memberCollaborations": modelName}
+                      modelName={mayCreateCollaborations ? modelName : showRequestCollaboration ? "memberCollaborations" : modelName}
                       searchAttributes={["name"]}
                       defaultSort="name"
                       rowLinkMapper={() => this.openCollaboration}

@@ -3,6 +3,7 @@ import I18n from "i18n-js";
 import "./AboutCollaboration.scss";
 import {ReactComponent as ServicesIcon} from "../../icons/services.svg";
 import {removeDuplicates, stopEvent} from "../../utils/Utils";
+import Logo from "./Logo";
 
 const memberCutOff = 10;
 
@@ -54,8 +55,7 @@ class AboutCollaboration extends React.Component {
                             {services.map(service =>
                                 <li key={service.id} onClick={this.openService(service)}
                                     className={`${service.uri ? "uri" : ""}`}>
-                                    {service.logo &&
-                                    <img src={`data:image/jpeg;base64,${service.logo}`} alt={service.name}/>}
+                                    {service.logo && <Logo src={service.logo} alt={service.name}/>}
                                     <span>{service.name}</span>
                                     <ServicesIcon/>
                                 </li>)}

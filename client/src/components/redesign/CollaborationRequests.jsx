@@ -4,6 +4,7 @@ import "./CollaborationRequests.scss";
 import {stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
+import Logo from "./Logo";
 
 export default class CollaborationRequests extends React.PureComponent {
 
@@ -25,14 +26,12 @@ export default class CollaborationRequests extends React.PureComponent {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: cr => cr.logo &&
-                    <img src={`data:image/jpeg;base64,${cr.logo}`} alt=""/>
+                mapper: cr => <Logo src={cr.logo}/>
             },
             {
                 key: "name",
                 header: I18n.t("models.collaborations.name"),
-                mapper: cr => <a href="/"
-                                 onClick={this.openCollaborationRequest(cr)}>{cr.name}</a>,
+                mapper: cr => <a href="/" onClick={this.openCollaborationRequest(cr)}>{cr.name}</a>
             },
             {
                 key: "requester",

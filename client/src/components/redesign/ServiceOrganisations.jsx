@@ -7,6 +7,7 @@ import ToggleSwitch from "./ToggleSwitch";
 import Button from "../Button";
 import {allowedOrganisations} from "../../api";
 import {setFlash} from "../../utils/Flash";
+import Logo from "./Logo";
 
 
 class ServiceOrganisations extends React.Component {
@@ -104,7 +105,7 @@ class ServiceOrganisations extends React.Component {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: org => org.logo && <img src={`data:image/jpeg;base64,${org.logo}`} alt=""/>
+                mapper: org => <Logo src={org.logo}/>
             },
             {
                 key: "name",

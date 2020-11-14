@@ -6,6 +6,7 @@ import "./CroppedImageField.scss";
 import {isEmpty} from "../../utils/Utils";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/lib/ReactCrop.scss";
+import Logo from "./Logo";
 
 export default class CroppedImageField extends React.PureComponent {
 
@@ -53,7 +54,7 @@ export default class CroppedImageField extends React.PureComponent {
                 width: 100,
                 x: Math.round(x),
                 y: Math.round(y),
-                aspect: 1
+                aspect: aspect
             }
         })
         return false;
@@ -96,16 +97,13 @@ export default class CroppedImageField extends React.PureComponent {
         }
     };
 
-    onCropChange = (crop, percentCrop) => {
-        this.setState({crop: percentCrop});
-    };
+    onCropChange = (crop, percentCrop) => this.setState({crop: percentCrop});
 
     render() {
         const {error, crop, source} = this.state;
         const {title, name, value, secondRow = false, initial = false, isNew} = this.props;
 
-        const src = (!isNew && !source) ? `data:image/jpeg;base64,${value}` : `data:image/jpeg;base64,${source}`;
-        const cropped = `data:image/jpeg;base64,${value}`;
+        const src = `data:image/jpeg;base64,${(!isNew && !source) ? value : source}`;
         return (
             <div className={`cropped-image-field ${secondRow ? "second-row" : ""}`}>
                 <label className="info" htmlFor="">{title}</label>
@@ -123,7 +121,7 @@ export default class CroppedImageField extends React.PureComponent {
                             onComplete={this.onCropComplete}
                             onChange={this.onCropChange}
                         />}
-                        {source && <img className="cropped-img" alt="Crop" src={cropped}/>}
+                        {source && <Logo className="cropped-img" src={value}/>}
                         {(!source && !isNew) && <img alt="" src={src}/>}
                     </div>}
                     <label className="file-upload-label button" htmlFor={`fileUpload_${name}`}>
