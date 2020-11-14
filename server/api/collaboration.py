@@ -200,13 +200,7 @@ def my_collaborations_lite():
         .options(selectinload(Collaboration.organisation)) \
         .filter(CollaborationMembership.user_id == user_id) \
         .all()
-
-    collaborations_json = jsonify(collaborations).json
-    for index, coll in enumerate(collaborations):
-        coll_json = collaborations_json[index]
-        coll_json["invitations_count"] = coll.invitations_count
-        coll_json["collaboration_memberships_count"] = coll.collaboration_memberships_count
-    return collaborations_json, 200
+    return collaborations, 200
 
 
 @collaboration_api.route("/lite/<collaboration_id>", strict_slashes=False)

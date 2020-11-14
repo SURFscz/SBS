@@ -2,10 +2,9 @@
 import ipaddress
 import urllib.parse
 
-from flask import Blueprint, request as current_request, jsonify, g as request_context
+from flask import Blueprint, request as current_request, g as request_context, jsonify
 from sqlalchemy import text, func, bindparam, String
-from sqlalchemy.orm import load_only, contains_eager, joinedload, selectinload
-
+from sqlalchemy.orm import load_only, contains_eager, selectinload
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
@@ -179,14 +178,7 @@ def service_by_id(service_id):
             .options(selectinload(Service.ip_networks))
 
     service = query.filter(Service.id == service_id).one()
-    service_json = jsonify(service).json
-    if add_admin_info:
-        for index, coll in enumerate(service.collaborations):
-            coll_json = service_json["collaborations"][index]
-            coll_json["invitations_count"] = coll.invitations_count
-            coll_json["collaboration_memberships_count"] = coll.collaboration_memberships_count
-
-    return service_json, 200
+    return service, 200
 
 
 @service_api.route("/all", strict_slashes=False)
@@ -198,13 +190,22 @@ def all_services():
     confirm_write_access(override_func=override_func)
 
     services = Service.query \
-        .options(joinedload(Service.allowed_organisations)) \
+        .options(selectinload(Service.allowed_organisations)) \
         .all()
+
+    sql = text("SELECT service_id, organisation_id FROM services_organisations")
+    result_set = db.engine.execute(sql)
+    service_orgs = [{"service_id": row[0], "organisation_id": row[1]} for row in result_set]
+
+    sql = text("SELECT service_id, collaboration_id FROM services_collaborations")
+    result_set = db.engine.execute(sql)
+    services_colls = [{"service_id": row[0], "collaboration_id": row[1]} for row in result_set]
+
     services_json = jsonify(services).json
     for index, service in enumerate(services):
         service_json = services_json[index]
-        service_json["collaborations_count"] = service.collaborations_count
-        service_json["organisations_count"] = service.organisations_count
+        service_json["collaborations_count"] = len([s for s in services_colls if s["service_id"] == service.id])
+        service_json["organisations_count"] = len([s for s in service_orgs if s["service_id"] == service.id])
     return services_json, 200
 
 
