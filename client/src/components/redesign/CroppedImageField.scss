@@ -1,0 +1,55 @@
+@import "../../stylesheets/vars.scss";
+
+.cropped-image-field {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+    grid-column-start: second;
+    grid-row-start: 1;
+    grid-row-end: 99;
+
+    &.second-row {
+        grid-row-start: 2;
+    }
+
+    label.info {
+        display: inline-block;
+        margin: 12px 0 6px 0;
+        min-width: 210px;
+        color: black;
+        position: relative;
+        font-weight: bold;
+    }
+
+    .file-upload {
+        display: flex;
+        margin-bottom: 5px;
+    }
+
+    label.file-upload-label {
+        margin-left: 25px;
+        max-height: 33px;
+    }
+
+    .preview {
+        .ReactCrop {
+            display: block;
+        }
+        img {
+            height: 250px;
+        }
+        img.cropped-img {
+            margin-top: 15px;
+            height: 150px;
+        }
+    }
+
+    .no-image svg {
+        width: 200px;
+        height: 200px;
+        padding: 50px;
+        border: 1px dotted $medium-grey;
+        fill: $lighter-grey;
+    }
+
+}

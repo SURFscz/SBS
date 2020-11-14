@@ -21,7 +21,7 @@ import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import RadioButton from "../components/redesign/RadioButton";
-import ImageField from "../components/redesign/ImageField";
+import CroppedImageField from "../components/redesign/CroppedImageField";
 import SelectField from "../components/SelectField";
 
 class OrganisationForm extends React.Component {
@@ -149,7 +149,7 @@ class OrganisationForm extends React.Component {
                 name,
                 short_name,
                 category: category !== null ? category.label : null,
-                schac_home_organisation,
+                schac_home_organisation: isEmpty(schac_home_organisation) ? null : schac_home_organisation,
                 administrators,
                 message,
                 description,
@@ -178,7 +178,8 @@ class OrganisationForm extends React.Component {
                 short_name, identifier, logo, category
             } = this.state;
             updateOrganisation({
-                id: organisation.id, name, description, schac_home_organisation,
+                id: organisation.id, name, description,
+                schac_home_organisation: isEmpty(schac_home_organisation) ? null : schac_home_organisation,
                 collaboration_creation_allowed, short_name, identifier, logo,
                 category: category !== null ? category.value : null
             })
@@ -280,7 +281,7 @@ class OrganisationForm extends React.Component {
                         attribute: I18n.t("organisation.shortName").toLowerCase()
                     })}</span>}
 
-                    <ImageField name="logo" onChange={s => this.setState({logo: s})}
+                    <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                 title={I18n.t("organisation.logo")} value={logo} initial={initial}/>
 
                     <SelectField value={category}
