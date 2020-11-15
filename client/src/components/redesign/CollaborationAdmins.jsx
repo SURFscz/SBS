@@ -69,19 +69,38 @@ class CollaborationAdmins extends React.Component {
     }
 
     changeMemberRole = member => selectedOption => {
-        const {collaboration} = this.props;
+        const {collaboration, user: currentUser} = this.props;
         const currentRole = collaboration.collaboration_memberships.find(m => m.user.id === member.user.id).role;
         if (currentRole === selectedOption.value) {
             return;
         }
-        updateCollaborationMembershipRole(collaboration.id, member.user.id, selectedOption.value)
-            .then(() => {
-                this.props.refresh(this.componentDidMount);
-                setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
-                    name: member.user.name,
-                    role: selectedOption.value
-                }));
+        if (member.user.id === currentUser.id && !currentUser.admin) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationDialogAction: () => {
+                    updateCollaborationMembershipRole(collaboration.id, member.user.id, selectedOption.value)
+                        .then(() => {
+                            this.props.refreshUser(() => this.props.history.push("/home"));
+                            setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
+                                name: member.user.name,
+                                role: selectedOption.value
+                            }));
+                        });
+                },
+                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationQuestion: I18n.t("collaborationDetail.downgradeYourselfMemberConfirmation"),
             });
+        } else {
+            updateCollaborationMembershipRole(collaboration.id, member.user.id, selectedOption.value)
+                .then(() => {
+                    this.props.refresh(this.componentDidMount);
+                    setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
+                        name: member.user.name,
+                        role: selectedOption.value
+                    }));
+                });
+
+        }
     };
 
     onCheck = memberShip => e => {

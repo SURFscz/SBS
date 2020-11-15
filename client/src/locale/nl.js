@@ -1,3 +1,4 @@
+
 import I18n from "i18n-js";
 
 I18n.translations.nl = {
@@ -496,6 +497,7 @@ I18n.translations.nl = {
         deleteMemberConfirmation: "Weet u zeker dat u {{name}} als lid voor deze samenwerking wilt verwijderen?",
         deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze samenwerking wilt verlaten? Je kan dit niet terugdraaien.",
+        downgradeYourselfMemberConfirmation: "Weet je zeker dat je geen admin meer wilt zijn? Je kan dit niet terugdraaien.",
         activateMemberConfirmation: "Are you sure you want to re-activate this user {{name}}?",
         activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
         flash: {
@@ -740,6 +742,7 @@ I18n.translations.nl = {
         update: "Bijwerken",
         delete: "Verwijderen",
         deleteMemberConfirmation: "Weet u zeker dat u het organisatie lidmaatschap van {{name}} wil verwijderen?",
+        deleteYourselfMemberConfirmation: "Weet je zeker dat je deze organisatie wilt verlaten? Je kan dit niet terugdraaien.",
         deleteApiKeyConfirmation: "Weet u zeker dat u deze API-sleutel wilt verwijderen?",
         deleteCollaborationConfirmation: "Weet u zeker dat u collaboration {{name}} wil verwijderen?",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",

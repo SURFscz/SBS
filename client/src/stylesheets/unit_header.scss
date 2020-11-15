@@ -12,6 +12,11 @@ div.org-attributes-container {
             &:first-child {
                 font-weight: bold;
             }
+
+            &:last-child {
+                max-width: 300px;
+                word-break: break-all;
+            }
         }
     }
 }

@@ -496,6 +496,7 @@ I18n.translations.en = {
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership for {{name}}?",
         deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You won't be able to redo this.",
+        downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to redo this.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
         activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
         flash: {
@@ -742,6 +743,7 @@ I18n.translations.en = {
         update: "Update",
         delete: "Delete",
         deleteMemberConfirmation: "Are you sure you want to delete the checked organisation memberships / invitations?",
+        deleteYourselfMemberConfirmation: "Are you sure you want to leave this organisation? You won't be able to redo this.",
         deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
         deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}?",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",

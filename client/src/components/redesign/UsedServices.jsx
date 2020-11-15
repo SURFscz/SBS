@@ -213,12 +213,13 @@ class UsedServices extends React.Component {
         usedServices = usedServices.concat(serviceConnectionRequests);
 
         usedServices.forEach(s => s.usedService = true);
+        debugger;
         const columns = [
             {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: entity => <Logo src={entity.connectionRequest ? entity.logo : entity.service.logo}/>
+                mapper: entity => <Logo src={entity.logo ? entity.logo : entity.connectionRequest ? entity.service.logo : null}/>
             },
             {
                 key: "name",
