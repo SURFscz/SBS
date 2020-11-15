@@ -7,8 +7,7 @@ from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE
 from server.db.domain import User, Collaboration, Service, Organisation, Group
 from server.test.abstract_test import AbstractTest
 from server.test.seed import join_request_peter_hash, roger_name, service_cloud_name, ai_computing_name, \
-    service_mail_name, invitation_hash_curious, organisation_invitation_hash, uuc_name, group_science_name, \
-    uva_research_name
+    service_mail_name, invitation_hash_curious, organisation_invitation_hash, uuc_name, group_science_name
 
 
 class TestAuditLog(AbstractTest):
