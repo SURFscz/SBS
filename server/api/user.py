@@ -12,7 +12,7 @@ import requests
 from flask import Blueprint, current_app, redirect
 from flask import request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
-from sqlalchemy.orm import contains_eager, joinedload, selectinload
+from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
