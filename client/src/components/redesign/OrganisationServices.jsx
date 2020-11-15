@@ -110,8 +110,14 @@ class OrganisationServices extends React.Component {
         return (
             <div>
 
-                <Entities entities={services} modelName="servicesUsed" searchAttributes={["name"]}
-                          defaultSort="name" columns={columns} loading={loading} title={titleUsed}
+                <Entities entities={services}
+                          modelName="servicesUsed"
+                          tableClassName="organisationServicesUsed"
+                          searchAttributes={["name"]}
+                          defaultSort="name"
+                          columns={columns}
+                          loading={loading}
+                          title={titleUsed}
                           explain={<OrganisationServicesExplanation/>}
                           {...this.props}/>
             </div>

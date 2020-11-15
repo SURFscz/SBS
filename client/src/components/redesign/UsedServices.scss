@@ -6,12 +6,12 @@ table.servicesUsed, table.servicesAvailable {
     thead {
         th {
             &.name {
-                width: 40%;
+                width: 50%;
                 padding-left: 15px;
             }
 
             &.status {
-                width: 35%;
+                width: 25%;
             }
 
             &.action {
@@ -28,7 +28,7 @@ table.servicesUsed, table.servicesAvailable {
             }
 
             &.status {
-                color: $dark-grey
+                color: $dark-grey;
             }
 
             &.action {

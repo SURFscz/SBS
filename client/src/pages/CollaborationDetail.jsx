@@ -18,6 +18,7 @@ import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as MemberIcon} from "../icons/personal_info.svg";
 import {ReactComponent as GroupsIcon} from "../icons/groups.svg";
+import {ReactComponent as JoinRequestsIcon} from "../icons/connections.svg";
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
 import SpinnerField from "../components/redesign/SpinnerField";
@@ -30,6 +31,7 @@ import Button from "../components/Button";
 import {getParameterByName} from "../utils/QueryParameters";
 import WelcomeDialog from "../components/WelcomeDialog";
 import {isEmpty} from "../utils/Utils";
+import JoinRequests from "../components/redesign/JoinRequests";
 
 
 class CollaborationDetail extends React.Component {
@@ -63,10 +65,13 @@ class CollaborationDetail extends React.Component {
                     const adminOfCollaboration = json.access === "full";
                     const promises = adminOfCollaboration ? [collaborationById(collaboration_id)] :
                         [collaborationLiteById(collaboration_id), organisationByUserSchacHomeOrganisation()];
-                    const {user} = this.props;
-                    const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                     Promise.all(promises).then(res => {
+                        const {user} = this.props;
+                        let tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                         const collaboration = res[0];
+                        collaboration.join_requests = collaboration.join_requests
+                            .filter(jr => !collaboration.collaboration_memberships.find(cm => cm.user.id === jr.user.id));
+                        tab = collaboration.join_requests.length === 0 && tab === "joinrequests" ? "admins" : tab;
                         const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
                         const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                         const firstTime = getParameterByName("first", window.location.search) === "true";
@@ -148,13 +153,14 @@ class CollaborationDetail extends React.Component {
                 this.getCollaborationAdminsTab(collaboration),
                 this.getMembersTab(collaboration, showMemberView),
                 this.getGroupsTab(collaboration, showMemberView),
-                this.getServicesTab(collaboration)
+                this.getServicesTab(collaboration),
+                collaboration.join_requests.length > 0 ? this.getJoinRequestsTab(collaboration) : null,
             ] : [
                 this.getAboutTab(collaboration),
                 this.getMembersTab(collaboration, showMemberView),
                 this.getGroupsTab(collaboration, showMemberView),
             ];
-        return tabs;
+        return tabs.filter(tab => tab !== null);
     }
 
 
@@ -183,10 +189,20 @@ class CollaborationDetail extends React.Component {
         </div>)
     }
 
+    getJoinRequestsTab = (collaboration) => {
+        return (<div key="joinrequests" name="joinrequests" label={I18n.t("home.tabs.joinRequests")}
+                     icon={<JoinRequestsIcon/>}>
+            <JoinRequests collaboration={collaboration}
+                          refresh={callback => this.componentDidMount(callback)}
+                          {...this.props} />
+        </div>)
+    }
+
     getServicesTab = collaboration => {
         return (<div key="services" name="services" label={I18n.t("home.tabs.coServices")} icon={<ServicesIcon/>}>
-            <UsedServices {...this.props} collaboration={collaboration}
-                          refresh={callback => this.componentDidMount(callback)}/>
+            <UsedServices collaboration={collaboration}
+                          refresh={callback => this.componentDidMount(callback)}
+                          {...this.props} />
         </div>);
     }
 
@@ -248,7 +264,8 @@ class CollaborationDetail extends React.Component {
                         </div>
                     </div>
                     {showRequestCollaboration && <div className="unit-edit">
-                        <Button onClick={this.createCollaborationRequest} txt={I18n.t("models.collaboration.newCollaborationRequest")}/>
+                        <Button onClick={this.createCollaborationRequest}
+                                txt={I18n.t("models.collaboration.newCollaborationRequest")}/>
                     </div>}
 
                 </div>
@@ -291,7 +308,7 @@ class CollaborationDetail extends React.Component {
                 {<WelcomeDialog name={collaboration.name} isOpen={firstTime}
                                 role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
                                 isOrganisation={false}
-                                close={() => this.setState({firstTime: false})} />}
+                                close={() => this.setState({firstTime: false})}/>}
                 {(adminOfCollaboration && showMemberView) && this.getUnitHeader(collaboration, allowedToEdit)}
                 {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMember(collaboration, user, schacHomeOrganisation)}
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>

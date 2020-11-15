@@ -92,12 +92,12 @@ class Entities extends React.Component {
         }
     }
 
-    renderEntities = (entities, sorted, reverse, modelName, columns, children, rowLinkMapper) => {
+    renderEntities = (entities, sorted, reverse, modelName, tableClassName, columns, children, rowLinkMapper) => {
         const hasEntities = !isEmpty(entities);
         return (
             <section className="entities-list">
                 {hasEntities &&
-                <table className={modelName}>
+                <table className={tableClassName || modelName}>
                     <thead>
                     <tr>
                         {columns.map(column =>
@@ -132,7 +132,7 @@ class Entities extends React.Component {
     render() {
         const {
             modelName, entities, showNew, searchAttributes, columns, children, loading,
-            actions, title, filters, explain, rowLinkMapper
+            actions, title, filters, explain, rowLinkMapper, tableClassName
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -150,7 +150,7 @@ class Entities extends React.Component {
                 </Explain>}
                 {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain)}
                 {actions}
-                {this.renderEntities(sortedEntities, sorted, reverse, modelName, columns, children, rowLinkMapper)}
+                {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children, rowLinkMapper)}
                 <div>{this.props.children}</div>
             </div>);
     }
@@ -160,6 +160,7 @@ Entities.propTypes = {
     title: PropTypes.string,
     entities: PropTypes.array.isRequired,
     modelName: PropTypes.string.isRequired,
+    tableClassName: PropTypes.string.isRequired,
     searchAttributes: PropTypes.array,
     defaultSort: PropTypes.string.isRequired,
     loading: PropTypes.bool.isRequired,
