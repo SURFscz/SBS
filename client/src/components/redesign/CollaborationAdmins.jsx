@@ -5,7 +5,12 @@ import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
 import CheckBox from "../CheckBox";
-import {deleteCollaborationMembership, invitationDelete, updateCollaborationMembershipRole} from "../../api";
+import {
+    createCollaborationMembershipRole,
+    deleteCollaborationMembership,
+    invitationDelete,
+    updateCollaborationMembershipRole
+} from "../../api";
 import {setFlash} from "../../utils/Flash";
 import "./CollaborationAdmins.scss";
 import Select from "react-select";
@@ -158,7 +163,12 @@ class CollaborationAdmins extends React.Component {
         return entities.concat(invitesFiltered);
     }
 
-    actionButtons = (selectedMembers, filteredEntities) => {
+    actionButtons = (isAdminOfCollaboration, selectedMembers, filteredEntities, members, currentUser) => {
+        if (!isAdminOfCollaboration) {
+            return null;
+        }
+        const isMember = members.some(m => m.user.id === currentUser.id);
+        const any = filteredEntities.length !== 0;
         const selected = Object.values(selectedMembers)
             .filter(v => v.selected)
             .filter(v => filteredEntities.find(e => e.id === v.ref.id && e.invite === v.ref.invite))
@@ -166,13 +176,19 @@ class CollaborationAdmins extends React.Component {
         const disabled = selected.length === 0;
         return (
             <div className="admin-actions">
-                <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
-                        disabled={disabled}
-                        icon={<FontAwesomeIcon icon="trash"/>}/>
-                <a href={`mailto:${hrefValue}`} className={`${disabled ? "disabled" : ""} button`}
-                   target="_blank" rel="noopener noreferrer">
+                {any && <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
+                                disabled={disabled}
+                                icon={<FontAwesomeIcon icon="trash"/>}/>}
+                {any && <a href={`mailto:${hrefValue}`} className={`${disabled ? "disabled" : ""} button`}
+                           target="_blank" rel="noopener noreferrer">
                     {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
-                </a>
+                </a>}
+                {!isMember && <Button className="right" txt={I18n.t("collaborationDetail.addMe")} onClick={() =>
+                    createCollaborationMembershipRole(this.props.collaboration.id).then(() => {
+                        this.props.refresh(this.componentDidMount);
+                        setFlash(I18n.t("collaborationDetail.flash.meAdded", {name: this.props.collaboration.name}));
+                    })
+                }/>}
             </div>);
     }
 
@@ -216,7 +232,7 @@ class CollaborationAdmins extends React.Component {
             return null;
         }
         const {user: currentUser} = this.props;
-        if (currentUser.admin) {
+        if (currentUser.admin && currentUser.id !== entity.user.id) {
             return <div className="impersonate" onClick={() =>
                 emitter.emit("impersonation",
                     {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
@@ -321,7 +337,7 @@ class CollaborationAdmins extends React.Component {
                           rowLinkMapper={entity => entity.invite && this.gotoInvitation}
                           showNew={isAdminOfCollaboration}
                           filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees, isAdminOfCollaboration)}
-                          actions={(isAdminOfCollaboration && filteredEntities.length > 0) ? this.actionButtons(selectedMembers, filteredEntities) : null}
+                          actions={this.actionButtons(isAdminOfCollaboration, selectedMembers, filteredEntities, members, currentUser)}
                           newEntityPath={`/new-invite/${collaboration.id}?isAdminView=${isAdminView}`}
                           {...this.props}/>
             </>

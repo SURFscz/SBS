@@ -9,11 +9,18 @@
     }
 
     .admin-actions {
+        display: flex;
+
         margin-bottom: 12px;
 
         a:not(:first-child) {
             margin-left: 25px;
         }
+
+        a.right {
+            margin-left: auto;
+        }
+
     }
 
     .member-filter {
