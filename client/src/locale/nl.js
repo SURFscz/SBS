@@ -1214,7 +1214,7 @@ I18n.translations.nl = {
         runDbSeedConfirmation: "Weet je het absoluut zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle data en voeg de test data toe",
         runDbSeed: "Run",
-        seedResult: "Test data is toegevoegd"
+        seedResult: "Test data is toegevoegd in {{ms}} ms"
     },
     access: {
         full: "Volledige",
