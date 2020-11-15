@@ -12,7 +12,7 @@ import requests
 from flask import Blueprint, current_app, redirect
 from flask import request as current_request, session, jsonify
 from sqlalchemy import text, or_, bindparam, String
-from sqlalchemy.orm import contains_eager, joinedload
+from sqlalchemy.orm import contains_eager, joinedload, selectinload
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
@@ -50,10 +50,10 @@ def _user_query():
         .outerjoin(OrganisationMembership.organisation) \
         .outerjoin(User.collaboration_memberships) \
         .outerjoin(CollaborationMembership.collaboration) \
-        .options(contains_eager(User.aups)) \
-        .options(contains_eager(User.organisation_memberships)
+        .options(selectinload(User.aups)) \
+        .options(selectinload(User.organisation_memberships)
                  .contains_eager(OrganisationMembership.organisation)) \
-        .options(contains_eager(User.collaboration_memberships)
+        .options(selectinload(User.collaboration_memberships)
                  .contains_eager(CollaborationMembership.collaboration))
 
 
@@ -366,7 +366,7 @@ def attribute_aggregation():
     users = User.query \
         .join(User.collaboration_memberships) \
         .join(CollaborationMembership.collaboration) \
-        .options(contains_eager(User.collaboration_memberships)
+        .options(selectinload(User.collaboration_memberships)
                  .contains_eager(CollaborationMembership.collaboration)) \
         .filter(or_(User.uid == edu_person_principal_name,
                     User.email == email)) \

@@ -258,14 +258,6 @@ export function deleteCollaboration(id) {
     return fetchDelete(`/api/collaborations/${id}`);
 }
 
-export function collaborationServices(collaborationId, includeMemberships = false) {
-    return fetchJson(`/api/collaborations/services/${collaborationId}?include_memberships=${includeMemberships}`);
-}
-
-export function collaborationGroups(collaborationId) {
-    return fetchJson(`/api/collaborations/groups/${collaborationId}`);
-}
-
 export function mayRequestCollaboration() {
     return fetchJson("/api/collaborations/may_request_collaboration");
 }
@@ -474,10 +466,6 @@ export function groupShortNameExists(shortName, collaborationId, existingGroup =
     return fetchJson(`/api/groups/short_name_exists?short_name=${encodeURIComponent(shortName)}&collaboration_id=${collaborationId}&existing_group=${encodeURIComponent(existingGroup)}`);
 }
 
-export function groupById(id, collaborationId) {
-    return fetchJson(`/api/groups/${id}/${collaborationId}`, {}, {}, false);
-}
-
 export function createGroup(group) {
     return postPutJson("/api/groups", group, "post");
 }
@@ -488,18 +476,6 @@ export function updateGroup(group) {
 
 export function deleteGroup(id) {
     return fetchDelete(`/api/groups/${id}`)
-}
-
-export function myGroups() {
-    return fetchJson("/api/groups")
-}
-
-export function groupAccessAllowed(id, collaborationId) {
-    return fetchJson(`/api/groups/access_allowed/${id}/${collaborationId}`, {}, {}, false);
-}
-
-export function groupsByCollaboration(collaboration_id) {
-    return fetchJson(`/api/groups/all/${collaboration_id}`)
 }
 
 //GroupMembers

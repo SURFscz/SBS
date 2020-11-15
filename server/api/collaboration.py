@@ -5,7 +5,7 @@ from secrets import token_urlsafe
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
-from sqlalchemy.orm import aliased, load_only, contains_eager, selectinload
+from sqlalchemy.orm import aliased, load_only, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
@@ -128,45 +128,6 @@ def collaboration_search():
         result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
         res = [{"id": row[0], "name": row[1], "description": row[2], "organisation_id": row[3]} for row in result_set]
     return res, 200
-
-
-@collaboration_api.route("services/<collaboration_id>", strict_slashes=False)
-@json_endpoint
-def collaboration_services_by_id(collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
-
-    query = Collaboration.query \
-        .outerjoin(Collaboration.services) \
-        .join(Collaboration.organisation) \
-        .options(contains_eager(Collaboration.services)) \
-        .options(contains_eager(Collaboration.organisation))
-
-    include_memberships = query_param("include_memberships", required=False, default=False)
-    if include_memberships:
-        query = query \
-            .outerjoin(Collaboration.invitations) \
-            .outerjoin(Collaboration.collaboration_memberships) \
-            .outerjoin(CollaborationMembership.user) \
-            .options(contains_eager(Collaboration.invitations)) \
-            .options(contains_eager(Collaboration.collaboration_memberships)
-                     .contains_eager(CollaborationMembership.user))
-
-    collaboration = query.filter(Collaboration.id == collaboration_id).one()
-
-    return collaboration, 200
-
-
-@collaboration_api.route("groups/<collaboration_id>", strict_slashes=False)
-@json_endpoint
-def collaboration_groups_by_id(collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
-
-    query = Collaboration.query \
-        .outerjoin(Collaboration.groups) \
-        .options(contains_eager(Collaboration.groups))
-    collaboration = query.filter(Collaboration.id == collaboration_id).one()
-
-    return collaboration, 200
 
 
 # Call for LSC to get all members based on the identifier of the Collaboration

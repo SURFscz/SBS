@@ -1,6 +1,8 @@
 # -*- coding: future_fstrings -*-
 import json
 
+from flask import jsonify
+
 from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE
 from server.db.domain import User, Collaboration, Service, Organisation, Group
 from server.test.abstract_test import AbstractTest
@@ -92,9 +94,7 @@ class TestAuditLog(AbstractTest):
     def test_groups(self):
         self.login("urn:sarah")
 
-        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
-        group_id = self.find_entity_by_name(Group, group_science_name).id
-        group = self.get(f"/api/groups/{group_id}/{collaboration_id}")
+        group = jsonify(self.find_entity_by_name(Group, group_science_name)).json
 
         group["short_name"] = "new_short_name"
         self.put("/api/groups/", body=group)

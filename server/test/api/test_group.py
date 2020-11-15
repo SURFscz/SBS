@@ -1,16 +1,12 @@
 # -*- coding: future_fstrings -*-
+from flask import jsonify
+
 from server.db.domain import Collaboration, Group
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_researchers_group, ai_computing_name, ai_researchers_group_short_name, \
-    group_science_name, uva_research_name
+from server.test.seed import ai_researchers_group, ai_computing_name, ai_researchers_group_short_name
 
 
 class TestGroup(AbstractTest):
-
-    def test_my_groups(self):
-        self.login("urn:john")
-        groups = self.get("api/groups", with_basic_auth=False)
-        self.assertEqual(2, len(groups))
 
     def test_group_name_exists(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
@@ -56,26 +52,6 @@ class TestGroup(AbstractTest):
                                    "collaboration_id": collaboration_id})
         self.assertEqual(False, res)
 
-    def test_group_by_id(self):
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        group_id = self.find_entity_by_name(Group, ai_researchers_group).id
-        self.login("urn:admin")
-        group = self.get(f"/api/groups/{group_id}/{collaboration_id}", with_basic_auth=False)
-        self.assertTrue(len(group["collaboration_memberships"]) > 0)
-
-    def test_group_by_id_regular_member(self):
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        group_id = self.find_entity_by_name(Group, ai_researchers_group).id
-        self.login("urn:jane")
-        group = self.get(f"/api/groups/{group_id}/{collaboration_id}", with_basic_auth=False)
-        self.assertTrue(len(group["collaboration_memberships"]) > 0)
-
-    def test_group_by_id_forbidden(self):
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        group_id = self.find_entity_by_name(Group, ai_researchers_group).id
-        self.login("urn:peter")
-        self.get(f"/api/groups/{group_id}/{collaboration_id}", with_basic_auth=False, response_status_code=403)
-
     def test_save_group(self):
         self._do_test_save_group(False, 0, 0)
 
@@ -86,18 +62,18 @@ class TestGroup(AbstractTest):
         self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         group_name = "new_auth_group"
-        group = self.post("/api/groups/", body={
+        self.post("/api/groups/", body={
             "name": group_name,
             "short_name": group_name,
             "description": "des",
             "auto_provision_members": auto_provision_members,
             "collaboration_id": collaboration_id,
         })
-        group = self.get(f"/api/groups/{group['id']}/{collaboration_id}")
+        group = self.find_entity_by_name(Group, group_name)
 
-        self.assertEqual("uuc:ai_computing:new_auth_group", group["global_urn"])
-        self.assertEqual(invitations_count, len(group["invitations"]))
-        self.assertEqual(members_count, len(group["collaboration_memberships"]))
+        self.assertEqual("uuc:ai_computing:new_auth_group", group.global_urn)
+        self.assertEqual(invitations_count, len(group.invitations))
+        self.assertEqual(members_count, len(group.collaboration_memberships))
 
     def test_update_group(self):
         self._do_test_update_group(False, 0, 2)
@@ -109,9 +85,7 @@ class TestGroup(AbstractTest):
 
     def _do_test_update_group(self, auto_provision_members, invitations_count, members_count):
         self.login("urn:john")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        group_id = self.find_entity_by_name(Group, ai_researchers_group).id
-        group = self.get(f"/api/groups/{group_id}/{collaboration_id}")
+        group = jsonify(self.find_entity_by_name(Group, ai_researchers_group)).json
         group["short_name"] = "new_short_name"
         group["auto_provision_members"] = auto_provision_members
         self.put("/api/groups/", body=group)
@@ -127,29 +101,3 @@ class TestGroup(AbstractTest):
         group_id = self.find_entity_by_name(Group, ai_researchers_group).id
         self.delete("/api/groups", primary_key=group_id)
         self.delete("/api/groups", primary_key=group_id, response_status_code=404)
-
-    def test_groups_by_collaboration(self):
-        self.login("urn:admin")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        groups = self.get(f"/api/groups/all/{collaboration_id}")
-        self.assertEqual(2, len(groups))
-
-    def test_group_access_allowed_admin(self):
-        self.login("urn:admin")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        group_id = "not_used"
-        res = self.get(f"api/groups/access_allowed/{group_id}>/{collaboration_id}")
-        self.assertEqual("full", res["access"])
-
-    def test_group_access_allowed_member(self):
-        self.login("urn:roger")
-        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
-        group_id = self.find_entity_by_name(Group, group_science_name).id
-        res = self.get(f"api/groups/access_allowed/{group_id}>/{collaboration_id}")
-        self.assertEqual("lite", res["access"])
-
-    def test_group_access_allowed_none(self):
-        self.login("urn:peter")
-        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
-        group_id = self.find_entity_by_name(Group, group_science_name).id
-        self.get(f"api/groups/access_allowed/{group_id}>/{collaboration_id}", response_status_code=403)

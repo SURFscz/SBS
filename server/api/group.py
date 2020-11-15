@@ -4,15 +4,13 @@ import uuid
 from flask import Blueprint, request as current_request
 from sqlalchemy import func
 from sqlalchemy.orm import load_only, contains_eager
-from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.group_invitations import do_add_group_invitations
 from server.api.group_members import do_add_group_members
-from server.auth.security import confirm_collaboration_admin, \
-    confirm_collaboration_admin_or_group_member, current_user_id, confirm_group_member
+from server.auth.security import confirm_collaboration_admin
 from server.db.defaults import cleanse_short_name
-from server.db.domain import Group, CollaborationMembership, Collaboration
+from server.db.domain import Group, Collaboration
 from server.db.models import update, save, delete
 from server.schemas import json_schema_validator
 
@@ -41,21 +39,6 @@ def auto_provision_all_members_and_invites(group: Group):
     })
 
 
-@group_api.route("/", strict_slashes=False)
-@json_endpoint
-def my_groups():
-    user_id = current_user_id()
-
-    groups = Group.query \
-        .join(Group.collaboration_memberships) \
-        .join(CollaborationMembership.user) \
-        .options(contains_eager(Group.collaboration_memberships)
-                 .contains_eager(CollaborationMembership.user)) \
-        .filter(CollaborationMembership.user_id == user_id) \
-        .all()
-    return groups, 200
-
-
 @group_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
@@ -82,54 +65,6 @@ def short_name_exists():
         .filter(Group.collaboration_id == collaboration_id) \
         .first()
     return group is not None, 200
-
-
-@group_api.route("/all/<collaboration_id>", strict_slashes=False)
-@json_endpoint
-def groups_by_collaboration(collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
-
-    groups = Group.query \
-        .join(Group.collaboration) \
-        .outerjoin(Group.collaboration_memberships) \
-        .options(contains_eager(Group.collaboration_memberships)) \
-        .filter(Group.collaboration_id == collaboration_id) \
-        .all()
-    return groups, 200
-
-
-@group_api.route("/access_allowed/<group_id>/<collaboration_id>", strict_slashes=False)
-@json_endpoint
-def group_access_allowed(group_id, collaboration_id):
-    try:
-        confirm_collaboration_admin(collaboration_id)
-        return {"access": "full"}, 200
-    except Forbidden:
-        if confirm_group_member(group_id):
-            return {"access": "lite"}, 200
-        raise Forbidden()
-
-
-@group_api.route("/<group_id>/<collaboration_id>", strict_slashes=False)
-@json_endpoint
-def group_by_id(group_id, collaboration_id):
-    confirm_collaboration_admin_or_group_member(collaboration_id, group_id)
-
-    group = Group.query \
-        .join(Group.collaboration) \
-        .outerjoin(Group.collaboration_memberships) \
-        .outerjoin(CollaborationMembership.user) \
-        .outerjoin(Group.invitations) \
-        .options(contains_eager(Group.collaboration)) \
-        .options(contains_eager(Group.collaboration_memberships)
-                 .contains_eager(CollaborationMembership.user)) \
-        .options(contains_eager(Group.invitations)) \
-        .filter(Group.id == group_id) \
-        .filter(Group.collaboration_id == collaboration_id) \
-        .one()
-    for member in group.collaboration.collaboration_memberships:
-        member.user
-    return group, 200
 
 
 @group_api.route("/", methods=["POST"], strict_slashes=False)
