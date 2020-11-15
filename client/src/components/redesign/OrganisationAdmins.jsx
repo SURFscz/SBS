@@ -50,19 +50,37 @@ class OrganisationAdmins extends React.Component {
     }
 
     changeMemberRole = member => selectedOption => {
-        const {organisation} = this.props;
+        const {organisation, user: currentUser} = this.props;
         const currentRole = organisation.organisation_memberships.find(m => m.user.id === member.user.id).role;
         if (currentRole === selectedOption.value) {
             return;
         }
-        updateOrganisationMembershipRole(organisation.id, member.user.id, selectedOption.value)
-            .then(() => {
-                this.props.refresh(this.componentDidMount);
-                setFlash(I18n.t("organisationDetail.flash.memberUpdated", {
-                    name: member.user.name,
-                    role: selectedOption.value
-                }));
+        if (member.user.id === currentUser.id && !currentUser.admin) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationDialogAction: () => {
+                    updateOrganisationMembershipRole(organisation.id, member.user.id, selectedOption.value)
+                        .then(() => {
+                            this.props.refreshUser(() => this.props.history.push("/home"));
+                            setFlash(I18n.t("organisationDetail.flash.memberUpdated", {
+                                name: member.user.name,
+                                role: selectedOption.value
+                            }));
+                        });
+                },
+                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationQuestion: I18n.t("collaborationDetail.downgradeYourselfMemberConfirmation"),
             });
+        } else {
+            updateOrganisationMembershipRole(organisation.id, member.user.id, selectedOption.value)
+                .then(() => {
+                    this.props.refresh(this.componentDidMount);
+                    setFlash(I18n.t("organisationDetail.flash.memberUpdated", {
+                        name: member.user.name,
+                        role: selectedOption.value
+                    }));
+                });
+        }
     };
 
     onCheck = memberShip => e => {
@@ -78,6 +96,23 @@ class OrganisationAdmins extends React.Component {
         const newSelectedMembers = {...selectedMembers};
         this.setState({allSelected: val, ...newSelectedMembers});
     }
+
+    doDeleteMe = () => {
+        this.setState({confirmationDialogOpen: false});
+        const {organisation, user} = this.props;
+        deleteOrganisationMembership(organisation.id, user.id)
+            .then(() => {
+                this.props.refreshUser(() => this.props.history.push("/home"))
+            });
+    };
+
+    deleteMe = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("organisationDetail.deleteYourselfMemberConfirmation"),
+            confirmationDialogAction: this.doDeleteMe
+        });
+    };
 
     gotoInvitation = invitation => e => {
         stopEvent(e);
@@ -95,18 +130,24 @@ class OrganisationAdmins extends React.Component {
         } else {
             this.setState({confirmationDialogOpen: false});
             const {selectedMembers} = this.state;
-            const {organisation} = this.props;
-
-            const promises = Object.keys(selectedMembers)
-                .filter(id => selectedMembers[id].selected)
+            const {user: currentUser, organisation} = this.props;
+            const selected = Object.keys(selectedMembers)
+                .filter(id => selectedMembers[id].selected);
+            const currentUserDeleted = selected
+                .some(id => selectedMembers[id].ref.user.id === currentUser.id);
+            const promises = selected
                 .map(id => {
                     const ref = selectedMembers[id].ref;
                     return ref.invite ? organisationInvitationDelete(ref.id) :
                         deleteOrganisationMembership(organisation.id, ref.user.id)
                 });
             Promise.all(promises).then(() => {
-                this.props.refresh(this.componentDidMount);
-                setFlash(I18n.t("organisationDetail.flash.entitiesDeleted"));
+                if (currentUserDeleted) {
+                    this.props.refreshUser(() => this.props.history.push("/home"));
+                } else {
+                    this.props.refresh(this.componentDidMount);
+                    setFlash(I18n.t("organisationDetail.flash.entitiesDeleted"));
+                }
             });
         }
     }
@@ -158,7 +199,8 @@ class OrganisationAdmins extends React.Component {
                 nonSortable: true,
                 key: "name",
                 header: I18n.t("models.users.name_email"),
-                mapper: entity => <UserColumn entity={entity} currentUser={currentUser} gotoInvitation={this.gotoInvitation}/>
+                mapper: entity => <UserColumn entity={entity} currentUser={currentUser}
+                                              gotoInvitation={this.gotoInvitation}/>
             },
             {
                 key: "user__schac_home_organisation",
@@ -188,12 +230,22 @@ class OrganisationAdmins extends React.Component {
                 nonSortable: true,
                 key: "impersonate",
                 header: "",
-                mapper: entity => (entity.invite || !currentUser.admin) ? null :
-                    <div className="impersonate" onClick={() =>
+                mapper: entity => {
+                    if (entity.invite || (currentUser.admin && entity.user.id === currentUser.id)) {
+                        return null;
+                    }
+                    if (!currentUser.admin && entity.user.id === currentUser.id) {
+                        return <Button onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
+                    }
+                    if (!currentUser.admin) {
+                        return null;
+                    }
+                    return (<div className="impersonate" onClick={() =>
                         emitter.emit("impersonation",
                             {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
                         <HandIcon/>
-                    </div>
+                    </div>);
+                }
             },
         ]
         const entities = admins.concat(invites);
@@ -201,6 +253,7 @@ class OrganisationAdmins extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
+                                    isWarning={true}
                                     question={confirmationQuestion}/>
 
                 <Entities entities={entities}
@@ -211,7 +264,7 @@ class OrganisationAdmins extends React.Component {
                           rowLinkMapper={entity => entity.invite && this.gotoInvitation}
                           loading={false}
                           showNew={isAdmin}
-                          actions={(isAdmin && entities.length > 0)? this.actionButtons(selectedMembers) : null}
+                          actions={(isAdmin && entities.length > 0) ? this.actionButtons(selectedMembers) : null}
                           newEntityPath={`/new-organisation-invite/${organisation.id}`}
                           {...this.props}/>
             </>

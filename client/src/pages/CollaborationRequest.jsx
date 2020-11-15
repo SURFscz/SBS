@@ -147,6 +147,12 @@ class CollaborationRequest extends React.Component {
         }
     };
 
+    updateLogo = logo => {
+        const {collaborationRequest} = this.state;
+        const newState = {...collaborationRequest, logo};
+        this.setState({collaborationRequest: newState});
+    };
+
     updateState = attributeName => e => {
         const {collaborationRequest, alreadyExists} = this.state;
         const value = attributeName === "short_name" ? sanitizeShortName(e.target.value) : e.target.value;
@@ -179,6 +185,7 @@ class CollaborationRequest extends React.Component {
                         <InputField
                             value={collaborationRequest.message}
                             name={I18n.t("collaboration.motivation")}
+                            multiline={true}
                             disabled={true}/>
 
                         <InputField value={collaborationRequest.name}
@@ -197,7 +204,7 @@ class CollaborationRequest extends React.Component {
                             attribute: I18n.t("collaboration.name").toLowerCase()
                         })}</span>}
 
-                        <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
+                        <CroppedImageField name="logo" onChange={this.updateLogo}
                                            isNew={false} title={I18n.t("collaboration.logo")}
                                            value={collaborationRequest.logo}
                                            initial={initial} secondRow={false}/>
