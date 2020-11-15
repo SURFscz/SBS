@@ -413,6 +413,13 @@ class CollaborationForm extends React.Component {
                                     toolTip={I18n.t("collaboration.globalUrnTooltip")}
                                     disabled={true}/>
 
+                        {(!isCollaborationRequest && !isNew) &&
+                        <InputField value={collaboration.identifier}
+                                    name={I18n.t("collaboration.identifier")}
+                                    copyClipBoard={true}
+                                    toolTip={I18n.t("collaboration.identifierTooltip")}
+                                    disabled={true}/>}
+
                         <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                                     placeholder={I18n.t("collaboration.descriptionPlaceholder")} multiline={true}
                                     name={I18n.t("collaboration.description")}/>

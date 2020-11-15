@@ -6,8 +6,6 @@ import InputField from "../components/InputField";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import Button from "../components/Button";
-import BackLink from "../components/BackLink";
-import {userRole} from "../utils/UserRole";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {ReactComponent as CollaborationIcon} from "../icons/collaborations.svg";
 
@@ -100,7 +98,6 @@ class JoinRequest extends React.Component {
     render() {
         const {joinRequest, confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, alreadyMember} =
             this.state;
-        const {user} = this.props;
         const joinRequestFound = joinRequest.id;
         const title = I18n.t("joinRequest.title", {
             collaboration: joinRequest.collaboration.name,
