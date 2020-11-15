@@ -35,7 +35,7 @@
         height: 50px;
 
         &[disabled] {
-            background-color: $background;
+            background-color: $lightest-grey;
             cursor: not-allowed;
         }
 

@@ -10,6 +10,8 @@ import InputField from "../components/InputField";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import Button from "../components/Button";
+import UnitHeader from "../components/redesign/UnitHeader";
+import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 
 class ServiceConnectionRequest extends React.Component {
 
@@ -100,6 +102,7 @@ class ServiceConnectionRequest extends React.Component {
         const {serviceConnectionRequest, confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, alreadyMember} =
             this.state;
         const serviceConnectionRequestFound = serviceConnectionRequest.id;
+        const title = I18n.t("serviceConnectionRequest.title");
         return (
             <div className="mod-service-connection-request">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -107,17 +110,21 @@ class ServiceConnectionRequest extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("serviceConnectionRequest.declineConfirmation")}
                                     leavePage={leavePage}/>
-                {serviceConnectionRequestFound && <div className="title">
-                    <p className="title">{I18n.t("serviceConnectionRequest.title")}</p>
-                    <span className="subTitle">{I18n.t("serviceConnectionRequest.subTitle", {
-                        collaboration: serviceConnectionRequest.collaboration.name,
-                        requester: serviceConnectionRequest.requester.name,
-                        service: serviceConnectionRequest.service.name
-                    })}</span>
-                </div>}
+                {serviceConnectionRequestFound &&
+                <UnitHeader obj={({name: title, svg: ServicesIcon})}>
+                                        <span className="subTitle">
+                                            {I18n.t("serviceConnectionRequest.subTitle", {
+                                                collaboration: serviceConnectionRequest.collaboration.name,
+                                                requester: serviceConnectionRequest.requester.name,
+                                                service: serviceConnectionRequest.service.name
+                                            })}</span>
+                </UnitHeader>}
                 <div className="service-connection-request-container">
                     <InputField name={I18n.t("serviceConnectionRequest.message")}
-                                value={serviceConnectionRequest.message} disabled={true}
+                                large={true}
+                                value={serviceConnectionRequest.message}
+                                disabled={true}
+                                multiline={true}
                                 toolTip={I18n.t("serviceConnectionRequest.messageTooltip", {name: serviceConnectionRequest.requester.name})}/>
 
                     <InputField name={I18n.t("serviceConnectionRequest.collaboration")}

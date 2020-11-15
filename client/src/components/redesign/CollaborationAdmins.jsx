@@ -22,6 +22,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 import UserColumn from "./UserColumn";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import SpinnerField from "./SpinnerField";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.admin`)},
@@ -43,7 +44,8 @@ class CollaborationAdmins extends React.Component {
             confirmationQuestion: "",
             filterOptions: [],
             filterValue: {value: memberFilterValue, label: ""},
-            hideInvitees: false
+            hideInvitees: false,
+            loading: true
         }
     }
 
@@ -69,7 +71,8 @@ class CollaborationAdmins extends React.Component {
         this.setState({
             selectedMembers,
             filterValue: filterOptions[0],
-            filterOptions: filterOptions.concat(groupOptions)
+            filterOptions: filterOptions.concat(groupOptions),
+            loading: false
         });
     }
 
@@ -250,9 +253,11 @@ class CollaborationAdmins extends React.Component {
         const {
             selectedMembers, allSelected, filterOptions, filterValue, hideInvitees,
             confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogAction, confirmationQuestion
+            confirmationDialogAction, confirmationQuestion,loading
         } = this.state;
-
+        if (loading) {
+            return <SpinnerField/>
+        }
         const isAdminOfCollaboration = isUserAllowed(ROLES.COLL_ADMIN, currentUser, collaboration.organisation_id, collaboration.id) && !showMemberView;
         const members = collaboration.collaboration_memberships;
         const invites = collaboration.invitations || [];

@@ -72,6 +72,7 @@ I18n.translations.nl = {
             serviceOrganisations: "Organisatie toegang",
             serviceCollaborations: "Samenwerkingen inzichten",
             collaborationRequests: "Coll verzoeken",
+            joinRequests: "Join Reqs",
             me: "Profiel",
             about: "Over",
             apikeys: "API Keys",
@@ -295,7 +296,14 @@ I18n.translations.nl = {
                 cancelInvitation: "Weet je zeker dat je de voorwaarden niet wilt accepteren?",
                 declineInvitation: "Weet je zeker dat je de uitnodiging niet wilt accepteren?",
             }
-        }
+        },
+        joinRequests: {
+            backToGroups: "Terug naar alle verzoeken",
+            title: "Verzoek om lid te worden",
+            searchPlaceHolder: "Zoek verzoeken...",
+            noEntities: "Geen verzoeken gevonden",
+            edit: "Accepteer / keur af",
+        },
     },
     user: {
         titleUpdate: "Werk je gebruikersprofiel bij",
@@ -1214,7 +1222,7 @@ I18n.translations.nl = {
         runDbSeedConfirmation: "Weet je het absoluut zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle data en voeg de test data toe",
         runDbSeed: "Run",
-        seedResult: "Test data is toegevoegd in {{ms}} ms"
+        seedResult: "Test data is toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren."
     },
     access: {
         full: "Volledige",

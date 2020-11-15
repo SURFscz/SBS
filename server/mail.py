@@ -37,18 +37,21 @@ def _do_send_mail(subject, recipients, template, context, preview):
                   recipients=recipients)
     msg.html = render_template(f"{template}.html", **context)
     msg.body = render_template(f"{template}.txt", **context)
+
     suppress_mail = "suppress_sending_mails" in mail_ctx and mail_ctx.suppress_sending_mails
-    if not preview and not suppress_mail:
+    open_mail_in_browser = current_app.config["OPEN_MAIL_IN_BROWSER"]
+
+    if not preview and not suppress_mail and not open_mail_in_browser:
         mail = current_app.mail
         ctx = current_app.app_context()
         thr = Thread(target=_send_async_email, args=[ctx, msg, mail])
         thr.start()
 
-    if suppress_mail:
+    if suppress_mail and not preview:
         logger = ctx_logger("mail")
         logger.info(f"Sending mail {msg.html}")
 
-    if current_app.config["OPEN_MAIL_IN_BROWSER"] and not preview:
+    if open_mail_in_browser and not preview and False:
         _open_mail_in_browser(msg.html)
     return msg.html
 

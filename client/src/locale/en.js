@@ -71,6 +71,7 @@ I18n.translations.en = {
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights",
             collaborationRequests: "Coll requests",
+            joinRequests: "Join Reqs",
             me: "Profile",
             about: "About",
             apikeys: "API Keys",
@@ -294,7 +295,14 @@ I18n.translations.en = {
                 cancelInvitation: "Are you sure you don't want to accept the terms?",
                 declineInvitation: "Are you sure you don't want to accept the invitation?",
             }
-        }
+        },
+        joinRequests: {
+            backToJoinRequests: "Back to all join requests",
+            title: "Join Request",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No join requests were found",
+            edit: "Approve / decline",
+        },
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -1214,7 +1222,7 @@ I18n.translations.en = {
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
         runDbSeedInfo: "Delete all data and insert the test seed",
         runDbSeed: "Run",
-        seedResult: "Test data is successfully inserted in {{ms}} ms"
+        seedResult: "Test data is successfully inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache."
     },
 
     access: {

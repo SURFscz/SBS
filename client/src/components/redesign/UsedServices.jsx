@@ -213,7 +213,6 @@ class UsedServices extends React.Component {
         usedServices = usedServices.concat(serviceConnectionRequests);
 
         usedServices.forEach(s => s.usedService = true);
-        debugger;
         const columns = [
             {
                 nonSortable: true,
