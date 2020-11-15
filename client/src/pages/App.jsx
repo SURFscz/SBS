@@ -14,7 +14,6 @@ import Footer from "../components/Footer";
 import Flash from "../components/Flash";
 import {getParameterByName} from "../utils/QueryParameters";
 import CollaborationDetail from "./CollaborationDetail";
-import Organisations from "../components/redesign/Organisations";
 import OrganisationDetail from "./OrganisationDetail";
 import Home from "./Home";
 import JoinRequest from "./JoinRequest";
@@ -24,7 +23,6 @@ import OrganisationInvitation from "./OrganisationInvitation";
 import CollaborationForm from "./CollaborationForm";
 import NewOrganisationInvitation from "./NewOrganisationInvitation";
 import Service from "./Service";
-import Services from "./Services";
 import NewInvitation from "./NewInvitation";
 import Invitation from "./Invitation";
 import UserInvitation from "./UserInvitation";
@@ -38,12 +36,10 @@ import Profile from "./Profile";
 import Aup from "./Aup";
 import CollaborationRequest from "./CollaborationRequest";
 import ServiceConnectionRequest from "./ServiceConnectionRequest";
-import OrganisationDetailLite from "./OrganisationDetailLite";
 import ServiceRequest from "./ServiceRequest";
 import Confirmation from "./Confirmation";
 import {setFlash} from "../utils/Flash";
 import System from "./System";
-import OrganisationServices from "./OrganisationServices";
 import {BreadCrumb} from "../components/BreadCrumb";
 import Impersonating from "../components/Impersonating";
 import History from "../components/History";
@@ -245,28 +241,15 @@ class App extends React.Component {
                                                                     refreshUser={this.refreshUserMemberships}
                                                                     Component={CollaborationDetail} {...props}/>}/>
 
-                            <Route exact path="/organisations"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser} Component={Organisations} {...props}/>}/>
-
                             <Route exact path="/organisations/:id/:tab?"
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser}
                                        refreshUser={this.refreshUserMemberships}
                                        Component={OrganisationDetail} {...props}/>}/>
 
-                            <Route exact path="/organisations-lite/:id"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser}
-                                       Component={OrganisationDetailLite} {...props}/>}/>
-
                             <Route exact path="/audit-logs/:collection/:id"
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser} Component={History} {...props}/>}/>
-
-                            <Route exact path="/services"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser} Component={Services} {...props}/>}/>
 
                             <Route exact path="/services/:id/:tab?"
                                    render={props => <ProtectedRoute config={config}
@@ -294,10 +277,6 @@ class App extends React.Component {
 
                             <Route path="/service-connection-requests/:hash"
                                    render={props => <ServiceConnectionRequest {...props}/>}/>
-
-                            <Route path="/organisation-services/:organisation_id"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser} Component={OrganisationServices} {...props}/>}/>
 
                             <Route exact path="/organisation-invitations/:id"
                                    render={props => <ProtectedRoute currentUser={currentUser}
