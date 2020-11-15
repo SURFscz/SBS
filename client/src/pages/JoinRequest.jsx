@@ -8,6 +8,8 @@ import {setFlash} from "../utils/Flash";
 import Button from "../components/Button";
 import BackLink from "../components/BackLink";
 import {userRole} from "../utils/UserRole";
+import UnitHeader from "../components/redesign/UnitHeader";
+import {ReactComponent as CollaborationIcon} from "../icons/collaborations.svg";
 
 class JoinRequest extends React.Component {
 
@@ -100,6 +102,10 @@ class JoinRequest extends React.Component {
             this.state;
         const {user} = this.props;
         const joinRequestFound = joinRequest.id;
+        const title = I18n.t("joinRequest.title", {
+            collaboration: joinRequest.collaboration.name,
+            requester: joinRequest.user.name
+        });
         return (
             <div className="mod-join-request">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -107,17 +113,11 @@ class JoinRequest extends React.Component {
                                     confirm={confirmationDialogAction}
                                     question={leavePage ? undefined : I18n.t("joinRequest.declineConfirmation")}
                                     leavePage={leavePage}/>
-                {joinRequestFound && <BackLink history={this.props.history} fullAccess={true} role={userRole(user,
-                    {
-                        organisation_id: joinRequest.collaboration.organisation_id,
-                        collaboration_id: joinRequest.collaboration_id,
-                    })}/>}
-                <p className="title">{I18n.t("joinRequest.title", {
-                    collaboration: joinRequest.collaboration.name,
-                    requester: joinRequest.user.name
-                })}</p>
+                {joinRequestFound && <UnitHeader obj={({name: title, svg: CollaborationIcon})}/>}
                 <div className="join-request-container">
-                    <InputField name={I18n.t("joinRequest.message")} value={joinRequest.message} disabled={true}
+                    <InputField name={I18n.t("joinRequest.message")} value={joinRequest.message}
+                                disabled={true}
+                                multiline={true}
                                 toolTip={I18n.t("joinRequest.messageTooltip", {name: joinRequest.user.name})}/>
 
                     <InputField name={I18n.t("joinRequest.reference")} value={joinRequest.reference} disabled={true}

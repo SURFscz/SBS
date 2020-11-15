@@ -1214,7 +1214,7 @@ I18n.translations.en = {
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
         runDbSeedInfo: "Delete all data and insert the test seed",
         runDbSeed: "Run",
-        seedResult: "Test data is successfully inserted"
+        seedResult: "Test data is successfully inserted in {{ms}} ms"
     },
 
     access: {

@@ -25,7 +25,7 @@ class System extends React.Component {
         }
     }
 
-        componentDidMount = () => {
+    componentDidMount = () => {
         health().then(() => {
             AppStore.update(s => {
                 s.breadcrumb.paths = [
@@ -60,9 +60,11 @@ class System extends React.Component {
         if (showConfirmation) {
             this.confirm(() => this.doDbSeed(false), I18n.t("system.runDbSeedConfirmation"));
         } else {
-            this.setState({confirmationDialogOpen: false, busy: true, })
+            this.setState({confirmationDialogOpen: false, busy: true,});
+            const d = new Date();
             dbSeed().then(() => {
-                this.setState({busy: false, seedResult: I18n.t("system.seedResult")});
+                this.setState({busy: false, seedResult: I18n.t("system.seedResult",
+                        {ms: new Date().getMilliseconds() - d.getMilliseconds()})});
             });
         }
     }
