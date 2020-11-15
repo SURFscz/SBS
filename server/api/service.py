@@ -126,7 +126,7 @@ def service_by_entity_id():
     entity_id = urllib.parse.unquote(query_param("entity_id"))
     return Service.query \
                .outerjoin(Service.allowed_organisations) \
-               .options(contains_eager(Service.allowed_organisations)) \
+               .options(selectinload(Service.allowed_organisations)) \
                .filter(Service.entity_id == entity_id) \
                .one(), 200
 

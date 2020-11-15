@@ -364,17 +364,6 @@ class TestCollaboration(AbstractTest):
                                    "organisation_id": organisation_id})
         self.assertEqual(False, res)
 
-    def test_collaboration_services_by_id(self):
-        collaboration_id = self._find_by_identifier()["id"]
-        collaboration = self.get(f"/api/collaborations/services/{collaboration_id}",
-                                 query_data={"include_memberships": True})
-
-        self.assertTrue(len(collaboration["collaboration_memberships"]) > 0)
-        self.assertTrue(len(collaboration["services"]) > 0)
-
-        collaboration = self.get(f"/api/collaborations/services/{collaboration_id}")
-        self.assertTrue("collaboration_memberships" not in collaboration)
-
     def test_collaboration_invites(self):
         pre_count = Invitation.query.count()
         self.login("urn:john")
@@ -508,11 +497,6 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(403, response.status_code)
         data = response.json
         self.assertEqual(data["message"], "Not associated with an API key")
-
-    def test_collaboration_groups_by_id(self):
-        collaboration_id = self._find_by_identifier()["id"]
-        collaboration = self.get(f"/api/collaborations/groups/{collaboration_id}")
-        self.assertEqual(2, len(collaboration["groups"]))
 
     def test_collaborations_may_request_collaboration_true(self):
         self.login("urn:mary")
