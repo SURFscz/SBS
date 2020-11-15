@@ -1,0 +1,89 @@
+@import "../../stylesheets/vars";
+@import "../../stylesheets/forms";
+@import "../../stylesheets/unit_header";
+
+table.joinRequests {
+
+    thead {
+        th {
+            &.name {
+                width: 20%;
+                padding-left: 15px;
+            }
+
+            &.description {
+                width: 40%;
+            }
+
+            &.member {
+                width: 90px;
+            }
+
+            &.memberCount {
+                width: 20%;
+                text-align: center;
+            }
+
+            &.auto_provision_members {
+                width: 20%;
+                text-align: center;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.memberCount {
+                text-align: center;
+            }
+
+            &.auto_provision_members {
+                text-align: center;
+            }
+        }
+    }
+}
+
+.join-request-details-container {
+    display: flex;
+    margin: 40px 0 25px 0;
+    width: 70%;
+
+    a.back-to-join-requests {
+        display: flex;
+        align-items: flex-start;
+        white-space: nowrap;
+        color: $dark-grey;
+        text-decoration: underline;
+        margin-right: 60px;
+
+        svg {
+            margin-right: 5px;
+            fill: $dark-grey;
+            height: 22px;
+        }
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    div.join-request-form {
+        width: 100%;
+
+        h1 {
+            margin: 1px 0 30px 0;
+        }
+
+        display: flex;
+        flex-direction: column;
+
+        div.checkbox {
+           margin-top: 25px;
+        }
+    }
+}
