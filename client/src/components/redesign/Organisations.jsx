@@ -57,7 +57,7 @@ class Organisations extends React.Component {
             },
             {
                 key: "role",
-                header: I18n.t("profile.yourRole"),
+                header: "",// I18n.t("profile.yourRole"),
                 mapper: org => {
                     const cm = currentUser.organisation_memberships.find(m => m.organisation_id === org.id);
                     return cm ?
