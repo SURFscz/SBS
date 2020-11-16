@@ -94,7 +94,7 @@ export default class Collaborations extends React.PureComponent {
             },
             {
                 key: "role",
-                header: I18n.t("profile.yourRole"),
+                header: "",// I18n.t("profile.yourRole"),
                 mapper: collaboration => {
                     const cm = user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id);
                     return cm ?
