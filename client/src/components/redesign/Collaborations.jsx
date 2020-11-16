@@ -88,17 +88,26 @@ export default class Collaborations extends React.PureComponent {
                                             onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
             },
             {
+                key: "organisation_name",
+                header: I18n.t("models.serviceCollaborations.organisationName"),
+                mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
+            },
+            {
+                key: "role",
+                header: I18n.t("profile.yourRole"),
+                mapper: collaboration => {
+                    const cm = user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id);
+                    return cm ?
+                        <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
+                }
+            },
+            {
                 key: "collaboration_memberships_count",
                 header: I18n.t("models.collaborations.memberCount")
             },
             {
                 key: "invitations_count",
                 header: I18n.t("models.collaborations.invitationsCount")
-            },
-            {
-                key: "organisation_name",
-                header: I18n.t("models.serviceCollaborations.organisationName"),
-                mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
             }]
         return (
             <Entities entities={collaborations}

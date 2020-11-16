@@ -3,12 +3,19 @@ table.organisations {
     thead {
         th {
             &.name {
-                width: 45%;
+                width: 30%;
                 padding-left: 15px;
             }
+
             &.category {
-                width: 25%;
+                width: 20%;
             }
+
+            &.role {
+                width: 20%;
+                text-align: center;
+            }
+
             &.organisation_memberships_count {
                 width: 15%;
                 text-align: center;
@@ -25,6 +32,11 @@ table.organisations {
         td {
             &.name {
                 padding-left: 15px;
+            }
+
+            &.role {
+                width: 20%;
+                text-align: center;
             }
 
             &.organisation_memberships_count {

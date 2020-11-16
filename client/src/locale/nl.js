@@ -406,6 +406,7 @@ I18n.translations.nl = {
         eduperson_principal_name: "EPPN",
         created_at: "Account created",
         superUser: "Super-User",
+        yourRole: "Je rol",
         role: "Rol",
         member: "Lid",
         manager: "Manager",

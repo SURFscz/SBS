@@ -6,6 +6,7 @@
     margin: 80px auto;
     max-width: 800px;
     align-items: center;
+
     h2 {
         color: $dark-grey;
         font-size: 18px;
@@ -13,9 +14,11 @@
         text-align: center;
         line-height: 26px;
     }
+
     svg#swinging {
         max-height: 300px;
     }
+
     a.button {
         min-width: 325px;
     }
@@ -26,21 +29,26 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
     thead {
         th {
             &.name {
-                width: 30%;
+                width: 25%;
                 padding-left: 15px;
             }
 
             &.organisation_name {
-                width: 30%;
+                width: 25%;
             }
 
             &.collaboration_memberships_count {
+                width: 15%;
+                text-align: center;
+            }
+
+            &.role {
                 width: 20%;
                 text-align: center;
             }
 
             &.invitations_count {
-                width: 20%;
+                width: 15%;
                 text-align: center;
             }
         }
@@ -53,6 +61,10 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
             }
 
             &.collaboration_memberships_count {
+                text-align: center;
+            }
+
+            &.role {
                 text-align: center;
             }
 
