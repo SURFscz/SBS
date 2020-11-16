@@ -257,7 +257,15 @@ class CollaborationAdmins extends React.Component {
         const {collaboration, user} = this.props;
         deleteCollaborationMembership(collaboration.id, user.id)
             .then(() => {
-                this.props.refreshUser(() => this.props.history.push("/home"))
+                this.props.refreshUser(() => {
+                    if (user.admin) {
+                        this.refreshAndFlash(Promise.resolve(),
+                            I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}),
+                            () => this.setState({confirmationDialogOpen: false, loading: false}));
+                    } else {
+                        this.props.history.push("/home");
+                    }
+                })
             });
     };
 
