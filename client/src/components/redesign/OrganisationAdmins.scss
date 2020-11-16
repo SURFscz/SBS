@@ -1,3 +1,5 @@
+@import "../../stylesheets/vars";
+
 .mod-entities {
     div.impersonate {
         svg {
@@ -59,4 +61,52 @@
 
 }
 
+.organisation-invitation-details-container {
+    display: flex;
+    margin: 40px 0 25px 0;
+    width: 70%;
 
+    a.back-to-org-members {
+        display: flex;
+        align-items: flex-start;
+        white-space: nowrap;
+        color: $dark-grey;
+        text-decoration: underline;
+        margin-right: 60px;
+
+        svg {
+            margin-right: 5px;
+            fill: $dark-grey;
+            height: 22px;
+        }
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    div.organisation-invitation-form {
+        p.error {
+            color: $red;
+            display: inline-block;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        h2 {
+            font-size: 18px;
+        }
+
+        width: 100%;
+
+        h1 {
+            margin: 1px 0 30px 0;
+        }
+
+        display: flex;
+        flex-direction: column;
+
+        div.checkbox {
+           margin-top: 25px;
+        }
+    }
+}

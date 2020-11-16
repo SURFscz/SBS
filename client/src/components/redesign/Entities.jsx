@@ -115,7 +115,7 @@ class Entities extends React.Component {
                             className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""}`}>
                             {columns.map(column =>
                                 <td key={column.key}
-                                    onClick={column.key !== "check" && this.onRowClick(rowLinkMapper, entity)}
+                                    onClick={column.key !== "check" ? this.onRowClick(rowLinkMapper, entity) : undefined}
                                     className={`${column.key} ${column.nonSortable ? "" : "sortable"}`}>
                                     {this.getEntityValue(entity, column)}
                                 </td>)}
@@ -160,7 +160,7 @@ Entities.propTypes = {
     title: PropTypes.string,
     entities: PropTypes.array.isRequired,
     modelName: PropTypes.string.isRequired,
-    tableClassName: PropTypes.string.isRequired,
+    tableClassName: PropTypes.string,
     searchAttributes: PropTypes.array,
     defaultSort: PropTypes.string.isRequired,
     loading: PropTypes.bool.isRequired,

@@ -80,6 +80,7 @@ class UsedServices extends React.Component {
     }
 
     refreshAndFlash = (promise, flashMsg, callback) => {
+        this.setState({loading: true, confirmationDialogOpen: false})
         promise.then(() => {
             this.props.refresh(() => {
                 this.componentDidMount();
@@ -243,6 +244,7 @@ class UsedServices extends React.Component {
             <div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
+                                    isWarning={true}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}/>
                 <Entities entities={usedServices} modelName="servicesUsed" searchAttributes={["name"]}

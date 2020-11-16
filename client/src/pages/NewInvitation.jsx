@@ -23,6 +23,7 @@ import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {ReactComponent as InviteIcon} from "../icons/single-neutral-question.svg";
 import {ReactComponent as EyeIcon} from "../icons/eye-icon.svg";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class NewInvitation extends React.Component {
 
@@ -55,8 +56,8 @@ class NewInvitation extends React.Component {
                 () => this.props.history.push(`/collaborations/${this.props.match.params.collaboration_id}`)),
             leavePage: true,
             htmlPreview: "",
-            activeTab: "invitation_form"
-
+            activeTab: "invitation_form",
+            submitted: false
         };
     }
 
@@ -105,6 +106,7 @@ class NewInvitation extends React.Component {
                 administrators, message, collaboration, expiry_date, fileEmails, intended_role,
                 selectedGroup
             } = this.state;
+            this.setState({submitted: true});
             collaborationInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
@@ -305,12 +307,12 @@ class NewInvitation extends React.Component {
         const {
             email, initial, administrators, expiry_date, collaboration, intended_role,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName, fileInputKey,
-            fileTypeError, fileEmails, activeTab, groups, selectedGroup
+            fileTypeError, fileEmails, activeTab, groups, selectedGroup, submitted
         } = this.state;
-        if (isEmpty(collaboration)) {
-            return null;
+        if (isEmpty(collaboration) || submitted) {
+            return <SpinnerField/>
         }
-        const disabledSubmit = !initial && !this.isValid();
+        const disabledSubmit = (!initial && !this.isValid()) || submitted;
         return (
             <div className="mod-new-collaboration-invitation">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}

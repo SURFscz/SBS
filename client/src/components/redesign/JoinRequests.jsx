@@ -13,6 +13,7 @@ import InputField from "../InputField";
 import {joinRequestAccept, joinRequestDecline} from "../../api";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import UserColumn from "./UserColumn";
+import moment from "moment";
 
 class JoinRequests extends React.Component {
 
@@ -100,22 +101,33 @@ class JoinRequests extends React.Component {
                     <ChevronLeft/>{I18n.t("models.joinRequests.backToJoinRequests")}
                 </a>
                 <div className="join-request-form">
+                    <h2>{I18n.t("models.joinRequests.details",
+                        {
+                            date: moment(joinRequest.created_at * 1000).format("LL"),
+                            name: joinRequest.user.name
+                        })}</h2>
+
+                    {joinRequest.reference && <InputField name={I18n.t("joinRequest.reference")}
+                                                          value={joinRequest.reference}
+                                                          disabled={true}
+                                                          noInput={true}
+                                                          toolTip={I18n.t("joinRequest.referenceTooltip",
+                                                              {
+                                                                  collaboration: collaboration.name,
+                                                                  name: joinRequest.user.name
+                                                              })}/>}
+
                     <InputField name={I18n.t("joinRequest.message")} value={joinRequest.message}
                                 disabled={true}
                                 multiline={true}
                                 toolTip={I18n.t("joinRequest.messageTooltip", {name: joinRequest.user.name})}/>
-
-                    <InputField name={I18n.t("joinRequest.reference")} value={joinRequest.reference} disabled={true}
-                                toolTip={I18n.t("joinRequest.referenceTooltip",
-                                    {collaboration: collaboration.name, name: joinRequest.user.name})}/>
-
-                    <InputField name={I18n.t("joinRequest.userName")} value={joinRequest.user.name} disabled={true}/>
 
                     <section className="actions">
                         <Button warningButton={true} txt={I18n.t("joinRequest.decline")}
                                 onClick={() => this.confirm(this.declineJoinRequest, I18n.t("joinRequest.declineConfirmation"))}/>
                         <Button txt={I18n.t("joinRequest.accept")}
                                 onClick={this.acceptJoinRequest}/>
+                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                     </section>
                 </div>
             </div>)
@@ -151,8 +163,15 @@ class JoinRequests extends React.Component {
                 header: I18n.t("models.users.institute"),
                 mapper: entity => entity.user.schac_home_organisation
             },
+            {
+                nonSortable: true,
+                key: "open",
+                header: "",
+                mapper: entity => <Button onClick={this.openJoinRequest(entity)} txt={I18n.t("forms.open")}
+                                          small={true}/>
+            },
+
         ]
-        //mainly due to seed data
         return (
             <div>
                 <Entities entities={collaboration.join_requests}

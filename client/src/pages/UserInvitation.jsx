@@ -50,7 +50,10 @@ class UserInvitation extends React.Component {
                     aupLinks().then(res => this.setState({"aup": res}));
 
                 }
-            }).catch(() => setFlash(I18n.t("organisationInvitation.flash.notFound"), "error"));
+            }).catch(() => {
+                this.setState({errorOccurred: true});
+                setFlash(I18n.t("organisationInvitation.flash.notFound"), "error");
+            });
         } else {
             this.props.history.push("/404");
         }
@@ -193,7 +196,7 @@ class UserInvitation extends React.Component {
                                     question={confirmationDialogQuestion}/>
                 {!errorOccurred &&
                 <div className="invitation-container">
-                    <h1>Hi,</h1>
+                    {!isExpired && <h1>Hi,</h1>}
                     {isExpired &&
                     <p className="error">{expiredMessage}</p>}
                     {!isExpired && <div className="invitation-inner">

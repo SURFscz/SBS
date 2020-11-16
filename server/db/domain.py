@@ -302,6 +302,8 @@ class JoinRequest(Base, db.Model):
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="join_requests")
     hash = db.Column("hash", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
 
 
 class OrganisationInvitation(Base, db.Model):

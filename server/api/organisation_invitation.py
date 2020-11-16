@@ -95,6 +95,9 @@ def organisation_invitations_resend():
     confirm_organisation_admin(organisation_invitation.organisation_id)
 
     organisation_invitation.expiry_date = default_expiry_date()
+    if "message" in data:
+        organisation_invitation.message = data["message"]
+
     organisation_invitation = db.session.merge(organisation_invitation)
 
     mail_organisation_invitation({

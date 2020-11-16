@@ -69,7 +69,8 @@ class CollaborationDetail extends React.Component {
                         const {user} = this.props;
                         let tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                         const collaboration = res[0];
-                        collaboration.join_requests = collaboration.join_requests
+                        //mainly due to seed data
+                        collaboration.join_requests = (collaboration.join_requests || [])
                             .filter(jr => !collaboration.collaboration_memberships.find(cm => cm.user.id === jr.user.id));
                         tab = collaboration.join_requests.length === 0 && tab === "joinrequests" ? "admins" : tab;
                         const schacHomeOrganisation = adminOfCollaboration ? null : res[1];

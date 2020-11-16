@@ -50,6 +50,7 @@ class OrganisationServices extends React.Component {
     }
 
     refreshAndFlash = (promise, flashMsg, callback) => {
+        this.setState({loading: true});
         promise.then(() => {
             this.props.refresh(() => {
                 this.componentDidMount();

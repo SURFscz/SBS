@@ -22,6 +22,7 @@ import SelectField from "../components/SelectField";
 import {organisationRoles} from "../forms/constants";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class NewOrganisationInvitation extends React.Component {
 
@@ -51,7 +52,9 @@ class NewOrganisationInvitation extends React.Component {
                 () => this.props.history.push(`/organisations/${this.props.match.params.organisation_id}`)),
             leavePage: true,
             activeTab: "invitation_form",
-            htmlPreview: ""
+            htmlPreview: "",
+            loading: true,
+            submitted: false
         };
     }
 
@@ -60,7 +63,7 @@ class NewOrganisationInvitation extends React.Component {
         if (params.organisation_id) {
             organisationById(params.organisation_id)
                 .then(json => {
-                    this.setState({organisation: json});
+                    this.setState({organisation: json, loading: false});
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
@@ -86,6 +89,7 @@ class NewOrganisationInvitation extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {administrators, message, organisation, expiry_date, fileEmails} = this.state;
+            this.setState({submitted: true});
             organisationInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
@@ -166,6 +170,7 @@ class NewOrganisationInvitation extends React.Component {
     tabChanged = activeTab => {
         this.setState({activeTab: activeTab});
         if (activeTab === "invitation_preview") {
+            this.setState({loading: true});
             const {administrators, message, organisation, expiry_date, fileEmails, intended_role} = this.state;
             organisationInvitationsPreview({
                 administrators: administrators.concat(fileEmails),
@@ -173,7 +178,10 @@ class NewOrganisationInvitation extends React.Component {
                 intended_role,
                 expiry_date: expiry_date.getTime() / 1000,
                 organisation_id: organisation.id
-            }).then(res => this.setState({htmlPreview: res.html.replace(/class="link" href/g, "nope")}));
+            }).then(res => this.setState({
+                htmlPreview: res.html.replace(/class="link" href/g, "nope"),
+                loading: false
+            }));
         }
     };
 
@@ -265,12 +273,12 @@ class NewOrganisationInvitation extends React.Component {
         const {
             email, initial, administrators, expiry_date, organisation,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
-            fileTypeError, fileEmails, fileInputKey, activeTab, intended_role
+            fileTypeError, fileEmails, fileInputKey, activeTab, intended_role, loading, submitted
         } = this.state;
-        if (organisation === undefined) {
-            return null;
+        if (loading || submitted) {
+            return <SpinnerField/>
         }
-        const disabledSubmit = !initial && !this.isValid();
+        const disabledSubmit = (!initial && !this.isValid());
         return (
             <div className="mod-new-organisation-invitation">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}

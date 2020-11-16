@@ -85,6 +85,7 @@ I18n.translations.en = {
         cancel: "Cancel",
         showMore: "More",
         hideSome: "Less",
+        open: "Open",
         today: "Today",
         manage: "Configure",
         invalidInput: "Invalid input for {{name}}",
@@ -128,7 +129,9 @@ I18n.translations.en = {
             accepted: "Accepted",
             new: "Add member(s)",
             remove: "Delete",
-            mail: "Compose mail"
+            mail: "Compose mail",
+            backToMembers: "Back to all members...",
+            invitation: "Invitation sent by {{inviter}} to {{email}} on {{date}}"
         },
         organisations: {
             title: "Organisations",
@@ -302,6 +305,7 @@ I18n.translations.en = {
             searchPlaceHolder: "Search for requests...",
             noEntities: "No join requests were found",
             edit: "Approve / decline",
+            details: "Join request made by {{name}} on {{date}}"
         },
     },
     user: {

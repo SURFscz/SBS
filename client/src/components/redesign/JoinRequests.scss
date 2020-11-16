@@ -6,43 +6,30 @@ table.joinRequests {
 
     thead {
         th {
-            &.name {
-                width: 20%;
+            &.user__name {
+                width: 35%;
                 padding-left: 15px;
             }
 
-            &.description {
-                width: 40%;
+            &.user__schac_home_organisation {
+                width: 35%;
             }
 
-            &.member {
-                width: 90px;
+            &.open {
+                width: 30%;
             }
 
-            &.memberCount {
-                width: 20%;
-                text-align: center;
-            }
-
-            &.auto_provision_members {
-                width: 20%;
-                text-align: center;
-            }
         }
     }
 
     tbody {
         td {
-            &.name {
+            &.user__name {
                 padding-left: 15px;
             }
 
-            &.memberCount {
-                text-align: center;
-            }
-
-            &.auto_provision_members {
-                text-align: center;
+            &.open {
+                text-align: right;
             }
         }
     }
