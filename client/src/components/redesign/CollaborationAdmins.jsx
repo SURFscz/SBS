@@ -257,8 +257,9 @@ class CollaborationAdmins extends React.Component {
         const {collaboration, user} = this.props;
         deleteCollaborationMembership(collaboration.id, user.id)
             .then(() => {
+                const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id)
                 this.props.refreshUser(() => {
-                    if (user.admin) {
+                    if (canStay) {
                         this.refreshAndFlash(Promise.resolve(),
                             I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}),
                             () => this.setState({confirmationDialogOpen: false, loading: false}));
@@ -270,11 +271,17 @@ class CollaborationAdmins extends React.Component {
     };
 
     deleteMe = () => {
-        this.setState({
-            confirmationDialogOpen: true,
-            confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
-            confirmationDialogAction: this.doDeleteMe
-        });
+        const {collaboration, user} = this.props;
+        const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id);
+        if (canStay) {
+            this.doDeleteMe()
+        } else {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
+                confirmationDialogAction: this.doDeleteMe
+            });
+        }
     };
 
     getImpersonateMapper = entity => {
