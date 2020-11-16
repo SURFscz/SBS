@@ -85,6 +85,7 @@ I18n.translations.nl = {
         request: "Verstuur",
         cancel: "Annuleren",
         showMore: "Meer",
+        open: "Open",
         hideSome: "Minder",
         today: "Vandaag",
         manage: "Overzicht",
@@ -129,7 +130,9 @@ I18n.translations.nl = {
             accepted: "Geaccepteerd",
             new: "Nieuwe leden",
             remove: "Verwijder",
-            mail: "Mail"
+            mail: "Mail",
+            backToMembers: "Terug...",
+            invitation: "Uitnodiging verstuurd door {{inviter}} naar {{email}} op {{date}}"
         },
         organisations: {
             title: "Organisaties",
@@ -298,11 +301,12 @@ I18n.translations.nl = {
             }
         },
         joinRequests: {
-            backToGroups: "Terug naar alle verzoeken",
+            backToJoinRequests: "Terug naar alle verzoeken",
             title: "Verzoek om lid te worden",
             searchPlaceHolder: "Zoek verzoeken...",
             noEntities: "Geen verzoeken gevonden",
             edit: "Accepteer / keur af",
+            details: "Voerzoek gemaakt door {{name}} op {{date}}"
         },
     },
     user: {

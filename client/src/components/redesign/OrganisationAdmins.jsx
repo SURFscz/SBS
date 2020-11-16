@@ -5,7 +5,13 @@ import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
 import CheckBox from "../CheckBox";
-import {deleteOrganisationMembership, organisationInvitationDelete, updateOrganisationMembershipRole} from "../../api";
+import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+import {
+    deleteOrganisationMembership,
+    organisationInvitationDelete,
+    organisationInvitationResend,
+    updateOrganisationMembershipRole
+} from "../../api";
 import {setFlash} from "../../utils/Flash";
 import "./OrganisationAdmins.scss";
 import Select from "react-select";
@@ -17,6 +23,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 import UserColumn from "./UserColumn";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import SpinnerField from "./SpinnerField";
+import InputField from "../InputField";
+import moment from "moment";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
@@ -30,10 +39,14 @@ class OrganisationAdmins extends React.Component {
         this.state = {
             selectedMembers: {},
             allSelected: false,
+            selectedInvitationId: null,
+            message: "",
             confirmationDialogOpen: false,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
+            isWarning: false,
+            loading: true
         }
     }
 
@@ -46,7 +59,7 @@ class OrganisationAdmins extends React.Component {
             acc[entity.id] = {selected: false, ref: entity};
             return acc;
         }, {})
-        this.setState({selectedMembers});
+        this.setState({selectedMembers, loading: false, selectedInvitationId: null, message: ""});
     }
 
     changeMemberRole = member => selectedOption => {
@@ -59,6 +72,7 @@ class OrganisationAdmins extends React.Component {
             this.setState({
                 confirmationDialogOpen: true,
                 confirmationDialogAction: () => {
+                    this.setState({loading: true});
                     updateOrganisationMembershipRole(organisation.id, member.user.id, selectedOption.value)
                         .then(() => {
                             this.props.refreshUser(() => this.props.history.push("/home"));
@@ -72,6 +86,7 @@ class OrganisationAdmins extends React.Component {
                 confirmationQuestion: I18n.t("collaborationDetail.downgradeYourselfMemberConfirmation"),
             });
         } else {
+            this.setState({loading: true});
             updateOrganisationMembershipRole(organisation.id, member.user.id, selectedOption.value)
                 .then(() => {
                     this.props.refresh(this.componentDidMount);
@@ -84,9 +99,12 @@ class OrganisationAdmins extends React.Component {
     };
 
     onCheck = memberShip => e => {
-        const {selectedMembers} = this.state;
-        selectedMembers[memberShip.id].selected = e.target.checked;
+        const {selectedMembers, allSelected} = this.state;
+        const checked = e.target.checked;
+        selectedMembers[memberShip.id].selected = checked;
         this.setState({selectedMembers: {...selectedMembers}});
+        this.setState({selectedMembers: {...selectedMembers}, allSelected : checked ? allSelected : false});
+
     }
 
     allSelected = e => {
@@ -98,7 +116,7 @@ class OrganisationAdmins extends React.Component {
     }
 
     doDeleteMe = () => {
-        this.setState({confirmationDialogOpen: false});
+        this.setState({confirmationDialogOpen: false, loading: true});
         const {organisation, user} = this.props;
         deleteOrganisationMembership(organisation.id, user.id)
             .then(() => {
@@ -116,8 +134,16 @@ class OrganisationAdmins extends React.Component {
 
     gotoInvitation = invitation => e => {
         stopEvent(e);
-        this.props.history.push(`/organisation-invitations/${invitation.id}`);
+        const {organisation} = this.props;
+        const selectedInvitation = organisation.organisation_invitations.find(i => i.id === invitation.id)
+        this.setState({selectedInvitationId: selectedInvitation.id, message: selectedInvitation.message});
     };
+
+    getSelectedInvitation = () => {
+        const {selectedInvitationId} = this.state;
+        const {organisation} = this.props;
+        return organisation.organisation_invitations.find(i => i.id === selectedInvitationId);
+    }
 
     remove = showConfirmation => () => {
         if (showConfirmation) {
@@ -128,21 +154,21 @@ class OrganisationAdmins extends React.Component {
                 confirmationQuestion: I18n.t("organisationDetail.deleteMemberConfirmation"),
             });
         } else {
-            this.setState({confirmationDialogOpen: false});
+            this.setState({confirmationDialogOpen: false, loading: true});
             const {selectedMembers} = this.state;
             const {user: currentUser, organisation} = this.props;
+            const currentUserDeleted = Object.values(selectedMembers)
+                .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
             const selected = Object.keys(selectedMembers)
                 .filter(id => selectedMembers[id].selected);
-            const currentUserDeleted = selected
-                .some(id => selectedMembers[id].ref.user.id === currentUser.id);
-            const promises = selected
-                .map(id => {
+
+            const promises = selected.map(id => {
                     const ref = selectedMembers[id].ref;
                     return ref.invite ? organisationInvitationDelete(ref.id) :
                         deleteOrganisationMembership(organisation.id, ref.user.id)
                 });
             Promise.all(promises).then(() => {
-                if (currentUserDeleted) {
+                if (currentUserDeleted && !currentUser.admin) {
                     this.props.refreshUser(() => this.props.history.push("/home"));
                 } else {
                     this.props.refresh(this.componentDidMount);
@@ -150,6 +176,17 @@ class OrganisationAdmins extends React.Component {
                 }
             });
         }
+    }
+
+    refreshAndFlash = (promise, flashMsg, callback) => {
+        this.setState({loading: true});
+        promise.then(() => {
+            this.props.refresh(() => {
+                this.componentDidMount();
+                setFlash(flashMsg);
+                callback && callback();
+            });
+        });
     }
 
     actionButtons = selectedMembers => {
@@ -162,12 +199,121 @@ class OrganisationAdmins extends React.Component {
             </div>);
     }
 
+    cancelSideScreen = e => {
+        stopEvent(e);
+        this.setState({selectedInvitationId: null, message: "", confirmationDialogOpen: false});
+    }
+
+    closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
+
+    delete = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            leavePage: false,
+            isWarning: true,
+            confirmationQuestion: I18n.t("organisationInvitation.deleteInvitation"),
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationDialogAction: this.doDelete
+        });
+    };
+
+    doDelete = () => {
+        const invitation = this.getSelectedInvitation();
+        const {organisation} = this.props;
+        this.refreshAndFlash(organisationInvitationDelete(invitation.id),
+            I18n.t("organisationInvitation.flash.inviteDeleted", {name: organisation.name}),
+            this.cancelSideScreen)
+    };
+
+    resend = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            leavePage: false,
+            isWarning: false,
+            confirmationQuestion: I18n.t("organisationInvitation.resendInvitation"),
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationDialogAction: this.doResend
+        });
+    };
+
+    doResend = () => {
+        const invitation = this.getSelectedInvitation();
+        const {organisation} = this.props;
+        const {message} = this.state;
+        this.refreshAndFlash(organisationInvitationResend({...invitation, message}),
+            I18n.t("organisationInvitation.flash.inviteResend", {name: organisation.name}),
+            this.cancelSideScreen)
+    };
+
+
+    renderSelectedInvitation = (organisation, invitation) => {
+        const {
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
+            isWarning, message
+        } = this.state;
+        const today = moment();
+        const inp = moment(invitation.expiry_date * 1000);
+        const isExpired = today.isAfter(inp);
+        const expiredMessage = isExpired ? I18n.t("organisationInvitation.expiredAdmin", {expiry_date: inp.format("LL")}) : null;
+        return (
+            <div className="organisation-invitation-details-container">
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    isWarning={isWarning}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationQuestion}/>
+                <a className="back-to-org-members" onClick={this.cancelSideScreen} href={"/cancel"}>
+                    <ChevronLeft/>{I18n.t("models.orgMembers.backToMembers")}
+                </a>
+                <div className="organisation-invitation-form">
+                    {isExpired &&
+                    <p className="error">{expiredMessage}</p>}
+                    <h2>{I18n.t("models.orgMembers.invitation",
+                        {
+                            date: moment(invitation.created_at * 1000).format("LL"),
+                            inviter: invitation.user.name,
+                            email: invitation.invitee_email
+                        })}</h2>
+
+                    <InputField value={I18n.t(`organisation.organisationRoles.${invitation.intended_role}`)}
+                                noInput={true}
+                                name={I18n.t("organisationInvitation.role")}
+                                disabled={true}/>
+
+                    <InputField value={message}
+                                name={I18n.t("organisationInvitation.message")}
+                                toolTip={I18n.t("organisationInvitation.messageTooltip", {name: invitation.user.name})}
+                                onChange={e => this.setState({message: e.target.value})}
+                                large={true}
+                                multiline={true}/>
+
+                    <section className="actions">
+                        <Button warningButton={true} txt={I18n.t("organisationInvitation.delete")}
+                                onClick={this.delete}/>
+                        <Button txt={I18n.t("organisationInvitation.resend")}
+                                onClick={this.resend}/>
+                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
+                    </section>
+                </div>
+            </div>)
+
+    }
+
+
     render() {
         const {user: currentUser, organisation} = this.props;
         const {
             selectedMembers, allSelected, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogAction, confirmationQuestion
+            confirmationDialogAction, confirmationQuestion, loading
         } = this.state;
+        if (loading) {
+            return <SpinnerField/>;
+        }
+        const selectedInvitation = this.getSelectedInvitation();
+        if (selectedInvitation) {
+            return this.renderSelectedInvitation(organisation, selectedInvitation);
+        }
+
         const admins = organisation.organisation_memberships;
         const invites = organisation.organisation_invitations;
         invites.forEach(invite => invite.invite = true);
@@ -231,13 +377,13 @@ class OrganisationAdmins extends React.Component {
                 key: "impersonate",
                 header: "",
                 mapper: entity => {
-                    if (entity.invite || (currentUser.admin && entity.user.id === currentUser.id)) {
-                        return null;
+                    if (entity.invite) {
+                        return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
                     }
-                    if (!currentUser.admin && entity.user.id === currentUser.id) {
+                    if (entity.user.id === currentUser.id) {
                         return <Button onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
                     }
-                    if (!currentUser.admin) {
+                    if (!currentUser.admin || entity.user.id === currentUser.id) {
                         return null;
                     }
                     return (<div className="impersonate" onClick={() =>

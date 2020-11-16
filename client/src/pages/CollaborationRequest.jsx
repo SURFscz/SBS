@@ -19,6 +19,7 @@ import {sanitizeShortName} from "../validations/regExps";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import CroppedImageField from "../components/redesign/CroppedImageField";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class CollaborationRequest extends React.Component {
 
@@ -37,7 +38,8 @@ class CollaborationRequest extends React.Component {
             approve: true,
             organisations: [],
             alreadyExists: {},
-            originalRequestedName: ""
+            originalRequestedName: "",
+            loading: true
         };
     }
 
@@ -58,7 +60,9 @@ class CollaborationRequest extends React.Component {
                 collaborationRequest.organisation = organisations.find(org => org.value = collaborationRequest.organisation.id);
                 this.setState({
                     collaborationRequest: collaborationRequest,
-                    originalRequestedName: collaborationRequest.name, organisations: organisations
+                    originalRequestedName: collaborationRequest.name,
+                    organisations: organisations,
+                    loading: false
                 });
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
@@ -120,9 +124,9 @@ class CollaborationRequest extends React.Component {
                 dialogQuestion: I18n.t("collaborationRequest.denyConfirmation"),
                 leavePage: false,
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
-                confirmationDialogAction: () => this.setState({confirmationDialogOpen: false},
+                confirmationDialogAction: () => this.setState({confirmationDialogOpen: false, loading: true},
                     () => {
-                        denyRequestCollaboration(this.state.collaborationRequest.id).then(r => {
+                        denyRequestCollaboration(this.state.collaborationRequest.id).then(() => {
                             this.props.history.push(`/organisations/${this.state.collaborationRequest.organisation_id}`);
                             setFlash(I18n.t("collaborationRequest.flash.denied", {name: this.state.collaborationRequest.name}));
                         });
@@ -131,6 +135,7 @@ class CollaborationRequest extends React.Component {
         } else if (this.isValid()) {
             const {collaborationRequest} = this.state;
             collaborationRequest.organisation_id = collaborationRequest.organisation.value;
+            this.setState({loading: true});
             approveRequestCollaboration(collaborationRequest).then(res => {
                 this.props.history.push(`/organisations/${collaborationRequest.organisation_id}`);
                 setFlash(I18n.t("collaborationRequest.flash.approved", {name: collaborationRequest.name}));
@@ -141,7 +146,7 @@ class CollaborationRequest extends React.Component {
     submit = approve => () => {
         const {initial} = this.state;
         if (initial) {
-            this.setState({initial: false}, this.doSubmit(approve))
+            this.setState({initial: false}, this.doSubmit(approve));
         } else {
             this.doSubmit(approve)();
         }
@@ -163,8 +168,11 @@ class CollaborationRequest extends React.Component {
     render() {
         const {
             collaborationRequest, initial, alreadyExists, confirmationDialogOpen, confirmationDialogAction,
-            cancelDialogAction, leavePage, organisations, dialogQuestion, originalRequestedName
+            cancelDialogAction, leavePage, organisations, dialogQuestion, originalRequestedName, loading
         } = this.state;
+        if (loading) {
+            return <SpinnerField/>
+        }
         const disabledSubmit = !initial && !this.isValid();
         return (
             <div className="mod-collaboration-request-container">

@@ -9,6 +9,7 @@ import {
     createCollaborationMembershipRole,
     deleteCollaborationMembership,
     invitationDelete,
+    invitationResend,
     updateCollaborationMembershipRole
 } from "../../api";
 import {setFlash} from "../../utils/Flash";
@@ -23,6 +24,9 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import UserColumn from "./UserColumn";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
+import moment from "moment";
+import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
+import InputField from "../InputField";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.admin`)},
@@ -38,10 +42,13 @@ class CollaborationAdmins extends React.Component {
         this.state = {
             selectedMembers: {},
             allSelected: false,
+            selectedInvitationId: null,
+            message: "",
             confirmationDialogOpen: false,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
+            isWarning: true,
             filterOptions: [],
             filterValue: {value: memberFilterValue, label: ""},
             hideInvitees: false,
@@ -72,7 +79,9 @@ class CollaborationAdmins extends React.Component {
             selectedMembers,
             filterValue: filterOptions[0],
             filterOptions: filterOptions.concat(groupOptions),
-            loading: false
+            loading: false,
+            selectedInvitationId: null,
+            message: ""
         });
     }
 
@@ -86,6 +95,7 @@ class CollaborationAdmins extends React.Component {
             this.setState({
                 confirmationDialogOpen: true,
                 confirmationDialogAction: () => {
+                    this.setState({loading: true});
                     updateCollaborationMembershipRole(collaboration.id, member.user.id, selectedOption.value)
                         .then(() => {
                             this.props.refreshUser(() => this.props.history.push("/home"));
@@ -99,6 +109,7 @@ class CollaborationAdmins extends React.Component {
                 confirmationQuestion: I18n.t("collaborationDetail.downgradeYourselfMemberConfirmation"),
             });
         } else {
+            this.setState({loading: true});
             updateCollaborationMembershipRole(collaboration.id, member.user.id, selectedOption.value)
                 .then(() => {
                     this.props.refresh(this.componentDidMount);
@@ -112,9 +123,10 @@ class CollaborationAdmins extends React.Component {
     };
 
     onCheck = memberShip => e => {
-        const {selectedMembers} = this.state;
-        selectedMembers[memberShip.id].selected = e.target.checked;
-        this.setState({selectedMembers: {...selectedMembers}});
+        const {selectedMembers, allSelected} = this.state;
+        const checked = e.target.checked;
+        selectedMembers[memberShip.id].selected = checked;
+        this.setState({selectedMembers: {...selectedMembers}, allSelected: checked ? allSelected : false});
     }
 
     allSelected = e => {
@@ -127,32 +139,46 @@ class CollaborationAdmins extends React.Component {
 
     gotoInvitation = invitation => e => {
         stopEvent(e);
-        this.props.history.push(`/invitations/${invitation.id}`);
+        const {collaboration} = this.props;
+        const selectedInvitation = collaboration.invitations.find(i => i.id === invitation.id)
+        this.setState({selectedInvitationId: selectedInvitation.id, message: selectedInvitation.message});
     };
+
+    getSelectedInvitation = () => {
+        const {selectedInvitationId} = this.state;
+        const {collaboration} = this.props;
+        return (collaboration.invitations || []).find(i => i.id === selectedInvitationId);
+    }
 
     remove = showConfirmation => () => {
         if (showConfirmation) {
             this.setState({
                 confirmationDialogOpen: true,
+                isWarning: true,
                 confirmationDialogAction: this.remove(false),
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
                 confirmationQuestion: I18n.t("collaborationDetail.deleteEntitiesConfirmation"),
             });
         } else {
-            this.setState({confirmationDialogOpen: false});
+            this.setState({confirmationDialogOpen: false, loading: true});
             const {selectedMembers} = this.state;
-            const {collaboration} = this.props;
-
-            const promises = Object.keys(selectedMembers)
-                .filter(id => selectedMembers[id].selected)
-                .map(id => {
-                    const ref = selectedMembers[id].ref;
-                    return ref.invite ? invitationDelete(ref.id) :
-                        deleteCollaborationMembership(collaboration.id, ref.user.id)
-                });
+            const {user: currentUser, collaboration} = this.props;
+            const currentUserDeleted = Object.values(selectedMembers)
+                .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
+            const selected = Object.keys(selectedMembers)
+                .filter(id => selectedMembers[id].selected);
+            const promises = selected.map(id => {
+                const ref = selectedMembers[id].ref;
+                return ref.invite ? invitationDelete(ref.id) :
+                    deleteCollaborationMembership(collaboration.id, ref.user.id)
+            });
             Promise.all(promises).then(() => {
-                this.props.refresh(this.componentDidMount);
-                setFlash(I18n.t("collaborationDetail.flash.entitiesDeleted"));
+                if (currentUserDeleted && !currentUser.admin) {
+                    this.props.refreshUser(() => this.props.history.push("/home"));
+                } else {
+                    this.props.refresh(this.componentDidMount);
+                    setFlash(I18n.t("organisationDetail.flash.entitiesDeleted"));
+                }
             });
         }
     }
@@ -164,6 +190,17 @@ class CollaborationAdmins extends React.Component {
         }
         const invitesFiltered = hideInvitees ? [] : isAdminView ? invites.filter(invite => invite.intended_role === "admin") : invites;
         return entities.concat(invitesFiltered);
+    }
+
+    refreshAndFlash = (promise, flashMsg, callback) => {
+        this.setState({loading: true});
+        promise.then(() => {
+            this.props.refresh(() => {
+                this.componentDidMount();
+                setFlash(flashMsg);
+                callback && callback();
+            });
+        });
     }
 
     actionButtons = (isAdminOfCollaboration, selectedMembers, filteredEntities, members, currentUser) => {
@@ -186,11 +223,13 @@ class CollaborationAdmins extends React.Component {
                            target="_blank" rel="noopener noreferrer">
                     {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
                 </a>}
-                {!isMember && <Button className="right" txt={I18n.t("collaborationDetail.addMe")} onClick={() =>
+                {!isMember && <Button className="right" txt={I18n.t("collaborationDetail.addMe")} onClick={() => {
+                    this.setState({loading: true});
                     createCollaborationMembershipRole(this.props.collaboration.id).then(() => {
                         this.props.refresh(this.componentDidMount);
                         setFlash(I18n.t("collaborationDetail.flash.meAdded", {name: this.props.collaboration.name}));
                     })
+                }
                 }/>}
             </div>);
     }
@@ -214,7 +253,7 @@ class CollaborationAdmins extends React.Component {
     }
 
     doDeleteMe = () => {
-        this.setState({confirmationDialogOpen: false});
+        this.setState({confirmationDialogOpen: false, loading: true});
         const {collaboration, user} = this.props;
         deleteCollaborationMembership(collaboration.id, user.id)
             .then(() => {
@@ -231,33 +270,138 @@ class CollaborationAdmins extends React.Component {
     };
 
     getImpersonateMapper = entity => {
-        if (entity.invite) {
-            return null;
-        }
         const {user: currentUser} = this.props;
-        if (currentUser.admin && currentUser.id !== entity.user.id) {
-            return <div className="impersonate" onClick={() =>
-                emitter.emit("impersonation",
-                    {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
-                <HandIcon/>
-            </div>
+        if (entity.invite) {
+            return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
         }
-        if (currentUser.id === entity.user.id) {
+        if (entity.user.id === currentUser.id) {
             return <Button onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
         }
-        return null;
+        if (!currentUser.admin || entity.user.id === currentUser.id) {
+            return null;
+        }
+        return (<div className="impersonate" onClick={() =>
+            emitter.emit("impersonation",
+                {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
+            <HandIcon/>
+        </div>);
     }
+
+    cancelSideScreen = e => {
+        stopEvent(e);
+        this.setState({selectedInvitationId: null, message: "", confirmationDialogOpen: false});
+    }
+
+    closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
+
+    delete = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            leavePage: false,
+            isWarning: true,
+            confirmationQuestion: I18n.t("organisationInvitation.deleteInvitation"),
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationDialogAction: this.doDelete
+        });
+    };
+
+    doDelete = () => {
+        const invitation = this.getSelectedInvitation();
+        const {collaboration} = this.props;
+        this.refreshAndFlash(invitationDelete(invitation.id),
+            I18n.t("organisationInvitation.flash.inviteDeleted", {name: collaboration.name}),
+            this.cancelSideScreen)
+    };
+
+    resend = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            leavePage: false,
+            isWarning: false,
+            confirmationQuestion: I18n.t("organisationInvitation.resendInvitation"),
+            cancelDialogAction: this.closeConfirmationDialog,
+            confirmationDialogAction: this.doResend
+        });
+    };
+
+    doResend = () => {
+        const invitation = this.getSelectedInvitation();
+        const {collaboration} = this.props;
+        const {message} = this.state;
+        this.refreshAndFlash(invitationResend({...invitation, message}),
+            I18n.t("organisationInvitation.flash.inviteResend", {name: collaboration.name}),
+            this.cancelSideScreen);
+    };
+
+    renderSelectedInvitation = (collabortion, invitation) => {
+        const {
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
+            isWarning, message
+        } = this.state;
+        const today = moment();
+        const inp = moment(invitation.expiry_date * 1000);
+        const isExpired = today.isAfter(inp);
+        const expiredMessage = isExpired ? I18n.t("organisationInvitation.expiredAdmin", {expiry_date: inp.format("LL")}) : null;
+        return (
+            <div className="collaboration-invitation-details-container">
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    isWarning={isWarning}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationQuestion}/>
+                <a className="back-to-org-members" onClick={this.cancelSideScreen} href={"/cancel"}>
+                    <ChevronLeft/>{I18n.t("models.orgMembers.backToMembers")}
+                </a>
+                <div className="collaboration-invitation-form">
+                    {isExpired &&
+                    <p className="error">{expiredMessage}</p>}
+                    <h2>{I18n.t("models.orgMembers.invitation",
+                        {
+                            date: moment(invitation.created_at * 1000).format("LL"),
+                            inviter: invitation.user.name,
+                            email: invitation.invitee_email
+                        })}</h2>
+
+                    <InputField value={I18n.t(`organisation.${invitation.intended_role}`)}
+                                noInput={true}
+                                name={I18n.t("organisationInvitation.role")}
+                                disabled={true}/>
+
+                    <InputField value={message}
+                                name={I18n.t("organisationInvitation.message")}
+                                toolTip={I18n.t("organisationInvitation.messageTooltip", {name: invitation.user.name})}
+                                onChange={e => this.setState({message: e.target.value})}
+                                large={true}
+                                multiline={true}/>
+
+                    <section className="actions">
+                        <Button warningButton={true} txt={I18n.t("organisationInvitation.delete")}
+                                onClick={this.delete}/>
+                        <Button txt={I18n.t("organisationInvitation.resend")}
+                                onClick={this.resend}/>
+                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
+                    </section>
+                </div>
+            </div>)
+
+    }
+
 
     render() {
         const {user: currentUser, collaboration, isAdminView, showMemberView} = this.props;
         const {
             selectedMembers, allSelected, filterOptions, filterValue, hideInvitees,
-            confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogAction, confirmationQuestion,loading
+            confirmationDialogOpen, cancelDialogAction, isWarning,
+            confirmationDialogAction, confirmationQuestion, loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
+        const selectedInvitation = this.getSelectedInvitation();
+        if (selectedInvitation) {
+            return this.renderSelectedInvitation(collaboration, selectedInvitation);
+        }
+
         const isAdminOfCollaboration = isUserAllowed(ROLES.COLL_ADMIN, currentUser, collaboration.organisation_id, collaboration.id) && !showMemberView;
         const members = collaboration.collaboration_memberships;
         const invites = collaboration.invitations || [];
@@ -331,6 +475,7 @@ class CollaborationAdmins extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
+                                    isWarning={isWarning}
                                     question={confirmationQuestion}/>
 
                 <Entities entities={filteredEntities}

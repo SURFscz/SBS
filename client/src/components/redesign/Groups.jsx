@@ -58,6 +58,7 @@ class Groups extends React.Component {
     }
 
     refreshAndFlash = (promise, flashMsg, callback) => {
+        this.setState({loading: true, confirmationDialogOpen: false});
         promise.then(res => {
             this.props.refresh(() => {
                 this.componentDidMount(() => callback && callback(res));
@@ -197,7 +198,7 @@ class Groups extends React.Component {
                     </div>}
 
                 </section>
-                <p className={`description ${mayCreateGroups ? "" : "no-header-actions" }`}>{selectedGroup.description}</p>
+                <p className={`description ${mayCreateGroups ? "" : "no-header-actions"}`}>{selectedGroup.description}</p>
                 <div className="org-attributes-container">
                     <div className="org-attributes">
                         <span>{I18n.t("models.groups.autoProvisioning")}</span>
@@ -427,11 +428,11 @@ class Groups extends React.Component {
         const {
             loading, createNewGroup, editGroup
         } = this.state;
-        const {collaboration, user: currentUser} = this.props;
-        const {showMemberView} = this.props;
         if (loading) {
             return <SpinnerField/>;
         }
+        const {collaboration, user: currentUser} = this.props;
+        const {showMemberView} = this.props;
         const selectedGroup = this.getSelectedGroup();
         const mayCreateGroups = isUserAllowed(ROLES.COLL_ADMIN, currentUser, collaboration.organisation_id, collaboration.id) && !showMemberView;
         if (createNewGroup || (editGroup && selectedGroup)) {
@@ -466,7 +467,7 @@ class Groups extends React.Component {
                 key: "memberCount",
                 header: I18n.t("models.groups.memberCount")
             },
-            ]
+        ]
         if (mayCreateGroups) {
             columns.push({
                 key: "auto_provision_members",

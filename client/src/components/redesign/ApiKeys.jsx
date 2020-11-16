@@ -12,6 +12,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 import ApiKeysExplanation from "../explanations/ApiKeys";
 import {stopEvent} from "../../utils/Utils";
+import SpinnerField from "./SpinnerField";
 
 class ApiKeys extends React.Component {
 
@@ -24,8 +25,13 @@ class ApiKeys extends React.Component {
             confirmationDialogOpen: false,
             confirmationDialogQuestion: undefined,
             confirmationDialogAction: () => true,
-            cancelDialogAction: () => this.setState({confirmationDialogOpen: false})
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            loading: true
         }
+    }
+
+    componentDidMount = () => {
+        this.setState({loading: false});
     }
 
     fetchNewApiValue = () => {
@@ -38,8 +44,10 @@ class ApiKeys extends React.Component {
     };
 
     refreshAndFlash = (promise, flashMsg, callback) => {
+        this.setState({loading: true});
         promise.then(res => {
             this.props.refresh(() => {
+                this.componentDidMount();
                 setFlash(flashMsg);
                 callback && callback(res);
             });
@@ -115,8 +123,11 @@ class ApiKeys extends React.Component {
     render() {
         const {
             createNewApiKey, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion,
-            confirmationDialogOpen
+            confirmationDialogOpen, loading
         } = this.state;
+        if (loading) {
+            return <SpinnerField/>
+        }
         const {organisation} = this.props;
         if (createNewApiKey) {
             return this.renderNewApiKeyForm();

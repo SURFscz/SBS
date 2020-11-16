@@ -71,6 +71,7 @@
         background-color: $lighter-grey;
         text-align: center;
         border-left: 1px solid black;
+
         label.file-upload {
             z-index: 99;
             cursor: pointer;
@@ -93,6 +94,12 @@
         &:hover {
             color: darken($blue, 15%);
         }
+
+    }
+
+    span.no-input {
+        margin-bottom: 6px;
+        display: block;
 
     }
 
