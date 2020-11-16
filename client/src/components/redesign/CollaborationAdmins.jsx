@@ -226,7 +226,7 @@ class CollaborationAdmins extends React.Component {
                 {!isMember && <Button className="right" txt={I18n.t("collaborationDetail.addMe")} onClick={() => {
                     this.setState({loading: true});
                     createCollaborationMembershipRole(this.props.collaboration.id).then(() => {
-                        this.props.refresh(this.componentDidMount);
+                        this.props.refreshUser(() => this.props.refresh(this.componentDidMount));
                         setFlash(I18n.t("collaborationDetail.flash.meAdded", {name: this.props.collaboration.name}));
                     })
                 }

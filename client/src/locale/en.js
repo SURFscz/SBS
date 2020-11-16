@@ -405,6 +405,7 @@ I18n.translations.en = {
         eduperson_principal_name: "EPPN",
         created_at: "Account created",
         superUser: "Super User",
+        yourRole: "Your role",
         role: "Role",
         member: "Member",
         manager: "Manager",

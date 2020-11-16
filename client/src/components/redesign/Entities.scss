@@ -184,6 +184,21 @@
             background-color: $light-green;
             color: black;
         }
+
+        &.admin {
+            background-color: $green-light;
+            color: black;
+        }
+
+        &.manager {
+            background-color: $purple;
+            color: white;
+        }
+
+        &.member {
+            background-color: $yellow;
+            color: black;
+        }
     }
 
 

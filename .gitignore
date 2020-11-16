@@ -103,6 +103,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+DEMO.txt
 TODO.txt
 questions.txt
 backlog.txt

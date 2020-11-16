@@ -56,6 +56,15 @@ class Organisations extends React.Component {
                 header: I18n.t("models.organisations.category")
             },
             {
+                key: "role",
+                header: I18n.t("profile.yourRole"),
+                mapper: org => {
+                    const cm = currentUser.organisation_memberships.find(m => m.organisation_id === org.id);
+                    return cm ?
+                        <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
+                }
+            },
+            {
                 key: "organisation_memberships_count",
                 header: I18n.t("models.organisations.memberCount"),
                 mapper: org => org.organisation_memberships_count
