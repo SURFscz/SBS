@@ -4,6 +4,7 @@ import "./AboutCollaboration.scss";
 import {ReactComponent as ServicesIcon} from "../../icons/services.svg";
 import {removeDuplicates, stopEvent} from "../../utils/Utils";
 import Logo from "./Logo";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
 
 const memberCutOff = 10;
 
@@ -33,7 +34,9 @@ class AboutCollaboration extends React.Component {
 
     render() {
         const {showAll} = this.state;
-        const {collaboration} = this.props;
+        const {collaboration, user, showMemberView} = this.props;
+        const isAllowedToSeeMembers =
+            isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id) && !showMemberView;
         const services = removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
         const {collaboration_memberships} = collaboration
         const memberships = collaboration_memberships
@@ -64,7 +67,7 @@ class AboutCollaboration extends React.Component {
                     {services.length === 0 && <div className="services">
                         <h1>{I18n.t("models.collaboration.noServices")}</h1>
                     </div>}
-                    {collaboration.disclose_member_information && <div className="members">
+                    {(collaboration.disclose_member_information || isAllowedToSeeMembers) && <div className="members">
                         <div className="members-header">
                             <h1>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships.length})}</h1>
                             <a href="/details"
@@ -85,7 +88,7 @@ class AboutCollaboration extends React.Component {
                             {nbr: collaboration_memberships.length - memberCutOff})}</a>}
 
                     </div>}
-                    {!collaboration.disclose_member_information && <div className="members">
+                    {(!collaboration.disclose_member_information && !isAllowedToSeeMembers) && <div className="members">
                         <div className="members-header">
                             <h1>{I18n.t("models.collaboration.discloseNoMemberInformation")}</h1>
                         </div>

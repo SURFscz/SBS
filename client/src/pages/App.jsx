@@ -31,7 +31,6 @@ import {emitter} from "../utils/Events";
 import {isEmpty, pseudoGuid} from "../utils/Utils";
 import Login from "./Login";
 import {ProtectedRoute} from "./ProtectedRoute";
-import NewApiKey from "./NewApiKey";
 import Profile from "./Profile";
 import Aup from "./Aup";
 import CollaborationRequest from "./CollaborationRequest";
@@ -291,11 +290,6 @@ class App extends React.Component {
                             <Route exact path="/new-organisation-invite/:organisation_id"
                                    render={props => <ProtectedRoute currentUser={currentUser}
                                                                     Component={NewOrganisationInvitation}
-                                                                    {...props}/>}/>
-
-                            <Route exact path="/new-api-key/:organisation_id"
-                                   render={props => <ProtectedRoute currentUser={currentUser}
-                                                                    Component={NewApiKey}
                                                                     {...props}/>}/>
 
                             <Route exact path="/new-invite/:collaboration_id"

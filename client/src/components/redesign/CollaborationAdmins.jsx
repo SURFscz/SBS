@@ -203,10 +203,7 @@ class CollaborationAdmins extends React.Component {
         });
     }
 
-    actionButtons = (isAdminOfCollaboration, selectedMembers, filteredEntities, members, currentUser) => {
-        if (!isAdminOfCollaboration) {
-            return null;
-        }
+    actionButtons = (collaboration, isAdminOfCollaboration, selectedMembers, filteredEntities, members, currentUser) => {
         const isMember = members.some(m => m.user.id === currentUser.id);
         const any = filteredEntities.length !== 0;
         const selected = Object.values(selectedMembers)
@@ -216,14 +213,17 @@ class CollaborationAdmins extends React.Component {
         const disabled = selected.length === 0;
         return (
             <div className="admin-actions">
-                {any && <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
-                                disabled={disabled}
-                                icon={<FontAwesomeIcon icon="trash"/>}/>}
-                {any && <a href={`mailto:${hrefValue}`} className={`${disabled ? "disabled" : ""} button`}
-                           target="_blank" rel="noopener noreferrer">
+                {(any && isAdminOfCollaboration) &&
+                <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
+                        disabled={disabled}
+                        icon={<FontAwesomeIcon icon="trash"/>}/>}
+                {(any && (isAdminOfCollaboration || collaboration.disclose_email_information))
+                && <a href={`mailto:${hrefValue}`} className={`${disabled ? "disabled" : ""} button`}
+                      target="_blank" rel="noopener noreferrer">
                     {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
                 </a>}
-                {!isMember && <Button className="right" txt={I18n.t("collaborationDetail.addMe")} onClick={() => {
+                {(!isMember && isAdminOfCollaboration) &&
+                <Button className="right" txt={I18n.t("collaborationDetail.addMe")} onClick={() => {
                     this.setState({loading: true});
                     createCollaborationMembershipRole(this.props.collaboration.id).then(() => {
                         this.props.refreshUser(() => this.props.refresh(this.componentDidMount));
@@ -285,14 +285,14 @@ class CollaborationAdmins extends React.Component {
     };
 
     getImpersonateMapper = entity => {
-        const {user: currentUser} = this.props;
+        const {user: currentUser, showMemberView} = this.props;
         if (entity.invite) {
             return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
         }
         if (entity.user.id === currentUser.id) {
-            return <Button onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
+            return <Button className="warning" onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
         }
-        if (!currentUser.admin || entity.user.id === currentUser.id) {
+        if (!currentUser.admin || entity.user.id === currentUser.id || showMemberView) {
             return null;
         }
         return (<div className="impersonate" onClick={() =>
@@ -448,6 +448,7 @@ class CollaborationAdmins extends React.Component {
                 key: "name",
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={currentUser}
+                                              hideEmail={showMemberView && !collaboration.disclose_email_information}
                                               gotoInvitation={this.gotoInvitation}/>
             },
             {
@@ -497,12 +498,12 @@ class CollaborationAdmins extends React.Component {
                           modelName={isAdminView ? "coAdmins" : "members"}
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name"
-                          columns={isAdminOfCollaboration ? columns : columns.slice(1)}
+                          columns={(isAdminOfCollaboration || collaboration.disclose_email_information) ? columns : columns.slice(1)}
                           loading={false}
                           rowLinkMapper={entity => entity.invite && this.gotoInvitation}
                           showNew={isAdminOfCollaboration}
                           filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees, isAdminOfCollaboration)}
-                          actions={this.actionButtons(isAdminOfCollaboration, selectedMembers, filteredEntities, members, currentUser)}
+                          actions={this.actionButtons(collaboration, isAdminOfCollaboration, selectedMembers, filteredEntities, members, currentUser)}
                           newEntityPath={`/new-invite/${collaboration.id}?isAdminView=${isAdminView}`}
                           {...this.props}/>
             </>
