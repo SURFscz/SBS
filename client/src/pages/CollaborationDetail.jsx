@@ -137,8 +137,8 @@ class CollaborationDetail extends React.Component {
 
                         });
                 });
-            }}>{
-                <EyeViewIcon/>}<span>{I18n.t(`models.collaboration.${showMemberView ? "viewAsMember" : "viewAsAdmin"}`)}</span>
+            }}>
+                {<EyeViewIcon/>}<span>{I18n.t(`models.collaboration.${showMemberView ? "viewAsMember" : "viewAsAdmin"}`)}</span>
             </div>
         );
     }
@@ -146,8 +146,8 @@ class CollaborationDetail extends React.Component {
 
     getTabs = (collaboration, schacHomeOrganisation, adminOfCollaboration, showMemberView) => {
         //Actually this collaboration is not for members to view
-        if (!adminOfCollaboration && !collaboration.disclose_member_information) {
-            return [this.getAboutTab(collaboration)];
+        if ((!adminOfCollaboration || showMemberView) && !collaboration.disclose_member_information) {
+            return [this.getAboutTab(collaboration, showMemberView)];
         }
         const tabs = (adminOfCollaboration && !showMemberView) ?
             [
@@ -157,7 +157,7 @@ class CollaborationDetail extends React.Component {
                 this.getServicesTab(collaboration),
                 collaboration.join_requests.length > 0 ? this.getJoinRequestsTab(collaboration) : null,
             ] : [
-                this.getAboutTab(collaboration),
+                this.getAboutTab(collaboration, showMemberView),
                 this.getMembersTab(collaboration, showMemberView),
                 this.getGroupsTab(collaboration, showMemberView),
             ];
@@ -207,9 +207,12 @@ class CollaborationDetail extends React.Component {
         </div>);
     }
 
-    getAboutTab = collaboration => {
+    getAboutTab = (collaboration, showMemberView) => {
         return (<div key="about" name="about" label={I18n.t("home.tabs.about")} icon={<AboutIcon/>}>
-            <AboutCollaboration {...this.props} collaboration={collaboration} tabChanged={this.tabChanged}/>
+            <AboutCollaboration showMemberView={showMemberView}
+                                collaboration={collaboration}
+                                tabChanged={this.tabChanged}
+                                {...this.props} />
         </div>);
     }
 
@@ -221,7 +224,13 @@ class CollaborationDetail extends React.Component {
 
 
     getAdminHeader = collaboration => {
-        const admins = collaboration.collaboration_memberships.filter(m => m.role === "admin").map(m => m.user);
+        if (!collaboration.disclose_member_information) {
+            return I18n.t("models.collaboration.discloseNoMemberInformation");
+        }
+        const admins = collaboration.collaboration_memberships
+            .filter(m => m.role === "admin")
+            .map(m => m.user);
+
         if (admins.length === 0) {
             return I18n.t("models.collaboration.noAdminsHeader");
         }

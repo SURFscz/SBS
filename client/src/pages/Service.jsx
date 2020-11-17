@@ -207,6 +207,7 @@ class Service extends React.Component {
     };
 
     doDelete = () => {
+        this.setState({loading: true});
         const {service} = this.state;
         deleteService(service.id).then(() => {
             this.props.history.push("/home/services");
@@ -236,6 +237,7 @@ class Service extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
+            this.setState({loading: true});
             const {name, isNew, ip_networks} = this.state;
             const strippedIpNetworks = ip_networks
                 .filter(network => network.network_value && network.network_value.trim())

@@ -23,6 +23,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import RadioButton from "../components/redesign/RadioButton";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SelectField from "../components/SelectField";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class OrganisationForm extends React.Component {
 
@@ -52,6 +53,7 @@ class OrganisationForm extends React.Component {
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             leavePage: true,
+            loading: true
         };
     }
 
@@ -68,7 +70,8 @@ class OrganisationForm extends React.Component {
                     ...org,
                     organisation: org,
                     category: categoryOption,
-                    isNew: false
+                    isNew: false,
+                    loading: false
                 });
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
@@ -80,6 +83,7 @@ class OrganisationForm extends React.Component {
             });
         } else {
             health().then(() => {
+                this.setState({loading: false})
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
                         {path: "/", value: I18n.t("breadcrumb.home")},
@@ -145,6 +149,7 @@ class OrganisationForm extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {name, short_name, administrators, message, schac_home_organisation, description, logo, category} = this.state;
+            this.setState({loading: true});
             createOrganisation({
                 name,
                 short_name,
@@ -177,6 +182,7 @@ class OrganisationForm extends React.Component {
                 name, description, organisation, schac_home_organisation, collaboration_creation_allowed,
                 short_name, identifier, logo, category
             } = this.state;
+            this.setState({loading: true});
             updateOrganisation({
                 id: organisation.id, name, description,
                 schac_home_organisation: isEmpty(schac_home_organisation) ? null : schac_home_organisation,
@@ -184,8 +190,8 @@ class OrganisationForm extends React.Component {
                 category: category !== null ? category.value : null
             })
                 .then(() => {
-                    setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
                     this.props.history.goBack();
+                    setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
                 });
         }
     };
@@ -221,8 +227,11 @@ class OrganisationForm extends React.Component {
             name, description, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
             schac_home_organisation, collaboration_creation_allowed, logo, category, categoryOptions, isNew,
-            organisation, warning
+            organisation, warning, loading
         } = this.state;
+        if (loading) {
+            return <SpinnerField/>
+        }
         const disabledSubmit = !initial && !this.isValid();
         const {user} = this.props;
         return (

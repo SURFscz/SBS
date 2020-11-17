@@ -389,7 +389,7 @@ class OrganisationAdmins extends React.Component {
                         return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
                     }
                     if (entity.user.id === currentUser.id) {
-                        return <Button onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
+                        return <Button className="warning" onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
                     }
                     if (!currentUser.admin || entity.user.id === currentUser.id) {
                         return null;

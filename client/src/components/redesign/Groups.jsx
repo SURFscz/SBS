@@ -136,7 +136,7 @@ class Groups extends React.Component {
         );
     }
 
-    renderGroupDetails = (selectedGroup, collaboration, currentUser, mayCreateGroups) => {
+    renderGroupDetails = (selectedGroup, collaboration, currentUser, mayCreateGroups, showMemberView) => {
         const columns = [
             {
                 nonSortable: true,
@@ -150,7 +150,9 @@ class Groups extends React.Component {
                 nonSortable: true,
                 key: "name",
                 header: I18n.t("models.users.name_email"),
-                mapper: membership => <UserColumn entity={membership} currentUser={currentUser}/>
+                mapper: membership => <UserColumn entity={membership}
+                                                  currentUser={currentUser}
+                                                  hideEmail={showMemberView && !collaboration.disclose_email_information}/>
             },
             {
                 key: "user__schac_home_organisation",
@@ -439,7 +441,7 @@ class Groups extends React.Component {
             return this.renderGroupForm(createNewGroup, selectedGroup, mayCreateGroups);
         }
         if (selectedGroup) {
-            return this.renderGroupDetails(selectedGroup, collaboration, currentUser, mayCreateGroups)
+            return this.renderGroupDetails(selectedGroup, collaboration, currentUser, mayCreateGroups, showMemberView);
         }
         const groups = collaboration.groups;
         groups.forEach(group => {

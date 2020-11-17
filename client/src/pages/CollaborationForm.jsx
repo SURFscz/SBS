@@ -190,7 +190,7 @@ class CollaborationForm extends React.Component {
     };
 
     doDelete = () => {
-        this.setState({confirmationDialogOpen: false});
+        this.setState({confirmationDialogOpen: false, loading: true});
         const {collaboration} = this.state;
         deleteCollaboration(collaboration.id)
             .then(() => {
@@ -207,6 +207,7 @@ class CollaborationForm extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
+            this.setState({loading: true});
             const {
                 name, short_name, description, logo, website_url,
                 administrators, message, accepted_user_policy, organisation, isCollaborationRequest,
@@ -229,10 +230,11 @@ class CollaborationForm extends React.Component {
                 disclose_member_information,
                 disclose_email_information
             }).then(res => {
-                this.props.history.goBack();
-                const isCollCreated = res.identifier;
-                setFlash(I18n.t(isCollCreated ? "collaboration.flash.created" : "collaboration.flash.requested", {name: res.name}));
-                this.props.refreshUser();
+                this.props.refreshUser(() => {
+                    this.props.history.goBack();
+                    const isCollCreated = res.identifier;
+                    setFlash(I18n.t(isCollCreated ? "collaboration.flash.created" : "collaboration.flash.requested", {name: res.name}));
+                });
             });
         }
     };
@@ -249,6 +251,7 @@ class CollaborationForm extends React.Component {
 
     doUpdate = () => {
         if (this.isValid()) {
+            this.setState({loading: true});
             const {
                 name, short_name, description, website_url, logo, collaboration,
                 administrators, message, accepted_user_policy, organisation,
@@ -271,11 +274,10 @@ class CollaborationForm extends React.Component {
                 current_user_admin,
                 disclose_member_information,
                 disclose_email_information
-            })
-                .then(() => {
-                    setFlash(I18n.t("collaborationDetail.flash.updated", {name: name}));
-                    this.props.history.goBack();
-                });
+            }).then(() => {
+                this.props.history.goBack();
+                setFlash(I18n.t("collaborationDetail.flash.updated", {name: name}));
+            });
         }
     };
 
