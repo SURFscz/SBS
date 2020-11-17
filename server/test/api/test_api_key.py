@@ -26,10 +26,7 @@ class TestApiKey(AbstractTest):
         secret = self.get("/api/api_keys")["value"]
         api_key["hashed_secret"] = secret
 
-        api_key_updated = self.put("/api/api_keys", body=api_key)
-        self.assertNotEqual(api_key["hashed_secret"], api_key_updated["hashed_secret"])
-
-        self.delete("/api/api_keys", primary_key=api_key_updated["id"])
+        self.delete("/api/api_keys", primary_key=api_key["id"])
         post_count = ApiKey.query.count()
         self.assertEqual(pre_count, post_count)
 

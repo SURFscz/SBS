@@ -25,7 +25,7 @@ class TestMail(AbstractTest):
             mail_msg = outbox[0]
             self.assertListEqual(["test@example.com"], mail_msg.recipients)
             self.assertEqual("SURF_ResearchAccessManagement <no-reply@surf.nl>", mail_msg.sender)
-            self.assertTrue(f"http://localhost:300/join-requests/{join_request['hash']}" in mail_msg.html)
+            self.assertTrue(f"http://localhost:300/collaborations/{collaboration.id}/joinrequests" in mail_msg.html)
 
     def test_send_error_mail(self):
         try:

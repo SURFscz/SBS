@@ -5,13 +5,12 @@ from secrets import token_urlsafe
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, func, bindparam, String
-from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import load_only
 from sqlalchemy.orm import selectinload
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_organisation_admin, is_collaboration_admin, confirm_read_access
+    confirm_organisation_admin, confirm_read_access
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -107,17 +106,6 @@ def my_organisations_lite():
     return organisations, 200
 
 
-@organisation_api.route("/lite/<organisation_id>", strict_slashes=False)
-@json_endpoint
-def organisation_by_id_lite(organisation_id):
-    def override_func():
-        return is_collaboration_admin(organisation_id=organisation_id)
-
-    confirm_write_access(override_func=override_func)
-    organisation = Organisation.query.get(organisation_id)
-    return organisation, 200
-
-
 @organisation_api.route("/<organisation_id>", strict_slashes=False)
 @json_endpoint
 def organisation_by_id(organisation_id):
@@ -145,17 +133,6 @@ def organisation_by_id(organisation_id):
 
     organisation = query.one()
     return organisation, 200
-
-
-@organisation_api.route("/services/<organisation_id>", strict_slashes=False)
-@json_endpoint
-def organisation_services(organisation_id):
-    confirm_organisation_admin(organisation_id)
-
-    return Organisation.query \
-               .options(joinedload(Organisation.services)) \
-               .filter(Organisation.id == organisation_id) \
-               .one(), 200
 
 
 @organisation_api.route("/", strict_slashes=False)

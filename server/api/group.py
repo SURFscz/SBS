@@ -6,15 +6,30 @@ from sqlalchemy import func
 from sqlalchemy.orm import load_only, contains_eager
 
 from server.api.base import json_endpoint, query_param
-from server.api.group_invitations import do_add_group_invitations
 from server.api.group_members import do_add_group_members
 from server.auth.security import confirm_collaboration_admin
+from server.db.db import db
 from server.db.defaults import cleanse_short_name
-from server.db.domain import Group, Collaboration
+from server.db.domain import Group, Collaboration, Invitation
 from server.db.models import update, save, delete
 from server.schemas import json_schema_validator
 
 group_api = Blueprint("group_api", __name__, url_prefix="/api/groups")
+
+
+def do_add_group_invitations(data):
+    group_id = data["group_id"]
+    collaboration_id = data["collaboration_id"]
+    confirm_collaboration_admin(collaboration_id)
+
+    group = Group.query.get(group_id)
+
+    invitations_ids = data["invitations_ids"]
+    for invitation_id in invitations_ids:
+        group.invitations.append(Invitation.query.get(invitation_id))
+
+    db.session.merge(group)
+    return len(invitations_ids)
 
 
 def auto_provision_all_members_and_invites(group: Group):

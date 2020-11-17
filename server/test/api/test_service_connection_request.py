@@ -2,20 +2,10 @@
 from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ssh_service_connection_request_hash, sarah_name, uva_research_name, service_wiki_name, \
-    ai_computing_name, service_ssh_uva_name, network_service_connection_request_hash, service_storage_name
+    ai_computing_name, service_ssh_uva_name, service_storage_name
 
 
 class TestServiceConnectionRequest(AbstractTest):
-
-    def test_service_request_connections_by_collaboration(self):
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
-
-        self.login("urn:admin")
-        res = self.get(f"/api/service_connection_requests/by_collaboration/{collaboration.id}", with_basic_auth=False)
-
-        self.assertEqual(1, len(res))
-        self.assertEqual(collaboration.id, res[0]["collaboration_id"])
-        self.assertEqual(network_service_connection_request_hash, res[0]["hash"])
 
     def test_service_request_connections_by_service(self):
         service = self.find_entity_by_name(Service, service_storage_name)
@@ -95,17 +85,3 @@ class TestServiceConnectionRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research has been declined",
                              mail_msg.subject)
-
-    def test_resend_service_connection_request(self):
-        with self.app.mail.record_messages() as outbox:
-            self.login("urn:sarah")
-            req = self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}")
-
-            self.get(f"/api/service_connection_requests/resend/{req['id']}")
-
-            mail_msg = outbox[0]
-            self.assertEqual("Request for new service SSH UvA connection to collaboration UVA UCC research",
-                             mail_msg.subject)
-
-    def test_resend_service_connection_request_404(self):
-        self.get("/api/service_connection_requests/resend/9999", response_status_code=404)

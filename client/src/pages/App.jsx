@@ -16,15 +16,12 @@ import {getParameterByName} from "../utils/QueryParameters";
 import CollaborationDetail from "./CollaborationDetail";
 import OrganisationDetail from "./OrganisationDetail";
 import Home from "./Home";
-import JoinRequest from "./JoinRequest";
 import OrganisationForm from "./OrganisationForm";
 import {addIcons} from "../utils/IconLibrary";
-import OrganisationInvitation from "./OrganisationInvitation";
 import CollaborationForm from "./CollaborationForm";
 import NewOrganisationInvitation from "./NewOrganisationInvitation";
 import Service from "./Service";
 import NewInvitation from "./NewInvitation";
-import Invitation from "./Invitation";
 import UserInvitation from "./UserInvitation";
 import Impersonate from "./Impersonate";
 import {emitter} from "../utils/Events";
@@ -270,16 +267,8 @@ class App extends React.Component {
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser} Component={ServiceRequest} {...props}/>}/>
 
-                            <Route exact path="/join-requests/:hash"
-                                   render={props => <ProtectedRoute
-                                       currentUser={currentUser} Component={JoinRequest} {...props}/>}/>
-
                             <Route path="/service-connection-requests/:hash"
                                    render={props => <ServiceConnectionRequest {...props}/>}/>
-
-                            <Route exact path="/organisation-invitations/:id"
-                                   render={props => <ProtectedRoute currentUser={currentUser}
-                                                                    Component={OrganisationInvitation} {...props}/>}/>
 
                             <Route exact path="/organisation-invitations/:action/:hash"
                                    render={props => <UserInvitation user={currentUser}
@@ -295,11 +284,6 @@ class App extends React.Component {
                             <Route exact path="/new-invite/:collaboration_id"
                                    render={props => <ProtectedRoute currentUser={currentUser}
                                                                     Component={NewInvitation}
-                                                                    {...props}/>}/>
-
-                            <Route exact path="/invitations/:id"
-                                   render={props => <ProtectedRoute currentUser={currentUser}
-                                                                    Component={Invitation}
                                                                     {...props}/>}/>
 
                             <Route exact path="/invitations/:action/:hash"

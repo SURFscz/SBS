@@ -2,6 +2,7 @@
 import uuid
 
 from sqlalchemy.orm import joinedload
+
 from server.db.db import db
 from server.db.domain import JoinRequest, User, Collaboration
 from server.test.abstract_test import AbstractTest
@@ -28,8 +29,9 @@ class TestJoinRequest(AbstractTest):
             self.assertEqual(pre_count + 1, post_count)
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
+
             self.assertListEqual(["boss@example.org"], mail_msg.recipients)
-            self.assertTrue("http://localhost:3000/join-requests/" in mail_msg.html)
+            self.assertTrue(f"http://localhost:3000/collaborations/{collaboration_id}/joinrequests" in mail_msg.html)
 
     def test_new_join_request_already_member(self):
         collaboration_id = Collaboration.query \
@@ -78,19 +80,6 @@ class TestJoinRequest(AbstractTest):
                         with_basic_auth=False)
         self.assertEqual(result, res)
 
-    def test_join_request_delete(self):
-        self.assertEqual(4, JoinRequest.query.count())
-        join_request_hash = self._join_request_by_user("urn:peter").hash
-        self.login("urn:admin")
-        self.delete("/api/join_requests", primary_key=join_request_hash)
-        self.assertEqual(3, JoinRequest.query.count())
-
-    def test_join_request_delete_no_access(self):
-        join_request_hash = self._join_request_by_user("urn:mary").hash
-        self.login("urn:peter")
-        response = self.client.delete(f"/api/join_requests/{join_request_hash}")
-        self.assertEqual(403, response.status_code)
-
     def test_accept_join_request(self):
         self.assertEqual(4, JoinRequest.query.count())
         join_request_hash = self._join_request_by_user("urn:peter").hash
@@ -121,15 +110,3 @@ class TestJoinRequest(AbstractTest):
             self.assertListEqual(["peter@example.org"], mail_msg.recipients)
             self.assertTrue("declined" in mail_msg.html)
             self.assertEqual(3, JoinRequest.query.count())
-
-    def test_join_request_by_hash(self):
-        join_request_hash = self._join_request_by_user("urn:peter").hash
-        self.login("urn:peter")
-        join_request = self.get(f"/api/join_requests/{join_request_hash}")
-        self.assertEqual("urn:peter", join_request["user"]["uid"])
-
-    def test_join_request_by_hash_org_manager(self):
-        join_request_hash = self._join_request_by_user("urn:peter").hash
-        self.login("urn:harry")
-        join_request = self.get(f"/api/join_requests/{join_request_hash}")
-        self.assertEqual("urn:peter", join_request["user"]["uid"])

@@ -3,14 +3,13 @@ import ipaddress
 import urllib.parse
 
 from flask import Blueprint, request as current_request, g as request_context, jsonify
-from sqlalchemy import text, func, bindparam, String
+from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
 
-from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
+from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin
 from server.db.db import db
-from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, User
 from server.db.models import update, save, delete
 
@@ -65,33 +64,6 @@ def services_from_organisation_memberships(user_id, service_id=None, count_only=
     return _services_from_query(count_only, query, service_id)
 
 
-@service_api.route("/search", strict_slashes=False)
-@json_endpoint
-def service_search():
-    def override_func():
-        return is_collaboration_admin() or is_org_member()
-
-    confirm_read_access(override_func=override_func)
-
-    res = []
-    q = query_param("q")
-
-    if q and len(q):
-        base_query = "SELECT id, entity_id, name, description FROM services "
-        not_wild_card = "*" not in q
-        if not_wild_card:
-            q = replace_full_text_search_boolean_mode_chars(q)
-            base_query += f"WHERE MATCH (name, entity_id, description) AGAINST (:q IN BOOLEAN MODE) " \
-                          f"AND id > 0  ORDER BY NAME LIMIT {full_text_search_autocomplete_limit}"
-        sql = text(base_query if not_wild_card else base_query + " ORDER BY NAME")
-        if not_wild_card:
-            sql = sql.bindparams(bindparam("q", type_=String))
-        result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
-
-        res = [{"id": row[0], "entity_id": row[1], "name": row[2], "description": row[3]} for row in result_set]
-    return res, 200
-
-
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
@@ -129,20 +101,6 @@ def service_by_entity_id():
                .options(selectinload(Service.allowed_organisations)) \
                .filter(Service.entity_id == entity_id) \
                .one(), 200
-
-
-@service_api.route("/my_services", strict_slashes=False)
-@json_endpoint
-def my_services():
-    user_id = current_user_id()
-    from_coll_memberships = services_from_collaboration_memberships(user_id)
-    from_org_coll_memberships = services_from_organisation_collaboration_memberships(user_id)
-    from_org_memberships = services_from_organisation_memberships(user_id)
-
-    all_services = from_coll_memberships + from_org_coll_memberships + from_org_memberships
-    # Now make the result unique as there can be overlaps
-    seen = set()
-    return [seen.add(service.id) or service for service in all_services if service.id not in seen], 200
 
 
 @service_api.route("/<service_id>", strict_slashes=False)

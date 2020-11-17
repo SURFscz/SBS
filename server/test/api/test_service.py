@@ -11,18 +11,6 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, name)
         return self.get(f"api/services/{service.id}")
 
-    def test_search(self):
-        res = self.get("/api/services/search", query_data={"q": "networ"})
-        self.assertEqual(2, len(res))
-
-    def test_search_wildcard(self):
-        res = self.get("/api/services/search", query_data={"q": "*"})
-        self.assertTrue(len(res) > 0)
-
-    def test_search_forbidden(self):
-        self.login("urn:roger")
-        self.get("/api/services/search", query_data={"q": "networ"}, response_status_code=403)
-
     def test_find_by_id_forbidden(self):
         service = self.find_entity_by_name(Service, service_mail_name)
         self.login("urn:roger")
@@ -43,11 +31,6 @@ class TestService(AbstractTest):
 
         self.assertEqual(res["name"], service_network_name)
         self.assertEqual(uuc_name, res["allowed_organisations"][0]["name"])
-
-    def test_my_services(self):
-        self.login("urn:sarah")
-        res = self.get("api/services/my_services")
-        self.assertEqual(6, len(res))
 
     def test_service_new(self):
         service = self.post("/api/services", body={
@@ -123,9 +106,8 @@ class TestService(AbstractTest):
 
     def test_services_all(self):
         self.login("urn:sarah")
-        services = self.get("/api/services/all",
-                            with_basic_auth=False)
-        self.assertEqual(8, len(services))
+        services = self.get("/api/services/all", with_basic_auth=False)
+        self.assertTrue(len(services) > 0)
 
         service_mail = self.find_by_name(services, service_mail_name)
         self.assertEqual(1, service_mail["collaborations_count"])
@@ -134,6 +116,11 @@ class TestService(AbstractTest):
         service_uuc = self.find_by_name(services, uuc_scheduler_name)
         self.assertEqual(1, service_uuc["organisations_count"])
         self.assertEqual(1, len(service_uuc["allowed_organisations"]))
+
+    def test_services_all_org_member(self):
+        self.login("urn:harry")
+        services = self.get("/api/services/all", with_basic_auth=False)
+        self.assertTrue(len(services) > 0)
 
     def test_add_allowed_organisations(self):
         service = self.find_entity_by_name(Service, service_network_name)

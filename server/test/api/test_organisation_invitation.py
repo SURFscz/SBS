@@ -17,22 +17,6 @@ class TestOrganisationInvitation(AbstractTest):
         self.assertEqual(organisation_invitation_hash, organisation_invitation["hash"])
         self.assertTrue(len(organisation_invitation["organisation"]["organisation_memberships"]) > 0)
 
-    # Must be admin
-    def test_find_by_id_forbidden(self):
-        organisation_invitation_id = self._invitation_by_hash(organisation_invitation_hash).id
-        self.login("urn:peter")
-        self.get(f"/api/organisation_invitations/{organisation_invitation_id}", with_basic_auth=False,
-                 response_status_code=403)
-
-    # Must be admin
-    def test_find_by_id(self):
-        organisation_invitation_id = self._invitation_by_hash(organisation_invitation_hash).id
-        self.login("urn:john")
-        organisation_invitation = self.get(f"/api/organisation_invitations/{organisation_invitation_id}",
-                                           with_basic_auth=False)
-        self.assertEqual("urn:john",
-                         organisation_invitation["organisation"]["organisation_memberships"][0]["user"]["uid"])
-
     def test_accept(self):
         self.login("urn:james")
         self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
@@ -73,7 +57,7 @@ class TestOrganisationInvitation(AbstractTest):
         invitation_id = self._invitation_by_hash(organisation_invitation_hash).id
         mail = self.app.mail
         with mail.record_messages() as outbox:
-            self.put("/api/organisation_invitations/resend", body={"id": invitation_id})
+            self.put("/api/organisation_invitations/resend", body={"id": invitation_id, "message": "changed"})
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["roger@example.org"], mail_msg.recipients)

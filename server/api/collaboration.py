@@ -155,10 +155,16 @@ def members():
 @collaboration_api.route("/", strict_slashes=False)
 @json_endpoint
 def my_collaborations_lite():
+    include_services = query_param("includeServices", False)
     user_id = current_user_id()
-    collaborations = Collaboration.query \
+    query = Collaboration.query \
         .join(Collaboration.collaboration_memberships) \
-        .options(selectinload(Collaboration.organisation)) \
+        .options(selectinload(Collaboration.organisation))
+    if include_services:
+        query = query \
+            .options(selectinload(Collaboration.services).selectinload(Service.allowed_organisations))
+
+    collaborations = query \
         .filter(CollaborationMembership.user_id == user_id) \
         .all()
     return collaborations, 200

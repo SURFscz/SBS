@@ -71,7 +71,7 @@ I18n.translations.en = {
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights",
             collaborationRequests: "Coll requests",
-            joinRequests: "Join Reqs",
+            joinRequests: "Join requests",
             me: "Profile",
             about: "About",
             apikeys: "API Keys",

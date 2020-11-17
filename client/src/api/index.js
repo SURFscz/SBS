@@ -83,11 +83,6 @@ function fetchDelete(path) {
     return validFetch(path, {method: "delete"});
 }
 
-function queryParam(options) {
-    const entries = Object.entries(options[0]);
-    return entries.reduce((acc, entry) => isEmpty(entry[1]) ? acc : acc + `${entry[0]}=${entry[1]}&`, "?");
-}
-
 //Base
 export function health() {
     return fetchJson("/health");
@@ -177,14 +172,6 @@ export function serviceByEntityId(entityid) {
     return fetchJson(`/api/services/find_by_entity_id?entity_id=${encodeURIComponent(entityid)}`, {}, {}, false);
 }
 
-export function searchServices(q) {
-    return fetchJson(`/api/services/search?q=${encodeURIComponent(q)}`);
-}
-
-export function myServices() {
-    return fetchJson("/api/services/my_services");
-}
-
 export function allServices() {
     return fetchJson("/api/services/all");
 }
@@ -222,8 +209,9 @@ export function collaborationLiteById(id) {
     return fetchJson(`/api/collaborations/lite/${id}`, {}, {}, false);
 }
 
-export function myCollaborations() {
-    return fetchJson("/api/collaborations");
+export function myCollaborations(includeServices = false) {
+    const query = includeServices ? "?includeServices=true" : "";
+    return fetchJson(`/api/collaborations${query}`);
 }
 
 export function createCollaboration(collaboration) {
@@ -294,14 +282,6 @@ export function organisationById(id) {
     return fetchJson(`/api/organisations/${id}`, {}, {}, false);
 }
 
-export function organisationByIdLite(id) {
-    return fetchJson(`/api/organisations/lite/${id}`, {}, {}, false);
-}
-
-export function organisationServices(id) {
-    return fetchJson(`/api/organisations/services/${id}`);
-}
-
 export function searchOrganisations(q) {
     return fetchJson(`/api/organisations/search?q=${encodeURIComponent(q)}`);
 }
@@ -327,10 +307,6 @@ export function deleteOrganisation(id) {
 }
 
 //JoinRequests
-export function joinRequestByHash(hash) {
-    return fetchJson(`/api/join_requests/${hash}`, {}, {}, false);
-}
-
 export function joinRequestForCollaboration(clientData) {
     return postPutJson("/api/join_requests", clientData, "post", false);
 }
@@ -348,10 +324,6 @@ export function joinRequestDecline(joinRequest) {
 }
 
 //OrganisationInvitations
-export function organisationInvitationById(id) {
-    return fetchJson(`/api/organisation_invitations/${id}`, {}, {}, false);
-}
-
 export function organisationInvitationByHash(hash) {
     return fetchJson(`/api/organisation_invitations/find_by_hash?hash=${hash}`, {}, {}, false);
 }
@@ -376,10 +348,6 @@ export function organisationInvitationDelete(organisationInvitationId) {
 }
 
 //Invitations
-export function invitationById(id) {
-    return fetchJson(`/api/invitations/${id}`, {}, {}, false);
-}
-
 export function invitationByHash(hash) {
     return fetchJson(`/api/invitations/find_by_hash?hash=${hash}`, {}, {}, false);
 }
@@ -492,25 +460,6 @@ export function deleteGroupMembers(groupId, memberId, collaborationId) {
     return fetchDelete(`/api/group_members/${groupId}/${memberId}/${collaborationId}`)
 }
 
-export function preFlightDeleteGroupMember({group_id, collaboration_membership_id, collaboration_id}) {
-    const query = queryParam(arguments);
-    return fetchJson(`/api/group_members/delete_pre_flight${query}`);
-}
-
-//GroupInvitations
-export function addGroupInvitations({groupId, collaborationId, invitationIds}) {
-    invitationIds = Array.isArray(invitationIds) ? invitationIds : [invitationIds];
-    return postPutJson("/api/group_invitations", {
-        group_id: groupId,
-        collaboration_id: collaborationId,
-        invitations_ids: invitationIds
-    }, "put")
-}
-
-export function deleteGroupInvitations(groupId, invitationId, collaborationId) {
-    return fetchDelete(`/api/group_invitations/${groupId}/${invitationId}/${collaborationId}`)
-}
-
 //ApiKeys
 export function apiKeyValue() {
     return fetchJson(`/api/api_keys`);
@@ -551,16 +500,8 @@ export function denyRequestCollaboration(id) {
 }
 
 //ServiceConnectionRequest
-export function serviceConnectionRequests(collaborationId) {
-    return postPutJson(`/api/service_connection_requests/by_collaboration/${collaborationId}`);
-}
-
 export function serviceConnectionRequestsOutstanding(serviceId) {
     return postPutJson(`/api/service_connection_requests/by_service/${serviceId}`);
-}
-
-export function resendServiceConnectionRequest(serviceConnectionRequestId) {
-    return fetchJson(`/api/service_connection_requests/resend/${serviceConnectionRequestId}`, {}, {}, false);
 }
 
 export function deleteServiceConnectionRequest(serviceConnectionRequestId) {
