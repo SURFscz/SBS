@@ -23,7 +23,6 @@ from server.api.collaboration_request import collaboration_request_api
 from server.api.collaborations_services import collaborations_services_api
 from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
 from server.api.group import group_api
-from server.api.group_invitations import group_invitations_api
 from server.api.group_members import group_members_api
 from server.api.invitation import invitations_api
 from server.api.ipaddress import ipaddress_api
@@ -108,7 +107,6 @@ app.register_blueprint(collaborations_services_api)
 app.register_blueprint(group_api)
 app.register_blueprint(group_members_api)
 app.register_blueprint(api_key_api)
-app.register_blueprint(group_invitations_api)
 app.register_blueprint(aup_api)
 app.register_blueprint(collaboration_request_api)
 app.register_blueprint(service_connection_request_api)

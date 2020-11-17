@@ -49,4 +49,4 @@ def run_seed():
 
     seed(db, current_app.app_config)
 
-    return {}, 200
+    return {}, 201

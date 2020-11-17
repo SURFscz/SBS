@@ -42,7 +42,7 @@ class ServiceRequest extends React.Component {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const entityId = urlSearchParams.get("entityID");
         if (entityId) {
-            Promise.all([serviceByEntityId(entityId), myCollaborations()])
+            Promise.all([serviceByEntityId(entityId), myCollaborations(true)])
                 .then(res => {
                     // Mark collaborations as already linked if the service is already connected
                     const service = res[0];
@@ -72,12 +72,13 @@ class ServiceRequest extends React.Component {
 
     backToService = () => {
         const {service} = this.state;
-        const redirectUri = getParameterByName("redirectUri");
+        const redirectUri = getParameterByName("redirectUri",  window.location.search);
+        debugger;
         window.location.href = isEmpty(redirectUri) ? service.uri : redirectUri;
     };
 
     displayBackToService = service => {
-        const redirectUri = getParameterByName("redirectUri");
+        const redirectUri = getParameterByName("redirectUri",  window.location.search);
         const defaultRedirectUri = isEmpty(redirectUri) && !isEmpty(service.uri);
         const validRedirectUri = !isEmpty(redirectUri) && redirectUri.startsWith(service.uri);
         return defaultRedirectUri || validRedirectUri;
@@ -204,6 +205,9 @@ class ServiceRequest extends React.Component {
                 I18n.t("serviceRequest.result.requested", {serviceName});
             return (
                 <div className="mod-service-request">
+                    <div className="title">
+                        <p className="title">{service.name}</p>
+                    </div>
                     <div className="result-feedback">
                         <p dangerouslySetInnerHTML={{__html: msg}}/>
                         <Button txt={I18n.t("serviceRequest.backToService")}
@@ -233,7 +237,6 @@ class ServiceRequest extends React.Component {
                     isVisible={showExplanation}>
                     <ServicesRequestExplanation name={escapeHtmlTooltip(serviceName)}/>
                 </Explain>
-
                 <div className="title">
                     <p className="title" dangerouslySetInnerHTML={{__html: title}}/>
                     <FontAwesomeIcon className="help"

@@ -15,6 +15,6 @@ The user has not provided any references within the collaboration.
 {% endif %}
 Login to process this request:
 
-{{base_url}}/join-requests/{{join_request.hash}}
+{{base_url}}/collaborations/{{collaboration.id}}/joinrequests
 
 {% endblock %}

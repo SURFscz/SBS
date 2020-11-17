@@ -34,17 +34,6 @@ def organisation_invitations_by_hash():
     return organisation_invitation, 200
 
 
-@organisation_invitations_api.route("/<id>", strict_slashes=False)
-@json_endpoint
-def organisation_invitations_by_id(id):
-    organisation_invitation = _organisation_invitation_query() \
-        .filter(OrganisationInvitation.id == id) \
-        .one()
-
-    confirm_organisation_admin(organisation_invitation.organisation_id)
-    return organisation_invitation, 200
-
-
 @organisation_invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def organisation_invitations_accept():

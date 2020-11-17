@@ -307,6 +307,14 @@ class TestCollaboration(AbstractTest):
         researcher = list(filter(lambda cm: cm["role"] == "member", collaboration["collaboration_memberships"]))[0]
         self.assertEqual("John Doe", researcher["user"]["name"])
 
+    def test_my_collaborations_include_services(self):
+        self.login("urn:admin")
+        my_collaborations = self.get("/api/collaborations", query_data={"includeServices": True})
+        self.assertEqual(1, len(my_collaborations))
+
+        services = my_collaborations[0]
+        self.assertTrue(len(services) > 0)
+
     def test_my_collaborations_no_admin(self):
         self.login("urn:james")
         my_collaborations = self.get("/api/collaborations")

@@ -21,3 +21,11 @@ class TestSystem(AbstractTest):
     def test_db_stats(self):
         res = self.get("/api/system/db_stats")
         self.assertDictEqual({"count": 17, "name": "users"}, res[0])
+
+    def test_db_seed(self):
+        self.get("/api/system/seed", response_status_code=201)
+
+    def test_db_seed_forbidden(self):
+        self.app.app_config.feature.seed_allowed = 0
+        self.get("/api/system/seed", response_status_code=400)
+        self.app.app_config.feature.seed_allowed = 1

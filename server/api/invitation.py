@@ -40,17 +40,6 @@ def invitations_by_hash():
     return invitation, 200
 
 
-@invitations_api.route("/<id>", strict_slashes=False)
-@json_endpoint
-def invitations_by_id(id):
-    invitation = _invitation_query() \
-        .filter(Invitation.id == id) \
-        .one()
-
-    confirm_collaboration_admin(invitation.collaboration.id)
-    return invitation, 200
-
-
 @invitations_api.route("/v1/collaboration_invites", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def collaboration_invites_api():

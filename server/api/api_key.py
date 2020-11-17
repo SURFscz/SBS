@@ -7,7 +7,7 @@ from werkzeug.exceptions import SecurityError
 from server.api.base import json_endpoint
 from server.auth.security import secure_hash, confirm_organisation_admin_or_manager
 from server.db.domain import ApiKey
-from server.db.models import update, save, delete
+from server.db.models import save, delete
 
 MIN_SECRET_LENGTH = 43
 
@@ -40,13 +40,6 @@ def generate_key():
 def save_api_key():
     data = _hash_secret_key()
     return save(ApiKey, custom_json=data)
-
-
-@api_key_api.route("/", methods=["PUT"], strict_slashes=False)
-@json_endpoint
-def reset_api_key():
-    data = _hash_secret_key()
-    return update(ApiKey, custom_json=data, allow_child_cascades=False)
 
 
 @api_key_api.route("/<api_key_id>", methods=["DELETE"], strict_slashes=False)

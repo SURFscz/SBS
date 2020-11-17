@@ -72,7 +72,7 @@ I18n.translations.nl = {
             serviceOrganisations: "Organisatie toegang",
             serviceCollaborations: "Samenwerkingen inzichten",
             collaborationRequests: "Coll verzoeken",
-            joinRequests: "Join Reqs",
+            joinRequests: "Join verzoeken",
             me: "Profiel",
             about: "Over",
             apikeys: "API Keys",

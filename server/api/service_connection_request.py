@@ -52,15 +52,6 @@ def _do_service_connection_request(hash, approved):
     return {}, 201
 
 
-@service_connection_request_api.route("/by_collaboration/<collaboration_id>", methods=["GET"], strict_slashes=False)
-@json_endpoint
-def service_request_connections_by_collaboration(collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
-    return _service_connection_request_query() \
-               .filter(ServiceConnectionRequest.collaboration_id == collaboration_id) \
-               .all(), 200
-
-
 @service_connection_request_api.route("/by_service/<service_id>", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def service_request_connections_by_service(service_id):
@@ -142,21 +133,3 @@ def approve_service_connection_request(hash):
 @json_endpoint
 def deny_service_connection_request(hash):
     return _do_service_connection_request(hash, False)
-
-
-@service_connection_request_api.route("/resend/<service_connection_request_id>", strict_slashes=False)
-@json_endpoint
-def resend_service_connection_request(service_connection_request_id):
-    service_connection_request = ServiceConnectionRequest.query.get(service_connection_request_id)
-    if not service_connection_request:
-        return {}, 404
-    service = service_connection_request.service
-    collaboration = service_connection_request.collaboration
-    user_id = current_user_id()
-    is_admin = collaboration.is_admin(user_id)
-
-    if is_admin:
-        confirm_collaboration_admin(collaboration.id)
-
-    _do_mail_request(collaboration, service, service_connection_request, is_admin)
-    return {}, 200
