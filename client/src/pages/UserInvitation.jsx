@@ -32,7 +32,7 @@ class UserInvitation extends React.Component {
             confirmationDialogQuestion: "",
             confirmationDialogAction: () => true,
             cancelDialogAction: this.closeConfirmationDialog,
-            loaded: false
+            loading: false
         };
     }
 
@@ -44,7 +44,7 @@ class UserInvitation extends React.Component {
             const promise = isOrganisationInvite ? organisationInvitationByHash(params.hash) : invitationByHash(params.hash);
             promise.then(json => {
                 const isExpired = today.isAfter(moment(json.expiry_date * 1000));
-                this.setState({invite: json, isExpired: isExpired, loaded: true});
+                this.setState({invite: json, isExpired: isExpired, loading: true});
                 const {user} = this.props;
                 if (!user.guest && user.needs_to_agree_with_aup) {
                     aupLinks().then(res => this.setState({"aup": res}));

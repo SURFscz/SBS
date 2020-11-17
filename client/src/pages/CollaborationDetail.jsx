@@ -49,7 +49,7 @@ class CollaborationDetail extends React.Component {
             adminOfCollaboration: false,
             showMemberView: true,
             viewAsMember: false,
-            loaded: false,
+            loading: false,
             firstTime: false,
             tab: "admins",
             tabs: []
@@ -80,7 +80,7 @@ class CollaborationDetail extends React.Component {
                             collaboration: collaboration,
                             adminOfCollaboration: adminOfCollaboration,
                             schacHomeOrganisation: schacHomeOrganisation,
-                            loaded: true,
+                            loading: true,
                             firstTime: firstTime,
                             tabs: this.getTabs(collaboration, schacHomeOrganisation, adminOfCollaboration, false),
                             tab: tab,
@@ -309,9 +309,9 @@ class CollaborationDetail extends React.Component {
 
     render() {
         const {
-            collaboration, loaded, tabs, tab, adminOfCollaboration, showMemberView, firstTime, schacHomeOrganisation
+            collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime, schacHomeOrganisation
         } = this.state;
-        if (!loaded) {
+        if (!loading) {
             return <SpinnerField/>;
         }
         const {user} = this.props;
