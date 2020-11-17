@@ -67,6 +67,7 @@ class NewOrganisationInvitation extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
+                            {value: I18n.t("breadcrumb.organisations")},
                             {path: `/organisations/${json.id}`, value: json.name},
                             {path: "/", value: I18n.t("breadcrumb.organisationInvite")}
                         ];

@@ -33,6 +33,7 @@ export default class Collaborations extends React.PureComponent {
                     showRequestCollaboration: res[0],
                     loading: false
                 });
+
             })
         } else {
             Promise.all(promises).then(res => this.setState({showRequestCollaboration: res, loading: false}))

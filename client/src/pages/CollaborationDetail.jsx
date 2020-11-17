@@ -107,11 +107,14 @@ class CollaborationDetail extends React.Component {
         AppStore.update(s => {
             s.breadcrumb.paths = orgManager ? [
                 {path: "/", value: I18n.t("breadcrumb.home")},
+                {value: I18n.t("breadcrumb.organisations")},
                 {path: `/organisations/${collaboration.organisation_id}`, value: collaboration.organisation.name},
+                {value: I18n.t("breadcrumb.collaborations")},
                 {path: "/", value: collaboration.name}
             ] : [
                 {path: "/", value: I18n.t("breadcrumb.home")},
-                {path: "/", value: collaboration.name}
+                {value: I18n.t("breadcrumb.collaborations")},
+                {value: collaboration.name}
             ];
             s.sideComponent = adminOfCollaboration ? this.eyeView() : null;
         });

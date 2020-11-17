@@ -39,7 +39,6 @@ class Home extends React.Component {
         const role = rawGlobalUserRole(user);
         const nbrOrganisations = user.organisation_memberships.length;
         const nbrCollaborations = user.collaboration_memberships.length;
-
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
                 tabs.push(this.getOrganisationsTab());
@@ -76,7 +75,9 @@ class Home extends React.Component {
                 tabs.push(this.getWelcomeTab());
         }
         AppStore.update(s => {
-            s.breadcrumb.paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
+            s.breadcrumb.paths = [
+                {path: "/", value: I18n.t("breadcrumb.home")}
+            ];
         });
         this.tabChanged(tab);
         this.setState({role: role, loaded: true, tabs, tab});
