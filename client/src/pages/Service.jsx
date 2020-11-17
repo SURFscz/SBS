@@ -62,7 +62,7 @@ class Service extends React.Component {
         leavePage: false,
         confirmationDialogAction: () => true,
         cancelDialogAction: () => true,
-        loaded: false
+        loading: false
     });
 
     UNSAFE_componentWillReceiveProps = nextProps => {
@@ -82,7 +82,7 @@ class Service extends React.Component {
                 } else {
                     searchOrganisations("*")
                         .then(r => {
-                            this.setState({organisations: this.mapOrganisationsToOptions(r), loaded: true});
+                            this.setState({organisations: this.mapOrganisationsToOptions(r), loading: true});
                             this.addIpAddress();
                             AppStore.update(s => {
                                 s.breadcrumb.paths = [
@@ -103,7 +103,7 @@ class Service extends React.Component {
                             isNew: false,
                             allowed_organisations: this.mapOrganisationsToOptions(res[0].allowed_organisations),
                             organisations: this.mapOrganisationsToOptions(res[1]),
-                            loaded: true
+                            loading: true
                         }, () => {
                             const {ip_networks} = this.state.service;
                             if (isEmpty(ip_networks)) {
@@ -239,7 +239,7 @@ class Service extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            this.setState({loading: true});
+            this.setState({loading: false});
             const {name, isNew, ip_networks} = this.state;
             const strippedIpNetworks = ip_networks
                 .filter(network => network.network_value && network.network_value.trim())
@@ -487,9 +487,9 @@ class Service extends React.Component {
             entity_id, description, uri, accepted_user_policy, contact_email,
             confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed, organisations,
             allowed_organisations, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-            research_scholarship_compliant, ip_networks, logo, loaded
+            research_scholarship_compliant, ip_networks, logo, loading
         } = this.state;
-        if (!loaded) {
+        if (!loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = !initial && !this.isValid();

@@ -62,7 +62,7 @@ class CollaborationForm extends React.Component {
             isCollaborationRequest: false,
             autoCreateCollaborationRequest: false,
             current_user_admin: false,
-            loaded: false
+            loading: false
         };
     }
 
@@ -82,7 +82,7 @@ class CollaborationForm extends React.Component {
                     organisation: orgOption,
                     organisations: [orgOption],
                     isNew: false,
-                    loaded: true
+                    loading: true
                 });
             });
         } else {
@@ -90,7 +90,7 @@ class CollaborationForm extends React.Component {
                 if (json.length === 0) {
                     organisationByUserSchacHomeOrganisation().then(json => {
                         if (isEmpty(json)) {
-                            this.setState({noOrganisations: true, loaded: true});
+                            this.setState({noOrganisations: true, loading: true});
                         } else {
                             const organisations = this.mapOrganisationsToOptions([json]);
                             const autoCreateCollaborationRequest = json.collaboration_creation_allowed || json.collaboration_creation_allowed_entitlement;
@@ -101,7 +101,7 @@ class CollaborationForm extends React.Component {
                                 isCollaborationRequest: true,
                                 autoCreateCollaborationRequest: autoCreateCollaborationRequest,
                                 current_user_admin: true,
-                                loaded: true,
+                                loading: true,
                                 required: this.state.required.concat("message")
                             });
                         }
@@ -122,7 +122,7 @@ class CollaborationForm extends React.Component {
                     this.setState({
                         organisations: organisations,
                         organisation: organisation,
-                        loaded: true
+                        loading: true
                     });
                 }
             });
@@ -329,9 +329,9 @@ class CollaborationForm extends React.Component {
             name, short_name, description, website_url, administrators, message, accepted_user_policy, organisation,
             organisations, email, initial, alreadyExists, confirmationDialogOpen, confirmationDialogAction, cancelDialogAction,
             leavePage, noOrganisations, isCollaborationRequest, services_restricted, disclose_member_information, disclose_email_information,
-            disable_join_requests, current_user_admin, logo, warning, isNew, collaboration, loaded, autoCreateCollaborationRequest
+            disable_join_requests, current_user_admin, logo, warning, isNew, collaboration, loading, autoCreateCollaborationRequest
         } = this.state;
-        if (!loaded) {
+        if (!loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = !initial && !this.isValid();

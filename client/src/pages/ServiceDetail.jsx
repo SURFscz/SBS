@@ -17,7 +17,7 @@ class ServiceDetail extends React.Component {
         super(props, context);
         this.state = {
             service: {},
-            loaded: false,
+            loading: false,
             tab: "organisations",
             tabs: []
         };
@@ -48,7 +48,7 @@ class ServiceDetail extends React.Component {
                         service: service,
                         tab: tab,
                         tabs: tabs,
-                        loaded: true
+                        loading: true
                     });
 
                 })
@@ -94,8 +94,8 @@ class ServiceDetail extends React.Component {
     }
 
     render() {
-        const {tabs, service, loaded, tab} = this.state;
-        if (!loaded) {
+        const {tabs, service, loading, tab} = this.state;
+        if (!loading) {
             return <SpinnerField/>;
         }
         const {user} = this.props;

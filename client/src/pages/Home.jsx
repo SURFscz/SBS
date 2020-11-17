@@ -26,7 +26,7 @@ class Home extends React.Component {
         this.state = {
             tabs: [],
             role: ROLES.USER,
-            loaded: false,
+            loading: false,
             tab: "organisations"
         };
     }
@@ -80,7 +80,7 @@ class Home extends React.Component {
             ];
         });
         this.tabChanged(tab);
-        this.setState({role: role, loaded: true, tabs, tab});
+        this.setState({role: role, loading: true, tabs, tab});
     };
 
     getOrganisationsTab = () =>
@@ -121,8 +121,8 @@ class Home extends React.Component {
 
 
     render() {
-        const {tabs, loaded, tab} = this.state;
-        if (!loaded) {
+        const {tabs, loading, tab} = this.state;
+        if (!loading) {
             return <SpinnerField/>;
         }
         const {user} = this.props;

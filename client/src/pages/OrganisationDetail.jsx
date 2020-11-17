@@ -27,7 +27,7 @@ class OrganisationDetail extends React.Component {
         super(props, context);
         this.state = {
             organisation: {},
-            loaded: false,
+            loading: false,
             tab: "collaborations",
             tabs: [],
             firstTime: false
@@ -69,7 +69,7 @@ class OrganisationDetail extends React.Component {
                         tab: tab,
                         tabs: tabs,
                         firstTime: firstTime,
-                        loaded: true
+                        loading: true
                     }, callBack);
 
                 })
@@ -135,8 +135,8 @@ class OrganisationDetail extends React.Component {
     }
 
     render() {
-        const {tabs, organisation, loaded, tab, firstTime, adminOfOrganisation} = this.state;
-        if (!loaded) {
+        const {tabs, organisation, loading, tab, firstTime, adminOfOrganisation} = this.state;
+        if (!loading) {
             return <SpinnerField/>;
         }
         return (
