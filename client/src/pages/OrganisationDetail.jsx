@@ -56,7 +56,8 @@ class OrganisationDetail extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {path: `/organisations/${json.id}`, value: json.name}
+                            {value: I18n.t("breadcrumb.organisations")},
+                            {value: json.name}
                         ];
                     });
                     const firstTime = getParameterByName("first", window.location.search) === "true";

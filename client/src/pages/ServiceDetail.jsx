@@ -39,7 +39,8 @@ class ServiceDetail extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {path: "/", value: service.name}
+                            {value: I18n.t("breadcrumb.services")},
+                            {value: service.name}
                         ];
                     });
                     this.tabChanged(tab, service.id);
