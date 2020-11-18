@@ -179,7 +179,7 @@ class NewOrganisationInvitation extends React.Component {
                 expiry_date: expiry_date.getTime() / 1000,
                 organisation_id: organisation.id
             }).then(res => {
-                const htmlPreview = res.html.replace(/class="link" href/g, "nope");
+                const htmlPreview = res.html.replace(/class="button" href/g, "nope");
                 this.setState({htmlPreview: htmlPreview, loading: false});
             });
         }
