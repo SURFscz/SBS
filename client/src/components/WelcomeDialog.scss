@@ -29,6 +29,23 @@
             margin-bottom: 35px;
         }
 
+        div.toggle-role {
+            display: flex;
+            align-items: center;
+            padding-bottom: 25px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid $lighter-grey;
+
+            label.switch {
+                margin-left: auto;
+            }
+
+            span.toggle-txt {
+                margin-left: 15px;
+                font-size: 18px;
+            }
+        }
+
         section.role {
             display: flex;
             align-items: center;
@@ -59,7 +76,7 @@
 
 .ReactModalPortal .welcome-dialog-content {
     transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
-    max-width: 560px;
+    width: 660px;
 
     &--before-close {
         top: -50%;

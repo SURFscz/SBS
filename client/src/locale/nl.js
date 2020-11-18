@@ -1248,7 +1248,8 @@ I18n.translations.nl = {
         role: "Je huidige rol is <strong>{{role}}</strong>",
         ok: "Ok, toon mij de {{type}}",
         organisation: "organisatie",
-        collaboration: "samenwerking"
+        collaboration: "samenwerking",
+        toggleRole: "Verander rol"
     },
     welcome: {
         title: "Welkom op het SRAM platform",
