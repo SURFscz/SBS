@@ -34,7 +34,7 @@ class OrganisationServices extends React.Component {
                 .filter(service => {
                     const allowed = service.allowed_organisations.some(org => org.id === organisation.id);
                     return allowed || (service.allowed_organisations.length === 0 &&
-                    service.automatic_connection_allowed);
+                        service.automatic_connection_allowed);
                 });
             this.setState({services: filteredServices, loading: false});
         });
@@ -120,6 +120,7 @@ class OrganisationServices extends React.Component {
                           loading={loading}
                           title={titleUsed}
                           explain={<OrganisationServicesExplanation/>}
+                          explainTitle={I18n.t("explain.services")}
                           {...this.props}/>
             </div>
         )

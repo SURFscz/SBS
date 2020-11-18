@@ -132,7 +132,7 @@ class Entities extends React.Component {
     render() {
         const {
             modelName, entities, showNew, searchAttributes, columns, children, loading,
-            actions, title, filters, explain, rowLinkMapper, tableClassName
+            actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -144,7 +144,7 @@ class Entities extends React.Component {
             <div className="mod-entities">
                 {explain && <Explain
                     close={this.closeExplanation}
-                    subject={I18n.t("explain.services")}
+                    subject={explainTitle || I18n.t("explain.services")}
                     isVisible={showExplanation}>
                     {explain}
                 </Explain>}

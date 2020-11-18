@@ -104,7 +104,8 @@ I18n.translations.nl = {
         title: "Uitleg {{subject}}",
         impersonate: "Imiteren",
         services: "Diensten",
-        serviceRequest: "Dienst verzoek"
+        serviceRequest: "Dienst verzoek",
+        apiKeys: "API keys"
     },
     models: {
         users: {
