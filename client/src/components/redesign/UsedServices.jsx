@@ -219,7 +219,8 @@ class UsedServices extends React.Component {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: entity => <Logo src={entity.logo ? entity.logo : entity.connectionRequest ? entity.service.logo : null}/>
+                mapper: entity => <Logo
+                    src={entity.logo ? entity.logo : entity.connectionRequest ? entity.service.logo : null}/>
             },
             {
                 key: "name",
@@ -247,12 +248,23 @@ class UsedServices extends React.Component {
                                     isWarning={true}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}/>
-                <Entities entities={usedServices} modelName="servicesUsed" searchAttributes={["name"]}
-                          defaultSort="name" columns={columns} loading={loading} title={titleUsed}
+                <Entities entities={usedServices}
+                          modelName="servicesUsed"
+                          searchAttributes={["name"]}
+                          defaultSort="name"
+                          columns={columns}
+                          loading={loading}
+                          title={titleUsed}
                           explain={<ServicesExplanation/>}
+                          explainTitle={I18n.t("explain.services")}
                           {...this.props}/>
-                <Entities entities={services} modelName="servicesAvailable" searchAttributes={["name"]}
-                          defaultSort="name" columns={columns} loading={loading} title={titleAvailable}
+                <Entities entities={services}
+                          modelName="servicesAvailable"
+                          searchAttributes={["name"]}
+                          defaultSort="name"
+                          columns={columns}
+                          loading={loading} t
+                          itle={titleAvailable}
                           {...this.props}/>
             </div>
         )

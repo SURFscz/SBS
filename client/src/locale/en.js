@@ -103,7 +103,8 @@ I18n.translations.en = {
         title: "Explanation {{subject}}",
         impersonate: "Impersonate",
         services: "Services",
-        serviceRequest: "Service request"
+        serviceRequest: "Service request",
+        apiKeys: "API keys"
     },
     models: {
         users: {
