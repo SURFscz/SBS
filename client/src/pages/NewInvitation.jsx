@@ -24,6 +24,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import {ReactComponent as InviteIcon} from "../icons/single-neutral-question.svg";
 import {ReactComponent as EyeIcon} from "../icons/eye-icon.svg";
 import SpinnerField from "../components/redesign/SpinnerField";
+import {isUserAllowed, ROLES} from "../utils/UserRole";
 
 class NewInvitation extends React.Component {
 
@@ -57,7 +58,7 @@ class NewInvitation extends React.Component {
             leavePage: true,
             htmlPreview: "",
             activeTab: "invitation_form",
-            submitted: false
+            loading: true
         };
     }
 
@@ -70,26 +71,36 @@ class NewInvitation extends React.Component {
                 .then(collaboration => {
                     this.setState({
                         collaboration: collaboration,
+                        loading: false,
                         intended_role: isAdminView ? "admin" : "member",
                         groups: collaboration.groups.map(ag => ({value: ag.id, label: ag.name})),
                     });
-                    AppStore.update(s => {
-                        s.breadcrumb.paths = [
-                            {path: "/", value: I18n.t("breadcrumb.home")},
-                            {
-                                path: `/organisations/${collaboration.organisation_id}`,
-                                value: collaboration.organisation.name
-                            },
-                            {path: `/collaborations/${collaboration.id}`, value: collaboration.name},
-                            {path: "/", value: I18n.t("breadcrumb.invite")}
-                        ];
-                    });
-
+                    this.updateAppStore(collaboration, this.props.user);
                 });
         } else {
             this.props.history.push("/404");
         }
     };
+
+    updateAppStore = (collaboration, user) => {
+        const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
+        AppStore.update(s => {
+            s.breadcrumb.paths = orgManager ? [
+                {path: "/", value: I18n.t("breadcrumb.home")},
+                {value: I18n.t("breadcrumb.organisations")},
+                {path: `/organisations/${collaboration.organisation_id}`, value: collaboration.organisation.name},
+                {value: I18n.t("breadcrumb.collaborations")},
+                {path: `/collaborations/${collaboration.id}`, value: collaboration.name},
+                {value: I18n.t("breadcrumb.invite")}
+            ] : [
+                {path: "/", value: I18n.t("breadcrumb.home")},
+                {value: I18n.t("breadcrumb.collaborations")},
+                {path: `/collaborations/${collaboration.id}`, value: collaboration.name},
+                {value: I18n.t("breadcrumb.invite")}
+            ];
+        });
+    }
+
 
     cancel = () => {
         this.setState({confirmationDialogOpen: true});
@@ -106,7 +117,7 @@ class NewInvitation extends React.Component {
                 administrators, message, collaboration, expiry_date, fileEmails, intended_role,
                 selectedGroup
             } = this.state;
-            this.setState({submitted: true});
+            this.setState({loading: true});
             collaborationInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
@@ -191,6 +202,7 @@ class NewInvitation extends React.Component {
     tabChanged = activeTab => {
         this.setState({activeTab: activeTab});
         if (activeTab === "invitation_preview") {
+            this.setState({loading: true});
             const {administrators, message, collaboration, intended_role, expiry_date, fileEmails} = this.state;
             collaborationInvitationsPreview({
                 administrators: administrators.concat(fileEmails),
@@ -198,8 +210,10 @@ class NewInvitation extends React.Component {
                 intended_role: intended_role,
                 expiry_date: expiry_date.getTime() / 1000,
                 collaboration_id: collaboration.id
-            }).then(res =>
-                this.setState({htmlPreview: res.html.replace(/class="button" href/g, "nope")}));
+            }).then(res => {
+                const htmlPreview = res.html.replace(/class="button" href/g, "nope");
+                this.setState({htmlPreview: htmlPreview, loading: false});
+            });
         }
     };
 
@@ -307,12 +321,12 @@ class NewInvitation extends React.Component {
         const {
             email, initial, administrators, expiry_date, collaboration, intended_role,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName, fileInputKey,
-            fileTypeError, fileEmails, activeTab, groups, selectedGroup, submitted
+            fileTypeError, fileEmails, activeTab, groups, selectedGroup, loading
         } = this.state;
-        if (isEmpty(collaboration) || submitted) {
+        if (loading) {
             return <SpinnerField/>
         }
-        const disabledSubmit = (!initial && !this.isValid()) || submitted;
+        const disabledSubmit = (!initial && !this.isValid());
         return (
             <div className="mod-new-collaboration-invitation">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}

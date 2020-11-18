@@ -53,8 +53,7 @@ class NewOrganisationInvitation extends React.Component {
             leavePage: true,
             activeTab: "invitation_form",
             htmlPreview: "",
-            loading: true,
-            submitted: false
+            loading: true
         };
     }
 
@@ -90,7 +89,7 @@ class NewOrganisationInvitation extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {administrators, message, organisation, expiry_date, fileEmails} = this.state;
-            this.setState({submitted: true});
+            this.setState({loading: true});
             organisationInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
@@ -179,10 +178,10 @@ class NewOrganisationInvitation extends React.Component {
                 intended_role,
                 expiry_date: expiry_date.getTime() / 1000,
                 organisation_id: organisation.id
-            }).then(res => this.setState({
-                htmlPreview: res.html.replace(/class="link" href/g, "nope"),
-                loading: false
-            }));
+            }).then(res => {
+                const htmlPreview = res.html.replace(/class="link" href/g, "nope");
+                this.setState({htmlPreview: htmlPreview, loading: false});
+            });
         }
     };
 
@@ -274,9 +273,9 @@ class NewOrganisationInvitation extends React.Component {
         const {
             email, initial, administrators, expiry_date, organisation,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
-            fileTypeError, fileEmails, fileInputKey, activeTab, intended_role, loading, submitted
+            fileTypeError, fileEmails, fileInputKey, activeTab, intended_role, loading
         } = this.state;
-        if (loading || submitted) {
+        if (loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = (!initial && !this.isValid());
