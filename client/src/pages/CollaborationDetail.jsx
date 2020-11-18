@@ -325,6 +325,7 @@ class CollaborationDetail extends React.Component {
                 {<WelcomeDialog name={collaboration.name} isOpen={firstTime}
                                 role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
                                 isOrganisation={false}
+                                isAdmin={user.admin}
                                 close={() => this.setState({firstTime: false})}/>}
                 {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit)}
                 {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMember(collaboration, user, schacHomeOrganisation)}

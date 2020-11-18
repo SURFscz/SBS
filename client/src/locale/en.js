@@ -1249,7 +1249,8 @@ I18n.translations.en = {
         role: "Your current role is <strong>{{role}}</strong>",
         ok: "All good, show me the {{type}}",
         organisation: "organisation",
-        collaboration: "collaboration"
+        collaboration: "collaboration",
+        toggleRole: "Toggle role"
     },
     welcome: {
         title: "Welcome to the SRAM platform",

@@ -149,6 +149,7 @@ class OrganisationDetail extends React.Component {
                 {<WelcomeDialog name={organisation.name} isOpen={firstTime}
                                 role={adminOfOrganisation ? ROLES.ORG_ADMIN : ROLES.ORG_MANAGER}
                                 isOrganisation={true}
+                                isAdmin={user.admin}
                                 close={() => this.setState({firstTime: false})}/>}
 
                 <UnitHeader obj={organisation} mayEdit={adminOfOrganisation}
