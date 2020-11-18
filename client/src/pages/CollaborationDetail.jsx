@@ -102,7 +102,6 @@ class CollaborationDetail extends React.Component {
         });
     }
 
-
     updateAppStore = (collaboration, adminOfCollaboration, orgManager) => {
         AppStore.update(s => {
             s.breadcrumb.paths = orgManager ? [
@@ -141,11 +140,15 @@ class CollaborationDetail extends React.Component {
                         });
                 });
             }}>
-                {<EyeViewIcon/>}<span>{I18n.t(`models.collaboration.${showMemberView ? "viewAsMember" : "viewAsAdmin"}`)}</span>
+                {
+                    <EyeViewIcon/>}<span>{I18n.t(`models.collaboration.${showMemberView ? "viewAsMember" : "viewAsAdmin"}`)}</span>
             </div>
         );
     }
 
+    onBoarding = () => {
+        this.setState({firstTime: true});
+    }
 
     getTabs = (collaboration, schacHomeOrganisation, adminOfCollaboration, showMemberView) => {
         //Actually this collaboration is not for members to view
@@ -286,9 +289,10 @@ class CollaborationDetail extends React.Component {
         );
     }
 
-    getUnitHeader = (collaboration, allowedToEdit) => {
+    getUnitHeader = (user, collaboration, allowedToEdit) => {
         return <UnitHeader obj={collaboration}
                            mayEdit={allowedToEdit}
+                           firstTime={user.admin ? this.onBoarding : undefined}
                            history={allowedToEdit && this.props.history}
                            auditLogPath={`collaborations/${collaboration.id}`}
                            name={collaboration.name}
@@ -322,7 +326,7 @@ class CollaborationDetail extends React.Component {
                                 role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
                                 isOrganisation={false}
                                 close={() => this.setState({firstTime: false})}/>}
-                {(adminOfCollaboration && showMemberView) && this.getUnitHeader(collaboration, allowedToEdit)}
+                {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit)}
                 {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMember(collaboration, user, schacHomeOrganisation)}
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
