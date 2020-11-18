@@ -209,7 +209,7 @@ class OrganisationForm extends React.Component {
     addEmail = e => {
         const email = e.target.value;
         const {administrators} = this.state;
-        const delimiters = [",", " ", ";"];
+        const delimiters = [",", " ", ";", "\n", "\t"];
         let emails;
         if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
             emails = email.replace(/[;\s]/g, ",").split(",").filter(part => part.trim().length > 0 && validEmailRegExp.test(part));
