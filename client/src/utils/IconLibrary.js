@@ -39,7 +39,8 @@ import {
     faUserLock,
     faUsers,
     faUserSecret,
-    faWindowClose
+    faWindowClose,
+    faPlaneDeparture
 } from '@fortawesome/free-solid-svg-icons'
 
 export function addIcons() {
@@ -47,6 +48,6 @@ export function addIcons() {
         faCircle, faCheck, faDoorClosed, faAngleDown, faAngleUp, faHistory, faMailBulk,
         faPlus, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
         faQuestion, faQuestionCircle, faToolbox, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret, faUserLock,
-        faLock, faLockOpen, faGlobe, faUserFriends, faDoorOpen, faUsers,
+        faLock, faLockOpen, faGlobe, faUserFriends, faDoorOpen, faUsers, faPlaneDeparture
     );
 }

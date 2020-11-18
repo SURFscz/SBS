@@ -36,10 +36,10 @@ class OrganisationDetail extends React.Component {
 
     componentDidMount = callBack => {
         const params = this.props.match.params;
-        const {user} = this.props;
         if (params.id) {
             organisationById(params.id)
                 .then(json => {
+                    const {user} = this.props;
                     const member = (user.organisation_memberships || [])
                         .find(membership => membership.organisation_id === json.id);
                     if (isEmpty(member) && !user.admin) {
@@ -78,6 +78,10 @@ class OrganisationDetail extends React.Component {
             this.props.history.push("/404");
         }
     };
+
+    onBoarding = () => {
+        this.setState({firstTime: true});
+    }
 
     getTabs = organisation => {
         const tabs = [
@@ -136,6 +140,7 @@ class OrganisationDetail extends React.Component {
 
     render() {
         const {tabs, organisation, loading, tab, firstTime, adminOfOrganisation} = this.state;
+        const {user} = this.props;
         if (!loading) {
             return <SpinnerField/>;
         }
@@ -144,11 +149,12 @@ class OrganisationDetail extends React.Component {
                 {<WelcomeDialog name={organisation.name} isOpen={firstTime}
                                 role={adminOfOrganisation ? ROLES.ORG_ADMIN : ROLES.ORG_MANAGER}
                                 isOrganisation={true}
-                                close={() => this.setState({firstTime: false})} />}
+                                close={() => this.setState({firstTime: false})}/>}
 
                 <UnitHeader obj={organisation} mayEdit={adminOfOrganisation}
                             history={this.props.history}
                             auditLogPath={`organisations/${organisation.id}`}
+                            firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
                             onEdit={() => this.props.history.push("/edit-organisation/" + organisation.id)}>
                     <p>{organisation.description}</p>

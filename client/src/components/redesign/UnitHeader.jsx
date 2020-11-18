@@ -7,7 +7,7 @@ import Logo from "./Logo";
 
 export default function UnitHeader(props) {
 
-    const {obj, mayEdit, onEdit, history, auditLogPath, name, svgClick} = props;
+    const {obj, mayEdit, onEdit, history, auditLogPath, name, svgClick, firstTime} = props;
 
     const queryParam = `name=${encodeURIComponent(name)}&back=${encodeURIComponent(window.location.pathname)}`;
 
@@ -25,6 +25,8 @@ export default function UnitHeader(props) {
                           onClick={() => history.push(`/audit-logs/${auditLogPath}?${queryParam}`)}>
                         <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
                     </span>}
+                    {firstTime &&
+                        <span className="onboarding" onClick={firstTime}><FontAwesomeIcon icon="plane-departure"/>{I18n.t("home.firstTime")}</span>}
                 </div>
             </div>
             <div className="children">

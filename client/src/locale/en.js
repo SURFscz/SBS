@@ -53,6 +53,7 @@ I18n.translations.en = {
         edit: "Edit",
         history: "History",
         backToHome: "Back to home",
+        firstTime: "Onboarding",
         collaborationRequest: "Request for new Collaboration",
         collaborationNew: "New Collaboration",
         noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution named '{{schac_home}}' where you logged in. This is not the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
