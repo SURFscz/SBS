@@ -202,6 +202,9 @@ I18n.translations.en = {
             new: "New Collaboration",
             organisationName: "Organisation",
             noEntities: "There are no collaborations using this service",
+            origin: "Enabled by",
+            fromOrganisation: "Organisation",
+            fromCollaboration: "Collaboration"
         },
         coAdmins: {
             searchPlaceHolder: "Search for admins...",

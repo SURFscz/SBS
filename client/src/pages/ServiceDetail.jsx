@@ -10,6 +10,7 @@ import {AppStore} from "../stores/AppStore";
 import Collaborations from "../components/redesign/Collaborations";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
+import {removeDuplicates} from "../utils/Utils";
 
 class ServiceDetail extends React.Component {
 
@@ -52,7 +53,9 @@ class ServiceDetail extends React.Component {
                     });
 
                 })
-                .catch(() => this.props.history.push("/404"));
+                .catch(e => {
+                    this.props.history.push("/404")
+                });
         } else {
             this.props.history.push("/404");
         }
@@ -66,11 +69,16 @@ class ServiceDetail extends React.Component {
     }
 
     getCollaborationsTab = service => {
-        debugger;
+        const collaborations = service.collaborations;
+        collaborations.forEach(coll => coll.fromCollaboration = true);
+        const collFromOrganisations = service.service_organisation_collaborations;
+        collFromOrganisations.forEach(coll => coll.fromCollaboration = false);
+        const colls = removeDuplicates(collaborations.concat(collFromOrganisations), "id");
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.serviceCollaborations")}
-                     icon={<ServicesIcon/>}>
+                                                                   icon={<ServicesIcon/>}>
             <Collaborations mayCreate={false}
-                            collaborations={service.collaborations}
+                            showOrigin={true}
+                            collaborations={colls}
                             modelName={"serviceCollaborations"}
                             {...this.props} />
         </div>)
