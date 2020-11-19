@@ -224,22 +224,23 @@ def seed(db, app_config):
              organisation_membership_jane, organisation_membership_paul_uuc, organisation_membership_paul_uva)
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
-                   public_visible=True, automatic_connection_allowed=True, logo=_read_image("email.jpeg"))
+                   public_visible=True, automatic_connection_allowed=True, logo=_read_image("email.jpeg"),
+                   accepted_user_policy="https://google.nl")
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
                        public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
-                       logo=_read_image("wireless.png"))
+                       logo=_read_image("wireless.png"), accepted_user_policy="https://google.nl")
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True, logo=_read_image("cloud.jpg"))
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name,
                       description="SURF Storage Service", logo=_read_image("storage.jpeg"),
                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
-                      white_listed=True)
+                      white_listed=True, accepted_user_policy="https://google.nl")
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
                        "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
                    public_visible=True, automatic_connection_allowed=False, logo=_read_image("wiki.jpeg"),
-                   contact_email="help@wiki.com")
+                   contact_email="help@wiki.com", accepted_user_policy="https://google.nl")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
@@ -255,6 +256,7 @@ def seed(db, app_config):
                               code_of_conduct_compliant=True, sirtfi_compliant=True)
 
     uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=uuc_scheduler_name,
+                            accepted_user_policy="https://google.nl",
                             description="UUC Scheduler Service", logo=_read_image("scheduler_uuc.jpeg"),
                             public_visible=True, automatic_connection_allowed=False, allowed_organisations=[uuc])
 

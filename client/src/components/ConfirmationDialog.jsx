@@ -8,7 +8,7 @@ import Button from "./Button";
 export default function ConfirmationDialog({
                                                isOpen = false, cancel, confirm, question = "",
                                                leavePage = false, isError = false, isWarning = false,
-                                               children = null
+                                               disabledConfirm = false, children = null
                                            }) {
     const className = isError ? " error " : isWarning ? " warning " : "";
     return (
@@ -34,7 +34,8 @@ export default function ConfirmationDialog({
                 </section>}
             <section className="dialog-buttons">
                 <Button txt={leavePage ? I18n.t("confirmationDialog.stay") : I18n.t("confirmationDialog.confirm")}
-                        onClick={confirm} className={className}/>
+                        onClick={() => !disabledConfirm && confirm()}
+                        className={className} disabled={disabledConfirm}/>
                 <Button cancelButton={true}
                         txt={leavePage ? I18n.t("confirmationDialog.leave") : I18n.t("confirmationDialog.cancel")}
                         onClick={cancel}/>
