@@ -89,7 +89,7 @@ export default class Collaborations extends React.PureComponent {
                                             onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
             },
             {
-                key: "organisation_name",
+                key: "organisation__name",
                 header: I18n.t("models.serviceCollaborations.organisationName"),
                 mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
             },
