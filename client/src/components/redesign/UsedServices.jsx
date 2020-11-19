@@ -97,7 +97,6 @@ class UsedServices extends React.Component {
     };
 
     linkService = (service, collaboration) => {
-        const {disabledConfirm} = this.state;
         const action = () => this.refreshAndFlash(addCollaborationServices(collaboration.id, service.id),
             I18n.t("collaborationServices.flash.added", {
                 service: service.name,
