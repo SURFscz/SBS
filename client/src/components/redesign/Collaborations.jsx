@@ -104,7 +104,7 @@ export default class Collaborations extends React.PureComponent {
             }];
         if (showOrigin) {
             columns.push({
-                key: "origin",
+                key: "fromCollaboration",
                 header: I18n.t("models.serviceCollaborations.origin"),
                 mapper: collaboration => collaboration.fromCollaboration ?
                     I18n.t("models.serviceCollaborations.fromCollaboration") : I18n.t("models.serviceCollaborations.fromOrganisation")
