@@ -43,7 +43,7 @@ class Home extends React.Component {
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
                 tabs.push(this.getOrganisationsTab());
-                tabs.push(this.getCollaborationsTab());
+                tabs.push(this.getCollaborationsTab(true));
                 tabs.push(this.getPlatformAdminsTab());
                 tabs.push(this.getServicesTab());
                 break;
@@ -55,7 +55,7 @@ class Home extends React.Component {
                 } else {
                     tabs.push(this.getOrganisationsTab());
                     if (nbrCollaborations > 0) {
-                        tabs.push(this.getCollaborationsTab());
+                        tabs.push(this.getCollaborationsTab(false));
                     }
                 }
                 break;
@@ -65,7 +65,7 @@ class Home extends React.Component {
                     setTimeout(() => this.props.history.push(`/collaborations/${user.collaboration_memberships[0].collaboration_id}`), 50);
                     return;
                 } else {
-                    tabs.push(this.getCollaborationsTab());
+                    tabs.push(this.getCollaborationsTab(false));
                     tab = "collaborations";
                     if (nbrOrganisations > 0) {
                         tabs.push(this.getOrganisationsTab());
@@ -109,10 +109,10 @@ class Home extends React.Component {
             <Welcome />
         </div>)
     }
-    getCollaborationsTab = ()=> {
+    getCollaborationsTab = platformAdmin=> {
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.collaborations")}
                      icon={<CollaborationsIcon/>}>
-            <Collaborations {...this.props} platformAdmin={true}/>
+            <Collaborations {...this.props} platformAdmin={platformAdmin}/>
         </div>)
     }
 

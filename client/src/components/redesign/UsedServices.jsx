@@ -19,6 +19,7 @@ import SpinnerField from "./SpinnerField";
 import ConfirmationDialog from "../ConfirmationDialog";
 import ServicesExplanation from "../explanations/Services";
 import Logo from "./Logo";
+import CheckBox from "../CheckBox";
 
 class UsedServices extends React.Component {
 
@@ -33,6 +34,10 @@ class UsedServices extends React.Component {
             confirmationDialogQuestion: undefined,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            disabledConfirm: false,
+            confirmationChildren: false,
+            selectedService: null,
+            warning: false
         }
     }
 
@@ -79,8 +84,34 @@ class UsedServices extends React.Component {
 
     }
 
+    unlinkService = (service, collaboration) => {
+        const action = () => this.refreshAndFlash(deleteCollaborationServices(collaboration.id, service.id),
+            I18n.t("collaborationServices.flash.deleted", {
+                service: service.name,
+                name: collaboration.name
+            }));
+        this.confirm(action, I18n.t("models.services.confirmations.remove", {
+            service: service.name,
+            name: collaboration.name
+        }), true);
+    };
+
+    linkService = (service, collaboration) => {
+        const {disabledConfirm} = this.state;
+        const action = () => this.refreshAndFlash(addCollaborationServices(collaboration.id, service.id),
+            I18n.t("collaborationServices.flash.added", {
+                service: service.name,
+                name: collaboration.name
+            }));
+        this.setState({selectedService: service});
+        this.confirm(action, I18n.t("models.services.confirmations.add", {
+            service: service.name,
+            name: collaboration.name
+        }), false, !isEmpty(service.accepted_user_policy), true);
+    };
+
     refreshAndFlash = (promise, flashMsg, callback) => {
-        this.setState({loading: true, confirmationDialogOpen: false})
+        this.setState({loading: true, confirmationDialogOpen: false, confirmationChildren: false, disabledConfirm: false})
         promise.then(() => {
             this.props.refresh(() => {
                 this.componentDidMount();
@@ -110,14 +141,17 @@ class UsedServices extends React.Component {
                 service: service.name,
                 collaboration: collaboration.name
             }), this.closeConfirmationDialog);
-        this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestDeleteConfirmation"));
+        this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestDeleteConfirmation"), true);
     };
 
-    confirm = (action, question) => {
+    confirm = (action, question, warning = false, confirmationChildren = false, disabledConfirm = false) => {
         this.setState({
             confirmationDialogOpen: true,
             confirmationDialogQuestion: question,
-            confirmationDialogAction: action
+            confirmationDialogAction: action,
+            confirmationChildren: confirmationChildren,
+            warning: warning,
+            disabledConfirm: disabledConfirm
         });
     };
 
@@ -135,21 +169,13 @@ class UsedServices extends React.Component {
         }
         if (service.usedService && !service.connectionRequest) {
             return <Button className={"white"}
-                           onClick={() => this.refreshAndFlash(deleteCollaborationServices(collaboration.id, service.id),
-                               I18n.t("collaborationServices.flash.deleted", {
-                                   service: service.name,
-                                   name: collaboration.name
-                               }))}
+                           onClick={() => this.unlinkService(service, collaboration)}
                            txt={I18n.t("models.services.removeFromCO")}/>
 
         }
         if (!service.usedService && service.automatic_connection_allowed) {
             return <Button className={"white"}
-                           onClick={() => this.refreshAndFlash(addCollaborationServices(collaboration.id, service.id),
-                               I18n.t("collaborationServices.flash.added", {
-                                   service: service.name,
-                                   name: collaboration.name
-                               }))}
+                           onClick={() => this.linkService(service, collaboration)}
                            txt={I18n.t("models.services.addToCO")}/>;
         }
         if (!service.usedService && !service.automatic_connection_allowed) {
@@ -192,10 +218,22 @@ class UsedServices extends React.Component {
             </div>);
     }
 
+    renderConfirmationChildren = (service, disabledConfirm) => {
+        return <div className="service-confirmation">
+            <CheckBox name="disabledConfirm" value={!disabledConfirm}
+                      onChange={() => this.setState({disabledConfirm: !this.state.disabledConfirm})}
+                      info={I18n.t("models.services.confirmations.check", {
+                          aup: service.accepted_user_policy,
+                          name: service.name
+                      })}/>
+        </div>
+    }
+
     render() {
         const {
-            services, loading, requestConnectionService, message,
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion
+            services, loading, requestConnectionService, message, confirmationChildren, disabledConfirm, warning,
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion,
+            selectedService
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -245,9 +283,11 @@ class UsedServices extends React.Component {
             <div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
-                                    isWarning={true}
+                                    isWarning={warning}
+                                    disabledConfirm={disabledConfirm}
                                     confirm={confirmationDialogAction}
-                                    question={confirmationDialogQuestion}/>
+                                    question={confirmationDialogQuestion}
+                                    children={confirmationChildren ? this.renderConfirmationChildren(selectedService, disabledConfirm) : null}/>
                 <Entities entities={usedServices}
                           modelName="servicesUsed"
                           searchAttributes={["name"]}
