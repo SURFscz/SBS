@@ -37,6 +37,10 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
                 width: 25%;
             }
 
+            &.origin {
+                width: 15%;
+            }
+
             &.collaboration_memberships_count {
                 width: 15%;
                 text-align: center;

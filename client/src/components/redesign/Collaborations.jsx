@@ -23,10 +23,10 @@ export default class Collaborations extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        const {collaborations, user} = this.props;
+        const {collaborations, platformAdmin = false} = this.props;
         const promises = [mayRequestCollaboration()];
         if (collaborations === undefined) {
-            Promise.all(promises.concat([user.admin ? allCollaborations() : myCollaborations()])).then(res => {
+            Promise.all(promises.concat([platformAdmin ? allCollaborations() : myCollaborations()])).then(res => {
                 this.setState({
                     standalone: true,
                     collaborations: res[1],
@@ -101,22 +101,30 @@ export default class Collaborations extends React.PureComponent {
                     return cm ?
                         <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
                 }
-            },
-            {
-                key: "collaboration_memberships_count",
-                header: I18n.t("models.collaborations.memberCount")
-            },
+            }];
+        if (showOrigin) {
+            columns.push({
+                key: "origin",
+                header: I18n.t("models.serviceCollaborations.origin"),
+                mapper: collaboration => collaboration.fromCollaboration ?
+                    I18n.t("models.serviceCollaborations.fromCollaboration") : I18n.t("models.serviceCollaborations.fromOrganisation")
+            });
+        }
+        const allColumns = columns.concat([{
+            key: "collaboration_memberships_count",
+            header: I18n.t("models.collaborations.memberCount")
+        },
             {
                 key: "invitations_count",
                 header: I18n.t("models.collaborations.invitationsCount")
-            }]
+            }]);
         return (
             <Entities entities={collaborations}
                       modelName={mayCreateCollaborations ? modelName : showRequestCollaboration ? "memberCollaborations" : modelName}
                       searchAttributes={["name"]}
                       defaultSort="name"
                       rowLinkMapper={() => this.openCollaboration}
-                      columns={columns}
+                      columns={allColumns}
                       showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
                       newEntityPath={`/new-collaboration`}
                       loading={loading}

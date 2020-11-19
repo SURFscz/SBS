@@ -203,6 +203,9 @@ I18n.translations.nl = {
             new: "Nieuwe samenwerking",
             organisationName: "Organisatie",
             noEntities: "Er zijn geen samenwerkingen die deze dienst gebruiken",
+            origin: "Beschikbaar door",
+            fromOrganisation: "Organisatie",
+            fromCollaboration: "Samenwerking"
         },
         coAdmins: {
             searchPlaceHolder: "Zoek admins...",

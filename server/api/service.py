@@ -134,9 +134,21 @@ def service_by_id(service_id):
             .options(selectinload(Service.organisations)) \
             .options(selectinload(Service.allowed_organisations)) \
             .options(selectinload(Service.ip_networks))
+        service = query.filter(Service.id == service_id).one()
+        res = jsonify(service).json
+        res["service_organisation_collaborations"] = []
+        # To prevent circular references value error
+        if len(res["organisations"]) > 0:
+            collaborations = Collaboration.query \
+                .options(selectinload(Collaboration.organisation)) \
+                .join(Collaboration.organisation) \
+                .join(Organisation.services) \
+                .filter(Service.id == service_id) \
+                .all()
+            res["service_organisation_collaborations"] = jsonify(collaborations).json
+        return res, 200
 
-    service = query.filter(Service.id == service_id).one()
-    return service, 200
+    return query.filter(Service.id == service_id).one(), 200
 
 
 @service_api.route("/all", strict_slashes=False)

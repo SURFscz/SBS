@@ -43,9 +43,9 @@ class Home extends React.Component {
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
                 tabs.push(this.getOrganisationsTab());
+                tabs.push(this.getCollaborationsTab());
                 tabs.push(this.getPlatformAdminsTab());
                 tabs.push(this.getServicesTab());
-                tabs.push(this.getCollaborationsTab());
                 break;
             case ROLES.ORG_ADMIN:
             case ROLES.ORG_MANAGER:
@@ -112,7 +112,7 @@ class Home extends React.Component {
     getCollaborationsTab = ()=> {
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.collaborations")}
                      icon={<CollaborationsIcon/>}>
-            <Collaborations {...this.props} />
+            <Collaborations {...this.props} platformAdmin={true}/>
         </div>)
     }
 

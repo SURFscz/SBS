@@ -161,7 +161,7 @@ class CollaborationDetail extends React.Component {
                 this.getMembersTab(collaboration, showMemberView),
                 this.getGroupsTab(collaboration, showMemberView),
                 this.getServicesTab(collaboration),
-                collaboration.join_requests.length > 0 ? this.getJoinRequestsTab(collaboration) : null,
+                this.getJoinRequestsTab(collaboration),
             ] : [
                 this.getAboutTab(collaboration, showMemberView),
                 this.getMembersTab(collaboration, showMemberView),

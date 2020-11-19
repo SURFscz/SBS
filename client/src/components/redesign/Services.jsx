@@ -1,10 +1,11 @@
 import React from "react";
 import {allServices} from "../../api";
 import "./Services.scss";
-import {isEmpty, stopEvent} from "../../utils/Utils";
+import {stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Logo from "./Logo";
+import SpinnerField from "./SpinnerField";
 
 
 class Services extends React.Component {
@@ -29,8 +30,8 @@ class Services extends React.Component {
     render() {
         const {services, loading} = this.state;
         const {user} = this.props;
-        if (isEmpty(services) && !loading) {
-            return <div>TODO - No services yet</div>
+        if (loading) {
+            return <SpinnerField/>;
         }
 
         const columns = [
@@ -45,11 +46,11 @@ class Services extends React.Component {
                 header: I18n.t("models.services.name"),
                 mapper: service => <a href="/" onClick={this.openService(service)}>{service.name}</a>,
             },
-{
+            {
                 key: "organisations_count",
                 header: I18n.t("models.services.organisationCount")
             },
-         {
+            {
                 key: "collaborations_count",
                 header: I18n.t("models.services.collaborationCount")
             }];

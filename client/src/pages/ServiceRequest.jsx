@@ -73,7 +73,6 @@ class ServiceRequest extends React.Component {
     backToService = () => {
         const {service} = this.state;
         const redirectUri = getParameterByName("redirectUri",  window.location.search);
-        debugger;
         window.location.href = isEmpty(redirectUri) ? service.uri : redirectUri;
     };
 
