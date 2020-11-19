@@ -28,14 +28,16 @@
         span.history {
             cursor: pointer;
         }
+
         span.onboarding {
             cursor: pointer;
         }
+
         svg {
             width: 50px;
             height: 30px;
 
-            &.fa-history, &.fa-plane-departure  {
+            &.fa-history, &.fa-plane-departure {
                 width: 1em;
                 height: 1em;
 
