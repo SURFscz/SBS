@@ -6,7 +6,7 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Button from "../Button";
-import {mayRequestCollaboration, myCollaborations} from "../../api";
+import {allCollaborations, mayRequestCollaboration, myCollaborations} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
@@ -23,10 +23,10 @@ export default class Collaborations extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        const {collaborations} = this.props;
+        const {collaborations, user} = this.props;
         const promises = [mayRequestCollaboration()];
         if (collaborations === undefined) {
-            Promise.all(promises.concat([myCollaborations()])).then(res => {
+            Promise.all(promises.concat([user.admin ? allCollaborations() : myCollaborations()])).then(res => {
                 this.setState({
                     standalone: true,
                     collaborations: res[1],
@@ -67,7 +67,7 @@ export default class Collaborations extends React.PureComponent {
             return <SpinnerField/>;
         }
         const {collaborations} = standalone ? this.state : this.props;
-        const {modelName = "collaborations", organisation} = this.props;
+        const {modelName = "collaborations", organisation, mayCreate = true, showOrigin = false} = this.props;
 
         if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
             return this.noCollaborations(this.props.organisation);
@@ -117,7 +117,7 @@ export default class Collaborations extends React.PureComponent {
                       defaultSort="name"
                       rowLinkMapper={() => this.openCollaboration}
                       columns={columns}
-                      showNew={mayCreateCollaborations || showRequestCollaboration}
+                      showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
                       newEntityPath={`/new-collaboration`}
                       loading={loading}
                       {...this.props}/>

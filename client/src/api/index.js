@@ -214,6 +214,10 @@ export function myCollaborations(includeServices = false) {
     return fetchJson(`/api/collaborations${query}`);
 }
 
+export function allCollaborations() {
+    return fetchJson(`/api/collaborations/all`);
+}
+
 export function createCollaboration(collaboration) {
     return postPutJson("/api/collaborations", collaboration, "post");
 }

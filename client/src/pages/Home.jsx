@@ -7,6 +7,7 @@ import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as WelcomeIcon} from "../icons/home.svg";
+
 import {AppStore} from "../stores/AppStore";
 import {rawGlobalUserRole, ROLES} from "../utils/UserRole";
 import Tabs from "../components/Tabs";
@@ -44,6 +45,7 @@ class Home extends React.Component {
                 tabs.push(this.getOrganisationsTab());
                 tabs.push(this.getPlatformAdminsTab());
                 tabs.push(this.getServicesTab());
+                tabs.push(this.getCollaborationsTab());
                 break;
             case ROLES.ORG_ADMIN:
             case ROLES.ORG_MANAGER:

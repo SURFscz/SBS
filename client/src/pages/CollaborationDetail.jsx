@@ -293,7 +293,7 @@ class CollaborationDetail extends React.Component {
         return <UnitHeader obj={collaboration}
                            mayEdit={allowedToEdit}
                            firstTime={user.admin ? this.onBoarding : undefined}
-                           history={allowedToEdit && this.props.history}
+                           history={(user.admin && allowedToEdit) && this.props.history}
                            auditLogPath={`collaborations/${collaboration.id}`}
                            name={collaboration.name}
                            onEdit={() => this.props.history.push("/edit-collaboration/" + collaboration.id)}>

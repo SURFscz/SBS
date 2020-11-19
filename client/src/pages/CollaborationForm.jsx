@@ -357,7 +357,7 @@ class CollaborationForm extends React.Component {
                     {!isNew && <UnitHeader obj={collaboration}
                                            auditLogPath={`collaborations/${collaboration.id}`}
                                            name={collaboration.name}
-                                           history={this.props.history}
+                                           history={user.admin && this.props.history}
                                            mayEdit={false}/>}
 
                     <div className="new-collaboration">

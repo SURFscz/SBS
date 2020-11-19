@@ -216,6 +216,7 @@ I18n.translations.en = {
             noEntities: "There are no members",
         },
         servicesAvailable: {
+            title: "Available services",
             searchPlaceHolder: "Search for services...",
             noEntities: "No services are available to add"
         },

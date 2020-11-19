@@ -39,11 +39,11 @@ export default class History extends React.PureComponent {
             const name = getParameterByName("name", window.location.search);
             const back = getParameterByName("back", window.location.search);
             AppStore.update(s => {
-                s.breadcrumb.paths = [
-                    {path: "/", value: I18n.t("breadcrumb.home")},
+                const paths = s.breadcrumb.paths.slice(0, s.breadcrumb.paths.length - 1);
+                s.breadcrumb.paths = paths.concat([
                     {path: decodeURIComponent(back), value: name},
-                    {path: `/`, value: I18n.t("breadcrumb.history")}
-                ];
+                    {value: I18n.t("breadcrumb.history")}
+                ]);
             });
 
         });

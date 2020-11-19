@@ -249,7 +249,7 @@ class OrganisationForm extends React.Component {
                 {!isNew && <UnitHeader obj={organisation}
                                        auditLogPath={`organisations/${organisation.id}`}
                                        name={organisation.name}
-                                       history={this.props.history}
+                                       history={user.admin && this.props.history}
                                        mayEdit={false}/>}
 
                 <div className="new-organisation">

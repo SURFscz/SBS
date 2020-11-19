@@ -21,7 +21,9 @@ table.collaboration_requests {
             &.name {
                 padding-left: 15px;
             }
-
+            &.open {
+                text-align: right;
+            }
         }
     }
 }
