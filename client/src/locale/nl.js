@@ -286,7 +286,8 @@ I18n.translations.nl = {
         collaboration_requests: {
             title: "Samenwerkingsverzoeken",
             requester: "Aanvrager",
-            searchPlaceHolder: "Zoek Samenwerkingsverzoeken..."
+            searchPlaceHolder: "Zoek Samenwerkingsverzoeken...",
+            noEntities: "Geen verzoeken voor samenwerkingen",
         },
         invitation: {
             welcome: "Welkom in SRAM. Hier kun je samenwerken met je collega-onderzoekers.",

@@ -285,7 +285,8 @@ I18n.translations.en = {
         collaboration_requests: {
             title: "Requests for collaborations",
             requester: "Requester",
-            searchPlaceHolder: "Search for requests..."
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No requests for collaborations",
         },
         invitation: {
             welcome: "Welcome to SRAM. Here you can collaborate with your fellow researchers.",
