@@ -5,6 +5,7 @@ import {stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Logo from "./Logo";
+import Button from "../Button";
 
 export default class CollaborationRequests extends React.PureComponent {
 
@@ -42,6 +43,12 @@ export default class CollaborationRequests extends React.PureComponent {
                         <span className="email">{cr.requester.email}</span>
                     </div>
                 </div>
+            },
+            {
+                nonSortable: true,
+                key: "open",
+                header: "",
+                mapper: cr => <Button onClick={this.openCollaborationRequest(cr)} txt={I18n.t("forms.open")} small={true}/>
             }
         ]
         return (

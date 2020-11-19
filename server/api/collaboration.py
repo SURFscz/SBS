@@ -104,7 +104,9 @@ def may_request_collaboration():
 @json_endpoint
 def collaboration_all():
     confirm_authorized_api_call()
-    collaborations = Collaboration.query.all()
+    collaborations = Collaboration.query \
+        .options(selectinload(Collaboration.organisation)) \
+        .all()
     return collaborations, 200
 
 

@@ -241,6 +241,7 @@ class App extends React.Component {
                                    render={props => <ProtectedRoute
                                        currentUser={currentUser}
                                        refreshUser={this.refreshUserMemberships}
+                                       config={config}
                                        Component={OrganisationDetail} {...props}/>}/>
 
                             <Route exact path="/audit-logs/:collection/:id"

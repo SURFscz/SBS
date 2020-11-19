@@ -163,6 +163,7 @@ def config():
     return {"local": current_app.config["LOCAL"],
             "base_url": base_url,
             "admin_users_upgrade": cfg.feature.admin_users_upgrade,
+            "api_keys_enabled": cfg.feature.api_keys_enabled,
             "seed_allowed": cfg.feature.seed_allowed,
             "organisation_categories": cfg.organisation_categories,
             "admin_users_upgrade_url": cfg.feature.admin_users_upgrade_url}, 200

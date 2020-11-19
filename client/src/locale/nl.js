@@ -217,6 +217,7 @@ I18n.translations.nl = {
             noEntities: "Er zijn geen leden",
         },
         servicesAvailable: {
+            title: "Besschikbare diensten",
             searchPlaceHolder: "Zoek diensten...",
             noEntities: "Er zijn geen diensten beschikbaar om toe te voegen"
         },

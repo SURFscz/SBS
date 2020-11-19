@@ -39,7 +39,7 @@ class OrganisationDetail extends React.Component {
         if (params.id) {
             organisationById(params.id)
                 .then(json => {
-                    const {user} = this.props;
+                    const {user, config} = this.props;
                     const member = (user.organisation_memberships || [])
                         .find(membership => membership.organisation_id === json.id);
                     if (isEmpty(member) && !user.admin) {
@@ -52,7 +52,7 @@ class OrganisationDetail extends React.Component {
                         .some(member => member.role === "manager" && member.user_id === user.id);
 
                     const tab = params.tab || this.state.tab;
-                    const tabs = this.getTabs(json);
+                    const tabs = this.getTabs(json,config);
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
@@ -83,13 +83,13 @@ class OrganisationDetail extends React.Component {
         this.setState({firstTime: true});
     }
 
-    getTabs = organisation => {
+    getTabs = (organisation, config )=> {
         const tabs = [
             this.getCollaborationsTab(organisation),
-            organisation.collaboration_requests.length > 0 ? this.getCollaborationRequestsTab(organisation) : null,
+            this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation),
             this.getServicesTab(organisation),
-            this.getAPIKeysTab(organisation)
+            config.api_keys_enabled ? this.getAPIKeysTab(organisation) : null
         ];
         return tabs.filter(tab => tab !== null);
     }
@@ -153,7 +153,7 @@ class OrganisationDetail extends React.Component {
                                 close={() => this.setState({firstTime: false})}/>}
 
                 <UnitHeader obj={organisation} mayEdit={adminOfOrganisation}
-                            history={this.props.history}
+                            history={user.admin && this.props.history}
                             auditLogPath={`organisations/${organisation.id}`}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}

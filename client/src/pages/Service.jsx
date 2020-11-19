@@ -509,7 +509,7 @@ class Service extends React.Component {
                 {!isNew && <UnitHeader obj={service}
                                        auditLogPath={`services/${service.id}`}
                                        name={service.name}
-                                       history={this.props.history}
+                                       history={user.admin && this.props.history}
                                        mayEdit={false}/>}
 
                 {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,

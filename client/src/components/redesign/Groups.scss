@@ -119,6 +119,10 @@ table.groups {
 
         .group-detail-actions {
             margin-bottom: 20px;
+            max-width: 50%;
+            div.actions__placeholder {
+                color: $blue;
+            }
         }
     }
 

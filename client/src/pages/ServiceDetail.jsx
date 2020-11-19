@@ -66,10 +66,13 @@ class ServiceDetail extends React.Component {
     }
 
     getCollaborationsTab = service => {
+        debugger;
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.serviceCollaborations")}
                      icon={<ServicesIcon/>}>
-            <Collaborations {...this.props} collaborations={service.collaborations}
-                            modelName={"serviceCollaborations"}/>
+            <Collaborations mayCreate={false}
+                            collaborations={service.collaborations}
+                            modelName={"serviceCollaborations"}
+                            {...this.props} />
         </div>)
     }
 
