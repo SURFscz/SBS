@@ -21,7 +21,7 @@ export default class CollaborationRequests extends React.PureComponent {
 
     render() {
         const {organisation} = this.props;
-
+        debugger;
         const columns = [
             {
                 nonSortable: true,
@@ -33,6 +33,11 @@ export default class CollaborationRequests extends React.PureComponent {
                 key: "name",
                 header: I18n.t("models.collaborations.name"),
                 mapper: cr => <a href="/" onClick={this.openCollaborationRequest(cr)}>{cr.name}</a>
+            },
+            {
+                key: "status",
+                header: I18n.t("collaborationRequest.status"),
+                mapper: cr => <span className={`person-role ${cr.status}`}>{I18n.t(`collaborationRequest.statuses.${cr.status}`)}</span>
             },
             {
                 key: "requester",

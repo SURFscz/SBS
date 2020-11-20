@@ -8,6 +8,7 @@ from secrets import token_urlsafe
 
 from sqlalchemy import text
 
+from server.api.collaboration_request import STATUS_OPEN
 from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
@@ -378,7 +379,8 @@ def seed(db, app_config):
 
     collaboration_request = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
                                                  website_url="https://google.com", logo=_read_image("request.jpg"),
-                                                 message="For research", organisation=uuc, requester=peter)
+                                                 status=STATUS_OPEN, message="For research", organisation=uuc,
+                                                 requester=peter)
     _persist(db, collaboration_request)
 
     service_connection_request_network = ServiceConnectionRequest(message="AI computing needs storage",

@@ -12,11 +12,15 @@ from server.auth.security import current_user_id, current_user_name, \
     confirm_organisation_admin_or_manager
 from server.db.defaults import cleanse_short_name
 from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db
-from server.db.models import save
+from server.db.models import save, delete
 from server.mail import mail_collaboration_request, mail_accepted_declined_collaboration_request, \
     mail_automatic_collaboration_request
 
 collaboration_request_api = Blueprint("collaboration_request_api", __name__, url_prefix="/api/collaboration_requests")
+
+STATUS_OPEN = "open"
+STATUS_DENIED = "denied"
+STATUS_APPROVED = "approved"
 
 
 @collaboration_request_api.route("/<collaboration_request_id>", methods=["GET"], strict_slashes=False)
@@ -68,6 +72,7 @@ def request_collaboration():
             mail_automatic_collaboration_request(context, collaboration, organisation, recipients)
         return collaboration, 201
     else:
+        data["status"] = STATUS_OPEN
         collaboration_request = save(CollaborationRequest, custom_json=data)[0]
 
         context = {"salutation": f"Dear {organisation.name} organisation admin,",
@@ -78,6 +83,25 @@ def request_collaboration():
             mail_collaboration_request(context, munchify(data), recipients)
 
         return collaboration_request, 201
+
+
+@collaboration_request_api.route("/<collaboration_request_id>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+def delete_request_collaboration(collaboration_request_id):
+    collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
+    confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
+    if collaboration_request.status == STATUS_OPEN:
+        user = collaboration_request.requester
+        mail_accepted_declined_collaboration_request({"salutation": f"Dear {user.name}",
+                                                      "base_url": current_app.app_config.base_url,
+                                                      "administrator": current_user_name(),
+                                                      "collaboration": {"name": collaboration_request.name},
+                                                      "organisation": collaboration_request.organisation},
+                                                     collaboration_request.name,
+                                                     False,
+                                                     [user.email])
+
+    return delete(CollaborationRequest, collaboration_request_id)
 
 
 @collaboration_request_api.route("/approve/<collaboration_request_id>", methods=["PUT"], strict_slashes=False)
@@ -111,8 +135,8 @@ def approve_request(collaboration_request_id):
                                                  collaboration.name,
                                                  True,
                                                  [user.email])
-
-    db.session.delete(collaboration_request)
+    collaboration_request.status = STATUS_APPROVED
+    db.session.merge(collaboration_request)
     return res
 
 
@@ -131,6 +155,6 @@ def deny_request(collaboration_request_id):
                                                  collaboration_request.name,
                                                  False,
                                                  [user.email])
-
-    db.session.delete(collaboration_request)
+    collaboration_request.status = STATUS_DENIED
+    db.session.merge(collaboration_request)
     return None, 201

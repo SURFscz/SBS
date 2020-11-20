@@ -371,6 +371,7 @@ class CollaborationRequest(Base, db.Model):
     description = db.Column("description", db.Text(), nullable=True)
     message = db.Column("message", db.Text(), nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
+    status = db.Column("status", db.String(length=255), nullable=False)
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
     organisation = db.relationship("Organisation", back_populates="collaboration_requests")
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))

@@ -503,6 +503,11 @@ export function denyRequestCollaboration(id) {
     return postPutJson(`/api/collaboration_requests/deny/${id}`, {}, "put");
 }
 
+export function deleteRequestCollaboration(id) {
+    return fetchDelete(`/api/collaboration_requests/${id}`);
+}
+
+
 //ServiceConnectionRequest
 export function serviceConnectionRequestsOutstanding(serviceId) {
     return postPutJson(`/api/service_connection_requests/by_service/${serviceId}`);
