@@ -83,9 +83,6 @@ class TestCollaborationRequest(AbstractTest):
                                "organisation_id": collaboration_request.organisation_id
                            }, with_basic_auth=False)
 
-            deleted = CollaborationRequest.query.filter(CollaborationRequest.name == collaboration_request_name).all()
-            self.assertEqual(0, len(deleted))
-
             members = CollaborationMembership.query.filter(CollaborationMembership.collaboration_id == res["id"]).all()
             self.assertEqual(1, len(members))
 
@@ -104,9 +101,16 @@ class TestCollaborationRequest(AbstractTest):
             self.login("urn:mary")
             self.put(f"/api/collaboration_requests/deny/{collaboration_request.id}", with_basic_auth=False)
 
-            deleted = CollaborationRequest.query.filter(CollaborationRequest.name == collaboration_request_name).all()
-            self.assertEqual(0, len(deleted))
+            mail_msg = outbox[0]
+            self.assertEqual("Collaboration request for collaboration New Collaboration has been declined",
+                             mail_msg.subject)
 
+    def test_delete(self):
+        collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
+        with self.app.mail.record_messages() as outbox:
+            self.login("urn:harry")
+            self.delete("/api/collaboration_requests", primary_key=collaboration_request.id, with_basic_auth=False)
+            self.assertIsNone(self.find_entity_by_name(CollaborationRequest, collaboration_request_name))
             mail_msg = outbox[0]
             self.assertEqual("Collaboration request for collaboration New Collaboration has been declined",
                              mail_msg.subject)

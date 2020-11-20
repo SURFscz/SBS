@@ -199,6 +199,22 @@
             background-color: $yellow;
             color: black;
         }
+
+        &.approved {
+            background-color: $dark-green;
+            color: white;
+        }
+
+        &.denied {
+            background-color: $lighter-grey;
+            color: $red;
+        }
+
+        &.open {
+            background-color: $blue-light;
+            color: $darker-grey;
+        }
+
     }
 
 

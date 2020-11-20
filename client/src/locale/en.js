@@ -1075,11 +1075,19 @@ I18n.translations.en = {
     collaborationRequest: {
         title: "{{requester}} has requested to create a new Collaboration '{{name}}'.",
         denyConfirmation: "Are you sure you want to deny this Collaboration request?",
+        deleteConfirmation: "Are you sure you want to delete this Collaboration request?",
         approve: "Approve",
         deny: "Deny",
+        status: "Status",
+        statuses: {
+            open: "Open",
+            denied: "Denied",
+            approved: "Approved"
+        },
         flash: {
             approved: "Collaboration {{name}} has been created and the Collaboration Request has been deleted",
-            denied: "Collaboration Request for {{name}} has been deleted",
+            denied: "Collaboration Request for {{name}} has been denied",
+            deleted: "Collaboration Request for {{name}} has been deleted",
         }
     },
     serviceConnectionRequest: {

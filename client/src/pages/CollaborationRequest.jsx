@@ -4,7 +4,7 @@ import {
     approveRequestCollaboration,
     collaborationNameExists,
     collaborationRequestById,
-    collaborationShortNameExists,
+    collaborationShortNameExists, deleteRequestCollaboration,
     denyRequestCollaboration,
     myOrganisationsLite
 } from "../api";
@@ -38,6 +38,7 @@ class CollaborationRequest extends React.Component {
             approve: true,
             organisations: [],
             alreadyExists: {},
+            warning: false,
             originalRequestedName: "",
             loading: true
         };
@@ -97,6 +98,24 @@ class CollaborationRequest extends React.Component {
         this.initState(this.state.collaborationRequest.id)
     };
 
+    deleteCollaborationRequest = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            dialogQuestion: I18n.t("collaborationRequest.deleteConfirmation"),
+            leavePage: false,
+            warning: true,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationDialogAction: () => this.setState({confirmationDialogOpen: false, loading: true},
+                () => {
+                    deleteRequestCollaboration(this.state.collaborationRequest.id).then(() => {
+                        this.props.history.push(`/organisations/${this.state.collaborationRequest.organisation_id}/collaboration_requests`);
+                        setFlash(I18n.t("collaborationRequest.flash.deleted", {name: this.state.collaborationRequest.name}));
+                    });
+                })
+        });
+
+    }
+
     cancel = () => {
         this.setState({
             confirmationDialogOpen: true,
@@ -123,11 +142,12 @@ class CollaborationRequest extends React.Component {
                 confirmationDialogOpen: true,
                 dialogQuestion: I18n.t("collaborationRequest.denyConfirmation"),
                 leavePage: false,
+                warning: false,
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
                 confirmationDialogAction: () => this.setState({confirmationDialogOpen: false, loading: true},
                     () => {
                         denyRequestCollaboration(this.state.collaborationRequest.id).then(() => {
-                            this.props.history.push(`/organisations/${this.state.collaborationRequest.organisation_id}`);
+                            this.props.history.push(`/organisations/${this.state.collaborationRequest.organisation_id}/collaboration_requests`);
                             setFlash(I18n.t("collaborationRequest.flash.denied", {name: this.state.collaborationRequest.name}));
                         });
                     })
@@ -137,7 +157,7 @@ class CollaborationRequest extends React.Component {
             collaborationRequest.organisation_id = collaborationRequest.organisation.value;
             this.setState({loading: true});
             approveRequestCollaboration(collaborationRequest).then(res => {
-                this.props.history.push(`/organisations/${collaborationRequest.organisation_id}`);
+                this.props.history.push(`/organisations/${collaborationRequest.organisation_id}/collaboration_requests`);
                 setFlash(I18n.t("collaborationRequest.flash.approved", {name: collaborationRequest.name}));
             });
         }
@@ -168,7 +188,8 @@ class CollaborationRequest extends React.Component {
     render() {
         const {
             collaborationRequest, initial, alreadyExists, confirmationDialogOpen, confirmationDialogAction,
-            cancelDialogAction, leavePage, organisations, dialogQuestion, originalRequestedName, loading
+            cancelDialogAction, leavePage, organisations, dialogQuestion, originalRequestedName, loading,
+            warning
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -181,6 +202,7 @@ class CollaborationRequest extends React.Component {
                                         cancel={cancelDialogAction}
                                         confirm={confirmationDialogAction}
                                         question={dialogQuestion}
+                                        isWarning={warning}
                                         leavePage={leavePage}/>
                     <UnitHeader obj={{
                         ...collaborationRequest, name: I18n.t("collaborationRequest.title", {
@@ -259,6 +281,7 @@ class CollaborationRequest extends React.Component {
                                      toolTip={I18n.t("collaboration.organisationTooltip")}
                         />
                         <section className="actions">
+                            <Button warningButton={true} onClick={this.deleteCollaborationRequest}/>
                             <Button cancelButton={true} txt={I18n.t("collaborationRequest.deny")}
                                     onClick={this.submit(false)}/>
                             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>

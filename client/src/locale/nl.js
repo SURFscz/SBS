@@ -1,4 +1,3 @@
-
 import I18n from "i18n-js";
 
 I18n.translations.nl = {
@@ -1074,11 +1073,21 @@ I18n.translations.nl = {
     collaborationRequest: {
         title: "{{requester}} heeft een verzoek gedaan om een nieuwe samenwerking '{{name}}' te maken .",
         denyConfirmation: "Weet je zeker dat je dit verzoek wilt afkeuren?",
+        deleteConfirmation: "Weet je zeker dat je dit verzoek wilt verwijderen?",
         approve: "Goedkeuren",
         deny: "Afkeuren",
+                status: "Status",
+        statuses: {
+            open: "Open",
+            denied: "Afgewezen",
+            approved: "Goedgekurd"
+        },
+
         flash: {
             approved: "Samenwerking {{name}} is aangemaakt en het veeroek daartoe is verwijderd",
-            denied: "Het verzoek om samenwerking {{name}} aan te maken is verwijderd",
+            denied: "Het verzoek om samenwerking {{name}} aan te maken is afgewezen",
+            deleted: "Verzoek voor samenwerking {{name}} is verwijderd",
+
         }
     },
     serviceConnectionRequest: {

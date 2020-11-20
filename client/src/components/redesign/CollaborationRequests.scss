@@ -5,14 +5,22 @@ table.collaboration_requests {
     thead {
         th {
             &.name {
-                width: 40%;
+                width: 30%;
                 padding-left: 15px;
             }
 
-            &.requester {
-                width: 40%;
+            &.status {
+                width: 25%;
+                text-align: center;
             }
 
+            &.requester {
+                width: 25%;
+            }
+
+            &.open {
+                width: 20%;
+            }
         }
     }
 
@@ -21,6 +29,11 @@ table.collaboration_requests {
             &.name {
                 padding-left: 15px;
             }
+
+            &.status {
+                text-align: center;
+            }
+
             &.open {
                 text-align: right;
             }
