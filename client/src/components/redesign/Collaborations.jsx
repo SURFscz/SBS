@@ -17,6 +17,7 @@ export default class Collaborations extends React.PureComponent {
         super(props, context);
         this.state = {
             standalone: false,
+            collaborations: [],
             showRequestCollaboration: false,
             loading: true
         }
@@ -48,8 +49,8 @@ export default class Collaborations extends React.PureComponent {
                 <h2>{I18n.t("models.collaborations.noCollaborations")}</h2>
                 <Button txt={I18n.t("models.collaborations.new")}
                         onClick={() => {
-                            const organisationQueryParam = organisation ? `organisation=${organisation.id}` : "";
-                            this.props.history.push(`/new-collaboration?${organisationQueryParam}`)
+                            const organisationQueryParam = organisation ? `?organisationId=${organisation.id}` : "";
+                            this.props.history.push(`/new-collaboration${organisationQueryParam}`)
                         }}/>
 
             </div>
@@ -70,10 +71,11 @@ export default class Collaborations extends React.PureComponent {
         const {modelName = "collaborations", organisation, mayCreate = true, showOrigin = false} = this.props;
 
         if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
-            return this.noCollaborations(this.props.organisation);
+            return this.noCollaborations(organisation);
         }
         const {user} = this.props;
         const mayCreateCollaborations = isUserAllowed(ROLES.ORG_MANAGER, user);
+        const organisationQueryParam = organisation ? `?organisationId=${organisation.id}` : "";
 
         const columns = [
             {
@@ -127,7 +129,7 @@ export default class Collaborations extends React.PureComponent {
                       rowLinkMapper={() => this.openCollaboration}
                       columns={allColumns}
                       showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
-                      newEntityPath={`/new-collaboration`}
+                      newEntityPath={`/new-collaboration${organisationQueryParam}`}
                       loading={loading}
                       {...this.props}/>
         )

@@ -72,8 +72,9 @@ class CollaborationForm extends React.Component {
             collaborationById(params.id).then(collaboration => {
                 const organisation = collaboration.organisation;
                 const orgOption = {
-                    label: organisation.name, value: organisation.id,
-                    short_name: organisation.short_name,
+                    label: organisation.name,
+                    value: organisation.id,
+                    short_name: organisation.short_name
                 };
                 this.updateBreadCrumb(orgOption, collaboration, false, false);
                 this.setState({
@@ -93,11 +94,13 @@ class CollaborationForm extends React.Component {
                             this.setState({noOrganisations: true, loading: false});
                         } else {
                             const organisations = this.mapOrganisationsToOptions([json]);
+                            const organisationId = getParameterByName("organisationId", window.location.search);
+                            const organisation = organisations.find(org => org.value === parseInt(organisationId, 10));
                             const autoCreateCollaborationRequest = json.collaboration_creation_allowed || json.collaboration_creation_allowed_entitlement;
                             this.updateBreadCrumb(null, null, autoCreateCollaborationRequest, true);
                             this.setState({
                                 organisations: organisations,
-                                organisation: organisations[0],
+                                organisation: organisation || organisations[0],
                                 isCollaborationRequest: true,
                                 autoCreateCollaborationRequest: autoCreateCollaborationRequest,
                                 current_user_admin: true,
@@ -107,17 +110,9 @@ class CollaborationForm extends React.Component {
                         }
                     });
                 } else {
-                    const organisationId = getParameterByName("organisation", window.location.search);
+                    const organisationId = getParameterByName("organisationId", window.location.search);
                     const organisations = this.mapOrganisationsToOptions(json);
-                    let organisation = {};
-                    if (organisationId) {
-                        const filtered = organisations.filter(org => org.value === parseInt(organisationId, 10));
-                        if (filtered.length > 0) {
-                            organisation = filtered[0];
-                        }
-                    } else {
-                        organisation = organisations[0];
-                    }
+                    const organisation = organisations.find(org => org.value === parseInt(organisationId, 10)) || organisations[0];
                     this.updateBreadCrumb(organisation, null, false, false);
                     this.setState({
                         organisations: organisations,

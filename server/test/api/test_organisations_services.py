@@ -20,7 +20,7 @@ class TestOrganisationsServices(AbstractTest):
     def test_add_organisations_services(self):
         self._do_add_organisations_services(uuc_name, service_wireless_name)
         organisation = self.find_entity_by_name(Organisation, uuc_name)
-        self.assertEqual(2, len(organisation.services))
+        self.assertEqual(3, len(organisation.services))
 
     def test_add_organisations_services_not_allowed_organisation(self):
         res = self._do_add_organisations_services(uuc_name, service_ssh_uva_name, response_status_code=400)
@@ -32,6 +32,7 @@ class TestOrganisationsServices(AbstractTest):
 
     def test_delete_organisations_services(self):
         uuc = self.find_entity_by_name(Organisation, uuc_name)
+        self.assertEqual(2, len(uuc.services))
         organisation_id = uuc.id
         service_id = uuc.services[0].id
         response = self.client.delete(f"api/organisations_services/{organisation_id}/{service_id}",
@@ -39,4 +40,4 @@ class TestOrganisationsServices(AbstractTest):
                                       content_type="application/json")
         self.assertEqual(204, response.status_code)
         uuc = self.find_entity_by_name(Organisation, uuc_name)
-        self.assertEqual(0, len(uuc.services))
+        self.assertEqual(1, len(uuc.services))

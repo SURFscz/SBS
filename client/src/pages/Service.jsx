@@ -110,7 +110,7 @@ class Service extends React.Component {
                             s.breadcrumb.paths = [
                                 {path: "/", value: I18n.t("breadcrumb.home")},
                                 {value: I18n.t("breadcrumb.services")},
-                                {path: `/services/${res[0].id}`, value: res[0].name},
+                                {path: `/services/${res.id}`, value: res.name},
                                 {path: "/", value: I18n.t("home.edit")}
                             ];
                         });

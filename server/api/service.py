@@ -218,6 +218,21 @@ def update_service():
     return res
 
 
+@service_api.route("/allowed_organisations_preflight/<service_id>", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def allowed_organisations_preflight(service_id):
+    confirm_write_access()
+    data = current_request.get_json()
+    allowed_organisations = data.get("allowed_organisations", None)
+    org_query = Organisation.query.join(Organisation.services).filter(Service.id == service_id)
+    coll_query = Collaboration.query.join(Collaboration.services).filter(Service.id == service_id)
+    if allowed_organisations:
+        org_identifiers = [value["organisation_id"] for value in allowed_organisations]
+        org_query = org_query.filter(Organisation.id.in_(org_identifiers))
+        coll_query = coll_query.filter(Collaboration.organisation_id.in_(org_identifiers))
+    return {"organisations": org_query.all(), "collaborations": coll_query.all()}, 200
+
+
 @service_api.route("/allowed_organisations/<service_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def add_allowed_organisations(service_id):
