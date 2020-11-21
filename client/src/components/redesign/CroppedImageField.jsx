@@ -101,7 +101,7 @@ export default class CroppedImageField extends React.PureComponent {
 
     render() {
         const {error, crop, source} = this.state;
-        const {title, name, value, secondRow = false, initial = false, isNew} = this.props;
+        const {title, name, value, secondRow = false, initial = false, isNew, disabled = false} = this.props;
 
         const src = `data:image/jpeg;base64,${(!isNew && !source) ? value : source}`;
         return (
@@ -124,15 +124,15 @@ export default class CroppedImageField extends React.PureComponent {
                         {source && <Logo className="cropped-img" src={value}/>}
                         {(!source && !isNew) && <img alt="" src={src}/>}
                     </div>}
-                    <label className="file-upload-label button" htmlFor={`fileUpload_${name}`}>
+                    {!disabled && <label className="file-upload-label button" htmlFor={`fileUpload_${name}`}>
                         {I18n.t("forms.upload")}
-                    </label>
-                    <input type="file"
-                           id={`fileUpload_${name}`}
-                           name={`fileUpload_${name}`}
-                           accept="image/png, image/jpeg, image/jpg"
-                           style={{display: "none"}}
-                           onChange={this.internalOnChange}/>
+                    </label>}
+                    {!disabled && <input type="file"
+                                         id={`fileUpload_${name}`}
+                                         name={`fileUpload_${name}`}
+                                         accept="image/png, image/jpeg, image/jpg"
+                                         style={{display: "none"}}
+                                         onChange={this.internalOnChange}/>}
                 </section>
                 <span className="disclaimer">{I18n.t("forms.image")}</span>
                 {!isEmpty(error) && <span className="error">{error}</span>}
@@ -149,5 +149,6 @@ CroppedImageField.propTypes = {
     title: PropTypes.string,
     value: PropTypes.string,
     secondRow: PropTypes.bool,
+    disabled: PropTypes.bool,
     initial: PropTypes.bool,
 };

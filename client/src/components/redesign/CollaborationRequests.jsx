@@ -21,7 +21,6 @@ export default class CollaborationRequests extends React.PureComponent {
 
     render() {
         const {organisation} = this.props;
-        debugger;
         const columns = [
             {
                 nonSortable: true,

@@ -4,14 +4,15 @@ import {
     approveRequestCollaboration,
     collaborationNameExists,
     collaborationRequestById,
-    collaborationShortNameExists, deleteRequestCollaboration,
+    collaborationShortNameExists,
+    deleteRequestCollaboration,
     denyRequestCollaboration,
     myOrganisationsLite
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {isEmpty} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import SelectField from "../components/SelectField";
@@ -92,11 +93,6 @@ class CollaborationRequest extends React.Component {
         collaborationShortNameExists(e.target.value, this.state.collaborationRequest.organisation.value).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
-
-    reset = e => {
-        stopEvent(e);
-        this.initState(this.state.collaborationRequest.id)
-    };
 
     deleteCollaborationRequest = () => {
         this.setState({
@@ -195,6 +191,10 @@ class CollaborationRequest extends React.Component {
             return <SpinnerField/>
         }
         const disabledSubmit = !initial && !this.isValid();
+        const approved = collaborationRequest.status === "approved";
+        const denied = collaborationRequest.status === "denied";
+        const mayDeny = !denied && !approved;
+        const mayApprove = !approved;
         return (
             <div className="mod-collaboration-request-container">
                 <div className="mod-collaboration-request">
@@ -205,7 +205,7 @@ class CollaborationRequest extends React.Component {
                                         isWarning={warning}
                                         leavePage={leavePage}/>
                     <UnitHeader obj={{
-                        ...collaborationRequest, name: I18n.t("collaborationRequest.title", {
+                        ...collaborationRequest, name: I18n.t(`collaborationRequest.title.${collaborationRequest.status}`, {
                             requester: collaborationRequest.requester.name,
                             name: originalRequestedName
                         })
@@ -220,6 +220,7 @@ class CollaborationRequest extends React.Component {
 
                         <InputField value={collaborationRequest.name}
                                     onChange={this.updateState("name")}
+                                    disabled={approved}
                                     placeholder={I18n.t("collaboration.namePlaceHolder")}
                                     onBlur={this.validateCollaborationName}
                                     name={I18n.t("collaboration.name")}/>
@@ -234,15 +235,20 @@ class CollaborationRequest extends React.Component {
                             attribute: I18n.t("collaboration.name").toLowerCase()
                         })}</span>}
 
-                        <CroppedImageField name="logo" onChange={this.updateLogo}
-                                           isNew={false} title={I18n.t("collaboration.logo")}
+                        <CroppedImageField name="logo"
+                                           onChange={this.updateLogo}
+                                           isNew={false}
+                                           disabled={approved}
+                                           title={I18n.t("collaboration.logo")}
                                            value={collaborationRequest.logo}
-                                           initial={initial} secondRow={false}/>
+                                           initial={initial}
+                                           secondRow={false}/>
 
                         <InputField value={collaborationRequest.short_name}
                                     onChange={this.updateState("short_name")}
                                     placeholder={I18n.t("collaboration.shortNamePlaceHolder")}
                                     onBlur={this.validateCollaborationShortName}
+                                    disabled={approved}
                                     toolTip={I18n.t("collaboration.shortNameTooltip")}
                                     name={I18n.t("collaboration.shortName")}/>
                         {alreadyExists.short_name && <span
@@ -266,11 +272,13 @@ class CollaborationRequest extends React.Component {
                         <InputField value={collaborationRequest.description}
                                     onChange={this.updateState("description")}
                                     placeholder={I18n.t("collaboration.descriptionPlaceholder")}
+                                    disabled={approved}
                                     name={I18n.t("collaboration.description")}/>
 
                         <InputField value={collaborationRequest.accepted_user_policy}
                                     onChange={this.updateState("accepted_user_policy")}
                                     placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
+                                    disabled={approved}
                                     name={I18n.t("collaboration.accepted_user_policy")}/>
 
                         <SelectField value={collaborationRequest.organisation}
@@ -282,13 +290,12 @@ class CollaborationRequest extends React.Component {
                         />
                         <section className="actions">
                             <Button warningButton={true} onClick={this.deleteCollaborationRequest}/>
-                            <Button cancelButton={true} txt={I18n.t("collaborationRequest.deny")}
-                                    onClick={this.submit(false)}/>
+                            {mayDeny && <Button cancelButton={true} txt={I18n.t("collaborationRequest.deny")}
+                                                   onClick={this.submit(false)}/>}
                             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                            <Button cancelButton={true} txt={I18n.t("forms.reset")} onClick={this.reset}/>
-                            <Button disabled={disabledSubmit}
-                                    txt={I18n.t("collaborationRequest.approve")}
-                                    onClick={this.submit(true)}/>
+                            {mayApprove && <Button disabled={disabledSubmit}
+                                                txt={I18n.t("collaborationRequest.approve")}
+                                                onClick={this.submit(true)}/>}
                         </section>
                     </div>
                 </div>
