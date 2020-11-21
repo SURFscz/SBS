@@ -18,7 +18,8 @@ class ServiceDetail extends React.Component {
         super(props, context);
         this.state = {
             service: {},
-            loading: false,
+            organisations: [],
+            loading: true,
             tab: "organisations",
             tabs: []
         };
@@ -47,9 +48,10 @@ class ServiceDetail extends React.Component {
                     this.tabChanged(tab, service.id);
                     this.setState({
                         service: service,
+                        organisations: organisations,
                         tab: tab,
                         tabs: tabs,
-                        loading: true
+                        loading: false
                     });
 
                 })
@@ -61,10 +63,30 @@ class ServiceDetail extends React.Component {
         }
     };
 
+    refresh = callback => {
+        const params = this.props.match.params;
+        const {organisations} = this.state;
+        this.setState({loading: true});
+        serviceById(params.id).then(res => {
+            const service = res;
+            const tabs = [
+                this.getOrganisationsTab(service, organisations),
+                this.getCollaborationsTab(service)
+            ];
+            this.setState({
+                service: service,
+                tabs: tabs,
+                loading: false
+            }, callback);
+        }).catch(e => {
+            this.props.history.push("/404")
+        });
+    };
+
     getOrganisationsTab = (service, organisations) => {
         return (<div key="organisations" name="organisations" label={I18n.t("home.tabs.serviceOrganisations")}
                      icon={<OrganisationsIcon/>}>
-            <ServiceOrganisations {...this.props} service={service} organisations={organisations}/>
+            <ServiceOrganisations {...this.props} refresh={this.refresh} service={service} organisations={organisations}/>
         </div>)
     }
 
@@ -75,7 +97,7 @@ class ServiceDetail extends React.Component {
         collFromOrganisations.forEach(coll => coll.fromCollaboration = false);
         const colls = removeDuplicates(collaborations.concat(collFromOrganisations), "id");
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.serviceCollaborations")}
-                                                                   icon={<ServicesIcon/>}>
+                     icon={<ServicesIcon/>}>
             <Collaborations mayCreate={false}
                             showOrigin={true}
                             collaborations={colls}
@@ -106,7 +128,7 @@ class ServiceDetail extends React.Component {
 
     render() {
         const {tabs, service, loading, tab} = this.state;
-        if (!loading) {
+        if (loading) {
             return <SpinnerField/>;
         }
         const {user} = this.props;
