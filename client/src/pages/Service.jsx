@@ -3,7 +3,6 @@ import {
     createService,
     deleteService,
     ipNetworks,
-    searchOrganisations,
     serviceById,
     serviceEntityIdExists,
     serviceNameExists,
@@ -49,8 +48,6 @@ class Service extends React.Component {
         research_scholarship_compliant: false,
         code_of_conduct_compliant: false,
         sirtfi_compliant: false,
-        allowed_organisations: [],
-        organisations: [],
         contact_email: "",
         ip_networks: [],
         required: ["name", "entity_id", "logo"],
@@ -62,7 +59,7 @@ class Service extends React.Component {
         leavePage: false,
         confirmationDialogAction: () => true,
         cancelDialogAction: () => true,
-        loading: false
+        loading: true
     });
 
     UNSAFE_componentWillReceiveProps = nextProps => {
@@ -80,30 +77,24 @@ class Service extends React.Component {
                 if (!isAdmin) {
                     this.props.history.push("/404");
                 } else {
-                    searchOrganisations("*")
-                        .then(r => {
-                            this.setState({organisations: this.mapOrganisationsToOptions(r), loading: true});
-                            this.addIpAddress();
-                            AppStore.update(s => {
-                                s.breadcrumb.paths = [
-                                    {path: "/", value: I18n.t("breadcrumb.home")},
-                                    {value: I18n.t("breadcrumb.services")},
-                                    {value: I18n.t("breadcrumb.newService")}
-                                ];
-                            });
-                        });
-
+                    this.addIpAddress();
+                    this.setState({loading: false});
+                    AppStore.update(s => {
+                        s.breadcrumb.paths = [
+                            {path: "/", value: I18n.t("breadcrumb.home")},
+                            {value: I18n.t("breadcrumb.services")},
+                            {value: I18n.t("breadcrumb.newService")}
+                        ];
+                    });
                 }
             } else {
-                Promise.all([serviceById(params.id), searchOrganisations("*")])
+                serviceById(params.id)
                     .then(res => {
                         this.setState({
-                            ...res[0],
-                            service: res[0],
+                            ...res,
+                            service: res,
                             isNew: false,
-                            allowed_organisations: this.mapOrganisationsToOptions(res[0].allowed_organisations),
-                            organisations: this.mapOrganisationsToOptions(res[1]),
-                            loading: true
+                            loading: false
                         }, () => {
                             const {ip_networks} = this.state.service;
                             if (isEmpty(ip_networks)) {
@@ -129,12 +120,6 @@ class Service extends React.Component {
             this.props.history.push("/404");
         }
     };
-
-    mapOrganisationsToOptions = organisations => organisations.map(org => ({
-        label: org.name,
-        value: org.id,
-        organisation_id: org.id
-    }));
 
     validateServiceName = e =>
         serviceNameExists(e.target.value, this.state.isNew ? null : this.state.service.name).then(json => {
@@ -239,7 +224,7 @@ class Service extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            this.setState({loading: false});
+            this.setState({loading: true});
             const {name, isNew, ip_networks} = this.state;
             const strippedIpNetworks = ip_networks
                 .filter(network => network.network_value && network.network_value.trim())
@@ -311,7 +296,7 @@ class Service extends React.Component {
     }
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
-                        contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations,
+                        contact_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, logo) => {
         const redirectUri = uri || entity_id || "https://redirectUri";
@@ -418,17 +403,6 @@ class Service extends React.Component {
                 {(!initial && contactEmailRequired) && <span
                     className="error">{I18n.t("service.contactEmailRequired")}</span>}
 
-                {/*TODO remove*/}
-                {/*<SelectField value={allowed_organisations}*/}
-                {/*             options={organisations}*/}
-                {/*             name={I18n.t("service.allowedOrganisations")}*/}
-                {/*             placeholder={I18n.t("service.allowedOrganisationsPlaceholder")}*/}
-                {/*             toolTip={I18n.t("service.allowedOrganisationsTooltip")}*/}
-                {/*             isMulti={true}*/}
-                {/*             disabled={!isAdmin}*/}
-                {/*             onChange={selectedOptions => this.setState({allowed_organisations: isEmpty(selectedOptions) ? [] : [...selectedOptions]})}*/}
-                {/*/>*/}
-
                 <InputField value={accepted_user_policy}
                             name={I18n.t("service.accepted_user_policy")}
                             placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
@@ -437,10 +411,6 @@ class Service extends React.Component {
                             disabled={!isAdmin}/>
 
                 {this.renderIpNetworks(ip_networks, isAdmin)}
-
-                {/*{!isNew && <InputField value={moment(service.created_at * 1000).format("LLLL")}*/}
-                {/*                       disabled={true}*/}
-                {/*                       name={I18n.t("organisation.created")}/>}*/}
 
                 <h1 className="section-separator last">{I18n.t("service.compliancy")}</h1>
 
@@ -485,11 +455,11 @@ class Service extends React.Component {
         const {
             alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
             entity_id, description, uri, accepted_user_policy, contact_email,
-            confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed, organisations,
-            allowed_organisations, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+            confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed,
+            white_listed, sirtfi_compliant, code_of_conduct_compliant,
             research_scholarship_compliant, ip_networks, logo, loading
         } = this.state;
-        if (!loading) {
+        if (loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = !initial && !this.isValid();
@@ -513,7 +483,7 @@ class Service extends React.Component {
                                        mayEdit={false}/>}
 
                 {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
-                    contact_email, invalidInputs, contactEmailRequired, allowed_organisations, organisations, accepted_user_policy,
+                    contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
                     isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                     research_scholarship_compliant, config, ip_networks, logo)}
             </div>);

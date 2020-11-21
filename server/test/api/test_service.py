@@ -50,18 +50,6 @@ class TestService(AbstractTest):
         self.assertEqual(2, len(service["ip_networks"]))
         self.assertEqual("2001:db8:f00f:bab::/64", service["ip_networks"][0]["network_value"])
 
-    def test_service_new_with_allowed_organisations(self):
-        uva_id = self.find_entity_by_name(Organisation, amsterdam_uva_name).id
-        uuc_id = self.find_entity_by_name(Organisation, uuc_name).id
-        allowed_organisations = [{"organisation_id": uva_id}, {"organisation_id": uuc_id}]
-        service = self.post("/api/services", body={"entity_id": "https://new_service", "name": "new_service",
-                                                   "allowed_organisations": allowed_organisations})
-        self.assertIsNotNone(service["id"])
-        self.assertEqual("new_service", service["name"])
-
-        service = self.find_entity_by_name(Service, "new_service")
-        self.assertEqual(2, len(service.allowed_organisations))
-
     def test_service_update(self):
         service = self._find_by_name()
         service["name"] = "changed"
@@ -118,7 +106,7 @@ class TestService(AbstractTest):
 
         service_mail = self.find_by_name(services, service_mail_name)
         self.assertEqual(1, service_mail["collaborations_count"])
-        self.assertEqual(0, len(service_mail["allowed_organisations"]))
+        self.assertEqual(2, len(service_mail["allowed_organisations"]))
 
         service_uuc = self.find_by_name(services, uuc_scheduler_name)
         self.assertEqual(1, service_uuc["organisations_count"])

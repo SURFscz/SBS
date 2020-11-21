@@ -97,7 +97,6 @@ def entity_id_exists():
 def service_by_entity_id():
     entity_id = urllib.parse.unquote(query_param("entity_id"))
     return Service.query \
-               .outerjoin(Service.allowed_organisations) \
                .options(selectinload(Service.allowed_organisations)) \
                .filter(Service.entity_id == entity_id) \
                .one(), 200
@@ -185,8 +184,6 @@ def save_service():
     confirm_write_access()
 
     data = current_request.get_json()
-    allowed_organisations = data.get("allowed_organisations", None)
-
     _validate_ip_networks(data)
 
     data["status"] = "active"
@@ -194,8 +191,6 @@ def save_service():
     res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
     service.ip_networks
-
-    _add_allowed_organisations(allowed_organisations, service)
 
     return res
 
@@ -207,32 +202,18 @@ def _validate_ip_networks(data):
             ipaddress.ip_network(ip_network["network_value"], False)
 
 
-def _add_allowed_organisations(allowed_organisations, service):
-    service.allowed_organisations.clear()
-    if allowed_organisations:
-        for value in allowed_organisations:
-            service.allowed_organisations.append(Organisation.query.get(value["organisation_id"]))
-            service.public_visible = False
-    else:
-        service.public_visible = True
-    db.session.merge(service)
-
-
 @service_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_service():
     confirm_write_access()
 
     data = current_request.get_json()
-    allowed_organisations = data.get("allowed_organisations", None)
 
     _validate_ip_networks(data)
 
     res = update(Service, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
     service.ip_networks
-
-    _add_allowed_organisations(allowed_organisations, service)
 
     return res
 
@@ -245,7 +226,12 @@ def add_allowed_organisations(service_id):
     service = Service.query.get(service_id)
     data = current_request.get_json()
     allowed_organisations = data.get("allowed_organisations", None)
-    _add_allowed_organisations(allowed_organisations, service)
+    service.allowed_organisations.clear()
+    if allowed_organisations:
+        for value in allowed_organisations:
+            service.allowed_organisations.append(Organisation.query.get(value["organisation_id"]))
+
+    db.session.merge(service)
     return None, 201
 
 

@@ -33,8 +33,7 @@ class OrganisationServices extends React.Component {
             const filteredServices = services
                 .filter(service => {
                     const allowed = service.allowed_organisations.some(org => org.id === organisation.id);
-                    return allowed || (service.allowed_organisations.length === 0 &&
-                        service.automatic_connection_allowed);
+                    return allowed && service.automatic_connection_allowed;
                 });
             this.setState({services: filteredServices, loading: false});
         });

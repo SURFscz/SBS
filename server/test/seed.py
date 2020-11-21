@@ -226,13 +226,15 @@ def seed(db, app_config):
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
                    public_visible=True, automatic_connection_allowed=True, logo=_read_image("email.jpeg"),
-                   accepted_user_policy="https://google.nl")
+                   accepted_user_policy="https://google.nl", allowed_organisations=[uuc, uva])
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
                        public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
-                       logo=_read_image("wireless.png"), accepted_user_policy="https://google.nl")
+                       logo=_read_image("wireless.png"), accepted_user_policy="https://google.nl",
+                       allowed_organisations=[uuc, uva])
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
-                    public_visible=True, automatic_connection_allowed=True, logo=_read_image("cloud.jpg"))
-    storage = Service(entity_id=service_storage_entity_id, name=service_storage_name,
+                    public_visible=True, automatic_connection_allowed=True, logo=_read_image("cloud.jpg"),
+                    allowed_organisations=[uuc, uva])
+    storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=_read_image("storage.jpeg"),
                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
                       white_listed=True, accepted_user_policy="https://google.nl")
@@ -241,7 +243,8 @@ def seed(db, app_config):
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
                        "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
                    public_visible=True, automatic_connection_allowed=False, logo=_read_image("wiki.jpeg"),
-                   contact_email="help@wiki.com", accepted_user_policy="https://google.nl")
+                   allowed_organisations=[uuc, uva], contact_email="help@wiki.com",
+                   accepted_user_policy="https://google.nl")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",

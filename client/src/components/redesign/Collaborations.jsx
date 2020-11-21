@@ -94,6 +94,7 @@ export default class Collaborations extends React.PureComponent {
                 mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
             },
             {
+                nonSortable: true,
                 key: "role",
                 header: "",// I18n.t("profile.yourRole"),
                 mapper: collaboration => {

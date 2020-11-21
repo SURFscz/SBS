@@ -44,19 +44,18 @@ class UsedServices extends React.Component {
     componentDidMount = () => {
         const {collaboration} = this.props;
         allServices().then(json => {
-            let services = json;
-            let servicesInUse = collaboration.services
+            const services = json;
+            const servicesInUse = collaboration.services
                 .concat(collaboration.organisation.services)
-                .concat(collaboration.service_connection_requests.map(r => r.service));
+                .concat(collaboration.service_connection_requests.map(r => r.service))
+                .map(e => e.id);
 
-            servicesInUse = servicesInUse.map(e => e.id);
-            services = services
+            const filteredServices = services
                 .filter(service => {
-                    return (service.allowed_organisations.length === 0 ||
-                        service.allowed_organisations.some(org => org.id === collaboration.organisation_id)) &&
+                    return service.allowed_organisations.some(org => org.id === collaboration.organisation_id) &&
                         servicesInUse.indexOf(service.id) === -1;
                 });
-            this.setState({services: services, loading: false});
+            this.setState({services: filteredServices, loading: false});
         });
     }
 
