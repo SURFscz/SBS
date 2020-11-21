@@ -55,7 +55,6 @@ I18n.translations.en = {
         backToHome: "Back to home",
         firstTime: "Onboarding",
         collaborationRequest: "Request for new Collaboration",
-        collaborationNew: "New Collaboration",
         noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution named '{{schac_home}}' where you logged in. This is not the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
         tabs: {
             groups: "Groups",
@@ -204,7 +203,6 @@ I18n.translations.en = {
         serviceCollaborations: {
             searchPlaceHolder: "Search for collaborations...",
             title: "Collaborations using this service",
-            new: "New Collaboration",
             organisationName: "Organisation",
             noEntities: "There are no collaborations using this service",
             origin: "Enabled by",

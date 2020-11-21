@@ -267,6 +267,7 @@ def seed(db, app_config):
     _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler)
 
     uuc.services.append(uuc_scheduler)
+    uuc.services.append(wiki)
     db.session.merge(uuc)
 
     ai_computing = Collaboration(name=ai_computing_name,

@@ -247,7 +247,8 @@ class CollaborationDetail extends React.Component {
     }
 
     createCollaborationRequest = () => {
-        this.props.history.push("/new-collaboration");
+        const {collaboration} = this.state;
+        this.props.history.push(`/new-collaboration?organisationId=${collaboration.organisation_id}`);
     }
 
     getUnitHeaderForMember(collaboration, user, schacHomeOrganisation) {

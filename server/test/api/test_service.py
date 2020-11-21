@@ -2,7 +2,7 @@
 from server.db.domain import Service, Organisation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name, \
-    service_network_name, uuc_scheduler_name
+    service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name
 
 
 class TestService(AbstractTest):
@@ -128,3 +128,26 @@ class TestService(AbstractTest):
 
         self.assertEqual(1, len(allowed_organisations))
         self.assertEqual(amsterdam_uva_name, allowed_organisations[0].name)
+
+    def test_allowed_organisations_preflight(self):
+        uuc = self.find_entity_by_name(Organisation, uuc_name)
+        wiki = self.find_entity_by_name(Service, service_wiki_name)
+        res = self.put(f"/api/services/allowed_organisations_preflight/{wiki.id}",
+                       body={"allowed_organisations": [{"organisation_id": uuc.id}]},
+                       response_status_code=200)
+
+        self.assertEqual(0, len(res["collaborations"]))
+        self.assertEqual(1, len(res["organisations"]))
+        self.assertEqual(uuc_name, res["organisations"][0]["name"])
+
+    def test_allowed_organisations_preflight_clear_all(self):
+        wiki = self.find_entity_by_name(Service, service_wiki_name)
+        res = self.put(f"/api/services/allowed_organisations_preflight/{wiki.id}",
+                       body={"allowed_organisations": []},
+                       response_status_code=200)
+
+        self.assertEqual(1, len(res["collaborations"]))
+        self.assertEqual(uva_research_name, res["collaborations"][0]["name"])
+
+        self.assertEqual(1, len(res["organisations"]))
+        self.assertEqual(uuc_name, res["organisations"][0]["name"])

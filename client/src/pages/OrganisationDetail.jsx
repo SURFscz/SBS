@@ -52,7 +52,7 @@ class OrganisationDetail extends React.Component {
                         .some(member => member.role === "manager" && member.user_id === user.id);
 
                     const tab = params.tab || this.state.tab;
-                    const tabs = this.getTabs(json,config);
+                    const tabs = this.getTabs(json, config);
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
@@ -83,7 +83,7 @@ class OrganisationDetail extends React.Component {
         this.setState({firstTime: true});
     }
 
-    getTabs = (organisation, config )=> {
+    getTabs = (organisation, config) => {
         const tabs = [
             this.getCollaborationsTab(organisation),
             this.getCollaborationRequestsTab(organisation),

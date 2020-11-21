@@ -19,7 +19,7 @@ class ServiceOrganisations extends React.Component {
         }
     }
 
-    componentDidMount = () => {
+    componentDidMount = toggleAll => {
         const {service, organisations} = this.props;
         const allowedOrganisationIdentifiers = service.allowed_organisations.map(org => org.id);
         const organisationsSelected = organisations.reduce((acc, org) => {
@@ -29,7 +29,7 @@ class ServiceOrganisations extends React.Component {
 
         this.setState({
             organisationsSelected: organisationsSelected,
-            toggleAll: allowedOrganisationIdentifiers.length === organisations.length
+            toggleAll: toggleAll === undefined ? allowedOrganisationIdentifiers.length === organisations.length : toggleAll
         });
     }
 
@@ -67,13 +67,14 @@ class ServiceOrganisations extends React.Component {
 
     submit = organisationsSelected => {
         const {service} = this.props;
+
         const organisations = Object.entries(organisationsSelected)
             .filter(e => e[1])
             .map(e => ({"organisation_id": e[0]}));
 
         allowedOrganisations(service.id, {"allowed_organisations": organisations})
             .then(() => this.props.refresh(() => {
-                this.componentDidMount();
+                this.componentDidMount(this.state.toggleAll);
                 setFlash(I18n.t("service.flash.updated", {name: service.name}));
             }));
     }
