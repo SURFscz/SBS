@@ -228,8 +228,10 @@ def allowed_organisations_preflight(service_id):
     coll_query = Collaboration.query.join(Collaboration.services).filter(Service.id == service_id)
     if allowed_organisations:
         org_identifiers = [value["organisation_id"] for value in allowed_organisations]
-        org_query = org_query.filter(Organisation.id.in_(org_identifiers))
-        coll_query = coll_query.filter(Collaboration.organisation_id.in_(org_identifiers))
+        org_id_all = [org.id for org in Organisation.query.options(load_only("id")).all()]
+        org_del_ids = ([org_id for org_id in org_id_all if org_id not in org_identifiers])
+        org_query = org_query.filter(Organisation.id.in_(org_del_ids))
+        coll_query = coll_query.filter(Collaboration.organisation_id.in_(org_del_ids))
     return {"organisations": org_query.all(), "collaborations": coll_query.all()}, 200
 
 
@@ -245,8 +247,23 @@ def add_allowed_organisations(service_id):
     if allowed_organisations:
         for value in allowed_organisations:
             service.allowed_organisations.append(Organisation.query.get(value["organisation_id"]))
-
     db.session.merge(service)
+
+    # Now remove all dangling references
+    org_sql = f"DELETE FROM services_organisations WHERE service_id = {service_id}"
+    coll_sql = f"DELETE sc FROM services_collaborations sc INNER JOIN collaborations c on c.id = sc.collaboration_id " \
+               f"WHERE sc.service_id = {service_id}"
+
+    if allowed_organisations:
+        org_identifiers = [value["organisation_id"] for value in allowed_organisations]
+        org_id_all = [org.id for org in Organisation.query.options(load_only("id")).all()]
+        org_del_ids = ",".join([str(org_id) for org_id in org_id_all if org_id not in org_identifiers])
+        org_sql += f" AND organisation_id in ({org_del_ids})"
+        coll_sql += f" AND c.organisation_id in ({org_del_ids})"
+
+    db.engine.execute(text(org_sql))
+    db.engine.execute(text(coll_sql))
+
     return None, 201
 
 
