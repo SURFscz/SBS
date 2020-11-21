@@ -55,7 +55,6 @@ I18n.translations.nl = {
         backToHome: "Terug naar thuis",
         firstTime: "Onboarding",
         collaborationRequest: "Verzoek voor een nieuwe samenwerking",
-        collaborationNew: "Nieuwe samenwerking",
         noOrganisations: "Voor het verzoek om een nieuwe samenwerking is het een vereiste dat er voor de instelling '{{schac_home}}' waarmee je bent ingelogd een organisatie is aangemaakt. Dit is niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie.",
         tabs: {
             groups: "Groupen",
@@ -204,7 +203,6 @@ I18n.translations.nl = {
         serviceCollaborations: {
             searchPlaceHolder: "Zoek samenwerkingen...",
             title: "Samenwerkingen die deze dienst gebruiken",
-            new: "Nieuwe samenwerking",
             organisationName: "Organisatie",
             noEntities: "Er zijn geen samenwerkingen die deze dienst gebruiken",
             origin: "Beschikbaar door",
