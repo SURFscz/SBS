@@ -1071,12 +1071,16 @@ I18n.translations.nl = {
         agreed: "Uw overeenkomst met {{name}} is opgeslagen."
     },
     collaborationRequest: {
-        title: "{{requester}} heeft een verzoek gedaan om een nieuwe samenwerking '{{name}}' te maken .",
+        title: {
+            open: "{{requester}} heeft een verzoek gedaan om een nieuwe samenwerking '{{name}}' te maken .",
+            approved: "{{requester}} samenwerkingsverzoek is goedgekeurd.",
+            denied: "{{requester}} samenwerkingsverzoek is afgewezen."
+        },
         denyConfirmation: "Weet je zeker dat je dit verzoek wilt afkeuren?",
         deleteConfirmation: "Weet je zeker dat je dit verzoek wilt verwijderen?",
         approve: "Goedkeuren",
         deny: "Afkeuren",
-                status: "Status",
+        status: "Status",
         statuses: {
             open: "Open",
             denied: "Afgewezen",
