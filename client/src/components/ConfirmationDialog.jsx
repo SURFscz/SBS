@@ -8,7 +8,7 @@ import Button from "./Button";
 export default function ConfirmationDialog({
                                                isOpen = false, cancel, confirm, question = "",
                                                leavePage = false, isError = false, isWarning = false,
-                                               disabledConfirm = false, children = null
+                                               disabledConfirm = false, children = null, closeTimeoutMS=125
                                            }) {
     const className = isError ? " error " : isWarning ? " warning " : "";
     return (
@@ -18,7 +18,7 @@ export default function ConfirmationDialog({
             contentLabel={I18n.t("confirmationDialog.title")}
             className="confirmation-dialog-content"
             overlayClassName="confirmation-dialog-overlay"
-            closeTimeoutMS={250}
+            closeTimeoutMS={closeTimeoutMS}
             ariaHideApp={false}>
             <section className={`dialog-header  ${className}`}>
                 {I18n.t("confirmationDialog.title")}

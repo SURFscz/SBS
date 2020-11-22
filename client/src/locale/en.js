@@ -192,7 +192,10 @@ I18n.translations.en = {
             searchPlaceHolder: "Search for organisations",
             title: "Organisations",
             new: "Toggle all on/off",
-            allowedNoneError: "At least one organisation must be selected"
+            disableAccessConfirmation: "Are you sure you want disable access for this service?",
+            disableAccessConsequences: "The following organisations and collaborations are using this Service and won't be able to use it anymore.",
+            collaboration: "collaboration",
+            organisation: "organisation",
         },
         memberCollaborations: {
             searchPlaceHolder: "Search for collaborations...",
