@@ -350,7 +350,7 @@ class CollaborationForm extends React.Component {
                     {isNew &&
                     <UnitHeader obj={({name: unitHeaderName, svg: CollaborationsIcon})}/>}
                     {!isNew && <UnitHeader obj={collaboration}
-                                           auditLogPath={`collaborations/${collaboration.id}`}
+                                           // auditLogPath={`collaborations/${collaboration.id}`}
                                            name={collaboration.name}
                                            history={user.admin && this.props.history}
                                            mayEdit={false}/>}

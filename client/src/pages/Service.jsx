@@ -478,7 +478,7 @@ class Service extends React.Component {
                                     question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
                 {isNew && <UnitHeader obj={({name: I18n.t("models.services.new"), svg: ServicesIcon})}/>}
                 {!isNew && <UnitHeader obj={service}
-                                       auditLogPath={`services/${service.id}`}
+                                       // auditLogPath={`services/${service.id}`}
                                        name={service.name}
                                        history={user.admin && this.props.history}
                                        mayEdit={false}/>}
