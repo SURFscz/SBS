@@ -9,6 +9,7 @@ import {auditLogsInfo, auditLogsMe} from "../api";
 import {AppStore} from "../stores/AppStore";
 import {getParameterByName} from "../utils/QueryParameters";
 import UnitHeader from "./redesign/UnitHeader";
+import SpinnerField from "./redesign/SpinnerField";
 
 const ignoreInDiff = ["created_by", "updated_by", "created_at", "updated_at"];
 const epochAttributes = ["agreed_at", "sent_at", "last_accessed_date", "last_login_date", "expiry_date"]
@@ -25,7 +26,8 @@ export default class History extends React.PureComponent {
         super(props, context);
         this.state = {
             selected: null,
-            auditLogs: {audit_logs: []}
+            auditLogs: {audit_logs: []},
+            loading: true
         };
         this.differ = new DiffPatcher();
     }
@@ -35,7 +37,11 @@ export default class History extends React.PureComponent {
         const promise = collection === "me" ? auditLogsMe() : auditLogsInfo(id, collection);
         promise.then(res => {
             const selected = this.convertReference(res, res.audit_logs[0]);
-            this.setState({auditLogs: res, selected: selected});
+            this.setState({
+                auditLogs: res,
+                selected: selected,
+                loading: false
+            });
             const name = getParameterByName("name", window.location.search);
             const back = getParameterByName("back", window.location.search);
             AppStore.update(s => {
@@ -182,7 +188,10 @@ export default class History extends React.PureComponent {
     };
 
     render() {
-        const {auditLogs, selected} = this.state;
+        const {auditLogs, selected, loading} = this.state;
+        if (loading) {
+            return <SpinnerField/>
+        }
         const auditLogEntries = this.convertReferences(auditLogs);
         return (
             <div className={`history-container`}>

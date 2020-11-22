@@ -17,7 +17,10 @@ export default function UnitHeader(props) {
                 {obj.logo && <Logo src={obj.logo}/>}
                 {obj.svg && <obj.svg onClick={() => svgClick && svgClick()}/>}
                 {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
-                {obj.name && <h1>{obj.name}</h1>}
+                {obj.name && <div className="obj-name">
+                    <h1>{obj.name}</h1>
+                    {obj.organisation && <span>{obj.organisation.name}</span>}
+                </div>}
                 <div className="edit">
                     {mayEdit && <Button onClick={onEdit} txt={I18n.t("home.edit")}/>}
                     {(history && auditLogPath) &&
