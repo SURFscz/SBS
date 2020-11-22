@@ -192,7 +192,10 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek organisaties",
             title: "Organisaties",
             new: "Toggle alle aan/uit",
-            allowedNoneError: "Op zijn minst 1 organisatie moet geselecteerd zijn"
+            disableAccessConfirmation: "Weet je zeker dat je voor deze dienst de toegang wilt verbieden?",
+            disableAccessConsequences: "De volgende organisaties en samenwerkingen gebruiken deze dienst en kunnen zullen hierdoor de dienst niet meer kunnen gebruiken.",
+            collaboration: "samenwerking",
+            organisation: "organisatie",
         },
         memberCollaborations: {
             searchPlaceHolder: "Zoek samenwerkingen...",
