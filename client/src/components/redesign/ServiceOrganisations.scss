@@ -33,8 +33,24 @@
             }
         }
 
-
     }
 
+}
 
+div.allowed-organisations-confirmation {
+    text-align: left;
+    padding: 0 10px;
+
+    ul {
+        margin-top: 20px;
+        list-style: circle;
+
+        li {
+            margin-left: 40px;
+
+            span {
+                color: $darker-grey;
+            }
+        }
+    }
 }

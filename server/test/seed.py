@@ -381,11 +381,15 @@ def seed(db, app_config):
                                           "really, really \n want to...")
     _persist(db, invitation, invitation_uva, invitation_noway)
 
-    collaboration_request = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
-                                                 website_url="https://google.com", logo=_read_image("request.jpg"),
-                                                 status=STATUS_OPEN, message="For research", organisation=uuc,
-                                                 requester=peter)
-    _persist(db, collaboration_request)
+    collaboration_request_1 = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
+                                                   website_url="https://google.com", logo=_read_image("request.jpg"),
+                                                   status=STATUS_OPEN, message="For research", organisation=uuc,
+                                                   requester=peter)
+    collaboration_request_2 = CollaborationRequest(name="Polse", short_name="polse",
+                                                   website_url="https://www.pols.me/", logo=_read_image("pols.jpg"),
+                                                   status=STATUS_OPEN, message="For research", organisation=uuc,
+                                                   requester=peter)
+    _persist(db, collaboration_request_1, collaboration_request_2)
 
     service_connection_request_network = ServiceConnectionRequest(message="AI computing needs storage",
                                                                   hash=network_service_connection_request_hash,

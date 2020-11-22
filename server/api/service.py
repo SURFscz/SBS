@@ -218,23 +218,6 @@ def update_service():
     return res
 
 
-@service_api.route("/allowed_organisations_preflight/<service_id>", methods=["PUT"], strict_slashes=False)
-@json_endpoint
-def allowed_organisations_preflight(service_id):
-    confirm_write_access()
-    data = current_request.get_json()
-    allowed_organisations = data.get("allowed_organisations", None)
-    org_query = Organisation.query.join(Organisation.services).filter(Service.id == service_id)
-    coll_query = Collaboration.query.join(Collaboration.services).filter(Service.id == service_id)
-    if allowed_organisations:
-        org_identifiers = [value["organisation_id"] for value in allowed_organisations]
-        org_id_all = [org.id for org in Organisation.query.options(load_only("id")).all()]
-        org_del_ids = ([org_id for org_id in org_id_all if org_id not in org_identifiers])
-        org_query = org_query.filter(Organisation.id.in_(org_del_ids))
-        coll_query = coll_query.filter(Collaboration.organisation_id.in_(org_del_ids))
-    return {"organisations": org_query.all(), "collaborations": coll_query.all()}, 200
-
-
 @service_api.route("/allowed_organisations/<service_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def add_allowed_organisations(service_id):
@@ -243,26 +226,38 @@ def add_allowed_organisations(service_id):
     service = Service.query.get(service_id)
     data = current_request.get_json()
     allowed_organisations = data.get("allowed_organisations", None)
-    service.allowed_organisations.clear()
-    if allowed_organisations:
-        for value in allowed_organisations:
-            service.allowed_organisations.append(Organisation.query.get(value["organisation_id"]))
-    db.session.merge(service)
 
-    # Now remove all dangling references
     org_sql = f"DELETE FROM services_organisations WHERE service_id = {service_id}"
     coll_sql = f"DELETE sc FROM services_collaborations sc INNER JOIN collaborations c on c.id = sc.collaboration_id " \
                f"WHERE sc.service_id = {service_id}"
 
+    need_to_delete = not bool(allowed_organisations)
     if allowed_organisations:
-        org_identifiers = [value["organisation_id"] for value in allowed_organisations]
-        org_id_all = [org.id for org in Organisation.query.options(load_only("id")).all()]
-        org_del_ids = ",".join([str(org_id) for org_id in org_id_all if org_id not in org_identifiers])
-        org_sql += f" AND organisation_id in ({org_del_ids})"
-        coll_sql += f" AND c.organisation_id in ({org_del_ids})"
+        # find delta, e.g. which one to remove and which ones to add
+        current_allowed = [org.id for org in service.allowed_organisations]
+        new_allowed = [int(value["organisation_id"]) for value in allowed_organisations]
 
-    db.engine.execute(text(org_sql))
-    db.engine.execute(text(coll_sql))
+        to_remove = [org_id for org_id in current_allowed if org_id not in new_allowed]
+        to_append = [org_id for org_id in new_allowed if org_id not in current_allowed]
+        for org_id in to_remove:
+            service.allowed_organisations.remove(Organisation.query.get(org_id))
+        for org_id in to_append:
+            service.allowed_organisations.append(Organisation.query.get(org_id))
+
+        if to_remove:
+            need_to_delete = True
+            org_del_ids = ",".join([str(org_id) for org_id in to_remove])
+            org_sql += f" AND organisation_id in ({org_del_ids})"
+            coll_sql += f" AND c.organisation_id in ({org_del_ids})"
+
+    else:
+        service.allowed_organisations.clear()
+
+    db.session.merge(service)
+
+    if need_to_delete:
+        db.engine.execute(text(org_sql))
+        db.engine.execute(text(coll_sql))
 
     return None, 201
 

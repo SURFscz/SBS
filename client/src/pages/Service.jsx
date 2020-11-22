@@ -361,6 +361,7 @@ class Service extends React.Component {
                             name={I18n.t("service.description")}
                             placeholder={I18n.t("service.descriptionPlaceholder")}
                             onChange={e => this.setState({description: e.target.value})}
+                            multiline={true}
                             disabled={!isAdmin}/>
 
                 <InputField value={uri}

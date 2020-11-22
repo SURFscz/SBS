@@ -139,39 +139,3 @@ class TestService(AbstractTest):
         coll = self.find_entity_by_name(Collaboration, uva_research_name)
         post = len(coll.services)
         self.assertEqual(pre - 1, post)
-
-    def test_allowed_organisations_preflight(self):
-        uva = self.find_entity_by_name(Organisation, amsterdam_uva_name)
-        wiki = self.find_entity_by_name(Service, service_wiki_name)
-        res = self.put(f"/api/services/allowed_organisations_preflight/{wiki.id}",
-                       body={"allowed_organisations": [{"organisation_id": uva.id}]},
-                       response_status_code=200)
-
-        self.assertEqual(0, len(res["collaborations"]))
-
-        self.assertEqual(1, len(res["organisations"]))
-        self.assertEqual(uuc_name, res["organisations"][0]["name"])
-
-    def test_allowed_organisations_preflight_collab(self):
-        uuc = self.find_entity_by_name(Organisation, uuc_name)
-        wiki = self.find_entity_by_name(Service, service_wiki_name)
-        res = self.put(f"/api/services/allowed_organisations_preflight/{wiki.id}",
-                       body={"allowed_organisations": [{"organisation_id": uuc.id}]},
-                       response_status_code=200)
-
-        self.assertEqual(1, len(res["collaborations"]))
-        self.assertEqual(uva_research_name, res["collaborations"][0]["name"])
-
-        self.assertEqual(0, len(res["organisations"]))
-
-    def test_allowed_organisations_preflight_clear_all(self):
-        wiki = self.find_entity_by_name(Service, service_wiki_name)
-        res = self.put(f"/api/services/allowed_organisations_preflight/{wiki.id}",
-                       body={"allowed_organisations": []},
-                       response_status_code=200)
-
-        self.assertEqual(1, len(res["collaborations"]))
-        self.assertEqual(uva_research_name, res["collaborations"][0]["name"])
-
-        self.assertEqual(1, len(res["organisations"]))
-        self.assertEqual(uuc_name, res["organisations"][0]["name"])
