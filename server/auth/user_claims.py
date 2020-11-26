@@ -33,7 +33,7 @@ def _normalize(s):
     return re.sub("[^a-zA-Z0-9_]", "", normalized)
 
 
-def generate_unique_username(user: User, user_info_json = {}, max_count=10000):
+def generate_unique_username(user: User, user_info_json={}, max_count=10000):
     """
     # TODO: clean up this mess with mismatching attributes and field names
     if hasattr(user, "eduperson_principal_name") and user.eduperson_principal_name:
