@@ -31,6 +31,11 @@ class TestUserClaims(AbstractTest):
         add_user_claims({"voperson_external_id": "university"}, "urn:johny", user)
         self.assertEqual("university", user.schac_home_organisation)
 
+    def test_add_user_claims_empty_entitlements(self):
+        user = User()
+        add_user_claims({"eduperson_entitlement": []}, "urn:johny", user)
+        self.assertIsNone(user.entitlement)
+
     def test_add_user_claims_user_name(self):
         user = User()
         add_user_claims({"given_name": "John", "family_name": "Doe"}, "urn:johny", user)
