@@ -57,8 +57,8 @@ def add_user_claims(user_info_json, uid, user, replace_none_values=True):
     for claim in claim_attribute_mapping():
         for key, attr in claim.items():
             val = user_info_json.get(key)
-            if val and isinstance(val, list):
-                val = ", ".join(val)
+            if isinstance(val, list):
+                val = ", ".join(val) if val else None
             if val or replace_none_values:
                 setattr(user, attr, val)
     if not user.name:
