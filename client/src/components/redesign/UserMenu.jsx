@@ -2,8 +2,8 @@ import I18n from "i18n-js";
 import React from "react";
 import "./UserMenu.scss";
 import {Link} from "react-router-dom";
+import {logout} from "../../utils/Login";
 
-const links = ["profile", "logout"];
 const adminLinks = ["system", "impersonate"]
 
 //https://stackoverflow.com/questions/32553158/detect-click-outside-react-component<Tabs
@@ -29,9 +29,10 @@ class UserMenu extends React.Component {
         return (
             <div className="user-menu" ref={node => this.node = node}>
                 <ul>
-                    {links.map(l => <li key={l}>
-                        <Link onClick={this.props.close} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
-                    </li>)}
+                    <li>
+                        <Link onClick={this.props.close} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
+                        <a href="/logout" onClick={logout}>{I18n.t(`header.links.logout`)}</a>
+                    </li>
                     {currentUser.admin && adminLinks.map(l => <li key={l}>
                         <Link onClick={this.props.close} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
                     </li>)}
