@@ -47,6 +47,18 @@ class TestUserClaims(AbstractTest):
                          "eduperson_principal_name": "mettens@example.com.org"}, "urn:johny", user)
         self.assertEqual("mettens", user.username)
 
+    def test_add_user_claims_user_name_eduperson_principal_name_numbers(self):
+        user = User()
+        add_user_claims({"given_name": "John", "family_name": "Doe",
+                         "eduperson_principal_name": "mettens123@example.com.org"}, "urn:johny", user)
+        self.assertEqual("mettens123", user.username)
+
+    def test_add_user_claims_user_name_eduperson_principal_name_invalid_chars(self):
+        user = User()
+        add_user_claims({"given_name": "John", "family_name": "Doe",
+                         "eduperson_principal_name": "髙-pieß-!t@#-髙x@example.com.org"}, "urn:johny", user)
+        self.assertEqual("piet", user.username)
+
     def test_generate_unique_username(self):
         # we don't want this in the normal seed
         for username in ["jdoe", "jdoe2", "cdoemanchi", "cdoemanchi2", "cdoemanchi3", "u", "u2"]:
