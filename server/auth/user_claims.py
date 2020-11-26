@@ -30,7 +30,7 @@ def _normalize(s):
     if s is None:
         return ""
     normalized = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("utf-8").strip()
-    return re.sub("[^a-zA-Z]", "", normalized)
+    return re.sub("[^a-z0-9_]", "", normalized)
 
 
 def generate_unique_username(user: User, max_count=10000):
