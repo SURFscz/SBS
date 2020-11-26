@@ -70,10 +70,5 @@ class TestUserClaims(AbstractTest):
         self.assertListEqual(["jdoe3", "cdoemanchi4", "u3", "paa"], short_names)
 
     def test_generate_unique_username_random(self):
-        username = generate_unique_username(munchify({"given_name": "John", "family_name": "Doe"}), 1)
+        username = generate_unique_username(munchify({"given_name": "John", "family_name": "Doe"}), max_count=1)
         self.assertEqual(14, len(username))
-
-    def test_eppn_generate_unique_username(self):
-        user = User(eduperson_principal_name="sarah-lee")
-        username = generate_unique_username(user)
-        self.assertEqual("sarahlee", username)
