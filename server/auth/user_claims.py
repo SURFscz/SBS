@@ -21,7 +21,7 @@ def claim_attribute_mapping():
             {"eduperson_scoped_affiliation": "affiliation"},
             {"voperson_external_affiliation": "scoped_affiliation"},
             {"eduperson_entitlement": "entitlement"},
-            {"eduperson_principal_name": "eduperson_principal_name"}
+            {"voperson_external_id": "eduperson_principal_name"}
         ]
     return claim_attribute_mapping_value
 
@@ -33,10 +33,19 @@ def _normalize(s):
     return re.sub("[^a-zA-Z0-9_]", "", normalized)
 
 
-def generate_unique_username(user: User, max_count=10000):
+def generate_unique_username(user: User, user_info_json = {}, max_count=10000):
+    """
+    # TODO: clean up this mess with mismatching attributes and field names
     if hasattr(user, "eduperson_principal_name") and user.eduperson_principal_name:
         eduperson_principal_name = re.split("@", user.eduperson_principal_name)[0]
         username = f"{_normalize(eduperson_principal_name)}".lower()
+    """
+    # Note: user.eduperson_principal_name is NOT equal to user_info_json["eduperson_principal_name"]
+    if "eduperson_principal_name" in user_info_json:
+        eduperson_principal_name = user_info_json["eduperson_principal_name"]
+        val = eduperson_principal_name[0] if isinstance(eduperson_principal_name, list) else eduperson_principal_name
+        val = re.split("@", val)[0]
+        username = _normalize(val).lower()
     else:
         username = f"{_normalize(user.given_name)[0:1]}{_normalize(user.family_name)[0:11]}"[0:10].lower()
 
@@ -71,4 +80,4 @@ def add_user_claims(user_info_json, uid, user, replace_none_values=True):
         parts = re.split("\\.", val)[-2:]
         user.schac_home_organisation = ".".join(parts)
     if not user.username:
-        user.username = generate_unique_username(user)
+        user.username = generate_unique_username(user, user_info_json)
