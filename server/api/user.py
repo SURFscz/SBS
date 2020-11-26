@@ -209,6 +209,8 @@ def resume_session():
         logger.error(error_msg)
         return redirect(f"{current_app.app_config.base_url}/error")
 
+    logger.debug(f"Fetched userinfo: {response.text}")
+
     user_info_json = response.json()
     uid = user_info_json["sub"]
     user = User.query.filter(User.uid == uid).first()
