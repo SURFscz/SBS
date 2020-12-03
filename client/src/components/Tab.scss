@@ -5,8 +5,6 @@
     min-width: 120px;
     padding: 10px 20px;
     margin: 0 20px;
-    border-top-width: 2px;
-    border-top-style: solid;
     display: flex;
     align-content: center;
 
@@ -24,34 +22,42 @@
     }
 
     &:not(.active) {
-        background: $lighter-grey;
-        border-color: $lighter-grey;
         cursor: pointer;
 
         h2, svg {
             color: $dark-grey;
         }
+
         svg {
             fill: $dark-grey;
+        }
+
+        &:hover {
+            h2, svg {
+                color: black;
+            }
+
+            svg {
+                fill: black;
+            }
+
+            border-bottom: 2px solid $medium-grey;
         }
     }
 
     &.active {
-        background: white;
-        border-color: $blue;
+        border-bottom: 2px solid $primary-orange;
 
         h2, svg {
-            color: $blue;
+            color: $secondary-orange;
             font-weight: bold;
         }
+
         svg {
-            fill: $blue;
+            fill: $primary-orange;
         }
     }
 
-    &.active.white {
-        background: white;
-    }
 }
 
 

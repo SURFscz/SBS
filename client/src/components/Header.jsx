@@ -1,13 +1,14 @@
 import React from "react";
 import I18n from "i18n-js";
 import {Link} from "react-router-dom";
-import {ReactComponent as Logo} from "../images/logo-surf-white.svg";
+import {ReactComponent as Logo} from "../images/logo-surf.svg";
 import "./Header.scss";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserMenu from "./redesign/UserMenu";
 import {globalUserRole} from "../utils/UserRole";
 import spinner from "../utils/Spin";
 import MDSpinner from "react-md-spinner";
+import {ReactComponent as ChevronDown} from "../icons/chevron-down.svg";
+import {ReactComponent as ChevronUp} from "../icons/chevron-up.svg";
 
 export default class Header extends React.PureComponent {
 
@@ -44,8 +45,13 @@ export default class Header extends React.PureComponent {
         );
     }
 
-    renderDropDownIndicator = () => this.state.dropDownActive ? <FontAwesomeIcon icon="angle-up"/> :
-        <FontAwesomeIcon icon="angle-down"/>;
+    renderDropDownIndicator = () => {
+        return (
+            <div className="drop-down">
+                {this.state.dropDownActive ? <ChevronUp/> : <ChevronDown/>}
+            </div>
+        );
+    }
 
 
     render() {

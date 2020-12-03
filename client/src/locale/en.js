@@ -6,7 +6,7 @@ I18n.translations.en = {
     select_locale: "Select English",
 
     header: {
-        title: "SRAM",
+        title: "Research Access Management",
         links: {
             login: "Login",
             system: "System",

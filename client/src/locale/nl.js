@@ -6,7 +6,7 @@ I18n.translations.nl = {
     select_locale: "Selecteer Nederlands",
 
     header: {
-        title: "SRAM",
+        title: "Research Access Management",
         links: {
             login: "Login",
             system: "Systeem",
