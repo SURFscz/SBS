@@ -2,9 +2,9 @@
 
 .header-container {
 
-    background: $darker-grey;
+    background: $primary-orange;
     margin: 0 auto;
-    color: white;
+    color: black;
 
     .header {
         max-width: $medium;
@@ -19,8 +19,12 @@
         }
 
         a.logo {
-            height: 50px;
             margin-top: 10px;
+
+            svg {
+                width: 90px;
+                height: auto;
+            }
 
             @media (max-width: $tablet-max) {
                 display: none;
@@ -31,7 +35,7 @@
         h1.title {
             font-size: 30px;
             line-height: 30px;
-            margin-left: 20px;
+            margin-left: 32px;
 
             @media (max-width: $tablet-max) {
                 display: none;
@@ -55,8 +59,7 @@
             align-items: center;
             padding: 5px 12px;
             color: black;
-            border-radius: 4px;
-            background-color: $background;
+            font-weight: bold;
 
             @media (max-width: $tablet-max) {
                 margin: 5px 5px -2px auto;
@@ -69,12 +72,25 @@
                 margin-right: 40px;
 
                 span.role {
-                    font-weight: bold;
+                    font-weight: normal;
+                    color: $dark-orange;
                 }
             }
 
-            svg.fa-angle-down, svg.fa-angle-up {
-                color: $medium-grey;
+            .drop-down {
+                border-radius: 50%;
+                padding: 18px;
+                background-color: $light-orange;
+                position: relative;
+
+                svg {
+                    fill: $dark-orange;
+                    position: absolute;
+                    top: 6px;
+                    right: 6px;
+                    width: 26px;
+                }
+
             }
         }
 

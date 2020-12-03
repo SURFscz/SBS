@@ -15,7 +15,6 @@ import Tabs from "../components/Tabs";
 import {ReactComponent as CoAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
-import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as MemberIcon} from "../icons/personal_info.svg";
 import {ReactComponent as GroupsIcon} from "../icons/groups.svg";
 import {ReactComponent as JoinRequestsIcon} from "../icons/connections.svg";
@@ -256,38 +255,36 @@ class CollaborationDetail extends React.Component {
         return (
             <div className="unit-header-container">
                 <div className="unit-header-custom">
-                    <CollaborationsIcon/>
-                    <div className="unit-custom-right">
+                    <img src={`data:image/jpeg;base64,${collaboration.logo}`} alt={collaboration.name}/>
+                    <div className="unit-right">
                         <h1>{collaboration.name}</h1>
                         <span className="organisation">{collaboration.organisation.name}</span>
-                        <div className={"unit-middle"}>
-                            <img src={`data:image/jpeg;base64,${collaboration.logo}`} alt={collaboration.name}/>
-                            <section className="unit-info">
-                                <ul>
-                                    <li><FontAwesomeIcon
-                                        icon="users"/><span>{I18n.t("models.collaboration.memberHeader", {
-                                        nbrMember: collaboration.collaboration_memberships.length,
-                                        nbrGroups: collaboration.groups.length
-                                    })}</span></li>
-                                    <li><FontAwesomeIcon icon="user-friends"/><span
-                                        dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/></li>
-                                    {collaboration.website_url &&
-                                    <li><FontAwesomeIcon icon="globe"/><span>
+                        <section className="unit-info">
+                            <ul>
+                                <li><FontAwesomeIcon
+                                    icon="users"/><span>{I18n.t("models.collaboration.memberHeader", {
+                                    nbrMember: collaboration.collaboration_memberships.length,
+                                    nbrGroups: collaboration.groups.length
+                                })}</span></li>
+                                <li><FontAwesomeIcon icon="user-friends"/>
+                                    <span dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/>
+                                </li>
+                                {collaboration.website_url &&
+                                <li><FontAwesomeIcon icon="globe"/>
+                                    <span>
                                         <a href={collaboration.website_url} rel="noopener noreferrer"
                                            target="_blank">{collaboration.website_url}</a>
-                                    </span></li>}
-                                </ul>
-                            </section>
-                        </div>
+                                    </span>
+                                </li>}
+                            </ul>
+                        </section>
                     </div>
-                    {showRequestCollaboration && <div className="unit-edit">
-                        <Button onClick={this.createCollaborationRequest}
-                                txt={I18n.t("models.collaboration.newCollaborationRequest")}/>
-                    </div>}
-
                 </div>
-            </div>
-        );
+                {showRequestCollaboration && <div className="unit-edit">
+                    <Button onClick={this.createCollaborationRequest}
+                            txt={I18n.t("models.collaboration.newCollaborationRequest")}/>
+                </div>}
+            </div>);
     }
 
     getUnitHeader = (user, collaboration, allowedToEdit) => {

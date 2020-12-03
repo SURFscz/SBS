@@ -67,12 +67,12 @@
     }
 
     &.orange {
-        background-color: $orange;
+        background-color: $primary-orange;
         color: white;
         border: none;
 
         &:hover {
-            background-color: darken($orange, 5%);
+            background-color: darken($primary-orange, 5%);
             color: darken(white, 10%);
         }
     }

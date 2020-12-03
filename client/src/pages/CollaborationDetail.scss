@@ -10,70 +10,58 @@
         display: flex;
         align-items: flex-start;
 
-        svg#collaborations {
-            width: 32px;
+        img {
+            max-height: 300px;
+            border-radius: 5px;
         }
 
-        .unit-custom-right {
+        .unit-right {
             margin-left: 20px;
             display: flex;
             flex-direction: column;
         }
 
-        .unit-middle {
-            display: flex;
-            margin-top: 15px;
+        .unit-info {
             @media (max-width: $tablet-max) {
-                flex-direction: column;
+                margin-top: 25px;
             }
 
-            img {
-                max-height: 240px;
-                border-radius: 5px;
-            }
+            li {
+                display: flex;
+                align-items: center;
+                padding-top: 12px;
 
-            .unit-info {
-                @media (max-width: $tablet-max) {
-                    margin-top: 25px;
+                svg {
+                    margin-right: 18px;
+                    font-size: 18px;
+
+                    &.fa-globe {
+                        font-size: 22px;
+
+                    }
                 }
 
-                li {
-                    display: flex;
-                    align-items: center;
 
-                    svg {
-                        margin-right: 18px;
-                        font-size: 20px;
-
-                        &.fa-globe {
-                            font-size: 24px;
-
-                        }
-                    }
-
-                    padding: 8px 0 8px 16px;
-
-                    &:first-child {
-                        padding-top: 0;
-                    }
-
-                }
             }
-        }
-
-        h1 {
-            margin-top: 5px;
-            margin-bottom: 10px;
-            font-size: 28px;
-            font-weight: bold;
-            color: $darker-grey;
-        }
-
-        span.organisation {
-            color: $dark-grey;
         }
     }
+
+    h1 {
+        margin-top: 5px;
+        margin-bottom: 10px;
+        font-size: 28px;
+        font-weight: bold;
+        color: $secondary-orange;
+    }
+
+    span.organisation {
+        color: black;
+        font-weight: bold;
+    }
+
     .unit-edit {
         margin: 0 15px 0 auto;
     }
+
 }
+
