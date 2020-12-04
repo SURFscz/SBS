@@ -42,8 +42,8 @@
 
     .header {
         display: flex;
-        background-color: $darker-grey;
-        color: white;
+        background: $primary-orange;
+        color: black;
         font-size: larger;
         height: 60px;
 
@@ -56,7 +56,7 @@
             font-size: 42px;
             padding: 8px;
             cursor: pointer;
-            color: white;
+            color: black;
         }
     }
 
