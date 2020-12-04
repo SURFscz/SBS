@@ -86,7 +86,8 @@ class ServiceDetail extends React.Component {
     getOrganisationsTab = (service, organisations) => {
         return (<div key="organisations" name="organisations" label={I18n.t("home.tabs.serviceOrganisations")}
                      icon={<OrganisationsIcon/>}>
-            <ServiceOrganisations {...this.props} refresh={this.refresh} service={service} organisations={organisations}/>
+            <ServiceOrganisations {...this.props} refresh={this.refresh} service={service}
+                                  organisations={organisations}/>
         </div>)
     }
 
@@ -133,7 +134,7 @@ class ServiceDetail extends React.Component {
         }
         const {user} = this.props;
         return (
-            <div className="mod-service-container">
+            <>
                 <UnitHeader obj={service}
                             mayEdit={user.admin}
                             history={user.admin && this.props.history}
@@ -163,10 +164,12 @@ class ServiceDetail extends React.Component {
                         </div>
                     </div>
                 </UnitHeader>
-                <Tabs activeTab={tab} tabChanged={this.tabChanged}>
-                    {tabs}
-                </Tabs>
-            </div>);
+                <div className="mod-service-container">
+                    <Tabs activeTab={tab} tabChanged={this.tabChanged}>
+                        {tabs}
+                    </Tabs>
+                </div>
+            </>);
     };
 }
 

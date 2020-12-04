@@ -14,13 +14,18 @@ export default function UnitHeader(props) {
     return (
         <div className="unit-header-container">
             <div className="unit-header">
-                {obj.logo && <Logo src={obj.logo}/>}
-                {obj.svg && <obj.svg onClick={() => svgClick && svgClick()}/>}
-                {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
-                {obj.name && <div className="obj-name">
-                    <h1>{obj.name}</h1>
+                <div className="image">
+                    {obj.logo && <Logo src={obj.logo}/>}
+                    {obj.svg && <obj.svg onClick={() => svgClick && svgClick()}/>}
+                    {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
+                </div>
+                <div className="obj-name">
+                    {obj.name && <h1>{obj.name}</h1>}
                     {obj.organisation && <span>{obj.organisation.name}</span>}
-                </div>}
+                    <div className="children">
+                        {props.children}
+                    </div>
+                </div>
                 <div className="edit">
                     {mayEdit && <Button onClick={onEdit} txt={I18n.t("home.edit")}/>}
                     {(history && auditLogPath) &&
@@ -29,12 +34,11 @@ export default function UnitHeader(props) {
                         <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
                     </span>}
                     {firstTime &&
-                        <span className="onboarding" onClick={firstTime}><FontAwesomeIcon icon="plane-departure"/>{I18n.t("home.firstTime")}</span>}
+                    <span className="onboarding" onClick={firstTime}><FontAwesomeIcon
+                        icon="plane-departure"/>{I18n.t("home.firstTime")}</span>}
                 </div>
             </div>
-            <div className="children">
-                {props.children}
-            </div>
+
 
         </div>
     )

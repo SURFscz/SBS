@@ -329,31 +329,36 @@ class NewInvitation extends React.Component {
         }
         const disabledSubmit = (!initial && !this.isValid());
         return (
-            <div className="mod-new-collaboration-invitation">
+            <>
+                <UnitHeader obj={collaboration}
+                            name={collaboration.name}/>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <UnitHeader obj={collaboration}
-                            name={collaboration.name}/>
 
                 <Tabs activeTab={activeTab} tabChanged={this.tabChanged}>
                     <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
                          name={"invitation_form"} icon={<InviteIcon/>}>
-                        <div className="new-collaboration-invitation">
-                            {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                                administrators, intended_role, message, expiry_date, disabledSubmit, groups,
-                                selectedGroup)}
+                        <div className="mod-new-collaboration-invitation">
+                            <div className="new-collaboration-invitation">
+                                {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                                    administrators, intended_role, message, expiry_date, disabledSubmit, groups,
+                                    selectedGroup)}
+                            </div>
                         </div>
                     </div>
                     <div label={I18n.t("tabs.invitation_preview")} key={"invitation_preview"}
                          name={"invitation_preview"} icon={<EyeIcon/>}>
-                        <div className="new-collaboration-invitation">
-                            {this.preview(disabledSubmit)}
+                        <div className="mod-new-collaboration-invitation">
+                            <div className="new-collaboration-invitation">
+                                {this.preview(disabledSubmit)}
+                            </div>
                         </div>
                     </div>
                 </Tabs>
-            </div>);
+            </>)
+            ;
     };
 
 

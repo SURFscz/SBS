@@ -339,190 +339,188 @@ class CollaborationForm extends React.Component {
             I18n.t("models.collaborations.newCollaborationRequest")
         return (
             <div className="mod-new-collaboration-container">
-                <div className="mod-new-collaboration">
-                    <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                        cancel={cancelDialogAction}
-                                        confirm={confirmationDialogAction}
-                                        isWarning={warning}
-                                        question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
-                                        leavePage={leavePage}/>
+                {isNew &&
+                <UnitHeader obj={({name: unitHeaderName, svg: CollaborationsIcon})}/>}
+                {!isNew && <UnitHeader obj={collaboration}
+                    // auditLogPath={`collaborations/${collaboration.id}`}
+                                       name={collaboration.name}
+                                       history={user.admin && this.props.history}
+                                       mayEdit={false}/>}
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    isWarning={warning}
+                                    question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
+                                    leavePage={leavePage}/>
 
-                    {isNew &&
-                    <UnitHeader obj={({name: unitHeaderName, svg: CollaborationsIcon})}/>}
-                    {!isNew && <UnitHeader obj={collaboration}
-                                           // auditLogPath={`collaborations/${collaboration.id}`}
-                                           name={collaboration.name}
-                                           history={user.admin && this.props.history}
-                                           mayEdit={false}/>}
 
-                    <div className="new-collaboration">
+                <div className="new-collaboration">
 
-                        <h1 className="section-separator">{I18n.t("collaboration.about")}</h1>
+                    <h1 className="section-separator">{I18n.t("collaboration.about")}</h1>
 
-                        <InputField value={name} onChange={e => {
-                            this.setState({
-                                name: e.target.value,
-                                alreadyExists: {...this.state.alreadyExists, name: false}
-                            })
-                        }}
-                                    placeholder={I18n.t("collaboration.namePlaceHolder")}
-                                    onBlur={this.validateCollaborationName}
-                                    name={I18n.t("collaboration.name")}/>
-                        {alreadyExists.name && <span
-                            className="error">{I18n.t("collaboration.alreadyExists", {
-                            attribute: I18n.t("collaboration.name").toLowerCase(),
-                            value: name,
-                            organisation: organisation.label
-                        })}</span>}
-                        {(!initial && isEmpty(name)) && <span
-                            className="error">{I18n.t("collaboration.required", {
-                            attribute: I18n.t("collaboration.name").toLowerCase()
-                        })}</span>}
+                    <InputField value={name} onChange={e => {
+                        this.setState({
+                            name: e.target.value,
+                            alreadyExists: {...this.state.alreadyExists, name: false}
+                        })
+                    }}
+                                placeholder={I18n.t("collaboration.namePlaceHolder")}
+                                onBlur={this.validateCollaborationName}
+                                name={I18n.t("collaboration.name")}/>
+                    {alreadyExists.name && <span
+                        className="error">{I18n.t("collaboration.alreadyExists", {
+                        attribute: I18n.t("collaboration.name").toLowerCase(),
+                        value: name,
+                        organisation: organisation.label
+                    })}</span>}
+                    {(!initial && isEmpty(name)) && <span
+                        className="error">{I18n.t("collaboration.required", {
+                        attribute: I18n.t("collaboration.name").toLowerCase()
+                    })}</span>}
 
-                        <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
-                                           isNew={isNew} title={I18n.t("collaboration.logo")} value={logo}
-                                           initial={initial} secondRow={true}/>
+                    <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
+                                       isNew={isNew} title={I18n.t("collaboration.logo")} value={logo}
+                                       initial={initial} secondRow={true}/>
 
-                        <InputField value={short_name} onChange={e => {
-                            this.setState({
-                                short_name: sanitizeShortName(e.target.value),
-                                alreadyExists: {...this.state.alreadyExists, short_name: false}
-                            })
-                        }}
-                                    placeholder={I18n.t("collaboration.shortNamePlaceHolder")}
-                                    onBlur={this.validateCollaborationShortName}
-                                    toolTip={I18n.t("collaboration.shortNameTooltip")}
-                                    name={I18n.t("collaboration.shortName")}/>
-                        {alreadyExists.short_name && <span
-                            className="error">{I18n.t("collaboration.alreadyExists", {
-                            attribute: I18n.t("collaboration.shortName").toLowerCase(),
-                            value: short_name,
-                            organisation: organisation.label
-                        })}</span>}
-                        {(!initial && isEmpty(short_name)) && <span
-                            className="error">{I18n.t("collaboration.required", {
-                            attribute: I18n.t("collaboration.shortName").toLowerCase()
-                        })}</span>}
+                    <InputField value={short_name} onChange={e => {
+                        this.setState({
+                            short_name: sanitizeShortName(e.target.value),
+                            alreadyExists: {...this.state.alreadyExists, short_name: false}
+                        })
+                    }}
+                                placeholder={I18n.t("collaboration.shortNamePlaceHolder")}
+                                onBlur={this.validateCollaborationShortName}
+                                toolTip={I18n.t("collaboration.shortNameTooltip")}
+                                name={I18n.t("collaboration.shortName")}/>
+                    {alreadyExists.short_name && <span
+                        className="error">{I18n.t("collaboration.alreadyExists", {
+                        attribute: I18n.t("collaboration.shortName").toLowerCase(),
+                        value: short_name,
+                        organisation: organisation.label
+                    })}</span>}
+                    {(!initial && isEmpty(short_name)) && <span
+                        className="error">{I18n.t("collaboration.required", {
+                        attribute: I18n.t("collaboration.shortName").toLowerCase()
+                    })}</span>}
 
-                        <InputField value={`${organisation.short_name}:${short_name}`}
-                                    name={I18n.t("collaboration.globalUrn")}
-                                    copyClipBoard={true}
-                                    toolTip={I18n.t("collaboration.globalUrnTooltip")}
-                                    disabled={true}/>
+                    <InputField value={`${organisation.short_name}:${short_name}`}
+                                name={I18n.t("collaboration.globalUrn")}
+                                copyClipBoard={true}
+                                toolTip={I18n.t("collaboration.globalUrnTooltip")}
+                                disabled={true}/>
 
-                        {(!isCollaborationRequest && !isNew) &&
-                        <InputField value={collaboration.identifier}
-                                    name={I18n.t("collaboration.identifier")}
-                                    copyClipBoard={true}
-                                    toolTip={I18n.t("collaboration.identifierTooltip")}
-                                    disabled={true}/>}
+                    {(!isCollaborationRequest && !isNew) &&
+                    <InputField value={collaboration.identifier}
+                                name={I18n.t("collaboration.identifier")}
+                                copyClipBoard={true}
+                                toolTip={I18n.t("collaboration.identifierTooltip")}
+                                disabled={true}/>}
 
-                        <InputField value={description} onChange={e => this.setState({description: e.target.value})}
-                                    placeholder={I18n.t("collaboration.descriptionPlaceholder")} multiline={true}
-                                    name={I18n.t("collaboration.description")}/>
+                    <InputField value={description} onChange={e => this.setState({description: e.target.value})}
+                                placeholder={I18n.t("collaboration.descriptionPlaceholder")} multiline={true}
+                                name={I18n.t("collaboration.description")}/>
 
-                        <InputField value={website_url} onChange={e => this.setState({website_url: e.target.value})}
-                                    placeholder={I18n.t("collaboration.websiteUrlPlaceholder")}
-                                    name={I18n.t("collaboration.websiteUrl")}/>
+                    <InputField value={website_url} onChange={e => this.setState({website_url: e.target.value})}
+                                placeholder={I18n.t("collaboration.websiteUrlPlaceholder")}
+                                name={I18n.t("collaboration.websiteUrl")}/>
 
-                        <InputField value={accepted_user_policy}
-                                    onChange={e => this.setState({accepted_user_policy: e.target.value})}
-                                    placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
-                                    name={I18n.t("collaboration.accepted_user_policy")}/>
+                    <InputField value={accepted_user_policy}
+                                onChange={e => this.setState({accepted_user_policy: e.target.value})}
+                                placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
+                                name={I18n.t("collaboration.accepted_user_policy")}/>
 
-                        {!isCollaborationRequest && <CheckBox name="disable_join_requests"
-                                                              value={disable_join_requests}
-                                                              info={I18n.t("collaboration.disableJoinRequests")}
-                                                              tooltip={I18n.t("collaboration.disableJoinRequestsTooltip")}
-                                                              onChange={() => this.setState({disable_join_requests: !disable_join_requests})}/>}
+                    {!isCollaborationRequest && <CheckBox name="disable_join_requests"
+                                                          value={disable_join_requests}
+                                                          info={I18n.t("collaboration.disableJoinRequests")}
+                                                          tooltip={I18n.t("collaboration.disableJoinRequestsTooltip")}
+                                                          onChange={() => this.setState({disable_join_requests: !disable_join_requests})}/>}
 
-                        {!isCollaborationRequest && <CheckBox name="services_restricted"
-                                                              value={services_restricted}
-                                                              info={I18n.t("collaboration.servicesRestricted")}
-                                                              tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
-                                                              readOnly={!user.admin}
-                                                              onChange={() => this.setState({services_restricted: !services_restricted})}/>}
+                    {!isCollaborationRequest && <CheckBox name="services_restricted"
+                                                          value={services_restricted}
+                                                          info={I18n.t("collaboration.servicesRestricted")}
+                                                          tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
+                                                          readOnly={!user.admin}
+                                                          onChange={() => this.setState({services_restricted: !services_restricted})}/>}
 
-                        {!isCollaborationRequest && <CheckBox name="disclose_member_information"
-                                                              value={disclose_member_information}
-                                                              info={I18n.t("collaboration.discloseMemberInformation")}
-                                                              tooltip={I18n.t("collaboration.discloseMemberInformationTooltip")}
-                                                              readOnly={!user.admin}
-                                                              onChange={() => this.setState({disclose_member_information: !disclose_member_information})}/>}
+                    {!isCollaborationRequest && <CheckBox name="disclose_member_information"
+                                                          value={disclose_member_information}
+                                                          info={I18n.t("collaboration.discloseMemberInformation")}
+                                                          tooltip={I18n.t("collaboration.discloseMemberInformationTooltip")}
+                                                          readOnly={!user.admin}
+                                                          onChange={() => this.setState({disclose_member_information: !disclose_member_information})}/>}
 
-                        {!isCollaborationRequest && <CheckBox name="disclose_email_information"
-                                                              value={disclose_email_information}
-                                                              info={I18n.t("collaboration.discloseEmailInformation")}
-                                                              tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
-                                                              readOnly={!user.admin}
-                                                              onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
-                        <SelectField value={organisation}
-                                     options={organisations}
-                                     name={I18n.t("collaboration.organisation_name")}
-                                     placeholder={I18n.t("collaboration.organisationPlaceholder")}
-                                     toolTip={I18n.t("collaboration.organisationTooltip")}
-                                     onChange={selectedOption => this.setState({organisation: selectedOption},
-                                         () => {
-                                             this.validateCollaborationName({target: {value: this.state.name}});
-                                             this.validateCollaborationShortName({target: {value: this.state.short_name}});
-                                         })}
-                                     searchable={false}
-                                     disabled={organisations.length === 1}
-                        />
-                        {(!initial && isEmpty(organisation)) && <span
-                            className="error">{I18n.t("collaboration.required", {
-                            attribute: I18n.t("collaboration.organisation_name").toLowerCase()
-                        })}</span>}
-                        {(!isCollaborationRequest && isNew) &&
-                        <div>
-                            <h1 className="section-separator">{I18n.t("collaboration.invitations")}</h1>
+                    {!isCollaborationRequest && <CheckBox name="disclose_email_information"
+                                                          value={disclose_email_information}
+                                                          info={I18n.t("collaboration.discloseEmailInformation")}
+                                                          tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
+                                                          readOnly={!user.admin}
+                                                          onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
+                    <SelectField value={organisation}
+                                 options={organisations}
+                                 name={I18n.t("collaboration.organisation_name")}
+                                 placeholder={I18n.t("collaboration.organisationPlaceholder")}
+                                 toolTip={I18n.t("collaboration.organisationTooltip")}
+                                 onChange={selectedOption => this.setState({organisation: selectedOption},
+                                     () => {
+                                         this.validateCollaborationName({target: {value: this.state.name}});
+                                         this.validateCollaborationShortName({target: {value: this.state.short_name}});
+                                     })}
+                                 searchable={false}
+                                 disabled={organisations.length === 1}
+                    />
+                    {(!initial && isEmpty(organisation)) && <span
+                        className="error">{I18n.t("collaboration.required", {
+                        attribute: I18n.t("collaboration.organisation_name").toLowerCase()
+                    })}</span>}
+                    {(!isCollaborationRequest && isNew) &&
+                    <div>
+                        <h1 className="section-separator">{I18n.t("collaboration.invitations")}</h1>
 
-                            <InputField value={email} onChange={e => this.setState({email: e.target.value})}
-                                        placeholder={I18n.t("collaboration.administratorsPlaceholder")}
-                                        name={I18n.t("collaboration.administrators")}
-                                        toolTip={I18n.t("collaboration.administratorsTooltip")}
-                                        onBlur={this.addEmail}
-                                        onEnter={this.addEmail}/>
+                        <InputField value={email} onChange={e => this.setState({email: e.target.value})}
+                                    placeholder={I18n.t("collaboration.administratorsPlaceholder")}
+                                    name={I18n.t("collaboration.administrators")}
+                                    toolTip={I18n.t("collaboration.administratorsTooltip")}
+                                    onBlur={this.addEmail}
+                                    onEnter={this.addEmail}/>
 
-                            <section className="email-tags">
-                                {administrators.map(mail =>
-                                    <div key={mail} className="email-tag">
-                                        <span>{mail}</span>
-                                        {(disabled || mail === this.props.user.email) ?
-                                            <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :
-                                            <span onClick={this.removeMail(mail)}><FontAwesomeIcon
-                                                icon="times"/></span>}
-                                    </div>)}
-                            </section>
-                        </div>}
-
-                        {isNew && <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
-                                            value={current_user_admin}
-                                            onChange={this.flipCurrentUserAdmin}
-                                            readOnly={isCollaborationRequest}
-                                            info={I18n.t("collaboration.currentUserAdmin")}
-                                            tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>}
-
-                        {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                                              placeholder={isCollaborationRequest ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
-                                              name={isCollaborationRequest ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
-                                              toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
-                                              multiline={true}/>}
-                        {(!initial && isEmpty(message) && isCollaborationRequest) && <span
-                            className="error">{I18n.t("collaboration.required", {
-                            attribute: I18n.t("collaboration.motivation").toLowerCase()
-                        })}</span>}
-
-                        <section className="actions">
-                            {!isNew &&
-                            <Button warningButton={true} txt={I18n.t("collaborationDetail.delete")}
-                                    onClick={this.delete}/>}
-                            <Button disabled={disabledSubmit}
-                                    txt={(isCollaborationRequest && !autoCreateCollaborationRequest) ? I18n.t("forms.request") : I18n.t("forms.save")}
-                                    onClick={this.submit}/>
-                            <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                        <section className="email-tags">
+                            {administrators.map(mail =>
+                                <div key={mail} className="email-tag">
+                                    <span>{mail}</span>
+                                    {(disabled || mail === this.props.user.email) ?
+                                        <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :
+                                        <span onClick={this.removeMail(mail)}><FontAwesomeIcon
+                                            icon="times"/></span>}
+                                </div>)}
                         </section>
-                    </div>
+                    </div>}
+
+                    {isNew && <CheckBox name={I18n.t("collaboration.currentUserAdmin")}
+                                        value={current_user_admin}
+                                        onChange={this.flipCurrentUserAdmin}
+                                        readOnly={isCollaborationRequest}
+                                        info={I18n.t("collaboration.currentUserAdmin")}
+                                        tooltip={I18n.t("collaboration.currentUserAdminTooltip")}/>}
+
+                    {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                                          placeholder={isCollaborationRequest ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
+                                          name={isCollaborationRequest ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
+                                          toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
+                                          multiline={true}/>}
+                    {(!initial && isEmpty(message) && isCollaborationRequest) && <span
+                        className="error">{I18n.t("collaboration.required", {
+                        attribute: I18n.t("collaboration.motivation").toLowerCase()
+                    })}</span>}
+
+                    <section className="actions">
+                        {!isNew &&
+                        <Button warningButton={true} txt={I18n.t("collaborationDetail.delete")}
+                                onClick={this.delete}/>}
+                        <Button disabled={disabledSubmit}
+                                txt={(isCollaborationRequest && !autoCreateCollaborationRequest) ? I18n.t("forms.request") : I18n.t("forms.save")}
+                                onClick={this.submit}/>
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                    </section>
                 </div>
             </div>);
     };

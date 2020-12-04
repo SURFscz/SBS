@@ -3,13 +3,14 @@
 .bread-crumb-container {
     margin: 0 auto;
     color: black;
-    padding: 15px 0;
+    background-color: $background;
 
 
     .bread-crumb {
         @media (max-width: $medium) {
             padding: 0 15px;
         }
+        padding: 15px 0;
         min-height: 32px;
         max-width: $medium;
         margin: 0 auto 0 auto;
@@ -44,23 +45,12 @@
                 margin-right: 10px;
             }
 
-            &.member {
-                color: $blue;
+            color: $blue;
 
-                svg {
-                    fill: $blue;
-                }
-
+            svg {
+                fill: $blue;
             }
 
-            &.admin {
-                color: $green;
-
-                svg {
-                    fill: $green;
-                }
-
-            }
         }
     }
 

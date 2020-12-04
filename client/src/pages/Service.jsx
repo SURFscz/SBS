@@ -470,24 +470,26 @@ class Service extends React.Component {
             : I18n.t("service.titleReadOnly", {name: service.name});
         const contactEmailRequired = !automatic_connection_allowed && isEmpty(contact_email);
         return (
-            <div className="mod-service">
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    confirm={confirmationDialogAction}
-                                    leavePage={leavePage}
-                                    question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
+            <>
                 {isNew && <UnitHeader obj={({name: I18n.t("models.services.new"), svg: ServicesIcon})}/>}
                 {!isNew && <UnitHeader obj={service}
-                                       // auditLogPath={`services/${service.id}`}
+                    // auditLogPath={`services/${service.id}`}
                                        name={service.name}
                                        history={user.admin && this.props.history}
                                        mayEdit={false}/>}
+                <div className="mod-service">
+                    <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                        cancel={cancelDialogAction}
+                                        confirm={confirmationDialogAction}
+                                        leavePage={leavePage}
+                                        question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
 
-                {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
-                    contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
-                    isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                    research_scholarship_compliant, config, ip_networks, logo)}
-            </div>);
+                    {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
+                        contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
+                        isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+                        research_scholarship_compliant, config, ip_networks, logo)}
+                </div>
+            </>);
     };
 
 }
