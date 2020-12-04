@@ -51,7 +51,7 @@ class Entities extends React.Component {
                            placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
                     <FontAwesomeIcon icon="search"/>
                 </div>}
-                {showNew && <Button onClick={this.newEntity}
+                {showNew && <Button onClick={this.newEntity} className="plus"
                                     txt={I18n.t(`models.${modelName}.new`)}/>
                 }
             </section>

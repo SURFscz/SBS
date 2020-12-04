@@ -136,42 +136,44 @@ class Me extends React.Component {
         d.setUTCSeconds(createdAt);
         const values = {"created_at": d.toUTCString()}
         return (
-            <div className="user-profile-tab">
-                {attributes.map(attribute =>
-                    <div className={"attributes"} key={attribute}>
-                        <span className="attribute-key">{I18n.t(`profile.${attribute}`)}</span>
-                        <span className="attribute-value">{values[attribute] || user[attribute]}</span>
-                    </div>)
-                }
+            <div className="user-profile-tab-container">
+                <div className="user-profile-tab">
+                    {attributes.map(attribute =>
+                        <div className={"attributes"} key={attribute}>
+                            <span className="attribute-key">{I18n.t(`profile.${attribute}`)}</span>
+                            <span className="attribute-value">{values[attribute] || user[attribute]}</span>
+                        </div>)
+                    }
 
-                <InputField value={ssh_key}
-                            name={I18n.t("user.ssh_key")}
-                            placeholder={I18n.t("user.ssh_keyPlaceholder")}
-                            onChange={e => this.setState({ssh_key: e.target.value})}
-                            toolTip={I18n.t("user.ssh_keyTooltip")}
-                            onBlur={this.validateSSHKey}
-                            fileUpload={true}
-                            fileName={fileName}
-                            fileInputKey={fileInputKey}
-                            onFileRemoval={this.onFileRemoval}
-                            onFileUpload={this.onFileUpload}
-                            acceptFileFormat=".pub"/>
-                {fileTypeError &&
-                <span
-                    className="error">{I18n.t("user.sshKeyError")}</span>}
-                {showConvertSSHKey &&
-                <CheckBox name="convertSSHKey" value={convertSSHKey}
-                          info={I18n.t("user.sshConvertInfo")}
-                          onChange={e => this.setState({convertSSHKey: e.target.checked})}/>}
+                    <InputField value={ssh_key}
+                                name={I18n.t("user.ssh_key")}
+                                placeholder={I18n.t("user.ssh_keyPlaceholder")}
+                                onChange={e => this.setState({ssh_key: e.target.value})}
+                                toolTip={I18n.t("user.ssh_keyTooltip")}
+                                onBlur={this.validateSSHKey}
+                                fileUpload={true}
+                                fileName={fileName}
+                                fileInputKey={fileInputKey}
+                                onFileRemoval={this.onFileRemoval}
+                                onFileUpload={this.onFileUpload}
+                                acceptFileFormat=".pub"/>
+                    {fileTypeError &&
+                    <span
+                        className="error">{I18n.t("user.sshKeyError")}</span>}
+                    {showConvertSSHKey &&
+                    <CheckBox name="convertSSHKey" value={convertSSHKey}
+                              info={I18n.t("user.sshConvertInfo")}
+                              onChange={e => this.setState({convertSSHKey: e.target.checked})}/>}
 
-                <section className="actions">
-                    <Button warningButton={true} txt={I18n.t("user.delete")}
-                            onClick={this.delete}/>
-                    <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                    <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
-                            onClick={this.submit}/>
-                </section>
+                    <section className="actions">
+                        <Button warningButton={true} txt={I18n.t("user.delete")}
+                                onClick={this.delete}/>
+                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                        <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
+                                onClick={this.submit}/>
+                    </section>
 
+                </div>
             </div>);
     };
 

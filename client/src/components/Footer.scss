@@ -1,9 +1,8 @@
 @import "../stylesheets/vars.scss";
 
 div.footer {
-    background-color: white;
+    background-color: $background;
     padding: 15px;
-    border-top: 2px solid $lighter-grey;
     margin-top: auto;
 
     div.footer-inner {

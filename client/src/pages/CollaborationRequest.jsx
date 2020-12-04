@@ -197,6 +197,12 @@ class CollaborationRequest extends React.Component {
         const mayApprove = !approved;
         return (
             <div className="mod-collaboration-request-container">
+                    <UnitHeader obj={{
+                        ...collaborationRequest, name: I18n.t(`collaborationRequest.title.${collaborationRequest.status}`, {
+                            requester: collaborationRequest.requester.name,
+                            name: originalRequestedName
+                        })
+                    }}/>
                 <div className="mod-collaboration-request">
                     <ConfirmationDialog isOpen={confirmationDialogOpen}
                                         cancel={cancelDialogAction}
@@ -204,12 +210,6 @@ class CollaborationRequest extends React.Component {
                                         question={dialogQuestion}
                                         isWarning={warning}
                                         leavePage={leavePage}/>
-                    <UnitHeader obj={{
-                        ...collaborationRequest, name: I18n.t(`collaborationRequest.title.${collaborationRequest.status}`, {
-                            requester: collaborationRequest.requester.name,
-                            name: originalRequestedName
-                        })
-                    }}/>
 
                     <div className="collaboration-request">
                         <InputField

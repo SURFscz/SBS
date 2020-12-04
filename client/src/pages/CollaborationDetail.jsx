@@ -319,19 +319,21 @@ class CollaborationDetail extends React.Component {
         const {user} = this.props;
         const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
         return (
-            <div className="mod-collaboration-detail">
+            <>
+                {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit)}
+                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMember(collaboration, user, schacHomeOrganisation)}
+
                 {<WelcomeDialog name={collaboration.name} isOpen={firstTime}
                                 role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
                                 isOrganisation={false}
                                 isAdmin={user.admin}
                                 close={() => this.setState({firstTime: false})}/>}
-                {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit)}
-                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMember(collaboration, user, schacHomeOrganisation)}
-                <Tabs activeTab={tab} tabChanged={this.tabChanged}>
-                    {tabs}
-                </Tabs>
 
-            </div>)
+                    <Tabs activeTab={tab} tabChanged={this.tabChanged}>
+                        {tabs}
+                    </Tabs>
+
+            </>)
     }
 
 

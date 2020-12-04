@@ -2,12 +2,6 @@
 @import "../stylesheets/forms";
 
 .mod-new-collaboration-container {
-    margin: 0 auto;
-    max-width: $medium;
-    width: 100%;
-}
-
-.mod-new-collaboration {
 
     h2.no-organisations {
         font-size: 18px;
@@ -18,6 +12,11 @@
     }
 
     .new-collaboration {
+        margin: 25px auto;
+        max-width: $medium;
+        width: 100%;
+
+
         display: grid;
         grid-template-columns: [first] 1fr [second] 1fr;
         column-gap: 50px;
@@ -83,6 +82,7 @@
                 }
             }
         }
+
 
     }
 }

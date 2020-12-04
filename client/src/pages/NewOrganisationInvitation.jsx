@@ -280,7 +280,7 @@ class NewOrganisationInvitation extends React.Component {
         }
         const disabledSubmit = (!initial && !this.isValid());
         return (
-            <div className="mod-new-organisation-invitation">
+            <>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
@@ -291,20 +291,23 @@ class NewOrganisationInvitation extends React.Component {
                 <Tabs activeTab={activeTab} tabChanged={this.tabChanged}>
                     <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
                          name={"invitation_form"} icon={<InviteIcon/>}>
-                        <div className="new-organisation-invitation">
-                            {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                                administrators, expiry_date, disabledSubmit, intended_role)}
+                        <div className="mod-new-organisation-invitation">
+                            <div className="new-organisation-invitation">
+                                {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                                    administrators, expiry_date, disabledSubmit, intended_role)}
+                            </div>
                         </div>
                     </div>
                     <div label={I18n.t("tabs.invitation_preview")} key={"invitation_preview"}
                          name={"invitation_preview"} icon={<EyeIcon/>}>
-                        <div className="new-organisation-invitation">
-                            {this.preview(disabledSubmit)}
+                        <div className="mod-new-organisation-invitation">
+                            <div className="new-organisation-invitation">
+                                {this.preview(disabledSubmit)}
+                            </div>
                         </div>
                     </div>
                 </Tabs>
-
-            </div>);
+            </>);
     };
 
 }

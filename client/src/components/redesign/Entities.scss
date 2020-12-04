@@ -2,6 +2,10 @@
 
 .mod-entities {
 
+    max-width: $medium;
+    width: 100%;
+    margin: 0 auto;
+
     &:last-child {
         margin-bottom: 25px;
     }
@@ -44,7 +48,7 @@
                 flex-grow: 2;
                 border: 1px solid $lighter-grey;
                 padding: 0 15px 0 10px;
-                min-height: 32px;
+                min-height: 36px;
                 font-size: 16px;
                 border-radius: $br;
                 min-width: 360px;
@@ -72,6 +76,7 @@
 
             th {
                 padding: 10px 0;
+                color: $secondary-orange;
 
                 &.sortable {
                     cursor: pointer;

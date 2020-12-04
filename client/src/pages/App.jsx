@@ -186,7 +186,6 @@ class App extends React.Component {
                     </div>}
                     {reloading && <SpinnerField/>}
                     {!reloading &&
-                    <div className="page-container">
                         <Switch>
                             <Route exact path="/" render={() => {
                                 return currentUser.guest ? <Redirect to="/landing"/> : <Redirect to="/home"/>;
@@ -355,8 +354,7 @@ class App extends React.Component {
                             <Route path="/error" render={props => <ServerError {...props}/>}/>
 
                             <Route render={props => <NotFound currentUser={currentUser} {...props}/>}/>
-                        </Switch>
-                    </div>}
+                        </Switch>}
                     <Footer/>
                 </div>
             </Router>

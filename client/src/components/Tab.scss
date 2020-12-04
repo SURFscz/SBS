@@ -41,12 +41,12 @@
                 fill: black;
             }
 
-            border-bottom: 2px solid $medium-grey;
+            border-bottom: 3px solid $medium-grey;
         }
     }
 
     &.active {
-        border-bottom: 2px solid $primary-orange;
+        border-bottom: 3px solid $primary-orange;
 
         h2, svg {
             color: $secondary-orange;
