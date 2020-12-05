@@ -26,10 +26,8 @@ import Groups from "../components/redesign/Groups";
 import AboutCollaboration from "../components/redesign/AboutCollaboration";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
-import Button from "../components/Button";
 import {getParameterByName} from "../utils/QueryParameters";
 import WelcomeDialog from "../components/WelcomeDialog";
-import {isEmpty} from "../utils/Utils";
 import JoinRequests from "../components/redesign/JoinRequests";
 
 
@@ -250,42 +248,34 @@ class CollaborationDetail extends React.Component {
         this.props.history.push(`/new-collaboration?organisationId=${collaboration.organisation_id}`);
     }
 
-    getUnitHeaderForMember(collaboration, user, schacHomeOrganisation) {
-        const showRequestCollaboration = user.collaboration_memberships.length === 1 && !isEmpty(schacHomeOrganisation);
-        return (
-            <div className="unit-header-container">
-                <div className="unit-header-custom">
-                    <img src={`data:image/jpeg;base64,${collaboration.logo}`} alt={collaboration.name}/>
-                    <div className="unit-right">
-                        <h1>{collaboration.name}</h1>
-                        <span className="organisation">{collaboration.organisation.name}</span>
-                        <section className="unit-info">
-                            <ul>
-                                <li><FontAwesomeIcon
-                                    icon="users"/><span>{I18n.t("models.collaboration.memberHeader", {
-                                    nbrMember: collaboration.collaboration_memberships.length,
-                                    nbrGroups: collaboration.groups.length
-                                })}</span></li>
-                                <li><FontAwesomeIcon icon="user-friends"/>
-                                    <span dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/>
-                                </li>
-                                {collaboration.website_url &&
-                                <li><FontAwesomeIcon icon="globe"/>
-                                    <span>
+    getUnitHeaderForMemberNew = (collaboration, user, schacHomeOrganisation) => {
+        return <UnitHeader obj={collaboration}
+                           mayEdit={false}
+                           name={collaboration.name}>
+            <section className="unit-info">
+                <ul>
+                    <li><FontAwesomeIcon
+                        icon="users"/><span>{I18n.t("models.collaboration.memberHeader", {
+                        nbrMember: collaboration.collaboration_memberships.length,
+                        nbrGroups: collaboration.groups.length
+                    })}</span></li>
+                    <li>
+                        <FontAwesomeIcon icon="user-friends"/>
+                        <span dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/>
+                    </li>
+                    {collaboration.website_url &&
+                    <li>
+                        <FontAwesomeIcon icon="globe"/>
+                        <span>
                                         <a href={collaboration.website_url} rel="noopener noreferrer"
                                            target="_blank">{collaboration.website_url}</a>
                                     </span>
-                                </li>}
-                            </ul>
-                        </section>
-                    </div>
-                </div>
-                {showRequestCollaboration && <div className="unit-edit">
-                    <Button onClick={this.createCollaborationRequest}
-                            txt={I18n.t("models.collaboration.newCollaborationRequest")}/>
-                </div>}
-            </div>);
+                    </li>}
+                </ul>
+            </section>
+        </UnitHeader>;
     }
+
 
     getUnitHeader = (user, collaboration, allowedToEdit) => {
         return <UnitHeader obj={collaboration}
@@ -321,7 +311,7 @@ class CollaborationDetail extends React.Component {
         return (
             <>
                 {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit)}
-                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMember(collaboration, user, schacHomeOrganisation)}
+                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(collaboration, user, schacHomeOrganisation)}
 
                 {<WelcomeDialog name={collaboration.name} isOpen={firstTime}
                                 role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
@@ -329,9 +319,9 @@ class CollaborationDetail extends React.Component {
                                 isAdmin={user.admin}
                                 close={() => this.setState({firstTime: false})}/>}
 
-                    <Tabs activeTab={tab} tabChanged={this.tabChanged}>
-                        {tabs}
-                    </Tabs>
+                <Tabs activeTab={tab} tabChanged={this.tabChanged}>
+                    {tabs}
+                </Tabs>
 
             </>)
     }
