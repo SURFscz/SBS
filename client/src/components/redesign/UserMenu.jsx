@@ -29,13 +29,15 @@ class UserMenu extends React.Component {
         return (
             <div className="user-menu" ref={node => this.node = node}>
                 <ul>
-                    <li>
-                        <Link onClick={this.props.close} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
-                        <a href="/logout" onClick={logout}>{I18n.t(`header.links.logout`)}</a>
-                    </li>
                     {currentUser.admin && adminLinks.map(l => <li key={l}>
                         <Link onClick={this.props.close} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
                     </li>)}
+                    <li>
+                        <Link onClick={this.props.close} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
+                    </li>
+                    <li>
+                        <a href="/logout" onClick={logout}>{I18n.t(`header.links.logout`)}</a>
+                    </li>
                 </ul>
             </div>
         );

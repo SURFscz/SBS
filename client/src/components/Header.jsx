@@ -46,9 +46,10 @@ export default class Header extends React.PureComponent {
     }
 
     renderDropDownIndicator = () => {
+        const {dropDownActive} = this.state;
         return (
             <div className="drop-down">
-                {this.state.dropDownActive ? <ChevronUp/> : <ChevronDown/>}
+                {dropDownActive ? <ChevronUp/> : <ChevronDown/>}
             </div>
         );
     }
