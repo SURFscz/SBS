@@ -63,8 +63,10 @@ class System extends React.Component {
             this.setState({confirmationDialogOpen: false, busy: true,});
             const d = new Date();
             dbSeed().then(() => {
-                this.setState({busy: false, seedResult: I18n.t("system.seedResult",
-                        {ms: new Date().getMilliseconds() - d.getMilliseconds()})});
+                this.setState({
+                    busy: false, seedResult: I18n.t("system.seedResult",
+                        {ms: new Date().getMilliseconds() - d.getMilliseconds()})
+                });
             });
         }
     }
@@ -152,31 +154,32 @@ class System extends React.Component {
             return <SpinnerField/>
         }
         return (
-            <div className="mod-system-container">
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    confirm={confirmationDialogAction}
-                                    isWarning={true}
-                                    question={confirmationDialogQuestion}/>
+            <>
+                <UnitHeader obj={({name: I18n.t("system.title"), icon: "toolbox"})}/>
+                <div className="mod-system-container">
+                    <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                        cancel={cancelDialogAction}
+                                        confirm={confirmationDialogAction}
+                                        isWarning={true}
+                                        question={confirmationDialogQuestion}/>
 
-                <div className="mod-system">
-                    <UnitHeader obj={({name: I18n.t("system.title"), icon: "toolbox"})}/>
-                    <section className={"info-block-container"}>
-                        {this.renderDailyCron()}
-                        {this.renderDailyCronResults()}
-                    </section>
-                    <section className={"info-block-container"}>
-                        {this.renderDbStats()}
-                        {this.renderDbStatsResults()}
-                    </section>
-                    {config.seed_allowed && <section className={"info-block-container"}>
-                        {this.renderDbSeed()}
-                        <p className="result">{seedResult}</p>
-                    </section>}
+                    <div className="mod-system">
+                        <section className={"info-block-container"}>
+                            {this.renderDailyCron()}
+                            {this.renderDailyCronResults()}
+                        </section>
+                        <section className={"info-block-container"}>
+                            {this.renderDbStats()}
+                            {this.renderDbStatsResults()}
+                        </section>
+                        {config.seed_allowed && <section className={"info-block-container"}>
+                            {this.renderDbSeed()}
+                            <p className="result">{seedResult}</p>
+                        </section>}
+                    </div>
                 </div>
-            </div>);
+            </>);
     }
-    ;
 }
 
 export default System;
