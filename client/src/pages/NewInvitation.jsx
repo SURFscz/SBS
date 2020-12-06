@@ -39,7 +39,7 @@ class NewInvitation extends React.Component {
 
         this.state = {
             collaboration: undefined,
-            administrators: ["oharsta@z.com", "b@x.com", "w@qq.com"],
+            administrators: administrators,
             groups: [],
             selectedGroup: [],
             fileName: null,
