@@ -49,7 +49,7 @@ I18n.translations.nl = {
         closeBrowserAfterDelete: "Om het verwijderen van je account te voltooien, moet je je browser sluiten."
     },
     home: {
-        sram: "SRAM PLATFORM",
+        sram: "RESEARCH ACCESS MANAGEMENT PLATFORM",
         edit: "Bewerk",
         history: "Geschiedenis",
         backToHome: "Terug naar thuis",
@@ -290,7 +290,7 @@ I18n.translations.nl = {
             noEntities: "Geen verzoeken voor samenwerkingen",
         },
         invitation: {
-            welcome: "Welkom in SRAM. Hier kun je samenwerken met je collega-onderzoekers.",
+            welcome: "Welkom op SURF Research Access Management. Hier kun je samenwerken met je collega-onderzoekers.",
             invited: "Je bent uitgenodigd om lid te worden van {{type}} \"{{collaboration}}\" door {{inviter}}",
             followingSteps: "Voer de volgende stappen uit:",
             steps: {
@@ -480,7 +480,7 @@ I18n.translations.nl = {
         descriptionPlaceholder: "De beschrijving van de samenwerking is voor iedereen zichtbaar",
         websiteUrl: "Website URL",
         websiteUrlPlaceholder: "The URL of the website is visible for members",
-        currentUserAdmin: "Do you want to an administrator of this collaboration?",
+        currentUserAdmin: "Do you want to be an administrator of this collaboration?",
         currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
         message: "Bericht",
         messagePlaceholder: "Boodschap aan de beheerders van deze samenwerking",
@@ -1269,7 +1269,7 @@ I18n.translations.nl = {
         user: "gebruiker"
     },
     welcomeDialog: {
-        title: "Welkom in {{name}}",
+        title: "Welkom op {{name}}",
         role: "Je huidige rol is <strong>{{role}}</strong>",
         ok: "Ok, toon mij de {{type}}",
         organisation: "organisatie",
@@ -1277,7 +1277,7 @@ I18n.translations.nl = {
         toggleRole: "Verander rol"
     },
     welcome: {
-        title: "Welkom op het SRAM platform",
+        title: "Welkom op het SURF Research Access Management platform",
         info: "Je bent momenteel geen lid van een organisatie of samenwerkingen." +
             "Neem bij vragen contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>"
     }

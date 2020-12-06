@@ -39,7 +39,7 @@ class NewInvitation extends React.Component {
 
         this.state = {
             collaboration: undefined,
-            administrators: administrators,
+            administrators: ["oharsta@z.com", "b@x.com", "w@qq.com"],
             groups: [],
             selectedGroup: [],
             fileName: null,
@@ -237,6 +237,7 @@ class NewInvitation extends React.Component {
     invitationForm = (email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
                       intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup) =>
         <div className={"invitation-form"}>
+
             <InputField value={email} onChange={e => this.setState({email: e.target.value})}
                         placeholder={I18n.t("invitation.inviteesPlaceholder")}
                         name={I18n.t("invitation.invitees")}

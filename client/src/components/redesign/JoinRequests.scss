@@ -37,8 +37,9 @@ table.joinRequests {
 
 .join-request-details-container {
     display: flex;
-    margin: 40px 0 25px 0;
-    width: 70%;
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto 25px auto;
 
     a.back-to-join-requests {
         display: flex;
@@ -60,7 +61,7 @@ table.joinRequests {
     }
 
     div.join-request-form {
-        width: 100%;
+        width: 60%;
 
         h1 {
             margin: 1px 0 30px 0;
@@ -70,7 +71,8 @@ table.joinRequests {
         flex-direction: column;
 
         div.checkbox {
-           margin-top: 25px;
+            margin-top: 25px;
         }
     }
+
 }

@@ -43,7 +43,7 @@ class Service extends React.Component {
         identity_type: "",
         uri: "",
         accepted_user_policy: "",
-        automatic_connection_allowed: true,
+        automatic_connection_allowed: false,
         white_listed: false,
         research_scholarship_compliant: false,
         code_of_conduct_compliant: false,
