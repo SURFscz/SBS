@@ -33,7 +33,9 @@ table.apiKeys {
 
 .api-key-container {
     display: flex;
-    margin: 40px 0 25px 0;
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto 25px auto;
 
     a.back-to-api-keys {
         display: flex;
@@ -55,7 +57,7 @@ table.apiKeys {
     }
 
     div.new-api-key {
-        width: 100%;
+        width: 60%;
 
         .header {
             display: flex;

@@ -40,7 +40,9 @@ table.servicesUsed, table.servicesAvailable {
 
 .request-connection-service {
     display: flex;
-    margin: 25px 0 25px 25px;
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto 25px auto;
 
     a.back-to-services {
         display: flex;
@@ -56,7 +58,7 @@ table.servicesUsed, table.servicesAvailable {
     }
 
     div.request-connection-service-form {
-        width: 50%;
+        width: 60%;
 
         h1 {
             font-size: 28px;

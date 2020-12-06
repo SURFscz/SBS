@@ -218,8 +218,14 @@ class CollaborationAdmins extends React.Component {
                         disabled={disabled}
                         icon={<FontAwesomeIcon icon="trash"/>}/>}
                 {(any && (isAdminOfCollaboration || collaboration.disclose_email_information))
-                && <a href={`mailto:${hrefValue}`} className={`${disabled ? "disabled" : ""} button`}
-                      target="_blank" rel="noopener noreferrer">
+                && <a href={`${disabled ? "" : "mailto:"}${hrefValue}`} className={`${disabled ? "disabled" : ""} button`}
+                      rel="noopener noreferrer" onClick={e => {
+                          if (disabled) {
+                              stopEvent(e);
+                          } else {
+                              return true;
+                          }
+                }}>
                     {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
                 </a>}
                 {(!isMember && isAdminOfCollaboration) &&

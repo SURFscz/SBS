@@ -250,96 +250,94 @@ class Groups extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         const children = (
             <div className="group-form">
-                <div className={"group-details-form"}>
-                    <h1>{createNewGroup ? I18n.t("models.groups.new") : selectedGroup.name}</h1>
+                <h1>{createNewGroup ? I18n.t("models.groups.new") : selectedGroup.name}</h1>
 
-                    <InputField value={name || ""}
-                                onChange={e => this.setState({
-                                    name: e.target.value,
-                                    alreadyExists: {...this.state.alreadyExists, name: false}
-                                })}
-                                placeholder={I18n.t("groups.namePlaceholder")}
-                                onBlur={this.validateGroupName}
-                                name={I18n.t("groups.name")}
-                                disabled={!adminOfCollaboration}/>
-                    {alreadyExists.name && <span
-                        className="error">{I18n.t("groups.alreadyExists", {
-                        attribute: I18n.t("groups.name").toLowerCase(),
-                        value: name
-                    })}</span>}
-                    {(!initial && isEmpty(name)) && <span
-                        className="error">{I18n.t("groups.required", {
-                        attribute: I18n.t("groups.name").toLowerCase()
-                    })}</span>}
+                <InputField value={name || ""}
+                            onChange={e => this.setState({
+                                name: e.target.value,
+                                alreadyExists: {...this.state.alreadyExists, name: false}
+                            })}
+                            placeholder={I18n.t("groups.namePlaceholder")}
+                            onBlur={this.validateGroupName}
+                            name={I18n.t("groups.name")}
+                            disabled={!adminOfCollaboration}/>
+                {alreadyExists.name && <span
+                    className="error">{I18n.t("groups.alreadyExists", {
+                    attribute: I18n.t("groups.name").toLowerCase(),
+                    value: name
+                })}</span>}
+                {(!initial && isEmpty(name)) && <span
+                    className="error">{I18n.t("groups.required", {
+                    attribute: I18n.t("groups.name").toLowerCase()
+                })}</span>}
 
-                    <InputField value={short_name}
-                                name={I18n.t("groups.short_name")}
-                                placeholder={I18n.t("groups.shortNamePlaceHolder")}
-                                onBlur={this.validateGroupShortName}
-                                onChange={e => this.setState({
-                                    short_name: sanitizeShortName(e.target.value),
-                                    alreadyExists: {...this.state.alreadyExists, short_name: false}
-                                })}
-                                toolTip={I18n.t("groups.shortNameTooltip")}
-                                disabled={shortNameDisabled(user, createNewGroup, adminOfCollaboration)}/>
-                    {alreadyExists.short_name && <span
-                        className="error">{I18n.t("groups.alreadyExists", {
-                        attribute: I18n.t("groups.short_name").toLowerCase(),
-                        value: short_name
-                    })}</span>}
-                    {(!initial && isEmpty(short_name)) && <span
-                        className="error">{I18n.t("groups.required", {
-                        attribute: I18n.t("groups.short_name").toLowerCase()
-                    })}</span>}
+                <InputField value={short_name}
+                            name={I18n.t("groups.short_name")}
+                            placeholder={I18n.t("groups.shortNamePlaceHolder")}
+                            onBlur={this.validateGroupShortName}
+                            onChange={e => this.setState({
+                                short_name: sanitizeShortName(e.target.value),
+                                alreadyExists: {...this.state.alreadyExists, short_name: false}
+                            })}
+                            toolTip={I18n.t("groups.shortNameTooltip")}
+                            disabled={shortNameDisabled(user, createNewGroup, adminOfCollaboration)}/>
+                {alreadyExists.short_name && <span
+                    className="error">{I18n.t("groups.alreadyExists", {
+                    attribute: I18n.t("groups.short_name").toLowerCase(),
+                    value: short_name
+                })}</span>}
+                {(!initial && isEmpty(short_name)) && <span
+                    className="error">{I18n.t("groups.required", {
+                    attribute: I18n.t("groups.short_name").toLowerCase()
+                })}</span>}
 
 
-                    <InputField
-                        value={`${collaboration.organisation.short_name}:${collaboration.short_name}:${isEmpty(short_name) ? "" : short_name}`}
-                        name={I18n.t("groups.global_urn")}
-                        toolTip={I18n.t("groups.globalUrnTooltip")}
-                        copyClipBoard={true}
-                        disabled={true}/>
+                <InputField
+                    value={`${collaboration.organisation.short_name}:${collaboration.short_name}:${isEmpty(short_name) ? "" : short_name}`}
+                    name={I18n.t("groups.global_urn")}
+                    toolTip={I18n.t("groups.globalUrnTooltip")}
+                    copyClipBoard={true}
+                    disabled={true}/>
 
-                    {!createNewGroup && <InputField value={identifier}
-                                                    name={I18n.t("groups.identifier")}
-                                                    toolTip={I18n.t("groups.identifierTooltip")}
-                                                    disabled={true}
-                                                    copyClipBoard={true}/>}
+                {!createNewGroup && <InputField value={identifier}
+                                                name={I18n.t("groups.identifier")}
+                                                toolTip={I18n.t("groups.identifierTooltip")}
+                                                disabled={true}
+                                                copyClipBoard={true}/>}
 
-                    <InputField value={description}
-                                name={I18n.t("groups.description")}
-                                placeholder={I18n.t("groups.descriptionPlaceholder")}
-                                onChange={e => this.setState({description: e.target.value})}
-                                multiline={true}
-                                disabled={!adminOfCollaboration}/>
+                <InputField value={description}
+                            name={I18n.t("groups.description")}
+                            placeholder={I18n.t("groups.descriptionPlaceholder")}
+                            onChange={e => this.setState({description: e.target.value})}
+                            multiline={true}
+                            disabled={!adminOfCollaboration}/>
 
-                    <InputField value={collaboration.name}
-                                name={I18n.t("groups.collaboration")}
-                                disabled={true}
-                    />
+                {/*<InputField value={collaboration.name}*/}
+                {/*            name={I18n.t("groups.collaboration")}*/}
+                {/*            disabled={true}*/}
+                {/*/>*/}
 
-                    <CheckBox name="auto_provision_members" value={auto_provision_members}
-                              info={I18n.t("groups.autoProvisionMembers")}
-                              tooltip={I18n.t("groups.autoProvisionMembersTooltip")}
-                              onChange={e => this.setState({auto_provision_members: e.target.checked})}
-                              readOnly={!adminOfCollaboration}/>
+                <CheckBox name="auto_provision_members" value={auto_provision_members}
+                          info={I18n.t("groups.autoProvisionMembers")}
+                          tooltip={I18n.t("groups.autoProvisionMembersTooltip")}
+                          onChange={e => this.setState({auto_provision_members: e.target.checked})}
+                          readOnly={!adminOfCollaboration}/>
 
-                    {(!adminOfCollaboration && !createNewGroup) &&
-                    <InputField value={moment(selectedGroup.created_at * 1000).format("LLLL")}
-                                disabled={true}
-                                name={I18n.t("organisation.created")}/>}
+                {(!adminOfCollaboration && !createNewGroup) &&
+                <InputField value={moment(selectedGroup.created_at * 1000).format("LLLL")}
+                            disabled={true}
+                            name={I18n.t("organisation.created")}/>}
 
-                    <section className="actions">
-                        {(adminOfCollaboration && !createNewGroup) &&
-                        <Button warningButton={true} txt={I18n.t("groups.delete")}
-                                onClick={this.delete}/>}
-                        <Button className="white" txt={I18n.t("forms.cancel")}
-                                onClick={() => this.setState({editGroup: false, createNewGroup: false})}/>
-                        <Button disabled={disabledSubmit} txt={I18n.t(`forms.save`)}
-                                onClick={this.submit}/>
-                    </section>
+                <section className="actions">
+                    {(adminOfCollaboration && !createNewGroup) &&
+                    <Button warningButton={true} txt={I18n.t("groups.delete")}
+                            onClick={this.delete}/>}
+                    <Button className="white" txt={I18n.t("forms.cancel")}
+                            onClick={() => this.setState({editGroup: false, createNewGroup: false})}/>
+                    <Button disabled={disabledSubmit} txt={I18n.t(`forms.save`)}
+                            onClick={this.submit}/>
+                </section>
 
-                </div>
             </div>
         );
         return this.renderGroupContainer(children);

@@ -49,7 +49,7 @@ I18n.translations.en = {
         closeBrowserAfterDelete: "To finish the deletion of your account you'll have to close your browser."
     },
     home: {
-        sram: "SRAM PLATFORM",
+        sram: "SURF RESEARCH ACCESS MANAGEMENT PLATFORM",
         edit: "Edit",
         history: "History",
         backToHome: "Back to home",
@@ -290,7 +290,7 @@ I18n.translations.en = {
             noEntities: "No requests for collaborations",
         },
         invitation: {
-            welcome: "Welcome to SRAM. Here you can collaborate with your fellow researchers.",
+            welcome: "Welcome to SURF Research Access Management. Here you can collaborate with your fellow researchers.",
             invited: "You have been invited to join {{type}} \"{{collaboration}}\" by {{inviter}}",
             followingSteps: "Please take the following steps:",
             steps: {
@@ -480,7 +480,7 @@ I18n.translations.en = {
         descriptionPlaceholder: "The description of the collaboration is visible to anyone",
         websiteUrl: "Website URL",
         websiteUrlPlaceholder: "The URL of the website is visible for members",
-        currentUserAdmin: "Do you want to an administrator of this collaboration?",
+        currentUserAdmin: "Do you want to be an administrator of this collaboration?",
         currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
@@ -521,8 +521,8 @@ I18n.translations.en = {
         deleteConfirmation: "Are you sure you want to delete this collaboration?",
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership for {{name}}?",
         deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
-        deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You won't be able to redo this.",
-        downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to redo this.",
+        deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You won't be able to revert this.",
+        downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to revert this.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
         activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
         flash: {
@@ -769,7 +769,7 @@ I18n.translations.en = {
         update: "Update",
         delete: "Delete",
         deleteMemberConfirmation: "Are you sure you want to delete the checked organisation memberships / invitations?",
-        deleteYourselfMemberConfirmation: "Are you sure you want to leave this organisation? You won't be able to redo this.",
+        deleteYourselfMemberConfirmation: "Are you sure you want to leave this organisation? You won't be able to revert this.",
         deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
         deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}?",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
@@ -1277,7 +1277,7 @@ I18n.translations.en = {
         toggleRole: "Toggle role"
     },
     welcome: {
-        title: "Welcome to the SRAM platform",
+        title: "Welcome to the SURF Research Access Management platform",
         info: "You are currently not a member of any organisation or collaboration. " +
             "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you have any questions"
     }

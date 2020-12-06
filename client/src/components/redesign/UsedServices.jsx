@@ -103,13 +103,19 @@ class UsedServices extends React.Component {
             }));
         this.setState({selectedService: service});
         this.confirm(action, I18n.t("models.services.confirmations.add", {
-            service: service.name,
-            name: collaboration.name
-        }), false, !isEmpty(service.accepted_user_policy), true);
+                service: service.name,
+                name: collaboration.name
+            }), false, !isEmpty(service.accepted_user_policy),
+            !isEmpty(service.accepted_user_policy));
     };
 
     refreshAndFlash = (promise, flashMsg, callback) => {
-        this.setState({loading: true, confirmationDialogOpen: false, confirmationChildren: false, disabledConfirm: false})
+        this.setState({
+            loading: true,
+            confirmationDialogOpen: false,
+            confirmationChildren: false,
+            disabledConfirm: false
+        })
         promise.then(() => {
             this.props.refresh(() => {
                 this.componentDidMount();
@@ -285,7 +291,8 @@ class UsedServices extends React.Component {
                                     disabledConfirm={disabledConfirm}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}
-                                    children={confirmationChildren ? this.renderConfirmationChildren(selectedService, disabledConfirm) : null}/>
+                                    children={confirmationChildren ?
+                                        this.renderConfirmationChildren(selectedService, disabledConfirm) : null}/>
                 <Entities entities={usedServices}
                           modelName="servicesUsed"
                           searchAttributes={["name"]}
