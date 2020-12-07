@@ -117,15 +117,15 @@ def seed(db, app_config):
     unconfirmed_super_user_mike = User(uid="urn:mike", name=mike_name, email="mike@example.org", username="mike",
                                        confirmed_super_user=False, application_uid="mike_application_uid",
                                        schac_home_organisation="surfnet.nl")
-    peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org")
+    peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org", username="peter")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
                 schac_home_organisation=schac_home_organisation)
-    admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org")
+    admin = User(uid="urn:admin", name=the_boss_name, email="boss@example.org", username="admin")
     roger = User(uid="urn:roger", name=roger_name, email="roger@example.org",
-                 schac_home_organisation=schac_home_organisation)
+                 schac_home_organisation=schac_home_organisation, username="roger")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry")
-    james = User(uid="urn:james", name=james_name, email="james@example.org",
-                 schac_home_organisation=schac_home_organisation_uuc, given_name="James",
+    james = User(uid="urn:james", name=james_name, email="james@example.org", username="james",
+                 schac_home_organisation=schac_home_organisation_uuc, given_name="James"
                  ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                          "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
                          "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
@@ -133,34 +133,35 @@ def seed(db, app_config):
                          "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
                          "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
                          "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
-    sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid")
-    betty = User(uid="urn:betty", name="betty", email="betty@uuc.org")
-    jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org",
+    sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
+                 username="sarah")
+    betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty")
+    jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org", username="jane",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co")
-    paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org",
+    paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
                 schac_home_organisation="example.com")
     # User seed for suspend testing
     retention = app_config.retention
     current_time = datetime.datetime.utcnow()
     retention_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 1)
 
-    user_inactive = User(uid="urn:inactive", name="inactive", email="inactive@example.org",
+    user_inactive = User(uid="urn:inactive", name="inactive", email="inactive@example.org", username="inacative",
                          last_login_date=retention_date, last_accessed_date=retention_date,
                          schac_home_organisation="not.exists")
-    user_one_suspend = User(uid="urn:one_suspend", name="one_suspend", email="one_suspend@example.org",
+    user_one_suspend = User(uid="urn:one_suspend", name="one_suspend", email="one_suspend@example.org", username="1suspend",
                             last_login_date=retention_date, last_accessed_date=retention_date)
 
-    user_two_suspend = User(uid="urn:two_suspend", name="two_suspend", email="two_suspend@example.org",
+    user_two_suspend = User(uid="urn:two_suspend", name="two_suspend", email="two_suspend@example.org", username="2suspend",
                             last_login_date=retention_date, last_accessed_date=retention_date)
 
     last_login_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 30)
-    user_suspended = User(uid="urn:suspended", name="suspended", email="suspended@example.org",
+    user_suspended = User(uid="urn:suspended", name="suspended", email="suspended@example.org", username="suspended",
                           last_login_date=last_login_date, last_accessed_date=last_login_date,
                           suspended=True)
 
     deletion_date = current_time - datetime.timedelta(days=retention.remove_suspended_users_period_days + 30)
     user_to_be_deleted = User(uid="urn:to_be_deleted", name="to_be_deleted", email="to_be_deleted@example.org",
-                              last_login_date=deletion_date, last_accessed_date=deletion_date,
+                              last_login_date=deletion_date, last_accessed_date=deletion_date, username="deleted",
                               suspended=True)
 
     _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, betty, jane,
