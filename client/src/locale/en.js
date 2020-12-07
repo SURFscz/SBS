@@ -3,7 +3,7 @@ import I18n from "i18n-js";
 I18n.translations.en = {
     code: "EN",
     name: "English",
-    select_locale: "Select English",
+    select_locale: "Change interface language to English",
 
     header: {
         title: "Research Access Management",
@@ -55,7 +55,7 @@ I18n.translations.en = {
         backToHome: "Back to home",
         firstTime: "Onboarding",
         collaborationRequest: "Request for new Collaboration",
-        noOrganisations: "To request a new collaboration it is required that there is an organization linked to the institution named '{{schac_home}}' where you logged in. This is not the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
+        noOrganisations: "To request a new collaboration it is required that institution '{{schac_home}}' where you logged in, has ordered SRAM. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
         tabs: {
             groups: "Groups",
             collaborations: "Collaborations",
@@ -111,7 +111,7 @@ I18n.translations.en = {
             blank: "",
             icon: "",
             profile: "Hi {{name}}",
-            subProfile: "You are currently logged in with your institution account via eduTeams",
+            subProfile: "You are currently logged in with your institution account via eduTEAMS",
             institute: "Institution",
             role: "Role",
             title: "SRAM platform administrators",
@@ -123,7 +123,7 @@ I18n.translations.en = {
         },
         orgMembers: {
             title: "Org admin & managers",
-            noEntities: "There are no administrator or managers yet in this organisation...",
+            noEntities: "There are no administrators or managers in this organisation yet...",
             searchPlaceHolder: "Search members...",
             status: "Status",
             inviteSend: "Invite sent {{date}}",
@@ -172,7 +172,7 @@ I18n.translations.en = {
             confirmations: {
                 add: "Are you sure you want to make {{service}} available for all members of {{name}}?",
                 remove: "Are you sure you want to remove {{service}} from {{name}}?",
-                check: "I have read and agree with the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}"
+                check: "I know about the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}"
             }
         },
         collaborations: {
@@ -261,7 +261,7 @@ I18n.translations.en = {
             noAdminsHeader: "No administrators (yet)",
             adminsHeader: "Organized by <strong>{{name}}</strong>",
             multipleAdminsHeader: "Organized by <strong>{{name}}</strong> and <strong>{{nbr}} others</strong>",
-            about: "What we're about",
+            about: "What our CO is about",
             services: "Where we collaborate ({{nbr}} services)",
             noServices: "There are no services available in this collaboration",
             servicesStart: "Click the button to start the service, or read the instructions first",
@@ -302,7 +302,7 @@ I18n.translations.en = {
                 collaborate: "Collaborate!"
             },
             login: "Please login to identify yourself",
-            loginTip: "You can use your institution account to login, or use a guest account",
+            loginTip: "You can use your institution account to login, or use a guest account like eduID",
             accept: "I accept these terms",
             noAccept: "No, I don't agree",
             acceptInvitation: "Yes, I accept the invitation",
@@ -325,7 +325,7 @@ I18n.translations.en = {
         titleUpdate: "Update your user profile keys",
         ssh_key: "SSH public key",
         ssh_keyPlaceholder: "Your public SSH key to login on the service",
-        ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP of services you<br/>are entitled access to.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a mac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
+        ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP of services you<br/>are entitled access to.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a Nac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Invalid SSH key",
         sshConvertInfo: "Convert this RFC 4716 SSH format to the OpenSSH key file format when saving the profile?",
         update: "Update",
@@ -355,7 +355,7 @@ I18n.translations.en = {
             startedImpersonation: "Successfully started to impersonate {{name}}.",
             clearedImpersonation: "Successfully cleared your impersonation. You are you again."
         },
-        exit: "Exit view",
+        exit: "Stop impersonating",
         impersonator: "You are impersonating <strong>{{name}}</strong> | <strong>{{role}}</strong>",
         impersonatorTooltip: "You are really <em>{{impersonator}}</em>,<br/>but you are impersonating <em>{{currentUser}}</em>.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
     },
@@ -367,26 +367,26 @@ I18n.translations.en = {
         request: "Request",
         continue: "Continue",
         requiredCollaboration: "Invalid request: collaboration needs to be specified.",
-        noJoinRequestCollaboration: "Collaboration {{name}} has disabled join requests. You can not request memberships",
-        unknownCollaboration: "The collaboration with the identifer {{collaboration}} does not exists",
+        noJoinRequestCollaboration: "Collaboration {{name}} has disabled join requests. You need to get invited.",
+        unknownCollaboration: "The collaboration with the identifer {{collaboration}} does not exists.",
         step1: {
             title: "Link your account",
             sub: "Select organisation",
             icon: "link",
-            tooltip: "You will be redirected to select<br/>your organisation and after you<br/>have logged in you will be<br/>redirected to proceed with step 2.",
+            tooltip: "You will be redirected to select<br/>your organisation (or eduID) and after you<br/>have logged in you will be<br/>redirected to proceed with step 2.",
         },
         step2: {
             title: "Request access",
             sub: "Motivation & Terms",
             icon: "book",
-            tooltip: "When you have chosen your organisation<br/> then you'll need to optionally <br/>motivate your request <br/>and review and accept our terms",
+            tooltip: "When you have chosen your organisation<br/>you'll need to optionally<br/>motivate your request<br/>and review and accept our terms",
             registrationInfo: "We will register the following information:",
             motivationInfo: "Why would you like to join the collaboration {{collaboration}}?",
             motivationPlaceholder: "Describe your work or need to access the resources of the collaboration in order for an admin to grant you the proper user rights.",
             reference: "Do you have a reference within {{collaboration}}?",
             referencePlaceholder: "Write down the names of people you know within {{collaboration}} like co-researchers.",
             policy: "Our Policy",
-            personalDataConfirmation: "I agree that the personal data as displayed above might be transmitted to services that are connected to collaboration {{name}}.",
+            personalDataConfirmation: "I understand that the personal data as displayed above might be transmitted to services that are or might get connected to collaboration {{name}}.",
             policyConfirmation: "I have read the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy</a> of {{collaboration}} and accept it",
             noAup: "Collaboration {{name}} has not provided a link to an Acceptable Use Policy."
         },
@@ -400,8 +400,8 @@ I18n.translations.en = {
         },
         flash: {
             info: "Step {{step}} successfully finished.",
-            success: "Your request to join {{name}} is sent for review",
-            alreadyMember: "Invalid join request: you are already a member of collaboration {{name}}",
+            success: "Your request to join {{name}} is sent for review.",
+            alreadyMember: "Invalid join request? You are already a member of collaboration {{name}}.",
         }
     },
     profile: {
@@ -462,10 +462,10 @@ I18n.translations.en = {
         globalUrn: "Global urn",
         globalUrnTooltip: "Global unique and read-only urn<br/>based on the short names of the organisation,<br/>and this collaboration.",
         identifier: "Identifier",
-        identifierTooltip: "Generated, unique and immutable<br/>identifier of a collaboration<br/>which used as identifier<br/>for external systems",
+        identifierTooltip: "Generated, unique and immutable<br/>identifier of a collaboration<br/>which is used as identifier<br/>for external systems",
         joinRequestUrl: "Join Request URL",
-        joinRequestUrlTooltip: "URL for non-members to<br/>join this collaboration.<br/><br/>The URL can be communicated<br/>to service providers that offer<br/>their service within this collaboration",
-        disableJoinRequests: "Disable Join request for this collaboration",
+        joinRequestUrlTooltip: "URL for non-members to<br/>join this collaboration.<br/><br/>You can for instance email this URL<br/>or publish it on a website etc.<br/>their service within this collaboration",
+        disableJoinRequests: "Disable Join request for this collaboration.",
         disableJoinRequestsTooltip: "When checked non-members of this<br/>collaboration can not issue a Join request.",
         joinRequests: "Join requests",
         disabled: "Disabled",
@@ -480,11 +480,11 @@ I18n.translations.en = {
         descriptionPlaceholder: "The description of the collaboration is visible to anyone",
         websiteUrl: "Website URL",
         websiteUrlPlaceholder: "The URL of the website is visible for members",
-        currentUserAdmin: "Do you want to an administrator of this collaboration?",
+        currentUserAdmin: "Do you want to be an administrator of this collaboration?",
         currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
-        messageTooltip: "The message will be included in the<br/>e-mail invitation to the administrators.",
+        messageTooltip: "The message will be included in the<br/>e-mail to the administrators.",
         motivation: "Motivation",
         motivationPlaceholder: "Motivation for the new collaboration",
         motivationTooltip: "Your motivation for the new collaboration.",
@@ -549,7 +549,6 @@ I18n.translations.en = {
         },
         invite: "Invite new members",
         addMe: "Add me"
-
     },
     organisations: {
         title: "Organisations ({{nbr}})",
