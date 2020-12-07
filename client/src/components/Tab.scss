@@ -46,10 +46,10 @@
     }
 
     &.active {
-        border-bottom: 3px solid $primary-orange;
+        border-bottom: 3px solid $light-orange;
 
         h2, svg {
-            color: $secondary-orange;
+            color: $primary-orange;
             font-weight: bold;
         }
 

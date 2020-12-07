@@ -21,7 +21,7 @@ export default function UnitHeader(props) {
                 </div>
                 <div className="obj-name">
                     {obj.name && <h1>{obj.name}</h1>}
-                    {obj.organisation && <span>{obj.organisation.name}</span>}
+                    {obj.organisation && <span className="name">{obj.organisation.name}</span>}
                     <div className="children">
                         {props.children}
                     </div>

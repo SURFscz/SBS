@@ -248,11 +248,12 @@ class CollaborationDetail extends React.Component {
         this.props.history.push(`/new-collaboration?organisationId=${collaboration.organisation_id}`);
     }
 
-    getUnitHeaderForMemberNew = (collaboration, user, schacHomeOrganisation) => {
+    getUnitHeaderForMemberNew = (collaboration) => {
         return <UnitHeader obj={collaboration}
                            mayEdit={false}
                            name={collaboration.name}>
             <section className="unit-info">
+                {/*<p>{collaboration.description}</p>*/}
                 <ul>
                     <li><FontAwesomeIcon
                         icon="users"/><span>{I18n.t("models.collaboration.memberHeader", {
@@ -301,7 +302,7 @@ class CollaborationDetail extends React.Component {
 
     render() {
         const {
-            collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime, schacHomeOrganisation
+            collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -311,7 +312,7 @@ class CollaborationDetail extends React.Component {
         return (
             <>
                 {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit)}
-                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(collaboration, user, schacHomeOrganisation)}
+                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(collaboration)}
 
                 {<WelcomeDialog name={collaboration.name} isOpen={firstTime}
                                 role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}

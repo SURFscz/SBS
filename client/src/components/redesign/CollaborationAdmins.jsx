@@ -218,13 +218,14 @@ class CollaborationAdmins extends React.Component {
                         disabled={disabled}
                         icon={<FontAwesomeIcon icon="trash"/>}/>}
                 {(any && (isAdminOfCollaboration || collaboration.disclose_email_information))
-                && <a href={`${disabled ? "" : "mailto:"}${hrefValue}`} className={`${disabled ? "disabled" : ""} button`}
-                      rel="noopener noreferrer" onClick={e => {
-                          if (disabled) {
-                              stopEvent(e);
-                          } else {
-                              return true;
-                          }
+                &&
+                <a href={`${disabled ? "" : "mailto:"}${hrefValue}`} className={`${disabled ? "disabled" : ""} button`}
+                   rel="noopener noreferrer" onClick={e => {
+                    if (disabled) {
+                        stopEvent(e);
+                    } else {
+                        return true;
+                    }
                 }}>
                     {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
                 </a>}
@@ -296,7 +297,8 @@ class CollaborationAdmins extends React.Component {
             return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
         }
         if (entity.user.id === currentUser.id) {
-            return <Button className="warning" onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
+            return <Button className="warning" onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")}
+                           small={true}/>
         }
         if (!currentUser.admin || entity.user.id === currentUser.id || showMemberView) {
             return null;
@@ -407,6 +409,19 @@ class CollaborationAdmins extends React.Component {
 
     }
 
+    renderSelectRole = (entity, isAdminOfCollaboration) => {
+        if (entity.invite) {
+            return <span className="member-role">{I18n.t(`organisation.${entity.intended_role}`)}</span>;
+        }
+        if (!isAdminOfCollaboration) {
+            return <span className="member-role">{I18n.t(`organisation.${entity.role}`)}</span>;
+        }
+        return <Select value={roles.find(option => option.value === entity.role)}
+                       options={roles}
+                       classNamePrefix={`select-member-role`}
+                       onChange={this.changeMemberRole(entity)}
+                       isDisabled={!isAdminOfCollaboration}/>
+    }
 
     render() {
         const {user: currentUser, collaboration, isAdminView, showMemberView} = this.props;
@@ -465,12 +480,7 @@ class CollaborationAdmins extends React.Component {
             {
                 key: "role",
                 header: I18n.t("models.users.role"),
-                mapper: entity => entity.invite ? I18n.t(`organisation.${entity.intended_role}`) :
-                    <Select value={roles.find(option => option.value === entity.role)}
-                            options={roles}
-                            classNamePrefix="select-role"
-                            onChange={this.changeMemberRole(entity)}
-                            isDisabled={!isAdminOfCollaboration}/>
+                mapper: entity => this.renderSelectRole(entity, isAdminOfCollaboration)
             },
             {
                 nonSortable: true,

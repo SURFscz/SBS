@@ -41,22 +41,20 @@ export default class CroppedImageField extends React.PureComponent {
     // If you setState the crop in here you should return false.
     onImageLoaded = image => {
         this.imageRef = image;
-        const width = image.width;
-        const height = image.height;
-        const aspect = 1;
-        const w = width / aspect < height * aspect ? 100 : ((height * aspect) / width) * 100;
-        const h = width / aspect > height * aspect ? 100 : (width / aspect / height) * 100;
-        const y = (100 - h) / 2;
-        const x = (100 - w) / 2;
-        this.setState({
-            crop: {
+        const ratio = 80 / 58;
+        const imageW = image.width;
+        const imageH = image.height;
+        const imageRatio = imageW / imageH;
+        const x = imageRatio <= ratio ? 0 : ((((imageW - (imageH * ratio)) / 2) / imageW) * 100) ;
+        const y = imageRatio >= ratio ? 0 : ((((imageH - (imageW / ratio)) / 2) / imageH) * 100);
+        const crop = {
                 unit: "%",
-                width: 100,
                 x: Math.round(x),
                 y: Math.round(y),
-                aspect: aspect
-            }
-        })
+                aspect: ratio
+            };
+        crop[`${imageRatio <= ratio ? "width" : "height"}`] = 100;
+        this.setState({crop});
         return false;
     };
 

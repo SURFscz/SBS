@@ -76,7 +76,7 @@
 
             th {
                 padding: 10px 0;
-                color: $secondary-orange;
+                color: $primary-orange;
 
                 &.sortable {
                     cursor: pointer;
@@ -141,13 +141,14 @@
                 }
 
                 &.logo {
-                    padding: 5px 0;
+                    padding: 4px 0;
 
                     img {
-                        max-width: 75px;
-                        max-height: 75px;
-                        //padding: 5px 12px;
-                        //border: 1px dotted $lighter-grey;
+                        border-radius: 4px;
+                        min-width: 80px;
+                        min-height: 58px;
+                        max-width: 80px;
+                        max-height: 58px;
                         margin-right: 5px;
                     }
                 }
@@ -181,7 +182,7 @@
         }
 
         &.invite {
-            background-color: $yellow;
+            background-color: $yellow-light;
             color: black;
         }
 

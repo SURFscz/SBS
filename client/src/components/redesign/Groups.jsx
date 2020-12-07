@@ -19,7 +19,6 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {CopyToClipboard} from "react-copy-to-clipboard";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import UserColumn from "./UserColumn";
 import Select from "react-select";
@@ -28,6 +27,7 @@ import CheckBox from "../CheckBox";
 import moment from "moment";
 import {sanitizeShortName, shortNameDisabled} from "../../validations/regExps";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import ClipBoardCopy from "./ClipBoardCopy";
 
 class Groups extends React.Component {
 
@@ -210,11 +210,7 @@ class Groups extends React.Component {
                         <span>{I18n.t("models.groups.urn")}</span>
                         <span>{selectedGroup.global_urn}</span>
                     </div>
-                    <CopyToClipboard text={selectedGroup.global_urn}>
-                        <section className="copy-to-clipboard">
-                            <FontAwesomeIcon icon="copy"/>
-                        </section>
-                    </CopyToClipboard>
+                    <ClipBoardCopy txt={selectedGroup.global_urn}/>
                 </div>
                 <Entities entities={selectedGroup.collaboration_memberships}
                           actions={actions}

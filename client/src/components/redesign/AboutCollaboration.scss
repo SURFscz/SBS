@@ -13,6 +13,7 @@ div.collaboration-about-mod {
     h1 {
         font-size: 22px;
         margin-bottom: 10px;
+        color: $primary-orange;
     }
 
     p {
@@ -61,8 +62,15 @@ div.collaboration-about-mod {
         margin-bottom: 15px;
         align-items: center;
 
+
         &.uri {
             cursor: pointer;
+
+            &:hover {
+                background-color: $light-blue;
+                border: 1px solid $light-blue;
+            }
+
         }
 
         img {
