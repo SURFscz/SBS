@@ -22,7 +22,6 @@ import Tabs from "../components/Tabs";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {ReactComponent as InviteIcon} from "../icons/single-neutral-question.svg";
-import {ReactComponent as EyeIcon} from "../icons/eye-icon.svg";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
 
@@ -329,6 +328,16 @@ class NewInvitation extends React.Component {
             return <SpinnerField/>
         }
         const disabledSubmit = (!initial && !this.isValid());
+        const tabs = [<div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
+                           name={"invitation_form"} icon={<InviteIcon/>}>
+            <div className="mod-new-collaboration-invitation">
+                <div className="new-collaboration-invitation">
+                    {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                        administrators, intended_role, message, expiry_date, disabledSubmit, groups,
+                        selectedGroup)}
+                </div>
+            </div>
+        </div>];
         return (
             <>
                 <UnitHeader obj={collaboration}
@@ -339,24 +348,7 @@ class NewInvitation extends React.Component {
                                     leavePage={leavePage}/>
 
                 <Tabs activeTab={activeTab} tabChanged={this.tabChanged}>
-                    <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
-                         name={"invitation_form"} icon={<InviteIcon/>}>
-                        <div className="mod-new-collaboration-invitation">
-                            <div className="new-collaboration-invitation">
-                                {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                                    administrators, intended_role, message, expiry_date, disabledSubmit, groups,
-                                    selectedGroup)}
-                            </div>
-                        </div>
-                    </div>
-                    <div label={I18n.t("tabs.invitation_preview")} key={"invitation_preview"}
-                         name={"invitation_preview"} icon={<EyeIcon/>}>
-                        <div className="mod-new-collaboration-invitation">
-                            <div className="new-collaboration-invitation">
-                                {this.preview(disabledSubmit)}
-                            </div>
-                        </div>
-                    </div>
+                    {tabs}
                 </Tabs>
             </>)
             ;

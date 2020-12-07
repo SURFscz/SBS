@@ -1,7 +1,7 @@
 import React from "react";
 import I18n from "i18n-js";
 import {Link} from "react-router-dom";
-import {ReactComponent as Logo} from "../images/logo-surf.svg";
+import {ReactComponent as Logo} from "../images/logo-surf-white.svg";
 import "./Header.scss";
 import UserMenu from "./redesign/UserMenu";
 import {globalUserRole} from "../utils/UserRole";

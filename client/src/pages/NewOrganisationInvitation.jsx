@@ -13,7 +13,6 @@ import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
 import {ReactComponent as InviteIcon} from "../icons/single-neutral-question.svg";
-import {ReactComponent as EyeIcon} from "../icons/eye-icon.svg";
 import "./NewOrganisationInvitation.scss"
 import DateField from "../components/DateField";
 import {getParameterByName} from "../utils/QueryParameters";
@@ -279,6 +278,15 @@ class NewOrganisationInvitation extends React.Component {
             return <SpinnerField/>
         }
         const disabledSubmit = (!initial && !this.isValid());
+        const tabs = [<div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
+                           name={"invitation_form"} icon={<InviteIcon/>}>
+            <div className="mod-new-organisation-invitation">
+                <div className="new-organisation-invitation">
+                    {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                        administrators, expiry_date, disabledSubmit, intended_role)}
+                </div>
+            </div>
+        </div>];
         return (
             <>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -289,23 +297,7 @@ class NewOrganisationInvitation extends React.Component {
                             name={organisation.name}/>
 
                 <Tabs activeTab={activeTab} tabChanged={this.tabChanged}>
-                    <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
-                         name={"invitation_form"} icon={<InviteIcon/>}>
-                        <div className="mod-new-organisation-invitation">
-                            <div className="new-organisation-invitation">
-                                {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                                    administrators, expiry_date, disabledSubmit, intended_role)}
-                            </div>
-                        </div>
-                    </div>
-                    <div label={I18n.t("tabs.invitation_preview")} key={"invitation_preview"}
-                         name={"invitation_preview"} icon={<EyeIcon/>}>
-                        <div className="mod-new-organisation-invitation">
-                            <div className="new-organisation-invitation">
-                                {this.preview(disabledSubmit)}
-                            </div>
-                        </div>
-                    </div>
+                    {tabs}
                 </Tabs>
             </>);
     };
