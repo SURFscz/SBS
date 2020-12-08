@@ -93,8 +93,9 @@ I18n.translations.en = {
         reset: "Reset",
         yes: "Yes",
         upload: "Upload image",
-        image: "Image must at least be 90x90 pixels and smaller then 512KB",
-        imageToLarge: "Image is larger then 512KB",
+        add: "Add an image",
+        image: "Image must at least be 300x120 pixels and smaller then 2MB",
+        imageToLarge: "Image is larger then 2MB",
         imageRequired: "Image is required",
         no: "No"
     },

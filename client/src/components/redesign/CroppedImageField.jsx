@@ -4,9 +4,10 @@ import I18n from "i18n-js";
 import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
 import "./CroppedImageField.scss";
 import {isEmpty} from "../../utils/Utils";
-import ReactCrop from "react-image-crop";
 import "react-image-crop/lib/ReactCrop.scss";
 import Logo from "./Logo";
+import Button from "../Button";
+import CroppedImageDialog from "./CroppedImageDialog";
 
 export default class CroppedImageField extends React.PureComponent {
 
@@ -14,125 +15,39 @@ export default class CroppedImageField extends React.PureComponent {
         super(props, context);
         this.state = {
             error: "",
-            source: null,
-            crop: {},
+            dialogOpen: false
         }
     }
 
-    internalOnChange = e => {
-        const files = e.target.files;
-        if (files && files[0]) {
-            const file = files[0];
-            if (file.size > 512 * 1000) {
-                this.setState({error: I18n.t("forms.imageToLarge")});
-            } else {
-                const reader = new FileReader();
-                reader.onload = evt => {
-                    const {onChange} = this.props;
-                    const base64 = btoa(evt.target.result);
-                    this.setState({source: base64});
-                    onChange(base64);
-                }
-                reader.readAsBinaryString(files[0]);
-            }
-        }
+    onInternalChange = val => {
+        this.setState({dialogOpen: false});
+        const {onChange} = this.props;
+        setTimeout(() => onChange(val), 425);
     }
 
-    // If you setState the crop in here you should return false.
-    onImageLoaded = image => {
-        this.imageRef = image;
-        const ratio = 80 / 58;
-        const imageW = image.width;
-        const imageH = image.height;
-        const imageRatio = imageW / imageH;
-        const x = imageRatio <= ratio ? 0 : ((((imageW - (imageH * ratio)) / 2) / imageW) * 100) ;
-        const y = imageRatio >= ratio ? 0 : ((((imageH - (imageW / ratio)) / 2) / imageH) * 100);
-        const crop = {
-                unit: "%",
-                x: Math.round(x),
-                y: Math.round(y),
-                aspect: ratio
-            };
-        crop[`${imageRatio <= ratio ? "width" : "height"}`] = 100;
-        this.setState({crop});
-        return false;
-    };
-
-    onCropComplete = crop => {
-        if (this.imageRef && crop.width && crop.height) {
-            const canvas = document.createElement("canvas");
-            const image = this.imageRef;
-            const scaleX = image.naturalWidth / image.width;
-            const scaleY = image.naturalHeight / image.height;
-            canvas.width = crop.width;
-            canvas.height = crop.height;
-            const ctx = canvas.getContext("2d");
-
-            ctx.drawImage(
-                image,
-                crop.x * scaleX,
-                crop.y * scaleY,
-                crop.width * scaleX,
-                crop.height * scaleY,
-                0,
-                0,
-                crop.width,
-                crop.height
-            );
-
-            canvas.toBlob(blob => {
-                if (!blob) {
-                    return;
-                }
-                const reader = new FileReader();
-                reader.readAsDataURL(blob);
-                reader.onloadend = () => {
-                    const base64data = reader.result;
-                    this.props.onChange(base64data.substring(base64data.indexOf(",") + 1));
-                }
-            }, "image/jpeg", 1);
-
-        }
-    };
-
-    onCropChange = (crop, percentCrop) => this.setState({crop: percentCrop});
+    closeDialog = () => this.setState({dialogOpen: false});
 
     render() {
-        const {error, crop, source} = this.state;
-        const {title, name, value, secondRow = false, initial = false, isNew, disabled = false} = this.props;
-
-        const src = `data:image/jpeg;base64,${(!isNew && !source) ? value : source}`;
+        const {error, dialogOpen} = this.state;
+        const {title, name, value, secondRow = false, initial = false} = this.props;
         return (
             <div className={`cropped-image-field ${secondRow ? "second-row" : ""}`}>
+                <CroppedImageDialog onSave={this.onInternalChange} onCancel={this.closeDialog} isOpen={dialogOpen}
+                                    name={name} value={value} title={title}/>
                 <label className="info" htmlFor="">{title}</label>
                 <section className="file-upload">
-                    {(!source && isNew) && <div className="no-image">
+                    {!value && <div className="no-image">
                         {<NotFoundIcon/>}
                     </div>}
-                    {(!isNew || source) && <div className="preview">
-                        {source &&
-                        <ReactCrop
-                            src={src}
-                            crop={crop}
-                            ruleOfThirds
-                            onImageLoaded={this.onImageLoaded}
-                            onComplete={this.onCropComplete}
-                            onChange={this.onCropChange}
-                        />}
-                        {source && <Logo className="cropped-img" src={value}/>}
-                        {(!source && !isNew) && <img alt="" src={src}/>}
+                    {value &&
+                    <div className="preview">
+                        {value && <Logo className="cropped-img" src={value}/>}
                     </div>}
-                    {!disabled && <label className="file-upload-label button" htmlFor={`fileUpload_${name}`}>
-                        {I18n.t("forms.upload")}
-                    </label>}
-                    {!disabled && <input type="file"
-                                         id={`fileUpload_${name}`}
-                                         name={`fileUpload_${name}`}
-                                         accept="image/png, image/jpeg, image/jpg"
-                                         style={{display: "none"}}
-                                         onChange={this.internalOnChange}/>}
+                    <div className="file-upload-actions">
+                        <Button txt={I18n.t("forms.add")} onClick={() => this.setState({dialogOpen: true})}/>
+                        {value && <Button warningButton={true} onClick={() => this.onInternalChange(null)}/>}
+                    </div>
                 </section>
-                <span className="disclaimer">{I18n.t("forms.image")}</span>
                 {!isEmpty(error) && <span className="error">{error}</span>}
                 {(!initial && isEmpty(value)) && <span className="error">{I18n.t("forms.imageRequired")}</span>}
             </div>

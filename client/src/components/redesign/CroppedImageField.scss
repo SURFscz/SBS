@@ -23,33 +23,30 @@
 
     .file-upload {
         display: flex;
-        margin-bottom: 5px;
-    }
-
-    label.file-upload-label {
-        margin-left: 25px;
-        max-height: 33px;
+        margin: 5px 0;
     }
 
     .preview {
-        .ReactCrop {
-            display: block;
-        }
-        img {
-            height: 250px;
-        }
         img.cropped-img {
-            margin-top: 15px;
-            height: 150px;
+            width: 240px;
+            height: 174px;
         }
     }
 
     .no-image svg {
-        width: 200px;
-        height: 200px;
+        width: 240px;
+        height: 174px;
         padding: 50px;
-        border: 1px dotted $medium-grey;
+        border: 3px dotted $lighter-grey;
         fill: $lighter-grey;
+    }
+
+    .file-upload-actions {
+        margin-left: 25px;
+
+        a:not(:first-child) {
+            margin-top: 25px;
+        }
     }
 
 }
