@@ -44,9 +44,12 @@
 
     .file-upload-actions {
         margin-left: 25px;
+        display: flex;
+        flex-direction: column;
 
         a:not(:first-child) {
-            margin-top: 25px;
+            margin: 25px 0 0 auto;
+
         }
     }
 
