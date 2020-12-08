@@ -95,6 +95,7 @@ I18n.translations.en = {
         upload: "Upload image",
         add: "Add an image",
         image: "Image must at least be 300x120 pixels and smaller then 2MB",
+        dragImage: "Drag and resize the croperea until you're happy with the result. Then hit save",
         imageToLarge: "Image is larger then 2MB",
         imageRequired: "Image is required",
         no: "No"
