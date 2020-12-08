@@ -31,7 +31,8 @@ export default class CroppedImageDialog extends React.PureComponent {
                 const reader = new FileReader();
                 reader.onload = evt => {
                     const base64 = btoa(evt.target.result);
-                    this.setState({source: base64});
+                    this.imageRef = null;
+                    this.setState({source: base64, result: null});
                 }
                 reader.readAsBinaryString(files[0]);
             }
@@ -106,13 +107,13 @@ export default class CroppedImageDialog extends React.PureComponent {
     onCropChange = (crop, percentCrop) => this.setState({crop: percentCrop});
 
     renderImages = (error, value, source, crop, onCancel, onSave, name) => {
-        const src = `data:image/jpeg;base64,${value || source}`;
+        const src = `data:image/jpeg;base64,${source || value}`;
         return (
             <div className="cropped-image-dialog-container">
                 {(!value && !source) && <div className="no-image">
                     {<NotFoundIcon/>}
                 </div>}
-                {(value || source) && <div className="preview">
+                {(source || value) && <div className="preview">
                     <ReactCrop
                         src={src}
                         crop={crop}
@@ -131,7 +132,8 @@ export default class CroppedImageDialog extends React.PureComponent {
                         accept="image/png, image/jpeg, image/jpg"
                         style={{display: "none"}}
                         onChange={this.internalOnChange}/>}
-                <span className="disclaimer">{I18n.t("forms.image")}</span>
+                {(!value && !source) && <span className="disclaimer">{I18n.t("forms.image")}</span>}
+                {(value || source) && <span className="disclaimer">{I18n.t("forms.dragImage")}</span>}
                 {!isEmpty(error) && <span className="error">{error}</span>}
             </div>
         );
