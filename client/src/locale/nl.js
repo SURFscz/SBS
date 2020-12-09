@@ -93,7 +93,9 @@ I18n.translations.nl = {
         reset: "Reset",
         yes: "Ja",
         upload: "Upload afbeelding",
-        image: "Afbeelding moet tenminste 90x90 pixels en kleiner dan 512KB",
+        add: "Voeg een afbeelding toe",
+        image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB",
+        dragImage: "Versleep de croperea en pas de grootte aan totdat je tevreden bent met het resultaat. Druk vervolgens op opslaan",
         imageToLarge: "Afbeelding is groter 512KB",
         imageRequired: "Afbeelding is verplicht",
         no: "Nee"
