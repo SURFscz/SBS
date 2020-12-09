@@ -12,11 +12,9 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
-import {ReactComponent as InviteIcon} from "../icons/single-neutral-question.svg";
 import "./NewOrganisationInvitation.scss"
 import DateField from "../components/DateField";
 import {getParameterByName} from "../utils/QueryParameters";
-import Tabs from "../components/Tabs";
 import SelectField from "../components/SelectField";
 import {organisationRoles} from "../forms/constants";
 import UnitHeader from "../components/redesign/UnitHeader";
@@ -65,8 +63,10 @@ class NewOrganisationInvitation extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {value: I18n.t("breadcrumb.organisations")},
-                            {path: `/organisations/${json.id}`, value: json.name},
+                            {
+                                path: `/organisations/${json.id}`,
+                                value: I18n.t("breadcrumb.organisation", {name: json.name})
+                            },
                             {path: "/", value: I18n.t("breadcrumb.organisationInvite")}
                         ];
                     });
@@ -272,21 +272,12 @@ class NewOrganisationInvitation extends React.Component {
         const {
             email, initial, administrators, expiry_date, organisation,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
-            fileTypeError, fileEmails, fileInputKey, activeTab, intended_role, loading
+            fileTypeError, fileEmails, fileInputKey, intended_role, loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = (!initial && !this.isValid());
-        const tabs = [<div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
-                           name={"invitation_form"} icon={<InviteIcon/>}>
-            <div className="mod-new-organisation-invitation">
-                <div className="new-organisation-invitation">
-                    {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                        administrators, expiry_date, disabledSubmit, intended_role)}
-                </div>
-            </div>
-        </div>];
         return (
             <>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -295,10 +286,13 @@ class NewOrganisationInvitation extends React.Component {
                                     leavePage={leavePage}/>
                 <UnitHeader obj={organisation}
                             name={organisation.name}/>
-
-                <Tabs activeTab={activeTab} tabChanged={this.tabChanged}>
-                    {tabs}
-                </Tabs>
+                <div className="mod-new-organisation-invitation">
+                    <h1>{I18n.t("tabs.invitation_form")}</h1>
+                    <div className="new-organisation-invitation">
+                        {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                            administrators, expiry_date, disabledSubmit, intended_role)}
+                    </div>
+                </div>
             </>);
     };
 

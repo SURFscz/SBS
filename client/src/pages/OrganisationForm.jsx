@@ -76,9 +76,8 @@ class OrganisationForm extends React.Component {
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
                         {path: "/", value: I18n.t("breadcrumb.home")},
-                        {value: I18n.t("breadcrumb.organisations")},
-                        {path: "/organisations/" + org.id, value: org.name},
-                        {path: "/", value: I18n.t("home.edit")}
+                        {path: "/organisations/" + org.id, value: I18n.t("breadcrumb.organisation", {name: org.name})},
+                        {value: I18n.t("home.edit")}
                     ];
                 });
             });
@@ -88,8 +87,7 @@ class OrganisationForm extends React.Component {
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
                         {path: "/", value: I18n.t("breadcrumb.home")},
-                        {value: I18n.t("breadcrumb.organisations")},
-                        {path: "/", value: I18n.t("breadcrumb.newOrganisation")}
+                        {value: I18n.t("breadcrumb.newOrganisation")}
                     ];
                 });
             });
