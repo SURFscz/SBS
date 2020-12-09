@@ -6,6 +6,13 @@
     width: 100%;
     margin: 0 auto $medium-padding auto;
 
+    h1 {
+        margin: 15px 0;
+        font-size: 28px;
+        font-weight: bold;
+        color: $primary-orange;
+    }
+
     .new-organisation-invitation {
         margin-bottom: 25px;
 
@@ -72,6 +79,7 @@
         }
 
     }
+
     .preview-mail {
         padding-top: 20px;
     }

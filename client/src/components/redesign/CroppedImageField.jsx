@@ -8,6 +8,7 @@ import "react-image-crop/lib/ReactCrop.scss";
 import Logo from "./Logo";
 import Button from "../Button";
 import CroppedImageDialog from "./CroppedImageDialog";
+import ConfirmationDialog from "../ConfirmationDialog";
 
 export default class CroppedImageField extends React.PureComponent {
 
@@ -15,11 +16,13 @@ export default class CroppedImageField extends React.PureComponent {
         super(props, context);
         this.state = {
             error: "",
-            dialogOpen: false
+            dialogOpen: false,
+            confirmationDialogOpen: false,
+            confirmationDialogAction: () => true
         }
     }
 
-    onInternalChange = val => {
+    onInternalChange = (val) => {
         this.setState({dialogOpen: false});
         const {onChange} = this.props;
         setTimeout(() => onChange(val), 425);
@@ -27,11 +30,24 @@ export default class CroppedImageField extends React.PureComponent {
 
     closeDialog = () => this.setState({dialogOpen: false});
 
+    confirmDelete = () => this.setState({
+        confirmationDialogOpen: true,
+        confirmationDialogAction: () => {
+            this.props.onChange(null);
+            this.setState({confirmationDialogOpen: false});
+        }
+    });
+
     render() {
-        const {error, dialogOpen} = this.state;
+        const {error, dialogOpen, confirmationDialogOpen, confirmationDialogAction} = this.state;
         const {title, name, value, secondRow = false, initial = false} = this.props;
         return (
             <div className={`cropped-image-field ${secondRow ? "second-row" : ""}`}>
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={() => this.setState({confirmationDialogOpen: false})}
+                                    confirm={confirmationDialogAction}
+                                    isWarning={true}
+                                    question={I18n.t("forms.imageDeleteConfirmation")}/>
                 <CroppedImageDialog onSave={this.onInternalChange} onCancel={this.closeDialog} isOpen={dialogOpen}
                                     name={name} value={value} title={title}/>
                 <label className="info" htmlFor="">{title}</label>
@@ -45,7 +61,7 @@ export default class CroppedImageField extends React.PureComponent {
                     </div>}
                     <div className="file-upload-actions">
                         <Button txt={I18n.t("forms.add")} onClick={() => this.setState({dialogOpen: true})}/>
-                        {value && <Button warningButton={true} onClick={() => this.onInternalChange(null)}/>}
+                        {value && <Button warningButton={true} onClick={this.confirmDelete}/>}
                     </div>
                 </section>
                 {!isEmpty(error) && <span className="error">{error}</span>}
@@ -53,6 +69,7 @@ export default class CroppedImageField extends React.PureComponent {
             </div>
         );
     }
+
 }
 
 CroppedImageField.propTypes = {

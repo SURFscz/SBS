@@ -7,21 +7,19 @@ section.copy-to-clipboard {
     font-size: 16px;
     color: $medium-blue;
     display: flex;
-    cursor: pointer;
 
     &.right {
-        margin-left: auto;
+        margin-left: 15px;
     }
 
     svg.fa-copy {
         margin: auto;
+        cursor: pointer;
     }
 
-    &.copied {
-        svg {
-            animation: pulse .8s;
-            animation-iteration-count: 1;
-        }
+    svg.copied {
+        animation: pulse .8s;
+        animation-iteration-count: 1;
 
         @keyframes pulse {
             0% {

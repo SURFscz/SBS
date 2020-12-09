@@ -126,8 +126,7 @@ class CollaborationForm extends React.Component {
 
     updateBreadCrumb = (organisation, collaboration, autoCreateCollaborationRequest, isCollaborationRequest) => {
         const collaborationPath = collaboration ? {
-                path: "/collaborations/" + collaboration.id,
-                value: collaboration.name
+                path: `/organisations/${collaboration.organisation_id}`, value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name}),
             } :
             (isCollaborationRequest && !autoCreateCollaborationRequest) ? {
                     path: "/",
@@ -137,7 +136,7 @@ class CollaborationForm extends React.Component {
         AppStore.update(s => {
             const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
             if (organisation) {
-                paths.push({path: `/organisations/${organisation.value}`, value: organisation.label});
+                paths.push({path: `/organisations/${organisation.value}`, value: I18n.t("breadcrumb.organisation", {name: organisation.label})});
             }
             paths.push(collaborationPath);
             if (collaboration) {
@@ -464,6 +463,7 @@ class CollaborationForm extends React.Component {
                                      () => {
                                          this.validateCollaborationName({target: {value: this.state.name}});
                                          this.validateCollaborationShortName({target: {value: this.state.short_name}});
+                                         this.updateBreadCrumb(selectedOption, null, false, false);
                                      })}
                                  searchable={false}
                                  disabled={organisations.length === 1}

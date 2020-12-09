@@ -6,6 +6,13 @@
     width: 100%;
     margin: 0 auto;
 
+    h1 {
+        margin: 15px 0;
+        font-size: 28px;
+        font-weight: bold;
+        color: $primary-orange;
+    }
+
     .new-collaboration-invitation {
         margin-bottom: 25px;
 
