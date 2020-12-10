@@ -41,8 +41,7 @@ class ServiceDetail extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {value: I18n.t("breadcrumb.services")},
-                            {value: service.name}
+                            {path: `/services/${service.id}`, value: I18n.t("breadcrumb.service", {name: service.name})},
                         ];
                     });
                     this.tabChanged(tab, service.id);
@@ -139,6 +138,7 @@ class ServiceDetail extends React.Component {
                             mayEdit={user.admin}
                             history={user.admin && this.props.history}
                             auditLogPath={`services/${service.id}`}
+                            breadcrumbName={I18n.t("breadcrumb.service", {name: service.name})}
                             name={service.name}
                             onEdit={() => this.props.history.push("/edit-service/" + service.id)}>
                     <p>{service.description}</p>

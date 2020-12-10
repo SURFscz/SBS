@@ -281,6 +281,7 @@ class CollaborationDetail extends React.Component {
                            firstTime={user.admin ? this.onBoarding : undefined}
                            history={(user.admin && allowedToEdit) && this.props.history}
                            auditLogPath={`collaborations/${collaboration.id}`}
+                           breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
                            name={collaboration.name}
                            onEdit={() => this.props.history.push("/edit-collaboration/" + collaboration.id)}>
             <p>{collaboration.description}</p>

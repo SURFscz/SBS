@@ -238,7 +238,6 @@ class OrganisationForm extends React.Component {
             <div className="mod-new-organisation-container">
                     {isNew && <UnitHeader obj={({name: I18n.t("models.organisations.new"), svg: OrganisationsIcon})}/>}
                     {!isNew && <UnitHeader obj={organisation}
-                        // auditLogPath={`organisations/${organisation.id}`}
                                            name={organisation.name}
                                            history={user.admin && this.props.history}
                                            mayEdit={false}/>}

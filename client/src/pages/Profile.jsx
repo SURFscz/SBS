@@ -2,23 +2,13 @@ import React from "react";
 import {health} from "../api";
 import I18n from "i18n-js";
 import "./Profile.scss";
-import Tabs from "../components/Tabs";
 import {AppStore} from "../stores/AppStore";
-import {ReactComponent as HomeIcon} from "../icons/home.svg";
 import {ReactComponent as PersonIcon} from "../icons/personal_info.svg";
 
 import UnitHeader from "../components/redesign/UnitHeader";
 import Me from "./Me";
 
 class Profile extends React.Component {
-
-    constructor(props, context) {
-        super(props, context);
-        this.state = {
-            tabs: [],
-            tab: "me"
-        };
-    }
 
     componentDidMount = () => {
         health().then(() => {
@@ -29,24 +19,11 @@ class Profile extends React.Component {
                     {path: "", value: user.name}
                 ];
             });
-            this.setState({tabs: [this.getMeTab()]})
         })
     };
 
-    getMeTab = () => {
-        return (<div key="me" name="me" label={I18n.t("home.tabs.me")}
-                     icon={<HomeIcon/>}>
-            <Me {...this.props}/>
-        </div>)
-    }
-
-
     render() {
-        const {
-            tabs, tab
-        } = this.state;
         const {user} = this.props;
-
         return (
             <div className="mod-user-profile">
                 <UnitHeader obj={({name: I18n.t("models.users.profile", {name: user.name}), svg: PersonIcon})}
@@ -56,9 +33,7 @@ class Profile extends React.Component {
                             name={user.name}>
                     <p>{I18n.t("models.users.subProfile")}</p>
                 </UnitHeader>
-                    <Tabs activeTab={tab}>
-                        {tabs}
-                    </Tabs>
+                <Me {...this.props}/>
             </div>);
     };
 

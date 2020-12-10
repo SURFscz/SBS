@@ -82,8 +82,7 @@ class Service extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {value: I18n.t("breadcrumb.services")},
-                            {value: I18n.t("breadcrumb.newService")}
+                            {value: I18n.t("breadcrumb.service", {name: I18n.t("breadcrumb.newService")})}
                         ];
                     });
                 }
@@ -109,9 +108,8 @@ class Service extends React.Component {
                         AppStore.update(s => {
                             s.breadcrumb.paths = [
                                 {path: "/", value: I18n.t("breadcrumb.home")},
-                                {value: I18n.t("breadcrumb.services")},
-                                {path: `/services/${res.id}`, value: res.name},
-                                {path: "/", value: I18n.t("home.edit")}
+                                {path: `/services/${res.id}`, value: I18n.t("breadcrumb.service", {name: res.name})},
+                                {value: I18n.t("home.edit")}
                             ];
                         });
                     });
@@ -473,7 +471,6 @@ class Service extends React.Component {
             <>
                 {isNew && <UnitHeader obj={({name: I18n.t("models.services.new"), svg: ServicesIcon})}/>}
                 {!isNew && <UnitHeader obj={service}
-                    // auditLogPath={`services/${service.id}`}
                                        name={service.name}
                                        history={user.admin && this.props.history}
                                        mayEdit={false}/>}

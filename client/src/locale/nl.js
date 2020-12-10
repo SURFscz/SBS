@@ -21,11 +21,12 @@ I18n.translations.nl = {
         home: "Home",
         registration: "Registratie",
         collaborations: "Samenwerkingen",
-        collaboration: "Samenwerking: {{name}}",
+        collaboration: "Samenwerking: <strong>{{name}}</strong>",
         organisations: "Organisaties",
-        organisation: "Organisatie: {{name}}",
+        organisation: "Organisatie: <strong>{{name}}</strong>",
         services: "Diensten",
-        service: "Dienst: {{name}}",
+        service: "Dienst: <strong>{{name}}</strong>",
+        group: "Groep: <strong>{{name}}</strong>",
         profile: "Profiel",
         aup: "AUP",
         history: "Geschiedenis",
@@ -1206,7 +1207,7 @@ I18n.translations.nl = {
         confirmAccount: "Start verification"
     },
     inputField: {
-        fileImport: "Bestand inlezen",
+        fileImport: "Upload",
     },
     confirmationDialog: {
         title: "Bevestig actie",
