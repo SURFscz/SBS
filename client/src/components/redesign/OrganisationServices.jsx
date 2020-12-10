@@ -13,6 +13,7 @@ import ToggleSwitch from "./ToggleSwitch";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
+import MissingServices from "../MissingServices";
 
 class OrganisationServices extends React.Component {
 
@@ -126,7 +127,7 @@ class OrganisationServices extends React.Component {
             }]
         const titleUsed = I18n.t(`models.services.titleUsedOrg`, {count: organisation.services.length});
         return (
-            <div>
+            <div className="organisation-services">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     isWarning={true}
@@ -144,6 +145,7 @@ class OrganisationServices extends React.Component {
                           explain={<OrganisationServicesExplanation/>}
                           explainTitle={I18n.t("explain.services")}
                           {...this.props}/>
+                <MissingServices nbrServices={services.length}/>
             </div>
         )
     }

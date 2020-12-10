@@ -125,27 +125,28 @@ class CollaborationForm extends React.Component {
     };
 
     updateBreadCrumb = (organisation, collaboration, autoCreateCollaborationRequest, isCollaborationRequest) => {
-        const collaborationPath = collaboration ? {
-                path: `/organisations/${collaboration.organisation_id}`,
-                value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name}),
-            } :
-            (isCollaborationRequest && !autoCreateCollaborationRequest) ? {
-                    path: "/",
-                    value: I18n.t("breadcrumb.newCollaborationRequest")
-                } :
-                {path: "/", value: I18n.t("breadcrumb.newCollaboration")}
+        const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
+        if (organisation) {
+            paths.push({
+                    path: `/organisations/${collaboration.organisation_id}`,
+                    value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
+                })
+        }
+        if (collaboration) {
+            paths.push({
+                path: `/collaboration/${collaboration.id}`,
+                value: I18n.t("breadcrumb.collaboration", {name: collaboration.name}),
+            })
+            paths.push({path: "/", value: I18n.t("breadcrumb.editCollaboration")})
+        } else if (isCollaborationRequest && !autoCreateCollaborationRequest) {
+            paths.push({
+                path: "/",
+                value: I18n.t("breadcrumb.newCollaborationRequest")
+            });
+        } else {
+            paths.push({path: "/", value: I18n.t("breadcrumb.newCollaboration")});
+        }
         AppStore.update(s => {
-            const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
-            if (organisation) {
-                paths.push({
-                    path: `/organisations/${organisation.value}`,
-                    value: I18n.t("breadcrumb.organisation", {name: organisation.label})
-                });
-            }
-            paths.push(collaborationPath);
-            if (collaboration) {
-                paths.push({path: "/", value: I18n.t("breadcrumb.editCollaboration")})
-            }
             s.breadcrumb.paths = paths;
         });
     }

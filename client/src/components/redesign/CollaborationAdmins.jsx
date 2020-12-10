@@ -6,7 +6,6 @@ import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.
 import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
 import CheckBox from "../CheckBox";
 import {
-    createCollaborationMembershipRole,
     deleteCollaborationMembership,
     invitationDelete,
     invitationResend,
@@ -203,8 +202,7 @@ class CollaborationAdmins extends React.Component {
         });
     }
 
-    actionButtons = (collaboration, isAdminOfCollaboration, selectedMembers, filteredEntities, members, currentUser) => {
-        const isMember = members.some(m => m.user.id === currentUser.id);
+    actionButtons = (collaboration, isAdminOfCollaboration, selectedMembers, filteredEntities) => {
         const any = filteredEntities.length !== 0;
         const selected = Object.values(selectedMembers)
             .filter(v => v.selected)
@@ -229,15 +227,6 @@ class CollaborationAdmins extends React.Component {
                 }}>
                     {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
                 </a>}
-                {(!isMember && isAdminOfCollaboration) &&
-                <Button className="right" txt={I18n.t("collaborationDetail.addMe")} onClick={() => {
-                    this.setState({loading: true});
-                    createCollaborationMembershipRole(this.props.collaboration.id).then(() => {
-                        this.props.refreshUser(() => this.props.refresh(this.componentDidMount));
-                        setFlash(I18n.t("collaborationDetail.flash.meAdded", {name: this.props.collaboration.name}));
-                    })
-                }
-                }/>}
             </div>);
     }
 
@@ -259,46 +248,10 @@ class CollaborationAdmins extends React.Component {
         );
     }
 
-    doDeleteMe = () => {
-        this.setState({confirmationDialogOpen: false, loading: true});
-        const {collaboration, user} = this.props;
-        deleteCollaborationMembership(collaboration.id, user.id)
-            .then(() => {
-                const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id)
-                this.props.refreshUser(() => {
-                    if (canStay) {
-                        this.refreshAndFlash(Promise.resolve(),
-                            I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}),
-                            () => this.setState({confirmationDialogOpen: false, loading: false}));
-                    } else {
-                        this.props.history.push("/home");
-                    }
-                })
-            });
-    };
-
-    deleteMe = () => {
-        const {collaboration, user} = this.props;
-        const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id);
-        if (canStay) {
-            this.doDeleteMe()
-        } else {
-            this.setState({
-                confirmationDialogOpen: true,
-                confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
-                confirmationDialogAction: this.doDeleteMe
-            });
-        }
-    };
-
     getImpersonateMapper = entity => {
         const {user: currentUser, showMemberView} = this.props;
         if (entity.invite) {
             return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
-        }
-        if (entity.user.id === currentUser.id) {
-            return <Button className="warning" onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")}
-                           small={true}/>
         }
         if (!currentUser.admin || entity.user.id === currentUser.id || showMemberView) {
             return null;
@@ -519,7 +472,7 @@ class CollaborationAdmins extends React.Component {
                           rowLinkMapper={entity => entity.invite && this.gotoInvitation}
                           showNew={isAdminOfCollaboration}
                           filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees, isAdminOfCollaboration)}
-                          actions={this.actionButtons(collaboration, isAdminOfCollaboration, selectedMembers, filteredEntities, members, currentUser)}
+                          actions={this.actionButtons(collaboration, isAdminOfCollaboration, selectedMembers, filteredEntities)}
                           newEntityPath={`/new-invite/${collaboration.id}?isAdminView=${isAdminView}`}
                           {...this.props}/>
             </>

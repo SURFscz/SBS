@@ -6,28 +6,16 @@ import {logout} from "../../utils/Login";
 
 const adminLinks = ["system", "impersonate"]
 
-//https://stackoverflow.com/questions/32553158/detect-click-outside-react-component<Tabs
 class UserMenu extends React.Component {
 
-    handleClick = e => {
-        if (!this.node.contains(e.target)) {
-            return setTimeout(this.props.close, 250);
-        }
-        return true;
-    }
-
     componentDidMount() {
-        document.addEventListener("mousedown", this.handleClick);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener("mousedown", this.handleClick);
+        this.ref.focus();
     }
 
     render() {
         const {currentUser} = this.props;
         return (
-            <div className="user-menu" ref={node => this.node = node}>
+            <div className="user-menu" ref={ref => this.ref = ref} tabIndex={1} onBlur={() => setTimeout(this.props.close, 250)}>
                 <ul>
                     {currentUser.admin && adminLinks.map(l => <li key={l}>
                         <Link onClick={this.props.close} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>

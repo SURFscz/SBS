@@ -60,7 +60,7 @@ export default class CroppedImageField extends React.PureComponent {
                         {value && <Logo className="cropped-img" src={value}/>}
                     </div>}
                     <div className="file-upload-actions">
-                        <Button txt={I18n.t("forms.add")} onClick={() => this.setState({dialogOpen: true})}/>
+                        <Button txt={value ? I18n.t("forms.change") : I18n.t("forms.add")} onClick={() => this.setState({dialogOpen: true})}/>
                         {value && <Button warningButton={true} onClick={this.confirmDelete}/>}
                     </div>
                 </section>

@@ -98,6 +98,7 @@ I18n.translations.nl = {
         yes: "Ja",
         upload: "Upload afbeelding",
         add: "Voeg een afbeelding toe",
+        change: "Verander afbeelding",
         image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB",
         dragImage: "Versleep de croperea en pas de grootte aan totdat je tevreden bent met het resultaat. Druk vervolgens op opslaan",
         imageToLarge: "Afbeelding is groter 512KB",
@@ -180,7 +181,8 @@ I18n.translations.nl = {
                 add: "Are you sure you want to make {{service}} available for all members of {{name}}?",
                 remove: "Are you sure you want to remove {{service}} from {{name}}?",
                 check: "I have read and agree with the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}"
-            }
+            },
+            missingServices: "<a href=\"mailto:sram-beheer@surf.nl\">Stuur ons een verzoek </a> als je denkt dat een specifieke service ontbreekt en moet worden vermeld."
         },
         collaborations: {
             title: "Samenwerkingen",

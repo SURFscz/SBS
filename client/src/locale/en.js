@@ -98,6 +98,7 @@ I18n.translations.en = {
         yes: "Yes",
         upload: "Upload image",
         add: "Add an image",
+        change: "Change image",
         image: "Image must at least be 300x120 pixels and smaller then 2MB.",
         dragImage: "Drag and resize the croperea until you're happy with the result. Then hit save.",
         imageToLarge: "Image is larger then 2MB.",
@@ -149,7 +150,8 @@ I18n.translations.en = {
             name: "Name",
             memberCount: "Members",
             collaborationCount: "Collaborations",
-            category: "Category"
+            category: "Category",
+            leave: "Leave ORG"
         },
         services: {
             title: "Services",
@@ -180,7 +182,8 @@ I18n.translations.en = {
                 add: "Are you sure you want to make {{service}} available for all members of {{name}}?",
                 remove: "Are you sure you want to remove {{service}} from {{name}}?",
                 check: "I have read and agree with the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}"
-            }
+            },
+            missingServices: "<a href=\"mailto:sram-beheer@surf.nl\">Send us your request</a> if you think a specific service is missing and should be listed."
         },
         collaborations: {
             title: "Collaborations",
@@ -281,7 +284,7 @@ I18n.translations.en = {
             viewAsAdmin: "View as admin",
             discloseNoMemberInformation: "This collaboration discloses no member information",
             newCollaborationRequest: "Request collaboration",
-            leave: "Leave"
+            leave: "Leave CO"
         },
         apiKeys: {
             title: "API Keys",
@@ -557,7 +560,7 @@ I18n.translations.en = {
             actions: ""
         },
         invite: "Invite new members",
-        addMe: "Add me"
+        addMe: "Add me to this CO"
 
     },
     organisations: {
@@ -1263,7 +1266,6 @@ I18n.translations.en = {
         runDbSeed: "Run",
         seedResult: "Test data is successfully inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache."
     },
-
     access: {
         full: "Full",
         limited: "Limited",
@@ -1276,6 +1278,14 @@ I18n.translations.en = {
         coMember: "Collaboration member",
         serviceUser: "Service user",
         user: "User"
+    },
+    actionRoles: {
+        title: "You're {{role}}",
+        orgAdmin: " ORG admin",
+        orgManager: " ORG manager",
+        coAdmin: " CO admin",
+        coMember: " ORG manager",
+        platformAdmin: " platform manager"
     },
     welcomeDialog: {
         title: "Welcome to {{name}}",

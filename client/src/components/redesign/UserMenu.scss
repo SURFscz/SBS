@@ -12,6 +12,10 @@
     border-radius: 4px;
     box-shadow: 0 1px 0 1px $lighter-grey;
 
+    &:focus {
+        outline: none;
+    }
+
     li {
         &:hover {
             background-color: $lightest-grey;
@@ -24,7 +28,7 @@
         a {
             width: 100%;
             padding: 15px 5px 15px 10px;
-            color: $dark-grey;
+            color: $darker-grey;
             text-decoration: none;
             display: inline-block;
 
