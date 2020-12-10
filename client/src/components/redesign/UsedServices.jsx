@@ -20,6 +20,7 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import ServicesExplanation from "../explanations/Services";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
+import MissingServices from "../MissingServices";
 
 class UsedServices extends React.Component {
 
@@ -311,6 +312,7 @@ class UsedServices extends React.Component {
                           loading={loading} t
                           itle={titleAvailable}
                           {...this.props}/>
+                <MissingServices nbrServices={services.length}/>
             </div>
         )
     }

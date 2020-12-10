@@ -3,6 +3,8 @@ import {
     collaborationAccessAllowed,
     collaborationById,
     collaborationLiteById,
+    createCollaborationMembershipRole,
+    deleteCollaborationMembership,
     health,
     organisationByUserSchacHomeOrganisation
 } from "../api";
@@ -25,10 +27,12 @@ import UsedServices from "../components/redesign/UsedServices";
 import Groups from "../components/redesign/Groups";
 import AboutCollaboration from "../components/redesign/AboutCollaboration";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {isUserAllowed, ROLES} from "../utils/UserRole";
+import {actionMenuUserRole, isUserAllowed, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
 import WelcomeDialog from "../components/WelcomeDialog";
 import JoinRequests from "../components/redesign/JoinRequests";
+import {setFlash} from "../utils/Flash";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 
 class CollaborationDetail extends React.Component {
@@ -49,7 +53,11 @@ class CollaborationDetail extends React.Component {
             loading: true,
             firstTime: false,
             tab: "admins",
-            tabs: []
+            tabs: [],
+            confirmationDialogOpen: false,
+            confirmationDialogAction: () => true,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationQuestion: "",
         }
     }
 
@@ -103,7 +111,10 @@ class CollaborationDetail extends React.Component {
         AppStore.update(s => {
             s.breadcrumb.paths = orgManager ? [
                 {path: "/", value: I18n.t("breadcrumb.home")},
-                {path: `/organisations/${collaboration.organisation_id}`, value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})},
+                {
+                    path: `/organisations/${collaboration.organisation_id}`,
+                    value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
+                },
                 {value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
             ] : [
                 {path: "/", value: I18n.t("breadcrumb.home")},
@@ -216,6 +227,40 @@ class CollaborationDetail extends React.Component {
         </div>);
     }
 
+    doDeleteMe = () => {
+        this.setState({confirmationDialogOpen: false, loading: true});
+        const {user} = this.props;
+        const {collaboration} = this.state;
+        this.setState({loading: true});
+        deleteCollaborationMembership(collaboration.id, user.id)
+            .then(() => {
+                this.componentDidMount(() => {
+                    const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id)
+                    if (canStay) {
+                        setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}));
+                        this.setState({confirmationDialogOpen: false, loading: false})
+                    } else {
+                        this.props.history.push("/home");
+                    }
+                })
+            });
+    };
+
+    deleteMe = () => {
+        const {user} = this.props;
+        const {collaboration} = this.state;
+        const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id);
+        if (canStay) {
+            this.doDeleteMe();
+        } else {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
+                confirmationDialogAction: this.doDeleteMe
+            });
+        }
+    };
+
     tabChanged = (name, id) => {
         const collId = id || this.state.collaboration.id;
         this.setState({tab: name}, () =>
@@ -245,9 +290,11 @@ class CollaborationDetail extends React.Component {
         this.props.history.push(`/new-collaboration?organisationId=${collaboration.organisation_id}`);
     }
 
-    getUnitHeaderForMemberNew = (collaboration) => {
+    getUnitHeaderForMemberNew = (user, collaboration, allowedToEdit, showMemberView) => {
         return <UnitHeader obj={collaboration}
                            mayEdit={false}
+                           dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
+                           actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}
                            name={collaboration.name}>
             <section className="unit-info">
                 {/*<p>{collaboration.description}</p>*/}
@@ -274,16 +321,54 @@ class CollaborationDetail extends React.Component {
         </UnitHeader>;
     }
 
+    getActions = (user, collaboration, allowedToEdit, showMemberView) => {
+        const actions = [];
+        if (allowedToEdit && showMemberView) {
+            actions.push({
+                icon: "pencil-alt",
+                name: I18n.t("home.edit"),
+                perform: () => this.props.history.push("/edit-collaboration/" + collaboration.id)
+            });
+        }
+        const isMember = collaboration.collaboration_memberships.some(m => m.user.id === user.id);
+        if (isMember) {
+            actions.push({
+                icon: "trash",
+                name: I18n.t("models.collaboration.leave"),
+                perform: this.deleteMe
+            });
+        }
+        const isAdminOfCollaboration = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
+        if (!isMember && isAdminOfCollaboration && showMemberView) {
+            actions.push({
+                icon: "plus-circle",
+                name: I18n.t("collaborationDetail.addMe"),
+                perform: this.addMe
+            })
+        }
+        return actions;
+    }
 
-    getUnitHeader = (user, collaboration, allowedToEdit) => {
+    addMe = () => {
+        const {collaboration} = this.state;
+        this.setState({loading: true});
+        createCollaborationMembershipRole(collaboration.id).then(() => {
+            this.componentDidMount(() => {
+                this.setState({loading: false});
+                setFlash(I18n.t("collaborationDetail.flash.meAdded", {name: collaboration.name}));
+            })
+        })
+    }
+
+    getUnitHeader = (user, collaboration, allowedToEdit, showMemberView) => {
         return <UnitHeader obj={collaboration}
-                           mayEdit={allowedToEdit}
                            firstTime={user.admin ? this.onBoarding : undefined}
                            history={(user.admin && allowedToEdit) && this.props.history}
                            auditLogPath={`collaborations/${collaboration.id}`}
                            breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
                            name={collaboration.name}
-                           onEdit={() => this.props.history.push("/edit-collaboration/" + collaboration.id)}>
+                           dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
+                           actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}>
             <p>{collaboration.description}</p>
             <div className="org-attributes-container">
                 <div className="org-attributes">
@@ -300,7 +385,8 @@ class CollaborationDetail extends React.Component {
 
     render() {
         const {
-            collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime
+            collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime,
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -309,15 +395,20 @@ class CollaborationDetail extends React.Component {
         const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
         return (
             <>
-                {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit)}
-                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(collaboration)}
+                {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit, showMemberView)}
+                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView)}
 
-                {<WelcomeDialog name={collaboration.name} isOpen={firstTime}
-                                role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
-                                isOrganisation={false}
-                                isAdmin={user.admin}
-                                close={() => this.setState({firstTime: false})}/>}
+                <WelcomeDialog name={collaboration.name} isOpen={firstTime}
+                               role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
+                               isOrganisation={false}
+                               isAdmin={user.admin}
+                               close={() => this.setState({firstTime: false})}/>
 
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    isWarning={true}
+                                    question={confirmationQuestion}/>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>

@@ -64,8 +64,8 @@ class System extends React.Component {
             const d = new Date();
             dbSeed().then(() => {
                 this.setState({
-                    busy: false, seedResult: I18n.t("system.seedResult",
-                        {ms: new Date().getMilliseconds() - d.getMilliseconds()})
+                    busy: false,
+                    seedResult: I18n.t("system.seedResult",{ms: new Date().getMilliseconds() - d.getMilliseconds()})
                 });
             });
         }

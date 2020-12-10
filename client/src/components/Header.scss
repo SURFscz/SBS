@@ -4,7 +4,7 @@
 
     background: $light-orange;
     margin: 0 auto;
-    color: white;
+    color: black;
 
     .header {
         max-width: $medium;
@@ -58,7 +58,7 @@
             display: flex;
             align-items: center;
             padding: 5px 12px;
-            color: white;
+            color: black;
             font-weight: bold;
 
             @media (max-width: $tablet-max) {
