@@ -10,7 +10,6 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
 
 import "./NewInvitation.scss"
@@ -22,6 +21,7 @@ import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
+import EmailField from "../components/EmailField";
 
 class NewInvitation extends React.Component {
 
@@ -84,12 +84,21 @@ class NewInvitation extends React.Component {
         AppStore.update(s => {
             s.breadcrumb.paths = orgManager ? [
                 {path: "/", value: I18n.t("breadcrumb.home")},
-                {path: `/organisations/${collaboration.organisation_id}`, value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})},
-                {path: `/collaborations/${collaboration.id}`, value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})},
+                {
+                    path: `/organisations/${collaboration.organisation_id}`,
+                    value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
+                },
+                {
+                    path: `/collaborations/${collaboration.id}`,
+                    value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})
+                },
                 {value: I18n.t("breadcrumb.invite")}
             ] : [
                 {path: "/", value: I18n.t("breadcrumb.home")},
-                {path: `/collaborations/${collaboration.id}`, value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})},
+                {
+                    path: `/collaborations/${collaboration.id}`,
+                    value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})
+                },
                 {value: I18n.t("breadcrumb.invite")}
             ];
         });
@@ -232,39 +241,12 @@ class NewInvitation extends React.Component {
                       intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup) =>
         <div className={"invitation-form"}>
 
-            <InputField value={email} onChange={e => this.setState({email: e.target.value})}
-                        placeholder={I18n.t("invitation.inviteesPlaceholder")}
-                        name={I18n.t("invitation.invitees")}
-                        toolTip={I18n.t("invitation.inviteesMessagesTooltip")}
-                        onBlur={this.addEmail}
-                        onEnter={this.addEmail}
-                        fileInputKey={fileInputKey}
-                        fileUpload={false}
-                        multiline={true}
-                        fileName={fileName}
-                        onFileRemoval={this.onFileRemoval}
-                        onFileUpload={this.onFileUpload}/>
-            {fileTypeError &&
-            <span
-                className="error">{I18n.t("invitation.fileExtensionError")}</span>}
-
-            {(fileName && !fileTypeError) &&
-            <span className="info-msg">{I18n.t("invitation.fileImportResult", {
-                nbr: fileEmails.length,
-                fileName: fileName
-            })}</span>}
-
+            <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
+                        addEmail={this.addEmail} removeMail={this.removeMail} name={I18n.t("invitation.invitees")}
+                        emails={administrators}/>
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
             <span
                 className="error">{I18n.t("invitation.requiredEmail")}</span>}
-
-            <section className="email-tags">
-                {administrators.map(mail =>
-                    <div key={mail} className="email-tag">
-                        <span>{mail}</span>
-                        <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
-                    </div>)}
-            </section>
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}

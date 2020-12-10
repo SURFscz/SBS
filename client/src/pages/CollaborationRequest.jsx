@@ -71,7 +71,7 @@ class CollaborationRequest extends React.Component {
                         {path: "/", value: I18n.t("breadcrumb.home")},
                         {
                             path: `/organisations/${collaborationRequest.organisation.value}`,
-                            value: collaborationRequest.organisation.label
+                            value: I18n.t("breadcrumb.organisation", {name: collaborationRequest.organisation.label})
                         },
                         {path: "/", value: collaborationRequest.name}
                     ];

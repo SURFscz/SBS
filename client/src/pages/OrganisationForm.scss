@@ -31,42 +31,6 @@
                 font-size: 14px;
             }
 
-            section.email-tags {
-                display: flex;
-                align-items: center;
-                flex-wrap: wrap;
-
-                .email-tag {
-                    border: 1px solid $lighter-grey;
-                    border-radius: $br;
-                    margin: 10px 10px 0 0;
-                    display: flex;
-                    align-content: center;
-                    align-items: center;
-                    background-color: $lightest-grey;
-
-                    span {
-                        &:first-child {
-                            padding: 8px 14px;
-                            word-break: break-all;
-                        }
-
-                        &:last-child {
-                            padding: 8px 14px;
-                            cursor: pointer;
-                            font-size: 14px;
-                            color: $red;
-
-                            &.disabled {
-                                cursor: not-allowed;
-                                color: $primary-orange;
-
-                            }
-                        }
-                    }
-                }
-            }
-
         }
     }
 }

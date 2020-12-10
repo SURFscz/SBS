@@ -10,7 +10,6 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
 import "./NewOrganisationInvitation.scss"
 import DateField from "../components/DateField";
@@ -20,6 +19,7 @@ import {organisationRoles} from "../forms/constants";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import SpinnerField from "../components/redesign/SpinnerField";
+import EmailField from "../components/EmailField";
 
 class NewOrganisationInvitation extends React.Component {
 
@@ -195,40 +195,13 @@ class NewOrganisationInvitation extends React.Component {
     invitationForm = (organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
                       disabledSubmit, intended_role) =>
         <div className={"invitation-form"}>
-            <InputField value={email}
-                        onChange={e => this.setState({email: e.target.value})}
-                        placeholder={I18n.t("organisation.administratorsPlaceholder")}
-                        name={I18n.t("organisation.administrators")}
-                        toolTip={I18n.t("organisation.administratorsTooltip")}
-                        onBlur={this.addEmail}
-                        onEnter={this.addEmail}
-                        fileUpload={false}
-                        fileInputKey={fileInputKey}
-                        fileName={fileName}
-                        multiline={true}
-                        onFileRemoval={this.onFileRemoval}
-                        onFileUpload={this.onFileUpload}/>
-            {fileTypeError &&
-            <span
-                className="error">{I18n.t("organisationInvitation.fileExtensionError")}</span>}
-
-            {(fileName && !fileTypeError) &&
-            <span className="info-msg">{I18n.t("organisationInvitation.fileImportResult", {
-                nbr: fileEmails.length,
-                fileName: fileName
-            })}</span>}
+            <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
+                        addEmail={this.addEmail} removeMail={this.removeMail} name={I18n.t("invitation.invitees")}
+                        emails={administrators}/>
 
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
             <span
                 className="error">{I18n.t("organisationInvitation.requiredAdministrator")}</span>}
-
-            <section className="email-tags">
-                {administrators.map(mail =>
-                    <div key={mail} className="email-tag">
-                        <span>{mail}</span>
-                        <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
-                    </div>)}
-            </section>
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}

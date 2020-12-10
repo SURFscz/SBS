@@ -28,6 +28,7 @@ import moment from "moment";
 import {sanitizeShortName, shortNameDisabled} from "../../validations/regExps";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import ClipBoardCopy from "./ClipBoardCopy";
+import {AppStore} from "../../stores/AppStore";
 
 class Groups extends React.Component {
 
@@ -99,6 +100,12 @@ class Groups extends React.Component {
     cancelSideScreen = e => {
         stopEvent(e);
         this.setState({selectedGroupId: null, createNewGroup: false, editGroup: false});
+        AppStore.update(s => {
+                const paths = s.breadcrumb.paths.slice(0, s.breadcrumb.paths.length - 1);
+                const lastPath = paths[paths.length - 1];
+                lastPath.path = null;
+                s.breadcrumb.paths = paths;
+            });
     }
 
     validateGroupName = e => {
@@ -184,7 +191,7 @@ class Groups extends React.Component {
                 options={options}
             />
         </div> : null;
-        const queryParam = `name=${encodeURIComponent(selectedGroup.name)}&back=${encodeURIComponent(window.location.pathname)}`;
+        const queryParam = `name=${encodeURIComponent(I18n.t("breadcrumb.group", {name:selectedGroup.name}))}&back=${encodeURIComponent(window.location.pathname)}`;
         const children = (
             <div className={"group-details"}>
                 <section className="header">
@@ -418,6 +425,16 @@ class Groups extends React.Component {
     gotoGroup = group => e => {
         stopEvent(e);
         this.setState({selectedGroupId: group.id, createNewGroup: false, editGroup: false});
+        AppStore.update(s => {
+                const {collaboration} = this.props;
+                const paths = s.breadcrumb.paths;
+                const lastPath = paths[paths.length - 1];
+                lastPath.path = `/collaborations/${collaboration.id}`
+                paths.push({
+                    value: I18n.t("breadcrumb.group", {name: group.name})
+                })
+                s.breadcrumb.paths = paths;
+            });
     }
 
     render() {

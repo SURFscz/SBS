@@ -47,12 +47,12 @@ table.servicesUsed, table.servicesAvailable {
     a.back-to-services {
         display: flex;
         align-items: flex-start;
-        color: $dark-grey;
+        color: $blue;
         text-decoration: underline;
 
         svg {
             margin-right: 5px;
-            fill: $dark-grey;
+            fill: $blue;
             height: 22px;
         }
     }

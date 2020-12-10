@@ -154,6 +154,7 @@ class OrganisationDetail extends React.Component {
                 <UnitHeader obj={organisation} mayEdit={adminOfOrganisation}
                             history={user.admin && this.props.history}
                             auditLogPath={`organisations/${organisation.id}`}
+                            breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
                             onEdit={() => this.props.history.push("/edit-organisation/" + organisation.id)}>

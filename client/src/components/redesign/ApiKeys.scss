@@ -41,13 +41,13 @@ table.apiKeys {
         display: flex;
         align-items: flex-start;
         white-space: nowrap;
-        color: $dark-grey;
+        color: $blue;
         text-decoration: underline;
         margin-right: 60px;
 
         svg {
             margin-right: 5px;
-            fill: $dark-grey;
+            fill: $blue;
             height: 22px;
         }
     }

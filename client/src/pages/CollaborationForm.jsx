@@ -17,7 +17,6 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
@@ -27,6 +26,7 @@ import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg"
 import {AppStore} from "../stores/AppStore";
 import SpinnerField from "../components/redesign/SpinnerField";
 import CroppedImageField from "../components/redesign/CroppedImageField";
+import EmailField from "../components/EmailField";
 
 class CollaborationForm extends React.Component {
 
@@ -126,7 +126,8 @@ class CollaborationForm extends React.Component {
 
     updateBreadCrumb = (organisation, collaboration, autoCreateCollaborationRequest, isCollaborationRequest) => {
         const collaborationPath = collaboration ? {
-                path: `/organisations/${collaboration.organisation_id}`, value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name}),
+                path: `/organisations/${collaboration.organisation_id}`,
+                value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name}),
             } :
             (isCollaborationRequest && !autoCreateCollaborationRequest) ? {
                     path: "/",
@@ -136,7 +137,10 @@ class CollaborationForm extends React.Component {
         AppStore.update(s => {
             const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
             if (organisation) {
-                paths.push({path: `/organisations/${organisation.value}`, value: I18n.t("breadcrumb.organisation", {name: organisation.label})});
+                paths.push({
+                    path: `/organisations/${organisation.value}`,
+                    value: I18n.t("breadcrumb.organisation", {name: organisation.label})
+                });
             }
             paths.push(collaborationPath);
             if (collaboration) {
@@ -203,9 +207,21 @@ class CollaborationForm extends React.Component {
         if (this.isValid()) {
             this.setState({loading: true});
             const {
-                name, short_name, description, logo, website_url,
-                administrators, message, accepted_user_policy, organisation, isCollaborationRequest,
-                services_restricted, disable_join_requests, current_user_admin, disclose_member_information, disclose_email_information
+                name,
+                short_name,
+                description,
+                logo,
+                website_url,
+                administrators,
+                message,
+                accepted_user_policy,
+                organisation,
+                isCollaborationRequest,
+                services_restricted,
+                disable_join_requests,
+                current_user_admin,
+                disclose_member_information,
+                disclose_email_information
             } = this.state;
             const promise = isCollaborationRequest ? requestCollaboration : createCollaboration;
             promise({
@@ -247,9 +263,21 @@ class CollaborationForm extends React.Component {
         if (this.isValid()) {
             this.setState({loading: true});
             const {
-                name, short_name, description, website_url, logo, collaboration,
-                administrators, message, accepted_user_policy, organisation,
-                services_restricted, disable_join_requests, current_user_admin, disclose_member_information, disclose_email_information
+                name,
+                short_name,
+                description,
+                website_url,
+                logo,
+                collaboration,
+                administrators,
+                message,
+                accepted_user_policy,
+                organisation,
+                services_restricted,
+                disable_join_requests,
+                current_user_admin,
+                disclose_member_information,
+                disclose_email_information
             } = this.state;
             updateCollaboration({
                 id: collaboration.id,
@@ -320,16 +348,40 @@ class CollaborationForm extends React.Component {
 
     render() {
         const {
-            name, short_name, description, website_url, administrators, message, accepted_user_policy, organisation,
-            organisations, email, initial, alreadyExists, confirmationDialogOpen, confirmationDialogAction, cancelDialogAction,
-            leavePage, noOrganisations, isCollaborationRequest, services_restricted, disclose_member_information, disclose_email_information,
-            disable_join_requests, current_user_admin, logo, warning, isNew, collaboration, loading, autoCreateCollaborationRequest
+            name,
+            short_name,
+            description,
+            website_url,
+            administrators,
+            message,
+            accepted_user_policy,
+            organisation,
+            organisations,
+            email,
+            initial,
+            alreadyExists,
+            confirmationDialogOpen,
+            confirmationDialogAction,
+            cancelDialogAction,
+            leavePage,
+            noOrganisations,
+            isCollaborationRequest,
+            services_restricted,
+            disclose_member_information,
+            disclose_email_information,
+            disable_join_requests,
+            current_user_admin,
+            logo,
+            warning,
+            isNew,
+            collaboration,
+            loading,
+            autoCreateCollaborationRequest
         } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = !initial && !this.isValid();
-        const disabled = false;
         const {user} = this.props;
         if (noOrganisations) {
             return this.renderNoOrganisations(user);
@@ -341,7 +393,6 @@ class CollaborationForm extends React.Component {
                 {isNew &&
                 <UnitHeader obj={({name: unitHeaderName, svg: CollaborationsIcon})}/>}
                 {!isNew && <UnitHeader obj={collaboration}
-                    // auditLogPath={`collaborations/${collaboration.id}`}
                                        name={collaboration.name}
                                        history={user.admin && this.props.history}
                                        mayEdit={false}/>}
@@ -476,23 +527,11 @@ class CollaborationForm extends React.Component {
                     <div>
                         <h1 className="section-separator">{I18n.t("collaboration.invitations")}</h1>
 
-                        <InputField value={email} onChange={e => this.setState({email: e.target.value})}
-                                    placeholder={I18n.t("collaboration.administratorsPlaceholder")}
-                                    name={I18n.t("collaboration.administrators")}
-                                    toolTip={I18n.t("collaboration.administratorsTooltip")}
-                                    onBlur={this.addEmail}
-                                    onEnter={this.addEmail}/>
-
-                        <section className="email-tags">
-                            {administrators.map(mail =>
-                                <div key={mail} className="email-tag">
-                                    <span>{mail}</span>
-                                    {(disabled || mail === this.props.user.email) ?
-                                        <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :
-                                        <span onClick={this.removeMail(mail)}><FontAwesomeIcon
-                                            icon="times"/></span>}
-                                </div>)}
-                        </section>
+                        <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
+                                    addEmail={this.addEmail} removeMail={this.removeMail}
+                                    name={I18n.t("invitation.invitees")}
+                                    pinnedEmails={current_user_admin ? [this.props.user.email] : []}
+                                    emails={administrators}/>
                     </div>}
 
                     {isNew && <CheckBox name={I18n.t("collaboration.currentUserAdmin")}

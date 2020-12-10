@@ -7,9 +7,9 @@ import Logo from "./Logo";
 
 export default function UnitHeader(props) {
 
-    const {obj, mayEdit, onEdit, history, auditLogPath, name, svgClick, firstTime} = props;
+    const {obj, mayEdit, onEdit, history, auditLogPath, name, breadcrumbName, svgClick, firstTime} = props;
 
-    const queryParam = `name=${encodeURIComponent(name)}&back=${encodeURIComponent(window.location.pathname)}`;
+    const queryParam = `name=${encodeURIComponent(breadcrumbName || name)}&back=${encodeURIComponent(window.location.pathname)}`;
 
     return (
         <div className="unit-header-container">

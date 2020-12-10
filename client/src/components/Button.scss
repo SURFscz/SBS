@@ -24,6 +24,7 @@
     &:hover, &:visited {
         text-decoration: none;
     }
+
     &.small {
         min-width: initial;
     }
@@ -55,12 +56,15 @@
         min-width: initial;
 
         font-size: 22px;
+
         &:hover {
             color: darken($red, 10%);
         }
+
         &:disabled {
             color: $lighter-grey;
         }
+
         svg {
             margin: auto;
         }
@@ -94,18 +98,6 @@
         }
     }
 
-
-    &.disabled {
-        cursor: no-drop;
-        background-color: $lighter-grey;
-        color: white;
-
-        &:hover {
-            background-color: $lighter-grey;
-            color: white;
-        }
-    }
-
     &.warning {
         background-color: $red;
     }
@@ -119,6 +111,17 @@
         color: $blue;
         border: 1px solid $blue;
         background-color: white;
+    }
+
+    &.disabled {
+        cursor: no-drop;
+        background-color: $lighter-grey;
+        color: white;
+
+        &:hover {
+            background-color: $lighter-grey;
+            color: white;
+        }
     }
 
 }

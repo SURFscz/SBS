@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
+import {ReactComponent as CriticalIcon} from "../icons/critical.svg";
 import {
     validPublicSSH2KeyRegExp,
     validPublicSSHEd25519KeyRegExp,
@@ -21,10 +22,10 @@ class Me extends React.Component {
         const {user} = this.props;
         this.state = {
             confirmationDialogOpen: false,
-            confirmationDialogAction: () => true,
-            cancelDialogAction: () => true,
-            leavePage: true,
-            confirmationQuestion: "",
+            confirmationDialogAction: this.doDelete,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false, nameConfirmation: ""}),
+            confirmationQuestion: I18n.t("user.deleteConfirmation"),
+            nameConfirmation: "",
             isWarning: false,
             fileName: null,
             fileTypeError: false,
@@ -43,24 +44,9 @@ class Me extends React.Component {
         this.props.history.push(`/home`)
     };
 
-    cancel = () => {
-        this.setState({
-            confirmationDialogOpen: true,
-            leavePage: true,
-            cancelDialogAction: this.gotoHome,
-            isWarning: false,
-            confirmationQuestion: "",
-            confirmationDialogAction: () => this.setState({confirmationDialogOpen: false})
-        });
-    };
-
     delete = () => {
         this.setState({
             confirmationDialogOpen: true,
-            leavePage: false,
-            isWarning: true,
-            confirmationQuestion: I18n.t("user.deleteConfirmation"),
-            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationDialogAction: () => this.doDelete()
         });
     };
@@ -138,6 +124,7 @@ class Me extends React.Component {
         return (
             <div className="user-profile-tab-container">
                 <div className="user-profile-tab">
+                    <h1>{I18n.t("home.tabs.me")}</h1>
                     {attributes.map(attribute =>
                         <div className={"attributes"} key={attribute}>
                             <span className="attribute-key">{I18n.t(`profile.${attribute}`)}</span>
@@ -168,7 +155,6 @@ class Me extends React.Component {
                     <section className="actions">
                         <Button warningButton={true} txt={I18n.t("user.delete")}
                                 onClick={this.delete}/>
-                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                         <Button disabled={disabledSubmit} txt={I18n.t("user.update")}
                                 onClick={this.submit}/>
                     </section>
@@ -179,21 +165,32 @@ class Me extends React.Component {
 
     render() {
         const {
-            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, leavePage, confirmationQuestion, isWarning,
-            fileName, fileTypeError, fileInputKey, initial, convertSSHKey, ssh_key
+            confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, confirmationQuestion,
+            fileName, fileTypeError, fileInputKey, initial, convertSSHKey, ssh_key, nameConfirmation
         } = this.state;
         const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         const showConvertSSHKey = !isEmpty(ssh_key) && validPublicSSH2KeyRegExp.test(ssh_key);
-
+        const disabledConfirm = user.name !== nameConfirmation;
         return (
-            <div>
+            <div className="user-profile-mod">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     question={confirmationQuestion}
                                     confirm={confirmationDialogAction}
-                                    isWarning={isWarning}
-                                    leavePage={leavePage}/>
+                                    isWarning={true}
+                                    disabledConfirm={disabledConfirm}>
+                    <div className="confirmation-warning-container">
+                        <div className="confirmation-warning">
+                            <CriticalIcon/>
+                            <p>{I18n.t("user.deleteConfirmationWarning")}</p>
+                        </div>
+                        <p className="delete-confirmation-check">{I18n.t("user.deleteConfirmationCheck")}</p>
+                        <InputField name={I18n.t("profile.name")} value={nameConfirmation}
+                                    onChange={e => this.setState({nameConfirmation: e.target.value})}/>
+                    </div>
+                </ConfirmationDialog>
+
                 {this.renderForm(user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit)}
             </div>
         );

@@ -21,11 +21,12 @@ I18n.translations.en = {
         home: "Home",
         registration: "Registration",
         collaborations: "Collaborations",
-        collaboration: "Collaboration: {{name}}",
+        collaboration: "Collaboration: <strong>{{name}}</strong>",
         organisations: "Organisations",
-        organisation: "Organisation: {{name}}",
+        organisation: "Organisation: <strong>{{name}}</strong>",
         services: "Services",
         service: "Service: <strong>{{name}}<strong/>",
+        group: "Group: <strong>{{name}}</strong>",
         profile: "Profile",
         aup: "AUP",
         history: "History",
@@ -339,7 +340,9 @@ I18n.translations.en = {
             updated: "Your profile has been updated"
         },
         delete: "Delete",
-        deleteConfirmation: "Are you sure you want to delete your account? All your memberships will be deleted and there is no way to revert this afterwards."
+        deleteConfirmation: "Are you sure you want to delete your account for all eternity?",
+        deleteConfirmationWarning: "All your memberships will be deleted and there is no way to revert this afterwards.",
+        deleteConfirmationCheck: "If you wish to proceed, please type in your full name for confirmation."
     },
     impersonate: {
         title: "Who do you want to be?",
@@ -1205,7 +1208,7 @@ I18n.translations.en = {
         confirmAccount: "Start verification"
     },
     inputField: {
-        fileImport: "File import",
+        fileImport: "Upload",
     },
     confirmationDialog: {
         title: "Please confirm",
