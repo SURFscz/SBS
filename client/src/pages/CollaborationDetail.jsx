@@ -85,6 +85,7 @@ class CollaborationDetail extends React.Component {
                             adminOfCollaboration: adminOfCollaboration,
                             schacHomeOrganisation: schacHomeOrganisation,
                             loading: false,
+                            confirmationDialogOpen: false,
                             firstTime: firstTime,
                             tabs: this.getTabs(collaboration, schacHomeOrganisation, adminOfCollaboration, false),
                             tab: tab,
@@ -235,21 +236,20 @@ class CollaborationDetail extends React.Component {
     }
 
     doDeleteMe = () => {
-        this.setState({confirmationDialogOpen: false, loading: true});
         const {user} = this.props;
         const {collaboration} = this.state;
-        this.setState({loading: true});
+        this.setState({confirmationDialogOpen: false, loading: true});
         deleteCollaborationMembership(collaboration.id, user.id)
             .then(() => {
-                this.componentDidMount(() => {
-                    const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id)
+                this.props.refreshUser(() => {
+                    const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id);
+                    setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}));
                     if (canStay) {
-                        setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}));
-                        this.setState({confirmationDialogOpen: false, loading: false})
+                        this.componentDidMount();
                     } else {
                         this.props.history.push("/home");
                     }
-                })
+                });
             });
     };
 
@@ -336,7 +336,7 @@ class CollaborationDetail extends React.Component {
                 perform: () => this.props.history.push("/edit-collaboration/" + collaboration.id)
             });
         }
-        const isMember = collaboration.collaboration_memberships.some(m => m.user.id === user.id);
+        const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
         if (isMember) {
             actions.push({
                 icon: "trash",

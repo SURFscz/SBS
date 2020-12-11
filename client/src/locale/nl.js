@@ -183,7 +183,7 @@ I18n.translations.nl = {
                 remove: "Are you sure you want to remove {{service}} from {{name}}?",
                 check: "I have read and agree with the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}"
             },
-            missingServices: "<a href=\"mailto:sram-beheer@surf.nl\">Stuur ons een verzoek </a> als je denkt dat een specifieke service ontbreekt en moet worden vermeld."
+            missingServices: "<a href=\"mailto:sram-support@surf.nl\">Stuur ons een verzoek </a> als je denkt dat een specifieke service ontbreekt en moet worden vermeld."
         },
         collaborations: {
             title: "Samenwerkingen",

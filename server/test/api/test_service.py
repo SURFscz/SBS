@@ -33,6 +33,12 @@ class TestService(AbstractTest):
         self.assertEqual(1, len(service["organisations"]))
         self.assertEqual(2, len(service["service_organisation_collaborations"]))
 
+    def test_find_by_id_api_call(self):
+        service = self.find_entity_by_name(Service, uuc_scheduler_name)
+        service = self.get(f"api/services/{service.id}")
+        self.assertEqual(0, len(service["ip_networks"]))
+        self.assertFalse("logo" in service)
+
     def test_find_by_entity_id(self):
         res = self.get("api/services/find_by_entity_id", query_data={"entity_id": service_network_entity_id})
 
