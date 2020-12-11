@@ -318,7 +318,8 @@ class App extends React.Component {
                                                                     {...props}/>}/>
 
                             <Route path="/new-collaboration"
-                                   render={props => <ProtectedRoute currentUser={currentUser}
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser}
                                                                     Component={CollaborationForm}
                                                                     refreshUser={this.refreshUserMemberships}
                                                                     {...props}/>}/>

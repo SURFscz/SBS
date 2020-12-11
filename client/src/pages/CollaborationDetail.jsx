@@ -33,6 +33,7 @@ import WelcomeDialog from "../components/WelcomeDialog";
 import JoinRequests from "../components/redesign/JoinRequests";
 import {setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 
 
 class CollaborationDetail extends React.Component {
@@ -379,7 +380,10 @@ class CollaborationDetail extends React.Component {
             <div className="org-attributes-container">
                 <div className="org-attributes">
                     <span>{I18n.t("collaboration.joinRequests")}</span>
-                    <span>{I18n.t(`collaboration.${collaboration.disable_join_requests ? "disabled" : "enabled"}`)}</span>
+                    <span className="contains-copy">
+                        {I18n.t(`collaboration.${collaboration.disable_join_requests ? "disabled" : "enabled"}`)}
+                        <ClipBoardCopy txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`} />
+                    </span>
                 </div>
                 <div className="org-attributes">
                     <span>{I18n.t("collaboration.servicesRestricted")}</span>

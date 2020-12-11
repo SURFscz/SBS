@@ -128,8 +128,8 @@ class CollaborationForm extends React.Component {
         const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
         if (organisation) {
             paths.push({
-                    path: `/organisations/${collaboration.organisation_id}`,
-                    value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
+                    path: `/organisations/${organisation.value}`,
+                    value: I18n.t("breadcrumb.organisation", {name: organisation.label})
                 })
         }
         if (collaboration) {
@@ -383,7 +383,7 @@ class CollaborationForm extends React.Component {
             return <SpinnerField/>
         }
         const disabledSubmit = !initial && !this.isValid();
-        const {user} = this.props;
+        const {user, config} = this.props;
         if (noOrganisations) {
             return this.renderNoOrganisations(user);
         }
@@ -459,6 +459,13 @@ class CollaborationForm extends React.Component {
                                 copyClipBoard={true}
                                 toolTip={I18n.t("collaboration.globalUrnTooltip")}
                                 disabled={true}/>
+
+                    {(!isCollaborationRequest && !isNew) &&
+                    <InputField value={`${config.base_url}/registration?collaboration=${collaboration.identifier}`}
+                                name={I18n.t("collaboration.joinRequestUrl")}
+                                copyClipBoard={true}
+                                toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
+                                disabled={true}/>}
 
                     {(!isCollaborationRequest && !isNew) &&
                     <InputField value={collaboration.identifier}

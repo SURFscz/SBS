@@ -29,7 +29,7 @@ export default function EmailField({onChange, name, value, emails, addEmail, rem
                     </div>)}
                 <textarea id="email-field" value={value} onChange={onChange} onBlur={addEmail}
                           onKeyDown={e => {
-                              if (e.key === "Enter") {
+                              if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
                                   addEmail(e);
                                   setTimeout(() => document.getElementById("email-field").focus(), 50);
                                   return stopEvent(e);
