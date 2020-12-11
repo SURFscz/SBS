@@ -40,23 +40,25 @@ table.servicesUsed, table.servicesAvailable {
 
 .request-connection-service {
     display: flex;
-    margin: 25px 0 25px 25px;
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto 25px auto;
 
     a.back-to-services {
         display: flex;
         align-items: flex-start;
-        color: $dark-grey;
+        color: $blue;
         text-decoration: underline;
 
         svg {
             margin-right: 5px;
-            fill: $dark-grey;
+            fill: $blue;
             height: 22px;
         }
     }
 
     div.request-connection-service-form {
-        width: 50%;
+        width: 60%;
 
         h1 {
             font-size: 28px;

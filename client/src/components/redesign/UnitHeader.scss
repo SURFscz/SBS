@@ -3,7 +3,8 @@
 
 .unit-header-container {
     background-color: $background;
-    padding: 25px;
+    padding: 15px 0 25px;
+    width: 100%;
 
     .children {
         p {
@@ -14,65 +15,49 @@
     }
 
     .unit-header {
-        margin: 0 auto 0 auto;
+        max-width: $medium;
+        margin: 0 auto;
+        width: 100%;
         display: flex;
-        align-items: center;
+
+        .image {
+            svg {
+                width: 50px;
+                height: 30px;
+                color: $primary-orange;
+                fill: $primary-orange;
+
+                &.child {
+                    color: black;
+                    fill: black;
+                }
+            }
+
+            img {
+                max-height: 300px;
+                max-width: 300px;
+                border-radius: 5px;
+            }
+
+
+        }
 
         .obj-name {
             margin-left: 20px;
 
             h1 {
-                margin-bottom: 5px;
+                margin: 5px 0;
                 font-size: 28px;
                 font-weight: bold;
-                color: $secondary-orange;
+                color: $primary-orange;
             }
 
-            span {
+            span.name {
                 color: black;
                 font-weight: bold;
             }
         }
 
-        span.history {
-            cursor: pointer;
-        }
-
-        span.onboarding {
-            cursor: pointer;
-        }
-
-        svg {
-            width: 50px;
-            height: 30px;
-
-            &.fa-history, &.fa-plane-departure {
-                width: 1em;
-                height: 1em;
-
-            }
-        }
-
-        img {
-            max-width: 90px;
-            max-height: 90px;
-        }
-
-        .edit {
-            margin-left: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-
-            span {
-                display: inline-block;
-                margin-top: 15px;
-
-                svg {
-                    margin-right: 10px;
-                }
-            }
-        }
     }
 
 }

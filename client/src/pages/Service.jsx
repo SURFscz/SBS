@@ -43,7 +43,7 @@ class Service extends React.Component {
         identity_type: "",
         uri: "",
         accepted_user_policy: "",
-        automatic_connection_allowed: true,
+        automatic_connection_allowed: false,
         white_listed: false,
         research_scholarship_compliant: false,
         code_of_conduct_compliant: false,
@@ -82,8 +82,7 @@ class Service extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {value: I18n.t("breadcrumb.services")},
-                            {value: I18n.t("breadcrumb.newService")}
+                            {value: I18n.t("breadcrumb.service", {name: I18n.t("breadcrumb.newService")})}
                         ];
                     });
                 }
@@ -109,9 +108,8 @@ class Service extends React.Component {
                         AppStore.update(s => {
                             s.breadcrumb.paths = [
                                 {path: "/", value: I18n.t("breadcrumb.home")},
-                                {value: I18n.t("breadcrumb.services")},
-                                {path: `/services/${res.id}`, value: res.name},
-                                {path: "/", value: I18n.t("home.edit")}
+                                {path: `/services/${res.id}`, value: I18n.t("breadcrumb.service", {name: res.name})},
+                                {value: I18n.t("home.edit")}
                             ];
                         });
                     });
@@ -470,24 +468,25 @@ class Service extends React.Component {
             : I18n.t("service.titleReadOnly", {name: service.name});
         const contactEmailRequired = !automatic_connection_allowed && isEmpty(contact_email);
         return (
-            <div className="mod-service">
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    confirm={confirmationDialogAction}
-                                    leavePage={leavePage}
-                                    question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
+            <>
                 {isNew && <UnitHeader obj={({name: I18n.t("models.services.new"), svg: ServicesIcon})}/>}
                 {!isNew && <UnitHeader obj={service}
-                                       // auditLogPath={`services/${service.id}`}
                                        name={service.name}
                                        history={user.admin && this.props.history}
                                        mayEdit={false}/>}
+                <div className="mod-service">
+                    <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                        cancel={cancelDialogAction}
+                                        confirm={confirmationDialogAction}
+                                        leavePage={leavePage}
+                                        question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
 
-                {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
-                    contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
-                    isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                    research_scholarship_compliant, config, ip_networks, logo)}
-            </div>);
+                    {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
+                        contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
+                        isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+                        research_scholarship_compliant, config, ip_networks, logo)}
+                </div>
+            </>);
     };
 
 }

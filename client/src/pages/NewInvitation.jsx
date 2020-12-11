@@ -10,7 +10,6 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
 
 import "./NewInvitation.scss"
@@ -18,13 +17,11 @@ import DateField from "../components/DateField";
 import {collaborationRoles} from "../forms/constants";
 import SelectField from "../components/SelectField";
 import {getParameterByName} from "../utils/QueryParameters";
-import Tabs from "../components/Tabs";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
-import {ReactComponent as InviteIcon} from "../icons/single-neutral-question.svg";
-import {ReactComponent as EyeIcon} from "../icons/eye-icon.svg";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
+import EmailField from "../components/EmailField";
 
 class NewInvitation extends React.Component {
 
@@ -87,15 +84,21 @@ class NewInvitation extends React.Component {
         AppStore.update(s => {
             s.breadcrumb.paths = orgManager ? [
                 {path: "/", value: I18n.t("breadcrumb.home")},
-                {value: I18n.t("breadcrumb.organisations")},
-                {path: `/organisations/${collaboration.organisation_id}`, value: collaboration.organisation.name},
-                {value: I18n.t("breadcrumb.collaborations")},
-                {path: `/collaborations/${collaboration.id}`, value: collaboration.name},
+                {
+                    path: `/organisations/${collaboration.organisation_id}`,
+                    value: I18n.t("breadcrumb.organisation", {name: collaboration.organisation.name})
+                },
+                {
+                    path: `/collaborations/${collaboration.id}`,
+                    value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})
+                },
                 {value: I18n.t("breadcrumb.invite")}
             ] : [
                 {path: "/", value: I18n.t("breadcrumb.home")},
-                {value: I18n.t("breadcrumb.collaborations")},
-                {path: `/collaborations/${collaboration.id}`, value: collaboration.name},
+                {
+                    path: `/collaborations/${collaboration.id}`,
+                    value: I18n.t("breadcrumb.collaboration", {name: collaboration.name})
+                },
                 {value: I18n.t("breadcrumb.invite")}
             ];
         });
@@ -237,39 +240,13 @@ class NewInvitation extends React.Component {
     invitationForm = (email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
                       intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup) =>
         <div className={"invitation-form"}>
-            <InputField value={email} onChange={e => this.setState({email: e.target.value})}
-                        placeholder={I18n.t("invitation.inviteesPlaceholder")}
-                        name={I18n.t("invitation.invitees")}
-                        toolTip={I18n.t("invitation.inviteesMessagesTooltip")}
-                        onBlur={this.addEmail}
-                        onEnter={this.addEmail}
-                        fileInputKey={fileInputKey}
-                        fileUpload={false}
-                        multiline={true}
-                        fileName={fileName}
-                        onFileRemoval={this.onFileRemoval}
-                        onFileUpload={this.onFileUpload}/>
-            {fileTypeError &&
-            <span
-                className="error">{I18n.t("invitation.fileExtensionError")}</span>}
 
-            {(fileName && !fileTypeError) &&
-            <span className="info-msg">{I18n.t("invitation.fileImportResult", {
-                nbr: fileEmails.length,
-                fileName: fileName
-            })}</span>}
-
+            <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
+                        addEmail={this.addEmail} removeMail={this.removeMail} name={I18n.t("invitation.invitees")}
+                        emails={administrators}/>
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
             <span
                 className="error">{I18n.t("invitation.requiredEmail")}</span>}
-
-            <section className="email-tags">
-                {administrators.map(mail =>
-                    <div key={mail} className="email-tag">
-                        <span>{mail}</span>
-                        <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
-                    </div>)}
-            </section>
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
@@ -309,10 +286,10 @@ class NewInvitation extends React.Component {
     renderActions = (disabledSubmit, showPreview) => (
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-            {showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.preview")}
-                                    onClick={() => this.tabChanged("invitation_preview")}/>}
-            {!showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.details")}
-                                     onClick={() => this.tabChanged("invitation_form")}/>}
+            {/*{showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.preview")}*/}
+            {/*                        onClick={() => this.tabChanged("invitation_preview")}/>}*/}
+            {/*{!showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.details")}*/}
+            {/*                         onClick={() => this.tabChanged("invitation_form")}/>}*/}
             <Button disabled={disabledSubmit} txt={I18n.t("invitation.invite")}
                     onClick={this.submit}/>
         </section>
@@ -320,40 +297,47 @@ class NewInvitation extends React.Component {
 
     render() {
         const {
-            email, initial, administrators, expiry_date, collaboration, intended_role,
-            confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName, fileInputKey,
-            fileTypeError, fileEmails, activeTab, groups, selectedGroup, loading
+            email,
+            initial,
+            administrators,
+            expiry_date,
+            collaboration,
+            intended_role,
+            confirmationDialogOpen,
+            confirmationDialogAction,
+            cancelDialogAction,
+            leavePage,
+            message,
+            fileName,
+            fileInputKey,
+            fileTypeError,
+            fileEmails,
+            groups,
+            selectedGroup,
+            loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = (!initial && !this.isValid());
         return (
-            <div className="mod-new-collaboration-invitation">
+            <>
+                <UnitHeader obj={collaboration}
+                            name={collaboration.name}/>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <UnitHeader obj={collaboration}
-                            name={collaboration.name}/>
-
-                <Tabs activeTab={activeTab} tabChanged={this.tabChanged}>
-                    <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
-                         name={"invitation_form"} icon={<InviteIcon/>}>
-                        <div className="new-collaboration-invitation">
-                            {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                                administrators, intended_role, message, expiry_date, disabledSubmit, groups,
-                                selectedGroup)}
-                        </div>
+                <div className="mod-new-collaboration-invitation">
+                    <h1>{I18n.t("tabs.invitation_form")}</h1>
+                    <div className="new-collaboration-invitation">
+                        {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                            administrators, intended_role, message, expiry_date, disabledSubmit, groups,
+                            selectedGroup)}
                     </div>
-                    <div label={I18n.t("tabs.invitation_preview")} key={"invitation_preview"}
-                         name={"invitation_preview"} icon={<EyeIcon/>}>
-                        <div className="new-collaboration-invitation">
-                            {this.preview(disabledSubmit)}
-                        </div>
-                    </div>
-                </Tabs>
-            </div>);
+                </div>
+            </>)
+            ;
     };
 
 

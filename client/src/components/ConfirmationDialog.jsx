@@ -33,12 +33,12 @@ export default function ConfirmationDialog({
                     {children && children}
                 </section>}
             <section className="dialog-buttons">
-                <Button txt={leavePage ? I18n.t("confirmationDialog.stay") : I18n.t("confirmationDialog.confirm")}
-                        onClick={() => !disabledConfirm && confirm()}
-                        className={className} disabled={disabledConfirm}/>
                 <Button cancelButton={true}
                         txt={leavePage ? I18n.t("confirmationDialog.leave") : I18n.t("confirmationDialog.cancel")}
                         onClick={cancel}/>
+                <Button txt={leavePage ? I18n.t("confirmationDialog.stay") : I18n.t("confirmationDialog.confirm")}
+                        onClick={() => !disabledConfirm && confirm()}
+                        className={className} disabled={disabledConfirm}/>
             </section>
         </Modal>
     );

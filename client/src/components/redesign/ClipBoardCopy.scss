@@ -1,0 +1,40 @@
+@import "../../stylesheets/vars";
+
+section.copy-to-clipboard {
+    border-radius: 4px;
+    border: 1px solid $medium-blue;
+    padding: 4px 14px;
+    font-size: 16px;
+    color: $medium-blue;
+    display: flex;
+
+    &.right {
+        margin-left: 10px;
+    }
+
+    svg.fa-copy {
+        margin: auto;
+        cursor: pointer;
+        color: $blue
+    }
+
+    svg.copied {
+        animation: pulse .8s;
+        animation-iteration-count: 1;
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 white;
+            }
+            55% {
+                box-shadow: 0 0 2px 2px lighten($blue, 5%);
+            }
+            100% {
+                box-shadow: 0 0 0 0 white;
+            }
+        }
+    }
+
+}
+
+

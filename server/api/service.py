@@ -126,7 +126,8 @@ def service_by_id(service_id):
 
     query = Service.query
 
-    add_admin_info = not request_context.is_authorized_api_call and is_application_admin()
+    api_call = request_context.is_authorized_api_call
+    add_admin_info = not api_call and is_application_admin()
     if add_admin_info:
         query = query \
             .options(selectinload(Service.collaborations).selectinload(Collaboration.organisation)) \
@@ -145,6 +146,13 @@ def service_by_id(service_id):
                 .filter(Service.id == service_id) \
                 .all()
             res["service_organisation_collaborations"] = jsonify(collaborations).json
+        return res, 200
+    if api_call:
+        query = query \
+            .options(selectinload(Service.ip_networks))
+        service = query.filter(Service.id == service_id).one()
+        res = jsonify(service).json
+        del res["logo"]
         return res, 200
 
     return query.filter(Service.id == service_id).one(), 200

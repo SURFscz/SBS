@@ -2,7 +2,7 @@
 
 .header-container {
 
-    background: $primary-orange;
+    background: $light-orange;
     margin: 0 auto;
     color: black;
 
@@ -33,9 +33,9 @@
         }
 
         h1.title {
-            font-size: 30px;
+            font-size: 32px;
             line-height: 30px;
-            margin-left: 32px;
+            margin-left: 52px;
 
             @media (max-width: $tablet-max) {
                 display: none;
@@ -73,18 +73,18 @@
 
                 span.role {
                     font-weight: normal;
-                    color: $dark-orange;
+                    color: #7b1900;
                 }
             }
 
             .drop-down {
                 border-radius: 50%;
                 padding: 18px;
-                background-color: $light-orange;
+                background-color: #ffcb8a;
                 position: relative;
 
                 svg {
-                    fill: $dark-orange;
+                    fill: $primary-orange;
                     position: absolute;
                     top: 6px;
                     right: 6px;

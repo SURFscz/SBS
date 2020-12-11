@@ -1,45 +1,91 @@
 @import "../stylesheets/vars.scss";
 @import "../stylesheets/forms";
 
-div.user-profile-tab {
-    margin-bottom: 25px;
-    width: 50%;
+div.confirmation-warning-container {
+    margin: 0 25px 15px 25px;
+    text-align: left;
 
-    .error {
-        color: $red;
-        display: block;
-        font-size: 14px;
+    div.confirmation-warning {
+        background-color: $warning-red;
+        display: flex;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 15px;
+
+        svg {
+            margin-right: 25px;
+            height: 60px;
+            width: auto;
+        }
+
     }
 
-    .attributes {
-        display: flex;
-        flex-direction: column;
+    .input-field {
+        margin-top: 0;
+        label {
+            text-align: left;
+        }
 
-        span.attribute-key {
-            margin: 12px 0 6px 0;
-            color: black;
+        input[type="text"] {
+            width: 100%;
+        }
+    }
+
+}
+
+div.user-profile-tab-container {
+    max-width: $medium;
+    margin: 0 auto;
+    width: 100%;
+
+    div.user-profile-tab {
+        h1 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: $primary-orange;
+        }
+
+        width: 50%;
+
+        margin: 25px 0;
+
+        .error {
+            color: $red;
+            display: block;
+            font-size: 14px;
+        }
+
+        .attributes {
+            display: flex;
+            flex-direction: column;
+
+            span.attribute-key {
+                margin: 12px 0 6px 0;
+                color: black;
+                font-weight: bold;
+            }
+
+            span.attribute-value {
+                margin-bottom: 6px;
+            }
+
+        }
+
+        div.input-field, div.select-field {
+            margin-top: 15px;
+        }
+
+        .required-marker {
+            color: $red;
+            font-size: 18px;
             font-weight: bold;
         }
-        span.attribute-value {
-            margin-bottom: 6px;
+
+        div.checkbox {
+            margin-top: 10px;
         }
 
     }
-
-    div.input-field, div.select-field {
-        margin-top: 15px;
-    }
-
-    .required-marker {
-        color: $red;
-        font-size: 18px;
-        font-weight: bold;
-    }
-
-    div.checkbox {
-        margin-top: 10px;
-    }
-
 }
 
 
