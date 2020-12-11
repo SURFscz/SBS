@@ -11,6 +11,7 @@ import Collaborations from "../components/redesign/Collaborations";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {removeDuplicates} from "../utils/Utils";
+import {actionMenuUserRole} from "../utils/UserRole";
 
 class ServiceDetail extends React.Component {
 
@@ -41,7 +42,10 @@ class ServiceDetail extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {path: `/services/${service.id}`, value: I18n.t("breadcrumb.service", {name: service.name})},
+                            {
+                                path: `/services/${service.id}`,
+                                value: I18n.t("breadcrumb.service", {name: service.name})
+                            },
                         ];
                     });
                     this.tabChanged(tab, service.id);
@@ -126,6 +130,19 @@ class ServiceDetail extends React.Component {
         return compliancies.length === 0 ? I18n.t("service.none") : compliancies.join(", ");
     }
 
+    getActions = (user, service) => {
+        const actions = [];
+        if (user.admin) {
+            actions.push({
+                icon: "pencil-alt",
+                name: I18n.t("home.edit"),
+                perform: () => this.props.history.push("/edit-service/" + service.id)
+            });
+        }
+        return actions;
+    }
+
+
     render() {
         const {tabs, service, loading, tab} = this.state;
         if (loading) {
@@ -140,7 +157,8 @@ class ServiceDetail extends React.Component {
                             auditLogPath={`services/${service.id}`}
                             breadcrumbName={I18n.t("breadcrumb.service", {name: service.name})}
                             name={service.name}
-                            onEdit={() => this.props.history.push("/edit-service/" + service.id)}>
+                            dropDownTitle={actionMenuUserRole(user)}
+                            actions={this.getActions(user, service)}>
                     <p>{service.description}</p>
                     <div className="org-attributes-container">
                         <div className="org-attributes">
