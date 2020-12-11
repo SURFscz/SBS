@@ -16,9 +16,15 @@
             font-size: 18px;
             line-height: 22px;
         }
+
+        p.post-title {
+            margin-top: 25px;
+        }
+
         ul {
             list-style: initial;
-            padding: 25px 5px 15px 25px;
+            padding: 25px 5px 0 25px;
+
             li {
                 padding: 2px 0;
             }
@@ -41,15 +47,27 @@
             grid-template-rows: auto;
             column-gap: 25px;
             row-gap: 25px;
-            max-width: $medium-compact;
+            max-width: $compact-medium;
             margin: 0 auto;
+
+            @media (max-width: $compact-medium) {
+                grid-template-columns: 100%;
+            }
         }
 
 
         .mod-login-top {
             @include grid-template;
             grid-template-areas:
-            "header-left header-right";
+                "header-left header-right";
+
+            @media (max-width: $compact-medium) {
+                margin-top: 125px;
+                grid-template-areas:
+                "header-left"
+                "header-right";
+            }
+
             margin-top: 25px;
             padding-bottom: 25px;
 
@@ -62,6 +80,9 @@
 
             a {
                 margin-top: 25px;
+                width: 280px;
+                padding: 15px 60px;
+                font-size: 22px;
             }
         }
 
@@ -71,10 +92,21 @@
             flex-grow: 2;
             margin-top: 25px;
             grid-template-areas:
-            "pre-title pre-title"
-            "managers researchers"
-            "institutions service_providers"
-            "institutions help_support";
+                "pre-title pre-title"
+                "managers researchers"
+                "institutions service_providers"
+                "institutions help_support";
+
+            @media (max-width: $compact-medium) {
+                grid-template-areas:
+                    "pre-title"
+                    "managers"
+                    "researchers"
+                    "institutions"
+                    "service_providers"
+                    "help_support";
+            }
+
 
             h1 {
                 color: $primary-orange;
@@ -94,7 +126,7 @@
 
             svg {
                 margin: auto;
-                width: 340px;
+                width: 310px;
                 height: auto;
             }
         }
@@ -133,6 +165,7 @@
             background-color: $lighter-grey;
             border-radius: 6px;
             padding: 15px;
+
             h1 {
                 color: black;
             }

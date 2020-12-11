@@ -1319,7 +1319,6 @@ I18n.translations.en = {
                 "Invite and onboard members",
                 "Manage access to services"
             ],
-            postTitle: ""
         },
         researchers: {
             subTitle: "Less time waiting for access to services, and more time for research",
@@ -1329,7 +1328,6 @@ I18n.translations.en = {
                 "Guest accounts provided by eduID",
                 "Manage your profile (inc SSH-keys) once"
             ],
-            postTitle: ""
         },
         institutions: {
             subTitle: "<strong>Access as a service</strong> for all your research collaborations!",
