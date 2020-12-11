@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="icons-/-duplicate" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g>
+            <g transform="translate(4.000000, 4.000000)" id="layers-back" stroke="#006db8" stroke-width="1.5">
+                <rect id="Rectangle-path" x="0.75" y="0.75" width="18" height="18" rx="1.5"></rect>
+                <path d="M21.75,5.25 C22.5784271,5.25 23.25,5.92157288 23.25,6.75 L23.25,21.75 C23.25,22.5784271 22.5784271,23.25 21.75,23.25 L6.75,23.25 C5.92157288,23.25 5.25,22.5784271 5.25,21.75" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

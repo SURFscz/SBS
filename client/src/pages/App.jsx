@@ -180,7 +180,7 @@ class App extends React.Component {
                         <Header currentUser={currentUser} config={config}/>
                         {impersonator &&
                         <Impersonating impersonator={impersonator} currentUser={currentUser}/>}
-                        <BreadCrumb/>
+                        {!currentUser.guest && <BreadCrumb/>}
                         <ErrorDialog isOpen={errorDialogOpen}
                                      close={errorDialogAction}/>
                     </div>}

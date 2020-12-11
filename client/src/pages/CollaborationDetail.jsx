@@ -21,12 +21,14 @@ import {ReactComponent as MemberIcon} from "../icons/personal_info.svg";
 import {ReactComponent as GroupsIcon} from "../icons/groups.svg";
 import {ReactComponent as JoinRequestsIcon} from "../icons/connections.svg";
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
+import {ReactComponent as AdminIcon} from "../icons/single-neutral-actions-key.svg";
+import {ReactComponent as GlobeIcon} from "../icons/network-information.svg";
+import {ReactComponent as PrivacyIcon} from "../icons/overview.svg";
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
 import SpinnerField from "../components/redesign/SpinnerField";
 import UsedServices from "../components/redesign/UsedServices";
 import Groups from "../components/redesign/Groups";
 import AboutCollaboration from "../components/redesign/AboutCollaboration";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {actionMenuUserRole, isUserAllowed, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
 import WelcomeDialog from "../components/WelcomeDialog";
@@ -304,24 +306,32 @@ class CollaborationDetail extends React.Component {
                            actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}
                            name={collaboration.name}>
             <section className="unit-info">
-                {/*<p>{collaboration.description}</p>*/}
                 <ul>
-                    <li><FontAwesomeIcon
-                        icon="users"/><span>{I18n.t("models.collaboration.memberHeader", {
-                        nbrMember: collaboration.collaboration_memberships.length,
-                        nbrGroups: collaboration.groups.length
-                    })}</span></li>
                     <li>
-                        <FontAwesomeIcon icon="user-friends"/>
+                        <GroupsIcon/>
+                        <span>{I18n.t("models.collaboration.memberHeader", {
+                            nbrMember: collaboration.collaboration_memberships.length,
+                            nbrGroups: collaboration.groups.length
+                        })}</span></li>
+                    <li>
+                        <AdminIcon/>
                         <span dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/>
                     </li>
                     {collaboration.website_url &&
                     <li>
-                        <FontAwesomeIcon icon="globe"/>
+                        <GlobeIcon/>
                         <span>
-                                        <a href={collaboration.website_url} rel="noopener noreferrer"
-                                           target="_blank">{collaboration.website_url}</a>
-                                    </span>
+                            <a href={collaboration.website_url} rel="noopener noreferrer"
+                               target="_blank">{collaboration.website_url}</a>
+                        </span>
+                    </li>}
+                    {collaboration.accepted_user_policy &&
+                    <li>
+                        <PrivacyIcon/>
+                        <span>
+                            <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
+                               target="_blank">{collaboration.accepted_user_policy}</a>
+                        </span>
                     </li>}
                 </ul>
             </section>
@@ -382,13 +392,20 @@ class CollaborationDetail extends React.Component {
                     <span>{I18n.t("collaboration.joinRequests")}</span>
                     <span className="contains-copy">
                         {I18n.t(`collaboration.${collaboration.disable_join_requests ? "disabled" : "enabled"}`)}
-                        <ClipBoardCopy txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`} />
+                        <ClipBoardCopy
+                            txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}/>
                     </span>
                 </div>
                 <div className="org-attributes">
                     <span>{I18n.t("collaboration.servicesRestricted")}</span>
                     <span>{I18n.t(`forms.${collaboration.services_restricted ? "yes" : "no"}`)}</span>
                 </div>
+                {collaboration.accepted_user_policy && <div className="org-attributes">
+                    <span>{I18n.t("collaboration.privacyPolicy")}</span>
+                    <span><a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
+                             target="_blank">{collaboration.accepted_user_policy}</a></span>
+                </div>}
+
             </div>
         </UnitHeader>;
     }
