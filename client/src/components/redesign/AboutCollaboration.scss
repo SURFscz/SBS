@@ -27,12 +27,7 @@ div.collaboration-about-mod {
 
     div.details {
         display: flex;
-
-
-    }
-
-    div.members {
-        margin: 0 auto 0 auto;
+        justify-content: space-between;
     }
 
     div.services {
@@ -94,6 +89,7 @@ div.collaboration-about-mod {
     }
 
     .members {
+        margin: 0 20px;
         .members-header {
             display: flex;
 
@@ -105,6 +101,14 @@ div.collaboration-about-mod {
         span.role {
             color: $dark-grey;
             font-size: 14px;
+        }
+    }
+
+    .playing-svg {
+        margin: auto 0px;
+        svg {
+            width: 320px;
+            height: auto;
         }
     }
 }

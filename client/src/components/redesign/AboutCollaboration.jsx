@@ -2,6 +2,7 @@ import React from "react";
 import I18n from "i18n-js";
 import "./AboutCollaboration.scss";
 import {ReactComponent as ServicesIcon} from "../../icons/services.svg";
+import {ReactComponent as IllustrationCO} from "../../icons/illustration-CO.svg";
 import {removeDuplicates, stopEvent} from "../../utils/Utils";
 import Logo from "./Logo";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
@@ -42,6 +43,7 @@ class AboutCollaboration extends React.Component {
         const memberships = collaboration_memberships
             .sort((m1, m2) => m1.role.localeCompare(m2.role))
             .slice(0, showAll ? collaboration_memberships.length : memberCutOff);
+        const showMembers = collaboration.disclose_member_information || isAllowedToSeeMembers;
         return (
             <div className="collaboration-about-mod">
                 <div className="about">
@@ -55,7 +57,7 @@ class AboutCollaboration extends React.Component {
                         {I18n.t("models.collaboration.servicesStart")}
                         </span>
                         <ul className="services">
-                            {services.sort((a,b) => a.name.localeCompare(b.name)).map(service =>
+                            {services.sort((a, b) => a.name.localeCompare(b.name)).map(service =>
                                 <li key={service.id} onClick={this.openService(service)}
                                     className={`${service.uri ? "uri" : ""}`}>
                                     {service.logo && <Logo src={service.logo} alt={service.name}/>}
@@ -67,7 +69,8 @@ class AboutCollaboration extends React.Component {
                     {services.length === 0 && <div className="services">
                         <h1>{I18n.t("models.collaboration.noServices")}</h1>
                     </div>}
-                    {(collaboration.disclose_member_information || isAllowedToSeeMembers) && <div className="members">
+                    {showMembers &&
+                    <div className="members">
                         <div className="members-header">
                             <h1>{I18n.t("models.collaboration.members", {nbr: collaboration.collaboration_memberships.length})}</h1>
                             <a href="/details"
@@ -79,8 +82,12 @@ class AboutCollaboration extends React.Component {
                             {m.user.name}
                                     {m.role === "admin" &&
                                     <span className="role">{` (${I18n.t("models.collaboration.admin")})`}</span>}
-                        </span>}
+                                </span>}
                             </li>)}
+                            {[...Array(7).keys()].map(m => <li key={m}>
+                                <span className="member">Nice</span>
+                            </li>)}
+
                         </ul>
                         {collaboration.collaboration_memberships.length > memberCutOff &&
                         <a href={showAll ? "/more" : "/less"}
@@ -88,7 +95,10 @@ class AboutCollaboration extends React.Component {
                             {nbr: collaboration_memberships.length - memberCutOff})}</a>}
 
                     </div>}
-                    {(!collaboration.disclose_member_information && !isAllowedToSeeMembers) && <div className="members">
+                    {showMembers && <div className="playing-svg">
+                        <IllustrationCO/>
+                    </div>}
+                    {!showMembers && <div className="members">
                         <div className="members-header">
                             <h1>{I18n.t("models.collaboration.discloseNoMemberInformation")}</h1>
                         </div>

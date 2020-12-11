@@ -1,17 +1,17 @@
 @import "../stylesheets/vars.scss";
 
 .unit-info {
+    margin-top: 2px;
 
     li {
         display: flex;
         align-items: center;
-        padding-top: 4px;
+        padding: 4px 0;
 
         svg {
             margin-right: 18px;
-            width: 1.25em !important;
-            color: $dark-grey !important;
-            fill: $dark-grey !important;
+            width: 20px ;
+            height: auto;
         }
 
 
@@ -28,6 +28,12 @@ span.contains-copy {
         padding: 0;
         display: inline-block;
         right: 1px;
+        top: -2px;
+
+        svg {
+            width: 24px;
+            height: auto;
+        }
     }
 }
 

@@ -482,6 +482,7 @@ I18n.translations.nl = {
         joinRequests: "Jezelf uitnodigen",
         disabled: "Uitgeschakeld",
         enabled: "Ingeschakeld",
+        privacyPolicy: "Privacy policy",
         servicesRestricted: "Beperkte diensten",
         servicesRestrictedTooltip: "Als dit aangevinkt is kunnen<br/>alleen platform beheerders diensten<br/>voor deze samenwerking beheren.",
         discloseMemberInformation: "Informatie van leden tonen",
@@ -1301,7 +1302,55 @@ I18n.translations.nl = {
         title: "Welkom op het SURF Research Access Management platform",
         info: "Je bent momenteel geen lid van een organisatie of samenwerkingen." +
             "Neem bij vragen contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>"
+    },
+    landing: {
+        header: {
+            title: "Collaborate with fellow researchers",
+            subtitle: "Spend less time managing infra-structure and access management, and more time on doing research"
+        },
+        title: "<strong>SURF Research Access Management</strong> is a service for access management for Dutch led research collaborations. Non-commercial, open, standards-based, easy and secury.",
+        roles: {
+            teamManager: "team managers",
+            researchers: "researchers",
+            institutions: "institutions"
+        },
+        benefits: "Benefits for {{name}}",
+        teamManager: {
+            subTitle: "Spend less time managing infra-structure and access management",
+            features: [
+                "Create and manage teams with ease",
+                "Invite and onboard members",
+                "Manage access to services"
+            ]
+        },
+        researchers: {
+            subTitle: "Less time waiting for access to services, and more time for research",
+            features: [
+                "Get invited",
+                "Easy login with your institution account",
+                "Guest accounts provided by eduID",
+                "Manage your profile (inc SSH-keys) once"
+            ]
+        },
+        institutions: {
+            subTitle: "<strong>Access as a service</strong> for all your research collaborations!",
+            features: [
+                "Improve your support to researchers",
+                "Improve security",
+                "No more zero hour contracts"
+            ],
+            postTitle: "<strong>SRAM</strong> is a ...service. Read more on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram</a>"
+        },
+        serviceProvider: {
+            title: "Are you a service provider?",
+            subTitle: "Do you want to reach thousands of researchers with your software. Join SRAM now. Learn more about what we can do for you on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
+        },
+        help: {
+            title: "Help & Support",
+            subTitle: "Feel free to reach out to <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+        }
     }
+
 };
 
 export default I18n.translations.nl;

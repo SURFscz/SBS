@@ -482,6 +482,7 @@ I18n.translations.en = {
         joinRequests: "Join requests",
         disabled: "Disabled",
         enabled: "Enabled",
+        privacyPolicy: "Privacy policy",
         servicesRestricted: "Restricted services",
         servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
         discloseMemberInformation: "Disclose member information",
@@ -1298,6 +1299,55 @@ I18n.translations.en = {
         title: "Welcome to the SURF Research Access Management platform",
         info: "You are currently not a member of any organisation or collaboration. " +
             "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you have any questions"
+    },
+    landing: {
+        header: {
+            title: "Collaborate with fellow researchers",
+            subTitle: "Spend less time managing infra-structure and access management, and more time on doing research."
+        },
+        title: "<strong>SURF Research Access Management</strong> is a service for access management for Dutch led research collaborations. Non-commercial, open, standards-based, easy and secury.",
+        roles: {
+            teamManager: "team managers",
+            researchers: "researchers",
+            institutions: "institutions"
+        },
+        benefits: "Benefits for {{name}}",
+        managers: {
+            subTitle: "Spend less time managing infra-structure and access management",
+            features: [
+                "Create and manage teams with ease",
+                "Invite and onboard members",
+                "Manage access to services"
+            ],
+            postTitle: ""
+        },
+        researchers: {
+            subTitle: "Less time waiting for access to services, and more time for research",
+            features: [
+                "Get invited",
+                "Easy login with your institution account",
+                "Guest accounts provided by eduID",
+                "Manage your profile (inc SSH-keys) once"
+            ],
+            postTitle: ""
+        },
+        institutions: {
+            subTitle: "<strong>Access as a service</strong> for all your research collaborations!",
+            features: [
+                "Improve your support to researchers",
+                "Improve security",
+                "No more zero hour contracts"
+            ],
+            postTitle: "<strong>SRAM</strong> is a ...service. Read more on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram</a>"
+        },
+        serviceProvider: {
+            title: "Are you a service provider?",
+            subTitle: "Do you want to reach thousands of researchers with your software. Join SRAM now. Learn more about what we can do for you on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
+        },
+        help: {
+            title: "Help & Support",
+            subTitle: "Feel free to reach out to <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+        }
     }
 };
 
