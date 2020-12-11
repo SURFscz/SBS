@@ -16,5 +16,18 @@
 
 
     }
+
+}
+
+span.contains-copy {
+    position: relative;
+
+    section.copy-to-clipboard {
+        position: absolute;
+        border: none;
+        padding: 0;
+        display: inline-block;
+        right: 1px;
+    }
 }
 

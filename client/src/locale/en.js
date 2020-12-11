@@ -476,7 +476,7 @@ I18n.translations.en = {
         identifier: "Identifier",
         identifierTooltip: "Generated, unique and immutable<br/>identifier of a collaboration<br/>which is used as identifier<br/>for external systems",
         joinRequestUrl: "Join Request URL",
-        joinRequestUrlTooltip: "URL for non-members to<br/>join this collaboration.<br/><br/>You can for instance email this URL<br/>or publish it on a website etc.<br/>their service within this collaboration",
+        joinRequestUrlTooltip: "URL for non-members to<br/>join this collaboration.<br/><br/>You can for instance email this URL<br/>or publish it on a website etc.",
         disableJoinRequests: "Disable Join request for this collaboration.",
         disableJoinRequestsTooltip: "When checked non-members of this<br/>collaboration can not issue a Join request.",
         joinRequests: "Join requests",
