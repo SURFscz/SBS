@@ -243,12 +243,12 @@ class Impersonate extends React.Component {
                                             })}/>
 
                             <section className="actions">
-                                <Button disabled={isEmpty(selectedUser) && !initial}
-                                        txt={I18n.t("impersonate.startImpersonation")}
-                                        onClick={this.startImpersonation}/>
                                 <Button disabled={isEmpty(impersonator)} cancelButton={true}
                                         txt={I18n.t("impersonate.clearImpersonation")}
                                         onClick={this.clearImpersonation}/>
+                                <Button disabled={isEmpty(selectedUser) && !initial}
+                                        txt={I18n.t("impersonate.startImpersonation")}
+                                        onClick={this.startImpersonation}/>
                             </section>
 
                         </div>}

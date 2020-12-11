@@ -58,7 +58,7 @@ export default class Header extends React.PureComponent {
                     {this.renderSpinner()}
                     {!currentUser.guest && <div className="user-profile">
                         {this.renderProfileLink(currentUser)}
-                        {dropDownActive &&
+                        {dropDownActive&&
                         <UserMenu currentUser={currentUser} close={() => this.setState({dropDownActive: false})}/>}
                     </div>}
                 </div>

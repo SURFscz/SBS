@@ -150,7 +150,8 @@ I18n.translations.nl = {
             name: "Naam",
             memberCount: "Leden",
             collaborationCount: "Samenwerkingen",
-            category: "Categorie"
+            category: "Categorie",
+            leave: "Verlaat ORG"
         },
         services: {
             title: "Diensten",
@@ -342,7 +343,9 @@ I18n.translations.nl = {
             updated: "Je profiel is bijgewerkt"
         },
         delete: "Verwijder",
-        deleteConfirmation: "Weet je zeker dat je je account wilt verwijderen? Al je lidmaatschappen worden verwijderd en er is geen manier om dit terug te draaien."
+        deleteConfirmation: "Weet je zeker dat je je account voorgoed wilt verwijderen?",
+        deleteConfirmationWarning: " Al je lidmaatschappen worden verwijderd en er is geen manier om dit terug te draaien.",
+        deleteConfirmationCheck: "Als je toch wilt doorgaan, type dan je volledige naam in ter confirmatie."
     },
     impersonate: {
         title: "Wie wilt u zijn?",
@@ -1277,6 +1280,15 @@ I18n.translations.nl = {
         serviceUser: "dienst gebruiker",
         user: "gebruiker"
     },
+    actionRoles: {
+        title: "Jij bent {{role}}",
+        orgAdmin: " ORG admin",
+        orgManager: " ORG manager",
+        coAdmin: " CO admin",
+        coMember: " CO lid",
+        platformAdmin: " platform manager"
+    },
+
     welcomeDialog: {
         title: "Welkom op {{name}}",
         role: "Je huidige rol is <strong>{{role}}</strong>",

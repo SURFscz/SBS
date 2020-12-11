@@ -26,7 +26,7 @@
         display: block;
         top: 38px;
         right: 0;
-        min-width: 165px;
+        min-width: 175px;
         z-index: 99;
         background: white;
         border: solid 1px $lightest-grey;
@@ -40,8 +40,18 @@
         li {
             display: flex;
             align-items: center;
+
             &:hover {
                 background-color: $lightest-grey;
+
+                a {
+                    color: $primary-orange;
+                    font-weight: bold;
+                }
+
+                svg {
+                    color: $primary-orange;
+                }
             }
 
             &:not(:first-child) {
@@ -52,18 +62,14 @@
                 color: $darker-grey;
                 font-size: 14px;
                 display: inline-block;
-                margin: 2px 6px 2px 10px;
+                margin: 2px 1px 2px 10px;
             }
 
             a {
-                padding: 15px 5px 15px 10px;
+                padding: 15px 15px 15px 15px;
                 color: $darker-grey;
                 text-decoration: none;
-
-                &:hover {
-                    color: $primary-orange;
-                    font-weight: bold;
-                }
+                width: 100%;
             }
         }
 

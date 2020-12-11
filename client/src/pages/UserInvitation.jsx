@@ -125,10 +125,10 @@ class UserInvitation extends React.Component {
                         <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.collaborate")})}</span>
                     </div>
                 </div>
-                <Button onClick={this.accept}
-                        txt={<span>{I18n.t("models.invitation.acceptInvitation")}</span>}/>
                 <Button onClick={this.decline} cancelButton={true}
                         txt={<span>{I18n.t("models.invitation.declineInvitation")}</span>}/>
+                <Button onClick={this.accept}
+                        txt={<span>{I18n.t("models.invitation.acceptInvitation")}</span>}/>
             </section>
         )
     }

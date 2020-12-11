@@ -79,10 +79,15 @@
             z-index: 99;
             cursor: pointer;
             margin: 0;
-            padding: 14px;
+            padding: 8px 14px;
             min-width: auto;
             color: $blue;
+
+            svg {
+                font-size: 26px;
+            }
         }
+
     }
 
     div.input-field-link {
