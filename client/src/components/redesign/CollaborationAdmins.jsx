@@ -86,16 +86,16 @@ class CollaborationAdmins extends React.Component {
 
     changeMemberRole = member => selectedOption => {
         const {collaboration, user: currentUser} = this.props;
-        const currentRole = collaboration.collaboration_memberships.find(m => m.user.id === member.user.id).role;
+        const currentRole = collaboration.collaboration_memberships.find(m => m.user_id === member.user_id).role;
         if (currentRole === selectedOption.value) {
             return;
         }
-        if (member.user.id === currentUser.id && !currentUser.admin) {
+        if (member.user_id === currentUser.id && !currentUser.admin) {
             this.setState({
                 confirmationDialogOpen: true,
                 confirmationDialogAction: () => {
                     this.setState({loading: true});
-                    updateCollaborationMembershipRole(collaboration.id, member.user.id, selectedOption.value)
+                    updateCollaborationMembershipRole(collaboration.id, member.user_id, selectedOption.value)
                         .then(() => {
                             this.props.refreshUser(() => this.props.history.push("/home"));
                             setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
@@ -109,7 +109,7 @@ class CollaborationAdmins extends React.Component {
             });
         } else {
             this.setState({loading: true});
-            updateCollaborationMembershipRole(collaboration.id, member.user.id, selectedOption.value)
+            updateCollaborationMembershipRole(collaboration.id, member.user_id, selectedOption.value)
                 .then(() => {
                     this.props.refresh(this.componentDidMount);
                     setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
