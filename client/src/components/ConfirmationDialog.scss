@@ -55,16 +55,11 @@
             margin: 40px 60px;
             display: flex;
 
-            a.blue {
+            a:not(:last-child) {
                 margin-right: 10px;
             }
-
-            a.cancel {
+            a:last-child {
                 margin-left: 10px;
-            }
-
-            a.error {
-                margin-left: auto;
             }
         }
     }

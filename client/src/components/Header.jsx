@@ -1,10 +1,9 @@
 import React from "react";
 import I18n from "i18n-js";
 import {Link} from "react-router-dom";
-import {ReactComponent as Logo} from "../images/logo-surf.svg";
+import {ReactComponent as Logo} from "../images/surf.svg";
 import "./Header.scss";
 import UserMenu from "./redesign/UserMenu";
-import {globalUserRole} from "../utils/UserRole";
 import spinner from "../utils/Spin";
 import MDSpinner from "react-md-spinner";
 import {ReactComponent as ChevronDown} from "../icons/chevron-down.svg";
@@ -34,25 +33,18 @@ export default class Header extends React.PureComponent {
         </div> : null;
 
     renderProfileLink(currentUser) {
+        const {dropDownActive} = this.state;
         return (
-            <div className="menu" onClick={() => this.setState({dropDownActive: !this.state.dropDownActive})}>
+            <div className="menu" onClick={() => this.setState({dropDownActive: !dropDownActive})}>
                 <div className="user">
                     <span>{currentUser.name}</span>
-                    <span className="role">{globalUserRole(currentUser)}</span>
                 </div>
-                {this.renderDropDownIndicator()}
+                <div className="drop-down">
+                    {dropDownActive ? <ChevronUp/> : <ChevronDown/>}
+                </div>
             </div>
         );
     }
-
-    renderDropDownIndicator = () => {
-        return (
-            <div className="drop-down">
-                {this.state.dropDownActive ? <ChevronUp/> : <ChevronDown/>}
-            </div>
-        );
-    }
-
 
     render() {
         const {currentUser} = this.props;
@@ -66,7 +58,7 @@ export default class Header extends React.PureComponent {
                     {this.renderSpinner()}
                     {!currentUser.guest && <div className="user-profile">
                         {this.renderProfileLink(currentUser)}
-                        {dropDownActive &&
+                        {dropDownActive&&
                         <UserMenu currentUser={currentUser} close={() => this.setState({dropDownActive: false})}/>}
                     </div>}
                 </div>

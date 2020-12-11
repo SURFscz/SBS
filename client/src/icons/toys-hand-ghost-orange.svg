@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <defs>
+        <style>.athg{fill:none;stroke:#c95102;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5px;}</style>
+    </defs>
+    <path class="athg" d="M11.1,6a.375.375,0,0,1,.375.375"/>
+    <path class="athg" d="M10.72,6.375A.375.375,0,0,1,11.1,6"/>
+    <path class="athg" d="M11.1,6.75a.375.375,0,0,1-.375-.375"/>
+    <path class="athg" d="M11.47,6.375a.375.375,0,0,1-.375.375"/>
+    <path class="athg" d="M16.345,6a.375.375,0,0,1,.375.375"/>
+    <path class="athg" d="M15.97,6.375A.375.375,0,0,1,16.345,6"/>
+    <path class="athg" d="M16.345,6.75a.375.375,0,0,1-.375-.375"/>
+    <path class="athg" d="M16.72,6.375a.375.375,0,0,1-.375.375"/>
+    <path class="athg" d="M6.47,23.25,3.039,18.1a1.537,1.537,0,0,1,0-1.707h0a1.539,1.539,0,0,1,2.241-.348L7.72,18V14.25"/>
+    <path class="athg" d="M19.72,14.25v6.879a5.124,5.124,0,0,1-.46,2.121"/>
+    <path class="athg" d="M21.22,13.5a.75.75,0,0,1-.75.75H6.97a.75.75,0,0,1-.75-.75V8.25a7.5,7.5,0,1,1,15,0Z"/>
+    <line class="athg" x1="12.97" y1="10.5" x2="14.47" y2="10.5"/>
+</svg>

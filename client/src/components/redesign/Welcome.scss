@@ -1,8 +1,16 @@
-.mod-welcome {
-    padding-top: 25px;
-    h1 {
-        font-size: 32px;
-        margin-bottom: 25px;
-    }
+@import "../../stylesheets/vars";
 
+.mod-welcome-container {
+    display: flex;
+    margin: 25px auto;
+    max-width: $medium;
+    width: 100%;
+
+    .mod-welcome {
+        h1 {
+            font-size: 32px;
+            margin-bottom: 25px;
+        }
+
+    }
 }

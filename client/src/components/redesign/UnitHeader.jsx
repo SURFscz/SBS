@@ -1,42 +1,84 @@
 import React from "react";
-import I18n from "i18n-js";
-import "./UnitHeader.scss"
-import Button from "../Button";
+import "./UnitHeader.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Logo from "./Logo";
+import {ReactComponent as ChevronUp} from "../../icons/chevron-up.svg";
+import {ReactComponent as ChevronDown} from "../../icons/chevron-down.svg";
+import {isEmpty, stopEvent} from "../../utils/Utils";
+import PropTypes from "prop-types";
+import UnitHeaderActionMenu from "./UnitHeaderActionMenu";
 
-export default function UnitHeader(props) {
+class UnitHeader extends React.Component {
 
-    const {obj, mayEdit, onEdit, history, auditLogPath, name, svgClick, firstTime} = props;
+    constructor() {
+        super();
+        this.state = {
+            showDropDown: false
+        };
+    }
 
-    const queryParam = `name=${encodeURIComponent(name)}&back=${encodeURIComponent(window.location.pathname)}`;
+    renderDropDownLink = (showDropDown, dropDownTitle) => {
+        return (
+            <div className="unit-menu" onClick={() => this.setState({showDropDown: !showDropDown})}>
+                <span>{dropDownTitle}</span>
+                {showDropDown ? <ChevronUp/> : <ChevronDown/>}
+            </div>
+        );
+    }
 
-    return (
-        <div className="unit-header-container">
-            <div className="unit-header">
-                {obj.logo && <Logo src={obj.logo}/>}
-                {obj.svg && <obj.svg onClick={() => svgClick && svgClick()}/>}
-                {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
-                {obj.name && <div className="obj-name">
-                    <h1>{obj.name}</h1>
-                    {obj.organisation && <span>{obj.organisation.name}</span>}
-                </div>}
-                <div className="edit">
-                    {mayEdit && <Button onClick={onEdit} txt={I18n.t("home.edit")}/>}
-                    {(history && auditLogPath) &&
-                    <span className="history"
-                          onClick={() => history.push(`/audit-logs/${auditLogPath}?${queryParam}`)}>
-                        <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
-                    </span>}
-                    {firstTime &&
-                        <span className="onboarding" onClick={firstTime}><FontAwesomeIcon icon="plane-departure"/>{I18n.t("home.firstTime")}</span>}
+    performAction = func => e => {
+        stopEvent(e);
+        func();
+    }
+
+    render() {
+        const {
+            obj, history, auditLogPath, name, breadcrumbName, svgClick, firstTime, actions, dropDownTitle, children
+        } = this.props;
+        const {showDropDown} = this.state;
+        const queryParam = `name=${encodeURIComponent(breadcrumbName || name)}&back=${encodeURIComponent(window.location.pathname)}`;
+        return (
+            <div className="unit-header-container">
+                <div className="unit-header">
+                    <div className="image">
+                        {obj.logo && <Logo src={obj.logo}/>}
+                        {obj.svg && <obj.svg onClick={() => svgClick && svgClick()}/>}
+                        {obj.icon && <FontAwesomeIcon icon={obj.icon}/>}
+                    </div>
+                    <div className="obj-name">
+                        {obj.name && <h1>{obj.name}</h1>}
+                        {obj.organisation && <span className="name">{obj.organisation.name}</span>}
+                        <div className="children">
+                            {children}
+                        </div>
+                    </div>
+                    {!isEmpty(actions) &&
+                    <div className="action-menu-container">
+                        {this.renderDropDownLink(showDropDown, dropDownTitle)}
+                        {showDropDown && <UnitHeaderActionMenu actions={actions}
+                                                               firstTime={firstTime}
+                                                               auditLogPath={auditLogPath}
+                                                               close={() => this.setState({showDropDown: false})}
+                                                               history={history}
+                                                               queryParam={queryParam}/>}
+                    </div>}
                 </div>
             </div>
-            <div className="children">
-                {props.children}
-            </div>
-
-        </div>
-    )
+        )
+    }
 
 }
+
+UnitHeader.propTypes = {
+    obj: PropTypes.object,
+    history: PropTypes.object,
+    auditLogPath: PropTypes.string,
+    dropDownTitle: PropTypes.string,
+    name: PropTypes.string,
+    breadcrumbName: PropTypes.string,
+    svgClick: PropTypes.func,
+    firstTime: PropTypes.func,
+    actions: PropTypes.array,
+};
+
+export default UnitHeader;

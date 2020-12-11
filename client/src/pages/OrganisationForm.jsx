@@ -76,9 +76,8 @@ class OrganisationForm extends React.Component {
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
                         {path: "/", value: I18n.t("breadcrumb.home")},
-                        {value: I18n.t("breadcrumb.organisations")},
-                        {path: "/organisations/" + org.id, value: org.name},
-                        {path: "/", value: I18n.t("home.edit")}
+                        {path: "/organisations/" + org.id, value: I18n.t("breadcrumb.organisation", {name: org.name})},
+                        {value: I18n.t("home.edit")}
                     ];
                 });
             });
@@ -88,8 +87,7 @@ class OrganisationForm extends React.Component {
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
                         {path: "/", value: I18n.t("breadcrumb.home")},
-                        {value: I18n.t("breadcrumb.organisations")},
-                        {path: "/", value: I18n.t("breadcrumb.newOrganisation")}
+                        {value: I18n.t("breadcrumb.newOrganisation")}
                     ];
                 });
             });
@@ -237,126 +235,127 @@ class OrganisationForm extends React.Component {
         const disabledSubmit = !initial && !this.isValid();
         const {user} = this.props;
         return (
-            <div className="mod-new-organisation">
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    confirm={confirmationDialogAction}
-                                    isWarning={warning}
-                                    question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
-                                    leavePage={leavePage}/>
+            <div className="mod-new-organisation-container">
+                    {isNew && <UnitHeader obj={({name: I18n.t("models.organisations.new"), svg: OrganisationsIcon})}/>}
+                    {!isNew && <UnitHeader obj={organisation}
+                                           name={organisation.name}
+                                           history={user.admin && this.props.history}
+                                           mayEdit={false}/>}
+                <div className="mod-new-organisation">
+                    <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                        cancel={cancelDialogAction}
+                                        confirm={confirmationDialogAction}
+                                        isWarning={warning}
+                                        question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
+                                        leavePage={leavePage}/>
 
-                {isNew && <UnitHeader obj={({name: I18n.t("models.organisations.new"), svg: OrganisationsIcon})}/>}
-                {!isNew && <UnitHeader obj={organisation}
-                                       // auditLogPath={`organisations/${organisation.id}`}
-                                       name={organisation.name}
-                                       history={user.admin && this.props.history}
-                                       mayEdit={false}/>}
 
-                <div className="new-organisation">
+                    <div className="new-organisation">
 
-                    <InputField value={name} onChange={e => {
-                        this.setState({
-                            name: e.target.value,
-                            alreadyExists: {...this.state.alreadyExists, name: false}
-                        })
-                    }}
-                                placeholder={I18n.t("organisation.namePlaceHolder")}
-                                onBlur={this.validateOrganisationName}
-                                name={I18n.t("organisation.name")}/>
-                    {alreadyExists.name && <span
-                        className="error">{I18n.t("organisation.alreadyExists", {
-                        attribute: I18n.t("organisation.name").toLowerCase(),
-                        value: name
-                    })}</span>}
-                    {(!initial && isEmpty(name)) && <span
-                        className="error">{I18n.t("organisation.required", {
-                        attribute: I18n.t("organisation.name").toLowerCase()
-                    })}</span>}
+                        <InputField value={name} onChange={e => {
+                            this.setState({
+                                name: e.target.value,
+                                alreadyExists: {...this.state.alreadyExists, name: false}
+                            })
+                        }}
+                                    placeholder={I18n.t("organisation.namePlaceHolder")}
+                                    onBlur={this.validateOrganisationName}
+                                    name={I18n.t("organisation.name")}/>
+                        {alreadyExists.name && <span
+                            className="error">{I18n.t("organisation.alreadyExists", {
+                            attribute: I18n.t("organisation.name").toLowerCase(),
+                            value: name
+                        })}</span>}
+                        {(!initial && isEmpty(name)) && <span
+                            className="error">{I18n.t("organisation.required", {
+                            attribute: I18n.t("organisation.name").toLowerCase()
+                        })}</span>}
 
-                    <InputField value={short_name}
-                                name={I18n.t("organisation.shortName")}
-                                placeholder={I18n.t("organisation.shortNamePlaceHolder")}
-                                onBlur={this.validateOrganisationShortName}
-                                onChange={e => this.setState({
-                                    short_name: sanitizeShortName(e.target.value),
-                                    alreadyExists: {...this.state.alreadyExists, short_name: false}
-                                })}
-                                toolTip={I18n.t("organisation.shortNameTooltip")}/>
-                    {alreadyExists.short_name && <span
-                        className="error">{I18n.t("organisation.alreadyExists", {
-                        attribute: I18n.t("organisation.shortName").toLowerCase(),
-                        value: short_name
-                    })}</span>}
-                    {(!initial && isEmpty(short_name)) && <span
-                        className="error">{I18n.t("organisation.required", {
-                        attribute: I18n.t("organisation.shortName").toLowerCase()
-                    })}</span>}
+                        <InputField value={short_name}
+                                    name={I18n.t("organisation.shortName")}
+                                    placeholder={I18n.t("organisation.shortNamePlaceHolder")}
+                                    onBlur={this.validateOrganisationShortName}
+                                    onChange={e => this.setState({
+                                        short_name: sanitizeShortName(e.target.value),
+                                        alreadyExists: {...this.state.alreadyExists, short_name: false}
+                                    })}
+                                    toolTip={I18n.t("organisation.shortNameTooltip")}/>
+                        {alreadyExists.short_name && <span
+                            className="error">{I18n.t("organisation.alreadyExists", {
+                            attribute: I18n.t("organisation.shortName").toLowerCase(),
+                            value: short_name
+                        })}</span>}
+                        {(!initial && isEmpty(short_name)) && <span
+                            className="error">{I18n.t("organisation.required", {
+                            attribute: I18n.t("organisation.shortName").toLowerCase()
+                        })}</span>}
 
-                    <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
-                                       isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
-                                       initial={initial}/>
+                        <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
+                                           isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
+                                           initial={initial}/>
 
-                    <SelectField value={category}
-                                 options={categoryOptions}
-                                 name={I18n.t("organisation.category")}
-                                 toolTip={I18n.t("organisation.categoryTooltip")}
-                                 onChange={e => this.setState({category: e})}/>
+                        <SelectField value={category}
+                                     options={categoryOptions}
+                                     name={I18n.t("organisation.category")}
+                                     toolTip={I18n.t("organisation.categoryTooltip")}
+                                     onChange={e => this.setState({category: e})}/>
 
-                    <InputField value={description} onChange={e => this.setState({description: e.target.value})}
-                                placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
-                                name={I18n.t("organisation.description")}/>
+                        <InputField value={description} onChange={e => this.setState({description: e.target.value})}
+                                    placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
+                                    name={I18n.t("organisation.description")}/>
 
-                    <InputField value={schac_home_organisation}
-                                onChange={e => this.setState({
-                                    schac_home_organisation: e.target.value,
-                                    alreadyExists: {...this.state.alreadyExists, schac_home_organisation: false}
-                                })}
-                                placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
-                                name={I18n.t("organisation.schacHomeOrganisation")}
-                                onBlur={this.validateOrganisationSchacHome}
-                                toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
-                    {alreadyExists.schac_home_organisation && <span
-                        className="error">{I18n.t("organisation.alreadyExists", {
-                        attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase(),
-                        value: schac_home_organisation
-                    })}</span>}
-                    <RadioButton
-                        label={I18n.t("organisation.collaborationCreationAllowed")}
-                        name={"collaboration_creation_allowed"}
-                        disabled={isEmpty(schac_home_organisation)}
-                        value={collaboration_creation_allowed}
-                        tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
-                        onChange={val => this.setState({collaboration_creation_allowed: val})}/>
-                    {/*<InputField value={email} onChange={e => this.setState({email: e.target.value})}*/}
-                    {/*            placeholder={I18n.t("organisation.administratorsPlaceholder")}*/}
-                    {/*            name={I18n.t("organisation.administrators")}*/}
-                    {/*            toolTip={I18n.t("organisation.administratorsTooltip")}*/}
-                    {/*            onBlur={this.addEmail}*/}
-                    {/*            onEnter={this.addEmail}/>*/}
+                        <InputField value={schac_home_organisation}
+                                    onChange={e => this.setState({
+                                        schac_home_organisation: e.target.value,
+                                        alreadyExists: {...this.state.alreadyExists, schac_home_organisation: false}
+                                    })}
+                                    placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
+                                    name={I18n.t("organisation.schacHomeOrganisation")}
+                                    onBlur={this.validateOrganisationSchacHome}
+                                    toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
+                        {alreadyExists.schac_home_organisation && <span
+                            className="error">{I18n.t("organisation.alreadyExists", {
+                            attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase(),
+                            value: schac_home_organisation
+                        })}</span>}
+                        <RadioButton
+                            label={I18n.t("organisation.collaborationCreationAllowed")}
+                            name={"collaboration_creation_allowed"}
+                            disabled={isEmpty(schac_home_organisation)}
+                            value={collaboration_creation_allowed}
+                            tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
+                            onChange={val => this.setState({collaboration_creation_allowed: val})}/>
+                        {/*<InputField value={email} onChange={e => this.setState({email: e.target.value})}*/}
+                        {/*            placeholder={I18n.t("organisation.administratorsPlaceholder")}*/}
+                        {/*            name={I18n.t("organisation.administrators")}*/}
+                        {/*            toolTip={I18n.t("organisation.administratorsTooltip")}*/}
+                        {/*            onBlur={this.addEmail}*/}
+                        {/*            onEnter={this.addEmail}/>*/}
 
-                    {/*<section className="email-tags">*/}
-                    {/*    {administrators.map(mail =>*/}
-                    {/*        <div key={mail} className="email-tag">*/}
-                    {/*            <span>{mail}</span>*/}
-                    {/*            {disabled ?*/}
-                    {/*                <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :*/}
-                    {/*                <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>}*/}
-                    {/*        </div>)}*/}
-                    {/*</section>*/}
+                        {/*<section className="email-tags">*/}
+                        {/*    {administrators.map(mail =>*/}
+                        {/*        <div key={mail} className="email-tag">*/}
+                        {/*            <span>{mail}</span>*/}
+                        {/*            {disabled ?*/}
+                        {/*                <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :*/}
+                        {/*                <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>}*/}
+                        {/*        </div>)}*/}
+                        {/*</section>*/}
 
-                    {/*<InputField value={message} onChange={e => this.setState({message: e.target.value})}*/}
-                    {/*            placeholder={I18n.t("organisation.messagePlaceholder")}*/}
-                    {/*            name={I18n.t("organisation.message")}*/}
-                    {/*            toolTip={I18n.t("organisation.messageTooltip")}*/}
-                    {/*            multiline={true}/>*/}
+                        {/*<InputField value={message} onChange={e => this.setState({message: e.target.value})}*/}
+                        {/*            placeholder={I18n.t("organisation.messagePlaceholder")}*/}
+                        {/*            name={I18n.t("organisation.message")}*/}
+                        {/*            toolTip={I18n.t("organisation.messageTooltip")}*/}
+                        {/*            multiline={true}/>*/}
 
-                    <section className="actions">
-                        {(user.admin && !isNew) &&
-                        <Button warningButton={true} txt={I18n.t("organisationDetail.delete")}
-                                onClick={this.delete}/>}
-                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                        <Button disabled={disabledSubmit} txt={I18n.t("forms.save")} onClick={this.submit}/>
-                    </section>
+                        <section className="actions">
+                            {(user.admin && !isNew) &&
+                            <Button warningButton={true} txt={I18n.t("organisationDetail.delete")}
+                                    onClick={this.delete}/>}
+                            <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                            <Button disabled={disabledSubmit} txt={I18n.t("forms.save")} onClick={this.submit}/>
+                        </section>
+                    </div>
                 </div>
             </div>);
     };

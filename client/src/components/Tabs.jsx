@@ -9,7 +9,6 @@ class Tabs extends React.Component {
     static propTypes = {
         children: PropTypes.instanceOf(Array).isRequired,
         className: PropTypes.string,
-        standAlone: PropTypes.bool,
         activeTab: PropTypes.string,
         tabChanged: PropTypes.func
     };
@@ -20,37 +19,41 @@ class Tabs extends React.Component {
     }
 
     render() {
-        const {children, className = "", standAlone = false} = this.props;
+        const {children, className = ""} = this.props;
         const activeTab = this.props.activeTab || children[0].props.name
         const filteredChildren = children.filter(child => child);
 
         return (
-            <div>
-                {<div className={`tabs ${className} ${standAlone ? " standalone" : ""}`}>
+            <>
+                <div className="tabs-container">
+                    {<div className={`tabs ${className}`}>
 
-                    {filteredChildren.map(child => {
-                        const {label, name, icon} = child.props;
+                        {filteredChildren.map(child => {
+                            const {label, name, icon, notifier} = child.props;
 
-                        return (
-                            <Tab
-                                activeTab={activeTab}
-                                icon={icon}
-                                key={name}
-                                name={name}
-                                label={label}
-                                onClick={this.onClickTabItem}
-                                className={className}
-                            />
-                        );
-                    })}
-                </div>}
+                            return (
+                                <Tab
+                                    activeTab={activeTab}
+                                    icon={icon}
+                                    key={name}
+                                    name={name}
+                                    notifier={notifier}
+                                    label={label}
+                                    onClick={this.onClickTabItem}
+                                    className={className}
+                                />
+                            );
+                        })}
+                    </div>}
+                </div>
                 {filteredChildren.map(child => {
                     if (child.props.name !== activeTab) {
                         return undefined;
                     }
                     return child.props.children;
                 })}
-            </div>
+
+            </>
         );
     }
 }

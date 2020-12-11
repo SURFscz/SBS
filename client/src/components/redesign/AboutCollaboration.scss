@@ -2,6 +2,9 @@
 
 div.collaboration-about-mod {
     padding: 32px 0;
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
 
     div.about {
         margin-bottom: 40px;
@@ -10,6 +13,7 @@ div.collaboration-about-mod {
     h1 {
         font-size: 22px;
         margin-bottom: 10px;
+        color: $primary-orange;
     }
 
     p {
@@ -57,9 +61,16 @@ div.collaboration-about-mod {
         border-radius: 8px;
         margin-bottom: 15px;
         align-items: center;
+        cursor: not-allowed;
 
         &.uri {
             cursor: pointer;
+
+            &:hover {
+                background-color: $light-blue;
+                border: 1px solid $light-blue;
+            }
+
         }
 
         img {

@@ -10,19 +10,16 @@ import Button from "../components/Button";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {validEmailRegExp} from "../validations/regExps";
-import {ReactComponent as InviteIcon} from "../icons/single-neutral-question.svg";
-import {ReactComponent as EyeIcon} from "../icons/eye-icon.svg";
 import "./NewOrganisationInvitation.scss"
 import DateField from "../components/DateField";
 import {getParameterByName} from "../utils/QueryParameters";
-import Tabs from "../components/Tabs";
 import SelectField from "../components/SelectField";
 import {organisationRoles} from "../forms/constants";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import SpinnerField from "../components/redesign/SpinnerField";
+import EmailField from "../components/EmailField";
 
 class NewOrganisationInvitation extends React.Component {
 
@@ -66,8 +63,10 @@ class NewOrganisationInvitation extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {value: I18n.t("breadcrumb.organisations")},
-                            {path: `/organisations/${json.id}`, value: json.name},
+                            {
+                                path: `/organisations/${json.id}`,
+                                value: I18n.t("breadcrumb.organisation", {name: json.name})
+                            },
                             {path: "/", value: I18n.t("breadcrumb.organisationInvite")}
                         ];
                     });
@@ -196,40 +195,13 @@ class NewOrganisationInvitation extends React.Component {
     invitationForm = (organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
                       disabledSubmit, intended_role) =>
         <div className={"invitation-form"}>
-            <InputField value={email}
-                        onChange={e => this.setState({email: e.target.value})}
-                        placeholder={I18n.t("organisation.administratorsPlaceholder")}
-                        name={I18n.t("organisation.administrators")}
-                        toolTip={I18n.t("organisation.administratorsTooltip")}
-                        onBlur={this.addEmail}
-                        onEnter={this.addEmail}
-                        fileUpload={false}
-                        fileInputKey={fileInputKey}
-                        fileName={fileName}
-                        multiline={true}
-                        onFileRemoval={this.onFileRemoval}
-                        onFileUpload={this.onFileUpload}/>
-            {fileTypeError &&
-            <span
-                className="error">{I18n.t("organisationInvitation.fileExtensionError")}</span>}
-
-            {(fileName && !fileTypeError) &&
-            <span className="info-msg">{I18n.t("organisationInvitation.fileImportResult", {
-                nbr: fileEmails.length,
-                fileName: fileName
-            })}</span>}
+            <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
+                        addEmail={this.addEmail} removeMail={this.removeMail} name={I18n.t("invitation.invitees")}
+                        emails={administrators}/>
 
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
             <span
                 className="error">{I18n.t("organisationInvitation.requiredAdministrator")}</span>}
-
-            <section className="email-tags">
-                {administrators.map(mail =>
-                    <div key={mail} className="email-tag">
-                        <span>{mail}</span>
-                        <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>
-                    </div>)}
-            </section>
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
@@ -273,38 +245,28 @@ class NewOrganisationInvitation extends React.Component {
         const {
             email, initial, administrators, expiry_date, organisation,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
-            fileTypeError, fileEmails, fileInputKey, activeTab, intended_role, loading
+            fileTypeError, fileEmails, fileInputKey, intended_role, loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = (!initial && !this.isValid());
         return (
-            <div className="mod-new-organisation-invitation">
+            <>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
                 <UnitHeader obj={organisation}
                             name={organisation.name}/>
-
-                <Tabs activeTab={activeTab} tabChanged={this.tabChanged}>
-                    <div label={I18n.t("tabs.invitation_form")} key={"tabs.invitation_form"}
-                         name={"invitation_form"} icon={<InviteIcon/>}>
-                        <div className="new-organisation-invitation">
-                            {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
-                                administrators, expiry_date, disabledSubmit, intended_role)}
-                        </div>
+                <div className="mod-new-organisation-invitation">
+                    <h1>{I18n.t("tabs.invitation_form")}</h1>
+                    <div className="new-organisation-invitation">
+                        {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                            administrators, expiry_date, disabledSubmit, intended_role)}
                     </div>
-                    <div label={I18n.t("tabs.invitation_preview")} key={"invitation_preview"}
-                         name={"invitation_preview"} icon={<EyeIcon/>}>
-                        <div className="new-organisation-invitation">
-                            {this.preview(disabledSubmit)}
-                        </div>
-                    </div>
-                </Tabs>
-
-            </div>);
+                </div>
+            </>);
     };
 
 }

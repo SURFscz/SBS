@@ -55,12 +55,12 @@ class AboutCollaboration extends React.Component {
                         {I18n.t("models.collaboration.servicesStart")}
                         </span>
                         <ul className="services">
-                            {services.map(service =>
+                            {services.sort((a,b) => a.name.localeCompare(b.name)).map(service =>
                                 <li key={service.id} onClick={this.openService(service)}
                                     className={`${service.uri ? "uri" : ""}`}>
                                     {service.logo && <Logo src={service.logo} alt={service.name}/>}
                                     <span>{service.name}</span>
-                                    <ServicesIcon/>
+                                    {service.uri && <ServicesIcon/>}
                                 </li>)}
                         </ul>
                     </div>}

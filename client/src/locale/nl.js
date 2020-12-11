@@ -21,8 +21,12 @@ I18n.translations.nl = {
         home: "Home",
         registration: "Registratie",
         collaborations: "Samenwerkingen",
+        collaboration: "Samenwerking: <strong>{{name}}</strong>",
         organisations: "Organisaties",
+        organisation: "Organisatie: <strong>{{name}}</strong>",
         services: "Diensten",
+        service: "Dienst: <strong>{{name}}</strong>",
+        group: "Groep: <strong>{{name}}</strong>",
         profile: "Profiel",
         aup: "AUP",
         history: "Geschiedenis",
@@ -49,7 +53,7 @@ I18n.translations.nl = {
         closeBrowserAfterDelete: "Om het verwijderen van je account te voltooien, moet je je browser sluiten."
     },
     home: {
-        sram: "SRAM PLATFORM",
+        sram: "RESEARCH ACCESS MANAGEMENT PLATFORM",
         edit: "Wijzig",
         history: "Geschiedenis",
         backToHome: "Terug naar home",
@@ -93,8 +97,12 @@ I18n.translations.nl = {
         reset: "Reset",
         yes: "Ja",
         upload: "Upload afbeelding",
-        image: "Afbeelding moet tenminste 90x90 pixels zijn en kleiner dan 512KB",
+        add: "Voeg een afbeelding toe",
+        change: "Verander afbeelding",
+        image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB",
+        dragImage: "Versleep de croperea en pas de grootte aan totdat je tevreden bent met het resultaat. Druk vervolgens op opslaan",
         imageToLarge: "Afbeelding is groter 512KB",
+        imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Afbeelding is verplicht",
         no: "Nee"
     },
@@ -142,7 +150,8 @@ I18n.translations.nl = {
             name: "Naam",
             memberCount: "Leden",
             collaborationCount: "Samenwerkingen",
-            category: "Categorie"
+            category: "Categorie",
+            leave: "Verlaat ORG"
         },
         services: {
             title: "Diensten",
@@ -173,7 +182,8 @@ I18n.translations.nl = {
                 add: "Weet je zeker dat je {{service}} beschikbaar wil maken voor alle leden van {{name}}?",
                 remove: "Weet je zeker dat je {{service}} wil ontkoppelen van {{name}}?",
                 check: "Ik ben bekend met de <a target=\"_blank\" href=\"{{aup}}\">AUP</a> van {{name}}"
-            }
+            },
+            missingServices: "<a href=\"mailto:sram-support@surf.nl\">Stuur ons een verzoek </a> als je denkt dat een specifieke service ontbreekt en moet worden vermeld."
         },
         collaborations: {
             title: "Samenwerkingen",
@@ -333,7 +343,9 @@ I18n.translations.nl = {
             updated: "Je profiel is bijgewerkt"
         },
         delete: "Verwijder",
-        deleteConfirmation: "Weet je zeker dat je je account wilt verwijderen? Al je lidmaatschappen worden verwijderd en er is geen manier om dit terug te draaien."
+        deleteConfirmation: "Weet je zeker dat je je account voorgoed wilt verwijderen?",
+        deleteConfirmationWarning: " Al je lidmaatschappen worden verwijderd en er is geen manier om dit terug te draaien.",
+        deleteConfirmationCheck: "Als je toch wilt doorgaan, type dan je volledige naam in ter confirmatie."
     },
     impersonate: {
         title: "Wie wil je zijn?",
@@ -1200,7 +1212,7 @@ I18n.translations.nl = {
         confirmAccount: "Start verification"
     },
     inputField: {
-        fileImport: "Bestand inlezen",
+        fileImport: "Upload",
     },
     confirmationDialog: {
         title: "Bevestig actie",
@@ -1268,8 +1280,17 @@ I18n.translations.nl = {
         serviceUser: "dienst gebruiker",
         user: "gebruiker"
     },
+    actionRoles: {
+        title: "Jij bent {{role}}",
+        orgAdmin: " ORG admin",
+        orgManager: " ORG manager",
+        coAdmin: " CO admin",
+        coMember: " CO lid",
+        platformAdmin: " platform manager"
+    },
+
     welcomeDialog: {
-        title: "Welkom in {{name}}",
+        title: "Welkom op {{name}}",
         role: "Je huidige rol is <strong>{{role}}</strong>",
         ok: "Ok, toon mij de {{type}}",
         organisation: "organisatie",
@@ -1277,7 +1298,7 @@ I18n.translations.nl = {
         toggleRole: "Verander rol"
     },
     welcome: {
-        title: "Welkom op het SRAM platform",
+        title: "Welkom op het SURF Research Access Management platform",
         info: "Je bent momenteel geen lid van een organisatie of samenwerkingen." +
             "Neem bij vragen contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>"
     }

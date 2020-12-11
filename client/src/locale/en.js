@@ -21,8 +21,12 @@ I18n.translations.en = {
         home: "Home",
         registration: "Registration",
         collaborations: "Collaborations",
+        collaboration: "Collaboration: <strong>{{name}}</strong>",
         organisations: "Organisations",
+        organisation: "Organisation: <strong>{{name}}</strong>",
         services: "Services",
+        service: "Service: <strong>{{name}}<strong/>",
+        group: "Group: <strong>{{name}}</strong>",
         profile: "Profile",
         aup: "AUP",
         history: "History",
@@ -49,7 +53,7 @@ I18n.translations.en = {
         closeBrowserAfterDelete: "To finish the deletion of your account you'll have to close your browser."
     },
     home: {
-        sram: "SRAM PLATFORM",
+        sram: "SURF RESEARCH ACCESS MANAGEMENT PLATFORM",
         edit: "Edit",
         history: "History",
         backToHome: "Back to home",
@@ -93,8 +97,12 @@ I18n.translations.en = {
         reset: "Reset",
         yes: "Yes",
         upload: "Upload image",
-        image: "Image must at least be 90x90 pixels and smaller then 512KB",
-        imageToLarge: "Image is larger then 512KB",
+        add: "Add an image",
+        change: "Change image",
+        image: "Image must at least be 300x120 pixels and smaller then 2MB.",
+        dragImage: "Drag and resize the croperea until you're happy with the result. Then hit save.",
+        imageToLarge: "Image is larger then 2MB.",
+        imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Image is required",
         no: "No"
     },
@@ -142,7 +150,8 @@ I18n.translations.en = {
             name: "Name",
             memberCount: "Members",
             collaborationCount: "Collaborations",
-            category: "Category"
+            category: "Category",
+            leave: "Leave ORG"
         },
         services: {
             title: "Services",
@@ -173,7 +182,8 @@ I18n.translations.en = {
                 add: "Are you sure you want to make {{service}} available for all members of {{name}}?",
                 remove: "Are you sure you want to remove {{service}} from {{name}}?",
                 check: "I know about the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}"
-            }
+            },
+            missingServices: "<a href=\"mailto:sram-support@surf.nl\">Send us your request</a> if you think a specific service is missing and should be listed."
         },
         collaborations: {
             title: "Collaborations",
@@ -241,7 +251,7 @@ I18n.translations.en = {
             new: "Create new group",
             edit: "Edit",
             name: "Name",
-            urn: "URN",
+            urn: "Platform identifier",
             description: "Description",
             member: "Member",
             memberCount: "Members",
@@ -274,7 +284,7 @@ I18n.translations.en = {
             viewAsAdmin: "View as admin",
             discloseNoMemberInformation: "This collaboration discloses no member information",
             newCollaborationRequest: "Request collaboration",
-            leave: "Leave"
+            leave: "Leave CO"
         },
         apiKeys: {
             title: "API Keys",
@@ -290,7 +300,7 @@ I18n.translations.en = {
             noEntities: "No requests for collaborations",
         },
         invitation: {
-            welcome: "Welcome to SRAM. Here you can collaborate with your fellow researchers.",
+            welcome: "Welcome to SURF Research Access Management. Here you can collaborate with your fellow researchers.",
             invited: "You have been invited to join {{type}} \"{{collaboration}}\" by {{inviter}}",
             followingSteps: "Please take the following steps:",
             steps: {
@@ -333,7 +343,9 @@ I18n.translations.en = {
             updated: "Your profile has been updated"
         },
         delete: "Delete",
-        deleteConfirmation: "Are you sure you want to delete your account? All your memberships will be deleted and there is no way to revert this afterwards."
+        deleteConfirmation: "Are you sure you want to delete your account for all eternity?",
+        deleteConfirmationWarning: "All your memberships will be deleted and there is no way to revert this afterwards.",
+        deleteConfirmationCheck: "If you wish to proceed, please type in your full name for confirmation."
     },
     impersonate: {
         title: "Who do you want to be?",
@@ -459,8 +471,8 @@ I18n.translations.en = {
         shortName: "Short name",
         shortNamePlaceHolder: "Unique short name of the collaboration",
         shortNameTooltip: "Assign short names to collaborations<br/>so that these short names can be used<br/>in the ldap services (like Linux group names)",
-        globalUrn: "Global urn",
-        globalUrnTooltip: "Global unique and read-only urn<br/>based on the short names of the organisation,<br/>and this collaboration.",
+        globalUrn: "Platform identifier",
+        globalUrnTooltip: "Platform broad unique and read-only identifier<br/>based on the short names of the organisation,<br/>and this collaboration.",
         identifier: "Identifier",
         identifierTooltip: "Generated, unique and immutable<br/>identifier of a collaboration<br/>which is used as identifier<br/>for external systems",
         joinRequestUrl: "Join Request URL",
@@ -521,8 +533,8 @@ I18n.translations.en = {
         deleteConfirmation: "Are you sure you want to delete this collaboration?",
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership for {{name}}?",
         deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
-        deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You won't be able to redo this.",
-        downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to redo this.",
+        deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You won't be able to revert this.",
+        downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to revert this.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
         activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
         flash: {
@@ -548,7 +560,7 @@ I18n.translations.en = {
             actions: ""
         },
         invite: "Invite new members",
-        addMe: "Add me"
+        addMe: "Add me to this CO"
     },
     organisations: {
         title: "My Organisations ({{nbr}})",
@@ -745,7 +757,7 @@ I18n.translations.en = {
             name: "Name",
             description: "Description",
             short_name: "Short name",
-            global_urn: "Global urn",
+            global_urn: "Platform identifier",
             accepted_user_policy: "AUP",
             created_at: "Since",
             actions: "",
@@ -768,7 +780,7 @@ I18n.translations.en = {
         update: "Update",
         delete: "Delete",
         deleteMemberConfirmation: "Are you sure you want to delete the checked organisation memberships / invitations?",
-        deleteYourselfMemberConfirmation: "Are you sure you want to leave this organisation? You won't be able to redo this.",
+        deleteYourselfMemberConfirmation: "Are you sure you want to leave this organisation? You won't be able to revert this.",
         deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
         deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}?",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
@@ -991,8 +1003,8 @@ I18n.translations.en = {
         collaboration: "Collaboration",
         autoProvisionMembers: "Auto-provision new collaboration members?",
         autoProvisionMembersTooltip: "Check to automatically add all existing and<br/>future new collaboration members to this group",
-        global_urn: "Global urn",
-        globalUrnTooltip: "Global unique and read-only urn<br/>based on the short names of the organisation,<br/> collaboration and this group.",
+        global_urn: "Platform identifier",
+        globalUrnTooltip: "Platform broad unique and read-only identifier<br/>based on the short names of the organisation,<br/> collaboration and this group.",
         alreadyExists: "An group with {{attribute}} {{value}} already exists.",
         required: "The {{attribute}} is required for an group ",
         uri: "URI",
@@ -1198,7 +1210,7 @@ I18n.translations.en = {
         confirmAccount: "Start verification"
     },
     inputField: {
-        fileImport: "File import",
+        fileImport: "Upload",
     },
     confirmationDialog: {
         title: "Please confirm",
@@ -1253,7 +1265,6 @@ I18n.translations.en = {
         runDbSeed: "Run",
         seedResult: "Test data is successfully inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache."
     },
-
     access: {
         full: "Full",
         limited: "Limited",
@@ -1267,6 +1278,14 @@ I18n.translations.en = {
         serviceUser: "Service user",
         user: "User"
     },
+    actionRoles: {
+        title: "You're {{role}}",
+        orgAdmin: " ORG admin",
+        orgManager: " ORG manager",
+        coAdmin: " CO admin",
+        coMember: " CO member",
+        platformAdmin: " platform manager"
+    },
     welcomeDialog: {
         title: "Welcome to {{name}}",
         role: "Your current role is <strong>{{role}}</strong>",
@@ -1276,7 +1295,7 @@ I18n.translations.en = {
         toggleRole: "Toggle role"
     },
     welcome: {
-        title: "Welcome to the SRAM platform",
+        title: "Welcome to the SURF Research Access Management platform",
         info: "You are currently not a member of any organisation or collaboration. " +
             "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you have any questions"
     }

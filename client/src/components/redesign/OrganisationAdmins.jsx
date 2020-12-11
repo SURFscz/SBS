@@ -115,31 +115,6 @@ class OrganisationAdmins extends React.Component {
         this.setState({allSelected: val, ...newSelectedMembers});
     }
 
-    doDeleteMe = () => {
-        this.setState({confirmationDialogOpen: false, loading: true});
-        const {organisation, user} = this.props;
-        deleteOrganisationMembership(organisation.id, user.id)
-            .then(() => {
-                this.props.refreshUser(() => {
-                    if (user.admin) {
-                        this.refreshAndFlash(Promise.resolve(),
-                            I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}),
-                            () => this.setState({confirmationDialogOpen: false, loading: false}));
-                    } else {
-                        this.props.history.push("/home");
-                    }
-                })
-            });
-    };
-
-    deleteMe = () => {
-        this.setState({
-            confirmationDialogOpen: true,
-            confirmationQuestion: I18n.t("organisationDetail.deleteYourselfMemberConfirmation"),
-            confirmationDialogAction: this.doDeleteMe
-        });
-    };
-
     gotoInvitation = invitation => e => {
         stopEvent(e);
         const {organisation} = this.props;
@@ -367,6 +342,7 @@ class OrganisationAdmins extends React.Component {
                 mapper: entity => entity.invite ? null : <Select
                     value={roles.find(option => option.value === entity.role)}
                     options={roles}
+                    classNamePrefix={`select-member-role`}
                     onChange={this.changeMemberRole(entity)}
                     isDisabled={!isAdmin}/>
             },
@@ -387,9 +363,6 @@ class OrganisationAdmins extends React.Component {
                 mapper: entity => {
                     if (entity.invite) {
                         return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
-                    }
-                    if (entity.user.id === currentUser.id) {
-                        return <Button className="warning" onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
                     }
                     if (!currentUser.admin || entity.user.id === currentUser.id) {
                         return null;

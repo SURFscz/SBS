@@ -13,11 +13,13 @@
 
         a {
             font-weight: normal;
-            color: black;
+            color: $blue;
             text-decoration: none;
+
             &.active {
-            font-weight: bold;
-            cursor: default;
+                font-weight: bold;
+                color: black;
+                cursor: default;
 
             }
         }
