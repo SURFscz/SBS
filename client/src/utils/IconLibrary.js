@@ -42,13 +42,14 @@ import {
     faUsers,
     faUserSecret,
     faWindowClose,
+    faFileUpload,
     faPlaneDeparture
 } from '@fortawesome/free-solid-svg-icons'
 
 export function addIcons() {
     library.add(faLightbulb, faCalendarAlt, faArrowLeft, faCopy, faGavel, faLink, faBook, faCheckCircle, faInfoCircle, faInfo,
         faCircle, faCheck, faDoorClosed, faAngleDown, faAngleUp, faHistory, faMailBulk,faPencilAlt,
-        faPlus, faPlusCircle, faSearch, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
+        faPlus, faPlusCircle, faSearch, faFileUpload, faWindowClose, faArrowRight, faExternalLinkAlt, faArrowUp, faArrowDown,
         faQuestion, faQuestionCircle, faToolbox, faEnvelope, faTrash, faTimes, faCaretUp, faCaretDown, faUserSecret, faUserLock,
         faLock, faLockOpen, faGlobe, faUserFriends, faDoorOpen, faUsers, faPlaneDeparture
     );

@@ -134,7 +134,7 @@ class CollaborationForm extends React.Component {
         }
         if (collaboration) {
             paths.push({
-                path: `/collaboration/${collaboration.id}`,
+                path: `/collaborations/${collaboration.id}`,
                 value: I18n.t("breadcrumb.collaboration", {name: collaboration.name}),
             })
             paths.push({path: "/", value: I18n.t("breadcrumb.editCollaboration")})
@@ -556,10 +556,10 @@ class CollaborationForm extends React.Component {
                         {!isNew &&
                         <Button warningButton={true} txt={I18n.t("collaborationDetail.delete")}
                                 onClick={this.delete}/>}
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                         <Button disabled={disabledSubmit}
                                 txt={(isCollaborationRequest && !autoCreateCollaborationRequest) ? I18n.t("forms.request") : I18n.t("forms.save")}
                                 onClick={this.submit}/>
-                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     </section>
                 </div>
             </div>);

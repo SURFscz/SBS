@@ -1,14 +1,12 @@
 import React from "react";
-import I18n from "i18n-js";
 import "./UnitHeader.scss";
-import "./UnitHeaderActionMenu.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Logo from "./Logo";
 import {ReactComponent as ChevronUp} from "../../icons/chevron-up.svg";
 import {ReactComponent as ChevronDown} from "../../icons/chevron-down.svg";
-import {Link} from "react-router-dom";
-import {isEmpty} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import PropTypes from "prop-types";
+import UnitHeaderActionMenu from "./UnitHeaderActionMenu";
 
 class UnitHeader extends React.Component {
 
@@ -28,32 +26,10 @@ class UnitHeader extends React.Component {
         );
     }
 
-    renderDropDownMenu = (actions, history, auditLogPath, firstTime, queryParam) => {
-        return <div className="action-menu" tabIndex={1} onBlur={() => this.setState({showDropDown: false})}>
-            <ul>
-                {actions.map(action => <li>
-                    <FontAwesomeIcon icon={action.icon}/>
-                    <Link onClick={action.perform}>{action.name}</Link>
-                </li>)}
-                {(history && auditLogPath) &&
-                <li>
-                    <FontAwesomeIcon icon="history"/>
-                    <Link onClick={() => history.push(`/audit-logs/${auditLogPath}?${queryParam}`)}>
-                        {I18n.t("home.history")}
-                    </Link>
-                </li>}
-                {firstTime &&
-                <li onClick={firstTime}>
-                    <FontAwesomeIcon icon="plane-departure"/>
-                    <Link onClick={firstTime}>
-                        {I18n.t("home.firstTime")}
-                    </Link>
-                </li>}
-
-            </ul>
-        </div>
+    performAction = func => e => {
+        stopEvent(e);
+        func();
     }
-
 
     render() {
         const {
@@ -79,7 +55,12 @@ class UnitHeader extends React.Component {
                     {!isEmpty(actions) &&
                     <div className="action-menu-container">
                         {this.renderDropDownLink(showDropDown, dropDownTitle)}
-                        {(true || showDropDown) && this.renderDropDownMenu(actions, history, auditLogPath, firstTime, queryParam)}
+                        {showDropDown && <UnitHeaderActionMenu actions={actions}
+                                                               firstTime={firstTime}
+                                                               auditLogPath={auditLogPath}
+                                                               close={() => this.setState({showDropDown: false})}
+                                                               history={history}
+                                                               queryParam={queryParam}/>}
                     </div>}
                 </div>
             </div>

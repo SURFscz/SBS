@@ -19,7 +19,7 @@ class Tab extends Component {
     };
 
     render() {
-        let {activeTab, className = "", label, name, icon} = this.props;
+        let {activeTab, className = "", label, name, icon, notifier} = this.props;
 
         className += " tab";
 
@@ -29,6 +29,7 @@ class Tab extends Component {
 
         return (
             <div className={className} onClick={this.onClick}>
+                {notifier && <span className="notifier">{notifier}</span>}
                 {icon && icon}<h2>{label}</h2>
             </div>
         );

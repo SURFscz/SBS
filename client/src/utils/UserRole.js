@@ -81,5 +81,6 @@ export function globalUserRole(user) {
 }
 
 export function actionMenuUserRole(user, organisation, collaboration) {
-    return  I18n.t("actionRoles.title",{role: I18n.t(`actionRoles.${rawGlobalUserRole(user, organisation, collaboration)}`)});
+    const userRole = rawGlobalUserRole(user, organisation, collaboration);
+    return I18n.t("actionRoles.title", {role: I18n.t(`actionRoles.${userRole}`)});
 }

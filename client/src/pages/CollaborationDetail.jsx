@@ -49,7 +49,6 @@ class CollaborationDetail extends React.Component {
             schacHomeOrganisation: null,
             adminOfCollaboration: false,
             showMemberView: true,
-            viewAsMember: false,
             loading: true,
             firstTime: false,
             tab: "admins",
@@ -177,16 +176,21 @@ class CollaborationDetail extends React.Component {
 
 
     getCollaborationAdminsTab = collaboration => {
+        const openInvitations = (collaboration.invitations || []).filter(inv => inv.intended_role === "admin").length;
         return (<div key="admins" name="admins" label={I18n.t("home.tabs.coAdmins")}
-                     icon={<CoAdminIcon/>}>
+                     icon={<CoAdminIcon/>}
+                     notifier={openInvitations > 0 ? openInvitations : null}>
             <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={true}
                                  refresh={callback => this.componentDidMount(callback)}/>
         </div>)
     }
 
     getMembersTab = (collaboration, showMemberView) => {
+        const openInvitations = (collaboration.invitations || []).length;
+
         return (<div key="members" name="members" label={I18n.t("home.tabs.members")}
-                     icon={<MemberIcon/>}>
+                     icon={<MemberIcon/>}
+                     notifier={(openInvitations > 0 && !showMemberView) ? openInvitations : null}>
             <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
                                  showMemberView={showMemberView}
                                  refresh={callback => this.componentDidMount(callback)}/>
@@ -202,8 +206,11 @@ class CollaborationDetail extends React.Component {
     }
 
     getJoinRequestsTab = (collaboration) => {
+        const openJoinRequests = (collaboration.join_requests || []).length;
         return (<div key="joinrequests" name="joinrequests" label={I18n.t("home.tabs.joinRequests")}
-                     icon={<JoinRequestsIcon/>}>
+                     icon={<JoinRequestsIcon/>}
+                     notifier={openJoinRequests > 0 ? openJoinRequests : null}>
+
             <JoinRequests collaboration={collaboration}
                           refresh={callback => this.componentDidMount(callback)}
                           {...this.props} />
@@ -292,7 +299,6 @@ class CollaborationDetail extends React.Component {
 
     getUnitHeaderForMemberNew = (user, collaboration, allowedToEdit, showMemberView) => {
         return <UnitHeader obj={collaboration}
-                           mayEdit={false}
                            dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
                            actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}
                            name={collaboration.name}>

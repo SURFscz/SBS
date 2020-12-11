@@ -3,15 +3,29 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import "./InputField.scss";
 import {isEmpty} from "../utils/Utils";
-import I18n from "i18n-js";
 import ClipBoardCopy from "./redesign/ClipBoardCopy";
 
 export default function InputField({
-                                       onChange, name, value, placeholder = "", disabled = false,
-                                       toolTip = null, onBlur = () => true, onEnter = null, multiline = false,
-                                       fileUpload = false, fileName = null, onFileUpload = null, onFileRemoval = null,
-                                       acceptFileFormat = "text/csv", fileInputKey = null,
-                                       copyClipBoard = false, link = null, externalLink = false, history = null, large = false,
+                                       onChange,
+                                       name,
+                                       value,
+                                       placeholder = "",
+                                       disabled = false,
+                                       toolTip = null,
+                                       onBlur = () => true,
+                                       onEnter = null,
+                                       multiline = false,
+                                       fileUpload = false,
+                                       fileName = null,
+                                       onFileUpload = null,
+                                       onFileRemoval = null,
+                                       acceptFileFormat = "text/csv",
+                                       fileInputKey = null,
+                                       copyClipBoard = false,
+                                       link = null,
+                                       externalLink = false,
+                                       history = null,
+                                       large = false,
                                        noInput = false
                                    }) {
     placeholder = disabled ? "" : placeholder;
@@ -41,7 +55,7 @@ export default function InputField({
                        }}/>}
                 {fileUpload && <section className="file-upload-container">
                     <label className="file-upload" htmlFor={`fileUpload_${name}`}>
-                        {isEmpty(fileName) ? I18n.t("inputField.fileImport") :
+                        {isEmpty(fileName) ? <span><FontAwesomeIcon icon="file-upload"/></span> :
                             <span className="remove"><em>{fileName}</em>
                             <FontAwesomeIcon onClick={onFileRemoval} icon="trash"/></span>}
                     </label>

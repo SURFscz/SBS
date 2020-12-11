@@ -295,6 +295,7 @@ class UsedServices extends React.Component {
                                     children={confirmationChildren ?
                                         this.renderConfirmationChildren(selectedService, disabledConfirm) : null}/>
                 <Entities entities={usedServices}
+                          className="first"
                           modelName="servicesUsed"
                           searchAttributes={["name"]}
                           defaultSort="name"
@@ -312,7 +313,7 @@ class UsedServices extends React.Component {
                           loading={loading} t
                           itle={titleAvailable}
                           {...this.props}/>
-                <MissingServices nbrServices={services.length}/>
+                <MissingServices nbrServices={usedServices.length + services.length}/>
             </div>
         )
     }

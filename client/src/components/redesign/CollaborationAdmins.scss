@@ -1,4 +1,5 @@
 @import "../../stylesheets/vars";
+@import "../../stylesheets/select_role";
 
 .mod-entities {
     div.impersonate {
@@ -37,38 +38,6 @@
     span.member-role {
         display: inline-block;
         margin-left: 5px;
-    }
-
-    div.select-member-role__control {
-        border: none;
-        cursor: pointer;
-        max-width: 160px;
-
-        &:hover {
-            background-color: $light-blue;
-        }
-
-        .select-member-role__value-container {
-            border: none;
-            padding-left: 5px;
-        }
-
-        .select-member-role__single-value {
-            color: $blue;
-            font-weight: bold;
-        }
-
-        .select-member-role__indicator-separator {
-            display: none;
-        }
-
-        .select-member-role__indicators {
-
-        }
-
-        .select-member-role__indicator svg {
-            fill: $blue
-        }
     }
 
     table.coAdmins, table.members {
@@ -126,8 +95,9 @@
 
 .collaboration-invitation-details-container {
     display: flex;
-    margin: 40px 0 25px 0;
-    width: 70%;
+    margin: 40px auto 25px auto;
+    max-width: $medium;
+    width: 100%;
 
     a.back-to-org-members {
         display: flex;
@@ -149,6 +119,10 @@
     }
 
     div.collaboration-invitation-form {
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+
         p.error {
             color: $red;
             display: inline-block;
@@ -160,14 +134,9 @@
             font-size: 18px;
         }
 
-        width: 100%;
-
         h1 {
             margin: 1px 0 30px 0;
         }
-
-        display: flex;
-        flex-direction: column;
 
         div.checkbox {
             margin-top: 25px;
