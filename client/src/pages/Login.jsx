@@ -18,7 +18,8 @@ class Login extends React.Component {
             {I18n.translations[I18n.locale].landing[name].features.map((feature, i) =>
                 <li key={i} dangerouslySetInnerHTML={{__html: feature}}/>)}
         </ul>
-        <p dangerouslySetInnerHTML={{__html: I18n.t(`landing.${name}.postTitle`)}}/>
+        {I18n.translations[I18n.locale].landing[name].postTitle &&
+            <p className="post-title" dangerouslySetInnerHTML={{__html: I18n.t(`landing.${name}.postTitle`)}}/>}
     </div>
 
     render() {
