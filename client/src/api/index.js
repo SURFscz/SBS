@@ -1,4 +1,3 @@
-import spinner from "../utils/Spin";
 import {isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
 
@@ -12,8 +11,6 @@ const impersonation_attributes = ["id", "uid", "name", "email"];
 //Internal API
 function validateResponse(showErrorDialog) {
     return res => {
-        spinner.stop();
-
         if (!res.ok) {
             if (res.type === "opaqueredirect") {
                 setTimeout(() => window.location.reload(true), 100);
@@ -61,13 +58,7 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
         credentials: "same-origin",
         redirect: "manual"
     });
-    spinner.start();
-    return fetch(path, fetchOptions)
-        .then(validateResponse(showErrorDialog))
-        .catch(err => {
-            spinner.stop();
-            throw err;
-        });
+    return fetch(path, fetchOptions).then(validateResponse(showErrorDialog))
 }
 
 function fetchJson(path, options = {}, headers = {}, showErrorDialog = true) {

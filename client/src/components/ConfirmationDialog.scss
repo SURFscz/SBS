@@ -60,6 +60,9 @@
             }
             a:last-child {
                 margin-left: 10px;
+                &.orphan {
+                    margin-left: auto;
+                }
             }
         }
     }

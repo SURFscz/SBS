@@ -6,10 +6,30 @@ import {getParameterByName} from "../utils/QueryParameters";
 import {ReactComponent as IllustrationCO} from "../icons/illustration-CO.svg";
 import Button from "../components/Button";
 import {login} from "../utils/Login";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 class Login extends React.Component {
 
-    componentDidMount = () => health();
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            confirmationDialogOpen: false,
+            confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationQuestion: "",
+        };
+    }
+
+    componentDidMount = () => health().then(() => {
+        const logout = getParameterByName("logout", window.location.search);
+        const afterDelete = getParameterByName("delete", window.location.search);
+        if (logout || afterDelete) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationQuestion: logout ? I18n.t("login.closeBrowser") : I18n.t("login.closeBrowserAfterDelete")
+            });
+
+        }
+    });
 
     benefitsBlock = name => <div key={name} className={`${name} benefits`}>
         <h1>{I18n.t("landing.benefits", {name})}</h1>
@@ -19,18 +39,17 @@ class Login extends React.Component {
                 <li key={i} dangerouslySetInnerHTML={{__html: feature}}/>)}
         </ul>
         {I18n.translations[I18n.locale].landing[name].postTitle &&
-            <p className="post-title" dangerouslySetInnerHTML={{__html: I18n.t(`landing.${name}.postTitle`)}}/>}
+        <p className="post-title" dangerouslySetInnerHTML={{__html: I18n.t(`landing.${name}.postTitle`)}}/>}
     </div>
 
     render() {
-        const logout = getParameterByName("logout", window.location.search);
-        const afterDelete = getParameterByName("delete", window.location.search);
+        const {confirmationDialogOpen, confirmationDialogAction, confirmationQuestion} = this.state;
         return (
             <div className="top-container">
-                <div className="mod-login-container">
-                    {logout && <h1 className="logout-msg">{I18n.t("login.closeBrowser")}</h1>}
-                    {afterDelete && <h1 className="logout-msg">{I18n.t("login.closeBrowserAfterDelete")}</h1>}
-                </div>
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    confirm={confirmationDialogAction}
+                                    confirmationTxt={I18n.t("confirmationDialog.ok")}
+                                    question={confirmationQuestion}/>
                 <div className="mod-login-container">
                     <div className="mod-login-top">
                         <div className="header-left">
