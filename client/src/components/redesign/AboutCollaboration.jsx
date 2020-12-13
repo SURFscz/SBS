@@ -84,10 +84,6 @@ class AboutCollaboration extends React.Component {
                                     <span className="role">{` (${I18n.t("models.collaboration.admin")})`}</span>}
                                 </span>}
                             </li>)}
-                            {[...Array(7).keys()].map(m => <li key={m}>
-                                <span className="member">Nice</span>
-                            </li>)}
-
                         </ul>
                         {collaboration.collaboration_memberships.length > memberCutOff &&
                         <a href={showAll ? "/more" : "/less"}
