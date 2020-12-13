@@ -2,9 +2,13 @@
 
 .header-container {
 
-    background: $background;
+    background-color: $background;
     margin: 0 auto;
     color: black;
+
+    &.guest {
+        background-color: white;
+    }
 
     .header {
         //max-width: $medium;
