@@ -6,13 +6,13 @@ secret_key: secret
 api_users:
   - name: "sysadmin"
     password: "secret"
-    scopes: [read, write, system]
+    scopes: [ read, write, system ]
   - name: "sysread"
     password: "secret"
-    scopes: [read]
+    scopes: [ read ]
   - name: "research_cloud"
     password: "secret"
-    scopes: ["restricted_co"]
+    scopes: [ "restricted_co" ]
 
 oidc:
   client_id: sram
@@ -42,7 +42,7 @@ entitlement_group_namespace: "urn:example:sbs"
 collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
 restricted_co:
-  services_white_list: ["https://cloud"]
+  services_white_list: [ "https://cloud" ]
   default_organisation: "schac_home_organisation_uuc.org"
 
 mail:
@@ -54,7 +54,7 @@ mail:
   info_email: sram-support@surf.nl
   send_exceptions: True
   send_js_exceptions: True
-  send_exceptions_recipients: ["sram-support@surf.nl"]
+  send_exceptions_recipients: [ "sram-support@surf.nl" ]
   environment: local
 
 aup:
@@ -93,6 +93,8 @@ retention:
 
 metadata:
   idp_url: https://metadata.surfconext.nl/idps-metadata.xml
+  #  idp_url: https://mds.edugain.org/edugain-v1.xml
+  parse_at_startup: False
 
 service_bus:
   enabled: False

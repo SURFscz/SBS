@@ -25,6 +25,10 @@ import CroppedImageField from "../components/redesign/CroppedImageField";
 import SelectField from "../components/SelectField";
 import SpinnerField from "../components/redesign/SpinnerField";
 
+import "react-mde/lib/styles/css/react-mde-all.css";
+import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
+
+
 class OrganisationForm extends React.Component {
 
     constructor(props, context) {
@@ -38,6 +42,7 @@ class OrganisationForm extends React.Component {
             schac_home_organisation: "",
             collaboration_creation_allowed: false,
             logo: "",
+            on_boarding_msg: "",
             categoryOptions: categoryOptions,
             category: category,
             administrators: [],
@@ -148,7 +153,10 @@ class OrganisationForm extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {name, short_name, administrators, message, schac_home_organisation, description, logo, category} = this.state;
+            const {
+                name, short_name, administrators, message, schac_home_organisation, description, logo,
+                on_boarding_msg, category
+            } = this.state;
             this.setState({loading: true});
             createOrganisation({
                 name,
@@ -158,7 +166,8 @@ class OrganisationForm extends React.Component {
                 administrators,
                 message,
                 description,
-                logo
+                logo,
+                on_boarding_msg
             }).then(res => {
                 this.props.history.goBack();
                 setFlash(I18n.t("organisation.flash.created", {name: res.name}))
@@ -180,13 +189,13 @@ class OrganisationForm extends React.Component {
         if (this.isValid()) {
             const {
                 name, description, organisation, schac_home_organisation, collaboration_creation_allowed,
-                short_name, identifier, logo, category
+                short_name, identifier, logo, on_boarding_msg, category
             } = this.state;
             this.setState({loading: true});
             updateOrganisation({
                 id: organisation.id, name, description,
                 schac_home_organisation: isEmpty(schac_home_organisation) ? null : schac_home_organisation,
-                collaboration_creation_allowed, short_name, identifier, logo,
+                collaboration_creation_allowed, short_name, identifier, logo, on_boarding_msg,
                 category: category !== null ? category.value : null
             })
                 .then(() => {
@@ -226,8 +235,8 @@ class OrganisationForm extends React.Component {
         const {
             name, description, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
-            schac_home_organisation, collaboration_creation_allowed, logo, category, categoryOptions, isNew,
-            organisation, warning, loading
+            schac_home_organisation, collaboration_creation_allowed, logo, on_boarding_msg, category, categoryOptions,
+            isNew, organisation, warning, loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -236,11 +245,11 @@ class OrganisationForm extends React.Component {
         const {user} = this.props;
         return (
             <div className="mod-new-organisation-container">
-                    {isNew && <UnitHeader obj={({name: I18n.t("models.organisations.new"), svg: OrganisationsIcon})}/>}
-                    {!isNew && <UnitHeader obj={organisation}
-                                           name={organisation.name}
-                                           history={user.admin && this.props.history}
-                                           mayEdit={false}/>}
+                {isNew && <UnitHeader obj={({name: I18n.t("models.organisations.new"), svg: OrganisationsIcon})}/>}
+                {!isNew && <UnitHeader obj={organisation}
+                                       name={organisation.name}
+                                       history={user.admin && this.props.history}
+                                       mayEdit={false}/>}
                 <div className="mod-new-organisation">
                     <ConfirmationDialog isOpen={confirmationDialogOpen}
                                         cancel={cancelDialogAction}
@@ -303,6 +312,9 @@ class OrganisationForm extends React.Component {
                         <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                                     placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
                                     name={I18n.t("organisation.description")}/>
+
+                        <OrganisationOnBoarding on_boarding_msg={on_boarding_msg}
+                                                saveOnBoarding={val => this.setState({on_boarding_msg: val})}/>
 
                         <InputField value={schac_home_organisation}
                                     onChange={e => this.setState({

@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 import atexit
 import logging
+import threading
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -21,6 +22,9 @@ def start_scheduling(app):
 
     logger.info(f"Running next suspend_users job at {jobs[0].next_run_time}")
     logger.info(f"Running next parse_idp_metadata job at {jobs[1].next_run_time}")
+
+    if app.app_config.metadata.get("parse_at_startup", False):
+        threading.Thread(target=parse_idp_metadata, args=(app,)).start()
 
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())

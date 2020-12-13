@@ -711,6 +711,14 @@ I18n.translations.en = {
         deleteConfirmation: "Are you sure you want to delete this organisation?",
         flash: {
             created: "Organisation {{name}} was successfully created"
+        },
+        onBoarding: {
+            label: "On-boarding message",
+            tooltip: "The markdown message converted to<br/>html show to new users from this institution",
+            tabs: {
+                write: "Markdown text",
+                preview: "Preview"
+            }
         }
     },
     organisationDetail: {

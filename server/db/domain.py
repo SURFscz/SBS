@@ -208,6 +208,7 @@ class Organisation(Base, db.Model):
     category = db.Column("category", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
+    on_boarding_msg = db.Column("on_boarding_msg", db.Text(), nullable=True)
     schac_home_organisation = db.Column("schac_home_organisation", db.String(length=255), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),

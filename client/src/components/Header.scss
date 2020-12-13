@@ -2,13 +2,13 @@
 
 .header-container {
 
-    background: $light-orange;
+    background: $background;
     margin: 0 auto;
     color: black;
 
     .header {
-        max-width: $medium;
-        margin: 0 auto 0 auto;
+        //max-width: $medium;
+        margin: 0 65px 0 15px;
         position: relative;
         transition: margin 150ms ease-in-out;
         display: flex;
@@ -35,7 +35,7 @@
         h1.title {
             font-size: 32px;
             line-height: 30px;
-            margin-left: 52px;
+            margin-left: 20px;
 
             @media (max-width: $tablet-max) {
                 display: none;
@@ -80,11 +80,11 @@
             .drop-down {
                 border-radius: 50%;
                 padding: 18px;
-                background-color: #ffcb8a;
+                background-color: $darker-grey;
                 position: relative;
 
                 svg {
-                    fill: $primary-orange;
+                    fill: white;
                     position: absolute;
                     top: 6px;
                     right: 6px;
