@@ -50,7 +50,7 @@ export default class Header extends React.PureComponent {
         const {currentUser} = this.props;
         const {dropDownActive} = this.state;
         return (
-            <div className="header-container">
+            <div className={`header-container ${currentUser.guest ? "guest" : ""}`}>
                 <div className="header">
                     <Link className="logo" to="/"><Logo/></Link>
 
