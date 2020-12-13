@@ -20,7 +20,8 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get("/api/collaborations/find_by_identifier",
                                  query_data={"identifier": collaboration_ai_computing_uuid},
                                  with_basic_auth=False)
-        self.assertSetEqual({"id", "name", "admin_email", "disable_join_requests", "accepted_user_policy"},
+        self.assertSetEqual({"id", "name", "admin_email", "disable_join_requests", "accepted_user_policy",
+                             "logo", "description"},
                             set(collaboration.keys()))
 
     def test_search(self):
