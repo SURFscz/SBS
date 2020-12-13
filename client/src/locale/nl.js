@@ -1226,6 +1226,7 @@ I18n.translations.nl = {
     confirmationDialog: {
         title: "Bevestig actie",
         confirm: "Bevestig",
+        ok: "Ok",
         cancel: "Annuleer",
         leavePage: "Weet u zeker dat u deze pagina wil verlaten?",
         leavePageSub: "Wijzigingen die niet zijn opgeslagen worden niet bewaard.",

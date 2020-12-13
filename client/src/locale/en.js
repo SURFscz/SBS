@@ -1224,6 +1224,7 @@ I18n.translations.en = {
     confirmationDialog: {
         title: "Please confirm",
         confirm: "Confirm",
+        ok: "Ok",
         cancel: "Cancel",
         leavePage: "Do you really want to leave this page?",
         leavePageSub: "Changes that you made will not be saved.",
