@@ -48,7 +48,8 @@ def collaboration_by_identifier():
     admin_email = admins[0].user.email if len(admins) > 0 else None
 
     return {"id": collaboration.id, "name": collaboration.name, "admin_email": admin_email,
-            "disable_join_requests": collaboration.disable_join_requests,
+            "disable_join_requests": collaboration.disable_join_requests, "logo": collaboration.logo,
+            "description": collaboration.description,
             "accepted_user_policy": collaboration.accepted_user_policy}, 200
 
 

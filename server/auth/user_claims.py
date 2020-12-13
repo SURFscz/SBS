@@ -6,24 +6,17 @@ import unicodedata
 
 from server.db.domain import User
 
-claim_attribute_mapping_value = None
-
-
-def claim_attribute_mapping():
-    global claim_attribute_mapping_value
-    if not claim_attribute_mapping_value:
-        claim_attribute_mapping_value = [
-            {"sub": "uid"},
-            {"name": "name"},
-            {"given_name": "given_name"},
-            {"family_name": "family_name"},
-            {"email": "email"},
-            {"voperson_external_affiliation": "scoped_affiliation"},
-            {"eduperson_scoped_affiliation": "affiliation"},
-            {"eduperson_entitlement": "entitlement"},
-            {"voperson_external_id": "eduperson_principal_name"}
-        ]
-    return claim_attribute_mapping_value
+claim_attribute_mapping_value = [
+    {"sub": "uid"},
+    {"name": "name"},
+    {"given_name": "given_name"},
+    {"family_name": "family_name"},
+    {"email": "email"},
+    {"voperson_external_affiliation": "scoped_affiliation"},
+    {"eduperson_scoped_affiliation": "affiliation"},
+    {"eduperson_entitlement": "entitlement"},
+    {"voperson_external_id": "eduperson_principal_name"}
+]
 
 
 def _normalize(s):
@@ -54,7 +47,7 @@ def generate_unique_username(user: User, max_count=10000):
 
 
 def add_user_claims(user_info_json, uid, user, replace_none_values=True):
-    for claim in claim_attribute_mapping():
+    for claim in claim_attribute_mapping_value:
         for key, attr in claim.items():
             val = user_info_json.get(key)
             if isinstance(val, list):

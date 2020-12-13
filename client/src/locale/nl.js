@@ -710,6 +710,14 @@ I18n.translations.nl = {
         deleteConfirmation: "Weet u zeker dat u deze organisatie wil verwijderen?",
         flash: {
             created: "Organisatie {{name}} is aangemaakt."
+        },
+        onBoarding: {
+            label: "On-boarding message",
+            tooltip: "The markdown message converted to<br/>html show to new users from this institution",
+            tabs: {
+                write: "Markdown text",
+                preview: "Preview"
+            }
         }
     },
     organisationDetail: {
