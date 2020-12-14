@@ -9,6 +9,7 @@ import Logo from "./Logo";
 import Button from "../Button";
 import CroppedImageDialog from "./CroppedImageDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
+import ErrorIndicator from "./ErrorIndicator";
 
 export default class CroppedImageField extends React.PureComponent {
 
@@ -41,6 +42,7 @@ export default class CroppedImageField extends React.PureComponent {
     render() {
         const {error, dialogOpen, confirmationDialogOpen, confirmationDialogAction} = this.state;
         const {title, name, value, secondRow = false, initial = false} = this.props;
+        const imageRequired = !initial && isEmpty(value);
         return (
             <div className={`cropped-image-field ${secondRow ? "second-row" : ""}`}>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -52,7 +54,7 @@ export default class CroppedImageField extends React.PureComponent {
                                     name={name} value={value} title={title}/>
                 <label className="info" htmlFor="">{title}</label>
                 <section className="file-upload">
-                    {!value && <div className="no-image">
+                    {!value && <div className={`no-image ${imageRequired ? "error" : ""}`}>
                         {<NotFoundIcon/>}
                     </div>}
                     {value &&
@@ -60,12 +62,13 @@ export default class CroppedImageField extends React.PureComponent {
                         {value && <Logo className="cropped-img" src={value}/>}
                     </div>}
                     <div className="file-upload-actions">
-                        <Button txt={value ? I18n.t("forms.change") : I18n.t("forms.add")} onClick={() => this.setState({dialogOpen: true})}/>
+                        <Button txt={value ? I18n.t("forms.change") : I18n.t("forms.add")}
+                                onClick={() => this.setState({dialogOpen: true})}/>
                         {value && <Button warningButton={true} onClick={this.confirmDelete}/>}
                     </div>
                 </section>
-                {!isEmpty(error) && <span className="error">{error}</span>}
-                {(!initial && isEmpty(value)) && <span className="error">{I18n.t("forms.imageRequired")}</span>}
+                {!isEmpty(error) && <ErrorIndicator msg={error}/> }
+                {imageRequired && <ErrorIndicator msg={I18n.t("forms.imageRequired")} />}
             </div>
         );
     }

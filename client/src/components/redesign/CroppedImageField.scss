@@ -42,6 +42,12 @@
         fill: $lighter-grey;
     }
 
+    .no-image.error svg {
+        border-color: $error-red;
+        fill: $error-red-background;
+    }
+
+
     .file-upload-actions {
         margin-left: 25px;
         display: flex;

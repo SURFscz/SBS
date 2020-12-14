@@ -36,7 +36,8 @@
         .select-inner__control {
             height: 100%;
             padding-left: 8px;
-            border: $br;
+            border: none;
+            border-radius: $br;
         }
 
         .select-inner__control--is-focused {
