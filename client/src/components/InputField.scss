@@ -22,6 +22,11 @@
             cursor: not-allowed;
         }
 
+        &.error {
+            background-color: $error-red-background;
+            border: 1px solid $error-red;
+        }
+
     }
 
     textarea {
@@ -86,6 +91,7 @@
         a {
             margin: auto;
         }
+
         svg {
 
             color: $blue;

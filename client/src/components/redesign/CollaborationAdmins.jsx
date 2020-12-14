@@ -26,6 +26,7 @@ import SpinnerField from "./SpinnerField";
 import moment from "moment";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import InputField from "../InputField";
+import ErrorIndicator from "./ErrorIndicator";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.admin`)},
@@ -329,8 +330,7 @@ class CollaborationAdmins extends React.Component {
                     <ChevronLeft/>{I18n.t("models.orgMembers.backToMembers")}
                 </a>
                 <div className="collaboration-invitation-form">
-                    {isExpired &&
-                    <p className="error">{expiredMessage}</p>}
+                    {isExpired && <ErrorIndicator msg={expiredMessage} standalone={true}/>}
                     <h2>{I18n.t("models.orgMembers.invitation",
                         {
                             date: moment(invitation.created_at * 1000).format("LL"),

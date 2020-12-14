@@ -26,6 +26,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import InputField from "../InputField";
 import moment from "moment";
+import ErrorIndicator from "./ErrorIndicator";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
@@ -103,7 +104,7 @@ class OrganisationAdmins extends React.Component {
         const checked = e.target.checked;
         selectedMembers[memberShip.id].selected = checked;
         this.setState({selectedMembers: {...selectedMembers}});
-        this.setState({selectedMembers: {...selectedMembers}, allSelected : checked ? allSelected : false});
+        this.setState({selectedMembers: {...selectedMembers}, allSelected: checked ? allSelected : false});
 
     }
 
@@ -146,10 +147,10 @@ class OrganisationAdmins extends React.Component {
                 .filter(id => selectedMembers[id].selected);
 
             const promises = selected.map(id => {
-                    const ref = selectedMembers[id].ref;
-                    return ref.invite ? organisationInvitationDelete(ref.id) :
-                        deleteOrganisationMembership(organisation.id, ref.user.id)
-                });
+                const ref = selectedMembers[id].ref;
+                return ref.invite ? organisationInvitationDelete(ref.id) :
+                    deleteOrganisationMembership(organisation.id, ref.user.id)
+            });
             Promise.all(promises).then(() => {
                 if (currentUserDeleted && !currentUser.admin) {
                     this.props.refreshUser(() => this.props.history.push("/home"));
@@ -249,8 +250,7 @@ class OrganisationAdmins extends React.Component {
                     <ChevronLeft/>{I18n.t("models.orgMembers.backToMembers")}
                 </a>
                 <div className="organisation-invitation-form">
-                    {isExpired &&
-                    <p className="error">{expiredMessage}</p>}
+                    {isExpired && <ErrorIndicator msg={expiredMessage} standalone={true}/>}
                     <h2>{I18n.t("models.orgMembers.invitation",
                         {
                             date: moment(invitation.created_at * 1000).format("LL"),

@@ -7,6 +7,7 @@ import Button from "../Button";
 import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
 import {isEmpty} from "../../utils/Utils";
 import ReactCrop from "react-image-crop";
+import ErrorIndicator from "./ErrorIndicator";
 
 export default class CroppedImageDialog extends React.PureComponent {
 
@@ -134,7 +135,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                         onChange={this.internalOnChange}/>}
                 {(!value && !source) && <span className="disclaimer">{I18n.t("forms.image")}</span>}
                 {(value || source) && <span className="disclaimer">{I18n.t("forms.dragImage")}</span>}
-                {!isEmpty(error) && <span className="error">{error}</span>}
+                {!isEmpty(error) && <ErrorIndicator msg={error}/>}
             </div>
         );
 
