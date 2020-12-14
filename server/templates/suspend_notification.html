@@ -4,20 +4,28 @@
 
 <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
     <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
-        Suspended SRAM account
+        {{salutation}},<br/>
+        Your account will be suspended soon
     </p>
-    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        You have not logged in for {{ retention.allowed_inactive_period_days }} days.
-    </p>
-    <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        Click the button below to prevent your account to be suspended.</p>
+
+</div>
+<div class="mail-end" style="padding: 30px 0 0 60px;background-color: white;">
+    <p>{{ salutation }},</p>
+    <p>You have been using SURF Research Access Management (SRAM). It's been over {{ retention.allowed_inactive_period_days }} days
+    since we saw you on SRAM.</p>
+    <p>For data security and GDPR purposes, without your action, your account will be flagged inactive
+    automatically on {{ suspension_date }}</p>
+    <p>If you want to keep using the services available through SRAM, just login to your account using the link below or
+    by going to {{ base_url }}</p>
+
     <a class="button" href="{{ base_url }}/login"
        style="border-radius: 4px;color: white;background-color: #0077c8;text-decoration: none;display: inline-block;margin: 15px 0;cursor:pointer;padding: 14px 26px;font-size: 18px;">
-        Login</a>
-</div>
-<div class="mail-end" style="padding: 30px 0 0 60px;background-color: #f5f5f5;">
-    <p>{{ salutation }},</p>
-    <p>You have not logged in for {{ retention.allowed_inactive_period_days }} days. </p>
+        Login to prevent suspension</a>
+
+    <p>If you have any questions, or need help of any kind, reply to this email and let us know.</p>
+
+    <p>All the best,
+    SURF Research Access Management support</p>
 </div>
 
 {% endblock %}

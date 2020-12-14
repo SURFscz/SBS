@@ -25,7 +25,8 @@ class UnitHeaderActionMenu extends React.Component {
                     onBlur={() => setTimeout(this.props.close, 250)}>
             <ul>
                 {actions.map(action => <li key={action.name}>
-                    <FontAwesomeIcon icon={action.icon}/>
+                    {action.icon && <FontAwesomeIcon icon={action.icon}/>}
+                    {action.svg && <action.svg/>}
                     <a href={"/" + action.name} onClick={this.performAction(action.perform)}>{action.name}</a>
                 </li>)}
                 {(history && auditLogPath) &&

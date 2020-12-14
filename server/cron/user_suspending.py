@@ -16,9 +16,13 @@ def create_suspend_notification(user, retention, app, is_primary):
     suspend_notification = SuspendNotification(user=user, sent_at=datetime.datetime.utcnow(),
                                                is_primary=is_primary)
     db.session.merge(suspend_notification)
-    mail_suspend_notification({"salutation": f"Dear {user.name}",
+    today = datetime.date.today()
+    days = retention.reminder_resent_period_days if is_primary else retention.reminder_expiry_period_days
+    suspension_date = today + datetime.timedelta(days=days)
+    mail_suspend_notification({"salutation": f"Hi {user.given_name}",
                                "base_url": app.app_config.base_url,
                                "retention": retention,
+                               "suspension_date": str(suspension_date),
                                "suspend_notification": suspend_notification
                                },
                               [user.email], is_primary, False)

@@ -9,6 +9,8 @@ import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as ApiKeysIcon} from "../icons/security.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as CollaborationRequestsIcon} from "../icons/faculty.svg";
+import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
+import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
@@ -176,7 +178,7 @@ class OrganisationDetail extends React.Component {
         const actions = [];
         if (adminOfOrganisation) {
             actions.push({
-                icon: "pencil-alt",
+                svg: PencilIcon,
                 name: I18n.t("home.edit"),
                 perform: () => this.props.history.push("/edit-organisation/" + organisation.id)
             });
@@ -184,7 +186,7 @@ class OrganisationDetail extends React.Component {
         const isMember = organisation.organisation_memberships.some(m => m.user.id === user.id);
         if (isMember) {
             actions.push({
-                icon: "trash",
+                svg: LeaveIcon,
                 name: I18n.t("models.organisations.leave"),
                 perform: this.deleteMe
             });
