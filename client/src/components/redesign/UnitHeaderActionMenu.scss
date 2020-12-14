@@ -41,6 +41,28 @@
             display: flex;
             align-items: center;
 
+            a {
+                padding: 15px 15px 15px 15px;
+                color: $darker-grey;
+                text-decoration: none;
+                width: 100%;
+            }
+
+            svg {
+                color: $darker-grey;
+                display: inline-block;
+                margin: 2px 1px 2px 10px;
+                width: 24px;
+                height: auto;
+
+                &.svg-inline--fa {
+                    font-size: 14px;
+                    margin-right: 6px;
+                    width: 16px;
+                    height: auto;
+                }
+            }
+
             &:hover {
                 background-color: $lightest-grey;
 
@@ -58,19 +80,6 @@
                 border-top: 3px solid $background;
             }
 
-            svg {
-                color: $darker-grey;
-                font-size: 14px;
-                display: inline-block;
-                margin: 2px 1px 2px 10px;
-            }
-
-            a {
-                padding: 15px 15px 15px 15px;
-                color: $darker-grey;
-                text-decoration: none;
-                width: 100%;
-            }
         }
 
     }

@@ -17,13 +17,15 @@ import Tabs from "../components/Tabs";
 import {ReactComponent as CoAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
-import {ReactComponent as MemberIcon} from "../icons/personal_info.svg";
-import {ReactComponent as GroupsIcon} from "../icons/groups.svg";
-import {ReactComponent as JoinRequestsIcon} from "../icons/connections.svg";
+import {ReactComponent as MemberIcon} from "../icons/groups.svg";
+import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
+import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-question.svg";
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import {ReactComponent as AdminIcon} from "../icons/single-neutral-actions-key.svg";
 import {ReactComponent as GlobeIcon} from "../icons/network-information.svg";
 import {ReactComponent as PrivacyIcon} from "../icons/overview.svg";
+import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
+import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
 import SpinnerField from "../components/redesign/SpinnerField";
 import UsedServices from "../components/redesign/UsedServices";
@@ -342,7 +344,7 @@ class CollaborationDetail extends React.Component {
         const actions = [];
         if (allowedToEdit && showMemberView) {
             actions.push({
-                icon: "pencil-alt",
+                svg: PencilIcon,
                 name: I18n.t("home.edit"),
                 perform: () => this.props.history.push("/edit-collaboration/" + collaboration.id)
             });
@@ -350,7 +352,7 @@ class CollaborationDetail extends React.Component {
         const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
         if (isMember) {
             actions.push({
-                icon: "trash",
+                svg: LeaveIcon,
                 name: I18n.t("models.collaboration.leave"),
                 perform: this.deleteMe
             });
