@@ -1,8 +1,10 @@
 @import "../stylesheets/vars.scss";
 @import "../stylesheets/input_field.scss";
+@import "../stylesheets/mde_preview.scss";
 
 div.organisation-onboarding {
     @include input-field;
+    @include mde-preview;
 
     label.label {
         min-width: 0;
@@ -21,7 +23,7 @@ div.organisation-onboarding {
         background-color: $background;
 
         .mde-tabs button {
-            color: $dark-grey;
+            color: $blue;
 
             &.selected, &:focus {
                 outline: $dark-grey;
@@ -36,16 +38,6 @@ div.organisation-onboarding {
             font-size: 16px;
             border-color: $dark-grey;
             border-top: none;
-        }
-    }
-
-    .mde-preview-content {
-        h3 {
-            color: $primary-orange;
-        }
-
-        p {
-            margin-bottom: 0;
         }
     }
 

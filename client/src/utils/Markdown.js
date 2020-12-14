@@ -13,7 +13,9 @@ export function convertToHtml(markdown, openLinkInNewTab = false) {
     if (isEmpty(markdown)) {
         return markdown;
     }
-    let html = DOMPurify.sanitize(converter.makeHtml(markdown));
+    const dirty = converter.makeHtml(markdown);
+    let html = DOMPurify.sanitize(dirty);
+    // debugger
     if (openLinkInNewTab) {
         html = html.replace(/<a /g, "<a target='_blank' ");
     }

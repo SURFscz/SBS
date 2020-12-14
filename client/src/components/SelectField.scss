@@ -36,7 +36,7 @@
         .select-inner__control {
             height: 100%;
             padding-left: 8px;
-            border: none;
+            border: $br;
         }
 
         .select-inner__control--is-focused {
@@ -44,8 +44,7 @@
             border: #5f9af6 2px solid !important;
             outline-offset: -2px;
             outline-color: #5f9af6 !important;
-            border-radius: 0;
-
+            border-radius: $br;
         }
 
         &[disabled] {
@@ -57,6 +56,6 @@
 
     .select-inner__control--is-disabled {
         background-color: $background;
-        border-radius: 0;
+        border-radius: 6px;
     }
 }

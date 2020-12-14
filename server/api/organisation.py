@@ -11,6 +11,7 @@ from sqlalchemy.orm import selectinload
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
     confirm_organisation_admin, confirm_read_access
+from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -148,7 +149,7 @@ def my_organisations():
 
 @organisation_api.route("/find_by_schac_home_organisation", strict_slashes=False)
 @json_endpoint
-def organisations_by_schac_home_organisation():
+def organisation_by_schac_home():
     user = User.query.filter(User.id == current_user_id()).one()
     schac_home_organisation = user.schac_home_organisation
     if not schac_home_organisation:
@@ -165,7 +166,21 @@ def organisations_by_schac_home_organisation():
                                      "name": org.name,
                                      "collaboration_creation_allowed": org.collaboration_creation_allowed,
                                      "collaboration_creation_allowed_entitlement": auto_aff,
+                                     "on_boarding_msg": org.on_boarding_msg,
                                      "short_name": org.short_name}, 200
+
+
+@organisation_api.route("/identity_provider_display_name", strict_slashes=False)
+@json_endpoint
+def identity_provider_display_name():
+    user = User.query.filter(User.id == current_user_id()).one()
+    schac_home_organisation = user.schac_home_organisation
+    if not schac_home_organisation:
+        return None, 200
+
+    lang = query_param("lang", required=False, default="en")
+    idp_name = idp_display_name(schac_home_organisation, lang)
+    return {"display_name": idp_name}, 200
 
 
 @organisation_api.route("/invites-preview", methods=["POST"], strict_slashes=False)

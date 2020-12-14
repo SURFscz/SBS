@@ -10,6 +10,7 @@ import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/ErrorDialog";
 import Registration from "./Registration";
+import Welcome from "../components/redesign/Welcome";
 import Footer from "../components/Footer";
 import Flash from "../components/Flash";
 import {getParameterByName} from "../utils/QueryParameters";
@@ -229,6 +230,11 @@ class App extends React.Component {
                                            currentUser={currentUser}
                                            Component={Home} {...props}/>
                                    }}/>
+
+                            <Route exact path="/welcome"
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser}
+                                                                    Component={Welcome} {...props}/>}/>
 
                             <Route exact path="/collaborations/:id/:tab?"
                                    render={props => <ProtectedRoute config={config}
