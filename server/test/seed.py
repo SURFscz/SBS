@@ -27,7 +27,7 @@ james_name = "James Byrd"
 sarah_name = "Sarah Cross"
 
 schac_home_organisation = "example.org"
-schac_home_organisation_uuc = "schac_home_organisation_uuc.org"
+schac_home_organisation_uuc = "rug.nl"
 
 organisation_invitation_hash = token_urlsafe()
 organisation_invitation_expired_hash = token_urlsafe()
@@ -125,7 +125,7 @@ def seed(db, app_config):
                  schac_home_organisation=schac_home_organisation)
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry")
     james = User(uid="urn:james", name=james_name, email="james@example.org",
-                 schac_home_organisation=schac_home_organisation_uuc,
+                 schac_home_organisation=schac_home_organisation_uuc, given_name="James",
                  ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                          "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
                          "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
@@ -190,6 +190,10 @@ def seed(db, app_config):
     uuc = Organisation(name=uuc_name, short_name="uuc", identifier=str(uuid.uuid4()),
                        description="Unincorporated Urban Community", logo=_read_image("uuc.jpeg"),
                        created_by="urn:admin", updated_by="urnadmin", category="Research",
+                       on_boarding_msg="We are using **SRAM** to provide access to the following research tools:"
+                                       "\n- Wiki\n- Cloud\n- Awesome things...\n\nIf you want to join one of our "
+                                       "collaborations, please send a mail to [support@uuc.nl](mailto:support@uuc.nl)."
+                                       "\n<br/><br/>\nHappy researching,\n\n*UUC support*",
                        collaboration_creation_allowed=True, schac_home_organisation=schac_home_organisation_uuc)
     uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam", identifier=str(uuid.uuid4()),
                        created_by="urn:admin", updated_by="urnadmin", short_name="uva", logo=_read_image("uva.jpg"),

@@ -1,0 +1,23 @@
+@mixin mde-preview {
+
+    .mde-preview-content {
+        h3 {
+            color: $primary-orange;
+        }
+
+        p {
+            margin: 0!important;
+        }
+
+        ul {
+            list-style: initial;
+            padding: 20px 5px 0 20px;
+
+            li {
+                padding: 2px 0;
+            }
+        }
+
+    }
+
+}

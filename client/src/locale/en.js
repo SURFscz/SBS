@@ -713,8 +713,8 @@ I18n.translations.en = {
             created: "Organisation {{name}} was successfully created"
         },
         onBoarding: {
-            label: "On-boarding message",
-            tooltip: "The markdown message converted to<br/>html show to new users from this institution",
+            label: "On-boarding instructions",
+            tooltip: "The markdown instructions converted to<br/>html to inform new users from this institution<br/>about what they can do / expect.",
             tabs: {
                 write: "Markdown text",
                 preview: "Preview"
@@ -1305,9 +1305,22 @@ I18n.translations.en = {
         toggleRole: "Toggle role"
     },
     welcome: {
-        title: "Welcome to the SURF Research Access Management platform",
-        info: "You are currently not a member of any organisation or collaboration. " +
-            "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you have any questions"
+        title: "Hi {{name}},",
+        subTitle: "Welcome to SURF Research Access Management (SRAM). Here you can collaborate with your fellow researchers.",
+        unknown: "an unknown institution",
+        mysterious: "mysterious guest",
+        institution: "You have logged on via <strong>{{name}}</strong>",
+        institutionNotConnected: "This institution is not (yet) connected to SRAM",
+        whatYouCanDo: "Here's what you can do:",
+        instructions: "Instruction from <strong>{{name}}</strong>",
+        createColl: "Create your own collaboration",
+        startCreateColl: "If you want to start your own collaboration, you can create it directly.",
+        createCollRequest: "Request your own collaboration",
+        startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check and hopefully approve it.",
+        createCollTxt: "Create a collaboration",
+        createCollRequestTxt: "Request a collaboration",
+        contact: "Contact SRAM helpdesk",
+        contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> and let us know what you were expecting, or if you have any questions. We'll try to respond asap."
     },
     landing: {
         header: {
