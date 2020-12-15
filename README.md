@@ -102,7 +102,7 @@ Start the registration with [http://localhost:3000/registration?collaboration=60
 
 See the https://github.com/SURFscz/SCZ-deploy project
 
-### [Docker]([#deployment)]
+### [Docker](#deployment)
 
 You can deploy SBS with the provided docker files.
 
@@ -117,7 +117,7 @@ Open a browser at **http://localhost:5000**
 
 #### backend evaluation
 
-When the containers start, you can run a server test using:
+When the containers ve started, you can run a server test from the command line:
 
 ```
 docker exec sbs_server_1 pytest
