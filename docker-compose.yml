@@ -9,16 +9,18 @@ volumes:
 
 services:
 
-
   client:
     build: client
     restart: "always"
     links:
-      - server:api
+      - server
     ports:
       - 5000:80
+    environment:
+      - SERVER_HOST=server
+      - SERVER_PORT=8080
     volumes:
-      - /home/harry/project/SBS/etc/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ${PWD}/etc/nginx-site.template:/etc/nginx/templates/default.conf.template:ro
 
   server:
     build: server
@@ -27,6 +29,7 @@ services:
       - db:sbs
     volumes:
       - ${PWD}/log:/opt/log
+      - ${PWD}/server:/opt/server
     ports:
       - 8080
     environment:
@@ -43,7 +46,7 @@ services:
        MYSQL_USER: sbs
        MYSQL_PASSWORD: sbs
     ports:
-      - 3306
+      - 3306:3306
     volumes:
       - data:/var/lib/mysql
       - ${PWD}/etc/init.sql:/docker-entrypoint-initdb.d/init.sql:ro

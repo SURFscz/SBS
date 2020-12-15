@@ -1,25 +1,6 @@
-worker_processes auto;
-
-events {
-    worker_connections 8000;
-    multi_accept on;
-}
-
-http {
-    include       /etc/nginx/mime.types;
-    default_type  application/octet-stream;
-
-    # Sets the path, format, and configuration for a buffered log write
-    log_format compression '$remote_addr - $remote_user [$time_local] '
-        '"$request" $status $upstream_addr '
-        '"$http_referer" "$http_user_agent"';
-
-    server {
+server {
         # listen on port 80
         listen 80;
-        # save logs here
-        access_log /var/log/nginx/access.log compression;
-        error_log /var/log/nginx/error.log;
 
         underscores_in_headers on;
 
@@ -42,7 +23,7 @@ http {
             proxy_cookie_domain  localhost $http_host;
 
             proxy_http_version 1.1;
-            proxy_pass http://server:8080;
+            proxy_pass http://${SERVER_HOST}:${SERVER_PORT};
         }
 
         location ~ ^/(static)/  {
@@ -76,4 +57,3 @@ http {
             try_files $uri =404;
         }
     }
-}

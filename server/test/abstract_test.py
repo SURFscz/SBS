@@ -33,6 +33,7 @@ class AbstractTest(TestCase):
     def setUpClass(cls):
         os.environ["CONFIG"] = "config/test_config.yml"
         os.environ["TESTING"] = "1"
+        os.environ["DATABASE_URI"] = "mysql+pymysql://sbs:sbs@192.168.191.229:3306/sbs_test"
 
         from server.__main__ import app
 
