@@ -105,6 +105,8 @@ See the https://github.com/SURFscz/SCZ-deploy project
 ### [Docker](#deployment)
 
 You can deploy SBS with the provided docker files.
+You need to have both docker and docker-compose installed.
+
 
 ```
 docker-compose build
@@ -117,8 +119,8 @@ Open a browser at **http://localhost:5000**
 
 #### backend evaluation
 
-When the containers ve started, you can run a server test from the command line:
+When the containers have started, you can run a server test from the command line:
 
 ```
-docker exec sbs_server_1 pytest
+docker-compose exec server pytest
 ```
