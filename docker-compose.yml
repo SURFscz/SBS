@@ -26,7 +26,7 @@ services:
     links:
       - db:sbs
     volumes:
-      - /home/harry/project/SBS/log:/opt/log
+      - ${PWD}/log:/opt/log
     ports:
       - 8080
     environment:
@@ -46,4 +46,4 @@ services:
       - 3306
     volumes:
       - data:/var/lib/mysql
-      - /home/harry/project/SBS/etc/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ${PWD}/etc/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
