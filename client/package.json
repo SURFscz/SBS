@@ -8,6 +8,7 @@
         "@fortawesome/free-regular-svg-icons": "^5.14.0",
         "@fortawesome/free-solid-svg-icons": "^5.14.0",
         "@fortawesome/react-fontawesome": "^0.1.11",
+        "@lottiefiles/react-lottie-player": "^2.2.2",
         "core-js": "3.6.5",
         "dompurify": "^2.2.3",
         "es6-promise": "^4.2.8",
