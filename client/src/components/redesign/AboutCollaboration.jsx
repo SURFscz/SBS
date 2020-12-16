@@ -35,8 +35,8 @@ class AboutCollaboration extends React.Component {
 
     render() {
         const {showAll} = this.state;
-        const {collaboration, user, showMemberView} = this.props;
-        const isAllowedToSeeMembers =
+        const {collaboration, user, showMemberView, isJoinRequest} = this.props;
+        const isAllowedToSeeMembers = !isJoinRequest &&
             isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id) && !showMemberView;
         const services = removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
         const {collaboration_memberships} = collaboration

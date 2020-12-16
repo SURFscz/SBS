@@ -2,6 +2,7 @@ import React from "react";
 import {
     collaborationAccessAllowed,
     collaborationById,
+    collaborationByIdentifier,
     collaborationLiteById,
     createCollaborationMembershipRole,
     deleteCollaborationMembership,
@@ -48,11 +49,11 @@ class CollaborationDetail extends React.Component {
             value: role,
             label: I18n.t(`profile.${role}`)
         }));
-
         this.state = {
             collaboration: null,
             schacHomeOrganisation: null,
             adminOfCollaboration: false,
+            collaborationJoinRequest: false,
             showMemberView: true,
             loading: true,
             firstTime: false,
@@ -76,12 +77,11 @@ class CollaborationDetail extends React.Component {
                         [collaborationLiteById(collaboration_id), organisationByUserSchacHomeOrganisation()];
                     Promise.all(promises).then(res => {
                         const {user} = this.props;
-                        let tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
+                        const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                         const collaboration = res[0];
                         //mainly due to seed data
                         collaboration.join_requests = (collaboration.join_requests || [])
                             .filter(jr => !collaboration.collaboration_memberships.find(cm => cm.user.id === jr.user.id));
-                        tab = collaboration.join_requests.length === 0 && tab === "joinrequests" ? "admins" : tab;
                         const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
                         const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                         const firstTime = getParameterByName("first", window.location.search) === "true";
@@ -102,7 +102,43 @@ class CollaborationDetail extends React.Component {
                     });
                 }).catch(() => this.props.history.push("/404"));
         } else {
-            this.props.history.push("/404");
+            const {collaborationIdentifier, user} = this.props;
+            if (!collaborationIdentifier) {
+                this.props.history.push("/404");
+            } else {
+                collaborationByIdentifier(collaborationIdentifier).then(collaboration => {
+                    if (collaboration.disable_join_requests) {
+                        this.props.history.push("/404");
+                    } else {
+                        const alreadyMember = user.collaboration_memberships.some(m => m.collaboration_id === collaboration.id);
+                        if (alreadyMember) {
+                            setFlash(I18n.t("registration.flash.alreadyMember", {name: collaboration.name}), "error");
+                        }
+                        this.setState({
+                            collaboration: collaboration,
+                            collaborationJoinRequest: true,
+                            alreadyMember: alreadyMember,
+                            adminOfCollaboration: false,
+                            schacHomeOrganisation: null,
+                            loading: false,
+                            confirmationDialogOpen: false,
+                            tabs: this.getTabs(collaboration, null, false, false, true),
+                            tab: "about",
+                        }, () => {
+                            AppStore.update(s => {
+                                s.breadcrumb.paths = [
+                                    {path: "/", value: I18n.t("breadcrumb.home")},
+                                    {value: I18n.t("breadcrumb.collaborationRequest", {name: collaboration.name})}
+                                ]
+                                s.sideComponent = null;
+                            });
+
+                        })
+                    }
+                }).catch(e => {
+                    this.props.history.push("/404");
+                })
+            }
         }
     };
 
@@ -160,7 +196,7 @@ class CollaborationDetail extends React.Component {
         this.setState({firstTime: true});
     }
 
-    getTabs = (collaboration, schacHomeOrganisation, adminOfCollaboration, showMemberView) => {
+    getTabs = (collaboration, schacHomeOrganisation, adminOfCollaboration, showMemberView, isJoinRequest = false) => {
         //Actually this collaboration is not for members to view
         if ((!adminOfCollaboration || showMemberView) && !collaboration.disclose_member_information) {
             return [this.getAboutTab(collaboration, showMemberView)];
@@ -173,9 +209,9 @@ class CollaborationDetail extends React.Component {
                 this.getServicesTab(collaboration),
                 this.getJoinRequestsTab(collaboration),
             ] : [
-                this.getAboutTab(collaboration, showMemberView),
-                this.getMembersTab(collaboration, showMemberView),
-                this.getGroupsTab(collaboration, showMemberView),
+                this.getAboutTab(collaboration, showMemberView, isJoinRequest),
+                this.getMembersTab(collaboration, showMemberView, isJoinRequest),
+                this.getGroupsTab(collaboration, showMemberView, isJoinRequest),
             ];
         return tabs.filter(tab => tab !== null);
     }
@@ -191,23 +227,25 @@ class CollaborationDetail extends React.Component {
         </div>)
     }
 
-    getMembersTab = (collaboration, showMemberView) => {
+    getMembersTab = (collaboration, showMemberView, isJoinRequest = false) => {
         const openInvitations = (collaboration.invitations || []).length;
 
         return (<div key="members" name="members" label={I18n.t("home.tabs.members")}
                      icon={<MemberIcon/>}
+                     readOnly={isJoinRequest}
                      notifier={(openInvitations > 0 && !showMemberView) ? openInvitations : null}>
-            <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
-                                 showMemberView={showMemberView}
-                                 refresh={callback => this.componentDidMount(callback)}/>
+            {!isJoinRequest && <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={false}
+                                                    showMemberView={showMemberView}
+                                                    refresh={callback => this.componentDidMount(callback)}/>}
         </div>)
     }
 
-    getGroupsTab = (collaboration, showMemberView) => {
+    getGroupsTab = (collaboration, showMemberView, isJoinRequest = false) => {
         return (<div key="groups" name="groups" label={I18n.t("home.tabs.groups")}
+                     readOnly={isJoinRequest}
                      icon={<GroupsIcon/>}>
-            <Groups {...this.props} collaboration={collaboration} showMemberView={showMemberView}
-                    refresh={callback => this.componentDidMount(callback)}/>
+            {!isJoinRequest && <Groups {...this.props} collaboration={collaboration} showMemberView={showMemberView}
+                                       refresh={callback => this.componentDidMount(callback)}/>}
         </div>)
     }
 
@@ -231,10 +269,11 @@ class CollaborationDetail extends React.Component {
         </div>);
     }
 
-    getAboutTab = (collaboration, showMemberView) => {
+    getAboutTab = (collaboration, showMemberView, isJoinRequest = false) => {
         return (<div key="about" name="about" label={I18n.t("home.tabs.about")} icon={<AboutIcon/>}>
             <AboutCollaboration showMemberView={showMemberView}
                                 collaboration={collaboration}
+                                isJoinRequest={isJoinRequest}
                                 tabChanged={this.tabChanged}
                                 {...this.props} />
         </div>);
@@ -280,14 +319,19 @@ class CollaborationDetail extends React.Component {
     }
 
 
-    getAdminHeader = collaboration => {
+    getAdminHeader = (collaboration, collaborationJoinRequest) => {
         if (!collaboration.disclose_member_information) {
             return I18n.t("models.collaboration.discloseNoMemberInformation");
         }
-        const admins = collaboration.collaboration_memberships
-            .filter(m => m.role === "admin")
-            .map(m => m.user);
-
+        let admins;
+        if (collaborationJoinRequest) {
+            admins = collaboration.admin
+                .map(m => ({name: m}));
+        } else {
+            admins = collaboration.collaboration_memberships
+                .filter(m => m.role === "admin")
+                .map(m => m.user);
+        }
         if (admins.length === 0) {
             return I18n.t("models.collaboration.noAdminsHeader");
         }
@@ -302,22 +346,25 @@ class CollaborationDetail extends React.Component {
         this.props.history.push(`/new-collaboration?organisationId=${collaboration.organisation_id}`);
     }
 
-    getUnitHeaderForMemberNew = (user, collaboration, allowedToEdit, showMemberView) => {
+    getUnitHeaderForMemberNew = (user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest) => {
+        const customAction = collaborationJoinRequest ? <span>"TODO"</span>: null;
         return <UnitHeader obj={collaboration}
                            dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
-                           actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}
-                           name={collaboration.name}>
+                           actions={collaborationJoinRequest ? [] : this.getActions(user, collaboration, allowedToEdit, showMemberView)}
+                           name={collaboration.name}
+                           customAction={customAction}>
             <section className="unit-info">
                 <ul>
                     <li>
                         <GroupsIcon/>
                         <span>{I18n.t("models.collaboration.memberHeader", {
-                            nbrMember: collaboration.collaboration_memberships.length,
-                            nbrGroups: collaboration.groups.length
+                            nbrMember: collaborationJoinRequest ? collaboration.member_count : collaboration.collaboration_memberships.length,
+                            nbrGroups: collaborationJoinRequest ? collaboration.group_count : collaboration.groups.length
                         })}</span></li>
                     <li>
                         <AdminIcon/>
-                        <span dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/>
+                        <span
+                            dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration, collaborationJoinRequest)}}/>
                     </li>
                     {collaboration.website_url &&
                     <li>
@@ -415,7 +462,8 @@ class CollaborationDetail extends React.Component {
     render() {
         const {
             collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime,
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
+            collaborationJoinRequest
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -425,7 +473,7 @@ class CollaborationDetail extends React.Component {
         return (
             <>
                 {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit, showMemberView)}
-                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView)}
+                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest)}
 
                 <WelcomeDialog name={collaboration.name} isOpen={firstTime}
                                role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}

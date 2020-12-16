@@ -6,15 +6,35 @@ import "./Header.scss";
 import UserMenu from "./redesign/UserMenu";
 import {ReactComponent as ChevronDown} from "../icons/chevron-down.svg";
 import {ReactComponent as ChevronUp} from "../icons/chevron-up.svg";
+import {organisationByUserSchacHomeOrganisation} from "../api";
+import {emitter} from "../utils/Events";
 
 export default class Header extends React.PureComponent {
 
-    constructor() {
-        super();
+    constructor(props, context) {
+        super(props, context);
         this.state = {
             dropDownActive: false,
+            organisation: null
         };
     }
+
+    componentDidMount() {
+        emitter.addListener("impersonation", this.impersonate);
+        organisationByUserSchacHomeOrganisation()
+            .then(res => this.setState({organisation: res}));
+    }
+
+    componentWillUnmount() {
+        emitter.removeListener("impersonation", this.impersonate);
+    }
+
+    impersonate = () => {
+        //Need to ensure the API call is done with the impersonated user
+        setTimeout(() => organisationByUserSchacHomeOrganisation()
+            .then(res => this.setState({organisation: res})), 750);
+    }
+
 
     renderProfileLink(currentUser) {
         const {dropDownActive} = this.state;
@@ -32,7 +52,7 @@ export default class Header extends React.PureComponent {
 
     render() {
         const {currentUser} = this.props;
-        const {dropDownActive} = this.state;
+        const {dropDownActive, organisation} = this.state;
         return (
             <div className={`header-container ${currentUser.guest ? "guest" : ""}`}>
                 <div className="header">
@@ -42,7 +62,8 @@ export default class Header extends React.PureComponent {
                     {!currentUser.guest && <div className="user-profile">
                         {this.renderProfileLink(currentUser)}
                         {dropDownActive &&
-                        <UserMenu currentUser={currentUser} close={() => this.setState({dropDownActive: false})}/>}
+                        <UserMenu currentUser={currentUser} organisation={organisation}
+                                  close={() => this.setState({dropDownActive: false})}/>}
                     </div>}
                 </div>
             </div>

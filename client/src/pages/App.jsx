@@ -217,10 +217,14 @@ class App extends React.Component {
                                    }}/>
 
                             <Route path="/registration"
+                                   render={props => <ProtectedRoute config={config}
+                                                                    currentUser={currentUser}
+                                                                    collaborationIdentifier={getParameterByName("collaboration", window.location.search)}
+                                                                    Component={CollaborationDetail} {...props}/>}/>
+                            <Route path="/registration-old"
                                    render={props => <Registration user={currentUser}
                                                                   collaboration={getParameterByName("collaboration", window.location.search)}
                                                                   {...props}/>}/>
-
                             <Route path="/home/:tab?"
                                    render={props => {
                                        if (currentUser.guest) {

@@ -10,8 +10,8 @@ import UnitHeaderActionMenu from "./UnitHeaderActionMenu";
 
 class UnitHeader extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props, context) {
+        super(props, context);
         this.state = {
             showDropDown: false
         };
@@ -33,7 +33,8 @@ class UnitHeader extends React.Component {
 
     render() {
         const {
-            obj, history, auditLogPath, name, breadcrumbName, svgClick, firstTime, actions, dropDownTitle, children
+            obj, history, auditLogPath, name, breadcrumbName, svgClick, firstTime, actions, dropDownTitle, children,
+            customAction
         } = this.props;
         const {showDropDown} = this.state;
         const queryParam = `name=${encodeURIComponent(breadcrumbName || name)}&back=${encodeURIComponent(window.location.pathname)}`;
@@ -62,6 +63,7 @@ class UnitHeader extends React.Component {
                                                                history={history}
                                                                queryParam={queryParam}/>}
                     </div>}
+                    {customAction && customAction}
                 </div>
             </div>
         )

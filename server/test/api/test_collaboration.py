@@ -17,11 +17,12 @@ class TestCollaboration(AbstractTest):
                         with_basic_auth=with_basic_auth)
 
     def test_find_by_identifier(self):
+        self.login("urn:james")
         collaboration = self.get("/api/collaborations/find_by_identifier",
                                  query_data={"identifier": collaboration_ai_computing_uuid},
                                  with_basic_auth=False)
-        self.assertSetEqual({"id", "name", "admin_email", "disable_join_requests", "accepted_user_policy",
-                             "logo", "description"},
+        self.assertSetEqual({"id", "name", "admins", "disable_join_requests", "accepted_user_policy",
+                             "logo", "description", "member_count", "group_count", "services", "website_url"},
                             set(collaboration.keys()))
 
     def test_search(self):

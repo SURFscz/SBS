@@ -28,8 +28,8 @@ const sanitizeHtml = html => {
 
 class Welcome extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props, context) {
+        super(props, context);
         this.state = {
             organisation: {},
             idpDisplayName: I18n.t("welcome.unknown"),
