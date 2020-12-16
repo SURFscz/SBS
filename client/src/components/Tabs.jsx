@@ -29,12 +29,13 @@ class Tabs extends React.Component {
                     {<div className={`tabs ${className}`}>
 
                         {filteredChildren.map(child => {
-                            const {label, name, icon, notifier} = child.props;
+                            const {label, name, icon, notifier, readOnly} = child.props;
 
                             return (
                                 <Tab
                                     activeTab={activeTab}
                                     icon={icon}
+                                    readOnly={readOnly}
                                     key={name}
                                     name={name}
                                     notifier={notifier}

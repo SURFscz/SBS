@@ -8,23 +8,30 @@ class Tab extends Component {
         activeTab: PropTypes.string.isRequired,
         label: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
+        readOnly: PropTypes.bool,
         icon: PropTypes.object,
         className: PropTypes.string,
         onClick: PropTypes.func.isRequired,
     };
 
     onClick = () => {
-        const {name, onClick} = this.props;
-        onClick(name);
+        const {name, onClick, readOnly} = this.props;
+        if (!readOnly) {
+            onClick(name);
+        }
+
     };
 
     render() {
-        let {activeTab, className = "", label, name, icon, notifier} = this.props;
+        let {activeTab, className = "", label, name, icon, notifier, readOnly} = this.props;
 
         className += " tab";
 
         if (activeTab === name) {
             className += " active";
+        }
+        if (readOnly) {
+            className += " read-only";
         }
 
         return (

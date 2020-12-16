@@ -389,6 +389,8 @@ class CollaborationForm extends React.Component {
         }
         const unitHeaderName = (!isCollaborationRequest || autoCreateCollaborationRequest) ? I18n.t("models.collaborations.new") :
             I18n.t("models.collaborations.newCollaborationRequest")
+        const joinRequestUrl = disable_join_requests ? I18n.t("collaboration.joinRequestUrlDisabled") :
+            `${config.base_url}/registration?collaboration=${collaboration.identifier}`;
         return (
             <div className="mod-new-collaboration-container">
                 {isNew &&
@@ -461,7 +463,7 @@ class CollaborationForm extends React.Component {
                                 disabled={true}/>
 
                     {(!isCollaborationRequest && !isNew) &&
-                    <InputField value={`${config.base_url}/registration?collaboration=${collaboration.identifier}`}
+                    <InputField value={joinRequestUrl}
                                 name={I18n.t("collaboration.joinRequestUrl")}
                                 copyClipBoard={true}
                                 toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
