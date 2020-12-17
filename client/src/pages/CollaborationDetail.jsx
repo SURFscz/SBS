@@ -39,6 +39,8 @@ import JoinRequests from "../components/redesign/JoinRequests";
 import {setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
+import Button from "../components/Button";
+import JoinRequestDialog from "../components/JoinRequestDialog";
 
 
 class CollaborationDetail extends React.Component {
@@ -55,6 +57,7 @@ class CollaborationDetail extends React.Component {
             adminOfCollaboration: false,
             collaborationJoinRequest: false,
             showMemberView: true,
+            alreadyMember: false,
             loading: true,
             firstTime: false,
             tab: "admins",
@@ -63,6 +66,7 @@ class CollaborationDetail extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
+            joinRequestDialogOpen: false
         }
     }
 
@@ -112,7 +116,7 @@ class CollaborationDetail extends React.Component {
                     } else {
                         const alreadyMember = user.collaboration_memberships.some(m => m.collaboration_id === collaboration.id);
                         if (alreadyMember) {
-                            setFlash(I18n.t("registration.flash.alreadyMember", {name: collaboration.name}), "error");
+                            setFlash(I18n.t("registration.alreadyMember", {name: collaboration.name}), "error");
                         }
                         this.setState({
                             collaboration: collaboration,
@@ -128,7 +132,7 @@ class CollaborationDetail extends React.Component {
                             AppStore.update(s => {
                                 s.breadcrumb.paths = [
                                     {path: "/", value: I18n.t("breadcrumb.home")},
-                                    {value: I18n.t("breadcrumb.collaborationRequest", {name: collaboration.name})}
+                                    {value: I18n.t("breadcrumb.collaborationJoinRequest", {name: collaboration.name})}
                                 ]
                                 s.sideComponent = null;
                             });
@@ -199,7 +203,7 @@ class CollaborationDetail extends React.Component {
     getTabs = (collaboration, schacHomeOrganisation, adminOfCollaboration, showMemberView, isJoinRequest = false) => {
         //Actually this collaboration is not for members to view
         if ((!adminOfCollaboration || showMemberView) && !collaboration.disclose_member_information) {
-            return [this.getAboutTab(collaboration, showMemberView)];
+            return [this.getAboutTab(collaboration, showMemberView, isJoinRequest)];
         }
         const tabs = (adminOfCollaboration && !showMemberView) ?
             [
@@ -325,7 +329,7 @@ class CollaborationDetail extends React.Component {
         }
         let admins;
         if (collaborationJoinRequest) {
-            admins = collaboration.admin
+            admins = collaboration.admins
                 .map(m => ({name: m}));
         } else {
             admins = collaboration.collaboration_memberships
@@ -346,8 +350,18 @@ class CollaborationDetail extends React.Component {
         this.props.history.push(`/new-collaboration?organisationId=${collaboration.organisation_id}`);
     }
 
-    getUnitHeaderForMemberNew = (user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest) => {
-        const customAction = collaborationJoinRequest ? <span>"TODO"</span>: null;
+    collaborationJoinRequestAction = (collaboration, alreadyMember) => {
+        return (
+            <div className="join-request-action">
+                <Button txt={I18n.t("registration.joinRequest", {name: collaboration.name})}
+                        disabled={alreadyMember}
+                        onClick={() => this.setState({joinRequestDialogOpen: true})}/>
+            </div>
+        );
+    }
+
+    getUnitHeaderForMemberNew = (user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember) => {
+        const customAction = collaborationJoinRequest ? this.collaborationJoinRequestAction(collaboration, alreadyMember) : null;
         return <UnitHeader obj={collaboration}
                            dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
                            actions={collaborationJoinRequest ? [] : this.getActions(user, collaboration, allowedToEdit, showMemberView)}
@@ -463,7 +477,7 @@ class CollaborationDetail extends React.Component {
         const {
             collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
-            collaborationJoinRequest
+            collaborationJoinRequest, joinRequestDialogOpen, alreadyMember
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -473,13 +487,19 @@ class CollaborationDetail extends React.Component {
         return (
             <>
                 {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit, showMemberView)}
-                {(!showMemberView || !adminOfCollaboration) && this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest)}
+                {(!showMemberView || !adminOfCollaboration) &&
+                    this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
 
                 <WelcomeDialog name={collaboration.name} isOpen={firstTime}
                                role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
                                isOrganisation={false}
                                isAdmin={user.admin}
                                close={() => this.setState({firstTime: false})}/>
+
+                <JoinRequestDialog collaboration={collaboration}
+                                   isOpen={joinRequestDialogOpen}
+                                   history={this.props.history}
+                               close={() => this.setState({joinRequestDialogOpen: false})}/>
 
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}

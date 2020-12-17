@@ -1,17 +1,17 @@
 import React from "react";
-import I18n from "i18n-js";
 import "./ServerError.scss";
-import {Browser} from 'react-kawaii'
+import {Player} from "@lottiefiles/react-lottie-player";
+import deadEnd from "../lotties/dead_end.json";
 
 export default function DeadEnd() {
     return (
         <div className="mod-server-error">
-            <div className="title">
-                <p>{I18n.t("error_dialog.deadEnd")}</p>
-            </div>
-            <div className="content">
-                <Browser size={160} mood="sad" color="#fbfbfb" />
-            </div>
+            <Player
+                autoplay
+                loop
+                src={deadEnd}
+                style={{height: '600px', width: '600px'}}
+            />
         </div>
     );
 }

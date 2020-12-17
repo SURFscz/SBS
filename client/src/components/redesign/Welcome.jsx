@@ -45,13 +45,11 @@ class Welcome extends React.Component {
                     idpDisplayName: res[1] ? res[1].display_name : this.state.idpDisplayName,
                     loading: false
                 });
-                if (!isEmpty(res[0])) {
-                    AppStore.update(s => {
-                        s.breadcrumb.paths = [
-                            {path: "/", value: I18n.t("breadcrumb.home")}
-                        ];
-                    });
-                }
+                AppStore.update(s => {
+                    s.breadcrumb.paths = [
+                        {path: "/", value: I18n.t("breadcrumb.home")}
+                    ];
+                });
             });
     }
 

@@ -99,17 +99,19 @@ class ServiceConnectionRequest extends React.Component {
     };
 
     render() {
-        const {serviceConnectionRequest, confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, alreadyMember} =
+        const {
+            serviceConnectionRequest,
+            confirmationDialogOpen,
+            confirmationDialogAction,
+            cancelDialogAction,
+            leavePage,
+            alreadyMember
+        } =
             this.state;
         const serviceConnectionRequestFound = serviceConnectionRequest.id;
         const title = I18n.t("serviceConnectionRequest.title");
         return (
-            <div className="mod-service-connection-request">
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    confirm={confirmationDialogAction}
-                                    question={leavePage ? undefined : I18n.t("serviceConnectionRequest.declineConfirmation")}
-                                    leavePage={leavePage}/>
+            <div className="service-connection-request-container">
                 {serviceConnectionRequestFound &&
                 <UnitHeader obj={({name: title, svg: ServicesIcon})}>
                                         <span className="subTitle">
@@ -119,30 +121,39 @@ class ServiceConnectionRequest extends React.Component {
                                                 service: serviceConnectionRequest.service.name
                                             })}</span>
                 </UnitHeader>}
-                <div className="service-connection-request-container">
-                    <InputField name={I18n.t("serviceConnectionRequest.message")}
-                                large={true}
-                                value={serviceConnectionRequest.message}
-                                disabled={true}
-                                multiline={true}
-                                toolTip={I18n.t("serviceConnectionRequest.messageTooltip", {name: serviceConnectionRequest.requester.name})}/>
 
-                    <InputField name={I18n.t("serviceConnectionRequest.collaboration")}
-                                value={serviceConnectionRequest.collaboration.name}
-                                disabled={true}/>
+                <div className="mod-service-connection-request">
+                    <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                        cancel={cancelDialogAction}
+                                        confirm={confirmationDialogAction}
+                                        question={leavePage ? undefined : I18n.t("serviceConnectionRequest.declineConfirmation")}
+                                        leavePage={leavePage}/>
 
-                    <InputField name={I18n.t("serviceConnectionRequest.requester")}
-                                value={serviceConnectionRequest.requester.name} disabled={true}/>
-                    {serviceConnectionRequestFound &&
-                    <section className="actions">
-                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-                        <Button cancelButton={true} txt={I18n.t("serviceConnectionRequest.decline")}
-                                onClick={this.decline}/>
-                        <Button txt={I18n.t("serviceConnectionRequest.accept")}
-                                onClick={this.accept}
-                                disabled={alreadyMember}/>
-                    </section>}
+                    <div className="service-connection-request">
+                        <InputField name={I18n.t("serviceConnectionRequest.message")}
+                                    large={true}
+                                    value={serviceConnectionRequest.message}
+                                    disabled={true}
+                                    multiline={true}
+                                    toolTip={I18n.t("serviceConnectionRequest.messageTooltip", {name: serviceConnectionRequest.requester.name})}/>
 
+                        <InputField name={I18n.t("serviceConnectionRequest.collaboration")}
+                                    value={serviceConnectionRequest.collaboration.name}
+                                    disabled={true}/>
+
+                        <InputField name={I18n.t("serviceConnectionRequest.requester")}
+                                    value={serviceConnectionRequest.requester.name} disabled={true}/>
+                        {serviceConnectionRequestFound &&
+                        <section className="actions">
+                            <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                            <Button cancelButton={true} txt={I18n.t("serviceConnectionRequest.decline")}
+                                    onClick={this.decline}/>
+                            <Button txt={I18n.t("serviceConnectionRequest.accept")}
+                                    onClick={this.accept}
+                                    disabled={alreadyMember}/>
+                        </section>}
+
+                    </div>
                 </div>
             </div>)
             ;

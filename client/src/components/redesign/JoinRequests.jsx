@@ -125,9 +125,9 @@ class JoinRequests extends React.Component {
                     <section className="actions">
                         <Button warningButton={true} txt={I18n.t("joinRequest.decline")}
                                 onClick={() => this.confirm(this.declineJoinRequest, I18n.t("joinRequest.declineConfirmation"))}/>
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("joinRequest.accept")}
                                 onClick={this.acceptJoinRequest}/>
-                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                     </section>
                 </div>
             </div>)

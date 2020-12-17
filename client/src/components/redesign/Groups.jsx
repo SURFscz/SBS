@@ -335,7 +335,7 @@ class Groups extends React.Component {
                     {(adminOfCollaboration && !createNewGroup) &&
                     <Button warningButton={true} txt={I18n.t("groups.delete")}
                             onClick={this.delete}/>}
-                    <Button className="white" txt={I18n.t("forms.cancel")}
+                    <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                             onClick={() => this.setState({editGroup: false, createNewGroup: false})}/>
                     <Button disabled={disabledSubmit} txt={I18n.t(`forms.save`)}
                             onClick={this.submit}/>

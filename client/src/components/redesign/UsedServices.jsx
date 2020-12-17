@@ -213,7 +213,7 @@ class UsedServices extends React.Component {
                                 large={true}
                                 onChange={e => this.setState({message: e.target.value})}/>
                     <section className="actions">
-                        <Button className="white" txt={I18n.t("forms.cancel")}
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                                 onClick={this.cancelRequestConnectionService}/>
                         <Button disabled={isEmpty(message)} txt={I18n.t("collaborationServices.send")}
                                 onClick={this.serviceConnectionRequest}/>

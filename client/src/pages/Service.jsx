@@ -433,7 +433,7 @@ class Service extends React.Component {
 
                 {(isNew && isAdmin) &&
                 <section className="actions">
-                    <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                    <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
                             onClick={this.submit}/>
                 </section>}
@@ -441,7 +441,7 @@ class Service extends React.Component {
                 <section className="actions">
                     <Button warningButton={true} txt={I18n.t("service.delete")}
                             onClick={this.delete}/>
-                    <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
+                    <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
                             onClick={this.submit}/>
                 </section>}
