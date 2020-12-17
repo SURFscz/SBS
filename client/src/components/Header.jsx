@@ -21,8 +21,12 @@ export default class Header extends React.PureComponent {
 
     componentDidMount() {
         emitter.addListener("impersonation", this.impersonate);
-        organisationByUserSchacHomeOrganisation()
-            .then(res => this.setState({organisation: res}));
+        const {currentUser} = this.props;
+        if (!currentUser.guest) {
+            organisationByUserSchacHomeOrganisation()
+                .then(res => this.setState({organisation: res}));
+        }
+
     }
 
     componentWillUnmount() {
