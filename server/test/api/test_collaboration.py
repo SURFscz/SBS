@@ -11,7 +11,7 @@ from server.test.seed import uuc_secret, uuc_name
 
 class TestCollaboration(AbstractTest):
 
-    def _find_by_identifier(self, with_basic_auth=False):
+    def _find_by_identifier(self, with_basic_auth=True):
         return self.get("/api/collaborations/find_by_identifier",
                         query_data={"identifier": collaboration_ai_computing_uuid},
                         with_basic_auth=with_basic_auth)
