@@ -50,6 +50,7 @@ def collaboration_by_identifier():
             "group_count": len(collaboration.groups), "website_url": collaboration.website_url,
             "disable_join_requests": collaboration.disable_join_requests, "logo": collaboration.logo,
             "description": collaboration.description,
+            "disclose_member_information": collaboration.disclose_member_information,
             "accepted_user_policy": collaboration.accepted_user_policy}, 200
 
 

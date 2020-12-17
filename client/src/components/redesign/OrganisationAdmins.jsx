@@ -273,9 +273,9 @@ class OrganisationAdmins extends React.Component {
                     <section className="actions">
                         <Button warningButton={true} txt={I18n.t("organisationInvitation.delete")}
                                 onClick={this.delete}/>
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("organisationInvitation.resend")}
                                 onClick={this.resend}/>
-                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                     </section>
                 </div>
             </div>)

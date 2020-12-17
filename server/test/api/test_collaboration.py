@@ -22,7 +22,8 @@ class TestCollaboration(AbstractTest):
                                  query_data={"identifier": collaboration_ai_computing_uuid},
                                  with_basic_auth=False)
         self.assertSetEqual({"id", "name", "admins", "disable_join_requests", "accepted_user_policy",
-                             "logo", "description", "member_count", "group_count", "services", "website_url"},
+                             "logo", "description", "member_count", "group_count", "services", "website_url",
+                             "disclose_member_information"},
                             set(collaboration.keys()))
 
     def test_search(self):

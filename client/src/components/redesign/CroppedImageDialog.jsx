@@ -162,7 +162,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                 <h2>{title}</h2>
                 {this.renderImages(error, value, source, crop, onCancel, onSave, name)}
                 <section className="actions">
-                    <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.onCancelInternal}/>
+                    <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.onCancelInternal}/>
                     <Button txt={I18n.t("forms.save")} disabled={busy || !source}
                             onClick={this.onSaveInternal}/>
                 </section>

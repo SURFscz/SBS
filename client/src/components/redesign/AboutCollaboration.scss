@@ -90,8 +90,13 @@ div.collaboration-about-mod {
 
     .members {
         margin: 0 20px;
+
         .members-header {
             display: flex;
+
+            &.join-request {
+                flex-direction: column;
+            }
 
             a {
                 margin-left: 25px;
@@ -106,6 +111,7 @@ div.collaboration-about-mod {
 
     .playing-svg {
         margin: auto 0px;
+
         svg {
             width: 320px;
             height: auto;

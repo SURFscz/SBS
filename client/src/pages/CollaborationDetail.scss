@@ -1,7 +1,7 @@
 @import "../stylesheets/vars.scss";
 
 .unit-info {
-    margin-top: 2px;
+    margin-top: 22px;
 
     li {
         display: flex;
@@ -10,13 +10,17 @@
 
         svg {
             margin-right: 18px;
-            width: 20px ;
+            width: 20px;
             height: auto;
         }
 
 
     }
 
+}
+
+.join-request-action {
+    margin-left: auto;
 }
 
 span.contains-copy {

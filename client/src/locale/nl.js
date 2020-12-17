@@ -24,6 +24,7 @@ I18n.translations.nl = {
         registration: "Registratie",
         collaborations: "Samenwerkingen",
         collaboration: "Samenwerking: <strong>{{name}}</strong>",
+        collaborationJoinRequest: "Lidmaatschap verzoek voor <strong>{{name}}</strong>",
         organisations: "Organisaties",
         organisation: "Organisatie: <strong>{{name}}</strong>",
         services: "Diensten",
@@ -285,6 +286,7 @@ I18n.translations.nl = {
             viewAsMember: "Bekijk als lid",
             viewAsAdmin: "Bekijk als admin",
             discloseNoMemberInformation: "Deze samenwerking deelt geen ledeninformatie",
+            discloseNoMemberInformationJoinRequest: "Alleen zichtbaar voor leden",
             newCollaborationRequest: "Aanvragen samenwerking",
             leave: "Vertrek"
         },
@@ -374,49 +376,16 @@ I18n.translations.nl = {
         impersonatorTooltip: "Je bent echt <em>{{impersonator}}</em>,<br/>maar je imiteert <em>{{currentUser}}</em>. <br/><br/>Op de <strong>Imitatie</strong> pagina<br/> kan je je identiteit veranderen<br/>of jezelf weer worden."
     },
     registration: {
-        title: "Vraag toegang tot de resources van {{collaboration}}",
-        start: "Start",
-        formTitle: "Vraag toegang tot de resources van {{collaboration}}",
-        formEndedTitle: "Je verzoek om lid te worden van {{collaboration}} is verzonden.",
-        request: "Vraag aan",
-        continue: "Ga door",
-        requiredCollaboration: "Ongeldig verzoek. Samenwerking dient gespecificieerd te worden.",
-        noJoinRequestCollaboration: "Samenwerking {{name}} ondersteunt geen verzoeken voor lidmaatschap; je moet uitgenodigd worden.",
-        unknownCollaboration: "De samenwerking met de identifier {{collaboration}} bestaat niet.",
-        step1: {
-            title: "Koppel je account",
-            sub: "Kies organisatie",
-            icon: "link",
-            tooltip: "Je zult doorgestuurd worden om<br/>je organisatie (of eduID) te kiezen en, nadat<br/>je ingelogd bent, word je<br/>doorgestuurd naar stap 2.",
+        joinRequest: "Vraag lidmaatschap voor {{name}}",
+                explanation: "Om je aanmeldingsverzoek in te dienen, vul je je motivatie in om lid te worden van samenwerking <strong>{{naam}}</strong>.",
+        title: "Verzoek lidmaatschap voor {{name}}",
+        alreadyMember: "Je bent reeds lid van {{name}}",
+        motivation: "Motivatie om lid te worden van {{name}}?",
+        motivationPlaceholder: "Omschrijf je motivatie om lid te worden zodat een admin je verzoek kan honoreren.",
+        policyConfirmation: "Ik heb de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy (AUP)</a> van {{collaboration}} gelezen en accepteer deze.",
+        feedback: {
+            info: "Je verzoek is verzonden naar de samenwerkingsmanager van <strong>{{name{{}}</strong> die je aanvraag zal beoordelen. <br/> Zijn / haar beslissing wordt je per e-mail meegedeeld",
         },
-        step2: {
-            title: "Vraag toegang aan",
-            sub: "Toelichting & voorwaarden",
-            icon: "book",
-            tooltip: "Nadat je je organisatie hebt gekozen<br/>kun je optioneel een motivatie<br/>voor je verzoek invullen<br/>en onze voorwaarden lezen en accepteren",
-            registrationInfo: "We zullen de volgende informatie vastleggen:",
-            motivationInfo: "Waarom wil je lid worden van samenwerking {{collaboration}}?",
-            motivationPlaceholder: "Beschrijf je werk, achtergrond of reden voor je verzoek tot toegang, zodat de beheerder van de samenwerking kan beoordelen of en welke rechten hij moet toekennen",
-            reference: "Ken je al iemand die lid is van {{collaboration}}?",
-            referencePlaceholder: "Vul de namen in van mensen die je kent die al lid zijn van {{collaboration}}, zoals mede-onderzoekers",
-            policy: "Ons Beleid",
-            personalDataConfirmation: "Ik begrijp dat de hierboven getoonde persoonlijke data doorgegeven kan worden aan diensten die zijn of worden gekoppeld aan deze samenwerking.",
-            policyConfirmation: "Ik heb de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy (AUP)</a> van {{collaboration}} gelezen en accepteer deze.",
-            noAup: "Samenwerking {{name}} heeft geen link opgeven naar een Acceptable Use Policy."
-        },
-        step3: {
-            title: "Wacht op toestemming",
-            sub: "Goedgekeurd of afgekeurd",
-            icon: "gavel",
-            tooltip: "Als laatste stap sturen we een e-mail <br/>naar de beheerder van de samenwerking<br/>die je verzoek zal goedkeuren of afwijzen.",
-            info: "Je verzoek is verstuurd naar de beheerder van de samenwerking. Die persoon zal je verzoek beoordelen.<br/>Zijn / haar beslissing krijg je te horen via een e-mail.",
-            contact: "Als je te lang niets hoort, neem dan contact met ons op via <a href=\"mailto:{{mail}}\">{{mail}}</a>."
-        },
-        flash: {
-            info: "Stap {{step}} is succesvol afgerond.",
-            success: "Je verzoek om lid te worden van {{name}} is verzonden voor review.",
-            alreadyMember: "Ongeldig verzoek? Je bent al lid van samenwerking {{name}}."
-        }
     },
     profile: {
         name: "Naam",

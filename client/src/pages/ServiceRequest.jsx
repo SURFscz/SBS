@@ -258,7 +258,7 @@ class ServiceRequest extends React.Component {
                     }
                     <section className="actions">
                         {this.displayBackToService(service) &&
-                        <Button className="white" txt={I18n.t("serviceRequest.backToService")}
+                        <Button cancelButton={true} txt={I18n.t("serviceRequest.backToService")}
                                 onClick={this.backToService}/>}
                         <Button disabled={!enableSubmit} txt={I18n.t("serviceRequest.link")}
                                 onClick={this.submit}/>

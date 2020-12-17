@@ -24,6 +24,7 @@ I18n.translations.en = {
         registration: "Registration",
         collaborations: "Collaborations",
         collaboration: "Collaboration: <strong>{{name}}</strong>",
+        collaborationJoinRequest: "Join request for <strong>{{name}}</strong>",
         organisations: "Organisations",
         organisation: "Organisation: <strong>{{name}}</strong>",
         services: "Services",
@@ -285,6 +286,7 @@ I18n.translations.en = {
             viewAsMember: "View as member",
             viewAsAdmin: "View as admin",
             discloseNoMemberInformation: "This collaboration discloses no member information",
+            discloseNoMemberInformationJoinRequest: "Only visible for members",
             newCollaborationRequest: "Request collaboration",
             leave: "Leave CO"
         },
@@ -374,49 +376,16 @@ I18n.translations.en = {
         impersonatorTooltip: "You are really <em>{{impersonator}}</em>,<br/>but you are impersonating <em>{{currentUser}}</em>.<br/><br/>On the <strong>Impersonate</strong> page<br/> you can change identity<br/>or become you again."
     },
     registration: {
-        title: "Request access to the resources of {{collaboration}}",
-        start: "Start",
-        formTitle: "Request access to the resources of {{collaboration}}",
-        formEndedTitle: "Your request to join {{collaboration}} is sent for review",
-        request: "Request",
-        continue: "Continue",
-        requiredCollaboration: "Invalid request: collaboration needs to be specified.",
-        noJoinRequestCollaboration: "Collaboration {{name}} has disabled join requests. You need to get invited.",
-        unknownCollaboration: "The collaboration with the identifer {{collaboration}} does not exists.",
-        step1: {
-            title: "Link your account",
-            sub: "Select organisation",
-            icon: "link",
-            tooltip: "You will be redirected to select<br/>your organisation (or eduID) and after you<br/>have logged in you will be<br/>redirected to proceed with step 2.",
+        joinRequest: "Submit request to join {{name}}",
+        explanation: "In order to submit your join request, please fill in your motivation for joining collaboration <strong>{{name}}</strong>.",
+        title: "Request membership of {{name}}",
+        alreadyMember: "You are already a member of {{name}}",
+        motivation: "Your motivation",
+        motivationPlaceholder: "Describe your motivation to join in order for an admin to grant you access.",
+        policyConfirmation: "I have read the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy</a> of {{collaboration}} and accept it",
+        feedback: {
+            info: "Your request has been sent to the collaboration manager of <strong>{{name}}</strong> who will review your application. His / her decision will be communicated to you by e-mail",
         },
-        step2: {
-            title: "Request access",
-            sub: "Motivation & Terms",
-            icon: "book",
-            tooltip: "When you have chosen your organisation<br/>you'll need to optionally<br/>motivate your request<br/>and review and accept our terms",
-            registrationInfo: "We will register the following information:",
-            motivationInfo: "Why would you like to join the collaboration {{collaboration}}?",
-            motivationPlaceholder: "Describe your work or need to access the resources of the collaboration in order for an admin to grant you the proper user rights.",
-            reference: "Do you have a reference within {{collaboration}}?",
-            referencePlaceholder: "Write down the names of people you know within {{collaboration}} like co-researchers.",
-            policy: "Our Policy",
-            personalDataConfirmation: "I understand that the personal data as displayed above might be transmitted to services that are or might get connected to collaboration {{name}}.",
-            policyConfirmation: "I have read the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy</a> of {{collaboration}} and accept it",
-            noAup: "Collaboration {{name}} has not provided a link to an Acceptable Use Policy."
-        },
-        step3: {
-            title: "Wait for approval",
-            sub: "Approved or denied",
-            icon: "gavel",
-            tooltip: "As a last step we will sent a mail <br/>to the administrator of the service<br/>who will either approve or deny your request.",
-            info: "Your request has been sent to the collaboration manager who will review your application.<br/>His / her decision will be communicated to you by e-mail",
-            contact: "Still haven't received a message from us? Please contact us via <a href=\"mailto:{{mail}}\">{{mail}}</a>"
-        },
-        flash: {
-            info: "Step {{step}} successfully finished.",
-            success: "Your request to join {{name}} is sent for review.",
-            alreadyMember: "Invalid join request? You are already a member of collaboration {{name}}.",
-        }
     },
     profile: {
         name: "Name",

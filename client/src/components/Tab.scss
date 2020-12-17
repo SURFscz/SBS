@@ -33,7 +33,7 @@
             fill: $dark-grey;
         }
 
-        &:hover {
+        &:not(.read-only):hover {
             h2, svg {
                 color: black;
             }
@@ -43,6 +43,18 @@
             }
 
             border-bottom: 3px solid $medium-grey;
+        }
+
+        &.read-only {
+            cursor: not-allowed;
+
+            h2, svg {
+                color: $medium-grey;
+            }
+
+            svg {
+                fill: $medium-grey;
+            }
         }
     }
 

@@ -155,14 +155,15 @@ class OrganisationDetail extends React.Component {
         const {organisation} = this.state;
         deleteOrganisationMembership(organisation.id, user.id)
             .then(() => {
-                this.componentDidMount(() => {
+                this.props.refreshUser(() => {
+                    this.setState({confirmationDialogOpen: false, loading: false});
+                    setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}));
                     if (user.admin) {
-                        setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}));
-                        this.setState({confirmationDialogOpen: false, loading: false});
+                        this.componentDidMount();
                     } else {
                         this.props.history.push("/home");
                     }
-                })
+                });
             });
     };
 
@@ -218,7 +219,7 @@ class OrganisationDetail extends React.Component {
                                     question={confirmationQuestion}/>
                 <UnitHeader obj={organisation}
                             mayEdit={adminOfOrganisation}
-                            history={user.admin && this.props.history}
+                            history={user.admin ? this.props.history : null}
                             auditLogPath={`organisations/${organisation.id}`}
                             breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}

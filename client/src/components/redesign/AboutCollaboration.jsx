@@ -38,12 +38,12 @@ class AboutCollaboration extends React.Component {
         const {collaboration, user, showMemberView, isJoinRequest} = this.props;
         const isAllowedToSeeMembers = !isJoinRequest &&
             isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id) && !showMemberView;
-        const services = removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
+        const services = isJoinRequest ? collaboration.services : removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
         const {collaboration_memberships} = collaboration
-        const memberships = collaboration_memberships
+        const memberships = isJoinRequest ? [] : collaboration_memberships
             .sort((m1, m2) => m1.role.localeCompare(m2.role))
             .slice(0, showAll ? collaboration_memberships.length : memberCutOff);
-        const showMembers = collaboration.disclose_member_information || isAllowedToSeeMembers;
+        const showMembers = !isJoinRequest && (collaboration.disclose_member_information || isAllowedToSeeMembers);
         return (
             <div className="collaboration-about-mod">
                 <div className="about">
@@ -53,12 +53,12 @@ class AboutCollaboration extends React.Component {
                 <div className="details">
                     {services.length > 0 && <div className="services">
                         <h1>{I18n.t("models.collaboration.services", {nbr: services.length})}</h1>
-                        <span className="info">
+                        {!isJoinRequest && <span className="info">
                         {I18n.t("models.collaboration.servicesStart")}
-                        </span>
+                        </span>}
                         <ul className="services">
                             {services.sort((a, b) => a.name.localeCompare(b.name)).map(service =>
-                                <li key={service.id} onClick={this.openService(service)}
+                                <li key={service.name} onClick={this.openService(service)}
                                     className={`${service.uri ? "uri" : ""}`}>
                                     {service.logo && <Logo src={service.logo} alt={service.name}/>}
                                     <span>{service.name}</span>
@@ -94,9 +94,15 @@ class AboutCollaboration extends React.Component {
                     {showMembers && <div className="playing-svg">
                         <IllustrationCO/>
                     </div>}
-                    {!showMembers && <div className="members">
+                    {(!showMembers && !isJoinRequest) && <div className="members">
                         <div className="members-header">
                             <h1>{I18n.t("models.collaboration.discloseNoMemberInformation")}</h1>
+                        </div>
+                    </div>}
+                    {isJoinRequest && <div className="members">
+                        <div className="members-header join-request">
+                            <h1>{I18n.t("models.collaboration.members", {nbr: collaboration.member_count})}</h1>
+                            <p>{I18n.t("models.collaboration.discloseNoMemberInformationJoinRequest")}</p>
                         </div>
                     </div>}
                 </div>
