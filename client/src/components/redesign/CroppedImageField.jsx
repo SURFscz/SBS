@@ -41,7 +41,7 @@ export default class CroppedImageField extends React.PureComponent {
 
     render() {
         const {error, dialogOpen, confirmationDialogOpen, confirmationDialogAction} = this.state;
-        const {title, name, value, secondRow = false, initial = false} = this.props;
+        const {title, name, value, secondRow = false, initial = false, disabled = false} = this.props;
         const imageRequired = !initial && isEmpty(value);
         return (
             <div className={`cropped-image-field ${secondRow ? "second-row" : ""}`}>
@@ -63,8 +63,9 @@ export default class CroppedImageField extends React.PureComponent {
                     </div>}
                     <div className="file-upload-actions">
                         <Button txt={value ? I18n.t("forms.change") : I18n.t("forms.add")}
+                                disabled={disabled}
                                 onClick={() => this.setState({dialogOpen: true})}/>
-                        {value && <Button warningButton={true} onClick={this.confirmDelete}/>}
+                        {(false && value) && <Button warningButton={true} onClick={this.confirmDelete}/>}
                     </div>
                 </section>
                 {!isEmpty(error) && <ErrorIndicator msg={error}/> }

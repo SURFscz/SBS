@@ -27,6 +27,7 @@ import {AppStore} from "../stores/AppStore";
 import SpinnerField from "../components/redesign/SpinnerField";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import EmailField from "../components/EmailField";
+import {isUserAllowed, ROLES} from "../utils/UserRole";
 
 class CollaborationForm extends React.Component {
 
@@ -128,9 +129,9 @@ class CollaborationForm extends React.Component {
         const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
         if (organisation) {
             paths.push({
-                    path: `/organisations/${organisation.value}`,
-                    value: I18n.t("breadcrumb.organisation", {name: organisation.label})
-                })
+                path: `/organisations/${organisation.value}`,
+                value: I18n.t("breadcrumb.organisation", {name: organisation.label})
+            })
         }
         if (collaboration) {
             paths.push({
@@ -193,8 +194,16 @@ class CollaborationForm extends React.Component {
         const {collaboration} = this.state;
         deleteCollaboration(collaboration.id)
             .then(() => {
-                this.props.history.push("/organisations/" + collaboration.organisation.id);
-                setFlash(I18n.t("collaborationDetail.flash.deleted", {name: collaboration.name}));
+                this.props.refreshUser(() => {
+                    const {user} = this.props;
+                    debugger;
+                    if (isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id)) {
+                        this.props.history.push("/organisations/" + collaboration.organisation.id);
+                    } else {
+                        this.props.history.push("/home");
+                    }
+                    setFlash(I18n.t("collaborationDetail.flash.deleted", {name: collaboration.name}));
+                });
             });
     };
 
@@ -242,8 +251,8 @@ class CollaborationForm extends React.Component {
                 disclose_email_information
             }).then(res => {
                 this.props.refreshUser(() => {
-                    this.props.history.goBack();
                     const isCollCreated = res.identifier;
+                    this.props.history.push(`/collaborations/${res.id}`);
                     setFlash(I18n.t(isCollCreated ? "collaboration.flash.created" : "collaboration.flash.requested", {name: res.name}));
                 });
             });
