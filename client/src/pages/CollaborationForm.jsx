@@ -389,7 +389,7 @@ class CollaborationForm extends React.Component {
         }
         const unitHeaderName = (!isCollaborationRequest || autoCreateCollaborationRequest) ? I18n.t("models.collaborations.new") :
             I18n.t("models.collaborations.newCollaborationRequest")
-        const joinRequestUrl = disable_join_requests ? I18n.t("collaboration.joinRequestUrlDisabled") :
+        const joinRequestUrl = (isNew || disable_join_requests) ? I18n.t("collaboration.joinRequestUrlDisabled") :
             `${config.base_url}/registration?collaboration=${collaboration.identifier}`;
         return (
             <div className="mod-new-collaboration-container">
