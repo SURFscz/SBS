@@ -27,6 +27,7 @@ I18n.translations.nl = {
         collaborationJoinRequest: "Lidmaatschap verzoek voor <strong>{{name}}</strong>",
         organisations: "Organisaties",
         organisation: "Organisatie: <strong>{{name}}</strong>",
+        collaborationRequest: "Samenwerkings aanvraag: <strong>{{name}}</strong>",
         services: "Diensten",
         service: "Dienst: <strong>{{name}}</strong>",
         group: "Groep: <strong>{{name}}</strong>",
@@ -1070,6 +1071,9 @@ I18n.translations.nl = {
             approved: "{{requester}} samenwerkingsverzoek is goedgekeurd.",
             denied: "{{requester}} samenwerkingsverzoek is afgewezen."
         },
+        request: "Verzoek {{id}}",
+        requester: "Aanvrager",
+        approved: "Goedgekeurd",
         denyConfirmation: "Weet je zeker dat je dit verzoek wilt afkeuren?",
         deleteConfirmation: "Weet je zeker dat je dit verzoek wilt verwijderen?",
         approve: "Goedkeuren",
@@ -1280,14 +1284,27 @@ I18n.translations.nl = {
         toggleRole: "Verander rol"
     },
     welcome: {
-        title: "Welkom op het SURF Research Access Management platform",
-        info: "Je bent momenteel geen lid van een organisatie of samenwerkingen." +
-            "Neem bij vragen contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>"
+        title: "Hi {{name}},",
+        subTitle: "Welcome to SURF Research Access Management (SRAM). Here you can collaborate with your fellow researchers.",
+        unknown: "an unknown institution",
+        mysterious: "mysterious guest",
+        institution: "You have logged on via <strong>{{name}}</strong>",
+        institutionNotConnected: "This institution is not (yet) connected to SRAM",
+        whatYouCanDo: "Here's what you can do:",
+        instructions: "Instruction from <strong>{{name}}</strong>",
+        createColl: "Create your own collaboration",
+        startCreateColl: "If you want to start your own collaboration, you can create it directly.",
+        createCollRequest: "Request your own collaboration",
+        startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check and hopefully approve it.",
+        createCollTxt: "Create a collaboration",
+        createCollRequestTxt: "Request a collaboration",
+        contact: "Contact SRAM helpdesk",
+        contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> and let us know what you were expecting, or if you have any questions. We'll try to respond asap."
     },
     landing: {
         header: {
             title: "Collaborate with fellow researchers",
-            subtitle: "Spend less time managing infra-structure and access management, and more time on doing research"
+            subTitle: "Spend less time managing infra-structure and access management, and more time on doing research"
         },
         title: "<strong>SURF Research Access Management</strong> is a service for access management for Dutch led research collaborations. Non-commercial, open, standards-based, easy and secury.",
         roles: {
@@ -1296,7 +1313,7 @@ I18n.translations.nl = {
             institutions: "institutions"
         },
         benefits: "Benefits for {{name}}",
-        teamManager: {
+        managers: {
             subTitle: "Spend less time managing infra-structure and access management",
             features: [
                 "Create and manage teams with ease",

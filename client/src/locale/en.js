@@ -27,6 +27,7 @@ I18n.translations.en = {
         collaborationJoinRequest: "Join request for <strong>{{name}}</strong>",
         organisations: "Organisations",
         organisation: "Organisation: <strong>{{name}}</strong>",
+        collaborationRequest: "Collaboration request: <strong>{{name}}</strong>",
         services: "Services",
         service: "Service: <strong>{{name}}<strong/>",
         group: "Group: <strong>{{name}}</strong>",
@@ -1071,6 +1072,9 @@ I18n.translations.en = {
             approved: "{{requester}} collaboration request was approved.",
             denied: "{{requester}} collaboration request was denied."
         },
+        request: "Request {{id}}",
+        requester: "Requester",
+        approved: "Approved",
         denyConfirmation: "Are you sure you want to deny this Collaboration request?",
         deleteConfirmation: "Are you sure you want to delete this Collaboration request?",
         approve: "Approve",
