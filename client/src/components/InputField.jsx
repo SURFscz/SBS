@@ -26,9 +26,14 @@ export default function InputField({
                                        externalLink = false,
                                        history = null,
                                        large = false,
-                                       noInput = false
+                                       noInput = false,
+                                       error = false
                                    }) {
     placeholder = disabled ? "" : placeholder;
+    let className = `${fileUpload ? "file-upload" : ""}`;
+    if (error) {
+        className += "error ";
+    }
     return (
         <div className="input-field">
             {name && <label htmlFor={name}>{name} {toolTip &&
@@ -47,7 +52,7 @@ export default function InputField({
                        onChange={onChange}
                        onBlur={onBlur}
                        placeholder={placeholder}
-                       className={`${fileUpload ? "file-upload" : ""}`}
+                       className={className}
                        onKeyDown={e => {
                            if (onEnter && e.keyCode === 13) {//enter
                                onEnter(e);
@@ -69,7 +74,7 @@ export default function InputField({
                 </section>}
                 {(multiline && !noInput) &&
                 <textarea disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
-                          className={`${large ? "large" : ""}`}
+                          className={`${className} ${large ? "large" : ""}`}
                           onKeyDown={e => {
                               if (onEnter && e.keyCode === 13) {//enter
                                   onEnter(e);

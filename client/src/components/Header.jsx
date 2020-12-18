@@ -1,7 +1,6 @@
 import React from "react";
-import I18n from "i18n-js";
 import {Link} from "react-router-dom";
-import {ReactComponent as Logo} from "../images/surf.svg";
+import {ReactComponent as Logo} from "../images/SURF_SRAM.svg";
 import "./Header.scss";
 import UserMenu from "./redesign/UserMenu";
 import {ReactComponent as ChevronDown} from "../icons/chevron-down.svg";
@@ -61,8 +60,6 @@ export default class Header extends React.PureComponent {
             <div className={`header-container ${currentUser.guest ? "guest" : ""}`}>
                 <div className="header">
                     <Link className="logo" to="/"><Logo/></Link>
-
-                    <h1 className="title">{I18n.t("header.title")}</h1>
                     {!currentUser.guest && <div className="user-profile">
                         {this.renderProfileLink(currentUser)}
                         {dropDownActive &&

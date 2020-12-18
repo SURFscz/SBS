@@ -29,6 +29,7 @@ import {sanitizeShortName, shortNameDisabled} from "../../validations/regExps";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import ClipBoardCopy from "./ClipBoardCopy";
 import {AppStore} from "../../stores/AppStore";
+import ErrorIndicator from "./ErrorIndicator";
 
 class Groups extends React.Component {
 
@@ -101,11 +102,11 @@ class Groups extends React.Component {
         stopEvent(e);
         this.setState({selectedGroupId: null, createNewGroup: false, editGroup: false});
         AppStore.update(s => {
-                const paths = s.breadcrumb.paths.slice(0, s.breadcrumb.paths.length - 1);
-                const lastPath = paths[paths.length - 1];
-                lastPath.path = null;
-                s.breadcrumb.paths = paths;
-            });
+            const paths = s.breadcrumb.paths.slice(0, s.breadcrumb.paths.length - 1);
+            const lastPath = paths[paths.length - 1];
+            lastPath.path = null;
+            s.breadcrumb.paths = paths;
+        });
     }
 
     validateGroupName = e => {
@@ -127,7 +128,12 @@ class Groups extends React.Component {
     };
 
     renderGroupContainer = children => {
-        const {confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion} = this.state;
+        const {
+            confirmationDialogOpen,
+            cancelDialogAction,
+            confirmationDialogAction,
+            confirmationDialogQuestion
+        } = this.state;
         return (
             <div className="group-details-container">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -191,7 +197,7 @@ class Groups extends React.Component {
                 options={options}
             />
         </div> : null;
-        const queryParam = `name=${encodeURIComponent(I18n.t("breadcrumb.group", {name:selectedGroup.name}))}&back=${encodeURIComponent(window.location.pathname)}`;
+        const queryParam = `name=${encodeURIComponent(I18n.t("breadcrumb.group", {name: selectedGroup.name}))}&back=${encodeURIComponent(window.location.pathname)}`;
         const children = (
             <div className={"group-details"}>
                 <section className="header">
@@ -260,19 +266,19 @@ class Groups extends React.Component {
                                 name: e.target.value,
                                 alreadyExists: {...this.state.alreadyExists, name: false}
                             })}
+                            error={alreadyExists.name || (!initial && isEmpty(name))}
                             placeholder={I18n.t("groups.namePlaceholder")}
                             onBlur={this.validateGroupName}
                             name={I18n.t("groups.name")}
                             disabled={!adminOfCollaboration}/>
-                {alreadyExists.name && <span
-                    className="error">{I18n.t("groups.alreadyExists", {
+                {alreadyExists.name && <ErrorIndicator msg={I18n.t("groups.alreadyExists", {
                     attribute: I18n.t("groups.name").toLowerCase(),
                     value: name
-                })}</span>}
-                {(!initial && isEmpty(name)) && <span
-                    className="error">{I18n.t("groups.required", {
-                    attribute: I18n.t("groups.name").toLowerCase()
-                })}</span>}
+                })}/>}
+                {(!initial && isEmpty(name)) && <ErrorIndicator
+                    msg={I18n.t("groups.required", {
+                        attribute: I18n.t("groups.name").toLowerCase()
+                    })}/>}
 
                 <InputField value={short_name}
                             name={I18n.t("groups.short_name")}
@@ -426,15 +432,15 @@ class Groups extends React.Component {
         stopEvent(e);
         this.setState({selectedGroupId: group.id, createNewGroup: false, editGroup: false});
         AppStore.update(s => {
-                const {collaboration} = this.props;
-                const paths = s.breadcrumb.paths;
-                const lastPath = paths[paths.length - 1];
-                lastPath.path = `/collaborations/${collaboration.id}`
-                paths.push({
-                    value: I18n.t("breadcrumb.group", {name: group.name})
-                })
-                s.breadcrumb.paths = paths;
-            });
+            const {collaboration} = this.props;
+            const paths = s.breadcrumb.paths;
+            const lastPath = paths[paths.length - 1];
+            lastPath.path = `/collaborations/${collaboration.id}`
+            paths.push({
+                value: I18n.t("breadcrumb.group", {name: group.name})
+            })
+            s.breadcrumb.paths = paths;
+        });
     }
 
     render() {
