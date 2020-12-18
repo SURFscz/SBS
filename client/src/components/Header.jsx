@@ -14,7 +14,8 @@ export default class Header extends React.PureComponent {
         super(props, context);
         this.state = {
             dropDownActive: false,
-            organisation: null
+            organisation: null,
+            orangeMode: false
         };
     }
 
@@ -32,6 +33,10 @@ export default class Header extends React.PureComponent {
         emitter.removeListener("impersonation", this.impersonate);
     }
 
+    toggleStyle = () => {
+        this.setState({orangeMode: !this.state.orangeMode});
+    }
+
     impersonate = () => {
         //Need to ensure the API call is done with the impersonated user
         setTimeout(() => organisationByUserSchacHomeOrganisation()
@@ -39,14 +44,14 @@ export default class Header extends React.PureComponent {
     }
 
 
-    renderProfileLink(currentUser) {
+    renderProfileLink = (currentUser, orangeMode) => {
         const {dropDownActive} = this.state;
         return (
             <div className="menu" onClick={() => this.setState({dropDownActive: !dropDownActive})}>
                 <div className="user">
                     <span>{currentUser.name}</span>
                 </div>
-                <div className="drop-down">
+                <div className={`drop-down ${orangeMode ? "ugly" : ""}`}>
                     {dropDownActive ? <ChevronUp/> : <ChevronDown/>}
                 </div>
             </div>
@@ -55,13 +60,13 @@ export default class Header extends React.PureComponent {
 
     render() {
         const {currentUser} = this.props;
-        const {dropDownActive, organisation} = this.state;
+        const {dropDownActive, organisation, orangeMode} = this.state;
         return (
-            <div className={`header-container ${currentUser.guest ? "guest" : ""}`}>
+            <div className={`header-container ${currentUser.guest ? "guest" : ""} ${orangeMode ? "ugly" : ""}`}>
                 <div className="header">
-                    <Link className="logo" to="/"><Logo/></Link>
+                    <Link className="logo" to="/" onClick={this.toggleStyle}><Logo/></Link>
                     {!currentUser.guest && <div className="user-profile">
-                        {this.renderProfileLink(currentUser)}
+                        {this.renderProfileLink(currentUser, orangeMode)}
                         {dropDownActive &&
                         <UserMenu currentUser={currentUser} organisation={organisation}
                                   close={() => this.setState({dropDownActive: false})}/>}
