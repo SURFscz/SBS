@@ -3,11 +3,16 @@ import "./BreadCrumb.scss";
 import {ReactComponent as ChevronRight} from "../icons/chevron-right.svg";
 import {AppStore} from "../stores/AppStore";
 import {Link} from "react-router-dom";
+import {isEmpty} from "../utils/Utils";
 
 export const BreadCrumb = () => {
 
     const {paths} = AppStore.useState(state => state.breadcrumb);
     const {sideComponent} = AppStore.useState(state => state);
+
+    if (isEmpty(paths) && isEmpty(sideComponent)) {
+        return null;
+    }
 
     return (
         <div className="bread-crumb-container">

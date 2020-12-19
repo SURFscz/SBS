@@ -21,6 +21,8 @@ import ReactTooltip from "react-tooltip";
 import {escapeHtmlTooltip, isEmpty, stopEvent} from "../utils/Utils";
 import {getParameterByName} from "../utils/QueryParameters";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import UnitHeader from "../components/redesign/UnitHeader";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 class ServiceRequest extends React.Component {
 
@@ -200,21 +202,6 @@ class ServiceRequest extends React.Component {
             collaborationAdminLinked, outstandingServiceConnectionRequestDetails
         } = this.state;
         const {user} = this.props;
-        if (finished) {
-            const msg = collaborationAdminLinked ? I18n.t("serviceRequest.result.completed", {serviceName}) :
-                I18n.t("serviceRequest.result.requested", {serviceName});
-            return (
-                <div className="mod-service-request">
-                    <div className="title">
-                        <p className="title">{service.name}</p>
-                    </div>
-                    <div className="result-feedback">
-                        <p dangerouslySetInnerHTML={{__html: msg}}/>
-                        <Button txt={I18n.t("serviceRequest.backToService")}
-                                onClick={this.backToService}/>
-                    </div>
-                </div>);
-        }
         const enableSubmit = collaborations.some(coll => coll.requestToLink && !coll.alreadyLinked);
         const linkNotAllowed = collaborations.every(coll => coll.linkNotAllowed || coll.outstandingServiceConnectionRequest);
         const title = alreadyLinked ?
@@ -229,42 +216,56 @@ class ServiceRequest extends React.Component {
             : linkNotAllowed ? I18n.t("serviceRequest.subTitleLinkNotAllowed", {name: serviceName})
                 : I18n.t("serviceRequest.subTitle", {name: serviceName});
         const noCollaborations = collaborations.length === 0;
+        const msg = collaborationAdminLinked ? I18n.t("serviceRequest.result.completed", {serviceName}) :
+            I18n.t("serviceRequest.result.requested", {serviceName});
         return (
-            <div className="mod-service-request">
-                <Explain
-                    close={this.closeExplanation}
-                    subject={I18n.t("explain.serviceRequest")}
-                    isVisible={showExplanation}>
-                    <ServicesRequestExplanation name={escapeHtmlTooltip(serviceName)}/>
-                </Explain>
-                <div className="title">
-                    <p className="title" dangerouslySetInnerHTML={{__html: title}}/>
-                    <FontAwesomeIcon className="help"
-                                     icon="question-circle"
-                                     id="service_request_close_explanation"
-                                     onClick={() => this.setState({showExplanation: !showExplanation})}/>
+            <div className="mod-service-request-container">
+                <ConfirmationDialog isOpen={finished}
+                                    confirm={this.backToService}
+                                    question={msg}
+                                    confirmationTxt={I18n.t("serviceRequest.backToService")}
+                />
 
-                </div>
-                {noCollaborations &&
-                <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.noCollaborations", {name: serviceName})}}/>}
-                {!noCollaborations && <div className="service-request">
-                    <p className="sub-title" dangerouslySetInnerHTML={{__html: subTitle}}/>
-                    {this.renderCollaborations(collaborations, user)}
-                    {outstandingServiceConnectionRequestDetails &&
-                    <div className="outstanding-service-request">
-                        <ErrorIndicator msg={I18n.t("serviceRequest.outstandingServiceConnectionRequest", {
-                            details: outstandingServiceConnectionRequestDetails
-                        })}/>
+                <UnitHeader obj={service}
+                            name={service.name}>
+                    <div className="title">
+                        <p className="title" dangerouslySetInnerHTML={{__html: title}}/>
+                        <FontAwesomeIcon className="help"
+                                         icon="question-circle"
+                                         id="service_request_close_explanation"
+                                         onClick={() => this.setState({showExplanation: !showExplanation})}/>
+
                     </div>
-                    }
-                    <section className="actions">
-                        {this.displayBackToService(service) &&
-                        <Button cancelButton={true} txt={I18n.t("serviceRequest.backToService")}
-                                onClick={this.backToService}/>}
-                        <Button disabled={!enableSubmit} txt={I18n.t("serviceRequest.link")}
-                                onClick={this.submit}/>
-                    </section>
-                </div>}
+                </UnitHeader>
+
+                <div className="mod-service-request">
+                    <Explain
+                        close={this.closeExplanation}
+                        subject={I18n.t("explain.serviceRequest")}
+                        isVisible={showExplanation}>
+                        <ServicesRequestExplanation name={escapeHtmlTooltip(serviceName)}/>
+                    </Explain>
+                    {noCollaborations &&
+                    <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.noCollaborations", {name: serviceName})}}/>}
+                    {!noCollaborations && <div className="service-request">
+                        <p className="sub-title" dangerouslySetInnerHTML={{__html: subTitle}}/>
+                        {this.renderCollaborations(collaborations, user)}
+                        {outstandingServiceConnectionRequestDetails &&
+                        <div className="outstanding-service-request">
+                            <ErrorIndicator msg={I18n.t("serviceRequest.outstandingServiceConnectionRequest", {
+                                details: outstandingServiceConnectionRequestDetails
+                            })}/>
+                        </div>
+                        }
+                        <section className="actions">
+                            {this.displayBackToService(service) &&
+                            <Button cancelButton={true} txt={I18n.t("serviceRequest.backToService")}
+                                    onClick={this.backToService}/>}
+                            <Button disabled={!enableSubmit} txt={I18n.t("serviceRequest.link")}
+                                    onClick={this.submit}/>
+                        </section>
+                    </div>}
+                </div>
             </div>);
     };
 
