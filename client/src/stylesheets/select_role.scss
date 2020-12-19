@@ -26,3 +26,21 @@ div.select-member-role__control {
     }
 }
 
+div.select-member-role--is-disabled {
+
+    div.select-member-role__control--is-disabled {
+
+        div.select-member-role__value-container {
+
+            div.select-member-role__single-value {
+                cursor: not-allowed;
+                color: $dark-grey;
+            }
+        }
+
+        div.select-member-role__indicators {
+            display: none;
+        }
+    }
+
+}

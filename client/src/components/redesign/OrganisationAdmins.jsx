@@ -329,7 +329,7 @@ class OrganisationAdmins extends React.Component {
                 key: "name",
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={currentUser}
-                                              gotoInvitation={this.gotoInvitation}/>
+                                              gotoInvitation={isAdmin ? this.gotoInvitation : null}/>
             },
             {
                 key: "user__schac_home_organisation",
@@ -339,6 +339,7 @@ class OrganisationAdmins extends React.Component {
             {
                 key: "role",
                 header: I18n.t("models.users.role"),
+                className: !isAdmin ? "not-allowed" : "",
                 mapper: entity => entity.invite ? null : <Select
                     value={roles.find(option => option.value === entity.role)}
                     options={roles}
@@ -361,6 +362,9 @@ class OrganisationAdmins extends React.Component {
                 key: "impersonate",
                 header: "",
                 mapper: entity => {
+                    if (!isAdmin) {
+                        return null;
+                    }
                     if (entity.invite) {
                         return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
                     }
@@ -388,7 +392,7 @@ class OrganisationAdmins extends React.Component {
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name"
                           columns={isAdmin ? columns : columns.slice(1)}
-                          rowLinkMapper={entity => entity.invite && this.gotoInvitation}
+                          rowLinkMapper={entity => (entity.invite && isAdmin) && this.gotoInvitation}
                           loading={false}
                           showNew={isAdmin}
                           actions={(isAdmin && entities.length > 0) ? this.actionButtons(selectedMembers) : null}
