@@ -1,6 +1,11 @@
 @import "../../stylesheets/vars";
 @import "../../stylesheets/forms";
 
+.organisation-services {
+    display: flex;
+    flex-direction: column;
+}
+
 table.organisationServicesUsed {
 
     thead {

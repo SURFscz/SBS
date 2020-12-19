@@ -4,6 +4,10 @@ div.org-attributes-container {
     div.org-attributes {
         &:not(last-child) {
             margin-right: 80px;
+
+            @media (max-width: $tablet-max) {
+                margin-right: 5px;
+            }
         }
 
         span {
@@ -15,6 +19,7 @@ div.org-attributes-container {
 
             &:last-child {
                 max-width: 300px;
+                font-weight: normal;
                 word-break: break-all;
             }
         }

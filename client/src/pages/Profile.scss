@@ -2,19 +2,10 @@
 @import "../stylesheets/forms";
 
 .mod-user-profile {
-    max-width: $medium;
-    margin: 0 auto;
-    width: 100%;
 
     div.user-profile {
         margin-bottom: 25px;
         width: 50%;
-
-        .error {
-            color: $red;
-            display: block;
-            font-size: 14px;
-        }
 
         .attributes {
             display: flex;
@@ -43,6 +34,5 @@
         }
 
     }
-
 
 }

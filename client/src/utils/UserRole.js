@@ -1,9 +1,5 @@
 import I18n from "i18n-js";
 
-export function userRole(user, {organisation_id = null, collaboration_id = null, service_id = null} = {}) {
-    return "Deprecated"
-}
-
 export const ROLES = {
     PLATFORM_ADMIN: "platformAdmin",
     ORG_ADMIN: "orgAdmin",
@@ -57,20 +53,24 @@ export function isUserAllowed(minimalRole, user, organisation_id = null, collabo
     return false;
 }
 
-export function rawGlobalUserRole(user) {
+export function rawGlobalUserRole(user, organisation, collaboration) {
     if (user.admin) {
         return ROLES.PLATFORM_ADMIN;
     }
-    if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "admin")) {
+    if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "admin" &&
+        (!organisation || m.organisation_id === organisation.id))) {
         return ROLES.ORG_ADMIN;
     }
-    if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "manager")) {
+    if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "manager" &&
+        (!organisation || m.organisation_id === organisation.id))) {
         return ROLES.ORG_MANAGER;
     }
-    if (user.collaboration_memberships && user.collaboration_memberships.find(m => m.role === "admin")) {
+    if (user.collaboration_memberships && user.collaboration_memberships.find(m => m.role === "admin" &&
+        (!collaboration || m.collaboration_id === collaboration.id))) {
         return ROLES.COLL_ADMIN;
     }
-    if (user.collaboration_memberships && user.collaboration_memberships.length > 0) {
+    if (user.collaboration_memberships && user.collaboration_memberships.length > 0 &&
+        (!collaboration || user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id))) {
         return ROLES.COLL_MEMBER;
     }
     return ROLES.USER;
@@ -78,4 +78,9 @@ export function rawGlobalUserRole(user) {
 
 export function globalUserRole(user) {
     return I18n.t(`access.${rawGlobalUserRole(user)}`);
+}
+
+export function actionMenuUserRole(user, organisation, collaboration) {
+    const userRole = rawGlobalUserRole(user, organisation, collaboration);
+    return I18n.t("actionRoles.title", {role: I18n.t(`actionRoles.${userRole}`)});
 }

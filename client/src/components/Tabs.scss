@@ -1,18 +1,13 @@
 @import "../stylesheets/vars.scss";
 
-.tabs {
-    max-width: $medium;
-    margin: 0 auto;
-    display: flex;
-    padding: 0 calc((#{$medium} - #{$medium-sub}) / 2);
+.tabs-container {
+    width: 100%;
     background-color: $background;
 
-    @media (max-width: $tablet-max) {
-        padding: 0
+    .tabs {
+        max-width: $medium;
+        margin: 0 auto;
+        display: flex;
     }
 
-
-    &.standalone {
-        padding-top: 20px
-    }
 }

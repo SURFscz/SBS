@@ -3,39 +3,41 @@ import React from "react";
 import "./UserMenu.scss";
 import {Link} from "react-router-dom";
 import {logout} from "../../utils/Login";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import {isEmpty} from "../../utils/Utils";
 
 const adminLinks = ["system", "impersonate"]
 
-//https://stackoverflow.com/questions/32553158/detect-click-outside-react-component<Tabs
 class UserMenu extends React.Component {
 
-    handleClick = e => {
-        if (!this.node.contains(e.target)) {
-            return setTimeout(this.props.close, 250);
-        }
-        return true;
-    }
-
     componentDidMount() {
-        document.addEventListener("mousedown", this.handleClick);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener("mousedown", this.handleClick);
+        this.ref.focus();
     }
 
     render() {
-        const {currentUser} = this.props;
+        const {currentUser, organisation} = this.props;
+        const lessThenOrgManager = !isUserAllowed(ROLES.ORG_MANAGER, currentUser);
+        const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation);
+        const collCreateAllowed = !isEmpty(organisation)
+            && (organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed);
         return (
-            <div className="user-menu" ref={node => this.node = node}>
+            <div className="user-menu" ref={ref => this.ref = ref} tabIndex={1}
+                 onBlur={() => setTimeout(this.props.close, 250)}>
                 <ul>
-                    <li>
-                        <Link onClick={this.props.close} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
-                        <a href="/logout" onClick={logout}>{I18n.t(`header.links.logout`)}</a>
-                    </li>
                     {currentUser.admin && adminLinks.map(l => <li key={l}>
                         <Link onClick={this.props.close} to={`/${l}`}>{I18n.t(`header.links.${l}`)}</Link>
                     </li>)}
+                    {collMenuItemRequired && <li>
+                        <Link onClick={this.props.close} to={`/new-collaboration`}>
+                            {I18n.t(`header.links.${collCreateAllowed ? "createCollaboration" : "requestCollaboration"}`)}
+                        </Link>
+                    </li>}
+                    <li>
+                        <Link onClick={this.props.close} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
+                    </li>
+                    <li>
+                        <a href="/logout" onClick={logout}>{I18n.t(`header.links.logout`)}</a>
+                    </li>
                 </ul>
             </div>
         );

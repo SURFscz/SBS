@@ -7,8 +7,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 export default class Flash extends React.PureComponent {
 
-    constructor() {
-        super();
+    constructor(props, context) {
+        super(props, context);
         this.state = {flash: {}, className: "hide", type: "info"};
         this.callback = flash => {
             this.setState({flash: flash, className: isEmpty(flash) || isEmpty(flash.message) ? "hide" : ""});

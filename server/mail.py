@@ -155,7 +155,7 @@ def mail_accepted_declined_service_connection_request(context, service_name, col
 
 def mail_suspend_notification(context, recipients, is_primary, preview=False):
     return _do_send_mail(
-        subject="Suspend notification",
+        subject="SURF SRAM: suspend notification",
         recipients=recipients,
         template="suspend_notification" if is_primary else "suspend_notification_reminder",
         context=context,

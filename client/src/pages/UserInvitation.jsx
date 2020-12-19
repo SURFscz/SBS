@@ -15,6 +15,7 @@ import {setFlash} from "../utils/Flash";
 import moment from "moment";
 import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class UserInvitation extends React.Component {
 
@@ -125,10 +126,10 @@ class UserInvitation extends React.Component {
                         <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.collaborate")})}</span>
                     </div>
                 </div>
-                <Button onClick={this.accept}
-                        txt={<span>{I18n.t("models.invitation.acceptInvitation")}</span>}/>
                 <Button onClick={this.decline} cancelButton={true}
                         txt={<span>{I18n.t("models.invitation.declineInvitation")}</span>}/>
+                <Button onClick={this.accept}
+                        txt={<span>{I18n.t("models.invitation.acceptInvitation")}</span>}/>
             </section>
         )
     }
@@ -198,7 +199,7 @@ class UserInvitation extends React.Component {
                 <div className="invitation-container">
                     {!isExpired && <h1>Hi,</h1>}
                     {isExpired &&
-                    <p className="error">{expiredMessage}</p>}
+                    <p className="expired"><ErrorIndicator msg={expiredMessage}/> </p>}
                     {!isExpired && <div className="invitation-inner">
                         <p className="info">{I18n.t("models.invitation.welcome")}</p>
                         <section className="invitation">

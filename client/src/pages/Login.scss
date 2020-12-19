@@ -1,41 +1,173 @@
 @import "../stylesheets/vars.scss";
 
-.mod-login {
+.top-container {
 
-    max-width: $medium;
-    margin: 20px auto;
     width: 100%;
-    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
+    background-color: $background;
 
-    h1.logout-msg {
-        font-size: 32px;
-        font-weight: bold;
-        margin-bottom: 25px;
-    }
+    .mod-login-container {
+        background-color: white;
 
-    div.title {
-        font-size: 22px;
-        color: $dark-grey;
-        padding: 10px 0 5px 0;
-
-        p {
-            padding: 10px 0 10px 0;
+        p.larger {
+            font-size: 18px;
+            line-height: 22px;
         }
 
-        a {
-            display: inline-block;
-            font-size: 18px;
-            text-transform: uppercase;
-            text-decoration: none;
-            margin: 10px 0;
-            color: $blue;
+        p.post-title {
+            margin-top: 25px;
+        }
 
-            &:hover {
-                font-weight: bolder;
+        ul {
+            list-style: initial;
+            padding: 25px 5px 0 25px;
+
+            li {
+                padding: 2px 0;
+            }
+        }
+
+        &.bottom {
+            background-color: $background;
+            margin-bottom: 25px;
+        }
+
+        h1.logout-msg {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        @mixin grid-template {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            grid-template-rows: auto;
+            column-gap: 25px;
+            row-gap: 25px;
+            max-width: $compact-medium;
+            margin: 0 auto;
+
+            @media (max-width: $compact-medium) {
+                grid-template-columns: 100%;
+            }
+        }
+
+
+        .mod-login-top {
+            @include grid-template;
+            grid-template-areas:
+                "header-left header-right";
+
+            @media (max-width: $compact-medium) {
+                margin-top: 125px;
+                grid-template-areas:
+                "header-left"
+                "header-right";
             }
 
+            margin-top: 25px;
+            padding-bottom: 25px;
+
+            h1 {
+                font-size: 34px;
+                line-height: 34px;
+                font-weight: bold;
+                margin-bottom: 25px;
+            }
+
+            a {
+                margin-top: 25px;
+                width: 280px;
+                padding: 15px 60px;
+                font-size: 22px;
+            }
+        }
+
+        .mod-login-bottom {
+            @include grid-template;
+            height: 100%;
+            flex-grow: 2;
+            margin-top: 25px;
+            grid-template-areas:
+                "pre-title pre-title"
+                "managers researchers"
+                "institutions service_providers"
+                "institutions help_support";
+
+            @media (max-width: $compact-medium) {
+                grid-template-areas:
+                    "pre-title"
+                    "managers"
+                    "researchers"
+                    "institutions"
+                    "service_providers"
+                    "help_support";
+            }
+
+
+            h1 {
+                color: $primary-orange;
+                font-size: 32px;
+                line-height: 32px;
+                margin-bottom: 20px;
+            }
+        }
+
+        .header-left {
+            grid-area: header-left;
+        }
+
+        .header-right {
+            grid-area: header-right;
+            display: flex;
+
             svg {
-                margin-right: 10px;
+                margin: auto;
+                width: 310px;
+                height: auto;
+            }
+        }
+
+        .pre-title {
+            grid-area: pre-title;
+        }
+
+        .managers {
+            grid-area: managers;
+        }
+
+        .researchers {
+            grid-area: researchers;
+        }
+
+        .institutions {
+            grid-area: institutions;
+        }
+
+        .service_providers {
+            grid-area: service_providers;
+        }
+
+        .help_support {
+            grid-area: help_support;
+        }
+
+        .benefits {
+            background-color: white;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .grey-block {
+            background-color: $lighter-grey;
+            border-radius: 6px;
+            padding: 15px;
+
+            h1 {
+                color: black;
             }
         }
     }

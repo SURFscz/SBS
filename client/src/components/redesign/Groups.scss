@@ -50,19 +50,22 @@ table.groups {
 
 .group-details-container {
     display: flex;
-    margin: 40px 0 25px 0;
+    max-width: $medium;
+    width: 100%;
+    margin: 40px auto 25px auto;
+
 
     a.back-to-groups {
         display: flex;
         align-items: flex-start;
         white-space: nowrap;
-        color: $dark-grey;
+        color: $blue;
         text-decoration: underline;
         margin-right: 60px;
 
         svg {
             margin-right: 5px;
-            fill: $dark-grey;
+            fill: $blue;
             height: 22px;
         }
     }
@@ -106,12 +109,6 @@ table.groups {
             }
         }
 
-        section.copy-to-clipboard {
-            font-size: 16px;
-            color: $dark-grey;
-            cursor: pointer;
-        }
-
         .org-attributes-container {
             padding-bottom: 20px;
             border-bottom: 3px solid $light-grey;
@@ -120,6 +117,7 @@ table.groups {
         .group-detail-actions {
             margin-bottom: 20px;
             max-width: 50%;
+
             div.actions__placeholder {
                 color: $blue;
             }
@@ -151,6 +149,7 @@ table.groups {
                     color: $red;
                     cursor: pointer;
                 }
+
                 &.trash_disabled {
                     text-align: right;
                     color: $lighter-grey;
@@ -163,8 +162,10 @@ table.groups {
     }
 
     div.group-form {
+
         h1 {
-            margin: 1px 0 30px 0;
+            margin-bottom: 20px;
+            color: $primary-orange;
         }
 
         width: 60%;
@@ -173,7 +174,8 @@ table.groups {
         flex-direction: column;
 
         div.checkbox {
-           margin-top: 25px;
+            margin-top: 25px;
         }
     }
+
 }

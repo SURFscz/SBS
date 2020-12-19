@@ -51,7 +51,7 @@ class Entities extends React.Component {
                            placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
                     <FontAwesomeIcon icon="search"/>
                 </div>}
-                {showNew && <Button onClick={this.newEntity}
+                {showNew && <Button onClick={this.newEntity} className="plus"
                                     txt={I18n.t(`models.${modelName}.new`)}/>
                 }
             </section>
@@ -132,7 +132,7 @@ class Entities extends React.Component {
     render() {
         const {
             modelName, entities, showNew, searchAttributes, columns, children, loading,
-            actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle
+            actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = ""
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -141,7 +141,7 @@ class Entities extends React.Component {
         const filteredEntities = this.filterEntities(entities, query, searchAttributes);
         const sortedEntities = sortObjects(filteredEntities, sorted, reverse);
         return (
-            <div className="mod-entities">
+            <div className={`mod-entities ${className}`}>
                 {explain && <Explain
                     close={this.closeExplanation}
                     subject={explainTitle || I18n.t("explain.services")}
@@ -161,6 +161,7 @@ Entities.propTypes = {
     entities: PropTypes.array.isRequired,
     modelName: PropTypes.string.isRequired,
     tableClassName: PropTypes.string,
+    className: PropTypes.string,
     searchAttributes: PropTypes.array,
     defaultSort: PropTypes.string.isRequired,
     loading: PropTypes.bool.isRequired,

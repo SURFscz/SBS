@@ -1,8 +1,58 @@
-.mod-welcome {
-    padding-top: 25px;
-    h1 {
-        font-size: 32px;
-        margin-bottom: 25px;
-    }
+@import "../../stylesheets/vars";
+@import "../../stylesheets/mde_preview.scss";
 
+.mod-welcome-container {
+    @include mde-preview;
+
+    max-width: 660px;
+    margin: 0 auto;
+    width: 100%;
+
+    .mod-welcome {
+        h1 {
+            font-size: 32px;
+            line-height: 32px;
+            margin: 25px 0;
+        }
+
+        div.institution {
+            display: flex;
+            align-items: center;
+            background-color: $information-blue;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: $br;
+
+            &.warning {
+                background-color: $warning-red;
+            }
+
+            svg {
+                margin-right: 20px;
+            }
+        }
+        h3.step {
+            font-size: 20px;
+            margin-bottom: 15px;
+            &.orphan {
+                margin-top: 20px;
+            }
+            span:first-child {
+                display: inline-block;
+                margin-right: 8px;
+                font-weight: bold;
+            }
+        }
+        div.instructions {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: $br;
+            background-color: #fdfdfd;
+            border: 1px solid $lighter-grey;
+        }
+        a.button {
+            margin: 25px 0 50px 0;
+            min-width: 210px;
+        }
+    }
 }

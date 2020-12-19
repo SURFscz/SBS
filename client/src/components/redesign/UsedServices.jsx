@@ -20,6 +20,7 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import ServicesExplanation from "../explanations/Services";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
+import MissingServices from "../MissingServices";
 
 class UsedServices extends React.Component {
 
@@ -103,13 +104,19 @@ class UsedServices extends React.Component {
             }));
         this.setState({selectedService: service});
         this.confirm(action, I18n.t("models.services.confirmations.add", {
-            service: service.name,
-            name: collaboration.name
-        }), false, !isEmpty(service.accepted_user_policy), true);
+                service: service.name,
+                name: collaboration.name
+            }), false, !isEmpty(service.accepted_user_policy),
+            !isEmpty(service.accepted_user_policy));
     };
 
     refreshAndFlash = (promise, flashMsg, callback) => {
-        this.setState({loading: true, confirmationDialogOpen: false, confirmationChildren: false, disabledConfirm: false})
+        this.setState({
+            loading: true,
+            confirmationDialogOpen: false,
+            confirmationChildren: false,
+            disabledConfirm: false
+        })
         promise.then(() => {
             this.props.refresh(() => {
                 this.componentDidMount();
@@ -206,7 +213,7 @@ class UsedServices extends React.Component {
                                 large={true}
                                 onChange={e => this.setState({message: e.target.value})}/>
                     <section className="actions">
-                        <Button className="white" txt={I18n.t("forms.cancel")}
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                                 onClick={this.cancelRequestConnectionService}/>
                         <Button disabled={isEmpty(message)} txt={I18n.t("collaborationServices.send")}
                                 onClick={this.serviceConnectionRequest}/>
@@ -285,8 +292,10 @@ class UsedServices extends React.Component {
                                     disabledConfirm={disabledConfirm}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}
-                                    children={confirmationChildren ? this.renderConfirmationChildren(selectedService, disabledConfirm) : null}/>
+                                    children={confirmationChildren ?
+                                        this.renderConfirmationChildren(selectedService, disabledConfirm) : null}/>
                 <Entities entities={usedServices}
+                          className="first"
                           modelName="servicesUsed"
                           searchAttributes={["name"]}
                           defaultSort="name"
@@ -304,6 +313,7 @@ class UsedServices extends React.Component {
                           loading={loading} t
                           itle={titleAvailable}
                           {...this.props}/>
+                <MissingServices nbrServices={usedServices.length + services.length}/>
             </div>
         )
     }
