@@ -15,7 +15,7 @@ export default class Header extends React.PureComponent {
         this.state = {
             dropDownActive: false,
             organisation: null,
-            orangeMode: false
+            orangeMode: true
         };
     }
 
