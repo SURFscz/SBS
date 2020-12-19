@@ -12,6 +12,8 @@ import OrganisationServicesExplanation from "../explanations/OrganisationService
 import ToggleSwitch from "./ToggleSwitch";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
+import ConfirmationDialog from "../ConfirmationDialog";
+import MissingServices from "../MissingServices";
 
 class OrganisationServices extends React.Component {
 
@@ -49,7 +51,7 @@ class OrganisationServices extends React.Component {
     }
 
     refreshAndFlash = (promise, flashMsg, callback) => {
-        this.setState({loading: true});
+        this.setState({loading: true, confirmationDialogOpen: false});
         promise.then(() => {
             this.props.refresh(() => {
                 this.componentDidMount();
@@ -59,16 +61,32 @@ class OrganisationServices extends React.Component {
         });
     }
 
-    onToggle = (service, organisation) => selected => {
-        const promise = selected ? addOrganisationServices(organisation.id, service.id) : deleteOrganisationServices(organisation.id, service.id);
-        const flashMsg = selected ? I18n.t("organisationServices.flash.added", {
-            service: service.name,
-            name: organisation.name
-        }) : I18n.t("organisationServices.flash.deleted", {
-            service: service.name,
-            name: organisation.name
+    confirm = (action, question) => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationDialogQuestion: question,
+            confirmationDialogAction: action,
         });
-        this.refreshAndFlash(promise, flashMsg);
+    };
+
+    onToggle = (service, organisation, showConfirmation = true) => selected => {
+        if (!selected && showConfirmation) {
+            const action = () => this.onToggle(service, organisation, false)(selected);
+            this.confirm(action, I18n.t("models.services.confirmations.remove", {
+                service: service.name,
+                name: organisation.name
+            }), true);
+        } else {
+            const promise = selected ? addOrganisationServices(organisation.id, service.id) : deleteOrganisationServices(organisation.id, service.id);
+            const flashMsg = selected ? I18n.t("organisationServices.flash.added", {
+                service: service.name,
+                name: organisation.name
+            }) : I18n.t("organisationServices.flash.deleted", {
+                service: service.name,
+                name: organisation.name
+            });
+            this.refreshAndFlash(promise, flashMsg);
+        }
     }
 
     getServiceAction = service => {
@@ -81,7 +99,8 @@ class OrganisationServices extends React.Component {
 
     render() {
         const {
-            services, loading
+            services, loading, confirmationDialogOpen, confirmationDialogQuestion, confirmationDialogAction,
+            cancelDialogAction
         } = this.state;
         const {organisation} = this.props;
         if (loading) {
@@ -108,7 +127,12 @@ class OrganisationServices extends React.Component {
             }]
         const titleUsed = I18n.t(`models.services.titleUsedOrg`, {count: organisation.services.length});
         return (
-            <div>
+            <div className="organisation-services">
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    isWarning={true}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationDialogQuestion}/>
 
                 <Entities entities={services}
                           modelName="servicesUsed"
@@ -121,6 +145,7 @@ class OrganisationServices extends React.Component {
                           explain={<OrganisationServicesExplanation/>}
                           explainTitle={I18n.t("explain.services")}
                           {...this.props}/>
+                <MissingServices nbrServices={services.length}/>
             </div>
         )
     }

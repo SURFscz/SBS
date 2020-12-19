@@ -5,6 +5,7 @@ export function stopEvent(e) {
     if (e !== undefined && e !== null) {
         e.preventDefault();
         e.stopPropagation();
+        return false;
     }
     return true;
 }

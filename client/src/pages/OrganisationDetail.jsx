@@ -1,5 +1,5 @@
 import React from "react";
-import {organisationById} from "../api";
+import {deleteOrganisationMembership, organisationById} from "../api";
 import "./OrganisationDetail.scss";
 import I18n from "i18n-js";
 import {isEmpty} from "../utils/Utils";
@@ -9,6 +9,8 @@ import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as ApiKeysIcon} from "../icons/security.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as CollaborationRequestsIcon} from "../icons/faculty.svg";
+import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
+import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
@@ -18,8 +20,10 @@ import ApiKeys from "../components/redesign/ApiKeys";
 import OrganisationServices from "../components/redesign/OrganisationServices";
 import CollaborationRequests from "../components/redesign/CollaborationRequests";
 import WelcomeDialog from "../components/WelcomeDialog";
-import {ROLES} from "../utils/UserRole";
+import {actionMenuUserRole, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
+import {setFlash} from "../utils/Flash";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 class OrganisationDetail extends React.Component {
 
@@ -30,7 +34,11 @@ class OrganisationDetail extends React.Component {
             loading: true,
             tab: "collaborations",
             tabs: [],
-            firstTime: false
+            firstTime: false,
+            confirmationDialogOpen: false,
+            confirmationDialogAction: () => true,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationQuestion: "",
         };
     }
 
@@ -56,8 +64,7 @@ class OrganisationDetail extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {value: I18n.t("breadcrumb.organisations")},
-                            {value: json.name}
+                            {value: I18n.t("breadcrumb.organisation", {name: json.name})}
                         ];
                     });
                     const firstTime = getParameterByName("first", window.location.search) === "true";
@@ -95,8 +102,10 @@ class OrganisationDetail extends React.Component {
     }
 
     getOrganisationAdminsTab = organisation => {
+        const openInvitations = (organisation.organisation_invitations || []).length;
         return (<div key="admins" name="admins" label={I18n.t("home.tabs.orgAdmins")}
-                     icon={<PlatformAdminIcon/>}>
+                     icon={<PlatformAdminIcon/>}
+                     notifier={openInvitations > 0 ? openInvitations : null}>
             <OrganisationAdmins {...this.props} organisation={organisation}
                                 refresh={callback => this.componentDidMount(callback)}/>
         </div>)
@@ -124,8 +133,10 @@ class OrganisationDetail extends React.Component {
     }
 
     getCollaborationRequestsTab = organisation => {
+        const crl = (organisation.collaboration_requests || []).filter(cr => cr.status === "open").length;
         return (<div key="collaboration_requests" name="collaboration_requests"
                      label={I18n.t("home.tabs.collaborationRequests")}
+                     notifier={crl > 0 ? crl : null}
                      icon={<CollaborationRequestsIcon/>}>
             <CollaborationRequests {...this.props} organisation={organisation}/>
         </div>)
@@ -138,8 +149,58 @@ class OrganisationDetail extends React.Component {
             this.props.history.replace(`/organisations/${orgId}/${name}`));
     }
 
+    doDeleteMe = () => {
+        this.setState({confirmationDialogOpen: false, loading: true});
+        const {user} = this.props;
+        const {organisation} = this.state;
+        deleteOrganisationMembership(organisation.id, user.id)
+            .then(() => {
+                this.props.refreshUser(() => {
+                    this.setState({confirmationDialogOpen: false, loading: false});
+                    setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}));
+                    if (user.admin) {
+                        this.componentDidMount();
+                    } else {
+                        this.props.history.push("/home");
+                    }
+                });
+            });
+    };
+
+    deleteMe = () => {
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("organisationDetail.deleteYourselfMemberConfirmation"),
+            confirmationDialogAction: this.doDeleteMe
+        });
+    };
+
+    getActions = (user, organisation, adminOfOrganisation) => {
+        const actions = [];
+        if (adminOfOrganisation) {
+            actions.push({
+                svg: PencilIcon,
+                name: I18n.t("home.edit"),
+                perform: () => this.props.history.push("/edit-organisation/" + organisation.id)
+            });
+        }
+        const isMember = organisation.organisation_memberships.some(m => m.user.id === user.id);
+        if (isMember) {
+            actions.push({
+                svg: LeaveIcon,
+                name: I18n.t("models.organisations.leave"),
+                perform: this.deleteMe
+            });
+        }
+        return actions;
+    }
+
+
     render() {
-        const {tabs, organisation, loading, tab, firstTime, adminOfOrganisation} = this.state;
+        const {
+            tabs, organisation, loading, tab, firstTime, adminOfOrganisation,
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion
+        } = this.state;
         const {user} = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -151,13 +212,21 @@ class OrganisationDetail extends React.Component {
                                 isOrganisation={true}
                                 isAdmin={user.admin}
                                 close={() => this.setState({firstTime: false})}/>}
-
-                <UnitHeader obj={organisation} mayEdit={adminOfOrganisation}
-                            history={user.admin && this.props.history}
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    isWarning={true}
+                                    question={confirmationQuestion}/>
+                <UnitHeader obj={organisation}
+                            mayEdit={adminOfOrganisation}
+                            history={user.admin ? this.props.history : null}
                             auditLogPath={`organisations/${organisation.id}`}
+                            breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
-                            onEdit={() => this.props.history.push("/edit-organisation/" + organisation.id)}>
+                            dropDownTitle={actionMenuUserRole(user, organisation, null)}
+                            actions={this.getActions(user, organisation, adminOfOrganisation)}>
+
                     <p>{organisation.description}</p>
                     <div className="org-attributes-container">
                         <div className="org-attributes">

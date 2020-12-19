@@ -1,0 +1,74 @@
+@import "../stylesheets/vars.scss";
+@import "../stylesheets/forms.scss";
+
+.join-request-dialog-overlay {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.75);
+    z-index: 99;
+
+    .join-request-dialog-content {
+        padding: 40px 60px;
+        background-color: white;
+        overflow: auto;
+        border-radius: $br;
+        outline: none;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 1px 2px 2px 0 rgba(0, 0, 0, 0.3);
+
+        h1 {
+            font-size: 26px;
+            line-height: 26px;
+            margin-bottom: 25px;
+        }
+
+        section.explanation {
+            background-color: $yellow;
+            padding: 15px;
+            border-radius: $br;
+
+            &.informational {
+                display: flex;
+                align-items: center;
+                background-color: #95d7e4;
+
+                svg {
+                    margin-right: 15px;
+                    width: 64px;
+                    height: auto;
+                }
+            }
+        }
+
+        textarea, .checkbox {
+            margin-bottom: 25px;
+        }
+
+    }
+}
+
+.ReactModalPortal .join-request-dialog-overlay {
+    transition: opacity 250ms ease-in-out;
+
+    &--before-close {
+        opacity: 0;
+    }
+}
+
+.ReactModalPortal .join-request-dialog-content {
+    transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
+    width: 660px;
+
+    &--before-close {
+        top: -50%;
+        bottom: 100%;
+    }
+}

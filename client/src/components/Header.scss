@@ -2,13 +2,22 @@
 
 .header-container {
 
-    background: $primary-orange;
-    margin: 0 auto;
+    background-color: $background;
+    margin: 0 auto ;
+    padding-bottom: 5px;
     color: black;
 
+    &.guest {
+        background-color: white;
+    }
+
+    &.ugly {
+        background-color: $light-orange;
+    }
+
     .header {
-        max-width: $medium;
-        margin: 0 auto 0 auto;
+        //max-width: $medium;
+        padding: 0 65px 0 15px;
         position: relative;
         transition: margin 150ms ease-in-out;
         display: flex;
@@ -22,7 +31,7 @@
             margin-top: 10px;
 
             svg {
-                width: 90px;
+                width: 360px;
                 height: auto;
             }
 
@@ -33,9 +42,9 @@
         }
 
         h1.title {
-            font-size: 30px;
+            font-size: 32px;
             line-height: 30px;
-            margin-left: 32px;
+            margin-left: 20px;
 
             @media (max-width: $tablet-max) {
                 display: none;
@@ -73,22 +82,30 @@
 
                 span.role {
                     font-weight: normal;
-                    color: $dark-orange;
+                    color: #7b1900;
                 }
             }
 
             .drop-down {
                 border-radius: 50%;
                 padding: 18px;
-                background-color: $light-orange;
+                background-color: $darker-grey;
                 position: relative;
 
                 svg {
-                    fill: $dark-orange;
+                    fill: white;
                     position: absolute;
                     top: 6px;
                     right: 6px;
                     width: 26px;
+                }
+
+                &.ugly {
+                    background-color: #ffcb8a;
+
+                    svg {
+                        fill: #7b1900;
+                    }
                 }
 
             }

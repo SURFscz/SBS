@@ -1,67 +1,43 @@
 @import "../stylesheets/vars.scss";
 
-.mod-collaboration-detail {
+.unit-info {
+    margin-top: 22px;
 
-    max-width: $medium;
-    width: 100%;
-    margin: 0 auto;
-
-    .unit-header-custom {
+    li {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
+        padding: 4px 0;
 
-        img {
-            max-height: 300px;
-            border-radius: 5px;
+        svg {
+            margin-right: 18px;
+            width: 20px;
+            height: auto;
         }
 
-        .unit-right {
-            margin-left: 20px;
-            display: flex;
-            flex-direction: column;
-        }
 
-        .unit-info {
-            @media (max-width: $tablet-max) {
-                margin-top: 25px;
-            }
+    }
 
-            li {
-                display: flex;
-                align-items: center;
-                padding-top: 12px;
+}
 
-                svg {
-                    margin-right: 18px;
-                    font-size: 18px;
+.join-request-action {
+    margin-left: auto;
+}
 
-                    &.fa-globe {
-                        font-size: 22px;
+span.contains-copy {
+    position: relative;
 
-                    }
-                }
+    section.copy-to-clipboard {
+        position: absolute;
+        border: none;
+        padding: 0;
+        display: inline-block;
+        right: 1px;
+        top: -2px;
 
-
-            }
+        svg {
+            width: 24px;
+            height: auto;
         }
     }
-
-    h1 {
-        margin-top: 5px;
-        margin-bottom: 10px;
-        font-size: 28px;
-        font-weight: bold;
-        color: $secondary-orange;
-    }
-
-    span.organisation {
-        color: black;
-        font-weight: bold;
-    }
-
-    .unit-edit {
-        margin: 0 15px 0 auto;
-    }
-
 }
 

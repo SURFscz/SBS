@@ -3,17 +3,19 @@ import I18n from "i18n-js";
 I18n.translations.nl = {
     code: "NL",
     name: "Nederlands",
-    select_locale: "Selecteer Nederlands",
+    select_locale: "Wijzig interfacetaal naar Nederlands",
 
     header: {
         title: "Research Access Management",
         links: {
-            login: "Login",
+            login: "Inloggen",
             system: "Systeem",
-            impersonate: "Imitatie",
+            impersonate: "Impersonate",
+            createCollaboration: "Nieuwe samenwerking",
+            requestCollaboration: "Samenwerking aanvragen",
             help: "Help",
             profile: "Profiel",
-            logout: "Logout",
+            logout: "Uitloggen",
             helpUrl: "https://wiki.surfnet.nl/display/sram"
         },
     },
@@ -21,8 +23,14 @@ I18n.translations.nl = {
         home: "Home",
         registration: "Registratie",
         collaborations: "Samenwerkingen",
+        collaboration: "Samenwerking: <strong>{{name}}</strong>",
+        collaborationJoinRequest: "Lidmaatschap verzoek voor <strong>{{name}}</strong>",
         organisations: "Organisaties",
+        organisation: "Organisatie: <strong>{{name}}</strong>",
+        collaborationRequest: "Samenwerkings aanvraag: <strong>{{name}}</strong>",
         services: "Diensten",
+        service: "Dienst: <strong>{{name}}</strong>",
+        group: "Groep: <strong>{{name}}</strong>",
         profile: "Profiel",
         aup: "AUP",
         history: "Geschiedenis",
@@ -33,31 +41,31 @@ I18n.translations.nl = {
         newService: "Nieuwe dienst",
         newCollaboration: "Nieuwe samenwerking",
         newCollaborationRequest: "Nieuw samenwerkings verzoek",
-        editCollaboration: "Bewerk samenwerking",
-        impersonate: "Imitatie",
-        organisationInvite: "Nieuwe leden",
+        editCollaboration: "Wijzig samenwerking",
+        impersonate: "Impersonate",
+        organisationInvite: "Leden toevoegen",
         organisationInvitation: "Uitnodiging",
-        invite: "Nieuwe leden",
+        invite: "Leden toevoegen",
         invitation: "Uitnodiging",
     },
     login: {
         title: "Research Access Management",
         subTitle: "Login aub...",
         suspended: "Je account is geschorst. Neem contact op met de admin van je samenwerking om dit op te lossen",
-        successfullyActivated: "Je hebt je account opnieuw geactiveerd",
-        closeBrowser: "Om uw afmelding te voltooien, moet je je browser sluiten",
+        successfullyActivated: "Gelukt: je account is opnieuw geactiveerd",
+        closeBrowser: "Om volledig uit te loggen, moet je je browser sluiten",
         closeBrowserAfterDelete: "Om het verwijderen van je account te voltooien, moet je je browser sluiten."
     },
     home: {
-        sram: "SRAM PLATFORM",
-        edit: "Bewerk",
+        sram: "RESEARCH ACCESS MANAGEMENT PLATFORM",
+        edit: "Wijzig",
         history: "Geschiedenis",
-        backToHome: "Terug naar thuis",
+        backToHome: "Terug naar home",
         firstTime: "Onboarding",
-        collaborationRequest: "Verzoek voor een nieuwe samenwerking",
-        noOrganisations: "Voor het verzoek om een nieuwe samenwerking is het een vereiste dat er voor de instelling '{{schac_home}}' waarmee je bent ingelogd een organisatie is aangemaakt. Dit is niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie.",
+        collaborationRequest: "Vraag een nieuwe samenwerking aan",
+        noOrganisations: "Om een nieuwe samenwerking te kunnen aanvragen, moet de instelling '{{schac_home}}' waarmee je bent ingelogd, SRAM als dienst afnemen. Dat lijkt nog niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie.",
         tabs: {
-            groups: "Groupen",
+            groups: "Groepen",
             collaborations: "Samenwerkingen",
             organisations: "Organisaties",
             services: "SRAM Diensten",
@@ -80,27 +88,31 @@ I18n.translations.nl = {
     },
     forms: {
         submit: "Toevoegen",
-        save: "Bewaren",
-        request: "Verstuur",
+        save: "Opslaan",
+        request: "Aanvragen",
         cancel: "Annuleren",
         showMore: "Meer",
-        open: "Open",
         hideSome: "Minder",
+        open: "Open",
         today: "Vandaag",
-        manage: "Overzicht",
-        invalidInput: "Foutieve waarde voor {{name}}",
+        manage: "Beheren",
+        invalidInput: "Ongeldige waarde voor {{name}}",
         back: "Terug",
         reset: "Reset",
         yes: "Ja",
         upload: "Upload afbeelding",
-        image: "Afbeelding moet tenminste 90x90 pixels en kleiner dan 512KB",
+        add: "Voeg een afbeelding toe",
+        change: "Verander afbeelding",
+        image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB",
+        dragImage: "Versleep de croperea en pas de grootte aan totdat je tevreden bent met het resultaat. Druk vervolgens op opslaan",
         imageToLarge: "Afbeelding is groter 512KB",
+        imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Afbeelding is verplicht",
         no: "Nee"
     },
     explain: {
         title: "Uitleg {{subject}}",
-        impersonate: "Imiteren",
+        impersonate: "Impersonate",
         services: "Diensten",
         serviceRequest: "Dienst verzoek",
         apiKeys: "API keys"
@@ -110,8 +122,8 @@ I18n.translations.nl = {
             name_email: "Naam / mail",
             blank: "",
             icon: "",
-            profile: "Hi {{name}}",
-            subProfile: "Je bent momenteel ingelogd met je instellingsaccount via eduTeams",
+            profile: "Hallo {{name}}",
+            subProfile: "Je bent momenteel ingelogd met je instellingsaccount via eduTEAMS",
             institute: "Instelling",
             role: "Rol",
             title: "SRAM platform admins",
@@ -123,12 +135,12 @@ I18n.translations.nl = {
         },
         orgMembers: {
             title: "Org admin & managers",
-            noEntities: "Er zijn nog geen admins in deze organisatie...",
+            noEntities: "Er zijn nog geen admins of managers in deze organisatie...",
             searchPlaceHolder: "Zoek leden...",
             status: "Status",
             inviteSend: "Uitnodiging {{date}}",
             accepted: "Geaccepteerd",
-            new: "Nieuwe leden",
+            new: "Voeg leden toe",
             remove: "Verwijder",
             mail: "Mail",
             backToMembers: "Terug...",
@@ -142,7 +154,8 @@ I18n.translations.nl = {
             name: "Naam",
             memberCount: "Leden",
             collaborationCount: "Samenwerkingen",
-            category: "Categorie"
+            category: "Categorie",
+            leave: "Verlaat ORG"
         },
         services: {
             title: "Diensten",
@@ -150,7 +163,7 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek diensten...",
             new: "Nieuwe dienst",
             name: "Naam",
-            status: "States",
+            status: "Status",
             organisationCount: "Gebruikt in organisaties",
             collaborationCount: "Gebruikt in samenwerkingen",
             titleAvailableColl: "Beschikbaar voor deze samenwerking ({{count}})",
@@ -160,20 +173,21 @@ I18n.translations.nl = {
             awaitingApproval: "Koppeling in afwachting goedkeuring",
             automaticConnectionAllowed: "Automatische koppeling toegestaan",
             requiredByOrganisation: "Ingeschakeld door organisatie",
-            removeFromCO: "Verwijder van CO",
+            removeFromCO: "Ontkoppel van CO",
             deleteConnectionRequest: "Verwijder koppelingsverzoek",
-            addToCO: "Voeg to aan CO",
-            removeFromOrg: "Verwijder van organisatie",
+            addToCO: "Voeg toe aan CO",
+            removeFromOrg: "Ontkoppel van organisatie",
             addToOrg: "Voeg toe aan organisatie",
             mandatory: "Ingeschakeld voor alle CO's",
             requestConnection: "Vraag koppeling aan",
             backToServices: "Terug naar diensten",
             connectionRequest: "Vraag koppeling aan met {{name}}",
             confirmations: {
-                add: "Are you sure you want to make {{service}} available for all members of {{name}}?",
-                remove: "Are you sure you want to remove {{service}} from {{name}}?",
-                check: "I have read and agree with the <a target=\"_blank\" href=\"{{aup}}\">AUP</a> of {{name}}"
-            }
+                add: "Weet je zeker dat je {{service}} beschikbaar wil maken voor alle leden van {{name}}?",
+                remove: "Weet je zeker dat je {{service}} wil ontkoppelen van {{name}}?",
+                check: "Ik ben bekend met de <a target=\"_blank\" href=\"{{aup}}\">AUP</a> van {{name}}"
+            },
+            missingServices: "<a href=\"mailto:sram-support@surf.nl\">Stuur ons een verzoek </a> als je denkt dat een specifieke service ontbreekt en moet worden vermeld."
         },
         collaborations: {
             title: "Samenwerkingen",
@@ -186,14 +200,14 @@ I18n.translations.nl = {
             allMembers: "Alle leden ({{count}})",
             group: "Groep {{name}} ({{count}})",
             hideInvites: "Verberg uitnodigingen",
-            noCollaborations: "Er zijn nog geen samenwerkingen in deze organisatie. Waarom maak jij niet de eerste aan?",
+            noCollaborations: "Er zijn nog geen samenwerkingen in deze organisatie. Zullen we er een aanmaken?",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Zoek organisaties",
             title: "Organisaties",
             new: "Toggle alle aan/uit",
             disableAccessConfirmation: "Weet je zeker dat je voor deze dienst de toegang wilt verbieden?",
-            disableAccessConsequences: "De volgende organisaties en samenwerkingen gebruiken deze dienst en kunnen zullen hierdoor de dienst niet meer kunnen gebruiken.",
+            disableAccessConsequences: "De volgende organisaties en samenwerkingen gebruiken deze dienst en zullen hierdoor de dienst niet meer kunnen gebruiken.",
             collaboration: "samenwerking",
             organisation: "organisatie",
         },
@@ -208,7 +222,7 @@ I18n.translations.nl = {
             title: "Samenwerkingen die deze dienst gebruiken",
             organisationName: "Organisatie",
             noEntities: "Er zijn geen samenwerkingen die deze dienst gebruiken",
-            origin: "Beschikbaar door",
+            origin: "Gekoppeld door",
             fromOrganisation: "Organisatie",
             fromCollaboration: "Samenwerking"
         },
@@ -231,7 +245,7 @@ I18n.translations.nl = {
         },
         servicesUsed: {
             searchPlaceHolder: "Zoek diensten...",
-            noEntities: "Geen diensten worden gebruikt"
+            noEntities: "Geen diensten in gebruik"
         },
         groups: {
             backToGroups: "Terug naar all groepen",
@@ -239,7 +253,7 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek groepen...",
             noEntities: "Geen groepen gevonden",
             new: "Nieuwe groep",
-            edit: "Bewerk",
+            edit: "Wijzig",
             name: "Naam",
             urn: "URN",
             description: "Omschrijving",
@@ -258,13 +272,13 @@ I18n.translations.nl = {
         },
         collaboration: {
             memberHeader: "{{nbrMember}} leden - {{nbrGroups}} groepen",
-            noAdminsHeader: "Geen admins (nog)",
+            noAdminsHeader: "(nog) Geen admins",
             adminsHeader: "Georganiseerd door <strong>{{name}}</strong>",
             multipleAdminsHeader: "Georganiseerd door <strong>{{name}}</strong> en <strong>{{nbr}} anderen</strong>",
-            about: "Waar gaan wij over",
+            about: "Over onze samenwerking",
             services: "Waar we samenwerken ({{nbr}} diensten)",
             noServices: "Er zijn nog geen diensten gekoppeld aan deze samenwerking",
-            servicesStart: "Klik op de knop om te starten met deze dienst, of lees eerst de instructies",
+            servicesStart: "Klik op de knop om de dienst te starten, of lees eerst de instructies",
             members: "Leden ({{nbr}})",
             showMemberDetails: "Toon alle details",
             admin: "admin",
@@ -272,7 +286,8 @@ I18n.translations.nl = {
             less: "Toon minder",
             viewAsMember: "Bekijk als lid",
             viewAsAdmin: "Bekijk als admin",
-            discloseNoMemberInformation: "Deze samenwerking laat geen This collaboration onthult geen ledeninformatie",
+            discloseNoMemberInformation: "Deze samenwerking deelt geen ledeninformatie",
+            discloseNoMemberInformationJoinRequest: "Alleen zichtbaar voor leden",
             newCollaborationRequest: "Aanvragen samenwerking",
             leave: "Vertrek"
         },
@@ -284,27 +299,27 @@ I18n.translations.nl = {
             backToApiKeys: "Terug naar alle API keys"
         },
         collaboration_requests: {
-            title: "Samenwerkingsverzoeken",
+            title: "Aanvragen voor samenwerkingen",
             requester: "Aanvrager",
-            searchPlaceHolder: "Zoek Samenwerkingsverzoeken...",
-            noEntities: "Geen verzoeken voor samenwerkingen",
+            searchPlaceHolder: "Zoek Samenwerkingsaanvragen...",
+            noEntities: "Geen aanvragen voor samenwerkingen",
         },
         invitation: {
             welcome: "Welkom in SRAM. Hier kun je samenwerken met je collega-onderzoekers.",
-            invited: "Je bent uitgenodigd om lid te worden van {{type}} \"{{collaboration}}\" door {{inviter}}",
-            followingSteps: "Voer de volgende stappen uit:",
+            invited: "Je bent door {{inviter}} uitgenodigd lid te worden van samenwerking {{type}} \"{{collaboration}}\"",
+            followingSteps: "Voer aub de volgende stappen uit:",
             steps: {
-                progress: "{{now}} of {{total}}",
-                login: "Login",
+                progress: "{{now}} van {{total}}",
+                login: "Inloggen",
                 next: "Volgende: {{step}}",
                 aup: "Accepteer onze AUP",
-                invite: "Accepteer deze uitnodiging",
+                invite: "Accepteer de uitnodiging",
                 collaborate: "Samenwerken!"
             },
             login: "Log in om je te identificeren",
-            loginTip: "Je kunt je instellingsaccount gebruiken om in te loggen, of een gastaccount gebruiken",
+            loginTip: "Je kunt je instellingsaccount gebruiken om in te loggen, of een gastaccount gebruiken zoals eduID",
             accept: "Ik accepteer de voorwaarden",
-            noAccept: "No, ik ga niet akkoord",
+            noAccept: "Nee, ik ga niet akkoord",
             acceptInvitation: "Ja, ik accepteer de uitnodiging",
             declineInvitation: "Nee, ik wijs de uitnodiging af",
             confirmations: {
@@ -318,14 +333,14 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek verzoeken...",
             noEntities: "Geen verzoeken gevonden",
             edit: "Accepteer / keur af",
-            details: "Voerzoek gemaakt door {{name}} op {{date}}"
+            details: "Verzoek gemaakt door {{name}} op {{date}}"
         },
     },
     user: {
-        titleUpdate: "Werk je gebruikersprofiel bij",
+        titleUpdate: "Werk de sleutels in je gebruikersprofiel bij",
         ssh_key: "SSH public key",
-        ssh_keyPlaceholder: "Uw publieke SSH sleutel om in te loggen op de dienst",
-        ssh_keyTooltip: "Uw publieke SSH sleutel<br/>zal worden uitgewisseld<br/>met de (LDAP van) diensten<br/>waar u toegang toe heeft.<br/><br/>U kunt uw publieke SSH sleutel ook uploaden.<br/>Om verborgen bestanden op een Mac te tonen<br/>drukt u op <code>CMD-SHIFT-PERIOD</code>",
+        ssh_keyPlaceholder: "Je publieke SSH sleutel om in te loggen op de dienst",
+        ssh_keyTooltip: "Je publieke SSH sleutel<br/>zal worden uitgewisseld<br/>met de (LDAP van) diensten<br/>waar je toegang toe moet hebben.<br/><br/>Je kunt je publieke SSH sleutel ook uploaden.<br/>Om verborgen bestanden op een Mac te tonen<br/>druk je <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Ongeldige SSH sleutel",
         sshConvertInfo: "Dit RFC 4716 SSH-formaat converteren naar het bestandsformaat <code>OpenSSH-key</code> bij het opslaan van het profiel?",
         update: "Bijwerken",
@@ -333,76 +348,45 @@ I18n.translations.nl = {
             updated: "Je profiel is bijgewerkt"
         },
         delete: "Verwijder",
-        deleteConfirmation: "Weet je zeker dat je je account wilt verwijderen? Al je lidmaatschappen worden verwijderd en er is geen manier om dit terug te draaien."
+        deleteConfirmation: "Weet je zeker dat je je account voorgoed wilt verwijderen?",
+        deleteConfirmationWarning: " Al je lidmaatschappen worden verwijderd en er is geen manier om dit terug te draaien.",
+        deleteConfirmationCheck: "Als je toch wilt doorgaan, type dan je volledige naam in ter confirmatie."
     },
     impersonate: {
-        title: "Wie wilt u zijn?",
+        title: "Wie wil je zijn?",
         organisation: "Organisatie",
-        organisationPlaceholder: "Voer de naam van een organisatie in om een lijst met zoekresultaten te tonen",
+        organisationPlaceholder: "Voer de naam van een organisatie in om de lijst met zoekresultaten te beperken",
         organisationAdminsOnly: "Toon alleen de beheerders van organisaties",
         collaboration: "Samenwerking",
-        collaborationPlaceholder: "Voer de naam van een samenwerking in om een lijst met zoekresultaten te tonen",
+        collaborationPlaceholder: "Voer de naam van een samenwerking in om de lijst met zoekresultaten te beperken",
         collaborationAdminsOnly: "Toon alleen de beheerders van samenwerkingen",
         user: "Gebruiker",
-        userSearchPlaceHolder: "Voer de naam van een gebruiker in die u 'na wilt doen'",
-        userRequired: "Kies welke gebruiker u na wilt doen.",
-        currentImpersonation: "U doet na",
-        noImpersonation: "U bent wie u bent - u doet niemand anders na.",
-        currentImpersonationValue: "U ziet SBS nu als {{currentUser}}, maar u bent natuurlijk {{impersonator}}.",
+        userSearchPlaceHolder: "Voer de naam van een gebruiker in die je 'na wil doen'",
+        userRequired: "Kies welke gebruiker je na wil doen.",
+        currentImpersonation: "Je doet na",
+        noImpersonation: "Je bent wie je bent - je doet niemand anders na.",
+        currentImpersonationValue: "Je ziet SBS nu als {{currentUser}}, maar je bent natuurlijk {{impersonator}}.",
         startImpersonation: "Nadoen",
         clearImpersonation: "Stop met nadoen",
         flash: {
             startedImpersonation: "Met success ben je nu - tijdelijk - {{name}}.",
             clearedImpersonation: "Met succes is je nabootsing gestopt. Je bent jezelf weer."
         },
-        exit: "Exit view",
+        exit: "Stop met nadoen",
         impersonator: "Je bent <strong>{{name}}</strong> aan het imiteren | <strong>{{role}}</strong>",
         impersonatorTooltip: "Je bent echt <em>{{impersonator}}</em>,<br/>maar je imiteert <em>{{currentUser}}</em>. <br/><br/>Op de <strong>Imitatie</strong> pagina<br/> kan je je identiteit veranderen<br/>of jezelf weer worden."
     },
     registration: {
-        title: "Vraag toegang tot de resources van {{collaboration}}",
-        start: "Start",
-        formTitle: "Vraag toegang tot de resources van {{collaboration}}",
-        formEndedTitle: "Uw verzoek om lid te worden van {{collaboration}} is verzonden voor review.",
-        request: "Vraag aan",
-        continue: "Ga door",
-        requiredCollaboration: "Ongeldig verzoek. Samenwerking dient gespecificieerd te worden.",
-        noJoinRequestCollaboration: "Samenwerking {{name}} ondersteunt geen verzoeken voor lidmaatschap.",
-        unknownCollaboration: "De samenwerking met de identifer {{collaboration}} bestaat niet.",
-        step1: {
-            title: "Koppel uw account",
-            sub: "Kies organisatie",
-            icon: "link",
-            tooltip: "U zult doorgestuurd worden om<br/>uw organisatie te kiezen en, nadat<br/>u ingelogd bent, wordt u<br/>doorgestuurd naar stap 2.",
+        joinRequest: "Vraag lidmaatschap voor {{name}}",
+                explanation: "Om je aanmeldingsverzoek in te dienen, vul je je motivatie in om lid te worden van samenwerking <strong>{{naam}}</strong>.",
+        title: "Verzoek lidmaatschap voor {{name}}",
+        alreadyMember: "Je bent reeds lid van {{name}}",
+        motivation: "Motivatie om lid te worden van {{name}}?",
+        motivationPlaceholder: "Omschrijf je motivatie om lid te worden zodat een admin je verzoek kan honoreren.",
+        policyConfirmation: "Ik heb de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy (AUP)</a> van {{collaboration}} gelezen en accepteer deze.",
+        feedback: {
+            info: "Je verzoek is verzonden naar de samenwerkingsmanager van <strong>{{name{{}}</strong> die je aanvraag zal beoordelen. <br/> Zijn / haar beslissing wordt je per e-mail meegedeeld",
         },
-        step2: {
-            title: "Vraag toegang aan",
-            sub: "Toelichting & voorwaarden",
-            icon: "book",
-            tooltip: "Nadat u uw organisatie heeft gekozen<br/> kunt u optioneel een motivatie<br/> voor uw verzoek invullen<br/>en onze voorwaarden lezen en accepteren",
-            registrationInfo: "We zullen de volgende informatie vastleggen:",
-            motivationInfo: "Waarom wilt u lid worden van samenwerking {{collaboration}}?",
-            motivationPlaceholder: "Beschrijf uw werk, achtergrond of reden voor uw verzoek tot toegang, zodat de beheerder van de samenwerking kan beoordelen of en welke rechten hij moet toekennen",
-            reference: "Kent u al iemand die lid is van {{collaboration}}?",
-            referencePlaceholder: "Vul de namen in van mensen die u kent die al lid zijn van {{collaboration}}, zoals mede-onderzoekers",
-            policy: "Ons Beleid",
-            personalDataConfirmation: "Ik geef toestemming om de persoonlijke data hierboven door te geven aan diensten die zijn gekoppeld aan deze samenwerking.",
-            policyConfirmation: "Ik heb de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy (AUP)</a> van {{collaboration}} gelezen en accepteer deze.",
-            noAup: "Samenwerking {{name}} heeft geen link opgeven naar een Acceptable Use Policy."
-        },
-        step3: {
-            title: "Wacht op toestemming",
-            sub: "Goedgekeurd of afgekeurd",
-            icon: "gavel",
-            tooltip: "Als laatste stap sturen we een e-mail <br/>naar de beheerder van de samenwerking<br/>die uw verzoek zal goedkeuren of afwijzen.",
-            info: "U verzoek is verstuurd naar de beheerder van de samenwerking. Die persoon zal uw verzoek beoordelen.<br/>Zijn / haar beslissing krijgt u te horen via een e-mail.",
-            contact: "Als u te lang niets hoort, neem dan contact met ons op via <a href=\"mailto:{{mail}}\">{{mail}}</a>."
-        },
-        flash: {
-            info: "Stap {{step}} is succesvol afgerond.",
-            success: "Uw verzoek om lid te worden van {{name}} is verzonden voor review.",
-            alreadyMember: "Ongeldig verzoek: u bent al lid van de samenwerking {{name}}."
-        }
     },
     profile: {
         name: "Naam",
@@ -416,8 +400,8 @@ I18n.translations.nl = {
         schac_home_organisation: "Instellingsafkorting",
         edu_members: "EDU lidmaatschap",
         eduperson_principal_name: "EPPN",
-        created_at: "Account created",
-        superUser: "Super-User",
+        created_at: "Account gemaakt op",
+        superUser: "Super User",
         yourRole: "Je rol",
         role: "Rol",
         member: "Lid",
@@ -431,15 +415,15 @@ I18n.translations.nl = {
     collaborations: {
         dashboard: "Dashboard voor je samenwerkingen",
         dashboardAdmin: "Admin dashboard voor mijn samenwerkingen",
-        dashboardAdminTooltip: "Dit is een overzicht over<br/>alle samenwerkingen waar u<br/>een van de beheerders van bent.",
+        dashboardAdminTooltip: "Dit is een overzicht van<br/>alle samenwerkingen waar u<br/>een van de beheerders van bent.",
         title: "Mijn Samenwerkingen",
         noCollaborations: "Je bent geen lid van een samenwerking",
         requests: "Lidmaatschapsverzoeken",
-        groups: "Autorisatie-groepen",
+        groups: "Groepen",
         invitations: "Uitnodigingen",
         services: "Diensten",
         add: "Nieuwe samenwerking",
-        searchPlaceHolder: "ZOEK OP ALLE SAMENWERKINGEN"
+        searchPlaceHolder: "ZOEK OP ALLE SAMENWERKINGEN..."
     },
     accessTypes: {
         open: "Open",
@@ -447,11 +431,11 @@ I18n.translations.nl = {
         on_acceptance: "Na goedkeuring"
     },
     collaboration: {
-        about: "About the collaboration",
-        invitations: "Invite CO admins",
-        title: "Nieuwe samenwerking toevoegen",
+        about: "Over de samenwerking",
+        invitations: "CO admins uitnodigen",
+        title: "Nieuwe samenwerking maken",
         requestTitle: "Nieuwe samenwerking aanvragen",
-        requestTitleCreationAllowed: "Nieuwe samenwerking aanvragen - organisatie {{name}} is geconfigureerd om automatisch samenwerkings verzoeken goed te keuren",
+        requestTitleCreationAllowed: "Nieuwe samenwerking aanvragen - organisatie {{name}} is geconfigureerd om automatisch aanvragen voor een samenwerking goed te keuren",
         actions: "",
         name: "Naam",
         logo: "Logo samenwerking",
@@ -464,30 +448,32 @@ I18n.translations.nl = {
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare<br/>identifier van een samenwerking<br/>die wordt gebruikt als identifier<br/>voor externe systemen",
         joinRequestUrl: "Lid-worden URL",
-        joinRequestUrlTooltip: "URL voor niet-leden om<br/>zich aan te melden voor deze samenwerking.<br/><br/>De URL kan gecommuniceerd worden naar<br/>dienst-aanbieders die hun dienst<br/>via deze samenwerking aanbieden.",
-        disableJoinRequests: "Niet-leden kunnen geen verzoek doen om lid te worden",
-        disableJoinRequestsTooltip: "Door dit aan te vinken kunnen niet-leden van<br>deze samenwerking geen verzoek doen om lid te worden.",
-        joinRequests: "Join requests",
-        disabled: "Disabled",
-        enabled: "Enabled",
-        servicesRestricted: "Restricted services",
-        servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
-        discloseMemberInformation: "Disclose member information",
-        discloseMemberInformationTooltip: "When checked the names<br/>of members are disclosed to other members",
-        discloseEmailInformation: "Disclose email information",
-        discloseEmailInformationTooltip: "When checked the emails<br/>of members are disclosed to other members",
+        joinRequestUrlTooltip: "URL voor niet-leden om<br/>zich aan te melden voor deze samenwerking.<br/><br/>De URL kunt u bijvoorbeeld emailen<br/>of publiceren op een website.",
+        joinRequestUrlDisabled: "Zelf-uitnodig-optie is uitgeschakeld voor deze samenwerking",
+        disableJoinRequests: "Zelf-uitnodig-optie uitschakelen voor deze samenwerking.",
+        disableJoinRequestsTooltip: "Als dit is aangevinkt kunnen niet-leden van<br>deze samenwerking niet zelf een verzoek doen om lid te worden.",
+        joinRequests: "Jezelf uitnodigen",
+        disabled: "Uitgeschakeld",
+        enabled: "Ingeschakeld",
+        privacyPolicy: "Privacy policy",
+        servicesRestricted: "Beperkte diensten",
+        servicesRestrictedTooltip: "Als dit aangevinkt is kunnen<br/>alleen platform beheerders diensten<br/>voor deze samenwerking beheren.",
+        discloseMemberInformation: "Informatie van leden tonen",
+        discloseMemberInformationTooltip: "Indien aangevinkt, dan wordt<br/>informatie van leden aan andere leden getoond",
+        discloseEmailInformation: "Email adressen tonen",
+        discloseEmailInformationTooltip: "Indien aangevinkt, dan zijn email-<br/>adressen van leden voor andere leden te zien",
         description: "Beschrijving",
         descriptionPlaceholder: "De beschrijving van de samenwerking is voor iedereen zichtbaar",
         websiteUrl: "Website URL",
-        websiteUrlPlaceholder: "The URL of the website is visible for members",
-        currentUserAdmin: "Do you want to an administrator of this collaboration?",
-        currentUserAdminTooltip: "If checked you will be added as an administrator of this collaboration",
+        websiteUrlPlaceholder: "De URL van de website is zichtbaar voor leden",
+        currentUserAdmin: "Wilt u zichzelf beheerder maken van deze samenwerking?",
+        currentUserAdminTooltip: "Indien aangevinkt, dan wordt u toegevoegd als beheerder van de samenwerking",
         message: "Bericht",
-        messagePlaceholder: "Boodschap aan de beheerders van deze samenwerking",
-        messageTooltip: "De boodschap nemen we op in de <br/>e-mail waarmee beheerders worden uitgenodigd.",
+        messagePlaceholder: "Persoonlijk bericht aan de beheerders",
+        messageTooltip: "De tekst nemen we op in de <br/>e-mail aan de beheerders.",
         motivation: "Motivatie",
         motivationPlaceholder: "Motivatie voor de nieuwe samenwerking",
-        motivationTooltip: "Motivatie voor de nieuwe samenwerking.",
+        motivationTooltip: "Motiveer waarom u een nieuwe samenwerking aanvraagt.",
         organisation_name: "Organisatie",
         organisationPlaceholder: "Kies de organisatie voor deze samenwerking",
         organisationTooltip: "Iedere samenwerking hoort bij<br/>precies 1 organisatie",
@@ -495,12 +481,12 @@ I18n.translations.nl = {
         acceptedUserPolicyPlaceholder: "De URL van de Acceptable Use Policy",
         role: "Rol",
         newTitle: "Voeg nieuwe samenwerking toe",
-        subTitle: "Beschrijf de samenwerking. U wordt beheerder van de nieuwe samenwerking.",
+        subTitle: "Beschrijf de samenwerking. Je wordt beheerder van de nieuwe samenwerking.",
         alreadyExists: "Een samenwerking met {{attribute}} {{value}} bestaat al in organisatie {{organisation}}.",
         required: "{{attribute}} moet worden ingevuld voor een samenwerking.",
         administrators: "Beheerders",
         administratorsPlaceholder: "Nodig beheerders uit per e-mail",
-        administratorsTooltip: "Beheerders van een samenwerking<br/>kunnen de beschrijving aanpassen en<br/>leden uitnodigen.<br/><br/>Voer e-mailadressen in, gescheiden door<br/>een komma, spatie of punt-komma, of voeg<br/>ze stuk voor stuk toe met de enter toets.",
+        administratorsTooltip: "Beheerders van een samenwerking<br/>kunnen de samenwerking aanpassen en<br/>leden uitnodigen.<br/><br/>Voer e-mailadressen in, gescheiden door<br/>een komma, spatie of punt-komma, of druk<br/>ENTER na elk adres.",
         members: "Normale gebruikers",
         selectRole: "Selecteer een rol.",
         manager: "Manager",
@@ -518,21 +504,21 @@ I18n.translations.nl = {
         backToCollaborationDetail: "Terug naar mijn samenwerking {{name}}",
         update: "Bijwerken",
         delete: "Verwijderen",
-        deleteConfirmation: "Weet u zeker dat u deze samenwerking wilt verwijderen?",
-        deleteMemberConfirmation: "Weet u zeker dat u {{name}} als lid voor deze samenwerking wilt verwijderen?",
-        deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
+        deleteConfirmation: "Weet je zeker dat je deze samenwerking wilt verwijderen?",
+        deleteMemberConfirmation: "Weet je zeker dat je {{name}} als lid voor deze samenwerking wilt verwijderen?",
+        deleteEntitiesConfirmation: "Weet je zeker dat je de gemarkeerde leden / uitnodigingen wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze samenwerking wilt verlaten? Je kan dit niet terugdraaien.",
         downgradeYourselfMemberConfirmation: "Weet je zeker dat je geen admin meer wilt zijn? Je kan dit niet terugdraaien.",
-        activateMemberConfirmation: "Are you sure you want to re-activate this user {{name}}?",
-        activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
+        activateMemberConfirmation: "Weet u zeker dat u lid {{name}} wil her-activeren? We zullen een mail met een activeringslink naar hem / haar sturen.",
+        activateMemberTooltip: "Klik om de gedeactiveerde gebruiker weer te activeren.<br/>Gedeactiveerde gebruikers kunnen niet inloggen",
         flash: {
             updated: "Samenwerking {{name}} is bijgewerkt.",
             deleted: "Samenwerking {{name}} is verwijderd.",
             memberDeleted: "{{name}} is geen lid meer van deze samenwerking.",
-            entitiesDeleted: "Membership / invitations are successfully deleted",
+            entitiesDeleted: "Lidmaatschap / uitnodigingen zijn verwijderd",
             memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
             meAdded: "Je bent toegevoegd als lid van {{name}}",
-            memberActivated: "Member {{name}} has been sent an email with an activation link"
+            memberActivated: "Lid {{name}} heeft een email met een activeringslink ontvangen"
         },
         infoBlocks: "Dashboard samenwerking {{name}}",
         searchPlaceHolder: "Zoek leden",
@@ -542,7 +528,7 @@ I18n.translations.nl = {
             user__name: "Naam",
             user__email: "E-mail",
             user__uid: "UID",
-            user__suspended: "Suspended",
+            user__suspended: "Gedeactiveerd",
             role: "Rol",
             created_at: "Sinds",
             actions: ""
@@ -551,13 +537,13 @@ I18n.translations.nl = {
         addMe: "Voeg mij toe"
     },
     organisations: {
-        title: "Mijn Organisaties",
-        noOrganisations: "Je bent geen lid van een organisatie",
+        title: "Mijn Organisaties ({{nbr}})",
+        noOrganisations: "Je bent nog geen lid van een organisatie",
         members: "Leden",
         collaborations: "Samenwerkingen",
         invitations: "Uitnodigingen",
-        collaborationRequests: "Collaboration requests",
-        add: "Nieuwe organisatie",
+        collaborationRequests: "Samenwerkings aanvragen",
+        add: "Nieuwe organisatie maken",
         searchPlaceHolder: "DOORZOEK ALLE ORGANISATIES",
         deleteConfirmation: "Weet u zeker dat u Dienst {{name}} wilt verwijderen?"
     },
@@ -567,30 +553,30 @@ I18n.translations.nl = {
         searchPlaceHolder: "DOORZOEK ALLE DIENSTEN"
     },
     service: {
-        about: "About the service",
-        logo: "Service logo",
-        accessAllowed: "Access allowed",
-        compliancy: "Service compliancy",
+        about: "Over de dienst",
+        logo: "Dienst logo",
+        accessAllowed: "Toegang toegestaan",
+        compliancy: "Dienst compliancy",
         compliancyShort: "Compliancy",
-        none: "None",
-        contact: "Contact contact-person",
+        none: "Geen",
+        contact: "Dienst contactpersoon",
         titleUpdate: "Dienst {{name}} bijwerken",
         titleReadOnly: "Dienst {{name}}",
         backToServices: "Terug naar diensten",
         name: "Naam",
-        namePlaceHolder: "De unieke naam van een dienst",
+        namePlaceHolder: "De unieke naam van de dienst",
         entity_id: "Entity ID",
-        entity_idPlaceHolder: "De unieke entity ID van een dienst",
-        entity_idTooltip: "De unieke entity ID van de <br/>dienst koppelt de dienst<br/>aan de externe dienstaanbieder.",
-        service_request: "Service Request URL",
-        service_requestTooltip: "The URL for a Service to request a connection<br/>between a Collaboration and this Service<br/>if the User does not have access<br/>to this Service",
+        entity_idPlaceHolder: "De unieke entity ID van de dienst",
+        entity_idTooltip: "De unieke entity ID van de dienst<br/>koppelt de dienst in SRAM<br/>aan de daadwerkelijke externe dienstaanbieder",
+        service_request: "Dienst Request URL",
+        service_requestTooltip: "De URL van een dienst om een koppeling aan<br/>te vragen tussen een Samenwerking en deze Dienst<br/>als de Gebruiker geen toegang heeft<br/>tot deze Dienst",
         description: "Beschrijving",
         descriptionPlaceholder: "De beschrijving van de dienst",
         address: "Adres",
         addressPlaceholder: "Het adres van de dienst",
         identity_type: "Identiteitsoort",
         identity_typePlaceholder: "De identiteitsoort van een dienst",
-        identity_typeTooltip: "De primaire manier om deze <br/>deze dienst te identificeren.",
+        identity_typeTooltip: "De primaire manier om bij deze <br/>deze dienst te identificeren.",
         uri: "URI",
         uriPlaceholder: "De URI van de dienst",
         uriTooltip: "URI waar meer informatie is<br/>te vinden over deze dienst.",
@@ -600,31 +586,31 @@ I18n.translations.nl = {
         network: "ACL IP-ranges",
         networkTooltip: "Configureer de ACL IP-ranges voor deze service.<br/><br/>Je kan IPv4 en IPv6 network ranges toevoegen. " +
             "Bijvoorbeeld:<br/><br/><ul>" +
-            "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
-            "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
-            "<li>IPv6 range 2001:db8:f00f:bab::/64. Maximal allowed subnet size for IPv6 is a /64</li>" +
+            "<li>Enkelvoudig IPv4 address 198.51.100.12 waar een /32 is aangenomen</li>" +
+            "<li>IPv4 range 198.51.100.0/24. Maximale toegestane subnet omvang voor IPv4 is een /24</li>" +
+            "<li>IPv6 range 2001:db8:f00f:bab::/64. Maximale toegestane subnet omvang voor IPv6 is een /64</li>" +
             "</ul> ",
-        networkPlaceholder: "IPv4 or IPv6 address with an optional subnet size",
-        networkError: "Subnet size {{prefix}} is not allowed. Max prefix allowed for IPv{{version}} is {{max}}",
-        networkSyntaxError: "De prefix {prefix} is niet toegestaan. Max prefix toegestaan voor IPv{version} is {max}",
-        networkInfo: "Lower bound IP: {lower}, higher bound IP: {higher}, # addresses: {num_addresses}, version: IPv{version}",
-        automaticConnectionAllowed: "Automatische connectie toegestaan?",
-        automaticConnectionAllowedTooltip: "Kunnen collaboraties deze service gebruiken<br/>zonder expliciete toestemming van de Service eigenaar?",
+        networkPlaceholder: "IPv4 of IPv6 adres met optionele subnet omvang",
+        networkError: "Die {{prefix}} subnet omvang is niet toegestaan. Max toegestane prefix voor IPv{{version}} is {{max}}",
+        networkSyntaxError: "De prefix {prefix} is niet toegestaan. Max toegestane prefix voor IPv{version} is {max}",
+        networkInfo: "Laagste IP: {lower}, hoogste IP: {higher}, # adressen: {num_addresses}, versie: IPv{version}",
+        automaticConnectionAllowed: "Automatische connectie toestaan?",
+        automaticConnectionAllowedTooltip: "Kunnen samenwerkingen deze service koppelen<br/>zonder expliciete toestemming van de Service eigenaar?",
         whiteListed: "Whitelisted?",
-        whiteListedTooltip: "Can this Service directly be connect<br/>to new restricted Collaborations created by the API?<br/><br/>Note that it also possible to configure<br/>this in the Server configuration file.",
+        whiteListedTooltip: "Kan deze dienst direct worden gekoppeld<br/>op nieuwe beperkte samenwerkingen die via de API aangemaakt worden?<br/><br/>Merk op dat het ook mogelijk is dit te<br/>configureren in het configuratie bestand op de server.",
         sirtfiCompliant: "Sirtfi compliant?",
-        sirtfiCompliantTooltip: "The Security Incident Response Trust Framework for Federated Identity (Sirtfi)<br/>aims to enable the coordination of incident response across federated organisations.<br/><br/>This assurance framework comprises a list of assertions which an<br/>organisation can attest in order to be declared Sirtfi compliant.",
+        sirtfiCompliantTooltip: "Het Security Incident Response Trust Framework for Federated Identity (Sirtfi) heeft als doel<br/>coordinatie van incidenten die organisatie-grenzen overtsijgen te vereenvoudigen.<br/><br/>Dit 'assurance framework' biedt een aantal 'assertions' waarmee een<br/>organisatie kan aangeven of ze Sirtfi compliant zijn.",
         codeOfConductCompliant: "CoCo compliant?",
-        codeOfConductCompliantTooltip: "The GÉANT Data Protection Code of Conduct (DP-CoCo) is an approach to meet<br/>the requirements of the EU Data Protection Directive for releasing personal<br/>attributes to a Service Provider from an Identity Provider.",
+        codeOfConductCompliantTooltip: "De GÉANT Data Protection Code of Conduct (DP-CoCo) is een initiatief om aan de eisen<br/>te voldoen van de EU Data Protection Directive voor het vrijgeven van persoonlijke<br/>attributen van een Identity Provider naar een Service Provider.",
         researchScholarshipCompliant: "R&S compliant?",
-        researchScholarshipCompliantTooltip: "Service Providers compliant to the Research and Scholarship (R&S) Category<br/>are Service Providers that are operated for the purpose of supporting research<br/>and scholarship interaction, collaboration or management, at least in part.",
-        allowedOrganisations: "Organisaties",
+        researchScholarshipCompliantTooltip: "Service Providers die voldoen aan de Research and Scholarship (R&S) Category<br/>zijn Service Providers die geheel of gedeeltelijk gericht zijn<br/>onderzoeks- en onderwijs-samenwerking en kennisuitwisseling te ondersteunen.",
+        allowedOrganisations: "Toegestane Organisaties",
         allowedOrganisationsPlaceholder: "Zoek organisaties",
-        allowedOrganisationsTooltip: "Als een organisatie is toegevoegd<br/>dan zijn alle andere organisaties automatisch<br/>uitgesloten van het gebruik van deze service.<br/><br/>Als deze service door alle collaboraties kan worden gebruikt<br/>voeg dan geen organisaties toe.",
+        allowedOrganisationsTooltip: "Als er een organisatie wordt toegevoegd<br/>dan zijn alle andere organisaties automatisch<br/>uitgesloten van het gebruik van deze service.<br/><br/>Als deze service door alle samenwerkingen mag worden gebruikt<br/>voeg dan geen organisaties toe.",
         contact_email: "E-mail contact",
         contact_emailPlaceholder: "Het e-mailadres van de contact persoon van deze dienst",
-        contact_emailTooltip: "Dit e-mailadres wordt gebruikt<br/>om met de contactpersoon van de dienst te communiceren.",
-        contactEmailRequired: "Contact e-mail is verplicht als automatische connectie miet toegestaan is voor een service",
+        contact_emailTooltip: "Dit e-mailadres wordt gebruikt om met de contactpersoon van de dienst te communiceren.<br/>Is idealiter een functioneel email-adres, zoals dienst_A_support@sp.org.",
+        contactEmailRequired: "Een contact e-mail is verplicht als automatische connectie niet toegestaan is voor een dienst",
         status: {
             name: "Status",
             active: "Actief",
@@ -635,7 +621,7 @@ I18n.translations.nl = {
         required: "De dienst heeft {{attribute}} nodig.",
         deleteConfirmation: "Weet u zeker dat u dienst {{name}} wilt verwijderen?",
         add: "Aanmaken",
-        update: "Bijwerken",
+        update: "Wijzigen",
         delete: "Verwijderen",
         cancel: "Annuleren",
         flash: {
@@ -697,6 +683,14 @@ I18n.translations.nl = {
         deleteConfirmation: "Weet u zeker dat u deze organisatie wil verwijderen?",
         flash: {
             created: "Organisatie {{name}} is aangemaakt."
+        },
+        onBoarding: {
+            label: "On-boarding message",
+            tooltip: "The markdown message converted to<br/>html show to new users from this institution",
+            tabs: {
+                write: "Markdown text",
+                preview: "Preview"
+            }
         }
     },
     organisationDetail: {
@@ -1077,6 +1071,9 @@ I18n.translations.nl = {
             approved: "{{requester}} samenwerkingsverzoek is goedgekeurd.",
             denied: "{{requester}} samenwerkingsverzoek is afgewezen."
         },
+        request: "Verzoek {{id}}",
+        requester: "Aanvrager",
+        approved: "Goedgekeurd",
         denyConfirmation: "Weet je zeker dat je dit verzoek wilt afkeuren?",
         deleteConfirmation: "Weet je zeker dat je dit verzoek wilt verwijderen?",
         approve: "Goedkeuren",
@@ -1200,11 +1197,12 @@ I18n.translations.nl = {
         confirmAccount: "Start verification"
     },
     inputField: {
-        fileImport: "Bestand inlezen",
+        fileImport: "Upload",
     },
     confirmationDialog: {
         title: "Bevestig actie",
         confirm: "Bevestig",
+        ok: "Ok",
         cancel: "Annuleer",
         leavePage: "Weet u zeker dat u deze pagina wil verlaten?",
         leavePageSub: "Wijzigingen die niet zijn opgeslagen worden niet bewaard.",
@@ -1268,8 +1266,17 @@ I18n.translations.nl = {
         serviceUser: "dienst gebruiker",
         user: "gebruiker"
     },
+    actionRoles: {
+        title: "Jij bent {{role}}",
+        orgAdmin: " ORG admin",
+        orgManager: " ORG manager",
+        coAdmin: " CO admin",
+        coMember: " CO lid",
+        platformAdmin: " platform manager"
+    },
+
     welcomeDialog: {
-        title: "Welkom in {{name}}",
+        title: "Welkom op {{name}}",
         role: "Je huidige rol is <strong>{{role}}</strong>",
         ok: "Ok, toon mij de {{type}}",
         organisation: "organisatie",
@@ -1277,10 +1284,71 @@ I18n.translations.nl = {
         toggleRole: "Verander rol"
     },
     welcome: {
-        title: "Welkom op het SRAM platform",
-        info: "Je bent momenteel geen lid van een organisatie of samenwerkingen." +
-            "Neem bij vragen contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>"
+        title: "Hi {{name}},",
+        subTitle: "Welcome to SURF Research Access Management (SRAM). Here you can collaborate with your fellow researchers.",
+        unknown: "an unknown institution",
+        mysterious: "mysterious guest",
+        institution: "You have logged on via <strong>{{name}}</strong>",
+        institutionNotConnected: "This institution is not (yet) connected to SRAM",
+        whatYouCanDo: "Here's what you can do:",
+        instructions: "Instruction from <strong>{{name}}</strong>",
+        createColl: "Create your own collaboration",
+        startCreateColl: "If you want to start your own collaboration, you can create it directly.",
+        createCollRequest: "Request your own collaboration",
+        startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check and hopefully approve it.",
+        createCollTxt: "Create a collaboration",
+        createCollRequestTxt: "Request a collaboration",
+        contact: "Contact SRAM helpdesk",
+        contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> and let us know what you were expecting, or if you have any questions. We'll try to respond asap."
+    },
+    landing: {
+        header: {
+            title: "Collaborate with fellow researchers",
+            subTitle: "Spend less time managing infra-structure and access management, and more time on doing research"
+        },
+        title: "<strong>SURF Research Access Management</strong> is a service for access management for Dutch led research collaborations. Non-commercial, open, standards-based, easy and secury.",
+        roles: {
+            teamManager: "team managers",
+            researchers: "researchers",
+            institutions: "institutions"
+        },
+        benefits: "Benefits for {{name}}",
+        managers: {
+            subTitle: "Spend less time managing infra-structure and access management",
+            features: [
+                "Create and manage teams with ease",
+                "Invite and onboard members",
+                "Manage access to services"
+            ]
+        },
+        researchers: {
+            subTitle: "Less time waiting for access to services, and more time for research",
+            features: [
+                "Get invited",
+                "Easy login with your institution account",
+                "Guest accounts provided by eduID",
+                "Manage your profile (inc SSH-keys) once"
+            ]
+        },
+        institutions: {
+            subTitle: "<strong>Access as a service</strong> for all your research collaborations!",
+            features: [
+                "Improve your support to researchers",
+                "Improve security",
+                "No more zero hour contracts"
+            ],
+            postTitle: "<strong>SRAM</strong> is a ...service. Read more on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram</a>"
+        },
+        serviceProvider: {
+            title: "Are you a service provider?",
+            subTitle: "Do you want to reach thousands of researchers with your software. Join SRAM now. Learn more about what we can do for you on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
+        },
+        help: {
+            title: "Help & Support",
+            subTitle: "Feel free to reach out to <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+        }
     }
+
 };
 
 export default I18n.translations.nl;

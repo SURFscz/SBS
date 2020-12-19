@@ -43,12 +43,14 @@ def collaboration_by_identifier():
         .options(selectinload(Collaboration.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
         .filter(Collaboration.identifier == identifier).one()
-
-    admins = list(filter(lambda m: m.role == "admin", collaboration.collaboration_memberships))
-    admin_email = admins[0].user.email if len(admins) > 0 else None
-
-    return {"id": collaboration.id, "name": collaboration.name, "admin_email": admin_email,
-            "disable_join_requests": collaboration.disable_join_requests,
+    admins = [m.user.name for m in collaboration.collaboration_memberships if m.role == "admin"]
+    services = [{"name": s.name, "logo": s.logo} for s in collaboration.services]
+    return {"id": collaboration.id, "name": collaboration.name, "admins": admins,
+            "member_count": len(collaboration.collaboration_memberships), "services": services,
+            "group_count": len(collaboration.groups), "website_url": collaboration.website_url,
+            "disable_join_requests": collaboration.disable_join_requests, "logo": collaboration.logo,
+            "description": collaboration.description,
+            "disclose_member_information": collaboration.disclose_member_information,
             "accepted_user_policy": collaboration.accepted_user_policy}, 200
 
 

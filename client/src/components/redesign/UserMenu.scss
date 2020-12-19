@@ -3,7 +3,7 @@
 .user-menu {
     position: absolute;
     display: block;
-    top: 65px;
+    top: 52px;
     right: 0;
     min-width: 220px;
     z-index: 99;
@@ -12,23 +12,28 @@
     border-radius: 4px;
     box-shadow: 0 1px 0 1px $lighter-grey;
 
+    &:focus {
+        outline: none;
+    }
+
     li {
         &:hover {
             background-color: $lightest-grey;
         }
 
-        &:not(:last-child) {
-            border-bottom: 3px solid $lightest-grey;
+        &:not(:first-child) {
+            border-top: 3px solid $background;
         }
 
         a {
             width: 100%;
             padding: 15px 5px 15px 10px;
-            color: $dark-grey;
+            color: $darker-grey;
             text-decoration: none;
             display: inline-block;
 
             &:hover {
+                color: $primary-orange;
                 font-weight: bold;
             }
         }

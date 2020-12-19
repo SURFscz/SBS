@@ -1,29 +1,12 @@
 @import "../stylesheets/vars.scss";
+@import "../stylesheets/input_field.scss";
 
 .input-field {
+    @include input-field;
+
     display: flex;
     position: relative;
     flex-direction: column;
-
-    label {
-        display: inline-block;
-        margin: 12px 0 6px 0;
-        min-width: 210px;
-        color: black;
-        position: relative;
-        font-weight: bold;
-    }
-
-    span.tool-tip-section {
-        font-size: 14px;
-        color: $lighter-grey;
-        cursor: pointer;
-        padding: 0 4px;
-
-        &:hover {
-            color: darken($light-blue, 20%);
-        }
-    }
 
     input[type=text], textarea {
         display: block;
@@ -32,11 +15,16 @@
         padding: 6px 12px;
         border-radius: $br;
         font-size: 16px;
-        height: 50px;
+        height: 48px;
 
         &[disabled] {
             background-color: $lightest-grey;
             cursor: not-allowed;
+        }
+
+        &.error {
+            background-color: $error-red-background;
+            border: 1px solid $error-red;
         }
 
     }
@@ -63,78 +51,63 @@
         }
     }
 
+    div.inner-input-field {
+        display: flex;
+    }
+
     section.file-upload-container {
-        position: absolute;
-        bottom: 1px;
-        right: 1px;
         cursor: pointer;
-        background-color: $lighter-grey;
+        margin-left: 10px;
         text-align: center;
-        border-left: 1px solid black;
+        border: 1px solid $blue;
+        border-radius: 4px;
+        color: $blue;
 
         label.file-upload {
             z-index: 99;
             cursor: pointer;
             margin: 0;
-            padding: 14px;
+            padding: 8px 14px;
             min-width: auto;
+            color: $blue;
+
+            svg {
+                font-size: 26px;
+            }
         }
+
     }
 
-
-    svg.fa-arrow-right {
-        position: absolute;
-        right: 2px;
-        top: 40px;
-        font-size: 34px;
-        color: $blue;
-        padding: 6px;
+    div.input-field-link {
+        margin-left: auto;
+        display: flex;
+        border-radius: 4px;
+        border: 1px solid $medium-blue;
+        padding: 4px 12px;
+        font-size: 20px;
+        color: $medium-blue;
         cursor: pointer;
 
-        &:hover {
-            color: darken($blue, 15%);
+        a {
+            margin: auto;
         }
 
+        svg {
+
+            color: $blue;
+            cursor: pointer;
+
+            &:hover {
+                color: darken($blue, 15%);
+            }
+
+        }
     }
+
 
     span.no-input {
         margin-bottom: 6px;
         display: block;
 
     }
-
-    section.copy-to-clipboard {
-        position: absolute;
-        right: 2px;
-        top: 40px;
-        font-size: 18px;
-        color: $blue;
-        padding: 6px;
-        cursor: pointer;
-
-        &:hover {
-            color: darken($blue, 10%);
-        }
-
-        svg.copied {
-            animation: pulse .8s;
-            animation-iteration-count: 1;
-            border-radius: 50%;
-            position: relative;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 white;
-            }
-            55% {
-                box-shadow: 0 0 6px 6px lighten($blue, 15%);
-            }
-            100% {
-                box-shadow: 0 0 0 0 white;
-            }
-        }
-
-    }
-
 }

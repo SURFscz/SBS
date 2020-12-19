@@ -1,6 +1,6 @@
-import spinner from "../utils/Spin";
 import {isEmpty} from "../utils/Utils";
 import {emitter} from "../utils/Events";
+import I18n from "i18n-js";
 
 let impersonator = null;
 emitter.addListener("impersonation", res => {
@@ -12,8 +12,6 @@ const impersonation_attributes = ["id", "uid", "name", "email"];
 //Internal API
 function validateResponse(showErrorDialog) {
     return res => {
-        spinner.stop();
-
         if (!res.ok) {
             if (res.type === "opaqueredirect") {
                 setTimeout(() => window.location.reload(true), 100);
@@ -61,13 +59,7 @@ function validFetch(path, options, headers = {}, showErrorDialog = true) {
         credentials: "same-origin",
         redirect: "manual"
     });
-    spinner.start();
-    return fetch(path, fetchOptions)
-        .then(validateResponse(showErrorDialog))
-        .catch(err => {
-            spinner.stop();
-            throw err;
-        });
+    return fetch(path, fetchOptions).then(validateResponse(showErrorDialog))
 }
 
 function fetchJson(path, options = {}, headers = {}, showErrorDialog = true) {
@@ -100,9 +92,11 @@ export function authorizationUrl(state) {
 export function me(config) {
     if (config.local && true) {
         let sub = "urn:john";
+        // sub = "urn:harry";
         // sub = "urn:james";
         // sub = "urn:betty";
-        //sub = "urn:suspended";
+        // sub = "urn:mike";
+        // sub = "urn:suspended";
         //Need to mock a login
         return postPutJson("/api/mock", {sub, "email": "john@example.com"}, "PUT")
             .then(() => fetchJson("/api/users/me", {}, {}, false));
@@ -253,6 +247,7 @@ export function deleteCollaboration(id) {
 export function mayRequestCollaboration() {
     return fetchJson("/api/collaborations/may_request_collaboration");
 }
+
 //Organisations
 export function myOrganisationsLite() {
     return fetchJson(`/api/organisations/mine_lite`);
@@ -260,6 +255,10 @@ export function myOrganisationsLite() {
 
 export function organisationByUserSchacHomeOrganisation() {
     return fetchJson(`/api/organisations/find_by_schac_home_organisation`);
+}
+
+export function identityProviderDisplayName() {
+    return fetchJson(`/api/organisations/identity_provider_display_name?lang=${I18n.locale}`)
 }
 
 export function myOrganisations() {

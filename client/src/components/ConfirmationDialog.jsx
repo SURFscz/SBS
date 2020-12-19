@@ -8,7 +8,8 @@ import Button from "./Button";
 export default function ConfirmationDialog({
                                                isOpen = false, cancel, confirm, question = "",
                                                leavePage = false, isError = false, isWarning = false,
-                                               disabledConfirm = false, children = null, closeTimeoutMS=125
+                                               disabledConfirm = false, children = null, closeTimeoutMS = 125,
+                                               confirmationTxt = I18n.t("confirmationDialog.confirm")
                                            }) {
     const className = isError ? " error " : isWarning ? " warning " : "";
     return (
@@ -33,12 +34,12 @@ export default function ConfirmationDialog({
                     {children && children}
                 </section>}
             <section className="dialog-buttons">
-                <Button txt={leavePage ? I18n.t("confirmationDialog.stay") : I18n.t("confirmationDialog.confirm")}
+                {cancel && <Button cancelButton={true}
+                                   txt={leavePage ? I18n.t("confirmationDialog.leave") : I18n.t("confirmationDialog.cancel")}
+                                   onClick={cancel}/>}
+                <Button txt={leavePage ? I18n.t("confirmationDialog.stay") : confirmationTxt}
                         onClick={() => !disabledConfirm && confirm()}
-                        className={className} disabled={disabledConfirm}/>
-                <Button cancelButton={true}
-                        txt={leavePage ? I18n.t("confirmationDialog.leave") : I18n.t("confirmationDialog.cancel")}
-                        onClick={cancel}/>
+                        className={`className ${cancel ? "" : "orphan"}`} disabled={disabledConfirm}/>
             </section>
         </Modal>
     );

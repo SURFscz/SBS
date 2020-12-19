@@ -1,0 +1,45 @@
+@import "../stylesheets/vars.scss";
+@import "../stylesheets/input_field.scss";
+@import "../stylesheets/mde_preview.scss";
+
+div.organisation-onboarding {
+    @include input-field;
+    @include mde-preview;
+
+    label.label {
+        min-width: 0;
+    }
+
+    .react-mde {
+        border-radius: $br;
+        border-color: $dark-grey;
+
+    }
+
+    .mde-header {
+        border-top-left-radius: $br;
+        border-top-right-radius: $br;
+        border-color: $dark-grey;
+        background-color: $background;
+
+        .mde-tabs button {
+            color: $blue;
+
+            &.selected, &:focus {
+                outline: $dark-grey;
+                border-color: $dark-grey;
+                color: black;
+                cursor: default;
+            }
+        }
+    }
+
+    .mde-textarea-wrapper {
+        textarea.mde-text {
+            font-size: 16px;
+            border-color: $dark-grey;
+            border-top: none;
+        }
+    }
+
+}

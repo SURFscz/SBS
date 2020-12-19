@@ -103,9 +103,9 @@ class ApiKeys extends React.Component {
                                 toolTip={I18n.t("apiKeys.descriptionTooltip")}
                     />
                     <section className="actions">
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("forms.submit")}
                                 onClick={this.submit}/>
-                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                     </section>
                 </div>
 

@@ -2,7 +2,7 @@
 
 from server.db.domain import Organisation, OrganisationInvitation
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import uuc_name, schac_home_organisation, amsterdam_uva_name, schac_home_organisation_uuc
+from server.test.seed import uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation
 
 
 class TestOrganisation(AbstractTest):
@@ -41,6 +41,12 @@ class TestOrganisation(AbstractTest):
         organisation = organisations[0]
         self.assertEqual(2, organisation["collaborations_count"])
         self.assertEqual(4, organisation["organisation_memberships_count"])
+
+    def test_identity_provider_display_name(self):
+        self.login("urn:roger", "rug.nl")
+        res = self.get("/api/organisations/identity_provider_display_name",
+                       with_basic_auth=False)
+        self.assertEqual("University of Groningen", res["display_name"])
 
     def test_organisations_by_schac_home_organisation(self):
         self.login("urn:roger", schac_home_organisation)

@@ -5,12 +5,14 @@ import I18n from "i18n-js";
 import Tabs from "../components/Tabs";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
+import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import Collaborations from "../components/redesign/Collaborations";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {removeDuplicates} from "../utils/Utils";
+import {actionMenuUserRole} from "../utils/UserRole";
 
 class ServiceDetail extends React.Component {
 
@@ -41,8 +43,10 @@ class ServiceDetail extends React.Component {
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
-                            {value: I18n.t("breadcrumb.services")},
-                            {value: service.name}
+                            {
+                                path: `/services/${service.id}`,
+                                value: I18n.t("breadcrumb.service", {name: service.name})
+                            },
                         ];
                     });
                     this.tabChanged(tab, service.id);
@@ -86,7 +90,8 @@ class ServiceDetail extends React.Component {
     getOrganisationsTab = (service, organisations) => {
         return (<div key="organisations" name="organisations" label={I18n.t("home.tabs.serviceOrganisations")}
                      icon={<OrganisationsIcon/>}>
-            <ServiceOrganisations {...this.props} refresh={this.refresh} service={service} organisations={organisations}/>
+            <ServiceOrganisations {...this.props} refresh={this.refresh} service={service}
+                                  organisations={organisations}/>
         </div>)
     }
 
@@ -126,6 +131,19 @@ class ServiceDetail extends React.Component {
         return compliancies.length === 0 ? I18n.t("service.none") : compliancies.join(", ");
     }
 
+    getActions = (user, service) => {
+        const actions = [];
+        if (user.admin) {
+            actions.push({
+                svg: PencilIcon,
+                name: I18n.t("home.edit"),
+                perform: () => this.props.history.push("/edit-service/" + service.id)
+            });
+        }
+        return actions;
+    }
+
+
     render() {
         const {tabs, service, loading, tab} = this.state;
         if (loading) {
@@ -133,13 +151,15 @@ class ServiceDetail extends React.Component {
         }
         const {user} = this.props;
         return (
-            <div className="mod-service-container">
+            <>
                 <UnitHeader obj={service}
                             mayEdit={user.admin}
                             history={user.admin && this.props.history}
                             auditLogPath={`services/${service.id}`}
+                            breadcrumbName={I18n.t("breadcrumb.service", {name: service.name})}
                             name={service.name}
-                            onEdit={() => this.props.history.push("/edit-service/" + service.id)}>
+                            dropDownTitle={actionMenuUserRole(user)}
+                            actions={this.getActions(user, service)}>
                     <p>{service.description}</p>
                     <div className="org-attributes-container">
                         <div className="org-attributes">
@@ -163,10 +183,12 @@ class ServiceDetail extends React.Component {
                         </div>
                     </div>
                 </UnitHeader>
-                <Tabs activeTab={tab} tabChanged={this.tabChanged}>
-                    {tabs}
-                </Tabs>
-            </div>);
+                <div className="mod-service-container">
+                    <Tabs activeTab={tab} tabChanged={this.tabChanged}>
+                        {tabs}
+                    </Tabs>
+                </div>
+            </>);
     };
 }
 

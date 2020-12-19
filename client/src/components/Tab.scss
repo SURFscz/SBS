@@ -7,6 +7,7 @@
     margin: 0 20px;
     display: flex;
     align-content: center;
+    position: relative;
 
     &:first-child {
         margin-left: 0;
@@ -32,7 +33,7 @@
             fill: $dark-grey;
         }
 
-        &:hover {
+        &:not(.read-only):hover {
             h2, svg {
                 color: black;
             }
@@ -41,21 +42,48 @@
                 fill: black;
             }
 
-            border-bottom: 2px solid $medium-grey;
+            border-bottom: 3px solid $medium-grey;
+        }
+
+        &.read-only {
+            cursor: not-allowed;
+
+            h2, svg {
+                color: $medium-grey;
+            }
+
+            svg {
+                fill: $medium-grey;
+            }
         }
     }
 
     &.active {
-        border-bottom: 2px solid $primary-orange;
+        border-bottom: 3px solid $light-orange;
 
         h2, svg {
-            color: $secondary-orange;
+            color: $primary-orange;
             font-weight: bold;
         }
 
         svg {
             fill: $primary-orange;
         }
+    }
+
+    span.notifier {
+        border-radius: 50%;
+        background-color: $blue;
+        color: white;
+        font-size: 14px;
+        display: inline-block;
+        width: 18px;
+        text-align: center;
+        height: 18px;
+        line-height: 18px;
+        position: absolute;
+        right: 0;
+        top: -4px;
     }
 
 }

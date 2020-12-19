@@ -194,13 +194,15 @@ export default class History extends React.PureComponent {
         }
         const auditLogEntries = this.convertReferences(auditLogs);
         return (
-            <div className={`history-container`}>
+            <>
                 <UnitHeader obj={({name: I18n.t("home.history"), icon: "history"})}/>
-                <div className={`history`}>
-                    {this.renderAuditLogs(auditLogEntries, selected)}
-                    {this.renderDetail(selected, auditLogs)}
+                <div className={`history-container`}>
+                    <div className={`history`}>
+                        {this.renderAuditLogs(auditLogEntries, selected)}
+                        {this.renderDetail(selected, auditLogs)}
+                    </div>
                 </div>
-            </div>);
+            </>);
     }
 
 }

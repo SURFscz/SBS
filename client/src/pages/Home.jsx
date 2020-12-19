@@ -6,7 +6,7 @@ import {ReactComponent as Logo} from "../icons/ram.svg";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
-import {ReactComponent as WelcomeIcon} from "../icons/home.svg";
+
 
 import {AppStore} from "../stores/AppStore";
 import {rawGlobalUserRole, ROLES} from "../utils/UserRole";
@@ -18,7 +18,6 @@ import Services from "../components/redesign/Services";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import Collaborations from "../components/redesign/Collaborations";
-import Welcome from "../components/redesign/Welcome";
 
 class Home extends React.Component {
 
@@ -73,8 +72,8 @@ class Home extends React.Component {
                 }
                 break;
             default:
-                tab = "welcome";
-                tabs.push(this.getWelcomeTab());
+                this.props.history.push("/welcome");
+                return;
         }
         AppStore.update(s => {
             s.breadcrumb.paths = [
@@ -103,13 +102,7 @@ class Home extends React.Component {
         </div>)
     }
 
-    getWelcomeTab = () => {
-        return (<div key="welcome" name="welcome" label={I18n.t("home.tabs.welcome")}
-                     icon={<WelcomeIcon/>}>
-            <Welcome />
-        </div>)
-    }
-    getCollaborationsTab = platformAdmin=> {
+    getCollaborationsTab = platformAdmin => {
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.collaborations")}
                      icon={<CollaborationsIcon/>}>
             <Collaborations {...this.props} platformAdmin={platformAdmin}/>
@@ -132,7 +125,7 @@ class Home extends React.Component {
         return (
             <div className="mod-home-container">
                 {(user.admin || noMemberships) && <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}
-                                           svgClick={() => new Audio(goat).play()}/>}
+                                                              svgClick={() => new Audio(goat).play()}/>}
                 <Tabs standAlone={!user.admin} activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>

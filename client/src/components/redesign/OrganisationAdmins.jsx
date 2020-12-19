@@ -26,6 +26,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
 import InputField from "../InputField";
 import moment from "moment";
+import ErrorIndicator from "./ErrorIndicator";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
@@ -103,7 +104,7 @@ class OrganisationAdmins extends React.Component {
         const checked = e.target.checked;
         selectedMembers[memberShip.id].selected = checked;
         this.setState({selectedMembers: {...selectedMembers}});
-        this.setState({selectedMembers: {...selectedMembers}, allSelected : checked ? allSelected : false});
+        this.setState({selectedMembers: {...selectedMembers}, allSelected: checked ? allSelected : false});
 
     }
 
@@ -114,31 +115,6 @@ class OrganisationAdmins extends React.Component {
         const newSelectedMembers = {...selectedMembers};
         this.setState({allSelected: val, ...newSelectedMembers});
     }
-
-    doDeleteMe = () => {
-        this.setState({confirmationDialogOpen: false, loading: true});
-        const {organisation, user} = this.props;
-        deleteOrganisationMembership(organisation.id, user.id)
-            .then(() => {
-                this.props.refreshUser(() => {
-                    if (user.admin) {
-                        this.refreshAndFlash(Promise.resolve(),
-                            I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}),
-                            () => this.setState({confirmationDialogOpen: false, loading: false}));
-                    } else {
-                        this.props.history.push("/home");
-                    }
-                })
-            });
-    };
-
-    deleteMe = () => {
-        this.setState({
-            confirmationDialogOpen: true,
-            confirmationQuestion: I18n.t("organisationDetail.deleteYourselfMemberConfirmation"),
-            confirmationDialogAction: this.doDeleteMe
-        });
-    };
 
     gotoInvitation = invitation => e => {
         stopEvent(e);
@@ -171,10 +147,10 @@ class OrganisationAdmins extends React.Component {
                 .filter(id => selectedMembers[id].selected);
 
             const promises = selected.map(id => {
-                    const ref = selectedMembers[id].ref;
-                    return ref.invite ? organisationInvitationDelete(ref.id) :
-                        deleteOrganisationMembership(organisation.id, ref.user.id)
-                });
+                const ref = selectedMembers[id].ref;
+                return ref.invite ? organisationInvitationDelete(ref.id) :
+                    deleteOrganisationMembership(organisation.id, ref.user.id)
+            });
             Promise.all(promises).then(() => {
                 if (currentUserDeleted && !currentUser.admin) {
                     this.props.refreshUser(() => this.props.history.push("/home"));
@@ -274,8 +250,7 @@ class OrganisationAdmins extends React.Component {
                     <ChevronLeft/>{I18n.t("models.orgMembers.backToMembers")}
                 </a>
                 <div className="organisation-invitation-form">
-                    {isExpired &&
-                    <p className="error">{expiredMessage}</p>}
+                    {isExpired && <ErrorIndicator msg={expiredMessage} standalone={true}/>}
                     <h2>{I18n.t("models.orgMembers.invitation",
                         {
                             date: moment(invitation.created_at * 1000).format("LL"),
@@ -298,9 +273,9 @@ class OrganisationAdmins extends React.Component {
                     <section className="actions">
                         <Button warningButton={true} txt={I18n.t("organisationInvitation.delete")}
                                 onClick={this.delete}/>
+                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("organisationInvitation.resend")}
                                 onClick={this.resend}/>
-                        <Button className="white" txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
                     </section>
                 </div>
             </div>)
@@ -367,6 +342,7 @@ class OrganisationAdmins extends React.Component {
                 mapper: entity => entity.invite ? null : <Select
                     value={roles.find(option => option.value === entity.role)}
                     options={roles}
+                    classNamePrefix={`select-member-role`}
                     onChange={this.changeMemberRole(entity)}
                     isDisabled={!isAdmin}/>
             },
@@ -387,9 +363,6 @@ class OrganisationAdmins extends React.Component {
                 mapper: entity => {
                     if (entity.invite) {
                         return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
-                    }
-                    if (entity.user.id === currentUser.id) {
-                        return <Button className="warning" onClick={this.deleteMe} txt={I18n.t("models.collaboration.leave")} small={true}/>
                     }
                     if (!currentUser.admin || entity.user.id === currentUser.id) {
                         return null;

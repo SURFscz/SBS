@@ -31,13 +31,13 @@
         border: 1px solid $dark-grey;
         border-radius: $br;
         font-size: 16px;
-        height: 50px;
-
+        height: 48px;
 
         .select-inner__control {
             height: 100%;
             padding-left: 8px;
             border: none;
+            border-radius: $br;
         }
 
         .select-inner__control--is-focused {
@@ -45,8 +45,7 @@
             border: #5f9af6 2px solid !important;
             outline-offset: -2px;
             outline-color: #5f9af6 !important;
-            border-radius: 0;
-
+            border-radius: $br;
         }
 
         &[disabled] {
@@ -58,6 +57,6 @@
 
     .select-inner__control--is-disabled {
         background-color: $background;
-        border-radius: 0;
+        border-radius: 6px;
     }
 }

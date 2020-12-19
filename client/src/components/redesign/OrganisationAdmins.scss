@@ -1,4 +1,5 @@
 @import "../../stylesheets/vars";
+@import "../../stylesheets/select_role";
 
 .mod-entities {
     div.impersonate {
@@ -63,20 +64,21 @@
 
 .organisation-invitation-details-container {
     display: flex;
-    margin: 40px 0 25px 0;
-    width: 70%;
+    margin: 40px auto 25px auto;
+    max-width: $medium;
+    width: 100%;
 
     a.back-to-org-members {
         display: flex;
         align-items: flex-start;
         white-space: nowrap;
-        color: $dark-grey;
+        color: $blue;
         text-decoration: underline;
         margin-right: 60px;
 
         svg {
             margin-right: 5px;
-            fill: $dark-grey;
+            fill: $blue;
             height: 22px;
         }
     }
@@ -86,24 +88,17 @@
     }
 
     div.organisation-invitation-form {
-        p.error {
-            color: $red;
-            display: inline-block;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+
         h2 {
             font-size: 18px;
         }
 
-        width: 100%;
-
         h1 {
             margin: 1px 0 30px 0;
         }
-
-        display: flex;
-        flex-direction: column;
 
         div.checkbox {
            margin-top: 25px;
