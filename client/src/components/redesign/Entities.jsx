@@ -116,7 +116,7 @@ class Entities extends React.Component {
                             {columns.map(column =>
                                 <td key={column.key}
                                     onClick={column.key !== "check" ? this.onRowClick(rowLinkMapper, entity) : undefined}
-                                    className={`${column.key} ${column.nonSortable ? "" : "sortable"}`}>
+                                    className={`${column.key} ${column.nonSortable ? "" : "sortable"} ${column.className ? column.className : ""}`}>
                                     {this.getEntityValue(entity, column)}
                                 </td>)}
                         </tr>

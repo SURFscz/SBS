@@ -10,6 +10,7 @@
             padding: 5px;
         }
     }
+
     .admin-actions {
         margin-bottom: 12px;
     }
@@ -49,6 +50,10 @@
             td {
                 &.status {
                     text-align: center;
+                }
+
+                &.not-allowed {
+                    cursor: not-allowed;
                 }
 
                 &.impersonate {
@@ -101,7 +106,7 @@
         }
 
         div.checkbox {
-           margin-top: 25px;
+            margin-top: 25px;
         }
     }
 }
