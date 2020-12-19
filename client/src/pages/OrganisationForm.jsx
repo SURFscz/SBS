@@ -27,6 +27,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 
 import "react-mde/lib/styles/css/react-mde-all.css";
 import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 
 class OrganisationForm extends React.Component {
@@ -269,17 +270,15 @@ class OrganisationForm extends React.Component {
                         }}
                                     placeholder={I18n.t("organisation.namePlaceHolder")}
                                     onBlur={this.validateOrganisationName}
+                                    error={alreadyExists.name || (!initial && isEmpty(name))}
                                     name={I18n.t("organisation.name")}/>
-                        {alreadyExists.name && <span
-                            className="error">{I18n.t("organisation.alreadyExists", {
+                        {alreadyExists.name && <ErrorIndicator msg={I18n.t("organisation.alreadyExists", {
                             attribute: I18n.t("organisation.name").toLowerCase(),
                             value: name
-                        })}</span>}
-                        {(!initial && isEmpty(name)) && <span
-                            className="error">{I18n.t("organisation.required", {
+                        })}/>}
+                        {(!initial && isEmpty(name)) && <ErrorIndicator msg={I18n.t("organisation.required", {
                             attribute: I18n.t("organisation.name").toLowerCase()
-                        })}</span>}
-
+                        })}/>}
                         <InputField value={short_name}
                                     name={I18n.t("organisation.shortName")}
                                     placeholder={I18n.t("organisation.shortNamePlaceHolder")}
@@ -288,16 +287,15 @@ class OrganisationForm extends React.Component {
                                         short_name: sanitizeShortName(e.target.value),
                                         alreadyExists: {...this.state.alreadyExists, short_name: false}
                                     })}
+                                    error={alreadyExists.short_name || (!initial && isEmpty(short_name))}
                                     toolTip={I18n.t("organisation.shortNameTooltip")}/>
-                        {alreadyExists.short_name && <span
-                            className="error">{I18n.t("organisation.alreadyExists", {
+                        {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("organisation.alreadyExists", {
                             attribute: I18n.t("organisation.shortName").toLowerCase(),
                             value: short_name
-                        })}</span>}
-                        {(!initial && isEmpty(short_name)) && <span
-                            className="error">{I18n.t("organisation.required", {
+                        })}/>}
+                        {(!initial && isEmpty(short_name)) && <ErrorIndicator msg={I18n.t("organisation.required", {
                             attribute: I18n.t("organisation.shortName").toLowerCase()
-                        })}</span>}
+                        })}/>}
 
                         <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
@@ -323,13 +321,14 @@ class OrganisationForm extends React.Component {
                                     })}
                                     placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
                                     name={I18n.t("organisation.schacHomeOrganisation")}
+                                    error={alreadyExists.schac_home_organisation}
                                     onBlur={this.validateOrganisationSchacHome}
                                     toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
-                        {alreadyExists.schac_home_organisation && <span
-                            className="error">{I18n.t("organisation.alreadyExists", {
+                        {alreadyExists.schac_home_organisation &&
+                        <ErrorIndicator msg={I18n.t("organisation.alreadyExists", {
                             attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase(),
                             value: schac_home_organisation
-                        })}</span>}
+                        })}/>}
                         <RadioButton
                             label={I18n.t("organisation.collaborationCreationAllowed")}
                             name={"collaboration_creation_allowed"}

@@ -36,6 +36,12 @@ div.email-field {
         &:focus-within {
             border: 2px solid #015fcb;
         }
+
+        &.error {
+            background-color: $error-red-background;
+            border: 1px solid $error-red;
+        }
+
     }
 
     textarea {

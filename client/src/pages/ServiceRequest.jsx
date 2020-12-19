@@ -20,6 +20,7 @@ import Button from "../components/Button";
 import ReactTooltip from "react-tooltip";
 import {escapeHtmlTooltip, isEmpty, stopEvent} from "../utils/Utils";
 import {getParameterByName} from "../utils/QueryParameters";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class ServiceRequest extends React.Component {
 
@@ -72,12 +73,12 @@ class ServiceRequest extends React.Component {
 
     backToService = () => {
         const {service} = this.state;
-        const redirectUri = getParameterByName("redirectUri",  window.location.search);
+        const redirectUri = getParameterByName("redirectUri", window.location.search);
         window.location.href = isEmpty(redirectUri) ? service.uri : redirectUri;
     };
 
     displayBackToService = service => {
-        const redirectUri = getParameterByName("redirectUri",  window.location.search);
+        const redirectUri = getParameterByName("redirectUri", window.location.search);
         const defaultRedirectUri = isEmpty(redirectUri) && !isEmpty(service.uri);
         const validRedirectUri = !isEmpty(redirectUri) && redirectUri.startsWith(service.uri);
         return defaultRedirectUri || validRedirectUri;
@@ -250,10 +251,10 @@ class ServiceRequest extends React.Component {
                     <p className="sub-title" dangerouslySetInnerHTML={{__html: subTitle}}/>
                     {this.renderCollaborations(collaborations, user)}
                     {outstandingServiceConnectionRequestDetails &&
-                    <div className="error">
-                            <span>{I18n.t("serviceRequest.outstandingServiceConnectionRequest", {
-                                details: outstandingServiceConnectionRequestDetails
-                            })}</span>
+                    <div className="outstanding-service-request">
+                        <ErrorIndicator msg={I18n.t("serviceRequest.outstandingServiceConnectionRequest", {
+                            details: outstandingServiceConnectionRequestDetails
+                        })}/>
                     </div>
                     }
                     <section className="actions">

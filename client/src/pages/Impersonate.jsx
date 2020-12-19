@@ -17,6 +17,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import {ReactComponent as HandIcon} from "../icons/toys-hand-ghost-orange.svg";
 import SpinnerField from "../components/redesign/SpinnerField";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class Impersonate extends React.Component {
 
@@ -220,6 +221,7 @@ class Impersonate extends React.Component {
                                    onChange={this.search}
                                    onFocus={this.search}
                                    value={query}
+                                   className={(!initial && isEmpty(selectedUser)) ? "error" : ""}
                                    onKeyDown={this.onSearchKeyDown}
                                    placeholder={I18n.t("impersonate.userSearchPlaceHolder")}/>
                                         {showAutoCompletes && <Autocomplete suggestions={suggestions}
@@ -234,7 +236,7 @@ class Impersonate extends React.Component {
                                 </div>
                             </section>
                             {(!initial && isEmpty(selectedUser)) &&
-                            <span className="error">{I18n.t("impersonate.userRequired")}</span>}
+                            <ErrorIndicator msg={I18n.t("impersonate.userRequired")}/>}
                             <InputField disabled={true} name={I18n.t("impersonate.currentImpersonation")}
                                         value={isEmpty(impersonator) ? I18n.t("impersonate.noImpersonation") :
                                             I18n.t("impersonate.currentImpersonationValue", {

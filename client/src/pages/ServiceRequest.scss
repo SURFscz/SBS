@@ -10,7 +10,7 @@
         font-size: 22px;
         color: $dark-grey;
         padding: 20px;
-    background-color: $background;
+        background-color: $background;
 
         p {
             padding: 10px 0 10px 0;
@@ -34,14 +34,15 @@
 
     .result-feedback {
         padding: 40px 0;
+
         a.button {
-        margin-top: 40px;
+            margin-top: 40px;
         }
 
     }
-    .error {
+
+    .outstanding-service-request {
         margin: 25px 0;
-        color: $red;
     }
 
     .service-request {

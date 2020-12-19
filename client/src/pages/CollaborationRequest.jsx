@@ -20,6 +20,7 @@ import {sanitizeShortName} from "../validations/regExps";
 import {AppStore} from "../stores/AppStore";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class CollaborationRequest extends React.Component {
 
@@ -214,11 +215,12 @@ class CollaborationRequest extends React.Component {
                         <section className="collaboration-request-header-actions">
                             <div className="request-header-actions">
                                 {isOpen && <Button cancelButton={true} txt={I18n.t("collaborationRequest.deny")}
-                                                    onClick={this.submit(false)}/>}
+                                                   onClick={this.submit(false)}/>}
                                 {isOpen && <Button disabled={disabledSubmit}
-                                                       txt={I18n.t("collaborationRequest.approve")}
-                                                       onClick={this.submit(true)}/>}
-                                {!isOpen && <span className={`status ${collaborationRequest.status}`}>{I18n.t(`collaborationRequest.statuses.${collaborationRequest.status}`)}</span>}
+                                                   txt={I18n.t("collaborationRequest.approve")}
+                                                   onClick={this.submit(true)}/>}
+                                {!isOpen && <span
+                                    className={`status ${collaborationRequest.status}`}>{I18n.t(`collaborationRequest.statuses.${collaborationRequest.status}`)}</span>}
                             </div>
                         </section>
                     </div>
@@ -238,20 +240,19 @@ class CollaborationRequest extends React.Component {
                         <InputField value={collaborationRequest.name}
                                     onChange={this.updateState("name")}
                                     disabled={!isOpen}
+                                    error={alreadyExists.name || (!initial && isEmpty(collaborationRequest.name))}
                                     placeholder={I18n.t("collaboration.namePlaceHolder")}
                                     onBlur={this.validateCollaborationName}
                                     name={I18n.t("collaboration.name")}/>
-                        {alreadyExists.name && <span
-                            className="error">{I18n.t("collaboration.alreadyExists", {
+                        {alreadyExists.name && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
                             attribute: I18n.t("collaboration.name").toLowerCase(),
                             value: collaborationRequest.name,
                             organisation: collaborationRequest.organisation.label
-                        })}</span>}
-                        {(!initial && isEmpty(collaborationRequest.name)) && <span
-                            className="error">{I18n.t("collaboration.required", {
+                        })}/>}
+                        {(!initial && isEmpty(collaborationRequest.name)) &&
+                        <ErrorIndicator msg={I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.name").toLowerCase()
-                        })}</span>}
-
+                        })}/>}
                         <CroppedImageField name="logo"
                                            onChange={this.updateLogo}
                                            isNew={false}
@@ -266,19 +267,18 @@ class CollaborationRequest extends React.Component {
                                     placeholder={I18n.t("collaboration.shortNamePlaceHolder")}
                                     onBlur={this.validateCollaborationShortName}
                                     disabled={!isOpen}
+                                    error={alreadyExists.short_name || (!initial && isEmpty(collaborationRequest.short_name))}
                                     toolTip={I18n.t("collaboration.shortNameTooltip")}
                                     name={I18n.t("collaboration.shortName")}/>
-                        {alreadyExists.short_name && <span
-                            className="error">{I18n.t("collaboration.alreadyExists", {
+                        {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
                             attribute: I18n.t("collaboration.shortName").toLowerCase(),
                             value: collaborationRequest.short_name,
                             organisation: collaborationRequest.organisation.label
-                        })}</span>}
-                        {(!initial && isEmpty(collaborationRequest.short_name)) && <span
-                            className="error">{I18n.t("collaboration.required", {
+                        })}/>}
+                        {(!initial && isEmpty(collaborationRequest.short_name)) &&
+                        <ErrorIndicator msg={I18n.t("collaboration.required", {
                             attribute: I18n.t("collaboration.shortName").toLowerCase()
-                        })}</span>}
-
+                        })}/>}
                         <InputField
                             value={`${collaborationRequest.organisation.short_name}:${collaborationRequest.short_name}`}
                             name={I18n.t("collaboration.globalUrn")}

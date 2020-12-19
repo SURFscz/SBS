@@ -987,7 +987,7 @@ I18n.translations.en = {
         autoProvisionMembersTooltip: "Check to automatically add all existing and<br/>future new collaboration members to this group",
         global_urn: "Platform identifier",
         globalUrnTooltip: "Platform broad unique and read-only identifier<br/>based on the short names of the organisation,<br/> collaboration and this group.",
-        alreadyExists: "An group with {{attribute}} {{value}} already exists.",
+        alreadyExists: "A group with {{attribute}} {{value}} already exists.",
         required: "The {{attribute}} is required for an group ",
         uri: "URI",
         uriPlaceholder: "URI of the group",

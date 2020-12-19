@@ -20,6 +20,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import SpinnerField from "../components/redesign/SpinnerField";
 import EmailField from "../components/EmailField";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class NewOrganisationInvitation extends React.Component {
 
@@ -195,23 +196,22 @@ class NewOrganisationInvitation extends React.Component {
     invitationForm = (organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
                       disabledSubmit, intended_role) =>
         <div className={"invitation-form"}>
-            <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
-                        addEmail={this.addEmail} removeMail={this.removeMail} name={I18n.t("invitation.invitees")}
+            <EmailField value={email}
+                        onChange={e => this.setState({email: e.target.value})}
+                        addEmail={this.addEmail}
+                        removeMail={this.removeMail}
+                        name={I18n.t("invitation.invitees")}
+                        error={!initial && isEmpty(administrators)}
                         emails={administrators}/>
 
-            {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
-            <span
-                className="error">{I18n.t("organisationInvitation.requiredAdministrator")}</span>}
-
+            {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) && <ErrorIndicator
+                msg={I18n.t("organisationInvitation.requiredAdministrator")}/>}
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
                          name={I18n.t("invitation.intendedRoleOrganisation")}
                          toolTip={I18n.t("invitation.intendedRoleTooltipOrganisation")}
                          placeholder={I18n.t("collaboration.selectRole")}
                          onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
-            {(!initial && isEmpty(intended_role)) &&
-            <span
-                className="error">{I18n.t("invitation.requiredRole")}</span>}
 
             <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                         placeholder={I18n.t("organisation.messagePlaceholder")}
