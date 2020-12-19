@@ -455,8 +455,8 @@ class CollaborationDetail extends React.Component {
                     <span>{I18n.t("collaboration.joinRequests")}</span>
                     <span className="contains-copy">
                         {I18n.t(`collaboration.${collaboration.disable_join_requests ? "disabled" : "enabled"}`)}
-                        <ClipBoardCopy
-                            txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}/>
+                        {!collaboration.disable_join_requests && <ClipBoardCopy
+                            txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}/>}
                     </span>
                 </div>
                 <div className="org-attributes">

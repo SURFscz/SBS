@@ -52,9 +52,9 @@ def _user_query():
         .outerjoin(CollaborationMembership.collaboration) \
         .options(selectinload(User.aups)) \
         .options(selectinload(User.organisation_memberships)
-                 .contains_eager(OrganisationMembership.organisation)) \
+                 .selectinload(OrganisationMembership.organisation)) \
         .options(selectinload(User.collaboration_memberships)
-                 .contains_eager(CollaborationMembership.collaboration))
+                 .selectinload(CollaborationMembership.collaboration))
 
 
 def _user_json_response(user):
