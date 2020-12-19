@@ -125,7 +125,7 @@ def seed(db, app_config):
                  schac_home_organisation=schac_home_organisation, username="roger")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry")
     james = User(uid="urn:james", name=james_name, email="james@example.org", username="james",
-                 schac_home_organisation=schac_home_organisation_uuc, given_name="James"
+                 schac_home_organisation=schac_home_organisation_uuc, given_name="James",
                  ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                          "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
                          "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
