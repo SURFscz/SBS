@@ -232,10 +232,6 @@ class NewOrganisationInvitation extends React.Component {
     renderActions = (disabledSubmit, showPreview) => (
         <section className="actions">
             <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
-            {showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.preview")}
-                                    onClick={() => this.tabChanged("invitation_preview")}/>}
-            {!showPreview && <Button cancelButton={true} className="preview" txt={I18n.t("organisationDetail.details")}
-                                     onClick={() => this.tabChanged("invitation_form")}/>}
             <Button disabled={disabledSubmit} txt={I18n.t("organisationInvitation.invite")}
                     onClick={this.submit}/>
         </section>
