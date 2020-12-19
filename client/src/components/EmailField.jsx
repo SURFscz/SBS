@@ -5,10 +5,10 @@ import "./EmailField.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import I18n from "i18n-js";
 
-export default function EmailField({onChange, name, value, emails, addEmail, removeMail, pinnedEmails = []}) {
+export default function EmailField({onChange, name, value, emails, addEmail, removeMail, pinnedEmails = [], error = false}) {
 
     return (
-        <div className="email-field">
+        <div className={`email-field ${error ? "error" : ""}`}>
             <label htmlFor={name}>{name} <span className="tool-tip-section">
                 <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
                 <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
@@ -16,7 +16,7 @@ export default function EmailField({onChange, name, value, emails, addEmail, rem
                 </ReactTooltip>
             </span>
             </label>
-            <div className="inner-email-field">
+            <div className={`inner-email-field ${error ? "error" : ""}`}>
                 {emails.map(mail =>
                     <div key={mail} className="email-tag">
                         <span>{mail}</span>

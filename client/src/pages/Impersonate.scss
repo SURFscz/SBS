@@ -35,12 +35,6 @@
                 width: 100%;
             }
 
-            .error {
-                color: $red;
-                display: inline-block;
-                font-size: 14px;
-            }
-
             div.input-field, div.select-field {
                 margin-top: 15px;
             }
@@ -96,6 +90,12 @@
                     &[disabled] {
                         background-color: $light-grey;
                     }
+
+                    &.error {
+                        background-color: $error-red-background;
+                        border: 1px solid $error-red;
+                    }
+
                 }
             }
         }

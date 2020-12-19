@@ -14,6 +14,7 @@ import {
     validPublicSSHKeyRegExp
 } from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class Me extends React.Component {
 
@@ -139,14 +140,13 @@ class Me extends React.Component {
                                 toolTip={I18n.t("user.ssh_keyTooltip")}
                                 onBlur={this.validateSSHKey}
                                 fileUpload={true}
+                                error={fileTypeError}
                                 fileName={fileName}
                                 fileInputKey={fileInputKey}
                                 onFileRemoval={this.onFileRemoval}
                                 onFileUpload={this.onFileUpload}
                                 acceptFileFormat=".pub"/>
-                    {fileTypeError &&
-                    <span
-                        className="error">{I18n.t("user.sshKeyError")}</span>}
+                    {fileTypeError && <ErrorIndicator msg={I18n.t("user.sshKeyError")}/> }
                     {showConvertSSHKey &&
                     <CheckBox name="convertSSHKey" value={convertSSHKey}
                               info={I18n.t("user.sshConvertInfo")}

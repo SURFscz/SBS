@@ -28,6 +28,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import EmailField from "../components/EmailField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class CollaborationForm extends React.Component {
 
@@ -427,19 +428,17 @@ class CollaborationForm extends React.Component {
                         })
                     }}
                                 placeholder={I18n.t("collaboration.namePlaceHolder")}
+                                error={alreadyExists.name || (!initial && isEmpty(name))}
                                 onBlur={this.validateCollaborationName}
                                 name={I18n.t("collaboration.name")}/>
-                    {alreadyExists.name && <span
-                        className="error">{I18n.t("collaboration.alreadyExists", {
+                    {alreadyExists.name && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
                         attribute: I18n.t("collaboration.name").toLowerCase(),
                         value: name,
                         organisation: organisation.label
-                    })}</span>}
-                    {(!initial && isEmpty(name)) && <span
-                        className="error">{I18n.t("collaboration.required", {
+                    })}/>}
+                    {(!initial && isEmpty(name)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.name").toLowerCase()
-                    })}</span>}
-
+                    })}/>}
                     <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                        isNew={isNew} title={I18n.t("collaboration.logo")} value={logo}
                                        initial={initial} secondRow={true}/>
@@ -453,18 +452,16 @@ class CollaborationForm extends React.Component {
                                 placeholder={I18n.t("collaboration.shortNamePlaceHolder")}
                                 onBlur={this.validateCollaborationShortName}
                                 toolTip={I18n.t("collaboration.shortNameTooltip")}
+                                error={alreadyExists.short_name || (!initial && isEmpty(short_name))}
                                 name={I18n.t("collaboration.shortName")}/>
-                    {alreadyExists.short_name && <span
-                        className="error">{I18n.t("collaboration.alreadyExists", {
+                    {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
                         attribute: I18n.t("collaboration.shortName").toLowerCase(),
                         value: short_name,
                         organisation: organisation.label
-                    })}</span>}
-                    {(!initial && isEmpty(short_name)) && <span
-                        className="error">{I18n.t("collaboration.required", {
+                    })}/>}
+                    {(!initial && isEmpty(short_name)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.shortName").toLowerCase()
-                    })}</span>}
-
+                    })}/>}
                     <InputField value={`${organisation.short_name}:${short_name}`}
                                 name={I18n.t("collaboration.globalUrn")}
                                 copyClipBoard={true}
@@ -536,12 +533,12 @@ class CollaborationForm extends React.Component {
                                          this.updateBreadCrumb(selectedOption, null, false, false);
                                      })}
                                  searchable={false}
+
                                  disabled={organisations.length === 1}
                     />
-                    {(!initial && isEmpty(organisation)) && <span
-                        className="error">{I18n.t("collaboration.required", {
+                    {(!initial && isEmpty(organisation)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.organisation_name").toLowerCase()
-                    })}</span>}
+                    })}/>}
                     {(!isCollaborationRequest && isNew) &&
                     <div>
                         <h1 className="section-separator">{I18n.t("collaboration.invitations")}</h1>
@@ -563,13 +560,12 @@ class CollaborationForm extends React.Component {
                     {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                                           placeholder={isCollaborationRequest ? I18n.t("collaboration.motivationPlaceholder") : I18n.t("collaboration.messagePlaceholder")}
                                           name={isCollaborationRequest ? I18n.t("collaboration.motivation") : I18n.t("collaboration.message")}
+                                          error={!initial && isEmpty(message) && isCollaborationRequest}
                                           toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
                                           multiline={true}/>}
-                    {(!initial && isEmpty(message) && isCollaborationRequest) && <span
-                        className="error">{I18n.t("collaboration.required", {
+                    {(!initial && isEmpty(message) && isCollaborationRequest) && <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.motivation").toLowerCase()
-                    })}</span>}
-
+                    })}/> }
                     <section className="actions">
                         {!isNew &&
                         <Button warningButton={true} txt={I18n.t("collaborationDetail.delete")}

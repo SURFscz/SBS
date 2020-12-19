@@ -22,6 +22,7 @@ import UnitHeader from "../components/redesign/UnitHeader";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
 import EmailField from "../components/EmailField";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class NewInvitation extends React.Component {
 
@@ -241,12 +242,15 @@ class NewInvitation extends React.Component {
                       intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup) =>
         <div className={"invitation-form"}>
 
-            <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
-                        addEmail={this.addEmail} removeMail={this.removeMail} name={I18n.t("invitation.invitees")}
-                        emails={administrators}/>
+            <EmailField value={email}
+                        onChange={e => this.setState({email: e.target.value})}
+                        addEmail={this.addEmail}
+                        removeMail={this.removeMail}
+                        name={I18n.t("invitation.invitees")}
+                        emails={administrators}
+                        error={!initial && isEmpty(administrators) && isEmpty(fileEmails)}/>
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) &&
-            <span
-                className="error">{I18n.t("invitation.requiredEmail")}</span>}
+            <ErrorIndicator msg={I18n.t("invitation.requiredEmail")}/>}
 
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
@@ -254,9 +258,6 @@ class NewInvitation extends React.Component {
                          toolTip={I18n.t("invitation.intendedRoleTooltip")}
                          placeholder={I18n.t("collaboration.selectRole")}
                          onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
-            {(!initial && isEmpty(intended_role)) &&
-            <span
-                className="error">{I18n.t("invitation.requiredRole")}</span>}
 
             <SelectField value={selectedGroup}
                          options={groups

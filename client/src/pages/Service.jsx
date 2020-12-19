@@ -25,6 +25,7 @@ import {AppStore} from "../stores/AppStore";
 import RadioButton from "../components/redesign/RadioButton";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
+import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class Service extends React.Component {
 
@@ -272,6 +273,7 @@ class Service extends React.Component {
                                     onChange={this.saveIpAddress(i)}
                                     onBlur={this.validateIpAddress(i)}
                                     placeholder={I18n.t("service.networkPlaceholder")}
+                                    error={(network.error && !network.syntax) || network.syntax || network.higher }
                                     disabled={!isAdmin}
                                     onEnter={e => {
                                         this.validateIpAddress(i);
@@ -282,12 +284,9 @@ class Service extends React.Component {
                             <FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/>
                         </span>}
                     </div>
-                    {(network.error && !network.syntax) && <span
-                        className="error">{I18n.t("service.networkError", network)}</span>}
-                    {network.syntax && <span
-                        className="error">{I18n.t("service.networkSyntaxError")}</span>}
-                    {network.higher && <span
-                        className="network-info">{I18n.t("service.networkInfo", network)}</span>}
+                    {(network.error && !network.syntax) && <ErrorIndicator msg={I18n.t("service.networkError", network)}/> }
+                    {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/> }
+                    {network.higher && <ErrorIndicator msg={I18n.t("service.networkInfo", network)}/> }
                 </div>
             )}
         </div>);
@@ -310,17 +309,16 @@ class Service extends React.Component {
                 })}
                             placeholder={I18n.t("service.namePlaceHolder")}
                             onBlur={this.validateServiceName}
+                            error={alreadyExists.name || (!initial && isEmpty(name)) }
                             name={I18n.t("service.name")}
                             disabled={!isAdmin}/>
-                {alreadyExists.name && <span
-                    className="error">{I18n.t("service.alreadyExists", {
+                {alreadyExists.name && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.name").toLowerCase(),
                     value: name
-                })}</span>}
-                {(!initial && isEmpty(name)) && <span
-                    className="error">{I18n.t("service.required", {
+                })}/> }
+                {(!initial && isEmpty(name)) && <ErrorIndicator msg={I18n.t("service.required", {
                     attribute: I18n.t("service.name").toLowerCase()
-                })}</span>}
+                })}/> }
 
                 <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                    isNew={isNew} title={I18n.t("service.logo")}
@@ -335,17 +333,16 @@ class Service extends React.Component {
                             onBlur={this.validateServiceEntityId}
                             name={I18n.t("service.entity_id")}
                             toolTip={I18n.t("service.entity_idTooltip")}
+                            error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
                             copyClipBoard={true}
                             disabled={!isAdmin}/>
-                {alreadyExists.entity_id && <span
-                    className="error">{I18n.t("service.alreadyExists", {
+                {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.entity_id").toLowerCase(),
                     value: entity_id
-                })}</span>}
-                {(!initial && isEmpty(entity_id)) && <span
-                    className="error">{I18n.t("service.required", {
+                })}/> }
+                {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
                     attribute: I18n.t("service.entity_id").toLowerCase()
-                })}</span>}
+                })}/> }
 
                 {!isNew && <InputField value={serviceRequestUrl}
                                        name={I18n.t("service.service_request")}
@@ -393,14 +390,13 @@ class Service extends React.Component {
                                 }
                             })}
                             toolTip={I18n.t("service.contact_emailTooltip")}
+                            error={invalidInputs["email"] || (!initial && contactEmailRequired)}
                             onBlur={this.validateEmail}
                             disabled={!isAdmin}/>
 
-                {invalidInputs["email"] && <span
-                    className="error">{I18n.t("forms.invalidInput", {name: "email"})}</span>}
+                {invalidInputs["email"] && <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/> }
 
-                {(!initial && contactEmailRequired) && <span
-                    className="error">{I18n.t("service.contactEmailRequired")}</span>}
+                {(!initial && contactEmailRequired) && <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/> }
 
                 <InputField value={accepted_user_policy}
                             name={I18n.t("service.accepted_user_policy")}

@@ -288,19 +288,16 @@ class Groups extends React.Component {
                                 short_name: sanitizeShortName(e.target.value),
                                 alreadyExists: {...this.state.alreadyExists, short_name: false}
                             })}
+                            error={alreadyExists.short_name || (!initial && isEmpty(short_name))}
                             toolTip={I18n.t("groups.shortNameTooltip")}
                             disabled={shortNameDisabled(user, createNewGroup, adminOfCollaboration)}/>
-                {alreadyExists.short_name && <span
-                    className="error">{I18n.t("groups.alreadyExists", {
+                {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("groups.alreadyExists", {
                     attribute: I18n.t("groups.short_name").toLowerCase(),
                     value: short_name
-                })}</span>}
-                {(!initial && isEmpty(short_name)) && <span
-                    className="error">{I18n.t("groups.required", {
+                })}/>}
+                {(!initial && isEmpty(short_name)) && <ErrorIndicator msg={I18n.t("groups.required", {
                     attribute: I18n.t("groups.short_name").toLowerCase()
-                })}</span>}
-
-
+                })}/>}
                 <InputField
                     value={`${collaboration.organisation.short_name}:${collaboration.short_name}:${isEmpty(short_name) ? "" : short_name}`}
                     name={I18n.t("groups.global_urn")}
