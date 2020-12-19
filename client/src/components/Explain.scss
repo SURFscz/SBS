@@ -43,9 +43,9 @@
     .header {
         display: flex;
         background: $light-orange;
-        color: white;
+        color: black;
         font-size: larger;
-        height: 60px;
+        height: 68px;
 
         p {
             padding: 18px 15px;
@@ -53,10 +53,10 @@
 
         svg {
             margin-left: auto;
-            font-size: 42px;
+            font-size: 36px;
             padding: 8px;
             cursor: pointer;
-            color: black;
+            fill: white;
         }
     }
 
