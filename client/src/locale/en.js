@@ -383,7 +383,7 @@ I18n.translations.en = {
         alreadyMember: "You are already a member of {{name}}",
         motivation: "Your motivation",
         motivationPlaceholder: "Describe your motivation to join in order for an admin to grant you access.",
-        policyConfirmation: "I have read the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>Acceptable Use Policy</a> of {{collaboration}} and accept it",
+        policyConfirmation: "{{collaboration}} has an AUP which you can read (more about) at <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>here</a>.",
         feedback: {
             info: "Your request has been sent to the collaboration manager of <strong>{{name}}</strong> who will review your application. His / her decision will be communicated to you by e-mail",
         },

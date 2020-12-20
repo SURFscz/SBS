@@ -3,7 +3,6 @@ import Modal from "react-modal";
 import I18n from "i18n-js";
 import "./JoinRequestDialog.scss";
 import Button from "./Button";
-import CheckBox from "./CheckBox";
 import InputField from "./InputField";
 import {isEmpty} from "../utils/Utils";
 import {joinRequestForCollaboration} from "../api";
@@ -15,7 +14,6 @@ export default class JoinRequestDialog extends React.Component {
         super(props, context);
         this.state = {
             motivation: "",
-            acceptedTerms: false,
             submitted: false
         }
     }
@@ -28,10 +26,7 @@ export default class JoinRequestDialog extends React.Component {
 
     gotoHome = () => this.props.history.push("/home");
 
-    isValid = (motivation, acceptedTerms, collaboration) =>
-        !isEmpty(motivation) && (!collaboration.accepted_user_policy || acceptedTerms);
-
-    renderForm = (collaboration, motivation, acceptedTerms, close) => {
+    renderForm = (collaboration, motivation, close) => {
         return (
             <div>
                 <section className="explanation">
@@ -44,19 +39,18 @@ export default class JoinRequestDialog extends React.Component {
                             placeholder={I18n.t("registration.motivationPlaceholder")}
                             onChange={e => this.setState({motivation: e.target.value})}/>
                 {collaboration.accepted_user_policy &&
-                <CheckBox name="policy"
-                          value={acceptedTerms}
-                          info={I18n.t("registration.policyConfirmation",
-                              {
-                                  collaboration: collaboration.name,
-                                  aup: collaboration.accepted_user_policy
-                              })}
-                          onChange={e => this.setState({acceptedTerms: e.target.checked})}/>}
+                <span className="policy" dangerouslySetInnerHTML={{
+                    __html: I18n.t("registration.policyConfirmation",
+                        {
+                            collaboration: collaboration.name,
+                            aup: collaboration.accepted_user_policy
+                        })
+                }}/>}
                 <section className="actions">
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                             onClick={close}/>
                     <Button txt={I18n.t("forms.request")}
-                            disabled={!this.isValid(motivation, acceptedTerms, collaboration)}
+                            disabled={isEmpty(motivation)}
                             onClick={this.submit}/>
                 </section>
             </div>
@@ -65,23 +59,34 @@ export default class JoinRequestDialog extends React.Component {
 
     renderFeedback = collaboration => {
         return (
+
             <div>
                 <section className="explanation informational">
                     <InformationIcon/>
                     <span
-                        dangerouslySetInnerHTML={{__html: I18n.t("registration.feedback.info", {name: collaboration.name})}}/>
+                        dangerouslySetInnerHTML={{
+                            __html: I18n.t
+                            (
+                                "registration.feedback.info"
+                                , {
+                                    name: collaboration.name
+                                }
+                            )
+                        }
+                        }/>
                 </section>
                 <section className="actions">
                     <Button txt={I18n.t("confirmationDialog.ok")}
                             onClick={this.gotoHome}/>
                 </section>
             </div>
-        );
+        )
+            ;
     }
 
     render() {
         const {collaboration, isOpen = false, close} = this.props;
-        const {motivation, acceptedTerms, submitted} = this.state;
+        const {motivation, submitted} = this.state;
         return (
             <Modal
                 isOpen={isOpen}
@@ -94,7 +99,7 @@ export default class JoinRequestDialog extends React.Component {
                 <h1>{I18n.t("registration.title", {name: collaboration.name})}</h1>
                 <div className="join-request-form">
                     {!submitted &&
-                    this.renderForm(collaboration, motivation, acceptedTerms, close)}
+                    this.renderForm(collaboration, motivation, close)}
                     {submitted && this.renderFeedback(collaboration)}
                 </div>
 

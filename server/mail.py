@@ -87,7 +87,8 @@ def mail_automatic_collaboration_request(context, collaboration, organisation, r
 
 
 def mail_organisation_invitation(context, organisation, recipients, preview=False):
-    context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])}}
+    context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
+               "organisation": organisation}
     return _do_send_mail(
         subject=f"Invitation to join organisation {organisation.name}",
         recipients=recipients,
@@ -98,7 +99,8 @@ def mail_organisation_invitation(context, organisation, recipients, preview=Fals
 
 
 def mail_collaboration_invitation(context, collaboration, recipients, preview=False):
-    context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])}}
+    context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
+               "collaboration": collaboration}
     return _do_send_mail(
         subject=f"Invitation to join collaboration {collaboration.name}",
         recipients=recipients,
