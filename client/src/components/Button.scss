@@ -106,9 +106,16 @@
     }
 
     &.plus {
-        color: $blue;
-        border: 1px solid $blue;
+
+        color: #0077c8;
+        border: 1px solid #0077c8;
         background-color: white;
+
+        &:hover {
+            background-color: #ddf2fd;
+            color: #004c97;
+        }
+
     }
 
     &.disabled {
