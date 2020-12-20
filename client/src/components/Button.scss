@@ -3,7 +3,7 @@
 .button {
     display: inline-block;
     padding: 6px 15px;
-    background-color: $blue;
+    background-color: #0077c8;
     color: white;
     border-radius: $br;
     min-width: 140px;
@@ -17,8 +17,7 @@
     }
 
     &:hover {
-        background-color: darken($blue, 5%);
-        color: darken(white, 10%);
+        background-color: #004c97;
     }
 
     &:hover, &:visited {
@@ -31,14 +30,13 @@
 
     &.cancel, &.white {
         background-color: white;
-        color: $blue;
-        border-radius: $br;
-        border: 1px solid $lighter-grey;
+        color: #0077c8;
+        border: 1px solid #0077c8;
         min-width: 120px;
 
         &:hover {
-            background-color: darken(white, 3%);
-            color: darken($blue, 10%);
+            background-color: #ddf2fd;
+            color: #004c97;
         }
 
         i {
@@ -115,13 +113,8 @@
 
     &.disabled {
         cursor: no-drop;
-        background-color: $lighter-grey;
+        background-color: #cccccc;
         color: white;
-
-        &:hover {
-            background-color: $lighter-grey;
-            color: white;
-        }
     }
 
 }

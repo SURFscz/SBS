@@ -370,7 +370,7 @@ class CollaborationDetail extends React.Component {
             <section className="unit-info">
                 <ul>
                     <li>
-                        <GroupsIcon/>
+                        <MemberIcon/>
                         <span>{I18n.t("models.collaboration.memberHeader", {
                             nbrMember: collaborationJoinRequest ? collaboration.member_count : collaboration.collaboration_memberships.length,
                             nbrGroups: collaborationJoinRequest ? collaboration.group_count : collaboration.groups.length
