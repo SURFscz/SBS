@@ -10,7 +10,7 @@ I18n.translations.nl = {
         links: {
             login: "Inloggen",
             system: "Systeem",
-            impersonate: "Impersonate",
+            impersonate: "Imiteer",
             createCollaboration: "Nieuwe samenwerking",
             requestCollaboration: "Samenwerking aanvragen",
             help: "Help",
@@ -42,7 +42,7 @@ I18n.translations.nl = {
         newCollaboration: "Nieuwe samenwerking",
         newCollaborationRequest: "Nieuw samenwerkings verzoek",
         editCollaboration: "Wijzig samenwerking",
-        impersonate: "Impersonate",
+        impersonate: "Imitatie",
         organisationInvite: "Leden toevoegen",
         organisationInvitation: "Uitnodiging",
         invite: "Leden toevoegen",
@@ -112,7 +112,7 @@ I18n.translations.nl = {
     },
     explain: {
         title: "Uitleg {{subject}}",
-        impersonate: "Impersonate",
+        impersonate: "Imitatie",
         services: "Diensten",
         serviceRequest: "Dienst verzoek",
         apiKeys: "API keys"
@@ -372,13 +372,13 @@ I18n.translations.nl = {
             startedImpersonation: "Met success ben je nu - tijdelijk - {{name}}.",
             clearedImpersonation: "Met succes is je nabootsing gestopt. Je bent jezelf weer."
         },
-        exit: "Stop met nadoen",
+        exit: "Stop met imiteren",
         impersonator: "Je bent <strong>{{name}}</strong> aan het imiteren | <strong>{{role}}</strong>",
         impersonatorTooltip: "Je bent echt <em>{{impersonator}}</em>,<br/>maar je imiteert <em>{{currentUser}}</em>. <br/><br/>Op de <strong>Imitatie</strong> pagina<br/> kan je je identiteit veranderen<br/>of jezelf weer worden."
     },
     registration: {
         joinRequest: "Vraag lidmaatschap voor {{name}}",
-                explanation: "Om je aanmeldingsverzoek in te dienen, vul je je motivatie in om lid te worden van samenwerking <strong>{{naam}}</strong>.",
+        explanation: "Om je aanmeldingsverzoek in te dienen, vul je je motivatie in om lid te worden van samenwerking <strong>{{naam}}</strong>.",
         title: "Verzoek lidmaatschap voor {{name}}",
         alreadyMember: "Je bent reeds lid van {{name}}",
         motivation: "Motivatie om lid te worden van {{name}}?",
@@ -929,15 +929,12 @@ I18n.translations.nl = {
             created_at: "Datum",
             message: "Motivatie"
         },
-        resendTooltip: "Resend the Service Connection request.<br/>The mail to approve or deny the request is send to the Service contact",
-        actionsTooltip: "Delete the Service Connection request.<br/>The request can not be approved or denied anymore.",
-        serviceConnectionRequests: "Service Connection Requests",
-        serviceConnectionRequestResend: "Successfully resend request to connect service {{service}} to collaboration {{collaboration}}",
-        serviceConnectionRequestDeleted: "Successfully deleted request to connect service {{service}} to collaboration {{collaboration}}",
-        serviceRestrictedInfo: "This Collaboration is service restricted. Only the platform admin can configure services to be used by this Collaboration.",
-        serviceDeleteConfirmation: "Are you sure you want to remove this service from collaboration {{collaboration}}",
-        serviceConnectionRequestDeleteConfirmation: "Are you sure you want to delete this Service Connection request?",
-        serviceConnectionRequestResendConfirmation: "Are you sure you want to resend the request to connect this service?",
+        actionsTooltip: "Verwijder het Dienst koppelverzoek.<br/>Het verzoek kan niet meer geaccepteerd of afgewezen worden.",
+        serviceConnectionRequests: "Dienst koppelverzoeken",
+        serviceConnectionRequestDeleted: "Het verzoek om dienst {{service}} te koppelen met samenwerking {{collaboration}} is verwijderd",
+        serviceRestrictedInfo: "Deze samenwerking is beperkt in de diensten. Alleen de platformbeheerder kan diensten configureren die door deze samenwerking worden gebruikt.",
+        serviceDeleteConfirmation: "Weet je zeker dat je deze dienst uit de samenwerking {{collaboration}} wilt verwijderen?",
+        serviceConnectionRequestDeleteConfirmation: "Weet je zeker dat je dit koppelverzoek wilt verwijderen?",
     },
     organisationServices: {
         title: "Diensten voor organisatie {{name}}",
@@ -957,7 +954,7 @@ I18n.translations.nl = {
             entity_id: "Entity ID",
             description: "Omschrijving"
         },
-        serviceDeleteConfirmation: "Are you sure you want to remove this service from organisation {{organisation}}",
+        serviceDeleteConfirmation: "Weet je zeker dat je deze dienst wilt verwijderen uit organisatie {{organisation}}",
     },
     groups: {
         title: "Groepen in samenwerking {{name}}",
@@ -1093,20 +1090,20 @@ I18n.translations.nl = {
         }
     },
     serviceConnectionRequest: {
-        title: "Service Connection request",
-        subTitle: "Request from {{requester}} to allow access for collaboration {{collaboration}} to service {{service}}",
-        message: " Motivation",
-        messageTooltip: "The motivation from {{name}} for this request",
-        service: "Service",
-        collaboration: "Collaboration",
-        requester: "Requester",
-        decline: "Decline",
-        accept: "Accept",
-        declineConfirmation: "Are you sure you want to decline this request?",
+        title: "Dienst koppelverzoek",
+        subTitle: "Verzoek van {{requester}} om toegang voor samenwerking {{collaboration}} voor dienst {{service}} toe te staan",
+        message: " Motivatie",
+        messageTooltip: "De motivatie van {{name}} voor dit verzoek",
+        service: "Dienst",
+        collaboration: "Samenwerking",
+        requester: "Aanvrager",
+        decline: "Afwijzen",
+        accept: "Accepteren",
+        declineConfirmation: "Weet je zeker dat je dit verzoek wilt afwijzen?",
         flash: {
-            declined: "Service Connect request for service {{name}} was declined",
-            accepted: "Service Connect request for service {{name}} was accepted",
-            notFound: "This request has already been accepted / declined."
+            declined: "Dienst koppelverzoek voor {{name}} is afgewezen",
+            accepted: "Dienst koppelverzoek voor {{name}} is geaccepteerd",
+            notFound: "Dit verzoek is reeds geaccepteerd / afgewezen."
         }
     },
     autocomplete: {
@@ -1161,40 +1158,40 @@ I18n.translations.nl = {
         }
     },
     serviceRequest: {
-        title: "Service {{name}} is not linked to any of your collaborations",
-        subTitle: "These are all the collaborations you are a member of. Choose one or more to link service <strong>{{name}}</strong> to in order for you to have access to this service.",
-        titleAlreadyLinked: "Service {{name}} is already linked to your collaboration {{collaboration}}",
-        subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this Service. However you already have access to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleLinkNotAllowed: "Service {{name}} can not be linked to any of your collaborations",
-        subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        noCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        title: "Dienst {{name}} is niet gekoppeld aan één van je samenwerkingen",
+        subTitle: "Dit zijn alle samenwerkingen waar je lid van bent. Kies een of meer om service <strong>{{name}}</strong> aan te koppelen om toegang te krijgen tot deze service.",
+        titleAlreadyLinked: "Dienst {{name}} is al gekoppeld aan je samenwerking {{collaboration}}",
+        subTitleAlreadyLinked: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina geredirect om één van je samenwerkingen met deze service te koppelen. Je hebt echter al toegang tot deze dienst. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
+        titleLinkNotAllowed: "Dienst {{name}} kan niet worden gekoppeld aan één je samenwerkingen",
+        subTitleLinkNotAllowed: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina geredirect om één van je samenwerkingen te koppelen. Geen van je samenwerkingen kan echter aan deze dienst worden gekoppeld. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
+        noCollaborations: "Je bent geen lid van een samenwerking. Om dienst <strong>{{name}}</strong> te gebruiken, moet je lid zijn van ten minste één samenwerking. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
         collaboration: {
-            name: "Name",
-            role: "Role",
-            organisation: "Organisation",
-            actions: "Link",
+            name: "Naam",
+            role: "Rol",
+            organisation: "Organisatie",
+            actions: "Koppel",
             tooltips: "",
-            linkNotAllowed: "You can not link this<br/>Service to this Collaboration,<br/>because the Organisation of this<br/>Collaboration is not allowed to link",
-            alreadyLinked: "You can not link this Service to this Collaboration,<br/>because the Service is already available in this Collaboration",
-            outstandingServiceConnectionRequest: "You can not link this Service to this Collaboration,<br/>because there is already an outstanding request<br/>to connect the Service to this Collaboration"
+            linkNotAllowed: "Je kan deze <br/>dienst niet koppelen aan deze samenwerking, <br/>omdat de organisatie van deze <br/>samenwerking niet mag koppelen",
+            alreadyLinked: "Je kan deze dienst niet aan deze samenwerking koppelen, <br/>omdat de dienste al beschikbaar is in deze samenwerking",
+            outstandingServiceConnectionRequest: "Je kan deze dienst niet aan deze samenwerking koppelen, <br/>omdat er al een openstaande aanvraag is <br/> om de dienst aan deze samenwerking te koppelen"
         },
         role: {
             admin: "Admin",
-            member: "Member"
+            member: "Regulier lid"
         },
-        backToService: "Back to service",
-        link: "Link collaboration(s)",
-        motivation: "Service {{serviceName}} redirected the user {{userName}} to connect a collaboration to this service",
+        backToService: "Terug naar de dienst",
+        link: "Koppel samenwerking(en)",
+        motivation: "Dienst {{serviceName}} redirected de gebruiker {{userName}} om een samenwerking te koppelen aan deze dienst",
         result: {
-            completed: "The Service {{serviceName}} is now accessibly for you. Click the button below to go to this service.",
-            requested: "Access to Service {{serviceName}} has been requested. Until the request is granted you can not access this service.",
+            completed: "De dienst {{serviceName}} is nu beschikbaar voor je. Klik op de onderstaande link om naar deze dienst te gaan.",
+            requested: "Toegang tot de dienst {{serviceName}} is aangevraagd. Totdat het verzoek is geaccepteerd, heb je geen toegang tot deze dienst.",
         },
-        outstandingServiceConnectionRequest: "Error occurred. There is already an outstanding service connection request for {{details}}"
+        outstandingServiceConnectionRequest: "Fout opgetreden. Er is al een openstaand serviceverbindingsverzoek voor {{details}}"
     },
     confirmation: {
-        title: "Upgrade to platform admin",
-        info: "You are configured as platform admin, but you'll need to verify this with a stronger verification. Click on the button below to start the upgrade of your account.",
-        confirmAccount: "Start verification"
+        title: "Upgrade naar platform admin",
+        info: "Je bent geconfigureerd als platformbeheerder, maar je moet dit verifiëren met een sterkere verificatie. Klik op de onderstaande knop om de upgrade van je account te starten.",
+        confirmAccount: "Start verificatie"
     },
     inputField: {
         fileImport: "Upload",
@@ -1285,67 +1282,67 @@ I18n.translations.nl = {
     },
     welcome: {
         title: "Hi {{name}},",
-        subTitle: "Welcome to SURF Research Access Management (SRAM). Here you can collaborate with your fellow researchers.",
-        unknown: "an unknown institution",
-        mysterious: "mysterious guest",
-        institution: "You have logged on via <strong>{{name}}</strong>",
-        institutionNotConnected: "This institution is not (yet) connected to SRAM",
-        whatYouCanDo: "Here's what you can do:",
-        instructions: "Instruction from <strong>{{name}}</strong>",
-        createColl: "Create your own collaboration",
-        startCreateColl: "If you want to start your own collaboration, you can create it directly.",
-        createCollRequest: "Request your own collaboration",
-        startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check and hopefully approve it.",
-        createCollTxt: "Create a collaboration",
-        createCollRequestTxt: "Request a collaboration",
+        subTitle: "Welcome op SURF Research Access Management (SRAM). Hier kun je samenwerken met je collega-onderzoekers.",
+        unknown: "een onbekende instelling",
+        mysterious: "mysterieuze gast",
+        institution: "Je bent ingelogd met <strong>{{name}}</strong>",
+        institutionNotConnected: "Deze instelling is (nog) niet gekoppeld met SRAM",
+        whatYouCanDo: "Hier is wat je kan doen:",
+        instructions: "Instructies van <strong>{{name}}</strong>",
+        createColl: "Creëer je eigen samenwerking",
+        startCreateColl: "Als je je eigen samenwerking wilt starten, kan je deze direct aanmaken.",
+        createCollRequest: "Vraag je eigen samenwerking aan",
+        startCreateCollRequest: "Als je je eigen samenwerking wilt starten, kan je deze rechtstreeks aanvragen en zullen de beheerders deze controleren en hopelijk goedkeuren.",
+        createCollTxt: "Creëer een samenwerking",
+        createCollRequestTxt: "Vraag een samenwerking aan",
         contact: "Contact SRAM helpdesk",
-        contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> and let us know what you were expecting, or if you have any questions. We'll try to respond asap."
+        contactInfo: "Neem contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> en laat ons weten wat je verwachtte, of als je vragen hebt. We zullen proberen zo snel mogelijk te reageren."
     },
     landing: {
         header: {
-            title: "Collaborate with fellow researchers",
-            subTitle: "Spend less time managing infra-structure and access management, and more time on doing research"
+            title: "Werk samen met collega-onderzoekers",
+            subTitle: "Besteed minder tijd aan het beheren van infrastructuur en toegangsbeheer, en meer tijd aan onderzoek"
         },
-        title: "<strong>SURF Research Access Management</strong> is a service for access management for Dutch led research collaborations. Non-commercial, open, standards-based, easy and secury.",
+        title: "<strong>SURF Research Access Management</strong> is een service voor toegangsbeheer voor door Nederland geleide onderzoekssamenwerkingen. Niet-commercieel, open, op standaarden gebaseerd, gemakkelijk en veilig.",
         roles: {
             teamManager: "team managers",
-            researchers: "researchers",
-            institutions: "institutions"
+            researchers: "onderzoekers",
+            institutions: "instellingen"
         },
-        benefits: "Benefits for {{name}}",
+        benefits: "Voordelen voor {{name}}",
         managers: {
-            subTitle: "Spend less time managing infra-structure and access management",
+            subTitle: "Besteed minder tijd aan het beheren van infrastructuur en toegangsbeheer",
             features: [
-                "Create and manage teams with ease",
-                "Invite and onboard members",
-                "Manage access to services"
+                "Creëer en beheer gemakkelijk teams",
+                "Nodig leden uit en onboard",
+                "Beheer de toegang tot services"
             ]
         },
         researchers: {
-            subTitle: "Less time waiting for access to services, and more time for research",
+            subTitle: "Minder tijd wachten op toegang tot diensten en meer tijd voor onderzoek",
             features: [
-                "Get invited",
-                "Easy login with your institution account",
-                "Guest accounts provided by eduID",
-                "Manage your profile (inc SSH-keys) once"
+                "Word uitgenodigd",
+                "Gemakkelijk inloggen met uw instellingsaccount",
+                "Gastaccounts geleverd door eduID",
+                "Beheer uw profiel (incl. SSH-keys) één keer"
             ]
         },
         institutions: {
-            subTitle: "<strong>Access as a service</strong> for all your research collaborations!",
+            subTitle: "<strong>Toegang als een service</strong> voor al je onderzoekssamenwerkingen!",
             features: [
-                "Improve your support to researchers",
-                "Improve security",
-                "No more zero hour contracts"
+                "Verbeter de steun aan onderzoekers",
+                "Verbeter de beveiliging",
+                "Geen nul-urencontracten meer"
             ],
-            postTitle: "<strong>SRAM</strong> is a ...service. Read more on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram</a>"
+            postTitle: "<strong>SRAM</strong> is een ...dienst. Lees meer op <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram</a>"
         },
         serviceProvider: {
-            title: "Are you a service provider?",
-            subTitle: "Do you want to reach thousands of researchers with your software. Join SRAM now. Learn more about what we can do for you on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
+            title: "Bent je een dienstaanbieder?",
+            subTitle: "Wil je met jullie software duizenden onderzoekers bereiken? Word nu lid van SRAM. Lees meer over wat we voor je kunnen doen op <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
         },
         help: {
-            title: "Help & Support",
-            subTitle: "Feel free to reach out to <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
+            title: "Help & ondersteuning",
+            subTitle: "Neem gerust contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
         }
     }
 
