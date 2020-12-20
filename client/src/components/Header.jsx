@@ -7,6 +7,7 @@ import {ReactComponent as ChevronDown} from "../icons/chevron-down.svg";
 import {ReactComponent as ChevronUp} from "../icons/chevron-up.svg";
 import {organisationByUserSchacHomeOrganisation} from "../api";
 import {emitter} from "../utils/Events";
+import {stopEvent} from "../utils/Utils";
 
 export default class Header extends React.PureComponent {
 
@@ -33,8 +34,13 @@ export default class Header extends React.PureComponent {
         emitter.removeListener("impersonation", this.impersonate);
     }
 
-    toggleStyle = () => {
-        this.setState({orangeMode: !this.state.orangeMode});
+    toggleStyle = e => {
+        stopEvent(e);
+        const sh = e.shiftKey;
+        const me = e.metaKey;
+        if (sh && me) {
+            this.setState({orangeMode: !this.state.orangeMode});
+        }
     }
 
     impersonate = () => {
@@ -63,8 +69,8 @@ export default class Header extends React.PureComponent {
         const {dropDownActive, organisation, orangeMode} = this.state;
         return (
             <div className={`header-container ${currentUser.guest ? "guest" : ""} ${orangeMode ? "ugly" : ""}`}>
-                <div className="header">
-                    <Link className="logo" to="/" onClick={this.toggleStyle}><Logo/></Link>
+                <div className="header" onClick={this.toggleStyle}>
+                    <Link className="logo" to="/"><Logo/></Link>
                     {!currentUser.guest && <div className="user-profile">
                         {this.renderProfileLink(currentUser, orangeMode)}
                         {dropDownActive &&

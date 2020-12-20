@@ -40,13 +40,16 @@ def collaboration_by_identifier():
         query \
         .outerjoin(Collaboration.collaboration_memberships) \
         .outerjoin(CollaborationMembership.user) \
+        .options(selectinload(Collaboration.organisation)) \
         .options(selectinload(Collaboration.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
         .filter(Collaboration.identifier == identifier).one()
     admins = [m.user.name for m in collaboration.collaboration_memberships if m.role == "admin"]
     services = [{"name": s.name, "logo": s.logo} for s in collaboration.services]
     return {"id": collaboration.id, "name": collaboration.name, "admins": admins,
-            "member_count": len(collaboration.collaboration_memberships), "services": services,
+            "member_count": len(collaboration.collaboration_memberships),
+            "services": services,
+            "organisation": {"name": collaboration.organisation.name},
             "group_count": len(collaboration.groups), "website_url": collaboration.website_url,
             "disable_join_requests": collaboration.disable_join_requests, "logo": collaboration.logo,
             "description": collaboration.description,
