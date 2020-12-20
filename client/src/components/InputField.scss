@@ -27,6 +27,15 @@
             border: 1px solid $error-red;
         }
 
+        &:hover {
+            background-color: $blue-hover;
+        }
+
+        &:focus {
+            box-shadow: 2px 1px 2px 1p $blue-hover;
+        }
+
+
     }
 
     textarea {

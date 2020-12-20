@@ -1,16 +1,16 @@
 @import "../stylesheets/vars.scss";
 
 .unit-info {
-    margin-top: 22px;
+    margin-top: 6px;
 
     li {
         display: flex;
         align-items: center;
-        padding: 4px 0;
+        padding: 3px 0;
 
         svg {
             margin-right: 18px;
-            width: 20px;
+            width: 18px;
             height: auto;
         }
 
