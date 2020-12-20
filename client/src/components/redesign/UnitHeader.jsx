@@ -26,11 +26,6 @@ class UnitHeader extends React.Component {
         );
     }
 
-    performAction = func => e => {
-        stopEvent(e);
-        func();
-    }
-
     render() {
         const {
             obj, history, auditLogPath, name, breadcrumbName, svgClick, firstTime, actions, dropDownTitle, children,
