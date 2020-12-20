@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Logo from "./Logo";
 import {ReactComponent as ChevronUp} from "../../icons/chevron-up.svg";
 import {ReactComponent as ChevronDown} from "../../icons/chevron-down.svg";
-import {isEmpty, stopEvent} from "../../utils/Utils";
+import {isEmpty} from "../../utils/Utils";
 import PropTypes from "prop-types";
 import UnitHeaderActionMenu from "./UnitHeaderActionMenu";
 
