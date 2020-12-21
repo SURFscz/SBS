@@ -36,9 +36,7 @@ export default class Header extends React.PureComponent {
 
     toggleStyle = e => {
         stopEvent(e);
-        const sh = e.shiftKey;
-        const me = e.metaKey;
-        if (sh && me) {
+        if (e && e.shiftKey && e.metaKey) {
             this.setState({orangeMode: !this.state.orangeMode});
         }
     }
