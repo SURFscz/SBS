@@ -5,9 +5,10 @@
     max-width: $medium;
     width: 100%;
     margin: 0 auto $medium-padding auto;
-        @media (max-width: $compact-medium) {
-            padding: 0 15px;
-        }
+
+    @media (max-width: $medium) {
+        padding: 0 15px;
+    }
 
     h1 {
         margin: 15px 0;
