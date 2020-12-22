@@ -19,6 +19,10 @@
         margin-right: 0;
     }
 
+    @media (max-width: $compact-medium) {
+        margin: 0;
+    }
+
     svg {
         width: 20px;
         height: auto;
@@ -87,6 +91,12 @@
         position: absolute;
         right: 0;
         top: -4px;
+
+        @media (max-width: $compact-medium) {
+            top: 8px;
+            right: 4px;
+        }
+
     }
 
     &.collaborations {

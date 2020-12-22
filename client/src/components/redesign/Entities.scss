@@ -6,6 +6,11 @@
     width: 100%;
     margin: 0 auto;
 
+    @media (max-width: $compact-medium) {
+        padding: 0 15px;
+    }
+
+
     &:not(.first) {
         margin-bottom: 25px;
     }
@@ -16,8 +21,18 @@
         padding: 32px 0 28px 0;
         min-height: 40px;
 
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+            align-items: normal;
+        }
+
         h1 {
             font-size: 22px;
+
+            @media (max-width: $compact-medium) {
+                margin-bottom: 15px
+            }
+
         }
 
         svg.help {
@@ -34,6 +49,10 @@
         .search {
             position: relative;
             margin-left: auto;
+            @media (max-width: $compact-medium) {
+                margin-left: 0;
+            }
+
             display: flex;
 
             svg.fa-search {
@@ -53,6 +72,11 @@
                 border-radius: $br;
                 min-width: 360px;
 
+                @media (max-width: $compact-medium) {
+                    min-width: 0;
+                }
+
+
                 &[disabled] {
                     background-color: $light-grey;
                 }
@@ -66,6 +90,11 @@
 
         a.button.blue {
             margin-left: 25px;
+            @media (max-width: $compact-medium) {
+                margin-top: 15px;
+                margin-left: 0;
+            }
+
         }
 
     }
@@ -110,6 +139,14 @@
                 &.right {
                     text-align: right;
                 }
+
+                @media (max-width: $compact-medium) {
+                    &.status, &.requester, &.impersonate, &.logo, &.collaboration_memberships_count,
+                    &.invitations_count {
+                        display: none;
+                    }
+                }
+
             }
 
 
@@ -157,6 +194,14 @@
                         margin-right: 5px;
                     }
                 }
+
+                @media (max-width: $compact-medium) {
+                    &.status, &.requester, &.impersonate, &.logo, &.collaboration_memberships_count,
+                    &.invitations_count {
+                        display: none;
+                    }
+                }
+
 
             }
         }

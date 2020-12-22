@@ -39,6 +39,10 @@
             margin-left: auto;
             font-weight: bold;
 
+            @media (max-width: $compact-medium) {
+                display: none;
+            }
+
             svg {
                 width: 32px;
                 margin-right: 10px;

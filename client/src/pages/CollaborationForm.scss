@@ -16,10 +16,15 @@
         max-width: $medium;
         width: 100%;
 
-
         display: grid;
         grid-template-columns: [first] 1fr [second] 1fr;
         column-gap: 50px;
+
+        @media (max-width: $compact-medium) {
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+        }
 
         .input-field, .actions, div.checkbox, .select-field, span.error {
             grid-column-start: first;

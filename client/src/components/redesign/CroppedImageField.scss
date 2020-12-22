@@ -24,6 +24,11 @@
     .file-upload {
         display: flex;
         margin: 5px 0;
+
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
     }
 
     .preview {

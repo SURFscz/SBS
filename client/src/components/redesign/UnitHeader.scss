@@ -25,6 +25,11 @@
         width: 100%;
         display: flex;
 
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+
         .image {
             svg {
                 width: 50px;
@@ -44,6 +49,9 @@
                 border-radius: 5px;
             }
 
+            @media (max-width: $compact-medium) {
+                display: none;
+            }
 
         }
 
@@ -53,6 +61,7 @@
             h1 {
                 margin: 5px 0;
                 font-size: 28px;
+                line-height: 28px;
                 font-weight: bold;
                 color: $primary-orange;
             }

@@ -8,6 +8,11 @@
         max-width: $medium;
         margin: 0 auto;
         display: flex;
+
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
     }
 
 }

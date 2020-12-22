@@ -44,6 +44,12 @@ table.servicesUsed, table.servicesAvailable {
     width: 100%;
     margin: 40px auto 25px auto;
 
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+        margin: 40px 15px 25px 15px;
+    }
+
+
     a.back-to-services {
         display: flex;
         align-items: flex-start;
@@ -62,6 +68,10 @@ table.servicesUsed, table.servicesAvailable {
         display: flex;
         flex-direction: column;
         margin-left: 60px;
+        
+        @media (max-width: $compact-medium) {
+            width: 100%
+        }
 
         h1 {
             margin-bottom: 20px;

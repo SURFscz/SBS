@@ -4,6 +4,11 @@
 div.missing-services {
     width: 100%;
     max-width: $medium;
+
+    @media (max-width: $compact-medium) {
+        padding: 0 15px;
+    }
+
     margin: 20px auto;
     padding: 20px;
     background-color: #ffeed9;

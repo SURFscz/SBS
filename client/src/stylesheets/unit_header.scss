@@ -1,6 +1,11 @@
 div.org-attributes-container {
     display: flex;
 
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+    }
+
+
     div.org-attributes {
         &:not(last-child) {
             margin-right: 80px;
