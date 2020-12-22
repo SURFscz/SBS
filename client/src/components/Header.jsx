@@ -51,7 +51,7 @@ export default class Header extends React.PureComponent {
     renderProfileLink = (currentUser, orangeMode) => {
         const {dropDownActive} = this.state;
         return (
-            <div className="menu" onClick={() => this.setState({dropDownActive: !dropDownActive})}>
+            <div className="menu">
                 <div className="user">
                     <span>{currentUser.name}</span>
                 </div>
@@ -69,7 +69,8 @@ export default class Header extends React.PureComponent {
             <div className={`header-container ${currentUser.guest ? "guest" : ""} ${orangeMode ? "ugly" : ""}`}>
                 <div className="header" onClick={this.toggleStyle}>
                     <Link className="logo" to="/"><Logo/></Link>
-                    {!currentUser.guest && <div className="user-profile">
+                    {!currentUser.guest &&
+                    <div className="user-profile" onClick={() => this.setState({dropDownActive: !dropDownActive})}>
                         {this.renderProfileLink(currentUser, orangeMode)}
                         {dropDownActive &&
                         <UserMenu currentUser={currentUser} organisation={organisation}
