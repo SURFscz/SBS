@@ -3,7 +3,12 @@
 
 .unit-header-container {
     background-color: $background;
-    padding: 15px 0 25px;
+    padding: 15px 0 25px 0;
+
+    @media (max-width: $medium) {
+        padding: 15px 15px 25px 15px;
+    }
+
     width: 100%;
 
     .children {

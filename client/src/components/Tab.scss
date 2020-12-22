@@ -6,8 +6,10 @@
     padding: 10px 20px;
     margin: 0 20px;
     display: flex;
-    align-content: center;
+    align-items: center;
     position: relative;
+    border-bottom: 3px solid $background;
+
 
     &:first-child {
         margin-left: 0;
@@ -19,6 +21,7 @@
 
     svg {
         width: 20px;
+        height: auto;
         margin-right: 10px;
     }
 
@@ -86,6 +89,29 @@
         top: -4px;
     }
 
+    &.collaborations {
+        svg {
+            width: 28px;
+        }
+    }
+
+    &.collaboration_requests {
+        svg {
+            width: 22px;
+        }
+
+    }
+
+    &.apikeys {
+        svg {
+            width: 28px;
+        }
+    }
+
+    h2 {
+        font-family: "Source Sans Pro", sans-serif !important;
+        font-weight: 600;
+    }
 }
 
 

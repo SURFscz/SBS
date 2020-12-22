@@ -14,6 +14,13 @@
             height: auto;
         }
 
+        a {
+            max-width: 500px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+        }
 
     }
 

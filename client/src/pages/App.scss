@@ -7,10 +7,6 @@
     width: 100%;
     flex-direction: column;
 
-    @media (max-width: $medium) {
-        padding: 0 15px;
-    }
-
     .__react_component_tooltip {
         text-align: center;
         opacity: 1;

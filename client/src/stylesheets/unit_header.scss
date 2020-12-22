@@ -22,6 +22,14 @@ div.org-attributes-container {
                 font-weight: normal;
                 word-break: break-all;
             }
+
+            a {
+                max-width: 200px;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                display: inline-block;
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ import "./ServiceDetail.scss";
 import I18n from "i18n-js";
 import Tabs from "../components/Tabs";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
-import {ReactComponent as ServicesIcon} from "../icons/services.svg";
+import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
@@ -102,7 +102,7 @@ class ServiceDetail extends React.Component {
         collFromOrganisations.forEach(coll => coll.fromCollaboration = false);
         const colls = removeDuplicates(collaborations.concat(collFromOrganisations), "id");
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.serviceCollaborations")}
-                     icon={<ServicesIcon/>}>
+                     icon={<CollaborationsIcon/>}>
             <Collaborations mayCreate={false}
                             showOrigin={true}
                             collaborations={colls}

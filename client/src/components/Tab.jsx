@@ -25,7 +25,7 @@ class Tab extends Component {
     render() {
         let {activeTab, className = "", label, name, icon, notifier, readOnly} = this.props;
 
-        className += " tab";
+        className += ` tab ${name}`;
 
         if (activeTab === name) {
             className += " active";
