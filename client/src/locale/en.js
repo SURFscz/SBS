@@ -89,6 +89,7 @@ I18n.translations.en = {
     forms: {
         submit: "Add",
         save: "Save",
+        apply: "Apply",
         request: "Request",
         cancel: "Cancel",
         showMore: "More",
@@ -104,7 +105,7 @@ I18n.translations.en = {
         add: "Add an image",
         change: "Change image",
         image: "Image must at least be 300x120 pixels and smaller then 2MB.",
-        dragImage: "Drag and resize the croperea until you're happy with the result. Then hit save.",
+        dragImage: "Drag and resize the crop area until you're happy with the result. Then hit apply.",
         imageToLarge: "Image is larger then 2MB.",
         imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Image is required",

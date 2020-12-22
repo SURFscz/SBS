@@ -77,11 +77,11 @@ div.email-field {
             &:last-child {
                 padding: 8px 14px;
                 cursor: pointer;
-                font-size: 10px;
-                color: $red;
+                font-size: 14px;
+                color: $dark-grey;
                 position: absolute;
                 right: -8px;
-                top: -8px;
+                top: -2px;
 
                 &.disabled {
                     cursor: not-allowed;
