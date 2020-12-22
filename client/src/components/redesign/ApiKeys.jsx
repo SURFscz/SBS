@@ -155,6 +155,7 @@ class ApiKeys extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
+                                    isWarning={true}
                                     question={confirmationDialogQuestion}/>
                 <Entities entities={organisation.api_keys}
                           modelName="apiKeys"

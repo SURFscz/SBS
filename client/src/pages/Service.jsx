@@ -273,7 +273,7 @@ class Service extends React.Component {
                                     onChange={this.saveIpAddress(i)}
                                     onBlur={this.validateIpAddress(i)}
                                     placeholder={I18n.t("service.networkPlaceholder")}
-                                    error={(network.error && !network.syntax) || network.syntax || network.higher }
+                                    error={network.error || network.syntax }
                                     disabled={!isAdmin}
                                     onEnter={e => {
                                         this.validateIpAddress(i);
@@ -286,7 +286,8 @@ class Service extends React.Component {
                     </div>
                     {(network.error && !network.syntax) && <ErrorIndicator msg={I18n.t("service.networkError", network)}/> }
                     {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/> }
-                    {network.higher && <ErrorIndicator msg={I18n.t("service.networkInfo", network)}/> }
+                    {network.higher && <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
+
                 </div>
             )}
         </div>);

@@ -8,6 +8,12 @@
         align-items: center;
         padding: 3px 0;
 
+        @media (max-width: 340px) {
+            &.collaboration-url {
+                display: none;
+            }
+        }
+
         svg {
             margin-right: 18px;
             width: 18px;
@@ -20,6 +26,11 @@
             white-space: nowrap;
             overflow: hidden;
             display: inline-block;
+
+            @media (max-width: $compact-medium) {
+                max-width: 280px;
+            }
+
         }
 
     }

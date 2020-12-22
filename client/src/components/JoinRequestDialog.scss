@@ -15,6 +15,11 @@
 
     .join-request-dialog-content {
         padding: 40px 60px;
+
+        @media (max-width: $compact-medium) {
+            padding: 20px;
+        }
+
         background-color: white;
         overflow: auto;
         border-radius: $br;
@@ -68,6 +73,10 @@
 .ReactModalPortal .join-request-dialog-content {
     transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
     width: 660px;
+
+    @media (max-width: $compact-medium) {
+        width: 280px;
+    }
 
     &--before-close {
         top: -50%;

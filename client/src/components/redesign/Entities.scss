@@ -28,6 +28,7 @@
 
         h1 {
             font-size: 22px;
+            line-height: 22px;
 
             @media (max-width: $compact-medium) {
                 margin-bottom: 15px
@@ -143,7 +144,7 @@
                 @media (max-width: $compact-medium) {
                     &.status, &.requester, &.impersonate, &.logo, &.collaboration_memberships_count,
                     &.invitations_count, &.organisation_memberships_count, &.collaborations_count,
-                    &.icon {
+                    &.icon, &.user__schac_home_organisation {
                         display: none;
                     }
                 }
@@ -199,7 +200,7 @@
                 @media (max-width: $compact-medium) {
                     &.status, &.requester, &.impersonate, &.logo, &.collaboration_memberships_count,
                     &.invitations_count, &.organisation_memberships_count, &.collaborations_count,
-                    &.icon {
+                    &.icon, &.user__schac_home_organisation {
                         display: none;
                     }
                 }

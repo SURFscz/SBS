@@ -57,9 +57,16 @@
         display: flex;
         flex-direction: column;
 
+        @media (max-width: $compact-medium) {
+            margin-left: 0;
+            margin-top: 5px;
+            a {
+                max-width: 240px;
+            }
+        }
+
         a:not(:first-child) {
             margin: 25px 0 0 auto;
-
         }
     }
 

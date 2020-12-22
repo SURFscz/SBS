@@ -381,7 +381,7 @@ class CollaborationDetail extends React.Component {
                             dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration, collaborationJoinRequest)}}/>
                     </li>
                     {collaboration.website_url &&
-                    <li>
+                    <li className="collaboration-url">
                         <GlobeIcon/>
                         <span>
                             <a href={collaboration.website_url} rel="noopener noreferrer"
@@ -389,7 +389,7 @@ class CollaborationDetail extends React.Component {
                         </span>
                     </li>}
                     {collaboration.accepted_user_policy &&
-                    <li>
+                    <li className="collaboration-url">
                         <PrivacyIcon/>
                         <span>
                             <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"

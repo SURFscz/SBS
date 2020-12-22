@@ -55,13 +55,24 @@
 
         .collaboration-request-header-actions {
             margin-left: auto;
+            @media (max-width: $compact-medium) {
+                margin-left: 5px;
+            }
 
             .request-header-actions {
                 display: flex;
                 align-items: center;
 
+                @media (max-width: $compact-medium) {
+                    flex-direction: column;
+                }
+
                 a:not(:first-child) {
                     margin-left: 25px;
+                    @media (max-width: $compact-medium) {
+                        margin-top: 5px;
+                    }
+
                 }
 
                 span.status {
