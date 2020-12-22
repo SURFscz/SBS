@@ -89,6 +89,7 @@ I18n.translations.nl = {
     forms: {
         submit: "Toevoegen",
         save: "Opslaan",
+        apply: "Toepassen",
         request: "Aanvragen",
         cancel: "Annuleren",
         showMore: "Meer",
@@ -104,7 +105,7 @@ I18n.translations.nl = {
         add: "Voeg een afbeelding toe",
         change: "Verander afbeelding",
         image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB",
-        dragImage: "Versleep de croperea en pas de grootte aan totdat je tevreden bent met het resultaat. Druk vervolgens op opslaan",
+        dragImage: "Versleep de croperea en pas de grootte aan totdat je tevreden bent met het resultaat. Druk vervolgens op toepassen",
         imageToLarge: "Afbeelding is groter 512KB",
         imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Afbeelding is verplicht",
