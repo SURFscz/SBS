@@ -6,7 +6,7 @@
     width: 100%;
     margin: 0 auto;
 
-    @media (max-width: $compact-medium) {
+    @media (max-width: $medium) {
         padding: 0 15px;
     }
 
@@ -142,7 +142,8 @@
 
                 @media (max-width: $compact-medium) {
                     &.status, &.requester, &.impersonate, &.logo, &.collaboration_memberships_count,
-                    &.invitations_count, &.organisation_memberships_count, &.collaborations_count {
+                    &.invitations_count, &.organisation_memberships_count, &.collaborations_count,
+                    &.icon {
                         display: none;
                     }
                 }
@@ -197,7 +198,8 @@
 
                 @media (max-width: $compact-medium) {
                     &.status, &.requester, &.impersonate, &.logo, &.collaboration_memberships_count,
-                    &.invitations_count, &.organisation_memberships_count, &.collaborations_count {
+                    &.invitations_count, &.organisation_memberships_count, &.collaborations_count,
+                    &.icon {
                         display: none;
                     }
                 }
@@ -225,6 +227,10 @@
         padding: 4px 15px;
         font-weight: bold;
         margin-left: 15px;
+
+        @media (max-width: $compact-medium) {
+            display: none;
+        }
 
         &.me {
             background-color: $green;

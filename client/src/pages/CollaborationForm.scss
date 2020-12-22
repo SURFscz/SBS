@@ -19,9 +19,11 @@
         display: grid;
         grid-template-columns: [first] 1fr [second] 1fr;
         column-gap: 50px;
+        @media (max-width: $medium) {
+            padding: 0 15px;
+        }
 
         @media (max-width: $compact-medium) {
-            padding: 0 15px;
             display: flex;
             flex-direction: column;
         }
