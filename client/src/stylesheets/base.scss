@@ -28,6 +28,11 @@ body {
         overflow: hidden;
     }
 
+    .ReactModal__Content {
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+
 }
 
 a {
