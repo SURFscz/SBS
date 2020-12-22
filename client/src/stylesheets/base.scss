@@ -24,6 +24,15 @@ body {
         transform: rotate(45deg);
     }
 
+    @media (max-width: $compact-medium) {
+        &:after {
+            content: ""!important;
+            background: transparent!important;
+            z-index: -1;
+        }
+    }
+
+
     &.ReactModal__Body--open {
         overflow: hidden;
     }

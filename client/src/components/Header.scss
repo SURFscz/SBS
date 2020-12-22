@@ -3,7 +3,7 @@
 .header-container {
 
     background-color: $background;
-    margin: 0 auto ;
+    margin: 0 auto;
     padding-bottom: 5px;
     color: black;
 
@@ -16,18 +16,11 @@
     }
 
     .header {
-        //max-width: $medium;
-        padding: 0 65px 0 15px;
+        padding-left: 15px;
         position: relative;
         transition: margin 150ms ease-in-out;
         display: flex;
         align-items: center;
-
-        @media (max-width: $compact-medium) {
-            flex-direction: column;
-            align-items: initial;
-            padding: 0 0 0 5px;
-        }
 
         a.logo {
             margin-top: 10px;
@@ -39,26 +32,15 @@
 
         }
 
-        h1.title {
-            font-size: 32px;
-            line-height: 30px;
-            margin-left: 20px;
-
-            @media (max-width: $tablet-max) {
-                display: none;
-            }
-        }
-
-        div.spinner {
-            position: absolute;
-            top: 15px;
-            right: 50%;
-        }
-
         .user-profile {
-            margin-left: auto;
+            margin: 0 65px 0 auto;
             position: relative;
             cursor: pointer;
+
+            @media (max-width: $compact-medium) {
+                margin: 0 5px 0 auto;
+            }
+
         }
 
         .menu {
@@ -68,15 +50,15 @@
             color: black;
             font-weight: bold;
 
-            @media (max-width: $tablet-max) {
-                margin: 5px 5px -2px auto;
-            }
-
-
             .user {
                 display: flex;
                 flex-direction: column;
                 margin-right: 40px;
+
+                @media (max-width: $compact-medium) {
+                    display: none;
+                }
+
 
                 span.role {
                     font-weight: normal;
