@@ -5,6 +5,10 @@
     max-width: $medium;
     width: 100%;
 
+    @media (max-width: $compact-medium) {
+        padding: 0 15px;
+    }
+
     .mod-system {
         width: 100%;
         padding: 0;
@@ -43,6 +47,7 @@
                 margin-left: auto;
             }
         }
+
         p.result {
             margin: 10px;
             color: $green;

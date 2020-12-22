@@ -12,6 +12,10 @@
     text-decoration: none;
     font-weight: bold;
 
+    @media (max-width: $compact-medium) {
+        min-width: 0;
+    }
+
     svg {
         margin-left: 25px;
     }
@@ -33,6 +37,10 @@
         color: #0077c8;
         border: 1px solid #0077c8;
         min-width: 120px;
+
+        @media (max-width: $compact-medium) {
+            min-width: 0;
+        }
 
         &:hover {
             background-color: #ddf2fd;

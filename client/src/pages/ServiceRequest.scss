@@ -23,6 +23,9 @@
         max-width: $medium;
         margin: 0 auto;
 
+        @media (max-width: $compact-medium) {
+            padding: 0 15px;
+        }
 
         .result-feedback {
             padding: 40px 0;

@@ -12,6 +12,10 @@
         position: relative;
         width: 100%;
 
+        @media (max-width: $compact-medium) {
+            padding: 0 15px;
+        }
+
         svg.help {
             color: $blue;
             font-size: 16px;

@@ -5,8 +5,17 @@
     margin: 25px auto;
     width: 100%;
 
+    @media (max-width: $compact-medium) {
+        padding: 0 15px;
+    }
+
     .history {
         display: flex;
+
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
         width: 100%;
 
         ul.logs {

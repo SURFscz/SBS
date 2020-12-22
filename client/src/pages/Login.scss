@@ -10,6 +10,11 @@
     background-color: $background;
 
     .mod-login-container {
+        @media (max-width: $compact-medium) {
+            padding: 0 15px;
+        }
+
+
         background-color: white;
 
         p.larger {

@@ -28,10 +28,18 @@
 
     .member-filter {
         display: flex;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
 
         .member-filter-select {
             width: 290px;
             margin: 0 25px 0 50px;
+            @media (max-width: $compact-medium) {
+                margin: 15px 0;
+            }
+
         }
     }
 
@@ -99,6 +107,10 @@
     max-width: $medium;
     width: 100%;
 
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+    }
+
     a.back-to-org-members {
         display: flex;
         align-items: flex-start;
@@ -120,6 +132,11 @@
 
     div.collaboration-invitation-form {
         width: 60%;
+        @media (max-width: $compact-medium) {
+            width: 100%;
+            padding: 15px;
+        }
+
         display: flex;
         flex-direction: column;
 

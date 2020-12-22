@@ -12,6 +12,13 @@
             grid-template-columns: [first] 1fr [second] 1fr;
             column-gap: 50px;
 
+            @media (max-width: $compact-medium) {
+                padding: 0 15px;
+                display: flex;
+                flex-direction: column;
+            }
+
+
             .input-field, .select-field, .radio-button-container, .actions {
                 grid-column-start: first;
             }

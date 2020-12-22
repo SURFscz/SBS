@@ -73,6 +73,11 @@
     max-width: $medium;
     width: 100%;
 
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+    }
+
+
     a.back-to-org-members {
         display: flex;
         align-items: flex-start;
@@ -94,6 +99,11 @@
 
     div.organisation-invitation-form {
         width: 60%;
+        @media (max-width: $compact-medium) {
+            width: 100%;
+            padding: 15px;
+        }
+
         display: flex;
         flex-direction: column;
 

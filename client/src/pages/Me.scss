@@ -22,6 +22,7 @@ div.confirmation-warning-container {
 
     .input-field {
         margin-top: 0;
+
         label {
             text-align: left;
         }
@@ -37,6 +38,10 @@ div.user-profile-tab-container {
     max-width: $medium;
     margin: 0 auto;
     width: 100%;
+
+    @media (max-width: $compact-medium) {
+        padding: 0 15px;
+    }
 
     div.user-profile-tab {
         h1 {
