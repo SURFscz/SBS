@@ -206,8 +206,10 @@ class NewOrganisationInvitation extends React.Component {
 
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) && <ErrorIndicator
                 msg={I18n.t("organisationInvitation.requiredAdministrator")}/>}
+
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
+                         small={true}
                          name={I18n.t("invitation.intendedRoleOrganisation")}
                          toolTip={I18n.t("invitation.intendedRoleTooltipOrganisation")}
                          placeholder={I18n.t("collaboration.selectRole")}

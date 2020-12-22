@@ -302,6 +302,7 @@ class OrganisationForm extends React.Component {
                                            initial={initial}/>
 
                         <SelectField value={category}
+                                     small={true}
                                      options={categoryOptions}
                                      name={I18n.t("organisation.category")}
                                      toolTip={I18n.t("organisation.categoryTooltip")}

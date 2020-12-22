@@ -255,6 +255,7 @@ class NewInvitation extends React.Component {
             <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
                          options={this.intendedRolesOptions}
                          name={I18n.t("invitation.intendedRole")}
+                         small={true}
                          toolTip={I18n.t("invitation.intendedRoleTooltip")}
                          placeholder={I18n.t("collaboration.selectRole")}
                          onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
