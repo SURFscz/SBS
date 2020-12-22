@@ -6,8 +6,8 @@ import Select from "react-select";
 
 export default function SelectField({
                                         onChange, name, value, options, placeholder = "", disabled = false,
-                                        toolTip = null, searchable = false, className = "input-select-inner",
-                                        classNamePrefix = "select-inner", clearable = false, isMulti = false
+                                        toolTip = null, searchable = false, small = false,
+                                        clearable = false, isMulti = false
                                     }) {
     return (
         <div className="select-field">
@@ -20,8 +20,8 @@ export default function SelectField({
             </span>}
             </label>
             <Select
-                className={className}
-                classNamePrefix={classNamePrefix}
+                className={`input-select-inner ${small ? " small" : ""}`}
+                classNamePrefix={"select-inner"}
                 value={value}
                 placeholder={placeholder}
                 isDisabled={disabled}

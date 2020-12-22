@@ -533,7 +533,6 @@ class CollaborationForm extends React.Component {
                                          this.updateBreadCrumb(selectedOption, null, false, false);
                                      })}
                                  searchable={false}
-
                                  disabled={organisations.length === 1}
                     />
                     {(!initial && isEmpty(organisation)) && <ErrorIndicator msg={I18n.t("collaboration.required", {

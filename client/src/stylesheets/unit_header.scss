@@ -29,11 +29,16 @@ div.org-attributes-container {
             }
 
             a {
-                max-width: 200px;
+                max-width: 240px;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
                 display: inline-block;
+
+                @media (max-width: $compact-medium) {
+                    max-width: 200px;
+                }
+
             }
         }
     }
