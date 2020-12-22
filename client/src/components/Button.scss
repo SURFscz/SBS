@@ -121,7 +121,13 @@
     &.disabled {
         cursor: no-drop;
         background-color: #cccccc;
+        border-color: #cccccc;
         color: white;
+
+        &:hover {
+            background-color: #cccccc;
+            color: white;
+        }
     }
 
 }

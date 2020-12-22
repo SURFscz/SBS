@@ -253,7 +253,7 @@ class CollaborationForm extends React.Component {
             }).then(res => {
                 this.props.refreshUser(() => {
                     const isCollCreated = res.identifier;
-                    this.props.history.push(`/collaborations/${res.id}`);
+                    this.props.history.push(isCollaborationRequest ? "/home" : `/collaborations/${res.id}`);
                     setFlash(I18n.t(isCollCreated ? "collaboration.flash.created" : "collaboration.flash.requested", {name: res.name}));
                 });
             });
