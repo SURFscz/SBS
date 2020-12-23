@@ -1338,7 +1338,7 @@ I18n.translations.nl = {
             postTitle: "<strong>SRAM</strong> is een ...dienst. Lees meer op <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram</a>"
         },
         serviceProvider: {
-            title: "Bent je een dienstaanbieder?",
+            title: "Ben je een dienstaanbieder?",
             subTitle: "Wil je met jullie software duizenden onderzoekers bereiken? Word nu lid van SRAM. Lees meer over wat we voor je kunnen doen op <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
         },
         help: {

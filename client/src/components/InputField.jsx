@@ -51,6 +51,7 @@ export default function InputField({
                        value={value || ""}
                        onChange={onChange}
                        onBlur={onBlur}
+                       maxLength={255}
                        placeholder={placeholder}
                        className={className}
                        onKeyDown={e => {

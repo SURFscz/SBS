@@ -26,10 +26,12 @@
 
         a.link {
             color: $dark-grey;
+            word-break: break-all;
         }
 
         span.last {
             color: black;
+            word-break: break-all;
         }
 
         .eye-view {
