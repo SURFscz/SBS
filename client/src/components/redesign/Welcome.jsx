@@ -116,7 +116,7 @@ class Welcome extends React.Component {
         return (
             <div className="mod-welcome-container">
                 <div className="mod-welcome">
-                    <h1>{I18n.t("welcome.title", {name: user.given_name || I18n.t("welcome.mysterious")})}</h1>
+                    <h1>{I18n.t("welcome.title", {name: user.given_name || user.name || I18n.t("welcome.mysterious")})}</h1>
                     <p>{I18n.t("welcome.subTitle")}</p>
                     <div className="institution">
                         <InformationIcon/>
