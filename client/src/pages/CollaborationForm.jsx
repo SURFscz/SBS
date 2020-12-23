@@ -197,7 +197,6 @@ class CollaborationForm extends React.Component {
             .then(() => {
                 this.props.refreshUser(() => {
                     const {user} = this.props;
-                    debugger;
                     if (isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id)) {
                         this.props.history.push("/organisations/" + collaboration.organisation.id);
                     } else {
