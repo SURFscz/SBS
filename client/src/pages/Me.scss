@@ -44,15 +44,19 @@ div.user-profile-tab-container {
     }
 
     div.user-profile-tab {
+        width: 50%;
+        margin: 25px 0;
+
+        @media (max-width: $compact-medium) {
+            width: 100%;
+        }
+
         h1 {
             font-size: 22px;
             margin-bottom: 10px;
             color: $primary-orange;
         }
 
-        width: 50%;
-
-        margin: 25px 0;
 
         .attributes {
             display: flex;

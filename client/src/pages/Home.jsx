@@ -39,6 +39,10 @@ class Home extends React.Component {
         const role = rawGlobalUserRole(user);
         const nbrOrganisations = user.organisation_memberships.length;
         const nbrCollaborations = user.collaboration_memberships.length;
+        if (user.needsSuperUserConfirmation) {
+            this.props.history.push("/confirmation");
+            return;
+        }
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
                 tabs.push(this.getOrganisationsTab());

@@ -47,6 +47,11 @@ class TestUser(AbstractTest):
         user = self.client.get("/api/users/me").json
         self.assertEqual(user["guest"], True)
 
+    def test_suspended(self):
+        self.login("urn:john")
+        users = self.get("/api/users/suspended", with_basic_auth=False)
+        self.assertEqual(2, len(users))
+
     def test_activate_by_organisation_admin(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
         self.do_test_activate("urn:mary", {"organisation_id": organisation_id})

@@ -291,14 +291,24 @@ def refresh():
     return _user_json_response(user)
 
 
+@user_api.route("/suspended", strict_slashes=False)
+@json_endpoint
+def suspended():
+    confirm_write_access()
+    return User.query.filter(User.suspended == True).all(), 200  # noqa: E712
+
+
 @user_api.route("/activate", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def activate():
     body = current_request.get_json()
     if "collaboration_id" in body:
         confirm_collaboration_admin(body["collaboration_id"], org_manager_allowed=False)
-    else:
+    elif "organisation_id" in body:
         confirm_organisation_admin(body["organisation_id"])
+    else:
+        confirm_write_access()
+
     user = User.query.get(body["user_id"])
 
     user.suspended = False

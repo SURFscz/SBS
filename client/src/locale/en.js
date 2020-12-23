@@ -1189,7 +1189,7 @@ I18n.translations.en = {
     },
     confirmation: {
         title: "Upgrade to platform admin",
-        info: "You are configured as platform admin, but you'll need to verify this with a stronger verification. Click on the button below to start the upgrade of your account.",
+        info: "You are designated to be a platform admin, but you'll need to verify this with a stronger verification. Hit the button below to start the upgrade of your account.",
         confirmAccount: "Start verification"
     },
     inputField: {
