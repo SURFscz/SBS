@@ -88,11 +88,12 @@ class NewOrganisationInvitation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {administrators, message, organisation, expiry_date, fileEmails} = this.state;
+            const {administrators, message, organisation, expiry_date, fileEmails, intended_role} = this.state;
             this.setState({loading: true});
             organisationInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
+                intended_role,
                 expiry_date: expiry_date.getTime() / 1000,
                 organisation_id: organisation.id
             }).then(res => {
