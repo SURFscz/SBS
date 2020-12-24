@@ -231,7 +231,7 @@ class OrganisationDetail extends React.Component {
                     <div className="org-attributes-container">
                         <div className="org-attributes">
                             <span>{I18n.t("organisation.schacHomeOrganisation")}</span>
-                            <span>{organisation.schac_home_organisation}</span>
+                            <span>{isEmpty(organisation.schac_home_organisations) ? null :  organisation.schac_home_organisations.map(sho => sho.name).join(", ")}</span>
                         </div>
                         <div className="org-attributes">
                             <span>{I18n.t("organisation.collaborationCreationAllowed")}</span>

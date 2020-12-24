@@ -64,6 +64,8 @@ I18n.translations.en = {
         firstTime: "Onboarding",
         collaborationRequest: "Request for new Collaboration",
         noOrganisations: "To request a new collaboration it is required that institution '{{schac_home}}' where you logged in, has ordered SRAM. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
+        noShacHome: "To request / create a new collaboration it is required that your institution releases the schac_home attribute. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
+        noOrganisationsPlatformAdmin: "To create a new collaboration it is required you first create a new organisation.",
         tabs: {
             groups: "Groups",
             collaborations: "Collaborations",

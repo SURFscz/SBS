@@ -64,6 +64,8 @@ I18n.translations.nl = {
         firstTime: "Onboarding",
         collaborationRequest: "Vraag een nieuwe samenwerking aan",
         noOrganisations: "Om een nieuwe samenwerking te kunnen aanvragen, moet de instelling '{{schac_home}}' waarmee je bent ingelogd, SRAM als dienst afnemen. Dat lijkt nog niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie.",
+        noShacHome: "Om een nieuwe samenwerking aan te vragen / aan te maken, is het vereist dat je instelling het attribuut schac_home vrijgeeft. Dit lijkt niet het geval te zijn. Neem voor meer informatie contact op via <a href='mailto:sram-support@surf.nl'> sram-support@surf.nl </a>",
+        noOrganisationsPlatformAdmin: "Om een nieuwe samenwerking te maken is het vereist dat je eerst een nieuwe organisatie maakt.",
         tabs: {
             groups: "Groepen",
             collaborations: "Samenwerkingen",

@@ -93,6 +93,7 @@ class CollaborationForm extends React.Component {
                 if (json.length === 0) {
                     organisationByUserSchacHomeOrganisation().then(json => {
                         if (isEmpty(json)) {
+                            this.updateBreadCrumb(null, null, false, false);
                             this.setState({noOrganisations: true, loading: false});
                         } else {
                             const organisations = this.mapOrganisationsToOptions([json]);
@@ -347,14 +348,18 @@ class CollaborationForm extends React.Component {
         this.setState({administrators: newAdministrators, current_user_admin: checked})
     }
 
-    renderNoOrganisations = user => (
-        <div className="mod-new-collaboration-container">
-            <div className="mod-new-collaboration">
-                <h2 className="no-organisations"
-                    dangerouslySetInnerHTML={{__html: I18n.t("home.noOrganisations", {schac_home: user.schac_home_organisation})}}/>
+    renderNoOrganisations = user => {
+        const msg = user.admin ? I18n.t("home.noOrganisationsPlatformAdmin") :
+            user.schac_home_organisation ? I18n.t("home.noOrganisations", {schac_home: user.schac_home_organisation}) : I18n.t("home.noShacHome");
+        return (
+            <div className="mod-new-collaboration-container">
+                <div className="new-collaboration">
+                    <h2 className="no-organisations"
+                        dangerouslySetInnerHTML={{__html: msg}}/>
+                </div>
             </div>
-        </div>
-    );
+        )
+    };
 
     render() {
         const {
@@ -561,9 +566,10 @@ class CollaborationForm extends React.Component {
                                           error={!initial && isEmpty(message) && isCollaborationRequest}
                                           toolTip={isCollaborationRequest ? I18n.t("collaboration.motivationTooltip") : I18n.t("collaboration.messageTooltip")}
                                           multiline={true}/>}
-                    {(!initial && isEmpty(message) && isCollaborationRequest) && <ErrorIndicator msg={I18n.t("collaboration.required", {
+                    {(!initial && isEmpty(message) && isCollaborationRequest) &&
+                    <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.motivation").toLowerCase()
-                    })}/> }
+                    })}/>}
                     <section className="actions">
                         {!isNew &&
                         <Button warningButton={true} txt={I18n.t("collaborationDetail.delete")}

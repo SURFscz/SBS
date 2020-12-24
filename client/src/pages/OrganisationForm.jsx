@@ -17,7 +17,7 @@ import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
+import {sanitizeShortName, validEmailRegExp, validSchacHomeRegExp} from "../validations/regExps";
 import {AppStore} from "../stores/AppStore";
 import UnitHeader from "../components/redesign/UnitHeader";
 import RadioButton from "../components/redesign/RadioButton";
@@ -28,6 +28,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import CreatableField from "../components/CreatableField";
 
 
 class OrganisationForm extends React.Component {
@@ -40,6 +41,7 @@ class OrganisationForm extends React.Component {
             name: "",
             description: "",
             short_name: "",
+            schac_home_organisations: [],
             schac_home_organisation: "",
             collaboration_creation_allowed: false,
             logo: "",
@@ -72,8 +74,10 @@ class OrganisationForm extends React.Component {
                 if (category) {
                     categoryOption = {value: category, label: category};
                 }
+                const schacHomeOrganisations = org.schac_home_organisations.map(sho => sho.name);
                 this.setState({
                     ...org,
+                    schac_home_organisations: schacHomeOrganisations,
                     organisation: org,
                     category: categoryOption,
                     isNew: false,
@@ -112,10 +116,61 @@ class OrganisationForm extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
 
-    validateOrganisationSchacHome = e =>
-        organisationSchacHomeOrganisationExists(e.target.value, this.existingOrganisationName("schac_home_organisation")).then(json => {
-            this.setState({alreadyExists: {...this.state.alreadyExists, schac_home_organisation: json}});
-        });
+    removeValue = value => e => {
+        stopEvent(e);
+        const {schac_home_organisations, isNew, organisation, alreadyExists} = this.state;
+        const newSchac_home_organisations = schac_home_organisations.filter(val => val !== value);
+        if (!isEmpty(newSchac_home_organisations)) {
+            const existingOrganisationId = isNew ? null : organisation.id;
+            Promise.all(newSchac_home_organisations.map(org => organisationSchacHomeOrganisationExists(org, existingOrganisationId)))
+                .then(res => {
+                    const anyInvalid = res.filter(b => b);
+                    this.setState({
+                        schac_home_organisations: newSchac_home_organisations,
+                        alreadyExists: {
+                            ...alreadyExists,
+                            schac_home_organisations: isEmpty(anyInvalid) ? null : anyInvalid
+                        }
+                    });
+                })
+        } else {
+            this.setState({
+                schac_home_organisations: [],
+                alreadyExists: {...alreadyExists, schac_home_organisations: null}
+            });
+        }
+    };
+
+    addValue = e => {
+        stopEvent(e);
+        const schac_home_organisation = e.target.value;
+        const {schac_home_organisations, isNew, organisation, alreadyExists} = this.state;
+        const values = [];
+        if (!isEmpty(schac_home_organisation) && validSchacHomeRegExp.test(schac_home_organisation.trim())) {
+            values.push(schac_home_organisation);
+            const existingOrganisationId = isNew ? null : organisation.id;
+            const uniqueValues = [...new Set(schac_home_organisations.concat(values))];
+            if (uniqueValues.length > schac_home_organisations.length) {
+                organisationSchacHomeOrganisationExists(schac_home_organisation, existingOrganisationId).then(schacHomeOrganisationExists => {
+                    let existingSchacHomes = alreadyExists.schac_home_organisations;
+                    if (schacHomeOrganisationExists) {
+                        existingSchacHomes = existingSchacHomes || [];
+                        existingSchacHomes.push(schac_home_organisation);
+                    }
+                    this.setState({
+                        schac_home_organisation: "",
+                        schac_home_organisations: uniqueValues,
+                        alreadyExists: {...alreadyExists, schac_home_organisations: existingSchacHomes}
+                    });
+                });
+            } else {
+                this.setState({schac_home_organisation: ""});
+            }
+        } else {
+            this.setState({schac_home_organisation: ""});
+        }
+        return true;
+    };
 
     cancel = () => {
         this.setState({
@@ -155,7 +210,7 @@ class OrganisationForm extends React.Component {
     doSubmit = () => {
         if (this.isValid()) {
             const {
-                name, short_name, administrators, message, schac_home_organisation, description, logo,
+                name, short_name, administrators, message, schac_home_organisations, description, logo,
                 on_boarding_msg, category
             } = this.state;
             this.setState({loading: true});
@@ -163,7 +218,7 @@ class OrganisationForm extends React.Component {
                 name,
                 short_name,
                 category: category !== null ? category.label : null,
-                schac_home_organisation: isEmpty(schac_home_organisation) ? null : schac_home_organisation,
+                schac_home_organisations: schac_home_organisations.map(sho => ({name: sho})),
                 administrators,
                 message,
                 description,
@@ -189,13 +244,13 @@ class OrganisationForm extends React.Component {
     doUpdate = () => {
         if (this.isValid()) {
             const {
-                name, description, organisation, schac_home_organisation, collaboration_creation_allowed,
+                name, description, organisation, schac_home_organisations, collaboration_creation_allowed,
                 short_name, identifier, logo, on_boarding_msg, category
             } = this.state;
             this.setState({loading: true});
             updateOrganisation({
                 id: organisation.id, name, description,
-                schac_home_organisation: isEmpty(schac_home_organisation) ? null : schac_home_organisation,
+                schac_home_organisations: schac_home_organisations.map(sho => ({name: sho})),
                 collaboration_creation_allowed, short_name, identifier, logo, on_boarding_msg,
                 category: category !== null ? category.value : null
             })
@@ -236,8 +291,8 @@ class OrganisationForm extends React.Component {
         const {
             name, description, initial, alreadyExists,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
-            schac_home_organisation, collaboration_creation_allowed, logo, on_boarding_msg, category, categoryOptions,
-            isNew, organisation, warning, loading
+            schac_home_organisations, collaboration_creation_allowed, logo, on_boarding_msg, category, categoryOptions,
+            schac_home_organisation, isNew, organisation, warning, loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -315,28 +370,32 @@ class OrganisationForm extends React.Component {
                         <OrganisationOnBoarding on_boarding_msg={on_boarding_msg}
                                                 saveOnBoarding={val => this.setState({on_boarding_msg: val})}/>
 
-                        <InputField value={schac_home_organisation}
-                                    onChange={e => this.setState({
-                                        schac_home_organisation: e.target.value,
-                                        alreadyExists: {...this.state.alreadyExists, schac_home_organisation: false}
-                                    })}
-                                    placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
-                                    name={I18n.t("organisation.schacHomeOrganisation")}
-                                    error={alreadyExists.schac_home_organisation}
-                                    onBlur={this.validateOrganisationSchacHome}
-                                    toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}/>
-                        {alreadyExists.schac_home_organisation &&
-                        <ErrorIndicator msg={I18n.t("organisation.alreadyExists", {
-                            attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase(),
-                            value: schac_home_organisation
-                        })}/>}
+                        <CreatableField onChange={e => this.setState({schac_home_organisation: e.target.value})}
+                                        name={I18n.t("organisation.schacHomeOrganisation")}
+                                        value={schac_home_organisation}
+                                        values={schac_home_organisations}
+                                        addValue={this.addValue}
+                                        removeValue={this.removeValue}
+                                        toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}
+                                        placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
+                                        error={alreadyExists.schac_home_organisations}/>
+
+                        {alreadyExists.schac_home_organisations &&
+                        alreadyExists.schac_home_organisations.map(sho =>
+                            <ErrorIndicator key={sho} msg={I18n.t("organisation.alreadyExists", {
+                                attribute: I18n.t("organisation.schacHomeOrganisation").toLowerCase(),
+                                value: sho
+                            })}/>
+                        )}
+
                         <RadioButton
                             label={I18n.t("organisation.collaborationCreationAllowed")}
                             name={"collaboration_creation_allowed"}
-                            disabled={isEmpty(schac_home_organisation)}
+                            disabled={isEmpty(schac_home_organisations)}
                             value={collaboration_creation_allowed}
                             tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
                             onChange={val => this.setState({collaboration_creation_allowed: val})}/>
+
                         {/*<InputField value={email} onChange={e => this.setState({email: e.target.value})}*/}
                         {/*            placeholder={I18n.t("organisation.administratorsPlaceholder")}*/}
                         {/*            name={I18n.t("organisation.administrators")}*/}

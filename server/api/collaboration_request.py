@@ -11,7 +11,8 @@ from server.api.collaboration import assign_global_urn_to_collaboration, do_save
 from server.auth.security import current_user_id, current_user_name, \
     confirm_organisation_admin_or_manager
 from server.db.defaults import cleanse_short_name
-from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db
+from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db, \
+    SchacHomeOrganisation
 from server.db.models import save, delete
 from server.mail import mail_collaboration_request, mail_accepted_declined_collaboration_request, \
     mail_automatic_collaboration_request
@@ -43,7 +44,8 @@ def request_collaboration():
     data = current_request.get_json()
     user = User.query.get(current_user_id())
     organisation = Organisation.query \
-        .filter(Organisation.schac_home_organisation == user.schac_home_organisation) \
+        .join(Organisation.schac_home_organisations)\
+        .filter(SchacHomeOrganisation.name == user.schac_home_organisation) \
         .first()
     if not organisation:
         raise BadRequest(f"There is no organisation with a schac_home_organisation that equals the "

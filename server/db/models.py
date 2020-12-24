@@ -7,10 +7,11 @@ from werkzeug.exceptions import BadRequest
 from server.auth.security import current_user_uid
 from server.db.db import db
 from server.db.domain import User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
-    Invitation, Service, Aup, IpNetwork, Group
+    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation
 
 deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
                            "join_requests": JoinRequest, "collaborations": Collaboration,
+                           "schac_home_organisations": SchacHomeOrganisation,
                            "organisation_memberships": OrganisationMembership, "invitations": Invitation,
                            "services": Service, "aups": Aup, "ip_networks": IpNetwork, "groups": Group}
 

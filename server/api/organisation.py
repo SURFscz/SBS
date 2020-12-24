@@ -16,7 +16,7 @@ from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
-    CollaborationRequest
+    CollaborationRequest, SchacHomeOrganisation
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation
 
@@ -53,12 +53,14 @@ def schac_home_exists():
     schac_home = query_param("schac_home")
     if not schac_home:
         return False, 200
-    existing_organisation = query_param("existing_organisation", required=False, default="")
-    org = Organisation.query.options(load_only("id")) \
-        .filter(func.lower(Organisation.schac_home_organisation) == func.lower(schac_home)) \
-        .filter(func.lower(Organisation.schac_home_organisation) != func.lower(existing_organisation)) \
-        .first()
-    return org is not None, 200
+    existing_organisation_id = query_param("existing_organisation_id", required=False)
+    query = SchacHomeOrganisation.query \
+        .filter(func.lower(SchacHomeOrganisation.name) == func.lower(schac_home))
+    if existing_organisation_id:
+        query = query \
+            .filter(SchacHomeOrganisation.organisation_id != int(existing_organisation_id))
+    res = query.first()
+    return res.name if res else False, 200
 
 
 @organisation_api.route("/all", strict_slashes=False)
@@ -156,7 +158,8 @@ def organisation_by_schac_home():
         return None, 200
 
     org = Organisation.query \
-        .filter(Organisation.schac_home_organisation == schac_home_organisation) \
+        .join(Organisation.schac_home_organisations) \
+        .filter(SchacHomeOrganisation.name == schac_home_organisation) \
         .first()
 
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement

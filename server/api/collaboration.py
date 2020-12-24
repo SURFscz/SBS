@@ -15,7 +15,7 @@ from server.auth.security import confirm_collaboration_admin, is_application_adm
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
-    Organisation, Service, ServiceConnectionRequest
+    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation
 from server.db.models import update, save, delete
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_collaboration_invitation
@@ -102,7 +102,9 @@ def may_request_collaboration():
     sho = user.schac_home_organisation
     if not sho:
         return False, 200
-    return Organisation.query.filter(Organisation.schac_home_organisation == sho).count() > 0, 200
+    return Organisation.query \
+               .join(Organisation.schac_home_organisations) \
+               .filter(SchacHomeOrganisation.name == sho).count() > 0, 200
 
 
 @collaboration_api.route("/all", strict_slashes=False)
@@ -346,25 +348,26 @@ def save_restricted_collaboration():
     admin = admins[0]
     restricted_co_config = current_app.app_config.restricted_co
 
-    organisations = []
+    organisation = None
     logger = ctx_logger("collaboration_api_restricted")
 
     if admin.schac_home_organisation:
-        organisations = Organisation.query \
-            .filter(Organisation.schac_home_organisation == admin.schac_home_organisation) \
-            .all()
+        organisation = Organisation.query \
+            .join(Organisation.schac_home_organisations) \
+            .filter(SchacHomeOrganisation.name == admin.schac_home_organisation) \
+            .first()
     else:
         logger.info(f"Admin user {admin.username} has no schac_home_organisation, fallback to configured default org")
 
-    if not organisations:
-        organisations = Organisation.query \
-            .filter(Organisation.schac_home_organisation == restricted_co_config.default_organisation).all()
+    if not organisation:
+        organisation = Organisation.query \
+            .join(Organisation.schac_home_organisations) \
+            .filter(SchacHomeOrganisation.name == restricted_co_config.default_organisation) \
+            .first()
 
-    if len(organisations) == 0:
+    if not organisation:
         raise BadRequest(f"Default organisation for restricted co "
                          f"{restricted_co_config.default_organisation} does not exists")
-
-    organisation = organisations[0]
 
     data["organisation_id"] = organisation.id
     data["services_restricted"] = True
