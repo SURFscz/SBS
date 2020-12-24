@@ -13,7 +13,7 @@ from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
-    ServiceConnectionRequest, SuspendNotification, Aup
+    ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation
 
 collaboration_request_name = "New Collaboration"
 
@@ -148,10 +148,12 @@ def seed(db, app_config):
     user_inactive = User(uid="urn:inactive", name="inactive", email="inactive@example.org", username="inacative",
                          last_login_date=retention_date, last_accessed_date=retention_date,
                          schac_home_organisation="not.exists")
-    user_one_suspend = User(uid="urn:one_suspend", name="one_suspend", email="one_suspend@example.org", username="1suspend",
+    user_one_suspend = User(uid="urn:one_suspend", name="one_suspend", email="one_suspend@example.org",
+                            username="1suspend",
                             last_login_date=retention_date, last_accessed_date=retention_date)
 
-    user_two_suspend = User(uid="urn:two_suspend", name="two_suspend", email="two_suspend@example.org", username="2suspend",
+    user_two_suspend = User(uid="urn:two_suspend", name="two_suspend", email="two_suspend@example.org",
+                            username="2suspend",
                             last_login_date=retention_date, last_accessed_date=retention_date)
 
     last_login_date = current_time - datetime.timedelta(days=retention.allowed_inactive_period_days + 30)
@@ -195,11 +197,17 @@ def seed(db, app_config):
                                        "\n- Wiki\n- Cloud\n- Awesome things...\n\nIf you want to join one of our "
                                        "collaborations, please send a mail to [support@uuc.nl](mailto:support@uuc.nl)."
                                        "\n<br/><br/>\nHappy researching,\n\n*UUC support*",
-                       collaboration_creation_allowed=True, schac_home_organisation=schac_home_organisation_uuc)
+                       collaboration_creation_allowed=True)
     uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam", identifier=str(uuid.uuid4()),
-                       created_by="urn:admin", updated_by="urnadmin", short_name="uva", logo=_read_image("uva.jpg"),
-                       schac_home_organisation=schac_home_organisation, category="University")
+                       created_by="urn:admin", updated_by="urn:admin", short_name="uva", logo=_read_image("uva.jpg"),
+                       category="University")
     _persist(db, uuc, uva)
+
+    shouuc = SchacHomeOrganisation(name=schac_home_organisation_uuc, organisation=uuc, created_by="urn:admin",
+                                   updated_by="urn:admin")
+    shouva = SchacHomeOrganisation(name=schac_home_organisation, organisation=uva, created_by="urn:admin",
+                                   updated_by="urn:admin")
+    _persist(db, shouuc, shouva)
 
     api_key = ApiKey(hashed_secret=uuc_hashed_secret, organisation=uuc, description="API access",
                      created_by="urn:admin", updated_by="urn:admin")

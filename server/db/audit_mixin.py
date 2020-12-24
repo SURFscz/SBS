@@ -92,6 +92,7 @@ parent_configuration = {
     "invitations": ("collaboration_id", "collaborations"),
     "organisation_invitations": ("organisation_id", "organisations"),
     "api_keys": ("organisation_id", "organisations"),
+    "schac_home_organisations": ("organisation_id", "organisations"),
     "collaboration_requests": ("organisation_id", "organisations"),
     "service_connection_requests": ("collaboration_id", "collaborations"),
     "ip_networks": ("service_id", "services"),

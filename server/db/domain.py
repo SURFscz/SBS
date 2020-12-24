@@ -209,7 +209,8 @@ class Organisation(Base, db.Model):
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
     on_boarding_msg = db.Column("on_boarding_msg", db.Text(), nullable=True)
-    schac_home_organisation = db.Column("schac_home_organisation", db.String(length=255), nullable=True)
+    schac_home_organisations = db.relationship("SchacHomeOrganisation", cascade="all, delete-orphan",
+                                               passive_deletes=True, lazy="selectin")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
@@ -407,6 +408,18 @@ class IpNetwork(Base, db.Model):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     network_value = db.Column("network_value", db.Text(), nullable=False)
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+
+
+class SchacHomeOrganisation(Base, db.Model):
+    __tablename__ = "schac_home_organisations"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=False)
+    organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
+    organisation = db.relationship("Organisation", back_populates="schac_home_organisations")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)

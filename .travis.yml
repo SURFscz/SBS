@@ -25,8 +25,8 @@ notifications:
 .mysql_init: &mysql_init
   >
     mysql -uroot -e "
-      DROP DATABASE IF EXISTS sbs_test;
-      CREATE DATABASE IF NOT EXISTS sbs_test;
+      DROP DATABASE IF EXISTS sbs_test_msh;
+      CREATE DATABASE IF NOT EXISTS sbs_test_msh;
       CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
       GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
     "

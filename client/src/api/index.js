@@ -269,12 +269,16 @@ export function allOrganisations() {
     return fetchJson(`/api/organisations/all`);
 }
 
-export function organisationSchacHomeOrganisationExists(schacHome, existingOrganisation = null) {
-    return fetchJson(`/api/organisations/schac_home_exists?schac_home=${encodeURIComponent(schacHome)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
+export function organisationSchacHomeOrganisationExists(schacHome, existingOrganisationId = null) {
+    let path = `/api/organisations/schac_home_exists?schac_home=${encodeURIComponent(schacHome)}`;
+    if (existingOrganisationId) {
+        path += `&existing_organisation_id=${existingOrganisationId}`;
+    }
+    return fetchJson(path);
 }
 
 export function organisationNameExists(name, existingOrganisation = null) {
-    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
+    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation_id=${encodeURIComponent(existingOrganisation)}`);
 }
 
 export function organisationShortNameExists(short_name, existingOrganisation = null) {

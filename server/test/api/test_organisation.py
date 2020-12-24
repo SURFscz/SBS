@@ -162,18 +162,20 @@ class TestOrganisation(AbstractTest):
 
     def test_organisation_schac_home_exists(self):
         res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": schac_home_organisation_uuc})
-        self.assertEqual(True, res)
+        self.assertEqual(schac_home_organisation_uuc, res)
+
+        uuc_id = self.find_entity_by_name(Organisation, uuc_name).id
 
         res = self.get("/api/organisations/schac_home_exists",
                        query_data={"schac_home": schac_home_organisation_uuc,
-                                   "existing_organisation": schac_home_organisation_uuc})
+                                   "existing_organisation_id": uuc_id})
         self.assertEqual(False, res)
 
         res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": "xyc"})
         self.assertEqual(False, res)
 
         res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": "xyc",
-                                                                           "existing_organisation": "xyc"})
+                                                                           "existing_organisation_id": uuc_id})
         self.assertEqual(False, res)
 
         res = self.get("/api/organisations/schac_home_exists", query_data={"schac_home": ""})
