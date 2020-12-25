@@ -32,12 +32,12 @@ def upgrade():
                     )
 
     conn = op.get_bind()
-    result = conn.execute("SELECT `schac_home_organisation`, `id` FROM `organisations` "
-                          "WHERE `schac_home_organisation` IS NOT NULL")
-    for row in result:
-        schac_home_organisation = row["schac_home_organisation"]
-        conn.execute(f"INSERT INTO `schac_home_organisations` (`name`, `organisation_id`, `created_by`, `updated_by`) "
-                     f"VALUES ({schac_home_organisation}, {row['id']}, 'migration', 'migration')")
+    # result = conn.execute("SELECT `schac_home_organisation`, `id` FROM `organisations` "
+    #                       "WHERE `schac_home_organisation` IS NOT NULL")
+    # for row in result:
+    #     schac_home_organisation = row["schac_home_organisation"]
+    #     conn.execute(f"INSERT INTO `schac_home_organisations` (`name`, `organisation_id`, `created_by`, `updated_by`) "
+    #                  f"VALUES ({schac_home_organisation}, {row['id']}, 'migration', 'migration')")
 
     conn.execute(text("ALTER TABLE organisations DROP COLUMN schac_home_organisation"))
 
