@@ -1,5 +1,5 @@
 database:
-  uri: "mysql+pymysql://sbs:sbs@localhost/sbs_test_msh"
+  uri: "mysql+pymysql://sbs:sbs@localhost/sbs_test"
 
 secret_key: secret
 
