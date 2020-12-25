@@ -13,7 +13,8 @@ export default function CreatableField({
                                            removeValue,
                                            toolTip = null,
                                            placeHolder = null,
-                                           error = false
+                                           error = false,
+                                           disabled = false
                                        }) {
 
     return (
@@ -26,16 +27,17 @@ export default function CreatableField({
                 </ReactTooltip>
             </span>}
             </label>
-            <div className={`inner-creatable-field ${error ? "error" : ""}`}>
+            <div className={`inner-creatable-field ${error ? "error" : ""}${disabled ? "disabled" : ""}`}>
                 {values.map(val =>
-                    <div key={val} className="creatable-tag">
-                        <span>{val}</span>
-                        <span onClick={removeValue(val)}>
+                    <div key={val.name} className="creatable-tag">
+                        <span>{val.name}</span>
+                        {!disabled && <span onClick={removeValue(val)}>
                                             <FontAwesomeIcon icon="times"/>
-                                        </span>
+                                        </span>}
+                        {disabled && <span></span>}
 
                     </div>)}
-                <textarea id="creatable-field" value={value} onChange={onChange} onBlur={addValue}
+                {!disabled && <textarea id="creatable-field" value={value} onChange={onChange} onBlur={addValue}
                           onKeyDown={e => {
                               if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
                                   addValue(e);
@@ -48,7 +50,7 @@ export default function CreatableField({
                                   addValue(e);
                               }
                           }}
-                          placeholder={placeHolder} cols={1}/>
+                          placeholder={placeHolder} cols={1}/>}
             </div>
         </div>
     );

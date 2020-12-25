@@ -1156,6 +1156,7 @@ I18n.translations.en = {
             "users": "User",
             "ip_networks": "IP network",
             "suspend_notifications": "Login notifications",
+            "schac_home_organisations": "Schac home organisations"
         }
     },
     serviceRequest: {

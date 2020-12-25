@@ -74,10 +74,8 @@ class OrganisationForm extends React.Component {
                 if (category) {
                     categoryOption = {value: category, label: category};
                 }
-                const schacHomeOrganisations = org.schac_home_organisations.map(sho => sho.name);
                 this.setState({
                     ...org,
-                    schac_home_organisations: schacHomeOrganisations,
                     organisation: org,
                     category: categoryOption,
                     isNew: false,
@@ -119,10 +117,10 @@ class OrganisationForm extends React.Component {
     removeValue = value => e => {
         stopEvent(e);
         const {schac_home_organisations, isNew, organisation, alreadyExists} = this.state;
-        const newSchac_home_organisations = schac_home_organisations.filter(val => val !== value);
+        const newSchac_home_organisations = schac_home_organisations.filter(val => val.name !== value.name);
         if (!isEmpty(newSchac_home_organisations)) {
             const existingOrganisationId = isNew ? null : organisation.id;
-            Promise.all(newSchac_home_organisations.map(org => organisationSchacHomeOrganisationExists(org, existingOrganisationId)))
+            Promise.all(newSchac_home_organisations.map(org => organisationSchacHomeOrganisationExists(org.name, existingOrganisationId)))
                 .then(res => {
                     const anyInvalid = res.filter(b => b);
                     this.setState({
@@ -145,27 +143,22 @@ class OrganisationForm extends React.Component {
         stopEvent(e);
         const schac_home_organisation = e.target.value;
         const {schac_home_organisations, isNew, organisation, alreadyExists} = this.state;
-        const values = [];
-        if (!isEmpty(schac_home_organisation) && validSchacHomeRegExp.test(schac_home_organisation.trim())) {
-            values.push(schac_home_organisation);
+        if (!isEmpty(schac_home_organisation) && validSchacHomeRegExp.test(schac_home_organisation.trim()) &&
+            !schac_home_organisations.find(sho => sho.name === schac_home_organisation.trim())) {
             const existingOrganisationId = isNew ? null : organisation.id;
-            const uniqueValues = [...new Set(schac_home_organisations.concat(values))];
-            if (uniqueValues.length > schac_home_organisations.length) {
-                organisationSchacHomeOrganisationExists(schac_home_organisation, existingOrganisationId).then(schacHomeOrganisationExists => {
-                    let existingSchacHomes = alreadyExists.schac_home_organisations;
-                    if (schacHomeOrganisationExists) {
-                        existingSchacHomes = existingSchacHomes || [];
-                        existingSchacHomes.push(schac_home_organisation);
-                    }
-                    this.setState({
-                        schac_home_organisation: "",
-                        schac_home_organisations: uniqueValues,
-                        alreadyExists: {...alreadyExists, schac_home_organisations: existingSchacHomes}
-                    });
+            schac_home_organisations.push({name: schac_home_organisation});
+            organisationSchacHomeOrganisationExists(schac_home_organisation, existingOrganisationId).then(schacHomeOrganisationExists => {
+                let existingSchacHomes = alreadyExists.schac_home_organisations;
+                if (schacHomeOrganisationExists) {
+                    existingSchacHomes = existingSchacHomes || [];
+                    existingSchacHomes.push(schac_home_organisation);
+                }
+                this.setState({
+                    schac_home_organisation: "",
+                    schac_home_organisations: [...schac_home_organisations],
+                    alreadyExists: {...alreadyExists, schac_home_organisations: existingSchacHomes}
                 });
-            } else {
-                this.setState({schac_home_organisation: ""});
-            }
+            });
         } else {
             this.setState({schac_home_organisation: ""});
         }
@@ -218,7 +211,7 @@ class OrganisationForm extends React.Component {
                 name,
                 short_name,
                 category: category !== null ? category.label : null,
-                schac_home_organisations: schac_home_organisations.map(sho => ({name: sho})),
+                schac_home_organisations,
                 administrators,
                 message,
                 description,
@@ -249,15 +242,20 @@ class OrganisationForm extends React.Component {
             } = this.state;
             this.setState({loading: true});
             updateOrganisation({
-                id: organisation.id, name, description,
-                schac_home_organisations: schac_home_organisations.map(sho => ({name: sho})),
-                collaboration_creation_allowed, short_name, identifier, logo, on_boarding_msg,
+                id: organisation.id,
+                name,
+                description,
+                schac_home_organisations,
+                collaboration_creation_allowed,
+                short_name,
+                identifier,
+                logo,
+                on_boarding_msg,
                 category: category !== null ? category.value : null
-            })
-                .then(() => {
-                    this.props.history.goBack();
-                    setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
-                });
+            }).then(() => {
+                this.props.history.goBack();
+                setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
+            });
         }
     };
 
@@ -338,6 +336,7 @@ class OrganisationForm extends React.Component {
                                     name={I18n.t("organisation.shortName")}
                                     placeholder={I18n.t("organisation.shortNamePlaceHolder")}
                                     onBlur={this.validateOrganisationShortName}
+                                    disabled={!user.admin}
                                     onChange={e => this.setState({
                                         short_name: sanitizeShortName(e.target.value),
                                         alreadyExists: {...this.state.alreadyExists, short_name: false}
@@ -376,6 +375,7 @@ class OrganisationForm extends React.Component {
                                         values={schac_home_organisations}
                                         addValue={this.addValue}
                                         removeValue={this.removeValue}
+                                        disabled={!user.admin}
                                         toolTip={I18n.t("organisation.schacHomeOrganisationTooltip")}
                                         placeholder={I18n.t("organisation.schacHomeOrganisationPlaceholder")}
                                         error={alreadyExists.schac_home_organisations}/>

@@ -98,6 +98,7 @@ class TestOrganisation(AbstractTest):
     def test_organisation_crud(self):
         self.login()
         organisation = self.post("/api/organisations", body={"name": "new_organisation",
+                                                             "schac_home_organisations": [],
                                                              "short_name": "https://ti1"},
                                  with_basic_auth=False)
         self.assertIsNotNone(organisation["id"])

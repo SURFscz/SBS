@@ -42,6 +42,11 @@ div.creatable-field {
             border: 1px solid $error-red;
         }
 
+        &.disabled {
+            cursor: not-allowed;
+            background-color: $lightest-grey;
+        }
+
     }
 
     textarea {
@@ -50,7 +55,8 @@ div.creatable-field {
         display: inline-block;
         background-color: transparent;
         font-size: 16px;
-        margin: 14px 5px 5px 5px;
+        padding: 12px 5px 0 6px;
+        line-height: 16px;
 
         &:focus {
             border: none;
@@ -61,7 +67,7 @@ div.creatable-field {
     div.creatable-tag {
         border: 1px solid $lighter-grey;
         border-radius: $br;
-        margin: 10px 5px;
+        margin: 5px;
         display: inline-block;
         position: relative;
         background-color: $lightest-grey;

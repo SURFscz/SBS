@@ -296,9 +296,6 @@ def update_organisation():
     confirm_write_access(override_func=override_func)
 
     data = current_request.get_json()
-    if not is_application_admin():
-        if "schac_home_organisation" in data:
-            del data["schac_home_organisation"]
 
     _clear_api_keys(data)
     cleanse_short_name(data)
@@ -312,7 +309,15 @@ def update_organisation():
                 group.global_urn = f"{data['short_name']}:{collaboration.short_name}:{group.short_name}"
                 db.session.merge(group)
 
-    return update(Organisation, custom_json=data, allow_child_cascades=False)
+    # Corner case: user removed name and added the exact same name again, prevent duplicate entry
+    existing_names = [sho.name for sho in organisation.schac_home_organisations]
+    if "schac_home_organisations" in data:
+        if len([sho for sho in data["schac_home_organisations"] if
+                not sho.get("id") and sho["name"] in existing_names]) > 0:
+            organisation.schac_home_organisations.clear()
+
+    return update(Organisation, custom_json=data, allow_child_cascades=False,
+                  allowed_child_collections=["schac_home_organisations"])
 
 
 @organisation_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
