@@ -1,8 +1,6 @@
 @import "../stylesheets/vars.scss";
 
 .mod-system-container {
-    margin: 0 auto;
-    max-width: $medium;
     width: 100%;
 
     @media (max-width: $medium) {
@@ -11,6 +9,8 @@
 
     .mod-system {
         width: 100%;
+        margin: 0 auto;
+        max-width: $medium;
         padding: 0;
 
         .info-block-container {
@@ -25,7 +25,7 @@
 
             .info-block {
                 border-bottom: solid 4px $lightest-grey;
-                padding: 15px 10px;
+                padding: 15px 0;
                 width: 100%;
 
                 &:not(:first-child) {
@@ -49,8 +49,8 @@
         }
 
         p.result {
-            margin: 10px;
-            color: $green;
+            margin: 10px 0;
+            color: $dark-green;
         }
 
         .results {
@@ -62,26 +62,23 @@
 
             }
 
-            p.category {
-                font-size: 18px;
-                color: $dark-grey;
-            }
-
             ul {
                 list-style: initial;
-                margin: 10px 0 25px 10px;
-
                 li {
-                    margin-left: 40px;
+                    margin: 10px 0 5px 20px;
+
+                    &:first-child {
+                        margin-top: 0;
+                    }
                 }
             }
 
             span {
                 display: inline-block;
-                margin: 10px 0 25px 10px;
+                margin: 10px 0;
             }
 
-            table.table-counts {
+            table.table-counts, table.suspended-users {
                 width: 100%;
                 margin-top: 25px;
 
@@ -103,6 +100,10 @@
                 td {
                     vertical-align: middle;
                     padding: 5px;
+
+                    &.action {
+                        vertical-align: top;
+                    }
 
                 }
             }
