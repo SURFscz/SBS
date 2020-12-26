@@ -85,7 +85,11 @@ I18n.translations.en = {
             me: "Profile",
             about: "About",
             apikeys: "API Keys",
-            welcome: "Welcome"
+            welcome: "Welcome",
+            cron: "Cron",
+            seed: "Seed",
+            database: "Database",
+            activity: "Activity"
         }
     },
     forms: {
@@ -1239,17 +1243,21 @@ I18n.translations.en = {
         title: "System maintenance",
         runDailyJobsInfo: "Run the daily cron job to send notification mails and potentially suspend users that have not logged in for the configured period",
         runDailyJobs: "Trigger",
-        first_suspend_notification: "First suspend notification email send to:",
-        second_suspend_notification: "Second suspend notification email send to:",
-        suspended: "Users who are marked as suspended:",
-        deleted: "Suspended users who are deleted:",
-        runDbStatsInfo: "Get the database table counts",
+        action: "Action",
+        results: "Results",
+        first_suspend_notification: "First suspend notification email received",
+        second_suspend_notification: "Second suspend notification email received",
+        suspended: "Users who are marked as suspended",
+        deleted: "Suspended users who are deleted",
+        runDbStatsInfo: "Database table counts",
         runDbStats: "Fetch",
         name: "Table name",
         count: "Nbr of records",
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
         runDbSeedInfo: "Delete all data and insert the test seed",
         runDbSeed: "Run",
+        clear: "Clear",
+        reload: "Reload",
         seedResult: "Test data is successfully inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache."
     },
     access: {

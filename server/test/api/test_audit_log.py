@@ -105,3 +105,13 @@ class TestAuditLog(AbstractTest):
 
         audit_log_collaboration_memberships = self.audit_log_by_target_type("collaboration_memberships", res)
         self.assertEqual(3, len(audit_log_collaboration_memberships))
+
+    def test_activity(self):
+        self.login("urn:sarah")
+        self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
+                 with_basic_auth=False)
+
+        res = self.get("/api/audit_logs/activity")
+        self.assertEquals(2, len(res["audit_logs"]))
+        self.assertEquals(1, len(res["organisations"]))
+        self.assertEquals(2, len(res["users"]))

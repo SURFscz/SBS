@@ -2,7 +2,7 @@
 from flask import Blueprint
 from sqlalchemy import desc, or_, and_
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_read_access, confirm_group_member, \
     is_current_user_collaboration_admin, is_current_user_organisation_admin_or_manager, \
     is_organisation_admin_or_manager
@@ -28,6 +28,18 @@ def me():
         .order_by(desc(AuditLog.created_at)) \
         .limit(100) \
         .all()
+    return _add_references(audit_logs), 200
+
+
+@audit_log_api.route("/activity", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def activity():
+    limit = int(query_param("limit", False, 50))
+    audit_logs = AuditLog.query \
+        .order_by(desc(AuditLog.created_at)) \
+        .limit(limit if limit <= 100 else 100) \
+        .all()
+
     return _add_references(audit_logs), 200
 
 

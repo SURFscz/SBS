@@ -85,7 +85,11 @@ I18n.translations.nl = {
             me: "Profiel",
             about: "Over",
             apikeys: "API Keys",
-            welcome: "Welkom"
+            welcome: "Welkom",
+            cron: "Cron",
+            seed: "Seed",
+            database: "Database",
+            activity: "Activiteit"
         }
     },
     forms: {
@@ -1241,17 +1245,21 @@ I18n.translations.nl = {
         title: "System maintenance",
         runDailyJobsInfo: "Voer de dagelijkse cron-taak uit om notificatie-e-mails te verzenden en mogelijk gebruikers op te schorten die zich gedurende de geconfigureerde periode niet hebben aangemeld",
         runDailyJobs: "Trigger",
-        first_suspend_notification: "Eerste e-mail met opschortingsmelding verzonden naar:",
-        second_suspend_notification: "Tweede e-mail met opschortingsmelding verzonden naar:",
-        suspended: "Gebruikers die zijn gemarkeerd als geschorst:",
-        deleted: "Geschorste gebruikers die worden verwijderd:",
-        runDbStatsInfo: "Haal het aantal databasetabellen op",
+        action: "Action",
+        results: "Results",
+        first_suspend_notification: "Eerste e-mail met opschortingsmelding verzonden",
+        second_suspend_notification: "Tweede e-mail met opschortingsmelding verzonden",
+        suspended: "Gebruikers die zijn gemarkeerd als geschorst",
+        deleted: "Geschorste gebruikers die worden verwijderd",
+        runDbStatsInfo: "Database tabellen en aantallen",
         runDbStats: "Fetch",
         name: "Tabel naam",
         count: "Nbr of records",
         runDbSeedConfirmation: "Weet je het absoluut zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle data en voeg de test data toe",
         runDbSeed: "Run",
+        clear: "Clear",
+        reload: "Reload",
         seedResult: "Test data is toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren."
     },
     access: {

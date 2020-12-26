@@ -345,7 +345,7 @@ class App extends React.Component {
                                    Component={Profile}
                                    refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
-                        <Route path="/system"
+                        <Route path="/system/:tab?"
                                render={props => <ProtectedRoute
                                    currentUser={currentUser}
                                    Component={System}

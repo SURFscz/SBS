@@ -545,6 +545,10 @@ export function auditLogsInfo(objectId, collectionNames) {
     return fetchJson(`/api/audit_logs/info/${objectId}/${collectionNames}`);
 }
 
+export function auditLogsActivity() {
+    return fetchJson(`/api/audit_logs/activity`);
+}
+
 //IP-networks
 export function ipNetworks(address, id) {
     return fetchJson(`/api/ipaddress/info?address=${address}&id=${id}`, {}, {}, false);
