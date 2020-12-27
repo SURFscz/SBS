@@ -117,6 +117,10 @@ class TestUser(AbstractTest):
         self.login("urn:john")
         res = self.get("/api/users/other", query_data={"uid": "urn:mary"})
         self.assertEqual("Mary Doe", res["name"])
+        self.assertEqual(0, len(res["aups"]))
+        self.assertEqual(0, len(res["collaboration_memberships"]))
+        self.assertEqual(1, len(res["organisation_memberships"]))
+        self.assertEqual("Research", res["organisation_memberships"][0]["organisation"]["category"])
 
     def test_attribute_aggregation_eppn(self):
         res = self.get("/api/users/attribute_aggregation",

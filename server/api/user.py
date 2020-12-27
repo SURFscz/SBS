@@ -45,11 +45,6 @@ def _store_user_in_session(user):
 
 def _user_query():
     return User.query \
-        .outerjoin(User.aups) \
-        .outerjoin(User.organisation_memberships) \
-        .outerjoin(OrganisationMembership.organisation) \
-        .outerjoin(User.collaboration_memberships) \
-        .outerjoin(CollaborationMembership.collaboration) \
         .options(selectinload(User.aups)) \
         .options(selectinload(User.organisation_memberships)
                  .selectinload(OrganisationMembership.organisation)) \
