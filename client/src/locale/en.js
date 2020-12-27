@@ -1144,7 +1144,7 @@ I18n.translations.en = {
             "aups": "Accepted User Policy",
             "collaboration_memberships": "Collaboration membership",
             "collaboration_memberships_groups": "Group membership",
-            "collaboration_requests": "Collaboratie request",
+            "collaboration_requests": "Collaboration request",
             "collaborations": "Collaboration",
             "groups": "Group",
             "groups_invitations": "Group invitation",

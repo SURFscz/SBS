@@ -43,12 +43,12 @@ def attributes():
         logger.info(f"Returning error for user {uid} and service_entity_id {service_entity_id} as user is suspended")
         return {"error": f"user {uid} is suspended"}, 404
 
-    services_by_entity_id = Service.query.filter(Service.entity_id == service_entity_id).all()
-    if len(services_by_entity_id) == 0:
+    service_by_entity_id = Service.query.filter(Service.entity_id == service_entity_id).first()
+    if not service_by_entity_id:
         logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} "
                     f"because service does not exists")
         return {}, 200
-    service_id = services_by_entity_id[0].id
+    service_id = service_by_entity_id.id
     user_id = user.id
 
     # Services connected to a collaboration where the user is a member of
