@@ -55,6 +55,7 @@ class System extends React.Component {
     }
 
     reload = () => {
+        // eslint-disable-next-line
         window.location.href = window.location.href;
     }
 
