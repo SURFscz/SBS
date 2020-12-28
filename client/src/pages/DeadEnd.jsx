@@ -6,12 +6,13 @@ import deadEnd from "../lotties/dead_end.json";
 export default function DeadEnd() {
     return (
         <div className="mod-server-error">
+            <div className="content">
             <Player
                 autoplay
                 loop
                 src={deadEnd}
-                style={{height: '600px', width: '600px'}}
-            />
+                style={{height: "auto", width: "100vw", "max-width": "900px"}}/>
+            </div>
         </div>
     );
 }

@@ -486,17 +486,21 @@ class CollaborationForm extends React.Component {
                                 toolTip={I18n.t("collaboration.identifierTooltip")}
                                 disabled={true}/>}
 
-                    <InputField value={description} onChange={e => this.setState({description: e.target.value})}
+                    <InputField value={description}
+                                onChange={e => this.setState({description: e.target.value})}
                                 placeholder={I18n.t("collaboration.descriptionPlaceholder")} multiline={true}
                                 name={I18n.t("collaboration.description")}/>
 
-                    <InputField value={website_url} onChange={e => this.setState({website_url: e.target.value})}
+                    <InputField value={website_url}
+                                onChange={e => this.setState({website_url: e.target.value})}
                                 placeholder={I18n.t("collaboration.websiteUrlPlaceholder")}
+                                externalLink={true}
                                 name={I18n.t("collaboration.websiteUrl")}/>
 
                     <InputField value={accepted_user_policy}
                                 onChange={e => this.setState({accepted_user_policy: e.target.value})}
                                 placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
+                                externalLink={true}
                                 name={I18n.t("collaboration.accepted_user_policy")}/>
 
                     {!isCollaborationRequest && <CheckBox name="disable_join_requests"

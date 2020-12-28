@@ -7,6 +7,9 @@
     margin: 25px auto 40px auto;
     width: 100%;
 
+        @media (max-width: 680px) {
+            padding: 0 15px;
+        }
     .invitation-container {
         margin: 0 auto;
 
