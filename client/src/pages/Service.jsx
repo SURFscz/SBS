@@ -140,14 +140,15 @@ class Service extends React.Component {
     validateIpAddress = index => e => {
         const currentIpNetwork = this.state.ip_networks[index];
         const address = e.target.value;
-        ipNetworks(address, currentIpNetwork.id)
-            .then(res => {
+        if (!isEmpty(address)) {
+            ipNetworks(address, currentIpNetwork.id)
+                .then(res => {
                     const {ip_networks} = this.state;
                     ip_networks.splice(index, 1, res);
                     const updatedIpNetworks = [...ip_networks];
                     this.setState({ip_networks: updatedIpNetworks});
-                }
-            );
+                });
+        }
     }
 
     saveIpAddress = index => e => {
@@ -273,7 +274,7 @@ class Service extends React.Component {
                                     onChange={this.saveIpAddress(i)}
                                     onBlur={this.validateIpAddress(i)}
                                     placeholder={I18n.t("service.networkPlaceholder")}
-                                    error={network.error || network.syntax }
+                                    error={network.error || network.syntax}
                                     disabled={!isAdmin}
                                     onEnter={e => {
                                         this.validateIpAddress(i);
@@ -284,8 +285,9 @@ class Service extends React.Component {
                             <FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/>
                         </span>}
                     </div>
-                    {(network.error && !network.syntax) && <ErrorIndicator msg={I18n.t("service.networkError", network)}/> }
-                    {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/> }
+                    {(network.error && !network.syntax) &&
+                    <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
+                    {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
                     {network.higher && <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
 
                 </div>
@@ -310,16 +312,16 @@ class Service extends React.Component {
                 })}
                             placeholder={I18n.t("service.namePlaceHolder")}
                             onBlur={this.validateServiceName}
-                            error={alreadyExists.name || (!initial && isEmpty(name)) }
+                            error={alreadyExists.name || (!initial && isEmpty(name))}
                             name={I18n.t("service.name")}
                             disabled={!isAdmin}/>
                 {alreadyExists.name && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.name").toLowerCase(),
                     value: name
-                })}/> }
+                })}/>}
                 {(!initial && isEmpty(name)) && <ErrorIndicator msg={I18n.t("service.required", {
                     attribute: I18n.t("service.name").toLowerCase()
-                })}/> }
+                })}/>}
 
                 <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                    isNew={isNew} title={I18n.t("service.logo")}
@@ -340,10 +342,10 @@ class Service extends React.Component {
                 {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.entity_id").toLowerCase(),
                     value: entity_id
-                })}/> }
+                })}/>}
                 {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
                     attribute: I18n.t("service.entity_id").toLowerCase()
-                })}/> }
+                })}/>}
 
                 {!isNew && <InputField value={serviceRequestUrl}
                                        name={I18n.t("service.service_request")}
@@ -395,15 +397,16 @@ class Service extends React.Component {
                             onBlur={this.validateEmail}
                             disabled={!isAdmin}/>
 
-                {invalidInputs["email"] && <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/> }
+                {invalidInputs["email"] && <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
 
-                {(!initial && contactEmailRequired) && <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/> }
+                {(!initial && contactEmailRequired) && <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
 
                 <InputField value={accepted_user_policy}
                             name={I18n.t("service.accepted_user_policy")}
                             placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
                             onChange={e => this.setState({accepted_user_policy: e.target.value})}
                             toolTip={I18n.t("service.accepted_user_policyTooltip")}
+                            externalLink={true}
                             disabled={!isAdmin}/>
 
                 {this.renderIpNetworks(ip_networks, isAdmin)}

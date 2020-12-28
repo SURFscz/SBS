@@ -4,15 +4,14 @@ import {Player} from '@lottiefiles/react-lottie-player';
 import notFound from "../lotties/not_found.json"
 
 
-export default function NotFound({currentUser}) {
+export default function NotFound({}) {
     return (
         <div className="mod-not-found">
             <Player
                 autoplay
                 loop
                 src={notFound}
-                style={{height: '300px', width: '300px'}}
-            />
+                style={{height: "auto", width: "100vw", "max-width": "900px"}}/>
         </div>
     );
 

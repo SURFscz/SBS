@@ -35,6 +35,8 @@ div.collaboration-about-mod {
     }
 
     @media (max-width: $tablet-max) {
+        padding: 32px 15px;
+
         div.details {
             flex-direction: column;
         }

@@ -5,24 +5,13 @@
     margin: 0 auto;
     width: 100%;
 
-    div.title {
-        font-size: 20px;
-        color: $dark-grey;
-        padding: 10px 0 5px 0;
-
-        p {
-            padding: 10px 0 10px 0;
-        }
-
-    }
-
     .content {
         margin: 0 auto 25px auto;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 80px;
+        padding: 15px;
 
     }
 }
