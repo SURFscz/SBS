@@ -1129,11 +1129,11 @@ I18n.translations.nl = {
         changes: "Historie",
         detail: "Detail",
         actions: {
-            "1": "create",
-            "2": "update",
-            "3": "delete"
+            "1": "Nieuwe",
+            "2": "Gewijzigde",
+            "3": "Verwijderde"
         },
-        overview: "Actie - {{action}} - op   {{date}} in {{collection}}.",
+        overview: "{{action}} {{collection}}{{name}} op {{date}} door {{user}}.",
         none: "Geen historie",
         key: "Attribuut",
         oldValue: "Oude waarde",
@@ -1258,6 +1258,8 @@ I18n.translations.nl = {
         runDbSeedConfirmation: "Weet je het absoluut zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle data en voeg de test data toe",
         runDbSeed: "Run",
+        activity: "Alle recente activiteit uit de audit logs",
+        searchPlaceholder: "Zoek audit logs...",
         clear: "Clear",
         reload: "Reload",
         seedResult: "Test data is toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren."

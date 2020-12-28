@@ -3,10 +3,6 @@
 .mod-system-container {
     width: 100%;
 
-    @media (max-width: $medium) {
-        padding: 0 15px;
-    }
-
     .mod-system {
         width: 100%;
         margin: 0 auto;
@@ -64,6 +60,7 @@
 
             ul {
                 list-style: initial;
+
                 li {
                     margin: 10px 0 5px 20px;
 
@@ -105,6 +102,74 @@
                         vertical-align: top;
                     }
 
+                }
+            }
+        }
+
+        .search-activity {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+
+            @media (max-width: $compact-medium) {
+                flex-direction: column;
+                align-items: normal;
+                padding: 0 15px;
+            }
+
+            p {
+
+                @media (max-width: $compact-medium) {
+                    margin-bottom: 15px
+                }
+
+            }
+
+            .search {
+                position: relative;
+                margin-left: auto;
+                @media (max-width: $compact-medium) {
+                    margin-left: 0;
+                }
+
+                display: flex;
+
+                svg.fa-search {
+                    position: absolute;
+                    font-size: 16px;
+                    color: $blue;
+                    top: 7px;
+                    right: 9px;
+                }
+
+                input[type=text] {
+                    flex-grow: 2;
+                    border: 1px solid $lighter-grey;
+                    padding: 0 15px 0 10px;
+                    min-height: 38px;
+                    font-size: 16px;
+                    border-radius: $br;
+                    min-width: 360px;
+
+                    @media (max-width: $compact-medium) {
+                        min-width: 0;
+                    }
+
+
+                    &:focus {
+                        outline: none;
+                        box-shadow: 1px 1px 1px $blue-hover, -1px -1px 1px $blue-hover;
+                    }
+                }
+
+            }
+
+            div.input-select-inner {
+                margin-left: 25px;
+                min-width: 100px;
+                @media (max-width: $compact-medium) {
+                    margin-top: 15px;
+                    margin-left: 0;
                 }
             }
         }

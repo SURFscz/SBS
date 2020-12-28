@@ -33,6 +33,17 @@ export default class Activity extends React.PureComponent {
         });
     }
 
+    componentDidUpdate(prevProps) {
+        const {selected} = this.state;
+        const {auditLogs} = this.props;
+        const filteredOut = !isEmpty(selected) && !auditLogs.audit_logs.some(log => log.id === selected.id);
+        if (filteredOut || isEmpty(selected)) {
+            this.setState({
+                selected: this.convertReference(auditLogs, auditLogs.audit_logs[0]),
+            });
+        }
+    }
+
     convertReference = (auditLogs, auditLog) => {
         if (auditLog) {
             auditLog.stateBefore = JSON.parse(auditLog.state_before || "{}");
@@ -74,9 +85,10 @@ export default class Activity extends React.PureComponent {
             <ul className="logs">
                 {auditLogs.map(log =>
                     <li key={log.id} onClick={() => this.setState({selected: log})}
-                        className={`${log.id === selected.id ? "selected" : ""}`}>
+                        className={`${selected && log.id === selected.id ? "selected" : ""}`}>
                         {I18n.t("history.overview", {
                             action: I18n.t(`history.actions.${log.action}`),
+                            name: log.target_name ? ` ${log.target_name}`: " ",
                             collection: I18n.t(`history.tables.${log.target_type}`),
                             date: moment(log.created_at * 1000).format("LLL"),
                             user: (log.user || {name: "Unknown"}).name
@@ -139,7 +151,7 @@ export default class Activity extends React.PureComponent {
                 <p className="info">{I18n.t("history.parentUpdated", {
                     collection: I18n.t(`history.tables.${auditLog.target_type}`),
                     parent: I18n.t(`history.tables.${auditLog.parent_name}`)
-                })}</p>}
+                })}{parentName && <span className="parent"> {parentName}</span>}</p>}
 
                 <table className="changes" cellSpacing="0">
                     <thead>

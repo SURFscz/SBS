@@ -545,8 +545,8 @@ export function auditLogsInfo(objectId, collectionNames) {
     return fetchJson(`/api/audit_logs/info/${objectId}/${collectionNames}`);
 }
 
-export function auditLogsActivity() {
-    return fetchJson(`/api/audit_logs/activity`);
+export function auditLogsActivity(limit) {
+    return fetchJson(`/api/audit_logs/activity?limit=${limit}`);
 }
 
 //IP-networks
