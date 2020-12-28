@@ -57,5 +57,8 @@ def run_seed():
 def clear_audit_logs():
     confirm_write_access()
 
+    if not current_app.app_config.feature.seed_allowed:
+        raise BadRequest("clear-audit-logs not allowed in this environment")
+
     db.session.execute(text("DELETE FROM audit_logs"))
     return {}, 201

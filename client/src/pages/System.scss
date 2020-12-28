@@ -137,6 +137,10 @@
                 position: relative;
                 display: flex;
 
+                &.no-clear-logs {
+                    margin-left: auto;
+                }
+
                 @media (max-width: $compact-medium) {
                     margin-left: 0;
                 }
