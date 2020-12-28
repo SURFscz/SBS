@@ -122,7 +122,7 @@ class System extends React.Component {
         return filteredAuditLogs;
     }
 
-    getActivityTab = (filteredAuditLogs, limit, query) => {
+    getActivityTab = (filteredAuditLogs, limit, query, config) => {
         return (
             <div key="activity" name="activity" label={I18n.t("home.tabs.activity")}
                  icon={<FontAwesomeIcon icon="code-branch"/>}>
@@ -130,8 +130,9 @@ class System extends React.Component {
                     <section className={"info-block-container"}>
                         <section className="search-activity">
                             <p>{I18n.t("system.activity")}</p>
-                            <Button warningButton={true} onClick={() => this.doClearAuditLogs(true)}/>
-                            <div className="search">
+                            {config.seed_allowed &&
+                                <Button warningButton={true} onClick={() => this.doClearAuditLogs(true)}/>}
+                            <div className={`search ${config.seed_allowed ? "" : "no-clear-logs"}`}>
                                 <input type="text"
                                        onChange={this.onChangeQuery}
                                        value={query}
@@ -177,14 +178,14 @@ class System extends React.Component {
         </div>)
     }
 
-    getSeedTab = (config, seedResult) => {
+    getSeedTab = seedResult => {
         return (<div key="seed" name="seed" label={I18n.t("home.tabs.seed")}
                      icon={<FontAwesomeIcon icon="seedling"/>}>
             <div className="mod-system">
-                {config.seed_allowed && <section className={"info-block-container"}>
+                <section className={"info-block-container"}>
                     {this.renderDbSeed()}
                     <p className="result">{seedResult}</p>
-                </section>}
+                </section>
             </div>
         </div>)
     }
@@ -359,9 +360,9 @@ class System extends React.Component {
         }
         const tabs = [
             this.getCronTab(suspendedUsers),
-            this.getSeedTab(config, seedResult),
+            config.seed_allowed ? this.getSeedTab(seedResult) : null,
             this.getDatabaseTab(databaseStats),
-            this.getActivityTab(filteredAuditLogs, limit, query)
+            this.getActivityTab(filteredAuditLogs, limit, query, config)
         ]
         return (
             <div className="mod-system-container">
