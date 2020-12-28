@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
+from server.test.seed import organisation_invitation_hash
 
 
 class TestSystem(AbstractTest):
@@ -29,3 +30,16 @@ class TestSystem(AbstractTest):
         self.app.app_config.feature.seed_allowed = 0
         self.get("/api/system/seed", response_status_code=400)
         self.app.app_config.feature.seed_allowed = 1
+
+    def test_clear_audit_logs(self):
+        self.login("urn:sarah")
+        self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
+                 with_basic_auth=False)
+
+        res = self.get("/api/audit_logs/activity")
+        self.assertEqual(2, len(res["audit_logs"]))
+
+        self.login("urn:john")
+        self.delete("/api/system/clear-audit-logs", response_status_code=201)
+        res = self.get("/api/audit_logs/activity")
+        self.assertEqual(0, len(res["audit_logs"]))

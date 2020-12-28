@@ -566,3 +566,7 @@ export function dbStats() {
 export function dbSeed() {
     return fetchJson("/api/system/seed");
 }
+
+export function clearAuditLogs() {
+    return fetchDelete("/api/system/clear-audit-logs")
+}

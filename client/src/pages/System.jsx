@@ -1,7 +1,7 @@
 import React from "react";
 import "./System.scss";
 import I18n from "i18n-js";
-import {auditLogsActivity, dbSeed, dbStats, health, suspendUsers} from "../api";
+import {auditLogsActivity, clearAuditLogs, dbSeed, dbStats, health, suspendUsers} from "../api";
 import Button from "../components/Button";
 import {isEmpty} from "../utils/Utils";
 import UnitHeader from "../components/redesign/UnitHeader";
@@ -114,7 +114,7 @@ class System extends React.Component {
                 }
             }
             if (a.target_name) {
-                matchesName = a.target_name.toLowerCase().indexOf(lowerQuery)  > -1;
+                matchesName = a.target_name.toLowerCase().indexOf(lowerQuery) > -1;
             }
             return matchesParent || matchesUser || matchesName;
         });
@@ -130,6 +130,7 @@ class System extends React.Component {
                     <section className={"info-block-container"}>
                         <section className="search-activity">
                             <p>{I18n.t("system.activity")}</p>
+                            <Button warningButton={true} onClick={() => this.doClearAuditLogs(true)}/>
                             <div className="search">
                                 <input type="text"
                                        onChange={this.onChangeQuery}
@@ -201,6 +202,20 @@ class System extends React.Component {
         suspendUsers().then(res => {
             this.setState({suspendedUsers: res, busy: false});
         });
+    }
+
+    doClearAuditLogs = showConfirmation => {
+        if (showConfirmation) {
+            this.confirm(() => this.doClearAuditLogs(false), I18n.t("system.runClearAuditLogsConfirmation"));
+        } else {
+            this.setState({confirmationDialogOpen: false, busy: true,});
+            clearAuditLogs().then(() => this.setState({
+                auditLogs: {audit_logs: []},
+                filteredAuditLogs: {audit_logs: []},
+                busy: false
+            }));
+        }
+
     }
 
     doDbSeed = showConfirmation => {
