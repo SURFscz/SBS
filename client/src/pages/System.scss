@@ -125,14 +125,21 @@
 
             }
 
+            a.delete {
+                margin: 0 25px 0 auto;
+
+                @media (max-width: $compact-medium) {
+                    margin: 0 0 15px 0;
+                }
+            }
+
             .search {
                 position: relative;
-                margin-left: auto;
+                display: flex;
+
                 @media (max-width: $compact-medium) {
                     margin-left: 0;
                 }
-
-                display: flex;
 
                 svg.fa-search {
                     position: absolute;

@@ -1258,6 +1258,7 @@ I18n.translations.en = {
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",
         runDbSeedInfo: "Delete all data and insert the test seed",
         runDbSeed: "Run",
+        runClearAuditLogsConfirmation: "Are you absolutely sure you want to delete all entries from the audit logs?",
         clear: "Clear",
         reload: "Reload",
         seedResult: "Test data is successfully inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache."

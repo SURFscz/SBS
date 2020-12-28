@@ -1258,6 +1258,7 @@ I18n.translations.nl = {
         runDbSeedConfirmation: "Weet je het absoluut zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle data en voeg de test data toe",
         runDbSeed: "Run",
+        runClearAuditLogsConfirmation: "Weet je het absoluut zeker dat je alle data uit de audit logs wilt verwijderen?",
         activity: "Alle recente activiteit uit de audit logs",
         searchPlaceholder: "Zoek audit logs...",
         clear: "Clear",

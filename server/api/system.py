@@ -50,3 +50,12 @@ def run_seed():
     seed(db, current_app.app_config)
 
     return {}, 201
+
+
+@system_api.route("/clear-audit-logs", strict_slashes=False, methods=["DELETE"])
+@json_endpoint
+def clear_audit_logs():
+    confirm_write_access()
+
+    db.session.execute(text("DELETE FROM audit_logs"))
+    return {}, 201
