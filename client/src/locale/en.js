@@ -1131,7 +1131,7 @@ I18n.translations.en = {
             "2": "Updated",
             "3": "Deleted"
         },
-        overview: "{{action}} {{collection}} at {{date}} by {{user}}.",
+        overview: "{{action}} {{collection}}{{name}} at {{date}} by {{user}}.",
         none: "No history",
         key: "Attribute",
         oldValue: "Old value",
@@ -1251,6 +1251,8 @@ I18n.translations.en = {
         deleted: "Suspended users who are deleted",
         runDbStatsInfo: "Database table counts",
         runDbStats: "Fetch",
+        activity: "All recent activity from the audit logs",
+        searchPlaceholder: "Search audit logs...",
         name: "Table name",
         count: "Nbr of records",
         runDbSeedConfirmation: "Are you absolutely sure? This will delete all current data",

@@ -22,13 +22,18 @@
             width: 50%;
             list-style: none;
 
+            @media (max-width: $compact-medium) {
+                width: 100%;
+            }
+
             li {
                 display: block;
                 padding: 15px;
                 border-bottom: 2px solid $light-grey;
 
                 &.selected {
-                    background-color: $light-blue;
+                    background-color: $background;
+                    font-weight: bold;
                 }
 
                 &:not(.selected):hover {

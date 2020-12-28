@@ -102,6 +102,7 @@ class TestAuditLog(AbstractTest):
 
         audit_log_groups = self.audit_log_by_target_type("groups", res)
         self.assertEqual(1, len(audit_log_groups))
+        self.assertEqual("Science", audit_log_groups[0]["target_name"])
 
         audit_log_collaboration_memberships = self.audit_log_by_target_type("collaboration_memberships", res)
         self.assertEqual(3, len(audit_log_collaboration_memberships))

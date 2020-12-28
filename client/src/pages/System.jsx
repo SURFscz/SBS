@@ -11,6 +11,9 @@ import {AppStore} from "../stores/AppStore";
 import Tabs from "../components/Tabs";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Activity from "../components/Activity";
+import Select from "react-select";
+
+const options = [25, 50, 100].map(nbr => ({value: nbr, label: nbr}));
 
 class System extends React.Component {
 
@@ -27,6 +30,9 @@ class System extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             busy: false,
             auditLogs: {audit_logs: []},
+            filteredAuditLogs: {audit_logs: []},
+            limit: options[1],
+            query: ""
         }
     }
 
@@ -50,7 +56,10 @@ class System extends React.Component {
             suspendedUsers: {},
             databaseStats: [],
             seedResult: null,
-            activity: [],
+            query: "",
+            auditLogs: {audit_logs: []},
+            filteredAuditLogs: {audit_logs: []},
+            limit: options[1],
         });
     }
 
@@ -71,15 +80,88 @@ class System extends React.Component {
         </div>)
     }
 
-    getActivityTab = auditLogs => {
-        return (<div key="activity" name="activity" label={I18n.t("home.tabs.activity")}
-                     icon={<FontAwesomeIcon icon="code-branch"/>}>
-            <div className="mod-system">
-                <section className={"info-block-container"}>
-                    <Activity auditLogs={auditLogs}/>
-                </section>
-            </div>
-        </div>)
+    changeLimit = val => {
+        this.setState({limit: val, busy: true}, () => {
+            auditLogsActivity(val.value).then(res => {
+                this.setState({
+                    auditLogs: res,
+                    filteredAuditLogs: this.filterAuditLogs(res, this.state.query),
+                    busy: false
+                });
+            });
+        });
+    }
+
+    filterAuditLogs = (auditLogs, query) => {
+        if (isEmpty(query) || query.length < 3) {
+            return auditLogs;
+        }
+        const lowerQuery = query.toLowerCase();
+        const sub = [...auditLogs.audit_logs].filter(a => {
+            let matchesParent = false;
+            let matchesUser = false;
+            let matchesName = false
+            if (a.parent_name && auditLogs[a.parent_name]) {
+                const parent = auditLogs[a.parent_name].find(obj => obj.id === a.parent_id);
+                if (parent && parent.name) {
+                    matchesParent = parent.name.toLowerCase().indexOf(lowerQuery) > -1;
+                }
+            }
+            if (a.subject_id && auditLogs.users) {
+                const subject = auditLogs.users.find(user => user.id === a.subject_id);
+                if (subject && subject.name) {
+                    matchesUser = subject.name.toLowerCase().indexOf(lowerQuery) > -1;
+                }
+            }
+            if (a.target_name) {
+                matchesName = a.target_name.toLowerCase().indexOf(lowerQuery)  > -1;
+            }
+            return matchesParent || matchesUser || matchesName;
+        });
+        const filteredAuditLogs = {...auditLogs, audit_logs: sub};
+        return filteredAuditLogs;
+    }
+
+    getActivityTab = (filteredAuditLogs, limit, query) => {
+        return (
+            <div key="activity" name="activity" label={I18n.t("home.tabs.activity")}
+                 icon={<FontAwesomeIcon icon="code-branch"/>}>
+                <div className="mod-system">
+                    <section className={"info-block-container"}>
+                        <section className="search-activity">
+                            <p>{I18n.t("system.activity")}</p>
+                            <div className="search">
+                                <input type="text"
+                                       onChange={this.onChangeQuery}
+                                       value={query}
+                                       placeholder={I18n.t("system.searchPlaceholder")}/>
+                                <FontAwesomeIcon icon="search"/>
+                            </div>
+                            <Select
+                                className="input-select-inner"
+                                classNamePrefix="select-inner"
+                                value={limit}
+                                placeholder={I18n.t("system.searchPlaceholder")}
+                                onChange={this.changeLimit}
+                                options={options}
+                                isSearchable={false}
+                                isClearable={false}
+                            />
+                        </section>
+                        <Activity auditLogs={filteredAuditLogs}/>
+                    </section>
+                </div>
+            </div>)
+    }
+
+    onChangeQuery = e => {
+        const query = e.target.value;
+        const {auditLogs} = this.state;
+        const filteredAuditLogs = this.filterAuditLogs(auditLogs, query);
+        this.setState({
+            filteredAuditLogs: filteredAuditLogs,
+            query: query
+        });
     }
 
     getDatabaseTab = databaseStats => {
@@ -232,9 +314,14 @@ class System extends React.Component {
                 this.setState({databaseStats: res, busy: false});
             });
         } else if (name === "activity") {
-            auditLogsActivity().then(res => {
-                this.setState({auditLogs: res, busy: false});
-            })
+            const {limit} = this.state;
+            auditLogsActivity(limit.value).then(res => {
+                this.setState({
+                    auditLogs: res,
+                    filteredAuditLogs: this.filterAuditLogs(res, this.state.query),
+                    busy: false
+                });
+            });
         } else {
             this.setState({busy: false});
         }
@@ -247,7 +334,8 @@ class System extends React.Component {
         }
         const {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
-            confirmationDialogQuestion, busy, tab, auditLogs, databaseStats, suspendedUsers
+            confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers,
+            limit, query
         } = this.state;
         const {config} = this.props;
 
@@ -258,7 +346,7 @@ class System extends React.Component {
             this.getCronTab(suspendedUsers),
             this.getSeedTab(config, seedResult),
             this.getDatabaseTab(databaseStats),
-            this.getActivityTab(auditLogs)
+            this.getActivityTab(filteredAuditLogs, limit, query)
         ]
         return (
             <div className="mod-system-container">
