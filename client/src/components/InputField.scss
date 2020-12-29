@@ -48,6 +48,7 @@
 
     span.remove {
         display: flex;
+        align-items: center;
 
         em {
             display: inline-block;
@@ -57,6 +58,10 @@
         svg.fa-trash {
             margin: 0 5px 0 auto;
             color: $red;
+
+            &:hover {
+                color: darken($red, 10%)!important;
+            }
         }
     }
 
@@ -72,6 +77,10 @@
         border-radius: 4px;
         color: $blue;
 
+        &:hover {
+            background-color: #ddf2fd;
+        }
+
         label.file-upload {
             z-index: 99;
             cursor: pointer;
@@ -82,6 +91,11 @@
 
             svg {
                 font-size: 26px;
+
+                &:hover {
+                    color: $hover-blue;
+                }
+
             }
         }
 
@@ -112,7 +126,7 @@
             cursor: pointer;
 
             &:hover {
-                color: #004c97;
+                color: $hover-blue;
             }
 
         }
