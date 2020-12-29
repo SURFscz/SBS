@@ -83,6 +83,10 @@ div.email-field {
                 right: -8px;
                 top: -2px;
 
+                &:hover {
+                    color: $red;
+                }
+
                 &.disabled {
                     cursor: not-allowed;
                     color: $green;
