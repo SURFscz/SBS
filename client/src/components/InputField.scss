@@ -97,6 +97,11 @@
         color: $medium-blue;
         cursor: pointer;
 
+        &:hover {
+            background-color: #ddf2fd;
+        }
+
+
         a {
             margin: auto;
         }
@@ -107,7 +112,7 @@
             cursor: pointer;
 
             &:hover {
-                color: darken($blue, 15%);
+                color: #004c97;
             }
 
         }
