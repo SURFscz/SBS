@@ -21,7 +21,7 @@
     }
 
     &:hover {
-        background-color: #004c97;
+        background-color: $hover-blue;
     }
 
     &:hover, &:visited {
@@ -44,7 +44,7 @@
 
         &:hover {
             background-color: #ddf2fd;
-            color: #004c97;
+            color: $hover-blue;
         }
 
         i {
@@ -121,7 +121,7 @@
 
         &:hover {
             background-color: #ddf2fd;
-            color: #004c97;
+            color: $hover-blue;
         }
 
     }
