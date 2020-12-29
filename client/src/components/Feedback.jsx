@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Modal from "react-modal";
 import I18n from "i18n-js";
 import {ReactComponent as InformationIcon} from "../icons/informational.svg";
@@ -12,9 +12,15 @@ export default function FeedbackDialog({isOpen = false, close}) {
 
     const [message, setMessage] = useState("");
 
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        inputRef.current && inputRef.current.focus();
+    });
+
     const doClose = () => {
-            close();
-            setTimeout(() => setMessage(""), 500);
+        close();
+        setTimeout(() => setMessage(""), 500);
     }
 
     const sendFeedBack = () => {
@@ -39,7 +45,11 @@ export default function FeedbackDialog({isOpen = false, close}) {
                 <span dangerouslySetInnerHTML={{__html: I18n.t("feedback.info")}}/>
             </section>
             <section className="feedback">
-                <textarea name="feedback" id="feedback" value={message} rows="10"
+                <textarea name="feedback"
+                          id="feedback"
+                          value={message}
+                          rows="10"
+                          ref={inputRef}
                           onChange={e => setMessage(e.target.value)}/>
             </section>
             <section className="help">
