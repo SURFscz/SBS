@@ -161,6 +161,9 @@
 
                 &.clickable {
                     cursor: pointer;
+                    &:hover {
+                        background-color: $lightest-grey;
+                    }
                 }
             }
 
