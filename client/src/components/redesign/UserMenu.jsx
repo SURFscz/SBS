@@ -15,7 +15,7 @@ class UserMenu extends React.Component {
     }
 
     render() {
-        const {currentUser, organisation} = this.props;
+        const {currentUser, organisation, config, provideFeedback} = this.props;
         const lessThenOrgManager = !isUserAllowed(ROLES.ORG_MANAGER, currentUser);
         const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation);
         const collCreateAllowed = !isEmpty(organisation)
@@ -35,6 +35,9 @@ class UserMenu extends React.Component {
                     <li>
                         <Link onClick={this.props.close} to={`/profile`}>{I18n.t(`header.links.profile`)}</Link>
                     </li>
+                    {config.feedback_enabled && <li>
+                        <a href="/feedback" onClick={provideFeedback} >{I18n.t(`header.links.feedback`)}</a>
+                    </li>}
                     <li>
                         <a href="/logout" onClick={logout}>{I18n.t(`header.links.logout`)}</a>
                     </li>

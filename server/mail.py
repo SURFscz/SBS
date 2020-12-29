@@ -172,3 +172,12 @@ def mail_error(environment, current_user, recipients, tb):
         template="error_notification",
         context={"environment": environment, "tb": tb, "date": datetime.now(), "current_user": current_user},
         preview=False)
+
+
+def mail_feedback(environment, message, current_user, recipients):
+    return _do_send_mail(
+        subject=f"Feedback on {environment} from {current_user.name}",
+        recipients=recipients,
+        template="feedback",
+        context={"environment": environment, "message": message, "date": datetime.now(), "current_user": current_user},
+        preview=False)

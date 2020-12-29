@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURFNET New service connection request declined{% endblock %}
+{% block title %}SURF New service connection request declined{% endblock %}
 {% block content %}
 
 {{ salutation }},

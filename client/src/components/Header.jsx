@@ -8,6 +8,7 @@ import {ReactComponent as ChevronUp} from "../icons/chevron-up.svg";
 import {organisationByUserSchacHomeOrganisation} from "../api";
 import {emitter} from "../utils/Events";
 import {stopEvent} from "../utils/Utils";
+import FeedbackDialog from "./Feedback";
 
 export default class Header extends React.PureComponent {
 
@@ -16,7 +17,8 @@ export default class Header extends React.PureComponent {
         this.state = {
             dropDownActive: false,
             organisation: null,
-            orangeMode: true
+            orangeMode: true,
+            showFeedBack: false
         };
     }
 
@@ -63,18 +65,27 @@ export default class Header extends React.PureComponent {
     }
 
     render() {
-        const {currentUser} = this.props;
-        const {dropDownActive, organisation, orangeMode} = this.state;
+        const {currentUser, config} = this.props;
+        const {dropDownActive, organisation, orangeMode, showFeedBack} = this.state;
         return (
             <div className={`header-container ${currentUser.guest ? "guest" : ""} ${orangeMode ? "ugly" : ""}`}>
+
+                <FeedbackDialog isOpen={showFeedBack} close={() => this.setState({showFeedBack: false})}/>
+
                 <div className="header" onClick={this.toggleStyle}>
                     <Link className="logo" to="/"><Logo/></Link>
                     {!currentUser.guest &&
                     <div className="user-profile" onClick={() => this.setState({dropDownActive: !dropDownActive})}>
                         {this.renderProfileLink(currentUser, orangeMode)}
                         {dropDownActive &&
-                        <UserMenu currentUser={currentUser} organisation={organisation}
-                                  close={() => this.setState({dropDownActive: false})}/>}
+                        <UserMenu currentUser={currentUser}
+                                  organisation={organisation}
+                                  config={config}
+                                  close={() => this.setState({dropDownActive: false})}
+                                  provideFeedback={e => {
+                                      stopEvent(e);
+                                      this.setState({showFeedBack: true})
+                                  }}/>}
                     </div>}
                 </div>
             </div>

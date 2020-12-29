@@ -570,3 +570,7 @@ export function dbSeed() {
 export function clearAuditLogs() {
     return fetchDelete("/api/system/clear-audit-logs")
 }
+
+export function feedback(message) {
+    return postPutJson("/api/system/feedback",{message}, "POST");
+}
