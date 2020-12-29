@@ -93,7 +93,7 @@ class System extends React.Component {
     }
 
     filterAuditLogs = (auditLogs, query) => {
-        if (isEmpty(query) || query.length < 3) {
+        if (isEmpty(query)) {
             return auditLogs;
         }
         const lowerQuery = query.toLowerCase();
