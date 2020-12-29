@@ -8,6 +8,10 @@ section.copy-to-clipboard {
     color: $medium-blue;
     display: flex;
 
+    &:hover {
+        background-color: #ddf2fd;
+    }
+
     &.right {
         margin-left: 10px;
     }
@@ -17,6 +21,10 @@ section.copy-to-clipboard {
         cursor: pointer;
         width: 32px;
         height: auto;
+
+        &:hover {
+            color: #004c97;
+        }
     }
 
     svg.copied {
