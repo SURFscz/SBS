@@ -14,7 +14,7 @@ ACTION_CREATE = 1
 ACTION_UPDATE = 2
 ACTION_DELETE = 3
 
-ignore_attributes = ["logo"]
+ignore_attributes = ["logo", "created_by", "updated_by", "created_at", "updated_at"]
 
 dynamicExtendedJSONEncoder = DynamicExtendedJSONEncoder()
 
