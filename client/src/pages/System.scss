@@ -9,6 +9,11 @@
         max-width: $medium;
         padding: 0;
 
+        @media (max-width: $compact-medium) {
+            padding: 0 15px;
+        }
+
+
         .info-block-container {
             margin: 15px auto 15px auto;
             display: flex;
