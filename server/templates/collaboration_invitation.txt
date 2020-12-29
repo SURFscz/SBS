@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURFNET Collaboration invite{% endblock %}
+{% block title %}SURF Collaboration invite{% endblock %}
 {% block content %}
 {{ invitation.user.name }} invited you to join collaboration
 {{ invitation.collaboration.name }} as{{ invitation_role(invitation.intended_role) }}.

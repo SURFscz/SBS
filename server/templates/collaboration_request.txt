@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURFNET Collaboration request{% endblock %}
+{% block title %}SURF Collaboration request{% endblock %}
 {% block content %}
 
 {{ salutation }},

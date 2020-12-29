@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURFNET Organisation invite{% endblock %}
+{% block title %}SURF Organisation invite{% endblock %}
 {% block content %}
 
 {{ invitation.user.name }} invited you to join organisation

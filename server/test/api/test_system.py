@@ -43,3 +43,12 @@ class TestSystem(AbstractTest):
         self.delete("/api/system/clear-audit-logs", response_status_code=201)
         res = self.get("/api/audit_logs/activity")
         self.assertEqual(0, len(res["audit_logs"]))
+
+    def test_feedback(self):
+        mail = self.app.mail
+        with mail.record_messages() as outbox:
+            self.login("urn:sarah")
+            self.post("/api/system/feedback", body={"message": "great\nawesome"}, response_status_code=201)
+            self.assertEqual(1, len(outbox))
+            mail_msg = outbox[0]
+            self.assertTrue("great" in mail_msg.html)

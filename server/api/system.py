@@ -1,13 +1,15 @@
 # -*- coding: future_fstrings -*-
 
-from flask import Blueprint, current_app
+from flask import current_app, Blueprint, request as current_request
 from sqlalchemy import text
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_write_access
+from server.auth.security import confirm_write_access, current_user_id
 from server.db.audit_mixin import metadata
 from server.db.db import db
+from server.db.domain import User
+from server.mail import mail_feedback
 from server.test.seed import seed
 
 system_api = Blueprint("system_api", __name__, url_prefix="/api/system")
@@ -61,4 +63,19 @@ def clear_audit_logs():
         raise BadRequest("clear-audit-logs not allowed in this environment")
 
     db.session.execute(text("DELETE FROM audit_logs"))
+    return {}, 201
+
+
+@system_api.route("/feedback", strict_slashes=False, methods=["POST"])
+@json_endpoint
+def feedback():
+    cfg = current_app.app_config
+    if not cfg.feature.feedback_enabled:
+        raise BadRequest("feedback is not enabled")
+
+    data = current_request.get_json()
+    message = data["message"]
+    mail_conf = cfg.mail
+    user = User.query.get(current_user_id())
+    mail_feedback(mail_conf.environment, message, user, [mail_conf.info_email])
     return {}, 201

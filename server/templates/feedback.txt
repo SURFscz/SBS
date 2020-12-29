@@ -1,0 +1,15 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURF Feedback{% endblock %}
+{% block content %}
+
+Hi,
+User {{ current_user.name }} has provided the following feedback for {{ environment }} at {{ date }}:
+
+{{ message }}
+
+Follow-up questions can be send to {{ current_user.email }}
+
+{% endblock %}
+
+
+

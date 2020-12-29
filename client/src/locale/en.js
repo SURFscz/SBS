@@ -16,6 +16,7 @@ I18n.translations.en = {
             help: "Help",
             profile: "Profile",
             logout: "Logout",
+            feedback: "Provide feedback",
             helpUrl: "https://wiki.surfnet.nl/display/sram"
         },
     },
@@ -1309,6 +1310,19 @@ I18n.translations.en = {
         createCollRequestTxt: "Request a collaboration",
         contact: "Contact SRAM helpdesk",
         contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> and let us know what you were expecting, or if you have any questions. We'll try to respond asap."
+    },
+    feedback: {
+        title: "Provide Feedback",
+        subTitle: "Share your thoughts",
+        info: "Like what you see? Have a suggestion? Let us know what you think here!",
+        disclaimer: "We will use this information, in conjunction with other information we may have regarding your account, to fix problems, improve our products and provide you with recommendations. " +
+            "We may follow up with you regarding your feedback using the email address associated with your account. " +
+            "You are responsible for ensuring that your feedback does not contain any confidential, sensitive, or personal information. " +
+            "For more information, please review our <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://wiki.surfnet.nl/display/SRAM/SRAM+-+Privacy+Policy\">Privacy Notice</a>.",
+        help: "Need help?",
+        helpInfo: "For questions or issues, please reach out to us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>",
+        send: "Send feedback",
+        flash: "Your feedback has successfully been send. Thanks!"
     },
     landing: {
         header: {
