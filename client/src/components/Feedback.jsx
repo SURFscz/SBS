@@ -12,10 +12,14 @@ export default function FeedbackDialog({isOpen = false, close}) {
 
     const [message, setMessage] = useState("");
 
+    const doClose = () => {
+            close();
+            setTimeout(() => setMessage(""), 500);
+    }
+
     const sendFeedBack = () => {
         feedback(message).then(() => {
-            close();
-            setMessage("");
+            doClose();
             setFlash(I18n.t("feedback.flash"));
         });
     }
@@ -23,7 +27,7 @@ export default function FeedbackDialog({isOpen = false, close}) {
     return (
         <Modal
             isOpen={isOpen}
-            onRequestClose={close}
+            onRequestClose={doClose}
             className="feedback-dialog-content"
             overlayClassName="feedback-dialog-overlay"
             closeTimeoutMS={250}
@@ -46,7 +50,7 @@ export default function FeedbackDialog({isOpen = false, close}) {
                 <span dangerouslySetInnerHTML={{__html: I18n.t("feedback.disclaimer")}}/>
             </section>
             <section className="actions">
-                <Button txt={I18n.t("forms.cancel")} cancelButton={true} onClick={close}/>
+                <Button txt={I18n.t("forms.cancel")} cancelButton={true} onClick={doClose}/>
                 <Button txt={I18n.t("feedback.send")} disabled={isEmpty(message)} onClick={sendFeedBack}/>
             </section>
 
