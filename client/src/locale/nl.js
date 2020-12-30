@@ -1173,7 +1173,7 @@ I18n.translations.nl = {
         subTitleAlreadyLinked: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina geredirect om één van je samenwerkingen met deze service te koppelen. Je hebt echter al toegang tot deze dienst. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
         titleLinkNotAllowed: "Dienst {{name}} kan niet worden gekoppeld aan één je samenwerkingen",
         subTitleLinkNotAllowed: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina geredirect om één van je samenwerkingen te koppelen. Geen van je samenwerkingen kan echter aan deze dienst worden gekoppeld. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
-        noCollaborations: "Je bent geen lid van een samenwerking. Om dienst <strong>{{name}}</strong> te gebruiken, moet je lid zijn van ten minste één samenwerking. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
+        noCollaborations: "Je bent geen lid van een samenwerking. Om dienst <strong>{{name}}</strong> te gebruiken, moet je lid zijn van ten minste één samenwerking.<br/><br/>Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
         collaboration: {
             name: "Naam",
             role: "Rol",

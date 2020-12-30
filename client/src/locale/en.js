@@ -1171,7 +1171,7 @@ I18n.translations.en = {
         subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this Service. However you already have access to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         titleLinkNotAllowed: "Service {{name}} can not be linked to any of your collaborations",
         subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        noCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        noCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         collaboration: {
             name: "Name",
             role: "Role",
@@ -1329,7 +1329,7 @@ I18n.translations.en = {
             title: "Collaborate with fellow researchers",
             subTitle: "Spend less time managing infra-structure and access management, and more time on doing research."
         },
-        title: "<strong>SURF Research Access Management</strong> is a service for access management for Dutch led research collaborations. Non-commercial, open, standards-based, easy and secury.",
+        title: "<strong>SURF Research Access Management</strong> is a service for access management for Dutch led research collaborations. Non-commercial, open, standards-based, easy and secure.",
         roles: {
             teamManager: "team managers",
             researchers: "researchers",
