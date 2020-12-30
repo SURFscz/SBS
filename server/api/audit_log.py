@@ -7,13 +7,14 @@ from server.auth.security import current_user_id, confirm_read_access, confirm_g
     is_current_user_collaboration_admin, is_current_user_organisation_admin_or_manager, \
     is_organisation_admin_or_manager
 from server.db.audit_mixin import AuditLog
-from server.db.domain import User, Organisation, Collaboration, Group
+from server.db.domain import User, Organisation, Collaboration, Group, Service
 
 audit_log_api = Blueprint("audit_log_api", __name__, url_prefix="/api/audit_logs")
 
 table_names_cls_mapping = {
     "organisations": Organisation,
     "collaborations": Collaboration,
+    "services": Service,
 }
 
 

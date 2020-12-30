@@ -103,7 +103,8 @@ export default class Activity extends React.PureComponent {
         const auditLogReferences = {
             "organisation_id": "organisations",
             "collaboration_id": "collaborations",
-            "user_id": "users"
+            "user_id": "users",
+            "service_id": "services"
         };
         if (auditLogReferences[key]) {
             const refs = auditLogs[auditLogReferences[key]] || [];
