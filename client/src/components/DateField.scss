@@ -29,6 +29,12 @@
         display: flex;
         width: 240px;
         position: relative;
+        border-radius: $br;
+
+        &:focus {
+            outline: none;
+            box-shadow: 3px 3px 3px $blue-hover, -3px -3px 1px $blue-hover;
+        }
 
         svg.fa-calendar-alt {
             position: absolute;
@@ -49,10 +55,17 @@
         input[type="text"] {
             display: block;
             width: 100%;
+            border-radius: $br;
+            border: 1px solid $dark-grey;
             line-height: 33px;
             padding: 16px;
             font-size: 14px;
             height: 48px;
+
+            &:focus {
+                outline: none;
+                box-shadow: 3px 3px 3px $blue-hover, -3px -3px 1px $blue-hover;
+            }
 
             &[disabled] {
                 cursor: not-allowed;
