@@ -34,7 +34,8 @@ div.email-field {
         font-size: 16px;
 
         &:focus-within {
-            border: 2px solid #015fcb;
+            outline: none;
+            box-shadow: 3px 3px 3px $blue-hover, -3px -3px 1px $blue-hover;
         }
 
         &.error {
