@@ -70,7 +70,7 @@ class ServiceOrganisations extends React.Component {
 
     toggle = (organisation, organisationsSelected) => {
         const value = organisationsSelected[organisation.id];
-        return <ToggleSwitch value={value} animate={false} onChange={this.toggleChanged(organisation)}/>;
+        return <ToggleSwitch value={value || false} animate={false} onChange={this.toggleChanged(organisation)}/>;
     }
 
     submit = (organisationsSelected, organisationsDeselected, toggleAll, showConfirmation = true) => {
@@ -129,7 +129,7 @@ class ServiceOrganisations extends React.Component {
             organisationsSelected, organisationsDeselected, confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction,
         } = this.state;
-        const {organisations, service} = this.props;
+        const {organisations, service, user} = this.props;
         organisations.forEach(org => org.toggle = organisationsSelected[org.id]);
         const columns = [
             {
@@ -142,6 +142,16 @@ class ServiceOrganisations extends React.Component {
                 key: "name",
                 header: I18n.t("models.organisations.name"),
                 mapper: org => <a href="/" onClick={this.openOrganisation(org)}>{org.name}</a>,
+            },
+                        {
+                nonSortable: true,
+                key: "role",
+                header: "",
+                mapper: org => {
+                    const cm = user.organisation_memberships.find(m => m.organisation_id === org.id);
+                    return cm ?
+                        <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
+                }
             },
             {
                 key: "category",

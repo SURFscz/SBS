@@ -11,7 +11,6 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import Button from "../components/Button";
 import UnitHeader from "../components/redesign/UnitHeader";
-import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 
 class ServiceConnectionRequest extends React.Component {
 
@@ -113,13 +112,14 @@ class ServiceConnectionRequest extends React.Component {
         return (
             <div className="service-connection-request-container">
                 {serviceConnectionRequestFound &&
-                <UnitHeader obj={({name: title, svg: ServicesIcon})}>
-                                        <span className="subTitle">
-                                            {I18n.t("serviceConnectionRequest.subTitle", {
-                                                collaboration: serviceConnectionRequest.collaboration.name,
-                                                requester: serviceConnectionRequest.requester.name,
-                                                service: serviceConnectionRequest.service.name
-                                            })}</span>
+                <UnitHeader obj={({name: title, logo: serviceConnectionRequest.service.logo})}>
+                    <span className="subTitle">
+                        {I18n.t("serviceConnectionRequest.subTitle", {
+                            collaboration: serviceConnectionRequest.collaboration.name,
+                            requester: serviceConnectionRequest.requester.name,
+                            service: serviceConnectionRequest.service.name
+                        })}
+                    </span>
                 </UnitHeader>}
 
                 <div className="mod-service-connection-request">

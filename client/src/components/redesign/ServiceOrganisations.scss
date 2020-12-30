@@ -4,9 +4,21 @@
     table.serviceOrganisations {
 
         thead {
+
             th {
+                @media (max-width: $compact-medium) {
+                    &.role {
+                        display: none;
+                    }
+                }
+
                 &.name {
-                    width: 50%;
+                    width: 25%;
+                    padding-left: 15px;
+                }
+
+                &.role {
+                    width: 25%;
                     padding-left: 15px;
                 }
 
@@ -23,6 +35,12 @@
 
         tbody {
             td {
+                @media (max-width: $compact-medium) {
+                    &.role {
+                        display: none;
+                    }
+                }
+
                 &.name {
                     padding-left: 15px;
                 }
