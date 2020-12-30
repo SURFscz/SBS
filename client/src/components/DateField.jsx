@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
-import I18n from "i18n-js";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -21,8 +20,9 @@ export default class DateField extends React.PureComponent {
             const maximalDate = maxDate || moment().add(31, "day").toDate();
             const value = e.target.value;
             if (value) {
-                const d = moment(value, "DD/MM/YYYY").toDate();
-                if (d > maximalDate || d < minimalDate) {
+                const m = moment(value, "dd/MM/yyyy");
+                const d = m.toDate();
+                if (!m.isValid() || d > maximalDate || d < minimalDate) {
                     onChange(moment().add(16, "days").toDate());
                 }
             } else {
@@ -35,7 +35,7 @@ export default class DateField extends React.PureComponent {
         const {
             onChange, name, value, disabled = false, maxDate = null, minDate = null, toolTip = null
         } = this.props;
-        const minimalDate = minDate || moment().add(1, "day").toDate();
+        const minimalDate = minDate || moment().add(1, "day").endOf("day").toDate();
         return (<div className="date-field">
                 <label className="date-field-label" htmlFor={name}>{name} {toolTip &&
                 <span className="tool-tip-section">
@@ -52,12 +52,13 @@ export default class DateField extends React.PureComponent {
                         id={name}
                         selected={value}
                         preventOpenOnFocus
+                        dateFormat={"dd/MM/yyyy"}
                         onChange={onChange}
                         showWeekNumbers
                         onBlur={this.validateOnBlur}
                         weekLabel="Week"
                         disabled={disabled}
-                        todayButton={I18n.t("forms.today")}
+                        todayButton={null}
                         maxDate={maxDate}
                         minDate={minimalDate}
                     />
