@@ -246,7 +246,7 @@ class ServiceRequest extends React.Component {
                         <ServicesRequestExplanation name={escapeHtmlTooltip(serviceName)}/>
                     </Explain>
                     {noCollaborations &&
-                    <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.noCollaborations", {name: serviceName})}}/>}
+                    <p className="no-user-collaborations" dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.noCollaborations", {name: serviceName})}}/>}
                     {!noCollaborations && <div className="service-request">
                         <p className="sub-title" dangerouslySetInnerHTML={{__html: subTitle}}/>
                         {this.renderCollaborations(collaborations, user)}
