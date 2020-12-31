@@ -44,10 +44,10 @@ class System extends React.Component {
             AppStore.update(s => {
                 s.breadcrumb.paths = [
                     {path: "/", value: I18n.t("breadcrumb.home")},
-                    {path: "/system", value: I18n.t("breadcrumb.system")},
-                    {value: I18n.t(`home.tabs.${tab}`)}
+                    {value: I18n.t("breadcrumb.system")}
                 ];
             });
+
         })
     };
 
@@ -131,7 +131,7 @@ class System extends React.Component {
                         <section className="search-activity">
                             <p>{I18n.t("system.activity")}</p>
                             {config.seed_allowed &&
-                                <Button warningButton={true} onClick={() => this.doClearAuditLogs(true)}/>}
+                            <Button warningButton={true} onClick={() => this.doClearAuditLogs(true)}/>}
                             <div className={`search ${config.seed_allowed ? "" : "no-clear-logs"}`}>
                                 <input type="text"
                                        onChange={this.onChangeQuery}
@@ -321,10 +321,11 @@ class System extends React.Component {
                 </div>}</div>)
     }
 
-    tabChanged = (name) => {
+    tabChanged = name => {
         this.clear();
-        this.setState({tab: name, busy: true}, () =>
-            this.props.history.replace(`/system/${name}`));
+        this.setState({tab: name, busy: true}, () => {
+            this.props.history.replace(`/system/${name}`);
+        });
         if (name === "database") {
             dbStats().then(res => {
                 this.setState({databaseStats: res, busy: false});
