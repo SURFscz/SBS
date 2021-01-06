@@ -85,3 +85,9 @@ class TestServiceConnectionRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research has been declined",
                              mail_msg.subject)
+
+    def test_all_service_request_connections_by_service(self):
+        storage_id = self.find_entity_by_name(Service, service_storage_name).id
+        self.login("urn:john")
+        res = self.get(f"/api/service_connection_requests/all/{storage_id}")
+        self.assertEqual(1, len(res))
