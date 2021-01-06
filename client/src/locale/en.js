@@ -1360,7 +1360,7 @@ I18n.translations.en = {
                 "Improve security",
                 "No more zero hour contracts"
             ],
-            postTitle: "<strong>SRAM</strong> is a ...service. Read more on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram</a>"
+            postTitle: "Read more on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram</a>"
         },
         serviceProvider: {
             title: "Are you a service provider?",
