@@ -7,7 +7,8 @@ from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
 from server.api.collaborations_services import connect_service_collaboration
-from server.auth.security import confirm_collaboration_admin, current_user_id, current_user_uid, current_user_name
+from server.auth.security import confirm_collaboration_admin, current_user_id, current_user_uid, current_user_name, \
+    confirm_write_access
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db
 from server.db.models import delete
 from server.mail import mail_service_connection_request, mail_accepted_declined_service_connection_request
@@ -133,3 +134,16 @@ def approve_service_connection_request(hash):
 @json_endpoint
 def deny_service_connection_request(hash):
     return _do_service_connection_request(hash, False)
+
+
+@service_connection_request_api.route("/all/<service_id>", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def all_service_request_connections_by_service(service_id):
+    confirm_write_access()
+    return ServiceConnectionRequest.query \
+               .join(ServiceConnectionRequest.collaboration) \
+               .join(ServiceConnectionRequest.requester) \
+               .options(contains_eager(ServiceConnectionRequest.collaboration)) \
+               .options(contains_eager(ServiceConnectionRequest.requester)) \
+               .filter(ServiceConnectionRequest.service_id == service_id) \
+               .all(), 200

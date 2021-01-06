@@ -1,10 +1,11 @@
 import React from "react";
-import {searchOrganisations, serviceById} from "../api";
+import {allServiceConnectionRequests, searchOrganisations, serviceById} from "../api";
 import "./ServiceDetail.scss";
 import I18n from "i18n-js";
 import Tabs from "../components/Tabs";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
+import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
 import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
@@ -21,6 +22,7 @@ class ServiceDetail extends React.Component {
         this.state = {
             service: {},
             organisations: [],
+            serviceConnectionRequests: [],
             loading: true,
             tab: "organisations",
             tabs: []
@@ -30,15 +32,18 @@ class ServiceDetail extends React.Component {
     componentDidMount = () => {
         const params = this.props.match.params;
         if (params.id) {
-            Promise.all([serviceById(params.id), searchOrganisations("*")])
+            Promise.all([serviceById(params.id), searchOrganisations("*"),
+                allServiceConnectionRequests(params.id)])
                 .then(res => {
                     const {user} = this.props;
                     const service = res[0];
                     const organisations = res[1];
+                    const serviceConnectionRequests = res[1];
                     const tab = params.tab || this.state.tab;
                     const tabs = user.admin ? [
                         this.getOrganisationsTab(service, organisations),
-                        this.getCollaborationsTab(service)
+                        this.getCollaborationsTab(service),
+                        this.getServiceConnectionRequest(service, serviceConnectionRequests)
                     ] : [];
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
@@ -53,6 +58,7 @@ class ServiceDetail extends React.Component {
                     this.setState({
                         service: service,
                         organisations: organisations,
+                        serviceConnectionRequests: serviceConnectionRequests,
                         tab: tab,
                         tabs: tabs,
                         loading: false
@@ -101,14 +107,31 @@ class ServiceDetail extends React.Component {
         const collFromOrganisations = service.service_organisation_collaborations;
         collFromOrganisations.forEach(coll => coll.fromCollaboration = false);
         const colls = removeDuplicates(collaborations.concat(collFromOrganisations), "id");
-        return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.serviceCollaborations")}
-                     icon={<CollaborationsIcon/>}>
-            <Collaborations mayCreate={false}
-                            showOrigin={true}
-                            collaborations={colls}
-                            modelName={"serviceCollaborations"}
-                            {...this.props} />
-        </div>)
+        return (
+            <div key="collaborations" name="collaborations" label={I18n.t("home.tabs.serviceCollaborations")}
+                 icon={<CollaborationsIcon/>}>
+                <Collaborations mayCreate={false}
+                                showOrigin={true}
+                                collaborations={colls}
+                                modelName={"serviceCollaborations"}
+                                {...this.props} />
+            </div>);
+    }
+
+    getServiceConnectionRequest = (service, serviceConnectionRequests) => {
+        /*
+        TODO copy JoinRequests.jsx, add collobaration logog as first column. Open is Approve / deny / delete
+         */
+        return (
+            <div key="serviceConnectionRequests" name="serviceConnectionRequests"
+                 label={I18n.t("home.tabs.serviceConnectionRequests")} icon={<ServiceConnectionRequestsIcon/>}>
+                <ServiceConnectionRequests
+                    service={service}
+                    serviceConnectionRequests={serviceConnectionRequests}
+                    modelName={"serviceConnectionRequests"}
+                    {...this.props} />
+            </div>);
+
     }
 
     tabChanged = (name, id) => {

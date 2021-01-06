@@ -536,6 +536,10 @@ export function denyServiceConnectionRequestByHash(hash) {
     return postPutJson(`/api/service_connection_requests/deny/${hash}`, {}, "put");
 }
 
+export function allServiceConnectionRequests(serviceId) {
+    return fetchJson(`/api/service_connection_requests/all/${serviceId}`);
+}
+
 //AuditLog
 export function auditLogsMe() {
     return fetchJson("/api/audit_logs/me");
@@ -572,5 +576,5 @@ export function clearAuditLogs() {
 }
 
 export function feedback(message) {
-    return postPutJson("/api/system/feedback",{message}, "POST");
+    return postPutJson("/api/system/feedback", {message}, "POST");
 }
