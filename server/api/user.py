@@ -55,9 +55,7 @@ def _user_query():
 def _user_json_response(user):
     is_admin = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
-    needs_to_agree_with_aup = \
-        current_app.app_config.aup.pdf not in list(map(lambda aup: aup.au_version, user.aups))
-    return {**json_user, **is_admin, **{"needs_to_agree_with_aup": needs_to_agree_with_aup}}, 200
+    return {**json_user, **is_admin,}, 200
 
 
 def _get_authorization_url(state=None):
@@ -264,8 +262,6 @@ def me():
             return {"error": f"user {user_from_db.uid} is suspended"}, 409
 
         user = {**jsonify(user_from_db).json, **user_from_session}
-        user["needs_to_agree_with_aup"] = \
-            current_app.app_config.aup.pdf not in list(map(lambda aup: aup["au_version"], user["aups"]))
 
         if len(user_from_db.suspend_notifications) > 0:
             user["successfully_activated"] = True

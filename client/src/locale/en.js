@@ -316,13 +316,12 @@ I18n.translations.en = {
         },
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here you can collaborate with your fellow researchers.",
-            invited: "You have been invited to join {{type}} \"{{collaboration}}\" by {{inviter}}",
+            invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by {{inviter}}",
             followingSteps: "Please take the following steps:",
             steps: {
                 progress: "{{now}} of {{total}}",
                 login: "Login",
                 next: "Next: {{step}}",
-                aup: "Accept our AUP",
                 invite: "Accept the invite",
                 collaborate: "Collaborate!"
             },

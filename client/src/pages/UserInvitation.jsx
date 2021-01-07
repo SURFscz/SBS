@@ -1,8 +1,7 @@
 import React from "react";
 import {
-    agreeAup,
-    aupLinks,
-    invitationAccept, invitationByHash,
+    invitationAccept,
+    invitationByHash,
     invitationDecline,
     organisationInvitationAccept,
     organisationInvitationByHash,
@@ -22,13 +21,15 @@ class UserInvitation extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            invite: {user: {}, collaboration: {collaboration_memberships: []}, organisation: {organisation_memberships: []}},
-            acceptedTerms: false,
+            invite: {
+                user: {},
+                collaboration: {collaboration_memberships: []},
+                organisation: {organisation_memberships: []}
+            },
             personalDataConfirmation: false,
             initial: true,
             isExpired: false,
             errorOccurred: false,
-            aup: {},
             confirmationDialogOpen: false,
             confirmationDialogQuestion: "",
             confirmationDialogAction: () => true,
@@ -46,11 +47,6 @@ class UserInvitation extends React.Component {
             promise.then(json => {
                 const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                 this.setState({invite: json, isExpired: isExpired, loading: true});
-                const {user} = this.props;
-                if (!user.guest && user.needs_to_agree_with_aup) {
-                    aupLinks().then(res => this.setState({"aup": res}));
-
-                }
             }).catch(() => {
                 this.setState({errorOccurred: true});
                 setFlash(I18n.t("organisationInvitation.flash.notFound"), "error");
@@ -59,8 +55,6 @@ class UserInvitation extends React.Component {
             this.props.history.push("/404");
         }
     };
-
-    agreeWith = () => agreeAup().then(() => this.setState({acceptedTerms: true}));
 
     accept = () => {
         const {invite} = this.state;
@@ -118,61 +112,32 @@ class UserInvitation extends React.Component {
         return (
             <section className="step-container">
                 <div className="step">
-                    <div className="circle three-quarters">
-                        <span>{I18n.t("models.invitation.steps.progress", {now: "3", total: "4"})}</span>
+                    <div className="circle two-third">
+                        <span>{I18n.t("models.invitation.steps.progress", {now: "2", total: "3"})}</span>
                     </div>
                     <div className="step-actions">
                         <h1>{I18n.t("models.invitation.steps.invite")}</h1>
                         <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.collaborate")})}</span>
                     </div>
                 </div>
-                <Button onClick={this.decline} cancelButton={true}
-                        txt={<span>{I18n.t("models.invitation.declineInvitation")}</span>}/>
                 <Button onClick={this.accept}
                         txt={<span>{I18n.t("models.invitation.acceptInvitation")}</span>}/>
+                <Button onClick={this.decline} cancelButton={true}
+                        txt={<span>{I18n.t("models.invitation.declineInvitation")}</span>}/>
             </section>
         )
     }
-
-    renderAupStep = () => {
-        const {aup} = this.state;
-
-        return (
-            <section className="step-container">
-                <div className="step">
-                    <div className="circle two-quarters">
-                        <span>{I18n.t("models.invitation.steps.progress", {now: "2", total: "4"})}</span>
-                    </div>
-                    <div className="step-actions">
-                        <h1>{I18n.t("models.invitation.steps.aup")}</h1>
-                        <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.invite")})}</span>
-                    </div>
-                </div>
-                <div className="htmlAup" dangerouslySetInnerHTML={{__html: aup.html}}/>
-                <div className="download">
-                    <a href={aup.pdf_link} className="pdf" download={aup.pdf} target="_blank" rel="noopener noreferrer">
-                        {I18n.t("aup.downloadPdf")}
-                    </a>
-                </div>
-                <Button onClick={this.agreeWith}
-                        txt={<span>{I18n.t("models.invitation.accept")}</span>}/>
-                <Button onClick={this.cancel} cancelButton={true}
-                        txt={<span>{I18n.t("models.invitation.noAccept")}</span>}/>
-            </section>
-        )
-    }
-
 
     renderLoginStep = () => {
         return (
             <section className="step-container">
                 <div className="step">
-                    <div className="circle one-quarters">
-                        <span>{I18n.t("models.invitation.steps.progress", {now: "1", total: "4"})}</span>
+                    <div className="circle one-third">
+                        <span>{I18n.t("models.invitation.steps.progress", {now: "1", total: "3"})}</span>
                     </div>
                     <div className="step-actions">
                         <h1>{I18n.t("models.invitation.steps.login")}</h1>
-                        <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.aup")})}</span>
+                        <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.invite")})}</span>
                     </div>
                 </div>
                 <Button onClick={login} txt={<span>{I18n.t("models.invitation.login")}<sup> *</sup></span>}/>
@@ -183,11 +148,8 @@ class UserInvitation extends React.Component {
 
     render() {
         const {user, isOrganisationInvite} = this.props;
-
-        const {
-            invite, acceptedTerms, isExpired, errorOccurred,
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogQuestion, confirmationDialogAction,
-        } = this.state;
+        const { invite, isExpired, errorOccurred, confirmationDialogOpen, cancelDialogAction,
+            confirmationDialogQuestion, confirmationDialogAction } = this.state;
         const expiredMessage = I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")});
         return (
             <div className="mod-user-invitation">
@@ -199,20 +161,19 @@ class UserInvitation extends React.Component {
                 <div className="invitation-container">
                     {!isExpired && <h1>Hi,</h1>}
                     {isExpired &&
-                    <p className="expired"><ErrorIndicator msg={expiredMessage}/> </p>}
+                    <p className="expired"><ErrorIndicator msg={expiredMessage}/></p>}
                     {!isExpired && <div className="invitation-inner">
                         <p className="info">{I18n.t("models.invitation.welcome")}</p>
                         <section className="invitation">
-                            {I18n.t("models.invitation.invited", {
+                            <span dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.invited", {
                                 type: isOrganisationInvite ? I18n.t("welcomeDialog.organisation") : I18n.t("welcomeDialog.collaboration"),
                                 collaboration: isOrganisationInvite ? invite.organisation.name : invite.collaboration.name,
                                 inviter: invite.user.name
-                            })}
+                            })}}/>
                         </section>
                         <p className="info">{I18n.t("models.invitation.followingSteps")}</p>
-                        {(user.guest) && this.renderLoginStep()}
-                        {(!user.guest && user.needs_to_agree_with_aup && !acceptedTerms) && this.renderAupStep()}
-                        {(!user.guest && (!user.needs_to_agree_with_aup || acceptedTerms)) && this.renderAcceptInvitationStep()}
+                        {user.guest && this.renderLoginStep()}
+                        {!user.guest && this.renderAcceptInvitationStep()}
                     </div>}
 
                 </div>}

@@ -7,9 +7,10 @@
     margin: 25px auto 40px auto;
     width: 100%;
 
-        @media (max-width: 680px) {
-            padding: 0 15px;
-        }
+    @media (max-width: 680px) {
+        padding: 0 15px;
+    }
+
     .invitation-container {
         margin: 0 auto;
 
@@ -50,9 +51,11 @@
             a.button.blue, a.button.cancel {
                 min-width: 100%;
                 max-width: 100%;
+
                 &.blue {
                     margin-top: 20px;
                 }
+
                 &:last-child {
                     margin-top: 20px;
                 }
@@ -65,43 +68,14 @@
             margin-bottom: 25px;
         }
 
-        .step-actions h1 {
-            margin-bottom: 15px;
-        }
-
-        div.htmlAup {
-            border-radius: $br;
-            border: 1px solid $medium-grey;
-            max-height: 315px;
-            overflow: scroll;
-            background-color: $lightest-grey;
-            padding: 10px;
+        .step-actions {
+            padding-top: 5px;
 
             h1 {
-                margin: 5px 0;
-                font-size: 16px;
-                font-weight: bold;
-            }
-
-            ul {
-                padding: $medium-padding;
-                list-style: initial;
-                margin-bottom: $medium-padding;
-            }
-
-            p {
-                margin-bottom: 5px;
+                margin-bottom: 15px;
             }
         }
 
-        div.download {
-            margin: 5px 0;
-            display: flex;
-
-            a.pdf {
-                margin-left: auto;
-            }
-        }
 
     }
 }
