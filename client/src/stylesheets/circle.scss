@@ -1,4 +1,4 @@
-$width: 60px;
+$width: 70px;
 
 .circle {
     display: inline-block;
@@ -8,7 +8,8 @@ $width: 60px;
     height: $width;
     margin-right: 20px;
 
-    &.one-quarters:before {
+
+    @mixin colored-borders {
         content: '';
         display: inline-block;
         width: $width;
@@ -19,56 +20,38 @@ $width: 60px;
         top: 0;
         left: 0;
         transform: rotate(45deg);
-        border-top-color: $blue;
     }
 
-    &.two-quarters:before {
-        content: '';
-        display: inline-block;
-        width: $width;
-        height: $width;
-        border-radius: 50%;
-        border: solid 5px $lighter-grey;
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform: rotate(45deg);
+    &.one-third:before {
+        @include colored-borders;
+        border: solid 5px transparent;
+        border-top-color: $blue;
+        z-index: 2;
+    }
+
+    &.one-third:after {
+        @include colored-borders;
+        border-top-color: $blue;
+        transform: rotate(78deg);
+    }
+
+    &.two-third:before {
+        @include colored-borders;
+        border: solid 5px transparent;
+        border-top-color: $blue;
+        z-index: 2;
+    }
+
+    &.two-third:after {
+        @include colored-borders;
         border-top-color: $blue;
         border-right-color: $blue;
-    }
-
-    &.three-quarters:before {
-        content: '';
-        display: inline-block;
-        width: $width;
-        height: $width;
-        border-radius: 50%;
-        border: solid 5px $lighter-grey;
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform: rotate(45deg);
-        border-right-color: $blue;
-        border-top-color: $blue;
-        border-bottom-color: $blue;
-    }
-
-    &.full-circle:before {
-        content: '';
-        display: inline-block;
-        width: $width;
-        height: $width;
-        border-radius: 50%;
-        border: solid 5px $blue;
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform: rotate(45deg);
+        transform: rotate(102deg);
     }
 
     span {
         display: inline-block;
-        margin-top: 20px;
+        margin-top: 25px;
     }
 
 }

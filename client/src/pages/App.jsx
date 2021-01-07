@@ -29,7 +29,6 @@ import {isEmpty, pseudoGuid} from "../utils/Utils";
 import Login from "./Login";
 import {ProtectedRoute} from "./ProtectedRoute";
 import Profile from "./Profile";
-import Aup from "./Aup";
 import CollaborationRequest from "./CollaborationRequest";
 import ServiceConnectionRequest from "./ServiceConnectionRequest";
 import ServiceRequest from "./ServiceRequest";
@@ -350,9 +349,6 @@ class App extends React.Component {
                                    currentUser={currentUser}
                                    Component={System}
                                    config={config} {...props}/>}/>
-
-                        <Route path="/aup" render={props =>
-                            <Aup currentUser={currentUser} refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
                         <Route path="/dead-end"
                                render={props => <DeadEnd {...props}/>}/>
