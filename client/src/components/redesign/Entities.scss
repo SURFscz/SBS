@@ -144,7 +144,7 @@
                 @media (max-width: $compact-medium) {
                     &.status, &.requester, &.impersonate, &.logo, &.collaboration_memberships_count,
                     &.invitations_count, &.organisation_memberships_count, &.collaborations_count,
-                    &.icon, &.user__schac_home_organisation {
+                    &.connection_requests_count, &.icon, &.user__schac_home_organisation {
                         display: none;
                     }
                 }
@@ -161,6 +161,7 @@
 
                 &.clickable {
                     cursor: pointer;
+
                     &:hover {
                         background-color: $lightest-grey;
                     }
@@ -203,8 +204,8 @@
 
                 @media (max-width: $compact-medium) {
                     &.status, &.requester, &.impersonate, &.logo, &.collaboration_memberships_count,
-                    &.invitations_count, &.organisation_memberships_count, &.collaborations_count,
-                    &.icon, &.user__schac_home_organisation {
+                    &.invitations_count, &.organisation_memberships_count, &.connection_requests_count,
+                    &.collaborations_count, &.icon, &.user__schac_home_organisation {
                         display: none;
                     }
                 }

@@ -1,10 +1,15 @@
-table.services   {
+table.services {
 
     thead {
         th {
             &.name {
-                width: 45%;
+                width: 35%;
                 padding-left: 15px;
+            }
+
+            &.connection_requests_count {
+                width: 20%;
+                text-align: center;
             }
 
             &.organisations_count {
@@ -23,6 +28,10 @@ table.services   {
         td {
             &.name {
                 padding-left: 15px;
+            }
+
+            &.connection_requests_count {
+                text-align: center;
             }
 
             &.organisations_count {

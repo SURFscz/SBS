@@ -266,6 +266,8 @@ class Service(Base, db.Model):
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
     organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select")
     ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
+    service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="service",
+                                                  cascade="all, delete-orphan", passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -394,7 +396,7 @@ class ServiceConnectionRequest(Base, db.Model):
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     requester = db.relationship("User")
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
-    service = db.relationship("Service")
+    service = db.relationship("Service", back_populates="service_connection_requests")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="service_connection_requests")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)

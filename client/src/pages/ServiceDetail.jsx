@@ -14,6 +14,7 @@ import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {removeDuplicates} from "../utils/Utils";
 import {actionMenuUserRole} from "../utils/UserRole";
+import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 
 class ServiceDetail extends React.Component {
 
@@ -38,7 +39,7 @@ class ServiceDetail extends React.Component {
                     const {user} = this.props;
                     const service = res[0];
                     const organisations = res[1];
-                    const serviceConnectionRequests = res[1];
+                    const serviceConnectionRequests = res[2];
                     const tab = params.tab || this.state.tab;
                     const tabs = user.admin ? [
                         this.getOrganisationsTab(service, organisations),
@@ -77,14 +78,17 @@ class ServiceDetail extends React.Component {
         const params = this.props.match.params;
         const {organisations} = this.state;
         this.setState({loading: true});
-        serviceById(params.id).then(res => {
-            const service = res;
+        Promise.all([serviceById(params.id), allServiceConnectionRequests(params.id)])
+            .then(res => {
+            const service = res[0];
+            const serviceConnectionRequests = res[1];
             const tabs = [
                 this.getOrganisationsTab(service, organisations),
-                this.getCollaborationsTab(service)
-            ];
+                this.getCollaborationsTab(service),
+                this.getServiceConnectionRequest(service, serviceConnectionRequests)            ];
             this.setState({
                 service: service,
+                serviceConnectionRequests: serviceConnectionRequests,
                 tabs: tabs,
                 loading: false
             }, callback);
@@ -119,14 +123,14 @@ class ServiceDetail extends React.Component {
     }
 
     getServiceConnectionRequest = (service, serviceConnectionRequests) => {
-        /*
-        TODO copy JoinRequests.jsx, add collobaration logog as first column. Open is Approve / deny / delete
-         */
+        const nbr = (serviceConnectionRequests || []).length;
         return (
             <div key="serviceConnectionRequests" name="serviceConnectionRequests"
-                 label={I18n.t("home.tabs.serviceConnectionRequests")} icon={<ServiceConnectionRequestsIcon/>}>
+                 label={I18n.t("home.tabs.serviceConnectionRequests")} icon={<ServiceConnectionRequestsIcon/>}
+                notifier={nbr > 0 ? nbr : null}>
                 <ServiceConnectionRequests
                     service={service}
+                    refresh={this.refresh}
                     serviceConnectionRequests={serviceConnectionRequests}
                     modelName={"serviceConnectionRequests"}
                     {...this.props} />

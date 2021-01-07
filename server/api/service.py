@@ -168,6 +168,7 @@ def all_services():
 
     services = Service.query \
         .options(selectinload(Service.allowed_organisations)) \
+        .options(selectinload(Service.service_connection_requests)) \
         .all()
 
     sql = text("SELECT service_id, organisation_id FROM services_organisations")

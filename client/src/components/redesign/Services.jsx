@@ -19,7 +19,10 @@ class Services extends React.Component {
     }
 
     componentDidMount = () => {
-        allServices().then(services => this.setState({services: services, loading: false}));
+        allServices().then(services => {
+            services.forEach(s => s.connection_requests_count = s.service_connection_requests.length)
+            this.setState({services: services, loading: false})
+        });
     }
 
     openService = service => e => {
@@ -45,6 +48,10 @@ class Services extends React.Component {
                 key: "name",
                 header: I18n.t("models.services.name"),
                 mapper: service => <a href="/" onClick={this.openService(service)}>{service.name}</a>,
+            },
+            {
+                key: "connection_requests_count",
+                header: I18n.t("models.services.connectionRequestCount")
             },
             {
                 key: "organisations_count",
