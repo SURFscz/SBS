@@ -83,6 +83,7 @@ I18n.translations.nl = {
             serviceCollaborations: "Samenwerkingen inzichten",
             collaborationRequests: "Coll verzoeken",
             joinRequests: "Join verzoeken",
+            serviceConnectionRequests: "Koppelverzoeken",
             me: "Profiel",
             about: "Over",
             apikeys: "API Keys",
@@ -172,6 +173,7 @@ I18n.translations.nl = {
             new: "Nieuwe dienst",
             name: "Naam",
             status: "Status",
+            connectionRequestCount: "Koppelverzoeken",
             organisationCount: "Gebruikt in organisaties",
             collaborationCount: "Gebruikt in samenwerkingen",
             titleAvailableColl: "Beschikbaar voor deze samenwerking ({{count}})",
@@ -343,6 +345,16 @@ I18n.translations.nl = {
             edit: "Accepteer / keur af",
             details: "Verzoek gemaakt door {{name}} op {{date}}"
         },
+        serviceConnectionRequests: {
+            backToServiceConnectionRequests: "Terug naar alle koppelverzoeken",
+            title: "Openstaande koppelverzoeken",
+            searchPlaceHolder: "Zoek koppelverzoeken...",
+            noEntities: "Geen koppelverzoeken gevonden",
+            edit: "Goed- / afkeuren",
+            details: "Dienst koppelverzoek gemaakt door {{name}} op {{date}} voor samenwerking {{collaborationName}}",
+            requester: "Aanvrager",
+            name: "Naam samenwerking"
+        }
     },
     user: {
         titleUpdate: "Werk de sleutels in je gebruikersprofiel bij",
@@ -687,7 +699,7 @@ I18n.translations.nl = {
             undefined: ""
         },
         yourself: "{{name}} (jijzelf dus)",
-        logo: "Organisation image", 
+        logo: "Organisation image",
         anotherAdmin: "We raden aan meerdere beheerders uit te nodigen.",
         deleteConfirmation: "Weet u zeker dat u deze organisatie wil verwijderen?",
         flash: {
@@ -1106,6 +1118,7 @@ I18n.translations.nl = {
         requester: "Aanvrager",
         decline: "Afwijzen",
         accept: "Accepteren",
+        approveConfirmation: "Weet je zeker dat je dit verzoek wilt goedkeuren?",
         declineConfirmation: "Weet je zeker dat je dit verzoek wilt afwijzen?",
         flash: {
             declined: "Dienst koppelverzoek voor {{name}} is afgewezen",

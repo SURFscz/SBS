@@ -83,6 +83,7 @@ I18n.translations.en = {
             serviceCollaborations: "Collaborations insights",
             collaborationRequests: "Coll requests",
             joinRequests: "Join requests",
+            serviceConnectionRequests: "Connection requests",
             me: "Profile",
             about: "About",
             apikeys: "API Keys",
@@ -172,6 +173,7 @@ I18n.translations.en = {
             new: "New Service",
             name: "Name",
             status: "Status",
+            connectionRequestCount: "Connection requests",
             organisationCount: "Used in organisations",
             collaborationCount: "Used in collaborations",
             titleAvailableColl: "Available for this collaboration ({{count}})",
@@ -343,6 +345,16 @@ I18n.translations.en = {
             edit: "Approve / decline",
             details: "Join request made by {{name}} on {{date}}"
         },
+        serviceConnectionRequests: {
+            backToServiceConnectionRequests: "Back to all connection requests",
+            title: "Outstanding connection requests",
+            searchPlaceHolder: "Search for connection requests...",
+            noEntities: "No service connection requests were found",
+            edit: "Approve / decline",
+            details: "Service connection request made by {{name}} on {{date}} for collaboration {{collaborationName}}",
+            requester: "Requester",
+            name: "Collaboration name"
+        }
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -1106,6 +1118,7 @@ I18n.translations.en = {
         requester: "Requester",
         decline: "Decline",
         accept: "Accept",
+        approveConfirmation: "Are you sure you want to approve this request?",
         declineConfirmation: "Are you sure you want to decline this request?",
         flash: {
             declined: "Service Connect request for service {{name}} was declined",
