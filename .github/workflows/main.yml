@@ -84,7 +84,7 @@ jobs:
           echo $HOME
           echo $PATH
 
-      Setup tmate session
+      # Setup tmate session
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
 
