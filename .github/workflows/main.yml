@@ -75,8 +75,8 @@ jobs:
           node-version: 12
 
       # Setup tmate session
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      #- name: Setup tmate session
+        #uses: mxschmitt/action-tmate@v3
 
       - name: Install dependencies
         shell: bash
@@ -84,6 +84,8 @@ jobs:
           rm -rf ~/.yarn
           curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.19.1
           export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+          echo $HOME
+          echo $PATH
           yarn -v
           nvm install v10.13.0
           nvm use v10.13.0
