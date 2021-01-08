@@ -79,6 +79,7 @@ jobs:
         uses: mxschmitt/action-tmate@v3
 
       - name: Install dependencies
+        shell: bash
         run: |
           rm -rf ~/.yarn
           curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.19.1
@@ -88,6 +89,7 @@ jobs:
           nvm use v10.13.0
 
       - name: Run tests
+        shell: bash
         run: |
           cd client
           yarn install
