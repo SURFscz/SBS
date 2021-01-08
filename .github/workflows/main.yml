@@ -41,8 +41,8 @@ jobs:
     steps:
 
       # Setup tmate session
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      #- name: Setup tmate session
+        #uses: mxschmitt/action-tmate@v3
 
       - name: Setup mysql server
         run: >
@@ -74,6 +74,10 @@ jobs:
       - name: Run tests
         run: |
           pytest --cov=server server/test
+
+      - name: The job has succeeded
+        run: codecov --token=${{ secrets.CODECOV_TOKEN }}
+        if: ${{ success() }}
 
   Client_build:
     name: Client build
