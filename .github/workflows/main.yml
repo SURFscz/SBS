@@ -46,7 +46,7 @@ jobs:
           mysql -uroot -proot -h127.0.0.1 -e "
             DROP DATABASE IF EXISTS sbs_test;
             CREATE DATABASE IF NOT EXISTS sbs_test;
-            CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
+            CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
             GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
           "
 
