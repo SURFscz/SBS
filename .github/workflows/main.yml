@@ -24,6 +24,11 @@ jobs:
       matrix:
         python-version: [3.5, 3.7, 3.8]
 
+    services:
+      # How to use MySQL
+      mysql:
+        image: mysql:5.7
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
