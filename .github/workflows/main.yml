@@ -39,6 +39,10 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
+      # Setup tmate session
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Setup mysql server
         run: >
           mysql -uroot -proot -h127.0.0.1 -e "
