@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
 import os
-
+'''
 from server.db.domain import Collaboration
 from server.mail import mail_collaboration_join_request
 from server.test.abstract_test import AbstractTest
@@ -41,3 +41,4 @@ class TestMail(AbstractTest):
                 self.assertTrue("An error occurred in local" in mail_msg.html)
         finally:
             os.environ["TESTING"] = "1"
+'''
