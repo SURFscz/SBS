@@ -322,9 +322,9 @@ I18n.translations.en = {
                 progress: "{{now}} of {{total}}",
                 login: "Login",
                 next: "Next: {{step}}",
+                aup: "Foobar",
                 invite: "Accept the invite",
-                collaborate: "Collaborate!",
-                aup: "Foobar"
+                collaborate: "Collaborate!"
             },
             login: "Please login to identify yourself",
             loginTip: "You can use your institution account to login, or use a guest account like eduID",

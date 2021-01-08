@@ -325,7 +325,6 @@ I18n.translations.nl = {
                 aup: "Accepteer onze AUP",
                 invite: "Accepteer de uitnodiging",
                 collaborate: "Samenwerken!",
-                aup: "Foobar"
             },
             login: "Log in om je te identificeren",
             loginTip: "Je kunt je instellingsaccount gebruiken om in te loggen, of een gastaccount gebruiken zoals eduID",
