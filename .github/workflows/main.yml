@@ -31,6 +31,10 @@ jobs:
       # How to use MySQL
       mysql:
         image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
