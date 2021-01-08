@@ -352,7 +352,7 @@ I18n.translations.en = {
             edit: "Approve / decline",
             details: "Service connection request made by {{name}} on {{date}} for collaboration {{collaborationName}}",
             requester: "Requester",
-            name: "Collaboration name"
+            name: "Collaboration"
         }
     },
     user: {
