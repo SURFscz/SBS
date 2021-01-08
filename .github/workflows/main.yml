@@ -16,6 +16,9 @@ on:
 jobs:
   # This workflow contains a single job called "Server flake8"
   Server_flake8:
+    name: Server flake8
+    if: always()
+
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -31,6 +34,15 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+
+      - name: Setup mysql server
+        run: >
+          mysql -uroot -e "
+            DROP DATABASE IF EXISTS sbs_test;
+            CREATE DATABASE IF NOT EXISTS sbs_test;
+            CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
+            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
+          "
 
       # Run Checkout code
       - name: Checkout
@@ -50,19 +62,14 @@ jobs:
           pip install -r ./server/requirements/test.txt
           pip install codecov
 
-      - name: Install mysql server
-        run: >
-          mysql -uroot -e "
-            DROP DATABASE IF EXISTS sbs_test;
-            CREATE DATABASE IF NOT EXISTS sbs_test;
-            CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
-            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
-          "
       - name: Run tests
         run: |
           pytest --cov=server server/test
 
   Client_build:
+    name: Client build
+    if: always()
+
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
