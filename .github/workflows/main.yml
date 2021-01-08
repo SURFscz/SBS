@@ -77,20 +77,19 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
+          source ~/.nvm/nvm.sh
           rm -rf ~/.yarn
           curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.19.1
           export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
           yarn -v
+          nvm install v10.13.0
+          nvm use v10.13.0
+        env:
+          VNM_DIR: ~/.nvm
 
       # Setup tmate session
       #- name: Setup tmate session
         #uses: mxschmitt/action-tmate@v3
-
-      - name: Install dependencies (contd)
-        shell: bash
-        run: |
-          nvm install v10.13.0
-          nvm use v10.13.0
 
       - name: Run tests
         shell: bash
@@ -101,3 +100,4 @@ jobs:
           yarn build
         env:
           CI: true
+          VNM_DIR: ~/.nvm
