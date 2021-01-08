@@ -353,7 +353,7 @@ I18n.translations.nl = {
             edit: "Goed- / afkeuren",
             details: "Dienst koppelverzoek gemaakt door {{name}} op {{date}} voor samenwerking {{collaborationName}}",
             requester: "Aanvrager",
-            name: "Naam samenwerking"
+            name: "Samenwerking"
         }
     },
     user: {
