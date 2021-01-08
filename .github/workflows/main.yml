@@ -74,10 +74,6 @@ jobs:
         with:
           node-version: 12
 
-      # Setup tmate session
-      #- name: Setup tmate session
-        #uses: mxschmitt/action-tmate@v3
-
       - name: Install dependencies
         shell: bash
         run: |
@@ -87,6 +83,14 @@ jobs:
           yarn -v
           echo $HOME
           echo $PATH
+
+      Setup tmate session
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
+      - name: Install dependencies (contd)
+        shell: bash
+        run: |
           which nvm
           nvm install v10.13.0
           nvm use v10.13.0
