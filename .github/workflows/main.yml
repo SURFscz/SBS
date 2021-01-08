@@ -47,7 +47,7 @@ jobs:
             DROP DATABASE IF EXISTS sbs_test;
             CREATE DATABASE IF NOT EXISTS sbs_test;
             CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
-            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
+            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
           "
 
       # Run Checkout code
