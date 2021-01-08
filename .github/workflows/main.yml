@@ -74,6 +74,10 @@ jobs:
         with:
           node-version: 12
 
+        # Setup tmate session
+        - name: Setup tmate session
+          uses: mxschmitt/action-tmate@v3
+
       - name: Install dependencies
         run: |
           rm -rf ~/.yarn
