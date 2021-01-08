@@ -37,7 +37,7 @@ jobs:
 
       - name: Setup mysql server
         run: >
-          mysql -uroot -e "
+          mysql -uroot -proot -hlocalhost -e "
             DROP DATABASE IF EXISTS sbs_test;
             CREATE DATABASE IF NOT EXISTS sbs_test;
             CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
