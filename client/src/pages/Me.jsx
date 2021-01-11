@@ -117,7 +117,7 @@ class Me extends React.Component {
     renderForm = (user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit) => {
         // const attributes = ["name", "email", "created_at", "username", , "uid", "eduperson_principal_name",
         //     "affiliation", "scoped_affiliation", "entitlement", "schac_home_organisation", "edu_members"];
-        const attributes = ["name", "email", "created_at"];
+        const attributes = ["name", "email", "username", "created_at"];
         const createdAt = user.created_at;
         const d = new Date(0);
         d.setUTCSeconds(createdAt);

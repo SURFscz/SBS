@@ -7,8 +7,16 @@ import {ReactComponent as PersonIcon} from "../icons/personal_info.svg";
 
 import UnitHeader from "../components/redesign/UnitHeader";
 import Me from "./Me";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class Profile extends React.Component {
+
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            loading: true
+        }
+    }
 
     componentDidMount = () => {
         health().then(() => {
@@ -19,10 +27,16 @@ class Profile extends React.Component {
                     {path: "", value: user.name}
                 ];
             });
+            this.setState({loading: false});
         })
     };
 
     render() {
+        const {loading} = this.state;
+        if (loading) {
+            return <SpinnerField/>
+        }
+
         const {user} = this.props;
         return (
             <div className="mod-user-profile">
