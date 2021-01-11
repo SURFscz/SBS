@@ -15,8 +15,8 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "Server flake8"
-  Server_flake8:
-    name: Server flake8
+  Server_tests:
+    name: Server tests
     if: always()
 
     # The type of runner that the job will run on
