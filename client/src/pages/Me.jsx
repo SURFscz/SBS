@@ -117,11 +117,12 @@ class Me extends React.Component {
     renderForm = (user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit) => {
         // const attributes = ["name", "email", "created_at", "username", , "uid", "eduperson_principal_name",
         //     "affiliation", "scoped_affiliation", "entitlement", "schac_home_organisation", "edu_members"];
-        const attributes = ["name", "email", "username", "created_at"];
         const createdAt = user.created_at;
         const d = new Date(0);
         d.setUTCSeconds(createdAt);
-        const values = {"created_at": d.toUTCString()}
+        const values = {"created_at": d.toUTCString()};
+        const attributes = ["name", "email", "username", "schac_home_organisation", "created_at"]
+            .filter(attr => values[attr] || user[attr]);
         return (
             <div className="user-profile-tab-container">
                 <div className="user-profile-tab">
