@@ -33,46 +33,53 @@ class ServiceDetail extends React.Component {
     componentDidMount = () => {
         const params = this.props.match.params;
         if (params.id) {
-            Promise.all([serviceById(params.id), searchOrganisations("*"),
-                allServiceConnectionRequests(params.id)])
-                .then(res => {
-                    const {user} = this.props;
-                    const service = res[0];
-                    const organisations = res[1];
-                    const serviceConnectionRequests = res[2];
-                    const tab = params.tab || this.state.tab;
-                    const tabs = user.admin ? [
-                        this.getOrganisationsTab(service, organisations),
-                        this.getCollaborationsTab(service),
-                        this.getServiceConnectionRequest(service, serviceConnectionRequests)
-                    ] : [];
-                    AppStore.update(s => {
-                        s.breadcrumb.paths = [
-                            {path: "/", value: I18n.t("breadcrumb.home")},
-                            {
-                                path: `/services/${service.id}`,
-                                value: I18n.t("breadcrumb.service", {name: service.name})
-                            },
+            const {user} = this.props;
+            if (user.admin) {
+                Promise.all([serviceById(params.id), searchOrganisations("*"),
+                    allServiceConnectionRequests(params.id)])
+                    .then(res => {
+                        const service = res[0];
+                        const organisations = res[1];
+                        const serviceConnectionRequests = res[2];
+                        const tabs = [
+                            this.getOrganisationsTab(service, organisations),
+                            this.getCollaborationsTab(service),
+                            this.getServiceConnectionRequest(service, serviceConnectionRequests)
                         ];
-                    });
-                    this.tabChanged(tab, service.id);
-                    this.setState({
-                        service: service,
-                        organisations: organisations,
-                        serviceConnectionRequests: serviceConnectionRequests,
-                        tab: tab,
-                        tabs: tabs,
-                        loading: false
-                    });
-
-                })
-                .catch(e => {
-                    this.props.history.push("/404")
-                });
+                        this.afterFetch(params, service, organisations, serviceConnectionRequests, tabs);
+                    }).catch(e => this.props.history.push("/404"));
+            } else {
+                serviceById(params.id)
+                    .then(res => {
+                        this.afterFetch(params, res, [], [], []);
+                    }).catch(e => this.props.history.push("/404"));
+            }
         } else {
             this.props.history.push("/404");
         }
     };
+
+    afterFetch = (params, service, organisations, serviceConnectionRequests, tabs) => {
+        const tab = params.tab || this.state.tab;
+        AppStore.update(s => {
+            s.breadcrumb.paths = [
+                {path: "/", value: I18n.t("breadcrumb.home")},
+                {
+                    path: `/services/${service.id}`,
+                    value: I18n.t("breadcrumb.service", {name: service.name})
+                },
+            ];
+        });
+        this.tabChanged(tab, service.id);
+        this.setState({
+            service: service,
+            organisations: organisations,
+            serviceConnectionRequests: serviceConnectionRequests,
+            tab: tab,
+            tabs: tabs,
+            loading: false
+        });
+    }
 
     refresh = callback => {
         const params = this.props.match.params;
@@ -80,19 +87,19 @@ class ServiceDetail extends React.Component {
         this.setState({loading: true});
         Promise.all([serviceById(params.id), allServiceConnectionRequests(params.id)])
             .then(res => {
-            const service = res[0];
-            const serviceConnectionRequests = res[1];
-            const tabs = [
-                this.getOrganisationsTab(service, organisations),
-                this.getCollaborationsTab(service),
-                this.getServiceConnectionRequest(service, serviceConnectionRequests)            ];
-            this.setState({
-                service: service,
-                serviceConnectionRequests: serviceConnectionRequests,
-                tabs: tabs,
-                loading: false
-            }, callback);
-        }).catch(e => {
+                const service = res[0];
+                const serviceConnectionRequests = res[1];
+                const tabs = [
+                    this.getOrganisationsTab(service, organisations),
+                    this.getCollaborationsTab(service),
+                    this.getServiceConnectionRequest(service, serviceConnectionRequests)];
+                this.setState({
+                    service: service,
+                    serviceConnectionRequests: serviceConnectionRequests,
+                    tabs: tabs,
+                    loading: false
+                }, callback);
+            }).catch(e => {
             this.props.history.push("/404")
         });
     };
@@ -127,7 +134,7 @@ class ServiceDetail extends React.Component {
         return (
             <div key="serviceConnectionRequests" name="serviceConnectionRequests"
                  label={I18n.t("home.tabs.serviceConnectionRequests")} icon={<ServiceConnectionRequestsIcon/>}
-                notifier={nbr > 0 ? nbr : null}>
+                 notifier={nbr > 0 ? nbr : null}>
                 <ServiceConnectionRequests
                     service={service}
                     refresh={this.refresh}

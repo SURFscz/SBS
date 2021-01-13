@@ -55,7 +55,7 @@ def _user_query():
 def _user_json_response(user):
     is_admin = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
-    return {**json_user, **is_admin,}, 200
+    return {**json_user, **is_admin, }, 200
 
 
 def _get_authorization_url(state=None):
