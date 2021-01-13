@@ -15,13 +15,6 @@ class TestOrganisation(AbstractTest):
         res = self.get("/api/organisations/search", query_data={"q": "*"})
         self.assertTrue(len(res) > 0)
 
-    def test_search_allowed(self):
-        self.login("urn:john")
-        organisations = self.get("/api/organisations/search", query_data={"q": "urba"}, with_basic_auth=False,
-                                 headers={"X-IMPERSONATE-ID": 1, "X-IMPERSONATE-UID": "urn:mary",
-                                          "X-IMPERSONATE-NAME": "mary", "X-IMPERSONATE-EMAIL": "email"})
-        self.assertEqual(1, len(organisations))
-
     def test_search_not_allowed(self):
         self.get("/api/organisations/search", query_data={"q": "urba"}, with_basic_auth=False, response_status_code=401)
 

@@ -10,7 +10,7 @@ from sqlalchemy.orm import selectinload
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_organisation_admin, confirm_read_access
+    confirm_organisation_admin
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
@@ -74,7 +74,7 @@ def organisation_all():
 @organisation_api.route("/search", strict_slashes=False)
 @json_endpoint
 def organisation_search():
-    confirm_read_access(override_func=lambda: True)
+    confirm_write_access()
 
     res = []
     q = query_param("q")
