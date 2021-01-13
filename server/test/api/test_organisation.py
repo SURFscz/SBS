@@ -41,6 +41,12 @@ class TestOrganisation(AbstractTest):
                        with_basic_auth=False)
         self.assertEqual("University of Groningen", res["display_name"])
 
+    def test_identity_provider_display_name_no_schac_home(self):
+        self.login("urn:harry")
+        res = self.get("/api/organisations/identity_provider_display_name",
+                       with_basic_auth=False)
+        self.assertIsNone(res)
+
     def test_organisations_by_schac_home_organisation(self):
         self.login("urn:roger", schac_home_organisation)
         organisation = self.get("/api/organisations/find_by_schac_home_organisation",
@@ -118,6 +124,17 @@ class TestOrganisation(AbstractTest):
             self.assertTrue("changed" in collaboration.global_urn)
             for group in collaboration.groups:
                 self.assertTrue("changed" in group.global_urn)
+
+    def test_organisation_update_schac_home(self):
+        self.login()
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
+        organisation["schac_home_organisations"] = [{"name": "rug.nl"}]
+        self.put("/api/organisations", body=organisation)
+
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        self.assertEqual(1, len(organisation.schac_home_organisations))
+        self.assertEqual("rug.nl", organisation.schac_home_organisations[0].name)
 
     def test_organisation_forbidden(self):
         self.login("urn:peter")

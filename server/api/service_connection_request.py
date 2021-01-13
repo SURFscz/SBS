@@ -97,25 +97,23 @@ def request_service_connection():
     db.session.merge(service_connection_request)
     db.session.commit()
 
-    _do_mail_request(collaboration, service, service_connection_request, is_admin)
-
-    return {}, 201
-
-
-def _do_mail_request(collaboration, service, service_connection_request, is_admin):
-    if service.contact_email:
+    recipients = []
+    if is_admin and service.contact_email:
+        recipients.append(service.contact_email)
+    else:
+        for membership in collaboration.collaboration_memberships:
+            if membership.role == "admin":
+                recipients.append(membership.user.email)
+    if len(recipients) > 0:
         context = {"salutation": f"Dear {service.contact_email}",
                    "base_url": current_app.app_config.base_url,
                    "requester": current_user_name(),
                    "service_connection_request": service_connection_request,
                    "service": service,
                    "collaboration": collaboration}
-        recipients = []
-        for membership in collaboration.collaboration_memberships:
-            if membership.role == "admin":
-                recipients.append(membership.user.email)
-        recipients = recipients if is_admin else [service.contact_email]
         mail_service_connection_request(context, service.name, collaboration.name, recipients, is_admin)
+
+    return {}, 201
 
 
 @service_connection_request_api.route("/find_by_hash/<hash>", strict_slashes=False)

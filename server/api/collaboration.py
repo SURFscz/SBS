@@ -341,11 +341,10 @@ def save_restricted_collaboration():
 
     data = current_request.get_json()
     administrator = data["administrator"]
-    admins = User.query.filter(User.username == administrator).all()
-    if len(admins) == 0:
+    admin = User.query.filter(User.username == administrator).first()
+    if not admin:
         raise BadRequest(f"Administrator {administrator} is not a valid user")
 
-    admin = admins[0]
     restricted_co_config = current_app.app_config.restricted_co
 
     organisation = None
@@ -376,9 +375,9 @@ def save_restricted_collaboration():
     connected_services = data.get("connected_services")
 
     res = do_save_collaboration(data, organisation, admin, current_user_admin=True)
+    collaboration = res[0]
 
     if connected_services:
-        collaboration = res[0]
         applied_connected_services = []
         services = Service.query.filter(Service.entity_id.in_(connected_services)).all()
         for service in services:

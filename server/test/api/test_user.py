@@ -60,6 +60,9 @@ class TestUser(AbstractTest):
         collaboration_id = Collaboration.query.filter(Collaboration.name == uva_research_name).one().id
         self.do_test_activate("urn:sarah", {"collaboration_id": collaboration_id})
 
+    def test_activate_by_platform_admin(self):
+        self.do_test_activate("urn:john", {})
+
     def do_test_activate(self, login_urn, object_dict):
         user = User.query.filter(User.name == "suspended").one()
         self.assertEqual(True, user.suspended)

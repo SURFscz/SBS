@@ -2,7 +2,7 @@
 from server.db.domain import Service, Organisation, Collaboration
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name, \
-    service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name
+    service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name, service_storage_name
 
 
 class TestService(AbstractTest):
@@ -19,6 +19,11 @@ class TestService(AbstractTest):
     def test_find_by_id_access_allowed(self):
         service = self.find_entity_by_name(Service, service_mail_name)
         self.login("urn:sarah")
+        self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
+
+    def test_find_by_id_access_allowed_through_collaboration_membership(self):
+        service = self.find_entity_by_name(Service, service_storage_name)
+        self.login("urn:roger")
         self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
 
     def test_find_by_id_access_allowed_through_organisation_collaboration_memberships(self):
