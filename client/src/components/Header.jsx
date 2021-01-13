@@ -46,7 +46,7 @@ export default class Header extends React.PureComponent {
     impersonate = () => {
         //Need to ensure the API call is done with the impersonated user
         setTimeout(() => organisationByUserSchacHomeOrganisation()
-            .then(res => this.setState({organisation: res})), 750);
+            .then(res => this.setState({organisation: res})), 1500);
     }
 
 
