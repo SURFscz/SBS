@@ -322,7 +322,6 @@ I18n.translations.nl = {
                 progress: "{{now}} van {{total}}",
                 login: "Inloggen",
                 next: "Volgende: {{step}}",
-                aup: "Accepteer onze AUP",
                 invite: "Accepteer de uitnodiging",
                 collaborate: "Samenwerken!"
             },
@@ -1184,7 +1183,14 @@ I18n.translations.nl = {
         subTitleAlreadyLinked: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina geredirect om één van je samenwerkingen met deze service te koppelen. Je hebt echter al toegang tot deze dienst. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
         titleLinkNotAllowed: "Dienst {{name}} kan niet worden gekoppeld aan je samenwerkingen",
         subTitleLinkNotAllowed: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina geredirect om één van je samenwerkingen te koppelen. Geen van je samenwerkingen kan echter aan deze dienst worden gekoppeld. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
-        noCollaborations: "Je bent geen lid van een samenwerking. Om dienst <strong>{{name}}</strong> te gebruiken, moet je lid zijn van ten minste één samenwerking.<br/><br/>Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
+        titleNoAutomaticConnection: "Dienst {{name}} kan niet worden gekoppeld aan je samenwerkingen",
+        subTitleNoAutomaticConnection: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina geredirect om één van je samenwerkingen te koppelen. Alleen deze dienst ondersteunt geen automatische koppelingen. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
+        titleRedirectMismatch: "Dienst {{name}} kan niet worden gekoppeld aan je samenwerkingen",
+        subTitleRedirectMismatch: "De dienst <strong>{{name}}</strong> heeft je naar deze pagina geredirect om één van je samenwerkingen te koppelen. Alleen de redirect URI is niet valide.  Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
+        titleNoCollaborations: "Dienst {{name}} kan niet worden gekoppeld aan je samenwerkingen",
+        subTitleNoCollaborations: "Je bent geen lid van een samenwerking. Om dienst <strong>{{name}}</strong> te gebruiken, moet je lid zijn van ten minste één samenwerking. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
+        titleOutstandingServiceConnectionRequest: "Dienst {{name}} kan niet worden gekoppeld aan je samenwerkingen",
+        subTitleOutstandingServiceConnectionRequest: "Er zijn reeds openstaande verzoeken om deze dienst te koppelen aan al je samenwerkingen: {{details}}. Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
         collaboration: {
             name: "Naam",
             role: "Rol",
@@ -1205,8 +1211,7 @@ I18n.translations.nl = {
         result: {
             completed: "De dienst {{serviceName}} is nu beschikbaar voor je. Klik op de onderstaande link om naar deze dienst te gaan.",
             requested: "Toegang tot de dienst {{serviceName}} is aangevraagd. Totdat het verzoek is geaccepteerd, heb je geen toegang tot deze dienst.",
-        },
-        outstandingServiceConnectionRequest: "Fout opgetreden. Er is al een openstaand serviceverbindingsverzoek voor {{details}}"
+        }
     },
     confirmation: {
         title: "Upgrade naar platform admin",

@@ -1183,7 +1183,14 @@ I18n.translations.en = {
         subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this Service. However you already have access to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         titleLinkNotAllowed: "Service {{name}} can not be linked to any of your collaborations",
         subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        noCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        titleNoAutomaticConnection: "Service {{name}} can not be linked to any of your collaborations",
+        subTitleNoAutomaticConnection: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However this service does not allow for automatic connections. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        titleRedirectMismatch: "Service {{name}} can not be linked to any of your collaborations",
+        subTitleRedirectMismatch: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However the provided redirect URI is not valid. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        titleNoCollaborations: "Service {{name}} can not be linked to any of your collaborations",
+        subTitleNoCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        titleOutstandingServiceConnectionRequest: "Service {{name}} can not be linked to any of your collaborations",
+        subTitleOutstandingServiceConnectionRequest: "There are already outstanding service connection request(s) for all of your collaborations: {{details}}. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         collaboration: {
             name: "Name",
             role: "Role",
@@ -1205,7 +1212,6 @@ I18n.translations.en = {
             completed: "The Service {{serviceName}} is now accessible for you. Click the button below to go to this service.",
             requested: "Access to Service {{serviceName}} has been requested. Until the request is granted you can not access this service.",
         },
-        outstandingServiceConnectionRequest: "Error occurred. There is already an outstanding service connection request for {{details}}"
     },
     confirmation: {
         title: "Upgrade to platform admin",

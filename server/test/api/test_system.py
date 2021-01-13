@@ -44,6 +44,11 @@ class TestSystem(AbstractTest):
         res = self.get("/api/audit_logs/activity")
         self.assertEqual(0, len(res["audit_logs"]))
 
+    def test_clear_audit_logs_forbidden(self):
+        self.app.app_config.feature.seed_allowed = 0
+        self.delete("/api/system/clear-audit-logs", response_status_code=400)
+        self.app.app_config.feature.seed_allowed = 1
+
     def test_feedback(self):
         mail = self.app.mail
         with mail.record_messages() as outbox:
@@ -52,3 +57,8 @@ class TestSystem(AbstractTest):
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertTrue("great" in mail_msg.html)
+
+    def test_feedback_forbidden(self):
+        self.app.app_config.feature.feedback_enabled = 0
+        self.post("/api/system/feedback", body={"message": "great\nawesome"}, response_status_code=400)
+        self.app.app_config.feature.feedback_enabled = 1
