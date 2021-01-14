@@ -118,8 +118,7 @@ class System extends React.Component {
             }
             return matchesParent || matchesUser || matchesName;
         });
-        const filteredAuditLogs = {...auditLogs, audit_logs: sub};
-        return filteredAuditLogs;
+        return {...auditLogs, audit_logs: sub};
     }
 
     getActivityTab = (filteredAuditLogs, limit, query, config) => {
