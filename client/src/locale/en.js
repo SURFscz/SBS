@@ -589,6 +589,7 @@ I18n.translations.en = {
         entity_idTooltip: "The unique entity ID of the Service<br/>links the Service in SRAM to<br/>the actual external Service Provider",
         service_request: "Service Request URL",
         service_requestTooltip: "The URL for a Service to request a connection<br/>between a Collaboration and this Service<br/>if the User does not have access to this Service",
+        service_requestError: "Requires a valid URI and Automatic connection allowed set to True",
         description: "Description",
         descriptionPlaceholder: "The description of the service",
         address: "Address",

@@ -299,8 +299,9 @@ class Service extends React.Component {
                         contact_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, logo) => {
-        const redirectUri = uri || entity_id || "https://redirectUri";
-        const serviceRequestUrl = `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(redirectUri)}`;
+        const serviceRequestUrlValid = !isEmpty(uri) && automatic_connection_allowed;
+        const serviceRequestUrl = serviceRequestUrlValid ? `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(uri)}` :
+            I18n.t("service.service_requestError");
         return (
             <div className="service">
 
