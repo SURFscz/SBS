@@ -589,6 +589,7 @@ I18n.translations.nl = {
         entity_idTooltip: "De unieke entity ID van de dienst<br/>koppelt de dienst in SRAM<br/>aan de daadwerkelijke externe dienstaanbieder",
         service_request: "Dienst Request URL",
         service_requestTooltip: "De URL van een dienst om een koppeling aan<br/>te vragen tussen een Samenwerking en deze Dienst<br/>als de Gebruiker geen toegang heeft<br/>tot deze Dienst",
+        service_requestError: "Vereist een valide URL en Automatische connectie toestaan moet aan staan",
         description: "Beschrijving",
         descriptionPlaceholder: "De beschrijving van de dienst",
         address: "Adres",
