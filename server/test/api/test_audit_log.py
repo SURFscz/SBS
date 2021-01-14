@@ -78,6 +78,9 @@ class TestAuditLog(AbstractTest):
         self.assertEqual(ACTION_DELETE, self.audit_log_by_target_type("invitations", res)[0]["action"])
         self.assertEqual(ACTION_CREATE, self.audit_log_by_target_type("collaboration_memberships", res)[0]["action"])
 
+        self.assertEqual(1, len(res["collaborations"]))
+        self.assertEqual("AI computing", res["collaborations"][0]["name"])
+
     def test_organisation(self):
         self.login("urn:sarah")
         self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
