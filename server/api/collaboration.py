@@ -424,6 +424,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
 
 
 def _validate_collaboration(data, organisation, new_collaboration=True):
+    cleanse_short_name(data)
     if _do_name_exists(data["name"], organisation.id,
                        existing_collaboration="" if new_collaboration else data["name"]):
         raise BadRequest(f"Collaboration with name '{data['name']}' already exists within "
@@ -432,7 +433,6 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
                              existing_collaboration="" if new_collaboration else data["short_name"]):
         raise BadRequest(f"Collaboration with short_name '{data['short_name']}' already exists within "
                          f"organisation '{organisation.name}'.")
-    cleanse_short_name(data)
     _assign_global_urn(data["organisation_id"], data)
 
 
