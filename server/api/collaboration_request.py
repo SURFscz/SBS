@@ -59,7 +59,6 @@ def request_collaboration():
     auto_create = organisation.collaboration_creation_allowed
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
     auto_aff = user.entitlement and entitlement in user.entitlement
-
     recipients = list(map(lambda membership: membership.user.email, organisation.organisation_memberships))
     if auto_create or auto_aff:
         collaboration = do_save_collaboration(data, organisation, user, current_user_admin=True)[0]

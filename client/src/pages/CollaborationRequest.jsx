@@ -85,7 +85,7 @@ class CollaborationRequest extends React.Component {
     }));
 
     validateCollaborationName = e =>
-        collaborationNameExists(e.target.value, this.state.collaborationRequest.organisation.value).then(json => {
+        collaborationNameExists(sanitizeShortName(e.target.value), this.state.collaborationRequest.organisation.value).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
