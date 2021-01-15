@@ -110,7 +110,7 @@ class OrganisationForm extends React.Component {
         });
 
     validateOrganisationShortName = e =>
-        organisationShortNameExists(e.target.value, this.existingOrganisationName("short_name")).then(json => {
+        organisationShortNameExists(sanitizeShortName(e.target.value), this.existingOrganisationName("short_name")).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
 

@@ -169,6 +169,8 @@ def organisation_by_schac_home():
                                      "name": org.name,
                                      "collaboration_creation_allowed": org.collaboration_creation_allowed,
                                      "collaboration_creation_allowed_entitlement": auto_aff,
+                                     "required_entitlement": entitlement,
+                                     "user_entitlement": user.entitlement,
                                      "on_boarding_msg": org.on_boarding_msg,
                                      "short_name": org.short_name}, 200
 

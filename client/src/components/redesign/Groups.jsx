@@ -122,7 +122,7 @@ class Groups extends React.Component {
         const {createNewGroup} = this.state;
         const selectedGroup = this.getSelectedGroup();
         const {collaboration} = this.props;
-        groupShortNameExists(e.target.value, collaboration.id, createNewGroup ? null : selectedGroup.short_name).then(json => {
+        groupShortNameExists(sanitizeShortName(e.target.value), collaboration.id, createNewGroup ? null : selectedGroup.short_name).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
     };

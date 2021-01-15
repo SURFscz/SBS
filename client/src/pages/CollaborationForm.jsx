@@ -168,7 +168,7 @@ class CollaborationForm extends React.Component {
             .then(json => this.setState({alreadyExists: {...this.state.alreadyExists, name: json}}));
 
     validateCollaborationShortName = e =>
-        collaborationShortNameExists(e.target.value, this.state.organisation.value, this.existingCollaborationName("short_name"))
+        collaborationShortNameExists(sanitizeShortName(e.target.value), this.state.organisation.value, this.existingCollaborationName("short_name"))
             .then(json => this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}}));
 
     cancel = () => {
