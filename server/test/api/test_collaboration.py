@@ -490,7 +490,7 @@ class TestCollaboration(AbstractTest):
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "administrators": ["the@ex.org"],
-                                        "short_name": ai_computing_short_name
+                                        "short_name": f"1{ai_computing_short_name}"
                                     }),
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
