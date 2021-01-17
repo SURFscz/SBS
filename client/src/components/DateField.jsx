@@ -9,13 +9,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./DateField.scss"
 import moment from "moment";
 
-export default class DateField extends React.PureComponent {
+export default class DateField extends React.Component {
 
     toggle = () => this.component.setOpen(true);
 
     validateOnBlur = e => {
+        const {onChange, maxDate = null, minDate = null} = this.props;
         if (e && e.target) {
-            const {onChange, maxDate = null, minDate = null} = this.props;
             const minimalDate = minDate || moment().add(1, "day").toDate();
             const maximalDate = maxDate || moment().add(31, "day").toDate();
             const value = e.target.value;
@@ -36,14 +36,16 @@ export default class DateField extends React.PureComponent {
             onChange, name, value, disabled = false, maxDate = null, minDate = null, toolTip = null
         } = this.props;
         const minimalDate = minDate || moment().add(1, "day").endOf("day").toDate();
-        return (<div className="date-field">
-                <label className="date-field-label" htmlFor={name}>{name} {toolTip &&
-                <span className="tool-tip-section">
-                <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
-                <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                    <p dangerouslySetInnerHTML={{__html: toolTip}}/>
-                </ReactTooltip>
-            </span>}
+        return (
+            <div className="date-field">
+                <label className="date-field-label" htmlFor={name}>{name}
+                    {toolTip &&
+                    <span className="tool-tip-section">
+                        <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
+                        <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
+                            <p dangerouslySetInnerHTML={{__html: toolTip}}/>
+                        </ReactTooltip>
+                    </span>}
                 </label>
                 <label className={"date-picker-container"} htmlFor={name}>
                     <DatePicker
