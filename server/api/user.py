@@ -213,10 +213,13 @@ def resume_session():
         logger.error(error_msg)
         return redirect(f"{current_app.app_config.base_url}/error")
 
+    logger = ctx_logger("user")
     user_info_json = response.json()
+
+    logger.debug(f"Userinfo endpoint results {user_info_json}")
+
     uid = user_info_json["sub"]
     user = User.query.filter(User.uid == uid).first()
-    logger = ctx_logger("user")
     if not user:
         user = User(uid=uid, created_by="system", updated_by="system")
         add_user_claims(user_info_json, uid, user)

@@ -19,7 +19,9 @@ function validateResponse(showErrorDialog) {
             }
             const error = new Error(res.statusText);
             error.response = res;
-
+            if (showErrorDialog && res.status === 401) {
+                window.location.reload(true);
+            }
             if (showErrorDialog) {
                 setTimeout(() => {
                     throw error;
