@@ -393,6 +393,7 @@ class OrganisationForm extends React.Component {
                             name={"collaboration_creation_allowed"}
                             disabled={isEmpty(schac_home_organisations)}
                             value={collaboration_creation_allowed}
+                            tooltipOnHover={true}
                             tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
                             onChange={val => this.setState({collaboration_creation_allowed: val})}/>
 

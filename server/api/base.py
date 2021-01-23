@@ -135,8 +135,6 @@ def json_endpoint(f):
             elif isinstance(e, ValidationError):
                 response.status_code = 400
             _add_custom_header(response)
-            if response.status_code == 401:
-                response.headers.set("WWW-Authenticate", "Basic realm=\"Please login\"")
             db.session.rollback()
             mail_conf = current_app.app_config.mail
             if mail_conf.send_exceptions and not os.environ.get("TESTING"):

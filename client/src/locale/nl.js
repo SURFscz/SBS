@@ -670,7 +670,7 @@ I18n.translations.nl = {
         schacHomeOrganisationPlaceholder: "De Schac Home Organisation van de organisatie",
         schacHomeOrganisationTooltip: "De home organisatie van een persoon<br/>gebaseerd op de domein naam van de instelling (b.v. uva.nl).",
         collaborationCreationAllowed: "Aanvragen voor nieuwe CO automatisch goedkeuren?",
-        collaborationCreationAllowedTooltip: "Iedereen kan <br/> collaboraties voor zijn instelling <br/> aanmaken.",
+        collaborationCreationAllowedTooltip: "Iedereen kan <br/> collaboraties voor zijn instelling<br/>aanmaken.<br/><br/>Hiervoor is een SchacHome vereist.",
         created: "Aangemaakt op",
         message: "Bericht",
         messagePlaceholder: "Bericht voor de beheerders",
