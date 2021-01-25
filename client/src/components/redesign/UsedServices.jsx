@@ -1,9 +1,9 @@
 import React from "react";
 import {
     addCollaborationServices,
-    allServices,
+    allServices, approveServiceConnectionRequestByHash,
     deleteCollaborationServices,
-    deleteServiceConnectionRequest,
+    deleteServiceConnectionRequest, denyServiceConnectionRequestByHash,
     requestServiceConnection
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
@@ -21,6 +21,7 @@ import ServicesExplanation from "../explanations/Services";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
 import MissingServices from "../MissingServices";
+import moment from "moment";
 
 class UsedServices extends React.Component {
 
@@ -29,6 +30,7 @@ class UsedServices extends React.Component {
         this.state = {
             services: [],
             requestConnectionService: null,
+            selectedServiceConnectionRequestId: null,
             message: "",
             loading: true,
             confirmationDialogOpen: false,
@@ -46,15 +48,22 @@ class UsedServices extends React.Component {
         const {collaboration} = this.props;
         allServices().then(json => {
             const services = json;
+            const requestedServices = collaboration.service_connection_requests
+                .filter(r => !r.is_member_request)
+                .map(r => r.service);
+            const memberRequestedServices = collaboration.service_connection_requests
+                .filter(r => r.is_member_request)
+                .map(r => r.service);
             const servicesInUse = collaboration.services
                 .concat(collaboration.organisation.services)
-                .concat(collaboration.service_connection_requests.map(r => r.service))
+                .concat(requestedServices)
+                .concat(memberRequestedServices)
                 .map(e => e.id);
 
             const filteredServices = services
                 .filter(service => {
-                    return service.allowed_organisations.some(org => org.id === collaboration.organisation_id) &&
-                        servicesInUse.indexOf(service.id) === -1;
+                    return service.allowed_organisations.some(org => org.id === collaboration.organisation_id)
+                        && servicesInUse.indexOf(service.id) === -1;
                 });
             this.setState({services: filteredServices, loading: false});
         });
@@ -75,6 +84,8 @@ class UsedServices extends React.Component {
         if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
             service.status = I18n.t("models.services.requiredByOrganisation");
+        } else if (service.connectionRequest && service.isMemberRequest) {
+            service.status = I18n.t("models.services.memberServiceRequest");
         } else if (service.usedService) {
             service.status = service.connectionRequest ? I18n.t("models.services.awaitingApproval") : ""
         } else {
@@ -140,6 +151,33 @@ class UsedServices extends React.Component {
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
 
+    getSelectedServiceConnectionRequest = () => {
+        const {selectedServiceConnectionRequestId} = this.state;
+        const {collaboration} = this.props;
+        return collaboration.service_connection_requests.find(r => r.id === selectedServiceConnectionRequestId);
+    }
+
+    approveServiceConnectionRequest = () => {
+        const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
+        this.confirm(() => {
+            this.refreshAndFlash(approveServiceConnectionRequestByHash(serviceConnectionRequest.hash),
+                I18n.t("serviceConnectionRequest.flash.accepted", {
+                    name: serviceConnectionRequest.service.name
+                }), () => this.componentDidMount())
+        }, I18n.t("serviceConnectionRequest.approveConfirmation"), false);
+
+    };
+
+    denyServiceConnectionRequest = () => {
+        const serviceConnectionRequest = this.getSelectedServiceConnectionRequest();
+        this.confirm(() => {
+            this.refreshAndFlash(denyServiceConnectionRequestByHash(serviceConnectionRequest.hash),
+                I18n.t("serviceConnectionRequest.flash.denied", {
+                    name: serviceConnectionRequest.service.name
+                }), () => this.componentDidMount())
+        }, I18n.t("serviceConnectionRequest.declineConfirmation"), true);
+    };
+
     removeServiceConnectionRequest = (service, collaboration) => {
         const action = () => this.refreshAndFlash(deleteServiceConnectionRequest(service.id),
             I18n.t("collaborationServices.serviceConnectionRequestDeleted", {
@@ -147,6 +185,11 @@ class UsedServices extends React.Component {
                 collaboration: collaboration.name
             }), this.closeConfirmationDialog);
         this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestDeleteConfirmation"), true);
+    };
+
+    openServiceConnectionRequest = serviceConnectionRequest => e => {
+        stopEvent(e);
+        this.setState({selectedServiceConnectionRequestId: serviceConnectionRequest.id});
     };
 
     confirm = (action, question, warning = false, confirmationChildren = false, disabledConfirm = false) => {
@@ -160,12 +203,60 @@ class UsedServices extends React.Component {
         });
     };
 
+    renderServiceConnectionRequest = serviceConnectionRequest => {
+        const {
+            confirmationDialogOpen,
+            cancelDialogAction,
+            confirmationDialogAction,
+            confirmationDialogQuestion,
+            warning
+        } = this.state;
+        const {collaboration} = this.props;
+        return (
+            <div className="request-connection-service">
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    isWarning={warning}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationDialogQuestion}/>
+                <a href="/services" className={"back-to-services"} onClick={this.cancelRequestConnectionService}>
+                    <ChevronLeft/>{I18n.t("models.services.backToServices")}
+                </a>
+                <div className={"request-connection-service-form"}>
+                    <h2>{I18n.t("models.serviceConnectionRequests.details",
+                        {
+                            date: moment(serviceConnectionRequest.created_at * 1000).format("LL"),
+                            name: serviceConnectionRequest.requester.name,
+                            collaborationName: collaboration.name
+                        })}</h2>
+
+                    <InputField name={I18n.t("serviceConnectionRequest.message")}
+                                value={serviceConnectionRequest.message}
+                                disabled={true}
+                                multiline={true}
+                                toolTip={I18n.t("serviceConnectionRequest.messageTooltip", {name: serviceConnectionRequest.requester.name})}/>
+
+                    <section className="actions">
+                        <Button cancelButton={true} txt={I18n.t("serviceConnectionRequest.decline")}
+                                onClick={this.denyServiceConnectionRequest}/>
+                        <Button txt={I18n.t("serviceConnectionRequest.accept")}
+                                onClick={this.approveServiceConnectionRequest}/>
+                    </section>
+                </div>
+            </div>)
+
+    }
 
     getServiceAction = service => {
         const {collaboration} = this.props;
         if (service.usedService && !service.connectionRequest &&
             collaboration.organisation.services.some(s => s.id === service.id)) {
             return null;
+        }
+        if (service.connectionRequest && service.isMemberRequest) {
+            return <Button className={"white"}
+                           onClick={this.openServiceConnectionRequest(service)}
+                           txt={I18n.t("forms.open")}/>
         }
         if (service.usedService && service.connectionRequest) {
             return <Button className={"white"}
@@ -176,7 +267,6 @@ class UsedServices extends React.Component {
             return <Button className={"white"}
                            onClick={() => this.unlinkService(service, collaboration)}
                            txt={I18n.t("models.services.removeFromCO")}/>
-
         }
         if (!service.usedService && service.automatic_connection_allowed) {
             return <Button className={"white"}
@@ -194,7 +284,7 @@ class UsedServices extends React.Component {
 
     cancelRequestConnectionService = e => {
         stopEvent(e);
-        this.setState({requestConnectionService: null, message: ""});
+        this.setState({requestConnectionService: null, selectedServiceConnectionRequestId: null, message: ""});
     }
 
     renderRequestConnectionService = (requestConnectionService, message) => {
@@ -218,7 +308,6 @@ class UsedServices extends React.Component {
                         <Button disabled={isEmpty(message)} txt={I18n.t("collaborationServices.send")}
                                 onClick={this.serviceConnectionRequest}/>
                     </section>
-
                 </div>
             </div>);
     }
@@ -246,17 +335,32 @@ class UsedServices extends React.Component {
         if (requestConnectionService) {
             return this.renderRequestConnectionService(requestConnectionService, message);
         }
+        const selectedServiceConnectionRequest = this.getSelectedServiceConnectionRequest();
+        if (selectedServiceConnectionRequest) {
+            return this.renderServiceConnectionRequest(selectedServiceConnectionRequest);
+        }
+
         const {collaboration} = this.props;
         let usedServices = collaboration.services.concat(collaboration.organisation.services);
         usedServices = removeDuplicates(usedServices, "id");
-        const serviceConnectionRequests = collaboration.service_connection_requests;
+        const serviceConnectionRequests = collaboration.service_connection_requests.filter(r => !r.is_member_request);
         serviceConnectionRequests.forEach(req => {
             req.connectionRequest = true;
+            req.isMemberRequest = false;
             req.name = req.service.name;
         });
         usedServices = usedServices.concat(serviceConnectionRequests);
-
         usedServices.forEach(s => s.usedService = true);
+
+        const requestedServices = collaboration.service_connection_requests
+            .filter(r => r.is_member_request)
+            .map(req => {
+                req.connectionRequest = true;
+                req.isMemberRequest = true;
+                req.name = req.service.name;
+                return req;
+            });
+
         const columns = [
             {
                 nonSortable: true,
@@ -283,6 +387,7 @@ class UsedServices extends React.Component {
                 mapper: this.getServiceAction
             }]
         const titleUsed = I18n.t("models.services.titleUsedColl", {count: usedServices.length});
+        const titleRequested = I18n.t("models.services.titleRequestedColl", {count: requestedServices.length});
         const titleAvailable = I18n.t("models.services.titleAvailableColl", {count: services.length});
         return (
             <div>
@@ -305,13 +410,21 @@ class UsedServices extends React.Component {
                           explain={<ServicesExplanation/>}
                           explainTitle={I18n.t("explain.services")}
                           {...this.props}/>
+                {!isEmpty(requestedServices) && <Entities entities={requestedServices}
+                                                          modelName="servicesRequested"
+                                                          searchAttributes={["name"]}
+                                                          defaultSort="name"
+                                                          columns={columns}
+                                                          loading={loading}
+                                                          title={titleRequested}
+                                                          {...this.props}/>}
                 <Entities entities={services}
                           modelName="servicesAvailable"
                           searchAttributes={["name"]}
                           defaultSort="name"
                           columns={columns}
-                          loading={loading} t
-                          itle={titleAvailable}
+                          loading={loading}
+                          title={titleAvailable}
                           {...this.props}/>
                 <MissingServices nbrServices={usedServices.length + services.length}/>
             </div>

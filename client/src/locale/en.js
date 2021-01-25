@@ -177,12 +177,14 @@ I18n.translations.en = {
             organisationCount: "Used in organisations",
             collaborationCount: "Used in collaborations",
             titleAvailableColl: "Available for this collaboration ({{count}})",
+            titleRequestedColl: "Requested by members for this collaboration ({{count}})",
             titleAvailableOrg: "Available for this organisation ({{count}})",
             titleUsedColl: "Used by this collaboration ({{count}})",
             titleUsedOrg: "Enabled by this organisation ({{count}})",
             awaitingApproval: "Connection awaiting approval",
             automaticConnectionAllowed: "Automatic connection allowed",
             requiredByOrganisation: "Enabled by organisation",
+            memberServiceRequest: "Member service connection request",
             removeFromCO: "Remove from CO",
             deleteConnectionRequest: "Delete connection request",
             addToCO: "Add to CO",
@@ -256,6 +258,9 @@ I18n.translations.en = {
         servicesUsed: {
             searchPlaceHolder: "Search for services...",
             noEntities: "No services are being used"
+        },
+        servicesRequested: {
+            searchPlaceHolder: "Search for services..."
         },
         groups: {
             backToGroups: "Back to all groups",
