@@ -267,6 +267,7 @@ class TestUser(AbstractTest):
             del os.environ["TESTING"]
             mail = self.app.mail
             with mail.record_messages() as outbox:
+                self.app.app_config.mail.send_js_exceptions = True
                 self.login("urn:sarah")
                 self.post("/api/users/error", body={"weird": "msg"}, response_status_code=201)
                 self.assertEqual(1, len(outbox))
@@ -275,3 +276,4 @@ class TestUser(AbstractTest):
                 self.assertTrue("An error occurred in local" in mail_msg.html)
         finally:
             os.environ["TESTING"] = "1"
+            self.app.app_config.mail.send_js_exceptions = False

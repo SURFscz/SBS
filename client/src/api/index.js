@@ -98,7 +98,7 @@ export function me(config) {
         // sub = "urn:james";
         // sub = "urn:betty";
         //  sub = "urn:jane";
-         // sub = "urn:admin";
+         //sub = "urn:admin";
         // sub = "urn:suspended";
         //Need to mock a login
         return postPutJson("/api/mock", {sub, "email": "john@example.com"}, "PUT")

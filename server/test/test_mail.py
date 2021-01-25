@@ -30,6 +30,7 @@ class TestMail(AbstractTest):
     def test_send_error_mail(self):
         try:
             del os.environ["TESTING"]
+            self.app.app_config.mail.send_exceptions = True
             mail = self.app.mail
             with mail.record_messages() as outbox:
                 self.login("urn:mary")
@@ -41,3 +42,4 @@ class TestMail(AbstractTest):
                 self.assertTrue("An error occurred in local" in mail_msg.html)
         finally:
             os.environ["TESTING"] = "1"
+            self.app.app_config.mail.send_exceptions = False

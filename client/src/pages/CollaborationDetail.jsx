@@ -266,7 +266,11 @@ class CollaborationDetail extends React.Component {
     }
 
     getServicesTab = collaboration => {
-        return (<div key="services" name="services" label={I18n.t("home.tabs.coServices")} icon={<ServicesIcon/>}>
+        const openServiceConnectionRequests = (collaboration.service_connection_requests || [])
+            .filter(r => r.is_member_request).length;
+        return (<div key="services" name="services" label={I18n.t("home.tabs.coServices")}
+                     icon={<ServicesIcon/>}
+                     notifier={openServiceConnectionRequests > 0 ? openServiceConnectionRequests : null}>
             <UsedServices collaboration={collaboration}
                           refresh={callback => this.componentDidMount(callback)}
                           {...this.props} />

@@ -229,6 +229,8 @@ def collaboration_by_id(collaboration_id):
         .options(selectinload(Collaboration.services)) \
         .options(selectinload(Collaboration.service_connection_requests)
                  .selectinload(ServiceConnectionRequest.service)) \
+        .options(selectinload(Collaboration.service_connection_requests)
+                 .selectinload(ServiceConnectionRequest.requester)) \
         .filter(Collaboration.id == collaboration_id).one()
 
     return collaboration, 200

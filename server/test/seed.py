@@ -78,6 +78,7 @@ group_science_name = "Science"
 
 network_service_connection_request_hash = token_urlsafe()
 ssh_service_connection_request_hash = token_urlsafe()
+wireless_service_connection_request_hash = token_urlsafe()
 
 
 def _read_image(file_name):
@@ -243,7 +244,7 @@ def seed(db, app_config):
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
                        public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
                        logo=_read_image("wireless.png"), accepted_user_policy="https://google.nl",
-                       allowed_organisations=[uuc, uva])
+                       allowed_organisations=[uuc, uva], uri="https://wireless")
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True, logo=_read_image("cloud.jpg"),
                     allowed_organisations=[uuc, uva])
@@ -412,6 +413,11 @@ def seed(db, app_config):
                                                                hash=ssh_service_connection_request_hash,
                                                                requester=sarah, collaboration=uva_research,
                                                                service=service_ssh_uva)
-    _persist(db, service_connection_request_network, service_connection_request_wiki)
+    service_connection_request_wireless = ServiceConnectionRequest(message="AI computing needs wireless",
+                                                                   hash=wireless_service_connection_request_hash,
+                                                                   requester=jane, collaboration=ai_computing,
+                                                                   service=wireless, is_member_request=True)
+    _persist(db, service_connection_request_network, service_connection_request_wiki,
+             service_connection_request_wireless)
 
     db.session.commit()

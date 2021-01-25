@@ -177,12 +177,14 @@ I18n.translations.nl = {
             organisationCount: "Gebruikt in organisaties",
             collaborationCount: "Gebruikt in samenwerkingen",
             titleAvailableColl: "Beschikbaar voor deze samenwerking ({{count}})",
+            titleRequestedColl: "Aangevraagd door leden voor de samenwerking ({{count}})",
             titleAvailableOrg: "Beschikbaar voor deze organisatie ({{count}})",
             titleUsedColl: "Gebruikt door deze samenwerking ({{count}})",
             titleUsedOrg: "Ingeschakeld door deze organisatie ({{count}})",
             awaitingApproval: "Koppeling in afwachting goedkeuring",
             automaticConnectionAllowed: "Automatische koppeling toegestaan",
             requiredByOrganisation: "Ingeschakeld door organisatie",
+            memberServiceRequest: "Koppelingsverzoek van lid",
             removeFromCO: "Ontkoppel van CO",
             deleteConnectionRequest: "Verwijder koppelingsverzoek",
             addToCO: "Voeg toe aan CO",
@@ -256,6 +258,9 @@ I18n.translations.nl = {
         servicesUsed: {
             searchPlaceHolder: "Zoek diensten...",
             noEntities: "Geen diensten in gebruik"
+                },
+        servicesRequested: {
+            searchPlaceHolder: "Zoek diensten..."
         },
         groups: {
             backToGroups: "Terug naar all groepen",
