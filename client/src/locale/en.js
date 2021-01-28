@@ -1257,7 +1257,7 @@ I18n.translations.en = {
     footer: {
         tips: "Need tips or info?",
         help: "Help & FAQ",
-        product: "Proudly powered by",
+        product: "SRAM is a service by",
         productLink: "https://wiki.surfnet.nl/display/sram",
         surf: "SURF",
         surfLink: "https://surf.nl",
