@@ -320,7 +320,7 @@ I18n.translations.en = {
             noEntities: "No requests for collaborations",
         },
         invitation: {
-            welcome: "Welcome to SURF Research Access Management. Here you can collaborate with your fellow researchers.",
+            welcome: "Welcome to SURF Research Access Management. Here access to research services for research collaborations is managed.",
             invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by {{inviter}}",
             followingSteps: "Please take the following steps:",
             steps: {
