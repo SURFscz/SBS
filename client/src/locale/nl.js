@@ -320,7 +320,7 @@ I18n.translations.nl = {
             noEntities: "Geen aanvragen voor samenwerkingen",
         },
         invitation: {
-            welcome: "Welkom in SRAM. Hier kun je samenwerken met je collega-onderzoekers.",
+            welcome: "Welkom in SURF Research Access Management (SRAM). Hier wordt voor onderzoekssamenwerkingen de toegang tot onderzoeksdiensten geregeld.",
             invited: "Je bent door {{inviter}} uitgenodigd lid te worden van samenwerking {{type}} \"{{collaboration}}\"",
             followingSteps: "Voer aub de volgende stappen uit:",
             steps: {
