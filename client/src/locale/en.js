@@ -816,9 +816,9 @@ I18n.translations.en = {
         accept: "Accept",
         declineConfirmation: "Are you sure you want to decline this join request?",
         flash: {
-            declined: "Join request for collaboration {{name}} was declined.",
+            declined: "Join request for collaboration {{name}} was denied.",
             accepted: "Join request for collaboration {{name}} was accepted.",
-            notFound: "This join request has already been accepted / declined.",
+            notFound: "This join request has already been accepted / denied.",
             alreadyMember: "You are already a member of collaboration {{name}} and can therefore not accept this invitation"
         }
     },
