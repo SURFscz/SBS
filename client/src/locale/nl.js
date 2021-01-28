@@ -113,7 +113,7 @@ I18n.translations.nl = {
         add: "Voeg een afbeelding toe",
         change: "Verander afbeelding",
         image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB",
-        dragImage: "Versleep de croperea en pas de grootte aan totdat je tevreden bent met het resultaat. Druk vervolgens op toepassen",
+        dragImage: "Versleep de rechthoek en pas de grootte aan totdat je tevreden bent met het resultaat. Druk vervolgens op toepassen",
         imageToLarge: "Afbeelding is groter 512KB",
         imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Afbeelding is verplicht",
@@ -337,8 +337,8 @@ I18n.translations.nl = {
             acceptInvitation: "Ja, ik accepteer de uitnodiging",
             declineInvitation: "Nee, ik wijs de uitnodiging af",
             confirmations: {
-                cancelInvitation: "Weet je zeker dat je de voorwaarden niet wilt accepteren?",
-                declineInvitation: "Weet je zeker dat je de uitnodiging niet wilt accepteren?",
+                cancelInvitation: "Weet je zeker dat je de voorwaarden wil weigeren?",
+                declineInvitation: "Weet je zeker dat je de uitnodiging wil weigeren?",
             }
         },
         joinRequests: {
