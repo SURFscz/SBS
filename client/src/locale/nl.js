@@ -407,7 +407,7 @@ I18n.translations.nl = {
         alreadyMember: "Je bent reeds lid van {{name}}",
         motivation: "Motivatie om lid te worden van {{name}}?",
         motivationPlaceholder: "Omschrijf je motivatie om lid te worden zodat een admin je verzoek kan honoreren.",
-        policyConfirmation: "{{collaboration}} heeft een AUP waar me je meer over kan lezen <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>hier</a>.",
+        policyConfirmation: "{{collaboration}} heeft een AUP waar je <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>hier</a> meer over kan lezen.",
         feedback: {
             info: "Je verzoek is verzonden naar de samenwerkingsmanager van <strong>{{name{{}}</strong> die je aanvraag zal beoordelen. <br/> Zijn / haar beslissing wordt je per e-mail meegedeeld",
         },
