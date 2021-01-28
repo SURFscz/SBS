@@ -1329,7 +1329,7 @@ I18n.translations.en = {
         createColl: "Create your own collaboration",
         startCreateColl: "If you want to start your own collaboration, you can create it directly.",
         createCollRequest: "Request your own collaboration",
-        startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check and hopefully approve it.",
+        startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check it.",
         createCollTxt: "Create a collaboration",
         createCollRequestTxt: "Request a collaboration",
         contact: "Contact SRAM helpdesk",
