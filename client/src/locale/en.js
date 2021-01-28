@@ -337,8 +337,8 @@ I18n.translations.en = {
             acceptInvitation: "Yes, I accept the invitation",
             declineInvitation: "No, I decline",
             confirmations: {
-                cancelInvitation: "Are you sure you don't want to accept the terms?",
-                declineInvitation: "Are you sure you don't want to accept the invitation?",
+                cancelInvitation: "Are you sure you want to decline the terms?",
+                declineInvitation: "Are you sure you want to decline the invitation?",
             }
         },
         joinRequests: {
