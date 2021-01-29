@@ -476,7 +476,7 @@ I18n.translations.en = {
         joinRequestUrlDisabled: "Join request are disabled for this collaboration",
         disableJoinRequests: "Disable Join request for this collaboration.",
         disableJoinRequestsTooltip: "When checked non-members of this<br/>collaboration can not issue a Join request.",
-        joinRequests: "Join requests",
+        joinRequests: "Join request URL",
         disabled: "Disabled",
         enabled: "Enabled",
         privacyPolicy: "Privacy policy",
