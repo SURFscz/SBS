@@ -476,7 +476,7 @@ I18n.translations.nl = {
         joinRequestUrlDisabled: "Zelf-uitnodig-optie is uitgeschakeld voor deze samenwerking",
         disableJoinRequests: "Zelf-uitnodig-optie uitschakelen voor deze samenwerking.",
         disableJoinRequestsTooltip: "Als dit is aangevinkt kunnen niet-leden van<br>deze samenwerking niet zelf een verzoek doen om lid te worden.",
-        joinRequests: "Jezelf uitnodigen",
+        joinRequests: "Uitnodigings-URL",
         disabled: "Uitgeschakeld",
         enabled: "Ingeschakeld",
         privacyPolicy: "Privacy policy",
