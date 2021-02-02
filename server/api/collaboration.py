@@ -23,11 +23,11 @@ from server.mail import mail_collaboration_invitation
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 
-def _del_non_disclosure_info(collaboration, json_collaboration):
+def _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=False):
     for cm in json_collaboration["collaboration_memberships"]:
-        if not collaboration.disclose_email_information:
+        if not collaboration.disclose_email_information and not cm["role"] == "admin" and allow_admins:
             del cm["user"]["email"]
-        if not collaboration.disclose_member_information:
+        if not collaboration.disclose_member_information and not cm["role"] == "admin" and allow_admins:
             del cm["user"]
 
 
@@ -194,9 +194,9 @@ def collaboration_lite_by_id(collaboration_id):
 
     if not collaboration.disclose_member_information or not collaboration.disclose_email_information:
         json_collaboration = jsonify(collaboration).json
-        _del_non_disclosure_info(collaboration, json_collaboration)
+        _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=True)
         for gr in json_collaboration["groups"]:
-            _del_non_disclosure_info(collaboration, gr)
+            _del_non_disclosure_info(collaboration, gr, allow_admins=False)
         return json_collaboration, 200
 
     return collaboration, 200

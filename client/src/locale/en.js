@@ -288,8 +288,8 @@ I18n.translations.en = {
         collaboration: {
             memberHeader: "{{nbrMember}} members - {{nbrGroups}} groups",
             noAdminsHeader: "No administrators (yet)",
-            adminsHeader: "Organized by <strong>{{name}}</strong>",
-            multipleAdminsHeader: "Organized by <strong>{{name}}</strong> and <strong>{{nbr}} others</strong>",
+            adminsHeader: "Organized by <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong></a>",
+            multipleAdminsHeader: "Organized by <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} others</strong></a>",
             about: "What our CO is about",
             services: "Where we collaborate ({{nbr}} services)",
             noServices: "There are no services available in this collaboration",

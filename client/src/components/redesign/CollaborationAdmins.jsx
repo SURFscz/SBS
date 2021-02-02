@@ -2,6 +2,7 @@ import React from "react";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
+import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
 import CheckBox from "../CheckBox";
@@ -414,7 +415,8 @@ class CollaborationAdmins extends React.Component {
                 header: "",
                 mapper: entity => <div className="member-icon">
                     {entity.invite && <InviteIcon/>}
-                    {!entity.invite && <UserIcon/>}
+                    {(!entity.invite && entity.role === "admin") && <UserIcon/>}
+                    {(!entity.invite && entity.role !== "admin") && <MembersIcon/>}
                 </div>
             },
             {

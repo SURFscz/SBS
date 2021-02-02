@@ -41,12 +41,6 @@ class TestUserClaims(AbstractTest):
         add_user_claims({"given_name": "John", "family_name": "Doe"}, "urn:johny", user)
         self.assertEqual("jdoe", user.username)
 
-    def test_add_user_claims_user_name_voperson_external_id(self):
-        user = User()
-        add_user_claims({"given_name": "John", "family_name": "Doe",
-                         "voperson_external_id": "mettens@example.com.org"}, "urn:johny", user)
-        self.assertEqual("mettens", user.username)
-
     def test_generate_unique_username(self):
         # we don't want this in the normal seed
         for username in ["jdoe", "jdoe2", "cdoemanchi", "cdoemanchi2", "cdoemanchi3", "u", "u2"]:
@@ -64,4 +58,5 @@ class TestUserClaims(AbstractTest):
     def test_eppn_generate_unique_username(self):
         user = User(eduperson_principal_name="sarah-lee")
         username = generate_unique_username(user)
-        self.assertEqual("sarahlee", username)
+        # We don't use the eduperson_principal_name anymore
+        self.assertEqual("u", username)

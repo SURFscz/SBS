@@ -446,6 +446,10 @@ class TestCollaboration(AbstractTest):
         self.assertTrue("name" in user)
         self.assertFalse("email" in user)
 
+        user = memberships[2]["user"]
+        self.assertTrue("name" in user)
+        self.assertTrue("email" in user)
+
     def test_collaboration_lite_disclose_no_information(self):
         self.login("urn:betty")
         collaboration_id = self.find_entity_by_name(Collaboration, uuc_teachers_name).id
