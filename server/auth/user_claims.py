@@ -27,12 +27,7 @@ def _normalize(s):
 
 
 def generate_unique_username(user: User, max_count=10000):
-    if hasattr(user, "eduperson_principal_name") and user.eduperson_principal_name:
-        eduperson_principal_name = re.split("@", user.eduperson_principal_name)[0]
-        username = f"{_normalize(eduperson_principal_name)}".lower()
-    else:
-        username = f"{_normalize(user.given_name)[0:1]}{_normalize(user.family_name)[0:11]}"[0:10].lower()
-
+    username = f"{_normalize(user.given_name)[0:1]}{_normalize(user.family_name)[0:11]}"[0:10].lower()
     if len(username) == 0:
         username = "u"
     counter = 2
