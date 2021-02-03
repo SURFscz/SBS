@@ -41,6 +41,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import Button from "../components/Button";
 import JoinRequestDialog from "../components/JoinRequestDialog";
+import Tooltip from "../components/redesign/Tooltip";
 
 
 class CollaborationDetail extends React.Component {
@@ -328,9 +329,6 @@ class CollaborationDetail extends React.Component {
 
 
     getAdminHeader = (collaboration, collaborationJoinRequest) => {
-        if (!collaboration.disclose_member_information) {
-            return I18n.t("models.collaboration.discloseNoMemberInformation");
-        }
         let admins;
         if (collaborationJoinRequest) {
             admins = collaboration.admins
@@ -347,7 +345,8 @@ class CollaborationDetail extends React.Component {
         if (admins.length === 1) {
             return I18n.t("models.collaboration.adminsHeader", {name: admins[0].name, mails: mails });
         }
-        return I18n.t("models.collaboration.multipleAdminsHeader", {name: admins[0].name, mails: mails, nbr: admins.length - 1});
+        const twoOrMore = admins.length === 2 ? "twoAdminsHeader" : "multipleAdminsHeader";
+        return I18n.t(`models.collaboration.${twoOrMore}`, {name: admins[0].name, mails: mails, nbr: admins.length - 1});
     }
 
     createCollaborationRequest = () => {
@@ -375,19 +374,19 @@ class CollaborationDetail extends React.Component {
             <section className="unit-info">
                 <ul>
                     <li>
-                        <MemberIcon/>
+                        <Tooltip children={<MemberIcon/>} id={"members-icon"} msg={I18n.t("tooltips.members")}/>
                         <span>{I18n.t("models.collaboration.memberHeader", {
                             nbrMember: collaborationJoinRequest ? collaboration.member_count : collaboration.collaboration_memberships.length,
                             nbrGroups: collaborationJoinRequest ? collaboration.group_count : collaboration.groups.length
                         })}</span></li>
                     <li>
-                        <AdminIcon/>
+                        <Tooltip children={<AdminIcon/>} id={"admins-icon"} msg={I18n.t("tooltips.admins")}/>
                         <span
                             dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration, collaborationJoinRequest)}}/>
                     </li>
                     {collaboration.website_url &&
                     <li className="collaboration-url">
-                        <GlobeIcon/>
+                        <Tooltip children={<GlobeIcon/>} id={"collaboration-icon"} msg={I18n.t("tooltips.collaborationUrl")}/>
                         <span>
                             <a href={collaboration.website_url} rel="noopener noreferrer"
                                target="_blank">{collaboration.website_url}</a>
@@ -395,7 +394,7 @@ class CollaborationDetail extends React.Component {
                     </li>}
                     {collaboration.accepted_user_policy &&
                     <li className="collaboration-url">
-                        <PrivacyIcon/>
+                        <Tooltip children={<PrivacyIcon/>} id={"globe-icon"} msg={I18n.t("tooltips.aup")}/>
                         <span>
                             <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
                                target="_blank">{collaboration.accepted_user_policy}</a>

@@ -16,6 +16,7 @@ export default class CroppedImageDialog extends React.PureComponent {
         this.state = {
             error: "",
             source: null,
+            isSvg: false,
             result: null,
             busy: false,
             crop: {},
@@ -31,9 +32,10 @@ export default class CroppedImageDialog extends React.PureComponent {
             } else {
                 const reader = new FileReader();
                 reader.onload = evt => {
-                    const base64 = btoa(evt.target.result);
+                    const data = evt.target.result;
+                    const base64 = btoa(data);
                     this.imageRef = null;
-                    this.setState({source: base64, result: null});
+                    this.setState({source: base64, isSvg: data.indexOf("<svg") > -1,result: null});
                 }
                 reader.readAsBinaryString(files[0]);
             }
@@ -71,9 +73,11 @@ export default class CroppedImageDialog extends React.PureComponent {
             const image = this.imageRef;
             const scaleX = image.naturalWidth / image.width;
             const scaleY = image.naturalHeight / image.height;
-            canvas.width = crop.width;
-            canvas.height = crop.height;
+            canvas.width = Math.max(crop.width, 400);
+            canvas.height = Math.max(crop.height, 400);
             const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "rgba(255, 255, 255, .99)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.drawImage(
                 image,
@@ -107,8 +111,9 @@ export default class CroppedImageDialog extends React.PureComponent {
 
     onCropChange = (crop, percentCrop) => this.setState({crop: percentCrop});
 
-    renderImages = (error, value, source, crop, onCancel, onSave, name) => {
-        const src = `data:image/jpeg;base64,${source || value}`;
+    renderImages = (error, value, source, isSvg, crop, onCancel, onSave, name) => {
+        const type = isSvg ? "svg+xml" : "jpeg";
+        const src = `data:image/${type};base64,${source || value}`;
         return (
             <div className="cropped-image-dialog-container">
                 {(!value && !source) && <div className="no-image">
@@ -130,7 +135,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                 {<input type="file"
                         id={`fileUpload_${name}`}
                         name={`fileUpload_${name}`}
-                        accept="image/png, image/jpeg, image/jpg"
+                        accept="image/png, image/jpeg, image/jpg, image/svg+xml"
                         style={{display: "none"}}
                         onChange={this.internalOnChange}/>}
                 {(!value && !source) && <span className="disclaimer">{I18n.t("forms.image")}</span>}
@@ -148,7 +153,7 @@ export default class CroppedImageDialog extends React.PureComponent {
 
     render() {
         const {onSave, onCancel, isOpen, name, value, title} = this.props;
-        const {error, crop, source, busy} = this.state;
+        const {error, crop, source, isSvg, busy} = this.state;
 
         return (
             <Modal
@@ -160,7 +165,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                 closeTimeoutMS={250}
                 ariaHideApp={false}>
                 <h2>{title}</h2>
-                {this.renderImages(error, value, source, crop, onCancel, onSave, name)}
+                {this.renderImages(error, value, source, isSvg, crop, onCancel, onSave, name)}
                 <section className="actions">
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.onCancelInternal}/>
                     <Button txt={I18n.t("forms.apply")} disabled={busy || (!source && !value)}

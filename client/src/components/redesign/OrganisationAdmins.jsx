@@ -27,6 +27,9 @@ import SpinnerField from "./SpinnerField";
 import InputField from "../InputField";
 import moment from "moment";
 import ErrorIndicator from "./ErrorIndicator";
+import Tooltip from "./Tooltip";
+import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
+import ReactTooltip from "react-tooltip";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
@@ -177,9 +180,15 @@ class OrganisationAdmins extends React.Component {
         const anySelected = Object.values(selectedMembers).some(v => v.selected);
         return (
             <div className="admin-actions">
+                <span data-tip data-for="delete-members">
                 <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
                         disabled={!anySelected}
                         icon={<FontAwesomeIcon icon="trash"/>}/>
+                <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
+                              place="bottom">
+                    <span dangerouslySetInnerHTML={{__html: !anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}}/>
+            </ReactTooltip>
+                    </span>
             </div>);
     }
 
@@ -320,8 +329,12 @@ class OrganisationAdmins extends React.Component {
                 key: "icon",
                 header: "",
                 mapper: entity => <div className="member-icon">
-                    {entity.invite && <InviteIcon/>}
-                    {!entity.invite && <UserIcon/>}
+                    {entity.invite &&
+                    <Tooltip children={<InviteIcon/>} id={"invite-icon"} msg={I18n.t("tooltips.invitations")}/>}
+                    {(!entity.invite && entity.role === "admin") &&
+                    <Tooltip children={<UserIcon/>} id={"admin-icon"} msg={I18n.t("tooltips.admin")}/>}
+                    {(!entity.invite && entity.role !== "admin") &&
+                    <Tooltip children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.manager")}/>}
                 </div>
             },
             {

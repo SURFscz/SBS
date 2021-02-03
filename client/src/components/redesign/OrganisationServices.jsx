@@ -32,12 +32,12 @@ class OrganisationServices extends React.Component {
     componentDidMount = () => {
         const {organisation} = this.props;
         allServices().then(services => {
-            const filteredServices = services
-                .filter(service => {
+            services.forEach(service => {
                     const allowed = service.allowed_organisations.some(org => org.id === organisation.id);
-                    return allowed && service.automatic_connection_allowed;
+                    service.allowed = allowed && service.automatic_connection_allowed;
+                    service.notAllowed = !service.allowed;
                 });
-            this.setState({services: filteredServices, loading: false});
+            this.setState({services: services, loading: false});
         });
     }
 
@@ -93,8 +93,9 @@ class OrganisationServices extends React.Component {
         const {organisation, user} = this.props;
         const allowed = isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id, null);
         const inUse = organisation.services.some(s => s.id === service.id);
-        return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={!allowed}
-                             value={inUse} animate={false}/>
+        return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={!allowed || !service.allowed}
+                             value={inUse && service.allowed} animate={false}
+                             tooltip={service.allowed ? undefined : I18n.t("organisationServices.notAllowedOrganisation")}/>
     }
 
     render() {
@@ -138,7 +139,7 @@ class OrganisationServices extends React.Component {
                           modelName="servicesUsed"
                           tableClassName="organisationServicesUsed"
                           searchAttributes={["name"]}
-                          defaultSort="name"
+                          defaultSort="notAllowed"
                           columns={columns}
                           loading={loading}
                           title={titleUsed}

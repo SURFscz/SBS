@@ -153,7 +153,11 @@ I18n.translations.en = {
             remove: "Delete",
             mail: "Compose mail",
             backToMembers: "Back to all members...",
-            invitation: "Invitation sent by {{inviter}} to {{email}} on {{date}}"
+            invitation: "Invitation sent by {{inviter}} to {{email}} on {{date}}",
+            removeTooltipDisabled: "First select<br/>users to delete",
+            removeTooltip: "Delete all<br/>selected members",
+            mailTooltipDisabled: "First select<br/>users to mail",
+            mailTooltip: "Mail all<br/>selected members"
         },
         organisations: {
             title: "Organisations",
@@ -289,6 +293,7 @@ I18n.translations.en = {
             memberHeader: "{{nbrMember}} members - {{nbrGroups}} groups",
             noAdminsHeader: "No administrators (yet)",
             adminsHeader: "Organized by <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong></a>",
+            twoAdminsHeader: "Organized by <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} other</strong></a>",
             multipleAdminsHeader: "Organized by <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} others</strong></a>",
             about: "What our CO is about",
             services: "Where we collaborate ({{nbr}} services)",
@@ -321,7 +326,7 @@ I18n.translations.en = {
         },
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here access to research services for research collaborations is managed.",
-            invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by {{inviter}}",
+            invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
             followingSteps: "Please take the following steps:",
             steps: {
                 progress: "{{now}} of {{total}}",
@@ -339,7 +344,10 @@ I18n.translations.en = {
             confirmations: {
                 cancelInvitation: "Are you sure you want to decline the terms?",
                 declineInvitation: "Are you sure you want to decline the invitation?",
-            }
+            },
+            disclaimer: "If you continue, SURF will transfer data about you to the collaboration (CO). Any data processing by the CO, like transferring data to services so you can access those, is a responsibility of the CO.",
+            disclaimerAup: "The collaboration has provided SURF <a href=\"{{aup}}\" target=\"_blank\">the following URL</a> as holding relevant information.",
+            disclaimerQuestions: "Any questions about transfer of data about you? Contact the person that invited you."
         },
         joinRequests: {
             backToJoinRequests: "Back to all join requests",
@@ -478,7 +486,7 @@ I18n.translations.en = {
         disableJoinRequestsTooltip: "When checked non-members of this<br/>collaboration can not issue a Join request.",
         joinRequests: "Join request URL",
         disabled: "Disabled",
-        enabled: "Enabled",
+        enabled: "Copy link",
         privacyPolicy: "Privacy policy",
         servicesRestricted: "Restricted services",
         servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
@@ -968,7 +976,7 @@ I18n.translations.en = {
         noServices: "This organisation has no services connected.",
         searchServices: "Search, select and add services to the available services within organisation {{name}}.",
         deleteServiceTooltip: "Make this service unavailable in<br/> the organisation {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for the members of<br/>the collaborations<br/>on this organisation",
-        notAllowedOrganisation: "Service '{{service}}' can not be added to organisation '{{organisation}}'. The service configuration excludes it from this organisation.",
+        notAllowedOrganisation: "This service cannot be enabled for al COs<br/>because it does not allow automatic connections to COs.<br/><br/>Connections can still be requested by<br/>individual COs in your organization.",
         flash: {
             added: "Successfully added service {{service}} to organisation {{name}}",
             deleted: "Successfully deleted service {{service}} from organisation {{name}}"
@@ -1393,8 +1401,21 @@ I18n.translations.en = {
         help: {
             title: "Help & Support",
             subTitle: "Feel free to reach out to <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
-        }
+        },
+    },
+    tooltips: {
+        members: "Composition of this collaboration",
+        admins: "Administrator(s) of this collaboration",
+        collaborationUrl: "More information about this collaboration",
+        aup: "Acceptable use policy for this collaboration",
+        user: "User",
+        admin: "Administrator",
+        invitations: "Invitee",
+        joinRequest: "Join request",
+        manager: "Manager",
+        platformAdmin: "Goddess divinity"
     }
+
 };
 
 export default I18n.translations.en;

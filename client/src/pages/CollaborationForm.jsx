@@ -453,6 +453,7 @@ class CollaborationForm extends React.Component {
                             alreadyExists: {...this.state.alreadyExists, short_name: false}
                         })
                     }}
+                                disabled={!isNew && !user.admin}
                                 placeholder={I18n.t("collaboration.shortNamePlaceHolder")}
                                 onBlur={this.validateCollaborationShortName}
                                 toolTip={I18n.t("collaboration.shortNameTooltip")}
@@ -513,14 +514,12 @@ class CollaborationForm extends React.Component {
                                                           value={services_restricted}
                                                           info={I18n.t("collaboration.servicesRestricted")}
                                                           tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
-                                                          readOnly={!user.admin}
                                                           onChange={() => this.setState({services_restricted: !services_restricted})}/>}
 
                     {!isCollaborationRequest && <CheckBox name="disclose_member_information"
                                                           value={disclose_member_information}
                                                           info={I18n.t("collaboration.discloseMemberInformation")}
                                                           tooltip={I18n.t("collaboration.discloseMemberInformationTooltip")}
-                                                          readOnly={!user.admin}
                                                           onChange={() => this.setState({disclose_member_information: !disclose_member_information})}/>}
 
                     {!isCollaborationRequest && <CheckBox name="disclose_email_information"

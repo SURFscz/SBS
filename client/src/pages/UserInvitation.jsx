@@ -108,7 +108,8 @@ class UserInvitation extends React.Component {
         });
     };
 
-    renderAcceptInvitationStep = () => {
+    renderAcceptInvitationStep = (isOrganisationInvite, invite) => {
+        const hasAup = !isOrganisationInvite && invite.collaboration.accepted_user_policy;
         return (
             <section className="step-container">
                 <div className="step">
@@ -120,6 +121,11 @@ class UserInvitation extends React.Component {
                         <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.collaborate")})}</span>
                     </div>
                 </div>
+                {!isOrganisationInvite && <div className="disclaimer">
+                    <p>{I18n.t("models.invitation.disclaimer")}</p>
+                    {hasAup && <p dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.disclaimerAup", {aup: invite.collaboration.accepted_user_policy})}}/>}
+                    <p>{I18n.t("models.invitation.disclaimerQuestions")}</p>
+                </div>}
                 <Button onClick={this.accept}
                         txt={<span>{I18n.t("models.invitation.acceptInvitation")}</span>}/>
                 <Button onClick={this.decline} cancelButton={true}
@@ -168,12 +174,13 @@ class UserInvitation extends React.Component {
                             <span dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.invited", {
                                 type: isOrganisationInvite ? I18n.t("welcomeDialog.organisation") : I18n.t("welcomeDialog.collaboration"),
                                 collaboration: isOrganisationInvite ? invite.organisation.name : invite.collaboration.name,
-                                inviter: invite.user.name
+                                inviter: invite.user.name,
+                                email: invite.user.email
                             })}}/>
                         </section>
                         <p className="info">{I18n.t("models.invitation.followingSteps")}</p>
                         {user.guest && this.renderLoginStep()}
-                        {!user.guest && this.renderAcceptInvitationStep()}
+                        {!user.guest && this.renderAcceptInvitationStep(isOrganisationInvite, invite)}
                     </div>}
 
                 </div>}

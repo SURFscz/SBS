@@ -20,16 +20,18 @@ import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ReactComponent as UserIcon} from "../../icons/users.svg";
+import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import UserColumn from "./UserColumn";
 import Select from "react-select";
 import InputField from "../InputField";
 import CheckBox from "../CheckBox";
 import moment from "moment";
-import {sanitizeShortName, shortNameDisabled} from "../../validations/regExps";
+import {sanitizeShortName} from "../../validations/regExps";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import ClipBoardCopy from "./ClipBoardCopy";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
+import Tooltip from "./Tooltip";
 
 class Groups extends React.Component {
 
@@ -155,8 +157,11 @@ class Groups extends React.Component {
                 nonSortable: true,
                 key: "icon",
                 header: "",
-                mapper: () => <div className="member-icon">
-                    <UserIcon/>
+                mapper: membership => <div className="member-icon">
+                    {(membership.role === "admin") &&
+                    <Tooltip children={<UserIcon/>} id={"admin-icon"} msg={I18n.t("tooltips.admin")}/>}
+                    {(membership.role !== "admin") &&
+                    <Tooltip children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.user")}/>}
                 </div>
             },
             {
@@ -290,7 +295,7 @@ class Groups extends React.Component {
                             })}
                             error={alreadyExists.short_name || (!initial && isEmpty(short_name))}
                             toolTip={I18n.t("groups.shortNameTooltip")}
-                            disabled={shortNameDisabled(user, createNewGroup, adminOfCollaboration)}/>
+                            disabled={!createNewGroup && !user.admin}/>
                 {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("groups.alreadyExists", {
                     attribute: I18n.t("groups.short_name").toLowerCase(),
                     value: short_name

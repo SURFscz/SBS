@@ -28,6 +28,8 @@ import moment from "moment";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import InputField from "../InputField";
 import ErrorIndicator from "./ErrorIndicator";
+import Tooltip from "./Tooltip";
+import ReactTooltip from "react-tooltip";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.admin`)},
@@ -211,15 +213,24 @@ class CollaborationAdmins extends React.Component {
             .filter(v => filteredEntities.find(e => e.id === v.ref.id && e.invite === v.ref.invite))
         const hrefValue = encodeURI(selected.map(v => v.ref.invite ? v.ref.invitee_email : v.ref.user.email).join(","));
         const disabled = selected.length === 0;
+        const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc="
         return (
             <div className="admin-actions">
                 {(any && isAdminOfCollaboration) &&
-                <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
+                <div data-tip data-for="delete-members">
+                    <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
                         disabled={disabled}
-                        icon={<FontAwesomeIcon icon="trash"/>}/>}
+                        icon={<FontAwesomeIcon icon="trash"/>}/>
+                        <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
+                                      place="bottom">
+                    <span dangerouslySetInnerHTML={{__html: disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}}/>
+            </ReactTooltip>
+                </div>}
                 {(any && (isAdminOfCollaboration || collaboration.disclose_email_information))
                 &&
-                <a href={`${disabled ? "" : "mailto:"}${hrefValue}`} className={`${disabled ? "disabled" : ""} button`}
+                    <div data-tip data-for="mail-members">
+                <a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
+                   className={`${disabled ? "disabled" : ""} button`}
                    rel="noopener noreferrer" onClick={e => {
                     if (disabled) {
                         stopEvent(e);
@@ -228,7 +239,11 @@ class CollaborationAdmins extends React.Component {
                     }
                 }}>
                     {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
-                </a>}
+                </a>
+                        <ReactTooltip id="mail-members" type="light" effect="solid" data-html={true}
+                                      place="bottom">
+                    <span dangerouslySetInnerHTML={{__html: disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}}/>
+            </ReactTooltip></div>}
             </div>);
     }
 
@@ -414,9 +429,15 @@ class CollaborationAdmins extends React.Component {
                 key: "icon",
                 header: "",
                 mapper: entity => <div className="member-icon">
-                    {entity.invite && <InviteIcon/>}
-                    {(!entity.invite && entity.role === "admin") && <UserIcon/>}
-                    {(!entity.invite && entity.role !== "admin") && <MembersIcon/>}
+
+
+                    {entity.invite &&
+                        <Tooltip children={<InviteIcon/>} id={"invite-icon"} msg={I18n.t("tooltips.invitations")}/> }
+                    {(!entity.invite && entity.role === "admin") &&
+                        <Tooltip children={<UserIcon/>} id={"admin-icon"} msg={I18n.t("tooltips.admin")}/>}
+                    {(!entity.invite && entity.role !== "admin") &&
+                        <Tooltip children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.user")}/>}
+
                 </div>
             },
             {

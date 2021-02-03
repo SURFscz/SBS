@@ -11,9 +11,10 @@ import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
 import InputField from "../InputField";
 import {joinRequestAccept, joinRequestDecline} from "../../api";
-import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import UserColumn from "./UserColumn";
 import moment from "moment";
+import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
+import Tooltip from "./Tooltip";
 
 class JoinRequests extends React.Component {
 
@@ -89,7 +90,12 @@ class JoinRequests extends React.Component {
     };
 
     renderJoinRequestForm = (collaboration, joinRequest) => {
-        const {confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationDialogQuestion} = this.state;
+        const {
+            confirmationDialogOpen,
+            cancelDialogAction,
+            confirmationDialogAction,
+            confirmationDialogQuestion
+        } = this.state;
         return (
             <div className="join-request-details-container">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -149,7 +155,7 @@ class JoinRequests extends React.Component {
                 key: "icon",
                 header: "",
                 mapper: () => <div className="member-icon">
-                    <UserIcon/>
+                    <Tooltip children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.joinRequest")}/>
                 </div>
             },
             {

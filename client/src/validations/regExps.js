@@ -17,5 +17,3 @@ export const sanitizeShortName = shortName => {
     }
     return shortName.replace(/[^a-zA-Z_0-9]+/g, "").substring(0, 16).toLowerCase();
 }
-
-export const shortNameDisabled = (user, isNew, adminOfEntity) => !(user.admin || (isNew && adminOfEntity));

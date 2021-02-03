@@ -13,6 +13,7 @@ import I18n from "i18n-js";
 import Cookies from "js-cookie";
 import "./locale/en";
 import "./locale/nl";
+import {reportError} from "./api";
 
 polyfill();
 
@@ -31,6 +32,12 @@ polyfill();
         parameterByName = "en";
     }
     I18n.locale = parameterByName;
+    const oldMissingTranslation = I18n.missingTranslation.bind(I18n);
+    I18n.missingTranslation = (scope, options) => {
+        const res = oldMissingTranslation(scope, options);
+        reportError({"Missing translation": res});
+        return res;
+    };
     moment.locale(I18n.locale);
 
 })();

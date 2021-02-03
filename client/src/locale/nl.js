@@ -153,7 +153,11 @@ I18n.translations.nl = {
             remove: "Verwijder",
             mail: "Mail",
             backToMembers: "Terug...",
-            invitation: "Uitnodiging verstuurd door {{inviter}} naar {{email}} op {{date}}"
+            invitation: "Uitnodiging verstuurd door {{inviter}} naar {{email}} op {{date}}",
+            removeTooltipDisabled: "Selecteer eerst gebruikers<br/>om te verwijderen",
+            removeTooltip: "Verwijderd alle<br/>geselecteerde leden",
+            mailTooltipDisabled: "Selecteer eerst gebruikers<br/>om te mailen",
+            mailTooltip: "Mail alle<br/>geselecteerde leden",
         },
         organisations: {
             title: "Organisaties",
@@ -258,7 +262,7 @@ I18n.translations.nl = {
         servicesUsed: {
             searchPlaceHolder: "Zoek diensten...",
             noEntities: "Geen diensten in gebruik"
-                },
+        },
         servicesRequested: {
             searchPlaceHolder: "Zoek diensten..."
         },
@@ -289,6 +293,7 @@ I18n.translations.nl = {
             memberHeader: "{{nbrMember}} leden - {{nbrGroups}} groepen",
             noAdminsHeader: "(nog) Geen admins",
             adminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong></a>",
+            twoAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} ander</strong></a>",
             multipleAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} anderen</strong></a>",
             about: "Over onze samenwerking",
             services: "Waar we samenwerken ({{nbr}} diensten)",
@@ -321,7 +326,7 @@ I18n.translations.nl = {
         },
         invitation: {
             welcome: "Welkom in SURF Research Access Management (SRAM). Hier wordt voor onderzoekssamenwerkingen de toegang tot onderzoeksdiensten geregeld.",
-            invited: "Je bent door {{inviter}} uitgenodigd lid te worden van samenwerking {{type}} \"{{collaboration}}\"",
+            invited: "Je bent door <a href=\"mailto:{{email}}\">{{inviter}}</a> uitgenodigd lid te worden van samenwerking {{type}} \"{{collaboration}}\"",
             followingSteps: "Voer aub de volgende stappen uit:",
             steps: {
                 progress: "{{now}} van {{total}}",
@@ -339,7 +344,10 @@ I18n.translations.nl = {
             confirmations: {
                 cancelInvitation: "Weet je zeker dat je de voorwaarden wil weigeren?",
                 declineInvitation: "Weet je zeker dat je de uitnodiging wil weigeren?",
-            }
+            },
+            disclaimer: "Als je doorgaat, zal SURF gegevens over jou overdragen aan het samenwerkingsverband (CO). Elke gegevensverwerking door de CO, zoals het overdragen van gegevens aan diensten zodat je daar toegang toe hebt, is een verantwoordelijkheid van de CO.",
+            disclaimerAup: "De samenwerking heeft SURF <a href=\"{{aup}}\" target=\"_blank\">de volgende URL</a> opgeleverd met relevante informatie.",
+            disclaimerQuestions: "Heb je vragen over de overdracht van je gegevens? Neem contact op met de persoon die je heeft uitgenodigd."
         },
         joinRequests: {
             backToJoinRequests: "Terug naar alle verzoeken",
@@ -402,14 +410,14 @@ I18n.translations.nl = {
     },
     registration: {
         joinRequest: "Vraag lidmaatschap voor {{name}}",
-        explanation: "Om je aanmeldingsverzoek in te dienen, vul je je motivatie in om lid te worden van samenwerking <strong>{{naam}}</strong>.",
+        explanation: "Om je aanmeldingsverzoek in te dienen, vul je je motivatie in om lid te worden van samenwerking <strong>{{name}}</strong>.",
         title: "Verzoek lidmaatschap voor {{name}}",
         alreadyMember: "Je bent reeds lid van {{name}}",
         motivation: "Motivatie om lid te worden van {{name}}?",
         motivationPlaceholder: "Omschrijf je motivatie om lid te worden zodat een admin je verzoek kan honoreren.",
         policyConfirmation: "{{collaboration}} heeft een AUP waar je <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{aup}}\"'>hier</a> meer over kan lezen.",
         feedback: {
-            info: "Je verzoek is verzonden naar de samenwerkingsmanager van <strong>{{name{{}}</strong> die je aanvraag zal beoordelen. <br/> Zijn / haar beslissing wordt je per e-mail meegedeeld",
+            info: "Je verzoek is verzonden naar de samenwerkingsmanager van <strong>{{name}}</strong> die je aanvraag zal beoordelen. <br/> Zijn / haar beslissing wordt je per e-mail meegedeeld",
         },
     },
     profile: {
@@ -478,7 +486,7 @@ I18n.translations.nl = {
         disableJoinRequestsTooltip: "Als dit is aangevinkt kunnen niet-leden van<br>deze samenwerking niet zelf een verzoek doen om lid te worden.",
         joinRequests: "Uitnodigings-URL",
         disabled: "Uitgeschakeld",
-        enabled: "Ingeschakeld",
+        enabled: "Copy link",
         privacyPolicy: "Privacy policy",
         servicesRestricted: "Beperkte diensten",
         servicesRestrictedTooltip: "Als dit aangevinkt is kunnen<br/>alleen platform beheerders diensten<br/>voor deze samenwerking beheren.",
@@ -968,7 +976,7 @@ I18n.translations.nl = {
         noServices: "Deze organisatie heeft geen gekoppelde diensten.",
         searchServices: "Zoek, kies en voeg diensten toe aan organisatie {{name}}",
         deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor<br/> samenwerking {{name}}.<br/><br/><strong>LET OP</strong>: de dienst zelf wordt niet verwijderd.<br/>  Hij is alleen niet beschikbaar<br/>voor de samenwerkingen van<br/> deze organisatie.",
-        notAllowedOrganisation: "Service '{{service}}' kan niet toegoegd worden aan organisatie '{{organisatie}}'. De configuratie van de service laat deze koppeling niet toe.",
+        notAllowedOrganisation: "Deze service kan niet worden gekoppeld voor alle CO's<br/>omdat automatische verbindingen met CO's niet toegestaan zijn.<br/><br/>Aansluitingen kunnen nog steeds worden aangevraagd<br/>door individuele CO's in uw organisatie.",
         flash: {
             added: "{{service}} is toegevoegd aan organisatie {{name}}.",
             deleted: "{{service}} is onbeschikbaar gemaakt voor organisatie {{name}}.",
@@ -1394,6 +1402,18 @@ I18n.translations.nl = {
             title: "Help & ondersteuning",
             subTitle: "Neem gerust contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
         }
+    },
+    tooltips: {
+        members: "Samenstelling van deze samenwerking",
+        admins: "Beheerder (s) van deze samenwerking",
+        collaborationUrl: "Meer informatie over deze samenwerking",
+        aup: "Acceptabel gebruiksbeleid voor deze samenwerking",
+        user: "Gebruiker",
+        admin: "Beheerder",
+        invitations: "Genodigde",
+        joinRequest: "Deelnameverzoek",
+        manager: "Manager",
+        platformAdmin: "Goddess divinity"
     }
 };
 
