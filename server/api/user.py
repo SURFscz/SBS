@@ -23,7 +23,7 @@ from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
-from server.db.domain import User, OrganisationMembership, CollaborationMembership
+from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest
 from server.db.models import update, delete
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error
@@ -251,7 +251,10 @@ def me():
                      .subqueryload(OrganisationMembership.organisation)) \
             .options(joinedload(User.collaboration_memberships)
                      .subqueryload(CollaborationMembership.collaboration)) \
-            .options(joinedload(User.aups)) \
+            .options(joinedload(User.join_requests)
+                     .subqueryload(JoinRequest.collaboration)) \
+            .options(joinedload(User.collaboration_requests)
+                     .subqueryload(CollaborationRequest.organisation)) \
             .filter(User.id == user_from_session["id"]) \
             .first()
 

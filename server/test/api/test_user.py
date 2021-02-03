@@ -41,6 +41,12 @@ class TestUser(AbstractTest):
         res = self.client.get("/api/users/me")
         self.assertEquals(True, res.json["successfully_activated"])
 
+    def test_me_user_with_collaboration_requests(self):
+        self.login("urn:peter")
+        res = self.get("/api/users/me")
+        self.assertEqual(2, len(res["collaboration_requests"]))
+        self.assertEqual(1, len(res["join_requests"]))
+
     def test_me_after_delete(self):
         self.login("urn:jane")
         User.query.filter(User.uid == "urn:jane").delete()

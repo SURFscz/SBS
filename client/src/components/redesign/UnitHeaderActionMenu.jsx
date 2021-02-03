@@ -52,7 +52,7 @@ class UnitHeaderActionMenu extends React.Component {
 
 UnitHeaderActionMenu.propTypes = {
     actions: PropTypes.array,
-    history: PropTypes.object,
+    history: PropTypes.any,
     auditLogPath: PropTypes.string,
     firstTime: PropTypes.func,
     close: PropTypes.func,

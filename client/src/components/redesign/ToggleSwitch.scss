@@ -19,7 +19,7 @@ label.switch {
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: $lighter-grey;
+        background-color: $red;
         transition: .4s;
 
         &.no-animation {
@@ -52,10 +52,6 @@ label.switch {
 
         &.round::before {
             border-radius: 50%;
-        }
-
-        &.round:not(.checked)::before {
-            border: 1px solid $medium-grey;
         }
 
     }

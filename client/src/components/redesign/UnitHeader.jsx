@@ -13,7 +13,7 @@ class UnitHeader extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            showDropDown: false
+            showDropDown: true
         };
     }
 
@@ -68,7 +68,7 @@ class UnitHeader extends React.Component {
 
 UnitHeader.propTypes = {
     obj: PropTypes.object,
-    history: PropTypes.object,
+    history: PropTypes.any,
     auditLogPath: PropTypes.string,
     dropDownTitle: PropTypes.string,
     name: PropTypes.string,
