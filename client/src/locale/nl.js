@@ -148,7 +148,7 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek leden...",
             status: "Status",
             inviteSend: "Uitnodiging {{date}}",
-            accepted: "Geaccepteerd",
+            accepted: "Actief",
             new: "Voeg leden toe",
             remove: "Verwijder",
             mail: "Mail",
@@ -167,6 +167,7 @@ I18n.translations.nl = {
             name: "Naam",
             memberCount: "Leden",
             collaborationCount: "Samenwerkingen",
+            schacHomeOrganisations: "Schac-homes",
             category: "Categorie",
             leave: "Verlaat ORG"
         },
@@ -274,7 +275,7 @@ I18n.translations.nl = {
             new: "Nieuwe groep",
             edit: "Wijzig",
             name: "Naam",
-            urn: "URN",
+            urn: "Platform identifier",
             description: "Omschrijving",
             member: "Leden",
             memberCount: "Leden",
@@ -298,7 +299,8 @@ I18n.translations.nl = {
             about: "Over onze samenwerking",
             services: "Waar we samenwerken ({{nbr}} diensten)",
             noServices: "Er zijn nog geen diensten gekoppeld aan deze samenwerking",
-            servicesStart: "Klik op de knop om de dienst te starten, of lees eerst de instructies",
+            servicesStart: "Bezoek de dienst door op de cloud knop te klikken - indien aanwezig",
+            servicesHoover: "Bezoek deze dienst op {{uri}}",
             members: "Leden ({{nbr}})",
             showMemberDetails: "Toon alle details",
             admin: "admin",
@@ -488,8 +490,9 @@ I18n.translations.nl = {
         disabled: "Uitgeschakeld",
         enabled: "Copy link",
         privacyPolicy: "Privacy policy",
-        servicesRestricted: "Beperkte diensten",
+        servicesRestricted: "Beperk CO tot SURF diensten",
         servicesRestrictedTooltip: "Als dit aangevinkt is kunnen<br/>alleen platform beheerders diensten<br/>voor deze samenwerking beheren.",
+        discloseMembers: "Toon leden info",
         discloseMemberInformation: "Informatie van leden tonen",
         discloseMemberInformationTooltip: "Indien aangevinkt, dan wordt<br/>informatie van leden aan andere leden getoond",
         discloseEmailInformation: "Email adressen tonen",
@@ -669,6 +672,7 @@ I18n.translations.nl = {
         actions: "",
         name: "Naam",
         namePlaceHolder: "De unieke naam van de organisatie",
+        invitations: "ORG admins uitnodigen",
         category: "Category",
         categoryTooltip: "Categorieen worden getoond als</br>services worden gelinked met organisaties",
         tenantPlaceHolder: "De unieke tenant- / organisatie-identifier die de organisatie verbindt met een instelling",
@@ -720,9 +724,10 @@ I18n.translations.nl = {
         },
         onBoarding: {
             label: "On-boarding message",
-            tooltip: "De markdown instructies vertaald naar<br/>html om nieuwe gebruikers van deze organisatie<br/>te informeren wat ze kunnen doen / verwachten.",
+            tooltip: "Wanneer een gebruiker zich bij<br/>SRAM aanmeldt met zijn instellings-account<br/>maar zonder enige rol of uitnodiging, zullen<br/>we hem laten zien wat hij kan doen.<br/><br/>De tekst die je hier invult<br/>zal ook getoond worden.<br/><br/>Probeer iets te formuleren<br/>wat de gebruiker kan doen.",
+            template: "Als u niet weet wat u nu moet doen, kijk dan op ***URL naar een webpagina op het intranet van de instelling?***<br/><br/>U kunt ook contact opnemen met ***de naam en het emailadres van de SRAM-contactpersoon binnen uw instelling opgeven, of kan de gebruiker contact opnemen met research support, of een helpdesk binnen de instelling?***",
             tabs: {
-                write: "Markdown tekst",
+                write: "Markdown",
                 preview: "Voorbeeld"
             }
         }

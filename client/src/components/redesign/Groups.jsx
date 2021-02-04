@@ -427,6 +427,8 @@ class Groups extends React.Component {
                         createNewGroup: false
                     }));
             }
+        } else {
+            window.scrollTo(0, 0);
         }
     }
 

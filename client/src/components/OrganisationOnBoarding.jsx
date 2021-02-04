@@ -7,13 +7,14 @@ import "react-mde/lib/styles/css/react-mde-all.css";
 import {convertToHtml} from "../utils/Markdown";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
+import {isEmpty} from "../utils/Utils";
 
 export default class OrganisationOnBoarding extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            selectedTab: "write"
+            selectedTab: isEmpty(props.on_boarding_msg) ? "write" : "preview"
         };
         this.tabOptions = {
             "write": I18n.t("organisation.onBoarding.tabs.write"),
@@ -46,7 +47,7 @@ export default class OrganisationOnBoarding extends React.Component {
                             ["unordered-list", "ordered-list"]
                         ]}
                         maxEditorHeight={240}
-                        value={on_boarding_msg}
+                        value={on_boarding_msg || ""}
                         l18n={this.tabOptions}
                         onChange={this.saveValue}
                         selectedTab={selectedTab}

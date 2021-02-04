@@ -257,6 +257,8 @@ class CollaborationForm extends React.Component {
                     setFlash(I18n.t(isCollCreated ? "collaboration.flash.created" : "collaboration.flash.requested", {name: res.name}));
                 });
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 
@@ -311,6 +313,8 @@ class CollaborationForm extends React.Component {
                 this.props.history.goBack();
                 setFlash(I18n.t("collaborationDetail.flash.updated", {name: name}));
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 
@@ -467,11 +471,11 @@ class CollaborationForm extends React.Component {
                     {(!initial && isEmpty(short_name)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.shortName").toLowerCase()
                     })}/>}
-                    <InputField value={`${organisation.short_name}:${short_name}`}
+                    {user.admin && <InputField value={`${organisation.short_name}:${short_name}`}
                                 name={I18n.t("collaboration.globalUrn")}
                                 copyClipBoard={true}
                                 toolTip={I18n.t("collaboration.globalUrnTooltip")}
-                                disabled={true}/>
+                                disabled={true}/>}
 
                     {(!isCollaborationRequest && !isNew) &&
                     <InputField value={joinRequestUrl}
@@ -526,7 +530,6 @@ class CollaborationForm extends React.Component {
                                                           value={disclose_email_information}
                                                           info={I18n.t("collaboration.discloseEmailInformation")}
                                                           tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
-                                                          readOnly={!user.admin}
                                                           onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
                     <SelectField value={organisation}
                                  options={organisations}

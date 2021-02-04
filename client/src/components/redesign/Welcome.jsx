@@ -57,6 +57,7 @@ class Welcome extends React.Component {
         const hasOnBoardingMsg = !isEmpty(organisation.on_boarding_msg);
         const stepTwo = hasOnBoardingMsg ? 2 : 1;
         const canCreate = organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed;
+        const hasOrgMembers = organisation.has_members;
         return (
             <div>
                 {hasOnBoardingMsg && <div>
@@ -75,14 +76,17 @@ class Welcome extends React.Component {
                         </div>
                     </div>
                 </div>}
-                <h3 className={`step ${hasOnBoardingMsg ? "" : "orphan"}`}><span>{stepTwo}.</span>
-                    {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest"}`)}
-                </h3>
-                <p>
-                    {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest"}`)}
-                </p>
-                <Button onClick={() => this.props.history.push("/new-collaboration")}
-                        txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
+                {hasOrgMembers && <div>
+                    <h3 className={`step ${hasOnBoardingMsg ? "" : "orphan"}`}><span>{stepTwo}.</span>
+                        {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest"}`)}
+                    </h3>
+                    <p>
+                        {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest"}`)}
+                    </p>
+                    <Button onClick={() => this.props.history.push("/new-collaboration")}
+                            txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
+
+                </div>}
             </div>
         );
     }

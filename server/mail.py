@@ -5,7 +5,9 @@ from threading import Thread
 from flask import current_app, render_template
 from flask_mail import Message
 
+from server.auth.security import current_user_id
 from server.db.defaults import calculate_expiry_period
+from server.db.domain import User
 from server.logger.context_logger import ctx_logger
 
 
@@ -181,3 +183,23 @@ def mail_feedback(environment, message, current_user, recipients):
         template="feedback",
         context={"environment": environment, "message": message, "date": datetime.now(), "current_user": current_user},
         preview=False)
+
+
+def mail_platform_admins(obj):
+    cfg = current_app.app_config
+    if cfg.platform_admin_notifications.enabled:
+        current_user = User.query.get(current_user_id())
+        admin_users = [u.uid for u in cfg.admin_users if u.uid != current_user.uid]
+        platform_admins = User.query.filter(User.uid.in_(admin_users)).all()
+        user = User.query.get(current_user_id())
+        _do_send_mail(
+            subject=f"New {type(obj).__name__} ({obj.name}) created by {user.name}",
+            recipients=[admin.email for admin in platform_admins],
+            template="platform_notification",
+            context={"environment": cfg.mail.environment,
+                     "date": datetime.now(),
+                     "object_type": type(obj).__name__,
+                     "current_user": current_user,
+                     "obj": obj},
+            preview=False
+        )

@@ -133,6 +133,8 @@ class NewInvitation extends React.Component {
                 this.props.history.goBack();
                 setFlash(I18n.t("invitation.flash.created", {name: collaboration.name}))
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 

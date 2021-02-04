@@ -3,16 +3,20 @@ table.organisations {
     thead {
         th {
             &.name {
-                width: 30%;
+                width: 25%;
                 padding-left: 15px;
             }
 
             &.category {
-                width: 20%;
+                width: 15%;
+            }
+
+            &.schacHomes {
+                width: 15%;
             }
 
             &.role {
-                width: 20%;
+                width: 15%;
                 text-align: center;
             }
 

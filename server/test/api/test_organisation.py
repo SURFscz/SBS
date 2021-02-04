@@ -53,6 +53,7 @@ class TestOrganisation(AbstractTest):
                                 with_basic_auth=False)
         self.assertEqual(False, organisation["collaboration_creation_allowed"])
         self.assertEqual(False, organisation["collaboration_creation_allowed_entitlement"])
+        self.assertEqual(True, organisation["has_members"])
         self.assertEqual(amsterdam_uva_name, organisation["name"])
 
     def test_organisations_by_schac_home_organisation_none(self):

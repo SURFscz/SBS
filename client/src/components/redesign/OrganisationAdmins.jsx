@@ -295,7 +295,7 @@ class OrganisationAdmins extends React.Component {
     render() {
         const {user: currentUser, organisation} = this.props;
         const {
-            selectedMembers, allSelected, confirmationDialogOpen, cancelDialogAction,
+            selectedMembers, confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction, confirmationQuestion, loading
         } = this.state;
         if (loading) {
@@ -311,17 +311,23 @@ class OrganisationAdmins extends React.Component {
         invites.forEach(invite => invite.invite = true);
 
         const isAdmin = isUserAllowed(ROLES.ORG_ADMIN, currentUser, organisation.id, null);
+        const nbrOfAdmins = organisation.organisation_memberships.filter(m => m.role === "admin").length;
+        const oneAdminLeft = nbrOfAdmins < 2;
+        const selectedAdmins = Object.values(selectedMembers).filter(entry => entry.selected && entry.ref.role === "admin").length;
+        const noMoreAdminsToCheck = (selectedAdmins + 1) === nbrOfAdmins;
 
         let i = 0;
         const columns = [
             {
                 nonSortable: true,
                 key: "check",
-                header: <CheckBox value={allSelected} name={"allSelected"}
-                                  onChange={this.allSelected}/>,
+                // header: <CheckBox value={allSelected} name={"allSelected"}
+                //                   onChange={this.allSelected}/>,
                 mapper: entity => <div className="check">
+                    {(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
+                        (!noMoreAdminsToCheck || selectedMembers[entity.id].selected))) &&
                     <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
-                              value={(selectedMembers[entity.id] || {}).selected || false}/>
+                              value={(selectedMembers[entity.id] || {}).selected || false}/>}
                 </div>
             },
             {
@@ -367,8 +373,8 @@ class OrganisationAdmins extends React.Component {
                 mapper: entity => entity.invite ?
                     <span
                         className="person-role invite">{I18n.t("models.orgMembers.inviteSend",
-                        {date: shortDateFromEpoch(entity.created_at)})}</span> :
-                    <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
+                        {date: shortDateFromEpoch(entity.created_at)})}</span> : null
+                    // <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
             },
             {
                 nonSortable: true,

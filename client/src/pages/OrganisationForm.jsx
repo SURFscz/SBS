@@ -29,6 +29,7 @@ import "react-mde/lib/styles/css/react-mde-all.css";
 import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import CreatableField from "../components/CreatableField";
+import EmailField from "../components/EmailField";
 
 
 class OrganisationForm extends React.Component {
@@ -221,6 +222,8 @@ class OrganisationForm extends React.Component {
                 this.props.history.goBack();
                 setFlash(I18n.t("organisation.flash.created", {name: res.name}))
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 
@@ -256,6 +259,8 @@ class OrganisationForm extends React.Component {
                 this.props.history.goBack();
                 setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 
@@ -266,7 +271,6 @@ class OrganisationForm extends React.Component {
         this.setState({administrators: newAdministrators});
     };
 
-    //TODO - no mail in newOrganisation
     addEmail = e => {
         const email = e.target.value;
         const {administrators} = this.state;
@@ -287,7 +291,7 @@ class OrganisationForm extends React.Component {
 
     render() {
         const {
-            name, description, initial, alreadyExists,
+            name, description, initial, alreadyExists, administrators, message, email,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
             schac_home_organisations, collaboration_creation_allowed, logo, on_boarding_msg, category, categoryOptions,
             schac_home_organisation, isNew, organisation, warning, loading
@@ -366,8 +370,9 @@ class OrganisationForm extends React.Component {
                                     placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
                                     name={I18n.t("organisation.description")}/>
 
-                        <OrganisationOnBoarding on_boarding_msg={on_boarding_msg}
-                                                saveOnBoarding={val => this.setState({on_boarding_msg: val})}/>
+                        <OrganisationOnBoarding
+                            on_boarding_msg={(isEmpty(on_boarding_msg) && isNew) ? I18n.t("organisation.onBoarding.template") : on_boarding_msg}
+                            saveOnBoarding={val => this.setState({on_boarding_msg: val})}/>
 
                         <CreatableField onChange={e => this.setState({schac_home_organisation: e.target.value})}
                                         name={I18n.t("organisation.schacHomeOrganisation")}
@@ -397,28 +402,24 @@ class OrganisationForm extends React.Component {
                             tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
                             onChange={val => this.setState({collaboration_creation_allowed: val})}/>
 
-                        {/*<InputField value={email} onChange={e => this.setState({email: e.target.value})}*/}
-                        {/*            placeholder={I18n.t("organisation.administratorsPlaceholder")}*/}
-                        {/*            name={I18n.t("organisation.administrators")}*/}
-                        {/*            toolTip={I18n.t("organisation.administratorsTooltip")}*/}
-                        {/*            onBlur={this.addEmail}*/}
-                        {/*            onEnter={this.addEmail}/>*/}
+                        {isNew &&
+                        <div>
+                            <h1 className="section-separator">{I18n.t("organisation.invitations")}</h1>
 
-                        {/*<section className="email-tags">*/}
-                        {/*    {administrators.map(mail =>*/}
-                        {/*        <div key={mail} className="email-tag">*/}
-                        {/*            <span>{mail}</span>*/}
-                        {/*            {disabled ?*/}
-                        {/*                <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :*/}
-                        {/*                <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>}*/}
-                        {/*        </div>)}*/}
-                        {/*</section>*/}
-
-                        {/*<InputField value={message} onChange={e => this.setState({message: e.target.value})}*/}
-                        {/*            placeholder={I18n.t("organisation.messagePlaceholder")}*/}
-                        {/*            name={I18n.t("organisation.message")}*/}
-                        {/*            toolTip={I18n.t("organisation.messageTooltip")}*/}
-                        {/*            multiline={true}/>*/}
+                            <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
+                                        addEmail={this.addEmail} removeMail={this.removeMail}
+                                        name={I18n.t("invitation.invitees")}
+                                        error={!initial && isEmpty(administrators)}
+                                        emails={administrators}/>
+                        </div>}
+                        {(!initial && isEmpty(administrators)) && <ErrorIndicator msg={I18n.t("organisation.required", {
+                            attribute: I18n.t("organisation.administrators").toLowerCase()
+                        })}/>}
+                        {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                                              placeholder={I18n.t("collaboration.messagePlaceholder")}
+                                              name={I18n.t("collaboration.message")}
+                                              toolTip={I18n.t("collaboration.messageTooltip")}
+                                              multiline={true}/>}
 
                         <section className="actions">
                             {(user.admin && !isNew) &&

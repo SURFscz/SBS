@@ -464,8 +464,8 @@ class CollaborationDetail extends React.Component {
                     </span>
                 </div>
                 <div className="org-attributes">
-                    <span>{I18n.t("collaboration.servicesRestricted")}</span>
-                    <span>{I18n.t(`forms.${collaboration.services_restricted ? "yes" : "no"}`)}</span>
+                    <span>{I18n.t("collaboration.discloseMembers")}</span>
+                    <span>{I18n.t(`forms.${collaboration.disclose_email_information && collaboration.disclose_member_information ? "yes" : "no"}`)}</span>
                 </div>
                 {collaboration.accepted_user_policy && <div className="org-attributes">
                     <span>{I18n.t("collaboration.privacyPolicy")}</span>

@@ -413,7 +413,7 @@ class CollaborationAdmins extends React.Component {
         invites.forEach(invite => invite.invite = true);
 
         let i = 0;
-        const columns = [
+        let columns = [
             {
                 nonSortable: true,
                 key: "check",
@@ -465,8 +465,8 @@ class CollaborationAdmins extends React.Component {
                 mapper: entity => entity.invite ?
                     <span
                         className="person-role invite">{I18n.t("models.orgMembers.inviteSend",
-                        {date: shortDateFromEpoch(entity.created_at)})}</span> :
-                    <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
+                        {date: shortDateFromEpoch(entity.created_at)})}</span> : null
+                    // <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
             },
             {
                 nonSortable: true,
@@ -474,7 +474,10 @@ class CollaborationAdmins extends React.Component {
                 header: "",
                 mapper: this.getImpersonateMapper
             },
-        ]
+        ];
+        if (!isAdminOfCollaboration) {
+            columns = columns.filter(col => col.key !== "status");
+        }
         const doHideInvitees = hideInvitees || showMemberView;
         const filteredEntities = this.filterEntities(isAdminView, members, filterValue, collaboration, doHideInvitees,
             invites);
