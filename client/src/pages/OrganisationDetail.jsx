@@ -60,7 +60,7 @@ class OrganisationDetail extends React.Component {
                         .some(member => member.role === "manager" && member.user_id === user.id);
 
                     const tab = params.tab || this.state.tab;
-                    const tabs = this.getTabs(json, config);
+                    const tabs = this.getTabs(json, config, adminOfOrganisation);
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
@@ -101,7 +101,7 @@ class OrganisationDetail extends React.Component {
         return tabs.filter(tab => tab !== null);
     }
 
-    getOrganisationAdminsTab = organisation => {
+    getOrganisationAdminsTab = (organisation) => {
         const openInvitations = (organisation.organisation_invitations || []).length;
         return (<div key="admins" name="admins" label={I18n.t("home.tabs.orgAdmins")}
                      icon={<PlatformAdminIcon/>}
@@ -185,7 +185,8 @@ class OrganisationDetail extends React.Component {
             });
         }
         const isMember = organisation.organisation_memberships.some(m => m.user.id === user.id);
-        if (isMember) {
+        const lastAdmin = adminOfOrganisation && organisation.organisation_memberships.filter(m => m.role === "admin").length < 2;
+        if (isMember && !lastAdmin) {
             actions.push({
                 svg: LeaveIcon,
                 name: I18n.t("models.organisations.leave"),
@@ -231,7 +232,7 @@ class OrganisationDetail extends React.Component {
                     <div className="org-attributes-container">
                         <div className="org-attributes">
                             <span>{I18n.t("organisation.schacHomeOrganisation")}</span>
-                            <span>{isEmpty(organisation.schac_home_organisations) ? null :  organisation.schac_home_organisations.map(sho => sho.name).join(", ")}</span>
+                            <span>{isEmpty(organisation.schac_home_organisations) ? I18n.t("service.none") :  organisation.schac_home_organisations.map(sho => sho.name).join(", ")}</span>
                         </div>
                         <div className="org-attributes">
                             <span>{I18n.t("organisation.collaborationCreationAllowed")}</span>

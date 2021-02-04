@@ -244,6 +244,8 @@ class Service extends React.Component {
                     updateService(this.state).then(res => this.afterUpdate(name, "updated", res));
                 }
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 

@@ -27,7 +27,8 @@ export default function InputField({
                                        history = null,
                                        large = false,
                                        noInput = false,
-                                       error = false
+                                       error = false,
+                                       cols = 5
                                    }) {
     placeholder = disabled ? "" : placeholder;
     let className = `${fileUpload ? "file-upload" : ""}`;
@@ -81,7 +82,7 @@ export default function InputField({
                                   onEnter(e);
                               }
                           }}
-                          placeholder={placeholder} cols={3}/>}
+                          placeholder={placeholder} cols={cols}/>}
                 {copyClipBoard && <ClipBoardCopy txt={value} right={true}/>}
                 {(link && history) && <div className="input-field-link"><FontAwesomeIcon icon="arrow-right"
                                                                                          onClick={() => history.push(link)}/>

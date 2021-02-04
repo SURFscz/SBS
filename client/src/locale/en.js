@@ -148,7 +148,7 @@ I18n.translations.en = {
             searchPlaceHolder: "Search members...",
             status: "Status",
             inviteSend: "Invite sent {{date}}",
-            accepted: "Accepted",
+            accepted: "Active",
             new: "Add member(s)",
             remove: "Delete",
             mail: "Compose mail",
@@ -167,6 +167,7 @@ I18n.translations.en = {
             name: "Name",
             memberCount: "Members",
             collaborationCount: "Collaborations",
+            schacHomeOrganisations: "Schac-homes",
             category: "Category",
             leave: "Leave ORG"
         },
@@ -298,7 +299,8 @@ I18n.translations.en = {
             about: "What our CO is about",
             services: "Where we collaborate ({{nbr}} services)",
             noServices: "There are no services available in this collaboration",
-            servicesStart: "Click the button to start the service, or read the instructions first",
+            servicesStart: "Visit the Service by clicking on the cloud button - if present",
+            servicesHoover: "Visit this service at {{uri}}",
             members: "Members ({{nbr}})",
             showMemberDetails: "Show all details",
             admin: "admin",
@@ -488,8 +490,9 @@ I18n.translations.en = {
         disabled: "Disabled",
         enabled: "Copy link",
         privacyPolicy: "Privacy policy",
-        servicesRestricted: "Restricted services",
+        servicesRestricted: "Restrict CO to SURF services",
         servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
+        discloseMembers: "Disclose member info",
         discloseMemberInformation: "Disclose member information",
         discloseMemberInformationTooltip: "When checked the names<br/>of members are disclosed to other members",
         discloseEmailInformation: "Disclose email information",
@@ -669,6 +672,7 @@ I18n.translations.en = {
         actions: "",
         name: "Name",
         namePlaceHolder: "The unique name of an organisation",
+        invitations: "ORG admins invitations",
         category: "Category",
         categoryTooltip: "Categories are displayed when</br>services are linked to organisations",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institute",
@@ -720,9 +724,10 @@ I18n.translations.en = {
         },
         onBoarding: {
             label: "On-boarding instructions",
-            tooltip: "The markdown instructions converted to<br/>html to inform new users from this organisation<br/>about what they can do / expect.",
+            tooltip: "When a user signs into SRAM using<br/>their institutional account, but without<br/>any role or invite, we'll<br/>show them what they can do.<br/><br/>The text you fill out here,<br/>will also be shown.<br/><br/>Try to formulate something<br/>the user can do.",
+            template: "If you don't know what to do next, please check out ***URL to a webpage on the intranet of the institution?***<br/><br/>You can also contact ***maybe supply the name and email address of the SRAM contact within your institution, or can the user contact research support, or a helpdesk at the institution?***",
             tabs: {
-                write: "Markdown text",
+                write: "Markdown",
                 preview: "Preview"
             }
         }

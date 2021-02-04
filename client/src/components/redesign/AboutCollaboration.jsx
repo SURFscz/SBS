@@ -6,6 +6,7 @@ import {ReactComponent as IllustrationCO} from "../../icons/illustration-CO.svg"
 import {removeDuplicates, stopEvent} from "../../utils/Utils";
 import Logo from "./Logo";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
+import Tooltip from "./Tooltip";
 
 const memberCutOff = 10;
 
@@ -58,11 +59,18 @@ class AboutCollaboration extends React.Component {
                         </span>}
                         <ul className="services">
                             {services.sort((a, b) => a.name.localeCompare(b.name)).map(service =>
-                                <li key={service.name} onClick={this.openService(service)}
+                                <li key={service.name}
                                     className={`${service.uri ? "uri" : ""}`}>
                                     {service.logo && <Logo src={service.logo} alt={service.name}/>}
-                                    <span>{service.name}</span>
-                                    {service.uri && <ServicesIcon/>}
+                                    <span className="border-left">{service.name}</span>
+                                    {service.uri &&
+                                        <span className="border-left open-service" onClick={this.openService(service)}>
+                                        <Tooltip id={`${service.id}`}
+                                                 children={<ServicesIcon/>}
+                                                 msg={I18n.t("models.collaboration.servicesHoover", {uri: service.uri})}/>
+                                        </span>
+
+                                    }
                                 </li>)}
                         </ul>
                     </div>}

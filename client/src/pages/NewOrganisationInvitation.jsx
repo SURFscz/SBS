@@ -100,6 +100,8 @@ class NewOrganisationInvitation extends React.Component {
                 this.props.history.push(`/organisations/${organisation.id}`);
                 setFlash(I18n.t("organisationInvitation.flash.created", {name: organisation.name}))
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 

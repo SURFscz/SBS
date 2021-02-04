@@ -79,6 +79,8 @@ class Me extends React.Component {
                 this.gotoHome();
                 setFlash(I18n.t("user.flash.updated"));
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 

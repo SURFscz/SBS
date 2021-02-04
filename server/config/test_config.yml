@@ -103,3 +103,10 @@ service_bus:
   user: "sbs"
   password: "changethispassword"
 
+platform_admin_notifications:
+  enabled: True
+  cron_hour_of_day: 11
+  check_outstanding_join_request_days: 7
+  check_outstanding_coll_request_days: 7
+  check_outstanding_coll_invitations_days: 7
+  check_outstanding_org_invitations_days: 7

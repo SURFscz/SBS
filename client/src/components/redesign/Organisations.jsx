@@ -1,7 +1,7 @@
 import React from "react";
 import {allOrganisations, myOrganisations} from "../../api";
 import "./Organisations.scss";
-import {stopEvent} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Logo from "./Logo";
@@ -25,6 +25,7 @@ class Organisations extends React.Component {
                 json.forEach(org => {
                     const membership = (user.organisation_memberships || []).find(m => m.user_id === user.id);
                     org.role = membership ? membership.role : "";
+                    org.schacHomes = isEmpty(org.schac_home_organisations) ? "-" :  org.schac_home_organisations.map(sho => sho.name).join(", ");
                 });
                 this.setState({organisations: json, loading: false})
             });
@@ -56,6 +57,11 @@ class Organisations extends React.Component {
                 header: I18n.t("models.organisations.category")
             },
             {
+                key: "schacHomes",
+                header: I18n.t("models.organisations.schacHomeOrganisations"),
+                mapper: org => org.schacHomes,
+            },
+            {
                 key: "role",
                 header: "",// I18n.t("profile.yourRole"),
                 mapper: org => {
@@ -76,7 +82,7 @@ class Organisations extends React.Component {
             }]
         return (
             <Entities entities={organisations}
-                      modelName="organisations" searchAttributes={["name"]}
+                      modelName="organisations" searchAttributes={["name","schacHomes"]}
                       defaultSort="name"
                       columns={columns}
                       rowLinkMapper={() => this.openOrganisation}
