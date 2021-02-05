@@ -8,6 +8,10 @@ export const validPublicSSHEd25519KeyRegExp = /ssh-ed25519 AAAA[0-9A-Za-z+/]+[=]
 
 export const validPublicSSH2KeyRegExp = /---- BEGIN SSH2 PUBLIC KEY ----.*/;
 
+export const validPublicPKCS8KeyRegExp = /-----BEGIN PUBLIC KEY-----.*/;
+
+export const validPublicPEMKeyRegExp = /-----BEGIN RSA PUBLIC KEY-----.*/;
+
 export const sanitizeShortName = shortName => {
     if (!shortName) {
         return shortName;

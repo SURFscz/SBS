@@ -164,6 +164,11 @@ class JoinRequests extends React.Component {
                 mapper: entity => <UserColumn entity={entity} currentUser={currentUser}/>
             },
             {
+                key: "status",
+                header: I18n.t("collaborationRequest.status"),
+                mapper: entity => <span className={`person-role ${entity.status}`}>{I18n.t(`collaborationRequest.statuses.${entity.status}`)}</span>
+            },
+            {
                 key: "user__schac_home_organisation",
                 header: I18n.t("models.users.institute"),
                 mapper: entity => entity.user.schac_home_organisation

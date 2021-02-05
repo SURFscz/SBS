@@ -3,6 +3,7 @@ import uuid
 
 from sqlalchemy.orm import joinedload
 
+from server.api.base import STATUS_APPROVED, STATUS_DENIED
 from server.db.db import db
 from server.db.domain import JoinRequest, User, Collaboration
 from server.test.abstract_test import AbstractTest
@@ -46,7 +47,8 @@ class TestJoinRequest(AbstractTest):
         collaboration = Collaboration.query \
             .filter(Collaboration.identifier == collaboration_ai_computing_uuid).one()
         user = User.query.filter(User.uid == "urn:betty").one()
-        join_request = JoinRequest(user_id=user.id, collaboration_id=collaboration.id, hash=str(uuid.uuid4()))
+        join_request = JoinRequest(user_id=user.id, collaboration_id=collaboration.id, hash=str(uuid.uuid4()),
+                                   status="open")
         db.session.merge(join_request)
         db.session.commit()
 
@@ -82,7 +84,8 @@ class TestJoinRequest(AbstractTest):
 
     def test_accept_join_request(self):
         self.assertEqual(4, JoinRequest.query.count())
-        join_request_hash = self._join_request_by_user("urn:peter").hash
+        join_request = self._join_request_by_user("urn:peter")
+        join_request_hash = join_request.hash
         self.login("urn:admin")
         mail = self.app.mail
         with mail.record_messages() as outbox:
@@ -91,7 +94,8 @@ class TestJoinRequest(AbstractTest):
             mail_msg = outbox[0]
             self.assertListEqual(["peter@example.org"], mail_msg.recipients)
             self.assertTrue("accepted" in mail_msg.html)
-            self.assertEqual(3, JoinRequest.query.count())
+            join_request = JoinRequest.query.get(join_request.id)
+            self.assertEqual(STATUS_APPROVED, join_request.status)
 
     def test_accept_join_request_already_member(self):
         join_request_hash = self._join_request_by_user("urn:john").hash
@@ -99,14 +103,37 @@ class TestJoinRequest(AbstractTest):
         self.put("/api/join_requests/accept", body={"hash": join_request_hash}, response_status_code=409)
 
     def test_decline_join_request(self):
-        self.assertEqual(4, JoinRequest.query.count())
-        join_request_hash = self._join_request_by_user("urn:peter").hash
+        join_request = self._join_request_by_user("urn:peter")
+        join_request_hash = join_request.hash
         self.login("urn:admin")
         mail = self.app.mail
         with mail.record_messages() as outbox:
-            self.put("/api/join_requests/decline", body={"hash": join_request_hash})
+            rejection_reason = "Prerogative of admins"
+            self.put("/api/join_requests/decline", body={"hash": join_request_hash,
+                                                         "rejection_reason": rejection_reason})
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["peter@example.org"], mail_msg.recipients)
             self.assertTrue("declined" in mail_msg.html)
-            self.assertEqual(3, JoinRequest.query.count())
+            self.assertTrue(rejection_reason in mail_msg.html)
+
+            join_request = JoinRequest.query.get(join_request.id)
+            self.assertEqual(STATUS_DENIED, join_request.status)
+            self.assertEqual(rejection_reason, join_request.rejection_reason)
+
+    def test_delete_join_request(self):
+        pre_count = JoinRequest.query.count()
+        join_request = self._join_request_by_user("urn:peter")
+        join_request_hash = join_request.hash
+        self.login("urn:admin")
+        self.put("/api/join_requests/accept", body={"hash": join_request_hash})
+        self.delete("/api/join_requests", primary_key=join_request.id, with_basic_auth=False)
+        self.assertEqual(pre_count - 1, JoinRequest.query.count())
+
+    def test_delete_join_request_with_open_status(self):
+        pre_count = JoinRequest.query.count()
+        join_request_id = self._join_request_by_user("urn:john").id
+        self.login("urn:admin")
+        self.delete("/api/join_requests", primary_key=join_request_id, with_basic_auth=False,
+                    response_status_code=400)
+        self.assertEqual(pre_count, JoinRequest.query.count())

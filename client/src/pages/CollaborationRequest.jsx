@@ -306,7 +306,7 @@ class CollaborationRequest extends React.Component {
                                      toolTip={I18n.t("collaboration.organisationTooltip")}
                         />
                         <section className="actions">
-                            <Button warningButton={true} onClick={this.deleteCollaborationRequest}/>
+                            {collaborationRequest.status !== "open" && <Button warningButton={true} onClick={this.deleteCollaborationRequest}/>}
                         </section>
                     </div>
                 </div>

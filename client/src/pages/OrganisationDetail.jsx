@@ -231,7 +231,7 @@ class OrganisationDetail extends React.Component {
                     <p>{organisation.description}</p>
                     <div className="org-attributes-container">
                         <div className="org-attributes">
-                            <span>{I18n.t("organisation.schacHomeOrganisation")}</span>
+                            <span>{I18n.t("organisation.schacHomeOrganisationShortName")}</span>
                             <span>{isEmpty(organisation.schac_home_organisations) ? I18n.t("service.none") :  organisation.schac_home_organisations.map(sho => sho.name).join(", ")}</span>
                         </div>
                         <div className="org-attributes">

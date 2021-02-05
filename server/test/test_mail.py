@@ -43,3 +43,23 @@ class TestMail(AbstractTest):
         finally:
             os.environ["TESTING"] = "1"
             self.app.app_config.mail.send_exceptions = False
+
+    def test_send_audit_trail_mail(self):
+        try:
+            del os.environ["TESTING"]
+            self.app.app_config.mail.audit_trail_notifications_enabled = True
+            mail = self.app.mail
+            with mail.record_messages() as outbox:
+                self.login("urn:john")
+                self.post("/api/organisations",
+                          body={"name": "new_organisation",
+                                "short_name": "https://ti1"},
+                          with_basic_auth=False)
+                self.assertEqual(1, len(outbox))
+                mail_msg = outbox[0]
+                self.assertTrue("<p>User urn:john has created a Organisation"
+                                " on environment <strong>local</strong>" in mail_msg.html)
+        finally:
+            os.environ["TESTING"] = "1"
+            self.app.app_config.mail.send_exceptions = False
+            self.app.app_config.mail.audit_trail_notifications_enabled = False

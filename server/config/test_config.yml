@@ -52,6 +52,9 @@ mail:
   sender_email: no-reply@surf.nl
   suppress_sending_mails: False
   info_email: sram-support@surf.nl
+  beheer_email: sram-beheer@surf.nl
+  # Do we mail a summary of new Organizations and Services to the beheer_email?
+  audit_trail_notifications_enabled: True
   send_exceptions: False
   send_js_exceptions: False
   send_exceptions_recipients: [ "sram-support@surf.nl" ]
@@ -104,9 +107,10 @@ service_bus:
   password: "changethispassword"
 
 platform_admin_notifications:
+  # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
   enabled: True
   cron_hour_of_day: 11
-  check_outstanding_join_request_days: 7
-  check_outstanding_coll_request_days: 7
-  check_outstanding_coll_invitations_days: 7
-  check_outstanding_org_invitations_days: 7
+  # How long before we include open join_requests in the summary
+  outstanding_join_request_days_threshold: 7
+  # How long before we include open CO requests in the summary
+  outstanding_coll_request_days_threshold: 7

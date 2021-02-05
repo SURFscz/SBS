@@ -1,0 +1,26 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURF Feedback{% endblock %}
+{% block content %}
+
+Hi,
+{% if collaboration_requests|length > 0 %}
+The following collaboration requests in {{ environment }} have been outstanding for more then
+    {{ admin_cfg.outstanding_coll_request_days_threshold }} days:
+    {% for req in collaboration_requests %}
+        {{ req.name }} requested by {{ req.requester.name }} in organization {{ req.organisation.name }} at
+        {{ created_at }}
+    {% endfor %}
+{% endif %}
+
+{% if collaboration_join_requests|length > 0 %}
+The following collaboration join requests in {{ environment }} have been outstanding for more then
+    {{ admin_cfg.outstanding_join_request_days_threshold }} days:
+    {% for req in collaboration_join_requests %}
+        {{ req.user.name }} requested access to collaboration {{ req.collaboration.name }} at {{ created_at }}
+    {% endfor %}
+{% endif %}
+
+This mail is automatically send and can be suppressed by changing the <i>platform_admin_notifications</i> section
+    of the configuration for environment {{ environment }}
+
+{% endblock %}
