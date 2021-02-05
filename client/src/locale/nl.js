@@ -211,6 +211,7 @@ I18n.translations.nl = {
             title: "Samenwerkingen",
             searchPlaceHolder: "Zoek samenwerkingen...",
             new: "Nieuwe samenwerking",
+            noEntities:  "Er zijn nog geen samenwerkingen...",
             newCollaborationRequest: "Nieuw verzoek voor samenwerking",
             name: "Naam",
             memberCount: "Leden",
