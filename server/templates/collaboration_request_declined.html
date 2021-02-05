@@ -19,6 +19,9 @@
     <p>Your request to create collaboration {{ collaboration.name }} has
         been declined by the administrator {{ administrator }} of the
         organisation {{ organisation.name }}.</p>
+    <p>The reason for the denial by {{ administrator }} is:</p>
+    <br/>
+    <p>{{ rejection_reason }}</p>
 </div>
 
 {% endblock %}

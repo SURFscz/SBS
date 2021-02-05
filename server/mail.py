@@ -186,20 +186,33 @@ def mail_feedback(environment, message, current_user, recipients):
 
 
 def mail_platform_admins(obj):
-    cfg = current_app.app_config
-    if cfg.platform_admin_notifications.enabled:
+    mail_cfg = current_app.app_config.mail
+    if mail_cfg.audit_trail_notifications_enabled:
         current_user = User.query.get(current_user_id())
-        admin_users = [u.uid for u in cfg.admin_users if u.uid != current_user.uid]
-        platform_admins = User.query.filter(User.uid.in_(admin_users)).all()
-        user = User.query.get(current_user_id())
         _do_send_mail(
-            subject=f"New {type(obj).__name__} ({obj.name}) created by {user.name}",
-            recipients=[admin.email for admin in platform_admins],
+            subject=f"New {type(obj).__name__} ({obj.name}) created by {current_user.name}"
+                    f" in environment {mail_cfg.environment}",
+            recipients=[mail_cfg.beheer_email],
             template="platform_notification",
-            context={"environment": cfg.mail.environment,
+            context={"environment": mail_cfg.environment,
                      "date": datetime.now(),
                      "object_type": type(obj).__name__,
                      "current_user": current_user,
                      "obj": obj},
             preview=False
         )
+
+
+def mail_outstanding_requests(collaboration_requests, collaboration_join_requests):
+    mail_cfg = current_app.app_config.mail
+    admin_cfg = current_app.app_config.platform_admin_notifications
+    _do_send_mail(
+        subject=f"Daily outstanding requests in environment {mail_cfg.environment}",
+        recipients=[mail_cfg.beheer_email],
+        template="platform_notification_outstanding_requests",
+        context={"environment": mail_cfg.environment,
+                 "admin_cfg": admin_cfg,
+                 "collaboration_join_requests": collaboration_join_requests,
+                 "collaboration_requests": collaboration_requests},
+        preview=False
+    )

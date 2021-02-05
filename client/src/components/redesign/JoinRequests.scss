@@ -7,12 +7,17 @@ table.joinRequests {
     thead {
         th {
             &.user__name {
-                width: 35%;
+                width: 25%;
                 padding-left: 15px;
             }
 
             &.user__schac_home_organisation {
-                width: 35%;
+                width: 25%;
+            }
+
+            &.status {
+                width: 20%;
+                text-align: center;
             }
 
             &.open {
@@ -26,6 +31,10 @@ table.joinRequests {
         td {
             &.user__name {
                 padding-left: 15px;
+            }
+
+            &.status {
+                text-align: center;
             }
 
             &.open {

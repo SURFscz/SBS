@@ -369,7 +369,7 @@ class CollaborationAdmins extends React.Component {
                     <section className="actions">
                         <Button warningButton={true} txt={I18n.t("organisationInvitation.delete")}
                                 onClick={this.delete}/>
-                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
+                        <Button cancelButton={true} txt={I18n.t("forms.close")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("organisationInvitation.resend")}
                                 onClick={this.resend}/>
                     </section>

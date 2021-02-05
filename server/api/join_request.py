@@ -3,9 +3,10 @@ from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager
-from werkzeug.exceptions import Conflict
+from werkzeug.exceptions import Conflict, BadRequest
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, STATUS_DENIED, STATUS_APPROVED
+from server.api.collaboration_request import STATUS_OPEN
 from server.auth.security import confirm_collaboration_admin, current_user_id, current_user, \
     current_user_name, current_user_uid
 from server.db.domain import CollaborationMembership, Collaboration, JoinRequest, db
@@ -71,6 +72,7 @@ def new_join_request():
     join_request = JoinRequest(message=client_data["motivation"],
                                reference=client_data["reference"] if "reference" in client_data else None,
                                user_id=user_id,
+                               status=STATUS_OPEN,
                                collaboration_id=collaboration.id,
                                hash=token_urlsafe())
     join_request = db.session.merge(join_request)
@@ -115,8 +117,9 @@ def approve_join_request():
                                                        created_by=current_user_uid(),
                                                        updated_by=current_user_uid())
 
+    join_request.status = STATUS_APPROVED
     db.session.merge(collaboration_membership)
-    delete(JoinRequest, join_request.id)
+    db.session.merge(join_request)
 
     res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201
@@ -126,17 +129,31 @@ def approve_join_request():
 @json_endpoint
 def deny_join_request():
     join_request_hash = current_request.get_json()["hash"]
+    rejection_reason = current_request.get_json()["rejection_reason"]
     join_request = _get_join_request(join_request_hash)
 
     confirm_collaboration_admin(join_request.collaboration.id)
 
     mail_accepted_declined_join_request({"salutation": f"Dear {join_request.user.name}",
                                          "base_url": current_app.app_config.base_url,
+                                         "rejection_reason": rejection_reason,
                                          "administrator": current_user_name(),
                                          "join_request": join_request},
                                         join_request,
                                         False,
                                         [join_request.user.email])
+    join_request.status = STATUS_DENIED
+    join_request.rejection_reason = rejection_reason
+    db.session.merge(join_request)
 
-    db.session.delete(join_request)
     return None, 201
+
+
+@join_request_api.route("/<join_request_id>", methods=["DELETE"], strict_slashes=False)
+@json_endpoint
+def delete_join_request(join_request_id):
+    join_request = JoinRequest.query.get(join_request_id)
+    confirm_collaboration_admin(join_request.collaboration_id)
+    if join_request.status == STATUS_OPEN:
+        raise BadRequest("Join request with status 'open' can not be deleted")
+    return delete(JoinRequest, join_request_id)

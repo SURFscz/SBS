@@ -373,12 +373,13 @@ def seed(db, app_config):
     db.session.commit()
 
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
-                                    collaboration=ai_computing, hash=token_urlsafe())
+                                    collaboration=ai_computing, hash=token_urlsafe(), status="open")
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing,
-                                     hash=join_request_peter_hash)
-    join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=token_urlsafe())
+                                     hash=join_request_peter_hash, status="open")
+    join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=token_urlsafe(),
+                                    status="open")
     join_request_uva_research = JoinRequest(message="Please...", user=james, collaboration=uva_research,
-                                            hash=token_urlsafe())
+                                            hash=token_urlsafe(), status="open")
 
     _persist(db, join_request_john, join_request_peter, join_request_mary, join_request_uva_research)
 

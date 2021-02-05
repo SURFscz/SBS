@@ -28,6 +28,10 @@ external_api_listing = ["api/collaborations/v1", "api/collaborations/v1/restrict
                         "api/collaborations_services/v1/connect_collaboration_service",
                         "/api/invitations/v1/collaboration_invites"]
 
+STATUS_OPEN = "open"
+STATUS_DENIED = "denied"
+STATUS_APPROVED = "approved"
+
 
 def auth_filter(app_config):
     url = current_request.base_url

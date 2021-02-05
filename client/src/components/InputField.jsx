@@ -60,23 +60,12 @@ export default function InputField({
                                onEnter(e);
                            }
                        }}/>}
-                {fileUpload && <section className="file-upload-container">
-                    <label className="file-upload" htmlFor={`fileUpload_${name}`}>
-                        {isEmpty(fileName) ? <span><FontAwesomeIcon icon="file-upload"/></span> :
-                            <span className="remove"><em>{fileName}</em>
-                            <FontAwesomeIcon onClick={onFileRemoval} icon="trash"/></span>}
-                    </label>
-                    <input key={fileInputKey}
-                           type="file"
-                           id={`fileUpload_${name}`}
-                           name={`fileUpload_${name}`}
-                           accept={acceptFileFormat}
-                           style={{display: "none"}}
-                           onChange={onFileUpload}/>
-                </section>}
                 {(multiline && !noInput) &&
-                <textarea disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
-                          className={`${className} ${large ? "large" : ""}`}
+                <textarea disabled={disabled}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          className={`${className} ${large ? "large" : ""} ${fileUpload ? "file-upload" : ""}`}
                           onKeyDown={e => {
                               if (onEnter && e.keyCode === 13) {//enter
                                   onEnter(e);
@@ -91,6 +80,20 @@ export default function InputField({
                 <div className="input-field-link"><a href={value} rel="noopener noreferrer"
                                                      target="_blank"><FontAwesomeIcon icon="arrow-right"/></a></div>}
                 {noInput && <span className="no-input">{value}</span>}
+                {fileUpload && <section className="file-upload-container">
+                    <label className="file-upload" htmlFor={`fileUpload_${name}`}>
+                        {isEmpty(fileName) ? <span><FontAwesomeIcon icon="file-upload"/></span> :
+                            <span className="remove"><em>{fileName}</em>
+                            <FontAwesomeIcon onClick={onFileRemoval} icon="trash"/></span>}
+                    </label>
+                    <input key={fileInputKey}
+                           type="file"
+                           id={`fileUpload_${name}`}
+                           name={`fileUpload_${name}`}
+                           accept={acceptFileFormat}
+                           style={{display: "none"}}
+                           onChange={onFileUpload}/>
+                </section>}
             </div>
         </div>
     );

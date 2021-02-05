@@ -43,17 +43,17 @@ class Entities extends React.Component {
                                              id="impersonate_close_explanation"
                                              onClick={() => this.setState({showExplanation: true})}/>}
                 {filters}
+                {showNew && <Button onClick={this.newEntity} className="plus"
+                                    txt={I18n.t(`models.${modelName}.new`)}/>
+                }
                 {!isEmpty(searchAttributes) &&
-                <div className="search">
+                <div className={`search ${showNew ? "" : "standalone"}`}>
                     <input type="text"
                            onChange={e => this.setState({query: e.target.value})}
                            value={query}
                            placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
                     <FontAwesomeIcon icon="search"/>
                 </div>}
-                {showNew && <Button onClick={this.newEntity} className="plus"
-                                    txt={I18n.t(`models.${modelName}.new`)}/>
-                }
             </section>
         );
     };
