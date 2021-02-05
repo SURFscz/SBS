@@ -333,6 +333,10 @@ export function joinRequestDecline(joinRequest) {
     return postPutJson("/api/join_requests/decline", joinRequest, "put", false);
 }
 
+export function joinRequestDelete(joinRequest) {
+    return fetchDelete(`/api/join_requests/${joinRequest.id}`);
+}
+
 //OrganisationInvitations
 export function organisationInvitationByHash(hash) {
     return fetchJson(`/api/organisation_invitations/find_by_hash?hash=${hash}`, {}, {}, false);

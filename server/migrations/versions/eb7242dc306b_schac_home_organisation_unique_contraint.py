@@ -17,6 +17,7 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
+    conn.execute(text("UPDATE organisations SET `schac_home_organisation` = NULL where `schac_home_organisation` = ''"))
     conn.execute(text("ALTER TABLE organisations "
                       "ADD UNIQUE INDEX organisation_schac_home_unique(schac_home_organisation)"))
 
