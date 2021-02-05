@@ -18,7 +18,7 @@ from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
     CollaborationRequest, SchacHomeOrganisation
 from server.db.models import update, save, delete
-from server.mail import mail_organisation_invitation
+from server.mail import mail_organisation_invitation, mail_platform_admins
 
 organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/organisations")
 
@@ -262,8 +262,8 @@ def save_organisation():
 
     res = save(Organisation, custom_json=data)
     user = User.query.get(current_user_id())
+    organisation = res[0]
     for administrator in administrators:
-        organisation = res[0]
         invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
                                             organisation_id=organisation.id, user_id=user.id,
                                             intended_role=intended_role,
@@ -275,6 +275,9 @@ def save_organisation():
             "invitation": invitation,
             "base_url": current_app.app_config.base_url
         }, organisation, [administrator])
+
+    mail_platform_admins(organisation)
+
     return res
 
 
