@@ -2,7 +2,7 @@ import React from "react";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 
 import "./JoinRequests.scss";
-import {stopEvent} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Button from "../Button";
 import {setFlash} from "../../utils/Flash";
@@ -26,6 +26,8 @@ class JoinRequests extends React.Component {
             confirmationDialogQuestion: undefined,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            children: null,
+            rejectionReason: "",
             loading: true,
         }
     }
@@ -80,11 +82,27 @@ class JoinRequests extends React.Component {
             }), () => this.componentDidMount());
     };
 
-    confirm = (action, question) => {
+    getDeclineRejectionOptions = () => {
+        const {rejectionReason} = this.state;
+        return (
+          <div className="rejection-reason-container">
+              <label htmlFor="rejection-reason">{I18n.t("joinRequest.rejectionReason")}</label>
+              <span>aaa: {rejectionReason}</span>
+              <InputField value={rejectionReason}
+                          onChange={e =>  {
+                              debugger;
+                              this.setState({rejectionReason: e.target.value});
+                          }}/>
+              <span className="rejection-reason-disclaimer">{I18n.t("joinRequest.rejectionReasonNote")}</span>
+          </div>
+        );
+    }
+    confirm = (action, question, children) => {
         this.setState({
             confirmationDialogOpen: true,
             confirmationDialogQuestion: question,
-            confirmationDialogAction: action
+            confirmationDialogAction: action,
+            children: children
         });
     };
 
@@ -103,7 +121,9 @@ class JoinRequests extends React.Component {
             confirmationDialogOpen,
             cancelDialogAction,
             confirmationDialogAction,
-            confirmationDialogQuestion
+            rejectionReason,
+            confirmationDialogQuestion,
+            children
         } = this.state;
         const isOpen = joinRequest.status === "open";
         return (
@@ -112,6 +132,8 @@ class JoinRequests extends React.Component {
                                     cancel={cancelDialogAction}
                                     isWarning={true}
                                     confirm={confirmationDialogAction}
+                                    children={children}
+                                    disabledConfirm={children && isEmpty(rejectionReason)}
                                     question={confirmationDialogQuestion}/>
                 <a className={"back-to-join-requests"} onClick={this.cancelSideScreen} href={"/cancel"}>
                     <ChevronLeft/>{I18n.t("models.joinRequests.backToJoinRequests")}
@@ -140,11 +162,18 @@ class JoinRequests extends React.Component {
 
                     <section className="actions">
                         {isOpen && <Button cancelButton={true} txt={I18n.t("joinRequest.decline")}
-                                           onClick={() => this.confirm(this.declineJoinRequest, I18n.t("joinRequest.declineConfirmation"))}/>}
+                                           onClick={() => this.confirm(
+                                               this.declineJoinRequest,
+                                               I18n.t("joinRequest.declineConfirmation"),
+                                               this.getDeclineRejectionOptions()
+                                           )}/>}
                         {isOpen && <Button txt={I18n.t("joinRequest.accept")}
                                            onClick={this.acceptJoinRequest}/>}
                         {!isOpen && <Button warningButton={true}
-                                            onClick={() => this.confirm(this.deleteJoinRequest, I18n.t("joinRequest.deleteConfirmation"))}/>}
+                                            onClick={() => this.confirm(
+                                                this.deleteJoinRequest,
+                                                I18n.t("joinRequest.deleteConfirmation"),
+                                                null)}/>}
                     </section>
                 </div>
             </div>)

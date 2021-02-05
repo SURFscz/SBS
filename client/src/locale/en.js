@@ -211,6 +211,7 @@ I18n.translations.en = {
             title: "Collaborations",
             searchPlaceHolder: "Search collaborations...",
             new: "New Collaboration",
+            noEntities:  "There are no collaborations yet...",
             newCollaborationRequest: "New request for collaboration",
             name: "Name",
             memberCount: "Members",
