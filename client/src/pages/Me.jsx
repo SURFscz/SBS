@@ -143,6 +143,7 @@ class Me extends React.Component {
                                 toolTip={I18n.t("user.ssh_keyTooltip")}
                                 onBlur={this.validateSSHKey}
                                 fileUpload={true}
+                                multiline={true}
                                 error={fileTypeError}
                                 fileName={fileName}
                                 fileInputKey={fileInputKey}

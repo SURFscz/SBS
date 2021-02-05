@@ -159,7 +159,6 @@ export default class CroppedImageDialog extends React.PureComponent {
             <Modal
                 isOpen={isOpen}
                 onRequestClose={this.onCancelInternal}
-                contentLabel={I18n.t("imageDialog.label")}
                 className="cropped-image-dialog-content"
                 overlayClassName="cropped-image-dialog-overlay"
                 closeTimeoutMS={250}
