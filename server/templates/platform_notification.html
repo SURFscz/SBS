@@ -3,7 +3,8 @@
 {% block content %}
 
     <p>Hi,</p>
-    <p>User {{ current_user.name }} has created an {{ object_type }} on environment {{ environment }} at {{ date }}:</p>
+    <p>User {{ current_user.name }} has created a {{ object_type }} on environment <strong>{{ environment }}</strong>
+        at {{ date }}:</p>
 
     <div style="padding: 20px;line-height: 24px;background-color: #f5f5f5;">
         <table style="width: 65%;">
@@ -17,12 +18,13 @@
             <tbody>
             <tr>
                 <td style="padding: 8px 0 4px 0; text-align: left;">
-                    <img alt="" style="border-radius: 4px;max-width: 80px;max-height: 58px;margin-right: 5px;" src="data:image/jpeg;base64,{{ obj.logo }}"/>
+                    <img alt="" style="border-radius: 4px;width: 120px;height: auto;margin-right: 5px;"
+                         src="data:image/jpeg;base64,{{ obj.logo }}"/>
                 </td>
-                <td style="padding: 8px 0 4px 0; text-align: left;">
+                <td style="padding: 8px 0 4px 0; text-align: left; vertical-align: top;">
                     {{ obj.name }}
                 </td>
-                <td style="padding: 8px 0 4px 0; text-align: left;">
+                <td style="padding: 8px 0 4px 0; text-align: left; vertical-align: top;">
                     {{ obj.description }}
                 </td>
             </tr>
