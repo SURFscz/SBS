@@ -10,7 +10,7 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import Entities from "./Entities";
 import SpinnerField from "./SpinnerField";
 import InputField from "../InputField";
-import {joinRequestAccept, joinRequestDecline} from "../../api";
+import {joinRequestAccept, joinRequestDecline, joinRequestDelete} from "../../api";
 import UserColumn from "./UserColumn";
 import moment from "moment";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
@@ -62,6 +62,15 @@ class JoinRequests extends React.Component {
             }), () => this.componentDidMount());
     };
 
+    deleteJoinRequest = () => {
+        const {collaboration} = this.props;
+        const joinRequest = this.getSelectedJoinRequest();
+        this.refreshAndFlash(joinRequestDelete(joinRequest),
+            I18n.t("joinRequest.flash.deleted", {
+                name: collaboration.name
+            }), () => this.componentDidMount());
+    };
+
     declineJoinRequest = () => {
         const {collaboration} = this.props;
         const joinRequest = this.getSelectedJoinRequest();
@@ -96,6 +105,7 @@ class JoinRequests extends React.Component {
             confirmationDialogAction,
             confirmationDialogQuestion
         } = this.state;
+        const isOpen = joinRequest.status === "open";
         return (
             <div className="join-request-details-container">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -129,10 +139,12 @@ class JoinRequests extends React.Component {
                                 toolTip={I18n.t("joinRequest.messageTooltip", {name: joinRequest.user.name})}/>
 
                     <section className="actions">
-                        <Button cancelButton={true} txt={I18n.t("joinRequest.decline")}
-                                onClick={() => this.confirm(this.declineJoinRequest, I18n.t("joinRequest.declineConfirmation"))}/>
-                        <Button txt={I18n.t("joinRequest.accept")}
-                                onClick={this.acceptJoinRequest}/>
+                        {isOpen && <Button cancelButton={true} txt={I18n.t("joinRequest.decline")}
+                                           onClick={() => this.confirm(this.declineJoinRequest, I18n.t("joinRequest.declineConfirmation"))}/>}
+                        {isOpen && <Button txt={I18n.t("joinRequest.accept")}
+                                           onClick={this.acceptJoinRequest}/>}
+                        {!isOpen && <Button warningButton={true}
+                                            onClick={() => this.confirm(this.deleteJoinRequest, I18n.t("joinRequest.deleteConfirmation"))}/>}
                     </section>
                 </div>
             </div>)
@@ -166,7 +178,8 @@ class JoinRequests extends React.Component {
             {
                 key: "status",
                 header: I18n.t("collaborationRequest.status"),
-                mapper: entity => <span className={`person-role ${entity.status}`}>{I18n.t(`collaborationRequest.statuses.${entity.status}`)}</span>
+                mapper: entity => <span
+                    className={`person-role ${entity.status}`}>{I18n.t(`collaborationRequest.statuses.${entity.status}`)}</span>
             },
             {
                 key: "user__schac_home_organisation",

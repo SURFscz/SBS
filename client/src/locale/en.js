@@ -830,9 +830,13 @@ I18n.translations.en = {
         decline: "Decline",
         accept: "Accept",
         declineConfirmation: "Are you sure you want to decline this join request?",
+        deleteConfirmation: "Are you sure you want to delete this join request?",
+        rejectionReason: "What is the reason to decline this join request?",
+        rejectionReasonNote: "Note that the reason is included in the mail to the requester",
         flash: {
             declined: "Join request for collaboration {{name}} was denied.",
             accepted: "Join request for collaboration {{name}} was accepted.",
+            deleted: "Join request for collaboration {{name}} was deleted.",
             notFound: "This join request has already been accepted / denied.",
             alreadyMember: "You are already a member of collaboration {{name}} and can therefore not accept this invitation"
         }
@@ -1326,6 +1330,7 @@ I18n.translations.en = {
     },
     welcomeDialog: {
         title: "Welcome to {{name}}",
+        label: "",
         role: "Your current role is <strong>{{role}}</strong>",
         ok: "All good, show me the {{type}}",
         organisation: "organisation",

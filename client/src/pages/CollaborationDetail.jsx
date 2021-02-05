@@ -84,9 +84,6 @@ class CollaborationDetail extends React.Component {
                         const {user} = this.props;
                         const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                         const collaboration = res[0];
-                        //mainly due to seed data
-                        collaboration.join_requests = (collaboration.join_requests || [])
-                            .filter(jr => !collaboration.collaboration_memberships.find(cm => cm.user.id === jr.user.id));
                         const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
                         const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                         const firstTime = getParameterByName("first", window.location.search) === "true";
@@ -255,11 +252,10 @@ class CollaborationDetail extends React.Component {
     }
 
     getJoinRequestsTab = (collaboration) => {
-        const openJoinRequests = (collaboration.join_requests || []).length;
+        const openJoinRequests = (collaboration.join_requests || []).filter(jr => jr.status === "open").length;
         return (<div key="joinrequests" name="joinrequests" label={I18n.t("home.tabs.joinRequests")}
                      icon={<JoinRequestsIcon/>}
                      notifier={openJoinRequests > 0 ? openJoinRequests : null}>
-
             <JoinRequests collaboration={collaboration}
                           refresh={callback => this.componentDidMount(callback)}
                           {...this.props} />

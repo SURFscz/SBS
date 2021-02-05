@@ -830,11 +830,15 @@ I18n.translations.nl = {
         decline: "Afwijzen",
         accept: "Goedkeuren",
         declineConfirmation: "Weet u zeker dat u het verzoek wil afwijzen?",
+        deleteConfirmation: "Weet u zeker dat u het verzoek wil verwijderen?",
+        rejectionReason: "Wat is de reden voor de afwijzing?",
+        rejectionReasonNote: "Let op dat de reden wordt opgenomen in de mail naar de aanvrager",
         flash: {
             declined: "Verzoek voor lidmaatschap van samenwerking {{name}} is afgewezen.",
             accepted: "Verzoek voor lidmaatschap van samenwerking {{name}} is goedgekeurd.",
+            deleted: "Verzoek voor lidmaatschap van samenwerking {{name}} is verwijderd.",
             notFound: "Dit verzoek voor lidmaatschap is reeds goedgekeurd of afgewezen.",
-            alreadyMember: "U bent al lid van de samenwerking {{name}} en kan daarom u deze uitnodiging niet accepteren."
+            alreadyMember: "U bent al lid van de samenwerking {{name}} en kan daarom deze uitnodiging niet accepteren."
         }
     },
     organisationInvitation: {
@@ -935,7 +939,7 @@ I18n.translations.nl = {
             inviteDeleted: "Uitnodiging voor samenwerking {{name}} is verwijderd.",
             inviteResend: "Uitnodiging voor samenwerking {{name}} opnieuw verstuurd.",
             created: "Uitnodigingen voor samenwerking {{name}} zijn aangemaakt.",
-            alreadyMember: "U bent al lid van de samenwerking {{name}} en kan daarom u deze uitnodiging niet accepteren.",
+            alreadyMember: "U bent al lid van de samenwerking {{name}} en kan daarom deze uitnodiging niet accepteren.",
         },
     },
     collaborationServices: {
@@ -1326,6 +1330,7 @@ I18n.translations.nl = {
     },
     welcomeDialog: {
         title: "Welkom op {{name}}",
+        label: "",
         role: "Je huidige rol is <strong>{{role}}</strong>",
         ok: "Ok, toon mij de {{type}}",
         organisation: "organisatie",
