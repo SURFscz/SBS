@@ -15,6 +15,9 @@ import UserColumn from "./UserColumn";
 import moment from "moment";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import Tooltip from "./Tooltip";
+import Select from "react-select";
+
+const allValue = "all";
 
 class JoinRequests extends React.Component {
 
@@ -25,15 +28,47 @@ class JoinRequests extends React.Component {
             confirmationDialogOpen: false,
             confirmationDialogQuestion: undefined,
             confirmationDialogAction: () => true,
-            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
-            children: null,
+            cancelDialogAction: () => this.setState({
+                confirmationDialogOpen: false,
+                declineDialog: false,
+                rejectionReason: ""
+            }),
+            declineDialog: false,
             rejectionReason: "",
             loading: true,
+            filterOptions: [],
+            filterValue: {},
+
         }
     }
 
     componentDidMount = callback => {
-        this.setState({loading: false, selectedJoinRequestId: null}, callback);
+        const {join_requests} = this.props.collaboration;
+        const filterOptions = [{
+            label: I18n.t("collaborationRequest.statuses.all", {nbr: join_requests.length}),
+            value: allValue
+        }];
+        const statusOptions = join_requests.reduce((acc, jr) => {
+            const option = acc.find(opt => opt.status === jr.status);
+            if (option) {
+                ++option.nbr;
+            } else {
+                acc.push({status: jr.status, nbr: 1})
+            }
+            return acc;
+        }, []).map(option => ({
+            label: `${I18n.t("collaborationRequest.statuses." + option.status)} (${option.nbr})`,
+            value: option.status
+        })).sort((o1, o2) => o1.label.localeCompare(o2.label));
+
+        this.setState({
+            filterOptions: filterOptions.concat(statusOptions),
+            filterValue: filterOptions[0],
+            loading: false,
+            selectedJoinRequestId: null,
+            declineDialog: false,
+            rejectionReason: "",
+        }, callback);
     }
 
     refreshAndFlash = (promise, flashMsg, callback) => {
@@ -75,34 +110,32 @@ class JoinRequests extends React.Component {
 
     declineJoinRequest = () => {
         const {collaboration} = this.props;
+        const {rejectionReason} = this.state;
         const joinRequest = this.getSelectedJoinRequest();
-        this.refreshAndFlash(joinRequestDecline(joinRequest),
+        this.refreshAndFlash(joinRequestDecline(joinRequest, rejectionReason),
             I18n.t("joinRequest.flash.declined", {
                 name: collaboration.name
             }), () => this.componentDidMount());
     };
 
-    getDeclineRejectionOptions = () => {
-        const {rejectionReason} = this.state;
+    getDeclineRejectionOptions = rejectionReason => {
         return (
-          <div className="rejection-reason-container">
-              <label htmlFor="rejection-reason">{I18n.t("joinRequest.rejectionReason")}</label>
-              <span>aaa: {rejectionReason}</span>
-              <InputField value={rejectionReason}
-                          onChange={e =>  {
-                              debugger;
-                              this.setState({rejectionReason: e.target.value});
-                          }}/>
-              <span className="rejection-reason-disclaimer">{I18n.t("joinRequest.rejectionReasonNote")}</span>
-          </div>
+            <div className="rejection-reason-container">
+                <label htmlFor="rejection-reason">{I18n.t("joinRequest.rejectionReason")}</label>
+                <InputField value={rejectionReason}
+                            multiline={true}
+                            onChange={e => this.setState({rejectionReason: e.target.value})}/>
+                <span className="rejection-reason-disclaimer">{I18n.t("joinRequest.rejectionReasonNote")}</span>
+            </div>
         );
     }
-    confirm = (action, question, children) => {
+
+    confirm = (action, question, declineDialog) => {
         this.setState({
             confirmationDialogOpen: true,
             confirmationDialogQuestion: question,
             confirmationDialogAction: action,
-            children: children
+            declineDialog: declineDialog
         });
     };
 
@@ -116,6 +149,21 @@ class JoinRequests extends React.Component {
         this.setState({selectedJoinRequestId: joinRequest.id});
     };
 
+    filter = (filterOptions, filterValue) => {
+        return (
+            <div className="join-request-filter">
+                <Select
+                    className={"join-request-filter-select"}
+                    value={filterValue}
+                    onChange={option => this.setState({filterValue: option})}
+                    options={filterOptions}
+                    isSearchable={false}
+                    isClearable={false}
+                />
+            </div>
+        );
+    }
+
     renderJoinRequestForm = (collaboration, joinRequest) => {
         const {
             confirmationDialogOpen,
@@ -123,28 +171,34 @@ class JoinRequests extends React.Component {
             confirmationDialogAction,
             rejectionReason,
             confirmationDialogQuestion,
-            children
+            declineDialog
         } = this.state;
-        const isOpen = joinRequest.status === "open";
+        const isOpen = joinRequest.status === "open"
+        const isDeclined = joinRequest.status === "denied";
         return (
             <div className="join-request-details-container">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     isWarning={true}
                                     confirm={confirmationDialogAction}
-                                    children={children}
-                                    disabledConfirm={children && isEmpty(rejectionReason)}
-                                    question={confirmationDialogQuestion}/>
+                                    disabledConfirm={declineDialog && isEmpty(rejectionReason)}
+                                    question={confirmationDialogQuestion}>
+                    {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
+                </ConfirmationDialog>
                 <a className={"back-to-join-requests"} onClick={this.cancelSideScreen} href={"/cancel"}>
                     <ChevronLeft/>{I18n.t("models.joinRequests.backToJoinRequests")}
                 </a>
                 <div className="join-request-form">
-                    <h2>{I18n.t("models.joinRequests.details",
-                        {
-                            date: moment(joinRequest.created_at * 1000).format("LL"),
-                            name: joinRequest.user.name
-                        })}</h2>
-
+                    <div className="join-request-header">
+                        <h2>{I18n.t("models.joinRequests.details",
+                            {
+                                date: moment(joinRequest.created_at * 1000).format("LL"),
+                                name: joinRequest.user.name
+                            })}</h2>
+                        {<span className={`status ${joinRequest.status}`}>
+                            {I18n.t(`collaborationRequest.statuses.${joinRequest.status}`)}
+                        </span>}
+                    </div>
                     {joinRequest.reference && <InputField name={I18n.t("joinRequest.reference")}
                                                           value={joinRequest.reference}
                                                           disabled={true}
@@ -160,12 +214,17 @@ class JoinRequests extends React.Component {
                                 multiline={true}
                                 toolTip={I18n.t("joinRequest.messageTooltip", {name: joinRequest.user.name})}/>
 
+                    {isDeclined && <InputField name={I18n.t("joinRequest.rejectionReasonLabel")}
+                                               value={joinRequest.rejection_reason}
+                                               disabled={true}
+                                               multiline={true}/>}
+
                     <section className="actions">
                         {isOpen && <Button cancelButton={true} txt={I18n.t("joinRequest.decline")}
                                            onClick={() => this.confirm(
                                                this.declineJoinRequest,
                                                I18n.t("joinRequest.declineConfirmation"),
-                                               this.getDeclineRejectionOptions()
+                                               true
                                            )}/>}
                         {isOpen && <Button txt={I18n.t("joinRequest.accept")}
                                            onClick={this.acceptJoinRequest}/>}
@@ -173,7 +232,7 @@ class JoinRequests extends React.Component {
                                             onClick={() => this.confirm(
                                                 this.deleteJoinRequest,
                                                 I18n.t("joinRequest.deleteConfirmation"),
-                                                null)}/>}
+                                                false)}/>}
                     </section>
                 </div>
             </div>)
@@ -181,7 +240,7 @@ class JoinRequests extends React.Component {
     }
 
     render() {
-        const {loading} = this.state;
+        const {loading, filterOptions, filterValue} = this.state;
         const {collaboration, user: currentUser} = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -222,16 +281,18 @@ class JoinRequests extends React.Component {
                 mapper: entity => <Button onClick={this.openJoinRequest(entity)} txt={I18n.t("forms.open")}
                                           small={true}/>
             },
-
         ]
+        const filteredJoinRequests = filterValue.value === allValue ? collaboration.join_requests :
+            collaboration.join_requests.filter(jr => jr.status === filterValue.value);
         return (
             <div>
-                <Entities entities={collaboration.join_requests}
+                <Entities entities={filteredJoinRequests}
                           modelName="joinRequests"
-                          searchAttributes={["user__name", "user__email", "message", "reference"]}
+                          searchAttributes={["user__name", "user__email", "message", "status", "reference"]}
                           defaultSort="name"
                           rowLinkMapper={() => this.openJoinRequest}
                           columns={columns}
+                          filters={this.filter(filterOptions, filterValue)}
                           loading={loading}
                           {...this.props}/>
             </div>

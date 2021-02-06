@@ -49,6 +49,16 @@
                 fill: $lighter-grey;
             }
 
+            div.add-white-space {
+                display: flex;
+                width: 100%;
+                margin: 10px 0 0 15px;
+                div.checkbox label {
+                    font-weight: normal;
+                    font-size: 14px;
+                }
+            }
+
             .file-upload-label {
                 margin: 15px 0;
             }

@@ -118,6 +118,7 @@ I18n.translations.en = {
         imageToLarge: "Image is larger then 2MB.",
         imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Image is required",
+        whiteSpace: "Fill with white space",
         no: "No"
     },
     explain: {
@@ -832,7 +833,8 @@ I18n.translations.en = {
         accept: "Accept",
         declineConfirmation: "Are you sure you want to decline this join request?",
         deleteConfirmation: "Are you sure you want to delete this join request?",
-        rejectionReason: "What is the reason to decline this join request?",
+        rejectionReason: "Please enter the reason to decline this join request",
+        rejectionReasonLabel: "Reason for declination",
         rejectionReasonNote: "Note that the reason is included in the mail to the requester",
         flash: {
             declined: "Join request for collaboration {{name}} was denied.",
@@ -1117,12 +1119,14 @@ I18n.translations.en = {
         request: "Request {{id}}",
         requester: "Requester",
         approved: "Approved",
+        rejectionReason: "Denied reason",
         denyConfirmation: "Are you sure you want to deny this Collaboration request?",
         deleteConfirmation: "Are you sure you want to delete this Collaboration request?",
         approve: "Approve",
         deny: "Deny",
         status: "Status",
         statuses: {
+            all: "All ({{nbr}})",
             open: "Open",
             denied: "Denied",
             approved: "Approved"

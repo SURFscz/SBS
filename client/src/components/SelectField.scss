@@ -32,6 +32,7 @@
         &.small {
             width: 240px;
         }
+
         border: 1px solid $dark-grey;
         border-radius: $br;
         font-size: 16px;
@@ -47,7 +48,7 @@
         .select-inner__control--is-focused {
             outline: none;
             box-shadow: 3px 3px 3px $blue-hover, -3px -3px 1px $blue-hover;
-            border: 1px solid $dark-grey!important;
+            border: 1px solid $dark-grey !important;
         }
 
         &[disabled] {
@@ -55,6 +56,14 @@
             cursor: not-allowed;
         }
 
+    }
+
+    .select-inner__single-value--is-disabled {
+        color: black;
+    }
+
+    .select-inner--is-disabled {
+        cursor: not-allowed;
     }
 
     .select-inner__control--is-disabled {

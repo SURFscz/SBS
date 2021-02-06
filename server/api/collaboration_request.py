@@ -122,6 +122,7 @@ def approve_request(collaboration_request_id):
                                                   "collaboration": collaboration,
                                                   "organisation": collaboration_request.organisation},
                                                  collaboration.name,
+                                                 collaboration_request.organisation,
                                                  True,
                                                  [user.email])
     collaboration_request.status = STATUS_APPROVED
@@ -145,6 +146,7 @@ def deny_request(collaboration_request_id):
                                                   "collaboration": {"name": collaboration_request.name},
                                                   "organisation": collaboration_request.organisation},
                                                  collaboration_request.name,
+                                                 collaboration_request.organisation,
                                                  False,
                                                  [user.email])
     collaboration_request.status = STATUS_DENIED

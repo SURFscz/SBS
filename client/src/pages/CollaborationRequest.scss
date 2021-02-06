@@ -1,5 +1,6 @@
 @import "../stylesheets/vars.scss";
 @import "../stylesheets/forms";
+@import "../stylesheets/entity_status";
 
 .mod-collaboration-request-container {
     width: 100%;
@@ -50,7 +51,10 @@
             &:first-child {
                 margin-bottom: 40px;
             }
+        }
 
+        span.rejection-reason {
+            margin-top: 15px;
         }
 
         .collaboration-request-header-actions {
@@ -60,6 +64,8 @@
             }
 
             .request-header-actions {
+                @include entity-status;
+
                 display: flex;
                 align-items: center;
 
@@ -75,25 +81,6 @@
 
                 }
 
-                span.status {
-                    text-align: center;
-                    border-radius: 12px;
-                    min-width: 75px;
-                    max-height: 28px;
-                    padding: 4px 15px;
-                    font-weight: bold;
-                    margin-left: 25px;
-
-                    &.approved {
-                        color: white;
-                        background-color: $dark-green;
-                    }
-
-                    &.denied {
-                        background-color: $lighter-grey;
-                        color: $red;
-                    }
-                }
             }
 
 
