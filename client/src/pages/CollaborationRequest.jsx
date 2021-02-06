@@ -40,6 +40,8 @@ class CollaborationRequest extends React.Component {
             organisations: [],
             alreadyExists: {},
             warning: false,
+            declineDialog: false,
+            rejectionReason: "",
             originalRequestedName: "",
             loading: true
         };
@@ -138,11 +140,18 @@ class CollaborationRequest extends React.Component {
                 confirmationDialogOpen: true,
                 dialogQuestion: I18n.t("collaborationRequest.denyConfirmation"),
                 leavePage: false,
-                warning: false,
-                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                warning: true,
+                declineDialog: true,
+                cancelDialogAction: () => this.setState({
+                    confirmationDialogOpen: false,
+                    declineDialog: false,
+                    rejectionReason: "",
+                    warning: false
+                }),
                 confirmationDialogAction: () => this.setState({confirmationDialogOpen: false, loading: true},
                     () => {
-                        denyRequestCollaboration(this.state.collaborationRequest.id).then(() => {
+                        const {collaborationRequest, rejectionReason} = this.state;
+                        denyRequestCollaboration(collaborationRequest.id, rejectionReason).then(() => {
                             this.props.history.push(`/organisations/${this.state.collaborationRequest.organisation_id}/collaboration_requests`);
                             setFlash(I18n.t("collaborationRequest.flash.denied", {name: this.state.collaborationRequest.name}));
                         });
@@ -181,11 +190,33 @@ class CollaborationRequest extends React.Component {
         this.setState({collaborationRequest: newState, alreadyExists: {...alreadyExists, [attributeName]: false}});
     };
 
+    getDeclineRejectionOptions = rejectionReason => {
+        return (
+            <div className="rejection-reason-container">
+                <label htmlFor="rejection-reason">{I18n.t("joinRequest.rejectionReason")}</label>
+                <InputField value={rejectionReason}
+                            multiline={true}
+                            onChange={e => this.setState({rejectionReason: e.target.value})}/>
+                <span className="rejection-reason-disclaimer">{I18n.t("joinRequest.rejectionReasonNote")}</span>
+            </div>
+        );
+    }
+
     render() {
         const {
-            collaborationRequest, initial, alreadyExists, confirmationDialogOpen, confirmationDialogAction,
-            cancelDialogAction, leavePage, organisations, dialogQuestion, loading,
-            warning
+            collaborationRequest,
+            initial,
+            alreadyExists,
+            confirmationDialogOpen,
+            confirmationDialogAction,
+            cancelDialogAction,
+            leavePage,
+            organisations,
+            dialogQuestion,
+            loading,
+            warning,
+            declineDialog,
+            rejectionReason
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -202,12 +233,16 @@ class CollaborationRequest extends React.Component {
                                 <div className="header-keys">
                                     <span className="name">{I18n.t("collaborationRequest.requester")}</span>
                                     <span className="name">{I18n.t("collaboration.motivation")}</span>
+                                    {collaborationRequest.status === "denied" &&
+                                        <span className="name rejection-reason">{I18n.t("collaborationRequest.rejectionReason")}</span>}
                                 </div>
                                 <div className="header-values">
                                     <span>{collaborationRequest.requester.name}</span>
                                     <span className="email"><a
                                         href={`mailto:${collaborationRequest.requester.email}`}>{collaborationRequest.requester.email}</a></span>
                                     <span>{collaborationRequest.message}</span>
+                                    {collaborationRequest.status === "denied" &&
+                                        <span className="rejection-reason">{collaborationRequest.rejection_reason}</span>}
                                 </div>
                             </div>
                         </div>
@@ -231,7 +266,10 @@ class CollaborationRequest extends React.Component {
                                         confirm={confirmationDialogAction}
                                         question={dialogQuestion}
                                         isWarning={warning}
-                                        leavePage={leavePage}/>
+                                        disabledConfirm={declineDialog && isEmpty(rejectionReason)}
+                                        leavePage={leavePage}>
+                        {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
+                    </ConfirmationDialog>
 
                     <div className="collaboration-request">
 
@@ -306,7 +344,8 @@ class CollaborationRequest extends React.Component {
                                      toolTip={I18n.t("collaboration.organisationTooltip")}
                         />
                         <section className="actions">
-                            {collaborationRequest.status !== "open" && <Button warningButton={true} onClick={this.deleteCollaborationRequest}/>}
+                            {collaborationRequest.status !== "open" &&
+                            <Button warningButton={true} onClick={this.deleteCollaborationRequest}/>}
                         </section>
                     </div>
                 </div>

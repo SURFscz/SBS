@@ -118,18 +118,24 @@ def mail_accepted_declined_join_request(context, join_request, accepted, recipie
         subject=f"Join request for collaboration {join_request.collaboration.name} has been {part}",
         recipients=recipients,
         template=f"join_request_{part}",
-        context=context,
+        context={**context,
+                 **{"admins":
+                        [m.user for m in join_request.collaboration.collaboration_memberships if m.role == "admin"]}},
         preview=preview
     )
 
 
-def mail_accepted_declined_collaboration_request(context, collaboration_name, accepted, recipients, preview=False):
+def mail_accepted_declined_collaboration_request(context, collaboration_name, organisation, accepted, recipients,
+                                                 preview=False):
     part = "accepted" if accepted else "declined"
     return _do_send_mail(
         subject=f"Collaboration request for collaboration {collaboration_name} has been {part}",
         recipients=recipients,
         template=f"collaboration_request_{part}",
-        context=context,
+        context={**context,
+                 **{"admins":
+                        [m.user for m in organisation.organisation_memberships if m.role == "admin"]}},
+
         preview=preview
     )
 

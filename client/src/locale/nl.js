@@ -118,6 +118,7 @@ I18n.translations.nl = {
         imageToLarge: "Afbeelding is groter 512KB",
         imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Afbeelding is verplicht",
+        whiteSpace: "Opvullen met white space",
         no: "Nee"
     },
     explain: {
@@ -832,7 +833,8 @@ I18n.translations.nl = {
         accept: "Goedkeuren",
         declineConfirmation: "Weet u zeker dat u het verzoek wil afwijzen?",
         deleteConfirmation: "Weet u zeker dat u het verzoek wil verwijderen?",
-        rejectionReason: "Wat is de reden voor de afwijzing?",
+        rejectionReason: "Voeg de reden voor de afwijzing toe",
+        rejectionReasonLabel: "Reden voor afwijzing",
         rejectionReasonNote: "Let op dat de reden wordt opgenomen in de mail naar de aanvrager",
         flash: {
             declined: "Verzoek voor lidmaatschap van samenwerking {{name}} is afgewezen.",
@@ -1117,12 +1119,14 @@ I18n.translations.nl = {
         request: "Verzoek {{id}}",
         requester: "Aanvrager",
         approved: "Goedgekeurd",
+        rejectionReason: "Reden voor afwijzing",
         denyConfirmation: "Weet je zeker dat je dit verzoek wilt afkeuren?",
         deleteConfirmation: "Weet je zeker dat je dit verzoek wilt verwijderen?",
         approve: "Goedkeuren",
         deny: "Afkeuren",
         status: "Status",
         statuses: {
+            all: "Allemaal ({{nbr}})",
             open: "Open",
             denied: "Afgewezen",
             approved: "Goedgekeurd"

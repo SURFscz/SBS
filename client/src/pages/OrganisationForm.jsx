@@ -359,12 +359,12 @@ class OrganisationForm extends React.Component {
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
                                            initial={initial}/>
 
-                        <SelectField value={category}
-                                     small={true}
-                                     options={categoryOptions}
-                                     name={I18n.t("organisation.category")}
-                                     toolTip={I18n.t("organisation.categoryTooltip")}
-                                     onChange={e => this.setState({category: e})}/>
+                        {user.admin && <SelectField value={category}
+                                                    small={true}
+                                                    options={categoryOptions}
+                                                    name={I18n.t("organisation.category")}
+                                                    toolTip={I18n.t("organisation.categoryTooltip")}
+                                                    onChange={e => this.setState({category: e})}/>}
 
                         <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                                     placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}

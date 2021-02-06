@@ -98,7 +98,7 @@ export function me(config) {
         // sub = "urn:james";
         // sub = "urn:betty";
         //  sub = "urn:jane";
-         //sub = "urn:admin";
+        //sub = "urn:admin";
         // sub = "urn:suspended";
         //Need to mock a login
         return postPutJson("/api/mock", {sub, "email": "john@example.com"}, "PUT")
@@ -329,8 +329,8 @@ export function joinRequestAccept(joinRequest) {
     return postPutJson("/api/join_requests/accept", joinRequest, "put", false);
 }
 
-export function joinRequestDecline(joinRequest) {
-    return postPutJson("/api/join_requests/decline", joinRequest, "put", false);
+export function joinRequestDecline(joinRequest, rejectionReason) {
+    return postPutJson("/api/join_requests/decline", {...joinRequest, rejection_reason: rejectionReason}, "put", false);
 }
 
 export function joinRequestDelete(joinRequest) {
@@ -509,8 +509,8 @@ export function approveRequestCollaboration(body) {
     return postPutJson(`/api/collaboration_requests/approve/${body.id}`, body, "put");
 }
 
-export function denyRequestCollaboration(id) {
-    return postPutJson(`/api/collaboration_requests/deny/${id}`, {}, "put");
+export function denyRequestCollaboration(id, rejectionReason) {
+    return postPutJson(`/api/collaboration_requests/deny/${id}`, {rejection_reason: rejectionReason}, "put");
 }
 
 export function deleteRequestCollaboration(id) {

@@ -40,3 +40,24 @@ table.collaboration_requests {
         }
     }
 }
+
+.mod-entities {
+
+    .collaboration-request-filter {
+        display: flex;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+        .collaboration-request-filter-select {
+            width: 290px;
+            margin: 0 25px 0 50px;
+            @media (max-width: $compact-medium) {
+                margin: 15px 0;
+            }
+
+        }
+    }
+
+}
+

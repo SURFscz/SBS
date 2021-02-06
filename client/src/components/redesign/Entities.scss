@@ -49,7 +49,6 @@
 
         .search {
             position: relative;
-            margin-left: 40px;
 
             &.standalone {
                 margin-left: auto;
@@ -95,6 +94,7 @@
         }
 
         a.button.blue.plus {
+            margin-right: auto;
             margin-left: auto;
             @media (max-width: $compact-medium) {
                 margin: 15px 0;
@@ -198,10 +198,12 @@
 
                     img {
                         border-radius: 4px;
-                        min-width: 80px;
-                        min-height: 58px;
-                        max-width: 80px;
-                        max-height: 58px;
+                        //min-width: 80px;
+                        //min-height: 58px;
+                        //max-width: 80px;
+                        //max-height: 58px;
+                        width: 80px;
+                        height: auto;
                         margin-right: 5px;
                     }
                 }
