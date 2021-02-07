@@ -1358,7 +1358,7 @@ I18n.translations.nl = {
         createCollTxt: "Creëer een samenwerking",
         createCollRequestTxt: "Vraag een samenwerking aan",
         contact: "Contact SRAM helpdesk",
-        contactInfo: "Neem contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> en laat ons weten wat je verwachtte, of als je vragen hebt. We zullen proberen zo snel mogelijk te reageren."
+        contactInfo: "Neem contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> en laat ons weten wat je verwachtte, of als je vragen hebt. We reageren zo snel mogelijk."
     },
     feedback: {
         title: "Feedback geven",
