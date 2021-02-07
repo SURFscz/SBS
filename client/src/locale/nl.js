@@ -314,7 +314,7 @@ I18n.translations.nl = {
             discloseNoMemberInformation: "Deze samenwerking deelt geen ledeninformatie",
             discloseNoMemberInformationJoinRequest: "Alleen zichtbaar voor leden",
             newCollaborationRequest: "Aanvragen samenwerking",
-            leave: "Vertrek"
+            leave: "CO lidmaatschap opzeggen"
         },
         apiKeys: {
             title: "API Keys",
@@ -336,7 +336,7 @@ I18n.translations.nl = {
             steps: {
                 progress: "{{now}} van {{total}}",
                 login: "Inloggen",
-                next: "Volgende: {{step}}",
+                next: "Hierna: {{step}}",
                 invite: "Accepteer de uitnodiging",
                 collaborate: "Samenwerken!"
             },
@@ -350,9 +350,9 @@ I18n.translations.nl = {
                 cancelInvitation: "Weet je zeker dat je de voorwaarden wil weigeren?",
                 declineInvitation: "Weet je zeker dat je de uitnodiging wil weigeren?",
             },
-            disclaimer: "Als je doorgaat, zal SURF gegevens over jou overdragen aan het samenwerkingsverband (CO). Elke gegevensverwerking door de CO, zoals het overdragen van gegevens aan diensten zodat je daar toegang toe hebt, is een verantwoordelijkheid van de CO.",
+            disclaimer: "Als je doorgaat, zal SURF gegevens over jou doorsturen naar de research collaboration (CO). Elke gegevensverwerking door de CO, zoals het overdragen van gegevens aan diensten zodat je daar toegang toe hebt, is een verantwoordelijkheid van de CO.",
             disclaimerAup: "De samenwerking heeft SURF <a href=\"{{aup}}\" target=\"_blank\">de volgende URL</a> opgeleverd met relevante informatie.",
-            disclaimerQuestions: "Heb je vragen over de overdracht van je gegevens? Neem contact op met de persoon die je heeft uitgenodigd."
+            disclaimerQuestions: "Heb je vragen over de verwerking van je gegevens door de CO? Neem contact op met de persoon die je heeft uitgenodigd."
         },
         joinRequests: {
             backToJoinRequests: "Terug naar alle verzoeken",
@@ -1320,8 +1320,8 @@ I18n.translations.nl = {
         platformAdmin: "platform admin",
         orgAdmin: "organisatie admin",
         orgManager: "organisatie manager",
-        coAdmin: "CO admin",
-        coMember: "CO lid",
+        coAdmin: "COllaboration admin",
+        coMember: "COllaboration lid",
         serviceUser: "dienst gebruiker",
         user: "gebruiker"
     },
@@ -1329,8 +1329,8 @@ I18n.translations.nl = {
         title: "Jij bent {{role}}",
         orgAdmin: " ORG admin",
         orgManager: " ORG manager",
-        coAdmin: " CO admin",
-        coMember: " CO lid",
+        coAdmin: " collaboration admin",
+        coMember: " collaboration lid",
         platformAdmin: " platform manager"
     },
     welcomeDialog: {
