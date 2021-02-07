@@ -281,7 +281,7 @@ export function organisationSchacHomeOrganisationExists(schacHome, existingOrgan
 }
 
 export function organisationNameExists(name, existingOrganisation = null) {
-    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation_id=${encodeURIComponent(existingOrganisation)}`);
+    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
 }
 
 export function organisationShortNameExists(short_name, existingOrganisation = null) {

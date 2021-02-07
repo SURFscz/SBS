@@ -138,37 +138,6 @@ class NewOrganisationInvitation extends React.Component {
             this.setState({email: "", administrators: uniqueEmails});
         }
     };
-    onFileRemoval = e => {
-        stopEvent(e);
-        this.setState({
-            fileName: null, fileEmails: [], fileTypeError: false,
-            fileInputKey: new Date().getMilliseconds()
-        });
-    };
-
-    onFileUpload = e => {
-        const files = e.target.files;
-        if (!isEmpty(files)) {
-            const file = files[0];
-            if (file.name.endsWith("csv")) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const csvEmails = reader.result;
-                    const fileEmails = csvEmails.split(/[,\n\r]/)
-                        .map(s => s.trim().replace(/[\t\r\n]/g, ""))
-                        .filter(mail => validEmailRegExp.test(mail));
-                    this.setState({
-                        fileName: file.name,
-                        fileTypeError: false,
-                        fileEmails: fileEmails
-                    });
-                };
-                reader.readAsText(file);
-            } else {
-                this.setState({fileName: file.name, fileTypeError: true, fileEmails: []});
-            }
-        }
-    };
 
     tabChanged = activeTab => {
         this.setState({activeTab: activeTab});

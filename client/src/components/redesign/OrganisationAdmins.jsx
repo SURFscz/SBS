@@ -364,7 +364,8 @@ class OrganisationAdmins extends React.Component {
                     options={roles}
                     classNamePrefix={`select-member-role`}
                     onChange={this.changeMemberRole(entity)}
-                    isDisabled={!isAdmin}/>
+                    isDisabled={!isAdmin || !(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
+                        (!noMoreAdminsToCheck || selectedMembers[entity.id].selected)))}/>
             },
             {
                 nonSortable: true,

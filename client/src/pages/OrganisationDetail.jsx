@@ -184,9 +184,9 @@ class OrganisationDetail extends React.Component {
                 perform: () => this.props.history.push("/edit-organisation/" + organisation.id)
             });
         }
-        const isMember = organisation.organisation_memberships.some(m => m.user.id === user.id);
+        const isMember = organisation.organisation_memberships.find(m => m.user.id === user.id);
         const lastAdmin = adminOfOrganisation && organisation.organisation_memberships.filter(m => m.role === "admin").length < 2;
-        if (isMember && !lastAdmin) {
+        if (isMember && (!lastAdmin || isMember.role !== "admin")) {
             actions.push({
                 svg: LeaveIcon,
                 name: I18n.t("models.organisations.leave"),

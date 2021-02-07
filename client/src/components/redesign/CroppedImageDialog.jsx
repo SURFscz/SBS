@@ -126,7 +126,6 @@ export default class CroppedImageDialog extends React.PureComponent {
         const {value} = this.props;
         const src = source || value;
         const val = e.target.checked;
-        debugger;
 
         if (!val) {
             this.setState({addWhiteSpace: val, source: copy || value});
@@ -136,10 +135,9 @@ export default class CroppedImageDialog extends React.PureComponent {
             const type = isSvg ? "svg+xml" : "jpeg";
             image.src = `data:image/${type};base64,${src}`;
             image.onload = () => {
-                debugger;
                 const canvas = document.createElement("canvas");
-                canvas.width = image.width < 480 ? image.width : 480;
-                canvas.height = image.height < 348 ? image.height : 348;
+                canvas.width = 480;
+                canvas.height = 348;
                 const ctx = canvas.getContext("2d");
                 ctx.fillStyle = "white";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -157,7 +155,6 @@ export default class CroppedImageDialog extends React.PureComponent {
                 ctx.drawImage(image, xOffset, yOffset, newWidth, newHeight);
 
                 canvas.toBlob(blob => {
-                    debugger;
                     if (!blob) {
                         return;
                     }
@@ -169,6 +166,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                             source: base64data.substring(base64data.indexOf(",") + 1),
                             busy: false,
                             copy: src,
+                            isSvg: false,
                             addWhiteSpace: val
                         });
                     }
@@ -223,7 +221,7 @@ export default class CroppedImageDialog extends React.PureComponent {
 
     onCancelInternal = () => {
         this.props.onCancel();
-        setTimeout(() => this.setState(this.initialState()), 75);
+        setTimeout(() => this.setState(this.initialState()), 175);
     }
 
     render() {
@@ -236,13 +234,13 @@ export default class CroppedImageDialog extends React.PureComponent {
                 onRequestClose={this.onCancelInternal}
                 className="cropped-image-dialog-content"
                 overlayClassName="cropped-image-dialog-overlay"
-                closeTimeoutMS={250}
+                closeTimeoutMS={0}
                 ariaHideApp={false}>
                 <h2>{title}</h2>
                 {this.renderImages(error, src, isSvg, crop, onCancel, onSave, name)}
                 <section className="actions">
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.onCancelInternal}/>
-                    <Button txt={I18n.t("forms.apply")} disabled={busy || (!src)}
+                    <Button txt={I18n.t("forms.apply")} disabled={busy || !src}
                             onClick={this.onSaveInternal}/>
                 </section>
             </Modal>

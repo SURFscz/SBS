@@ -34,14 +34,14 @@
     .preview {
         img.cropped-img {
             width: 240px;
-            height: 174px;
+            height: auto;
             border-radius: 4px;
         }
     }
 
     .no-image svg {
         width: 240px;
-        height: 174px;
+        height: auto;
         padding: 50px;
         border: 3px dotted $lighter-grey;
         fill: $lighter-grey;

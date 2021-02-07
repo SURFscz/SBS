@@ -103,15 +103,15 @@ class OrganisationForm extends React.Component {
         }
     }
 
-    existingOrganisationName = attr => this.state.isNew ? null : this.state.organisation[attr];
+    existingOrganisationAttribute = attr => this.state.isNew ? null : this.state.organisation[attr];
 
     validateOrganisationName = e =>
-        organisationNameExists(e.target.value, this.existingOrganisationName("name")).then(json => {
+        organisationNameExists(e.target.value, this.existingOrganisationAttribute("name")).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
     validateOrganisationShortName = e =>
-        organisationShortNameExists(sanitizeShortName(e.target.value), this.existingOrganisationName("short_name")).then(json => {
+        organisationShortNameExists(sanitizeShortName(e.target.value), this.existingOrganisationAttribute("short_name")).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
 
@@ -196,9 +196,9 @@ class OrganisationForm extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists} = this.state;
+        const {required, alreadyExists, administrators, isNew} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
-        return !inValid;
+        return !inValid && (!isNew || !isEmpty(administrators));
     };
 
     doSubmit = () => {
@@ -412,7 +412,7 @@ class OrganisationForm extends React.Component {
                                         error={!initial && isEmpty(administrators)}
                                         emails={administrators}/>
                         </div>}
-                        {(!initial && isEmpty(administrators)) && <ErrorIndicator msg={I18n.t("organisation.required", {
+                        {(!initial && isEmpty(administrators) && isNew) && <ErrorIndicator msg={I18n.t("organisation.required", {
                             attribute: I18n.t("organisation.administrators").toLowerCase()
                         })}/>}
                         {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
