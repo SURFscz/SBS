@@ -403,8 +403,8 @@ I18n.translations.nl = {
         currentImpersonation: "Je doet na",
         noImpersonation: "Je bent wie je bent - je doet niemand anders na.",
         currentImpersonationValue: "Je ziet SBS nu als {{currentUser}}, maar je bent natuurlijk {{impersonator}}.",
-        startImpersonation: "Nadoen",
-        clearImpersonation: "Stop met nadoen",
+        startImpersonation: "Imiteer",
+        clearImpersonation: "Stop met imiteren",
         flash: {
             startedImpersonation: "Met success ben je nu - tijdelijk - {{name}}.",
             clearedImpersonation: "Met succes is je nabootsing gestopt. Je bent jezelf weer."
