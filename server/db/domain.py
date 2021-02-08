@@ -256,6 +256,7 @@ class Service(Base, db.Model):
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
     public_visible = db.Column("public_visible", db.Boolean(), nullable=True, default=True)
     automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
+    access_allowed_for_all = db.Column("access_allowed_for_all", db.Boolean(), nullable=True, default=False)
     white_listed = db.Column("white_listed", db.Boolean(), nullable=True, default=False)
     research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
                                                nullable=True,

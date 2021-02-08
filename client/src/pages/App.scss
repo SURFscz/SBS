@@ -20,6 +20,10 @@
         border-top-color: $lighter-grey !important;
     }
 
+    .__react_component_tooltip.show {
+        opacity: .98;
+    }
+
     .select-disabled__single-value {
         color: $dark-grey;
     }

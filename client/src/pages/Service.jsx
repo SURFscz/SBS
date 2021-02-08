@@ -45,6 +45,7 @@ class Service extends React.Component {
         uri: "",
         accepted_user_policy: "",
         automatic_connection_allowed: false,
+        access_allowed_for_all: false,
         white_listed: false,
         research_scholarship_compliant: false,
         code_of_conduct_compliant: false,
@@ -298,7 +299,7 @@ class Service extends React.Component {
     }
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
-                        contact_email, invalidInputs, contactEmailRequired,
+                        access_allowed_for_all, contact_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, logo) => {
         const serviceRequestUrlValid = !isEmpty(uri) && automatic_connection_allowed;
@@ -377,6 +378,12 @@ class Service extends React.Component {
                           info={I18n.t("service.automaticConnectionAllowed")}
                           tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
                           onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}
+                          readOnly={!isAdmin}/>
+
+                <CheckBox name="access_allowed_for_all" value={access_allowed_for_all}
+                          info={I18n.t("service.accessAllowedForAll")}
+                          tooltip={I18n.t("service.accessAllowedForAllTooltip")}
+                          onChange={e => this.setState({access_allowed_for_all: e.target.checked})}
                           readOnly={!isAdmin}/>
 
                 <CheckBox name="white_listed" value={white_listed}
@@ -458,7 +465,7 @@ class Service extends React.Component {
             alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
             entity_id, description, uri, accepted_user_policy, contact_email,
             confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed,
-            white_listed, sirtfi_compliant, code_of_conduct_compliant,
+            access_allowed_for_all, white_listed, sirtfi_compliant, code_of_conduct_compliant,
             research_scholarship_compliant, ip_networks, logo, loading
         } = this.state;
         if (loading) {
@@ -485,7 +492,7 @@ class Service extends React.Component {
                                         question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
 
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
-                        contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
+                        access_allowed_for_all, contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
                         isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, logo)}
                 </div>

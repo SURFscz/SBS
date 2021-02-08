@@ -72,3 +72,16 @@ div.allowed-organisations-confirmation {
         }
     }
 }
+
+.mod-entities {
+    span.access-allowed-for-all {
+        margin: 0 auto;
+        text-align: center;
+        border-radius: 12px;
+        padding: 4px 15px;
+        font-weight: bold;
+        background-color: $yellow-light;
+        color: black;
+
+    }
+}

@@ -97,6 +97,7 @@ class CollaborationAdmins extends React.Component {
         if (member.user_id === currentUser.id && !currentUser.admin) {
             this.setState({
                 confirmationDialogOpen: true,
+                confirmationTxt: I18n.t("confirmationDialog.confirm"),
                 confirmationDialogAction: () => {
                     this.setState({loading: true});
                     updateCollaborationMembershipRole(collaboration.id, member.user_id, selectedOption.value)
@@ -134,8 +135,15 @@ class CollaborationAdmins extends React.Component {
 
     allSelected = e => {
         const {selectedMembers} = this.state;
+        const {isAdminView} = this.props;
         const val = e.target.checked;
-        Object.keys(selectedMembers).forEach(id => selectedMembers[id].selected = val);
+        let identifiers = Object.keys(selectedMembers);
+        if (isAdminView) {
+            identifiers = identifiers.filter(id => {
+                return selectedMembers[id].ref.role === "admin" || selectedMembers[id].ref.intended_role === "admin"
+            });
+        }
+        identifiers.forEach(id => selectedMembers[id].selected = val);
         const newSelectedMembers = {...selectedMembers};
         this.setState({allSelected: val, ...newSelectedMembers});
     }
@@ -154,20 +162,29 @@ class CollaborationAdmins extends React.Component {
     }
 
     remove = showConfirmation => () => {
-        if (showConfirmation) {
+        const {selectedMembers} = this.state;
+        const {user: currentUser, collaboration} = this.props;
+        const currentUserDeleted = Object.values(selectedMembers)
+            .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
+        const oneSelected = Object.keys(selectedMembers).filter(id => selectedMembers[id].selected).length === 1;
+        const deleteYourSelf = currentUserDeleted && oneSelected;
+        const deleteInBatch = currentUserDeleted && !oneSelected;
+
+        // const {user} = this.props;
+        // const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id);
+
+        if (showConfirmation) {// && ((!deleteYourSelf && !canStay) || !oneSelected)) {
             this.setState({
                 confirmationDialogOpen: true,
                 isWarning: true,
-                confirmationDialogAction: this.remove(false),
-                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
-                confirmationQuestion: I18n.t("collaborationDetail.deleteEntitiesConfirmation"),
+                confirmationDialogAction: deleteInBatch ? () => this.setState({confirmationDialogOpen: false}) : this.remove(false),
+                cancelDialogAction: deleteInBatch ? null : () => this.setState({confirmationDialogOpen: false}),
+                confirmationTxt: deleteInBatch ? I18n.t("confirmationDialog.ok") : I18n.t("confirmationDialog.confirm"),
+                confirmationQuestion: deleteInBatch ? I18n.t("collaborationDetail.noBatchDeleteAllowed") :
+                    deleteYourSelf ? I18n.t("collaborationDetail.deleteYourselfMemberConfirmation") : I18n.t("collaborationDetail.deleteEntitiesConfirmation"),
             });
         } else {
             this.setState({confirmationDialogOpen: false, loading: true});
-            const {selectedMembers} = this.state;
-            const {user: currentUser, collaboration} = this.props;
-            const currentUserDeleted = Object.values(selectedMembers)
-                .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
             const selected = Object.keys(selectedMembers)
                 .filter(id => selectedMembers[id].selected);
             const promises = selected.map(id => {
@@ -219,31 +236,33 @@ class CollaborationAdmins extends React.Component {
                 {(any && isAdminOfCollaboration) &&
                 <div data-tip data-for="delete-members">
                     <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
-                        disabled={disabled}
-                        icon={<FontAwesomeIcon icon="trash"/>}/>
-                        <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
-                                      place="bottom">
-                    <span dangerouslySetInnerHTML={{__html: disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}}/>
-            </ReactTooltip>
+                            disabled={disabled}
+                            icon={<FontAwesomeIcon icon="trash"/>}/>
+                    <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
+                                  place="bottom">
+                        <span
+                            dangerouslySetInnerHTML={{__html: disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}}/>
+                    </ReactTooltip>
                 </div>}
                 {(any && (isAdminOfCollaboration || collaboration.disclose_email_information))
                 &&
-                    <div data-tip data-for="mail-members">
-                <a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
-                   className={`${disabled ? "disabled" : ""} button`}
-                   rel="noopener noreferrer" onClick={e => {
-                    if (disabled) {
-                        stopEvent(e);
-                    } else {
-                        return true;
-                    }
-                }}>
-                    {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
-                </a>
-                        <ReactTooltip id="mail-members" type="light" effect="solid" data-html={true}
-                                      place="bottom">
-                    <span dangerouslySetInnerHTML={{__html: disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}}/>
-            </ReactTooltip></div>}
+                <div data-tip data-for="mail-members">
+                    <a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
+                       className={`${disabled ? "disabled" : ""} button`}
+                       rel="noopener noreferrer" onClick={e => {
+                        if (disabled) {
+                            stopEvent(e);
+                        } else {
+                            return true;
+                        }
+                    }}>
+                        {I18n.t("models.orgMembers.mail")}<FontAwesomeIcon icon="mail-bulk"/>
+                    </a>
+                    <ReactTooltip id="mail-members" type="light" effect="solid" data-html={true}
+                                  place="bottom">
+                        <span
+                            dangerouslySetInnerHTML={{__html: disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}}/>
+                    </ReactTooltip></div>}
             </div>);
     }
 
@@ -293,6 +312,7 @@ class CollaborationAdmins extends React.Component {
             leavePage: false,
             isWarning: true,
             confirmationQuestion: I18n.t("organisationInvitation.deleteInvitation"),
+            confirmationTxt: I18n.t("confirmationDialog.confirm"),
             cancelDialogAction: this.closeConfirmationDialog,
             confirmationDialogAction: this.doDelete
         });
@@ -312,6 +332,7 @@ class CollaborationAdmins extends React.Component {
             leavePage: false,
             isWarning: false,
             confirmationQuestion: I18n.t("organisationInvitation.resendInvitation"),
+            confirmationTxt: I18n.t("confirmationDialog.confirm"),
             cancelDialogAction: this.closeConfirmationDialog,
             confirmationDialogAction: this.doResend
         });
@@ -329,7 +350,7 @@ class CollaborationAdmins extends React.Component {
     renderSelectedInvitation = (collabortion, invitation) => {
         const {
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
-            isWarning, message
+            isWarning, message, confirmationTxt
         } = this.state;
         const today = moment();
         const inp = moment(invitation.expiry_date * 1000);
@@ -340,6 +361,7 @@ class CollaborationAdmins extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     isWarning={isWarning}
+                                    confirmationTxt={confirmationTxt}
                                     confirm={confirmationDialogAction}
                                     question={confirmationQuestion}/>
                 <a className="back-to-org-members" onClick={this.cancelSideScreen} href={"/cancel"}>
@@ -396,7 +418,7 @@ class CollaborationAdmins extends React.Component {
         const {user: currentUser, collaboration, isAdminView, showMemberView} = this.props;
         const {
             selectedMembers, allSelected, filterOptions, filterValue, hideInvitees,
-            confirmationDialogOpen, cancelDialogAction, isWarning,
+            confirmationDialogOpen, cancelDialogAction, isWarning, confirmationTxt,
             confirmationDialogAction, confirmationQuestion, loading
         } = this.state;
         if (loading) {
@@ -432,11 +454,11 @@ class CollaborationAdmins extends React.Component {
 
 
                     {entity.invite &&
-                        <Tooltip children={<InviteIcon/>} id={"invite-icon"} msg={I18n.t("tooltips.invitations")}/> }
+                    <Tooltip children={<InviteIcon/>} id={"invite-icon"} msg={I18n.t("tooltips.invitations")}/>}
                     {(!entity.invite && entity.role === "admin") &&
-                        <Tooltip children={<UserIcon/>} id={"admin-icon"} msg={I18n.t("tooltips.admin")}/>}
+                    <Tooltip children={<UserIcon/>} id={"admin-icon"} msg={I18n.t("tooltips.admin")}/>}
                     {(!entity.invite && entity.role !== "admin") &&
-                        <Tooltip children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.user")}/>}
+                    <Tooltip children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.user")}/>}
 
                 </div>
             },
@@ -466,7 +488,7 @@ class CollaborationAdmins extends React.Component {
                     <span
                         className="person-role invite">{I18n.t("models.orgMembers.inviteSend",
                         {date: shortDateFromEpoch(entity.created_at)})}</span> : null
-                    // <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
+                // <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
             },
             {
                 nonSortable: true,
@@ -487,6 +509,7 @@ class CollaborationAdmins extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     isWarning={isWarning}
+                                    confirmationTxt={confirmationTxt}
                                     question={confirmationQuestion}/>
 
                 <Entities entities={filteredEntities}
