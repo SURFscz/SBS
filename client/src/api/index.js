@@ -95,7 +95,7 @@ export function me(config) {
     if (config.local && true) {
         let sub = "urn:john";
         // sub = "urn:qwerty";
-        sub = "urn:james";
+        // sub = "urn:james";
         // sub = "urn:betty";
         //  sub = "urn:jane";
         //sub = "urn:admin";
