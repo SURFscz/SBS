@@ -35,6 +35,7 @@
             grid-column: 1/-1;
             color: $blue;
             font-weight: bold;
+            font-size: 18px;
             border-bottom: 1px solid $blue;
             padding: 25px 0 5px 0;
 
@@ -43,7 +44,7 @@
             }
         }
 
-        div.input-field, div.select-field, div.checkbox {
+        div.input-field, div.select-field, div.checkbox, div.email-field {
             margin-top: 15px;
         }
 

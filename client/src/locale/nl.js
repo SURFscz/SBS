@@ -673,6 +673,7 @@ I18n.translations.nl = {
         title: "Nieuwe organisatie toevoegen",
         subTitle: "Wijzig de beschrijving van de organisatie.",
         actions: "",
+        about: "Over onze organisatie",
         name: "Naam",
         namePlaceHolder: "De unieke naam van de organisatie",
         invitations: "ORG admins uitnodigen",
