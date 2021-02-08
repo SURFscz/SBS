@@ -34,7 +34,8 @@ class OrganisationServices extends React.Component {
         allServices().then(services => {
             services.forEach(service => {
                     const allowed = service.allowed_organisations.some(org => org.id === organisation.id);
-                    service.allowed = allowed && service.automatic_connection_allowed;
+                    service.allowedByService = allowed;
+                    service.allowed = (allowed && service.automatic_connection_allowed) || service.access_allowed_for_all;
                     service.notAllowed = !service.allowed;
                 });
             this.setState({services: services, loading: false});
@@ -93,9 +94,11 @@ class OrganisationServices extends React.Component {
         const {organisation, user} = this.props;
         const allowed = isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id, null);
         const inUse = organisation.services.some(s => s.id === service.id);
+        const tooltip = service.allowed ? undefined :
+            service.allowedByService ? I18n.t("organisationServices.notAllowedOrganisation") : I18n.t("organisationServices.notEnabledOrganisation");
         return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={!allowed || !service.allowed}
                              value={inUse && service.allowed} animate={false}
-                             tooltip={service.allowed ? undefined : I18n.t("organisationServices.notAllowedOrganisation")}/>
+                             tooltip={tooltip}/>
     }
 
     render() {

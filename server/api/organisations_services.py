@@ -23,11 +23,12 @@ def add_collaborations_services():
     confirm_organisation_admin_or_manager(organisation_id)
     # Ensure that the connection is allowed
     service = Service.query.get(service_id)
-    is_allowed = organisation_id in list(map(lambda org: org.id, service.allowed_organisations))
+    is_allowed = organisation_id in list(
+        map(lambda org: org.id, service.allowed_organisations)) or service.access_allowed_for_all
     if not is_allowed:
         raise BadRequest("not_allowed_organisation")
 
-    if not service.automatic_connection_allowed:
+    if not service.automatic_connection_allowed and not service.access_allowed_for_all:
         raise BadRequest("automatic_connection_not_allowed")
 
     organisation = Organisation.query.get(organisation_id)

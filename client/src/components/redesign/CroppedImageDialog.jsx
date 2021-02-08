@@ -22,6 +22,7 @@ export default class CroppedImageDialog extends React.PureComponent {
             source: props.value,
             copy: props.value,
             isSvg: false,
+            initialSvg: false,
             result: null,
             busy: false,
             crop: {},
@@ -40,10 +41,12 @@ export default class CroppedImageDialog extends React.PureComponent {
                     const data = evt.target.result;
                     const base64 = btoa(data);
                     this.imageRef = null;
+                    const isSvg = data.indexOf("<svg") > -1;
                     this.setState({
                         source: base64,
                         copy: base64,
-                        isSvg: data.indexOf("<svg") > -1,
+                        isSvg: isSvg,
+                        initialSvg: isSvg,
                         result: null,
                         addWhiteSpace: false
                     });
@@ -122,13 +125,13 @@ export default class CroppedImageDialog extends React.PureComponent {
     };
 
     onWhiteSpace = e => {
-        const {source, isSvg, copy} = this.state;
+        const {source, isSvg, copy, initialSvg} = this.state;
         const {value} = this.props;
         const src = source || value;
         const val = e.target.checked;
 
         if (!val) {
-            this.setState({addWhiteSpace: val, source: copy || value});
+            this.setState({addWhiteSpace: val, source: copy || value, isSvg: initialSvg});
         } else {
             this.setState({busy: true});
             const image = new Image();

@@ -62,8 +62,8 @@ class UsedServices extends React.Component {
 
             const filteredServices = services
                 .filter(service => {
-                    return service.allowed_organisations.some(org => org.id === collaboration.organisation_id)
-                        && servicesInUse.indexOf(service.id) === -1;
+                    return (service.allowed_organisations.some(org => org.id === collaboration.organisation_id)
+                        || service.access_allowed_for_all) && servicesInUse.indexOf(service.id) === -1;
                 });
             this.setState({services: filteredServices, loading: false});
         });

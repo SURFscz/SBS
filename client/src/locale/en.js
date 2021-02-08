@@ -557,7 +557,8 @@ I18n.translations.en = {
         deleteConfirmation: "Are you sure you want to delete this collaboration?",
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership for {{name}}?",
         deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
-        deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You won't be able to revert this.",
+        deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You will have to be re-invited by an administrator to rejoin.",
+        noBatchDeleteAllowed: "It is not possible to leave the CO as part of a batch delete. Please select only yourself to leave this CO, or select only other members to remove others from the group.",
         downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to revert this.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
         activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
@@ -647,6 +648,9 @@ I18n.translations.en = {
         networkInfo: "Lower bound IP: {{lower}}, higher bound IP: {{higher}}, # addresses: {{num_addresses}}, version: IPv{{version}}",
         automaticConnectionAllowed: "Automatic connection allowed?",
         automaticConnectionAllowedTooltip: "Can collaborations use this service<br/>without explicit permission of the Service contact person?",
+        accessAllowedForAll: "Enabled for all organisations?",
+        accessAllowedForAllTooltip: "Is this service for all current and<br/>future organisations by default enabled?",
+        accessAllowedForAllInfo: "All organisations are enabled by default for this service",
         whiteListed: "Whitelisted?",
         whiteListedTooltip: "Can this Service directly be connected<br/>to new restricted Collaborations created by the API?<br/><br/>Note that it also possible to configure<br/>this in the Server configuration file.",
         sirtfiCompliant: "Sirtfi compliant?",
@@ -1004,6 +1008,7 @@ I18n.translations.en = {
         searchServices: "Search, select and add services to the available services within organisation {{name}}.",
         deleteServiceTooltip: "Make this service unavailable in<br/> the organisation {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for the members of<br/>the collaborations<br/>on this organisation",
         notAllowedOrganisation: "This service cannot be enabled for al COs<br/>because it does not allow automatic connections to COs.<br/><br/>Connections can still be requested by<br/>individual COs in your organization.",
+        notEnabledOrganisation: "This service cannot be enabled for al COs<br/>because this organisation is not<br/>allowed access to this service.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         flash: {
             added: "Successfully added service {{service}} to organisation {{name}}",
             deleted: "Successfully deleted service {{service}} from organisation {{name}}"
