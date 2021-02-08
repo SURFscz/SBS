@@ -5,3 +5,9 @@ export function shortDateFromEpoch(epoch) {
     const dateTimeFormat = new Intl.DateTimeFormat(`${I18n.locale}-${I18n.locale.toUpperCase()}`, options)
     return dateTimeFormat.format(new Date(epoch * 1000));
 }
+
+export function dateFromEpoch(epoch) {
+    const options = {month: "long", day: "numeric", year: "numeric"};
+    const dateTimeFormat = new Intl.DateTimeFormat(`${I18n.locale}-${I18n.locale.toUpperCase()}`, options)
+    return dateTimeFormat.format(new Date(epoch * 1000));
+}

@@ -18,6 +18,11 @@ import Services from "../components/redesign/Services";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import Collaborations from "../components/redesign/Collaborations";
+import {isEmpty} from "../utils/Utils";
+import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-question.svg";
+import MemberJoinRequests from "../components/redesign/MemberJoinRequests";
+import {ReactComponent as CollaborationRequestsIcon} from "../icons/faculty.svg";
+import MemberCollaborationRequests from "../components/redesign/MemberCollaborationRequests";
 
 class Home extends React.Component {
 
@@ -43,6 +48,7 @@ class Home extends React.Component {
             this.props.history.push("/confirmation");
             return;
         }
+        const canStayInHome = !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests);
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
                 tabs.push(this.getOrganisationsTab());
@@ -74,10 +80,15 @@ class Home extends React.Component {
                         tabs.push(this.getOrganisationsTab());
                     }
                 }
+                this.addRequestsTabs(user, tabs, tab);
                 break;
             default:
-                this.props.history.push("/welcome");
-                return;
+                if (canStayInHome) {
+                    tab = this.addRequestsTabs(user, tabs, tab);
+                } else {
+                    this.props.history.push("/welcome");
+                    return;
+                }
         }
         AppStore.update(s => {
             s.breadcrumb.paths = [
@@ -87,6 +98,20 @@ class Home extends React.Component {
         this.tabChanged(tab);
         this.setState({role: role, loading: false, tabs, tab});
     };
+
+    addRequestsTabs = (user, tabs, tab) => {
+        if (!isEmpty(user.join_requests)) {
+            tabs.push(this.getMemberJoinRequestsTab(user.join_requests));
+            tab = (tab !== "collaboration_requests") ? "joinrequests" : tab;
+        }
+        if (!isEmpty(user.collaboration_requests)) {
+            tabs.push(this.getCollaborationRequestsTab(user.collaboration_requests));
+            if (isEmpty(user.join_requests)) {
+                tab = "collaboration_requests"
+            }
+        }
+        return tab;
+    }
 
     getOrganisationsTab = () =>
         <div key="organisations" name="organisations" label={I18n.t("home.tabs.organisations")}
@@ -112,6 +137,27 @@ class Home extends React.Component {
             <Collaborations {...this.props} platformAdmin={platformAdmin}/>
         </div>)
     }
+
+    getMemberJoinRequestsTab = join_requests => {
+        const openJoinRequests = (join_requests || []).filter(jr => jr.status === "open").length;
+        return (<div key="joinrequests" name="joinrequests" label={I18n.t("home.tabs.joinRequests")}
+                     icon={<JoinRequestsIcon/>}
+                     notifier={openJoinRequests > 0 ? openJoinRequests : null}>
+            <MemberJoinRequests join_requests={join_requests} {...this.props} />
+        </div>)
+    }
+
+    getCollaborationRequestsTab = collaboration_requests => {
+        const crl = (collaboration_requests || []).filter(cr => cr.status === "open").length;
+        return (<div key="collaboration_requests" name="collaboration_requests"
+                     label={I18n.t("home.tabs.collaborationRequests")}
+                     notifier={crl > 0 ? crl : null}
+                     icon={<CollaborationRequestsIcon/>}>
+            <MemberCollaborationRequests {...this.props} collaboration_requests={collaboration_requests}/>
+        </div>)
+
+    }
+
 
     tabChanged = (name) => {
         this.setState({tab: name}, () =>

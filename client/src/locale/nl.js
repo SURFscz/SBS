@@ -212,7 +212,7 @@ I18n.translations.nl = {
             title: "Samenwerkingen",
             searchPlaceHolder: "Zoek samenwerkingen...",
             new: "Nieuwe samenwerking",
-            noEntities:  "Er zijn nog geen samenwerkingen...",
+            noEntities: "Er zijn nog geen samenwerkingen...",
             newCollaborationRequest: "Nieuw verzoek voor samenwerking",
             name: "Naam",
             memberCount: "Leden",
@@ -329,6 +329,11 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek Samenwerkingsaanvragen...",
             noEntities: "Geen aanvragen voor samenwerkingen",
         },
+        member_collaboration_requests: {
+            title: "Mijn aanvragen voor samenwerkinge",
+            searchPlaceHolder: "Zoek Samenwerkingsaanvragen...",
+            noEntities: "Geen aanvragen voor samenwerkingen",
+        },
         invitation: {
             welcome: "Welkom in SURF Research Access Management (SRAM). Hier wordt voor onderzoekssamenwerkingen de toegang tot onderzoeksdiensten geregeld.",
             invited: "Je bent door <a href=\"mailto:{{email}}\">{{inviter}}</a> uitgenodigd lid te worden van {{type}} \"{{collaboration}}\"",
@@ -361,6 +366,13 @@ I18n.translations.nl = {
             noEntities: "Geen verzoeken gevonden",
             edit: "Accepteer / keur af",
             details: "Verzoek gemaakt door {{name}} op {{date}}"
+        },
+        memberJoinRequests: {
+            title: "Mijn verzoeken voor samenwerkingen",
+            searchPlaceHolder: "Zoek verzoeken...",
+            noEntities: "Geen verzoeken gevonden",
+            collaborationName: "Naam samenwerking",
+            requested: "Verzocht op"
         },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Terug naar alle koppelverzoeken",

@@ -11,7 +11,7 @@ export default function DeadEnd() {
                 autoplay
                 loop
                 src={deadEnd}
-                style={{height: "auto", width: "100vw", "max-width": "900px"}}/>
+                style={{height: "auto", width: "100vw", "maxWidth": "900px"}}/>
             </div>
         </div>
     );

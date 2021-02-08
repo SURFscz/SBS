@@ -329,6 +329,11 @@ I18n.translations.en = {
             searchPlaceHolder: "Search for requests...",
             noEntities: "No requests for collaborations",
         },
+        member_collaboration_requests: {
+            title: "My requests for collaborations",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No requests for collaborations",
+        },
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here access to research services for research collaborations is managed.",
             invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
@@ -361,6 +366,13 @@ I18n.translations.en = {
             noEntities: "No join requests were found",
             edit: "Approve / decline",
             details: "Join request made by {{name}} on {{date}}"
+        },
+        memberJoinRequests: {
+            title: "My collaboration join requests",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No join requests were found",
+            collaborationName: "Collaboration name",
+            requested: "Requested at"
         },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Back to all connection requests",

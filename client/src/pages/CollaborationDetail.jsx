@@ -498,8 +498,9 @@ class CollaborationDetail extends React.Component {
 
                 <JoinRequestDialog collaboration={collaboration}
                                    isOpen={joinRequestDialogOpen}
+                                   refresh={callback => this.componentDidMount(callback)}
                                    history={this.props.history}
-                               close={() => this.setState({joinRequestDialogOpen: false})}/>
+                                   close={() => this.setState({joinRequestDialogOpen: false})}/>
 
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
