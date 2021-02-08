@@ -77,8 +77,8 @@ I18n.translations.en = {
             orgServices: "Org Services",
             orgCollaborations: "Org Collaborations",
             coServices: "CO Services",
-            coAdmins: "CO admins",
-            members: "Members",
+            coAdmins: "CO Admins",
+            members: "CO Members",
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights",
             collaborationRequests: "Coll requests",
@@ -254,7 +254,7 @@ I18n.translations.en = {
         },
         members: {
             searchPlaceHolder: "Search for members...",
-            title: "Members",
+            title: "CO Members",
             new: "Add member(s)",
             noEntities: "There are no members",
         },
@@ -272,7 +272,7 @@ I18n.translations.en = {
         },
         groups: {
             backToGroups: "Back to all groups",
-            title: "Groups",
+            title: "CO Groups",
             searchPlaceHolder: "Search for groups...",
             noEntities: "No groups were found",
             new: "Create new group",
