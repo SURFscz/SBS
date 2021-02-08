@@ -78,7 +78,7 @@ I18n.translations.nl = {
             orgCollaborations: "Org Samenwerkingen",
             coServices: "CO Diensten",
             coAdmins: "CO admins",
-            members: "Leden",
+            members: "CO Leden",
             serviceOrganisations: "Organisatie toegang",
             serviceCollaborations: "Samenwerkingen inzichten",
             collaborationRequests: "Coll verzoeken",
@@ -254,7 +254,7 @@ I18n.translations.nl = {
         },
         members: {
             searchPlaceHolder: "Zoek leden...",
-            title: "Leden",
+            title: "CO Leden",
             new: "Voeg leden toe",
             noEntities: "Er zijn geen leden",
         },
@@ -272,7 +272,7 @@ I18n.translations.nl = {
         },
         groups: {
             backToGroups: "Terug naar all groepen",
-            title: "Groepen",
+            title: "CO Groepen",
             searchPlaceHolder: "Zoek groepen...",
             noEntities: "Geen groepen gevonden",
             new: "Nieuwe groep",
