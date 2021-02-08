@@ -45,11 +45,14 @@ def _store_user_in_session(user):
 
 def _user_query():
     return User.query \
-        .options(selectinload(User.aups)) \
-        .options(selectinload(User.organisation_memberships)
-                 .selectinload(OrganisationMembership.organisation)) \
-        .options(selectinload(User.collaboration_memberships)
-                 .selectinload(CollaborationMembership.collaboration))
+        .options(joinedload(User.organisation_memberships)
+                 .subqueryload(OrganisationMembership.organisation)) \
+        .options(joinedload(User.collaboration_memberships)
+                 .subqueryload(CollaborationMembership.collaboration)) \
+        .options(joinedload(User.join_requests)
+                 .subqueryload(JoinRequest.collaboration)) \
+        .options(joinedload(User.collaboration_requests)
+                 .subqueryload(CollaborationRequest.organisation))
 
 
 def _user_json_response(user):
@@ -246,19 +249,10 @@ def resume_session():
 def me():
     if "user" in session and not session["user"]["guest"]:
         user_from_session = session["user"]
-        user_from_db = User.query \
-            .options(joinedload(User.organisation_memberships)
-                     .subqueryload(OrganisationMembership.organisation)) \
-            .options(joinedload(User.collaboration_memberships)
-                     .subqueryload(CollaborationMembership.collaboration)) \
-            .options(joinedload(User.join_requests)
-                     .subqueryload(JoinRequest.collaboration)) \
-            .options(joinedload(User.collaboration_requests)
-                     .subqueryload(CollaborationRequest.organisation)) \
+        user_from_db = _user_query() \
             .filter(User.id == user_from_session["id"]) \
             .first()
 
-        # user_from_db = User.query.get(user_from_session["id"])
         if user_from_db is None:
             return {"uid": "anonymous", "guest": True, "admin": False}, 200
         if user_from_db.suspended:
