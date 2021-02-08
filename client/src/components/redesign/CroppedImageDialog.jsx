@@ -85,8 +85,8 @@ export default class CroppedImageDialog extends React.PureComponent {
             const image = this.imageRef;
             const scaleX = image.naturalWidth / image.width;
             const scaleY = image.naturalHeight / image.height;
-            canvas.width = Math.max(crop.width, 480);
-            canvas.height = Math.max(crop.height, 348);
+            canvas.width = crop.width;
+            canvas.height = crop.height;
             const ctx = canvas.getContext("2d");
             ctx.fillStyle = "rgba(255, 255, 255, .99)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);

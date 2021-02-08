@@ -319,6 +319,8 @@ class OrganisationForm extends React.Component {
 
                     <div className="new-organisation">
 
+                        <h1 className="section-separator">{I18n.t("organisation.about")}</h1>
+
                         <InputField value={name} onChange={e => {
                             this.setState({
                                 name: e.target.value,
@@ -357,7 +359,7 @@ class OrganisationForm extends React.Component {
 
                         <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
-                                           initial={initial}/>
+                                           initial={initial} secondRow={true}/>
 
                         {user.admin && <SelectField value={category}
                                                     small={true}
@@ -412,7 +414,8 @@ class OrganisationForm extends React.Component {
                                         error={!initial && isEmpty(administrators)}
                                         emails={administrators}/>
                         </div>}
-                        {(!initial && isEmpty(administrators) && isNew) && <ErrorIndicator msg={I18n.t("organisation.required", {
+                        {(!initial && isEmpty(administrators) && isNew) &&
+                        <ErrorIndicator msg={I18n.t("organisation.required", {
                             attribute: I18n.t("organisation.administrators").toLowerCase()
                         })}/>}
                         {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
