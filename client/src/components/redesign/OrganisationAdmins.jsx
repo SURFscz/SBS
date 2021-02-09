@@ -374,8 +374,8 @@ class OrganisationAdmins extends React.Component {
                 mapper: entity => entity.invite ?
                     <span
                         className="person-role invite">{I18n.t("models.orgMembers.inviteSend",
-                        {date: shortDateFromEpoch(entity.created_at)})}</span> : null
-                    // <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
+                        {date: shortDateFromEpoch(entity.created_at)})}</span> :
+                        entity.role === "admin" ? <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span> : null
             },
             {
                 nonSortable: true,
