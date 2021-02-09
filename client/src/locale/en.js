@@ -561,6 +561,8 @@ I18n.translations.en = {
         noBatchDeleteAllowed: "It is not possible to leave the CO as part of a batch delete. Please select only yourself to leave this CO, or select only other members to remove others from the group.",
         downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to revert this.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
+        lastAdminWarning: "You are leaving this collaboration without admins. After this, management of the CO can only be carried out by the administrators of organisation {{name}}",
+        lastAdminWarningUser: "You are the last administrator in this CO. After you leave, management of the CO can only be carried out by the administrators of organisation {{name}}",
         activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
         flash: {
             updated: "Collaboration {{name}} was successfully updated",
