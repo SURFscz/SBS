@@ -9,6 +9,7 @@ import {isEmpty} from "../../utils/Utils";
 import ReactCrop from "react-image-crop";
 import ErrorIndicator from "./ErrorIndicator";
 import CheckBox from "../CheckBox";
+import {sanitizeHtml} from "../../utils/Markdown";
 
 export default class CroppedImageDialog extends React.PureComponent {
 
@@ -38,10 +39,13 @@ export default class CroppedImageDialog extends React.PureComponent {
             } else {
                 const reader = new FileReader();
                 reader.onload = evt => {
-                    const data = evt.target.result;
+                    let data = evt.target.result;
+                    const isSvg = data.indexOf("<svg") > -1;
+                    if (isSvg) {
+                        data = sanitizeHtml(data);
+                    }
                     const base64 = btoa(data);
                     this.imageRef = null;
-                    const isSvg = data.indexOf("<svg") > -1;
                     this.setState({
                         source: base64,
                         copy: base64,
