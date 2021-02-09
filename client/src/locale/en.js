@@ -747,6 +747,7 @@ I18n.translations.en = {
         },
         onBoarding: {
             label: "On-boarding instructions",
+            invalid: "You must change the on-boarding instructions",
             tooltip: "When a user signs into SRAM using<br/>their institutional account, but without<br/>any role or invite, we'll<br/>show them what they can do.<br/><br/>The text you fill out here,<br/>will also be shown.<br/><br/>Try to formulate something<br/>the user can do.",
             template: "If you don't know what to do next, please check out ***URL to a webpage on the intranet of the institution?***<br/><br/>You can also contact ***maybe supply the name and email address of the SRAM contact within your institution, or can the user contact research support, or a helpdesk at the institution?***",
             tabs: {

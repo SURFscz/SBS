@@ -196,9 +196,10 @@ class OrganisationForm extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, administrators, isNew} = this.state;
+        const {required, alreadyExists, administrators, isNew, on_boarding_msg} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
-        return !inValid && (!isNew || !isEmpty(administrators));
+        // const inValidOnBoarding = isNew && I18n.t("organisation.onBoarding.template") !== on_boarding_msg;
+        return !inValid && (!isNew || !isEmpty(administrators)) ;//&& !inValidOnBoarding;
     };
 
     doSubmit = () => {
@@ -300,6 +301,7 @@ class OrganisationForm extends React.Component {
             return <SpinnerField/>
         }
         const disabledSubmit = !initial && !this.isValid();
+        // const inValidOnBoarding = !initial && isNew && I18n.t("organisation.onBoarding.template") !== on_boarding_msg;
         const {user} = this.props;
         return (
             <div className="mod-new-organisation-container">
@@ -375,6 +377,7 @@ class OrganisationForm extends React.Component {
                         <OrganisationOnBoarding
                             on_boarding_msg={(isEmpty(on_boarding_msg) && isNew) ? I18n.t("organisation.onBoarding.template") : on_boarding_msg}
                             saveOnBoarding={val => this.setState({on_boarding_msg: val})}/>
+                        {/*{inValidOnBoarding && <ErrorIndicator msg={I18n.t("organisation.onBoarding.invalid")}/>}*/}
 
                         <CreatableField onChange={e => this.setState({schac_home_organisation: e.target.value})}
                                         name={I18n.t("organisation.schacHomeOrganisation")}
