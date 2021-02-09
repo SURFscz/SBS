@@ -561,6 +561,8 @@ I18n.translations.nl = {
         noBatchDeleteAllowed: "Het is niet mogelijk om de CO te verlaten in een batchverwijdering. Selecteer alleen jezelf om deze CO te verlaten of selecteer alleen andere leden om anderen uit de groep te verwijderen.",
         downgradeYourselfMemberConfirmation: "Weet je zeker dat je geen admin meer wilt zijn? Je kan dit niet terugdraaien.",
         activateMemberConfirmation: "Weet u zeker dat u lid {{name}} wil her-activeren? We zullen een mail met een activeringslink naar hem / haar sturen.",
+        lastAdminWarning: "Je laat deze samenwerking achter zonder admins. Hierna kan het beheer van de CO alleen worden uitgevoerd door de beheerders van organisatie {{name}}",
+        lastAdminWarningUser: "Je bent de laatste admin in deze CO. Na je vertrek kan het beheer van de CO alleen worden uitgevoerd door de beheerders van organisatie {{name}}",
         activateMemberTooltip: "Klik om de gedeactiveerde gebruiker weer te activeren.<br/>Gedeactiveerde gebruikers kunnen niet inloggen",
         flash: {
             updated: "Samenwerking {{name}} is bijgewerkt.",

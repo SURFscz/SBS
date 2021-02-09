@@ -42,6 +42,7 @@ import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import Button from "../components/Button";
 import JoinRequestDialog from "../components/JoinRequestDialog";
 import Tooltip from "../components/redesign/Tooltip";
+import LastAdminWarning from "../components/redesign/LastAdminWarning";
 
 
 class CollaborationDetail extends React.Component {
@@ -67,6 +68,7 @@ class CollaborationDetail extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
+            lastAdminWarning: "",
             joinRequestDialogOpen: false
         }
     }
@@ -305,16 +307,14 @@ class CollaborationDetail extends React.Component {
     deleteMe = () => {
         const {user} = this.props;
         const {collaboration} = this.state;
-        const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id);
-        if (canStay) {
-            this.doDeleteMe();
-        } else {
-            this.setState({
-                confirmationDialogOpen: true,
-                confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
-                confirmationDialogAction: this.doDeleteMe
-            });
-        }
+        const admins = collaboration.collaboration_memberships.filter(m => m.role === "admin");
+        const lastAdminWarning = admins.length === 1 && admins[0].user_id === user.id;
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
+            confirmationDialogAction: this.doDeleteMe,
+            lastAdminWarning: lastAdminWarning
+        });
     };
 
     tabChanged = (name, id) => {
@@ -339,10 +339,14 @@ class CollaborationDetail extends React.Component {
         }
         const mails = admins.map(u => u.email).join(",");
         if (admins.length === 1) {
-            return I18n.t("models.collaboration.adminsHeader", {name: admins[0].name, mails: mails });
+            return I18n.t("models.collaboration.adminsHeader", {name: admins[0].name, mails: mails});
         }
         const twoOrMore = admins.length === 2 ? "twoAdminsHeader" : "multipleAdminsHeader";
-        return I18n.t(`models.collaboration.${twoOrMore}`, {name: admins[0].name, mails: mails, nbr: admins.length - 1});
+        return I18n.t(`models.collaboration.${twoOrMore}`, {
+            name: admins[0].name,
+            mails: mails,
+            nbr: admins.length - 1
+        });
     }
 
     createCollaborationRequest = () => {
@@ -382,7 +386,8 @@ class CollaborationDetail extends React.Component {
                     </li>
                     {collaboration.website_url &&
                     <li className="collaboration-url">
-                        <Tooltip children={<GlobeIcon/>} id={"collaboration-icon"} msg={I18n.t("tooltips.collaborationUrl")}/>
+                        <Tooltip children={<GlobeIcon/>} id={"collaboration-icon"}
+                                 msg={I18n.t("tooltips.collaborationUrl")}/>
                         <span>
                             <a href={collaboration.website_url} rel="noopener noreferrer"
                                target="_blank">{collaboration.website_url}</a>
@@ -477,7 +482,7 @@ class CollaborationDetail extends React.Component {
         const {
             collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
-            collaborationJoinRequest, joinRequestDialogOpen, alreadyMember
+            collaborationJoinRequest, joinRequestDialogOpen, alreadyMember, lastAdminWarning
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -488,7 +493,7 @@ class CollaborationDetail extends React.Component {
             <>
                 {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit, showMemberView)}
                 {(!showMemberView || !adminOfCollaboration) &&
-                    this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
+                this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
 
                 <WelcomeDialog name={collaboration.name} isOpen={firstTime}
                                role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
@@ -506,7 +511,9 @@ class CollaborationDetail extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     isWarning={true}
-                                    question={confirmationQuestion}/>
+                                    question={confirmationQuestion}>
+                    {lastAdminWarning && <LastAdminWarning organisation={collaboration.organisation} currentUserDeleted={true}/>}
+                </ConfirmationDialog>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>

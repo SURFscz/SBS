@@ -17,7 +17,7 @@ import "./CollaborationAdmins.scss";
 import Select from "react-select";
 import {emitter} from "../../utils/Events";
 import {shortDateFromEpoch} from "../../utils/Date";
-import {stopEvent} from "../../utils/Utils";
+import {isEmpty, stopEvent} from "../../utils/Utils";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
@@ -30,6 +30,7 @@ import InputField from "../InputField";
 import ErrorIndicator from "./ErrorIndicator";
 import Tooltip from "./Tooltip";
 import ReactTooltip from "react-tooltip";
+import LastAdminWarning from "./LastAdminWarning";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.admin`)},
@@ -51,6 +52,8 @@ class CollaborationAdmins extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
+            lastAdminWarning: false,
+            lastAdminWarningUser: false,
             isWarning: true,
             filterOptions: [],
             filterValue: {value: memberFilterValue, label: ""},
@@ -65,7 +68,7 @@ class CollaborationAdmins extends React.Component {
         const invites = collaboration.invitations || [];
         const entities = admins.concat(invites);
         const selectedMembers = entities.reduce((acc, entity) => {
-            acc[entity.id] = {selected: false, ref: entity};
+            acc[entity.id] = {selected: false, ref: entity, invite: !isEmpty(entity.intended_role)};
             return acc;
         }, {});
         const filterOptions = [{
@@ -94,9 +97,14 @@ class CollaborationAdmins extends React.Component {
         if (currentRole === selectedOption.value) {
             return;
         }
-        if (member.user_id === currentUser.id && !currentUser.admin) {
+        const admins = collaboration.collaboration_memberships
+            .filter(m => m.role === "admin");
+        const lastAdminWarning = admins.length === 1 && selectedOption.value !== "admin";
+        if (member.user_id === currentUser.id || lastAdminWarning) {
             this.setState({
                 confirmationDialogOpen: true,
+                lastAdminWarning: lastAdminWarning,
+                lastAdminWarningUser: lastAdminWarning && member.user_id === currentUser.id,
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
                 confirmationDialogAction: () => {
                     this.setState({loading: true});
@@ -170,13 +178,17 @@ class CollaborationAdmins extends React.Component {
         const deleteYourSelf = currentUserDeleted && oneSelected;
         const deleteInBatch = currentUserDeleted && !oneSelected;
 
-        // const {user} = this.props;
-        // const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id);
 
-        if (showConfirmation) {// && ((!deleteYourSelf && !canStay) || !oneSelected)) {
+        if (showConfirmation) {
+            const lastAdminWarning = !deleteInBatch && collaboration.collaboration_memberships
+                .filter(m => m.role === "admin")
+                .filter(m => !Object.values(selectedMembers).some(s => s.selected && s.ref.id === m.id))
+                .length === 0;
             this.setState({
                 confirmationDialogOpen: true,
                 isWarning: true,
+                lastAdminWarning: lastAdminWarning,
+                lastAdminWarningUser: deleteYourSelf,
                 confirmationDialogAction: deleteInBatch ? () => this.setState({confirmationDialogOpen: false}) : this.remove(false),
                 cancelDialogAction: deleteInBatch ? null : () => this.setState({confirmationDialogOpen: false}),
                 confirmationTxt: deleteInBatch ? I18n.t("confirmationDialog.ok") : I18n.t("confirmationDialog.confirm"),
@@ -309,6 +321,8 @@ class CollaborationAdmins extends React.Component {
     delete = () => {
         this.setState({
             confirmationDialogOpen: true,
+            lastAdminWarning: false,
+            lastAdminWarningUser: false,
             leavePage: false,
             isWarning: true,
             confirmationQuestion: I18n.t("organisationInvitation.deleteInvitation"),
@@ -329,6 +343,8 @@ class CollaborationAdmins extends React.Component {
     resend = () => {
         this.setState({
             confirmationDialogOpen: true,
+            lastAdminWarning: false,
+            lastAdminWarningUser: false,
             leavePage: false,
             isWarning: false,
             confirmationQuestion: I18n.t("organisationInvitation.resendInvitation"),
@@ -419,7 +435,7 @@ class CollaborationAdmins extends React.Component {
         const {
             selectedMembers, allSelected, filterOptions, filterValue, hideInvitees,
             confirmationDialogOpen, cancelDialogAction, isWarning, confirmationTxt,
-            confirmationDialogAction, confirmationQuestion, loading
+            confirmationDialogAction, confirmationQuestion, loading, lastAdminWarning, lastAdminWarningUser
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -510,7 +526,10 @@ class CollaborationAdmins extends React.Component {
                                     confirm={confirmationDialogAction}
                                     isWarning={isWarning}
                                     confirmationTxt={confirmationTxt}
-                                    question={confirmationQuestion}/>
+                                    question={confirmationQuestion}>
+                    {lastAdminWarning && <LastAdminWarning organisation={collaboration.organisation}
+                                                           currentUserDeleted={lastAdminWarningUser} />}
+                </ConfirmationDialog>
 
                 <Entities entities={filteredEntities}
                           modelName={isAdminView ? "coAdmins" : "members"}
