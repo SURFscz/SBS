@@ -100,7 +100,8 @@ class CollaborationAdmins extends React.Component {
         const admins = collaboration.collaboration_memberships
             .filter(m => m.role === "admin");
         const lastAdminWarning = admins.length === 1 && selectedOption.value !== "admin";
-        if (member.user_id === currentUser.id || lastAdminWarning) {
+        const canStay = isUserAllowed(ROLES.ORG_MANAGER, currentUser, collaboration.organisation_id);
+        if ((member.user_id === currentUser.id && !canStay) || lastAdminWarning) {
             this.setState({
                 confirmationDialogOpen: true,
                 lastAdminWarning: lastAdminWarning,
@@ -110,7 +111,11 @@ class CollaborationAdmins extends React.Component {
                     this.setState({loading: true});
                     updateCollaborationMembershipRole(collaboration.id, member.user_id, selectedOption.value)
                         .then(() => {
-                            this.props.refreshUser(() => this.props.history.push("/home"));
+                            this.props.refreshUser(() => {
+                                if (!canStay) {
+                                    this.props.history.push("/home");
+                                }
+                            });
                             setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
                                 name: member.user.name,
                                 role: selectedOption.value
