@@ -309,12 +309,17 @@ class CollaborationDetail extends React.Component {
         const {collaboration} = this.state;
         const admins = collaboration.collaboration_memberships.filter(m => m.role === "admin");
         const lastAdminWarning = admins.length === 1 && admins[0].user_id === user.id;
-        this.setState({
-            confirmationDialogOpen: true,
-            confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
-            confirmationDialogAction: this.doDeleteMe,
-            lastAdminWarning: lastAdminWarning
-        });
+        const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id);
+        if (!canStay || lastAdminWarning) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
+                confirmationDialogAction: this.doDeleteMe,
+                lastAdminWarning: lastAdminWarning
+            });
+        } else {
+            this.doDeleteMe();
+        }
     };
 
     tabChanged = (name, id) => {
@@ -512,7 +517,9 @@ class CollaborationDetail extends React.Component {
                                     confirm={confirmationDialogAction}
                                     isWarning={true}
                                     question={confirmationQuestion}>
-                    {lastAdminWarning && <LastAdminWarning organisation={collaboration.organisation} currentUserDeleted={true}/>}
+                    {lastAdminWarning &&
+                    <LastAdminWarning organisation={collaboration.organisation} currentUserDeleted={true}
+                    />}
                 </ConfirmationDialog>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
