@@ -196,7 +196,7 @@ class OrganisationForm extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, administrators, isNew, on_boarding_msg} = this.state;
+        const {required, alreadyExists, administrators, isNew} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
         // const inValidOnBoarding = isNew && I18n.t("organisation.onBoarding.template") !== on_boarding_msg;
         return !inValid && (!isNew || !isEmpty(administrators)) ;//&& !inValidOnBoarding;
