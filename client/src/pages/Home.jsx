@@ -88,7 +88,10 @@ class Home extends React.Component {
                     return;
                 }
         }
-        tab = this.addRequestsTabs(user, tabs, tab);
+        const tabSuggestion = this.addRequestsTabs(user, tabs, tab);
+        if (role === ROLES.USER) {
+            tab = tabSuggestion;
+        }
         AppStore.update(s => {
             s.breadcrumb.paths = [
                 {path: "/", value: I18n.t("breadcrumb.home")}

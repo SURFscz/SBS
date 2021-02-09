@@ -747,6 +747,7 @@ I18n.translations.nl = {
         },
         onBoarding: {
             label: "On-boarding message",
+            invalid: "Je moeet de de on-boarding aanpassen",
             tooltip: "Wanneer een gebruiker zich bij<br/>SRAM aanmeldt met zijn instellings-account<br/>maar zonder enige rol of uitnodiging, zullen<br/>we hem laten zien wat hij kan doen.<br/><br/>De tekst die je hier invult<br/>zal ook getoond worden.<br/><br/>Probeer iets te formuleren<br/>wat de gebruiker kan doen.",
             template: "Als u niet weet wat u nu moet doen, kijk dan op ***URL naar een webpagina op het intranet van de instelling?***<br/><br/>U kunt ook contact opnemen met ***de naam en het emailadres van de SRAM-contactpersoon binnen uw instelling opgeven, of kan de gebruiker contact opnemen met research support, of een helpdesk binnen de instelling?***",
             tabs: {
