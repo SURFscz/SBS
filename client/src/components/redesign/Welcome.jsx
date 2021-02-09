@@ -7,10 +7,10 @@ import {ReactComponent as InformationIcon} from "../../icons/informational.svg";
 import {ReactComponent as CriticalIcon} from "../../icons/critical.svg";
 import SpinnerField from "./SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
-import DOMPurify from "dompurify";
 import * as Showdown from "showdown";
 import Button from "../Button";
 import {AppStore} from "../../stores/AppStore";
+import {sanitizeHtml} from "../../utils/Markdown";
 
 const converter = new Showdown.Converter({
     tables: true,
@@ -18,13 +18,6 @@ const converter = new Showdown.Converter({
     strikethrough: true,
     tasklists: true
 });
-
-const sanitizeHtml = html => {
-    if (isEmpty(html)) {
-        return "";
-    }
-    return DOMPurify.sanitize(html);
-};
 
 class Welcome extends React.Component {
 

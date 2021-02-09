@@ -129,7 +129,9 @@ class CollaborationForm extends React.Component {
 
     updateBreadCrumb = (organisation, collaboration, autoCreateCollaborationRequest, isCollaborationRequest) => {
         const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
-        if (organisation) {
+        const {user} = this.props;
+        const accessAllowedToOrg = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id)
+        if (organisation && accessAllowedToOrg) {
             paths.push({
                 path: `/organisations/${organisation.value}`,
                 value: I18n.t("breadcrumb.organisation", {name: organisation.label})
