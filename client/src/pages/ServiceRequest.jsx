@@ -56,7 +56,8 @@ class ServiceRequest extends React.Component {
                     const redirectUriMismatch = isEmpty(service.uri) || (!isEmpty(redirectUri) && !redirectUri.startsWith(service.uri));
                     collaborations.forEach(collaboration => {
                         collaboration.alreadyLinked = collaboration.services.some(ser => ser.id === service.id);
-                        collaboration.linkNotAllowed = service.allowed_organisations.every(org => org.id !== collaboration.organisation.id);
+                        collaboration.linkNotAllowed = service.allowed_organisations.every(org => org.id !== collaboration.organisation.id)
+                            && !service.access_allowed_for_all;
                     });
                     serviceConnectionRequestsOutstanding(service.id).then(res => {
                         collaborations.forEach(collaboration => {
@@ -153,7 +154,7 @@ class ServiceRequest extends React.Component {
                         />
                     </td>
                     <td>{coll.linkNotAllowed &&
-                    <span className="tooltip-container">
+                            <span className="tooltip-container">
                                 <span data-tip data-for={`coll_lna${coll.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
@@ -162,7 +163,7 @@ class ServiceRequest extends React.Component {
                                 </ReactTooltip>
                             </span>}
                         {coll.alreadyLinked &&
-                        <span className="tooltip-container">
+                            <span className="tooltip-container">
                                 <span data-tip data-for={`coll_al${coll.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
@@ -171,7 +172,7 @@ class ServiceRequest extends React.Component {
                                 </ReactTooltip>
                             </span>}
                         {(coll.outstandingServiceConnectionRequest && this.roleOfUserInCollaboration(coll, user) === "member") &&
-                        <span className="tooltip-container">
+                            <span className="tooltip-container">
                                 <span data-tip data-for={`coll_osr${coll.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
@@ -179,7 +180,6 @@ class ServiceRequest extends React.Component {
                                     <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.collaboration.outstandingServiceConnectionRequest")}}/>
                                 </ReactTooltip>
                             </span>}
-
                     </td>
                 </tr>)}
                 </tbody>
@@ -217,7 +217,7 @@ class ServiceRequest extends React.Component {
                 collaboration: collaborations.find(coll => coll.alreadyLinked).name
             });
             subTitle = I18n.t("serviceRequest.subTitleAlreadyLinked", {name: serviceName});
-        }  else if (noAutomaticConnectionsAllowed) {
+        } else if (noAutomaticConnectionsAllowed) {
             title = I18n.t("serviceRequest.titleNoAutomaticConnection", {name: serviceName});
             subTitle = I18n.t("serviceRequest.titleNoAutomaticConnection", {name: serviceName});
         } else if (redirectUriMismatch) {
