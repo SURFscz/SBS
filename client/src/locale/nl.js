@@ -296,9 +296,9 @@ I18n.translations.nl = {
         collaboration: {
             memberHeader: "{{nbrMember}} leden - {{nbrGroups}} groepen",
             noAdminsHeader: "(nog) Geen admins",
-            adminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong></a>",
-            twoAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} ander</strong></a>",
-            multipleAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} anderen</strong></a>",
+            adminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong></a>",
+            twoAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} ander</strong></a>",
+            multipleAdminsHeader: "Georganiseerd door <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> en <strong>{{nbr}} anderen</strong></a>",
             about: "Over onze samenwerking",
             services: "Waar we samenwerken ({{nbr}} diensten)",
             noServices: "Er zijn nog geen diensten gekoppeld aan deze samenwerking",

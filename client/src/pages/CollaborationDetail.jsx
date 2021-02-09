@@ -343,13 +343,15 @@ class CollaborationDetail extends React.Component {
             return I18n.t("models.collaboration.noAdminsHeader");
         }
         const mails = admins.map(u => u.email).join(",");
+        const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc=";
         if (admins.length === 1) {
-            return I18n.t("models.collaboration.adminsHeader", {name: admins[0].name, mails: mails});
+            return I18n.t("models.collaboration.adminsHeader", {name: admins[0].name, mails: mails, bcc: bcc});
         }
         const twoOrMore = admins.length === 2 ? "twoAdminsHeader" : "multipleAdminsHeader";
         return I18n.t(`models.collaboration.${twoOrMore}`, {
             name: admins[0].name,
             mails: mails,
+            bcc: bcc,
             nbr: admins.length - 1
         });
     }
