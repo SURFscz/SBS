@@ -1243,7 +1243,7 @@ I18n.translations.en = {
         titleOutstandingServiceConnectionRequest: "Service {{name}} can not be linked to any of your collaborations",
         subTitleOutstandingServiceConnectionRequest: "There are already outstanding service connection request(s) for all of your collaborations: {{details}}. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         collaboration: {
-            name: "Name",
+            name: "Collaboration",
             role: "Role",
             organisation: "Organisation",
             actions: "Link",
