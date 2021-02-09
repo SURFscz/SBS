@@ -83,13 +83,12 @@ class Home extends React.Component {
                 this.addRequestsTabs(user, tabs, tab);
                 break;
             default:
-                if (canStayInHome) {
-                    tab = this.addRequestsTabs(user, tabs, tab);
-                } else {
+                if (!canStayInHome) {
                     this.props.history.push("/welcome");
                     return;
                 }
         }
+        tab = this.addRequestsTabs(user, tabs, tab);
         AppStore.update(s => {
             s.breadcrumb.paths = [
                 {path: "/", value: I18n.t("breadcrumb.home")}
