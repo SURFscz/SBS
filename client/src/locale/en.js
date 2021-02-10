@@ -68,7 +68,7 @@ I18n.translations.en = {
         noShacHome: "To request / create a new collaboration it is required that your institution releases the schac_home attribute. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
         noOrganisationsPlatformAdmin: "To create a new collaboration it is required you first create a new organisation.",
         tabs: {
-            groups: "Groups",
+            groups: "CO Groups",
             collaborations: "Collaborations",
             organisations: "Organisations",
             services: "SRAM Services",
