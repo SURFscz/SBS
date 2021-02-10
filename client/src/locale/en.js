@@ -220,7 +220,7 @@ I18n.translations.en = {
             allMembers: "All members ({{count}})",
             group: "Group {{name}} ({{count}})",
             hideInvites: "Hide invitees",
-            noCollaborations: "There are no collaborations yet within your organization. Why don't you create the first one?",
+            noCollaborations: "There are no collaborations yet within your organisation. Why don't you create the first one?",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Search for organisations",
@@ -717,9 +717,9 @@ I18n.translations.en = {
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
         schacHomeOrganisationShortName: "Schac Home",
-        schacHomeOrganisation: "Home organization SAML identifier",
+        schacHomeOrganisation: "Home organisation SAML identifier",
         schacHomeOrganisationPlaceholder: "The Schac Home Organisation of the organisation",
-        schacHomeOrganisationTooltip: "A person's home organization based<br/>on the domain name of the institution (i.e. uva.nl).<br/><br/>SAML2: urn:mace:terena.org:attribute-def:schacHomeOrganization",
+        schacHomeOrganisationTooltip: "A person's home organisation based<br/>on the domain name of the institution (i.e. uva.nl).<br/><br/>SAML2: urn:mace:terena.org:attribute-def:schacHomeOrganization",
         collaborationCreationAllowed: "Automatically approve CO creation requests?",
         collaborationCreationAllowedTooltip: "Any person can create<br/>Collaborations for their home<br/>institution.<br/><br/>This requires a SchacHome",
         created: "Created at",
@@ -907,7 +907,7 @@ I18n.translations.en = {
             inviteResend: "Invitation for organisation {{name}} was resend.",
             inviteAccepted: "Invitation for organisation {{name}} was accepted.",
             created: "Invitions for organisation {{name}} are created.",
-            alreadyMember: "The invitation could not be accepted because you are already a member of this organization.",
+            alreadyMember: "The invitation could not be accepted because you are already a member of this organisation.",
             notFound: "Invitation has already been accepted / declined. If you think there is a problem check with your CO admin (or with SRAM support at sram-support@surf.nl)."
         },
     },
@@ -1021,7 +1021,7 @@ I18n.translations.en = {
         noServices: "This organisation has no services connected.",
         searchServices: "Search, select and add services to the available services within organisation {{name}}.",
         deleteServiceTooltip: "Make this service unavailable in<br/> the organisation {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for the members of<br/>the collaborations<br/>on this organisation",
-        notAllowedOrganisation: "This service cannot be enabled for al COs<br/>because it does not allow automatic connections to COs.<br/><br/>Connections can still be requested by<br/>individual COs in your organization.",
+        notAllowedOrganisation: "This service cannot be enabled for al COs<br/>because it does not allow automatic connections to COs.<br/><br/>Connections can still be requested by<br/>individual COs in your organisation.",
         notEnabledOrganisation: "This service cannot be enabled for al COs<br/>because this organisation is not<br/>allowed access to this service.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         flash: {
             added: "Successfully added service {{service}} to organisation {{name}}",
