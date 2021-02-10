@@ -4,7 +4,7 @@
 
 <p>Hi,</p>
 {% if collaboration_requests|length > 0 %}
-<p>The following collaboration requests in {{ environment }} have been outstanding for more then
+<p>The following collaboration requests in {{ environment }} have been outstanding for more than
     {{ admin_cfg.outstanding_coll_request_days_threshold }} days:</p>
 <ul>
     {% for req in collaboration_requests %}
@@ -16,7 +16,7 @@
 {% endif %}
 
 {% if collaboration_join_requests|length > 0 %}
-<p>The following collaboration join requests in {{ environment }} have been outstanding for more then
+<p>The following collaboration join requests in {{ environment }} have been outstanding for more than
     {{ admin_cfg.outstanding_join_request_days_threshold }} days:</p>
 <ul>
     {% for req in collaboration_join_requests %}
@@ -27,7 +27,7 @@
 </ul>
 {% endif %}
 
-<p>This mail is automatically send and can be suppressed by changing the <i>platform_admin_notifications</i> section
+<p>This mail is automatically sent and can be suppressed by changing the <i>platform_admin_notifications</i> section
     of the configuration for environment {{ environment }}</p>
 
 {% endblock %}
