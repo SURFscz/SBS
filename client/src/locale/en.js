@@ -334,6 +334,11 @@ I18n.translations.en = {
             searchPlaceHolder: "Search for requests...",
             noEntities: "No requests for collaborations",
         },
+        system_collaboration_requests: {
+            title: "Outdated open requests for collaborations",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No outdated requests for collaborations",
+        },
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here access to research services for research collaborations is managed.",
             invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
@@ -373,6 +378,11 @@ I18n.translations.en = {
             noEntities: "No join requests were found",
             collaborationName: "Collaboration name",
             requested: "Requested at"
+        },
+        systemJoinRequests: {
+            title: "Outdated collaboration join requests",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No outdated join requests",
         },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Back to all connection requests",
@@ -1313,6 +1323,8 @@ I18n.translations.en = {
         title: "System maintenance",
         runDailyJobsInfo: "Run the daily cron job to send notification mails and potentially suspend users that have not logged in for the configured period",
         runDailyJobs: "Trigger",
+        runOutdatedRequestsInfo: "Run the cron job to report all open outdated join requests and new collaboration requests for the configured threshold",
+        runOutdatedRequests: "Run",
         action: "Action",
         results: "Results",
         first_suspend_notification: "First suspend notification email sent",
