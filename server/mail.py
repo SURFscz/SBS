@@ -35,7 +35,7 @@ def _do_send_mail(subject, recipients, template, context, preview):
 
     mail_ctx = current_app.app_config.mail
     msg = Message(subject=subject,
-                  sender=(mail_ctx.get("sender_name", "SURFnet"), mail_ctx.get("sender_email", "no-reply@surfnet.nl")),
+                  sender=(mail_ctx.get("sender_name", "SURF"), mail_ctx.get("sender_email", "no-reply@surf.nl")),
                   recipients=recipients)
     msg.html = render_template(f"{template}.html", **context)
     msg.body = render_template(f"{template}.txt", **context)
