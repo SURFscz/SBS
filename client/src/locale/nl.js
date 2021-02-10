@@ -351,6 +351,7 @@ I18n.translations.nl = {
                 collaborate: "Samenwerken!"
             },
             login: "Log in om je te identificeren",
+            loginWithSub: "Log in om je te identificeren<sup> *</sup>",
             loginTip: "Je kunt je instellingsaccount gebruiken om in te loggen, of een gastaccount gebruiken zoals eduID",
             accept: "Ik accepteer de voorwaarden",
             noAccept: "Nee, ik ga niet akkoord",

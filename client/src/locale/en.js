@@ -351,6 +351,7 @@ I18n.translations.en = {
                 collaborate: "Collaborate!"
             },
             login: "Please login to identify yourself",
+            loginWithSub: "Please login to identify yourself<sup> *</sup>",
             loginTip: "You can use your institution account to login, or use a guest account like eduID",
             accept: "I accept these terms",
             noAccept: "No, I don't agree",
