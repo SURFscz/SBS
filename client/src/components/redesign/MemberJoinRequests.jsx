@@ -24,10 +24,12 @@ class MemberJoinRequests extends React.Component {
     }
 
     componentDidMount = callback => {
-        const {join_requests, user} = this.props;
-        join_requests.forEach(jr => {
-            jr.user = user;
-        })
+        const {join_requests, user, isPersonal = true} = this.props;
+        if (isPersonal) {
+            join_requests.forEach(jr => {
+                jr.user = user;
+            })
+        }
         const filterOptions = [{
             label: I18n.t("collaborationRequest.statuses.all", {nbr: join_requests.length}),
             value: allValue
@@ -69,7 +71,7 @@ class MemberJoinRequests extends React.Component {
 
     render() {
         const {loading, filterOptions, filterValue} = this.state;
-        const {join_requests, user: currentUser} = this.props;
+        const {join_requests, user: currentUser, isPersonal = true} = this.props;
         if (loading) {
             return <SpinnerField/>;
         }
@@ -88,7 +90,8 @@ class MemberJoinRequests extends React.Component {
             {
                 key: "user__name",
                 header: I18n.t("models.users.name_email"),
-                mapper: entity => <UserColumn entity={entity} currentUser={currentUser}/>
+                mapper: entity => <UserColumn entity={entity} currentUser={isPersonal ? currentUser : entity.user}
+                                              showMe={isPersonal}/>
             },
             {
                 key: "created_at",
@@ -107,7 +110,7 @@ class MemberJoinRequests extends React.Component {
         return (
             <div>
                 <Entities entities={filteredJoinRequests}
-                          modelName="memberJoinRequests"
+                          modelName={isPersonal ? "memberJoinRequests" : "systemJoinRequests"}
                           searchAttributes={["user__name", "user__email", "collaboration__name", "status"]}
                           defaultSort="name"
                           columns={columns}

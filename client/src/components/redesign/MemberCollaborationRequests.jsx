@@ -23,10 +23,16 @@ export default class MemberCollaborationRequests extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        const {collaboration_requests, user} = this.props;
-        collaboration_requests.forEach(cr => {
-            cr.user = user;
-        })
+        const {collaboration_requests, user, isPersonal = true} = this.props;
+        if (isPersonal) {
+            collaboration_requests.forEach(cr => {
+                cr.user = user;
+            })
+        } else {
+            collaboration_requests.forEach(cr => {
+                cr.user = cr.requester;
+            })
+        }
 
         const filterOptions = [{
             label: I18n.t("collaborationRequest.statuses.all", {nbr: collaboration_requests.length}),
@@ -69,7 +75,7 @@ export default class MemberCollaborationRequests extends React.PureComponent {
     }
 
     render() {
-        const {collaboration_requests, user} = this.props;
+        const {collaboration_requests, user, isPersonal = true} = this.props;
         const {filterOptions, filterValue, loading} = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -89,7 +95,8 @@ export default class MemberCollaborationRequests extends React.PureComponent {
             {
                 key: "user__name",
                 header: I18n.t("models.users.name_email"),
-                mapper: entity => <UserColumn entity={entity} currentUser={user}/>
+                mapper: entity => <UserColumn entity={entity} currentUser={isPersonal ? user : entity.requester}
+                                              showMe={isPersonal}/>
             },
             {
                 key: "created_at",
@@ -108,7 +115,7 @@ export default class MemberCollaborationRequests extends React.PureComponent {
 
         return (
             <Entities entities={filteredCollaborationRequests}
-                      modelName={"member_collaboration_requests"}
+                      modelName={isPersonal ? "member_collaboration_requests" : "system_collaboration_requests"}
                       searchAttributes={["user__name", "user__email", "organisation__name", "name", "status"]}
                       defaultSort="name"
                       columns={columns}

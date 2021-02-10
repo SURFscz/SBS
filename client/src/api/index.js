@@ -570,6 +570,10 @@ export function suspendUsers() {
     return postPutJson("/api/system/suspend_users", {}, "PUT");
 }
 
+export function outstandingRequests() {
+    return fetchJson("/api/system/outstanding_requests");
+}
+
 export function dbStats() {
     return fetchJson("/api/system/db_stats");
 }

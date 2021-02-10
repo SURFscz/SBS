@@ -330,9 +330,14 @@ I18n.translations.nl = {
             noEntities: "Geen aanvragen voor samenwerkingen",
         },
         member_collaboration_requests: {
-            title: "Mijn aanvragen voor samenwerkinge",
+            title: "Mijn aanvragen voor samenwerkingem",
             searchPlaceHolder: "Zoek Samenwerkingsaanvragen...",
             noEntities: "Geen aanvragen voor samenwerkingen",
+        },
+        system_collaboration_requests: {
+            title: "Gedateerde aanvragen voor samenwerkingen",
+            searchPlaceHolder: "Zoek Samenwerkingsaanvragen...",
+            noEntities: "Geen gedateerde aanvragen voor samenwerkingen",
         },
         invitation: {
             welcome: "Welkom in SURF Research Access Management (SRAM). Hier wordt voor onderzoekssamenwerkingen de toegang tot onderzoeksdiensten geregeld.",
@@ -373,6 +378,11 @@ I18n.translations.nl = {
             noEntities: "Geen verzoeken gevonden",
             collaborationName: "Naam samenwerking",
             requested: "Verzocht op"
+        },
+        systemJoinRequests: {
+            title: "Gedateerde open verzoeken voor samenwerkingen",
+            searchPlaceHolder: "Zoek verzoeken...",
+            noEntities: "Geen gedateerde verzoeken gevonden",
         },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Terug naar alle koppelverzoeken",
@@ -1313,6 +1323,8 @@ I18n.translations.nl = {
         title: "Systeemonderhoud",
         runDailyJobsInfo: "Voer de dagelijkse cron-taak uit om notificatie-e-mails te verzenden en mogelijk gebruikers op te schorten die zich gedurende de geconfigureerde periode niet hebben aangemeld",
         runDailyJobs: "Trigger",
+        runOutdatedRequestsInfo: "Voer de cron-taak uit om alle verouderde open join-verzoeken en nieuwe samenwerkingsverzoeken voor de geconfigureerde drempel te rapporteren",
+        runOutdatedRequests: "Run",
         action: "Action",
         results: "Results",
         first_suspend_notification: "Eerste e-mail met opschortingsmelding verzonden",

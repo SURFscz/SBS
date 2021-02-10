@@ -25,6 +25,16 @@ def suspend_users_endpoint():
     return suspend_users(current_app), 201
 
 
+@system_api.route("/outstanding_requests", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def outstanding_requests():
+    confirm_write_access()
+
+    from server.cron.outstanding_requests import outstanding_requests
+
+    return outstanding_requests(current_app), 200
+
+
 @system_api.route("/db_stats", strict_slashes=False, methods=["GET"])
 @json_endpoint
 def db_stats():

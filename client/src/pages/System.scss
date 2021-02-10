@@ -29,16 +29,6 @@
                 padding: 15px 0;
                 width: 100%;
 
-                &:not(:first-child) {
-                    margin-left: 15px;
-                }
-
-                @media (max-width: $tablet-max) {
-                    &:not(:first-child) {
-                        margin-left: 0;
-                    }
-                }
-
                 display: flex;
                 flex-direction: row;
                 align-items: center;
