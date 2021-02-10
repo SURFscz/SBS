@@ -146,7 +146,7 @@ class UserInvitation extends React.Component {
                         <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.invite")})}</span>
                     </div>
                 </div>
-                <Button onClick={login} html={I18n.t("models.invitation.loginWithSub")} txt="/login"/>
+                <Button onClick={login} html={I18n.t("models.invitation.loginWithSub")} txt="login"/>
                 <p className="tip"><sup>*</sup>{I18n.t("models.invitation.loginTip")}</p>
             </section>
         )
