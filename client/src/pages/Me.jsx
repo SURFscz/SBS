@@ -8,13 +8,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {ReactComponent as CriticalIcon} from "../icons/critical.svg";
-import {
-    validPublicPEMKeyRegExp,
-    validPublicPKCS8KeyRegExp,
-    validPublicSSH2KeyRegExp,
-    validPublicSSHEd25519KeyRegExp,
-    validPublicSSHKeyRegExp
-} from "../validations/regExps";
+import {validateSSHKey,} from "../validations/regExps";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class Me extends React.Component {
@@ -69,7 +63,7 @@ class Me extends React.Component {
     isValid = () => {
         const {invalidInputs, ssh_key} = this.state;
         const inValid = Object.keys(invalidInputs).some(key => invalidInputs[key]);
-        const isValidSsh = this.doValidateSSSHKey(ssh_key);
+        const isValidSsh = validateSSHKey(ssh_key);
         return !inValid && isValidSsh;
     };
 
@@ -88,14 +82,9 @@ class Me extends React.Component {
 
     validateSSHKey = e => {
         const sshKey = e.target.value;
-        const isValid = this.doValidateSSSHKey(sshKey);
+        const isValid = validateSSHKey(sshKey);
         this.setState({fileTypeError: !isValid, fileInputKey: new Date().getMilliseconds()});
     };
-
-    doValidateSSSHKey = sshKey => {
-        return isEmpty(sshKey) || validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey)
-            || validPublicSSHEd25519KeyRegExp.test(sshKey) || validPublicPEMKeyRegExp.test(sshKey) || validPublicPKCS8KeyRegExp.test(sshKey);
-    }
 
     onFileRemoval = e => {
         stopEvent(e);
@@ -112,7 +101,7 @@ class Me extends React.Component {
             const reader = new FileReader();
             reader.onload = () => {
                 const sshKey = reader.result.toString();
-                if (this.doValidateSSSHKey(sshKey)) {
+                if (validateSSHKey(sshKey)) {
                     this.setState({fileName: file.name, fileTypeError: false, ssh_key: sshKey});
                 } else {
                     this.setState({fileName: file.name, fileTypeError: true, ssh_key: ""});
@@ -178,7 +167,7 @@ class Me extends React.Component {
         } = this.state;
         const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
-        const showConvertSSHKey = !isEmpty(ssh_key) && validPublicSSH2KeyRegExp.test(ssh_key);
+        const showConvertSSHKey = !isEmpty(ssh_key) && ssh_key.startsWith("---- BEGIN SSH2 PUBLIC KEY ----");
         const disabledConfirm = user.name !== nameConfirmation;
         return (
             <div className="user-profile-mod">
