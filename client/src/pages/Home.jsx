@@ -80,7 +80,6 @@ class Home extends React.Component {
                         tabs.push(this.getOrganisationsTab());
                     }
                 }
-                this.addRequestsTabs(user, tabs, tab);
                 break;
             default:
                 if (!canStayInHome) {
