@@ -38,10 +38,15 @@ def _do_send_mail(subject, recipients, template, context, preview):
     mail_ctx = current_app.app_config.mail
     msg = Message(subject=subject,
                   sender=(mail_ctx.get("sender_name", "SURF"), mail_ctx.get("sender_email", "no-reply@surf.nl")),
-                  recipients=recipients)
+                  recipients=recipients,
+                  extra_headers={
+                      "Auto-submitted": "auto-generated",
+                      "X-Auto-Response-Suppress": "yes",
+                      "Precedence": "bulk"
+                  })
     msg.html = render_template(f"{template}.html", **context)
     msg.body = render_template(f"{template}.txt", **context)
-    msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-",".")
+    msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-", ".")
 
     logger = ctx_logger("user")
     logger.debug(f"Sending mail message with Message-id {msg.msgId}")
