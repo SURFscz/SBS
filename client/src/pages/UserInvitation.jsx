@@ -15,6 +15,7 @@ import moment from "moment";
 import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import {isEmpty} from "../utils/Utils";
 
 class UserInvitation extends React.Component {
 
@@ -34,7 +35,8 @@ class UserInvitation extends React.Component {
             confirmationDialogQuestion: "",
             confirmationDialogAction: () => true,
             cancelDialogAction: this.closeConfirmationDialog,
-            loading: false
+            loading: false,
+            skippedLoginStep: false
         };
     }
 
@@ -46,7 +48,17 @@ class UserInvitation extends React.Component {
             const promise = isOrganisationInvite ? organisationInvitationByHash(params.hash) : invitationByHash(params.hash);
             promise.then(json => {
                 const isExpired = today.isAfter(moment(json.expiry_date * 1000));
-                this.setState({invite: json, isExpired: isExpired, loading: true});
+                const {user} = this.props;
+                let skippedLoginStep = false;
+                if (user.guest) {
+                    //We need to store that we skip step 1
+                    window.localStorage.setItem("step1", "true");
+                } else {
+                    const step1 = window.localStorage.getItem("step1");
+                    skippedLoginStep = isEmpty(step1);
+                    window.localStorage.removeItem("step1");
+                }
+                this.setState({invite: json, isExpired: isExpired, loading: true, skippedLoginStep: skippedLoginStep});
             }).catch(() => {
                 this.setState({errorOccurred: true});
                 setFlash(I18n.t("organisationInvitation.flash.notFound"), "error");
@@ -108,13 +120,16 @@ class UserInvitation extends React.Component {
         });
     };
 
-    renderAcceptInvitationStep = (isOrganisationInvite, invite) => {
+    renderAcceptInvitationStep = (isOrganisationInvite, invite, skippedLoginStep) => {
         const hasAup = !isOrganisationInvite && invite.collaboration.accepted_user_policy;
+        const circleClassName = skippedLoginStep ? "circle two-quarters" : "circle two-third"
+        const stepNow = skippedLoginStep ? "1" : "2";
+        const stepTotal = skippedLoginStep ? "2" : "3";
         return (
             <section className="step-container">
                 <div className="step">
-                    <div className="circle two-third">
-                        <span>{I18n.t("models.invitation.steps.progress", {now: "2", total: "3"})}</span>
+                    <div className={circleClassName}>
+                        <span>{I18n.t("models.invitation.steps.progress", {now: stepNow, total: stepTotal})}</span>
                     </div>
                     <div className="step-actions">
                         <h1>{I18n.t("models.invitation.steps.invite")}</h1>
@@ -155,7 +170,7 @@ class UserInvitation extends React.Component {
     render() {
         const {user, isOrganisationInvite} = this.props;
         const { invite, isExpired, errorOccurred, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogQuestion, confirmationDialogAction } = this.state;
+            confirmationDialogQuestion, confirmationDialogAction, skippedLoginStep } = this.state;
         const expiredMessage = I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")});
         return (
             <div className="mod-user-invitation">
@@ -180,7 +195,7 @@ class UserInvitation extends React.Component {
                         </section>
                         <p className="info">{I18n.t("models.invitation.followingSteps")}</p>
                         {user.guest && this.renderLoginStep()}
-                        {!user.guest && this.renderAcceptInvitationStep(isOrganisationInvite, invite)}
+                        {!user.guest && this.renderAcceptInvitationStep(isOrganisationInvite, invite, skippedLoginStep)}
                     </div>}
 
                 </div>}

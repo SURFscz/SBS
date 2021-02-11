@@ -41,7 +41,7 @@ def _do_send_mail(subject, recipients, template, context, preview):
                   recipients=recipients)
     msg.html = render_template(f"{template}.html", **context)
     msg.body = render_template(f"{template}.txt", **context)
-    msg.msgId = f"{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl"
+    msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-",".")
 
     logger = ctx_logger("user")
     logger.debug(f"Sending mail message with Message-id {msg.msgId}")
