@@ -46,7 +46,7 @@ from server.tools import read_file
 
 def _init_logging(is_test):
     if is_test:
-        logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+        logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
     else:
         formatter = logging.Formatter("SBS: %(asctime)s %(name)s %(levelname)s %(message)s")
 
