@@ -1,16 +1,18 @@
+import {isEmpty} from "../utils/Utils";
+
 export const validEmailRegExp = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 export const validSchacHomeRegExp = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$/;
 
-export const validPublicSSHKeyRegExp = /ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3}( [^@]+@[^@]+)?/;
+const validPrefixes = [
+    "ssh-rsa", "ssh-ed25519", "ecdsa-sha2-nistp256", "ecdsa-sha2-nistp384,", "ecdsa-sha2-nistp521",
+    "---- BEGIN SSH2 PUBLIC KEY ----", "-----BEGIN PUBLIC KEY-----", "-----BEGIN RSA PUBLIC KEY-----"
+]
 
-export const validPublicSSHEd25519KeyRegExp = /ssh-ed25519 AAAA[0-9A-Za-z+/]+[=]{0,3}( [^@]+@[^@]+)?/;
+export const validateSSHKey = sshKey => {
+    return isEmpty(sshKey) || validPrefixes.some(prefix => sshKey.startsWith(prefix));
+}
 
-export const validPublicSSH2KeyRegExp = /---- BEGIN SSH2 PUBLIC KEY ----.*/;
-
-export const validPublicPKCS8KeyRegExp = /-----BEGIN PUBLIC KEY-----.*/;
-
-export const validPublicPEMKeyRegExp = /-----BEGIN RSA PUBLIC KEY-----.*/;
 
 export const sanitizeShortName = shortName => {
     if (!shortName) {
