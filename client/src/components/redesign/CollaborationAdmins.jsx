@@ -87,7 +87,8 @@ class CollaborationAdmins extends React.Component {
             filterOptions: filterOptions.concat(groupOptions),
             loading: false,
             selectedInvitationId: null,
-            message: ""
+            message: "",
+            allSelected: false
         });
     }
 
@@ -114,6 +115,8 @@ class CollaborationAdmins extends React.Component {
                             this.props.refreshUser(() => {
                                 if (!canStay) {
                                     this.props.history.push("/home");
+                                } else {
+                                    this.componentDidMount();
                                 }
                             });
                             setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
