@@ -150,6 +150,7 @@ I18n.translations.en = {
             searchPlaceHolder: "Search members...",
             status: "Status",
             inviteSend: "Invite sent {{date}}",
+            expiredAt: "Invite expired {{date}}",
             accepted: "Active",
             new: "Add member(s)",
             remove: "Delete",

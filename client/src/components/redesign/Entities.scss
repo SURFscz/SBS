@@ -252,6 +252,11 @@
         &.invite {
             background-color: $yellow-light;
             color: black;
+
+            &.expired {
+                background-color: $warning-red;
+                color: black;
+            }
         }
 
         &.accepted {

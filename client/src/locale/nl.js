@@ -150,6 +150,7 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek leden...",
             status: "Status",
             inviteSend: "Uitnodiging {{date}}",
+            expiredAt: "Uitnodiging verlopen {{date}}",
             accepted: "Actief",
             new: "Voeg leden toe",
             remove: "Verwijder",
