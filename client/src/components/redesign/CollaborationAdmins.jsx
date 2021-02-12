@@ -424,6 +424,12 @@ class CollaborationAdmins extends React.Component {
 
     }
 
+    isInvitationExpired = invitation => {
+        const today = moment();
+        const inp = moment(invitation.expiry_date * 1000);
+        return today.isAfter(inp);
+    }
+
     renderSelectRole = (entity, isAdminOfCollaboration) => {
         if (entity.invite) {
             return <span className="member-role">{I18n.t(`organisation.${entity.intended_role}`)}</span>;
@@ -508,11 +514,16 @@ class CollaborationAdmins extends React.Component {
                 nonSortable: true,
                 key: "status",
                 header: I18n.t("models.orgMembers.status"),
-                mapper: entity => entity.invite ?
-                    <span
-                        className="person-role invite">{I18n.t("models.orgMembers.inviteSend",
-                        {date: shortDateFromEpoch(entity.created_at)})}</span> :
-                    entity.role === "admin"  ? <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span> : null
+                mapper: entity => {
+                    const isExpired = entity.invite && this.isInvitationExpired(entity);
+                    return entity.invite ?
+                        <span
+                            className={`person-role invite ${isExpired ? "expired" : ""}`}>
+                            {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
+                                I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
+                        </span> :
+                        entity.role === "admin"  ? <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span> : null
+                }
             },
             {
                 nonSortable: true,
