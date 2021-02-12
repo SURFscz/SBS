@@ -82,7 +82,7 @@ I18n.translations.en = {
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights",
             collaborationRequests: "Coll requests",
-            joinRequests: "Join requests",
+            joinRequests: "CO Join requests",
             serviceConnectionRequests: "Connection requests",
             me: "Profile",
             about: "About",
@@ -169,7 +169,7 @@ I18n.translations.en = {
             name: "Name",
             memberCount: "Members",
             collaborationCount: "Collaborations",
-            schacHomeOrganisations: "Schac-homes",
+            schacHomeOrganisations: "Org domain(s)",
             category: "Category",
             leave: "Leave ORG"
         },
