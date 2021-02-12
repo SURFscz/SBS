@@ -82,7 +82,7 @@ I18n.translations.nl = {
             serviceOrganisations: "Organisatie toegang",
             serviceCollaborations: "Samenwerkingen inzichten",
             collaborationRequests: "Coll verzoeken",
-            joinRequests: "Join verzoeken",
+            joinRequests: "CO aanmeld verzoeken",
             serviceConnectionRequests: "Koppelverzoeken",
             me: "Profiel",
             about: "Over",
@@ -169,7 +169,7 @@ I18n.translations.nl = {
             name: "Naam",
             memberCount: "Leden",
             collaborationCount: "Samenwerkingen",
-            schacHomeOrganisations: "Schac-homes",
+            schacHomeOrganisations: "Org domein(en)",
             category: "Categorie",
             leave: "Verlaat ORG"
         },
