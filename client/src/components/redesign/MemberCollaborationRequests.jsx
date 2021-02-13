@@ -75,7 +75,7 @@ export default class MemberCollaborationRequests extends React.PureComponent {
     }
 
     render() {
-        const {collaboration_requests, user, isPersonal = true} = this.props;
+        const {collaboration_requests, user, isPersonal = true, isDeleted = false} = this.props;
         const {filterOptions, filterValue, loading} = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -115,7 +115,7 @@ export default class MemberCollaborationRequests extends React.PureComponent {
 
         return (
             <Entities entities={filteredCollaborationRequests}
-                      modelName={isPersonal ? "member_collaboration_requests" : "system_collaboration_requests"}
+                      modelName={isPersonal ? "member_collaboration_requests" : isDeleted ? "deleted_collaboration_requests" : "system_collaboration_requests"}
                       searchAttributes={["user__name", "user__email", "organisation__name", "name", "status"]}
                       defaultSort="name"
                       columns={columns}

@@ -251,7 +251,7 @@ class TestOrganisation(AbstractTest):
                             "intended_role": "manager",
                             "short_name": "https://ti1"},
                       with_basic_auth=False)
-            self.assertEqual(2, len(outbox))
+            self.assertTrue(len(outbox) >= 2)
             post_count = OrganisationInvitation.query.count()
             self.assertEqual(pre_count + 2, post_count)
 

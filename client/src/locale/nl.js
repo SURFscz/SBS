@@ -1327,6 +1327,8 @@ I18n.translations.nl = {
         runDailyJobs: "Trigger",
         runOutdatedRequestsInfo: "Voer de cron-taak uit om alle verouderde open join-verzoeken en nieuwe samenwerkingsverzoeken voor de geconfigureerde drempel te rapporteren",
         runOutdatedRequests: "Run",
+        runCleanedRequestsInfo: "Voer de cron-taak uit om alle verouderde goedgekeurde / geweigerde aanmeldingsverzoeken en samenwerkingsverzoeken voor de geconfigureerde drempel te verwijderen",
+        runCleanedRequests: "Verwijder",
         action: "Action",
         results: "Results",
         first_suspend_notification: "Eerste e-mail met opschortingsmelding verzonden",

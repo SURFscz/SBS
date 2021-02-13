@@ -1,7 +1,16 @@
 import React from "react";
 import "./System.scss";
 import I18n from "i18n-js";
-import {auditLogsActivity, clearAuditLogs, dbSeed, dbStats, health, outstandingRequests, suspendUsers} from "../api";
+import {
+    auditLogsActivity,
+    cleanupNonOpenRequests,
+    clearAuditLogs,
+    dbSeed,
+    dbStats,
+    health,
+    outstandingRequests,
+    suspendUsers
+} from "../api";
 import Button from "../components/Button";
 import {isEmpty} from "../utils/Utils";
 import UnitHeader from "../components/redesign/UnitHeader";
@@ -25,6 +34,7 @@ class System extends React.Component {
             tab: "cron",
             suspendedUsers: {},
             outstandingRequests: {},
+            cleanedRequests: {},
             databaseStats: [],
             seedResult: null,
             confirmationDialogOpen: false,
@@ -58,6 +68,7 @@ class System extends React.Component {
         this.setState({
             suspendedUsers: {},
             outstandingRequests: {},
+            cleanedRequests: {},
             databaseStats: [],
             seedResult: null,
             query: "",
@@ -72,7 +83,7 @@ class System extends React.Component {
         window.location.href = window.location.href;
     }
 
-    getCronTab = (suspendedUsers, outstandingRequests) => {
+    getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests) => {
         return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}
                      icon={<FontAwesomeIcon icon="clock"/>}>
             <div className="mod-system">
@@ -81,6 +92,8 @@ class System extends React.Component {
                     {this.renderDailyCronResults(suspendedUsers)}
                     {this.renderOutstandingRequests()}
                     {this.renderOutstandingRequestsResults(outstandingRequests)}
+                    {this.renderCleanedRequests()}
+                    {this.renderCleanedRequestsResults(cleanedRequests)}
                 </section>
             </div>
         </div>)
@@ -213,8 +226,14 @@ class System extends React.Component {
     doOutstandingRequests = () => {
         this.setState({busy: true})
         outstandingRequests().then(res => {
-            // debugger;
             this.setState({outstandingRequests: res, busy: false});
+        });
+    }
+
+    doCleanupNonOpenRequests = () => {
+        this.setState({busy: true})
+        cleanupNonOpenRequests().then(res => {
+            this.setState({cleanedRequests: res, busy: false});
         });
     }
 
@@ -271,6 +290,21 @@ class System extends React.Component {
                     {isEmpty(outstandingRequests) && <Button txt={I18n.t("system.runOutdatedRequests")}
                                                              onClick={this.doOutstandingRequests}/>}
                     {!isEmpty(outstandingRequests) && <Button txt={I18n.t("system.clear")}
+                                                              onClick={this.clear} cancelButton={true}/>}
+                </div>
+            </div>
+        );
+    }
+
+    renderCleanedRequests = () => {
+        const {cleanedRequests} = this.state;
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.runCleanedRequestsInfo")}</p>
+                <div className="actions">
+                    {isEmpty(cleanedRequests) && <Button txt={I18n.t("system.runCleanedRequests")}
+                                                             onClick={this.doCleanupNonOpenRequests}/>}
+                    {!isEmpty(cleanedRequests) && <Button txt={I18n.t("system.clear")}
                                                               onClick={this.clear} cancelButton={true}/>}
                 </div>
             </div>
@@ -340,6 +374,20 @@ class System extends React.Component {
         )
     }
 
+    renderCleanedRequestsResults = cleanedRequests => {
+        const collaboration_requests = cleanedRequests.collaboration_requests;
+        const join_requests = cleanedRequests.collaboration_join_requests;
+        return (
+            <div className="results">
+                {!isEmpty(cleanedRequests) && <div className="results">
+                    <MemberJoinRequests join_requests={join_requests} isPersonal={false} isDeleted={true} {...this.props} />
+                    <MemberCollaborationRequests {...this.props} isPersonal={false} isDeleted={true}
+                                                 collaboration_requests={collaboration_requests}/>
+                </div>}
+            </div>
+        )
+    }
+
     renderDbStatsResults = databaseStats => {
         return (
             <div className="results">
@@ -391,7 +439,7 @@ class System extends React.Component {
         }
         const {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
-            confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers,
+            confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query
         } = this.state;
         const {config} = this.props;
@@ -400,7 +448,7 @@ class System extends React.Component {
             return <SpinnerField/>
         }
         const tabs = [
-            this.getCronTab(suspendedUsers, outstandingRequests),
+            this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
             this.getDatabaseTab(databaseStats),
             this.getActivityTab(filteredAuditLogs, limit, query, config)

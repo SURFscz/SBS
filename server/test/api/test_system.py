@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+from server.api.base import STATUS_DENIED, STATUS_APPROVED
 from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
@@ -32,6 +33,15 @@ class TestSystem(AbstractTest):
         db.engine.execute(f"update join_requests set created_at = '{past_date}'")
         db.engine.execute(f"update collaboration_requests set created_at = '{past_date}'")
         res = self.get("/api/system/outstanding_requests")
+
+        self.assertTrue(len(res["collaboration_requests"]) > 0)
+        self.assertTrue(len(res["collaboration_join_requests"]) > 0)
+
+    def test_cleanup_non_open_requests(self):
+        past_date = "2018-03-20 14:51:40"
+        db.engine.execute(f"update join_requests set created_at = '{past_date}', status = '{STATUS_DENIED}'")
+        db.engine.execute(f"update collaboration_requests set created_at = '{past_date}', status = '{STATUS_APPROVED}'")
+        res = self.put("/api/system/cleanup_non_open_requests")
 
         self.assertTrue(len(res["collaboration_requests"]) > 0)
         self.assertTrue(len(res["collaboration_join_requests"]) > 0)

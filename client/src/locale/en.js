@@ -340,6 +340,11 @@ I18n.translations.en = {
             searchPlaceHolder: "Search for requests...",
             noEntities: "No outdated requests for collaborations",
         },
+        deleted_collaboration_requests: {
+            title: "Deleted requests for collaborations",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No outdated denied / approved requests for collaborations",
+        },
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here access to research services for research collaborations is managed.",
             invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
@@ -385,6 +390,11 @@ I18n.translations.en = {
             title: "Outdated collaboration join requests",
             searchPlaceHolder: "Search for requests...",
             noEntities: "No outdated join requests",
+        },
+        deletedJoinRequests: {
+            title: "Deleted collaboration join requests",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No outdated approved / denied join requests",
         },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Back to all connection requests",
@@ -1327,6 +1337,8 @@ I18n.translations.en = {
         runDailyJobs: "Trigger",
         runOutdatedRequestsInfo: "Run the cron job to report all open outdated join requests and new collaboration requests for the configured threshold",
         runOutdatedRequests: "Run",
+        runCleanedRequestsInfo: "Run the cron job to delete all outdated approved / denied join requests and collaboration requests for the configured threshold",
+        runCleanedRequests: "Delete",
         action: "Action",
         results: "Results",
         first_suspend_notification: "First suspend notification email sent",

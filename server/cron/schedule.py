@@ -5,7 +5,7 @@ import threading
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-
+from server.cron.cleanup_non_open_requests import cleanup_non_open_requests
 from server.cron.idp_metadata_parser import parse_idp_metadata
 from server.cron.outstanding_requests import outstanding_requests
 from server.cron.user_suspending import suspend_users
@@ -19,7 +19,10 @@ def start_scheduling(app):
                       hour=retention.cron_hour_of_day)
     if app.app_config.platform_admin_notifications.enabled:
         scheduler.add_job(func=outstanding_requests, trigger="cron", kwargs={"app": app}, day="*",
-                          hour=retention.cron_hour_of_day)
+                          hour=app.app_config.platform_admin_notifications.cron_hour_of_day)
+    if app.app_config.user_requests_retention.enabled:
+        scheduler.add_job(func=cleanup_non_open_requests, trigger="cron", kwargs={"app": app}, day="*",
+                          hour=app.app_config.user_requests_retention.cron_hour_of_day)
     scheduler.start()
 
     logger = logging.getLogger("scheduler")

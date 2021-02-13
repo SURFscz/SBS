@@ -2,7 +2,7 @@
 @import "../../stylesheets/unit_header";
 @import "../../stylesheets/entity_status";
 
-table.memberJoinRequests, table.systemJoinRequests {
+table.memberJoinRequests, table.systemJoinRequests, table.deletedJoinRequests {
 
     thead {
         th {

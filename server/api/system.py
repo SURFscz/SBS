@@ -17,7 +17,7 @@ system_api = Blueprint("system_api", __name__, url_prefix="/api/system")
 
 @system_api.route("/suspend_users", strict_slashes=False, methods=["PUT"])
 @json_endpoint
-def suspend_users_endpoint():
+def do_suspend_users():
     confirm_write_access()
 
     from server.cron.user_suspending import suspend_users
@@ -27,7 +27,7 @@ def suspend_users_endpoint():
 
 @system_api.route("/outstanding_requests", strict_slashes=False, methods=["GET"])
 @json_endpoint
-def outstanding_requests():
+def do_outstanding_requests():
     confirm_write_access()
 
     from server.cron.outstanding_requests import outstanding_requests
@@ -35,9 +35,19 @@ def outstanding_requests():
     return outstanding_requests(current_app), 200
 
 
+@system_api.route("/cleanup_non_open_requests", strict_slashes=False, methods=["PUT"])
+@json_endpoint
+def do_cleanup_non_open_requests():
+    confirm_write_access()
+
+    from server.cron.cleanup_non_open_requests import cleanup_non_open_requests
+
+    return cleanup_non_open_requests(current_app), 201
+
+
 @system_api.route("/db_stats", strict_slashes=False, methods=["GET"])
 @json_endpoint
-def db_stats():
+def do_db_stats():
     confirm_write_access()
 
     results = []

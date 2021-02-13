@@ -574,6 +574,10 @@ export function outstandingRequests() {
     return fetchJson("/api/system/outstanding_requests");
 }
 
+export function cleanupNonOpenRequests() {
+    return postPutJson("/api/system/cleanup_non_open_requests", {}, "PUT");
+}
+
 export function dbStats() {
     return fetchJson("/api/system/db_stats");
 }
