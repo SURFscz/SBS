@@ -106,7 +106,8 @@ def _assign_global_urn(collaboration_id, data):
     collaboration = Collaboration.query \
         .join(Collaboration.organisation) \
         .options(contains_eager(Collaboration.organisation)) \
-        .filter(Collaboration.id == collaboration_id).one()
+        .filter(Collaboration.id == collaboration_id)\
+        .one()
     data["global_urn"] = f"{collaboration.organisation.short_name}:{collaboration.short_name}:{data['short_name']}"
 
 

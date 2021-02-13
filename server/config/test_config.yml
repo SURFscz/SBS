@@ -114,3 +114,12 @@ platform_admin_notifications:
   outstanding_join_request_days_threshold: 7
   # How long before we include open CO requests in the summary
   outstanding_coll_request_days_threshold: 7
+
+user_requests_retention:
+  # Do we daily check for CO join_requests and CO requests and delete approved and denied?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long before we delete approved / denied join_requests
+  outstanding_join_request_days_threshold: 21
+  # How long before we delete approved / denied CO requests
+  outstanding_coll_request_days_threshold: 21

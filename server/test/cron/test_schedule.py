@@ -11,4 +11,4 @@ class TestSchedule(AbstractTest):
         jobs = scheduler.get_jobs()
 
         self.assertTrue(scheduler.running)
-        self.assertEqual(3, len(jobs))
+        self.assertEqual(4, len(jobs))

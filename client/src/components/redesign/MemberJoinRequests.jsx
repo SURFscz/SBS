@@ -71,7 +71,7 @@ class MemberJoinRequests extends React.Component {
 
     render() {
         const {loading, filterOptions, filterValue} = this.state;
-        const {join_requests, user: currentUser, isPersonal = true} = this.props;
+        const {join_requests, user: currentUser, isPersonal = true, isDeleted = false} = this.props;
         if (loading) {
             return <SpinnerField/>;
         }
@@ -110,7 +110,7 @@ class MemberJoinRequests extends React.Component {
         return (
             <div>
                 <Entities entities={filteredJoinRequests}
-                          modelName={isPersonal ? "memberJoinRequests" : "systemJoinRequests"}
+                          modelName={isPersonal ? "memberJoinRequests" : isDeleted ? "deletedJoinRequests" : "systemJoinRequests"}
                           searchAttributes={["user__name", "user__email", "collaboration__name", "status"]}
                           defaultSort="name"
                           columns={columns}
