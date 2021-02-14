@@ -238,6 +238,7 @@
         max-height: 28px;
         padding: 4px 15px;
         font-weight: bold;
+        word-break: keep-all;
         margin-left: 15px;
 
         @media (max-width: $compact-medium) {
