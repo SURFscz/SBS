@@ -5,7 +5,7 @@ export const validEmailRegExp = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-
 export const validSchacHomeRegExp = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$/;
 
 const validPrefixes = [
-    "ssh-rsa", "ssh-ed25519", "ecdsa-sha2-nistp256", "ecdsa-sha2-nistp384,", "ecdsa-sha2-nistp521",
+    "ssh-rsa", "ssh-ed25519", "ecdsa-sha2-nistp256", "ecdsa-sha2-nistp384", "ecdsa-sha2-nistp521",
     "---- BEGIN SSH2 PUBLIC KEY ----", "-----BEGIN PUBLIC KEY-----", "-----BEGIN RSA PUBLIC KEY-----"
 ]
 
