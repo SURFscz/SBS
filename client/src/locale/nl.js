@@ -403,7 +403,7 @@ I18n.translations.nl = {
         ssh_keyPlaceholder: "Je publieke SSH sleutel om in te loggen op de dienst",
         ssh_keyTooltip: "Je publieke SSH sleutel<br/>zal worden uitgewisseld<br/>met de (LDAP van) diensten<br/>waar je toegang toe moet hebben.<br/><br/>Je kunt je publieke SSH sleutel ook uploaden.<br/>Om verborgen bestanden op een Mac te tonen<br/>druk je <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Ongeldige SSH sleutel",
-        sshConvertInfo: "RFC4716 SSH-formaat wordt geconverteerd naar het bestandsformaat <code>OpenSSH-key</code> bij het opslaan van het profiel",
+        sshConvertInfo: "Public key wordt geconverteerd naar het bestandsformaat <code>OpenSSH-key</code> bij het opslaan van het profiel",
         update: "Bijwerken",
         flash: {
             updated: "Je profiel is bijgewerkt"

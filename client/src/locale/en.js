@@ -413,7 +413,7 @@ I18n.translations.en = {
         ssh_keyPlaceholder: "Your public SSH key to login on the service",
         ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP of services you<br/>are entitled access to.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a Mac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Invalid SSH key",
-        sshConvertInfo: "RFC4716 SSH format will be converted to the OpenSSH format when saving the profile",
+        sshConvertInfo: "Public key will be converted to the <code>OpenSSH</code> format when saving the profile",
         update: "Update",
         flash: {
             updated: "Your profile has been updated"
