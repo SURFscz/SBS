@@ -331,7 +331,7 @@ I18n.translations.nl = {
             noEntities: "Geen aanvragen voor samenwerkingen",
         },
         member_collaboration_requests: {
-            title: "Mijn aanvragen voor samenwerkingem",
+            title: "Mijn aanvragen voor samenwerkingen",
             searchPlaceHolder: "Zoek Samenwerkingsaanvragen...",
             noEntities: "Geen aanvragen voor samenwerkingen",
         },
