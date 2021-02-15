@@ -11,6 +11,7 @@ import * as Showdown from "showdown";
 import Button from "../Button";
 import {AppStore} from "../../stores/AppStore";
 import {sanitizeHtml} from "../../utils/Markdown";
+import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 
 const converter = new Showdown.Converter({
     tables: true,
@@ -31,6 +32,12 @@ class Welcome extends React.Component {
     }
 
     componentDidMount() {
+        const {user} = this.props;
+        const role = rawGlobalUserRole(user);
+        if (role !== ROLES.USER || !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests)) {
+            this.props.history.push("/home");
+            return;
+        }
         Promise.all([organisationByUserSchacHomeOrganisation(), identityProviderDisplayName()])
             .then(res => {
                 this.setState({
