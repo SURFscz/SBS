@@ -182,11 +182,19 @@ class TestUser(AbstractTest):
         james = self.find_entity_by_name(User, james_name)
         self.assertEqual("bogus", james.ssh_key)
 
-    def test_update_user_service_profile_ssh_key_conversion(self):
+    def test_update_user_service_profile_ssh2_key_conversion(self):
+        self.do_test_update_user_profile_ssk_key_conversion("ssh2.pub")
+
+    def test_update_user_service_profile_pem_key_conversion(self):
+        self.do_test_update_user_profile_ssk_key_conversion("pem.pub")
+
+    def test_update_user_service_profile_pkcs8_key_conversion(self):
+        self.do_test_update_user_profile_ssk_key_conversion("pkcs8.pub")
+
+    def do_test_update_user_profile_ssk_key_conversion(self, file_name):
         user = self.find_entity_by_name(User, john_name)
         self.login("urn:john")
-
-        ssh2_pub = self.read_file("ssh2.pub")
+        ssh2_pub = self.read_file(file_name)
         body = {"ssh_key": ssh2_pub,
                 "convertSSHKey": True,
                 "id": user.id}

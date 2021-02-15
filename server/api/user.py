@@ -334,11 +334,18 @@ def update_user():
     if "ssh_key" in user_json:
         if "convertSSHKey" in user_json and user_json["convertSSHKey"]:
             ssh_key = user_json["ssh_key"]
-            if ssh_key and ssh_key.startswith("---- BEGIN SSH2 PUBLIC KEY ----"):
+            if ssh_key and (ssh_key.startswith("---- BEGIN SSH2 PUBLIC KEY ----")
+                            or ssh_key.startswith("-----BEGIN PUBLIC KEY-----")  # noQA:W503
+                            or ssh_key.startswith("-----BEGIN RSA PUBLIC KEY-----")):  # noQA:W503
                 with tempfile.NamedTemporaryFile() as f:
                     f.write(ssh_key.encode())
                     f.flush()
-                    res = subprocess.run(["ssh-keygen", "-i", "-f", f.name], stdout=subprocess.PIPE)
+                    options = ["ssh-keygen", "-i", "-f", f.name]
+                    if ssh_key.startswith("-----BEGIN PUBLIC KEY-----"):
+                        options.append("-mPKCS8")
+                    if ssh_key.startswith("-----BEGIN RSA PUBLIC KEY-----"):
+                        options.append("-mPEM")
+                    res = subprocess.run(options, stdout=subprocess.PIPE)
                     if res.returncode == 0:
                         custom_json["ssh_key"] = res.stdout.decode()
 

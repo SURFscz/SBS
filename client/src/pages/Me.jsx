@@ -147,7 +147,8 @@ class Me extends React.Component {
                                 acceptFileFormat=".pub"/>
                     {fileTypeError && <ErrorIndicator msg={I18n.t("user.sshKeyError")}/>}
                     {showConvertSSHKey &&
-                    <span className="ssh-convert">{I18n.t("user.sshConvertInfo")}</span>}
+                    <span className="ssh-convert"
+                          dangerouslySetInnerHTML={{__html: I18n.t("user.sshConvertInfo")}}/>}
 
                     <section className="actions">
                         <Button warningButton={true} txt={I18n.t("user.delete")}
@@ -167,7 +168,10 @@ class Me extends React.Component {
         } = this.state;
         const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
-        const showConvertSSHKey = !isEmpty(ssh_key) && ssh_key.startsWith("---- BEGIN SSH2 PUBLIC KEY ----");
+        const showConvertSSHKey = !isEmpty(ssh_key) && (
+            ssh_key.startsWith("---- BEGIN SSH2 PUBLIC KEY ----") ||
+            ssh_key.startsWith("-----BEGIN PUBLIC KEY-----") ||
+            ssh_key.startsWith("-----BEGIN RSA PUBLIC KEY-----"));
         const disabledConfirm = user.name !== nameConfirmation;
         return (
             <div className="user-profile-mod">
