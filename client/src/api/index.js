@@ -94,7 +94,7 @@ export function authorizationUrl(state) {
 export function me(config) {
     if (config.local && true   ) {
         let sub = "urn:john";
-        // sub = "urn:qwerty";
+        // sub = "urn:sarah";
         // sub = "urn:james";
         // sub = "urn:betty";
         //  sub = "urn:jane";
