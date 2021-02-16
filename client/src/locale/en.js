@@ -297,9 +297,9 @@ I18n.translations.en = {
         collaboration: {
             memberHeader: "{{nbrMember}} members - {{nbrGroups}} groups",
             noAdminsHeader: "No administrators (yet)",
-            adminsHeader: "Organized by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong></a>",
-            twoAdminsHeader: "Organized by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} other</strong></a>",
-            multipleAdminsHeader: "Organized by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} others</strong></a>",
+            adminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong></a>",
+            twoAdminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} other</strong></a>",
+            multipleAdminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} others</strong></a>",
             about: "What our CO is about",
             services: "Where we collaborate ({{nbr}} services)",
             noServices: "There are no services available in this collaboration",
