@@ -116,7 +116,7 @@ class Welcome extends React.Component {
             return <SpinnerField/>;
         }
 
-        const orphanUser = isEmpty(organisation);
+        const orphanUser = isEmpty(organisation) || !organisation.has_members;
         return (
             <div className="mod-welcome-container">
                 <div className="mod-welcome">
