@@ -7,7 +7,7 @@ export default function CollaborationNL({role}) {
 
     const responsibilities = [
         "Beheer de details van deze samenwerking",
-        "Bheer groepen in deze samenwerking",
+        "Beheer groepen in deze samenwerking",
         "Beheer gebruikers in deze samenwerking",
         "Beheer diensten voor deze samenwerking"
     ]
