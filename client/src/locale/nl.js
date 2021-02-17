@@ -340,6 +340,11 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek Samenwerkingsaanvragen...",
             noEntities: "Geen gedateerde aanvragen voor samenwerkingen",
         },
+        deleted_collaboration_requests: {
+            title: "Verwijderde verzoeken voor samenwerkingen",
+            searchPlaceHolder: "Verzoeken zoeken...",
+            noEntities: "Geen gedateerde geweigerde / goedgekeurde verzoeken voor samenwerkingen",
+        },
         invitation: {
             welcome: "Welkom in SURF Research Access Management (SRAM). Hier wordt voor onderzoekssamenwerkingen de toegang tot onderzoeksdiensten geregeld.",
             invited: "Je bent door <a href=\"mailto:{{email}}\">{{inviter}}</a> uitgenodigd lid te worden van {{type}} \"{{collaboration}}\"",
@@ -385,6 +390,11 @@ I18n.translations.nl = {
             title: "Gedateerde open verzoeken voor samenwerkingen",
             searchPlaceHolder: "Zoek verzoeken...",
             noEntities: "Geen gedateerde verzoeken gevonden",
+        },
+        deletedJoinRequests: {
+            title: "Verwijderde verzoeken lid te worden van een samenwerking",
+            searchPlaceHolder: "Zoek naar verzoeken...",
+            noEntities: "Geen gedateerde goedgekeurde / afgekeurde verzoeken gevonden",
         },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Terug naar alle koppelverzoeken",
@@ -458,7 +468,7 @@ I18n.translations.nl = {
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Roepnaam",
-        schac_home_organisation: "Instellingsafkorting",
+        schac_home_organisation: "Organisatie domeinnaam",
         edu_members: "EDU lidmaatschap",
         eduperson_principal_name: "EPPN",
         created_at: "Account gemaakt op",
@@ -717,12 +727,12 @@ I18n.translations.nl = {
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare<br/>identifier van een organisatie<br/>die wordt gebruikt als identifier<br/>voor externe systemen",
         description: "Beschrijving",
         descriptionPlaceholder: "De beschrijving van de organisatie is zichtbaar voor iedereen",
-        schacHomeOrganisationShortName: "Schac Home",
-        schacHomeOrganisation: "Home organisatie SAML identifier",
-        schacHomeOrganisationPlaceholder: "De Schac Home Organisation van de organisatie",
-        schacHomeOrganisationTooltip: "De home organisatie van een persoon<br/>gebaseerd op de domein naam van de instelling (b.v. uva.nl).<br/><br/>SAML2: urn:mace:terena.org:attribute-def:schacHomeOrganization",
+        schacHomeOrganisationShortName: "Org domein(en)",
+        schacHomeOrganisation: "Organisatie domeinnamen",
+        schacHomeOrganisationPlaceholder: "De domeinnaam van de organisatie",
+        schacHomeOrganisationTooltip: "De domeinnaam van een persoon<br/>gebaseerd op de domeinnaam van de instelling (b.v. uva.nl).<br/><br/>SAML2: urn:mace:terena.org:attribute-def:schacHomeOrganization",
         collaborationCreationAllowed: "Aanvragen voor nieuwe CO automatisch goedkeuren?",
-        collaborationCreationAllowedTooltip: "Iedereen kan <br/> collaboraties voor zijn instelling<br/>aanmaken.<br/><br/>Hiervoor is een SchacHome vereist.",
+        collaborationCreationAllowedTooltip: "Iedereen kan <br/> collaboraties voor zijn instelling<br/>aanmaken.<br/><br/>Hiervoor is een domeinnaam vereist.",
         created: "Aangemaakt op",
         message: "Bericht",
         messagePlaceholder: "Bericht voor de admins",
@@ -1469,6 +1479,7 @@ I18n.translations.nl = {
         manager: "Manager",
         platformAdmin: "Goddess divinity"
     }
+
 };
 
 export default I18n.translations.nl;
