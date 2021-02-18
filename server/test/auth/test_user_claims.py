@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import json
 import uuid
 
 from munch import munchify
@@ -30,6 +31,13 @@ class TestUserClaims(AbstractTest):
         user = User()
         add_user_claims({"voperson_external_id": "university"}, "urn:johny", user)
         self.assertEqual("university", user.schac_home_organisation)
+
+    def test_user_claims_schac_home_org(self):
+        user = User()
+        user_info_json_str = self.read_file("user_info.json")
+        user_info_json = json.loads(user_info_json_str)
+        add_user_claims(user_info_json, "urn:new_user", user)
+        self.assertEqual("okke.harsta", user.schac_home_organisation)
 
     def test_add_user_claims_empty_entitlements(self):
         user = User()

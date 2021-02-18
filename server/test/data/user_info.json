@@ -1,0 +1,27 @@
+{
+    "name": "Tata Steel",
+    "given_name": "Tata",
+    "family_name": "Steel",
+    "eduperson_scoped_affiliation": [
+        "member@acc.sram.eduteams.org"
+    ],
+    "email": "oharsta+sbs@zilverline.com",
+    "voperson_external_id": [
+        "okke.harsta"
+    ],
+    "eduperson_entitlement": [
+        "urn:geant:eduteams.org:acc.sram.eduteams.org:group:surf-ram#acc.sram.eduteams.org"
+    ],
+    "eduperson_assurance": [
+        "https://refeds.org/assurance",
+        "https://refeds.org/ID/unique",
+        "https://refeds.org/ID/eppn-unique-no-reassign",
+        "https://refeds.org/IAP/low",
+        "https://refeds.org/ATP/ePA-1m",
+        "https://refeds.org/ATP/ePA-1d"
+    ],
+    "sub": "afb204b5507e0ed4f0594f1e02a3449b39d22f48@acc.sram.eduteams.org",
+    "voperson_id": [
+        "afb204b5507e0ed4f0594f1e02a3449b39d22f48@acc.sram.eduteams.org"
+    ]
+}
