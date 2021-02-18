@@ -85,12 +85,12 @@ export default class MemberCollaborationRequests extends React.PureComponent {
                 nonSortable: true,
                 key: "logo",
                 header: "",
-                mapper: entity => <Logo src={entity.organisation.logo}/>
+                mapper: entity => <Logo src={entity.logo}/>
             },
             {
                 key: "name",
                 header: I18n.t("models.memberJoinRequests.collaborationName"),
-                mapper: entity => entity.organisation.name,
+                mapper: entity => entity.name,
             },
             {
                 key: "user__name",
