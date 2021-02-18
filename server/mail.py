@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import logging
 import os
 import uuid
 from datetime import datetime
@@ -31,7 +32,7 @@ def _open_mail_in_browser(html):
     webbrowser.open("file://" + path)
 
 
-def _do_send_mail(subject, recipients, template, context, preview):
+def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False):
     recipients = recipients if isinstance(recipients, list) else list(
         map(lambda x: x.strip(), recipients.split(",")))
 
@@ -48,7 +49,7 @@ def _do_send_mail(subject, recipients, template, context, preview):
     msg.body = render_template(f"{template}.txt", **context)
     msg.msgId = f"<{str(uuid.uuid4())}@{os.uname()[1]}.internal.sram.surf.nl>".replace("-", ".")
 
-    logger = ctx_logger("user")
+    logger = logging.getLogger("mail") if working_outside_of_request_context else ctx_logger("user")
     logger.debug(f"Sending mail message with Message-id {msg.msgId}")
 
     suppress_mail = "suppress_sending_mails" in mail_ctx and mail_ctx.suppress_sending_mails
@@ -61,7 +62,6 @@ def _do_send_mail(subject, recipients, template, context, preview):
         thr.start()
 
     if suppress_mail and not preview:
-        logger = ctx_logger("mail")
         logger.info(f"Sending mail {msg.html}")
 
     if open_mail_in_browser and not preview:
@@ -180,7 +180,8 @@ def mail_suspend_notification(context, recipients, is_primary, preview=False):
         recipients=recipients,
         template="suspend_notification" if is_primary else "suspend_notification_reminder",
         context=context,
-        preview=preview
+        preview=preview,
+        working_outside_of_request_context=True
     )
 
 
@@ -231,5 +232,6 @@ def mail_outstanding_requests(collaboration_requests, collaboration_join_request
                  "admin_cfg": admin_cfg,
                  "collaboration_join_requests": collaboration_join_requests,
                  "collaboration_requests": collaboration_requests},
-        preview=False
+        preview=False,
+        working_outside_of_request_context=True
     )
