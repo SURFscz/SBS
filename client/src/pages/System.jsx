@@ -116,14 +116,13 @@ class System extends React.Component {
             return auditLogs;
         }
 
-        debugger;
         const lowerQuery = query.toLowerCase();
         const sub = [...auditLogs.audit_logs].filter(a => {
             let matchesParent = false;
             let matchesUser = false;
             let matchesName = false
 
-            const translation = I18n.t(`history.tables.${a.target_type}`);
+            const translation = I18n.t(`history.tables.${a.target_type}`).toLowerCase();
             const matchesTranslation = translation.indexOf(lowerQuery) > -1;
             if (a.parent_name && auditLogs[a.parent_name]) {
                 const parent = auditLogs[a.parent_name].find(obj => obj.id === a.parent_id);
@@ -308,9 +307,9 @@ class System extends React.Component {
                 <p>{I18n.t("system.runCleanedRequestsInfo")}</p>
                 <div className="actions">
                     {isEmpty(cleanedRequests) && <Button txt={I18n.t("system.runCleanedRequests")}
-                                                             onClick={this.doCleanupNonOpenRequests}/>}
+                                                         onClick={this.doCleanupNonOpenRequests}/>}
                     {!isEmpty(cleanedRequests) && <Button txt={I18n.t("system.clear")}
-                                                              onClick={this.clear} cancelButton={true}/>}
+                                                          onClick={this.clear} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -345,8 +344,10 @@ class System extends React.Component {
                 {!isEmpty(suspendedUsers) && <div className="results">
                     <table className="suspended-users">
                         <thead>
-                        <th>{I18n.t("system.action")}</th>
-                        <th>{I18n.t("system.results")}</th>
+                        <tr>
+                            <th>{I18n.t("system.action")}</th>
+                            <th>{I18n.t("system.results")}</th>
+                        </tr>
                         </thead>
                         <tbody>
                         {Object.keys(suspendedUsers).map(key =>
@@ -373,7 +374,8 @@ class System extends React.Component {
             <div className="results">
                 {!isEmpty(outstandingRequests) && <div className="results">
                     <MemberJoinRequests join_requests={join_requests} isPersonal={false} {...this.props} />
-                    <MemberCollaborationRequests {...this.props} isPersonal={false} collaboration_requests={collaboration_requests}/>
+                    <MemberCollaborationRequests {...this.props} isPersonal={false}
+                                                 collaboration_requests={collaboration_requests}/>
                 </div>}
             </div>
         )
@@ -385,7 +387,8 @@ class System extends React.Component {
         return (
             <div className="results">
                 {!isEmpty(cleanedRequests) && <div className="results">
-                    <MemberJoinRequests join_requests={join_requests} isPersonal={false} isDeleted={true} {...this.props} />
+                    <MemberJoinRequests join_requests={join_requests} isPersonal={false}
+                                        isDeleted={true} {...this.props} />
                     <MemberCollaborationRequests {...this.props} isPersonal={false} isDeleted={true}
                                                  collaboration_requests={collaboration_requests}/>
                 </div>}
