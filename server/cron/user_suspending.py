@@ -15,10 +15,19 @@ suspend_users_lock_name = "suspend_users_lock"
 def create_suspend_notification(user, retention, app, is_primary):
     suspend_notification = SuspendNotification(user=user, sent_at=datetime.datetime.utcnow(),
                                                is_primary=is_primary)
-    db.session.merge(suspend_notification)
+    user.suspend_notifications.append(suspend_notification)
+    db.session.merge(user)
     today = datetime.date.today()
     days = retention.reminder_resent_period_days if is_primary else retention.reminder_expiry_period_days
     suspension_date = today + datetime.timedelta(days=days)
+
+    lsn = len(user.suspend_notifications)
+    count = "first" if lsn == 1 else "second" if lsn == 2 else "third"
+
+    logger = logging.getLogger("scheduler")
+    logger.info(f"Sending {count} suspend notification to user {user.email} because last_login_date "
+                f"is {str(user.last_login_date)}")
+
     mail_suspend_notification({"salutation": f"Hi {user.given_name}",
                                "base_url": app.app_config.base_url,
                                "retention": retention,
@@ -65,8 +74,13 @@ def _do_suspend_users(app):
             else:
                 suspend_notification = list(filter(lambda sn: not sn.is_primary, suspend_notifications))[0]
                 days = retention.reminder_resent_period_days
-                if suspend_notification.sent_at < current_time - datetime.timedelta(days=days):
+                days_ = current_time - datetime.timedelta(days=days)
+                if suspend_notification.sent_at < days_:
                     user.suspended = True
+
+                    logger.info(f"Suspending user {user.email}, last suspend_notification.sent_at is "
+                                f"{str(suspend_notification.sent_at)} and before retention date {str(days_)}")
+
                     db.session.merge(user)
                     results["suspended"].append(user.email)
 

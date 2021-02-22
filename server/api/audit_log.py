@@ -39,7 +39,7 @@ def activity():
     limit = int(query_param("limit", False, 50))
     audit_logs = AuditLog.query \
         .order_by(desc(AuditLog.created_at)) \
-        .limit(limit if limit <= 100 else 100) \
+        .limit(limit if limit <= 250 else 250) \
         .all()
 
     return _add_references(audit_logs), 200
