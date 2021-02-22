@@ -54,6 +54,7 @@ class CollaborationForm extends React.Component {
             organisations: [],
             isNew: true,
             collaboration: null,
+            confirmationQuestion: "",
             initial: true,
             confirmationDialogOpen: false,
             warning: false,
@@ -186,8 +187,9 @@ class CollaborationForm extends React.Component {
     delete = () => {
         this.setState({
             confirmationDialogOpen: true,
-            confirmationQuestion: I18n.t("collaboration.deleteConfirmation"),
+            confirmationQuestion: I18n.t("collaborationDetail.deleteConfirmation"),
             confirmationDialogAction: this.doDelete,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             warning: true,
             leavePage: false
         });
@@ -384,6 +386,7 @@ class CollaborationForm extends React.Component {
             alreadyExists,
             confirmationDialogOpen,
             confirmationDialogAction,
+            confirmationQuestion,
             cancelDialogAction,
             leavePage,
             noOrganisations,
@@ -424,7 +427,7 @@ class CollaborationForm extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     isWarning={warning}
-                                    question={leavePage ? undefined : I18n.t("organisation.deleteConfirmation")}
+                                    question={leavePage ? undefined : confirmationQuestion}
                                     leavePage={leavePage}/>
 
 

@@ -620,7 +620,7 @@ I18n.translations.en = {
         collaborationRequests: "Collaboration requests",
         add: "Create new Organisation",
         searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS...",
-        deleteConfirmation: "Are you sure you want to delete Service {{name}}?"
+        deleteConfirmation: "Are you sure you want to delete Organisation {{name}}?"
     },
     services: {
         title: "Services",
