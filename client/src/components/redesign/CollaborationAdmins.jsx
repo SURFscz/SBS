@@ -39,6 +39,9 @@ const roles = [
 
 const memberFilterValue = "members";
 
+const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
+const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
+
 class CollaborationAdmins extends React.Component {
 
     constructor(props, context) {
@@ -68,7 +71,7 @@ class CollaborationAdmins extends React.Component {
         const invites = collaboration.invitations || [];
         const entities = admins.concat(invites);
         const selectedMembers = entities.reduce((acc, entity) => {
-            acc[entity.id] = {selected: false, ref: entity, invite: !isEmpty(entity.intended_role)};
+            acc[this.getIdentifier(entity)] = {selected: false, ref: entity, invite: !isEmpty(entity.intended_role)};
             return acc;
         }, {});
         const filterOptions = [{
@@ -145,8 +148,14 @@ class CollaborationAdmins extends React.Component {
     onCheck = memberShip => e => {
         const {selectedMembers, allSelected} = this.state;
         const checked = e.target.checked;
-        selectedMembers[memberShip.id].selected = checked;
+        const identifier = this.getIdentifier(memberShip);
+        selectedMembers[identifier].selected = checked;
         this.setState({selectedMembers: {...selectedMembers}, allSelected: checked ? allSelected : false});
+    }
+
+    getIdentifier = entity => {
+        const invite = !isEmpty(entity.intended_role);
+        return entity.id + (invite ? INVITE_IDENTIFIER : MEMBER_IDENTIFIER );
     }
 
     allSelected = e => {
@@ -465,6 +474,7 @@ class CollaborationAdmins extends React.Component {
         invites.forEach(invite => invite.invite = true);
 
         let i = 0;
+        //name={"" + ++i}
         let columns = [
             {
                 nonSortable: true,
@@ -472,8 +482,8 @@ class CollaborationAdmins extends React.Component {
                 header: <CheckBox value={allSelected} name={"allSelected"}
                                   onChange={this.allSelected}/>,
                 mapper: entity => <div className="check">
-                    <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
-                              value={(selectedMembers[entity.id] || {}).selected || false}/>
+                    <CheckBox name={""+ ++i} onChange={this.onCheck(entity)}
+                              value={(selectedMembers[this.getIdentifier(entity)] || {}).selected || false}/>
                 </div>
             },
             {
