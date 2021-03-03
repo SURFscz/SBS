@@ -510,6 +510,7 @@ I18n.translations.nl = {
         actions: "",
         name: "Naam",
         logo: "Logo samenwerking",
+        useOrganisationLogo: "Gebruik het organisatie logo",
         namePlaceHolder: "De unieke naam van de samenwerking",
         shortName: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de samenwerking",

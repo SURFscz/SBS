@@ -48,5 +48,11 @@
             margin-top: 15px;
         }
 
+        div.cropped-image-container {
+            grid-row-start: 2;
+            grid-column-start: second;
+            grid-row-end: 99;
+        }
+
     }
 }

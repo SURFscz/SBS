@@ -65,6 +65,7 @@ class CollaborationForm extends React.Component {
             isCollaborationRequest: false,
             autoCreateCollaborationRequest: false,
             current_user_admin: false,
+            useOrganisationLogo: false,
             loading: true
         };
     }
@@ -161,7 +162,8 @@ class CollaborationForm extends React.Component {
         label: org.name,
         value: org.id,
         short_name: org.short_name,
-        collaboration_creation_allowed: org.collaboration_creation_allowed
+        collaboration_creation_allowed: org.collaboration_creation_allowed,
+        logo: org.logo
     }));
 
     existingCollaborationName = attr => this.state.isNew ? null : this.state.collaboration[attr];
@@ -401,7 +403,8 @@ class CollaborationForm extends React.Component {
             isNew,
             collaboration,
             loading,
-            autoCreateCollaborationRequest
+            autoCreateCollaborationRequest,
+            useOrganisationLogo
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -453,10 +456,20 @@ class CollaborationForm extends React.Component {
                     {(!initial && isEmpty(name)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.name").toLowerCase()
                     })}/>}
-                    <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
-                                       isNew={isNew} title={I18n.t("collaboration.logo")} value={logo}
-                                       initial={initial} secondRow={true}/>
-
+                    <div className="cropped-image-container">
+                        <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
+                                           isNew={isNew} title={I18n.t("collaboration.logo")} value={logo}
+                                           initial={initial} secondRow={true}/>
+                        {isNew && <CheckBox name="use-org-logo" value={useOrganisationLogo}
+                                            onChange={e => {
+                                                const checked = e.target.checked;
+                                                this.setState({
+                                                    useOrganisationLogo: !useOrganisationLogo,
+                                                    logo: checked ? organisation.logo : ""
+                                                });
+                                            }}
+                                            info={I18n.t("collaboration.useOrganisationLogo")}/>}
+                    </div>
                     <InputField value={short_name} onChange={e => {
                         this.setState({
                             short_name: sanitizeShortName(e.target.value),
@@ -478,10 +491,10 @@ class CollaborationForm extends React.Component {
                         attribute: I18n.t("collaboration.shortName").toLowerCase()
                     })}/>}
                     {user.admin && <InputField value={`${organisation.short_name}:${short_name}`}
-                                name={I18n.t("collaboration.globalUrn")}
-                                copyClipBoard={true}
-                                toolTip={I18n.t("collaboration.globalUrnTooltip")}
-                                disabled={true}/>}
+                                               name={I18n.t("collaboration.globalUrn")}
+                                               copyClipBoard={true}
+                                               toolTip={I18n.t("collaboration.globalUrnTooltip")}
+                                               disabled={true}/>}
 
                     {(!isCollaborationRequest && !isNew) &&
                     <InputField value={joinRequestUrl}
@@ -548,6 +561,9 @@ class CollaborationForm extends React.Component {
                                          this.validateCollaborationName({target: {value: this.state.name}});
                                          this.validateCollaborationShortName({target: {value: this.state.short_name}});
                                          this.updateBreadCrumb(selectedOption, null, false, false);
+                                         if (useOrganisationLogo) {
+                                             this.setState({logo: selectedOption.logo});
+                                         }
                                      })}
                                  searchable={false}
                                  disabled={organisations.length === 1}
