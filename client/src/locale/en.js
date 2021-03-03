@@ -510,6 +510,7 @@ I18n.translations.en = {
         actions: "",
         name: "Name",
         logo: "Collaboration logo",
+        useOrganisationLogo: "Use the organization logo",
         namePlaceHolder: "The unique name of a collaboration",
         shortName: "Short name",
         shortNamePlaceHolder: "Unique short name of the collaboration",

@@ -167,6 +167,7 @@ def organisation_by_schac_home():
 
     return None if org is None else {"id": org.id,
                                      "name": org.name,
+                                     "logo": org.logo,
                                      "collaboration_creation_allowed": org.collaboration_creation_allowed,
                                      "collaboration_creation_allowed_entitlement": auto_aff,
                                      "required_entitlement": entitlement,
