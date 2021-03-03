@@ -495,7 +495,7 @@ class CollaborationDetail extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-        const {user} = this.props;
+        const {user, refreshUser} = this.props;
         const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
         return (
             <>
@@ -511,7 +511,7 @@ class CollaborationDetail extends React.Component {
 
                 <JoinRequestDialog collaboration={collaboration}
                                    isOpen={joinRequestDialogOpen}
-                                   refresh={callback => this.componentDidMount(callback)}
+                                   refresh={callback =>  refreshUser(callback)}
                                    history={this.props.history}
                                    close={() => this.setState({joinRequestDialogOpen: false})}/>
 
