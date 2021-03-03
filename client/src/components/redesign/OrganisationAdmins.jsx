@@ -16,7 +16,7 @@ import {setFlash} from "../../utils/Flash";
 import "./OrganisationAdmins.scss";
 import Select from "react-select";
 import {emitter} from "../../utils/Events";
-import {shortDateFromEpoch} from "../../utils/Date";
+import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import {stopEvent} from "../../utils/Utils";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -186,7 +186,8 @@ class OrganisationAdmins extends React.Component {
                         icon={<FontAwesomeIcon icon="trash"/>}/>
                 <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
                               place="bottom">
-                    <span dangerouslySetInnerHTML={{__html: !anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}}/>
+                    <span
+                        dangerouslySetInnerHTML={{__html: !anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}}/>
             </ReactTooltip>
                     </span>
             </div>);
@@ -371,11 +372,17 @@ class OrganisationAdmins extends React.Component {
                 nonSortable: true,
                 key: "status",
                 header: I18n.t("models.orgMembers.status"),
-                mapper: entity => entity.invite ?
-                    <span
-                        className="person-role invite">{I18n.t("models.orgMembers.inviteSend",
-                        {date: shortDateFromEpoch(entity.created_at)})}</span> :
-                        entity.role === "admin" ? <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span> : null
+                mapper: entity => {
+                    const isExpired = entity.invite && isInvitationExpired(entity);
+                    return entity.invite ?
+                        <span
+                            className={`person-role invite ${isExpired ? "expired" : ""}`}>
+                            {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
+                                I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
+                        </span> :
+                        entity.role === "admin" ?
+                            <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span> : null
+                }
             },
             {
                 nonSortable: true,

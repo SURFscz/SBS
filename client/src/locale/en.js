@@ -150,7 +150,7 @@ I18n.translations.en = {
             searchPlaceHolder: "Search members...",
             status: "Status",
             inviteSend: "Invite sent {{date}}",
-            expiredAt: "Invite expired {{date}}",
+            expiredAt: "Expired on {{date}}",
             accepted: "Active",
             new: "Add member(s)",
             remove: "Delete",
@@ -1479,8 +1479,12 @@ I18n.translations.en = {
         joinRequest: "Join request",
         manager: "Manager",
         platformAdmin: "Goddess divinity"
+    },
+    notFound : {
+        msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that.<br/><br/>" +
+            "You could try visiting the <a href='{{base_url}}'>homepage</a>. If you that does not offer you an option you were looking for, " +
+            "contact the person that invited you, or follow the SRAM Help link which includes how to contact the SURF SRAM team."
     }
-
 };
 
 export default I18n.translations.en;

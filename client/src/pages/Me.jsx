@@ -118,8 +118,7 @@ class Me extends React.Component {
         const d = new Date(0);
         d.setUTCSeconds(createdAt);
         const values = {"created_at": d.toUTCString()};
-        const attributes = ["name", "email", "username", "schac_home_organisation", "created_at"]
-            .filter(attr => values[attr] || user[attr]);
+        const attributes = ["name", "email", "username", "schac_home_organisation", "created_at"];
         return (
             <div className="user-profile-tab-container">
                 <div className="user-profile-tab">
@@ -127,7 +126,7 @@ class Me extends React.Component {
                     {attributes.map(attribute =>
                         <div className={"attributes"} key={attribute}>
                             <span className="attribute-key">{I18n.t(`profile.${attribute}`)}</span>
-                            <span className="attribute-value">{values[attribute] || user[attribute]}</span>
+                            <span className="attribute-value">{values[attribute] || user[attribute] || "-"}</span>
                         </div>)
                     }
 

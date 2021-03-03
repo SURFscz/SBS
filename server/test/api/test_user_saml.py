@@ -1,4 +1,6 @@
 # -*- coding: future_fstrings -*-
+import os
+
 from server.test.abstract_test import AbstractTest
 from server.test.seed import john_name, uuc_scheduler_entity_id, service_network_entity_id
 
@@ -15,9 +17,9 @@ class TestUserSaml(AbstractTest):
         self.assertListEqual(res["uid"], ["john"])
         self.assertEqual(1, len(res["sshKey"]))
         self.assertSetEqual(set(res["eduPersonEntitlement"]), {
-            "urn:example:sbs:group:ai_computing",
-            "urn:example:sbs:group:ai_computing:ai_dev",
-            "urn:example:sbs:group:ai_computing:ai_res"
+            "urn:example:sbs:group:uuc:ai_computing",
+            "urn:example:sbs:group:uuc:ai_computing:ai_dev",
+            "urn:example:sbs:group:uuc:ai_computing:ai_res"
         })
 
     def test_attributes_service_linked_to_organisation(self):
@@ -41,9 +43,22 @@ class TestUserSaml(AbstractTest):
         self.assertDictEqual({}, res)
 
     def test_attributes_no_service(self):
-        res = self.get("/api/users/attributes",
-                       query_data={"uid": "urn:john", "service_entity_id": "https://nope"})
-        self.assertDictEqual({}, res)
+        try:
+            del os.environ["TESTING"]
+            self.app.app_config.mail.send_exceptions = True
+            mail = self.app.mail
+            with mail.record_messages() as outbox:
+                res = self.get("/api/users/attributes",
+                               query_data={"uid": "urn:john", "service_entity_id": "https://nope"})
+                self.assertDictEqual({}, res)
+                html = outbox[0].html
+                print(html)
+                self.assertTrue("Returning empty dict as attributes for user urn:john and "
+                                "service_entity_id https://nope because service does not exists" in html)
+                self.assertTrue("An error occurred in local" in html)
+        finally:
+            os.environ["TESTING"] = "1"
+            self.app.app_config.mail.send_exceptions = False
 
     def test_attributes_no_user(self):
         self.get("/api/users/attributes", response_status_code=404,

@@ -37,9 +37,9 @@ class TestMail(AbstractTest):
                 self.get("/api/collaborations/members", query_data={"identifier": collaboration_ai_computing_uuid},
                          response_status_code=403, with_basic_auth=False)
                 self.assertEqual(1, len(outbox))
-                mail_msg = outbox[0]
-                self.assertTrue("Forbidden()" in mail_msg.html)
-                self.assertTrue("An error occurred in local" in mail_msg.html)
+                html = outbox[0].html
+                self.assertTrue("Forbidden()" in html)
+                self.assertTrue("An error occurred in local" in html)
         finally:
             os.environ["TESTING"] = "1"
             self.app.app_config.mail.send_exceptions = False

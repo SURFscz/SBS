@@ -150,7 +150,7 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek leden...",
             status: "Status",
             inviteSend: "Uitnodiging {{date}}",
-            expiredAt: "Uitnodiging verlopen {{date}}",
+            expiredAt: "Verlopen {{date}}",
             accepted: "Actief",
             new: "Voeg leden toe",
             remove: "Verwijder",
@@ -1479,8 +1479,12 @@ I18n.translations.nl = {
         joinRequest: "Deelnameverzoek",
         manager: "Manager",
         platformAdmin: "Goddess divinity"
+    },
+    notFound: {
+        msg: "Mmmm, het lijkt erop dat je op de een of andere manier een link hebt gekregen waar we je niet mee kunnen helpen. Sorry daarvoor. <br/> <br/>" +
+            "Je zou kunnen proberen de <a href='{{base_url}}'> startpagina </a> te bezoeken. Als die optie niet biedt waarnaar u op zoek was, " +
+            "neem contact op met de persoon die je heeft uitgenodigd, of volg de SRAM Help-link die aangeeft hoe je contact kunt opnemen met het SURF SRAM-team."
     }
-
 };
 
 export default I18n.translations.nl;
