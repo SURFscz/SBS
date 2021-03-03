@@ -19,15 +19,15 @@ export default class JoinRequestDialog extends React.Component {
     }
 
     submit = () => {
-        const {collaboration, refresh} = this.props;
+        const {collaboration,} = this.props;
         joinRequestForCollaboration({...this.state, collaborationId: collaboration.id})
-            .then(() => {
-                this.setState({submitted: true});
-                refresh();
-            });
+            .then(() => this.setState({submitted: true}));
     }
 
-    gotoHome = () => this.props.history.push("/home/collaboration_requests");
+    gotoHome = () =>  {
+        const { refresh} = this.props;
+        refresh(() => setTimeout(() => this.props.history.push("/home/joinrequests"), 75));
+    }
 
     renderForm = (collaboration, motivation, close) => {
         return (

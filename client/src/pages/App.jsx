@@ -217,6 +217,7 @@ class App extends React.Component {
                         <Route path="/registration"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}
+                                                                refreshUser={this.refreshUserMemberships}
                                                                 collaborationIdentifier={getParameterByName("collaboration", window.location.search)}
                                                                 Component={CollaborationDetail} {...props}/>}/>
                         <Route path="/home/:tab?"
