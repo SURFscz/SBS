@@ -462,8 +462,8 @@ def update_collaboration():
             group.global_urn = f"{organisation.short_name}:{data['short_name']}:{group.short_name}"
             db.session.merge(group)
 
-    if not is_application_admin() and "services_restricted" in data:
-        del data["services_restricted"]
+    if not is_application_admin() and "services_restricted" in data and collaboration.services_restricted:
+        data["services_restricted"] = True
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
     return update(Collaboration, custom_json=data, allow_child_cascades=False)
