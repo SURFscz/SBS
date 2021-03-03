@@ -30,7 +30,6 @@ import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import CreatableField from "../components/CreatableField";
 import EmailField from "../components/EmailField";
-import CheckBox from "../components/CheckBox";
 
 
 class OrganisationForm extends React.Component {
@@ -401,12 +400,6 @@ class OrganisationForm extends React.Component {
                                 value: sho
                             })}/>
                         )}
-                        <CheckBox name="services_restricted"
-                                  value={services_restricted}
-                                  info={I18n.t("organisation.servicesRestricted")}
-                                  tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
-                                  readOnly={!user.admin}
-                                  onChange={() => this.setState({services_restricted: !services_restricted})}/>
 
                         <RadioButton
                             label={I18n.t("organisation.collaborationCreationAllowed")}
@@ -416,6 +409,14 @@ class OrganisationForm extends React.Component {
                             tooltipOnHover={true}
                             tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
                             onChange={val => this.setState({collaboration_creation_allowed: val})}/>
+
+                        <RadioButton
+                            label={I18n.t("organisation.servicesRestricted")}
+                            name={"services_restricted"}
+                            disabled={!user.admin}
+                            value={services_restricted}
+                            tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
+                            onChange={() => this.setState({services_restricted: !services_restricted})}/>
 
                         {isNew &&
                         <div>
