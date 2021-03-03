@@ -156,25 +156,29 @@ def organisation_by_schac_home():
     schac_home_organisation = user.schac_home_organisation
     if not schac_home_organisation:
         return None, 200
+    # Because of subdomains we need the schac_home of which the users schac_home is a strict subdomain
+    schac_homes = SchacHomeOrganisation.query.all()
+    hits = list(filter(
+        lambda schac_home: schac_home_organisation == schac_home.name or schac_home_organisation.endswith(
+            f".{schac_home.name}"), schac_homes))
+    if not hits:
+        return None, 200
 
-    org = Organisation.query \
-        .join(Organisation.schac_home_organisations) \
-        .filter(SchacHomeOrganisation.name == schac_home_organisation) \
-        .first()
+    org = Organisation.query.get(hits[0].organisation_id)
 
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
     auto_aff = bool(user.entitlement) and entitlement in user.entitlement
 
-    return None if org is None else {"id": org.id,
-                                     "name": org.name,
-                                     "logo": org.logo,
-                                     "collaboration_creation_allowed": org.collaboration_creation_allowed,
-                                     "collaboration_creation_allowed_entitlement": auto_aff,
-                                     "required_entitlement": entitlement,
-                                     "user_entitlement": user.entitlement,
-                                     "has_members": len(org.organisation_memberships) > 0,
-                                     "on_boarding_msg": org.on_boarding_msg,
-                                     "short_name": org.short_name}, 200
+    return {"id": org.id,
+            "name": org.name,
+            "logo": org.logo,
+            "collaboration_creation_allowed": org.collaboration_creation_allowed,
+            "collaboration_creation_allowed_entitlement": auto_aff,
+            "required_entitlement": entitlement,
+            "user_entitlement": user.entitlement,
+            "has_members": len(org.organisation_memberships) > 0,
+            "on_boarding_msg": org.on_boarding_msg,
+            "short_name": org.short_name}, 200
 
 
 @organisation_api.route("/identity_provider_display_name", strict_slashes=False)

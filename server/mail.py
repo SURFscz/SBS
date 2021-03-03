@@ -125,13 +125,13 @@ def mail_collaboration_invitation(context, collaboration, recipients, preview=Fa
 
 def mail_accepted_declined_join_request(context, join_request, accepted, recipients, preview=False):
     part = "accepted" if accepted else "declined"
+    admins = [m.user for m in join_request.collaboration.collaboration_memberships if m.role == "admin"]
     return _do_send_mail(
         subject=f"Join request for collaboration {join_request.collaboration.name} has been {part}",
         recipients=recipients,
         template=f"join_request_{part}",
         context={**context,
-                 **{"admins":
-                        [m.user for m in join_request.collaboration.collaboration_memberships if m.role == "admin"]}},
+                 **{"admins": admins}},
         preview=preview
     )
 

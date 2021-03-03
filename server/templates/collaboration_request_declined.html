@@ -21,7 +21,7 @@
     <ul style="background-color: #f5f5f5;margin: 0;">
         {% for admin in admins %}
         <li>
-            {{ admin.name }} <{{ admin.email }}>
+            {{ admin.name }} - <a href="mailto:{{ admin.email }}">{{ admin.email }}</a>
         </li>
         {% endfor %}
     {% endif %}

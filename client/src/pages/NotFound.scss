@@ -5,6 +5,13 @@
     max-width: $medium;
     width: 100%;
     margin: 40px auto;
+    text-align: center;
 
+    div#lottie {
+        max-width: 600px!important;
+    }
+    p.not-found-msg {
+        margin-bottom: 25px;
+    }
 
 }

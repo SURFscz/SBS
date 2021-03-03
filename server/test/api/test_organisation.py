@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 
-from server.db.domain import Organisation, OrganisationInvitation
+from server.db.db import db
+from server.db.domain import Organisation, OrganisationInvitation, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation
 
@@ -54,6 +55,16 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(False, organisation["collaboration_creation_allowed"])
         self.assertEqual(False, organisation["collaboration_creation_allowed_entitlement"])
         self.assertEqual(True, organisation["has_members"])
+        self.assertEqual(amsterdam_uva_name, organisation["name"])
+
+    def test_organisations_by_schac_home_organisation_subdomain(self):
+        roger = User.query.filter(User.uid == "urn:roger").first()
+        roger.schac_home_organisation = "subdomain.example.org"
+        db.session.merge(roger)
+
+        self.login("urn:roger", schac_home_organisation)
+        organisation = self.get("/api/organisations/find_by_schac_home_organisation",
+                                with_basic_auth=False)
         self.assertEqual(amsterdam_uva_name, organisation["name"])
 
     def test_organisations_by_schac_home_organisation_none(self):

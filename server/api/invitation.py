@@ -139,6 +139,7 @@ def invitations_resend():
     confirm_collaboration_admin(invitation.collaboration_id)
 
     invitation.expiry_date = default_expiry_date()
+    invitation.created_at = datetime.date.today(),
     db.session.merge(invitation)
 
     mail_collaboration_invitation({

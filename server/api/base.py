@@ -114,6 +114,15 @@ def _service_status(body):
             current_app.mqtt.publish(topic, msg)
 
 
+def send_error_mail(tb, session_exists=True):
+    mail_conf = current_app.app_config.mail
+    if mail_conf.send_exceptions and not os.environ.get("TESTING"):
+        user = current_user() if session_exists else {}
+        user_id = user.get("email", user.get("name")) if "email" in user or "name" in user \
+            else request_context.api_user.name if request_context.is_authorized_api_call else "unknown"
+        mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, tb)
+
+
 def json_endpoint(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -140,13 +149,7 @@ def json_endpoint(f):
                 response.status_code = 400
             _add_custom_header(response)
             db.session.rollback()
-            mail_conf = current_app.app_config.mail
-            if mail_conf.send_exceptions and not os.environ.get("TESTING"):
-                tb = traceback.format_exc()
-                user = current_user()
-                user_id = user.get("email", user.get("name")) if "email" in user or "name" in user \
-                    else request_context.api_user.name if request_context.is_authorized_api_call else "unknown"
-                mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, tb)
+            send_error_mail(tb=traceback.format_exc())
             return response
 
     return wrapper

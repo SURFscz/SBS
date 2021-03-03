@@ -16,7 +16,7 @@ import {setFlash} from "../../utils/Flash";
 import "./CollaborationAdmins.scss";
 import Select from "react-select";
 import {emitter} from "../../utils/Events";
-import {shortDateFromEpoch} from "../../utils/Date";
+import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -433,12 +433,6 @@ class CollaborationAdmins extends React.Component {
 
     }
 
-    isInvitationExpired = invitation => {
-        const today = moment();
-        const inp = moment(invitation.expiry_date * 1000);
-        return today.isAfter(inp);
-    }
-
     renderSelectRole = (entity, isAdminOfCollaboration) => {
         if (entity.invite) {
             return <span className="member-role">{I18n.t(`organisation.${entity.intended_role}`)}</span>;
@@ -525,7 +519,7 @@ class CollaborationAdmins extends React.Component {
                 key: "status",
                 header: I18n.t("models.orgMembers.status"),
                 mapper: entity => {
-                    const isExpired = entity.invite && this.isInvitationExpired(entity);
+                    const isExpired = entity.invite && isInvitationExpired(entity);
                     return entity.invite ?
                         <span
                             className={`person-role invite ${isExpired ? "expired" : ""}`}>
