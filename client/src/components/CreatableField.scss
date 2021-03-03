@@ -45,6 +45,7 @@ div.creatable-field {
         &.disabled {
             cursor: not-allowed;
             background-color: $lightest-grey;
+            min-height: 40px;
         }
 
     }
