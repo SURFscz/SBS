@@ -524,6 +524,7 @@ class CollaborationForm extends React.Component {
                                                           value={services_restricted}
                                                           info={I18n.t("collaboration.servicesRestricted")}
                                                           tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
+                                                          readOnly={!user.admin}
                                                           onChange={() => this.setState({services_restricted: !services_restricted})}/>}
 
                     {!isCollaborationRequest && <CheckBox name="disclose_member_information"
