@@ -453,6 +453,7 @@ class CollaborationDetail extends React.Component {
     }
 
     getUnitHeader = (user, collaboration, allowedToEdit, showMemberView) => {
+
         return <UnitHeader obj={collaboration}
                            firstTime={user.admin ? this.onBoarding : undefined}
                            history={(user.admin && allowedToEdit) && this.props.history}

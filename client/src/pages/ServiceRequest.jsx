@@ -56,8 +56,8 @@ class ServiceRequest extends React.Component {
                     const redirectUriMismatch = isEmpty(service.uri) || (!isEmpty(redirectUri) && !redirectUri.startsWith(service.uri));
                     collaborations.forEach(collaboration => {
                         collaboration.alreadyLinked = collaboration.services.some(ser => ser.id === service.id);
-                        collaboration.linkNotAllowed = service.allowed_organisations.every(org => org.id !== collaboration.organisation.id)
-                            && !service.access_allowed_for_all;
+                        collaboration.linkNotAllowed = (service.allowed_organisations.every(org => org.id !== collaboration.organisation.id)
+                            && !service.access_allowed_for_all) || collaboration.services_restricted;
                     });
                     serviceConnectionRequestsOutstanding(service.id).then(res => {
                         collaborations.forEach(collaboration => {
