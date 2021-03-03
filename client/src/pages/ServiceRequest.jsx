@@ -57,7 +57,7 @@ class ServiceRequest extends React.Component {
                     collaborations.forEach(collaboration => {
                         collaboration.alreadyLinked = collaboration.services.some(ser => ser.id === service.id);
                         collaboration.linkNotAllowed = (service.allowed_organisations.every(org => org.id !== collaboration.organisation.id)
-                            && !service.access_allowed_for_all) || collaboration.services_restricted;
+                            && !service.access_allowed_for_all) || collaboration.organisation.services_restricted;
                     });
                     serviceConnectionRequestsOutstanding(service.id).then(res => {
                         collaborations.forEach(collaboration => {

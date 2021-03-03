@@ -164,7 +164,6 @@ class Collaboration(Base, db.Model):
     service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="collaboration",
                                                   cascade="all, delete-orphan", passive_deletes=True)
     disable_join_requests = db.Column("disable_join_requests", db.Boolean(), nullable=True, default=False)
-    services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
     disclose_member_information = db.Column("disclose_member_information", db.Boolean(), nullable=True, default=False)
     disclose_email_information = db.Column("disclose_email_information", db.Boolean(), nullable=True, default=False)
     website_url = db.Column("website_url", db.String(length=512), nullable=True)
@@ -211,6 +210,7 @@ class Organisation(Base, db.Model):
     on_boarding_msg = db.Column("on_boarding_msg", db.Text(), nullable=True)
     schac_home_organisations = db.relationship("SchacHomeOrganisation", cascade="all, delete-orphan",
                                                passive_deletes=True, lazy="selectin")
+    services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)

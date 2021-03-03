@@ -24,7 +24,7 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
         raise BadRequest("automatic_connection_not_allowed")
 
     collaboration = Collaboration.query.get(collaboration_id)
-    if collaboration.services_restricted:
+    if collaboration.organisation.services_restricted:
         confirm_write_access()
 
     collaboration.services.append(service)
@@ -84,7 +84,7 @@ def delete_all_services(collaboration_id):
     confirm_collaboration_admin(collaboration_id)
 
     collaboration = Collaboration.query.get(collaboration_id)
-    if collaboration.services_restricted:
+    if collaboration.organisation.services_restricted:
         confirm_write_access()
 
     collaboration.services = []
@@ -98,7 +98,7 @@ def delete_collaborations_services(collaboration_id, service_id):
     confirm_collaboration_admin(collaboration_id)
 
     collaboration = Collaboration.query.get(collaboration_id)
-    if collaboration.services_restricted:
+    if collaboration.organisation.services_restricted:
         confirm_write_access()
 
     collaboration.services.remove(Service.query.get(service_id))

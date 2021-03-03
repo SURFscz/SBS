@@ -371,7 +371,6 @@ def save_restricted_collaboration():
                          f"{restricted_co_config.default_organisation} does not exists")
 
     data["organisation_id"] = organisation.id
-    data["services_restricted"] = True
 
     # do_save_collaboration sanitizes the JSON so we need to define upfront
     connected_services = data.get("connected_services")
@@ -461,9 +460,6 @@ def update_collaboration():
         for group in collaboration.groups:
             group.global_urn = f"{organisation.short_name}:{data['short_name']}:{group.short_name}"
             db.session.merge(group)
-
-    if not is_application_admin() and "services_restricted" in data and collaboration.services_restricted:
-        data["services_restricted"] = True
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
     return update(Collaboration, custom_json=data, allow_child_cascades=False)

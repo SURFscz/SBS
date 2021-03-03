@@ -74,7 +74,7 @@ class TestOrganisation(AbstractTest):
         self.assertIsNone(organisation)
 
     def test_organisations_by_schac_home_organisation_not_present(self):
-        self.login("urn:peter")
+        self.login("urn:mike")
         organisation = self.get("/api/organisations/find_by_schac_home_organisation",
                                 with_basic_auth=False)
         self.assertIsNone(organisation)
@@ -124,14 +124,20 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(2, Organisation.query.count())
 
     def test_organisation_update_short_name(self):
-        self.login()
-        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        self.login("urn:mary")
+        organisation_uuc = self.find_entity_by_name(Organisation, uuc_name)
+        organisation_id = organisation_uuc.id
+
+        self.mark_organisation_service_restricted(organisation_uuc.id)
         organisation = self.get(f"/api/organisations/{organisation_id}", with_basic_auth=False)
         organisation["short_name"] = "changed!!!!"
+        organisation["services_restricted"] = False
         organisation = self.put("/api/organisations", body=organisation)
         self.assertEqual("changed", organisation["short_name"])
+        self.assertTrue(organisation["services_restricted"])
 
         collaborations = self.find_entity_by_name(Organisation, uuc_name).collaborations
+
         for collaboration in collaborations:
             self.assertTrue("changed" in collaboration.global_urn)
             for group in collaboration.groups:
