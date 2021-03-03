@@ -1482,8 +1482,8 @@ I18n.translations.nl = {
     },
     notFound: {
         msg: "Mmmm, het lijkt erop dat je op de een of andere manier een link hebt gekregen waar we je niet mee kunnen helpen. Sorry daarvoor. <br/> <br/>" +
-            "Je zou kunnen proberen de <a href='{{base_url}}'> startpagina </a> te bezoeken. Als die optie niet biedt waarnaar u op zoek was, " +
-            "neem contact op met de persoon die je heeft uitgenodigd, of volg de SRAM Help-link die aangeeft hoe je contact kunt opnemen met het SURF SRAM-team."
+            "Je zou kunnen proberen de <a href='{{base_url}}'> startpagina </a> te bezoeken. Als je daar niet iets vindt waar je mee geholpen bent, " +
+            "neem dan contact op met de persoon die je heeft uitgenodigd, of volg de SRAM Help-link waar ook staathoe je contact kunt opnemen met het SURF SRAM-team."
     }
 };
 
