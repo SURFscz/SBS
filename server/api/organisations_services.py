@@ -3,7 +3,7 @@ from flask import Blueprint, request as current_request
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_organisation_admin, confirm_organisation_admin_or_manager
+from server.auth.security import confirm_organisation_admin, confirm_organisation_admin_or_manager, is_application_admin
 from server.db.db import db
 from server.db.domain import Service, Organisation
 from server.schemas import json_schema_validator
@@ -33,6 +33,9 @@ def add_collaborations_services():
 
     organisation = Organisation.query.get(organisation_id)
 
+    if not is_application_admin() and organisation.services_restricted:
+        raise BadRequest("services_restricted")
+
     organisation.services.append(service)
     db.session.merge(organisation)
     return None, 201
@@ -44,6 +47,10 @@ def delete_organisations_services(organisation_id, service_id):
     confirm_organisation_admin(organisation_id)
 
     organisation = Organisation.query.get(organisation_id)
+
+    if not is_application_admin() and organisation.services_restricted:
+        raise BadRequest("services_restricted")
+
     organisation.services.remove(Service.query.get(service_id))
     db.session.merge(organisation)
 

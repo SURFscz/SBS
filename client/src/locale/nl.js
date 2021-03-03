@@ -1035,6 +1035,7 @@ I18n.translations.nl = {
         deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor<br/> samenwerking {{name}}.<br/><br/><strong>LET OP</strong>: de dienst zelf wordt niet verwijderd.<br/>  Hij is alleen niet beschikbaar<br/>voor de samenwerkingen van<br/> deze organisatie.",
         notAllowedOrganisation: "Deze service kan niet worden gekoppeld voor alle CO's<br/>omdat automatische verbindingen met CO's niet toegestaan zijn.<br/><br/>Aansluitingen kunnen nog steeds worden aangevraagd<br/>door individuele CO's in uw organisatie.",
         notEnabledOrganisation: "Deze service kan niet worden gekoppeld voor alle CO's<br/>omdat deze organisatie onbeschikbaar is voor deze service<br/><br/><br/>Neem contact op met <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> om dit probleem op te lossen.",
+        serviceRestrictedOrganisation: "Deze service kan niet worden gekoppeld voor alle CO's<br/>omdat deze organisatie geconfigureerd is als dienst beperkend.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         flash: {
             added: "{{service}} is toegevoegd aan organisatie {{name}}.",
             deleted: "{{service}} is onbeschikbaar gemaakt voor organisatie {{name}}.",
