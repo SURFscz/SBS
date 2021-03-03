@@ -30,6 +30,7 @@ import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import CreatableField from "../components/CreatableField";
 import EmailField from "../components/EmailField";
+import CheckBox from "../components/CheckBox";
 
 
 class OrganisationForm extends React.Component {
@@ -46,6 +47,7 @@ class OrganisationForm extends React.Component {
             schac_home_organisation: "",
             collaboration_creation_allowed: false,
             logo: "",
+            services_restricted: false,
             on_boarding_msg: "",
             categoryOptions: categoryOptions,
             category: category,
@@ -199,14 +201,14 @@ class OrganisationForm extends React.Component {
         const {required, alreadyExists, administrators, isNew} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
         // const inValidOnBoarding = isNew && I18n.t("organisation.onBoarding.template") !== on_boarding_msg;
-        return !inValid && (!isNew || !isEmpty(administrators)) ;//&& !inValidOnBoarding;
+        return !inValid && (!isNew || !isEmpty(administrators));//&& !inValidOnBoarding;
     };
 
     doSubmit = () => {
         if (this.isValid()) {
             const {
                 name, short_name, administrators, message, schac_home_organisations, description, logo,
-                on_boarding_msg, category
+                on_boarding_msg, category, services_restricted
             } = this.state;
             this.setState({loading: true});
             createOrganisation({
@@ -217,6 +219,7 @@ class OrganisationForm extends React.Component {
                 administrators,
                 message,
                 description,
+                services_restricted,
                 logo,
                 on_boarding_msg
             }).then(res => {
@@ -242,7 +245,7 @@ class OrganisationForm extends React.Component {
         if (this.isValid()) {
             const {
                 name, description, organisation, schac_home_organisations, collaboration_creation_allowed,
-                short_name, identifier, logo, on_boarding_msg, category
+                short_name, identifier, logo, on_boarding_msg, category, services_restricted
             } = this.state;
             this.setState({loading: true});
             updateOrganisation({
@@ -251,6 +254,7 @@ class OrganisationForm extends React.Component {
                 description,
                 schac_home_organisations,
                 collaboration_creation_allowed,
+                services_restricted,
                 short_name,
                 identifier,
                 logo,
@@ -294,8 +298,8 @@ class OrganisationForm extends React.Component {
         const {
             name, description, initial, alreadyExists, administrators, message, email,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
-            schac_home_organisations, collaboration_creation_allowed, logo, on_boarding_msg, category, categoryOptions,
-            schac_home_organisation, isNew, organisation, warning, loading
+            schac_home_organisations, collaboration_creation_allowed, services_restricted, logo, on_boarding_msg,
+            category, categoryOptions, schac_home_organisation, isNew, organisation, warning, loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -397,6 +401,12 @@ class OrganisationForm extends React.Component {
                                 value: sho
                             })}/>
                         )}
+                        <CheckBox name="services_restricted"
+                                  value={services_restricted}
+                                  info={I18n.t("organisation.servicesRestricted")}
+                                  tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
+                                  readOnly={!user.admin}
+                                  onChange={() => this.setState({services_restricted: !services_restricted})}/>
 
                         <RadioButton
                             label={I18n.t("organisation.collaborationCreationAllowed")}

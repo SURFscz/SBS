@@ -44,7 +44,6 @@ class CollaborationForm extends React.Component {
             message: "",
             email: "",
             accepted_user_policy: "",
-            services_restricted: false,
             disclose_email_information: true,
             disclose_member_information: true,
             disable_join_requests: false,
@@ -234,7 +233,6 @@ class CollaborationForm extends React.Component {
                 accepted_user_policy,
                 organisation,
                 isCollaborationRequest,
-                services_restricted,
                 disable_join_requests,
                 current_user_admin,
                 disclose_member_information,
@@ -251,7 +249,6 @@ class CollaborationForm extends React.Component {
                 message,
                 accepted_user_policy,
                 organisation_id: organisation.value,
-                services_restricted,
                 disable_join_requests,
                 current_user_admin,
                 disclose_member_information,
@@ -293,7 +290,6 @@ class CollaborationForm extends React.Component {
                 message,
                 accepted_user_policy,
                 organisation,
-                services_restricted,
                 disable_join_requests,
                 current_user_admin,
                 disclose_member_information,
@@ -311,7 +307,6 @@ class CollaborationForm extends React.Component {
                 message,
                 accepted_user_policy,
                 organisation_id: organisation.value,
-                services_restricted,
                 disable_join_requests,
                 current_user_admin,
                 disclose_member_information,
@@ -393,7 +388,6 @@ class CollaborationForm extends React.Component {
             leavePage,
             noOrganisations,
             isCollaborationRequest,
-            services_restricted,
             disclose_member_information,
             disclose_email_information,
             disable_join_requests,
@@ -532,13 +526,6 @@ class CollaborationForm extends React.Component {
                                                           info={I18n.t("collaboration.disableJoinRequests")}
                                                           tooltip={I18n.t("collaboration.disableJoinRequestsTooltip")}
                                                           onChange={() => this.setState({disable_join_requests: !disable_join_requests})}/>}
-
-                    {!isCollaborationRequest && <CheckBox name="services_restricted"
-                                                          value={services_restricted}
-                                                          info={I18n.t("collaboration.servicesRestricted")}
-                                                          tooltip={I18n.t("collaboration.servicesRestrictedTooltip")}
-                                                          readOnly={!user.admin}
-                                                          onChange={() => this.setState({services_restricted: !services_restricted})}/>}
 
                     {!isCollaborationRequest && <CheckBox name="disclose_member_information"
                                                           value={disclose_member_information}
