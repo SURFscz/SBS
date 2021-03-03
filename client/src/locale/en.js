@@ -1482,7 +1482,7 @@ I18n.translations.en = {
     },
     notFound : {
         msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that.<br/><br/>" +
-            "You could try visiting the <a href='{{base_url}}'>homepage</a>. If you that does not offer you an option you were looking for, " +
+            "You could try visiting the <a href='{{base_url}}'>homepage</a>. If that does not offer you an option you were looking for, " +
             "contact the person that invited you, or follow the SRAM Help link which includes how to contact the SURF SRAM team."
     }
 };
