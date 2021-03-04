@@ -368,7 +368,7 @@ I18n.translations.nl = {
                 declineInvitation: "Weet je zeker dat je de uitnodiging wil weigeren?",
             },
             disclaimer: "Als je doorgaat, zal SURF gegevens over jou doorsturen naar de onderzoekssamenwerking (CO). Elke gegevensverwerking door de CO, zoals het overdragen van gegevens aan diensten zodat je daar toegang toe hebt, is een verantwoordelijkheid van de CO.",
-            disclaimerAup: "De samenwerking heeft SURF <a href=\"{{aup}}\" target=\"_blank\">de volgende URL</a> opgeleverd met relevante informatie.",
+            disclaimerAup: "De samenwerking heeft SURF gemeld dat op <a href=\"{{aup}}\" target=\"_blank\">deze URL</a> nog relevante informatie voor je staat.",
             disclaimerQuestions: "Heb je vragen over de verwerking van je gegevens door de CO? Neem contact op met de persoon die je heeft uitgenodigd."
         },
         joinRequests: {
