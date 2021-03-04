@@ -9,7 +9,7 @@ from flask import current_app
 from flask_testing import TestCase
 
 from server.db.db import db
-from server.db.domain import Collaboration, User
+from server.db.domain import Collaboration, User, Organisation
 from server.test.seed import seed
 
 # See api_users in config/test_config.yml
@@ -101,8 +101,16 @@ class AbstractTest(TestCase):
         db = self.app.db
         with self.app.app_context():
             collaboration = db.session.query(Collaboration).get(collaboration_id)
-            collaboration.services_restricted = True
-            db.session.add(collaboration)
+            collaboration.organisation.services_restricted = True
+            db.session.add(collaboration.organisation)
+            db.session.commit()
+
+    def mark_organisation_service_restricted(self, organisation_id):
+        db = self.app.db
+        with self.app.app_context():
+            organisation = db.session.query(Organisation).get(organisation_id)
+            organisation.services_restricted = True
+            db.session.add(organisation)
             db.session.commit()
 
     def mark_user_suspended(self, user_name):

@@ -9,8 +9,8 @@ from sqlalchemy.orm import aliased, load_only, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
-from server.auth.security import confirm_collaboration_admin, is_application_admin, \
-    current_user_id, confirm_collaboration_member, confirm_authorized_api_call, \
+from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
+    confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name
@@ -371,7 +371,6 @@ def save_restricted_collaboration():
                          f"{restricted_co_config.default_organisation} does not exists")
 
     data["organisation_id"] = organisation.id
-    data["services_restricted"] = True
 
     # do_save_collaboration sanitizes the JSON so we need to define upfront
     connected_services = data.get("connected_services")
@@ -461,9 +460,6 @@ def update_collaboration():
         for group in collaboration.groups:
             group.global_urn = f"{organisation.short_name}:{data['short_name']}:{group.short_name}"
             db.session.merge(group)
-
-    if not is_application_admin() and "services_restricted" in data and collaboration.services_restricted:
-        data["services_restricted"] = True
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
     return update(Collaboration, custom_json=data, allow_child_cascades=False)
