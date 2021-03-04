@@ -528,8 +528,6 @@ I18n.translations.en = {
         disabled: "Disabled",
         enabled: "Copy link",
         privacyPolicy: "Acceptable Use Policy",
-        servicesRestricted: "Restrict CO to SURF services",
-        servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
         discloseMembers: "Disclose member info",
         discloseMemberInformation: "Disclose member information",
         discloseMemberInformationTooltip: "When checked the names<br/>of members are disclosed to other members",
@@ -728,6 +726,8 @@ I18n.translations.en = {
         identifierTooltip: "Generated, unique and immutable<br/>identifier of a organisation<br/>which used as identifier<br/>for external systems",
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
+        servicesRestricted: "Restrict ORG to SURF services",
+        servicesRestrictedTooltip: "When checked the Collaborations in<br/>this Organisation are restricted and<br/>only the platform admin can<br/>configure the Services.",
         schacHomeOrganisationShortName: "Org domain",
         schacHomeOrganisation: "Organisation domain names",
         schacHomeOrganisationPlaceholder: "The domain name of the organisation",
@@ -1035,6 +1035,7 @@ I18n.translations.en = {
         deleteServiceTooltip: "Make this service unavailable in<br/> the organisation {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for the members of<br/>the collaborations<br/>on this organisation",
         notAllowedOrganisation: "This service cannot be enabled for al COs<br/>because it does not allow automatic connections to COs.<br/><br/>Connections can still be requested by<br/>individual COs in your organisation.",
         notEnabledOrganisation: "This service cannot be enabled for al COs<br/>because this organisation is not<br/>allowed access to this service.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        serviceRestrictedOrganisation: "This service cannot be enabled for al COs<br/>because this organisation is configured<br/>services restricted.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         flash: {
             added: "Successfully added service {{service}} to organisation {{name}}",
             deleted: "Successfully deleted service {{service}} from organisation {{name}}"
