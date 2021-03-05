@@ -27,6 +27,11 @@ class TestUserClaims(AbstractTest):
         add_user_claims({"voperson_external_id": ["teacher@sub.uni.org"]}, "urn:johny", user)
         self.assertEqual("sub.uni.org", user.schac_home_organisation)
 
+    def test_add_user_claims_none(self):
+        user = User()
+        add_user_claims({"voperson_external_id": ["teacher@"]}, "urn:johny", user)
+        self.assertIsNone(user.schac_home_organisation)
+
     def test_add_user_claims_affiliation_defensive(self):
         user = User()
         add_user_claims({"voperson_external_id": "university"}, "urn:johny", user)
