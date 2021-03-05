@@ -1405,7 +1405,7 @@ I18n.translations.nl = {
         createCollRequest: "Vraag je eigen samenwerking aan",
         startCreateCollRequest: "Als je je eigen samenwerking wilt starten, kan je deze rechtstreeks aanvragen en zullen de admins deze controleren.",
         createCollTxt: "Creëer een samenwerking",
-        createCollRequestTxt: "Vraag een samenwerking aan",
+        createCollRequestTxt: "Start een samenwerking",
         contact: "Contact SRAM helpdesk",
         contactInfo: "Neem contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> en laat ons weten wat je verwachtte, of als je vragen hebt. We reageren zo snel mogelijk."
     },
