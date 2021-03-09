@@ -1393,7 +1393,7 @@ I18n.translations.en = {
     },
     welcome: {
         title: "Hi {{name}},",
-        subTitle: "Welcome to SURF Research Access Management (SRAM). SRAM is used to manage access for you research collaboration.",
+        subTitle: "Welcome to SURF Research Access Management (SRAM). SRAM is used to manage access for your research collaboration.",
         unknown: "an unknown institution",
         mysterious: "mysterious guest",
         institution: "You have logged on via <strong>{{name}}</strong>.",
