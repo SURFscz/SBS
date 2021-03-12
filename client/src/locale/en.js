@@ -1036,6 +1036,7 @@ I18n.translations.en = {
         notAllowedOrganisation: "This service cannot be enabled for al COs<br/>because it does not allow automatic connections to COs.<br/><br/>Connections can still be requested by<br/>individual COs in your organisation.",
         notEnabledOrganisation: "This service cannot be enabled for al COs<br/>because this organisation is not<br/>allowed access to this service.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         serviceRestrictedOrganisation: "This service cannot be enabled for al COs<br/>because this organisation is configured<br/>services restricted.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        serviceRestrictedOrganisationAdded: "This service is enabled for al COs<br/>but you can't edit this<br/>because this organisation is configured<br/>services restricted.<br/>",
         flash: {
             added: "Successfully added service {{service}} to organisation {{name}}",
             deleted: "Successfully deleted service {{service}} from organisation {{name}}"

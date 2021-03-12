@@ -24,7 +24,7 @@
         margin: 0 auto;
         max-width: $medium;
 
-        @media (max-width: $medium) {
+        @media (max-width: $tablet-max) {
             padding: 0 15px;
         }
 
@@ -42,7 +42,7 @@
             margin-left: auto;
             position: relative;
             cursor: pointer;
-            @media (max-width: $medium) {
+            @media (max-width: $tablet-max) {
                 margin-right: 65px;
             }
         }
