@@ -33,13 +33,12 @@ class OrganisationServices extends React.Component {
         const {organisation, user} = this.props;
         allServices().then(services => {
             services.forEach(service => {
-                    const allowed = service.allowed_organisations.some(org => org.id === organisation.id);
-                    service.allowedByService = allowed;
-                    service.allowed = ((allowed && service.automatic_connection_allowed) || service.access_allowed_for_all)
-                        && (user.admin || !organisation.services_restricted);
-                    service.notAllowed = !service.allowed;
-                    service.notAllowedServicesRestricted = !user.admin && organisation.services_restricted;
-                });
+                const allowed = service.allowed_organisations.some(org => org.id === organisation.id);
+                service.allowedByService = allowed;
+                service.allowed = (allowed && service.automatic_connection_allowed) || service.access_allowed_for_all;
+                service.notAllowed = !service.allowed;
+                service.notAllowedServicesRestricted = !user.admin && organisation.services_restricted;
+            });
             this.setState({services: services, loading: false});
         });
     }
@@ -96,12 +95,24 @@ class OrganisationServices extends React.Component {
         const {organisation, user} = this.props;
         const allowed = isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id, null);
         const inUse = organisation.services.some(s => s.id === service.id);
-        const tooltip = service.allowed ? undefined :
-            service.notAllowedServicesRestricted ? I18n.t("organisationServices.serviceRestrictedOrganisation") :
-            service.allowedByService ? I18n.t("organisationServices.notAllowedOrganisation") : I18n.t("organisationServices.notEnabledOrganisation");
-        return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={!allowed || !service.allowed}
-                             value={inUse && service.allowed} animate={false}
-                             tooltip={tooltip}/>
+        const value = inUse && service.allowed;
+        let tooltip;
+        if (!service.allowed || service.notAllowedServicesRestricted) {
+            if (service.notAllowedServicesRestricted) {
+                if (value) {
+                    tooltip = I18n.t("organisationServices.serviceRestrictedOrganisationAdded");
+                } else {
+                    tooltip = I18n.t("organisationServices.serviceRestrictedOrganisation");
+                }
+            } else if (service.allowedByService) {
+                tooltip = I18n.t("organisationServices.notAllowedOrganisation")
+            } else {
+                tooltip = I18n.t("organisationServices.notEnabledOrganisation")
+            }
+        }
+        const disabled = !allowed || !service.allowed || service.notAllowedServicesRestricted;
+        return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={disabled}
+                             value={value} animate={false} tooltip={tooltip}/>
     }
 
     render() {

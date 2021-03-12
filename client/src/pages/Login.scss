@@ -10,7 +10,7 @@
     background-color: $background;
 
     .mod-login-container {
-        @media (max-width: $medium) {
+        @media (max-width: $tablet-max) {
             padding: 0 15px;
         }
 

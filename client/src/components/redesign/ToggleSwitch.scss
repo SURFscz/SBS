@@ -61,7 +61,7 @@ label.switch {
     }
 
     input:checked + .slider.checked.disabled {
-        background-color: $medium-grey;
+        background-color: #677e91;
     }
 
     input:focus + .slider.checked {

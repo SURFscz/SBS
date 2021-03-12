@@ -23,7 +23,7 @@
         max-width: $medium;
         margin: 0 auto;
 
-        @media (max-width: $medium) {
+        @media (max-width: $tablet-max) {
             padding: 0 15px;
         }
 
