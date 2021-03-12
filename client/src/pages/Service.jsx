@@ -61,6 +61,7 @@ class Service extends React.Component {
         leavePage: false,
         confirmationDialogAction: () => true,
         cancelDialogAction: () => true,
+        warning: false,
         loading: true
     });
 
@@ -179,6 +180,7 @@ class Service extends React.Component {
         this.setState({
             confirmationDialogOpen: true,
             leavePage: true,
+            warning: false,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
                 () => this.props.history.goBack()),
             confirmationDialogAction: this.closeConfirmationDialog
@@ -189,6 +191,7 @@ class Service extends React.Component {
         this.setState({
             confirmationDialogOpen: true,
             leavePage: false,
+            warning: true,
             cancelDialogAction: this.closeConfirmationDialog,
             confirmationDialogAction: this.doDelete
         });
@@ -466,7 +469,7 @@ class Service extends React.Component {
             entity_id, description, uri, accepted_user_policy, contact_email,
             confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed,
             access_allowed_for_all, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-            research_scholarship_compliant, ip_networks, logo, loading
+            research_scholarship_compliant, ip_networks, logo, warning, loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -489,6 +492,7 @@ class Service extends React.Component {
                                         cancel={cancelDialogAction}
                                         confirm={confirmationDialogAction}
                                         leavePage={leavePage}
+                                        isWarning={warning}
                                         question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
 
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,

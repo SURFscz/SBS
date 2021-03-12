@@ -163,7 +163,6 @@ class ServiceOrganisations extends React.Component {
                 header: I18n.t("models.organisations.category")
             },
             {
-
                 key: "toggle",
                 header: I18n.t("service.accessAllowed"),
                 mapper: org => this.toggle(org, organisationsSelected, service)

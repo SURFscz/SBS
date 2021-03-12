@@ -15,7 +15,7 @@ table.organisationServicesUsed {
                 padding-left: 15px;
             }
 
-            &.inUse {
+            &.allowed {
                 width: 50%;
                 text-align: right;
             }
@@ -28,7 +28,7 @@ table.organisationServicesUsed {
                 padding-left: 15px;
             }
 
-            &.inUse {
+            &.allowed {
                 text-align: right;
             }
         }
