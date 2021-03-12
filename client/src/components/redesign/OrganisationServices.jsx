@@ -124,8 +124,6 @@ class OrganisationServices extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-        services.forEach(service => service.inUse = organisation.services.some(s => s.id === service.id));
-        organisation.services.forEach(service => service.inUse = true);
         const columns = [
             {
                 nonSortable: true,
@@ -139,7 +137,7 @@ class OrganisationServices extends React.Component {
                 mapper: this.getServiceLink,
             },
             {
-                key: "inUse",
+                key: "allowed",
                 header: I18n.t("models.services.mandatory"),
                 mapper: this.getServiceAction
             }]

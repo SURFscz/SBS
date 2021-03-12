@@ -5,20 +5,20 @@ table.member_collaboration_requests, table.system_collaboration_requests, table.
     thead {
         th {
             &.name {
-                width: 35%;
+                width: 28%;
                 padding-left: 15px;
             }
 
             &.user__name {
-                width: 25%;
+                width: 38%;
             }
 
             &.created_at {
-                width: 20%;
+                width: 17%;
             }
 
             &.status {
-                width: 20%;
+                width: 17%;
                 text-align: center;
             }
         }

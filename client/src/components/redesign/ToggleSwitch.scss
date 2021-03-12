@@ -20,11 +20,6 @@ label.switch {
         right: 0;
         bottom: 0;
         background-color: $red;
-        transition: .4s;
-
-        &.no-animation {
-            transition: none;
-        }
 
         &::before {
             position: absolute;
@@ -34,11 +29,6 @@ label.switch {
             left: 4px;
             bottom: 4px;
             background-color: white;
-            transition: .4s;
-
-            &.no-animation {
-                transition: none;
-            }
         }
 
         &.disabled {
