@@ -12,7 +12,7 @@ export default function ApiKeysExplanation() {
             the <span className="strong">Authorization</span> header of the HTTP calls performed against the API.
         </section>,
         < section key={3} className="example">
-            <code>curl -H "Authorization: api_key_value" "https://sbs.surf.nl/api/organisations"</code>
+            <code>curl -H "Authorization: bearer $api_key_value" "https://sbs.surf.nl/api/organisations"</code>
         </section>,
         <section key={4} className="details">
             Please contact <a href="mailto:sram-support@surf.nl"> sram-support@surf.nl</a> if you have any questions
