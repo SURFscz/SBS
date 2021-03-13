@@ -17,7 +17,7 @@ export default function OrganisationServicesExplanation() {
         <section key={5} className="details">
             Please contact
             <a href="mailto:sram-support@surf.nl"> sram-support@surf.nl</a> if you think if a <span
-            className="strong">Service</span> is not correct configured.
+            className="strong">Service</span> is not configured correct.
         </section>]
 
 }

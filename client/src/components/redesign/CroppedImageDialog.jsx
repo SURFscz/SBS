@@ -52,6 +52,7 @@ export default class CroppedImageDialog extends React.PureComponent {
                         isSvg: isSvg,
                         initialSvg: isSvg,
                         result: null,
+                        error: "",
                         addWhiteSpace: false
                     });
                 }
