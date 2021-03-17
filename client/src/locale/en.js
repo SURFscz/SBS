@@ -353,7 +353,6 @@ I18n.translations.en = {
                 progress: "{{now}} of {{total}}",
                 login: "Login",
                 next: "Next: {{step}}",
-                aup: "Foobar",
                 invite: "Accept the invite",
                 collaborate: "Collaborate!"
             },
