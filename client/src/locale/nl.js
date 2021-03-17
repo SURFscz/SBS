@@ -354,7 +354,7 @@ I18n.translations.nl = {
                 login: "Inloggen",
                 next: "Hierna: {{step}}",
                 invite: "Accepteer de uitnodiging",
-                collaborate: "Samenwerken!"
+                collaborate: "Samenwerken!",
             },
             login: "Log in om je te identificeren",
             loginWithSub: "Log in om je te identificeren<sup> *</sup>",
