@@ -1,5 +1,5 @@
 # SURF SamenwerkingsBeheerSysteem (SBS)
-![Build status](https://github.com/SURFscz/SCZ-deploy/actions/workflows/main.yml/badge.svg)
+[![Build status](https://github.com/SURFscz/SCZ-deploy/actions/workflows/main.yml/badge.svg)](https://github.com/SURFscz/SBS/actions)
 [![Codecov](https://codecov.io/gh/SURFscz/SBS/branch/master/graph/badge.svg)](https://codecov.io/gh/SURFscz/SBS)
 
 Research Access Management
