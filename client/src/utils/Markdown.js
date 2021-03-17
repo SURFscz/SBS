@@ -9,6 +9,14 @@ const converter = new Showdown.Converter({
     tasklists: true
 });
 
+export const sanitizeHtml = html => {
+    if (isEmpty(html)) {
+        return "";
+    }
+    return DOMPurify.sanitize(html);
+};
+
+
 export function convertToHtml(markdown, openLinkInNewTab = false) {
     if (isEmpty(markdown)) {
         return markdown;

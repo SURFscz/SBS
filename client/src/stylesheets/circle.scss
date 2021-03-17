@@ -49,6 +49,13 @@ $width: 70px;
         transform: rotate(102deg);
     }
 
+    &.two-quarters:before {
+        @include colored-borders;
+        border-top-color: $blue;
+        border-right-color: $blue;
+    }
+
+
     span {
         display: inline-block;
         margin-top: 25px;

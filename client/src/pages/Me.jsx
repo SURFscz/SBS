@@ -8,12 +8,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {ReactComponent as CriticalIcon} from "../icons/critical.svg";
-import {
-    validPublicSSH2KeyRegExp,
-    validPublicSSHEd25519KeyRegExp,
-    validPublicSSHKeyRegExp
-} from "../validations/regExps";
-import CheckBox from "../components/CheckBox";
+import {validateSSHKey,} from "../validations/regExps";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
 class Me extends React.Component {
@@ -66,9 +61,10 @@ class Me extends React.Component {
     };
 
     isValid = () => {
-        const {invalidInputs} = this.state;
+        const {invalidInputs, ssh_key} = this.state;
         const inValid = Object.keys(invalidInputs).some(key => invalidInputs[key]);
-        return !inValid;
+        const isValidSsh = validateSSHKey(ssh_key);
+        return !inValid && isValidSsh;
     };
 
 
@@ -79,13 +75,14 @@ class Me extends React.Component {
                 this.gotoHome();
                 setFlash(I18n.t("user.flash.updated"));
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 
     validateSSHKey = e => {
         const sshKey = e.target.value;
-        const isValid = isEmpty(sshKey) || validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey)
-            || validPublicSSHEd25519KeyRegExp.test(sshKey);
+        const isValid = validateSSHKey(sshKey);
         this.setState({fileTypeError: !isValid, fileInputKey: new Date().getMilliseconds()});
     };
 
@@ -104,7 +101,7 @@ class Me extends React.Component {
             const reader = new FileReader();
             reader.onload = () => {
                 const sshKey = reader.result.toString();
-                if (validPublicSSHKeyRegExp.test(sshKey) || validPublicSSH2KeyRegExp.test(sshKey) || validPublicSSHEd25519KeyRegExp.test(sshKey)) {
+                if (validateSSHKey(sshKey)) {
                     this.setState({fileName: file.name, fileTypeError: false, ssh_key: sshKey});
                 } else {
                     this.setState({fileName: file.name, fileTypeError: true, ssh_key: ""});
@@ -117,11 +114,11 @@ class Me extends React.Component {
     renderForm = (user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit) => {
         // const attributes = ["name", "email", "created_at", "username", , "uid", "eduperson_principal_name",
         //     "affiliation", "scoped_affiliation", "entitlement", "schac_home_organisation", "edu_members"];
-        const attributes = ["name", "email", "created_at"];
         const createdAt = user.created_at;
         const d = new Date(0);
         d.setUTCSeconds(createdAt);
-        const values = {"created_at": d.toUTCString()}
+        const values = {"created_at": d.toUTCString()};
+        const attributes = ["name", "email", "username", "schac_home_organisation", "created_at"];
         return (
             <div className="user-profile-tab-container">
                 <div className="user-profile-tab">
@@ -129,7 +126,7 @@ class Me extends React.Component {
                     {attributes.map(attribute =>
                         <div className={"attributes"} key={attribute}>
                             <span className="attribute-key">{I18n.t(`profile.${attribute}`)}</span>
-                            <span className="attribute-value">{values[attribute] || user[attribute]}</span>
+                            <span className="attribute-value">{values[attribute] || user[attribute] || "-"}</span>
                         </div>)
                     }
 
@@ -140,17 +137,17 @@ class Me extends React.Component {
                                 toolTip={I18n.t("user.ssh_keyTooltip")}
                                 onBlur={this.validateSSHKey}
                                 fileUpload={true}
+                                multiline={true}
                                 error={fileTypeError}
                                 fileName={fileName}
                                 fileInputKey={fileInputKey}
                                 onFileRemoval={this.onFileRemoval}
                                 onFileUpload={this.onFileUpload}
                                 acceptFileFormat=".pub"/>
-                    {fileTypeError && <ErrorIndicator msg={I18n.t("user.sshKeyError")}/> }
+                    {fileTypeError && <ErrorIndicator msg={I18n.t("user.sshKeyError")}/>}
                     {showConvertSSHKey &&
-                    <CheckBox name="convertSSHKey" value={convertSSHKey}
-                              info={I18n.t("user.sshConvertInfo")}
-                              onChange={e => this.setState({convertSSHKey: e.target.checked})}/>}
+                    <span className="ssh-convert"
+                          dangerouslySetInnerHTML={{__html: I18n.t("user.sshConvertInfo")}}/>}
 
                     <section className="actions">
                         <Button warningButton={true} txt={I18n.t("user.delete")}
@@ -170,7 +167,10 @@ class Me extends React.Component {
         } = this.state;
         const {user} = this.props;
         const disabledSubmit = !initial && !this.isValid();
-        const showConvertSSHKey = !isEmpty(ssh_key) && validPublicSSH2KeyRegExp.test(ssh_key);
+        const showConvertSSHKey = !isEmpty(ssh_key) && (
+            ssh_key.startsWith("---- BEGIN SSH2 PUBLIC KEY ----") ||
+            ssh_key.startsWith("-----BEGIN PUBLIC KEY-----") ||
+            ssh_key.startsWith("-----BEGIN RSA PUBLIC KEY-----"));
         const disabledConfirm = user.name !== nameConfirmation;
         return (
             <div className="user-profile-mod">

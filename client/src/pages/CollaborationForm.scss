@@ -18,7 +18,7 @@
         display: grid;
         grid-template-columns: [first] 1fr [second] 1fr;
         column-gap: 50px;
-        @media (max-width: $medium) {
+        @media (max-width: $tablet-max) {
             padding: 0 15px;
         }
 
@@ -35,6 +35,7 @@
             grid-column: 1/-1;
             color: $blue;
             font-weight: bold;
+            font-size: 18px;
             border-bottom: 1px solid $blue;
             padding: 25px 0 5px 0;
 
@@ -43,8 +44,14 @@
             }
         }
 
-        div.input-field, div.select-field, div.checkbox {
+        div.input-field, div.select-field, div.checkbox, div.email-field {
             margin-top: 15px;
+        }
+
+        div.cropped-image-container {
+            grid-row-start: 2;
+            grid-column-start: second;
+            grid-row-end: 99;
         }
 
     }

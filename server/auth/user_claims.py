@@ -27,12 +27,7 @@ def _normalize(s):
 
 
 def generate_unique_username(user: User, max_count=10000):
-    if hasattr(user, "eduperson_principal_name") and user.eduperson_principal_name:
-        eduperson_principal_name = re.split("@", user.eduperson_principal_name)[0]
-        username = f"{_normalize(eduperson_principal_name)}".lower()
-    else:
-        username = f"{_normalize(user.given_name)[0:1]}{_normalize(user.family_name)[0:11]}"[0:10].lower()
-
+    username = f"{_normalize(user.given_name)[0:1]}{_normalize(user.family_name)[0:11]}"[0:10].lower()
     if len(username) == 0:
         username = "u"
     counter = 2
@@ -60,8 +55,9 @@ def add_user_claims(user_info_json, uid, user, replace_none_values=True):
     if "voperson_external_id" in user_info_json:
         voperson_external_id = user_info_json["voperson_external_id"]
         val = voperson_external_id[0] if isinstance(voperson_external_id, list) else voperson_external_id
-        val = re.split("@", val)[-1]
-        parts = re.split("\\.", val)[-2:]
-        user.schac_home_organisation = ".".join(parts)
+        if "@" in val:
+            schac_home= re.split("@", val)[-1]
+            if schac_home:
+                user.schac_home_organisation = schac_home
     if not user.username:
         user.username = generate_unique_username(user)

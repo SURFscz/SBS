@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import json
 import uuid
 
 from munch import munchify
@@ -24,12 +25,29 @@ class TestUserClaims(AbstractTest):
     def test_add_user_claims_affiliation_list(self):
         user = User()
         add_user_claims({"voperson_external_id": ["teacher@sub.uni.org"]}, "urn:johny", user)
-        self.assertEqual("uni.org", user.schac_home_organisation)
+        self.assertEqual("sub.uni.org", user.schac_home_organisation)
+
+    def test_add_user_claims_none(self):
+        user = User()
+        add_user_claims({"voperson_external_id": ["teacher@"]}, "urn:johny", user)
+        self.assertIsNone(user.schac_home_organisation)
 
     def test_add_user_claims_affiliation_defensive(self):
         user = User()
         add_user_claims({"voperson_external_id": "university"}, "urn:johny", user)
-        self.assertEqual("university", user.schac_home_organisation)
+        self.assertIsNone(user.schac_home_organisation)
+
+    def test_add_user_claims_no_voperson_external_id(self):
+        user = User()
+        add_user_claims({}, "urn:johny", user)
+        self.assertIsNone(user.schac_home_organisation)
+
+    def test_user_claims_schac_home_org(self):
+        user = User()
+        user_info_json_str = self.read_file("user_info.json")
+        user_info_json = json.loads(user_info_json_str)
+        add_user_claims(user_info_json, "urn:new_user", user)
+        self.assertEqual("rug", user.schac_home_organisation)
 
     def test_add_user_claims_empty_entitlements(self):
         user = User()
@@ -40,12 +58,6 @@ class TestUserClaims(AbstractTest):
         user = User()
         add_user_claims({"given_name": "John", "family_name": "Doe"}, "urn:johny", user)
         self.assertEqual("jdoe", user.username)
-
-    def test_add_user_claims_user_name_voperson_external_id(self):
-        user = User()
-        add_user_claims({"given_name": "John", "family_name": "Doe",
-                         "voperson_external_id": "mettens@example.com.org"}, "urn:johny", user)
-        self.assertEqual("mettens", user.username)
 
     def test_generate_unique_username(self):
         # we don't want this in the normal seed
@@ -64,4 +76,5 @@ class TestUserClaims(AbstractTest):
     def test_eppn_generate_unique_username(self):
         user = User(eduperson_principal_name="sarah-lee")
         username = generate_unique_username(user)
-        self.assertEqual("sarahlee", username)
+        # We don't use the eduperson_principal_name anymore
+        self.assertEqual("u", username)

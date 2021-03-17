@@ -2,7 +2,7 @@ import React from "react";
 import I18n from "i18n-js";
 import "./UserColumn.scss";
 
-export default function UserColumn({entity, currentUser, gotoInvitation, hideEmail = false}) {
+export default function UserColumn({entity, currentUser, gotoInvitation, hideEmail = false, showMe = true}) {
 
     return (
         <div className="user-name-email-container">
@@ -16,7 +16,7 @@ export default function UserColumn({entity, currentUser, gotoInvitation, hideEma
                 {(!entity.invite && !hideEmail) && <span className="email">{entity.user.email}</span>}
 
             </div>
-            {(!entity.invite && entity.user.id === currentUser.id) &&
+            {(!entity.invite && entity.user.id === currentUser.id && showMe) &&
             <span className="person-role me">{I18n.t("models.users.me")}</span>}
         </div>
     );

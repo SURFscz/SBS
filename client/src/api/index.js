@@ -19,7 +19,9 @@ function validateResponse(showErrorDialog) {
             }
             const error = new Error(res.statusText);
             error.response = res;
-
+            if (showErrorDialog && res.status === 401) {
+                window.location.reload(true);
+            }
             if (showErrorDialog) {
                 setTimeout(() => {
                     throw error;
@@ -90,12 +92,13 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && true) {
+    if (config.local && true   ) {
         let sub = "urn:john";
-        // sub = "urn:qwerty";
+        // sub = "urn:sarah";
         // sub = "urn:james";
         // sub = "urn:betty";
-        // sub = "urn:mike";
+        //  sub = "urn:jane";
+        //sub = "urn:admin";
         // sub = "urn:suspended";
         //Need to mock a login
         return postPutJson("/api/mock", {sub, "email": "john@example.com"}, "PUT")
@@ -278,7 +281,7 @@ export function organisationSchacHomeOrganisationExists(schacHome, existingOrgan
 }
 
 export function organisationNameExists(name, existingOrganisation = null) {
-    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation_id=${encodeURIComponent(existingOrganisation)}`);
+    return fetchJson(`/api/organisations/name_exists?name=${encodeURIComponent(name)}&existing_organisation=${encodeURIComponent(existingOrganisation)}`);
 }
 
 export function organisationShortNameExists(short_name, existingOrganisation = null) {
@@ -326,8 +329,12 @@ export function joinRequestAccept(joinRequest) {
     return postPutJson("/api/join_requests/accept", joinRequest, "put", false);
 }
 
-export function joinRequestDecline(joinRequest) {
-    return postPutJson("/api/join_requests/decline", joinRequest, "put", false);
+export function joinRequestDecline(joinRequest, rejectionReason) {
+    return postPutJson("/api/join_requests/decline", {...joinRequest, rejection_reason: rejectionReason}, "put", false);
+}
+
+export function joinRequestDelete(joinRequest) {
+    return fetchDelete(`/api/join_requests/${joinRequest.id}`);
 }
 
 //OrganisationInvitations
@@ -502,8 +509,8 @@ export function approveRequestCollaboration(body) {
     return postPutJson(`/api/collaboration_requests/approve/${body.id}`, body, "put");
 }
 
-export function denyRequestCollaboration(id) {
-    return postPutJson(`/api/collaboration_requests/deny/${id}`, {}, "put");
+export function denyRequestCollaboration(id, rejectionReason) {
+    return postPutJson(`/api/collaboration_requests/deny/${id}`, {rejection_reason: rejectionReason}, "put");
 }
 
 export function deleteRequestCollaboration(id) {
@@ -561,6 +568,14 @@ export function ipNetworks(address, id) {
 //System
 export function suspendUsers() {
     return postPutJson("/api/system/suspend_users", {}, "PUT");
+}
+
+export function outstandingRequests() {
+    return fetchJson("/api/system/outstanding_requests");
+}
+
+export function cleanupNonOpenRequests() {
+    return postPutJson("/api/system/cleanup_non_open_requests", {}, "PUT");
 }
 
 export function dbStats() {

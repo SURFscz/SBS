@@ -12,6 +12,7 @@ from server.auth.security import confirm_write_access, current_user_id, confirm_
 from server.db.db import db
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, User
 from server.db.models import update, save, delete
+from server.mail import mail_platform_admins
 
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
@@ -200,6 +201,8 @@ def save_service():
     res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
     service.ip_networks
+
+    mail_platform_admins(service)
 
     return res
 

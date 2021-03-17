@@ -19,12 +19,15 @@ export default class JoinRequestDialog extends React.Component {
     }
 
     submit = () => {
-        const {collaboration} = this.props;
+        const {collaboration,} = this.props;
         joinRequestForCollaboration({...this.state, collaborationId: collaboration.id})
             .then(() => this.setState({submitted: true}));
     }
 
-    gotoHome = () => this.props.history.push("/home");
+    gotoHome = () =>  {
+        const { refresh} = this.props;
+        refresh(() => setTimeout(() => this.props.history.push("/home/joinrequests"), 75));
+    }
 
     renderForm = (collaboration, motivation, close) => {
         return (
@@ -59,21 +62,14 @@ export default class JoinRequestDialog extends React.Component {
 
     renderFeedback = collaboration => {
         return (
-
             <div>
                 <section className="explanation informational">
                     <InformationIcon/>
-                    <span
-                        dangerouslySetInnerHTML={{
-                            __html: I18n.t
-                            (
-                                "registration.feedback.info"
-                                , {
-                                    name: collaboration.name
-                                }
-                            )
-                        }
-                        }/>
+                    <span dangerouslySetInnerHTML={{
+                        __html: I18n.t("registration.feedback.info", {
+                            name: collaboration.name
+                        })
+                    }}/>
                 </section>
                 <section className="actions">
                     <Button txt={I18n.t("confirmationDialog.ok")}

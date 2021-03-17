@@ -41,6 +41,12 @@ class TestUser(AbstractTest):
         res = self.client.get("/api/users/me")
         self.assertEquals(True, res.json["successfully_activated"])
 
+    def test_me_user_with_collaboration_requests(self):
+        self.login("urn:peter")
+        res = self.get("/api/users/me")
+        self.assertEqual(2, len(res["collaboration_requests"]))
+        self.assertEqual(1, len(res["join_requests"]))
+
     def test_me_after_delete(self):
         self.login("urn:jane")
         User.query.filter(User.uid == "urn:jane").delete()
@@ -59,6 +65,9 @@ class TestUser(AbstractTest):
     def test_activate_by_collaboration_admin(self):
         collaboration_id = Collaboration.query.filter(Collaboration.name == uva_research_name).one().id
         self.do_test_activate("urn:sarah", {"collaboration_id": collaboration_id})
+
+    def test_activate_by_platform_admin(self):
+        self.do_test_activate("urn:john", {})
 
     def do_test_activate(self, login_urn, object_dict):
         user = User.query.filter(User.name == "suspended").one()
@@ -117,7 +126,6 @@ class TestUser(AbstractTest):
         self.login("urn:john")
         res = self.get("/api/users/other", query_data={"uid": "urn:mary"})
         self.assertEqual("Mary Doe", res["name"])
-        self.assertEqual(0, len(res["aups"]))
         self.assertEqual(0, len(res["collaboration_memberships"]))
         self.assertEqual(1, len(res["organisation_memberships"]))
         self.assertEqual("Research", res["organisation_memberships"][0]["organisation"]["category"])
@@ -174,11 +182,19 @@ class TestUser(AbstractTest):
         james = self.find_entity_by_name(User, james_name)
         self.assertEqual("bogus", james.ssh_key)
 
-    def test_update_user_service_profile_ssh_key_conversion(self):
+    def test_update_user_service_profile_ssh2_key_conversion(self):
+        self.do_test_update_user_profile_ssk_key_conversion("ssh2.pub")
+
+    def test_update_user_service_profile_pem_key_conversion(self):
+        self.do_test_update_user_profile_ssk_key_conversion("pem.pub")
+
+    def test_update_user_service_profile_pkcs8_key_conversion(self):
+        self.do_test_update_user_profile_ssk_key_conversion("pkcs8.pub")
+
+    def do_test_update_user_profile_ssk_key_conversion(self, file_name):
         user = self.find_entity_by_name(User, john_name)
         self.login("urn:john")
-
-        ssh2_pub = self.read_file("ssh2.pub")
+        ssh2_pub = self.read_file(file_name)
         body = {"ssh_key": ssh2_pub,
                 "convertSSHKey": True,
                 "id": user.id}
@@ -264,6 +280,7 @@ class TestUser(AbstractTest):
             del os.environ["TESTING"]
             mail = self.app.mail
             with mail.record_messages() as outbox:
+                self.app.app_config.mail.send_js_exceptions = True
                 self.login("urn:sarah")
                 self.post("/api/users/error", body={"weird": "msg"}, response_status_code=201)
                 self.assertEqual(1, len(outbox))
@@ -272,3 +289,4 @@ class TestUser(AbstractTest):
                 self.assertTrue("An error occurred in local" in mail_msg.html)
         finally:
             os.environ["TESTING"] = "1"
+            self.app.app_config.mail.send_js_exceptions = False

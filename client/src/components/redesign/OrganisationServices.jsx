@@ -30,14 +30,16 @@ class OrganisationServices extends React.Component {
     }
 
     componentDidMount = () => {
-        const {organisation} = this.props;
+        const {organisation, user} = this.props;
         allServices().then(services => {
-            const filteredServices = services
-                .filter(service => {
-                    const allowed = service.allowed_organisations.some(org => org.id === organisation.id);
-                    return allowed && service.automatic_connection_allowed;
-                });
-            this.setState({services: filteredServices, loading: false});
+            services.forEach(service => {
+                const allowed = service.allowed_organisations.some(org => org.id === organisation.id);
+                service.allowedByService = allowed;
+                service.allowed = (allowed && service.automatic_connection_allowed) || service.access_allowed_for_all;
+                service.notAllowed = !service.allowed;
+                service.notAllowedServicesRestricted = !user.admin && organisation.services_restricted;
+            });
+            this.setState({services: services, loading: false});
         });
     }
 
@@ -93,8 +95,24 @@ class OrganisationServices extends React.Component {
         const {organisation, user} = this.props;
         const allowed = isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id, null);
         const inUse = organisation.services.some(s => s.id === service.id);
-        return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={!allowed}
-                             value={inUse} animate={false}/>
+        const value = inUse && service.allowed;
+        let tooltip;
+        if (!service.allowed || service.notAllowedServicesRestricted) {
+            if (service.notAllowedServicesRestricted) {
+                if (value) {
+                    tooltip = I18n.t("organisationServices.serviceRestrictedOrganisationAdded");
+                } else {
+                    tooltip = I18n.t("organisationServices.serviceRestrictedOrganisation");
+                }
+            } else if (service.allowedByService) {
+                tooltip = I18n.t("organisationServices.notAllowedOrganisation")
+            } else {
+                tooltip = I18n.t("organisationServices.notEnabledOrganisation")
+            }
+        }
+        const disabled = !allowed || !service.allowed || service.notAllowedServicesRestricted;
+        return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={disabled}
+                             value={value} animate={false} tooltip={tooltip}/>
     }
 
     render() {
@@ -106,8 +124,6 @@ class OrganisationServices extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-        services.forEach(service => service.inUse = organisation.services.some(s => s.id === service.id));
-        organisation.services.forEach(service => service.inUse = true);
         const columns = [
             {
                 nonSortable: true,
@@ -121,7 +137,7 @@ class OrganisationServices extends React.Component {
                 mapper: this.getServiceLink,
             },
             {
-                key: "inUse",
+                key: "allowed",
                 header: I18n.t("models.services.mandatory"),
                 mapper: this.getServiceAction
             }]
@@ -138,7 +154,7 @@ class OrganisationServices extends React.Component {
                           modelName="servicesUsed"
                           tableClassName="organisationServicesUsed"
                           searchAttributes={["name"]}
-                          defaultSort="name"
+                          defaultSort="notAllowed"
                           columns={columns}
                           loading={loading}
                           title={titleUsed}

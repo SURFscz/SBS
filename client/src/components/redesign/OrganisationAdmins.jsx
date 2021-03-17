@@ -16,7 +16,7 @@ import {setFlash} from "../../utils/Flash";
 import "./OrganisationAdmins.scss";
 import Select from "react-select";
 import {emitter} from "../../utils/Events";
-import {shortDateFromEpoch} from "../../utils/Date";
+import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import {stopEvent} from "../../utils/Utils";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -27,6 +27,9 @@ import SpinnerField from "./SpinnerField";
 import InputField from "../InputField";
 import moment from "moment";
 import ErrorIndicator from "./ErrorIndicator";
+import Tooltip from "./Tooltip";
+import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
+import ReactTooltip from "react-tooltip";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
@@ -177,9 +180,16 @@ class OrganisationAdmins extends React.Component {
         const anySelected = Object.values(selectedMembers).some(v => v.selected);
         return (
             <div className="admin-actions">
+                <span data-tip data-for="delete-members">
                 <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
                         disabled={!anySelected}
                         icon={<FontAwesomeIcon icon="trash"/>}/>
+                <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
+                              place="bottom">
+                    <span
+                        dangerouslySetInnerHTML={{__html: !anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}}/>
+            </ReactTooltip>
+                    </span>
             </div>);
     }
 
@@ -273,7 +283,7 @@ class OrganisationAdmins extends React.Component {
                     <section className="actions">
                         <Button warningButton={true} txt={I18n.t("organisationInvitation.delete")}
                                 onClick={this.delete}/>
-                        <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancelSideScreen}/>
+                        <Button cancelButton={true} txt={I18n.t("forms.close")} onClick={this.cancelSideScreen}/>
                         <Button txt={I18n.t("organisationInvitation.resend")}
                                 onClick={this.resend}/>
                     </section>
@@ -286,7 +296,7 @@ class OrganisationAdmins extends React.Component {
     render() {
         const {user: currentUser, organisation} = this.props;
         const {
-            selectedMembers, allSelected, confirmationDialogOpen, cancelDialogAction,
+            selectedMembers, confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction, confirmationQuestion, loading
         } = this.state;
         if (loading) {
@@ -302,17 +312,23 @@ class OrganisationAdmins extends React.Component {
         invites.forEach(invite => invite.invite = true);
 
         const isAdmin = isUserAllowed(ROLES.ORG_ADMIN, currentUser, organisation.id, null);
+        const nbrOfAdmins = organisation.organisation_memberships.filter(m => m.role === "admin").length;
+        const oneAdminLeft = nbrOfAdmins < 2;
+        const selectedAdmins = Object.values(selectedMembers).filter(entry => entry.selected && entry.ref.role === "admin").length;
+        const noMoreAdminsToCheck = (selectedAdmins + 1) === nbrOfAdmins;
 
         let i = 0;
         const columns = [
             {
                 nonSortable: true,
                 key: "check",
-                header: <CheckBox value={allSelected} name={"allSelected"}
-                                  onChange={this.allSelected}/>,
+                // header: <CheckBox value={allSelected} name={"allSelected"}
+                //                   onChange={this.allSelected}/>,
                 mapper: entity => <div className="check">
+                    {(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
+                        (!noMoreAdminsToCheck || selectedMembers[entity.id].selected))) &&
                     <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
-                              value={(selectedMembers[entity.id] || {}).selected || false}/>
+                              value={(selectedMembers[entity.id] || {}).selected || false}/>}
                 </div>
             },
             {
@@ -320,8 +336,12 @@ class OrganisationAdmins extends React.Component {
                 key: "icon",
                 header: "",
                 mapper: entity => <div className="member-icon">
-                    {entity.invite && <InviteIcon/>}
-                    {!entity.invite && <UserIcon/>}
+                    {entity.invite &&
+                    <Tooltip children={<InviteIcon/>} id={"invite-icon"} msg={I18n.t("tooltips.invitations")}/>}
+                    {(!entity.invite && entity.role === "admin") &&
+                    <Tooltip children={<UserIcon/>} id={"admin-icon"} msg={I18n.t("tooltips.admin")}/>}
+                    {(!entity.invite && entity.role !== "admin") &&
+                    <Tooltip children={<MembersIcon/>} id={"user-icon"} msg={I18n.t("tooltips.manager")}/>}
                 </div>
             },
             {
@@ -345,17 +365,24 @@ class OrganisationAdmins extends React.Component {
                     options={roles}
                     classNamePrefix={`select-member-role`}
                     onChange={this.changeMemberRole(entity)}
-                    isDisabled={!isAdmin}/>
+                    isDisabled={!isAdmin || !(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
+                        (!noMoreAdminsToCheck || selectedMembers[entity.id].selected)))}/>
             },
             {
                 nonSortable: true,
                 key: "status",
                 header: I18n.t("models.orgMembers.status"),
-                mapper: entity => entity.invite ?
-                    <span
-                        className="person-role invite">{I18n.t("models.orgMembers.inviteSend",
-                        {date: shortDateFromEpoch(entity.created_at)})}</span> :
-                    <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
+                mapper: entity => {
+                    const isExpired = entity.invite && isInvitationExpired(entity);
+                    return entity.invite ?
+                        <span
+                            className={`person-role invite ${isExpired ? "expired" : ""}`}>
+                            {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
+                                I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
+                        </span> :
+                        entity.role === "admin" ?
+                            <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span> : null
+                }
             },
             {
                 nonSortable: true,

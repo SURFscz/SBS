@@ -9,8 +9,8 @@ from sqlalchemy.orm import aliased, load_only, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
-from server.auth.security import confirm_collaboration_admin, is_application_admin, \
-    current_user_id, confirm_collaboration_member, confirm_authorized_api_call, \
+from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
+    confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name
@@ -23,11 +23,11 @@ from server.mail import mail_collaboration_invitation
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 
-def _del_non_disclosure_info(collaboration, json_collaboration):
+def _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=False):
     for cm in json_collaboration["collaboration_memberships"]:
-        if not collaboration.disclose_email_information:
+        if not collaboration.disclose_email_information and not cm["role"] == "admin" and allow_admins:
             del cm["user"]["email"]
-        if not collaboration.disclose_member_information:
+        if not collaboration.disclose_member_information and not cm["role"] == "admin" and allow_admins:
             del cm["user"]
 
 
@@ -194,9 +194,9 @@ def collaboration_lite_by_id(collaboration_id):
 
     if not collaboration.disclose_member_information or not collaboration.disclose_email_information:
         json_collaboration = jsonify(collaboration).json
-        _del_non_disclosure_info(collaboration, json_collaboration)
+        _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=True)
         for gr in json_collaboration["groups"]:
-            _del_non_disclosure_info(collaboration, gr)
+            _del_non_disclosure_info(collaboration, gr, allow_admins=False)
         return json_collaboration, 200
 
     return collaboration, 200
@@ -229,6 +229,8 @@ def collaboration_by_id(collaboration_id):
         .options(selectinload(Collaboration.services)) \
         .options(selectinload(Collaboration.service_connection_requests)
                  .selectinload(ServiceConnectionRequest.service)) \
+        .options(selectinload(Collaboration.service_connection_requests)
+                 .selectinload(ServiceConnectionRequest.requester)) \
         .filter(Collaboration.id == collaboration_id).one()
 
     return collaboration, 200
@@ -341,11 +343,10 @@ def save_restricted_collaboration():
 
     data = current_request.get_json()
     administrator = data["administrator"]
-    admins = User.query.filter(User.username == administrator).all()
-    if len(admins) == 0:
+    admin = User.query.filter(User.username == administrator).first()
+    if not admin:
         raise BadRequest(f"Administrator {administrator} is not a valid user")
 
-    admin = admins[0]
     restricted_co_config = current_app.app_config.restricted_co
 
     organisation = None
@@ -370,15 +371,14 @@ def save_restricted_collaboration():
                          f"{restricted_co_config.default_organisation} does not exists")
 
     data["organisation_id"] = organisation.id
-    data["services_restricted"] = True
 
     # do_save_collaboration sanitizes the JSON so we need to define upfront
     connected_services = data.get("connected_services")
 
     res = do_save_collaboration(data, organisation, admin, current_user_admin=True)
+    collaboration = res[0]
 
     if connected_services:
-        collaboration = res[0]
         applied_connected_services = []
         services = Service.query.filter(Service.entity_id.in_(connected_services)).all()
         for service in services:
@@ -425,6 +425,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
 
 
 def _validate_collaboration(data, organisation, new_collaboration=True):
+    cleanse_short_name(data)
     if _do_name_exists(data["name"], organisation.id,
                        existing_collaboration="" if new_collaboration else data["name"]):
         raise BadRequest(f"Collaboration with name '{data['name']}' already exists within "
@@ -433,7 +434,6 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
                              existing_collaboration="" if new_collaboration else data["short_name"]):
         raise BadRequest(f"Collaboration with short_name '{data['short_name']}' already exists within "
                          f"organisation '{organisation.name}'.")
-    cleanse_short_name(data)
     _assign_global_urn(data["organisation_id"], data)
 
 
@@ -460,9 +460,6 @@ def update_collaboration():
         for group in collaboration.groups:
             group.global_urn = f"{organisation.short_name}:{data['short_name']}:{group.short_name}"
             db.session.merge(group)
-
-    if not is_application_admin() and "services_restricted" in data:
-        del data["services_restricted"]
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
     return update(Collaboration, custom_json=data, allow_child_cascades=False)

@@ -8,19 +8,27 @@ import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
 import {isEmpty} from "../../utils/Utils";
 import ReactCrop from "react-image-crop";
 import ErrorIndicator from "./ErrorIndicator";
+import CheckBox from "../CheckBox";
+import {sanitizeHtml} from "../../utils/Markdown";
 
 export default class CroppedImageDialog extends React.PureComponent {
 
     constructor(props, context) {
         super(props, context);
-        this.state = {
+        this.state = this.initialState(props)
+    }
+
+    initialState = (props = {}) => ({
             error: "",
-            source: null,
+            source: props.value,
+            copy: props.value,
+            isSvg: false,
+            initialSvg: false,
             result: null,
             busy: false,
             crop: {},
-        }
-    }
+            addWhiteSpace: false
+        });
 
     internalOnChange = e => {
         const files = e.target.files;
@@ -31,9 +39,22 @@ export default class CroppedImageDialog extends React.PureComponent {
             } else {
                 const reader = new FileReader();
                 reader.onload = evt => {
-                    const base64 = btoa(evt.target.result);
+                    let data = evt.target.result;
+                    const isSvg = data.indexOf("<svg") > -1;
+                    if (isSvg) {
+                        data = sanitizeHtml(data);
+                    }
+                    const base64 = btoa(data);
                     this.imageRef = null;
-                    this.setState({source: base64, result: null});
+                    this.setState({
+                        source: base64,
+                        copy: base64,
+                        isSvg: isSvg,
+                        initialSvg: isSvg,
+                        result: null,
+                        error: "",
+                        addWhiteSpace: false
+                    });
                 }
                 reader.readAsBinaryString(files[0]);
             }
@@ -62,6 +83,7 @@ export default class CroppedImageDialog extends React.PureComponent {
 
     onSaveInternal = () => {
         this.props.onSave(this.state.result);
+        this.setState(this.initialState());
     }
 
     onCropComplete = crop => {
@@ -74,6 +96,8 @@ export default class CroppedImageDialog extends React.PureComponent {
             canvas.width = crop.width;
             canvas.height = crop.height;
             const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "rgba(255, 255, 255, .99)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.drawImage(
                 image,
@@ -105,18 +129,73 @@ export default class CroppedImageDialog extends React.PureComponent {
         }
     };
 
+    onWhiteSpace = e => {
+        const {source, isSvg, copy, initialSvg} = this.state;
+        const {value} = this.props;
+        const src = source || value;
+        const val = e.target.checked;
+
+        if (!val) {
+            this.setState({addWhiteSpace: val, source: copy || value, isSvg: initialSvg});
+        } else {
+            this.setState({busy: true});
+            const image = new Image();
+            const type = isSvg ? "svg+xml" : "jpeg";
+            image.src = `data:image/${type};base64,${src}`;
+            image.onload = () => {
+                const canvas = document.createElement("canvas");
+                canvas.width = 480;
+                canvas.height = 348;
+                const ctx = canvas.getContext("2d");
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const wrh = image.width / image.height;
+                let newWidth = canvas.width;
+                let newHeight = newWidth / wrh;
+                if (newHeight > canvas.height) {
+                    newHeight = canvas.height;
+                    newWidth = newHeight * wrh;
+                }
+                const xOffset = newWidth < canvas.width ? ((canvas.width - newWidth) / 2) : 0;
+                const yOffset = newHeight < canvas.height ? ((canvas.height - newHeight) / 2) : 0;
+
+                ctx.drawImage(image, xOffset, yOffset, newWidth, newHeight);
+
+                canvas.toBlob(blob => {
+                    if (!blob) {
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = () => {
+                        const base64data = reader.result;
+                        this.setState({
+                            source: base64data.substring(base64data.indexOf(",") + 1),
+                            busy: false,
+                            copy: src,
+                            isSvg: false,
+                            addWhiteSpace: val
+                        });
+                    }
+                }, "image/jpeg", 1);
+            };
+        }
+    }
+
     onCropChange = (crop, percentCrop) => this.setState({crop: percentCrop});
 
-    renderImages = (error, value, source, crop, onCancel, onSave, name) => {
-        const src = `data:image/jpeg;base64,${source || value}`;
+    renderImages = (error, src, isSvg, crop, onCancel, onSave, name) => {
+        const type = isSvg ? "svg+xml" : "jpeg";
+        const img = `data:image/${type};base64,${src}`;
         return (
             <div className="cropped-image-dialog-container">
-                {(!value && !source) && <div className="no-image">
+                {(!src) && <div className="no-image">
                     {<NotFoundIcon/>}
                 </div>}
-                {(source || value) && <div className="preview">
+                {src && <div className="preview">
                     <ReactCrop
-                        src={src}
+                        src={img}
                         crop={crop}
                         ruleOfThirds
                         onImageLoaded={this.onImageLoaded}
@@ -130,11 +209,18 @@ export default class CroppedImageDialog extends React.PureComponent {
                 {<input type="file"
                         id={`fileUpload_${name}`}
                         name={`fileUpload_${name}`}
-                        accept="image/png, image/jpeg, image/jpg"
+                        accept="image/png, image/jpeg, image/jpg, image/svg+xml"
                         style={{display: "none"}}
                         onChange={this.internalOnChange}/>}
-                {(!value && !source) && <span className="disclaimer">{I18n.t("forms.image")}</span>}
-                {(value || source) && <span className="disclaimer">{I18n.t("forms.dragImage")}</span>}
+                {!src && <span className="disclaimer">{I18n.t("forms.image")}</span>}
+                {src && <span className="disclaimer">{I18n.t("forms.dragImage")}</span>}
+                {src && <div className="add-white-space">
+                    <CheckBox name={"add-white-space"}
+                              value={this.state.addWhiteSpace}
+                              onChange={this.onWhiteSpace}
+                              info={I18n.t("forms.whiteSpace")}/>
+                </div>
+                }
                 {!isEmpty(error) && <ErrorIndicator msg={error}/>}
             </div>
         );
@@ -143,27 +229,26 @@ export default class CroppedImageDialog extends React.PureComponent {
 
     onCancelInternal = () => {
         this.props.onCancel();
-        setTimeout(() => this.setState({source: null}), 75);
+        setTimeout(() => this.setState(this.initialState()), 175);
     }
 
     render() {
         const {onSave, onCancel, isOpen, name, value, title} = this.props;
-        const {error, crop, source, busy} = this.state;
-
+        const {error, crop, source, isSvg, busy} = this.state;
+        const src = source || value;
         return (
             <Modal
                 isOpen={isOpen}
                 onRequestClose={this.onCancelInternal}
-                contentLabel={I18n.t("imageDialog.label")}
                 className="cropped-image-dialog-content"
                 overlayClassName="cropped-image-dialog-overlay"
-                closeTimeoutMS={250}
+                closeTimeoutMS={0}
                 ariaHideApp={false}>
                 <h2>{title}</h2>
-                {this.renderImages(error, value, source, crop, onCancel, onSave, name)}
+                {this.renderImages(error, src, isSvg, crop, onCancel, onSave, name)}
                 <section className="actions">
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.onCancelInternal}/>
-                    <Button txt={I18n.t("forms.apply")} disabled={busy || (!source && !value)}
+                    <Button txt={I18n.t("forms.apply")} disabled={busy || !src}
                             onClick={this.onSaveInternal}/>
                 </section>
             </Modal>

@@ -28,6 +28,10 @@ external_api_listing = ["api/collaborations/v1", "api/collaborations/v1/restrict
                         "api/collaborations_services/v1/connect_collaboration_service",
                         "/api/invitations/v1/collaboration_invites"]
 
+STATUS_OPEN = "open"
+STATUS_DENIED = "denied"
+STATUS_APPROVED = "approved"
+
 
 def auth_filter(app_config):
     url = current_request.base_url
@@ -110,6 +114,15 @@ def _service_status(body):
             current_app.mqtt.publish(topic, msg)
 
 
+def send_error_mail(tb, session_exists=True):
+    mail_conf = current_app.app_config.mail
+    if mail_conf.send_exceptions and not os.environ.get("TESTING"):
+        user = current_user() if session_exists else {}
+        user_id = user.get("email", user.get("name")) if "email" in user or "name" in user \
+            else request_context.api_user.name if request_context.is_authorized_api_call else "unknown"
+        mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, tb)
+
+
 def json_endpoint(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -135,16 +148,8 @@ def json_endpoint(f):
             elif isinstance(e, ValidationError):
                 response.status_code = 400
             _add_custom_header(response)
-            if response.status_code == 401:
-                response.headers.set("WWW-Authenticate", "Basic realm=\"Please login\"")
             db.session.rollback()
-            mail_conf = current_app.app_config.mail
-            if mail_conf.send_exceptions and not os.environ.get("TESTING"):
-                tb = traceback.format_exc()
-                user = current_user()
-                user_id = user.get("email", user.get("name")) if "email" in user or "name" in user \
-                    else request_context.api_user.name if request_context.is_authorized_api_call else "unknown"
-                mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, tb)
+            send_error_mail(tb=traceback.format_exc())
             return response
 
     return wrapper

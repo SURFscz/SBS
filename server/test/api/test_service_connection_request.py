@@ -2,7 +2,7 @@
 from server.db.domain import Collaboration, Service, ServiceConnectionRequest
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ssh_service_connection_request_hash, sarah_name, uva_research_name, service_wiki_name, \
-    ai_computing_name, service_ssh_uva_name, service_storage_name
+    ai_computing_name, service_ssh_uva_name, service_storage_name, service_cloud_name
 
 
 class TestServiceConnectionRequest(AbstractTest):
@@ -39,6 +39,27 @@ class TestServiceConnectionRequest(AbstractTest):
 
             mail_msg = outbox[0]
             self.assertEqual("Request for new service Wiki connection to collaboration AI computing", mail_msg.subject)
+
+    def test_service_connection_request_by_member(self):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        service = self.find_entity_by_name(Service, service_cloud_name)
+
+        self.login("urn:jane")
+        data = {
+            "collaboration_id": collaboration.id,
+            "service_id": service.id,
+            "message": "Pretty please"
+        }
+        with self.app.mail.record_messages() as outbox:
+            pre_count = ServiceConnectionRequest.query.count()
+            self.post("/api/service_connection_requests", body=data, with_basic_auth=False)
+            post_count = ServiceConnectionRequest.query.count()
+            self.assertEqual(pre_count + 1, post_count)
+
+            mail_msg = outbox[0]
+            self.assertTrue("You receive this email, because you are an admin of this collaboration" in mail_msg.html)
+            req = ServiceConnectionRequest.query.filter(ServiceConnectionRequest.service_id == service.id).first()
+            self.assertEqual(True, req.is_member_request)
 
     def test_existing_service_connection_request(self):
         collaboration = self.find_entity_by_name(Collaboration, uva_research_name)

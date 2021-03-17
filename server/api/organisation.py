@@ -10,7 +10,7 @@ from sqlalchemy.orm import selectinload
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_organisation_admin, confirm_read_access
+    confirm_organisation_admin
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
@@ -18,7 +18,7 @@ from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
     CollaborationRequest, SchacHomeOrganisation
 from server.db.models import update, save, delete
-from server.mail import mail_organisation_invitation
+from server.mail import mail_organisation_invitation, mail_platform_admins
 
 organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/organisations")
 
@@ -74,7 +74,7 @@ def organisation_all():
 @organisation_api.route("/search", strict_slashes=False)
 @json_endpoint
 def organisation_search():
-    confirm_read_access(override_func=lambda: True)
+    confirm_write_access()
 
     res = []
     q = query_param("q")
@@ -156,21 +156,29 @@ def organisation_by_schac_home():
     schac_home_organisation = user.schac_home_organisation
     if not schac_home_organisation:
         return None, 200
+    # Because of subdomains we need the schac_home of which the users schac_home is a strict subdomain
+    schac_homes = SchacHomeOrganisation.query.all()
+    hits = list(filter(
+        lambda schac_home: schac_home_organisation == schac_home.name or schac_home_organisation.endswith(
+            f".{schac_home.name}"), schac_homes))
+    if not hits:
+        return None, 200
 
-    org = Organisation.query \
-        .join(Organisation.schac_home_organisations) \
-        .filter(SchacHomeOrganisation.name == schac_home_organisation) \
-        .first()
+    org = Organisation.query.get(hits[0].organisation_id)
 
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
     auto_aff = bool(user.entitlement) and entitlement in user.entitlement
 
-    return None if org is None else {"id": org.id,
-                                     "name": org.name,
-                                     "collaboration_creation_allowed": org.collaboration_creation_allowed,
-                                     "collaboration_creation_allowed_entitlement": auto_aff,
-                                     "on_boarding_msg": org.on_boarding_msg,
-                                     "short_name": org.short_name}, 200
+    return {"id": org.id,
+            "name": org.name,
+            "logo": org.logo,
+            "collaboration_creation_allowed": org.collaboration_creation_allowed,
+            "collaboration_creation_allowed_entitlement": auto_aff,
+            "required_entitlement": entitlement,
+            "user_entitlement": user.entitlement,
+            "has_members": len(org.organisation_memberships) > 0,
+            "on_boarding_msg": org.on_boarding_msg,
+            "short_name": org.short_name}, 200
 
 
 @organisation_api.route("/identity_provider_display_name", strict_slashes=False)
@@ -259,8 +267,8 @@ def save_organisation():
 
     res = save(Organisation, custom_json=data)
     user = User.query.get(current_user_id())
+    organisation = res[0]
     for administrator in administrators:
-        organisation = res[0]
         invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
                                             organisation_id=organisation.id, user_id=user.id,
                                             intended_role=intended_role,
@@ -272,6 +280,9 @@ def save_organisation():
             "invitation": invitation,
             "base_url": current_app.app_config.base_url
         }, organisation, [administrator])
+
+    mail_platform_admins(organisation)
+
     return res
 
 
@@ -308,6 +319,9 @@ def update_organisation():
             for group in collaboration.groups:
                 group.global_urn = f"{data['short_name']}:{collaboration.short_name}:{group.short_name}"
                 db.session.merge(group)
+
+    if not is_application_admin() and organisation.services_restricted:
+        data["services_restricted"] = True
 
     # Corner case: user removed name and added the exact same name again, prevent duplicate entry
     existing_names = [sho.name for sho in organisation.schac_home_organisations]

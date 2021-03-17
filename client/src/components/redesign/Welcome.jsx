@@ -7,10 +7,11 @@ import {ReactComponent as InformationIcon} from "../../icons/informational.svg";
 import {ReactComponent as CriticalIcon} from "../../icons/critical.svg";
 import SpinnerField from "./SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
-import DOMPurify from "dompurify";
 import * as Showdown from "showdown";
 import Button from "../Button";
 import {AppStore} from "../../stores/AppStore";
+import {sanitizeHtml} from "../../utils/Markdown";
+import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
 
 const converter = new Showdown.Converter({
     tables: true,
@@ -18,13 +19,6 @@ const converter = new Showdown.Converter({
     strikethrough: true,
     tasklists: true
 });
-
-const sanitizeHtml = html => {
-    if (isEmpty(html)) {
-        return "";
-    }
-    return DOMPurify.sanitize(html);
-};
 
 class Welcome extends React.Component {
 
@@ -38,6 +32,12 @@ class Welcome extends React.Component {
     }
 
     componentDidMount() {
+        const {user} = this.props;
+        const role = rawGlobalUserRole(user);
+        if (role !== ROLES.USER || !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests)) {
+            this.props.history.push("/home");
+            return;
+        }
         Promise.all([organisationByUserSchacHomeOrganisation(), identityProviderDisplayName()])
             .then(res => {
                 this.setState({
@@ -57,6 +57,7 @@ class Welcome extends React.Component {
         const hasOnBoardingMsg = !isEmpty(organisation.on_boarding_msg);
         const stepTwo = hasOnBoardingMsg ? 2 : 1;
         const canCreate = organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed;
+        const hasOrgMembers = organisation.has_members;
         return (
             <div>
                 {hasOnBoardingMsg && <div>
@@ -75,14 +76,17 @@ class Welcome extends React.Component {
                         </div>
                     </div>
                 </div>}
-                <h3 className={`step ${hasOnBoardingMsg ? "" : "orphan"}`}><span>{stepTwo}.</span>
-                    {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest"}`)}
-                </h3>
-                <p>
-                    {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest"}`)}
-                </p>
-                <Button onClick={() => this.props.history.push("/new-collaboration")}
-                        txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
+                {hasOrgMembers && <div>
+                    <h3 className={`step ${hasOnBoardingMsg ? "" : "orphan"}`}><span>{stepTwo}.</span>
+                        {I18n.t(`welcome.${canCreate ? "createColl" : "createCollRequest"}`)}
+                    </h3>
+                    <p>
+                        {I18n.t(`welcome.${canCreate ? "startCreateColl" : "startCreateCollRequest"}`)}
+                    </p>
+                    <Button onClick={() => this.props.history.push("/new-collaboration")}
+                            txt={I18n.t(`welcome.${canCreate ? "createCollTxt" : "createCollRequestTxt"}`)}/>
+
+                </div>}
             </div>
         );
     }
@@ -112,7 +116,7 @@ class Welcome extends React.Component {
             return <SpinnerField/>;
         }
 
-        const orphanUser = isEmpty(organisation);
+        const orphanUser = isEmpty(organisation) || !organisation.has_members;
         return (
             <div className="mod-welcome-container">
                 <div className="mod-welcome">

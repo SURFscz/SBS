@@ -23,7 +23,7 @@ from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
-from server.db.domain import User, OrganisationMembership, CollaborationMembership
+from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest
 from server.db.models import update, delete
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error
@@ -45,17 +45,20 @@ def _store_user_in_session(user):
 
 def _user_query():
     return User.query \
-        .options(selectinload(User.aups)) \
-        .options(selectinload(User.organisation_memberships)
-                 .selectinload(OrganisationMembership.organisation)) \
-        .options(selectinload(User.collaboration_memberships)
-                 .selectinload(CollaborationMembership.collaboration))
+        .options(joinedload(User.organisation_memberships)
+                 .subqueryload(OrganisationMembership.organisation)) \
+        .options(joinedload(User.collaboration_memberships)
+                 .subqueryload(CollaborationMembership.collaboration)) \
+        .options(joinedload(User.join_requests)
+                 .subqueryload(JoinRequest.collaboration)) \
+        .options(joinedload(User.collaboration_requests)
+                 .subqueryload(CollaborationRequest.organisation))
 
 
 def _user_json_response(user):
     is_admin = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
-    return {**json_user, **is_admin}, 200
+    return {**json_user, **is_admin, }, 200
 
 
 def _get_authorization_url(state=None):
@@ -213,10 +216,13 @@ def resume_session():
         logger.error(error_msg)
         return redirect(f"{current_app.app_config.base_url}/error")
 
+    logger = ctx_logger("user")
     user_info_json = response.json()
+
+    logger.debug(f"Userinfo endpoint results {user_info_json}")
+
     uid = user_info_json["sub"]
     user = User.query.filter(User.uid == uid).first()
-    logger = ctx_logger("user")
     if not user:
         user = User(uid=uid, created_by="system", updated_by="system")
         add_user_claims(user_info_json, uid, user)
@@ -243,16 +249,10 @@ def resume_session():
 def me():
     if "user" in session and not session["user"]["guest"]:
         user_from_session = session["user"]
-        user_from_db = User.query \
-            .options(joinedload(User.organisation_memberships)
-                     .subqueryload(OrganisationMembership.organisation)) \
-            .options(joinedload(User.collaboration_memberships)
-                     .subqueryload(CollaborationMembership.collaboration)) \
-            .options(joinedload(User.aups)) \
+        user_from_db = _user_query() \
             .filter(User.id == user_from_session["id"]) \
             .first()
 
-        # user_from_db = User.query.get(user_from_session["id"])
         if user_from_db is None:
             return {"uid": "anonymous", "guest": True, "admin": False}, 200
         if user_from_db.suspended:
@@ -334,11 +334,18 @@ def update_user():
     if "ssh_key" in user_json:
         if "convertSSHKey" in user_json and user_json["convertSSHKey"]:
             ssh_key = user_json["ssh_key"]
-            if ssh_key and ssh_key.startswith("---- BEGIN SSH2 PUBLIC KEY ----"):
+            if ssh_key and (ssh_key.startswith("---- BEGIN SSH2 PUBLIC KEY ----")
+                            or ssh_key.startswith("-----BEGIN PUBLIC KEY-----")  # noQA:W503
+                            or ssh_key.startswith("-----BEGIN RSA PUBLIC KEY-----")):  # noQA:W503
                 with tempfile.NamedTemporaryFile() as f:
                     f.write(ssh_key.encode())
                     f.flush()
-                    res = subprocess.run(["ssh-keygen", "-i", "-f", f.name], stdout=subprocess.PIPE)
+                    options = ["ssh-keygen", "-i", "-f", f.name]
+                    if ssh_key.startswith("-----BEGIN PUBLIC KEY-----"):
+                        options.append("-mPKCS8")
+                    if ssh_key.startswith("-----BEGIN RSA PUBLIC KEY-----"):
+                        options.append("-mPEM")
+                    res = subprocess.run(options, stdout=subprocess.PIPE)
                     if res.returncode == 0:
                         custom_json["ssh_key"] = res.stdout.decode()
 

@@ -164,7 +164,6 @@ class Collaboration(Base, db.Model):
     service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="collaboration",
                                                   cascade="all, delete-orphan", passive_deletes=True)
     disable_join_requests = db.Column("disable_join_requests", db.Boolean(), nullable=True, default=False)
-    services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
     disclose_member_information = db.Column("disclose_member_information", db.Boolean(), nullable=True, default=False)
     disclose_email_information = db.Column("disclose_email_information", db.Boolean(), nullable=True, default=False)
     website_url = db.Column("website_url", db.String(length=512), nullable=True)
@@ -211,6 +210,7 @@ class Organisation(Base, db.Model):
     on_boarding_msg = db.Column("on_boarding_msg", db.Text(), nullable=True)
     schac_home_organisations = db.relationship("SchacHomeOrganisation", cascade="all, delete-orphan",
                                                passive_deletes=True, lazy="selectin")
+    services_restricted = db.Column("services_restricted", db.Boolean(), nullable=True, default=False)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
@@ -256,6 +256,7 @@ class Service(Base, db.Model):
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
     public_visible = db.Column("public_visible", db.Boolean(), nullable=True, default=True)
     automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
+    access_allowed_for_all = db.Column("access_allowed_for_all", db.Boolean(), nullable=True, default=False)
     white_listed = db.Column("white_listed", db.Boolean(), nullable=True, default=False)
     research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
                                                nullable=True,
@@ -301,6 +302,8 @@ class JoinRequest(Base, db.Model):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     message = db.Column("message", db.Text(), nullable=True)
     reference = db.Column("reference", db.Text(), nullable=True)
+    rejection_reason = db.Column("rejection_reason", db.Text(), nullable=True)
+    status = db.Column("status", db.String(length=255), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="join_requests")
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
@@ -374,6 +377,7 @@ class CollaborationRequest(Base, db.Model):
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     message = db.Column("message", db.Text(), nullable=True)
+    rejection_reason = db.Column("rejection_reason", db.Text(), nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=False)
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
@@ -393,6 +397,7 @@ class ServiceConnectionRequest(Base, db.Model):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     message = db.Column("message", db.Text(), nullable=True)
     hash = db.Column("hash", db.String(length=512), nullable=False)
+    is_member_request = db.Column("is_member_request", db.Boolean(), nullable=True, default=False)
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     requester = db.relationship("User")
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))

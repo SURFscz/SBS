@@ -1,0 +1,39 @@
+{% extends "mail_layout.html" %}
+{% block title %}SURF Platform notification {% endblock %}
+{% block content %}
+
+    <p>Hi,</p>
+    <p>User {{ current_user.name }} has created a(n) {{ object_type }} on environment <strong>{{ environment }}</strong>
+        at {{ date }}:</p>
+
+    <div style="padding: 20px;line-height: 24px;background-color: #f5f5f5;">
+        <table style="width: 65%;">
+            <thead>
+            <tr>
+                <th style="font-weight: bold; text-align: left;">Logo</th>
+                <th style="font-weight: bold; text-align: left;">Name</th>
+                <th style="font-weight: bold; text-align: left;">Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="padding: 8px 0 4px 0; text-align: left;">
+                    <img alt="" style="border-radius: 4px;width: 120px;height: auto;margin-right: 5px;"
+                         src="data:image/jpeg;base64,{{ obj.logo }}"/>
+                </td>
+                <td style="padding: 8px 0 4px 0; text-align: left; vertical-align: top;">
+                    {{ obj.name }}
+                </td>
+                <td style="padding: 8px 0 4px 0; text-align: left; vertical-align: top;">
+                    {{ obj.description }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p/>
+
+    <p>This mail is automatically send and can be suppressed by changing the <i>platform_admin_notifications</i> section
+        of the configuration for environment {{ environment }}</p>
+
+{% endblock %}

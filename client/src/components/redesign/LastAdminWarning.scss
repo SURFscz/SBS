@@ -1,0 +1,15 @@
+@import "../../stylesheets/vars";
+
+span.last-admin-error-indication {
+    color: $error-red;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+
+    svg {
+        margin-bottom: 15px;
+        width: 40px;
+        height: auto;
+    }
+}

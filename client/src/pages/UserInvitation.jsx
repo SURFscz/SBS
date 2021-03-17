@@ -15,6 +15,7 @@ import moment from "moment";
 import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import {isEmpty} from "../utils/Utils";
 
 class UserInvitation extends React.Component {
 
@@ -34,7 +35,8 @@ class UserInvitation extends React.Component {
             confirmationDialogQuestion: "",
             confirmationDialogAction: () => true,
             cancelDialogAction: this.closeConfirmationDialog,
-            loading: false
+            loading: false,
+            skippedLoginStep: false
         };
     }
 
@@ -46,7 +48,17 @@ class UserInvitation extends React.Component {
             const promise = isOrganisationInvite ? organisationInvitationByHash(params.hash) : invitationByHash(params.hash);
             promise.then(json => {
                 const isExpired = today.isAfter(moment(json.expiry_date * 1000));
-                this.setState({invite: json, isExpired: isExpired, loading: true});
+                const {user} = this.props;
+                let skippedLoginStep = false;
+                if (user.guest) {
+                    //We need to store that we skip step 1
+                    window.localStorage.setItem("step1", "true");
+                } else {
+                    const step1 = window.localStorage.getItem("step1");
+                    skippedLoginStep = isEmpty(step1);
+                    window.localStorage.removeItem("step1");
+                }
+                this.setState({invite: json, isExpired: isExpired, loading: true, skippedLoginStep: skippedLoginStep});
             }).catch(() => {
                 this.setState({errorOccurred: true});
                 setFlash(I18n.t("organisationInvitation.flash.notFound"), "error");
@@ -108,18 +120,27 @@ class UserInvitation extends React.Component {
         });
     };
 
-    renderAcceptInvitationStep = () => {
+    renderAcceptInvitationStep = (isOrganisationInvite, invite, skippedLoginStep) => {
+        const hasAup = !isOrganisationInvite && invite.collaboration.accepted_user_policy;
+        const circleClassName = skippedLoginStep ? "circle two-quarters" : "circle two-third"
+        const stepNow = skippedLoginStep ? "1" : "2";
+        const stepTotal = skippedLoginStep ? "2" : "3";
         return (
             <section className="step-container">
                 <div className="step">
-                    <div className="circle two-third">
-                        <span>{I18n.t("models.invitation.steps.progress", {now: "2", total: "3"})}</span>
+                    <div className={circleClassName}>
+                        <span>{I18n.t("models.invitation.steps.progress", {now: stepNow, total: stepTotal})}</span>
                     </div>
                     <div className="step-actions">
                         <h1>{I18n.t("models.invitation.steps.invite")}</h1>
                         <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.collaborate")})}</span>
                     </div>
                 </div>
+                {!isOrganisationInvite && <div className="disclaimer">
+                    <p>{I18n.t("models.invitation.disclaimer")}</p>
+                    {hasAup && <p dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.disclaimerAup", {aup: invite.collaboration.accepted_user_policy})}}/>}
+                    <p>{I18n.t("models.invitation.disclaimerQuestions")}</p>
+                </div>}
                 <Button onClick={this.accept}
                         txt={<span>{I18n.t("models.invitation.acceptInvitation")}</span>}/>
                 <Button onClick={this.decline} cancelButton={true}
@@ -140,7 +161,7 @@ class UserInvitation extends React.Component {
                         <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.invite")})}</span>
                     </div>
                 </div>
-                <Button onClick={login} txt={<span>{I18n.t("models.invitation.login")}<sup> *</sup></span>}/>
+                <Button onClick={login} html={I18n.t("models.invitation.loginWithSub")} txt="login"/>
                 <p className="tip"><sup>*</sup>{I18n.t("models.invitation.loginTip")}</p>
             </section>
         )
@@ -149,7 +170,7 @@ class UserInvitation extends React.Component {
     render() {
         const {user, isOrganisationInvite} = this.props;
         const { invite, isExpired, errorOccurred, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogQuestion, confirmationDialogAction } = this.state;
+            confirmationDialogQuestion, confirmationDialogAction, skippedLoginStep } = this.state;
         const expiredMessage = I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")});
         return (
             <div className="mod-user-invitation">
@@ -168,12 +189,13 @@ class UserInvitation extends React.Component {
                             <span dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.invited", {
                                 type: isOrganisationInvite ? I18n.t("welcomeDialog.organisation") : I18n.t("welcomeDialog.collaboration"),
                                 collaboration: isOrganisationInvite ? invite.organisation.name : invite.collaboration.name,
-                                inviter: invite.user.name
+                                inviter: invite.user.name,
+                                email: invite.user.email
                             })}}/>
                         </section>
                         <p className="info">{I18n.t("models.invitation.followingSteps")}</p>
                         {user.guest && this.renderLoginStep()}
-                        {!user.guest && this.renderAcceptInvitationStep()}
+                        {!user.guest && this.renderAcceptInvitationStep(isOrganisationInvite, invite, skippedLoginStep)}
                     </div>}
 
                 </div>}

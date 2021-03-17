@@ -217,6 +217,7 @@ class App extends React.Component {
                         <Route path="/registration"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}
+                                                                refreshUser={this.refreshUserMemberships}
                                                                 collaborationIdentifier={getParameterByName("collaboration", window.location.search)}
                                                                 Component={CollaborationDetail} {...props}/>}/>
                         <Route path="/home/:tab?"
@@ -355,7 +356,7 @@ class App extends React.Component {
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 
-                        <Route render={props => <NotFound currentUser={currentUser} {...props}/>}/>
+                        <Route render={props => <NotFound config={config} currentUser={currentUser} {...props}/>}/>
                     </Switch>}
                     <Footer/>
                 </div>

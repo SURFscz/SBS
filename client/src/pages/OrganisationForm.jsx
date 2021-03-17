@@ -29,6 +29,7 @@ import "react-mde/lib/styles/css/react-mde-all.css";
 import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import CreatableField from "../components/CreatableField";
+import EmailField from "../components/EmailField";
 
 
 class OrganisationForm extends React.Component {
@@ -45,6 +46,7 @@ class OrganisationForm extends React.Component {
             schac_home_organisation: "",
             collaboration_creation_allowed: false,
             logo: "",
+            services_restricted: false,
             on_boarding_msg: "",
             categoryOptions: categoryOptions,
             category: category,
@@ -102,15 +104,15 @@ class OrganisationForm extends React.Component {
         }
     }
 
-    existingOrganisationName = attr => this.state.isNew ? null : this.state.organisation[attr];
+    existingOrganisationAttribute = attr => this.state.isNew ? null : this.state.organisation[attr];
 
     validateOrganisationName = e =>
-        organisationNameExists(e.target.value, this.existingOrganisationName("name")).then(json => {
+        organisationNameExists(e.target.value, this.existingOrganisationAttribute("name")).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
     validateOrganisationShortName = e =>
-        organisationShortNameExists(e.target.value, this.existingOrganisationName("short_name")).then(json => {
+        organisationShortNameExists(sanitizeShortName(e.target.value), this.existingOrganisationAttribute("short_name")).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
 
@@ -195,16 +197,17 @@ class OrganisationForm extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists} = this.state;
+        const {required, alreadyExists, administrators, isNew} = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) || required.some(attr => isEmpty(this.state[attr]));
-        return !inValid;
+        // const inValidOnBoarding = isNew && I18n.t("organisation.onBoarding.template") !== on_boarding_msg;
+        return !inValid && (!isNew || !isEmpty(administrators));//&& !inValidOnBoarding;
     };
 
     doSubmit = () => {
         if (this.isValid()) {
             const {
                 name, short_name, administrators, message, schac_home_organisations, description, logo,
-                on_boarding_msg, category
+                on_boarding_msg, category, services_restricted
             } = this.state;
             this.setState({loading: true});
             createOrganisation({
@@ -215,12 +218,15 @@ class OrganisationForm extends React.Component {
                 administrators,
                 message,
                 description,
+                services_restricted,
                 logo,
                 on_boarding_msg
             }).then(res => {
                 this.props.history.goBack();
                 setFlash(I18n.t("organisation.flash.created", {name: res.name}))
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 
@@ -238,7 +244,7 @@ class OrganisationForm extends React.Component {
         if (this.isValid()) {
             const {
                 name, description, organisation, schac_home_organisations, collaboration_creation_allowed,
-                short_name, identifier, logo, on_boarding_msg, category
+                short_name, identifier, logo, on_boarding_msg, category, services_restricted
             } = this.state;
             this.setState({loading: true});
             updateOrganisation({
@@ -247,6 +253,7 @@ class OrganisationForm extends React.Component {
                 description,
                 schac_home_organisations,
                 collaboration_creation_allowed,
+                services_restricted,
                 short_name,
                 identifier,
                 logo,
@@ -256,6 +263,8 @@ class OrganisationForm extends React.Component {
                 this.props.history.goBack();
                 setFlash(I18n.t("organisationDetail.flash.updated", {name: name}));
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 
@@ -266,7 +275,6 @@ class OrganisationForm extends React.Component {
         this.setState({administrators: newAdministrators});
     };
 
-    //TODO - no mail in newOrganisation
     addEmail = e => {
         const email = e.target.value;
         const {administrators} = this.state;
@@ -287,15 +295,16 @@ class OrganisationForm extends React.Component {
 
     render() {
         const {
-            name, description, initial, alreadyExists,
+            name, description, initial, alreadyExists, administrators, message, email,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, short_name,
-            schac_home_organisations, collaboration_creation_allowed, logo, on_boarding_msg, category, categoryOptions,
-            schac_home_organisation, isNew, organisation, warning, loading
+            schac_home_organisations, collaboration_creation_allowed, services_restricted, logo, on_boarding_msg,
+            category, categoryOptions, schac_home_organisation, isNew, organisation, warning, loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
         const disabledSubmit = !initial && !this.isValid();
+        // const inValidOnBoarding = !initial && isNew && I18n.t("organisation.onBoarding.template") !== on_boarding_msg;
         const {user} = this.props;
         return (
             <div className="mod-new-organisation-container">
@@ -314,6 +323,8 @@ class OrganisationForm extends React.Component {
 
 
                     <div className="new-organisation">
+
+                        <h1 className="section-separator">{I18n.t("organisation.about")}</h1>
 
                         <InputField value={name} onChange={e => {
                             this.setState({
@@ -353,21 +364,23 @@ class OrganisationForm extends React.Component {
 
                         <CroppedImageField name="logo" onChange={s => this.setState({logo: s})}
                                            isNew={isNew} title={I18n.t("organisation.logo")} value={logo}
-                                           initial={initial}/>
+                                           initial={initial} secondRow={true}/>
 
-                        <SelectField value={category}
-                                     small={true}
-                                     options={categoryOptions}
-                                     name={I18n.t("organisation.category")}
-                                     toolTip={I18n.t("organisation.categoryTooltip")}
-                                     onChange={e => this.setState({category: e})}/>
+                        {user.admin && <SelectField value={category}
+                                                    small={true}
+                                                    options={categoryOptions}
+                                                    name={I18n.t("organisation.category")}
+                                                    toolTip={I18n.t("organisation.categoryTooltip")}
+                                                    onChange={e => this.setState({category: e})}/>}
 
                         <InputField value={description} onChange={e => this.setState({description: e.target.value})}
                                     placeholder={I18n.t("organisation.descriptionPlaceholder")} multiline={true}
                                     name={I18n.t("organisation.description")}/>
 
-                        <OrganisationOnBoarding on_boarding_msg={on_boarding_msg}
-                                                saveOnBoarding={val => this.setState({on_boarding_msg: val})}/>
+                        <OrganisationOnBoarding
+                            on_boarding_msg={(isEmpty(on_boarding_msg) && isNew) ? I18n.t("organisation.onBoarding.template") : on_boarding_msg}
+                            saveOnBoarding={val => this.setState({on_boarding_msg: val})}/>
+                        {/*{inValidOnBoarding && <ErrorIndicator msg={I18n.t("organisation.onBoarding.invalid")}/>}*/}
 
                         <CreatableField onChange={e => this.setState({schac_home_organisation: e.target.value})}
                                         name={I18n.t("organisation.schacHomeOrganisation")}
@@ -393,31 +406,37 @@ class OrganisationForm extends React.Component {
                             name={"collaboration_creation_allowed"}
                             disabled={isEmpty(schac_home_organisations)}
                             value={collaboration_creation_allowed}
+                            tooltipOnHover={true}
                             tooltip={I18n.t("organisation.collaborationCreationAllowedTooltip")}
                             onChange={val => this.setState({collaboration_creation_allowed: val})}/>
 
-                        {/*<InputField value={email} onChange={e => this.setState({email: e.target.value})}*/}
-                        {/*            placeholder={I18n.t("organisation.administratorsPlaceholder")}*/}
-                        {/*            name={I18n.t("organisation.administrators")}*/}
-                        {/*            toolTip={I18n.t("organisation.administratorsTooltip")}*/}
-                        {/*            onBlur={this.addEmail}*/}
-                        {/*            onEnter={this.addEmail}/>*/}
+                        <RadioButton
+                            label={I18n.t("organisation.servicesRestricted")}
+                            name={"services_restricted"}
+                            disabled={!user.admin}
+                            value={services_restricted}
+                            tooltip={I18n.t("organisation.servicesRestrictedTooltip")}
+                            onChange={() => this.setState({services_restricted: !services_restricted})}/>
 
-                        {/*<section className="email-tags">*/}
-                        {/*    {administrators.map(mail =>*/}
-                        {/*        <div key={mail} className="email-tag">*/}
-                        {/*            <span>{mail}</span>*/}
-                        {/*            {disabled ?*/}
-                        {/*                <span className="disabled"><FontAwesomeIcon icon="envelope"/></span> :*/}
-                        {/*                <span onClick={this.removeMail(mail)}><FontAwesomeIcon icon="times"/></span>}*/}
-                        {/*        </div>)}*/}
-                        {/*</section>*/}
+                        {isNew &&
+                        <div>
+                            <h1 className="section-separator">{I18n.t("organisation.invitations")}</h1>
 
-                        {/*<InputField value={message} onChange={e => this.setState({message: e.target.value})}*/}
-                        {/*            placeholder={I18n.t("organisation.messagePlaceholder")}*/}
-                        {/*            name={I18n.t("organisation.message")}*/}
-                        {/*            toolTip={I18n.t("organisation.messageTooltip")}*/}
-                        {/*            multiline={true}/>*/}
+                            <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
+                                        addEmail={this.addEmail} removeMail={this.removeMail}
+                                        name={I18n.t("invitation.invitees")}
+                                        error={!initial && isEmpty(administrators)}
+                                        emails={administrators}/>
+                        </div>}
+                        {(!initial && isEmpty(administrators) && isNew) &&
+                        <ErrorIndicator msg={I18n.t("organisation.required", {
+                            attribute: I18n.t("organisation.administrators").toLowerCase()
+                        })}/>}
+                        {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                                              placeholder={I18n.t("collaboration.messagePlaceholder")}
+                                              name={I18n.t("collaboration.message")}
+                                              toolTip={I18n.t("collaboration.messageTooltip")}
+                                              multiline={true}/>}
 
                         <section className="actions">
                             {(user.admin && !isNew) &&

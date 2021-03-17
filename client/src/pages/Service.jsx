@@ -45,6 +45,7 @@ class Service extends React.Component {
         uri: "",
         accepted_user_policy: "",
         automatic_connection_allowed: false,
+        access_allowed_for_all: false,
         white_listed: false,
         research_scholarship_compliant: false,
         code_of_conduct_compliant: false,
@@ -60,6 +61,7 @@ class Service extends React.Component {
         leavePage: false,
         confirmationDialogAction: () => true,
         cancelDialogAction: () => true,
+        warning: false,
         loading: true
     });
 
@@ -178,6 +180,7 @@ class Service extends React.Component {
         this.setState({
             confirmationDialogOpen: true,
             leavePage: true,
+            warning: false,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
                 () => this.props.history.goBack()),
             confirmationDialogAction: this.closeConfirmationDialog
@@ -188,6 +191,7 @@ class Service extends React.Component {
         this.setState({
             confirmationDialogOpen: true,
             leavePage: false,
+            warning: true,
             cancelDialogAction: this.closeConfirmationDialog,
             confirmationDialogAction: this.doDelete
         });
@@ -244,6 +248,8 @@ class Service extends React.Component {
                     updateService(this.state).then(res => this.afterUpdate(name, "updated", res));
                 }
             });
+        } else {
+            window.scrollTo(0, 0);
         }
     };
 
@@ -296,11 +302,12 @@ class Service extends React.Component {
     }
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
-                        contact_email, invalidInputs, contactEmailRequired,
+                        access_allowed_for_all, contact_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, logo) => {
-        const redirectUri = uri || entity_id || "https://redirectUri";
-        const serviceRequestUrl = `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(redirectUri)}`;
+        const serviceRequestUrlValid = !isEmpty(uri) && automatic_connection_allowed;
+        const serviceRequestUrl = serviceRequestUrlValid ? `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(uri)}` :
+            I18n.t("service.service_requestError");
         return (
             <div className="service">
 
@@ -374,6 +381,12 @@ class Service extends React.Component {
                           info={I18n.t("service.automaticConnectionAllowed")}
                           tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
                           onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}
+                          readOnly={!isAdmin}/>
+
+                <CheckBox name="access_allowed_for_all" value={access_allowed_for_all}
+                          info={I18n.t("service.accessAllowedForAll")}
+                          tooltip={I18n.t("service.accessAllowedForAllTooltip")}
+                          onChange={e => this.setState({access_allowed_for_all: e.target.checked})}
                           readOnly={!isAdmin}/>
 
                 <CheckBox name="white_listed" value={white_listed}
@@ -455,8 +468,8 @@ class Service extends React.Component {
             alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
             entity_id, description, uri, accepted_user_policy, contact_email,
             confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed,
-            white_listed, sirtfi_compliant, code_of_conduct_compliant,
-            research_scholarship_compliant, ip_networks, logo, loading
+            access_allowed_for_all, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+            research_scholarship_compliant, ip_networks, logo, warning, loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -479,10 +492,11 @@ class Service extends React.Component {
                                         cancel={cancelDialogAction}
                                         confirm={confirmationDialogAction}
                                         leavePage={leavePage}
+                                        isWarning={warning}
                                         question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
 
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
-                        contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
+                        access_allowed_for_all, contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
                         isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, logo)}
                 </div>

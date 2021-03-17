@@ -10,7 +10,7 @@
     background-color: $background;
 
     .mod-login-container {
-        @media (max-width: $medium) {
+        @media (max-width: $tablet-max) {
             padding: 0 15px;
         }
 
@@ -67,7 +67,7 @@
                 "header-left header-right";
 
             @media (max-width: $compact-medium) {
-                margin-top: 125px;
+                margin-top: 25px;
                 grid-template-areas:
                 "header-left"
                 "header-right";
@@ -78,7 +78,7 @@
 
             h1 {
                 font-size: 34px;
-                line-height: 34px;
+                line-height: 38px;
                 font-weight: bold;
                 margin-bottom: 25px;
             }
@@ -116,7 +116,7 @@
             h1 {
                 color: $primary-orange;
                 font-size: 32px;
-                line-height: 32px;
+                line-height: 36px;
                 margin-bottom: 20px;
             }
         }

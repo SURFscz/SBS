@@ -16,7 +16,7 @@
 
         margin-bottom: 12px;
 
-        a:not(:first-child) {
+        div:not(:first-child) {
             margin-left: 25px;
         }
 
@@ -57,11 +57,11 @@
                 }
 
                 &.name {
-                    width: 30%;
+                    width: 35%;
                 }
 
                 &.user__schac_home_organisation {
-                    width: 15%;
+                    width: 20%;
                 }
 
                 &.role {
@@ -75,7 +75,7 @@
                 }
 
                 &.impersonate {
-                    width: 74px;
+                    width: 100px;
                 }
             }
         }
@@ -128,6 +128,7 @@
 
     h1 {
         font-size: 26px;
+        line-height: 30px;
     }
 
     div.collaboration-invitation-form {

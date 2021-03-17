@@ -6,7 +6,7 @@ from munch import munchify
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import BadRequest
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, STATUS_OPEN, STATUS_APPROVED, STATUS_DENIED
 from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
 from server.auth.security import current_user_id, current_user_name, \
     confirm_organisation_admin_or_manager
@@ -18,10 +18,6 @@ from server.mail import mail_collaboration_request, mail_accepted_declined_colla
     mail_automatic_collaboration_request
 
 collaboration_request_api = Blueprint("collaboration_request_api", __name__, url_prefix="/api/collaboration_requests")
-
-STATUS_OPEN = "open"
-STATUS_DENIED = "denied"
-STATUS_APPROVED = "approved"
 
 
 @collaboration_request_api.route("/<collaboration_request_id>", methods=["GET"], strict_slashes=False)
@@ -44,7 +40,7 @@ def request_collaboration():
     data = current_request.get_json()
     user = User.query.get(current_user_id())
     organisation = Organisation.query \
-        .join(Organisation.schac_home_organisations)\
+        .join(Organisation.schac_home_organisations) \
         .filter(SchacHomeOrganisation.name == user.schac_home_organisation) \
         .first()
     if not organisation:
@@ -59,7 +55,6 @@ def request_collaboration():
     auto_create = organisation.collaboration_creation_allowed
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
     auto_aff = user.entitlement and entitlement in user.entitlement
-
     recipients = list(map(lambda membership: membership.user.email, organisation.organisation_memberships))
     if auto_create or auto_aff:
         collaboration = do_save_collaboration(data, organisation, user, current_user_admin=True)[0]
@@ -93,16 +88,7 @@ def delete_request_collaboration(collaboration_request_id):
     collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
     confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
     if collaboration_request.status == STATUS_OPEN:
-        user = collaboration_request.requester
-        mail_accepted_declined_collaboration_request({"salutation": f"Dear {user.name}",
-                                                      "base_url": current_app.app_config.base_url,
-                                                      "administrator": current_user_name(),
-                                                      "collaboration": {"name": collaboration_request.name},
-                                                      "organisation": collaboration_request.organisation},
-                                                     collaboration_request.name,
-                                                     False,
-                                                     [user.email])
-
+        raise BadRequest("Collaboration request with status 'open' can not be deleted")
     return delete(CollaborationRequest, collaboration_request_id)
 
 
@@ -136,6 +122,7 @@ def approve_request(collaboration_request_id):
                                                   "collaboration": collaboration,
                                                   "organisation": collaboration_request.organisation},
                                                  collaboration.name,
+                                                 collaboration_request.organisation,
                                                  True,
                                                  [user.email])
     collaboration_request.status = STATUS_APPROVED
@@ -149,15 +136,20 @@ def deny_request(collaboration_request_id):
     collaboration_request = CollaborationRequest.query.get(collaboration_request_id)
     confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
 
+    rejection_reason = current_request.get_json()["rejection_reason"]
+
     user = collaboration_request.requester
     mail_accepted_declined_collaboration_request({"salutation": f"Dear {user.name}",
                                                   "base_url": current_app.app_config.base_url,
                                                   "administrator": current_user_name(),
+                                                  "rejection_reason": rejection_reason,
                                                   "collaboration": {"name": collaboration_request.name},
                                                   "organisation": collaboration_request.organisation},
                                                  collaboration_request.name,
+                                                 collaboration_request.organisation,
                                                  False,
                                                  [user.email])
     collaboration_request.status = STATUS_DENIED
+    collaboration_request.rejection_reason = rejection_reason
     db.session.merge(collaboration_request)
     return None, 201

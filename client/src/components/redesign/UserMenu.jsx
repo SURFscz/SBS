@@ -17,7 +17,7 @@ class UserMenu extends React.Component {
     render() {
         const {currentUser, organisation, config, provideFeedback} = this.props;
         const lessThenOrgManager = !isUserAllowed(ROLES.ORG_MANAGER, currentUser);
-        const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation);
+        const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation) && organisation.has_members
         const collCreateAllowed = !isEmpty(organisation)
             && (organisation.collaboration_creation_allowed_entitlement || organisation.collaboration_creation_allowed);
         return (

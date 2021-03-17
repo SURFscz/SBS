@@ -4,7 +4,7 @@
 
     background-color: $background;
     margin: 0 auto;
-    padding-bottom: 5px;
+    padding: 5px 0 10px 0;
     color: black;
 
     &.guest {
@@ -16,11 +16,17 @@
     }
 
     .header {
-        padding-left: 15px;
         position: relative;
         transition: margin 150ms ease-in-out;
         display: flex;
         align-items: center;
+        width: 100%;
+        margin: 0 auto;
+        max-width: $medium;
+
+        @media (max-width: $tablet-max) {
+            padding: 0 15px;
+        }
 
         a.logo {
             margin-top: 10px;
@@ -33,20 +39,17 @@
         }
 
         .user-profile {
-            margin: 0 65px 0 auto;
+            margin-left: auto;
             position: relative;
             cursor: pointer;
-
-            @media (max-width: $compact-medium) {
-                margin: 0 5px 0 auto;
+            @media (max-width: $tablet-max) {
+                margin-right: 65px;
             }
-
         }
 
         .menu {
             display: flex;
             align-items: center;
-            padding: 5px 12px;
             color: black;
             font-weight: bold;
 

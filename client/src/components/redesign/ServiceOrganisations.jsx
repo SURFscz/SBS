@@ -68,9 +68,14 @@ class ServiceOrganisations extends React.Component {
         this.submit(organisationsSelected, value ? [] : [organisation.id]);
     }
 
-    toggle = (organisation, organisationsSelected) => {
+    toggle = (organisation, organisationsSelected, service) => {
         const value = organisationsSelected[organisation.id];
-        return <ToggleSwitch value={value || false} animate={false} onChange={this.toggleChanged(organisation)}/>;
+        const access_allowed_for_all = service.access_allowed_for_all;
+        return <ToggleSwitch value={access_allowed_for_all ? true : value || false}
+                             disabled={access_allowed_for_all}
+                             animate={false}
+                             tooltip={access_allowed_for_all ? I18n.t("service.accessAllowedForAllInfo") : null}
+                             onChange={this.toggleChanged(organisation)}/>;
     }
 
     submit = (organisationsSelected, organisationsDeselected, toggleAll, showConfirmation = true) => {
@@ -143,7 +148,7 @@ class ServiceOrganisations extends React.Component {
                 header: I18n.t("models.organisations.name"),
                 mapper: org => <a href="/" onClick={this.openOrganisation(org)}>{org.name}</a>,
             },
-                        {
+            {
                 nonSortable: true,
                 key: "role",
                 header: "",
@@ -158,10 +163,9 @@ class ServiceOrganisations extends React.Component {
                 header: I18n.t("models.organisations.category")
             },
             {
-
                 key: "toggle",
                 header: I18n.t("service.accessAllowed"),
-                mapper: org => this.toggle(org, organisationsSelected)
+                mapper: org => this.toggle(org, organisationsSelected, service)
             }]
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -178,8 +182,11 @@ class ServiceOrganisations extends React.Component {
                           searchAttributes={["name"]}
                           defaultSort="name"
                           columns={columns}
-                          showNew={true}
-                          newEntityFunc={this.onToggleAll}
+                          filters={service.access_allowed_for_all ?
+                              <span
+                                  className="access-allowed-for-all">{I18n.t("service.accessAllowedForAllInfo")}</span> : null}
+                          showNew={!service.access_allowed_for_all}
+                          newEntityFunc={service.access_allowed_for_all ? () => true : this.onToggleAll}
                           loading={false}
                           {...this.props}>
                 </Entities>

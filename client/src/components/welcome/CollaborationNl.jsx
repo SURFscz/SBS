@@ -7,7 +7,7 @@ export default function CollaborationNL({role}) {
 
     const responsibilities = [
         "Beheer de details van deze samenwerking",
-        "Bheer groepen in deze samenwerking",
+        "Beheer groepen in deze samenwerking",
         "Beheer gebruikers in deze samenwerking",
         "Beheer diensten voor deze samenwerking"
     ]
@@ -18,11 +18,12 @@ export default function CollaborationNL({role}) {
             <p>Als een gebruiker kan je ook de mede-gebruikers en hun contactgegevens bekijken.</p>
             <p>Happy researching!</p>
         </div>}
-            {role === ROLES.COLL_ADMIN}
-            <p>Als een samenwerkings admin kan je het volgende doen:</p>
-            <ul>
-                {responsibilities.map((r, i) => <li key={i}>{r}</li>)}
-            </ul>
+            {role === ROLES.COLL_ADMIN && <div>
+                <p>Als een samenwerkings admin kan je het volgende doen:</p>
+                <ul>
+                    {responsibilities.map((r, i) => <li key={i}>{r}</li>)}
+                </ul>
+            </div>}
         </div>
     );
 }

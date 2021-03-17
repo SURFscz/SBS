@@ -14,7 +14,7 @@ ACTION_CREATE = 1
 ACTION_UPDATE = 2
 ACTION_DELETE = 3
 
-ignore_attributes = ["logo", "created_by", "updated_by", "created_at", "updated_at"]
+ignore_attributes = ["logo", "created_by", "updated_by", "created_at", "updated_at", "last_login_date"]
 
 dynamicExtendedJSONEncoder = DynamicExtendedJSONEncoder()
 
@@ -118,20 +118,20 @@ class AuditMixin(JsonSerializableBase):
                      **kwargs):
         from server.auth.security import current_user_id
 
-        if session and "user" in session and "id" in session["user"]:
-            audit = AuditLog(
-                current_user_id(),
-                subject_id,
-                target_type,
-                target_id,
-                target_name,
-                parent_id,
-                parent_name,
-                action,
-                kwargs.get("state_before"),
-                kwargs.get("state_after")
-            )
-            audit.save(connection)
+        user_id = current_user_id() if session and "user" in session and "id" in session["user"] else None
+        audit = AuditLog(
+            user_id,
+            subject_id,
+            target_type,
+            target_id,
+            target_name,
+            parent_id,
+            parent_name,
+            action,
+            kwargs.get("state_before"),
+            kwargs.get("state_after")
+        )
+        audit.save(connection)
 
     @classmethod
     def __declare_last__(cls):

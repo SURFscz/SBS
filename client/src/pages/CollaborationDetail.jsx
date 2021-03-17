@@ -41,6 +41,8 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
 import Button from "../components/Button";
 import JoinRequestDialog from "../components/JoinRequestDialog";
+import Tooltip from "../components/redesign/Tooltip";
+import LastAdminWarning from "../components/redesign/LastAdminWarning";
 
 
 class CollaborationDetail extends React.Component {
@@ -66,6 +68,7 @@ class CollaborationDetail extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
+            lastAdminWarning: "",
             joinRequestDialogOpen: false
         }
     }
@@ -83,9 +86,6 @@ class CollaborationDetail extends React.Component {
                         const {user} = this.props;
                         const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                         const collaboration = res[0];
-                        //mainly due to seed data
-                        collaboration.join_requests = (collaboration.join_requests || [])
-                            .filter(jr => !collaboration.collaboration_memberships.find(cm => cm.user.id === jr.user.id));
                         const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
                         const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                         const firstTime = getParameterByName("first", window.location.search) === "true";
@@ -254,11 +254,10 @@ class CollaborationDetail extends React.Component {
     }
 
     getJoinRequestsTab = (collaboration) => {
-        const openJoinRequests = (collaboration.join_requests || []).length;
+        const openJoinRequests = (collaboration.join_requests || []).filter(jr => jr.status === "open").length;
         return (<div key="joinrequests" name="joinrequests" label={I18n.t("home.tabs.joinRequests")}
                      icon={<JoinRequestsIcon/>}
                      notifier={openJoinRequests > 0 ? openJoinRequests : null}>
-
             <JoinRequests collaboration={collaboration}
                           refresh={callback => this.componentDidMount(callback)}
                           {...this.props} />
@@ -266,7 +265,11 @@ class CollaborationDetail extends React.Component {
     }
 
     getServicesTab = collaboration => {
-        return (<div key="services" name="services" label={I18n.t("home.tabs.coServices")} icon={<ServicesIcon/>}>
+        const openServiceConnectionRequests = (collaboration.service_connection_requests || [])
+            .filter(r => r.is_member_request).length;
+        return (<div key="services" name="services" label={I18n.t("home.tabs.coServices")}
+                     icon={<ServicesIcon/>}
+                     notifier={openServiceConnectionRequests > 0 ? openServiceConnectionRequests : null}>
             <UsedServices collaboration={collaboration}
                           refresh={callback => this.componentDidMount(callback)}
                           {...this.props} />
@@ -304,15 +307,18 @@ class CollaborationDetail extends React.Component {
     deleteMe = () => {
         const {user} = this.props;
         const {collaboration} = this.state;
+        const admins = collaboration.collaboration_memberships.filter(m => m.role === "admin");
+        const lastAdminWarning = admins.length === 1 && admins[0].user_id === user.id;
         const canStay = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id);
-        if (canStay) {
-            this.doDeleteMe();
-        } else {
+        if (!canStay || lastAdminWarning) {
             this.setState({
                 confirmationDialogOpen: true,
                 confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
-                confirmationDialogAction: this.doDeleteMe
+                confirmationDialogAction: this.doDeleteMe,
+                lastAdminWarning: lastAdminWarning
             });
+        } else {
+            this.doDeleteMe();
         }
     };
 
@@ -324,9 +330,6 @@ class CollaborationDetail extends React.Component {
 
 
     getAdminHeader = (collaboration, collaborationJoinRequest) => {
-        if (!collaboration.disclose_member_information) {
-            return I18n.t("models.collaboration.discloseNoMemberInformation");
-        }
         let admins;
         if (collaborationJoinRequest) {
             admins = collaboration.admins
@@ -339,10 +342,18 @@ class CollaborationDetail extends React.Component {
         if (admins.length === 0) {
             return I18n.t("models.collaboration.noAdminsHeader");
         }
+        const mails = admins.map(u => u.email).join(",");
+        const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc=";
         if (admins.length === 1) {
-            return I18n.t("models.collaboration.adminsHeader", {name: admins[0].name});
+            return I18n.t("models.collaboration.adminsHeader", {name: admins[0].name, mails: mails, bcc: bcc});
         }
-        return I18n.t("models.collaboration.multipleAdminsHeader", {name: admins[0].name, nbr: admins.length - 1});
+        const twoOrMore = admins.length === 2 ? "twoAdminsHeader" : "multipleAdminsHeader";
+        return I18n.t(`models.collaboration.${twoOrMore}`, {
+            name: admins[0].name,
+            mails: mails,
+            bcc: bcc,
+            nbr: admins.length - 1
+        });
     }
 
     createCollaborationRequest = () => {
@@ -370,19 +381,20 @@ class CollaborationDetail extends React.Component {
             <section className="unit-info">
                 <ul>
                     <li>
-                        <MemberIcon/>
+                        <Tooltip children={<MemberIcon/>} id={"members-icon"} msg={I18n.t("tooltips.members")}/>
                         <span>{I18n.t("models.collaboration.memberHeader", {
                             nbrMember: collaborationJoinRequest ? collaboration.member_count : collaboration.collaboration_memberships.length,
                             nbrGroups: collaborationJoinRequest ? collaboration.group_count : collaboration.groups.length
                         })}</span></li>
                     <li>
-                        <AdminIcon/>
+                        <Tooltip children={<AdminIcon/>} id={"admins-icon"} msg={I18n.t("tooltips.admins")}/>
                         <span
                             dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration, collaborationJoinRequest)}}/>
                     </li>
                     {collaboration.website_url &&
                     <li className="collaboration-url">
-                        <GlobeIcon/>
+                        <Tooltip children={<GlobeIcon/>} id={"collaboration-icon"}
+                                 msg={I18n.t("tooltips.collaborationUrl")}/>
                         <span>
                             <a href={collaboration.website_url} rel="noopener noreferrer"
                                target="_blank">{collaboration.website_url}</a>
@@ -390,7 +402,7 @@ class CollaborationDetail extends React.Component {
                     </li>}
                     {collaboration.accepted_user_policy &&
                     <li className="collaboration-url">
-                        <PrivacyIcon/>
+                        <Tooltip children={<PrivacyIcon/>} id={"globe-icon"} msg={I18n.t("tooltips.aup")}/>
                         <span>
                             <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
                                target="_blank">{collaboration.accepted_user_policy}</a>
@@ -441,6 +453,7 @@ class CollaborationDetail extends React.Component {
     }
 
     getUnitHeader = (user, collaboration, allowedToEdit, showMemberView) => {
+
         return <UnitHeader obj={collaboration}
                            firstTime={user.admin ? this.onBoarding : undefined}
                            history={(user.admin && allowedToEdit) && this.props.history}
@@ -460,8 +473,8 @@ class CollaborationDetail extends React.Component {
                     </span>
                 </div>
                 <div className="org-attributes">
-                    <span>{I18n.t("collaboration.servicesRestricted")}</span>
-                    <span>{I18n.t(`forms.${collaboration.services_restricted ? "yes" : "no"}`)}</span>
+                    <span>{I18n.t("collaboration.discloseMembers")}</span>
+                    <span>{I18n.t(`forms.${collaboration.disclose_email_information && collaboration.disclose_member_information ? "yes" : "no"}`)}</span>
                 </div>
                 {collaboration.accepted_user_policy && <div className="org-attributes">
                     <span>{I18n.t("collaboration.privacyPolicy")}</span>
@@ -477,18 +490,18 @@ class CollaborationDetail extends React.Component {
         const {
             collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
-            collaborationJoinRequest, joinRequestDialogOpen, alreadyMember
+            collaborationJoinRequest, joinRequestDialogOpen, alreadyMember, lastAdminWarning
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
-        const {user} = this.props;
+        const {user, refreshUser} = this.props;
         const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
         return (
             <>
                 {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit, showMemberView)}
                 {(!showMemberView || !adminOfCollaboration) &&
-                    this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
+                this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
 
                 <WelcomeDialog name={collaboration.name} isOpen={firstTime}
                                role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
@@ -498,14 +511,19 @@ class CollaborationDetail extends React.Component {
 
                 <JoinRequestDialog collaboration={collaboration}
                                    isOpen={joinRequestDialogOpen}
+                                   refresh={callback =>  refreshUser(callback)}
                                    history={this.props.history}
-                               close={() => this.setState({joinRequestDialogOpen: false})}/>
+                                   close={() => this.setState({joinRequestDialogOpen: false})}/>
 
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     isWarning={true}
-                                    question={confirmationQuestion}/>
+                                    question={confirmationQuestion}>
+                    {lastAdminWarning &&
+                    <LastAdminWarning organisation={collaboration.organisation} currentUserDeleted={true}
+                    />}
+                </ConfirmationDialog>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>

@@ -4,7 +4,7 @@ from datetime import datetime
 
 from flask import Blueprint, current_app
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, send_error_mail
 from server.api.service import services_from_collaboration_memberships, \
     services_from_organisation_collaboration_memberships, services_from_organisation_memberships
 from server.auth.security import confirm_read_access
@@ -45,9 +45,12 @@ def attributes():
 
     service_by_entity_id = Service.query.filter(Service.entity_id == service_entity_id).first()
     if not service_by_entity_id:
-        logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} "
-                    f"because service does not exists")
+        msg = f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} " \
+              f"because service does not exists"
+        logger.error(msg)
+        send_error_mail(tb=msg, session_exists=False)
         return {}, 200
+
     service_id = service_by_entity_id.id
     user_id = user.id
 
@@ -90,15 +93,16 @@ def attributes():
     # COs map to GROUP and Groups map to SUBGROUP
     # We don't use roles, so we omit those.
     # Also, we omit the GROUP-AUTHORITY (and are therefore not completely compliant), as it complicates parsing the
-    # entitlement, will confuse Services, and  the spec fails to make clear what the usecase is, exactly.
+    # entitlement, will confuse Services, and the spec fails to make clear what the usecase is, exactly.
     cfg = current_app.app_config
     namespace = cfg.get("entitlement_group_namespace", "urn:bla")
 
     memberships = set()
     for cm in user.collaboration_memberships:
-        memberships.add(f"{namespace}:group:{cm.collaboration.short_name}")
+        memberships.add(f"{namespace}:group:{cm.collaboration.organisation.short_name}:{cm.collaboration.short_name}")
         for g in cm.collaboration.groups:
-            memberships.add(f"{namespace}:group:{cm.collaboration.short_name}:{g.short_name}")
+            memberships.add(f"{namespace}:group:{cm.collaboration.organisation.short_name}:"
+                            f"{cm.collaboration.short_name}:{g.short_name}")
     membership_attribute = custom_saml_mapping['custom_attribute_saml_mapping']['memberships']
     result[membership_attribute] = memberships
 

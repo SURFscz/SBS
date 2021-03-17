@@ -16,10 +16,12 @@
         border-radius: $br;
         font-size: 16px;
         height: 48px;
+        color: black;
 
         &[disabled] {
-            background-color: $lightest-grey;
+            background-color: $hover;
             cursor: not-allowed;
+            color: black;
         }
 
         &.error {
@@ -39,10 +41,14 @@
     }
 
     textarea {
-        height: 70px;
+        height: 90px;
 
         &.large {
             height: 170px;
+        }
+
+        &.file-upload {
+            height: 240px;
         }
     }
 
@@ -72,6 +78,7 @@
     section.file-upload-container {
         cursor: pointer;
         margin-left: 10px;
+        max-height: 44px;
         text-align: center;
         border: 1px solid $blue;
         border-radius: 4px;

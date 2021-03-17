@@ -39,7 +39,7 @@ div.user-profile-tab-container {
     margin: 0 auto;
     width: 100%;
 
-    @media (max-width: $medium) {
+    @media (max-width: $tablet-max) {
         padding: 0 15px;
     }
 
@@ -53,6 +53,7 @@ div.user-profile-tab-container {
 
         h1 {
             font-size: 22px;
+            line-height: 26px;
             margin-bottom: 10px;
             color: $primary-orange;
         }
@@ -70,6 +71,10 @@ div.user-profile-tab-container {
 
             span.attribute-value {
                 margin-bottom: 6px;
+
+                &.none {
+                    font-style: italic;
+                }
             }
 
         }
@@ -84,10 +89,11 @@ div.user-profile-tab-container {
             font-weight: bold;
         }
 
-        div.checkbox {
+        span.ssh-convert {
+            display: inline-block;
             margin-top: 10px;
+            font-size: 14px;
         }
-
     }
 }
 

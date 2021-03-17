@@ -4,7 +4,7 @@
 
     label.info {
         display: inline-block;
-        margin: 27px 0 10px 0;
+        margin: 25px 0 10px 0;
         color: black;
         position: relative;
         font-weight: bold;
@@ -45,7 +45,8 @@
 
             &.disabled {
                 cursor: not-allowed;
-            }
+                color: $medium-grey;
+                }
 
         }
     }
@@ -68,6 +69,7 @@
 
         &.disabled {
             cursor: not-allowed;
+            border: 1px solid $lighter-grey;
         }
 
     }
@@ -101,7 +103,15 @@
         height: 11px;
         border-radius: 50%;
         background: $blue;
-    }
 
+    }
+    .r-button input:disabled ~ .checkmark:after {
+        top: 6px;
+        left: 6px;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: $dark-grey
+    }
 }
 

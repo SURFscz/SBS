@@ -1,22 +1,28 @@
 @import "../../stylesheets/vars";
 @import "../../stylesheets/forms";
 @import "../../stylesheets/unit_header";
+@import "../../stylesheets/entity_status";
 
 table.joinRequests {
 
     thead {
         th {
             &.user__name {
-                width: 35%;
+                width: 45%;
                 padding-left: 15px;
             }
 
             &.user__schac_home_organisation {
-                width: 35%;
+                width: 20%;
+            }
+
+            &.status {
+                width: 20%;
+                text-align: center;
             }
 
             &.open {
-                width: 30%;
+                width: 15%;
             }
 
         }
@@ -28,11 +34,35 @@ table.joinRequests {
                 padding-left: 15px;
             }
 
+            &.status {
+                text-align: center;
+            }
+
             &.open {
                 text-align: right;
             }
         }
     }
+}
+
+.mod-entities {
+
+    .join-request-filter {
+        display: flex;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+        .join-request-filter-select {
+            width: 290px;
+            margin: 0 25px 0 50px;
+            @media (max-width: $compact-medium) {
+                margin: 15px 0;
+            }
+
+        }
+    }
+
 }
 
 .join-request-details-container {
@@ -63,6 +93,7 @@ table.joinRequests {
 
     h1 {
         font-size: 26px;
+        line-height: 30px;
     }
 
     div.join-request-form {
@@ -72,8 +103,10 @@ table.joinRequests {
             padding: 15px 15px 0 15px;
         }
 
-        h1 {
-            margin: 1px 0 30px 0;
+        .join-request-header {
+            display: flex;
+
+            @include entity-status;
         }
 
         display: flex;
@@ -85,3 +118,18 @@ table.joinRequests {
     }
 
 }
+
+.rejection-reason-container {
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+
+    .rejection-reason-disclaimer {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 10px;
+        font-style: italic;
+    }
+}
+

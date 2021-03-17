@@ -68,7 +68,7 @@ I18n.translations.en = {
         noShacHome: "To request / create a new collaboration it is required that your institution releases the schac_home attribute. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
         noOrganisationsPlatformAdmin: "To create a new collaboration it is required you first create a new organisation.",
         tabs: {
-            groups: "Groups",
+            groups: "CO Groups",
             collaborations: "Collaborations",
             organisations: "Organisations",
             services: "SRAM Services",
@@ -77,12 +77,12 @@ I18n.translations.en = {
             orgServices: "Org Services",
             orgCollaborations: "Org Collaborations",
             coServices: "CO Services",
-            coAdmins: "CO admins",
-            members: "Members",
+            coAdmins: "CO Admins",
+            members: "CO Members",
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights",
             collaborationRequests: "Coll requests",
-            joinRequests: "Join requests",
+            joinRequests: "CO Join requests",
             serviceConnectionRequests: "Connection requests",
             me: "Profile",
             about: "About",
@@ -100,6 +100,7 @@ I18n.translations.en = {
         apply: "Apply",
         request: "Request",
         cancel: "Cancel",
+        close: "Close",
         showMore: "More",
         hideSome: "Less",
         open: "Open",
@@ -117,6 +118,7 @@ I18n.translations.en = {
         imageToLarge: "Image is larger then 2MB.",
         imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Image is required",
+        whiteSpace: "Fill with white space",
         no: "No"
     },
     explain: {
@@ -148,12 +150,17 @@ I18n.translations.en = {
             searchPlaceHolder: "Search members...",
             status: "Status",
             inviteSend: "Invite sent {{date}}",
-            accepted: "Accepted",
+            expiredAt: "Expired on {{date}}",
+            accepted: "Active",
             new: "Add member(s)",
             remove: "Delete",
             mail: "Compose mail",
             backToMembers: "Back to all members...",
-            invitation: "Invitation sent by {{inviter}} to {{email}} on {{date}}"
+            invitation: "Invitation sent by {{inviter}} to {{email}} on {{date}}",
+            removeTooltipDisabled: "First select<br/>users to delete",
+            removeTooltip: "Delete all<br/>selected members",
+            mailTooltipDisabled: "First select<br/>users to mail",
+            mailTooltip: "Mail all<br/>selected members"
         },
         organisations: {
             title: "Organisations",
@@ -163,6 +170,7 @@ I18n.translations.en = {
             name: "Name",
             memberCount: "Members",
             collaborationCount: "Collaborations",
+            schacHomeOrganisations: "Org domain(s)",
             category: "Category",
             leave: "Leave ORG"
         },
@@ -177,12 +185,14 @@ I18n.translations.en = {
             organisationCount: "Used in organisations",
             collaborationCount: "Used in collaborations",
             titleAvailableColl: "Available for this collaboration ({{count}})",
+            titleRequestedColl: "Requested by members for this collaboration ({{count}})",
             titleAvailableOrg: "Available for this organisation ({{count}})",
             titleUsedColl: "Used by this collaboration ({{count}})",
             titleUsedOrg: "Enabled by this organisation ({{count}})",
             awaitingApproval: "Connection awaiting approval",
             automaticConnectionAllowed: "Automatic connection allowed",
             requiredByOrganisation: "Enabled by organisation",
+            memberServiceRequest: "Member service connection request",
             removeFromCO: "Remove from CO",
             deleteConnectionRequest: "Delete connection request",
             addToCO: "Add to CO",
@@ -203,6 +213,7 @@ I18n.translations.en = {
             title: "Collaborations",
             searchPlaceHolder: "Search collaborations...",
             new: "New Collaboration",
+            noEntities:  "There are no collaborations yet...",
             newCollaborationRequest: "New request for collaboration",
             name: "Name",
             memberCount: "Members",
@@ -210,7 +221,7 @@ I18n.translations.en = {
             allMembers: "All members ({{count}})",
             group: "Group {{name}} ({{count}})",
             hideInvites: "Hide invitees",
-            noCollaborations: "There are no collaborations yet within your organization. Why don't you create the first one?",
+            noCollaborations: "There are no collaborations yet within your organisation. Why don't you create the first one?",
         },
         serviceOrganisations: {
             searchPlaceHolder: "Search for organisations",
@@ -244,7 +255,7 @@ I18n.translations.en = {
         },
         members: {
             searchPlaceHolder: "Search for members...",
-            title: "Members",
+            title: "CO Members",
             new: "Add member(s)",
             noEntities: "There are no members",
         },
@@ -257,9 +268,12 @@ I18n.translations.en = {
             searchPlaceHolder: "Search for services...",
             noEntities: "No services are being used"
         },
+        servicesRequested: {
+            searchPlaceHolder: "Search for services..."
+        },
         groups: {
             backToGroups: "Back to all groups",
-            title: "Groups",
+            title: "CO Groups",
             searchPlaceHolder: "Search for groups...",
             noEntities: "No groups were found",
             new: "Create new group",
@@ -283,12 +297,14 @@ I18n.translations.en = {
         collaboration: {
             memberHeader: "{{nbrMember}} members - {{nbrGroups}} groups",
             noAdminsHeader: "No administrators (yet)",
-            adminsHeader: "Organized by <strong>{{name}}</strong>",
-            multipleAdminsHeader: "Organized by <strong>{{name}}</strong> and <strong>{{nbr}} others</strong>",
+            adminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong></a>",
+            twoAdminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} other</strong></a>",
+            multipleAdminsHeader: "Organised by <a style=\"display:inline;\" href=\"mailto:{{bcc}}{{mails}}\"><strong>{{name}}</strong> and <strong>{{nbr}} others</strong></a>",
             about: "What our CO is about",
             services: "Where we collaborate ({{nbr}} services)",
             noServices: "There are no services available in this collaboration",
-            servicesStart: "Click the button to start the service, or read the instructions first",
+            servicesStart: "Visit the Service by clicking on the cloud button - if present",
+            servicesHoover: "Visit this service at {{uri}}",
             members: "Members ({{nbr}})",
             showMemberDetails: "Show all details",
             admin: "admin",
@@ -314,9 +330,24 @@ I18n.translations.en = {
             searchPlaceHolder: "Search for requests...",
             noEntities: "No requests for collaborations",
         },
+        member_collaboration_requests: {
+            title: "My requests for collaborations",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No requests for collaborations",
+        },
+        system_collaboration_requests: {
+            title: "Outdated open requests for collaborations",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No outdated requests for collaborations",
+        },
+        deleted_collaboration_requests: {
+            title: "Deleted requests for collaborations",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No outdated denied / approved requests for collaborations",
+        },
         invitation: {
-            welcome: "Welcome to SURF Research Access Management. Here you can collaborate with your fellow researchers.",
-            invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by {{inviter}}",
+            welcome: "Welcome to SURF Research Access Management. Here access to research services for research collaborations is managed.",
+            invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
             followingSteps: "Please take the following steps:",
             steps: {
                 progress: "{{now}} of {{total}}",
@@ -327,15 +358,19 @@ I18n.translations.en = {
                 collaborate: "Collaborate!"
             },
             login: "Please login to identify yourself",
+            loginWithSub: "Please login to identify yourself<sup> *</sup>",
             loginTip: "You can use your institution account to login, or use a guest account like eduID",
             accept: "I accept these terms",
             noAccept: "No, I don't agree",
             acceptInvitation: "Yes, I accept the invitation",
             declineInvitation: "No, I decline",
             confirmations: {
-                cancelInvitation: "Are you sure you don't want to accept the terms?",
-                declineInvitation: "Are you sure you don't want to accept the invitation?",
-            }
+                cancelInvitation: "Are you sure you want to decline the terms?",
+                declineInvitation: "Are you sure you want to decline the invitation?",
+            },
+            disclaimer: "If you continue, SURF will transfer data about you to the collaboration (CO). Any data processing by the CO, like transferring data to services so you can access those, is a responsibility of the CO.",
+            disclaimerAup: "The collaboration has provided SURF <a href=\"{{aup}}\" target=\"_blank\">the following URL</a> as holding relevant information.",
+            disclaimerQuestions: "Any questions about transfer of data about you? Contact the person that invited you."
         },
         joinRequests: {
             backToJoinRequests: "Back to all join requests",
@@ -345,6 +380,23 @@ I18n.translations.en = {
             edit: "Approve / decline",
             details: "Join request made by {{name}} on {{date}}"
         },
+        memberJoinRequests: {
+            title: "My collaboration join requests",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No join requests were found",
+            collaborationName: "Collaboration name",
+            requested: "Requested at"
+        },
+        systemJoinRequests: {
+            title: "Outdated collaboration join requests",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No outdated join requests",
+        },
+        deletedJoinRequests: {
+            title: "Deleted collaboration join requests",
+            searchPlaceHolder: "Search for requests...",
+            noEntities: "No outdated approved / denied join requests",
+        },
         serviceConnectionRequests: {
             backToServiceConnectionRequests: "Back to all connection requests",
             title: "Outstanding connection requests",
@@ -353,7 +405,7 @@ I18n.translations.en = {
             edit: "Approve / decline",
             details: "Service connection request made by {{name}} on {{date}} for collaboration {{collaborationName}}",
             requester: "Requester",
-            name: "Collaboration name"
+            name: "Collaboration"
         }
     },
     user: {
@@ -362,7 +414,7 @@ I18n.translations.en = {
         ssh_keyPlaceholder: "Your public SSH key to login on the service",
         ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP of services you<br/>are entitled access to.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a Mac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Invalid SSH key",
-        sshConvertInfo: "Convert this RFC 4716 SSH format to the OpenSSH key file format when saving the profile?",
+        sshConvertInfo: "Public key will be converted to the <code>OpenSSH</code> format when saving the profile",
         update: "Update",
         flash: {
             updated: "Your profile has been updated"
@@ -417,7 +469,7 @@ I18n.translations.en = {
         scoped_affiliation: "Scoped affiliations",
         entitlement: "Entitlements",
         nick_name: "Nick name",
-        schac_home_organisation: "Institute abbreviation",
+        schac_home_organisation: "Organisation domain name",
         edu_members: "EDU memberships",
         eduperson_principal_name: "EPPN",
         created_at: "Account created",
@@ -452,13 +504,14 @@ I18n.translations.en = {
     },
     collaboration: {
         about: "About the collaboration",
-        invitations: "Invite CO admins",
+        invitations: "Invite collaboration admins",
         title: "Create new collaboration",
         requestTitle: "Request a new collaboration",
         requestTitleCreationAllowed: "Request a new collaboration - organisation {{name}} is configured to automatic approve collaborations requests",
         actions: "",
         name: "Name",
         logo: "Collaboration logo",
+        useOrganisationLogo: "Use the organization logo",
         namePlaceHolder: "The unique name of a collaboration",
         shortName: "Short name",
         shortNamePlaceHolder: "Unique short name of the collaboration",
@@ -472,12 +525,11 @@ I18n.translations.en = {
         joinRequestUrlDisabled: "Join request are disabled for this collaboration",
         disableJoinRequests: "Disable Join request for this collaboration.",
         disableJoinRequestsTooltip: "When checked non-members of this<br/>collaboration can not issue a Join request.",
-        joinRequests: "Join requests",
+        joinRequests: "Join request URL",
         disabled: "Disabled",
-        enabled: "Enabled",
-        privacyPolicy: "Privacy policy",
-        servicesRestricted: "Restricted services",
-        servicesRestrictedTooltip: "When checked this Collaboration is<br/>restricted and only the platform admin<br/>can configure the Services.",
+        enabled: "Copy link",
+        privacyPolicy: "Acceptable Use Policy",
+        discloseMembers: "Disclose member info",
         discloseMemberInformation: "Disclose member information",
         discloseMemberInformationTooltip: "When checked the names<br/>of members are disclosed to other members",
         discloseEmailInformation: "Disclose email information",
@@ -497,8 +549,8 @@ I18n.translations.en = {
         organisation_name: "Organisation",
         organisationPlaceholder: "Select the organisation for this collaboration...",
         organisationTooltip: "Every collaboration belongs to<br/>precisely one and only one organisation",
-        accepted_user_policy: "AUP",
-        acceptedUserPolicyPlaceholder: "The URL of the Acceptable Use Policy",
+        accepted_user_policy: "Acceptable Use Policy",
+        acceptedUserPolicyPlaceholder: "The URL of the CO-specifc Acceptable Use Policy",
         role: "Role",
         newTitle: "Create new collaboration",
         subTitle: "Enter / edit the collaboration details. You will become an administrator of the new collaboration.",
@@ -527,9 +579,12 @@ I18n.translations.en = {
         deleteConfirmation: "Are you sure you want to delete this collaboration?",
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership for {{name}}?",
         deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
-        deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You won't be able to revert this.",
+        deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You will have to be re-invited by an administrator to rejoin.",
+        noBatchDeleteAllowed: "It is not possible to leave the CO as part of a batch delete. Please select only yourself to leave this CO, or select only other members to remove others from the group.",
         downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to revert this.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send an email with an activation link to him / her.",
+        lastAdminWarning: "You are leaving this collaboration without admins. After this, management of the CO can only be carried out by the administrators of organisation {{name}}",
+        lastAdminWarningUser: "You are the last administrator in this CO. After you leave, management of the CO can only be carried out by the administrators of organisation {{name}}",
         activateMemberTooltip: "Click to re-activate this suspended user.<br/>Suspended users can not login",
         flash: {
             updated: "Collaboration {{name}} was successfully updated",
@@ -565,7 +620,7 @@ I18n.translations.en = {
         collaborationRequests: "Collaboration requests",
         add: "Create new Organisation",
         searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS...",
-        deleteConfirmation: "Are you sure you want to delete Service {{name}}?"
+        deleteConfirmation: "Are you sure you want to delete Organisation {{name}}?"
     },
     services: {
         title: "Services",
@@ -590,6 +645,7 @@ I18n.translations.en = {
         entity_idTooltip: "The unique entity ID of the Service<br/>links the Service in SRAM to<br/>the actual external Service Provider",
         service_request: "Service Request URL",
         service_requestTooltip: "The URL for a Service to request a connection<br/>between a Collaboration and this Service<br/>if the User does not have access to this Service",
+        service_requestError: "Requires a valid URI and Automatic connection allowed set to True",
         description: "Description",
         descriptionPlaceholder: "The description of the service",
         address: "Address",
@@ -616,6 +672,9 @@ I18n.translations.en = {
         networkInfo: "Lower bound IP: {{lower}}, higher bound IP: {{higher}}, # addresses: {{num_addresses}}, version: IPv{{version}}",
         automaticConnectionAllowed: "Automatic connection allowed?",
         automaticConnectionAllowedTooltip: "Can collaborations use this service<br/>without explicit permission of the Service contact person?",
+        accessAllowedForAll: "Enabled for all organisations?",
+        accessAllowedForAllTooltip: "Is this service for all current and<br/>future organisations by default enabled?",
+        accessAllowedForAllInfo: "All organisations are enabled by default for this service",
         whiteListed: "Whitelisted?",
         whiteListedTooltip: "Can this Service directly be connected<br/>to new restricted Collaborations created by the API?<br/><br/>Note that it also possible to configure<br/>this in the Server configuration file.",
         sirtfiCompliant: "Sirtfi compliant?",
@@ -654,8 +713,10 @@ I18n.translations.en = {
         title: "Create new organisation",
         subTitle: "Enter / edit the organisation details.",
         actions: "",
+        about: "About the organisation",
         name: "Name",
         namePlaceHolder: "The unique name of an organisation",
+        invitations: "Invite organisation admins",
         category: "Category",
         categoryTooltip: "Categories are displayed when</br>services are linked to organisations",
         tenantPlaceHolder: "The unique tenant / organisation identifier linking the organisation to an institute",
@@ -666,11 +727,14 @@ I18n.translations.en = {
         identifierTooltip: "Generated, unique and immutable<br/>identifier of a organisation<br/>which used as identifier<br/>for external systems",
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
-        schacHomeOrganisation: "Schac Home",
-        schacHomeOrganisationPlaceholder: "The Schac Home Organisation of the organisation",
-        schacHomeOrganisationTooltip: "A person's home organization based<br/>on the domain name of the institution (i.e. uva.nl).",
+        servicesRestricted: "Restrict ORG to SURF services",
+        servicesRestrictedTooltip: "When checked the Collaborations in<br/>this Organisation are restricted and<br/>only the platform admin can<br/>configure the Services.",
+        schacHomeOrganisationShortName: "Org domain",
+        schacHomeOrganisation: "Organisation domain names",
+        schacHomeOrganisationPlaceholder: "The domain name of the organisation",
+        schacHomeOrganisationTooltip: "The domain name of a person based<br/>on the domain name of the institution (i.e. uva.nl).<br/><br/>SAML2: urn:mace:terena.org:attribute-def:schacHomeOrganization",
         collaborationCreationAllowed: "Automatically approve CO creation requests?",
-        collaborationCreationAllowedTooltip: "Any person can create<br/>Collaborations for their home<br/>institution.<br/>",
+        collaborationCreationAllowedTooltip: "Any person can create<br/>Collaborations for their home<br/>institution.<br/><br/>This requires a domain name",
         created: "Created at",
         message: "Message",
         messagePlaceholder: "Personal message to the administrators",
@@ -707,9 +771,11 @@ I18n.translations.en = {
         },
         onBoarding: {
             label: "On-boarding instructions",
-            tooltip: "The markdown instructions converted to<br/>html to inform new users from this organisation<br/>about what they can do / expect.",
+            invalid: "You must change the on-boarding instructions",
+            tooltip: "When a user signs into SRAM using<br/>their institutional account, but without<br/>any role or invite, we'll<br/>show them what they can do.<br/><br/>The text you fill out here,<br/>will also be shown.<br/><br/>Try to formulate something<br/>the user can do.",
+            template: "If you don't know what to do next, please check out ***URL to a webpage on the intranet of the institution?***<br/><br/>You can also contact ***maybe supply the name and email address of the SRAM contact within your institution, or can the user contact research support, or a helpdesk at the institution?***",
             tabs: {
-                write: "Markdown text",
+                write: "Markdown",
                 preview: "Preview"
             }
         }
@@ -810,10 +876,15 @@ I18n.translations.en = {
         decline: "Decline",
         accept: "Accept",
         declineConfirmation: "Are you sure you want to decline this join request?",
+        deleteConfirmation: "Are you sure you want to delete this join request?",
+        rejectionReason: "Please enter the reason to decline this join request",
+        rejectionReasonLabel: "Reason for declination",
+        rejectionReasonNote: "Note that the reason is included in the mail to the requester",
         flash: {
-            declined: "Join request for collaboration {{name}} was declined.",
+            declined: "Join request for collaboration {{name}} was denied.",
             accepted: "Join request for collaboration {{name}} was accepted.",
-            notFound: "This join request has already been accepted / declined.",
+            deleted: "Join request for collaboration {{name}} was deleted.",
+            notFound: "This join request has already been accepted / denied.",
             alreadyMember: "You are already a member of collaboration {{name}} and can therefore not accept this invitation"
         }
     },
@@ -849,7 +920,7 @@ I18n.translations.en = {
             inviteResend: "Invitation for organisation {{name}} was resend.",
             inviteAccepted: "Invitation for organisation {{name}} was accepted.",
             created: "Invitions for organisation {{name}} are created.",
-            alreadyMember: "The invitation could not be accepted because you are already a member of this organization.",
+            alreadyMember: "The invitation could not be accepted because you are already a member of this organisation.",
             notFound: "Invitation has already been accepted / declined. If you think there is a problem check with your CO admin (or with SRAM support at sram-support@surf.nl)."
         },
     },
@@ -963,7 +1034,10 @@ I18n.translations.en = {
         noServices: "This organisation has no services connected.",
         searchServices: "Search, select and add services to the available services within organisation {{name}}.",
         deleteServiceTooltip: "Make this service unavailable in<br/> the organisation {{name}}.<br/><br/><strong>NOTE</strong>: the service itself is NOT deleted.<br/>  It is only not available anymore<br/>  for the members of<br/>the collaborations<br/>on this organisation",
-        notAllowedOrganisation: "Service '{{service}}' can not be added to organisation '{{organisation}}'. The service configuration excludes it from this organisation.",
+        notAllowedOrganisation: "This service cannot be enabled for al COs<br/>because it does not allow automatic connections to COs.<br/><br/>Connections can still be requested by<br/>individual COs in your organisation.",
+        notEnabledOrganisation: "This service cannot be enabled for al COs<br/>because this organisation is not<br/>allowed access to this service.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        serviceRestrictedOrganisation: "This service cannot be enabled for al COs<br/>because this organisation is configured<br/>services restricted.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        serviceRestrictedOrganisationAdded: "This service is enabled for al COs<br/>but you can't edit this<br/>because this organisation is configured<br/>services restricted.<br/>",
         flash: {
             added: "Successfully added service {{service}} to organisation {{name}}",
             deleted: "Successfully deleted service {{service}} from organisation {{name}}"
@@ -1092,12 +1166,14 @@ I18n.translations.en = {
         request: "Request {{id}}",
         requester: "Requester",
         approved: "Approved",
+        rejectionReason: "Denied reason",
         denyConfirmation: "Are you sure you want to deny this Collaboration request?",
         deleteConfirmation: "Are you sure you want to delete this Collaboration request?",
         approve: "Approve",
         deny: "Deny",
         status: "Status",
         statuses: {
+            all: "All ({{nbr}})",
             open: "Open",
             denied: "Denied",
             approved: "Approved"
@@ -1184,9 +1260,16 @@ I18n.translations.en = {
         subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this Service. However you already have access to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         titleLinkNotAllowed: "Service {{name}} can not be linked to any of your collaborations",
         subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        noCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration.<br/><br/>Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        titleNoAutomaticConnection: "Service {{name}} can not be linked to any of your collaborations",
+        subTitleNoAutomaticConnection: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However this service does not allow for automatic connections. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        titleRedirectMismatch: "Service {{name}} can not be linked to any of your collaborations",
+        subTitleRedirectMismatch: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However the provided redirect URI is not valid. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        titleNoCollaborations: "Service {{name}} can not be linked to any of your collaborations",
+        subTitleNoCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
+        titleOutstandingServiceConnectionRequest: "Service {{name}} can not be linked to any of your collaborations",
+        subTitleOutstandingServiceConnectionRequest: "There are already outstanding service connection request(s) for all of your collaborations: {{details}}. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         collaboration: {
-            name: "Name",
+            name: "Collaboration",
             role: "Role",
             organisation: "Organisation",
             actions: "Link",
@@ -1206,7 +1289,6 @@ I18n.translations.en = {
             completed: "The Service {{serviceName}} is now accessible for you. Click the button below to go to this service.",
             requested: "Access to Service {{serviceName}} has been requested. Until the request is granted you can not access this service.",
         },
-        outstandingServiceConnectionRequest: "Error occurred. There is already an outstanding service connection request for {{details}}"
     },
     confirmation: {
         title: "Upgrade to platform admin",
@@ -1246,7 +1328,7 @@ I18n.translations.en = {
     footer: {
         tips: "Need tips or info?",
         help: "Help & FAQ",
-        product: "Proudly powered by",
+        product: "SRAM is a service by",
         productLink: "https://wiki.surfnet.nl/display/sram",
         surf: "SURF",
         surfLink: "https://surf.nl",
@@ -1257,6 +1339,10 @@ I18n.translations.en = {
         title: "System maintenance",
         runDailyJobsInfo: "Run the daily cron job to send notification mails and potentially suspend users that have not logged in for the configured period",
         runDailyJobs: "Trigger",
+        runOutdatedRequestsInfo: "Run the cron job to report all open outdated join requests and new collaboration requests for the configured threshold",
+        runOutdatedRequests: "Run",
+        runCleanedRequestsInfo: "Run the cron job to delete all outdated approved / denied join requests and collaboration requests for the configured threshold",
+        runCleanedRequests: "Delete",
         action: "Action",
         results: "Results",
         first_suspend_notification: "First suspend notification email sent",
@@ -1300,6 +1386,7 @@ I18n.translations.en = {
     },
     welcomeDialog: {
         title: "Welcome to {{name}}",
+        label: "",
         role: "Your current role is <strong>{{role}}</strong>",
         ok: "All good, show me the {{type}}",
         organisation: "organisation",
@@ -1308,19 +1395,19 @@ I18n.translations.en = {
     },
     welcome: {
         title: "Hi {{name}},",
-        subTitle: "Welcome to SURF Research Access Management (SRAM). SRAM is used to manage access for you research collaboration.",
+        subTitle: "Welcome to SURF Research Access Management (SRAM). SRAM is used to manage access for your research collaboration.",
         unknown: "an unknown institution",
         mysterious: "mysterious guest",
-        institution: "You have logged on via <strong>{{name}}</strong>",
-        institutionNotConnected: "This institution is not (yet) connected to SRAM",
+        institution: "You have logged on via <strong>{{name}}</strong>.",
+        institutionNotConnected: "That organization has not (yet) ordered SRAM as a service.",
         whatYouCanDo: "Here's what you can do:",
         instructions: "Instruction from <strong>{{name}}</strong>",
         createColl: "Create your own collaboration",
         startCreateColl: "If you want to start your own collaboration, you can create it directly.",
         createCollRequest: "Request your own collaboration",
-        startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check and hopefully approve it.",
+        startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check it.",
         createCollTxt: "Create a collaboration",
-        createCollRequestTxt: "Request a collaboration",
+        createCollRequestTxt: "Start a new collaboration",
         contact: "Contact SRAM helpdesk",
         contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> and let us know what you were expecting, or if you have any questions. We'll try to respond asap."
     },
@@ -1382,7 +1469,24 @@ I18n.translations.en = {
         help: {
             title: "Help & Support",
             subTitle: "Feel free to reach out to <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
-        }
+        },
+    },
+    tooltips: {
+        members: "Composition of this collaboration",
+        admins: "Administrator(s) of this collaboration",
+        collaborationUrl: "More information about this collaboration",
+        aup: "Acceptable use policy for this collaboration",
+        user: "User",
+        admin: "Administrator",
+        invitations: "Invitee",
+        joinRequest: "Join request",
+        manager: "Manager",
+        platformAdmin: "Goddess divinity"
+    },
+    notFound : {
+        msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that.<br/><br/>" +
+            "You could try visiting the <a href='{{base_url}}'>homepage</a>. If that does not offer you an option you were looking for, " +
+            "contact the person that invited you, or follow the SRAM Help link which includes how to contact the SURF SRAM team."
     }
 };
 

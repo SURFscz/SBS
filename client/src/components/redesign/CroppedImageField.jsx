@@ -16,7 +16,6 @@ export default class CroppedImageField extends React.PureComponent {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            error: "",
             dialogOpen: false,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => true
@@ -31,16 +30,8 @@ export default class CroppedImageField extends React.PureComponent {
 
     closeDialog = () => this.setState({dialogOpen: false});
 
-    confirmDelete = () => this.setState({
-        confirmationDialogOpen: true,
-        confirmationDialogAction: () => {
-            this.props.onChange(null);
-            this.setState({confirmationDialogOpen: false});
-        }
-    });
-
     render() {
-        const {error, dialogOpen, confirmationDialogOpen, confirmationDialogAction} = this.state;
+        const {dialogOpen, confirmationDialogOpen, confirmationDialogAction} = this.state;
         const {title, name, value, secondRow = false, initial = false, disabled = false} = this.props;
         const imageRequired = !initial && isEmpty(value);
         return (
@@ -65,10 +56,8 @@ export default class CroppedImageField extends React.PureComponent {
                         <Button txt={value ? I18n.t("forms.change") : I18n.t("forms.add")}
                                 disabled={disabled}
                                 onClick={() => this.setState({dialogOpen: true})}/>
-                        {(false && value) && <Button warningButton={true} onClick={this.confirmDelete}/>}
                     </div>
                 </section>
-                {!isEmpty(error) && <ErrorIndicator msg={error}/> }
                 {imageRequired && <ErrorIndicator msg={I18n.t("forms.imageRequired")} />}
             </div>
         );

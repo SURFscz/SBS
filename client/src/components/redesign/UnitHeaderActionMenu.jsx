@@ -22,7 +22,8 @@ class UnitHeaderActionMenu extends React.Component {
         const {actions, history, auditLogPath, firstTime, queryParam} = this.props;
         return <div className="action-menu" ref={ref => this.ref = ref}
                     tabIndex={1}
-                    onBlur={() => setTimeout(this.props.close, 250)}>
+                    onBlur={() => setTimeout(this.props.close, 250)}
+                >
             <ul>
                 {actions.map(action => <li key={action.name}>
                     {action.icon && <FontAwesomeIcon icon={action.icon}/>}
@@ -51,7 +52,7 @@ class UnitHeaderActionMenu extends React.Component {
 
 UnitHeaderActionMenu.propTypes = {
     actions: PropTypes.array,
-    history: PropTypes.object,
+    history: PropTypes.any,
     auditLogPath: PropTypes.string,
     firstTime: PropTypes.func,
     close: PropTypes.func,

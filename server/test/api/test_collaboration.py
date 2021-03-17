@@ -238,19 +238,6 @@ class TestCollaboration(AbstractTest):
         for group in groups:
             self.assertTrue("changed" in group.global_urn)
 
-    def test_collaboration_update_restricted_service(self):
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-
-        self.login("urn:admin")
-        self.mark_collaboration_service_restricted(collaboration_id)
-
-        collaboration_json = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
-        collaboration_json["services_restricted"] = False
-        self.put("/api/collaborations", body=collaboration_json)
-
-        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
-        self.assertTrue(collaboration.services_restricted)
-
     def test_collaboration_delete(self):
         pre_count = Collaboration.query.count()
         collaboration = self._find_by_identifier()
@@ -446,6 +433,10 @@ class TestCollaboration(AbstractTest):
         self.assertTrue("name" in user)
         self.assertFalse("email" in user)
 
+        user = memberships[2]["user"]
+        self.assertTrue("name" in user)
+        self.assertTrue("email" in user)
+
     def test_collaboration_lite_disclose_no_information(self):
         self.login("urn:betty")
         collaboration_id = self.find_entity_by_name(Collaboration, uuc_teachers_name).id
@@ -490,7 +481,7 @@ class TestCollaboration(AbstractTest):
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "administrators": ["the@ex.org"],
-                                        "short_name": ai_computing_short_name
+                                        "short_name": f"1{ai_computing_short_name}"
                                     }),
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)

@@ -99,18 +99,31 @@ class TestCollaborationRequest(AbstractTest):
 
         with self.app.mail.record_messages() as outbox:
             self.login("urn:mary")
-            self.put(f"/api/collaboration_requests/deny/{collaboration_request.id}", with_basic_auth=False)
+            reason = "Prerogative of admins"
+            self.put(f"/api/collaboration_requests/deny/{collaboration_request.id}",
+                     body={"rejection_reason": reason},
+                     with_basic_auth=False)
 
             mail_msg = outbox[0]
             self.assertEqual("Collaboration request for collaboration New Collaboration has been declined",
                              mail_msg.subject)
+            self.assertTrue(reason in mail_msg.html)
 
     def test_delete(self):
         collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
-        with self.app.mail.record_messages() as outbox:
-            self.login("urn:harry")
-            self.delete("/api/collaboration_requests", primary_key=collaboration_request.id, with_basic_auth=False)
-            self.assertIsNone(self.find_entity_by_name(CollaborationRequest, collaboration_request_name))
-            mail_msg = outbox[0]
-            self.assertEqual("Collaboration request for collaboration New Collaboration has been declined",
-                             mail_msg.subject)
+        self.login("urn:harry")
+        self.delete("/api/collaboration_requests", primary_key=collaboration_request.id, with_basic_auth=False,
+                    response_status_code=400)
+
+    def test_delete_with_status_open(self):
+        pre_count = CollaborationRequest.query.count()
+        collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
+        self.login("urn:harry")
+        self.put(f"/api/collaboration_requests/approve/{collaboration_request.id}",
+                 body={
+                     "name": collaboration_request.name,
+                     "short_name": collaboration_request.short_name,
+                     "organisation_id": collaboration_request.organisation_id
+                 }, with_basic_auth=False)
+        self.delete("/api/collaboration_requests", primary_key=collaboration_request.id, with_basic_auth=False)
+        self.assertEqual(pre_count - 1, CollaborationRequest.query.count())

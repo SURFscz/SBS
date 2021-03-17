@@ -23,6 +23,7 @@ import {getParameterByName} from "../utils/QueryParameters";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import UnitHeader from "../components/redesign/UnitHeader";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class ServiceRequest extends React.Component {
 
@@ -36,8 +37,9 @@ class ServiceRequest extends React.Component {
             alreadyLinked: false,
             finished: false,
             redirectUriMismatch: false,
+            noAutomaticConnectionsAllowed: false,
             collaborationAdminLinked: false,
-            outstandingServiceConnectionRequestDetails: null
+            loading: true
         };
     }
 
@@ -50,10 +52,12 @@ class ServiceRequest extends React.Component {
                     // Mark collaborations as already linked if the service is already connected
                     const service = res[0];
                     const collaborations = res[1];
+                    const redirectUri = getParameterByName("redirectUri", window.location.search);
+                    const redirectUriMismatch = isEmpty(service.uri) || (!isEmpty(redirectUri) && !redirectUri.startsWith(service.uri));
                     collaborations.forEach(collaboration => {
                         collaboration.alreadyLinked = collaboration.services.some(ser => ser.id === service.id);
-                        collaboration.linkNotAllowed = service.allowed_organisations.length > 0 &&
-                            service.allowed_organisations.every(org => org.id !== collaboration.organisation.id);
+                        collaboration.linkNotAllowed = (service.allowed_organisations.every(org => org.id !== collaboration.organisation.id)
+                            && !service.access_allowed_for_all) || collaboration.organisation.services_restricted;
                     });
                     serviceConnectionRequestsOutstanding(service.id).then(res => {
                         collaborations.forEach(collaboration => {
@@ -62,9 +66,12 @@ class ServiceRequest extends React.Component {
                         this.setState({
                             service,
                             collaborations,
+                            noAutomaticConnectionsAllowed: !service.automatic_connection_allowed,
                             serviceName: escapeHtmlTooltip(service.name),
+                            redirectUriMismatch: redirectUriMismatch,
                             displayBackToService: this.displayBackToService(service),
-                            alreadyLinked: collaborations.some(coll => coll.alreadyLinked)
+                            alreadyLinked: collaborations.some(coll => coll.alreadyLinked),
+                            loading: false
                         });
                     });
                 });
@@ -91,13 +98,10 @@ class ServiceRequest extends React.Component {
         const {service, collaborations, serviceName} = this.state;
         const {user} = this.props;
         const selectedCollaborations = collaborations.filter(coll => coll.requestToLink);
-        const noAutomaticConnectionAllowed = !service.automatic_connection_allowed;
-        const collaborationAdminLinked = selectedCollaborations.some(coll => this.roleOfUserInCollaboration(coll, user) === "admin" || user.admin)
-            && !noAutomaticConnectionAllowed;
+        const collaborationAdminLinked = selectedCollaborations.some(coll => this.roleOfUserInCollaboration(coll, user) === "admin" || user.admin);
         const promises = selectedCollaborations.map(coll => {
             const isMember = this.roleOfUserInCollaboration(coll, user) !== "admin" && !user.admin;
-            const requestIsRequired = isMember || noAutomaticConnectionAllowed
-            return requestIsRequired ?
+            return isMember ?
                 requestServiceConnection({
                     message: I18n.t("serviceRequest.motivation", {serviceName, userName: user.name}),
                     service_id: service.id,
@@ -111,18 +115,7 @@ class ServiceRequest extends React.Component {
                     finished: true,
                     collaborationAdminLinked: collaborationAdminLinked
                 });
-            }).catch(e => {
-            if (e.response && e.response.json && e.response.status === 400) {
-                e.response.json().then(res => {
-                    if (res.message && res.message.indexOf("outstanding_service_connection_request") > -1) {
-                        const cleanMsg = res.message.replace("outstanding_service_connection_request: ", "");
-                        this.setState({outstandingServiceConnectionRequestDetails: cleanMsg});
-                    } else {
-                        throw e;
-                    }
-                })
-            }
-        });
+            });
     };
 
     closeExplanation = () => this.setState({showExplanation: false});
@@ -161,7 +154,7 @@ class ServiceRequest extends React.Component {
                         />
                     </td>
                     <td>{coll.linkNotAllowed &&
-                    <span className="tooltip-container">
+                            <span className="tooltip-container">
                                 <span data-tip data-for={`coll_lna${coll.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
@@ -170,7 +163,7 @@ class ServiceRequest extends React.Component {
                                 </ReactTooltip>
                             </span>}
                         {coll.alreadyLinked &&
-                        <span className="tooltip-container">
+                            <span className="tooltip-container">
                                 <span data-tip data-for={`coll_al${coll.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
@@ -179,7 +172,7 @@ class ServiceRequest extends React.Component {
                                 </ReactTooltip>
                             </span>}
                         {(coll.outstandingServiceConnectionRequest && this.roleOfUserInCollaboration(coll, user) === "member") &&
-                        <span className="tooltip-container">
+                            <span className="tooltip-container">
                                 <span data-tip data-for={`coll_osr${coll.id}`}>
                                     <FontAwesomeIcon icon="info-circle"/>
                                 </span>
@@ -187,7 +180,6 @@ class ServiceRequest extends React.Component {
                                     <p dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.collaboration.outstandingServiceConnectionRequest")}}/>
                                 </ReactTooltip>
                             </span>}
-
                     </td>
                 </tr>)}
                 </tbody>
@@ -198,26 +190,54 @@ class ServiceRequest extends React.Component {
 
     render() {
         const {
-            collaborations, showExplanation, alreadyLinked, serviceName, finished, service,
-            collaborationAdminLinked, outstandingServiceConnectionRequestDetails
+            collaborations,
+            showExplanation,
+            alreadyLinked,
+            serviceName,
+            finished,
+            service,
+            noAutomaticConnectionsAllowed,
+            collaborationAdminLinked,
+            redirectUriMismatch,
+            loading
         } = this.state;
+        if (loading) {
+            return <SpinnerField/>;
+        }
         const {user} = this.props;
-        const enableSubmit = collaborations.some(coll => coll.requestToLink && !coll.alreadyLinked);
-        const linkNotAllowed = collaborations.every(coll => coll.linkNotAllowed || coll.outstandingServiceConnectionRequest);
-        const title = alreadyLinked ?
-            I18n.t("serviceRequest.titleAlreadyLinked", {
+        const linkNotAllowed = collaborations.every(coll => coll.linkNotAllowed);
+        const outstandingServiceConnectionRequest = collaborations.every(coll => coll.outstandingServiceConnectionRequest);
+        const noCollaborations = collaborations.length === 0;
+
+        let title = I18n.t("serviceRequest.title", {name: serviceName});
+        let subTitle = I18n.t("serviceRequest.subTitle", {name: serviceName});
+        if (alreadyLinked) {
+            title = I18n.t("serviceRequest.titleAlreadyLinked", {
                 name: serviceName,
                 collaboration: collaborations.find(coll => coll.alreadyLinked).name
-            })
-            : linkNotAllowed ? I18n.t("serviceRequest.titleLinkNotAllowed", {name: serviceName})
-                : I18n.t("serviceRequest.title", {name: serviceName});
-        const subTitle = alreadyLinked ?
-            I18n.t("serviceRequest.subTitleAlreadyLinked", {name: serviceName})
-            : linkNotAllowed ? I18n.t("serviceRequest.subTitleLinkNotAllowed", {name: serviceName})
-                : I18n.t("serviceRequest.subTitle", {name: serviceName});
-        const noCollaborations = collaborations.length === 0;
+            });
+            subTitle = I18n.t("serviceRequest.subTitleAlreadyLinked", {name: serviceName});
+        } else if (noAutomaticConnectionsAllowed) {
+            title = I18n.t("serviceRequest.titleNoAutomaticConnection", {name: serviceName});
+            subTitle = I18n.t("serviceRequest.titleNoAutomaticConnection", {name: serviceName});
+        } else if (redirectUriMismatch) {
+            title = I18n.t("serviceRequest.titleRedirectMismatch", {name: serviceName});
+            subTitle = I18n.t("serviceRequest.subTitleRedirectMismatch", {name: serviceName});
+        } else if (noCollaborations) {
+            title = I18n.t("serviceRequest.titleNoCollaborations", {name: serviceName});
+            subTitle = I18n.t("serviceRequest.subTitleNoCollaborations", {name: serviceName});
+        } else if (outstandingServiceConnectionRequest) {
+            title = I18n.t("serviceRequest.titleOutstandingServiceConnectionRequest", {name: serviceName});
+            subTitle = I18n.t("serviceRequest.subTitleOutstandingServiceConnectionRequest", {details: collaborations.map(coll => coll.name).join(", ")});
+        } else if (linkNotAllowed) {
+            title = I18n.t("serviceRequest.titleLinkNotAllowed", {name: serviceName});
+            subTitle = I18n.t("serviceRequest.subTitleLinkNotAllowed", {name: serviceName});
+        }
         const msg = collaborationAdminLinked ? I18n.t("serviceRequest.result.completed", {serviceName}) :
             I18n.t("serviceRequest.result.requested", {serviceName});
+        const errorSituation = alreadyLinked || linkNotAllowed || noAutomaticConnectionsAllowed || redirectUriMismatch || noCollaborations
+            || outstandingServiceConnectionRequest;
+        const enableSubmit = collaborations.some(coll => coll.requestToLink && !coll.alreadyLinked) && !errorSituation;
         return (
             <div className="mod-service-request-container">
                 <ConfirmationDialog isOpen={finished}
@@ -225,7 +245,6 @@ class ServiceRequest extends React.Component {
                                     question={msg}
                                     confirmationTxt={I18n.t("serviceRequest.backToService")}
                 />
-
                 <UnitHeader obj={service}
                             name={service.name}>
                     <div className="title">
@@ -237,7 +256,6 @@ class ServiceRequest extends React.Component {
 
                     </div>
                 </UnitHeader>
-
                 <div className="mod-service-request">
                     <Explain
                         close={this.closeExplanation}
@@ -245,26 +263,24 @@ class ServiceRequest extends React.Component {
                         isVisible={showExplanation}>
                         <ServicesRequestExplanation name={escapeHtmlTooltip(serviceName)}/>
                     </Explain>
-                    {noCollaborations &&
-                    <p className="no-user-collaborations" dangerouslySetInnerHTML={{__html: I18n.t("serviceRequest.noCollaborations", {name: serviceName})}}/>}
-                    {!noCollaborations && <div className="service-request">
-                        <p className="sub-title" dangerouslySetInnerHTML={{__html: subTitle}}/>
-                        {this.renderCollaborations(collaborations, user)}
-                        {outstandingServiceConnectionRequestDetails &&
-                        <div className="outstanding-service-request">
-                            <ErrorIndicator msg={I18n.t("serviceRequest.outstandingServiceConnectionRequest", {
-                                details: outstandingServiceConnectionRequestDetails
-                            })}/>
+                    <div className="service-request">
+                        {errorSituation && <div className="error">
+                            <ErrorIndicator msg={subTitle} standalone={true} decode={false}/>
+                        </div>}
+                        {!errorSituation &&
+                        <div>
+                            <p className="sub-title" dangerouslySetInnerHTML={{__html: subTitle}}/>
+                            {this.renderCollaborations(collaborations, user)}
                         </div>
                         }
                         <section className="actions">
-                            {this.displayBackToService(service) &&
-                            <Button cancelButton={true} txt={I18n.t("serviceRequest.backToService")}
-                                    onClick={this.backToService}/>}
+                            <Button disabled={!this.displayBackToService(service)} cancelButton={true}
+                                    txt={I18n.t("serviceRequest.backToService")}
+                                    onClick={this.backToService}/>
                             <Button disabled={!enableSubmit} txt={I18n.t("serviceRequest.link")}
                                     onClick={this.submit}/>
                         </section>
-                    </div>}
+                    </div>
                 </div>
             </div>);
     };

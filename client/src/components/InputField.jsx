@@ -27,7 +27,8 @@ export default function InputField({
                                        history = null,
                                        large = false,
                                        noInput = false,
-                                       error = false
+                                       error = false,
+                                       cols = 5
                                    }) {
     placeholder = disabled ? "" : placeholder;
     let className = `${fileUpload ? "file-upload" : ""}`;
@@ -59,6 +60,26 @@ export default function InputField({
                                onEnter(e);
                            }
                        }}/>}
+                {(multiline && !noInput) &&
+                <textarea disabled={disabled}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                          className={`${className} ${large ? "large" : ""} ${fileUpload ? "file-upload" : ""}`}
+                          onKeyDown={e => {
+                              if (onEnter && e.keyCode === 13) {//enter
+                                  onEnter(e);
+                              }
+                          }}
+                          placeholder={placeholder} cols={cols}/>}
+                {copyClipBoard && <ClipBoardCopy txt={value} right={true}/>}
+                {(link && history) && <div className="input-field-link"><FontAwesomeIcon icon="arrow-right"
+                                                                                         onClick={() => history.push(link)}/>
+                </div>}
+                {(externalLink && value) &&
+                <div className="input-field-link"><a href={value} rel="noopener noreferrer"
+                                                     target="_blank"><FontAwesomeIcon icon="arrow-right"/></a></div>}
+                {noInput && <span className="no-input">{value}</span>}
                 {fileUpload && <section className="file-upload-container">
                     <label className="file-upload" htmlFor={`fileUpload_${name}`}>
                         {isEmpty(fileName) ? <span><FontAwesomeIcon icon="file-upload"/></span> :
@@ -73,23 +94,6 @@ export default function InputField({
                            style={{display: "none"}}
                            onChange={onFileUpload}/>
                 </section>}
-                {(multiline && !noInput) &&
-                <textarea disabled={disabled} value={value} onChange={onChange} onBlur={onBlur}
-                          className={`${className} ${large ? "large" : ""}`}
-                          onKeyDown={e => {
-                              if (onEnter && e.keyCode === 13) {//enter
-                                  onEnter(e);
-                              }
-                          }}
-                          placeholder={placeholder} cols={3}/>}
-                {copyClipBoard && <ClipBoardCopy txt={value} right={true}/>}
-                {(link && history) && <div className="input-field-link"><FontAwesomeIcon icon="arrow-right"
-                                                                                         onClick={() => history.push(link)}/>
-                </div>}
-                {(externalLink && value) &&
-                <div className="input-field-link"><a href={value} rel="noopener noreferrer"
-                                                     target="_blank"><FontAwesomeIcon icon="arrow-right"/></a></div>}
-                {noInput && <span className="no-input">{value}</span>}
             </div>
         </div>
     );

@@ -6,7 +6,7 @@
     width: 100%;
     margin: 0 auto;
 
-    @media (max-width: $medium) {
+    @media (max-width: $tablet-max) {
         padding: 0 15px;
     }
 
@@ -28,7 +28,7 @@
 
         h1 {
             font-size: 22px;
-            line-height: 22px;
+            line-height: 26px;
 
             @media (max-width: $compact-medium) {
                 margin-bottom: 15px
@@ -49,7 +49,11 @@
 
         .search {
             position: relative;
-            margin-left: auto;
+
+            &.standalone {
+                margin-left: auto;
+            }
+
             @media (max-width: $compact-medium) {
                 margin-left: 0;
             }
@@ -66,7 +70,7 @@
 
             input[type=text] {
                 flex-grow: 2;
-                border: 1px solid $lighter-grey;
+                border: 1px solid $medium-grey;
                 padding: 0 15px 0 10px;
                 min-height: 36px;
                 font-size: 16px;
@@ -89,11 +93,11 @@
             }
         }
 
-        a.button.blue {
-            margin-left: 25px;
+        a.button.blue.plus {
+            margin-right: auto;
+            margin-left: auto;
             @media (max-width: $compact-medium) {
-                margin-top: 15px;
-                margin-left: 0;
+                margin: 15px 0;
             }
 
         }
@@ -122,7 +126,7 @@
                 }
 
                 &.logo {
-                    width: 75px;
+                    width: 85px;
                 }
 
                 svg.fa-caret-up, svg.fa-caret-down {
@@ -194,10 +198,12 @@
 
                     img {
                         border-radius: 4px;
-                        min-width: 80px;
-                        min-height: 58px;
-                        max-width: 80px;
-                        max-height: 58px;
+                        //min-width: 80px;
+                        //min-height: 58px;
+                        //max-width: 80px;
+                        //max-height: 58px;
+                        width: 80px;
+                        height: auto;
                         margin-right: 5px;
                     }
                 }
@@ -232,7 +238,8 @@
         max-height: 28px;
         padding: 4px 15px;
         font-weight: bold;
-        margin-left: 15px;
+        word-break: keep-all;
+        margin: 0 15px;
 
         @media (max-width: $compact-medium) {
             display: none;
@@ -246,6 +253,11 @@
         &.invite {
             background-color: $yellow-light;
             color: black;
+
+            &.expired {
+                background-color: $warning-red;
+                color: black;
+            }
         }
 
         &.accepted {

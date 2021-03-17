@@ -3,7 +3,7 @@ import json
 
 from flask import jsonify
 
-from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE
+from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE, ACTION_UPDATE
 from server.db.domain import User, Collaboration, Service, Organisation, Group
 from server.test.abstract_test import AbstractTest
 from server.test.seed import join_request_peter_hash, roger_name, service_cloud_name, ai_computing_name, \
@@ -24,7 +24,7 @@ class TestAuditLog(AbstractTest):
         self.login("urn:peter")
         res = self.get("/api/audit_logs/me")
 
-        self.assertEqual(ACTION_DELETE, self.audit_log_by_target_type("join_requests", res)[0]["action"])
+        self.assertEqual(ACTION_UPDATE, self.audit_log_by_target_type("join_requests", res)[0]["action"])
         self.assertEqual(ACTION_CREATE, self.audit_log_by_target_type("collaboration_memberships", res)[0]["action"])
 
     def test_me_profile(self):
@@ -77,6 +77,9 @@ class TestAuditLog(AbstractTest):
         self.assertEqual(2, len(res["audit_logs"]))
         self.assertEqual(ACTION_DELETE, self.audit_log_by_target_type("invitations", res)[0]["action"])
         self.assertEqual(ACTION_CREATE, self.audit_log_by_target_type("collaboration_memberships", res)[0]["action"])
+
+        self.assertEqual(1, len(res["collaborations"]))
+        self.assertEqual("AI computing", res["collaborations"][0]["name"])
 
     def test_organisation(self):
         self.login("urn:sarah")

@@ -24,24 +24,20 @@
     .file-upload {
         display: flex;
         margin: 5px 0;
-
-        @media (max-width: $compact-medium) {
-            flex-direction: column;
-        }
-
+        flex-direction: column;
     }
 
     .preview {
         img.cropped-img {
             width: 240px;
-            height: 174px;
+            height: auto;
             border-radius: 4px;
         }
     }
 
     .no-image svg {
         width: 240px;
-        height: 174px;
+        height: auto;
         padding: 50px;
         border: 3px dotted $lighter-grey;
         fill: $lighter-grey;
@@ -53,21 +49,13 @@
     }
 
     .file-upload-actions {
-        margin-left: 25px;
         display: flex;
-        flex-direction: column;
+        margin-top: 15px;
 
-        @media (max-width: $compact-medium) {
-            margin-left: 0;
-            margin-top: 5px;
-            a {
-                max-width: 240px;
-            }
+        a {
+            max-width: 240px;
         }
 
-        a:not(:first-child) {
-            margin: 25px 0 0 auto;
-        }
     }
 
 }
