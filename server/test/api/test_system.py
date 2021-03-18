@@ -57,7 +57,7 @@ class TestSystem(AbstractTest):
                  with_basic_auth=False)
 
         res = self.get("/api/audit_logs/activity")
-        self.assertEqual(2, len(res["audit_logs"]))
+        self.assertEqual(3, len(res["audit_logs"]))
 
         self.login("urn:john")
         self.delete("/api/system/clear-audit-logs", response_status_code=201)

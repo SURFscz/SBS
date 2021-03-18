@@ -24,7 +24,9 @@ class AbstractTest(TestCase):
     def setUp(self):
         db = self.app.db
         with self.app.app_context():
+            os.environ["SEEDING"] = "1"
             seed(db, self.app.app_config)
+            del os.environ["SEEDING"]
 
     def create_app(self):
         return AbstractTest.app
