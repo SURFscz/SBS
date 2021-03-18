@@ -634,6 +634,7 @@ I18n.translations.nl = {
         compliancyShort: "Compliancy",
         none: "Geen",
         contact: "Dienst contactpersoon",
+        titleNew: "Dienst toevoegen",
         titleUpdate: "Dienst {{name}} bijwerken",
         titleReadOnly: "Dienst {{name}}",
         backToServices: "Terug naar diensten",
