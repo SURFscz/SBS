@@ -634,6 +634,7 @@ I18n.translations.en = {
         compliancyShort: "Compliancy",
         none: "None",
         contact: "Service contact-person",
+        titleNew: "Add service",
         titleUpdate: "Update service {{name}}",
         titleReadOnly: "Service {{name}}",
         backToServices: "Back to services",
