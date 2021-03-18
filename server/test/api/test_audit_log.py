@@ -40,12 +40,9 @@ class TestAuditLog(AbstractTest):
         self.assertEqual(2, len(res))
         audit_logs = res["audit_logs"]
 
-        state_before = json.loads(audit_logs[0]["state_before"])
-        state_after = json.loads(audit_logs[0]["state_after"])
+        state_after = json.loads(audit_logs[1]["state_after"])
 
-        self.assertIsNone(state_before["ssh_key"])
-        for k in ["ssh"]:
-            self.assertEqual(f"{k}_value", state_after[f"{k}_key"])
+        self.assertEquals(state_after["ssh_key"], "ssh_value")
 
     def test_services_info(self):
         self.login("urn:john")
@@ -116,6 +113,6 @@ class TestAuditLog(AbstractTest):
                  with_basic_auth=False)
 
         res = self.get("/api/audit_logs/activity")
-        self.assertEquals(2, len(res["audit_logs"]))
-        self.assertEquals(1, len(res["organisations"]))
-        self.assertEquals(2, len(res["users"]))
+        self.assertEqual(3, len(res["audit_logs"]))
+        self.assertEqual(1, len(res["organisations"]))
+        self.assertEqual(2, len(res["users"]))

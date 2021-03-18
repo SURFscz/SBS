@@ -1,4 +1,6 @@
 # -*- coding: future_fstrings -*-
+import os
+
 from flask import session
 from flask_jsontools.formatting import JsonSerializableBase
 from sqlalchemy import MetaData
@@ -116,22 +118,23 @@ class AuditMixin(JsonSerializableBase):
     @staticmethod
     def create_audit(connection, subject_id, target_type, target_id, target_name, parent_id, parent_name, action,
                      **kwargs):
-        from server.auth.security import current_user_id
+        if not os.environ.get("SEEDING"):
+            from server.auth.security import current_user_id
 
-        user_id = current_user_id() if session and "user" in session and "id" in session["user"] else None
-        audit = AuditLog(
-            user_id,
-            subject_id,
-            target_type,
-            target_id,
-            target_name,
-            parent_id,
-            parent_name,
-            action,
-            kwargs.get("state_before"),
-            kwargs.get("state_after")
-        )
-        audit.save(connection)
+            user_id = current_user_id() if session and "user" in session and "id" in session["user"] else None
+            audit = AuditLog(
+                user_id,
+                subject_id,
+                target_type,
+                target_id,
+                target_name,
+                parent_id,
+                parent_name,
+                action,
+                kwargs.get("state_before"),
+                kwargs.get("state_after")
+            )
+            audit.save(connection)
 
     @classmethod
     def __declare_last__(cls):
