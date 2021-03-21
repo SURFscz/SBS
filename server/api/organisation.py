@@ -130,6 +130,7 @@ def organisation_by_id(organisation_id):
         if not is_admin:
             user_id = current_user_id()
             query = query \
+                .join(Organisation.organisation_memberships) \
                 .join(OrganisationMembership.user) \
                 .filter(OrganisationMembership.role.in_(["admin", "manager"])) \
                 .filter(OrganisationMembership.user_id == user_id)

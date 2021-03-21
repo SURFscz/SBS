@@ -39,7 +39,7 @@ class TestUser(AbstractTest):
     def test_me_user_with_suspend_notifactions(self):
         self.login("urn:two_suspend")
         res = self.client.get("/api/users/me")
-        self.assertEquals(True, res.json["successfully_activated"])
+        self.assertEqual(True, res.json["successfully_activated"])
 
     def test_me_user_with_collaboration_requests(self):
         self.login("urn:peter")
