@@ -169,10 +169,12 @@ class Collaboration(Base, db.Model):
     website_url = db.Column("website_url", db.String(length=512), nullable=True)
     invitations_count = column_property(select([func.count(Invitation.id)])
                                         .where(Invitation.collaboration_id == id)
-                                        .correlate_except(Invitation))
+                                        .correlate_except(Invitation)
+                                        .scalar_subquery())
     collaboration_memberships_count = column_property(select([func.count(CollaborationMembership.id)])
                                                       .where(CollaborationMembership.collaboration_id == id)
-                                                      .correlate_except(CollaborationMembership))
+                                                      .correlate_except(CollaborationMembership)
+                                                      .scalar_subquery())
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
@@ -234,10 +236,12 @@ class Organisation(Base, db.Model):
                                passive_deletes=True)
     collaborations_count = column_property(select([func.count(Collaboration.id)])
                                            .where(Collaboration.organisation_id == id)
-                                           .correlate_except(Collaboration))
+                                           .correlate_except(Collaboration)
+                                           .scalar_subquery())
     organisation_memberships_count = column_property(select([func.count(OrganisationMembership.id)])
                                                      .where(OrganisationMembership.organisation_id == id)
-                                                     .correlate_except(OrganisationMembership))
+                                                     .correlate_except(OrganisationMembership)
+                                                     .scalar_subquery())
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.organisation_memberships))) > 0
