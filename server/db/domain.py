@@ -110,9 +110,8 @@ class Invitation(Base, db.Model):
     collaboration = db.relationship("Collaboration", back_populates="invitations")
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User")
-    groups = db.relationship("Group",
-                             secondary=groups_invitations_association,
-                             lazy="select")
+    groups = db.relationship("Group", secondary=groups_invitations_association, lazy="select",
+                             back_populates="invitations")
     accepted = db.Column("accepted", db.Boolean(), nullable=True)
     denied = db.Column("denied", db.Boolean(), nullable=True)
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
@@ -152,7 +151,8 @@ class Collaboration(Base, db.Model):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
-    services = db.relationship("Service", secondary=services_collaborations_association, lazy="select")
+    services = db.relationship("Service", secondary=services_collaborations_association, lazy="select",
+                               back_populates="collaborations")
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
                                                 cascade="all, delete-orphan", passive_deletes=True)
     groups = db.relationship("Group", back_populates="collaboration",
@@ -219,7 +219,8 @@ class Organisation(Base, db.Model):
                                                default=False)
     collaborations = db.relationship("Collaboration", back_populates="organisation", cascade="all, delete-orphan",
                                      passive_deletes=True)
-    services = db.relationship("Service", secondary=services_organisations_association, lazy="select")
+    services = db.relationship("Service", secondary=services_organisations_association, lazy="select",
+                               back_populates="organisations")
     collaboration_requests = db.relationship("CollaborationRequest", back_populates="organisation",
                                              cascade="all, delete-orphan",
                                              passive_deletes=True)
@@ -263,9 +264,11 @@ class Service(Base, db.Model):
                                                default=False)
     code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
     sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
-    collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select")
+    collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select",
+                                     back_populates="services")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
-    organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select")
+    organisations = db.relationship("Organisation", secondary=services_organisations_association, lazy="select",
+                                    back_populates="services")
     ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
     service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="service",
                                                   cascade="all, delete-orphan", passive_deletes=True)
@@ -290,7 +293,8 @@ class Group(Base, db.Model):
                                                 secondary=collaboration_memberships_groups_association,
                                                 back_populates="groups",
                                                 lazy="select")
-    invitations = db.relationship("Invitation", secondary=groups_invitations_association, lazy="select")
+    invitations = db.relationship("Invitation", secondary=groups_invitations_association, lazy="select",
+                                  back_populates="groups")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),

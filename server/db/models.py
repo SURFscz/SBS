@@ -24,13 +24,13 @@ def flatten(coll):
 
 
 def validate(cls, json_dict, is_new_instance=True):
-    required_columns = {k: v for k, v in cls.__table__.columns._data.items() if
-                        not v.nullable and (not v.server_default or v.primary_key)}
-    required_attributes = required_columns.keys()
+    required_columns = [coll for coll in cls.__table__.columns._all_columns if
+                        not coll.nullable and not coll.server_default]
     if is_new_instance:
-        required_attributes = filter(lambda k: not required_columns[k].primary_key, required_attributes)
-    missing_attributes = list(filter(lambda key: key not in json_dict, required_attributes))
-    if len(missing_attributes) > 0:
+        required_columns = [coll for coll in required_columns if not coll.primary_key]
+    required_attributes = [coll.name for coll in required_columns]
+    missing_attributes = [k for k in required_attributes if k not in json_dict]
+    if missing_attributes:
         raise BadRequest(f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}")
 
 
@@ -42,7 +42,7 @@ def _merge(cls, d):
 
 
 def add_audit_trail_data(cls, json_dict):
-    column_names = cls.__table__.columns._data.keys()
+    column_names = list(map(lambda c: c[0], cls.__table__.columns._collection))
     if "created_by" in column_names:
         user_name = current_user_uid() if "user" in session and not session["user"][
             "guest"] else request_context.api_user.name if "api_user" in request_context else "ext_api"
@@ -75,7 +75,7 @@ def update(cls, custom_json=None, allow_child_cascades=True, allowed_child_colle
     json_dict = transform_json(cls, json_dict, allow_child_cascades=allow_child_cascades,
                                allowed_child_collections=allowed_child_collections)
 
-    pk = list({k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys())[0]
+    pk = [coll.name for coll in cls.__table__.columns._all_columns if coll.primary_key][0]
 
     # This will raise a NoResultFound and result in a 404
     cls.query.filter(cls.__dict__[pk] == json_dict[pk]).one()
@@ -92,7 +92,7 @@ def delete(cls, primary_key):
 
 def cleanse_json(json_dict, cls=None, allow_child_cascades=True, allowed_child_collections=[]):
     if cls:
-        column_names = cls.__table__.columns._data.keys()
+        column_names = list(map(lambda c: c[0], cls.__table__.columns._collection))
         if allow_child_cascades:
             column_names += list(cls.__dict__.keys())
         elif allowed_child_collections:

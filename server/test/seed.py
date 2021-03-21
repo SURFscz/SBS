@@ -282,7 +282,6 @@ def seed(db, app_config):
 
     uuc.services.append(uuc_scheduler)
     uuc.services.append(wiki)
-    db.session.merge(uuc)
 
     ai_computing = Collaboration(name=ai_computing_name,
                                  identifier=collaboration_ai_computing_uuid,
@@ -369,8 +368,6 @@ def seed(db, app_config):
                           collaboration=uva_research,
                           collaboration_memberships=[roger_uva_research])
     _persist(db, group_researchers, group_developers, group_science)
-
-    db.session.commit()
 
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
                                     collaboration=ai_computing, hash=token_urlsafe(), status="open")
