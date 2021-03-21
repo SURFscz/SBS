@@ -9,7 +9,7 @@ class SQLAlchemyPrePing(SQLAlchemy):
     def apply_pool_defaults(self, app, options):
         options["pool_pre_ping"] = True
         options["echo"] = app.config["SQLALCHEMY_ECHO"]
-        super().apply_pool_defaults(app, options)
+        return super().apply_pool_defaults(app, options)
 
 
 db = SQLAlchemyPrePing()
