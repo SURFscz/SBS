@@ -375,7 +375,7 @@ def attribute_aggregation():
         .join(User.collaboration_memberships) \
         .join(CollaborationMembership.collaboration) \
         .options(selectinload(User.collaboration_memberships)
-                 .contains_eager(CollaborationMembership.collaboration)) \
+                 .selectinload(CollaborationMembership.collaboration)) \
         .filter(or_(User.uid == edu_person_principal_name,
                     User.email == email)) \
         .all()

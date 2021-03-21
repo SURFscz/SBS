@@ -75,12 +75,12 @@ CONFIG='config/test_config.yml' FLASK_APP='__main__.py' flask routes
 
 To run all Python tests and validate syntax / formatting:
 ```
-pytest --disable-warnings server/test
+pytest server/test
 flake8 ./server/
 ```
 To generate coverage reports:
 ```
-pytest --disable-warnings --cov=server --cov-report html:htmlcov server/test
+pytest --cov=server --cov-report html:htmlcov server/test
 open htmlcov/index.html
 ```
 To run all JavaScript tests:
