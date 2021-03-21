@@ -72,7 +72,7 @@ jobs:
       #- name: Setup tmate session
         #uses: mxschmitt/action-tmate@v3
 
-      - name: Run tests
+      - name: Run flake8
         run: |
           flake8 ./server/
 
