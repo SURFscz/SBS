@@ -42,7 +42,7 @@ class TestAuditLog(AbstractTest):
 
         state_after = json.loads(audit_logs[1]["state_after"])
 
-        self.assertEquals(state_after["ssh_key"], "ssh_value")
+        self.assertEqual(state_after["ssh_key"], "ssh_value")
 
     def test_services_info(self):
         self.login("urn:john")
