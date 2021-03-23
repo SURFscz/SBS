@@ -82,66 +82,66 @@ class CollaborationDetail extends React.Component {
                     const adminOfCollaboration = json.access === "full";
                     const promises = adminOfCollaboration ? [collaborationById(collaboration_id)] :
                         [collaborationLiteById(collaboration_id), organisationByUserSchacHomeOrganisation()];
-                    Promise.all(promises).then(res => {
-                        const {user} = this.props;
-                        const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
-                        const collaboration = res[0];
-                        const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
-                        const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
-                        const firstTime = getParameterByName("first", window.location.search) === "true";
-                        this.setState({
-                            collaboration: collaboration,
-                            adminOfCollaboration: adminOfCollaboration,
-                            schacHomeOrganisation: schacHomeOrganisation,
-                            loading: false,
-                            confirmationDialogOpen: false,
-                            firstTime: firstTime,
-                            tabs: this.getTabs(collaboration, schacHomeOrganisation, adminOfCollaboration, false),
-                            tab: tab,
-                        }, () => {
-                            callback && callback();
-                            this.updateAppStore(collaboration, adminOfCollaboration, orgManager);
-                            this.tabChanged(tab, collaboration.id);
-                        });
-                    });
+                    Promise.all(promises)
+                        .then(res => {
+                            const {user} = this.props;
+                            const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
+                            const collaboration = res[0];
+                            const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
+                            const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
+                            const firstTime = getParameterByName("first", window.location.search) === "true";
+                            this.setState({
+                                collaboration: collaboration,
+                                adminOfCollaboration: adminOfCollaboration,
+                                schacHomeOrganisation: schacHomeOrganisation,
+                                loading: false,
+                                confirmationDialogOpen: false,
+                                firstTime: firstTime,
+                                tabs: this.getTabs(collaboration, schacHomeOrganisation, adminOfCollaboration, false),
+                                tab: tab,
+                            }, () => {
+                                callback && callback();
+                                this.updateAppStore(collaboration, adminOfCollaboration, orgManager);
+                                this.tabChanged(tab, collaboration.id);
+                            });
+                        }).catch(() => this.props.history.push("/404"));
                 }).catch(() => this.props.history.push("/404"));
         } else {
             const {collaborationIdentifier, user} = this.props;
             if (!collaborationIdentifier) {
                 this.props.history.push("/404");
             } else {
-                collaborationByIdentifier(collaborationIdentifier).then(collaboration => {
-                    if (collaboration.disable_join_requests) {
-                        this.props.history.push("/404");
-                    } else {
-                        const alreadyMember = user.collaboration_memberships.some(m => m.collaboration_id === collaboration.id);
-                        if (alreadyMember) {
-                            setFlash(I18n.t("registration.alreadyMember", {name: collaboration.name}), "error");
-                        }
-                        this.setState({
-                            collaboration: collaboration,
-                            collaborationJoinRequest: true,
-                            alreadyMember: alreadyMember,
-                            adminOfCollaboration: false,
-                            schacHomeOrganisation: null,
-                            loading: false,
-                            confirmationDialogOpen: false,
-                            tabs: this.getTabs(collaboration, null, false, false, true),
-                            tab: "about",
-                        }, () => {
-                            AppStore.update(s => {
-                                s.breadcrumb.paths = [
-                                    {path: "/", value: I18n.t("breadcrumb.home")},
-                                    {value: I18n.t("breadcrumb.collaborationJoinRequest", {name: collaboration.name})}
-                                ]
-                                s.sideComponent = null;
-                            });
+                collaborationByIdentifier(collaborationIdentifier)
+                    .then(collaboration => {
+                        if (collaboration.disable_join_requests) {
+                            this.props.history.push("/404");
+                        } else {
+                            const alreadyMember = user.collaboration_memberships.some(m => m.collaboration_id === collaboration.id);
+                            if (alreadyMember) {
+                                setFlash(I18n.t("registration.alreadyMember", {name: collaboration.name}), "error");
+                            }
+                            this.setState({
+                                collaboration: collaboration,
+                                collaborationJoinRequest: true,
+                                alreadyMember: alreadyMember,
+                                adminOfCollaboration: false,
+                                schacHomeOrganisation: null,
+                                loading: false,
+                                confirmationDialogOpen: false,
+                                tabs: this.getTabs(collaboration, null, false, false, true),
+                                tab: "about",
+                            }, () => {
+                                AppStore.update(s => {
+                                    s.breadcrumb.paths = [
+                                        {path: "/", value: I18n.t("breadcrumb.home")},
+                                        {value: I18n.t("breadcrumb.collaborationJoinRequest", {name: collaboration.name})}
+                                    ]
+                                    s.sideComponent = null;
+                                });
 
-                        })
-                    }
-                }).catch(e => {
-                    this.props.history.push("/404");
-                })
+                            })
+                        }
+                    }).catch(() => this.props.history.push("/404"));
             }
         }
     };
@@ -511,7 +511,7 @@ class CollaborationDetail extends React.Component {
 
                 <JoinRequestDialog collaboration={collaboration}
                                    isOpen={joinRequestDialogOpen}
-                                   refresh={callback =>  refreshUser(callback)}
+                                   refresh={callback => refreshUser(callback)}
                                    history={this.props.history}
                                    close={() => this.setState({joinRequestDialogOpen: false})}/>
 
