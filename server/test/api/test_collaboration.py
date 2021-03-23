@@ -259,6 +259,10 @@ class TestCollaboration(AbstractTest):
         self.login("urn:john")
         self.get(f"/api/collaborations/{-1}", response_status_code=404, with_basic_auth=False)
 
+    def test_non_existing_collaboration_by_id_not_found(self):
+        self.login("urn:james")
+        self.get("/api/collaborations/99999999999", response_status_code=403, with_basic_auth=False)
+
     def test_collaboration_all(self):
         collaborations = self.get("/api/collaborations/all")
         self.assertEqual(4, len(collaborations))
@@ -411,6 +415,10 @@ class TestCollaboration(AbstractTest):
         collaboration_id = self._find_by_identifier()["id"]
         self.login("urn:roger")
         self.get(f"/api/collaborations/lite/{collaboration_id}", response_status_code=403)
+
+    def test_collaboration_lite_not_existing_collaboration(self):
+        self.login("urn:roger")
+        self.get("/api/collaborations/lite/99999999999", response_status_code=403)
 
     def test_collaboration_lite_disclose_member_information(self):
         self.login("urn:sarah")

@@ -152,7 +152,10 @@ def confirm_collaboration_admin(collaboration_id, org_manager_allowed=True):
         user_id = current_user_id()
         coll_admin = is_collaboration_admin(user_id, collaboration_id)
         if not coll_admin:
-            org_id = Collaboration.query.get(collaboration_id).organisation_id
+            collaboration = Collaboration.query.get(collaboration_id)
+            if not collaboration:
+                return False
+            org_id = collaboration.organisation_id
             allowed = is_organisation_admin_or_manager(org_id) if org_manager_allowed else is_organisation_admin(org_id)
             return allowed
         return True
@@ -170,7 +173,10 @@ def confirm_collaboration_member(collaboration_id):
                         .count() > 0
         if is_member:
             return True
-        return is_organisation_admin_or_manager(Collaboration.query.get(collaboration_id).organisation_id)
+        collaboration = Collaboration.query.get(collaboration_id)
+        if not collaboration:
+            return False
+        return is_organisation_admin_or_manager(collaboration.organisation_id)
 
     confirm_write_access(override_func=override_func)
 
