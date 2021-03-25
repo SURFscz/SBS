@@ -1,6 +1,6 @@
 APScheduler==3.6.3
 PyMySQL==0.10.1
-PyYAML==5.3.1
+PyYAML==5.4
 SQLAlchemy==1.4.2
 Werkzeug~=1.0.1
 cryptography==3.3.2
