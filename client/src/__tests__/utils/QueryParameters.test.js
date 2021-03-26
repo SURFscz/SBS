@@ -19,6 +19,14 @@ test("Parameter by name", () => {
     expect("value").toBe(getParameterByName("name", "?name=value"));
 });
 
+test("Parameter by encoded name", () => {
+    expect("value search").toBe(getParameterByName("name", "?name=value+search"));
+});
+
+test("Parameter by encoded ref name", () => {
+    expect("ref:refs/heads/main").toBe(getParameterByName("query", "?query=ref%3Arefs%2Fheads%2Fmain"));
+});
+
 test("Parameter by name not exists", () => {
-    expect("").toBe(getParameterByName("", undefined));
+    expect(null).toBe(getParameterByName("", undefined));
 });
