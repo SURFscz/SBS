@@ -1382,7 +1382,8 @@ I18n.translations.nl = {
         orgManager: " ORG manager",
         coAdmin: " collaboration admin",
         coMember: " collaboration lid",
-        platformAdmin: " platform admin"
+        platformAdmin: " platform admin",
+        user: " gebruiker"
     },
     welcomeDialog: {
         title: "Welkom op {{name}}",
