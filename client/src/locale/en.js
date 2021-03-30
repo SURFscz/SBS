@@ -1382,7 +1382,8 @@ I18n.translations.en = {
         orgManager: " ORG manager",
         coAdmin: " CO admin",
         coMember: " CO member",
-        platformAdmin: " platform manager"
+        platformAdmin: " platform manager",
+        user: " user"
     },
     welcomeDialog: {
         title: "Welcome to {{name}}",
