@@ -149,7 +149,9 @@ def json_endpoint(f):
                 response.status_code = 400
             _add_custom_header(response)
             db.session.rollback()
-            send_error_mail(tb=traceback.format_exc())
+            # We want to send emails if the exception is unexpected and validation errors should not happen server-side
+            if response.status_code == 500 or response.status_code == 400:
+                send_error_mail(tb=traceback.format_exc())
             return response
 
     return wrapper
