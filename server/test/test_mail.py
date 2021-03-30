@@ -33,12 +33,17 @@ class TestMail(AbstractTest):
             self.app.app_config.mail.send_exceptions = True
             mail = self.app.mail
             with mail.record_messages() as outbox:
-                self.login("urn:mary")
-                self.get("/api/collaborations/members", query_data={"identifier": collaboration_ai_computing_uuid},
-                         response_status_code=403, with_basic_auth=False)
+                self.login("urn:john")
+                group_name = "new_auth_group"
+                self.post("/api/groups/", body={
+                    "name": group_name,
+                    "short_name": group_name,
+                    "description": "des",
+                    "auto_provision_members": False,
+                    "collaboration_id": "nope",
+                }, response_status_code=400)
                 self.assertEqual(1, len(outbox))
                 html = outbox[0].html
-                self.assertTrue("Forbidden()" in html)
                 self.assertTrue("An error occurred in local" in html)
         finally:
             os.environ["TESTING"] = "1"
