@@ -4,7 +4,7 @@ import os
 from server.db.domain import Collaboration
 from server.mail import mail_collaboration_join_request
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_uva_researcher_uuid, collaboration_ai_computing_uuid
+from server.test.seed import collaboration_uva_researcher_uuid
 
 
 class TestMail(AbstractTest):
