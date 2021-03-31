@@ -96,8 +96,6 @@ CI=true yarn test
 With the environment variable `CONFIG=config/test_config.yml` the test database is used. After you ran one or all of the tests
 the database is left with the test data seed.
 
-Start the registration with [http://localhost:3000/registration?collaboration=60fde69c-778f-4af9-88da-532d5dde1754](http://localhost:3000/registration?collaboration=60fde69c-778f-4af9-88da-532d5dde1754)
-
 ### [Deployment](#deployment)
 
 See the https://github.com/SURFscz/SCZ-deploy project
