@@ -34,6 +34,16 @@ class Entities extends React.Component {
 
     closeExplanation = () => this.setState({showExplanation: false});
 
+    queryChanged = e => {
+        const query = e.target.value;
+        this.setState({query: query});
+        const {searchCallback, entities, searchAttributes} = this.props;
+
+        if (searchCallback) {
+            searchCallback(this.filterEntities(entities, query, searchAttributes));
+        }
+    }
+
     renderSearch = (modelName, title, entities, query, searchAttributes, showNew, filters, explain) => {
         return (
             <section className="entities-search">
@@ -49,7 +59,7 @@ class Entities extends React.Component {
                 {!isEmpty(searchAttributes) &&
                 <div className={`search ${showNew ? "" : "standalone"}`}>
                     <input type="text"
-                           onChange={e => this.setState({query: e.target.value})}
+                           onChange={this.queryChanged}
                            value={query}
                            placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
                     <FontAwesomeIcon icon="search"/>
@@ -169,6 +179,7 @@ Entities.propTypes = {
     newEntityPath: PropTypes.string,
     newEntityFunc: PropTypes.func,
     rowLinkMapper: PropTypes.func,
+    searchCallback: PropTypes.func,
     showNew: PropTypes.bool,
     actions: PropTypes.any,
     filters: PropTypes.any,
