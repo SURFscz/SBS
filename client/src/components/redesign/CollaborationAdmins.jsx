@@ -61,6 +61,7 @@ class CollaborationAdmins extends React.Component {
             filterOptions: [],
             filterValue: {value: memberFilterValue, label: ""},
             hideInvitees: false,
+            resultAfterSearch: false,
             loading: true
         }
     }
@@ -155,12 +156,19 @@ class CollaborationAdmins extends React.Component {
 
     getIdentifier = entity => {
         const invite = !isEmpty(entity.intended_role);
-        return entity.id + (invite ? INVITE_IDENTIFIER : MEMBER_IDENTIFIER );
+        return entity.id + (invite ? INVITE_IDENTIFIER : MEMBER_IDENTIFIER);
     }
 
     allSelected = e => {
-        const {selectedMembers} = this.state;
-        const {isAdminView} = this.props;
+        const {selectedMembers, resultAfterSearch, filterValue, hideInvitees} = this.state;
+        const {isAdminView, collaboration, showMemberView} = this.props;
+        const doHideInvitees = hideInvitees || showMemberView;
+        const members = collaboration.collaboration_memberships;
+        const invites = collaboration.invitations || [];
+
+        const filteredEntityIdentifiers = this.filterEntities(isAdminView, members, filterValue, collaboration, doHideInvitees,
+            invites).map(entity => this.getIdentifier(entity));
+
         const val = e.target.checked;
         let identifiers = Object.keys(selectedMembers);
         if (isAdminView) {
@@ -168,9 +176,15 @@ class CollaborationAdmins extends React.Component {
                 return selectedMembers[id].ref.role === "admin" || selectedMembers[id].ref.intended_role === "admin"
             });
         }
+        if (resultAfterSearch !== false) {
+            const afterSearchIdentifiers = resultAfterSearch.map(entity => this.getIdentifier(entity));
+            identifiers = identifiers.filter(id => afterSearchIdentifiers.includes(id));
+        }
+
+        identifiers = identifiers.filter(id => filteredEntityIdentifiers.includes(id));
         identifiers.forEach(id => selectedMembers[id].selected = val);
         const newSelectedMembers = {...selectedMembers};
-        this.setState({allSelected: val, ...newSelectedMembers});
+        this.setState({allSelected: val, selectedMembers: newSelectedMembers});
     }
 
     gotoInvitation = invitation => e => {
@@ -188,18 +202,18 @@ class CollaborationAdmins extends React.Component {
 
     remove = showConfirmation => () => {
         const {selectedMembers} = this.state;
+        const filteredSelectedMembers = this.getSelectedMembersWithFilteredSearch(selectedMembers);
         const {user: currentUser, collaboration} = this.props;
-        const currentUserDeleted = Object.values(selectedMembers)
+        const currentUserDeleted = Object.values(filteredSelectedMembers)
             .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
-        const oneSelected = Object.keys(selectedMembers).filter(id => selectedMembers[id].selected).length === 1;
+        const oneSelected = Object.keys(filteredSelectedMembers).filter(id => filteredSelectedMembers[id].selected).length === 1;
         const deleteYourSelf = currentUserDeleted && oneSelected;
         const deleteInBatch = currentUserDeleted && !oneSelected;
-
 
         if (showConfirmation) {
             const lastAdminWarning = !deleteInBatch && collaboration.collaboration_memberships
                 .filter(m => m.role === "admin")
-                .filter(m => !Object.values(selectedMembers).some(s => s.selected && s.ref.id === m.id))
+                .filter(m => !Object.values(filteredSelectedMembers).some(s => s.selected && s.ref.id === m.id))
                 .length === 0;
             this.setState({
                 confirmationDialogOpen: true,
@@ -214,10 +228,10 @@ class CollaborationAdmins extends React.Component {
             });
         } else {
             this.setState({confirmationDialogOpen: false, loading: true});
-            const selected = Object.keys(selectedMembers)
-                .filter(id => selectedMembers[id].selected);
+            const selected = Object.keys(filteredSelectedMembers)
+                .filter(id => filteredSelectedMembers[id].selected);
             const promises = selected.map(id => {
-                const ref = selectedMembers[id].ref;
+                const ref = filteredSelectedMembers[id].ref;
                 return ref.invite ? invitationDelete(ref.id) :
                     deleteCollaborationMembership(collaboration.id, ref.user.id)
             });
@@ -254,9 +268,10 @@ class CollaborationAdmins extends React.Component {
 
     actionButtons = (collaboration, isAdminOfCollaboration, selectedMembers, filteredEntities) => {
         const any = filteredEntities.length !== 0;
-        const selected = Object.values(selectedMembers)
+        const filteredSelectedMembers = this.getSelectedMembersWithFilteredSearch(selectedMembers);
+        const selected = Object.values(filteredSelectedMembers)
             .filter(v => v.selected)
-            .filter(v => filteredEntities.find(e => e.id === v.ref.id && e.invite === v.ref.invite))
+            .filter(v => filteredEntities.find(e => e.id === v.ref.id && e.invite === v.ref.invite));
         const hrefValue = encodeURI(selected.map(v => v.ref.invite ? v.ref.invitee_email : v.ref.user.email).join(","));
         const disabled = selected.length === 0;
         const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc="
@@ -371,6 +386,24 @@ class CollaborationAdmins extends React.Component {
         });
     };
 
+    getSelectedMembersWithFilteredSearch = selectedMembers => {
+        const {resultAfterSearch} = this.state;
+        if (resultAfterSearch !== false) {
+            const afterSearchIdentifiers = resultAfterSearch.map(entity => this.getIdentifier(entity));
+            //Everything not visible after search is de-selected
+            const visibleIdentifiers = Object.keys(selectedMembers).filter(id => afterSearchIdentifiers.includes(id));
+            return visibleIdentifiers.reduce((acc, id) => {
+                acc[id] = selectedMembers[id];
+                return acc;
+            }, {});
+        }
+        return selectedMembers;
+    }
+
+    searchCallback = resultAfterSearch => {
+        this.setState({resultAfterSearch: resultAfterSearch});
+    }
+
     doResend = () => {
         const invitation = this.getSelectedInvitation();
         const {collaboration} = this.props;
@@ -476,7 +509,7 @@ class CollaborationAdmins extends React.Component {
                 header: <CheckBox value={allSelected} name={"allSelected"}
                                   onChange={this.allSelected}/>,
                 mapper: entity => <div className="check">
-                    <CheckBox name={""+ ++i} onChange={this.onCheck(entity)}
+                    <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
                               value={(selectedMembers[this.getIdentifier(entity)] || {}).selected || false}/>
                 </div>
             },
@@ -526,7 +559,8 @@ class CollaborationAdmins extends React.Component {
                             {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
                                 I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
                         </span> :
-                        entity.role === "admin"  ? <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span> : null
+                        entity.role === "admin" ?
+                            <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span> : null
                 }
             },
             {
@@ -551,13 +585,14 @@ class CollaborationAdmins extends React.Component {
                                     confirmationTxt={confirmationTxt}
                                     question={confirmationQuestion}>
                     {lastAdminWarning && <LastAdminWarning organisation={collaboration.organisation}
-                                                           currentUserDeleted={lastAdminWarningUser} />}
+                                                           currentUserDeleted={lastAdminWarningUser}/>}
                 </ConfirmationDialog>
 
                 <Entities entities={filteredEntities}
                           modelName={isAdminView ? "coAdmins" : "members"}
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name"
+                          searchCallback={this.searchCallback}
                           columns={(isAdminOfCollaboration || collaboration.disclose_email_information) ? columns : columns.slice(1)}
                           loading={false}
                           rowLinkMapper={entity => entity.invite && this.gotoInvitation}
