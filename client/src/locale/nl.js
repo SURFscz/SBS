@@ -1250,7 +1250,8 @@ I18n.translations.nl = {
             "users": "Gebruiker",
             "ip_networks": "IP netwerk",
             "suspend_notifications": "Login notificatie",
-            "schac_home_organisations": "Schac home organisations"
+            "schac_home_organisations": "Schac home organisations",
+            "user_names_history": "Username history"
         }
     },
     serviceRequest: {
