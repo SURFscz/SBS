@@ -439,3 +439,11 @@ class SchacHomeOrganisation(Base, db.Model):
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+
+
+class UserNameHistory(Base, db.Model):
+    __tablename__ = "user_names_history"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    username = db.Column("username", db.String(length=255), nullable=True)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)

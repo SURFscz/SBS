@@ -4,7 +4,7 @@ import re
 import string
 import unicodedata
 
-from server.db.domain import User
+from server.db.domain import User, UserNameHistory
 
 claim_attribute_mapping_value = [
     {"sub": "uid"},
@@ -33,7 +33,9 @@ def generate_unique_username(user: User, max_count=10000):
     counter = 2
     generated_user_name = username
     while True and counter < max_count:
-        if User.query.filter(User.username == generated_user_name).count() == 0:
+        unique_user_name = User.query.filter(User.username == generated_user_name).count() == 0
+        unique_history = UserNameHistory.query.filter(UserNameHistory.username == generated_user_name).count() == 0
+        if unique_user_name and unique_history:
             return generated_user_name
         generated_user_name = f"{username}{counter}"
         counter = counter + 1

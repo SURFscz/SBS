@@ -23,8 +23,9 @@ from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
-from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest
-from server.db.models import update, delete
+from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
+    UserNameHistory
+from server.db.models import update
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error
 
@@ -422,9 +423,17 @@ def logout():
 @json_endpoint
 def delete_user():
     user_id = current_user_id()
+    user = User.query.get(user_id)
+    db.session.delete(user)
+
+    if user.username:
+        user_name_history = UserNameHistory(username=user.username)
+        db.session.merge(user_name_history)
+    db.session.commit()
+
     session["user"] = None
     session.clear()
-    return delete(User, user_id)
+    return user, 204
 
 
 @user_api.route("/error", methods=["POST"], strict_slashes=False)

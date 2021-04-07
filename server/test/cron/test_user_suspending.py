@@ -3,7 +3,7 @@ from sqlalchemy import text
 
 from server.cron.user_suspending import suspend_users, suspend_users_lock_name
 from server.db.db import db
-from server.db.domain import User
+from server.db.domain import User, UserNameHistory
 from server.test.abstract_test import AbstractTest
 
 
@@ -43,3 +43,7 @@ class TestUserSuspending(AbstractTest):
 
         to_be_deleted = self.find_entity_by_name(User, "to_be_deleted")
         self.assertIsNone(to_be_deleted)
+
+        user_names_history = UserNameHistory.query.all()
+        self.assertEqual(1, len(user_names_history))
+        self.assertEqual("deleted", user_names_history[0].username)
