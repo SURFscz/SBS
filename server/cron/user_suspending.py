@@ -90,8 +90,11 @@ def _do_suspend_users(app):
         for user in suspended_users:
             results["deleted"].append(user.email)
             if user.username:
-                user_name_history = UserNameHistory(username=user.username)
-                db.session.merge(user_name_history)
+                history_not_exists = UserNameHistory.query.filter(
+                    UserNameHistory.username == user.username).count() == 0
+                if history_not_exists:
+                    user_name_history = UserNameHistory(username=user.username)
+                    db.session.merge(user_name_history)
             db.session.delete(user)
 
         if len(users) > 0 or len(suspended_users) > 0:
