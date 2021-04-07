@@ -6,7 +6,7 @@ import time
 from sqlalchemy import text
 
 from server.db.db import db
-from server.db.domain import User, SuspendNotification
+from server.db.domain import User, SuspendNotification, UserNameHistory
 from server.mail import mail_suspend_notification
 
 suspend_users_lock_name = "suspend_users_lock"
@@ -89,6 +89,9 @@ def _do_suspend_users(app):
             .filter(User.last_login_date < deletion_date, User.suspended == True, ).all()  # noqa: E712
         for user in suspended_users:
             results["deleted"].append(user.email)
+            if user.username:
+                user_name_history = UserNameHistory(username=user.username)
+                db.session.merge(user_name_history)
             db.session.delete(user)
 
         if len(users) > 0 or len(suspended_users) > 0:

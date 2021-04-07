@@ -6,7 +6,7 @@ from munch import munchify
 
 from server.auth.user_claims import add_user_claims, generate_unique_username
 from server.db.db import db
-from server.db.domain import User
+from server.db.domain import User, UserNameHistory
 from server.test.abstract_test import AbstractTest
 
 
@@ -64,10 +64,11 @@ class TestUserClaims(AbstractTest):
         for username in ["jdoe", "jdoe2", "cdoemanchi", "cdoemanchi2", "cdoemanchi3", "u", "u2"]:
             db.session.merge(User(uid=str(uuid.uuid4()), username=username, created_by="test", updated_by="test",
                                   name="name"))
+        db.session.merge(UserNameHistory(username="jdoe3"))
         db.session.commit()
         names = [("John2", "Doe,"), ("Cinderella!", "Doemanchinice"), (None, "髙橋 大"), ("påré", "ÄÄ")]
         short_names = [generate_unique_username(munchify({"given_name": n[0], "family_name": n[1]})) for n in names]
-        self.assertListEqual(["jdoe3", "cdoemanchi4", "u3", "paa"], short_names)
+        self.assertListEqual(["jdoe4", "cdoemanchi4", "u3", "paa"], short_names)
 
     def test_generate_unique_username_random(self):
         username = generate_unique_username(munchify({"given_name": "John", "family_name": "Doe"}), 1)
