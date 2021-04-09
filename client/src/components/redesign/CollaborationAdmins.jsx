@@ -284,7 +284,7 @@ class CollaborationAdmins extends React.Component {
                 callback && callback();
             });
         }).catch(() => {
-            this.handle404("member");
+            this.handle404("invitation");
         });
     }
 
