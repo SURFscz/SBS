@@ -60,8 +60,7 @@ class UserInvitation extends React.Component {
                 }
                 this.setState({invite: json, isExpired: isExpired, loading: true, skippedLoginStep: skippedLoginStep});
             }).catch(() => {
-                this.setState({errorOccurred: true});
-                setFlash(I18n.t("organisationInvitation.flash.notFound"), "error");
+                this.props.history.push("/404");
             });
         } else {
             this.props.history.push("/404");

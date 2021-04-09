@@ -69,8 +69,7 @@ class ServiceConnectionRequest extends React.Component {
                 setFlash(I18n.t("serviceConnectionRequest.flash.declined", {name: serviceConnectionRequest.service.name}));
             })
             .catch(() => {
-                this.setState({serviceConnectionRequest: {collaboration: {}, service: {}, requester: {}}});
-                setFlash(I18n.t("serviceConnectionRequest.flash.notFound"), "error");
+                this.props.history.push("/404");
             });
 
     };
@@ -83,8 +82,7 @@ class ServiceConnectionRequest extends React.Component {
                 setFlash(I18n.t("serviceConnectionRequest.flash.accepted", {name: serviceConnectionRequest.service.name}));
             })
             .catch(e => {
-                this.setState({serviceConnectionRequest: {collaboration: {}, service: {}, requester: {}}});
-                setFlash(I18n.t("serviceConnectionRequest.flash.notFound"), "error");
+                this.props.history.push("/404");
             });
     };
 
