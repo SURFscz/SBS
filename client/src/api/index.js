@@ -73,8 +73,8 @@ function postPutJson(path, body, method, showErrorDialog = true) {
     return fetchJson(path, {method: method, body: JSON.stringify(body)}, {}, showErrorDialog);
 }
 
-function fetchDelete(path) {
-    return validFetch(path, {method: "delete"});
+function fetchDelete(path, showErrorDialog = true) {
+    return validFetch(path, {method: "delete"}, {}, showErrorDialog);
 }
 
 //Base
@@ -353,12 +353,12 @@ export function organisationInvitationDecline(organisationInvitation) {
     return postPutJson("/api/organisation_invitations/decline", organisationInvitation, "put");
 }
 
-export function organisationInvitationResend(organisationInvitation) {
-    return postPutJson("/api/organisation_invitations/resend", organisationInvitation, "put");
+export function organisationInvitationResend(organisationInvitation, showErrorDialog = true) {
+    return postPutJson("/api/organisation_invitations/resend", organisationInvitation, "put", showErrorDialog);
 }
 
-export function organisationInvitationDelete(organisationInvitationId) {
-    return fetchDelete(`/api/organisation_invitations/${organisationInvitationId}`);
+export function organisationInvitationDelete(organisationInvitationId, showErrorDialog = true) {
+    return fetchDelete(`/api/organisation_invitations/${organisationInvitationId}`, showErrorDialog);
 }
 
 //Invitations
@@ -375,38 +375,38 @@ export function invitationDecline(invitation) {
     return postPutJson("/api/invitations/decline", invitation, "put");
 }
 
-export function invitationResend(invitation) {
-    return postPutJson("/api/invitations/resend", invitation, "put");
+export function invitationResend(invitation, showErrorDialog = true) {
+    return postPutJson("/api/invitations/resend", invitation, "put", showErrorDialog);
 }
 
-export function invitationDelete(invitationId) {
-    return fetchDelete(`/api/invitations/${invitationId}`);
+export function invitationDelete(invitationId, showErrorDialog = true) {
+    return fetchDelete(`/api/invitations/${invitationId}`, showErrorDialog);
 }
 
 //Organisation Memberships
-export function deleteOrganisationMembership(organisationId, userId) {
-    return fetchDelete(`/api/organisation_memberships/${organisationId}/${userId}`)
+export function deleteOrganisationMembership(organisationId, userId, showErrorDialog = true) {
+    return fetchDelete(`/api/organisation_memberships/${organisationId}/${userId}`, showErrorDialog)
 }
 
-export function updateOrganisationMembershipRole(organisationId, userId, role) {
+export function updateOrganisationMembershipRole(organisationId, userId, role, showErrorDialog = true) {
     return postPutJson("/api/organisation_memberships", {
         organisationId: organisationId,
         userId: userId,
         role: role
-    }, "put")
+    }, "put", showErrorDialog)
 }
 
 //Collaboration Memberships
-export function deleteCollaborationMembership(collaborationId, userId) {
-    return fetchDelete(`/api/collaboration_memberships/${collaborationId}/${userId}`)
+export function deleteCollaborationMembership(collaborationId, userId, showErrorDialog = true) {
+    return fetchDelete(`/api/collaboration_memberships/${collaborationId}/${userId}`, showErrorDialog)
 }
 
-export function updateCollaborationMembershipRole(collaborationId, userId, role) {
+export function updateCollaborationMembershipRole(collaborationId, userId, role, showErrorDialog = true) {
     return postPutJson("/api/collaboration_memberships", {
         collaborationId: collaborationId,
         userId: userId,
         role: role
-    }, "put")
+    }, "put", showErrorDialog)
 }
 
 export function createCollaborationMembershipRole(collaborationId) {

@@ -80,6 +80,8 @@ def organisation_invitations_resend():
     organisation_invitation = _organisation_invitation_query() \
         .filter(OrganisationInvitation.id == data["id"]) \
         .one()
+    if not organisation_invitation:
+        return None, 404
 
     confirm_organisation_admin(organisation_invitation.organisation_id)
 
@@ -102,6 +104,9 @@ def organisation_invitations_resend():
 @json_endpoint
 def delete_organisation_invitation(id):
     organisation_invitation = OrganisationInvitation.query.get(id)
+    if not organisation_invitation:
+        return None, 404
+
     confirm_organisation_admin(organisation_invitation.organisation_id)
 
     return delete(OrganisationInvitation, id)

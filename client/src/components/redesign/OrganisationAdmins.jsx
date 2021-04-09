@@ -46,6 +46,7 @@ class OrganisationAdmins extends React.Component {
             selectedInvitationId: null,
             message: "",
             confirmationDialogOpen: false,
+            confirmationTxt: I18n.t("confirmationDialog.confirm"),
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
@@ -84,7 +85,9 @@ class OrganisationAdmins extends React.Component {
                                 name: member.user.name,
                                 role: selectedOption.value
                             }));
-                        });
+                        }).catch(() => {
+                        this.handle404("member");
+                    });
                 },
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
                 confirmationQuestion: I18n.t("collaborationDetail.downgradeYourselfMemberConfirmation"),
@@ -98,7 +101,9 @@ class OrganisationAdmins extends React.Component {
                         name: member.user.name,
                         role: selectedOption.value
                     }));
-                });
+                }).catch(() => {
+                this.handle404("member");
+            });
         }
     };
 
@@ -151,29 +156,49 @@ class OrganisationAdmins extends React.Component {
 
             const promises = selected.map(id => {
                 const ref = selectedMembers[id].ref;
-                return ref.invite ? organisationInvitationDelete(ref.id) :
-                    deleteOrganisationMembership(organisation.id, ref.user.id)
+                return ref.invite ? organisationInvitationDelete(ref.id,false) :
+                    deleteOrganisationMembership(organisation.id, ref.user.id, false)
             });
-            Promise.all(promises).then(() => {
-                if (currentUserDeleted && !currentUser.admin) {
-                    this.props.refreshUser(() => this.props.history.push("/home"));
-                } else {
-                    this.props.refresh(this.componentDidMount);
-                    setFlash(I18n.t("organisationDetail.flash.entitiesDeleted"));
-                }
+            Promise.all(promises)
+                .then(() => {
+                    if (currentUserDeleted && !currentUser.admin) {
+                        this.props.refreshUser(() => this.props.history.push("/home"));
+                    } else {
+                        this.props.refresh(this.componentDidMount);
+                        setFlash(I18n.t("organisationDetail.flash.entitiesDeleted"));
+                    }
+                }).catch(() => {
+                this.handle404("member");
             });
         }
     }
 
     refreshAndFlash = (promise, flashMsg, callback) => {
         this.setState({loading: true});
-        promise.then(() => {
-            this.props.refresh(() => {
-                this.componentDidMount();
-                setFlash(flashMsg);
-                callback && callback();
-            });
+        promise
+            .then(() => {
+                this.props.refresh(() => {
+                    this.componentDidMount();
+                    setFlash(flashMsg);
+                    callback && callback();
+                });
+            }).catch(() => {
+            this.handle404("invitation");
         });
+    }
+
+    handle404 = key => {
+        this.setState({
+                loading: false,
+                confirmationDialogOpen: true,
+            confirmationTxt: I18n.t("confirmationDialog.ok"),
+                confirmationDialogAction: () => {
+                    this.setState({confirmationDialogOpen: false, confirmationTxt: I18n.t("confirmationDialog.confirm")});
+                    this.props.refresh(this.componentDidMount);
+                },
+                cancelDialogAction: undefined,
+                confirmationQuestion: I18n.t(`organisationDetail.gone.${key}`),
+            });
     }
 
     actionButtons = selectedMembers => {
@@ -214,7 +239,7 @@ class OrganisationAdmins extends React.Component {
     doDelete = () => {
         const invitation = this.getSelectedInvitation();
         const {organisation} = this.props;
-        this.refreshAndFlash(organisationInvitationDelete(invitation.id),
+        this.refreshAndFlash(organisationInvitationDelete(invitation.id, false),
             I18n.t("organisationInvitation.flash.inviteDeleted", {name: organisation.name}),
             this.cancelSideScreen)
     };
@@ -234,7 +259,7 @@ class OrganisationAdmins extends React.Component {
         const invitation = this.getSelectedInvitation();
         const {organisation} = this.props;
         const {message} = this.state;
-        this.refreshAndFlash(organisationInvitationResend({...invitation, message}),
+        this.refreshAndFlash(organisationInvitationResend({...invitation, message}, false),
             I18n.t("organisationInvitation.flash.inviteResend", {name: organisation.name}),
             this.cancelSideScreen)
     };
@@ -243,7 +268,7 @@ class OrganisationAdmins extends React.Component {
     renderSelectedInvitation = (organisation, invitation) => {
         const {
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
-            isWarning, message
+            isWarning, message, confirmationTxt
         } = this.state;
         const today = moment();
         const inp = moment(invitation.expiry_date * 1000);
@@ -254,6 +279,7 @@ class OrganisationAdmins extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     isWarning={isWarning}
+                                    confirmationTxt={confirmationTxt}
                                     confirm={confirmationDialogAction}
                                     question={confirmationQuestion}/>
                 <a className="back-to-org-members" onClick={this.cancelSideScreen} href={"/cancel"}>
@@ -297,7 +323,7 @@ class OrganisationAdmins extends React.Component {
         const {user: currentUser, organisation} = this.props;
         const {
             selectedMembers, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogAction, confirmationQuestion, loading
+            confirmationDialogAction, confirmationQuestion, loading, confirmationTxt
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -412,6 +438,7 @@ class OrganisationAdmins extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     isWarning={true}
+                                    confirmationTxt={confirmationTxt}
                                     question={confirmationQuestion}/>
 
                 <Entities entities={entities}
