@@ -1,8 +1,8 @@
 import React from "react";
 import "./App.scss";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import I18n from "i18n-js";
 import Header from "../components/Header";
-import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
 import {config, me, other, refreshUser, reportError} from "../api";
@@ -60,7 +60,7 @@ class App extends React.Component {
         };
         window.onerror = (msg, url, line, col, err) => {
             if (err && err.response && err.response.status === 404) {
-                this.props.history.push("/404");
+                window.location.href = "/404";
                 return;
             }
             this.setState({errorDialogOpen: true});

@@ -863,7 +863,11 @@ I18n.translations.en = {
             memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}.",
         },
         preview: "Preview",
-        details: "Details"
+        details: "Details",
+        gone: {
+            member: "This membership does no longer exists. After closing this popup the memberships will be refreshed.",
+            invitation: "This invitation has already been accepted / rejected and does no longer exists. After closing this popup the invitations will be refreshed."
+        }
     },
     joinRequest: {
         title: "Join request from {{requester}} for collaboration {{collaboration}}",

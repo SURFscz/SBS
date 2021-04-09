@@ -863,7 +863,11 @@ I18n.translations.nl = {
             memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
         },
         preview: "Preview",
-        details: "Details"
+        details: "Details",
+        gone: {
+            member: "Dit lidmaatschap bestaat niet meer. Na het sluiten van deze popup worden de lidmaatschappen vernieuwd.",
+            invitation: "Deze uitnodiging is al geaccepteerd / afgewezen en bestaat niet meer. Na het sluiten van deze popup worden de uitnodigingen ververst."
+        }
     },
     joinRequest: {
         title: "Verzoek van {{requester}} om lid te worden van CO {{collaboration}}",

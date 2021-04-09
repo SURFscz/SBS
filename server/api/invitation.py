@@ -135,6 +135,8 @@ def invitations_resend():
     invitation = _invitation_query() \
         .filter(Invitation.id == data["id"]) \
         .one()
+    if not invitation:
+        return None, 404
 
     confirm_collaboration_admin(invitation.collaboration_id)
 
@@ -155,5 +157,7 @@ def invitations_resend():
 @json_endpoint
 def delete_invitation(invitation_id):
     invitation = Invitation.query.get(invitation_id)
+    if not invitation:
+        return None, 404
     confirm_collaboration_admin(invitation.collaboration_id)
     return delete(Invitation, invitation_id)

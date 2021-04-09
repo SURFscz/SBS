@@ -54,6 +54,7 @@ class CollaborationAdmins extends React.Component {
             confirmationDialogOpen: false,
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationTxt: I18n.t("confirmationDialog.confirm"),
             confirmationQuestion: "",
             lastAdminWarning: false,
             lastAdminWarningUser: false,
@@ -114,7 +115,7 @@ class CollaborationAdmins extends React.Component {
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
                 confirmationDialogAction: () => {
                     this.setState({loading: true});
-                    updateCollaborationMembershipRole(collaboration.id, member.user_id, selectedOption.value)
+                    updateCollaborationMembershipRole(collaboration.id, member.user_id, selectedOption.value, false)
                         .then(() => {
                             this.props.refreshUser(() => {
                                 if (!canStay) {
@@ -127,22 +128,25 @@ class CollaborationAdmins extends React.Component {
                                 name: member.user.name,
                                 role: selectedOption.value
                             }));
-                        });
+                        }).catch(() => {
+                        this.handle404("member");
+                    });
                 },
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
                 confirmationQuestion: I18n.t("collaborationDetail.downgradeYourselfMemberConfirmation"),
             });
         } else {
             this.setState({loading: true});
-            updateCollaborationMembershipRole(collaboration.id, member.user_id, selectedOption.value)
+            updateCollaborationMembershipRole(collaboration.id, member.user_id, selectedOption.value, false)
                 .then(() => {
                     this.props.refresh(this.componentDidMount);
                     setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
                         name: member.user.name,
                         role: selectedOption.value
                     }));
-                });
-
+                }).catch(() => {
+                this.handle404("member");
+            });
         }
     };
 
@@ -200,6 +204,20 @@ class CollaborationAdmins extends React.Component {
         return (collaboration.invitations || []).find(i => i.id === selectedInvitationId);
     }
 
+    handle404 = key => {
+        this.setState({
+            loading: false,
+            confirmationTxt: I18n.t("confirmationDialog.ok"),
+            confirmationDialogOpen: true,
+            confirmationDialogAction: () => {
+                this.setState({confirmationDialogOpen: false, confirmationTxt: I18n.t("confirmationDialog.confirm")});
+                this.props.refresh(this.componentDidMount);
+            },
+            cancelDialogAction: undefined,
+            confirmationQuestion: I18n.t(`organisationDetail.gone.${key}`),
+        });
+    }
+
     remove = showConfirmation => () => {
         const {selectedMembers} = this.state;
         const filteredSelectedMembers = this.getSelectedMembersWithFilteredSearch(selectedMembers);
@@ -232,8 +250,8 @@ class CollaborationAdmins extends React.Component {
                 .filter(id => filteredSelectedMembers[id].selected);
             const promises = selected.map(id => {
                 const ref = filteredSelectedMembers[id].ref;
-                return ref.invite ? invitationDelete(ref.id) :
-                    deleteCollaborationMembership(collaboration.id, ref.user.id)
+                return ref.invite ? invitationDelete(ref.id, false) :
+                    deleteCollaborationMembership(collaboration.id, ref.user.id, false)
             });
             Promise.all(promises).then(() => {
                 if (currentUserDeleted && !currentUser.admin) {
@@ -242,6 +260,8 @@ class CollaborationAdmins extends React.Component {
                     this.props.refresh(this.componentDidMount);
                     setFlash(I18n.t("organisationDetail.flash.entitiesDeleted"));
                 }
+            }).catch(() => {
+                this.handle404("member");
             });
         }
     }
@@ -263,6 +283,8 @@ class CollaborationAdmins extends React.Component {
                 setFlash(flashMsg);
                 callback && callback();
             });
+        }).catch(() => {
+            this.handle404("member");
         });
     }
 
@@ -408,7 +430,7 @@ class CollaborationAdmins extends React.Component {
         const invitation = this.getSelectedInvitation();
         const {collaboration} = this.props;
         const {message} = this.state;
-        this.refreshAndFlash(invitationResend({...invitation, message}),
+        this.refreshAndFlash(invitationResend({...invitation, message}, false),
             I18n.t("organisationInvitation.flash.inviteResend", {name: collaboration.name}),
             this.cancelSideScreen);
     };
