@@ -118,7 +118,7 @@ I18n.translations.en = {
         imageToLarge: "Image is larger then 2MB.",
         imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Image is required",
-        whiteSpace: "Fill with white space",
+        whiteSpace: "Automagically fit image",
         no: "No"
     },
     explain: {
