@@ -6,8 +6,7 @@ import {
     collaborationRequestById,
     collaborationShortNameExists,
     deleteRequestCollaboration,
-    denyRequestCollaboration,
-    myOrganisationsLite
+    denyRequestCollaboration
 } from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
@@ -15,7 +14,6 @@ import Button from "../components/Button";
 import {isEmpty} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import SelectField from "../components/SelectField";
 import {sanitizeShortName} from "../validations/regExps";
 import {AppStore} from "../stores/AppStore";
 import CroppedImageField from "../components/redesign/CroppedImageField";
@@ -37,7 +35,6 @@ class CollaborationRequest extends React.Component {
             required: ["name", "short_name", "organisation", "logo"],
             collaborationRequest: {organisation: {}, requester: {}},
             approve: true,
-            organisations: [],
             alreadyExists: {},
             warning: false,
             declineDialog: false,
@@ -57,34 +54,25 @@ class CollaborationRequest extends React.Component {
     };
 
     initState = id =>
-        Promise.all([collaborationRequestById(id), myOrganisationsLite()])
-            .then(json => {
-                const collaborationRequest = json[0];
-                const organisations = this.mapOrganisationsToOptions(json[1]);
-                collaborationRequest.organisation = organisations.find(org => org.value = collaborationRequest.organisation.id);
+        collaborationRequestById(id)
+            .then(res => {
+                const collaborationRequest = res;
                 this.setState({
                     collaborationRequest: collaborationRequest,
                     originalRequestedName: collaborationRequest.name,
-                    organisations: organisations,
                     loading: false
                 });
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
                         {path: "/", value: I18n.t("breadcrumb.home")},
                         {
-                            path: `/organisations/${collaborationRequest.organisation.value}`,
-                            value: I18n.t("breadcrumb.organisation", {name: collaborationRequest.organisation.label})
+                            path: `/organisations/${collaborationRequest.organisation_id}`,
+                            value: I18n.t("breadcrumb.organisation", {name: collaborationRequest.organisation.name})
                         },
                         {path: "/", value: I18n.t("breadcrumb.collaborationRequest", {name: collaborationRequest.name})}
                     ];
                 });
             }).catch(e => this.props.history.push("/"));
-
-    mapOrganisationsToOptions = organisations => organisations.map(org => ({
-        label: org.name,
-        value: org.id,
-        short_name: org.short_name,
-    }));
 
     validateCollaborationName = e =>
         collaborationNameExists(sanitizeShortName(e.target.value), this.state.collaborationRequest.organisation.value).then(json => {
@@ -159,7 +147,6 @@ class CollaborationRequest extends React.Component {
             });
         } else if (this.isValid()) {
             const {collaborationRequest} = this.state;
-            collaborationRequest.organisation_id = collaborationRequest.organisation.value;
             this.setState({loading: true});
             approveRequestCollaboration(collaborationRequest).then(res => {
                 this.props.history.push(`/organisations/${collaborationRequest.organisation_id}/collaboration_requests`);
@@ -211,7 +198,6 @@ class CollaborationRequest extends React.Component {
             confirmationDialogAction,
             cancelDialogAction,
             leavePage,
-            organisations,
             dialogQuestion,
             loading,
             warning,
@@ -234,7 +220,8 @@ class CollaborationRequest extends React.Component {
                                     <span className="name">{I18n.t("collaborationRequest.requester")}</span>
                                     <span className="name">{I18n.t("collaboration.motivation")}</span>
                                     {collaborationRequest.status === "denied" &&
-                                        <span className="name rejection-reason">{I18n.t("collaborationRequest.rejectionReason")}</span>}
+                                    <span
+                                        className="name rejection-reason">{I18n.t("collaborationRequest.rejectionReason")}</span>}
                                 </div>
                                 <div className="header-values">
                                     <span>{collaborationRequest.requester.name}</span>
@@ -242,7 +229,7 @@ class CollaborationRequest extends React.Component {
                                         href={`mailto:${collaborationRequest.requester.email}`}>{collaborationRequest.requester.email}</a></span>
                                     <span>{collaborationRequest.message}</span>
                                     {collaborationRequest.status === "denied" &&
-                                        <span className="rejection-reason">{collaborationRequest.rejection_reason}</span>}
+                                    <span className="rejection-reason">{collaborationRequest.rejection_reason}</span>}
                                 </div>
                             </div>
                         </div>
@@ -336,13 +323,11 @@ class CollaborationRequest extends React.Component {
                                     disabled={!isOpen}
                                     name={I18n.t("collaboration.accepted_user_policy")}/>
 
-                        <SelectField value={collaborationRequest.organisation}
-                                     options={organisations}
-                                     disabled={true}
-                                     name={I18n.t("collaboration.organisation_name")}
-                                     placeholder={I18n.t("collaboration.organisationPlaceholder")}
-                                     toolTip={I18n.t("collaboration.organisationTooltip")}
-                        />
+                        <InputField value={collaborationRequest.organisation.name}
+                                    toolTip={I18n.t("collaboration.organisationTooltip")}
+                                    disabled={true}
+                                    name={I18n.t("collaboration.organisation_name")}/>
+
                         <section className="actions">
                             {collaborationRequest.status !== "open" &&
                             <Button warningButton={true} onClick={this.deleteCollaborationRequest}/>}
