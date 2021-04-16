@@ -118,7 +118,7 @@ I18n.translations.nl = {
         imageToLarge: "Afbeelding is groter 512KB",
         imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
         imageRequired: "Afbeelding is verplicht",
-        whiteSpace: "Opvullen met white space",
+        whiteSpace: "Automagisch afbeelding passend maken",
         no: "Nee"
     },
     explain: {
