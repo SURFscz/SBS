@@ -422,9 +422,12 @@ class OrganisationForm extends React.Component {
                         <div>
                             <h1 className="section-separator">{I18n.t("organisation.invitations")}</h1>
 
-                            <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
-                                        addEmail={this.addEmail} removeMail={this.removeMail}
+                            <EmailField value={email}
+                                        onChange={e => this.setState({email: e.target.value})}
+                                        addEmail={this.addEmail}
+                                        removeMail={this.removeMail}
                                         name={I18n.t("invitation.invitees")}
+                                        isAdmin={true}
                                         error={!initial && isEmpty(administrators)}
                                         emails={administrators}/>
                         </div>}

@@ -967,6 +967,7 @@ I18n.translations.en = {
         messagePlaceholder: "Personal message to the administrators",
         messageTooltip: "The message will be included in the<br/>e-mail invitation to the administrators.",
         inviteesMessagesTooltip: "Add e-mail addresses separated by comma, space <br/>or semi-colon or one-by-one using <br/>the enter key.<br/>You can also copy & paste a csv file<br/>with line-separated e-mail addresses.",
+        appendAdminNote: "<br/><br/>Note: the invitees will become <strong>admin</strong> after accepting the invite.",
         inviteesMessagePlaceholder: "Personal message to the invitees",
         inviter: "Inviter",
         decline: "Decline",

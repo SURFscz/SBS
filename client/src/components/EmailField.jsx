@@ -5,14 +5,27 @@ import "./EmailField.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import I18n from "i18n-js";
 
-export default function EmailField({onChange, name, value, emails, addEmail, removeMail, pinnedEmails = [], error = false}) {
+export default function EmailField({
+                                       onChange,
+                                       name,
+                                       value,
+                                       emails,
+                                       addEmail,
+                                       removeMail,
+                                       isAdmin = false,
+                                       pinnedEmails = [],
+                                       error = false
+                                   }) {
 
     return (
         <div className={`email-field ${error ? "error" : ""}`}>
             <label htmlFor={name}>{name} <span className="tool-tip-section">
                 <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
                 <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                    <p dangerouslySetInnerHTML={{__html: I18n.t("invitation.inviteesMessagesTooltip")}}/>
+                    <p dangerouslySetInnerHTML={{
+                        __html:
+                            `${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`
+                    }}/>
                 </ReactTooltip>
             </span>
             </label>
