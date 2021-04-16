@@ -967,6 +967,7 @@ I18n.translations.nl = {
         messagePlaceholder: "Bericht aan de admins",
         messageTooltip: "De boodschap nemen we op in de <br/>e-mail waarmee admins worden uitgenodigd.",
         inviteesMessagesTooltip: "Voer e-mailadressen in, gescheiden door een komma, spatie <br/>of punt-komma of voer ze stuk-voor-stuk in<br/>met de enter toets.<br/>U kunt ook een csv file copy & pasten<br/>met daarin regel-gescheiden e-mailadressen.",
+        appendAdminNote: "<br/><br/>Let op: the genodigen zullen <strong>admin</strong> worden na het accepteren van de uitnodiging.",
         inviteesMessagePlaceholder: "Bericht aan genodigden",
         inviter: "Uitnodiger",
         decline: "Afslaan",

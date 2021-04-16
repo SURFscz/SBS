@@ -562,10 +562,13 @@ class CollaborationForm extends React.Component {
                     <div>
                         <h1 className="section-separator">{I18n.t("collaboration.invitations")}</h1>
 
-                        <EmailField value={email} onChange={e => this.setState({email: e.target.value})}
-                                    addEmail={this.addEmail} removeMail={this.removeMail}
+                        <EmailField value={email}
+                                    onChange={e => this.setState({email: e.target.value})}
+                                    addEmail={this.addEmail}
+                                    removeMail={this.removeMail}
                                     name={I18n.t("invitation.invitees")}
                                     pinnedEmails={current_user_admin ? [this.props.user.email] : []}
+                                    isAdmin={true}
                                     emails={administrators}/>
                     </div>}
 
