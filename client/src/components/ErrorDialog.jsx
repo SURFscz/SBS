@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 import "./ConfirmationDialog.scss";
 import I18n from "i18n-js";
-import {stopEvent} from "../utils/Utils";
+import Button from "./Button";
 
 export default function ErrorDialog({isOpen = false, close}) {
     return (
@@ -21,10 +21,7 @@ export default function ErrorDialog({isOpen = false, close}) {
                 <h2>{I18n.t("error_dialog.body")}</h2>
             </section>
             <section className="dialog-buttons">
-                <a href="/close" className="button white error" onClick={e => {
-                    stopEvent(e);
-                    close(e);
-                }}>{I18n.t("error_dialog.ok")}</a>
+                <Button cancelButton={true} className={"orphan"} onClick={close} txt={I18n.t("error_dialog.ok")}/>
             </section>
         </Modal>
     );
