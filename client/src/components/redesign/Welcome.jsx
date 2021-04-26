@@ -4,7 +4,6 @@ import I18n from "i18n-js";
 import {identityProviderDisplayName, organisationByUserSchacHomeOrganisation} from "../../api";
 import {isEmpty} from "../../utils/Utils";
 import {ReactComponent as InformationIcon} from "../../icons/informational.svg";
-import {ReactComponent as CriticalIcon} from "../../icons/critical.svg";
 import SpinnerField from "./SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import * as Showdown from "showdown";
@@ -94,16 +93,15 @@ class Welcome extends React.Component {
     unknownOrganisation = () => {
         return (
             <div>
-                <div className="institution warning">
-                    <CriticalIcon/>
-                    <p>{I18n.t("welcome.institutionNotConnected")}</p>
-                </div>
                 <h1>{I18n.t("welcome.whatYouCanDo")}</h1>
                 <h3 className="step">
                     <span>1.</span>
                     <span>{I18n.t("welcome.contact")}</span>
                 </h3>
-                <p dangerouslySetInnerHTML={{__html: I18n.t("welcome.contactInfo")}}/>
+                <div className="welcome-unknown">
+                    <p>{I18n.t("welcome.noMember")}</p>
+                    <p dangerouslySetInnerHTML={{__html: I18n.t("welcome.contactInfo")}}/>
+                </div>
             </div>
         );
     }
