@@ -43,6 +43,11 @@ class Impersonate extends React.Component {
     }
 
     componentDidMount = () => {
+        const {user, history} = this.props;
+        if (!user.admin) {
+            history.push("/404");
+            return;
+        }
         Promise.all([searchOrganisations("*"), searchCollaborations("*")]).then(res => {
             this.setState({
                 organisations: res[0].map(org => ({
