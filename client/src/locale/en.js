@@ -1009,7 +1009,7 @@ I18n.translations.en = {
         flash: {
             added: "Successfully added service {{service}} to collaboration {{name}}.",
             deleted: "Successfully deleted service {{service}} from collaboration {{name}}.",
-            send: "Successfully send service connection requets for {{service}}.",
+            send: "Successfully send service connection request for {{service}}.",
         },
         service: {
             open: "",
