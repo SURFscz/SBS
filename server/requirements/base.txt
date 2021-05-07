@@ -19,3 +19,4 @@ pytz==2020.1
 requests==2.24.0
 uWSGI==2.0.19.1
 urllib3==1.25.10
+websockets==9.0.1
