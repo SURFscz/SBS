@@ -32,6 +32,7 @@ from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
 from server.api.organisation_membership import organisation_membership_api
 from server.api.organisations_services import organisations_services_api
+from server.api.plsc import plsc_api
 from server.api.service import service_api
 from server.api.service_connection_request import service_connection_request_api
 from server.api.system import system_api
@@ -115,6 +116,7 @@ app.register_blueprint(ipaddress_api)
 app.register_blueprint(system_api)
 app.register_blueprint(organisations_services_api)
 app.register_blueprint(mock_user_api)
+app.register_blueprint(plsc_api)
 
 app.register_error_handler(404, page_not_found)
 
