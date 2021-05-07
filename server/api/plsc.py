@@ -77,9 +77,8 @@ def sync():
         result["organisations"].append({
             "id": organisation_id, "name": row[1], "identifier": row[2], "short_name": row[3],
             "schac_home_organisations": _find_by_id(schac_home_organisations, "organisation_id", organisation_id),
-            "organisation_memberships": [
-                _find_by_id(organisation_memberships, "organisation_id", organisation_id)],
-            "collaborations": [_find_by_id(collaborations, "organisation_id", organisation_id)],
+            "organisation_memberships": _find_by_id(organisation_memberships, "organisation_id", organisation_id),
+            "collaborations": _find_by_id(collaborations, "organisation_id", organisation_id),
             "services": _identifiers_only(
                 _find_by_identifiers(services, "id", [si["service_id"] for si in service_identifiers]))
         })
