@@ -31,7 +31,7 @@ CREATE DATABASE sbs_test DEFAULT CHARACTER SET utf8;
 CREATE USER 'sbs'@'localhost' IDENTIFIED BY 'sbs';
 GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'localhost' WITH GRANT OPTION;
 ```
-Ensure MySQL is running and run the Python server with the correct local environment setting:
+Ensure MySQL is running and run the Python server with the correct local environment settings:
 ```
 PROFILE=local CONFIG=config/test_config.yml python -m server
 ```
