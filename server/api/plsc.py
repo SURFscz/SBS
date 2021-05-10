@@ -89,7 +89,7 @@ def sync():
                            "eduperson_principal_name, username FROM users")
     for row in rs:
         result["users"].append(
-            {"id": row[0], "uid": row[1], "given_name": row[2], "family_name": row[3], "email": row[4],
-             "ssh_key": row[5], "scoped_affiliation": row[6], "eduperson_principal_name": row[7], "username": row[8]})
+            {"id": row[0], "uid": row[1], "name": row[2], "given_name": row[3], "family_name": row[4], "email": row[5],
+             "ssh_key": row[6], "scoped_affiliation": row[7], "eduperson_principal_name": row[8], "username": row[9]})
 
     return result, 200
