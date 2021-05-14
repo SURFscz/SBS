@@ -97,7 +97,7 @@ def _persist(db, *objs):
         db.session.add(obj)
 
 
-def seed(db, app_config):
+def seed(db, app_config, skip_seed=False):
     tables = reversed(metadata.sorted_tables)
     for table in tables:
         db.session.execute(table.delete())
@@ -105,6 +105,9 @@ def seed(db, app_config):
     db.session.execute(text("DELETE FROM audit_logs"))
 
     db.session.commit()
+
+    if skip_seed:
+        return
 
     john = User(uid="urn:john", name=john_name, email="john@example.org", username="john",
                 ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"

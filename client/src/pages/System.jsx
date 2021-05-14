@@ -3,6 +3,7 @@ import "./System.scss";
 import I18n from "i18n-js";
 import {
     auditLogsActivity,
+    cleanSlate,
     cleanupNonOpenRequests,
     clearAuditLogs,
     dbSeed,
@@ -23,6 +24,7 @@ import Activity from "../components/Activity";
 import Select from "react-select";
 import MemberJoinRequests from "../components/redesign/MemberJoinRequests";
 import MemberCollaborationRequests from "../components/redesign/MemberCollaborationRequests";
+import {logout} from "../utils/Login";
 
 const options = [25, 50, 100, 150, 200, 250].map(nbr => ({value: nbr, label: nbr}));
 
@@ -188,7 +190,7 @@ class System extends React.Component {
         });
     }
 
-    getDatabaseTab = databaseStats => {
+    getDatabaseTab = (databaseStats, config) => {
         return (<div key="database" name="database" label={I18n.t("home.tabs.database")}
                      icon={<FontAwesomeIcon icon="database"/>}>
             <div className="mod-system">
@@ -196,6 +198,11 @@ class System extends React.Component {
                     {this.renderDbStats()}
                     {this.renderDbStatsResults(databaseStats)}
                 </section>
+                {config.seed_allowed && <div className={"delete-all"}>
+                    <Button warningButton={true}
+                            icon={<FontAwesomeIcon icon="trash"/>}
+                            onClick={() => this.doCleanSlate(true)}/>
+                </div>}
             </div>
         </div>)
     }
@@ -252,8 +259,17 @@ class System extends React.Component {
                 busy: false
             }));
         }
-
     }
+
+    doCleanSlate = showConfirmation => {
+        if (showConfirmation) {
+            this.confirm(() => this.doCleanSlate(false), I18n.t("system.runCleanSlate"));
+        } else {
+            this.setState({confirmationDialogOpen: false, busy: true,});
+            cleanSlate().then(() => logout());
+        }
+    }
+
 
     doDbSeed = showConfirmation => {
         if (showConfirmation) {
@@ -458,7 +474,7 @@ class System extends React.Component {
         const tabs = [
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
-            this.getDatabaseTab(databaseStats),
+            this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config)
         ]
         return (

@@ -74,6 +74,19 @@ def run_seed():
     return {}, 201
 
 
+@system_api.route("/clean_slate", strict_slashes=False, methods=["DELETE"])
+@json_endpoint
+def clean_slate():
+    confirm_write_access()
+
+    if not current_app.app_config.feature.seed_allowed:
+        raise BadRequest("clean_slate not allowed in this environment")
+
+    seed(db, current_app.app_config, skip_seed=True)
+
+    return {}, 201
+
+
 @system_api.route("/clear-audit-logs", strict_slashes=False, methods=["DELETE"])
 @json_endpoint
 def clear_audit_logs():
