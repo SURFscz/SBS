@@ -1366,6 +1366,8 @@ I18n.translations.nl = {
         runDbSeedInfo: "Verwijder alle data en voeg de test data toe",
         runDbSeed: "Run",
         runClearAuditLogsConfirmation: "Weet je het absoluut zeker dat je alle data uit de audit logs wilt verwijderen?",
+        cleanSlate: "Verwijder alles",
+        runCleanSlate: "Weet je het absoluut zeker dat je alle data wilt verwijderen?",
         clear: "Clear",
         reload: "Reload",
         seedResult: "Test data is toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren."

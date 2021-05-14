@@ -92,7 +92,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && true   ) {
+    if (config.local && true) {
         let sub = "urn:john";
         // sub = "urn:sarah";
         // sub = "urn:james";
@@ -587,7 +587,11 @@ export function dbSeed() {
 }
 
 export function clearAuditLogs() {
-    return fetchDelete("/api/system/clear-audit-logs")
+    return fetchDelete("/api/system/clear-audit-logs");
+}
+
+export function cleanSlate() {
+    return fetchDelete("/api/system/clean_slate");
 }
 
 export function feedback(message) {
