@@ -231,6 +231,7 @@ I18n.translations.nl = {
             disableAccessConsequences: "De volgende organisaties en samenwerkingen gebruiken deze dienst en zullen hierdoor de dienst niet meer kunnen gebruiken.",
             collaboration: "samenwerking",
             organisation: "organisatie",
+            noEntities: "Er zijn geen organisaties die deze dienst gebruiken",
         },
         memberCollaborations: {
             searchPlaceHolder: "Zoek samenwerkingen...",

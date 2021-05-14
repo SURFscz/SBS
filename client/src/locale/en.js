@@ -231,6 +231,7 @@ I18n.translations.en = {
             disableAccessConsequences: "The following organisations and collaborations are using this Service and won't be able to use it anymore.",
             collaboration: "collaboration",
             organisation: "organisation",
+            noEntities: "There are no organisations using this service",
         },
         memberCollaborations: {
             searchPlaceHolder: "Search for collaborations...",
