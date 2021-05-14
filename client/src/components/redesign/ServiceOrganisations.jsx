@@ -185,7 +185,7 @@ class ServiceOrganisations extends React.Component {
                           filters={service.access_allowed_for_all ?
                               <span
                                   className="access-allowed-for-all">{I18n.t("service.accessAllowedForAllInfo")}</span> : null}
-                          showNew={!service.access_allowed_for_all}
+                          showNew={!service.access_allowed_for_all && organisations.length > 0}
                           newEntityFunc={service.access_allowed_for_all ? () => true : this.onToggleAll}
                           loading={false}
                           {...this.props}>
