@@ -9,6 +9,11 @@ from server.db.db import db
 plsc_api = Blueprint("plsc_api", __name__, url_prefix="/api/plsc")
 
 
+def _find_user_id(collaboration_memberships, collaboration_membership_id):
+    user_ids = [cm["user_id"] for cm in collaboration_memberships if cm["id"] == collaboration_membership_id]
+    return user_ids[0]
+
+
 def _find_by_id(seq, fk, value):
     return [row for row in seq if row[fk] == value]
 
@@ -55,10 +60,11 @@ def sync():
          'organisation_id': row[5]} for row in
         rs]
 
-    rs = db.engine.execute("SELECT id, name, short_name, global_urn, identifier, collaboration_id FROM `groups`")
+    rs = db.engine.execute(
+        "SELECT id, name, short_name, global_urn, identifier, collaboration_id, description FROM `groups`")
     groups = [
         {"id": row[0], "name": row[1], "short_name": row[2], "global_urn": row[3], "identifier": row[4],
-         "collaboration_id": row[5]}
+         "collaboration_id": row[5], "description": row[6]}
         for row in rs]
 
     for coll in collaborations:
@@ -66,6 +72,10 @@ def sync():
         coll["groups"] = _find_by_id(groups, "collaboration_id", collaboration_id)
         for group in coll["groups"]:
             group["collaboration_memberships"] = _find_by_id(collaboration_memberships_groups, "group_id", group["id"])
+            for collaboration_membership in group["collaboration_memberships"]:
+                collaboration_membership["user_id"] = _find_user_id(collaboration_memberships,
+                                                                    collaboration_membership[
+                                                                        "collaboration_membership_id"])
         service_identifiers = _find_by_id(services_collaborations, "collaboration_id", collaboration_id)
         coll["services"] = _identifiers_only(
             _find_by_identifiers(services, "id", [si["service_id"] for si in service_identifiers]))

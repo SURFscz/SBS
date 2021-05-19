@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
-
+from server.db.models import flatten
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, service_wiki_entity_id
+from server.test.seed import sarah_name, service_wiki_entity_id, uuc_name, ai_computing_name, ai_researchers_group
 
 
 class TestPlsc(AbstractTest):
@@ -21,3 +21,11 @@ class TestPlsc(AbstractTest):
         wiki = next(s for s in services_ if s["entity_id"] == service_wiki_entity_id)
         self.assertEqual(wiki["contact_email"], "help@wiki.com")
         self.assertEqual(wiki["name"], "Wiki")
+
+        collaborations = flatten([org["collaborations"] for org in res["organisations"] if org["name"] == uuc_name])
+        groups = flatten([coll["groups"] for coll in collaborations if coll["name"] == ai_computing_name])
+        ai_researchers = list(filter(lambda group: group["name"] == ai_researchers_group, groups))[0]
+        self.assertIsNotNone(ai_researchers["description"])
+
+        group_membership = ai_researchers["collaboration_memberships"][0]
+        self.assertIsNotNone(group_membership["user_id"])
