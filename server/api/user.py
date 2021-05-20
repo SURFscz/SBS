@@ -25,7 +25,6 @@ from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
     UserNameHistory
-from server.db.models import update
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error
 
@@ -327,10 +326,10 @@ def update_user():
             raise Forbidden()
 
     user = User.query.get(user_id)
-    custom_json = jsonify(user).json
     user_json = current_request.get_json()
+    # For now we only allow editing of ssh_key. This will probably change so keep the for loop
     for attr in ["ssh_key"]:
-        custom_json[attr] = user_json.get(attr)
+        setattr(user, attr, user_json.get(attr))
 
     if "ssh_key" in user_json:
         if "convertSSHKey" in user_json and user_json["convertSSHKey"]:
@@ -348,9 +347,11 @@ def update_user():
                         options.append("-mPEM")
                     res = subprocess.run(options, stdout=subprocess.PIPE)
                     if res.returncode == 0:
-                        custom_json["ssh_key"] = res.stdout.decode()
-
-    return update(User, custom_json=custom_json, allow_child_cascades=False)
+                        user.ssh_key = res.stdout.decode()
+    user.updated_by = user.uid
+    db.session.merge(user)
+    db.session.commit()
+    return user, 201
 
 
 @user_api.route("/other", strict_slashes=False)

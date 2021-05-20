@@ -6,6 +6,7 @@ from urllib import parse
 import responses
 from flask import current_app
 
+from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name
@@ -290,3 +291,22 @@ class TestUser(AbstractTest):
         finally:
             os.environ["TESTING"] = "1"
             self.app.app_config.mail.send_js_exceptions = False
+
+    def test_update_date_bug(self):
+        roger = self.find_entity_by_name(User, roger_name)
+        now = datetime.datetime.now()
+        roger.last_login_date = now
+        roger.last_accessed_date = now
+
+        db.session.merge(roger)
+        db.session.commit()
+
+        self.login("urn:roger")
+        body = {"id": roger.id,
+                "email": "bogus"}
+        self.put("/api/users", body, with_basic_auth=False)
+
+        roger = User.query.get(roger.id)
+        now = now.date()
+        self.assertEqual(roger.last_accessed_date.date(), now)
+        self.assertEqual(roger.last_login_date.date(), now)
