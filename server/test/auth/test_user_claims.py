@@ -79,3 +79,8 @@ class TestUserClaims(AbstractTest):
         username = generate_unique_username(user)
         # We don't use the eduperson_principal_name anymore
         self.assertEqual("u", username)
+
+    def test_bugfix_empty_user_claims_affiliation_list(self):
+        user = User()
+        add_user_claims({"voperson_external_id": []}, "urn:johny", user)
+        self.assertIsNone(user.schac_home_organisation)
