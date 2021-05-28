@@ -406,8 +406,7 @@ class OrganisationAdmins extends React.Component {
                             {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
                                 I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
                         </span> :
-                        entity.role === "admin" ?
-                            <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span> : null
+                            <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
                 }
             },
             {
