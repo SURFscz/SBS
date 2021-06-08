@@ -33,10 +33,16 @@ class TestService(AbstractTest):
 
     def test_find_by_id_admin(self):
         service = self.find_entity_by_name(Service, uuc_scheduler_name)
+        logo = self.client.get(f"/api/images/services/{service.id}").data
+        self.assertIsNotNone(logo)
+
         self.login("urn:john")
         service = self.get(f"api/services/{service.id}", with_basic_auth=False)
         self.assertEqual(1, len(service["organisations"]))
         self.assertEqual(2, len(service["service_organisation_collaborations"]))
+
+        logo_data = self.client.get(service["logo"]).data
+        self.assertEqual(logo, logo_data)
 
     def test_find_by_id_api_call(self):
         service = self.find_entity_by_name(Service, uuc_scheduler_name)

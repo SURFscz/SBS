@@ -24,6 +24,7 @@ from server.api.collaborations_services import collaborations_services_api
 from server.api.dynamic_extended_json_encoder import DynamicExtendedJSONEncoder
 from server.api.group import group_api
 from server.api.group_members import group_members_api
+from server.api.image import image_api
 from server.api.invitation import invitations_api
 from server.api.ipaddress import ipaddress_api
 from server.api.join_request import join_request_api
@@ -40,6 +41,7 @@ from server.api.user import user_api
 from server.api.user_saml import user_saml_api
 from server.cron.schedule import start_scheduling
 from server.db.db import db, db_migrations
+from server.db.redis import init_redis
 from server.mqtt.mqtt import MqttClient
 from server.templates import invitation_role
 from server.tools import read_file
@@ -117,6 +119,7 @@ app.register_blueprint(system_api)
 app.register_blueprint(organisations_services_api)
 app.register_blueprint(mock_user_api)
 app.register_blueprint(plsc_api)
+app.register_blueprint(image_api)
 
 app.register_error_handler(404, page_not_found)
 
@@ -141,6 +144,8 @@ app.json_encoder = DynamicExtendedJSONEncoder
 
 db.init_app(app)
 app.db = db
+
+app.redis_client = init_redis(config)
 
 app.app_config = config
 app.app_config["profile"] = profile

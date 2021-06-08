@@ -8,6 +8,7 @@ from server.auth.security import current_user_uid
 from server.db.db import db
 from server.db.domain import User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
     Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation
+from server.db.logo_mixin import evict_from_cache
 
 deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
                            "join_requests": JoinRequest, "collaborations": Collaboration,
@@ -38,6 +39,9 @@ def _merge(cls, d):
     o = cls(**d)
     merged = db.session.merge(o)
     db.session.commit()
+    if hasattr(merged, "logo"):
+        object_type = str(cls._sa_class_manager.mapper.persist_selectable.name)
+        evict_from_cache(object_type, getattr(merged, "id"))
     return merged
 
 

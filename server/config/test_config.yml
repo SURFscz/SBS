@@ -3,6 +3,11 @@ database:
 
 secret_key: secret
 
+redis:
+  host: localhost
+  port: 6379
+  password:
+
 api_users:
   - name: "sysadmin"
     password: "secret"
@@ -66,6 +71,7 @@ aup:
   html: SURFresearch-Access-Management-AUP-01122019-0001.html
 
 base_url: http://localhost:3000/
+base_server_url: http://localhost:8080
 wiki_link: https://wiki.surfnet.nl/display/sram
 
 admin_users:

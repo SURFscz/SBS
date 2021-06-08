@@ -4,6 +4,7 @@ from sqlalchemy.orm import column_property
 
 from server.db.audit_mixin import Base, metadata
 from server.db.db import db
+from server.db.logo_mixin import LogoMixin
 
 
 class User(Base, db.Model):
@@ -135,7 +136,7 @@ services_collaborations_association = db.Table(
 )
 
 
-class Collaboration(Base, db.Model):
+class Collaboration(Base, db.Model, LogoMixin):
     __tablename__ = "collaborations"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     identifier = db.Column("identifier", db.String(length=255), nullable=False)
@@ -200,7 +201,7 @@ class OrganisationMembership(Base, db.Model):
                            nullable=False)
 
 
-class Organisation(Base, db.Model):
+class Organisation(Base, db.Model, LogoMixin):
     __tablename__ = "organisations"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)
@@ -247,7 +248,7 @@ class Organisation(Base, db.Model):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.organisation_memberships))) > 0
 
 
-class Service(Base, db.Model):
+class Service(Base, db.Model, LogoMixin):
     __tablename__ = "services"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     entity_id = db.Column("entity_id", db.String(length=255), nullable=False)
@@ -378,7 +379,7 @@ class SuspendNotification(Base, db.Model):
     is_primary = db.Column("is_primary", db.Boolean(), nullable=True, default=False)
 
 
-class CollaborationRequest(Base, db.Model):
+class CollaborationRequest(Base, db.Model, LogoMixin):
     __tablename__ = "collaboration_requests"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     name = db.Column("name", db.String(length=255), nullable=False)

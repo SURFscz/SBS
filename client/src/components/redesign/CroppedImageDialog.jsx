@@ -10,6 +10,7 @@ import ReactCrop from "react-image-crop";
 import ErrorIndicator from "./ErrorIndicator";
 import CheckBox from "../CheckBox";
 import {sanitizeHtml} from "../../utils/Markdown";
+import {srcUrl} from "../../utils/Image";
 
 export default class CroppedImageDialog extends React.PureComponent {
 
@@ -91,6 +92,7 @@ export default class CroppedImageDialog extends React.PureComponent {
             this.setState({busy: true});
             const canvas = document.createElement("canvas");
             const image = this.imageRef;
+            image.setAttribute('crossOrigin', 'anonymous');
             const scaleX = image.naturalWidth / image.width;
             const scaleY = image.naturalHeight / image.height;
             canvas.width = crop.width;
@@ -140,8 +142,9 @@ export default class CroppedImageDialog extends React.PureComponent {
         } else {
             this.setState({busy: true});
             const image = new Image();
+            image.setAttribute('crossOrigin', 'anonymous');
             const type = isSvg ? "svg+xml" : "jpeg";
-            image.src = `data:image/${type};base64,${src}`;
+            image.src = srcUrl(src, type);
             image.onload = () => {
                 const canvas = document.createElement("canvas");
                 canvas.width = 480;
@@ -187,7 +190,7 @@ export default class CroppedImageDialog extends React.PureComponent {
 
     renderImages = (error, src, isSvg, crop, onCancel, onSave, name) => {
         const type = isSvg ? "svg+xml" : "jpeg";
-        const img = `data:image/${type};base64,${src}`;
+        const img = srcUrl(src, type) ;
         return (
             <div className="cropped-image-dialog-container">
                 {(!src) && <div className="no-image">
