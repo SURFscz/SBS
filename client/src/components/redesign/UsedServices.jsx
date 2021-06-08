@@ -296,7 +296,7 @@ class UsedServices extends React.Component {
                 </a>
                 <div className={"request-connection-service-form"}>
                     <h1>{I18n.t("models.services.connectionRequest", {name: requestConnectionService.name})}</h1>
-                    <Logo src={`data:image/jpeg;base64,${requestConnectionService.logo}`}/>
+                    <Logo src={requestConnectionService.logo}/>
                     <InputField value={message}
                                 name={I18n.t("collaborationServices.motivation")}
                                 placeholder={I18n.t("collaborationServices.motivationPlaceholder")}
