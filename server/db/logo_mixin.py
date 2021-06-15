@@ -18,8 +18,8 @@ def logo_from_cache(object_type, sid):
         result_set = db.engine.execute(sql, sid=(int(sid)))
         value = next(result_set)[0]
         current_app.redis_client.set(_redis_key(object_type, sid), value)
-        return value
-    return value.decode()
+        return value.encode()
+    return value
 
 
 def evict_from_cache(object_type, sid):
