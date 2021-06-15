@@ -19,7 +19,7 @@ def get_logo(object_type, sid):
     if object_type not in login_mixins_classes:
         raise BadRequest(f"Not allowed object type {object_type}")
     logo = logo_from_cache(object_type, sid)
-    decoded_logo = base64.decodebytes(logo.encode())
+    decoded_logo = base64.decodebytes(logo)
     res = send_file(io.BytesIO(decoded_logo), mimetype='image/jpeg')
     res.headers.add('Access-Control-Allow-Origin', '*')
     return res
