@@ -20,8 +20,8 @@ from server.mail import mail_error
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
 white_listing = ["health", "config", "info", "api/users/authorization", "api/aup", "api/users/resume-session",
-                 "api/users/me", "/api/images/"
-                 "api/service_connection_requests/find_by_hash", "api/service_connection_requests/approve",
+                 "api/users/me", "/api/images/", "api/service_connection_requests/find_by_hash",
+                 "api/service_connection_requests/approve",
                  "/api/organisation_invitations/find_by_hash", "/api/invitations/find_by_hash",
                  "api/service_connection_requests/deny", "/api/mock", "/api/users/error"]
 external_api_listing = ["api/collaborations/v1", "api/collaborations/v1/restricted",
@@ -61,7 +61,9 @@ def auth_filter(app_config):
             raise Unauthorized(description="Invalid username or password")
 
         hashed_secret = secure_hash(authorization_header[len('bearer '):])
-        api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).one()
+        api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).first()
+        if not api_key:
+            raise Unauthorized(description="Invalid API key")
         request_context.external_api_organisation = api_key.organisation
 
     request_context.is_authorized_api_call = is_authorized_api_call
