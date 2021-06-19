@@ -76,6 +76,7 @@ def _get_authorization_url(state=None):
         "response_mode": "query",
         "response_type": "code",
         "scope": scopes,
+        "acr_values": "https://refeds.org/profile/mfa",
         "redirect_uri": oidc_config.redirect_uri
     }
     args = urllib.parse.urlencode(params)
