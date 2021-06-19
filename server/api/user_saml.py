@@ -43,32 +43,30 @@ def attributes():
         logger.info(f"Returning error for user {uid} and service_entity_id {service_entity_id} as user is suspended")
         return {"error": f"user {uid} is suspended"}, 404
 
-    service_by_entity_id = Service.query.filter(Service.entity_id == service_entity_id).first()
-    if not service_by_entity_id:
+    service = Service.query.filter(Service.entity_id == service_entity_id).first()
+    if not service:
         msg = f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} " \
               f"because service does not exists"
         logger.error(msg)
         send_error_mail(tb=msg, session_exists=False)
         return {}, 200
 
-    service_id = service_by_entity_id.id
-    user_id = user.id
-
-    # Services connected to a collaboration where the user is a member of
-    count = services_from_collaboration_memberships(user_id, service_id, True)
-
-    if count == 0:
-        # Services connected to a organisation which has a collaboration where the user is a member of
-        count = services_from_organisation_collaboration_memberships(user_id, service_id, True)
-
-    if count == 0:
-        # Services connected to a organisation where the user is a member of
-        count = services_from_organisation_memberships(user_id, service_id, True)
-
-    if count == 0:
-        logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} "
-                    f"because user has no access to the service")
-        return {}, 200
+    connected_collaborations = []
+    for cm in user.collaboration_memberships:
+        if not list(filter(lambda s:s.id == service.id,  cm.collaboration.services)):
+            if list(filter(lambda s:s.id == service.id, cm.collaboration.organisation.services)):
+                connected_collaborations.append(cm.collaboration)
+        else:
+            connected_collaborations.append(cm.collaboration)
+    if not connected_collaborations:
+        # Edge case where the user is member of an organization which is linked to the service
+        for om in user.organisation_memberships:
+            if list(filter(lambda s: s.id == service.id, om.organisation.services)):
+                connected_collaborations = connected_collaborations + om.organisation.collaborations
+        if not connected_collaborations:
+            logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} "
+                        f"because user has no access to the service")
+            return {}, 200
 
     # gather regular user attributes
     result = {}
@@ -98,11 +96,11 @@ def attributes():
     namespace = cfg.get("entitlement_group_namespace", "urn:bla")
 
     memberships = set()
-    for cm in user.collaboration_memberships:
-        memberships.add(f"{namespace}:group:{cm.collaboration.organisation.short_name}:{cm.collaboration.short_name}")
-        for g in cm.collaboration.groups:
-            memberships.add(f"{namespace}:group:{cm.collaboration.organisation.short_name}:"
-                            f"{cm.collaboration.short_name}:{g.short_name}")
+    for collaboration in connected_collaborations:
+        memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:{collaboration.short_name}")
+        for g in collaboration.groups:
+            memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:"
+                            f"{collaboration.short_name}:{g.short_name}")
     membership_attribute = custom_saml_mapping['custom_attribute_saml_mapping']['memberships']
     result[membership_attribute] = memberships
 

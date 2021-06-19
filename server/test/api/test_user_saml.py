@@ -2,7 +2,7 @@
 import os
 
 from server.test.abstract_test import AbstractTest
-from server.test.seed import john_name, uuc_scheduler_entity_id, service_network_entity_id
+from server.test.seed import john_name, uuc_scheduler_entity_id, service_network_entity_id, service_mail_entity_id
 
 
 class TestUserSaml(AbstractTest):
@@ -69,3 +69,12 @@ class TestUserSaml(AbstractTest):
 
         self.get("/api/users/attributes", response_status_code=404,
                  query_data={"uid": "urn:john", "service_entity_id": "https://network"})
+
+    def test_attributes_user_limit_linked_collaborations(self):
+        res = self.get("/api/users/attributes",
+                       query_data={"uid": "urn:sarah", "service_entity_id": service_mail_entity_id})
+        entitlements = res["eduPersonEntitlement"]
+        self.assertListEqual(["urn:example:sbs:group:uuc:ai_computing",
+                              "urn:example:sbs:group:uuc:ai_computing:ai_dev",
+                              "urn:example:sbs:group:uuc:ai_computing:ai_res"
+                              ], sorted(entitlements))

@@ -75,7 +75,7 @@ def save(cls, custom_json=None, allow_child_cascades=True, allowed_child_collect
 def update(cls, custom_json=None, allow_child_cascades=True, allowed_child_collections=[]):
     json_dict = request.get_json() if custom_json is None else custom_json
     # URL replacement should not override base64 encoded image
-    if "logo" in json_dict and json_dict["logo"].startswith("http"):
+    if "logo" in json_dict and json_dict["logo"] and json_dict["logo"].startswith("http"):
         del json_dict["logo"]
 
     add_audit_trail_data(cls, json_dict)
