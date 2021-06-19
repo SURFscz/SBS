@@ -5,8 +5,6 @@ from datetime import datetime
 from flask import Blueprint, current_app
 
 from server.api.base import json_endpoint, query_param, send_error_mail
-from server.api.service import services_from_collaboration_memberships, \
-    services_from_organisation_collaboration_memberships, services_from_organisation_memberships
 from server.auth.security import confirm_read_access
 from server.db.db import db
 from server.db.domain import User, Service
@@ -53,8 +51,8 @@ def attributes():
 
     connected_collaborations = []
     for cm in user.collaboration_memberships:
-        if not list(filter(lambda s:s.id == service.id,  cm.collaboration.services)):
-            if list(filter(lambda s:s.id == service.id, cm.collaboration.organisation.services)):
+        if not list(filter(lambda s: s.id == service.id, cm.collaboration.services)):
+            if list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
                 connected_collaborations.append(cm.collaboration)
         else:
             connected_collaborations.append(cm.collaboration)
