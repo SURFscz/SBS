@@ -51,7 +51,7 @@ I18n.translations.nl = {
     },
     login: {
         title: "Research Access Management",
-        subTitle: "Login aub...",
+        subTitle: "Login...",
         suspended: "Je account is geschorst. Neem contact op met de admin van je samenwerking om dit op te lossen",
         successfullyActivated: "Gelukt: je account is opnieuw geactiveerd",
         closeBrowser: "Om volledig uit te loggen, moet je je browser sluiten",
@@ -349,7 +349,7 @@ I18n.translations.nl = {
         invitation: {
             welcome: "Welkom in SURF Research Access Management (SRAM). Hier wordt voor onderzoekssamenwerkingen de toegang tot onderzoeksdiensten geregeld.",
             invited: "Je bent door <a href=\"mailto:{{email}}\">{{inviter}}</a> uitgenodigd lid te worden van {{type}} \"{{collaboration}}\"",
-            followingSteps: "Voer aub de volgende stappen uit:",
+            followingSteps: "Voer de volgende stappen uit:",
             steps: {
                 progress: "{{now}} van {{total}}",
                 login: "Inloggen",
@@ -1380,8 +1380,8 @@ I18n.translations.nl = {
         platformAdmin: "platform admin",
         orgAdmin: "organisatie admin",
         orgManager: "organisatie manager",
-        coAdmin: "COllaboration admin",
-        coMember: "COllaboration lid",
+        coAdmin: "Collaboration admin",
+        coMember: "Collaboration lid",
         serviceUser: "dienst gebruiker",
         user: "gebruiker"
     },

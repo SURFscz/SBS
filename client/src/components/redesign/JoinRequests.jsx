@@ -185,9 +185,11 @@ class JoinRequests extends React.Component {
                                     question={confirmationDialogQuestion}>
                     {declineDialog && this.getDeclineRejectionOptions(rejectionReason)}
                 </ConfirmationDialog>
-                <a className={"back-to-join-requests"} onClick={this.cancelSideScreen} href={"/cancel"}>
-                    <ChevronLeft/>{I18n.t("models.joinRequests.backToJoinRequests")}
-                </a>
+                <div>
+                    <a className={"back-to-join-requests"} onClick={this.cancelSideScreen} href={"/cancel"}>
+                        <ChevronLeft/>{I18n.t("models.joinRequests.backToJoinRequests")}
+                    </a>
+                </div>
                 <div className="join-request-form">
                     <div className="join-request-header">
                         <h2>{I18n.t("models.joinRequests.details",

@@ -1,0 +1,12 @@
+{% extends "mail_layout.html" %}
+{% block title %}SURF Platform account deletionnotification {% endblock %}
+{% block content %}
+
+    <p>Hi,</p>
+    <p>User {{ user.name }} ({{ user.uid }}) has deleted his / hers account on environment <strong>{{ environment }}</strong>
+        at {{ date }}:</p>
+
+    <p>This mail is automatically send and can be suppressed by changing the <i>account_deletion_notifications_enabled</i> section
+        of the configuration for environment {{ environment }}</p>
+
+{% endblock %}

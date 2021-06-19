@@ -84,9 +84,11 @@ class ApiKeys extends React.Component {
         const {description, hashedSecret} = this.state;
         return (
             <div className="api-key-container">
-                <a href={"/cancel"} className={"back-to-api-keys"} onClick={this.cancelSideScreen}>
-                    <ChevronLeft/>{I18n.t("models.apiKeys.backToApiKeys")}
-                </a>
+                <div>
+                    <a href={"/cancel"} className={"back-to-api-keys"} onClick={this.cancelSideScreen}>
+                        <ChevronLeft/>{I18n.t("models.apiKeys.backToApiKeys")}
+                    </a>
+                </div>
                 <div className="new-api-key">
                     <p dangerouslySetInnerHTML={{__html: I18n.t("apiKeys.secretDisclaimer")}}/>
                     <InputField value={hashedSecret}

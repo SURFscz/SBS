@@ -1,9 +1,11 @@
 import React from "react";
 import {
     addCollaborationServices,
-    allServices, approveServiceConnectionRequestByHash,
+    allServices,
+    approveServiceConnectionRequestByHash,
     deleteCollaborationServices,
-    deleteServiceConnectionRequest, denyServiceConnectionRequestByHash,
+    deleteServiceConnectionRequest,
+    denyServiceConnectionRequestByHash,
     requestServiceConnection
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
@@ -220,9 +222,11 @@ class UsedServices extends React.Component {
                                     isWarning={warning}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}/>
-                <a href="/services" className={"back-to-services"} onClick={this.cancelRequestConnectionService}>
-                    <ChevronLeft/>{I18n.t("models.services.backToServices")}
-                </a>
+                <div>
+                    <a href="/services" className={"back-to-services"} onClick={this.cancelRequestConnectionService}>
+                        <ChevronLeft/>{I18n.t("models.services.backToServices")}
+                    </a>
+                </div>
                 <div className={"request-connection-service-form"}>
                     <h2>{I18n.t("models.serviceConnectionRequests.details",
                         {
@@ -291,9 +295,11 @@ class UsedServices extends React.Component {
     renderRequestConnectionService = (requestConnectionService, message) => {
         return (
             <div className="request-connection-service">
-                <a href="/services" className={"back-to-services"} onClick={this.cancelRequestConnectionService}>
-                    <ChevronLeft/>{I18n.t("models.services.backToServices")}
-                </a>
+                <div>
+                    <a href="/services" className={"back-to-services"} onClick={this.cancelRequestConnectionService}>
+                        <ChevronLeft/>{I18n.t("models.services.backToServices")}
+                    </a>
+                </div>
                 <div className={"request-connection-service-form"}>
                     <h1>{I18n.t("models.services.connectionRequest", {name: requestConnectionService.name})}</h1>
                     <Logo src={requestConnectionService.logo}/>
