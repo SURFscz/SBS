@@ -230,7 +230,7 @@ class UsedServices extends React.Component {
                             name: serviceConnectionRequest.requester.name,
                             collaborationName: collaboration.name
                         })}</h2>
-
+                    <Logo src={serviceConnectionRequest.service.logo}/>
                     <InputField name={I18n.t("serviceConnectionRequest.message")}
                                 value={serviceConnectionRequest.message}
                                 disabled={true}
@@ -359,6 +359,7 @@ class UsedServices extends React.Component {
                 req.connectionRequest = true;
                 req.isMemberRequest = true;
                 req.name = req.service.name;
+                req.logo = req.service.logo;
                 return req;
             });
 

@@ -79,6 +79,11 @@ table.servicesUsed, table.servicesAvailable, table.servicesRequested {
             font-size: 22px;
         }
 
+        h2 {
+            margin-bottom: 20px;
+            color: $primary-orange;
+        }
+
         img {
             width: 62px;
             margin-bottom: 20px;
