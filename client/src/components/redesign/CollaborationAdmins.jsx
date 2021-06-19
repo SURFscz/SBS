@@ -452,9 +452,11 @@ class CollaborationAdmins extends React.Component {
                                     confirmationTxt={confirmationTxt}
                                     confirm={confirmationDialogAction}
                                     question={confirmationQuestion}/>
-                <a className="back-to-org-members" onClick={this.cancelSideScreen} href={"/cancel"}>
-                    <ChevronLeft/>{I18n.t("models.orgMembers.backToMembers")}
-                </a>
+                <div>
+                    <a className="back-to-org-members" onClick={this.cancelSideScreen} href={"/cancel"}>
+                        <ChevronLeft/>{I18n.t("models.orgMembers.backToMembers")}
+                    </a>
+                </div>
                 <div className="collaboration-invitation-form">
                     {isExpired && <ErrorIndicator msg={expiredMessage} standalone={true}/>}
                     <h2>{I18n.t("models.orgMembers.invitation",
@@ -463,12 +465,18 @@ class CollaborationAdmins extends React.Component {
                             inviter: invitation.user.name,
                             email: invitation.invitee_email
                         })}</h2>
+                    <div className={"organisation-meta"}>
 
-                    <InputField value={I18n.t(`organisation.${invitation.intended_role}`)}
-                                noInput={true}
-                                name={I18n.t("organisationInvitation.role")}
-                                disabled={true}/>
+                        <InputField value={I18n.t(`organisation.${invitation.intended_role}`)}
+                                    noInput={true}
+                                    name={I18n.t("organisationInvitation.role")}
+                                    disabled={true}/>
 
+                        <InputField value={moment(invitation.expiry_date * 1000).format("LL")}
+                                    noInput={true}
+                                    name={I18n.t("organisationInvitation.expiryDate")}
+                                    disabled={true}/>
+                    </div>
                     <InputField value={message}
                                 name={I18n.t("organisationInvitation.message")}
                                 toolTip={I18n.t("organisationInvitation.messageTooltip", {name: invitation.user.name})}
@@ -581,7 +589,7 @@ class CollaborationAdmins extends React.Component {
                             {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
                                 I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
                         </span> :
-                            <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
+                        <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
                 }
             },
             {

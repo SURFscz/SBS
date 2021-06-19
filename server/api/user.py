@@ -26,7 +26,7 @@ from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
     UserNameHistory
 from server.logger.context_logger import ctx_logger
-from server.mail import mail_error
+from server.mail import mail_error, mail_account_deletion
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
@@ -425,6 +425,7 @@ def logout():
 def delete_user():
     user_id = current_user_id()
     user = User.query.get(user_id)
+    mail_account_deletion(user)
     db.session.delete(user)
 
     if user.username:

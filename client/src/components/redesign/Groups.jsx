@@ -143,9 +143,11 @@ class Groups extends React.Component {
                                     confirm={confirmationDialogAction}
                                     isWarning={true}
                                     question={confirmationDialogQuestion}/>
-                <a className={"back-to-groups"} onClick={this.cancelSideScreen} href={"/cancel"}>
-                    <ChevronLeft/>{I18n.t("models.groups.backToGroups")}
-                </a>
+                <div>
+                    <a className={"back-to-groups"} onClick={this.cancelSideScreen} href={"/cancel"}>
+                        <ChevronLeft/>{I18n.t("models.groups.backToGroups")}
+                    </a>
+                </div>
                 {children}
             </div>
         );

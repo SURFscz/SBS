@@ -235,3 +235,17 @@ def mail_outstanding_requests(collaboration_requests, collaboration_join_request
         preview=False,
         working_outside_of_request_context=True
     )
+
+
+def mail_account_deletion(user):
+    mail_cfg = current_app.app_config.mail
+    if mail_cfg.account_deletion_notifications_enabled:
+        _do_send_mail(
+            subject=f"User {user.email} has deleted his/ hers accoun in environment {mail_cfg.environment}",
+            recipients=[mail_cfg.beheer_email],
+            template="user_account_deleted",
+            context={"environment": mail_cfg.environment,
+                     "date": datetime.now(),
+                     "user": user},
+            preview=False
+        )

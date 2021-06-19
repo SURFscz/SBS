@@ -124,9 +124,12 @@ class ServiceConnectionRequests extends React.Component {
                                     isWarning={isWarning}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}/>
-                <a className={"back-to-service-connection-requests"} onClick={this.cancelSideScreen} href={"/cancel"}>
-                    <ChevronLeft/>{I18n.t("models.serviceConnectionRequests.backToServiceConnectionRequests")}
-                </a>
+                <div>
+                    <a className={"back-to-service-connection-requests"} onClick={this.cancelSideScreen}
+                       href={"/cancel"}>
+                        <ChevronLeft/>{I18n.t("models.serviceConnectionRequests.backToServiceConnectionRequests")}
+                    </a>
+                </div>
                 <div className="service-connection-request-form">
                     <h2>{I18n.t("models.serviceConnectionRequests.details",
                         {
@@ -144,7 +147,8 @@ class ServiceConnectionRequests extends React.Component {
                     <section className="actions">
                         <Button cancelButton={true} txt={I18n.t("serviceConnectionRequest.decline")}
                                 onClick={this.denyServiceConnectionRequest}/>
-                        <Button txt={I18n.t("serviceConnectionRequest.accept")} onClick={this.approveServiceConnectionRequest}/>
+                        <Button txt={I18n.t("serviceConnectionRequest.accept")}
+                                onClick={this.approveServiceConnectionRequest}/>
                     </section>
                 </div>
             </div>)

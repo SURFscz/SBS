@@ -153,6 +153,15 @@
             margin-top: 25px;
         }
     }
+
+    .organisation-meta {
+        display: flex;
+
+        div.input-field:last-child {
+            margin-left: auto;
+        }
+    }
+
 }
 
 
