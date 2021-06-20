@@ -23,6 +23,7 @@ class User(Base, db.Model):
     family_name = db.Column("family_name", db.String(length=255), nullable=True)
     given_name = db.Column("given_name", db.String(length=255), nullable=True)
     email = db.Column("email", db.String(length=255), nullable=True)
+    second_factor_auth = db.Column("second_factor_auth", db.String(length=255), nullable=True)
     ssh_key = db.Column("ssh_key", db.Text(), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),

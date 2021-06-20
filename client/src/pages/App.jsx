@@ -5,7 +5,7 @@ import I18n from "i18n-js";
 import Header from "../components/Header";
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
-import {config, me, other, refreshUser, reportError} from "../api";
+import {config, me, other, refreshUser} from "../api";
 import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/ErrorDialog";
@@ -41,6 +41,7 @@ import History from "../components/History";
 import ServiceDetail from "./ServiceDetail";
 import SpinnerField from "../components/redesign/SpinnerField";
 import DeadEnd from "./DeadEnd";
+import SecondFactorAuthentication from "./SecondFactorAuthentication";
 
 addIcons();
 
@@ -77,7 +78,7 @@ class App extends React.Component {
                 targetUrl: response.url,
                 status: response.status
             };
-            reportError(error);
+            // reportError(error);
         };
     }
 
@@ -109,27 +110,28 @@ class App extends React.Component {
             this.setState({loading: false});
         } else {
             config().then(res => {
-                this.setState({config: res}, () => me(res).then(currentUser => {
-                    if (currentUser && currentUser.uid) {
-                        const user = this.markUserAdmin(currentUser);
-                        this.setState({currentUser: user, loading: false});
-                        if (currentUser.successfully_activated) {
-                            setFlash(I18n.t("login.successfullyActivated"))
+                this.setState({config: res},
+                    () => me(res).then(currentUser => {
+                        if (currentUser && currentUser.uid) {
+                            const user = this.markUserAdmin(currentUser);
+                            this.setState({currentUser: user, loading: false});
+                            if (currentUser.successfully_activated) {
+                                setFlash(I18n.t("login.successfullyActivated"))
+                            }
+                        } else {
+                            this.handleBackendDown();
                         }
-                    } else {
-                        this.handleBackendDown();
-                    }
-                }).catch(e => {
-                    if (e.response && e.response.status === 409) {
-                        this.setState({
-                            currentUser: {"uid": "anonymous", "guest": true, "admin": false},
-                            loading: false
-                        });
-                        setFlash(I18n.t("login.suspended"), "error");
-                    } else {
-                        this.handleBackendDown();
-                    }
-                }));
+                    }).catch(e => {
+                        if (e.response && e.response.status === 409) {
+                            this.setState({
+                                currentUser: {"uid": "anonymous", "guest": true, "admin": false},
+                                loading: false
+                            });
+                            setFlash(I18n.t("login.suspended"), "error");
+                        } else {
+                            this.handleBackendDown();
+                        }
+                    }));
             }).catch(() => this.handleBackendDown());
         }
     }
@@ -213,7 +215,8 @@ class App extends React.Component {
                                    }
                                    return <Redirect to={decodeURIComponent(state)}/>
                                }}/>
-
+                        <Route path="/2fa"
+                               render={props => <SecondFactorAuthentication user={currentUser} {...props}/>}/>
                         <Route path="/registration"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}
@@ -364,6 +367,7 @@ class App extends React.Component {
 
         );
     }
+
 }
 
 export default App;

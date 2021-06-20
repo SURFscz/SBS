@@ -35,10 +35,12 @@ STATUS_APPROVED = "approved"
 
 def auth_filter(app_config):
     url = current_request.base_url
+    oidc_config = current_app.app_config.oidc
 
-    if "user" in session and "guest" in session["user"] and not session["user"]["guest"]:
-        request_context.is_authorized_api_call = False
-        return
+    if "user" in session and not session["user"].get("guest"):
+        if not oidc_config.second_factor_authentication_required or session["user"].get("sfc"):
+            request_context.is_authorized_api_call = False
+            return
 
     is_whitelisted_url = False
     for u in white_listing:

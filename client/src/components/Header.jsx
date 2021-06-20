@@ -25,7 +25,7 @@ export default class Header extends React.PureComponent {
     componentDidMount() {
         emitter.addListener("impersonation", this.impersonate);
         const {currentUser} = this.props;
-        if (!currentUser.guest) {
+        if (!currentUser.guest && currentUser.sfc) {
             organisationByUserSchacHomeOrganisation()
                 .then(res => this.setState({organisation: res}));
         }
