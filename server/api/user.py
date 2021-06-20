@@ -17,6 +17,7 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
+from server.auth.oidc import ACR_VALUES, decode_jwt_token
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access
 from server.auth.user_claims import add_user_claims
@@ -31,12 +32,13 @@ from server.mail import mail_error, mail_account_deletion
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
-def _store_user_in_session(user):
+def _store_user_in_session(user, second_factor_confirmed):
     # The session is stored as a cookie in the browser. We therefore minimize the content
     res = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
     session_data = {
         "id": user.id,
         "uid": user.uid,
+        "sfc": second_factor_confirmed,
         "name": user.name,
         "email": user.email
     }
@@ -76,7 +78,7 @@ def _get_authorization_url(state=None):
         "response_mode": "query",
         "response_type": "code",
         "scope": scopes,
-        "acr_values": "https://refeds.org/profile/mfa",
+        "acr_values": ACR_VALUES,
         "redirect_uri": oidc_config.redirect_uri
     }
     args = urllib.parse.urlencode(params)
@@ -235,13 +237,20 @@ def resume_session():
         logger.info(f"Updating user {user.uid} with new claims / updated at")
         add_user_claims(user_info_json, uid, user)
 
-    user.last_login_date = datetime.datetime.now()
+    encoded_id_token = token_json["id_token"]
+    id_token = decode_jwt_token(encoded_id_token)
+    second_factor_confirmed = not oidc_config.second_factor_authentication_required or id_token.get("acr") == ACR_VALUES
+    if second_factor_confirmed:
+        user.last_login_date = datetime.datetime.now()
 
     user = db.session.merge(user)
     db.session.commit()
 
-    _store_user_in_session(user)
-    location = session["original_destination"] if "original_destination" in session else current_app.app_config.base_url
+    _store_user_in_session(user, second_factor_confirmed)
+    if second_factor_confirmed:
+        location = session.get("original_destination", current_app.app_config.base_url)
+    else:
+        location = f"{current_app.app_config.base_url}2fa"
     return redirect(location)
 
 
@@ -270,6 +279,7 @@ def me():
             db.session.merge(user_from_db)
             db.session.commit()
 
+        user["second_factor_auth"] = bool("second_factor_auth" in user and user["second_factor_auth"])
         return user, 200
     else:
         return {"uid": "anonymous", "guest": True, "admin": False}, 200
@@ -406,7 +416,7 @@ def upgrade_super_user():
     user = db.session.merge(user)
     db.session.commit()
 
-    _store_user_in_session(user)
+    _store_user_in_session(user, True)
 
     response = redirect(current_app.app_config.feature.admin_users_upgrade_redirect_url)
     response.headers.set("x-session-alive", "true")

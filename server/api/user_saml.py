@@ -38,7 +38,7 @@ def attributes():
 
     user = User.query.filter(User.uid == uid).one()
     if user.suspended:
-        logger.info(f"Returning error for user {uid} and service_entity_id {service_entity_id} as user is suspended")
+        logger.error(f"Returning error for user {uid} and service_entity_id {service_entity_id} as user is suspended")
         return {"error": f"user {uid} is suspended"}, 404
 
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
@@ -51,10 +51,8 @@ def attributes():
 
     connected_collaborations = []
     for cm in user.collaboration_memberships:
-        if not list(filter(lambda s: s.id == service.id, cm.collaboration.services)):
-            if list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
-                connected_collaborations.append(cm.collaboration)
-        else:
+        connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
+        if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
             connected_collaborations.append(cm.collaboration)
     if not connected_collaborations:
         # Edge case where the user is member of an organization which is linked to the service

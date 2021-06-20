@@ -25,8 +25,10 @@ oidc:
   authorization_endpoint: http://localhost:9001/authorize
   token_endpoint: http://localhost:9001/token
   userinfo_endpoint: http://localhost:9001/userinfo
+  jwks_endpoint: http://localhost:9001/jwks
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
   redirect_uri: http://localhost:8080/api/users/resume-session
+  second_factor_authentication_required: True
   scopes:
     - profile
     - eduperson_scoped_affiliation
