@@ -14,7 +14,7 @@ from server.logger.context_logger import ctx_logger
 from server.tools import read_file
 
 oidc_api = Blueprint("oidc_api", __name__, url_prefix="/api/oidc")
-
+# TODO make  lazy and use config
 private_key = read_file("test/data/jwt-private-key")
 public_key_json = json.loads(read_file("test/data/jwt-public-key.json"))
 
