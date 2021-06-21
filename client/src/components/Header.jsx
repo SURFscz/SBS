@@ -25,7 +25,7 @@ export default class Header extends React.PureComponent {
     componentDidMount() {
         emitter.addListener("impersonation", this.impersonate);
         const {currentUser} = this.props;
-        if (!currentUser.guest && currentUser.sfc) {
+        if (!currentUser.guest && currentUser.second_factor_confirmed) {
             organisationByUserSchacHomeOrganisation()
                 .then(res => this.setState({organisation: res}));
         }
@@ -67,6 +67,7 @@ export default class Header extends React.PureComponent {
     render() {
         const {currentUser, config} = this.props;
         const {dropDownActive, organisation, orangeMode, showFeedBack} = this.state;
+        const showProfile = !currentUser.guest && currentUser.second_factor_confirmed;
         return (
             <div className={`header-container ${currentUser.guest ? "guest" : ""} ${orangeMode ? "ugly" : ""}`}>
 
@@ -74,7 +75,7 @@ export default class Header extends React.PureComponent {
 
                 <div className="header" onClick={this.toggleStyle}>
                     <Link className="logo" to="/"><Logo/></Link>
-                    {!currentUser.guest &&
+                    {showProfile &&
                     <div className="user-profile" onClick={() => this.setState({dropDownActive: !dropDownActive})}>
                         {this.renderProfileLink(currentUser, orangeMode)}
                         {dropDownActive &&

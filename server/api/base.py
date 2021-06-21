@@ -24,6 +24,7 @@ white_listing = ["health", "config", "info", "api/users/authorization", "api/aup
                  "api/service_connection_requests/approve",
                  "/api/organisation_invitations/find_by_hash", "/api/invitations/find_by_hash",
                  "api/service_connection_requests/deny", "/api/mock", "/api/users/error"]
+second_fa_listing = ["/get2fa", "/verify2fa"]
 external_api_listing = ["api/collaborations/v1", "api/collaborations/v1/restricted",
                         "api/collaborations_services/v1/connect_collaboration_service",
                         "/api/invitations/v1/collaboration_invites"]
@@ -38,9 +39,13 @@ def auth_filter(app_config):
     oidc_config = current_app.app_config.oidc
 
     if "user" in session and not session["user"].get("guest"):
-        if not oidc_config.second_factor_authentication_required or session["user"].get("sfc"):
+        if not oidc_config.second_factor_authentication_required or session["user"].get("second_factor_confirmed"):
             request_context.is_authorized_api_call = False
             return
+        else:
+            for u in second_fa_listing:
+                if u in url:
+                    return
 
     is_whitelisted_url = False
     for u in white_listing:

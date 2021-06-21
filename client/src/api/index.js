@@ -152,6 +152,14 @@ export function platformAdmins() {
     return fetchJson("/api/users/platform_admins");
 }
 
+export function get2fa() {
+    return fetchJson("/api/users/get2fa");
+}
+
+export function verify2fa(totp) {
+    return postPutJson("/api/users/verify2fa", {totp}, "POST", false);
+}
+
 //Services
 export function serviceNameExists(name, existingService = null) {
     return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${encodeURIComponent(existingService)}`);

@@ -213,7 +213,7 @@ I18n.translations.en = {
             title: "Collaborations",
             searchPlaceHolder: "Search collaborations...",
             new: "New Collaboration",
-            noEntities:  "There are no collaborations yet...",
+            noEntities: "There are no collaborations yet...",
             newCollaborationRequest: "New request for collaboration",
             name: "Name",
             memberCount: "Members",
@@ -1494,10 +1494,38 @@ I18n.translations.en = {
         manager: "Manager",
         platformAdmin: "Goddess divinity"
     },
-    notFound : {
+    notFound: {
         msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that.<br/><br/>" +
             "You could try visiting the <a href='{{base_url}}'>homepage</a>. If that does not offer you an option you were looking for, " +
             "contact the person that invited you, or follow the SRAM Help link which includes how to contact the SURF SRAM team."
+    },
+    mfa: {
+        register: {
+            title: "Configure two-factor authentication",
+            info1: "You have successfully signed in at {{name}} with your username and password.",
+            info2: "For SURF Research Access Management, a more secure way of signing in is required. Please register for two-factor authentication.",
+            step: "Step {{nbr}}",
+            getApp: "Get the app",
+            getAppInfo: "Download and install the Google Authenticator or Microsoft Authenticator app.",
+            scan: "Scan this QR-code",
+            scanInfo: "Open the authenticator app and:",
+            scanSteps: [
+                "Tap the '+' icon in the app",
+                "Scan the QR-code below using your phone's camera"
+            ],
+            verificationCode: "Enter authentication code",
+            verificationCodeInfo: "Once the QR-code above is scanned, enter the 6-digit authentication code from the app",
+            verificationCodePlaceholder: "6-digit code",
+            verify: "Verify and activate"
+        },
+        verify: {
+            title: "Enter your authentication code",
+            info1: "Use your two-factor authenticator app on your device to view your authentication code for <strong>SRAM</strong> and verify your identity.",
+            explanation: "Two-factor authentication",
+            signIn: "Verify",
+            problems: "Problems with your authenticator app?",
+            invalid: "Invalid authentication code"
+        }
     }
 };
 

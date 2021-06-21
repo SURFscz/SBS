@@ -55,10 +55,20 @@ $width: 70px;
         border-right-color: $blue;
     }
 
-
     span {
         display: inline-block;
         margin-top: 25px;
     }
+
+    &.full {
+        border: solid 5px $blue;
+        border-radius: 50%;
+
+        span {
+            margin-top: 20px;
+        }
+
+    }
+
 
 }

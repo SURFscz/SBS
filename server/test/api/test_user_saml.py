@@ -27,10 +27,10 @@ class TestUserSaml(AbstractTest):
                        query_data={"uid": "urn:sarah", "service_entity_id": uuc_scheduler_entity_id})
         self.assertListEqual(res["cuid"], ["urn:sarah"])
 
-    def test_attributes_service_linked_to_organisation_membership(self):
+    def test_attributes_service_linked_to_organisation_membership_not_supported(self):
         res = self.get("/api/users/attributes",
                        query_data={"uid": "urn:mary", "service_entity_id": uuc_scheduler_entity_id})
-        self.assertListEqual(res["cuid"], ["urn:mary"])
+        self.assertDictEqual(res, {})
 
     def test_attributes_service_linked_to_organisation_collaboration_membership(self):
         res = self.get("/api/users/attributes",

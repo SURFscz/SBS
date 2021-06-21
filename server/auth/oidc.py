@@ -2,8 +2,10 @@ import json
 
 import jwt
 import requests
-from flask import current_app
+from flask import current_app, session
 from jwt import algorithms
+
+from server.auth.security import is_admin_user
 
 ACR_VALUES = "https://refeds.org/profile/mfa"
 
@@ -28,6 +30,19 @@ def _refresh_public_keys():
 
     global public_keys
     public_keys = {jwk["kid"]: _get_algorithm(jwk).from_jwk(json.dumps(jwk)) for jwk in jwks["keys"]}
+
+
+def store_user_in_session(user, second_factor_confirmed):
+    # The session is stored as a cookie in the browser. We therefore minimize the content
+    res = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
+    session_data = {
+        "id": user.id,
+        "uid": user.uid,
+        "second_factor_confirmed": second_factor_confirmed,
+        "name": user.name,
+        "email": user.email
+    }
+    session["user"] = {**session_data, **res}
 
 
 def decode_jwt_token(token):
