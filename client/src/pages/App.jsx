@@ -5,7 +5,7 @@ import I18n from "i18n-js";
 import Header from "../components/Header";
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
-import {config, me, other, refreshUser} from "../api";
+import {config, me, other, refreshUser, reportError} from "../api";
 import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/ErrorDialog";
@@ -78,7 +78,7 @@ class App extends React.Component {
                 targetUrl: response.url,
                 status: response.status
             };
-            // reportError(error);
+            reportError(error);
         };
     }
 
@@ -216,7 +216,8 @@ class App extends React.Component {
                                    return <Redirect to={decodeURIComponent(state)}/>
                                }}/>
                         <Route path="/2fa"
-                               render={props => <SecondFactorAuthentication user={currentUser} {...props}/>}/>
+                               render={props => <SecondFactorAuthentication user={currentUser}
+                                                                            refreshUser={this.refreshUserMemberships} {...props}/>}/>
                         <Route path="/registration"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}

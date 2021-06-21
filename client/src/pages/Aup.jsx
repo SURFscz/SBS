@@ -24,7 +24,7 @@ class Aup extends React.Component {
         stopEvent(e);
         this.props.refreshUser(() => {
             const location = getParameterByName("state", window.location.search) || "/home";
-            this.props.history.push(location)
+            this.props.history.push(location);
         });
     });
 

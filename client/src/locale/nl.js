@@ -1498,7 +1498,36 @@ I18n.translations.nl = {
         msg: "Mmmm, het lijkt erop dat je op de een of andere manier een link hebt gekregen waar we je niet mee kunnen helpen. Sorry daarvoor. <br/> <br/>" +
             "Je zou kunnen proberen de <a href='{{base_url}}'> startpagina </a> te bezoeken. Als je daar niet iets vindt waar je mee geholpen bent, " +
             "neem dan contact op met de persoon die je heeft uitgenodigd, of volg de SRAM Help-link waar ook staathoe je contact kunt opnemen met het SURF SRAM-team."
+    },
+    mfa: {
+        register: {
+            title: "Twee-factor-authenticatie configureren",
+            info1: "U bent succesvol ingelogd op {{name}} met uw gebruikersnaam en wachtwoord.",
+            info2: "Voor SURF Research Access Management is een veiligere manier van inloggen vereist. Meld je aan voor twee-factor-authenticatie.",
+            step: "Stap {{nbr}}",
+            getApp: "Download de app",
+            getAppInfo: "Download en installeer de Google Authenticator- of Microsoft Authenticator-app.",
+            scan: "Scan deze QR-code",
+            scanInfo: "Open de authenticator-app en:",
+            scanSteps: [
+                "Tik op het '+' icoon in de app",
+                "Scan de onderstaande QR-code met de camera van je telefoon"
+            ],
+            verificationCode: "Voer verificatiecode in",
+            verificationCodeInfo: "Zodra de QR-code hierboven is gescand, voert u de 6-cijferige verificatiecode van de app in",
+            verificationCodePlaceholder: "6-cijferige code",
+            verify: "Verifiëren en activeren"
+        }
+    },
+    verify: {
+        title: "Vul uw authenticatiecode in",
+        info1: "Gebruik je twee-factor authenticator op je app om de authenticatiecode voor <strong>SRAM</strong> te bekijken en uw identiteit te verifiëren.",
+        explanation: "Two-factor authenticatie",
+        signIn: "Verifiëren",
+        problems: "Problemen met je authenticator app?",
+        invalid: "Foutieve authentication code"
     }
+
 };
 
 export default I18n.translations.nl;

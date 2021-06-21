@@ -55,14 +55,9 @@ def attributes():
         if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
             connected_collaborations.append(cm.collaboration)
     if not connected_collaborations:
-        # Edge case where the user is member of an organization which is linked to the service
-        for om in user.organisation_memberships:
-            if list(filter(lambda s: s.id == service.id, om.organisation.services)):
-                connected_collaborations = connected_collaborations + om.organisation.collaborations
-        if not connected_collaborations:
-            logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} "
-                        f"because user has no access to the service")
-            return {}, 200
+        logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} "
+                    f"because user has no access to the service")
+        return {}, 200
 
     # gather regular user attributes
     result = {}

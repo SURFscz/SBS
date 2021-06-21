@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import base64
 import datetime
 import itertools
 import json
@@ -7,7 +8,10 @@ import subprocess
 import tempfile
 import urllib.parse
 import uuid
+from io import BytesIO
 
+import pyotp
+import qrcode
 import requests
 from flask import Blueprint, current_app, redirect
 from flask import request as current_request, session, jsonify
@@ -17,10 +21,11 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
-from server.auth.oidc import ACR_VALUES, decode_jwt_token
+from server.auth.oidc import ACR_VALUES, decode_jwt_token, store_user_in_session
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access
 from server.auth.user_claims import add_user_claims
+from server.cron.idp_metadata_parser import idp_display_name
 from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
@@ -38,7 +43,7 @@ def _store_user_in_session(user, second_factor_confirmed):
     session_data = {
         "id": user.id,
         "uid": user.uid,
-        "sfc": second_factor_confirmed,
+        "second_factor_confirmed": second_factor_confirmed,
         "name": user.name,
         "email": user.email
     }
@@ -58,7 +63,10 @@ def _user_query():
 
 
 def _user_json_response(user):
-    is_admin = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
+    is_admin = {"admin": is_admin_user(user),
+                "second_factor_confirmed": True,
+                "guest": False,
+                "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
     return {**json_user, **is_admin, }, 200
 
@@ -246,11 +254,11 @@ def resume_session():
     user = db.session.merge(user)
     db.session.commit()
 
-    _store_user_in_session(user, second_factor_confirmed)
+    store_user_in_session(user, second_factor_confirmed)
     if second_factor_confirmed:
         location = session.get("original_destination", current_app.app_config.base_url)
     else:
-        location = f"{current_app.app_config.base_url}2fa"
+        location = f"{current_app.app_config.base_url}/2fa"
     return redirect(location)
 
 
@@ -271,6 +279,11 @@ def me():
                 f"Returning error for user {user_from_db.uid} as user is suspended")
             return {"error": f"user {user_from_db.uid} is suspended"}, 409
 
+        user_from_session["second_factor_auth"] = bool(user_from_db.second_factor_auth)
+        # Do not send all information is second_factor is required
+        if not user_from_session["second_factor_confirmed"]:
+            return user_from_session, 200
+
         user = {**jsonify(user_from_db).json, **user_from_session}
 
         if len(user_from_db.suspend_notifications) > 0:
@@ -279,7 +292,6 @@ def me():
             db.session.merge(user_from_db)
             db.session.commit()
 
-        user["second_factor_auth"] = bool("second_factor_auth" in user and user["second_factor_auth"])
         return user, 200
     else:
         return {"uid": "anonymous", "guest": True, "admin": False}, 200
@@ -403,6 +415,42 @@ def attribute_aggregation():
     return [cm.collaboration.name for cm in user.collaboration_memberships], 200
 
 
+@user_api.route("/get2fa", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def get2fa():
+    user = User.query.filter(User.id == current_user_id()).one()
+    secret = pyotp.random_base32()
+    session["second_factor_auth"] = secret
+    secret_url = pyotp.totp.TOTP(secret).provisioning_uri(user.email, "SRAM")
+    img = qrcode.make(secret_url)
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    idp_name = idp_display_name(user.schac_home_organisation, "en")
+    return {"qr_code_base64": img_str, "idp_name": idp_name}, 200
+
+
+@user_api.route("/verify2fa", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def verify2fa():
+    user = User.query.filter(User.id == current_user_id()).one()
+    secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
+    data = current_request.get_json()
+    totp_value = data["totp"]
+    totp = pyotp.TOTP(secret)
+    if totp.verify(totp_value):
+        if not user.second_factor_auth:
+            user.second_factor_auth = secret
+            user = db.session.merge(user)
+            db.session.commit()
+        store_user_in_session(user, True)
+        location = session.get("original_destination", current_app.app_config.base_url)
+        # TODO check ssession in which flow we are - redirect back to proxy or to client (only in local modus?)
+        return {"location": location}, 200
+    else:
+        return {}, 400
+
+
 @user_api.route("/upgrade_super_user", methods=["GET"], strict_slashes=False)
 def upgrade_super_user():
     session.modified = True
@@ -416,7 +464,7 @@ def upgrade_super_user():
     user = db.session.merge(user)
     db.session.commit()
 
-    _store_user_in_session(user, True)
+    store_user_in_session(user, True)
 
     response = redirect(current_app.app_config.feature.admin_users_upgrade_redirect_url)
     response.headers.set("x-session-alive", "true")
