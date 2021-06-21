@@ -2,15 +2,20 @@
 import json
 import os
 from base64 import b64encode
+from time import time
+from uuid import uuid4
 
+import jwt
 import requests
 import responses
 from flask import current_app
 from flask_testing import TestCase
 
+from server.auth.oidc import ACR_VALUES
 from server.db.db import db
 from server.db.domain import Collaboration, User, Organisation
 from server.test.seed import seed
+from server.tools import read_file
 
 # See api_users in config/test_config.yml
 BASIC_AUTH_HEADER = {"Authorization": f"Basic {b64encode(b'sysadmin:secret').decode('ascii')}"}
@@ -61,12 +66,15 @@ class AbstractTest(TestCase):
     @responses.activate
     def login(self, uid="urn:john", schac_home_organisation=None, user_info={}):
         responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
-                      json={"access_token": "some_token"}, status=200)
+                      json={"access_token": "some_token", "id_token": self.sign_jwt()},
+                      status=200)
         json_body = {"sub": uid}
         if schac_home_organisation:
             json_body["voperson_external_id"] = f"jdoe@{schac_home_organisation}"
         responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
                       json={**json_body, **user_info}, status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
+                      read_file("test/data/public.json"), status=200)
         with requests.Session():
             self.client.get("/api/users/resume-session?code=123456")
 
@@ -120,3 +128,11 @@ class AbstractTest(TestCase):
         user.suspended = True
         db.session.merge(user)
         db.session.commit()
+
+    def sign_jwt(self):
+        now = int(time())
+        aud = self.app.app_config.oidc.client_id
+        payload = {"aud": aud, "exp": now + (60 * 10), "iat": now, "iss": "issuer",
+                   "jti": str(uuid4()), "acr": ACR_VALUES}
+        private_key = read_file("test/data/jwt-private-key")
+        return jwt.encode(payload, private_key, algorithm="RS256", headers={"kid": "test"})
