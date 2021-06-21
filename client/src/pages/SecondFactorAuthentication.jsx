@@ -27,10 +27,13 @@ class SecondFactorAuthentication extends React.Component {
 
     componentDidMount() {
         const {user} = this.props;
+        debugger;
         if (!user.second_factor_auth) {
             get2fa().then(res => {
                 this.setState({qrCode: res.qr_code_base64, idp_name: res.idp_name, loading: false})
             });
+        } else {
+            this.setState({loading: false})
         }
     }
 
