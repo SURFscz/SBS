@@ -29,7 +29,8 @@ export default function InputField({
                                        noInput = false,
                                        error = false,
                                        cols = 5,
-                                       maxLength = 255
+                                       maxLength = 255,
+                                       onRef = null
                                    }) {
     placeholder = disabled ? "" : placeholder;
     let className = `${fileUpload ? "file-upload" : ""}`;
@@ -54,6 +55,7 @@ export default function InputField({
                        onChange={onChange}
                        onBlur={onBlur}
                        maxLength={maxLength}
+                       ref={ref => onRef && onRef(ref)}
                        placeholder={placeholder}
                        className={className}
                        onKeyDown={e => {
