@@ -52,9 +52,8 @@ class TestUserSaml(AbstractTest):
                                query_data={"uid": "urn:john", "service_entity_id": "https://nope"})
                 self.assertDictEqual({}, res)
                 html = outbox[0].html
-                print(html)
-                self.assertTrue("Returning empty dict as attributes for user urn:john and "
-                                "service_entity_id https://nope because service does not exists" in html)
+                self.assertTrue("Returning unauthorized for user urn:john and service_"
+                                "entity_id https://nope as the service is unknown" in html)
                 self.assertTrue("An error occurred in local" in html)
         finally:
             os.environ["TESTING"] = "1"
@@ -99,5 +98,4 @@ class TestUserSaml(AbstractTest):
                         response_status_code=200)
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service_denied?uidurn:john"
-                         "&service_entity_id=https%3A%2F%2Fnetwork&uid=urn%3Ajohn")
+                         "http://localhost:3000/service_denied?service_entity_id=https%3A%2F%2Fnetwork&uid=urn%3Ajohn")
