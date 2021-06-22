@@ -78,3 +78,26 @@ class TestUserSaml(AbstractTest):
                               "urn:example:sbs:group:uuc:ai_computing:ai_dev",
                               "urn:example:sbs:group:uuc:ai_computing:ai_res"
                               ], sorted(entitlements))
+
+    def test_proxy_authz(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id})
+        attrs = res["attributes"]
+        entitlements = attrs["eduPersonEntitlement"]
+        self.assertListEqual(["urn:example:sbs:group:uuc:ai_computing",
+                              "urn:example:sbs:group:uuc:ai_computing:ai_dev",
+                              "urn:example:sbs:group:uuc:ai_computing:ai_res"
+                              ], sorted(entitlements))
+        self.assertListEqual(["sarah@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
+        self.assertListEqual(["sarah"], attrs["uid"])
+        self.assertIsNotNone(attrs["sshkey"][0])
+
+    def test_proxy_authz_suspended(self):
+        self.mark_user_suspended(john_name)
+
+        res = self.post("/api/users/proxy_authz", body={"user_id": "urn:john", "service_id": "https://network"},
+                        response_status_code=200)
+        self.assertEqual(res["status"]["result"], "unauthorized")
+        self.assertEqual(res["status"]["redirect_url"],
+                         "http://localhost:3000/service_denied?uidurn:john"
+                         "&service_entity_id=https%3A%2F%2Fnetwork&uid=urn%3Ajohn")

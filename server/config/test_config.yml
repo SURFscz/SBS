@@ -50,6 +50,7 @@ oidc:
 
 base_scope: "test.sbs.local"
 entitlement_group_namespace: "urn:example:sbs"
+eppn_scope: "test.sram.surf.nl"
 collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
 restricted_co:
