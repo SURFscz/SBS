@@ -1517,17 +1517,16 @@ I18n.translations.nl = {
             verificationCodeInfo: "Zodra de QR-code hierboven is gescand, voert u de 6-cijferige verificatiecode van de app in",
             verificationCodePlaceholder: "6-cijferige code",
             verify: "Verifiëren en activeren"
+        },
+        verify: {
+            title: "Vul uw authenticatiecode in",
+            info1: "Gebruik je twee-factor authenticator op je app om de authenticatiecode voor <strong>SRAM</strong> te bekijken en uw identiteit te verifiëren.",
+            explanation: "Two-factor authenticatie",
+            signIn: "Verifiëren",
+            problems: "Problemen met je authenticator app?",
+            invalid: "Foutieve authentication code"
         }
-    },
-    verify: {
-        title: "Vul uw authenticatiecode in",
-        info1: "Gebruik je twee-factor authenticator op je app om de authenticatiecode voor <strong>SRAM</strong> te bekijken en uw identiteit te verifiëren.",
-        explanation: "Two-factor authenticatie",
-        signIn: "Verifiëren",
-        problems: "Problemen met je authenticator app?",
-        invalid: "Foutieve authentication code"
     }
-
 };
 
 export default I18n.translations.nl;
