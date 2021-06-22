@@ -162,7 +162,8 @@ class App extends React.Component {
     refreshUserMemberships = callback => {
         refreshUser().then(json => {
             const {impersonator} = this.state;
-            this.setState({currentUser: json, impersonator: impersonator}, () => callback && callback());
+            const user = this.markUserAdmin(json);
+            this.setState({currentUser: user, impersonator: impersonator}, () => callback && callback());
         });
     };
 

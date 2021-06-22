@@ -27,13 +27,23 @@ class SecondFactorAuthentication extends React.Component {
 
     componentDidMount() {
         const {user} = this.props;
-        debugger;
         if (!user.second_factor_auth) {
             get2fa().then(res => {
-                this.setState({qrCode: res.qr_code_base64, idp_name: res.idp_name, loading: false})
+                this.setState({qrCode: res.qr_code_base64, idp_name: res.idp_name, loading: false});
+                setTimeout(() => {
+                    if (this.ref) {
+                        this.ref.focus();
+                    }
+                }, 350);
+
             });
         } else {
-            this.setState({loading: false})
+            this.setState({loading: false});
+            setTimeout(() => {
+                if (this.ref) {
+                    this.ref.focus();
+                }
+            }, 350);
         }
     }
 
@@ -73,6 +83,8 @@ class SecondFactorAuthentication extends React.Component {
                     <div className="input-field-container">
                         <InputField value={totp}
                                     maxLength={6}
+                                    onRef={ref => this.ref = ref}
+                                    onEnter={this.verify}
                                     placeholder={I18n.t("mfa.register.verificationCodePlaceholder")}
                                     onChange={e => this.setState({totp: e.target.value})}/>
                         {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
@@ -140,6 +152,8 @@ class SecondFactorAuthentication extends React.Component {
                             <span>{I18n.t("mfa.register.verificationCodeInfo")}</span>
                             <InputField value={totp}
                                         maxLength={6}
+                                        onEnter={this.verify}
+                                        onRef={ref => this.ref = ref}
                                         placeholder={I18n.t("mfa.register.verificationCodePlaceholder")}
                                         onChange={e => this.setState({totp: e.target.value})}/>
                             {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
