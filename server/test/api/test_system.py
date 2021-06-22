@@ -82,3 +82,11 @@ class TestSystem(AbstractTest):
         self.app.app_config.feature.feedback_enabled = 0
         self.post("/api/system/feedback", body={"message": "great\nawesome"}, response_status_code=400)
         self.app.app_config.feature.feedback_enabled = 1
+
+    def test_db_clean_slate(self):
+        self.delete("/api/system/clean_slate", response_status_code=201)
+
+    def test_db_clean_slate_forbidden(self):
+        self.app.app_config.feature.seed_allowed = 0
+        self.delete("/api/system/clean_slate", response_status_code=400)
+        self.app.app_config.feature.seed_allowed = 1

@@ -21,10 +21,12 @@ base_api = Blueprint("base_api", __name__, url_prefix="/")
 
 white_listing = ["health", "config", "info", "api/users/authorization", "api/aup", "api/users/resume-session",
                  "api/users/me", "/api/images/", "api/service_connection_requests/find_by_hash",
-                 "api/service_connection_requests/approve",
+                 "api/service_connection_requests/approve", "/api/mfa/jwks", "/api/mfa/sfo"
                  "/api/organisation_invitations/find_by_hash", "/api/invitations/find_by_hash",
                  "api/service_connection_requests/deny", "/api/mock", "/api/users/error"]
-second_fa_listing = ["/get2fa", "/verify2fa"]
+
+mfa_listing = ["/get2fa", "/verify2fa"]
+
 external_api_listing = ["api/collaborations/v1", "api/collaborations/v1/restricted",
                         "api/collaborations_services/v1/connect_collaboration_service",
                         "/api/invitations/v1/collaboration_invites"]
@@ -43,7 +45,7 @@ def auth_filter(app_config):
             request_context.is_authorized_api_call = False
             return
         else:
-            for u in second_fa_listing:
+            for u in mfa_listing:
                 if u in url:
                     return
 

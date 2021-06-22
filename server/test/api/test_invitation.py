@@ -60,6 +60,9 @@ class TestInvitation(AbstractTest):
         invitations = Invitation.query.filter(Invitation.hash == invitation_hash_curious).all()
         self.assertEqual(0, len(invitations))
 
+    def test_delete_not_found(self):
+        self.delete("/api/invitations", primary_key="nope", response_status_code=404)
+
     def test_delete_forbidden(self):
         invitation_id = Invitation.query.filter(Invitation.hash == invitation_hash_curious).one().id
         self.login("urn:jane")
@@ -75,7 +78,11 @@ class TestInvitation(AbstractTest):
             self.assertListEqual(["curious@ex.org"], mail_msg.recipients)
             self.assertTrue("http://localhost:3000/invitations/accept/" in mail_msg.html)
 
-    def _delete_coll_memberships(self, collaboration_name):
+    def test_resend_not_found(self):
+        self.put("/api/invitations/resend", body={"id": "nope"}, response_status_code=404)
+
+    @staticmethod
+    def _delete_coll_memberships(collaboration_name):
         memberships = CollaborationMembership.query \
             .join(Collaboration) \
             .filter(Collaboration.name == collaboration_name) \

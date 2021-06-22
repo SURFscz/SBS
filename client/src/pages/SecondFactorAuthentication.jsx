@@ -53,10 +53,14 @@ class SecondFactorAuthentication extends React.Component {
         this.setState({busy: true});
         const {totp} = this.state;
         verify2fa(totp).then(r => {
-            this.props.refreshUser(() => {
-                const url = new URL(r.location)
-                this.props.history.push(url.pathname + url.search);
-            })
+            if (r.in_proxy_flow) {
+                window.location.href = r.location;
+            } else {
+                this.props.refreshUser(() => {
+                    const url = new URL(r.location)
+                    this.props.history.push(url.pathname + url.search);
+                });
+            }
         }).catch(() => {
             this.setState({busy: false, error: true})
         })
