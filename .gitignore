@@ -112,6 +112,8 @@ log
 
 # server config
 server/config/config.yml
+server/config/jwt_private_key
+server/config/jwt_public_keys.json
 sbs-api.wsgi
 server/static/disclaimer.css
 git.info
