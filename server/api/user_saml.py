@@ -1,8 +1,9 @@
 # -*- coding: future_fstrings -*-
 
 from datetime import datetime
+from urllib.parse import urlencode
 
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, request as current_request
 
 from server.api.base import json_endpoint, query_param, send_error_mail
 from server.auth.security import confirm_read_access
@@ -11,6 +12,11 @@ from server.db.domain import User, Service
 from server.logger.context_logger import ctx_logger
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
+
+USER_UNKNOWN = 1
+USER_IS_SUSPENDED = 2
+SERVICE_UNKNOWN = 3
+SERVICE_NOT_CONNECTED = 4
 
 # Independent mapping, so different attribute names can be send back
 custom_saml_mapping = {
@@ -26,28 +32,27 @@ custom_saml_mapping = {
 }
 
 
-# Endpoint for SATOSA/eduteams
-@user_saml_api.route("/attributes", strict_slashes=False)
-@json_endpoint
-def attributes():
+def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func):
     confirm_read_access()
     logger = ctx_logger("user_api")
 
-    uid = query_param("uid")
-    service_entity_id = query_param("service_entity_id")
-
-    user = User.query.filter(User.uid == uid).one()
+    user = User.query.filter(User.uid == uid).first()
+    if not user:
+        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
+                     f" as the user is unknown")
+        return not_authorized_func(USER_UNKNOWN)
     if user.suspended:
-        logger.error(f"Returning error for user {uid} and service_entity_id {service_entity_id} as user is suspended")
-        return {"error": f"user {uid} is suspended"}, 404
+        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
+                     f" as the user is suspended")
+        return not_authorized_func(USER_IS_SUSPENDED)
 
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
     if not service:
-        msg = f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} " \
-              f"because service does not exists"
+        msg = f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} " \
+              f"as the service is unknown"
         logger.error(msg)
         send_error_mail(tb=msg, session_exists=False)
-        return {}, 200
+        return not_authorized_func(SERVICE_UNKNOWN)
 
     connected_collaborations = []
     for cm in user.collaboration_memberships:
@@ -55,22 +60,18 @@ def attributes():
         if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
             connected_collaborations.append(cm.collaboration)
     if not connected_collaborations:
-        logger.info(f"Returning empty dict as attributes for user {uid} and service_entity_id {service_entity_id} "
-                    f"because user has no access to the service")
-        return {}, 200
+        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
+                     f" as the service is not connected to any of the user collaborations")
+        return not_authorized_func(SERVICE_NOT_CONNECTED)
 
-    # gather regular user attributes
-    result = {}
     user.last_accessed_date = datetime.now()
     user.last_login_date = datetime.now()
     user.suspend_notifications = []
     user = db.session.merge(user)
     db.session.commit()
 
-    for k, v in custom_saml_mapping["attribute_saml_mapping"].items():
-        val = getattr(user, k)
-        if val:
-            result[v] = val.split(",") if k in custom_saml_mapping["multi_value_attributes"] else [val]
+    cfg = current_app.app_config
+    namespace = cfg.get("entitlement_group_namespace", "urn:bla")
 
     # gather groups and collaborations
     #
@@ -83,19 +84,82 @@ def attributes():
     # We don't use roles, so we omit those.
     # Also, we omit the GROUP-AUTHORITY (and are therefore not completely compliant), as it complicates parsing the
     # entitlement, will confuse Services, and the spec fails to make clear what the usecase is, exactly.
-    cfg = current_app.app_config
-    namespace = cfg.get("entitlement_group_namespace", "urn:bla")
-
     memberships = set()
     for collaboration in connected_collaborations:
         memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:{collaboration.short_name}")
         for g in collaboration.groups:
             memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:"
                             f"{collaboration.short_name}:{g.short_name}")
-    membership_attribute = custom_saml_mapping['custom_attribute_saml_mapping']['memberships']
-    result[membership_attribute] = memberships
 
-    result = {k: list(set(v)) for k, v in result.items()}
+    logger.info(f"Returning attributes {memberships} for user {uid} and service_entity_id {service_entity_id}")
+    return authorized_func(user, memberships)
 
-    logger.info(f"Returning attributes for user {uid} and service_entity_id {service_entity_id}")
-    return result, 200
+
+# Endpoint for SATOSA/eduteams
+@user_saml_api.route("/attributes", strict_slashes=False)
+@json_endpoint
+def attributes():
+    uid = query_param("uid")
+    service_entity_id = query_param("service_entity_id")
+
+    def not_authorized_func(status):
+        if status == USER_UNKNOWN:
+            return {"error": f"user {uid} is unknown"}, 404
+        if status == USER_IS_SUSPENDED:
+            return {"error": f"user {uid} is suspended"}, 404
+        if status == SERVICE_UNKNOWN or status == SERVICE_NOT_CONNECTED:
+            return {}, 200
+
+    def authorized_func(user, memberships):
+        # gather regular user attributes
+        result = {}
+        for k, v in custom_saml_mapping["attribute_saml_mapping"].items():
+            val = getattr(user, k)
+            if val:
+                result[v] = val.split(",") if k in custom_saml_mapping["multi_value_attributes"] else [val]
+
+        membership_attribute = custom_saml_mapping['custom_attribute_saml_mapping']['memberships']
+        result[membership_attribute] = memberships
+
+        result = {k: list(set(v)) for k, v in result.items()}
+        return result, 200
+
+    return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
+
+
+# Endpoint for EDUteams
+@user_saml_api.route("/proxy_authz", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def proxy_authz():
+    json_dict = current_request.get_json()
+    uid = json_dict["user_id"]
+    service_entity_id = json_dict["service_id"]
+
+    def not_authorized_func(_):
+        base_url = current_app.app_config.base_url
+        parameters = urlencode({"service_entity_id": service_entity_id, "uid": uid})
+        return {
+                   "status": {
+                       "result": "unauthorized",
+                       "redirect_url": f"{base_url}/service_denied?uid{uid}&{parameters}"
+                   }
+               }, 200
+
+    def authorized_func(user, memberships):
+        eppn_scope = current_app.app_config.eppn_scope
+        result = {
+            "status": {
+                "result": "authorized",
+            }
+        }
+        attrs = {
+            "eduPersonEntitlement": list(memberships),
+            "eduPersonPrincipalName": [f"{user.username}@{eppn_scope}"],
+            "uid": [user.username]
+        }
+        if user.ssh_key:
+            attrs["sshkey"] = [user.ssh_key]
+        result["attributes"] = attrs
+        return result, 200
+
+    return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)

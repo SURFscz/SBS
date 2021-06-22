@@ -139,7 +139,7 @@ def seed(db, app_config, skip_seed=False):
                          "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
                          "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
-                 username="sarah")
+                 username="sarah", ssh_key="some-lame-key")
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty")
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org", username="jane",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co")
