@@ -135,9 +135,6 @@ def invitations_resend():
     invitation = _invitation_query() \
         .filter(Invitation.id == data["id"]) \
         .one()
-    if not invitation:
-        return None, 404
-
     confirm_collaboration_admin(invitation.collaboration_id)
 
     invitation.expiry_date = default_expiry_date()
@@ -156,8 +153,6 @@ def invitations_resend():
 @invitations_api.route("/<invitation_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_invitation(invitation_id):
-    invitation = Invitation.query.get(invitation_id)
-    if not invitation:
-        return None, 404
+    invitation = Invitation.query.filter(Invitation.id == invitation_id).one()
     confirm_collaboration_admin(invitation.collaboration_id)
     return delete(Invitation, invitation_id)

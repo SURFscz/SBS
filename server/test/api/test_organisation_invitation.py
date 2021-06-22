@@ -61,3 +61,9 @@ class TestOrganisationInvitation(AbstractTest):
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["roger@example.org"], mail_msg.recipients)
+
+    def test_resend_not_found(self):
+        self.put("/api/organisation_invitations/resend", body={"id": "nope"}, response_status_code=404)
+
+    def test_delete_not_found(self):
+        self.delete("/api/organisation_invitations", primary_key="nope", response_status_code=404)

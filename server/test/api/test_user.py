@@ -3,6 +3,7 @@ import datetime
 import os
 from urllib import parse
 
+import requests
 import responses
 from flask import current_app
 
@@ -10,6 +11,7 @@ from server.db.db import db
 from server.db.domain import Organisation, Collaboration, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name
+from server.tools import read_file
 
 
 class TestUser(AbstractTest):
@@ -310,3 +312,22 @@ class TestUser(AbstractTest):
         now = now.date()
         self.assertEqual(roger.last_accessed_date.date(), now)
         self.assertEqual(roger.last_login_date.date(), now)
+
+    @responses.activate
+    def test_resume_session_with_no_acr(self):
+        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
+                      json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
+                      status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
+                      json={"sub": "urn:john"}, status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
+                      read_file("test/data/public.json"), status=200)
+        with requests.Session():
+            res = self.client.get("/api/users/resume-session?code=123456")
+            self.assertEqual("http://localhost:3000/2fa", res.headers.get("Location"))
+            user = self.client.get("/api/users/me", ).json
+
+            self.assertFalse(user["second_factor_auth"])
+            self.assertFalse(user["second_factor_confirmed"])
+            self.assertFalse("organisation_memberships" in user)
+            self.assertTrue(user["admin"])

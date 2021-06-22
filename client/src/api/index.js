@@ -152,12 +152,13 @@ export function platformAdmins() {
     return fetchJson("/api/users/platform_admins");
 }
 
+//MFA
 export function get2fa() {
-    return fetchJson("/api/users/get2fa");
+    return fetchJson("/api/mfa/get2fa");
 }
 
 export function verify2fa(totp) {
-    return postPutJson("/api/users/verify2fa", {totp}, "POST", false);
+    return postPutJson("/api/mfa/verify2fa", {totp}, "POST", false);
 }
 
 //Services

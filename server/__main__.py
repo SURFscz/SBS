@@ -28,6 +28,7 @@ from server.api.image import image_api
 from server.api.invitation import invitations_api
 from server.api.ipaddress import ipaddress_api
 from server.api.join_request import join_request_api
+from server.api.mfa import mfa_api
 from server.api.mock_user import mock_user_api
 from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
@@ -99,6 +100,7 @@ app.register_blueprint(base_api)
 app.register_blueprint(service_api)
 app.register_blueprint(user_api)
 app.register_blueprint(user_saml_api)
+app.register_blueprint(mfa_api)
 app.register_blueprint(collaboration_api)
 app.register_blueprint(organisation_api)
 app.register_blueprint(join_request_api)

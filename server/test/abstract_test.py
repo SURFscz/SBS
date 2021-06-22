@@ -11,7 +11,7 @@ import responses
 from flask import current_app
 from flask_testing import TestCase
 
-from server.auth.oidc import ACR_VALUES
+from server.auth.mfa import ACR_VALUES
 from server.db.db import db
 from server.db.domain import Collaboration, User, Organisation
 from server.test.seed import seed
@@ -129,10 +129,10 @@ class AbstractTest(TestCase):
         db.session.merge(user)
         db.session.commit()
 
-    def sign_jwt(self):
+    def sign_jwt(self, additional_payload={}):
         now = int(time())
         aud = self.app.app_config.oidc.client_id
         payload = {"aud": aud, "exp": now + (60 * 10), "iat": now, "iss": "issuer",
                    "jti": str(uuid4()), "acr": ACR_VALUES}
         private_key = read_file("test/data/jwt-private-key")
-        return jwt.encode(payload, private_key, algorithm="RS256", headers={"kid": "test"})
+        return jwt.encode({**payload, **additional_payload}, private_key, algorithm="RS256", headers={"kid": "test"})

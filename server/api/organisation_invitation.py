@@ -80,9 +80,6 @@ def organisation_invitations_resend():
     organisation_invitation = _organisation_invitation_query() \
         .filter(OrganisationInvitation.id == data["id"]) \
         .one()
-    if not organisation_invitation:
-        return None, 404
-
     confirm_organisation_admin(organisation_invitation.organisation_id)
 
     organisation_invitation.expiry_date = default_expiry_date()
@@ -103,10 +100,9 @@ def organisation_invitations_resend():
 @organisation_invitations_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_organisation_invitation(id):
-    organisation_invitation = OrganisationInvitation.query.get(id)
-    if not organisation_invitation:
-        return None, 404
-
+    organisation_invitation = _organisation_invitation_query() \
+        .filter(OrganisationInvitation.id == id) \
+        .one()
     confirm_organisation_admin(organisation_invitation.organisation_id)
 
     return delete(OrganisationInvitation, id)
