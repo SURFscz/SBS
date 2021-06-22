@@ -141,7 +141,7 @@ def proxy_authz():
         return {
                    "status": {
                        "result": "unauthorized",
-                       "redirect_url": f"{base_url}/service_denied?uid{uid}&{parameters}"
+                       "redirect_url": f"{base_url}/service_denied?{parameters}"
                    }
                }, 200
 
