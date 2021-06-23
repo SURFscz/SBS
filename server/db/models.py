@@ -29,7 +29,7 @@ def validate(cls, json_dict, is_new_instance=True):
                         not coll.nullable and not coll.server_default]
     if is_new_instance:
         required_columns = [coll for coll in required_columns if not coll.primary_key]
-    required_attributes = [coll.name for coll in required_columns]
+    required_attributes = [coll.name for coll in required_columns if coll.name != "uuid4"]
     missing_attributes = [k for k in required_attributes if k not in json_dict]
     if missing_attributes:
         raise BadRequest(f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}")
@@ -41,7 +41,8 @@ def _merge(cls, d):
     db.session.commit()
     if hasattr(merged, "logo"):
         object_type = str(cls._sa_class_manager.mapper.persist_selectable.name)
-        evict_from_cache(object_type, getattr(merged, "id"))
+        uuid4 = getattr(merged, "uuid4")
+        evict_from_cache(object_type, uuid4)
     return merged
 
 
