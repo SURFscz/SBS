@@ -1518,6 +1518,16 @@ I18n.translations.nl = {
             verificationCodePlaceholder: "6-cijferige code",
             verify: "Verifiëren en activeren"
         },
+        update: {
+            "info1": "Volg de onderstaande stappen om je tweede-factor authenticatie bij te werken.",
+            "info2": "Je moet toegang hebben tot de authenticator-app die je momenteel gebruikt om in te loggen bij SURF Research Access Management, evenals tot de nieuwe authenticator-app die je wilt gebruiken voor toekomstige logins.",
+            currentCode: "Voer de huidige authenticatiecode in",
+            currentCodeInfo: "Voer de 6-cijferige authenticatiecode van je huidige authenticator-app in.",
+            scanInfo: "Open je nieuwe authenticator-app en:",
+            verificationCodeInfo: "Zodra de QR-code hierboven is gescand, voer je de 6-cijferige authenticatiecode van je nieuwe authenticator-app in.",
+            verify: "Verifiëren en bijwerken",
+            flash: "Je tweede-factor authenticatie is aangepast voor je nieuwe authenticator app"
+        },
         verify: {
             title: "Vul uw authenticatiecode in",
             info1: "Gebruik je twee-factor authenticator op je app om de authenticatiecode voor <strong>SRAM</strong> te bekijken en uw identiteit te verifiëren.",
@@ -1525,6 +1535,15 @@ I18n.translations.nl = {
             signIn: "Verifiëren",
             problems: "Problemen met je authenticator app?",
             invalid: "Foutieve authentication code"
+        },
+        profile: {
+            name: "Tweede-factor authenticatie",
+            no2FA: "Tweede-factor authenticatie is niet geconfigureerd.",
+            tooltip: "Two-Factor Authentication (2FA) voegt een<br/>extra beveiligingslaag<br/>aan uw SRAM-account toe.<br/><br/>Het vereist een extra login<br/>inloggegevens - meer dan alleen uw gebruikersnaam<br/>en wachtwoord – om toegang te krijgen tot uw account<br/>, en om die<br/>tweede referentie te krijgen, moet u toegang hebben tot uw<br/>mobiele authenticator-app.",
+            handledByIdp: "Tweede-factor authenticatie wordt afgedwongen door {{name}}.",
+            institution: "je instelling",
+            handledBySRAM: "Tweede-factor authenticatie met authenticator-app voor mobiele telefoon is geconfigureerd.",
+            edit: "Aanpassen"
         }
     }
 };

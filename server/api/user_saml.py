@@ -135,13 +135,14 @@ def proxy_authz():
     uid = json_dict["user_id"]
     service_entity_id = json_dict["service_id"]
 
-    def not_authorized_func(_):
+    def not_authorized_func(status):
         base_url = current_app.app_config.base_url
         parameters = urlencode({"service_entity_id": service_entity_id, "uid": uid})
         return {
                    "status": {
                        "result": "unauthorized",
-                       "redirect_url": f"{base_url}/service_denied?{parameters}"
+                       "redirect_url": f"{base_url}/service_denied?{parameters}",
+                       "error_status": status
                    }
                }, 200
 

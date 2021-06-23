@@ -62,7 +62,7 @@
         margin-bottom: 40px;
 
         &.clear {
-            margin-bottom: 0px;
+            margin-bottom: 0;
         }
     }
 
@@ -112,5 +112,17 @@
         display: block;
         margin-top: 5px;
         color: $red;
+    }
+
+    section.actions {
+        display: flex;
+        margin-top: 20px;
+
+        a.button.blue, a.button.cancel {
+            margin-top: 0;
+            min-width: 220px;
+            max-width: 220px;
+        }
+
     }
 }

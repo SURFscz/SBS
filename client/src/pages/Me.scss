@@ -94,6 +94,18 @@ div.user-profile-tab-container {
             margin-top: 10px;
             font-size: 14px;
         }
+
+        .second-factor {
+            display: flex;
+
+            .button-container {
+                display: flex;
+            }
+
+            a {
+                margin: auto 0 auto 20px;
+            }
+        }
     }
 }
 

@@ -187,6 +187,7 @@ def config():
             "feedback_enabled": cfg.feature.feedback_enabled,
             "seed_allowed": cfg.feature.seed_allowed,
             "organisation_categories": cfg.organisation_categories,
+            "second_factor_authentication_required": cfg.oidc.second_factor_authentication_required,
             "admin_users_upgrade_url": cfg.feature.admin_users_upgrade_url}, 200
 
 

@@ -65,7 +65,8 @@ def get2fa():
     user = User.query.filter(User.id == current_user_id()).one()
     secret = pyotp.random_base32()
     session["second_factor_auth"] = secret
-    secret_url = pyotp.totp.TOTP(secret).provisioning_uri(user.email, "SRAM")
+    name = "LOCAL" if current_app.app_config.profile == "local" else "SRAM"
+    secret_url = pyotp.totp.TOTP(secret).provisioning_uri(user.email, name)
     img = qrcode.make(secret_url)
     buffered = BytesIO()
     img.save(buffered, format="PNG")
@@ -96,7 +97,27 @@ def verify2fa():
             location = f"{oidc_config.sfo_eduteams_redirect_uri}?id_token={id_token}"
         return {"location": location, "in_proxy_flow": in_proxy_flow}, 201
     else:
-        return {}, 400
+        return {"new_totp": False}, 400
+
+
+@mfa_api.route("/update2fa", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def update2fa():
+    user = User.query.filter(User.id == current_user_id()).one()
+    current_secret = user.second_factor_auth
+    new_secret = session["second_factor_auth"]
+    data = current_request.get_json()
+    current_totp_value = data["current_totp"]
+    new_totp_value = data["new_totp_value"]
+    verified_current = pyotp.TOTP(current_secret).verify(current_totp_value)
+    verified_new = pyotp.TOTP(new_secret).verify(new_totp_value)
+    if not verified_current or not verified_new:
+        return {"current_totp": not verified_current, "new_totp": not verified_new}, 400
+
+    user.second_factor_auth = new_secret
+    db.session.merge(user)
+    db.session.commit()
+    return {}, 201
 
 
 @mfa_api.route("/sfo", strict_slashes=False)

@@ -161,6 +161,10 @@ export function verify2fa(totp) {
     return postPutJson("/api/mfa/verify2fa", {totp}, "POST", false);
 }
 
+export function update2fa(new_totp_value, current_totp) {
+    return postPutJson("/api/mfa/update2fa", {new_totp_value, current_totp}, "POST", false);
+}
+
 //Services
 export function serviceNameExists(name, existingService = null) {
     return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${encodeURIComponent(existingService)}`);

@@ -229,7 +229,9 @@ def resume_session():
 
     encoded_id_token = token_json["id_token"]
     id_token = decode_jwt_token(encoded_id_token)
-    second_factor_confirmed = not oidc_config.second_factor_authentication_required or id_token.get("acr") == ACR_VALUES
+    no_mfa_required = not oidc_config.second_factor_authentication_required
+    idp_mfa = id_token.get("acr") == ACR_VALUES
+    second_factor_confirmed = no_mfa_required or idp_mfa
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
 
@@ -261,6 +263,7 @@ def me():
                 f"Returning error for user {user_from_db.uid} as user is suspended")
             return {"error": f"user {user_from_db.uid} is suspended"}, 409
 
+        # Do not expose the actual secret of second_factor_auth
         user_from_session["second_factor_auth"] = bool(user_from_db.second_factor_auth)
         # Do not send all information is second_factor is required
         if not user_from_session["second_factor_confirmed"]:

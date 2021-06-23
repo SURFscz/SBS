@@ -67,6 +67,10 @@ class Me extends React.Component {
         return !inValid && isValidSsh;
     };
 
+    configureMfa = () => {
+        const {history} = this.props;
+        history.push("/2fa-update");
+    }
 
     doSubmit = () => {
         if (this.isValid()) {
@@ -111,7 +115,8 @@ class Me extends React.Component {
         }
     };
 
-    renderForm = (user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit) => {
+    renderForm = (user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey,
+                  disabledSubmit, config) => {
         // const attributes = ["name", "email", "created_at", "username", , "uid", "eduperson_principal_name",
         //     "affiliation", "scoped_affiliation", "entitlement", "schac_home_organisation", "edu_members"];
         const createdAt = user.created_at;
@@ -119,6 +124,8 @@ class Me extends React.Component {
         d.setUTCSeconds(createdAt);
         const values = {"created_at": d.toUTCString()};
         const attributes = ["name", "email", "username", "schac_home_organisation", "created_at"];
+        const mfaValue = user.second_factor_auth ? I18n.t("mfa.profile.handledBySRAM") :
+            I18n.t("mfa.profile.handledByIdp", {name: user.schac_home_organisation || I18n.t("mfa.profile.institution")});
         return (
             <div className="user-profile-tab-container">
                 <div className="user-profile-tab">
@@ -129,7 +136,16 @@ class Me extends React.Component {
                             <span className="attribute-value">{values[attribute] || user[attribute] || "-"}</span>
                         </div>)
                     }
-
+                    {config.second_factor_authentication_required && <div className="second-factor">
+                        <InputField value={mfaValue}
+                                    name={I18n.t("mfa.profile.name")}
+                                    tooltip={I18n.t("mfa.profile.tooltip")}
+                                    noInput={true}/>
+                        {user.second_factor_auth && <div className="button-container">
+                            <Button txt={I18n.t("mfa.profile.edit")}
+                                    onClick={this.configureMfa}/>
+                        </div>}
+                    </div>}
                     <InputField value={ssh_key}
                                 name={I18n.t("user.ssh_key")}
                                 placeholder={I18n.t("user.ssh_keyPlaceholder")}
@@ -165,7 +181,7 @@ class Me extends React.Component {
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, confirmationQuestion,
             fileName, fileTypeError, fileInputKey, initial, convertSSHKey, ssh_key, nameConfirmation
         } = this.state;
-        const {user} = this.props;
+        const {user, config} = this.props;
         const disabledSubmit = !initial && !this.isValid();
         const showConvertSSHKey = !isEmpty(ssh_key) && (
             ssh_key.startsWith("---- BEGIN SSH2 PUBLIC KEY ----") ||
@@ -191,7 +207,8 @@ class Me extends React.Component {
                     </div>
                 </ConfirmationDialog>
 
-                {this.renderForm(user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey, convertSSHKey, disabledSubmit)}
+                {this.renderForm(user, ssh_key, fileName, fileInputKey, fileTypeError, showConvertSSHKey,
+                    convertSSHKey, disabledSubmit, config)}
             </div>
         );
     };
