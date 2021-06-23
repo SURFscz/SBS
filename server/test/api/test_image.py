@@ -1,3 +1,4 @@
+
 # -*- coding: future_fstrings -*-
 import re
 
@@ -10,7 +11,7 @@ class TestImage(AbstractTest):
 
     def test_find_image(self):
         service = self.find_entity_by_name(Service, uuc_scheduler_name)
-        res = self.client.get(f"/api/images/services/{service.id}")
+        res = self.client.get(f"/api/images/services/{service.uuid4}")
 
         self.assertEqual("*", res.headers["Access-Control-Allow-Origin"])
         self.assertIsNotNone(res.data)
@@ -18,7 +19,7 @@ class TestImage(AbstractTest):
     def test_logo_url(self):
         collaborations = self.get("/api/collaborations/all")
         self.assertEqual(4, len(collaborations))
-        pattern = re.compile("^http://localhost:8080/api/images/collaborations/([0-9]+)$")
+        pattern = re.compile(r"^http://localhost:8080/api/images/collaborations/([a-z0-9-]+)$")
         for coll in collaborations:
             self.assertTrue(pattern.match(coll["logo"]))
 
@@ -27,10 +28,11 @@ class TestImage(AbstractTest):
         self.assertEqual(400, res.status_code)
 
     def test_collaboration_request(self):
-        collaboration_request_id = self.find_entity_by_name(CollaborationRequest, collaboration_request_name).id
+        collaboration_request = self.find_entity_by_name(CollaborationRequest, collaboration_request_name)
+        collaboration_request_id = collaboration_request.id
         self.login("urn:john")
         collaboration_request = self.get(f"/api/collaboration_requests/{collaboration_request_id}")
         self.assertEqual(collaboration_request["logo"],
-                         f"http://localhost:8080/api/images/collaboration_requests/{collaboration_request_id}")
-        res = self.client.get(f"/api/images/collaboration_requests/{collaboration_request_id}")
+                         f"http://localhost:8080/api/images/collaboration_requests/{collaboration_request['uuid4']}")
+        res = self.client.get(f"/api/images/collaboration_requests/{collaboration_request['uuid4']}")
         self.assertIsNotNone(res.data)
