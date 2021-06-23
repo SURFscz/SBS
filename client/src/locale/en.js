@@ -1518,6 +1518,16 @@ I18n.translations.en = {
             verificationCodePlaceholder: "6-digit code",
             verify: "Verify and activate"
         },
+        update: {
+            info1: "To update your two-factor authentication, please follow the steps below.",
+            info2: "You will need to have access to the authenticator app that you are currently using to sign in to SURF Research Access Management, as well as to the new authenticator app that you wish to use for future logins.",
+            currentCode: "Enter current verification code",
+            currentCodeInfo: "Enter the 6-digit authentication code from your current authenticator app.",
+            scanInfo: "Open your new authenticator app and:",
+            verificationCodeInfo: "Once the QR-code above is scanned, enter the 6-digit authentication code from your new authenticator app.",
+            verify: "Verify and update",
+            flash: "Your two-factor authentication has been updated to use your new authenticator app"
+        },
         verify: {
             title: "Enter your authentication code",
             info1: "Use your two-factor authenticator app on your device to view your authentication code for <strong>SRAM</strong> and verify your identity.",
@@ -1525,6 +1535,15 @@ I18n.translations.en = {
             signIn: "Verify",
             problems: "Problems with your authenticator app?",
             invalid: "Invalid authentication code"
+        },
+        profile: {
+            name: "Two-factor authentication",
+            no2FA: "Two-factor authentication is not configured.",
+            tooltip: "Two-Factor Authentication (2FA) adds an<br/>additional layer of security<br/>to your SRAM account.<br/><br/>It requires an additional login<br/>credential – beyond just your username<br/>and password – to gain account<br/>access, and getting that<br/>second credential requires access to your<br/>mobile authenticator app.",
+            handledByIdp: "Two-factor authentication is handled by {{name}}.",
+            institution: "your institution",
+            handledBySRAM: "Two-factor authentication with authenticator app for mobile phone is configured.",
+            edit: "Edit"
         }
     }
 };

@@ -218,7 +218,13 @@ class App extends React.Component {
                                }}/>
                         <Route path="/2fa"
                                render={props => <SecondFactorAuthentication user={currentUser}
-                                                                            refreshUser={this.refreshUserMemberships} {...props}/>}/>
+                                                                            refreshUser={this.refreshUserMemberships}
+                                                                            {...props}/>}/>
+                        <Route path="/2fa-update"
+                               render={props => <SecondFactorAuthentication user={currentUser}
+                                                                            refreshUser={this.refreshUserMemberships}
+                                                                            update={true}
+                                                                            {...props}/>}/>
                         <Route path="/registration"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}
@@ -348,6 +354,7 @@ class App extends React.Component {
                                render={props => <ProtectedRoute
                                    currentUser={currentUser}
                                    Component={Profile}
+                                   config={config}
                                    refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
                         <Route path="/system/:tab?"

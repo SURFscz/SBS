@@ -41,7 +41,8 @@ class Profile extends React.Component {
         return (
             <div className="mod-user-profile">
                 <UnitHeader obj={({name: I18n.t("models.users.profile", {name: user.name}), svg: PersonIcon})}
-                            mayEdit={false} history={this.props.history}
+                            mayEdit={false}
+                            history={this.props.history}
                             auditLogPath={"me/me"}
                             svg={PersonIcon}
                             name={user.name}>
