@@ -1,10 +1,16 @@
 # -*- coding: future_fstrings -*-
+from uuid import uuid4
+
 from sqlalchemy import select, func
 from sqlalchemy.orm import column_property
 
 from server.db.audit_mixin import Base, metadata
 from server.db.db import db
 from server.db.logo_mixin import LogoMixin
+
+
+def gen_uuid4():
+    return str(uuid4())
 
 
 class User(Base, db.Model):
@@ -144,6 +150,7 @@ class Collaboration(Base, db.Model, LogoMixin):
     name = db.Column("name", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
+    uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
     global_urn = db.Column("global_urn", db.Text, nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
@@ -211,6 +218,7 @@ class Organisation(Base, db.Model, LogoMixin):
     category = db.Column("category", db.String(length=255), nullable=True)
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
+    uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     on_boarding_msg = db.Column("on_boarding_msg", db.Text(), nullable=True)
     schac_home_organisations = db.relationship("SchacHomeOrganisation", cascade="all, delete-orphan",
                                                passive_deletes=True, lazy="selectin")
@@ -256,6 +264,7 @@ class Service(Base, db.Model, LogoMixin):
     name = db.Column("name", db.String(length=255), nullable=False)
     description = db.Column("description", db.Text(), nullable=True)
     logo = db.Column("logo", db.Text(), nullable=True)
+    uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     address = db.Column("address", db.Text(), nullable=True)
     identity_type = db.Column("identity_type", db.String(length=255), nullable=True)
     uri = db.Column("uri", db.String(length=255), nullable=True)
@@ -395,6 +404,7 @@ class CollaborationRequest(Base, db.Model, LogoMixin):
     requester_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     requester = db.relationship("User", back_populates="collaboration_requests")
     logo = db.Column("logo", db.Text(), nullable=True)
+    uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     website_url = db.Column("website_url", db.String(length=512), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
