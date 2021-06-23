@@ -33,7 +33,7 @@ class TestService(AbstractTest):
 
     def test_find_by_id_admin(self):
         service = self.find_entity_by_name(Service, uuc_scheduler_name)
-        logo = self.client.get(f"/api/images/services/{service.id}").data
+        logo = self.client.get(f"/api/images/services/{service.uuid4}").data
         self.assertIsNotNone(logo)
 
         self.login("urn:john")
