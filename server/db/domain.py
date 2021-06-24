@@ -51,6 +51,7 @@ class User(Base, db.Model):
     suspended = db.Column("suspended", db.Boolean(), nullable=True, default=False)
     suspend_notifications = db.relationship("SuspendNotification", back_populates="user", cascade="all, delete-orphan",
                                             passive_deletes=True)
+    mfa_reset_token = db.Column("mfa_reset_token", db.String(length=512), nullable=True)
 
 
 services_organisations_association = db.Table(

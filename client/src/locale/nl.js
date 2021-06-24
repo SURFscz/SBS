@@ -1534,7 +1534,9 @@ I18n.translations.nl = {
             explanation: "Two-factor authenticatie",
             signIn: "Verifiëren",
             problems: "Problemen met je authenticator app?",
-            invalid: "Foutieve authentication code"
+            invalid: "Foutieve authentication code",
+            resetRequest: "Vraag een reset aan van je authenticatie code",
+            resetToken: "Voer een ontvangen authenticatie reset token in"
         },
         profile: {
             name: "Tweede-factor authenticatie",
@@ -1544,7 +1546,29 @@ I18n.translations.nl = {
             institution: "je instelling",
             handledBySRAM: "Tweede-factor authenticatie met authenticator-app voor mobiele telefoon is geconfigureerd.",
             edit: "Aanpassen"
+        },
+        lost: {
+            title: "Reset je authenticatie code",
+            info: "In het geval je:",
+            reasons: [
+                "toegang tot je telefoon verloren bent",
+                "de authenticatiecode hebt gereset",
+                "andere problemen hebben"
+            ],
+            request: "Je kan de beheerder van je samenwerking vragen voor een authenticatie-resettoken. Je moet je tweede authenticatie instellen bij de volgende login.",
+            select: "Selecteer een collega die de reset-token zal ontvangen:",
+            respondent: "De e-mail wordt verzonden naar:",
+            message: "Bericht voor de beheerder",
+            sendMail: "E-mail verzenden",
+            flash: "Je verzoek om je authenticatie te resetten is verzonden"
+        },
+        reset: {
+            title: "Reset JE authenticatie code",
+            info1: "Voer het reset token in dat je administrator hebt gekregen",
+            submit: "Verzend",
+            resetCodePlaceholder: "Reset token"
         }
+
     },
     sfo: {
         title: "Helaas, geen toegang tot <i>{{name}}</i>",

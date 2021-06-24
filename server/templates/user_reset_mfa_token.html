@@ -1,0 +1,35 @@
+{% extends "mail_layout.html" %}
+{% block title %}SRAM 2fa token reset{% endblock %}
+{% block content %}
+
+<div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
+    <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
+        Second-factor authentication reset token.
+    </p>
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 0.6em;">
+        User {{ user.name }} has reported that he / she can't login anymore due
+        to the fact that he / she has no longer access to the authenticator app.
+    </p>
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 0.6em;">
+        The token below can be used to reset the second-factor authentication for {{ user.name }}.</p>
+    <br>
+    <p class="mail-subtitle" style="font-weight: bold;font-size: 18px;line-height: 22px; margin: 0.6em 0.6em 2em 0.6em;">
+        {{ user.mfa_reset_token }}</p>
+    <p class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 0.6em;">
+        Please deliver this token to <a href="mailto:{{ user.email }}">{{ user.email }}</a> and inform him / her that the token can
+        be entered on the next login attempt of {{ user.name }}.</p>
+    {% if message is defined and message != None and message|length %}
+    <div class="mail-subtitle" style="font-weight: 300;font-size: 18px;line-height: 22px; margin: 1em 0.6em;max-width: 800px;font-style: italic; border-bottom: 3px solid #f5f5f5">
+        <p style="margin: 0;"></p>
+        <p style="margin: 0;">A message from {{ user.name }}:</p>
+        <p style="margin: 0;"></p>
+        <p style="white-space: pre-line;margin: 0;">
+            {{ message }}
+        </p>
+    </div>
+    {% endif %}
+
+</div>
+<br><br>
+
+{% endblock %}

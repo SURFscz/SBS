@@ -1,0 +1,17 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SRAM 2fa token reset{% endblock %}
+{% block content %}
+
+Second-factor authentication reset token.
+
+User {{ user.name }} has reported that he / she can't login anymore due
+to the fact that he / she has no longer access to the authenticator app.
+
+The token below can be used to reset the second-factor authentication for {{ user.name }}.
+
+        {{ user.mfa_reset_token }}
+
+Please mail this token to {{ user.email }} and inform him / her that the token can
+be entered on the next login attempt of {{ user.name }}.</p>
+
+{% endblock %}

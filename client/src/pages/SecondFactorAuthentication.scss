@@ -35,6 +35,27 @@
         }
     }
 
+    .authenticator-problems {
+        padding: $medium-padding 0;
+
+        ul {
+            margin-bottom: 25px;
+        }
+
+        .select-respondents {
+            padding-top: $medium-padding;
+
+            .checkbox {
+                padding-top: $medium-padding;
+
+                label.disabled {
+                    color: black;
+                }
+
+            }
+        }
+    }
+
     a.button.blue, a.button.cancel {
         min-width: 100%;
         max-width: 100%;
@@ -48,13 +69,21 @@
         }
     }
 
-    .input-field {
+    .input-field-container {
         input[type='text'] {
             max-width: 125px;
         }
 
     }
 
+    .input-field-container-large {
+        min-width: 100%;
+
+        input[type='text'] {
+            min-width: 100%;
+        }
+
+    }
 
     .step {
         display: flex;
@@ -98,13 +127,15 @@
     }
 
     .explain {
+        display: flex;
+        flex-direction: column;
         cursor: pointer;
-        color: $dark-grey;
         font-size: 15px;
         margin-top: 15px;
 
-        svg {
-            margin-right: 5px;
+        a {
+            display: block;
+            margin-top: 3px;
         }
     }
 

@@ -1,15 +1,14 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
 import "./SecondFactorAuthentication.scss";
-import {get2fa, update2fa, verify2fa} from "../api";
+import {get2fa, reset2fa, tokenResetRequest, tokenResetRespondents, update2fa, verify2fa} from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
 import I18n from "i18n-js";
 import Button from "../components/Button";
 import InputField from "../components/InputField";
-import Explain from "../components/Explain";
-import TwoFactorAuthentication from "../components/explanations/TwoFactorAuthentication";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {setFlash} from "../utils/Flash";
+import CheckBox from "../components/CheckBox";
+import {stopEvent} from "../utils/Utils";
 
 class SecondFactorAuthentication extends React.Component {
 
@@ -24,7 +23,12 @@ class SecondFactorAuthentication extends React.Component {
             error: null,
             newError: null,
             idp_name: "",
-            showExplanation: false
+            showExplanation: false,
+            showEnterToken: false,
+            respondents: [],
+            message: "",
+            resetCode: "",
+            resetCodeError: null
         };
     }
 
@@ -53,11 +57,61 @@ class SecondFactorAuthentication extends React.Component {
         }, 350);
     }
 
+    enterResetToken = e => {
+        stopEvent(e);
+        this.setState({showEnterToken: true})
+    }
+
+    openResetRequest = e => {
+        stopEvent(e);
+        const {respondents} = this.state;
+        if (respondents.length === 0) {
+            this.setState({loading: true});
+            tokenResetRespondents().then(res => {
+                res.forEach(respondent => respondent.selected = false);
+                res[0].selected = true;
+                this.setState({respondents: res, loading: false, showExplanation: true});
+            });
+        } else {
+            this.setState({showExplanation: true});
+        }
+    }
+
+    onSelectRespondent = email => e => {
+        const {respondents} = this.state;
+        const newRespondents = respondents.map(respondent => {
+            respondent.selected = respondent.email === email;
+            return respondent;
+        });
+        this.setState({respondents: newRespondents});
+    }
+
     closeExplanation = () => this.setState({showExplanation: false});
+
+    closeResetCode = () => this.setState({showEnterToken: false});
 
     cancel = () => {
         this.props.history.push("/profile");
     }
+
+    sendResetRequest = () => {
+        const {respondents, message} = this.state;
+        const admin = respondents.find(respondent => respondent.selected);
+        tokenResetRequest(admin, message).then(() => {
+            setFlash(I18n.t("mfa.lost.flash"));
+            this.setState({showExplanation: false, message: ""})
+        });
+    }
+
+    submitResetCode = () => {
+        const {resetCode} = this.state;
+        reset2fa(resetCode).then(() => {
+            this.props.refreshUser(() => {
+                this.setState({showEnterToken: false})
+            });
+        })
+    }
+
     verify = () => {
         this.setState({busy: true});
         const {totp, newTotp} = this.state;
@@ -92,6 +146,51 @@ class SecondFactorAuthentication extends React.Component {
         }
     }
 
+    renderLostCode = (respondents, message) => {
+        const submitDisabled = respondents.filter(respondent => respondent.selected).length === 0;
+        return (<div className="authenticator-problems">
+
+            <h1>{I18n.t("mfa.lost.title")}</h1>
+            <p>{I18n.t("mfa.lost.info")}</p>
+            <ul>
+                {I18n.translations[I18n.locale].mfa.lost.reasons.map((option, i) =>
+                    <li key={i} dangerouslySetInnerHTML={{__html: option}}/>)}
+            </ul>
+            <p>{I18n.t("mfa.lost.request")}</p>
+            {respondents.length > 1 && <div className="select-respondents">
+                <p>{I18n.t("mfa.lost.select")}</p>
+                {respondents.map((respondent, i) => <div key={i}>
+                    <CheckBox name={`respondent${i}`}
+                              onChange={this.onSelectRespondent(respondent.email)}
+                              value={respondent.selected}
+                              info={respondent.name}
+                    />
+                </div>)}
+            </div>}
+            {respondents.length === 1 && <div className="select-respondents">
+                <p>{I18n.t("mfa.lost.respondent")}</p>
+                <div>
+                    <CheckBox name={`respondent`}
+                              value={true}
+                              readOnly={true}
+                              info={respondents[0].name}
+                    />
+                </div>
+            </div>}
+            <InputField value={message} multiline={true} name={I18n.t("mfa.lost.message")}
+                        onChange={e => this.setState({message: e.target.value})}/>
+
+            <section className="actions">
+                <Button cancelButton={true} onClick={this.closeExplanation} html={I18n.t("forms.cancel")}
+                        txt="cancel"/>
+                <Button disabled={submitDisabled} onClick={this.sendResetRequest} html={I18n.t("mfa.lost.sendMail")}
+                        txt="update"/>
+            </section>
+        </div>)
+
+
+    }
+
     renderVerificationCode = (totp, busy, showExplanation, error) => {
         const verifyDisabled = totp.length !== 6 || busy;
         return (
@@ -103,12 +202,6 @@ class SecondFactorAuthentication extends React.Component {
                             `${I18n.t("mfa.verify.info1")}`
                     }}/>
                 </section>
-                <Explain
-                    close={this.closeExplanation}
-                    subject={I18n.t("mfa.verify.explanation")}
-                    isVisible={showExplanation}>
-                    <TwoFactorAuthentication/>
-                </Explain>
                 <div className="step-actions center">
                     <div className="input-field-container">
                         <InputField value={totp}
@@ -122,13 +215,41 @@ class SecondFactorAuthentication extends React.Component {
                 </div>
                 <Button disabled={verifyDisabled} onClick={this.verify} html={I18n.t("mfa.verify.signIn")}
                         txt="login"/>
-                <div className="explain" onClick={() => this.setState({showExplanation: true})}>
-                    <FontAwesomeIcon className="help" icon="question-circle"
-                                     id="impersonate_close_explanation"/>
-                    {I18n.t("mfa.verify.problems")}
-
+                <div className="explain">
+                    <span>{I18n.t("mfa.verify.problems")}</span>
+                    <a href="/reset-token" onClick={this.openResetRequest}>{I18n.t("mfa.verify.resetRequest")}</a>
+                    <a href="/enter-reset" onClick={this.enterResetToken}>{I18n.t("mfa.verify.resetToken")}</a>
                 </div>
+            </div>
+        )
+    }
 
+    renderEnterResetCode = (resetCode, resetCodeError, busy) => {
+        const submitDisabled = resetCode.length === 0 || busy;
+        return (
+            <div>
+                <section className="register-header">
+                    <h1>{I18n.t("mfa.reset.title")}</h1>
+                    <p dangerouslySetInnerHTML={{
+                        __html:
+                            `${I18n.t("mfa.reset.info1")}`
+                    }}/>
+                </section>
+                <div className="step-actions center">
+                    <div className="input-field-container-large">
+                        <InputField value={resetCode}
+                                    onEnter={this.submitResetCode}
+                                    placeholder={I18n.t("mfa.reset.resetCodePlaceholder")}
+                                    onChange={e => this.setState({resetCode: e.target.value})}/>
+                        {resetCodeError && <span className="error">{I18n.t("mfa.reset.invalid")}</span>}
+                    </div>
+                </div>
+                <section className="actions">
+                    <Button cancelButton={true} onClick={this.closeResetCode} html={I18n.t("forms.cancel")}
+                            txt="cancel"/>
+                    <Button disabled={submitDisabled} onClick={this.submitResetCode} html={I18n.t("mfa.reset.submit")}
+                            txt="update"/>
+                </section>
             </div>
         )
     }
@@ -235,16 +356,18 @@ class SecondFactorAuthentication extends React.Component {
     render() {
         const {update} = this.props;
         const {
-            loading, totp, qrCode, idp_name, busy, showExplanation, error,
-            newTotp, newError
+            loading, totp, qrCode, idp_name, busy, showExplanation, error, respondents, message,
+            newTotp, newError, showEnterToken, resetCode, resetCodeError
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
         return (
             <div className={`mod-mfa ${qrCode ? '' : 'verify'}`}>
-                {qrCode && this.renderRegistration(qrCode, totp, newTotp, idp_name, busy, error, newError, update)}
-                {!qrCode && this.renderVerificationCode(totp, busy, showExplanation, error)}
+                {(qrCode && !showExplanation && !showEnterToken) && this.renderRegistration(qrCode, totp, newTotp, idp_name, busy, error, newError, update)}
+                {(!qrCode && !showExplanation && !showEnterToken) && this.renderVerificationCode(totp, busy, showExplanation, error, showEnterToken)}
+                {(showExplanation && !showEnterToken) && this.renderLostCode(respondents, message)}
+                {(!showExplanation && showEnterToken) && this.renderEnterResetCode(resetCode, resetCodeError, busy)}
             </div>
         )
     }
