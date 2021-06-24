@@ -1566,9 +1566,9 @@ I18n.translations.nl = {
             title: "Reset JE authenticatie code",
             info1: "Voer het reset token in dat je administrator hebt gekregen",
             submit: "Verzend",
-            resetCodePlaceholder: "Reset token"
+            resetCodePlaceholder: "Reset token",
+            invalid: "Foutief reset token",
         }
-
     },
     sfo: {
         title: "Helaas, geen toegang tot <i>{{name}}</i>",
