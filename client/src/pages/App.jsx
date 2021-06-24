@@ -42,6 +42,7 @@ import ServiceDetail from "./ServiceDetail";
 import SpinnerField from "../components/redesign/SpinnerField";
 import DeadEnd from "./DeadEnd";
 import SecondFactorAuthentication from "./SecondFactorAuthentication";
+import ServiceDenied from "./ServiceDenied";
 
 addIcons();
 
@@ -365,6 +366,8 @@ class App extends React.Component {
 
                         <Route path="/dead-end"
                                render={props => <DeadEnd {...props}/>}/>
+
+                        <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>
 
                         <Route path="/error" render={props => <ServerError {...props}/>}/>
 
