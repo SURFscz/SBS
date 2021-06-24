@@ -86,9 +86,13 @@ class SecondFactorAuthentication extends React.Component {
         this.setState({respondents: newRespondents});
     }
 
-    closeExplanation = () => this.setState({showExplanation: false});
+    closeExplanation = () => {
+        this.setState({showExplanation: false, resetCodeError: null, newError: null, error: null});
+    }
 
-    closeResetCode = () => this.setState({showEnterToken: false});
+    closeResetCode = () => {
+        this.setState({showEnterToken: false, resetCodeError: null, newError: null, error: null});
+    }
 
     cancel = () => {
         this.props.history.push("/profile");
@@ -105,11 +109,14 @@ class SecondFactorAuthentication extends React.Component {
 
     submitResetCode = () => {
         const {resetCode} = this.state;
-        reset2fa(resetCode).then(() => {
-            this.props.refreshUser(() => {
-                this.setState({showEnterToken: false})
-            });
-        })
+        reset2fa(resetCode)
+            .then(() => {
+                this.props.refreshUser(() => {
+                    this.setState({showEnterToken: false})
+                })
+            }).catch(e => {
+            this.setState({resetCodeError: true})
+        });
     }
 
     verify = () => {

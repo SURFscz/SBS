@@ -1566,7 +1566,8 @@ I18n.translations.en = {
             title: "Reset your authentication code",
             info1: "Enter the reset token you have received from your administrator",
             submit: "Submit",
-            resetCodePlaceholder: "Reset token"
+            resetCodePlaceholder: "Reset token",
+            invalid: "Invalid reset token",
         }
     },
     sfo: {
