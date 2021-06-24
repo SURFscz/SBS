@@ -25,7 +25,7 @@ white_listing = ["health", "config", "info", "api/users/authorization", "api/aup
                  "/api/organisation_invitations/find_by_hash", "/api/invitations/find_by_hash",
                  "api/service_connection_requests/deny", "/api/mock", "/api/users/error"]
 
-mfa_listing = ["/get2fa", "/verify2fa"]
+mfa_listing = ["/get2fa", "/verify2fa", "/token_reset_request", "/reset2fa"]
 
 external_api_listing = ["api/collaborations/v1", "api/collaborations/v1/restricted",
                         "api/collaborations_services/v1/connect_collaboration_service",

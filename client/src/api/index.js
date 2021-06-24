@@ -92,7 +92,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && false) {
+    if (config.local && true) {
         let sub = "urn:john";
         // sub = "urn:sarah";
         // sub = "urn:james";
@@ -165,6 +165,17 @@ export function update2fa(new_totp_value, current_totp) {
     return postPutJson("/api/mfa/update2fa", {new_totp_value, current_totp}, "POST", false);
 }
 
+export function tokenResetRespondents() {
+    return fetchJson("/api/mfa/token_reset_request");
+}
+
+export function tokenResetRequest(admin, message) {
+    return postPutJson("/api/mfa/token_reset_request", {email: admin.email, message}, "POST", false);
+}
+
+export function reset2fa(token) {
+    return postPutJson("/api/mfa/reset2fa", {token}, "POST", false);
+}
 //Services
 export function serviceNameExists(name, existingService = null) {
     return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${encodeURIComponent(existingService)}`);

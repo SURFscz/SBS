@@ -1534,7 +1534,9 @@ I18n.translations.en = {
             explanation: "Two-factor authentication",
             signIn: "Verify",
             problems: "Problems with your authenticator app?",
-            invalid: "Invalid authentication code"
+            invalid: "Invalid authentication code",
+            resetRequest: "Request a reset of your authentication code",
+            resetToken: "Enter a received authentication reset token"
         },
         profile: {
             name: "Two-factor authentication",
@@ -1544,6 +1546,27 @@ I18n.translations.en = {
             institution: "your institution",
             handledBySRAM: "Two-factor authentication with authenticator app for mobile phone is configured.",
             edit: "Edit"
+        },
+        lost: {
+            title: "Reset your authentication code",
+            info: "In case you have:",
+            reasons: [
+                "lost access to your phone",
+                "reset your authentication code",
+                "or are experiencing other difficulties"
+            ],
+            request: "You can request a collaboration admin for a authentication reset token. You will be required to setup your second-authentication on your next login.",
+            select: "Select a colleague which will receive the reset-token:",
+            respondent: "The email will be send to:",
+            message: "Message for the administrator",
+            sendMail: "Send mail",
+            flash: "Your request to reset your authentication has been send"
+        },
+        reset: {
+            title: "Reset your authentication code",
+            info1: "Enter the reset token you have received from your administrator",
+            submit: "Submit",
+            resetCodePlaceholder: "Reset token"
         }
     },
     sfo: {

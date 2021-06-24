@@ -249,3 +249,13 @@ def mail_account_deletion(user):
                      "user": user},
             preview=False
         )
+
+
+def mail_reset_token(admin, user, message):
+    _do_send_mail(
+        subject=f"User {user.email} has requested a seconf-factor authentication reset",
+        recipients=[admin.email],
+        template="user_reset_mfa_token",
+        context={"user": user, "message": message},
+        preview=False
+    )

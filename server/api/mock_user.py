@@ -33,7 +33,7 @@ def login_user():
         "uid": user.uid,
         "name": user.name,
         "email": user.email,
-        "second_factor_confirmed": True
+        "second_factor_confirmed": False
     }
     session["user"] = {**session_data, **res}
     return None, 201

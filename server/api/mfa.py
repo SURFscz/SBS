@@ -2,6 +2,7 @@
 import base64
 import json
 from io import BytesIO
+from secrets import token_urlsafe
 from time import time
 from urllib.parse import quote
 from uuid import uuid4
@@ -10,14 +11,16 @@ import jwt
 import pyotp
 import qrcode
 from flask import Blueprint, current_app, redirect, session, request as current_request
+from werkzeug.exceptions import Forbidden
 
 from server.api.base import query_param, json_endpoint
-from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session
+from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
 from server.auth.security import current_user_id
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.domain import User
 from server.logger.context_logger import ctx_logger
+from server.mail import mail_reset_token
 from server.tools import read_file
 
 mfa_api = Blueprint("mfa_api", __name__, url_prefix="/api/mfa")
@@ -57,6 +60,26 @@ def _construct_jwt(user, nonce, oidc_config):
     return jwt.encode(payload, _get_private_key(),
                       algorithm=public_signing_key["alg"],
                       headers={"kid": public_signing_key["kid"]})
+
+
+@mfa_api.route("/token_reset_request", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def token_reset_request():
+    user = User.query.filter(User.id == current_user_id()).one()
+    return eligible_users_to_reset_token(user), 200
+
+
+@mfa_api.route("/token_reset_request", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def token_reset_request_post():
+    data = current_request.get_json()
+    admin = User.query.filter(User.email == data["email"]).one()
+    user = User.query.filter(User.id == current_user_id()).one()
+    user.mfa_reset_token = token_urlsafe()
+    db.session.merge(user)
+    db.session.commit()
+    mail_reset_token(admin, user, data["message"])
+    return {}, 201
 
 
 @mfa_api.route("/get2fa", methods=["GET"], strict_slashes=False)
@@ -115,6 +138,21 @@ def update2fa():
         return {"current_totp": not verified_current, "new_totp": not verified_new}, 400
 
     user.second_factor_auth = new_secret
+    db.session.merge(user)
+    db.session.commit()
+    return {}, 201
+
+
+@mfa_api.route("/reset2fa", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def reset2fa():
+    user = User.query.filter(User.id == current_user_id()).one()
+    data = current_request.get_json()
+    token = data["token"]
+    if token != user.mfa_reset_token:
+        raise Forbidden()
+    user.second_factor_auth = None
+    user.mfa_reset_token = None
     db.session.merge(user)
     db.session.commit()
     return {}, 201
