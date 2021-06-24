@@ -98,4 +98,4 @@ class TestUserSaml(AbstractTest):
                         response_status_code=200)
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service_denied?service_entity_id=https%3A%2F%2Fnetwork&uid=urn%3Ajohn")
+                         "http://localhost:3000/service-denied?service_name=Network+Services&error_status=2")

@@ -36,23 +36,23 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
     confirm_read_access()
     logger = ctx_logger("user_api")
 
-    user = User.query.filter(User.uid == uid).first()
-    if not user:
-        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
-                     f" as the user is unknown")
-        return not_authorized_func(USER_UNKNOWN)
-    if user.suspended:
-        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
-                     f" as the user is suspended")
-        return not_authorized_func(USER_IS_SUSPENDED)
-
     service = Service.query.filter(Service.entity_id == service_entity_id).first()
     if not service:
         msg = f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} " \
               f"as the service is unknown"
         logger.error(msg)
         send_error_mail(tb=msg, session_exists=False)
-        return not_authorized_func(SERVICE_UNKNOWN)
+        return not_authorized_func(service_entity_id, SERVICE_UNKNOWN)
+
+    user = User.query.filter(User.uid == uid).first()
+    if not user:
+        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
+                     f" as the user is unknown")
+        return not_authorized_func(service.name, USER_UNKNOWN)
+    if user.suspended:
+        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
+                     f" as the user is suspended")
+        return not_authorized_func(service.name, USER_IS_SUSPENDED)
 
     connected_collaborations = []
     for cm in user.collaboration_memberships:
@@ -62,7 +62,7 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
     if not connected_collaborations:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to any of the user collaborations")
-        return not_authorized_func(SERVICE_NOT_CONNECTED)
+        return not_authorized_func(service.name, SERVICE_NOT_CONNECTED)
 
     user.last_accessed_date = datetime.now()
     user.last_login_date = datetime.now()
@@ -102,7 +102,7 @@ def attributes():
     uid = query_param("uid")
     service_entity_id = query_param("service_entity_id")
 
-    def not_authorized_func(status):
+    def not_authorized_func(_, status):
         if status == USER_UNKNOWN:
             return {"error": f"user {uid} is unknown"}, 404
         if status == USER_IS_SUSPENDED:
@@ -135,13 +135,13 @@ def proxy_authz():
     uid = json_dict["user_id"]
     service_entity_id = json_dict["service_id"]
 
-    def not_authorized_func(status):
+    def not_authorized_func(service_name, status):
         base_url = current_app.app_config.base_url
-        parameters = urlencode({"service_entity_id": service_entity_id, "uid": uid})
+        parameters = urlencode({"service_name": service_name, "error_status": status})
         return {
                    "status": {
                        "result": "unauthorized",
-                       "redirect_url": f"{base_url}/service_denied?{parameters}",
+                       "redirect_url": f"{base_url}/service-denied?{parameters}",
                        "error_status": status
                    }
                }, 200
