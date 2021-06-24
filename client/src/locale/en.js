@@ -1547,11 +1547,11 @@ I18n.translations.en = {
         }
     },
     sfo: {
-        title: "Whoops, no access to {{name}}",
-        info1: "You've not successfully logged into SURF Research Access Management, and therefore you don't have access to {{name}}.",
-        info2: "You've not successfully logged into SURF Research Access Management as your account is suspended, and therefore you don't have access to {{name}}. None of the collaborations you are currently a member of, have enabled access to {{name}}. Contact your collaboration administrator(s) to enable access to this service.",
-        info3: "You've successfully logged into SURF Research Access Management (SRAM), but the service {{name}} is unknown in SRAM.",
-        info4: "You've successfully logged into SURF Research Access Management, but unfortunately you don't have access to {{name}}. None of the collaborations you are currently a member of, have enabled access to {{name}}. Contact your collaboration administrator(s) to enable access to this service."
+        title: "Whoops, no access to <i>{{name}}</i>",
+        info1: "You've not successfully logged into SURF Research Access Management, and therefore you don't have access to <i>{{name}}</i>.",
+        info2: "You've not successfully logged into SURF Research Access Management as your account is suspended, and therefore you don't have access to <i>{{name}}</i>. None of the collaborations you are currently a member of, have enabled access to <i>{{name}}</i>. Contact your collaboration administrator(s) to enable access to this service.",
+        info3: "You've successfully logged into SURF Research Access Management (SRAM), but the service <i>{{name}}</i> is unknown in SRAM.",
+        info4: "You've successfully logged into SURF Research Access Management, but unfortunately you don't have access to <i>{{name}}</i>. None of the collaborations you are currently a member of, have enabled access to <i>{{name}}</i>. Contact your collaboration administrator(s) to enable access to this service."
     }
 };
 

@@ -1547,13 +1547,12 @@ I18n.translations.nl = {
         }
     },
     sfo: {
-        title: "Helaas, geen toegang tot {{name}}",
-        info1: "Je bent niet succesvol ingelogd bij SURF Research Access Management en je hebt dus geen toegang tot {{name}}.",
-        info2: "Je bent niet succesvol ingelogd bij SURF Research Access Management omdat je account is opgeschort, en daarom heb je geen toegang tot {{name}}. Geen van de samenwerkingsverbanden waar je momenteel een lid van, hebben toegang tot {{name}} ingeschakeld. Neem contact op met uw samenwerkingsbeheerder(s) om toegang tot deze service in te schakelen.",
-        info3: "Je bent succesvol ingelogd bij SURF Research Access Management (SRAM), maar de service {{name}} is onbekend binnen SRAM.",
-        info4: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot {{name}}. De samenwerking(en) waar je momenteel lid van bent, hebben {{name}} niet beschikbaar gemaakt. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen."
+        title: "Helaas, geen toegang tot <i>{{name}}</i>",
+        info1: "Je bent niet succesvol ingelogd bij SURF Research Access Management en je hebt dus geen toegang tot <i>{{name}}</i>.",
+        info2: "Je bent niet succesvol ingelogd bij SURF Research Access Management omdat je account is opgeschort, en daarom heb je geen toegang tot <i>{{name}}</i>. Geen van de samenwerkingsverbanden waar je momenteel een lid van, hebben toegang tot <i>{{name}}</i> ingeschakeld. Neem contact op met uw samenwerkingsbeheerder(s) om toegang tot deze service in te schakelen.",
+        info3: "Je bent succesvol ingelogd bij SURF Research Access Management (SRAM), maar de service <i>{{name}}</i> is onbekend binnen SRAM.",
+        info4: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. De samenwerking(en) waar je momenteel lid van bent, hebben <i>{{name}}</i> niet beschikbaar gemaakt. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen."
     }
-
 };
 
 export default I18n.translations.nl;
