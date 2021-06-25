@@ -22,7 +22,8 @@ base_api = Blueprint("base_api", __name__, url_prefix="/")
 white_listing = ["health", "config", "info", "api/users/authorization", "api/aup", "api/users/resume-session",
                  "api/users/me", "/api/images/", "api/service_connection_requests/find_by_hash",
                  "api/service_connection_requests/approve", "/api/mfa/jwks", "/api/mfa/sfo"
-                 "/api/organisation_invitations/find_by_hash", "/api/invitations/find_by_hash",
+                                                                             "/api/organisation_invitations/find_by_hash",
+                 "/api/invitations/find_by_hash",
                  "api/service_connection_requests/deny", "/api/mock", "/api/users/error"]
 
 mfa_listing = ["/get2fa", "/verify2fa", "/token_reset_request", "/reset2fa"]
@@ -188,7 +189,8 @@ def config():
             "seed_allowed": cfg.feature.seed_allowed,
             "organisation_categories": cfg.organisation_categories,
             "second_factor_authentication_required": cfg.oidc.second_factor_authentication_required,
-            "admin_users_upgrade_url": cfg.feature.admin_users_upgrade_url}, 200
+            "admin_users_upgrade_url": cfg.feature.admin_users_upgrade_url,
+            "impersonation_allowed": cfg.feature.impersonation_allowed}, 200
 
 
 @base_api.route("/info", strict_slashes=False)

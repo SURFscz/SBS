@@ -341,10 +341,10 @@ class App extends React.Component {
                                                                 refreshUser={this.refreshUserMemberships}
                                                                 {...props}/>}/>
 
-                        <Route path="/impersonate"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Impersonate}
-                                   impersonator={impersonator} {...props}/>}/>
+                        {config.impersonation_allowed && <Route path="/impersonate"
+                                                                render={props => <ProtectedRoute
+                                                                    currentUser={currentUser} Component={Impersonate}
+                                                                    impersonator={impersonator} {...props}/>}/>}
 
                         <Route path="/confirmation"
                                render={props => <ProtectedRoute

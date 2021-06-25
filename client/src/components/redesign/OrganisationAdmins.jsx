@@ -351,6 +351,7 @@ class OrganisationAdmins extends React.Component {
         const noMoreAdminsToCheck = (selectedAdmins + 1) === nbrOfAdmins;
 
         let i = 0;
+        const {impersonation_allowed} = this.props.config;
         const columns = [
             {
                 nonSortable: true,
@@ -427,7 +428,7 @@ class OrganisationAdmins extends React.Component {
                     if (entity.invite) {
                         return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
                     }
-                    if (!currentUser.admin || entity.user.id === currentUser.id) {
+                    if (!currentUser.admin || entity.user.id === currentUser.id || !impersonation_allowed) {
                         return null;
                     }
                     return (<div className="impersonate" onClick={() =>
