@@ -461,10 +461,8 @@ class SshKey(Base, db.Model):
     ssh_value = db.Column("ssh_value", db.Text(), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="ssh_keys")
-    created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
-    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
 
 class UserNameHistory(Base, db.Model):

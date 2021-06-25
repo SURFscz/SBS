@@ -33,6 +33,8 @@ oidc:
   private_rsa_signing_key_path: config/test-jwt-private-key
   public_rsa_signing_key_path: config/test-jwt-public-key.json
   second_factor_authentication_required: True
+  totp_token_name: "SRAM local"
+
   scopes:
     - profile
     - eduperson_scoped_affiliation

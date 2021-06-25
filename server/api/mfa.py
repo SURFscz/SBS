@@ -91,7 +91,7 @@ def get2fa():
     user = User.query.filter(User.id == current_user_id()).one()
     secret = pyotp.random_base32()
     session["second_factor_auth"] = secret
-    name = "LOCAL" if current_app.app_config.profile == "local" else "SRAM"
+    name = current_app.app_config.oidc.totp_token_name
     secret_url = pyotp.totp.TOTP(secret).provisioning_uri(user.email, name)
     img = qrcode.make(secret_url)
     buffered = BytesIO()

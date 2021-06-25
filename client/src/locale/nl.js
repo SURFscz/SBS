@@ -1257,7 +1257,8 @@ I18n.translations.nl = {
             "ip_networks": "IP netwerk",
             "suspend_notifications": "Login notificatie",
             "schac_home_organisations": "Schac home organisations",
-            "user_names_history": "Username history"
+            "user_names_history": "Username history",
+            "ssh_keys": "SSH key"
         }
     },
     serviceRequest: {

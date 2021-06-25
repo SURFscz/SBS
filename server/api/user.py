@@ -25,7 +25,7 @@ from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
-    UserNameHistory
+    UserNameHistory, SshKey
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 
@@ -335,27 +335,32 @@ def update_user():
 
     user = User.query.get(user_id)
     user_json = current_request.get_json()
-    # For now we only allow editing of ssh_key. This will probably change so keep the for loop
-    for attr in ["ssh_key"]:
-        setattr(user, attr, user_json.get(attr))
 
-    if "ssh_key" in user_json:
-        if "convertSSHKey" in user_json and user_json["convertSSHKey"]:
-            ssh_key = user_json["ssh_key"]
-            if ssh_key and (ssh_key.startswith("---- BEGIN SSH2 PUBLIC KEY ----")
-                            or ssh_key.startswith("-----BEGIN PUBLIC KEY-----")  # noQA:W503
-                            or ssh_key.startswith("-----BEGIN RSA PUBLIC KEY-----")):  # noQA:W503
+    if "ssh_keys" in user_json:
+        for ssh_key in user_json["ssh_keys"]:
+            ssh_value = ssh_key["ssh_value"]
+            if ssh_value and (ssh_value.startswith("---- BEGIN SSH2 PUBLIC KEY ----")
+                              or ssh_value.startswith("-----BEGIN PUBLIC KEY-----")  # noQA:W503
+                              or ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----")):  # noQA:W503
                 with tempfile.NamedTemporaryFile() as f:
-                    f.write(ssh_key.encode())
+                    f.write(ssh_value.encode())
                     f.flush()
                     options = ["ssh-keygen", "-i", "-f", f.name]
-                    if ssh_key.startswith("-----BEGIN PUBLIC KEY-----"):
+                    if ssh_value.startswith("-----BEGIN PUBLIC KEY-----"):
                         options.append("-mPKCS8")
-                    if ssh_key.startswith("-----BEGIN RSA PUBLIC KEY-----"):
+                    if ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----"):
                         options.append("-mPEM")
                     res = subprocess.run(options, stdout=subprocess.PIPE)
                     if res.returncode == 0:
-                        user.ssh_key = res.stdout.decode()
+                        ssh_key["ssh_value"] = res.stdout.decode()
+        user.ssh_keys.clear()
+        for ssh_key in user_json["ssh_keys"]:
+            ssh_value = ssh_key["ssh_value"]
+            if ssh_value:
+                new_ssh_key = SshKey(ssh_value=ssh_value, user_id=user.id)
+                if "id" in ssh_key:
+                    new_ssh_key.id = ssh_key["id"]
+                db.session.merge(new_ssh_key)
     user.updated_by = user.uid
     db.session.merge(user)
     db.session.commit()

@@ -1,4 +1,3 @@
-
 # -*- coding: future_fstrings -*-
 import base64
 import datetime
@@ -14,7 +13,7 @@ from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
-    ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation
+    ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey
 
 collaboration_request_name = "New Collaboration"
 
@@ -111,13 +110,6 @@ def seed(db, app_config, skip_seed=False):
         return
 
     john = User(uid="urn:john", name=john_name, email="john@example.org", username="john",
-                ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
-                        "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
-                        "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
-                        "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
-                        "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
-                        "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
-                        "jxEpu8soL okke@Mikes-MBP-2.fritz.box",
                 address="Postal 1234AA", confirmed_super_user=True)
     unconfirmed_super_user_mike = User(uid="urn:mike", name=mike_name, email="mike@example.org", username="mike",
                                        confirmed_super_user=False, application_uid="mike_application_uid",
@@ -130,16 +122,9 @@ def seed(db, app_config, skip_seed=False):
                  schac_home_organisation=schac_home_organisation, username="roger")
     harry = User(uid="urn:harry", name="Harry Doe", email="harry@example.org", username="harry")
     james = User(uid="urn:james", name=james_name, email="james@example.org", username="james",
-                 schac_home_organisation=schac_home_organisation_uuc, given_name="James",
-                 ssh_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
-                         "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
-                         "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
-                         "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
-                         "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
-                         "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
-                         "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
+                 schac_home_organisation=schac_home_organisation_uuc, given_name="James")
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
-                 username="sarah", ssh_key="some-lame-key")
+                 username="sarah")
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty")
     jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org", username="jane",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co")
@@ -173,6 +158,23 @@ def seed(db, app_config, skip_seed=False):
 
     _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, betty, jane,
              user_inactive, user_one_suspend, user_two_suspend, user_suspended, user_to_be_deleted, paul)
+
+    ssh_key_john = SshKey(user=john, ssh_value="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
+                                               "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
+                                               "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
+                                               "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
+                                               "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
+                                               "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
+                                               "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
+    ssh_key_james = SshKey(user=james, ssh_value="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
+                                                 "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
+                                                 "gk74MiVBtAQWI5+TsO5QHupO3V6aLrKhmn8xn1PKc9JycgjOa4BMQ1meomn3Z"
+                                                 "mph6oo87MCtF2w75cxYEBJ9dJgHzZsn9mw+w8Z3H1vYnkcBT/i2MIK+qfsue/t"
+                                                 "vEe8ybi+26bGQIZIPDcd+OmDUBxDLWyBwCbVOyRL5M6ywnWJINLdpIwfqCUk24"
+                                                 "J1q1qiJ5eZu0m0uDcG5KRzgZ+grnSSYBwCx1xCunoGjMg7iwxEMgScD02nKtii"
+                                                 "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
+    ssh_key_sarah = SshKey(user=sarah, ssh_value="some-lame-key")
+    _persist(db, ssh_key_john, ssh_key_james, ssh_key_sarah)
 
     resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
     user_one_suspend_notification1 = SuspendNotification(user=user_one_suspend, sent_at=resend_suspension_date,

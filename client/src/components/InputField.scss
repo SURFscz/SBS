@@ -7,6 +7,10 @@
     display: flex;
     position: relative;
     flex-direction: column;
+    em.file-name {
+        margin-bottom: 3px;
+        color: $blue;
+    }
 
     input[type=text], textarea {
         display: block;
@@ -66,7 +70,7 @@
             color: $red;
 
             &:hover {
-                color: darken($red, 10%)!important;
+                color: darken($red, 10%) !important;
             }
         }
     }
@@ -76,7 +80,6 @@
     }
 
     section.file-upload-container {
-        cursor: pointer;
         margin-left: 10px;
         max-height: 44px;
         text-align: center;
@@ -103,6 +106,30 @@
                     color: $hover-blue;
                 }
 
+            }
+        }
+
+    }
+
+    section.on-file-initial-removal {
+        margin: 5px 0 0 10px;
+        max-height: 44px;
+        text-align: center;
+        border: 1px solid $red;
+        border-radius: 4px;
+        padding: 8px 14px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #ffe9e9 !important;
+        }
+
+
+        svg.fa-trash {
+            color: $red;
+
+            &:hover {
+                color: darken($red, 10%) !important;
             }
         }
 
