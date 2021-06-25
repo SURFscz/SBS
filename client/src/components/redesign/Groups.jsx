@@ -228,7 +228,7 @@ class Groups extends React.Component {
                     </div>
                     <div className="org-attributes">
                         <span>{I18n.t("models.groups.urn")}</span>
-                        <span>{selectedGroup.global_urn}</span>
+                        <span className="no-break">{selectedGroup.global_urn}</span>
                     </div>
                     <ClipBoardCopy txt={selectedGroup.global_urn}/>
                 </div>
