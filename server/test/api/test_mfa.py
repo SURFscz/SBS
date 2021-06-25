@@ -79,3 +79,70 @@ class TestMfa(AbstractTest):
         self.assertTrue(
             res.headers.get("location").startswith(f"{self.app.app_config.oidc.sfo_eduteams_redirect_uri}?id_token="))
         self.app.app_config.oidc.second_factor_authentication_required = True
+
+    def test_token_reset_request(self):
+        self.login("urn:mary")
+        res = self.get("/api/mfa/token_reset_request", with_basic_auth=False)
+        self.assertEqual(1, len(res))
+        self.assertEqual("john@example.org", res[0]["email"])
+
+    def test_token_reset_request_post(self):
+        mail = self.app.mail
+        with mail.record_messages() as outbox:
+            self.login("urn:mary")
+            self.post("/api/mfa/token_reset_request", body={"email": "john@example.org", "message": "please"},
+                      with_basic_auth=False)
+            self.assertEqual(1, len(outbox))
+            mail_msg = outbox[0]
+            self.assertTrue("please" in mail_msg.html)
+            mary = User.query.filter(User.uid == "urn:mary").one()
+            self.assertTrue(mary.mfa_reset_token in mail_msg.html)
+
+    def test_token_reset_request_post_invalid_email(self):
+        self.login("urn:mary")
+        self.post("/api/mfa/token_reset_request", body={"email": "nope@nope.org", "message": "please"},
+                  with_basic_auth=False, response_status_code=403)
+
+    def test_reset2fa(self):
+        self.login("urn:mary")
+        self.post("/api/mfa/token_reset_request", body={"email": "john@example.org", "message": "please"},
+                  with_basic_auth=False)
+        mary = User.query.filter(User.uid == "urn:mary").one()
+        self.post("/api/mfa/reset2fa", body={"token": mary.mfa_reset_token})
+        mary = User.query.filter(User.uid == "urn:mary").one()
+        self.assertIsNone(mary.mfa_reset_token)
+        self.assertIsNone(mary.second_factor_auth)
+
+    def test_reset2fa_invalid_token(self):
+        self.login("urn:mary")
+        self.post("/api/mfa/reset2fa", body={"token": "nope"}, response_status_code=403)
+
+    def test_update2fa(self):
+        self.login("urn:mary")
+        secret = self.get("/api/mfa/get2fa")["secret"]
+
+        mary = User.query.filter(User.uid == "urn:mary").one()
+        mary.second_factor_auth = pyotp.random_base32()
+        db.session.merge(mary)
+        db.session.commit()
+
+        body = {"current_totp": pyotp.TOTP(mary.second_factor_auth).now(),
+                "new_totp_value": pyotp.TOTP(secret).now()}
+        self.post("/api/mfa/update2fa", body=body)
+
+        mary = User.query.filter(User.uid == "urn:mary").one()
+        self.assertEqual(secret, mary.second_factor_auth)
+
+    def test_update2fa_invalid_totp(self):
+        self.login("urn:mary")
+        self.get("/api/mfa/get2fa")["secret"]
+
+        mary = User.query.filter(User.uid == "urn:mary").one()
+        mary.second_factor_auth = pyotp.random_base32()
+        db.session.merge(mary)
+        db.session.commit()
+
+        body = {"current_totp": pyotp.TOTP(mary.second_factor_auth).now(),
+                "new_totp_value": "123456"}
+        res = self.post("/api/mfa/update2fa", body=body, response_status_code=400)
+        self.assertEqual(res["new_totp"], True)
