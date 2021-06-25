@@ -195,7 +195,7 @@ class ServiceDetail extends React.Component {
                             dropDownTitle={actionMenuUserRole(user)}
                             actions={this.getActions(user, service)}>
                     <p>{service.description}</p>
-                    <div className="org-attributes-container">
+                    <div className="org-attributes-container-grid">
                         <div className="org-attributes">
                             <span>{I18n.t("service.uri")}</span>
                             <span>{service.uri ?

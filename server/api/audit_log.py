@@ -6,7 +6,7 @@ from sqlalchemy.orm import load_only
 from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_read_access, confirm_group_member, \
     is_current_user_collaboration_admin, is_current_user_organisation_admin_or_manager, \
-    is_organisation_admin_or_manager
+    is_organisation_admin_or_manager, confirm_allow_impersonation
 from server.db.audit_mixin import AuditLog
 from server.db.domain import User, Organisation, Collaboration, Group, Service
 
@@ -22,7 +22,11 @@ table_names_cls_mapping = {
 @audit_log_api.route("/me", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def me():
-    user_id = current_user_id()
+    user_id = query_param("user_id", False)
+    if user_id:
+        confirm_allow_impersonation()
+    else:
+        user_id = current_user_id()
     audit_logs = AuditLog.query \
         .filter((
                     (AuditLog.target_id == user_id) & (AuditLog.target_type == User.__tablename__)) | (

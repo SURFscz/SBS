@@ -26,6 +26,7 @@ div.org-attributes-container {
                 max-width: 300px;
                 font-weight: normal;
                 word-break: break-all;
+
                 &.no-break {
                     max-width: 400px;
                 }
@@ -45,5 +46,48 @@ div.org-attributes-container {
             }
         }
     }
+
 }
 
+div.org-attributes-container-grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 60% 40%;
+    row-gap: 1em;
+
+    @media (max-width: $compact-medium) {
+        flex-direction: column;
+    }
+
+
+    div.org-attributes {
+
+        span {
+            display: block;
+            width: 100%;
+
+            &:first-child {
+                font-weight: bold;
+            }
+
+            &:last-child {
+                font-weight: normal;
+                word-break: break-all;
+
+                &.no-break {
+                    max-width: 400px;
+                }
+            }
+
+            a {
+                display: inline-block;
+
+                @media (max-width: $compact-medium) {
+                    max-width: 200px;
+                }
+
+            }
+        }
+    }
+
+}
