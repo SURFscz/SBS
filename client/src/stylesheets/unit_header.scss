@@ -52,8 +52,9 @@ div.org-attributes-container {
 div.org-attributes-container-grid {
     display: grid;
     width: 100%;
-    grid-template-columns: 60% 40%;
+    grid-template-columns: 2fr 1fr;
     row-gap: 1em;
+    column-gap: 15px;
 
     @media (max-width: $compact-medium) {
         flex-direction: column;
@@ -81,6 +82,10 @@ div.org-attributes-container-grid {
 
             a {
                 display: inline-block;
+                word-break: break-all;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
 
                 @media (max-width: $compact-medium) {
                     max-width: 200px;
