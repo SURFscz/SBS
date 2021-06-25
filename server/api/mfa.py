@@ -66,8 +66,6 @@ def _construct_jwt(user, nonce, oidc_config):
 @json_endpoint
 def token_reset_request():
     user = User.query.filter(User.id == current_user_id()).one()
-    # TODO only send the names and ensure no cheating can be done
-    # Maybe store in session?
     return eligible_users_to_reset_token(user), 200
 
 
@@ -76,10 +74,10 @@ def token_reset_request():
 def token_reset_request_post():
     data = current_request.get_json()
     email = data["email"]
-    if email != current_app.app_config.mail.info_email:
-        # Ensure the email is from a valid user - check session
-        User.query.filter(User.email == email).one()
     user = User.query.filter(User.id == current_user_id()).one()
+    admins = eligible_users_to_reset_token(user)
+    if len(list(filter(lambda admin: admin["email"] == email, admins))) == 0:
+        raise Forbidden()
     user.mfa_reset_token = token_urlsafe()
     db.session.merge(user)
     db.session.commit()
@@ -154,7 +152,7 @@ def reset2fa():
     user = User.query.filter(User.id == current_user_id()).one()
     data = current_request.get_json()
     token = data["token"]
-    if token != user.mfa_reset_token:
+    if not token or token != user.mfa_reset_token:
         raise Forbidden()
     user.second_factor_auth = None
     user.mfa_reset_token = None
