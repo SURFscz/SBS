@@ -30,7 +30,8 @@ class User(Base, db.Model):
     given_name = db.Column("given_name", db.String(length=255), nullable=True)
     email = db.Column("email", db.String(length=255), nullable=True)
     second_factor_auth = db.Column("second_factor_auth", db.String(length=255), nullable=True)
-    ssh_key = db.Column("ssh_key", db.Text(), nullable=True)
+    ssh_keys = db.relationship("SshKey", back_populates="user", cascade="all, delete-orphan", passive_deletes=True,
+                               lazy="selectin")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
@@ -448,6 +449,18 @@ class SchacHomeOrganisation(Base, db.Model):
     name = db.Column("name", db.String(length=255), nullable=False)
     organisation_id = db.Column(db.Integer(), db.ForeignKey("organisations.id"))
     organisation = db.relationship("Organisation", back_populates="schac_home_organisations")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+
+
+class SshKey(Base, db.Model):
+    __tablename__ = "ssh_keys"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    ssh_value = db.Column("ssh_value", db.Text(), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="ssh_keys")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)

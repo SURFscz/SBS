@@ -6,7 +6,7 @@ import {logout} from "../../utils/Login";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import {isEmpty} from "../../utils/Utils";
 
-const adminLinks = ["system", "impersonate"]
+
 
 class UserMenu extends React.Component {
 
@@ -16,6 +16,10 @@ class UserMenu extends React.Component {
 
     render() {
         const {currentUser, organisation, config, provideFeedback} = this.props;
+        const adminLinks = ["system"];
+        if (config.impersonation_allowed) {
+            adminLinks.push("impersonate")
+        }
         const lessThenOrgManager = !isUserAllowed(ROLES.ORG_MANAGER, currentUser);
         const collMenuItemRequired = lessThenOrgManager && !isEmpty(organisation) && organisation.has_members
         const collCreateAllowed = !isEmpty(organisation)

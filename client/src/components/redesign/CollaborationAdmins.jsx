@@ -352,10 +352,12 @@ class CollaborationAdmins extends React.Component {
 
     getImpersonateMapper = entity => {
         const {user: currentUser, showMemberView} = this.props;
+        const {impersonation_allowed} = this.props.config;
+
         if (entity.invite) {
             return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
         }
-        if (!currentUser.admin || entity.user.id === currentUser.id || showMemberView) {
+        if (!currentUser.admin || entity.user.id === currentUser.id || showMemberView || !impersonation_allowed) {
             return null;
         }
         return (<div className="impersonate" onClick={() =>
@@ -531,7 +533,6 @@ class CollaborationAdmins extends React.Component {
         invites.forEach(invite => invite.invite = true);
 
         let i = 0;
-        //name={"" + ++i}
         let columns = [
             {
                 nonSortable: true,
