@@ -27,8 +27,6 @@ def upgrade():
                     sa.Column("updated_at", sa.DateTime(timezone=True),
                               server_default=sa.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
                               nullable=False),
-                    sa.Column("created_by", sa.String(length=255), nullable=False),
-                    sa.Column("updated_by", sa.String(length=255), nullable=False),
                     )
 
     conn = op.get_bind()
@@ -37,8 +35,7 @@ def upgrade():
     result = conn.execute("SELECT `ssh_key`, `id` FROM `users` WHERE `ssh_key` IS NOT NULL")
     for row in result:
         ssh_key = row["ssh_key"]
-        conn.execute(f"INSERT INTO `ssh_keys` (`ssh_value`, `user_id`, `created_by`, `updated_by`) "
-                     f"VALUES ('{ssh_key}', {row['id']}, 'migration', 'migration')")
+        conn.execute(f"INSERT INTO `ssh_keys` (`ssh_value`, `user_id`) VALUES ('{ssh_key}', {row['id']})")
 
     conn.execute(text("ALTER TABLE users DROP COLUMN ssh_key"))
 

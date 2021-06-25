@@ -76,6 +76,9 @@ export default class Activity extends React.PureComponent {
         return auditLogRecords.map(auditLog => this.convertReference(auditLogs, auditLog));
     };
 
+    userLabel = user => {
+        return !user ? "Unknown" : `${user.email} (${user.username})`
+    }
 
     renderAuditLogs = (auditLogs, selected) => {
         if (isEmpty(auditLogs)) {
@@ -88,10 +91,10 @@ export default class Activity extends React.PureComponent {
                         className={`${selected && log.id === selected.id ? "selected" : ""}`}>
                         {I18n.t("history.overview", {
                             action: I18n.t(`history.actions.${log.action}`),
-                            name: log.target_name ? ` ${log.target_name}`: " ",
+                            name: log.target_name ? ` ${log.target_name}` : " ",
                             collection: I18n.t(`history.tables.${log.target_type}`),
                             date: moment(log.created_at * 1000).format("LLL"),
-                            user: (log.user || {name: "Unknown"}).name
+                            user: this.userLabel(log.user)
                         })}
                         {}
                     </li>)}
@@ -110,7 +113,8 @@ export default class Activity extends React.PureComponent {
             const refs = auditLogs[auditLogReferences[key]] || [];
             const reference = refs.find(ref => ref.id === value);
             if (reference) {
-                return `${value} - name: ${reference.name}`;
+                const name = reference.email && reference.username ? `${reference.email} (${reference.username})` : reference.name;
+                return `${value} - name: ${name}`;
             }
         }
         return (epochAttributes.indexOf(key) > -1 && !isEmpty(value)) ? new Date(value * 1000).toISOString() : value;

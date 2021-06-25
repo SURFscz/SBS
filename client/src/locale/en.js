@@ -410,9 +410,9 @@ I18n.translations.en = {
     },
     user: {
         titleUpdate: "Update your user profile keys",
-        ssh_key: "SSH public key",
-        ssh_keyPlaceholder: "Your public SSH key to login on the service",
-        ssh_keyTooltip: "Your public SSH key<br/>will be provisioned<br/>to the LDAP of services you<br/>are entitled access to.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a Mac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
+        ssh_key: "SSH public keys",
+        ssh_keyPlaceholder: "Your public SSH keys to login on services",
+        ssh_keyTooltip: "Your public SSH keys<br/>will be provisioned<br/>to the LDAP of services you<br/>are entitled access to.<br/><br/>You can also upload your public SSH key.<br/>To display hidden files on a Mac<br/>enter <code>CMD-SHIFT-PERIOD</code>",
         sshKeyError: "Invalid SSH key",
         sshConvertInfo: "Public key will be converted to the <code>OpenSSH</code> format when saving the profile",
         update: "Update",
@@ -1257,7 +1257,8 @@ I18n.translations.en = {
             "ip_networks": "IP network",
             "suspend_notifications": "Login notifications",
             "schac_home_organisations": "Schac home organisations",
-            "user_names_history": "Username history"
+            "user_names_history": "Username history",
+            "ssh_keys": "SSH key"
         }
     },
     serviceRequest: {
