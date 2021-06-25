@@ -26,6 +26,9 @@ div.org-attributes-container {
                 max-width: 300px;
                 font-weight: normal;
                 word-break: break-all;
+                &.no-break {
+                    max-width: 400px;
+                }
             }
 
             a {
