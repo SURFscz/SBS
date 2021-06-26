@@ -23,8 +23,7 @@ custom_saml_mapping = {
     "multi_value_attributes": ["edu_members", "affiliation", "scoped_affiliation", "entitlement"],
     "attribute_saml_mapping": {
         "uid": "cuid",
-        "username": "uid",
-        "ssh_key": "sshKey",
+        "username": "uid"
     },
     "custom_attribute_saml_mapping": {
         "memberships": "eduPersonEntitlement",
@@ -117,7 +116,7 @@ def attributes():
             val = getattr(user, k)
             if val:
                 result[v] = val.split(",") if k in custom_saml_mapping["multi_value_attributes"] else [val]
-
+        result["sshKey"] = [ssh_key.ssh_value for ssh_key in user.ssh_keys]
         membership_attribute = custom_saml_mapping['custom_attribute_saml_mapping']['memberships']
         result[membership_attribute] = memberships
 
@@ -156,10 +155,9 @@ def proxy_authz():
         attrs = {
             "eduPersonEntitlement": list(memberships),
             "eduPersonPrincipalName": [f"{user.username}@{eppn_scope}"],
-            "uid": [user.username]
+            "uid": [user.username],
+            "sshkey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
         }
-        if user.ssh_key:
-            attrs["sshkey"] = [user.ssh_key]
         result["attributes"] = attrs
         return result, 200
 

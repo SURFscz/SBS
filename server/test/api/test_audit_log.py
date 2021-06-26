@@ -6,8 +6,9 @@ from flask import jsonify
 from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE, ACTION_UPDATE
 from server.db.domain import User, Collaboration, Service, Organisation, Group
 from server.test.abstract_test import AbstractTest
-from server.test.seed import join_request_peter_hash, roger_name, service_cloud_name, ai_computing_name, \
-    service_mail_name, invitation_hash_curious, organisation_invitation_hash, uuc_name, group_science_name
+from server.test.seed import join_request_peter_hash, service_cloud_name, ai_computing_name, \
+    service_mail_name, invitation_hash_curious, organisation_invitation_hash, uuc_name, group_science_name, sarah_name, \
+    james_name
 
 
 class TestAuditLog(AbstractTest):
@@ -28,21 +29,29 @@ class TestAuditLog(AbstractTest):
         self.assertEqual(ACTION_CREATE, self.audit_log_by_target_type("collaboration_memberships", res)[0]["action"])
 
     def test_me_profile(self):
-        roger = self.find_entity_by_name(User, roger_name)
-        self.login("urn:roger")
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.login("urn:sarah")
 
-        body = {"ssh_key": "ssh_value",
-                "id": roger.id}
+        body = {"ssh_keys":
+            [
+                {"ssh_value": "some_ssh"},
+                {"ssh_value": "overwrite_existing", "id": sarah.ssh_keys[0].id}
+            ]
+        }
 
         self.put("/api/users", body, with_basic_auth=False)
         res = self.get("/api/audit_logs/me")
 
-        self.assertEqual(2, len(res))
         audit_logs = res["audit_logs"]
+        self.assertEqual(3, len(audit_logs))
 
+        self.assertEqual(ACTION_UPDATE, audit_logs[1]["action"])
         state_after = json.loads(audit_logs[1]["state_after"])
+        self.assertEqual(state_after["ssh_value"], "overwrite_existing")
 
-        self.assertEqual(state_after["ssh_key"], "ssh_value")
+        self.assertEqual(ACTION_CREATE, audit_logs[2]["action"])
+        state_after = json.loads(audit_logs[2]["state_after"])
+        self.assertEqual(state_after["ssh_value"], "some_ssh")
 
     def test_services_info(self):
         self.login("urn:john")
@@ -116,3 +125,15 @@ class TestAuditLog(AbstractTest):
         self.assertEqual(3, len(res["audit_logs"]))
         self.assertEqual(1, len(res["organisations"]))
         self.assertEqual(2, len(res["users"]))
+
+    def test_me_impersonate(self):
+        james = User.query.filter(User.uid == "urn:james").one()
+        self.login("urn:james")
+        body = {"ssh_keys": [{"ssh_value": "some_ssh"}]}
+        self.put("/api/users", body, with_basic_auth=False)
+
+        self.login("urn:john")
+        res = self.get("/api/audit_logs/me", with_basic_auth=False,
+                       headers={"X-IMPERSONATE-ID": james.id, "X-IMPERSONATE-UID": james.uid,
+                                "X-IMPERSONATE-NAME": james_name})
+        self.assertEqual(james_name, json.loads(res["audit_logs"][0]["state_before"])["name"])

@@ -1,5 +1,5 @@
 # -*- coding: future_fstrings -*-
-from flask import Blueprint
+from flask import Blueprint, request as current_request
 from sqlalchemy import desc, or_, and_
 from sqlalchemy.orm import load_only
 
@@ -22,11 +22,13 @@ table_names_cls_mapping = {
 @audit_log_api.route("/me", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def me():
-    user_id = query_param("user_id", False)
-    if user_id:
+    headers = current_request.headers
+    user_id = current_user_id()
+
+    impersonate_id = headers.get("X-IMPERSONATE-ID", default=None, type=int)
+    if impersonate_id:
         confirm_allow_impersonation()
-    else:
-        user_id = current_user_id()
+
     audit_logs = AuditLog.query \
         .filter((
                     (AuditLog.target_id == user_id) & (AuditLog.target_type == User.__tablename__)) | (

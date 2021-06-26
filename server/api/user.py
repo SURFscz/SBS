@@ -324,43 +324,45 @@ def activate():
 @json_endpoint
 def update_user():
     headers = current_request.headers
-    user_id = current_request.get_json()["id"]
+    user_id = current_user_id()
 
     impersonate_id = headers.get("X-IMPERSONATE-ID", default=None, type=int)
     if impersonate_id:
         confirm_allow_impersonation()
-    else:
-        if user_id != current_user_id():
-            raise Forbidden()
 
     user = User.query.get(user_id)
     user_json = current_request.get_json()
 
-    if "ssh_keys" in user_json:
-        for ssh_key in user_json["ssh_keys"]:
-            ssh_value = ssh_key["ssh_value"]
-            if ssh_value and (ssh_value.startswith("---- BEGIN SSH2 PUBLIC KEY ----")
-                              or ssh_value.startswith("-----BEGIN PUBLIC KEY-----")  # noQA:W503
-                              or ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----")):  # noQA:W503
-                with tempfile.NamedTemporaryFile() as f:
-                    f.write(ssh_value.encode())
-                    f.flush()
-                    options = ["ssh-keygen", "-i", "-f", f.name]
-                    if ssh_value.startswith("-----BEGIN PUBLIC KEY-----"):
-                        options.append("-mPKCS8")
-                    if ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----"):
-                        options.append("-mPEM")
-                    res = subprocess.run(options, stdout=subprocess.PIPE)
-                    if res.returncode == 0:
-                        ssh_key["ssh_value"] = res.stdout.decode()
-        user.ssh_keys.clear()
-        for ssh_key in user_json["ssh_keys"]:
-            ssh_value = ssh_key["ssh_value"]
-            if ssh_value:
-                new_ssh_key = SshKey(ssh_value=ssh_value, user_id=user.id)
-                if "id" in ssh_key:
-                    new_ssh_key.id = ssh_key["id"]
-                db.session.merge(new_ssh_key)
+    ssh_keys_json = [ssh_key for ssh_key in user_json["ssh_keys"] if ssh_key["ssh_value"]]
+    for ssh_key in ssh_keys_json:
+        ssh_value = ssh_key["ssh_value"]
+        if ssh_value and (ssh_value.startswith("---- BEGIN SSH2 PUBLIC KEY ----")
+                          or ssh_value.startswith("-----BEGIN PUBLIC KEY-----")  # noQA:W503
+                          or ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----")):  # noQA:W503
+            with tempfile.NamedTemporaryFile() as f:
+                f.write(ssh_value.encode())
+                f.flush()
+                options = ["ssh-keygen", "-i", "-f", f.name]
+                if ssh_value.startswith("-----BEGIN PUBLIC KEY-----"):
+                    options.append("-mPKCS8")
+                if ssh_value.startswith("-----BEGIN RSA PUBLIC KEY-----"):
+                    options.append("-mPEM")
+                res = subprocess.run(options, stdout=subprocess.PIPE)
+                if res.returncode == 0:
+                    ssh_key["ssh_value"] = res.stdout.decode()
+
+    ssh_key_ids = [ssh_key["id"] for ssh_key in ssh_keys_json if "id" in ssh_key]
+    for ssh_key in user.ssh_keys:
+        if ssh_key.id not in ssh_key_ids:
+            db.session.delete(ssh_key)
+        else:
+            existing_ssh_key = next(s for s in ssh_keys_json if int(s.get("id", -1)) == ssh_key.id)
+            ssh_key.ssh_value = existing_ssh_key["ssh_value"]
+            db.session.merge(ssh_key)
+    new_ssh_keys = [ssh_key for ssh_key in ssh_keys_json if "id" not in ssh_key]
+    for ssh_key in new_ssh_keys:
+        db.session.merge(SshKey(ssh_value=ssh_key["ssh_value"], user_id=user.id))
+
     user.updated_by = user.uid
     db.session.merge(user)
     db.session.commit()

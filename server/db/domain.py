@@ -53,6 +53,7 @@ class User(Base, db.Model):
     suspend_notifications = db.relationship("SuspendNotification", back_populates="user", cascade="all, delete-orphan",
                                             passive_deletes=True)
     mfa_reset_token = db.Column("mfa_reset_token", db.String(length=512), nullable=True)
+    user_mails = db.relationship("UserMail", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
 
 
 services_organisations_association = db.Table(
@@ -469,5 +470,16 @@ class UserNameHistory(Base, db.Model):
     __tablename__ = "user_names_history"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     username = db.Column("username", db.String(length=255), nullable=True)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+
+
+class UserMail(Base, db.Model):
+    __tablename__ = "user_mails"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    content = db.Column("content", db.Text(), nullable=False)
+    mail_type = db.Column("mail_type", db.String(length=255), nullable=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="user_mails")
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
