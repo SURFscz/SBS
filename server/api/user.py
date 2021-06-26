@@ -145,6 +145,16 @@ def user_search():
     return res, 200
 
 
+@user_api.route("/query", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def user_query():
+    confirm_write_access()
+    wildcard = f"%{query_param('q')}%"
+    conditions = [User.name.ilike(wildcard), User.username.ilike(wildcard), User.uid.ilike(wildcard),
+                  User.email.ilike(wildcard)]
+    return User.query.filter(or_(*conditions)).limit(full_text_search_autocomplete_limit).all(), 200
+
+
 @user_api.route("/platform_admins", strict_slashes=False)
 @json_endpoint
 def get_platform_admins():
@@ -377,6 +387,13 @@ def other():
     uid = query_param("uid")
     user = _user_query().filter(User.uid == uid).one()
     return _user_json_response(user)
+
+
+@user_api.route("/find_by_id", strict_slashes=False)
+@json_endpoint
+def find_by_id():
+    confirm_write_access()
+    return User.query.get(query_param("id")), 200
 
 
 @user_api.route("/attribute_aggregation", strict_slashes=False)

@@ -48,6 +48,7 @@ I18n.translations.nl = {
         organisationInvitation: "Uitnodiging",
         invite: "Leden toevoegen",
         invitation: "Uitnodiging",
+        users: "Gebruikers"
     },
     login: {
         title: "Research Access Management",
@@ -61,6 +62,7 @@ I18n.translations.nl = {
         sram: "RESEARCH ACCESS MANAGEMENT PLATFORM",
         edit: "Wijzig",
         history: "Geschiedenis",
+        details: "Details",
         backToHome: "Terug naar home",
         firstTime: "Onboarding",
         collaborationRequest: "Vraag een nieuwe samenwerking aan",
@@ -78,6 +80,7 @@ I18n.translations.nl = {
             orgCollaborations: "Org Samenwerkingen",
             coServices: "CO Diensten",
             coAdmins: "CO admins",
+            users: "Users",
             members: "CO Leden",
             serviceOrganisations: "Organisatie toegang",
             serviceCollaborations: "Samenwerkingen inzichten",
@@ -135,6 +138,7 @@ I18n.translations.nl = {
             icon: "",
             profile: "Hallo {{name}}",
             subProfile: "Je bent momenteel ingelogd met je instellingsaccount via eduTEAMS",
+            subOtherProfile: "Het account van {{name}} is aangemaakt op {{date}}",
             institute: "Instelling",
             role: "Rol",
             title: "SRAM platform admins",
@@ -143,6 +147,18 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek administrators...",
             new: "Nieuw lid",
             me: "Jij"
+        },
+        allUsers: {
+            name_email: "Naam / email",
+            institute: "Instelling",
+            title: "Gebruikers",
+            affiliation: "Affiliatie",
+            username: "Username",
+            uid: "Uid",
+            noEntities: "Zoek eerst gebruikers...",
+            searchPlaceHolder: "Zoek gebruikers...",
+            me: "Jij",
+            moreResults: "Er zijn nog meer zoek resultaten, verfijn je zoek term."
         },
         orgMembers: {
             title: "Org admin & managers",

@@ -47,7 +47,7 @@ import {
     faUserFriends,
     faUserLock,
     faUsers,
-    faUserSecret,
+    faUserSecret, faVrCardboard,
     faWindowClose,
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -76,6 +76,7 @@ export function addIcons() {
         faExternalLinkAlt,
         faFileUpload,
         faGavel,
+        faVrCardboard,
         faGlobe,
         faHistory,
         faInfo,

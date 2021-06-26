@@ -22,6 +22,10 @@ class Entities extends React.Component {
         }
     }
 
+    componentDidMount = () => {
+        setTimeout(() => this.props.inputFocus && this.input && this.input.focus(), 150);
+    }
+
     newEntity = () => {
         const {newEntityPath, newEntityFunc} = this.props;
         if (newEntityFunc) {
@@ -37,14 +41,16 @@ class Entities extends React.Component {
     queryChanged = e => {
         const query = e.target.value;
         this.setState({query: query});
-        const {searchCallback, entities, searchAttributes} = this.props;
-
+        const {searchCallback, customSearch, entities, searchAttributes} = this.props;
+        if (customSearch) {
+            customSearch(query);
+        }
         if (searchCallback) {
             searchCallback(this.filterEntities(entities, query, searchAttributes));
         }
     }
 
-    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, filters, explain) => {
+    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch) => {
         return (
             <section className="entities-search">
 
@@ -56,10 +62,11 @@ class Entities extends React.Component {
                 {showNew && <Button onClick={this.newEntity} className="plus"
                                     txt={I18n.t(`models.${modelName}.new`)}/>
                 }
-                {!isEmpty(searchAttributes) &&
+                {(!isEmpty(searchAttributes) || customSearch) &&
                 <div className={`search ${showNew ? "" : "standalone"}`}>
                     <input type="text"
                            onChange={this.queryChanged}
+                           ref={ref => this.input = ref}
                            value={query}
                            placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
                     <FontAwesomeIcon icon="search"/>
@@ -68,8 +75,8 @@ class Entities extends React.Component {
         );
     };
 
-    filterEntities = (entities, query, searchAttributes) => {
-        if (isEmpty(query)) {
+    filterEntities = (entities, query, searchAttributes, customSearch) => {
+        if (isEmpty(query) || customSearch) {
             return entities;
         }
         query = query.toLowerCase();
@@ -141,14 +148,14 @@ class Entities extends React.Component {
 
     render() {
         const {
-            modelName, entities, showNew, searchAttributes, columns, children, loading,
+            modelName, entities, showNew, searchAttributes, columns, children, loading, customSearch,
             actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = ""
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
         }
         const {query, sorted, reverse, showExplanation} = this.state;
-        const filteredEntities = this.filterEntities(entities, query, searchAttributes);
+        const filteredEntities = this.filterEntities(entities, query, searchAttributes, customSearch);
         const sortedEntities = sortObjects(filteredEntities, sorted, reverse);
         return (
             <div className={`mod-entities ${className}`}>
@@ -158,7 +165,7 @@ class Entities extends React.Component {
                     isVisible={showExplanation}>
                     {explain}
                 </Explain>}
-                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain)}
+                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch)}
                 {actions}
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children, rowLinkMapper)}
                 <div>{this.props.children}</div>
@@ -180,10 +187,12 @@ Entities.propTypes = {
     newEntityFunc: PropTypes.func,
     rowLinkMapper: PropTypes.func,
     searchCallback: PropTypes.func,
+    customSearch: PropTypes.func,
     showNew: PropTypes.bool,
     actions: PropTypes.any,
     filters: PropTypes.any,
-    explain: PropTypes.any
+    explain: PropTypes.any,
+    inputFocus: PropTypes.bool
 };
 
 export default Entities;

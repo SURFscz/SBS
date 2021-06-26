@@ -6,7 +6,7 @@ from sqlalchemy.orm import load_only
 from server.api.base import json_endpoint, query_param
 from server.auth.security import current_user_id, confirm_read_access, confirm_group_member, \
     is_current_user_collaboration_admin, is_current_user_organisation_admin_or_manager, \
-    is_organisation_admin_or_manager, confirm_allow_impersonation
+    is_organisation_admin_or_manager, confirm_allow_impersonation, confirm_write_access
 from server.db.audit_mixin import AuditLog
 from server.db.domain import User, Organisation, Collaboration, Group, Service
 
@@ -19,6 +19,17 @@ table_names_cls_mapping = {
 }
 
 
+def _user_activity(user_id):
+    audit_logs = AuditLog.query \
+        .filter((
+                    (AuditLog.target_id == user_id) & (AuditLog.target_type == User.__tablename__)) | (
+                    AuditLog.subject_id == user_id)) \
+        .order_by(desc(AuditLog.created_at)) \
+        .limit(150) \
+        .all()
+    return _add_references(audit_logs), 200
+
+
 @audit_log_api.route("/me", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def me():
@@ -27,16 +38,16 @@ def me():
 
     impersonate_id = headers.get("X-IMPERSONATE-ID", default=None, type=int)
     if impersonate_id:
-        confirm_allow_impersonation()
+        confirm_allow_impersonation(confirm_feature_impersonation_allowed=False)
 
-    audit_logs = AuditLog.query \
-        .filter((
-                    (AuditLog.target_id == user_id) & (AuditLog.target_type == User.__tablename__)) | (
-                    AuditLog.subject_id == user_id)) \
-        .order_by(desc(AuditLog.created_at)) \
-        .limit(100) \
-        .all()
-    return _add_references(audit_logs), 200
+    return _user_activity(user_id)
+
+
+@audit_log_api.route("/other/<user_id>", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def other(user_id):
+    confirm_write_access()
+    return _user_activity(user_id)
 
 
 @audit_log_api.route("/activity", methods=["GET"], strict_slashes=False)
@@ -72,7 +83,7 @@ def info(query_id, collection_name):
         .filter(or_(and_(AuditLog.parent_id == query_id, AuditLog.parent_name == collection_name),
                     and_(AuditLog.target_id == query_id, AuditLog.target_type == collection_name))) \
         .order_by(desc(AuditLog.created_at)) \
-        .limit(100) \
+        .limit(150) \
         .all()
 
     res = _add_references(audit_logs)

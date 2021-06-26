@@ -48,6 +48,7 @@ I18n.translations.en = {
         organisationInvitation: "Invitation",
         invite: "Add members",
         invitation: "Invitation",
+        users: "Users"
     },
     login: {
         title: "Research Access Management",
@@ -61,6 +62,7 @@ I18n.translations.en = {
         sram: "SURF RESEARCH ACCESS MANAGEMENT PLATFORM",
         edit: "Edit",
         history: "History",
+        details: "Details",
         backToHome: "Back to home",
         firstTime: "Onboarding",
         collaborationRequest: "Request for new Collaboration",
@@ -79,6 +81,7 @@ I18n.translations.en = {
             coServices: "CO Services",
             coAdmins: "CO Admins",
             members: "CO Members",
+            users: "Users",
             serviceOrganisations: "Organisation access",
             serviceCollaborations: "Collaborations insights",
             collaborationRequests: "Coll requests",
@@ -135,6 +138,7 @@ I18n.translations.en = {
             icon: "",
             profile: "Hi {{name}}",
             subProfile: "You are currently logged in with your institution account via eduTEAMS",
+            subOtherProfile: "The account of {{name}} was created at {{date}}",
             institute: "Institution",
             role: "Role",
             title: "SRAM platform administrators",
@@ -143,6 +147,18 @@ I18n.translations.en = {
             searchPlaceHolder: "Search administrators...",
             new: "New Member",
             me: "You"
+        },
+        allUsers: {
+            name_email: "Name / email",
+            institute: "Institution",
+            title: "Users",
+            affiliation: "Affiliation",
+            username: "Username",
+            uid: "Uid",
+            noEntities: "First search for users...",
+            searchPlaceHolder: "Search users...",
+            me: "You",
+            moreResults: "There are more results then shown, please refine your search."
         },
         orgMembers: {
             title: "Org admin & managers",

@@ -4,6 +4,7 @@ import goat from "./goat.wav";
 import I18n from "i18n-js";
 import {ReactComponent as Logo} from "../icons/ram.svg";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
+import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {AppStore} from "../stores/AppStore";
@@ -21,6 +22,7 @@ import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-questi
 import MemberJoinRequests from "../components/redesign/MemberJoinRequests";
 import {ReactComponent as CollaborationRequestsIcon} from "../icons/faculty.svg";
 import MemberCollaborationRequests from "../components/redesign/MemberCollaborationRequests";
+import Users from "../components/redesign/Users";
 
 class Home extends React.Component {
 
@@ -53,6 +55,7 @@ class Home extends React.Component {
                 tabs.push(this.getCollaborationsTab(true));
                 tabs.push(this.getPlatformAdminsTab());
                 tabs.push(this.getServicesTab());
+                tabs.push(this.getUsersTab());
                 break;
             case ROLES.ORG_ADMIN:
             case ROLES.ORG_MANAGER:
@@ -124,6 +127,14 @@ class Home extends React.Component {
             <PlatformAdmins {...this.props}/>
         </div>)
     }
+
+    getUsersTab = () => {
+        return (<div key="users" name="users" label={I18n.t("home.tabs.users")}
+                     icon={<MembersIcon/>}>
+            <Users {...this.props}/>
+        </div>)
+    }
+
     getServicesTab = () => {
         return (<div key="services" name="services" label={I18n.t("home.tabs.services")} icon={<ServicesIcon/>}>
             <Services {...this.props}/>

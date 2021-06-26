@@ -49,6 +49,22 @@ class TestAuditLog(AbstractTest):
         state_after = json.loads(audit_logs[2]["state_after"])
         self.assertEqual(state_after["ssh_value"], "some_ssh")
 
+    def test_other_(self):
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.login("urn:sarah")
+        body = {
+            "ssh_keys": [{"ssh_value": "some_ssh"}, {"ssh_value": "overwrite_existing", "id": sarah.ssh_keys[0].id}]}
+        self.put("/api/users", body, with_basic_auth=False)
+
+        self.login("urn:john")
+        res = self.get(f"/api/audit_logs/other/{sarah.id}")
+        self.assertEqual("sarah", res["users"][0]["username"])
+
+    def test_other_403(self):
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.login("urn:mary")
+        self.get(f"/api/audit_logs/other/{sarah.id}", response_status_code=403)
+
     def test_services_info(self):
         self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id

@@ -1,0 +1,43 @@
+.mod-users {
+    position: relative;
+
+    .mod-spinner-loading {
+        position: absolute;
+        top: -90px;
+        right: 50%;
+    }
+
+    .more-results-available {
+        text-align: center;
+        margin: 0 auto;
+        flex-grow: 2;
+    }
+
+    table.allUsers {
+
+        thead {
+            th {
+                &.name {
+                    width: 25%;
+                }
+
+                &.schac_home_organisation {
+                    width: 10%;
+                }
+
+                &.affiliation {
+                    width: 25%;
+                }
+
+                &.username {
+                    width: 15%;
+                }
+
+                &.uid {
+                    width: 25%;
+                }
+            }
+        }
+    }
+
+}

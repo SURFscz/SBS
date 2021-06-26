@@ -116,6 +116,10 @@ export function other(uid) {
     return fetchJson(`/api/users/other?uid=${encodeURIComponent(uid)}`);
 }
 
+export function findUserById(id) {
+    return fetchJson(`/api/users/find_by_id?id=${id}`);
+}
+
 export function searchUsers(q, organisationId, collaborationId, limitToOrganisationAdmins, limitToCollaborationAdmins) {
     const organisationIdPart = isEmpty(organisationId) ? "" : `&organisation_id=${organisationId}`;
     const collaborationIdPart = isEmpty(collaborationId) ? "" : `&collaboration_id=${collaborationId}`;
@@ -150,6 +154,10 @@ export function deleteUser() {
 
 export function platformAdmins() {
     return fetchJson("/api/users/platform_admins");
+}
+
+export function queryForUsers(q) {
+    return fetchJson(`/api/users/query?q=${encodeURIComponent(q)}`);
 }
 
 //MFA
@@ -574,6 +582,10 @@ export function allServiceConnectionRequests(serviceId) {
 //AuditLog
 export function auditLogsMe() {
     return fetchJson("/api/audit_logs/me");
+}
+
+export function auditLogsUser(id) {
+    return fetchJson(`/api/audit_logs/other/${id}`);
 }
 
 export function auditLogsInfo(objectId, collectionNames) {
