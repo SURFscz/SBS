@@ -43,6 +43,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import DeadEnd from "./DeadEnd";
 import SecondFactorAuthentication from "./SecondFactorAuthentication";
 import ServiceDenied from "./ServiceDenied";
+import UserDetail from "./UserDetail";
 
 addIcons();
 
@@ -357,6 +358,11 @@ class App extends React.Component {
                                    Component={Profile}
                                    config={config}
                                    refreshUser={this.refreshUserMemberships} {...props}/>}/>
+
+                        {currentUser.admin && <Route exact path="/users/:id/:tab?"
+                               render={props => <ProtectedRoute config={config}
+                                                                currentUser={currentUser}
+                                                                Component={UserDetail} {...props}/>}/>}
 
                         <Route path="/system/:tab?"
                                render={props => <ProtectedRoute

@@ -1,0 +1,21 @@
+@import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
+
+.mod-user-details {
+
+    div.user-profile {
+        max-width: $medium;
+        margin: 25px auto;
+        width: 100%;
+
+        div.input-field, div.select-field {
+            margin-top: 15px;
+        }
+
+        div.checkbox {
+            margin-top: 10px;
+        }
+
+    }
+
+}

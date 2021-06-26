@@ -124,8 +124,12 @@ class TestSecurity(AbstractTest):
         def do_test_impersonation_forbidden():
             with self.app.app_context():
                 session["user"] = {"uid": "urn:nope", "admin": True, "confirmed_admin": True}
-                self.app.app_config.feature.impersonation_allowed = False
                 confirm_allow_impersonation()
+
+        with self.app.app_context():
+            session["user"] = {"uid": "urn:nope", "admin": True, "confirmed_admin": True}
+            self.app.app_config.feature.impersonation_allowed = False
+            confirm_allow_impersonation(confirm_feature_impersonation_allowed=False)
 
         self.assertRaises(Forbidden, do_test_impersonation_forbidden)
         self.app.app_config.feature.impersonation_allowed = True

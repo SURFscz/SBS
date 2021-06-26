@@ -8,6 +8,7 @@ import responses
 from flask import current_app
 
 from server.db.db import db
+from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, Collaboration, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name
@@ -132,6 +133,12 @@ class TestUser(AbstractTest):
         self.assertEqual(0, len(res["collaboration_memberships"]))
         self.assertEqual(1, len(res["organisation_memberships"]))
         self.assertEqual("Research", res["organisation_memberships"][0]["organisation"]["category"])
+
+    def test_find_by_id(self):
+        self.login("urn:john")
+        user_id = User.query.filter(User.uid == "urn:mary").one().id
+        res = self.get("/api/users/find_by_id", query_data={"id": user_id})
+        self.assertEqual("urn:mary", res["uid"])
 
     def test_attribute_aggregation_eppn(self):
         res = self.get("/api/users/attribute_aggregation",
@@ -314,3 +321,19 @@ class TestUser(AbstractTest):
             self.assertFalse(user["second_factor_confirmed"])
             self.assertFalse("organisation_memberships" in user)
             self.assertTrue(user["admin"])
+
+    def test_query(self):
+        res = self.get("/api/users/query", query_data={"q": "AMES"})
+        self.assertEqual(1, len(res))
+        self.assertEqual("james@example.org", res[0]["email"])
+
+        res = self.get("/api/users/query", query_data={"q": "BYR"})
+        self.assertEqual(1, len(res))
+        self.assertEqual("james@example.org", res[0]["email"])
+
+        res = self.get("/api/users/query", query_data={"q": "@EX"})
+        self.assertEqual(13, len(res))
+
+        # Ensure max limit of 16 - full_text_search_autocomplete_limit
+        res = self.get("/api/users/query", query_data={"q": "@"})
+        self.assertEqual(full_text_search_autocomplete_limit, len(res))
