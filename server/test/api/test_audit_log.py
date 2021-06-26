@@ -32,12 +32,8 @@ class TestAuditLog(AbstractTest):
         sarah = self.find_entity_by_name(User, sarah_name)
         self.login("urn:sarah")
 
-        body = {"ssh_keys":
-            [
-                {"ssh_value": "some_ssh"},
-                {"ssh_value": "overwrite_existing", "id": sarah.ssh_keys[0].id}
-            ]
-        }
+        body = {
+            "ssh_keys": [{"ssh_value": "some_ssh"}, {"ssh_value": "overwrite_existing", "id": sarah.ssh_keys[0].id}]}
 
         self.put("/api/users", body, with_basic_auth=False)
         res = self.get("/api/audit_logs/me")
