@@ -119,3 +119,11 @@ class TestSecurity(AbstractTest):
             confirm_allow_impersonation()
 
         self.assertRaises(Forbidden, do_test_impersonation_forbidden)
+
+    def test_impersonation_forbidden_by_configuration(self):
+        def do_test_impersonation_forbidden():
+            self.app.app_config.feature.impersonation_allowed = False
+            confirm_allow_impersonation()
+
+        self.assertRaises(Forbidden, do_test_impersonation_forbidden)
+        self.app.app_config.feature.impersonation_allowed = True

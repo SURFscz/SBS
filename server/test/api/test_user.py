@@ -153,37 +153,27 @@ class TestUser(AbstractTest):
                  response_status_code=404)
 
     def test_update(self):
-        roger = self.find_entity_by_name(User, roger_name)
-
         self.login("urn:roger")
 
-        body = {"ssh_key": "ssh_key",
-                "id": roger.id,
+        body = {"ssh_keys": [{"ssh_value": "ssh_key"}],
                 "email": "bogus"}
 
         self.put("/api/users", body, with_basic_auth=False)
 
-        roger = User.query.get(roger.id)
-        roger.ssh_key = "ssh_key"
-
-    def test_update_someone_else_forbidden(self):
-        james = self.find_entity_by_name(User, james_name)
-
-        self.login("urn:roger")
-
-        self.put("/api/users", {"id": james.id}, with_basic_auth=False, response_status_code=403)
+        roger = User.query.filter(User.uid == "urn:roger").one()
+        self.assertEqual("ssh_key", roger.ssh_keys[0].ssh_value)
+        self.assertIsNone(roger.email)
 
     def test_update_impersonation(self):
-        james = self.find_entity_by_name(User, james_name)
-
         self.login("urn:john")
 
-        body = {"id": james.id,
-                "ssh_key": "bogus"}
+        body = {"ssh_keys": [{"ssh_value": "bogus"}]}
+        james = User.query.filter(User.uid == "urn:james").one()
 
-        self.put("/api/users", body, headers={"X-IMPERSONATE-ID": 999}, with_basic_auth=False)
-        james = self.find_entity_by_name(User, james_name)
-        self.assertEqual("bogus", james.ssh_key)
+        self.put("/api/users", body, headers={"X-IMPERSONATE-ID": james.id, "X-IMPERSONATE-UID": james.uid,
+                                              "X-IMPERSONATE-NAME": james_name}, with_basic_auth=False)
+        james = User.query.filter(User.uid == "urn:james").one()
+        self.assertEqual("bogus", james.ssh_keys[0].ssh_value)
 
     def test_update_user_service_profile_ssh2_key_conversion(self):
         self.do_test_update_user_profile_ssk_key_conversion("ssh2.pub")
@@ -198,19 +188,11 @@ class TestUser(AbstractTest):
         user = self.find_entity_by_name(User, john_name)
         self.login("urn:john")
         ssh2_pub = self.read_file(file_name)
-        body = {"ssh_key": ssh2_pub,
+        body = {"ssh_keys": [{"ssh_value": ssh2_pub}],
                 "convertSSHKey": True,
                 "id": user.id}
         res = self.put("/api/users", body=body)
-        self.assertTrue(res["ssh_key"].startswith("ssh-rsa"))
-
-    def test_update_user_service_profile_ssh_key_conversion_not_default(self):
-        user = self.find_entity_by_name(User, john_name)
-        self.login("urn:john")
-        ssh2_pub = self.read_file("ssh2.pub")
-        body = {"ssh_key": ssh2_pub, "id": user.id}
-        res = self.put("/api/users", body=body)
-        self.assertTrue(res["ssh_key"].startswith("---- BEGIN SSH2 PUBLIC KEY ----"))
+        self.assertTrue(res["ssh_keys"][0]["ssh_value"].startswith("ssh-rsa"))
 
     def test_upgrade_super_account(self):
         self.login("urn:mike")
@@ -305,6 +287,7 @@ class TestUser(AbstractTest):
 
         self.login("urn:roger")
         body = {"id": roger.id,
+                "ssh_keys": [],
                 "email": "bogus"}
         self.put("/api/users", body, with_basic_auth=False)
 

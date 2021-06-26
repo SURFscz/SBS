@@ -15,6 +15,7 @@ class TestPlsc(AbstractTest):
         sarah = next(u for u in users_ if u["name"] == sarah_name)
         self.assertEqual("sarah@uva.org", sarah["email"])
         self.assertEqual("sarah", sarah["username"])
+        self.assertEqual("some-lame-key", sarah["ssh_keys"][0])
 
         services_ = res["services"]
         self.assertEqual(8, len(services_))
