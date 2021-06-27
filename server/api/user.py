@@ -393,7 +393,7 @@ def other():
 @json_endpoint
 def find_by_id():
     confirm_write_access()
-    return User.query.get(query_param("id")), 200
+    return _user_query().filter(User.id == query_param("id")).one(), 200
 
 
 @user_api.route("/attribute_aggregation", strict_slashes=False)

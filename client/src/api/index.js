@@ -101,7 +101,7 @@ export function me(config) {
         //sub = "urn:admin";
         // sub = "urn:suspended";
         //Need to mock a login
-        return postPutJson("/api/mock", {sub, "email": "john@example.com"}, "PUT")
+        return postPutJson("/api/mock", {sub, "name": "Mock User", "email": "john@example.com"}, "PUT")
             .then(() => fetchJson("/api/users/me", {}, {}, false));
     } else {
         return fetchJson("/api/users/me", {}, {}, false);
@@ -184,6 +184,7 @@ export function tokenResetRequest(admin, message) {
 export function reset2fa(token) {
     return postPutJson("/api/mfa/reset2fa", {token}, "POST", false);
 }
+
 //Services
 export function serviceNameExists(name, existingService = null) {
     return fetchJson(`/api/services/name_exists?name=${encodeURIComponent(name)}&existing_service=${encodeURIComponent(existingService)}`);
@@ -593,7 +594,7 @@ export function auditLogsInfo(objectId, collectionNames) {
 }
 
 export function auditLogsActivity(limit) {
-    return fetchJson(`/api/audit_logs/activity?limit=${limit}`);
+    return fetchJson(`/api/audit_logs/activity?${limit ? '?limit=' + limit : ''}`);
 }
 
 //IP-networks

@@ -150,15 +150,23 @@ I18n.translations.nl = {
         },
         allUsers: {
             name_email: "Naam / email",
+            name: "Naam",
+            email: "Email",
+            entitlement: "Entitlement",
+            eduperson_principal_name: "Eduperson principal name",
             institute: "Instelling",
+            schac_home_organisation: "Instelling",
             title: "Gebruikers",
+            last_login_date: "Laaste login datum",
             affiliation: "Affiliatie",
             username: "Username",
             uid: "Uid",
             noEntities: "Zoek eerst gebruikers...",
             searchPlaceHolder: "Zoek gebruikers...",
             me: "Jij",
-            moreResults: "Er zijn nog meer zoek resultaten, verfijn je zoek term."
+            moreResults: "Er zijn nog meer zoek resultaten, verfijn je zoek term.",
+            noResults: "Geen gebruikers gevonden...",
+            activity: "User historie"
         },
         orgMembers: {
             title: "Org admin & managers",

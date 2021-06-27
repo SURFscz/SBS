@@ -150,15 +150,23 @@ I18n.translations.en = {
         },
         allUsers: {
             name_email: "Name / email",
+            name: "Name",
+            email: "Email",
+            entitlement: "Entitlement",
+            eduperson_principal_name: "Eduperson principal name",
             institute: "Institution",
+            schac_home_organisation: "Institution",
             title: "Users",
+            last_login_date: "Last login date",
             affiliation: "Affiliation",
             username: "Username",
             uid: "Uid",
             noEntities: "First search for users...",
             searchPlaceHolder: "Search users...",
             me: "You",
-            moreResults: "There are more results then shown, please refine your search."
+            moreResults: "There are more results then shown, please refine your search.",
+            noResults: "No users were found...",
+            activity: "User history"
         },
         orgMembers: {
             title: "Org admin & managers",

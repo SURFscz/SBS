@@ -20,12 +20,13 @@ table_names_cls_mapping = {
 
 
 def _user_activity(user_id):
+    limit = int(query_param("limit", False, 1000))
     audit_logs = AuditLog.query \
         .filter((
                     (AuditLog.target_id == user_id) & (AuditLog.target_type == User.__tablename__)) | (
                     AuditLog.subject_id == user_id)) \
         .order_by(desc(AuditLog.created_at)) \
-        .limit(150) \
+        .limit(limit) \
         .all()
     return _add_references(audit_logs), 200
 
@@ -53,10 +54,10 @@ def other(user_id):
 @audit_log_api.route("/activity", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def activity():
-    limit = int(query_param("limit", False, 50))
+    limit = int(query_param("limit", False, 0))
     audit_logs = AuditLog.query \
         .order_by(desc(AuditLog.created_at)) \
-        .limit(limit if limit <= 250 else 250) \
+        .limit(limit if limit != 0 else None) \
         .all()
 
     return _add_references(audit_logs), 200

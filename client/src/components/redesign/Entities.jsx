@@ -109,7 +109,8 @@ class Entities extends React.Component {
         }
     }
 
-    renderEntities = (entities, sorted, reverse, modelName, tableClassName, columns, children, rowLinkMapper) => {
+    renderEntities = (entities, sorted, reverse, modelName, tableClassName, columns, children,
+                      rowLinkMapper, customNoEntities) => {
         const hasEntities = !isEmpty(entities);
         return (
             <section className="entities-list">
@@ -141,7 +142,7 @@ class Entities extends React.Component {
                     </tbody>
                 </table>}
                 {(!hasEntities && !children) &&
-                <p className="no-entities">{I18n.t(`models.${modelName}.noEntities`)}</p>}
+                <p className="no-entities">{customNoEntities || I18n.t(`models.${modelName}.noEntities`)}</p>}
             </section>
         );
     };
@@ -149,7 +150,8 @@ class Entities extends React.Component {
     render() {
         const {
             modelName, entities, showNew, searchAttributes, columns, children, loading, customSearch,
-            actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = ""
+            actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = "",
+            customNoEntities
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -167,7 +169,8 @@ class Entities extends React.Component {
                 </Explain>}
                 {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch)}
                 {actions}
-                {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children, rowLinkMapper)}
+                {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children,
+                    rowLinkMapper, customNoEntities)}
                 <div>{this.props.children}</div>
             </div>);
     }
@@ -179,6 +182,7 @@ Entities.propTypes = {
     modelName: PropTypes.string.isRequired,
     tableClassName: PropTypes.string,
     className: PropTypes.string,
+    customNoEntities: PropTypes.string,
     searchAttributes: PropTypes.array,
     defaultSort: PropTypes.string.isRequired,
     loading: PropTypes.bool.isRequired,
