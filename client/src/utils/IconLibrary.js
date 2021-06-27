@@ -1,4 +1,3 @@
-
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {
     faAngleDown,
@@ -26,6 +25,7 @@ import {
     faGavel,
     faGlobe,
     faHistory,
+    faIdBadge,
     faInfo,
     faInfoCircle,
     faLightbulb,
@@ -47,7 +47,7 @@ import {
     faUserFriends,
     faUserLock,
     faUsers,
-    faUserSecret, faVrCardboard,
+    faUserSecret,
     faWindowClose,
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -76,7 +76,7 @@ export function addIcons() {
         faExternalLinkAlt,
         faFileUpload,
         faGavel,
-        faVrCardboard,
+        faIdBadge,
         faGlobe,
         faHistory,
         faInfo,

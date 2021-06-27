@@ -20,7 +20,8 @@ class Users extends React.Component {
         this.state = {
             searching: false,
             users: [],
-            moreToShow: false
+            moreToShow: false,
+            noResults: false
         };
     }
 
@@ -35,7 +36,7 @@ class Users extends React.Component {
             this.delayedAutocomplete(query);
         }
         if (isEmpty(query)) {
-            this.setState({users: [], moreToShow: false});
+            this.setState({users: [], moreToShow: false, noResults: false});
         }
     };
 
@@ -44,7 +45,8 @@ class Users extends React.Component {
             this.setState({
                 users: results,
                 searching: false,
-                moreToShow: results.length > 15
+                moreToShow: results.length > 15,
+                noResults: results.length === 0
             })
         })
     }, 200);
@@ -54,7 +56,7 @@ class Users extends React.Component {
     </div>)
 
     render() {
-        const {searching, users, moreToShow} = this.state;
+        const {searching, users, moreToShow, noResults} = this.state;
         const {user: currentUser} = this.props;
         const columns = [
             {
@@ -93,6 +95,7 @@ class Users extends React.Component {
                       defaultSort="name"
                       filters={moreToShow && this.moreResultsAvailable()}
                       columns={columns}
+                      customNoEntities={noResults && I18n.t("models.allUsers.noResults")}
                       loading={false}
                       inputFocus={true}
                       customSearch={this.search}

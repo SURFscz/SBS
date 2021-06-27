@@ -25,8 +25,9 @@ import Select from "react-select";
 import MemberJoinRequests from "../components/redesign/MemberJoinRequests";
 import MemberCollaborationRequests from "../components/redesign/MemberCollaborationRequests";
 import {logout} from "../utils/Login";
+import {filterAuditLogs} from "../utils/AuditLog";
 
-const options = [25, 50, 100, 150, 200, 250].map(nbr => ({value: nbr, label: nbr}));
+const options = [25, 50, 100, 150, 200, 250, "All"].map(nbr => ({value: nbr, label: nbr}));
 
 class System extends React.Component {
 
@@ -103,47 +104,14 @@ class System extends React.Component {
 
     changeLimit = val => {
         this.setState({limit: val, busy: true}, () => {
-            auditLogsActivity(val.value).then(res => {
+            auditLogsActivity(val.value === "All" ? null : val.value).then(res => {
                 this.setState({
                     auditLogs: res,
-                    filteredAuditLogs: this.filterAuditLogs(res, this.state.query),
+                    filteredAuditLogs: filterAuditLogs(res, this.state.query),
                     busy: false
                 });
             });
         });
-    }
-
-    filterAuditLogs = (auditLogs, query) => {
-        if (isEmpty(query)) {
-            return auditLogs;
-        }
-
-        const lowerQuery = query.toLowerCase();
-        const sub = [...auditLogs.audit_logs].filter(a => {
-            let matchesParent = false;
-            let matchesUser = false;
-            let matchesName = false
-
-            const translation = I18n.t(`history.tables.${a.target_type}`).toLowerCase();
-            const matchesTranslation = translation.indexOf(lowerQuery) > -1;
-            if (a.parent_name && auditLogs[a.parent_name]) {
-                const parent = auditLogs[a.parent_name].find(obj => obj.id === a.parent_id);
-                if (parent && parent.name) {
-                    matchesParent = parent.name.toLowerCase().indexOf(lowerQuery) > -1;
-                }
-            }
-            if (a.subject_id && auditLogs.users) {
-                const subject = auditLogs.users.find(user => user.id === a.subject_id);
-                if (subject && subject.name) {
-                    matchesUser = subject.name.toLowerCase().indexOf(lowerQuery) > -1;
-                }
-            }
-            if (a.target_name) {
-                matchesName = a.target_name.toLowerCase().indexOf(lowerQuery) > -1;
-            }
-            return matchesTranslation || matchesParent || matchesUser || matchesName;
-        });
-        return {...auditLogs, audit_logs: sub};
     }
 
     getActivityTab = (filteredAuditLogs, limit, query, config) => {
@@ -183,7 +151,7 @@ class System extends React.Component {
     onChangeQuery = e => {
         const query = e.target.value;
         const {auditLogs} = this.state;
-        const filteredAuditLogs = this.filterAuditLogs(auditLogs, query);
+        const filteredAuditLogs = filterAuditLogs(auditLogs, query);
         this.setState({
             filteredAuditLogs: filteredAuditLogs,
             query: query
@@ -447,7 +415,7 @@ class System extends React.Component {
             auditLogsActivity(limit.value).then(res => {
                 this.setState({
                     auditLogs: res,
-                    filteredAuditLogs: this.filterAuditLogs(res, this.state.query),
+                    filteredAuditLogs: filterAuditLogs(res, this.state.query),
                     busy: false
                 });
             });
