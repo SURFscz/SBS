@@ -215,6 +215,12 @@ class ServiceDetail extends React.Component {
                             <span>{I18n.t("service.whiteListed")}</span>
                             <span>{service.white_listed ? I18n.t("forms.yes") : I18n.t("forms.no")}</span>
                         </div>
+                        {service.accepted_user_policy &&
+                        <div className="org-attributes">
+                            <span>{I18n.t("service.accepted_user_policy")}</span>
+                            <span><a href={service.accepted_user_policy}
+                                     target="_blank" rel="noopener noreferrer">service.accepted_user_policy</a></span>
+                        </div>}
                     </div>
                 </UnitHeader>
                 <div className="mod-service-container">
