@@ -6,7 +6,7 @@ import {
     deleteCollaborationServices,
     deleteServiceConnectionRequest,
     denyServiceConnectionRequestByHash,
-    requestServiceConnection
+    requestServiceConnection, resendServiceConnectionRequests
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 
@@ -190,6 +190,15 @@ class UsedServices extends React.Component {
         this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestDeleteConfirmation"), true);
     };
 
+    resendServiceConnectionRequest = (service, collaboration) => {
+        const action = () => this.refreshAndFlash(resendServiceConnectionRequests(service.id),
+            I18n.t("collaborationServices.serviceConnectionRequestResend", {
+                service: service.name,
+                collaboration: collaboration.name
+            }), this.closeConfirmationDialog);
+        this.confirm(action, I18n.t("collaborationServices.serviceConnectionRequestResendConfirmation"), false);
+    };
+
     openServiceConnectionRequest = serviceConnectionRequest => e => {
         stopEvent(e);
         this.setState({selectedServiceConnectionRequestId: serviceConnectionRequest.id});
@@ -264,9 +273,14 @@ class UsedServices extends React.Component {
                            txt={I18n.t("forms.open")}/>
         }
         if (service.usedService && service.connectionRequest) {
-            return <Button className={"white"}
+            return <div className="actions">
+                <Button className={"white"}
+                           onClick={() => this.resendServiceConnectionRequest(service, collaboration)}
+                           txt={I18n.t("models.services.resendConnectionRequest")}/>
+                <Button className={"white"}
                            onClick={() => this.removeServiceConnectionRequest(service, collaboration)}
                            txt={I18n.t("models.services.deleteConnectionRequest")}/>
+            </div>
         }
         if (service.usedService && !service.connectionRequest) {
             return <Button className={"white"}

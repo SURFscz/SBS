@@ -107,6 +107,16 @@ class TestServiceConnectionRequest(AbstractTest):
             self.assertEqual("Service SSH UvA connection request for collaboration UVA UCC research has been declined",
                              mail_msg.subject)
 
+    def test_resend_service_connection_request(self):
+        res = self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}")
+
+        with self.app.mail.record_messages() as outbox:
+            self.login("urn:john")
+            self.get(f"/api/service_connection_requests/resend/{res['id']}")
+            mail_msg = outbox[0]
+            self.assertEqual("Request for new service SSH UvA connection to collaboration UVA UCC research",
+                             mail_msg.subject)
+
     def test_all_service_request_connections_by_service(self):
         storage_id = self.find_entity_by_name(Service, service_storage_name).id
         self.login("urn:john")

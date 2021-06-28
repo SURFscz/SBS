@@ -6,7 +6,7 @@ table.servicesUsed, table.servicesAvailable, table.servicesRequested {
     thead {
         th {
             &.name {
-                width: 50%;
+                width: 35%;
                 padding-left: 15px;
             }
 
@@ -15,7 +15,7 @@ table.servicesUsed, table.servicesAvailable, table.servicesRequested {
             }
 
             &.action {
-                width: 25%;
+                width: 40%;
                 text-align: right;
             }
         }
@@ -33,6 +33,29 @@ table.servicesUsed, table.servicesAvailable, table.servicesRequested {
 
             &.action {
                 text-align: right;
+            }
+
+            div.actions {
+                display: flex;
+
+                a {
+                    &:first-child {
+                        margin-left: auto;
+                    }
+
+                    &:last-child {
+                        margin-left: 15px;
+                    }
+
+                }
+
+                @media (max-width: $medium) {
+                    flex-direction: column;
+                    a:last-child {
+                        margin-left: auto;
+                        margin-top: 15px;
+                    }
+                }
             }
         }
     }
