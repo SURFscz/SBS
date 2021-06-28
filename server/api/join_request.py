@@ -106,7 +106,8 @@ def approve_join_request():
         "salutation": f"Dear {join_request.user.name}",
         "base_url": current_app.app_config.base_url,
         "administrator": current_user_name(),
-        "join_request": join_request},
+        "join_request": join_request,
+        "user": join_request.user},
         join_request,
         True,
         [join_request.user.email])
@@ -138,7 +139,8 @@ def deny_join_request():
                                          "base_url": current_app.app_config.base_url,
                                          "rejection_reason": rejection_reason,
                                          "administrator": current_user_name(),
-                                         "join_request": join_request},
+                                         "join_request": join_request,
+                                         "user": join_request.user},
                                         join_request,
                                         False,
                                         [join_request.user.email])

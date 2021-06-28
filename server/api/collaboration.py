@@ -266,7 +266,8 @@ def collaboration_invites():
             "salutation": "Dear",
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
-            "wiki_link": current_app.app_config.wiki_link
+            "wiki_link": current_app.app_config.wiki_link,
+            "recipient": administrator
         }, collaboration, [administrator])
     return None, 201
 
@@ -413,7 +414,8 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
             "salutation": "Dear",
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
-            "wiki_link": current_app.app_config.wiki_link
+            "wiki_link": current_app.app_config.wiki_link,
+            "recipient": administrator
         }, collaboration, [administrator])
 
     if current_user_admin:

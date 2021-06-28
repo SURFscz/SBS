@@ -74,7 +74,8 @@ def collaboration_invites_api():
             "salutation": "Dear",
             "invitation": invitation,
             "base_url": current_app.app_config.base_url,
-            "wiki_link": current_app.app_config.wiki_link
+            "wiki_link": current_app.app_config.wiki_link,
+            "recipient": email
         }, collaboration, [email])
 
     return invites, 201
@@ -145,7 +146,8 @@ def invitations_resend():
         "salutation": "Dear",
         "invitation": invitation,
         "base_url": current_app.app_config.base_url,
-        "wiki_link": current_app.app_config.wiki_link
+        "wiki_link": current_app.app_config.wiki_link,
+        "recipient": invitation.invitee_email
     }, invitation.collaboration, [invitation.invitee_email])
     return None, 201
 

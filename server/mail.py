@@ -9,9 +9,16 @@ from flask import current_app, render_template
 from flask_mail import Message
 
 from server.auth.security import current_user_id
+from server.db.db import db
 from server.db.defaults import calculate_expiry_period
-from server.db.domain import User
+from server.db.domain import User, UserMail
 from server.logger.context_logger import ctx_logger
+from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
+    COLLABORATION_JOIN_REQUEST_MAIL, AUTOMATIC_COLLABORATION_JOIN_REQUEST_MAIL, ORGANISATION_INVITATION_MAIL, \
+    COLLABORATION_INVITATION_MAIL, ACCEPTED_JOIN_REQUEST_MAIL, DENIED_JOIN_REQUEST_MAIL, \
+    ACCEPTED_COLLABORATION_REQUEST_MAIL, DENIED_COLLABORATION_REQUEST_MAIL, SERVICE_CONNECTION_REQUEST_MAIL, \
+    ACCEPTED_SERVICE_CONNECTTION_REQUEST_MAIL, DENIED_SERVICE_CONNECTTION_REQUEST_MAIL, SUSPEND_NOTIFICATION_MAIL, \
+    RESET_MFA_TOKEN_MAIL
 
 
 def _send_async_email(ctx, msg, mail):
@@ -69,7 +76,17 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
     return msg.html
 
 
+def _store_mail(user, mail_type, recipients):
+    recipient = ",".join(recipients) if isinstance(recipients, list) else recipients
+    user_id = None if not user else user.id if hasattr(user, "id") else user["id"]
+    user_mail = UserMail(user_id=user_id, name=mail_type, recipient=recipient)
+    db.session.merge(user_mail)
+    db.session.commit()
+
+
 def mail_collaboration_join_request(context, collaboration, recipients, preview=False):
+    if not preview:
+        _store_mail(context["user"], COLLABORATION_JOIN_REQUEST_MAIL, recipients)
     return _do_send_mail(
         subject=f"Join request for collaboration {collaboration.name}",
         recipients=recipients,
@@ -80,6 +97,8 @@ def mail_collaboration_join_request(context, collaboration, recipients, preview=
 
 
 def mail_collaboration_request(context, collaboration_request, recipients, preview=False):
+    if not preview:
+        _store_mail(context["user"], COLLABORATION_REQUEST_MAIL, recipients)
     return _do_send_mail(
         subject=f"Request for new collaboration {collaboration_request.name}",
         recipients=recipients,
@@ -90,6 +109,8 @@ def mail_collaboration_request(context, collaboration_request, recipients, previ
 
 
 def mail_automatic_collaboration_request(context, collaboration, organisation, recipients, preview=False):
+    if not preview:
+        _store_mail(context["user"], AUTOMATIC_COLLABORATION_JOIN_REQUEST_MAIL, recipients)
     return _do_send_mail(
         subject=f"New collaboration {collaboration.name} created in {organisation.name}",
         recipients=recipients,
@@ -100,6 +121,8 @@ def mail_automatic_collaboration_request(context, collaboration, organisation, r
 
 
 def mail_organisation_invitation(context, organisation, recipients, preview=False):
+    if not preview:
+        _store_mail(None, ORGANISATION_INVITATION_MAIL, recipients)
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
                "organisation": organisation}
     return _do_send_mail(
@@ -112,6 +135,8 @@ def mail_organisation_invitation(context, organisation, recipients, preview=Fals
 
 
 def mail_collaboration_invitation(context, collaboration, recipients, preview=False):
+    if not preview:
+        _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
                "collaboration": collaboration}
     return _do_send_mail(
@@ -124,6 +149,8 @@ def mail_collaboration_invitation(context, collaboration, recipients, preview=Fa
 
 
 def mail_accepted_declined_join_request(context, join_request, accepted, recipients, preview=False):
+    if not preview:
+        _store_mail(context["user"], ACCEPTED_JOIN_REQUEST_MAIL if accepted else DENIED_JOIN_REQUEST_MAIL,recipients)
     part = "accepted" if accepted else "declined"
     admins = [m.user for m in join_request.collaboration.collaboration_memberships if m.role == "admin"]
     return _do_send_mail(
@@ -138,6 +165,10 @@ def mail_accepted_declined_join_request(context, join_request, accepted, recipie
 
 def mail_accepted_declined_collaboration_request(context, collaboration_name, organisation, accepted, recipients,
                                                  preview=False):
+    if not preview:
+        _store_mail(context["user"],
+                    ACCEPTED_COLLABORATION_REQUEST_MAIL if accepted else DENIED_COLLABORATION_REQUEST_MAIL,
+                    recipients)
     part = "accepted" if accepted else "declined"
     return _do_send_mail(
         subject=f"Collaboration request for collaboration {collaboration_name} has been {part}",
@@ -152,6 +183,8 @@ def mail_accepted_declined_collaboration_request(context, collaboration_name, or
 
 
 def mail_service_connection_request(context, service_name, collaboration_name, recipients, is_admin, preview=False):
+    if not preview:
+        _store_mail(context["user"], SERVICE_CONNECTION_REQUEST_MAIL, recipients)
     template = "service_connection_request" if is_admin else "service_connection_request_collaboration_admin"
     return _do_send_mail(
         subject=f"Request for new service {service_name} connection to collaboration {collaboration_name}",
@@ -164,6 +197,10 @@ def mail_service_connection_request(context, service_name, collaboration_name, r
 
 def mail_accepted_declined_service_connection_request(context, service_name, collaboration_name, accepted, recipients,
                                                       preview=False):
+    if not preview:
+        _store_mail(context["user"],
+                    ACCEPTED_SERVICE_CONNECTTION_REQUEST_MAIL if accepted else DENIED_SERVICE_CONNECTTION_REQUEST_MAIL,
+                    recipients)
     part = "accepted" if accepted else "declined"
     return _do_send_mail(
         subject=f"Service {service_name} connection request for collaboration {collaboration_name} has been {part}",
@@ -175,6 +212,8 @@ def mail_accepted_declined_service_connection_request(context, service_name, col
 
 
 def mail_suspend_notification(context, recipients, is_primary, preview=False):
+    if not preview:
+        _store_mail(context["user"], SUSPEND_NOTIFICATION_MAIL, recipients)
     return _do_send_mail(
         subject="SURF SRAM: suspend notification",
         recipients=recipients,
@@ -195,6 +234,7 @@ def mail_error(environment, current_user, recipients, tb):
 
 
 def mail_feedback(environment, message, current_user, recipients):
+    _store_mail(current_user, SUSPEND_NOTIFICATION_MAIL, recipients)
     return _do_send_mail(
         subject=f"Feedback on {environment} from {current_user.name}",
         recipients=recipients,
@@ -252,8 +292,9 @@ def mail_account_deletion(user):
 
 
 def mail_reset_token(admin_email, user, message):
+    _store_mail(user, RESET_MFA_TOKEN_MAIL, admin_email)
     _do_send_mail(
-        subject=f"User {user.email} has requested a seconf-factor authentication reset",
+        subject=f"User {user.email} has requested a second-factor authentication reset",
         recipients=[admin_email],
         template="user_reset_mfa_token",
         context={"user": user, "message": message},
