@@ -1,6 +1,5 @@
 # -*- coding: future_fstrings -*-
 import base64
-import json
 from io import BytesIO
 from secrets import token_urlsafe
 from time import time
@@ -10,6 +9,7 @@ from uuid import uuid4
 import jwt
 import pyotp
 import qrcode
+from authlib.jose import jwk
 from flask import Blueprint, current_app, redirect, session, request as current_request
 from werkzeug.exceptions import Forbidden
 
@@ -39,8 +39,13 @@ def _get_private_key():
 def _get_public_key():
     global public_key_json
     if public_key_json is None:
-        public_key_json = read_file(current_app.app_config.oidc.public_rsa_signing_key_path)
-    return json.loads(public_key_json)
+        public_key = read_file(current_app.app_config.oidc.public_rsa_signing_key_path)
+        jwks = jwk.dumps(public_key, kty='RSA')
+        jwks["alg"] = "RS256"
+        jwks["kid"] = "sbs"
+        jwks["use"] = "sig"
+        public_key_json = {"keys": [jwks]}
+    return public_key_json
 
 
 def _construct_jwt(user, nonce, oidc_config):
