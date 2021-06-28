@@ -2,6 +2,7 @@ import React from "react";
 import I18n from "i18n-js";
 import "./AboutCollaboration.scss";
 import {ReactComponent as ServicesIcon} from "../../icons/services.svg";
+import {ReactComponent as TerminalIcon} from "../../icons/terminal.svg";
 import {ReactComponent as IllustrationCO} from "../../icons/illustration-CO.svg";
 import {removeDuplicates, stopEvent} from "../../utils/Utils";
 import Logo from "./Logo";
@@ -25,8 +26,13 @@ class AboutCollaboration extends React.Component {
         tabChanged("members");
     }
 
-    openService = service => () => {
-        service.uri && window.open(service.uri);
+    openService = service => e => {
+        stopEvent(e);
+        this.props.history.push(`/services/${service.id}`);
+    }
+
+    openServiceUri = service => () => {
+        service.uri && window.open(service.uri, "_blank");
     }
 
     toggleShowMore = e => {
@@ -59,19 +65,22 @@ class AboutCollaboration extends React.Component {
                         </span>}
                         <ul className="services">
                             {services.sort((a, b) => a.name.localeCompare(b.name)).map(service =>
-                                <li key={service.name}
-                                    className={`${service.uri ? "uri" : ""}`}>
-                                    {service.logo && <Logo src={service.logo} alt={service.name}/>}
-                                    <span className="border-left">{service.name}</span>
-                                    {service.uri &&
-                                        <span className="border-left open-service" onClick={this.openService(service)}>
+                                <div className="service-button">
+                                    <li key={service.name} onClick={this.openServiceUri(service)}
+                                        className={`${service.uri ? "uri" : ""}`}>
+                                        {service.logo && <Logo src={service.logo} alt={service.name}/>}
+                                        <span className="border-left">{service.name}</span>
+                                        {service.uri &&
+                                        <span className="border-left no-border open-service">
                                         <Tooltip id={`${service.id}`}
-                                                 children={<ServicesIcon/>}
+                                                 children={service.uri.startsWith("http") ? <ServicesIcon/> :
+                                                     <TerminalIcon/>}
                                                  msg={I18n.t("models.collaboration.servicesHoover", {uri: service.uri})}/>
-                                        </span>
-
-                                    }
-                                </li>)}
+                                        </span>}
+                                    </li>
+                                    <a href={`/${service.name}`} onClick={this.openService(service)}>{I18n.t("models.collaboration.instructions")}</a>
+                                </div>
+                            )}
                         </ul>
                     </div>}
                     {services.length === 0 && <div className="services">
@@ -117,6 +126,7 @@ class AboutCollaboration extends React.Component {
             </div>
         );
     }
+
 }
 
 export default AboutCollaboration;

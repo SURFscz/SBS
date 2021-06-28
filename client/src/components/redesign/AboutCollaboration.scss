@@ -52,48 +52,65 @@ div.collaboration-about-mod {
 
 
     ul.services li {
-        margin-top: 15px;
         display: flex;
-        padding: 10px;
+        padding: 6px 10px;
         border: 1px solid $lighter-grey;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
-        margin-bottom: 15px;
         align-items: center;
+        width: 100%;
+        &.uri {
+            cursor: pointer;
+            padding: 4px 10px;
+
+            &:hover {
+                background-color: $light-blue;
+                border-left: 1px solid $light-blue;
+            }
+        }
 
         img {
-            width: 60px;
+            width: 40px;
             border-radius: 4px;
         }
 
         span.border-left {
             display: inline-block;
             margin-left: 15px;
-            padding: 10px;
+            padding: 2px 10px;
             border-left: 1px solid $medium-grey;
 
+            &.no-border {
+                border-left: none;
+                padding: 2px 0;
+            }
+
             &.open-service {
-                cursor: pointer;
-                margin: 0 15px 0 auto;
-
-
-                &:hover {
-                    background-color: $light-blue;
-                    border-left: 1px solid $light-blue;
-                }
+                margin: auto 0 auto auto;
 
                 svg {
-                    width: 52px;
+                    width: 28px;
                     fill: $lighter-blue;
                     color: $lighter-blue;
                 }
             }
         }
+    }
 
+    div.service-button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        margin-top: 15px;
 
+        a {
+            text-decoration: none;
+            margin-left: 15px;
+        }
     }
 
     .members {
-        margin: 0 20px;
+        margin: 0 20px 0 50px;
 
         .members-header {
             display: flex;

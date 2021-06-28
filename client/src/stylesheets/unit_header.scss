@@ -86,9 +86,14 @@ div.org-attributes-container-grid {
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
+                max-width: 660px;
+
+                @media (max-width: $medium) {
+                    max-width: 400px;
+                }
 
                 @media (max-width: $compact-medium) {
-                    max-width: 200px;
+                    max-width: 275px;
                 }
 
             }
