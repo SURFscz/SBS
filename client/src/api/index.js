@@ -576,6 +576,10 @@ export function denyServiceConnectionRequestByHash(hash) {
     return postPutJson(`/api/service_connection_requests/deny/${hash}`, {}, "put");
 }
 
+export function resendServiceConnectionRequests(serviceId) {
+    return fetchJson(`/api/service_connection_requests/resend/${serviceId}`);
+}
+
 export function allServiceConnectionRequests(serviceId) {
     return fetchJson(`/api/service_connection_requests/all/${serviceId}`);
 }
