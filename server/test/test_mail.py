@@ -1,7 +1,8 @@
 # -*- coding: future_fstrings -*-
 import os
 
-from server.db.domain import Collaboration
+from server.db.audit_mixin import AuditLog
+from server.db.domain import Collaboration, User
 from server.mail import mail_collaboration_join_request
 from server.test.abstract_test import AbstractTest
 from server.test.seed import collaboration_uva_researcher_uuid
@@ -17,7 +18,7 @@ class TestMail(AbstractTest):
         with mail.record_messages() as outbox:
             context = {"salutation": "Dear",
                        "collaboration": collaboration,
-                       "user": "John Doe",
+                       "user": User.query.filter(User.uid == "urn:john").one(),
                        "base_url": "http://localhost:300",
                        "join_request": join_request}
             mail_collaboration_join_request(context, collaboration, ["test@example.com"])
@@ -26,6 +27,10 @@ class TestMail(AbstractTest):
             self.assertListEqual(["test@example.com"], mail_msg.recipients)
             self.assertEqual("SURF_ResearchAccessManagement <no-reply@surf.nl>", mail_msg.sender)
             self.assertTrue(f"http://localhost:300/collaborations/{collaboration.id}/joinrequests" in mail_msg.html)
+
+        audit_logs = AuditLog.query.all()
+        self.assertEqual(len(audit_logs), 1)
+        self.assertIsNotNone(audit_logs[0].user_id)
 
     def test_send_error_mail(self):
         try:

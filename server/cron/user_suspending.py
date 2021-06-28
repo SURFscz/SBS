@@ -32,7 +32,8 @@ def create_suspend_notification(user, retention, app, is_primary):
                                "base_url": app.app_config.base_url,
                                "retention": retention,
                                "suspension_date": str(suspension_date),
-                               "suspend_notification": suspend_notification
+                               "suspend_notification": suspend_notification,
+                               "user":  user
                                },
                               [user.email], is_primary, False)
 

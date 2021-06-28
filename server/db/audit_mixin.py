@@ -116,18 +116,22 @@ def get_target_name(target):
 class AuditMixin(JsonSerializableBase):
 
     @staticmethod
-    def create_audit(connection, subject_id, target_type, target_id, target_name, parent_id, parent_name, action,
+    def create_audit(connection, subject_id, target, parent_id, parent_name, action,
                      **kwargs):
         if not os.environ.get("SEEDING"):
             from server.auth.security import current_user_id
 
-            user_id = current_user_id() if session and "user" in session and "id" in session["user"] else None
+            user_id = None
+            if hasattr(target, "user_id"):
+                user_id = getattr(target, "user_id")
+            if not user_id:
+                user_id = current_user_id() if session and "user" in session and "id" in session["user"] else None
             audit = AuditLog(
                 user_id,
                 subject_id,
-                target_type,
-                target_id,
-                target_name,
+                target.__tablename__,
+                target.id,
+                get_target_name(target),
                 parent_id,
                 parent_name,
                 action,
@@ -154,8 +158,8 @@ class AuditMixin(JsonSerializableBase):
         state_after = target_state(mapper, value)
         subject_id = find_subject(mapper, value)
         connection = db.get_engine().connect()
-        target.create_audit(connection, subject_id, value.__tablename__, value.id, get_target_name(value), target.id,
-                            target.__tablename__, ACTION_CREATE, state_after=state_after)
+        target.create_audit(connection, subject_id, value, target.id, target.__tablename__, ACTION_CREATE,
+                            state_after=state_after)
 
     @staticmethod
     def audit_relationship_remove(target, value, _):
@@ -163,8 +167,8 @@ class AuditMixin(JsonSerializableBase):
         state_before = target_state(mapper, value)
         subject_id = find_subject(mapper, value)
         connection = db.get_engine().connect()
-        target.create_audit(connection, subject_id, value.__tablename__, value.id, get_target_name(value), target.id,
-                            target.__tablename__, ACTION_DELETE, state_before=state_before)
+        target.create_audit(connection, subject_id, value, target.id, target.__tablename__, ACTION_DELETE,
+                            state_before=state_before)
 
     @staticmethod
     def audit_insert(mapper, connection, target):
@@ -172,8 +176,7 @@ class AuditMixin(JsonSerializableBase):
         subject_id = find_subject(mapper, target)
         # connection, subject_id, target_type, target_id, parent_id, parent_name, action
         pi = parent_info(target)
-        target.create_audit(connection, subject_id, target.__tablename__, target.id, get_target_name(target),
-                            pi[0], pi[1], ACTION_CREATE, state_after=state_after)
+        target.create_audit(connection, subject_id, target, pi[0], pi[1], ACTION_CREATE, state_after=state_after)
 
     @staticmethod
     def audit_delete(mapper, connection, target):
@@ -181,8 +184,7 @@ class AuditMixin(JsonSerializableBase):
         subject_id = find_subject(mapper, target)
         # connection, subject_id, target_type, target_id, parent_id, parent_name, action
         pi = parent_info(target)
-        target.create_audit(connection, subject_id, target.__tablename__, target.id, get_target_name(target),
-                            pi[0], pi[1], ACTION_DELETE, state_before=state_before)
+        target.create_audit(connection, subject_id, target, pi[0], pi[1], ACTION_DELETE, state_before=state_before)
 
     @staticmethod
     def audit_update(mapper, connection, target):
@@ -194,13 +196,14 @@ class AuditMixin(JsonSerializableBase):
             if attr.key not in ignore_attributes:
                 hist = getattr(inspr.attrs, attr.key).history
                 if hist.has_changes():
-                    state_before[attr.key] = get_history(target, attr.key)[2].pop()
-                    state_after[attr.key] = getattr(target, attr.key)
+                    state_before_list = get_history(target, attr.key)[2]
+                    if isinstance(state_before_list, list):
+                        state_before[attr.key] = state_before_list.pop()
+                        state_after[attr.key] = getattr(target, attr.key)
         # connection, subject_id, target_type, target_id, parent_id, parent_name, action
         pi = parent_info(target)
         if state_before and state_after:
-            target.create_audit(connection, find_subject(mapper, target), target.__tablename__, target.id,
-                                get_target_name(target), pi[0], pi[1], ACTION_UPDATE,
+            target.create_audit(connection, find_subject(mapper, target), target, pi[0], pi[1], ACTION_UPDATE,
                                 state_before=dynamicExtendedJSONEncoder.encode(state_before),
                                 state_after=dynamicExtendedJSONEncoder.encode(state_after))
 

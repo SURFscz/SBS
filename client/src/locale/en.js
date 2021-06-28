@@ -1286,7 +1286,8 @@ I18n.translations.en = {
             "suspend_notifications": "Login notifications",
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",
-            "ssh_keys": "SSH key"
+            "ssh_keys": "SSH key",
+            "user_mails": "User emails"
         }
     },
     serviceRequest: {

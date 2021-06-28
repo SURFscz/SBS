@@ -477,8 +477,8 @@ class UserNameHistory(Base, db.Model):
 class UserMail(Base, db.Model):
     __tablename__ = "user_mails"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
-    content = db.Column("content", db.Text(), nullable=False)
-    mail_type = db.Column("mail_type", db.String(length=255), nullable=True)
+    name = db.Column("name", db.String(length=255), nullable=True)
+    recipient = db.Column("recipient", db.String(length=255), nullable=True)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="user_mails")
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),

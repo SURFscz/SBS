@@ -247,7 +247,8 @@ def organisation_invites():
         mail_organisation_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url
+            "base_url": current_app.app_config.base_url,
+            "recipient": administrator
         }, organisation, [administrator])
     return None, 201
 
@@ -279,7 +280,8 @@ def save_organisation():
         mail_organisation_invitation({
             "salutation": "Dear",
             "invitation": invitation,
-            "base_url": current_app.app_config.base_url
+            "base_url": current_app.app_config.base_url,
+            "recipient": administrator
         }, organisation, [administrator])
 
     mail_platform_admins(organisation)
