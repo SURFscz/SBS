@@ -55,11 +55,13 @@ def other(user_id):
 @json_endpoint
 def activity():
     limit = int(query_param("limit", False, 0))
-    audit_logs = AuditLog.query \
-        .order_by(desc(AuditLog.created_at)) \
-        .limit(limit if limit != 0 else None) \
-        .all()
-
+    tables = list(filter(lambda s: s.strip(), query_param("tables", False, "").split(",")))
+    query = AuditLog.query.order_by(desc(AuditLog.created_at))
+    if tables:
+        query = query.filter(AuditLog.target_type.in_(tables))
+    if limit:
+        query = query.limit(limit)
+    audit_logs = query.all()
     return _add_references(audit_logs), 200
 
 

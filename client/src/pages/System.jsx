@@ -26,6 +26,7 @@ import MemberJoinRequests from "../components/redesign/MemberJoinRequests";
 import MemberCollaborationRequests from "../components/redesign/MemberCollaborationRequests";
 import {logout} from "../utils/Login";
 import {filterAuditLogs} from "../utils/AuditLog";
+import SelectField from "../components/SelectField";
 
 const options = [25, 50, 100, 150, 200, 250, "All"].map(nbr => ({value: nbr, label: nbr}));
 
@@ -33,6 +34,8 @@ class System extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        this.allTables = Object.entries(I18n.translations[I18n.locale].history.tables)
+            .map(arr => ({value: arr[0], label: arr[1]}));
         this.state = {
             tab: "cron",
             suspendedUsers: {},
@@ -48,7 +51,8 @@ class System extends React.Component {
             auditLogs: {audit_logs: []},
             filteredAuditLogs: {audit_logs: []},
             limit: options[1],
-            query: ""
+            query: "",
+            selectedTables: []
         }
     }
 
@@ -57,6 +61,7 @@ class System extends React.Component {
             const params = this.props.match.params;
             const tab = params.tab || this.state.tab;
             this.tabChanged(tab);
+
             AppStore.update(s => {
                 s.breadcrumb.paths = [
                     {path: "/", value: I18n.t("breadcrumb.home")},
@@ -104,7 +109,8 @@ class System extends React.Component {
 
     changeLimit = val => {
         this.setState({limit: val, busy: true}, () => {
-            auditLogsActivity(val.value === "All" ? null : val.value).then(res => {
+            const {selectedTables} = this.state;
+            auditLogsActivity(val.value === "All" ? null : val.value, selectedTables).then(res => {
                 this.setState({
                     auditLogs: res,
                     filteredAuditLogs: filterAuditLogs(res, this.state.query),
@@ -114,7 +120,30 @@ class System extends React.Component {
         });
     }
 
-    getActivityTab = (filteredAuditLogs, limit, query, config) => {
+    fetchActivities = () => {
+        const {selectedTables, limit} = this.state;
+        this.setState({busy: true}, () => {
+            auditLogsActivity(limit.value === "All" ? null : limit.value, selectedTables).then(res => {
+                this.setState({
+                    auditLogs: res,
+                    filteredAuditLogs: filterAuditLogs(res, this.state.query),
+                    busy: false
+                });
+            });
+        });
+    }
+
+    selectedTablesChanged = selectedOptions => {
+        if (selectedOptions === null) {
+            this.setState({selectedTables: []});
+        } else {
+            const newSelectedOptions = Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
+            this.setState({selectedTables: newSelectedOptions});
+        }
+    }
+
+
+    getActivityTab = (filteredAuditLogs, limit, query, config, selectedTables) => {
         return (
             <div key="activity" name="activity" label={I18n.t("home.tabs.activity")}
                  icon={<FontAwesomeIcon icon="code-branch"/>}>
@@ -141,6 +170,21 @@ class System extends React.Component {
                                 isSearchable={false}
                                 isClearable={false}
                             />
+                        </section>
+                        <section className="table-selection">
+                            <SelectField value={selectedTables}
+                                         options={this.allTables
+                                             .filter(table => !selectedTables.find(st => st.value === table.value))}
+                                         name={I18n.t("history.activities.tables")}
+                                         toolTip={I18n.t("history.activities.tablesTooltip")}
+                                         isMulti={true}
+                                         searchable={true}
+                                         placeholder={I18n.t("history.activities.tablesPlaceHolder")}
+                                         onChange={this.selectedTablesChanged}/>
+                            <div className="action-container">
+                                <Button txt={I18n.t("history.activities.submit")} onClick={this.fetchActivities}/>
+                            </div>
+
                         </section>
                         <Activity auditLogs={filteredAuditLogs}/>
                     </section>
@@ -411,8 +455,8 @@ class System extends React.Component {
                 this.setState({databaseStats: res, busy: false});
             });
         } else if (name === "activity") {
-            const {limit} = this.state;
-            auditLogsActivity(limit.value).then(res => {
+            const {limit, selectedTables} = this.state;
+            auditLogsActivity(limit.value === "All" ? null : limit.value, selectedTables).then(res => {
                 this.setState({
                     auditLogs: res,
                     filteredAuditLogs: filterAuditLogs(res, this.state.query),
@@ -432,7 +476,7 @@ class System extends React.Component {
         const {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
-            limit, query
+            limit, query, selectedTables
         } = this.state;
         const {config} = this.props;
 
@@ -443,7 +487,7 @@ class System extends React.Component {
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
             this.getDatabaseTab(databaseStats, config),
-            this.getActivityTab(filteredAuditLogs, limit, query, config)
+            this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables)
         ]
         return (
             <div className="mod-system-container">

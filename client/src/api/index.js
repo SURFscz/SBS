@@ -597,8 +597,13 @@ export function auditLogsInfo(objectId, collectionNames) {
     return fetchJson(`/api/audit_logs/info/${objectId}/${collectionNames}`);
 }
 
-export function auditLogsActivity(limit) {
-    return fetchJson(`/api/audit_logs/activity?${limit ? '?limit=' + limit : ''}`);
+export function auditLogsActivity(limit, tableNames) {
+    const tables = isEmpty(tableNames) ? null : tableNames.map(s => s.value).join(",");
+    const params = {limit, tables};
+    const queryString = Object.keys(params)
+        .filter(key => params[key])
+        .map(key => `${key}=${params[key]}`).join("&");
+    return fetchJson(`/api/audit_logs/activity?${queryString}`);
 }
 
 //IP-networks
