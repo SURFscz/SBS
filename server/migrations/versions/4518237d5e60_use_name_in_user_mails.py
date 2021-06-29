@@ -17,7 +17,8 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    conn.execute(text("ALTER TABLE user_mails RENAME COLUMN mail_type TO name"))
+    conn.execute(text("ALTER TABLE user_mails DROP COLUMN mail_type"))
+    conn.execute(text("ALTER TABLE user_mails ADD COLUMN name VARCHAR(255) NOT NULL"))
 
 
 def downgrade():
