@@ -1263,9 +1263,15 @@ I18n.translations.en = {
         parentNew: "New {{collection}} added to {{parent}}",
         parentUpdated: "Existing {{collection}} was updated and is linked to {{parent}}",
         parentDeleted: "Existing {{collection}} deleted from {{parent}}",
+        activities: {
+          tables: "All audit log tables",
+          tablesTooltip: "Select all tables<br/>that you want to include.<br/><br/> If you select none<br/>then no filtering is<br/>done on table type.",
+          tablesPlaceHolder: "Select tables",
+          submit: "Fetch"
+        },
         tables: {
             "api_keys": "API key",
-            "aups": "Acceptable User Policy",
+            // "aups": "Acceptable User Policy",
             "collaboration_memberships": "Collaboration membership",
             "collaboration_memberships_groups": "Group membership",
             "collaboration_requests": "Collaboration request",
@@ -1283,7 +1289,7 @@ I18n.translations.en = {
             "services_collaborations": "Collaboration service",
             "users": "User",
             "ip_networks": "IP network",
-            "suspend_notifications": "Login notifications",
+            "suspend_notifications": "Suspend notifications",
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",
             "ssh_keys": "SSH key",

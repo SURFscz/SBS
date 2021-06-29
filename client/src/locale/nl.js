@@ -1263,9 +1263,15 @@ I18n.translations.nl = {
         parentNew: "Nieuwe {{collection}} toegevoegd aan {{parent}}",
         parentUpdated: "Bestaande {{collection}} is aangepast en is gelinkt aan {{parent}}",
         parentDeleted: "Bestaande {{collection}} verwijderd uit {{parent}}",
+        activities: {
+            tables: "Alle audit log tabellen",
+            tablesTooltip: "Selecteer alle tabellen<br/>waarop je wilt filteren.<br/><br/> Als je niks selecteert<br/>dan wordt er niet op<br/>tabellen gefilterd.",
+            tablesPlaceHolder: "Selecteer tabellen",
+            submit: "Fetch"
+        },
         tables: {
             "api_keys": "API key",
-            "aups": "Acceptable User Policy",
+            // "aups": "Acceptable User Policy",
             "collaboration_memberships": "CO lidmaatschap",
             "collaboration_memberships_groups": "Groep lidmaatschap",
             "collaboration_requests": "CO request",
@@ -1286,7 +1292,8 @@ I18n.translations.nl = {
             "suspend_notifications": "Login notificatie",
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",
-            "ssh_keys": "SSH key"
+            "ssh_keys": "SSH key",
+            "user_mails": "User emails"
         }
     },
     serviceRequest: {

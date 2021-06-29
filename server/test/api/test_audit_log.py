@@ -138,6 +138,14 @@ class TestAuditLog(AbstractTest):
         self.assertEqual(1, len(res["organisations"]))
         self.assertEqual(2, len(res["users"]))
 
+        res = self.get("/api/audit_logs/activity", query_data={"limit": 2})
+        self.assertEqual(2, len(res["audit_logs"]))
+
+        tables = ["organisation_invitations", "users"]
+        res = self.get("/api/audit_logs/activity", query_data={"tables": ",".join(tables)})
+        self.assertEqual(2, len(res["audit_logs"]))
+        self.assertEqual(tables, sorted([audit_log["target_type"] for audit_log in res["audit_logs"]]))
+
     def test_me_impersonate(self):
         james = User.query.filter(User.uid == "urn:james").one()
         self.login("urn:james")
