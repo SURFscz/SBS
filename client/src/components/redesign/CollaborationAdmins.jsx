@@ -93,7 +93,8 @@ class CollaborationAdmins extends React.Component {
             loading: false,
             selectedInvitationId: null,
             message: "",
-            allSelected: false
+            allSelected: false,
+            confirmationDialogOpen: false
         });
     }
 
@@ -108,10 +109,11 @@ class CollaborationAdmins extends React.Component {
         const lastAdminWarning = admins.length === 1 && selectedOption.value !== "admin";
         const canStay = isUserAllowed(ROLES.ORG_MANAGER, currentUser, collaboration.organisation_id);
         if ((member.user_id === currentUser.id && !canStay) || lastAdminWarning) {
+            const lastAdminWarningUser= lastAdminWarning && member.user_id === currentUser.id;
             this.setState({
                 confirmationDialogOpen: true,
                 lastAdminWarning: lastAdminWarning,
-                lastAdminWarningUser: lastAdminWarning && member.user_id === currentUser.id,
+                lastAdminWarningUser: lastAdminWarningUser,
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
                 confirmationDialogAction: () => {
                     this.setState({loading: true});
@@ -121,7 +123,7 @@ class CollaborationAdmins extends React.Component {
                                 if (!canStay) {
                                     this.props.history.push("/home");
                                 } else {
-                                    this.componentDidMount();
+                                    this.props.refresh(this.componentDidMount);
                                 }
                             });
                             setFlash(I18n.t("collaborationDetail.flash.memberUpdated", {
@@ -133,7 +135,8 @@ class CollaborationAdmins extends React.Component {
                     });
                 },
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
-                confirmationQuestion: I18n.t("collaborationDetail.downgradeYourselfMemberConfirmation"),
+                confirmationQuestion: lastAdminWarningUser ?
+                    I18n.t("collaborationDetail.downgradeYourselfMemberConfirmation") : "",
             });
         } else {
             this.setState({loading: true});
