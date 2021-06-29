@@ -222,7 +222,7 @@ class ServiceDetail extends React.Component {
                                 <a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">
                                     {service.accepted_user_policy}</a></span>}
                             {!service.accepted_user_policy && <span>
-                                    {I18n.t("service.none")}}</span>}
+                                    {I18n.t("service.none")}</span>}
                         </div>
                     </div>
                 </UnitHeader>
