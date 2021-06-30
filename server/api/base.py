@@ -111,7 +111,7 @@ def _audit_trail():
         # Prevent logo base64 logging
         body = current_request.json if method != "DELETE" else {}
         body.pop("logo", None)
-        ctx_logger("base").info(f"Path {current_request.path} {method} {json.dumps(body)}")
+        ctx_logger("base").info(f"Path {current_request.path} {method} {json.dumps(body, default=str)}")
 
 
 def _service_status(body):
@@ -120,7 +120,7 @@ def _service_status(body):
         path = current_request.path
         endpoint = path.rsplit('/', 1)[-1]
         if method in _audit_trail_methods and endpoint != 'error':
-            msg = jsonify(body).get_data() if isinstance(body, db.Model) else json.dumps(body)
+            msg = jsonify(body).get_data() if isinstance(body, db.Model) else json.dumps(body, default=str)
             method = method.lower()
             topic = f"sbs{path}/{method}"
             current_app.mqtt.publish(topic, msg)

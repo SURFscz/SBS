@@ -3,7 +3,7 @@ from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager, load_only
-from werkzeug.exceptions import BadRequest, Forbidden
+from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
 from server.api.collaborations_services import connect_service_collaboration

@@ -555,6 +555,8 @@ I18n.translations.nl = {
         disabled: "Uitgeschakeld",
         enabled: "Copy link",
         privacyPolicy: "Privacy policy",
+        expiryDate: "Eind datum",
+        expiryDateTooltip: "De einddatum van de samenwerking.<br/>Na deze datum wordt de samenwerking<br/> opgeschort en kunnen gebruikers van<br/>deze CO geen gebruik meer maken van services",
         discloseMembers: "Toon leden info",
         discloseMemberInformation: "Informatie van leden tonen",
         discloseMemberInformationTooltip: "Indien aangevinkt, dan wordt<br/>informatie van leden aan andere leden getoond",
@@ -590,6 +592,16 @@ I18n.translations.nl = {
         manager: "Manager",
         admin: "CO-Admin",
         member: "Normale gebruiker",
+        status: {
+            name: "Status",
+            active: "Actief",
+            suspended: "Geschorst",
+            expired: "Verlopen",
+            activeTooltip: "This collaboration is active<br/>and ready for business.",
+            suspendedTooltip: "This collaboration is suspended<br/> due to long inactivity.<br/><br/>It was used for the<br/>last time on {{lastActivityDate}}.",
+            expiredTooltip: "This collaboration is expired<br/> due to the expiry date.<br/><br/>It has expires on {{expiryDate}}.<br/>It can be activated by setting a new end date.",
+        },
+
         flash: {
             created: "Samenwerking {{name}} is met succes aangemaakt.",
             requested: "Samenwerking {{name}} is met succes aangevraagd."

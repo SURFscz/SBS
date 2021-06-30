@@ -37,7 +37,8 @@ export default class DateField extends React.Component {
 
     render() {
         const {
-            onChange, name, value, disabled = false, maxDate = null, minDate = null, toolTip = null, allowNull = false
+            onChange, name, value, disabled = false, maxDate = null, minDate = null, toolTip = null, allowNull = false,
+            showYearDropdown = false
         } = this.props;
         const minimalDate = minDate || moment().add(1, "day").endOf("day").toDate();
         return (
@@ -56,11 +57,13 @@ export default class DateField extends React.Component {
                         ref={ref => this.component = ref}
                         name={name}
                         id={name}
-                        selected={value || allowNull ? null : moment().add(16, "days").toDate()}
+                        selected={value || (allowNull ? null : moment().add(16, "days").toDate())}
                         preventOpenOnFocus
                         dateFormat={"dd/MM/yyyy"}
                         onChange={onChange}
                         showWeekNumbers
+                        isClearable={allowNull}
+                        showYearDropdown={showYearDropdown}
                         onBlur={this.validateOnBlur}
                         weekLabel="Week"
                         disabled={disabled}
@@ -82,6 +85,7 @@ DateField.propTypes = {
     disabled: PropTypes.bool,
     maxDate: PropTypes.object,
     allowNull: PropTypes.bool,
+    showYearDropdown: PropTypes.bool,
     tooltip: PropTypes.string,
     className: PropTypes.string,
 };

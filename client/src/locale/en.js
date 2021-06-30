@@ -176,6 +176,7 @@ I18n.translations.en = {
             inviteSend: "Invite sent {{date}}",
             expiredAt: "Expired on {{date}}",
             accepted: "Active",
+            suspended: "Suspended",
             new: "Add member(s)",
             remove: "Delete",
             mail: "Compose mail",
@@ -592,6 +593,15 @@ I18n.translations.en = {
         manager: "Manager",
         admin: "Collaboration Admin",
         member: "Regular user",
+        status: {
+            name: "Status",
+            active: "Active",
+            suspended: "Suspended",
+            expired: "Expired",
+            activeTooltip: "This collaboration is active<br/>and ready for business.",
+            suspendedTooltip: "This collaboration is suspended<br/> due to long inactivity.<br/><br/>It was used for the<br/>last time on {{lastActivityDate}}.",
+            expiredTooltip: "This collaboration is expired<br/> due to the expiry date.<br/><br/>It has expires on {{expiryDate}}.<br/>It can be activated by setting a new end date.",
+        },
         flash: {
             created: "Collaboration {{name}} was successfully created",
             requested: "Collaboration {{name}} was successfully requested"

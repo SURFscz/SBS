@@ -43,6 +43,9 @@ import Button from "../components/Button";
 import JoinRequestDialog from "../components/JoinRequestDialog";
 import Tooltip from "../components/redesign/Tooltip";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
+import moment from "moment";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ReactTooltip from "react-tooltip";
 
 
 class CollaborationDetail extends React.Component {
@@ -381,38 +384,43 @@ class CollaborationDetail extends React.Component {
                            actions={collaborationJoinRequest ? [] : this.getActions(user, collaboration, allowedToEdit, showMemberView)}
                            name={collaboration.name}
                            customAction={customAction}>
-            <section className="unit-info">
-                <ul>
-                    <li>
-                        <Tooltip children={<MemberIcon/>} id={"members-icon"} msg={I18n.t("tooltips.members")}/>
-                        <span>{I18n.t("models.collaboration.memberHeader", {
-                            nbrMember: collaborationJoinRequest ? collaboration.member_count : collaboration.collaboration_memberships.length,
-                            nbrGroups: collaborationJoinRequest ? collaboration.group_count : collaboration.groups.length
-                        })}</span></li>
-                    <li>
-                        <Tooltip children={<AdminIcon/>} id={"admins-icon"} msg={I18n.t("tooltips.admins")}/>
-                        <span
-                            dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration, collaborationJoinRequest)}}/>
-                    </li>
-                    {collaboration.website_url &&
-                    <li className="collaboration-url">
-                        <Tooltip children={<GlobeIcon/>} id={"collaboration-icon"}
-                                 msg={I18n.t("tooltips.collaborationUrl")}/>
-                        <span>
+            <div className="org-attributes-container-grid">
+                <section className="unit-info">
+                    <ul>
+                        <li>
+                            <Tooltip children={<MemberIcon/>} id={"members-icon"} msg={I18n.t("tooltips.members")}/>
+                            <span>{I18n.t("models.collaboration.memberHeader", {
+                                nbrMember: collaborationJoinRequest ? collaboration.member_count : collaboration.collaboration_memberships.length,
+                                nbrGroups: collaborationJoinRequest ? collaboration.group_count : collaboration.groups.length
+                            })}</span></li>
+                        <li>
+                            <Tooltip children={<AdminIcon/>} id={"admins-icon"} msg={I18n.t("tooltips.admins")}/>
+                            <span
+                                dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration, collaborationJoinRequest)}}/>
+                        </li>
+                        {collaboration.website_url &&
+                        <li className="collaboration-url">
+                            <Tooltip children={<GlobeIcon/>} id={"collaboration-icon"}
+                                     msg={I18n.t("tooltips.collaborationUrl")}/>
+                            <span>
                             <a href={collaboration.website_url} rel="noopener noreferrer"
                                target="_blank">{collaboration.website_url}</a>
                         </span>
-                    </li>}
-                    {collaboration.accepted_user_policy &&
-                    <li className="collaboration-url">
-                        <Tooltip children={<PrivacyIcon/>} id={"globe-icon"} msg={I18n.t("tooltips.aup")}/>
-                        <span>
+                        </li>}
+                        {collaboration.accepted_user_policy &&
+                        <li className="collaboration-url">
+                            <Tooltip children={<PrivacyIcon/>} id={"globe-icon"} msg={I18n.t("tooltips.aup")}/>
+                            <span>
                             <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
                                target="_blank">{collaboration.accepted_user_policy}</a>
                         </span>
-                    </li>}
-                </ul>
-            </section>
+                        </li>}
+                    </ul>
+                </section>
+                <section className="collaboration-inactive">
+                    {this.getCollaborationStatus(collaboration)}
+                </section>
+            </div>
         </UnitHeader>;
     }
 
@@ -455,18 +463,38 @@ class CollaborationDetail extends React.Component {
         })
     }
 
-    getUnitHeader = (user, collaboration, allowedToEdit, showMemberView) => {
+    getCollaborationStatus = collaboration => {
+        const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).format("LL") : I18n.t("service.none");
+        const lastActivityDate = moment(collaboration.last_activity_date * 1000).format("LL");
+        return (
+            <div className="org-attributes">
+                    <span className="contains-tooltip">{I18n.t(`collaboration.status.name`)}
+                        <FontAwesomeIcon data-tip data-for="collaboration-status" icon="info-circle"/>
+                            <ReactTooltip id="collaboration-status" type="light" effect="solid" data-html={true}>
+                                <span className="tooltip-wrapper-inner"
+                                      dangerouslySetInnerHTML={{
+                                          __html: I18n.t(`collaboration.status.${collaboration.status}Tooltip`,
+                                              {expiryDate: expiryDate, lastActivityDate: lastActivityDate})
+                                      }}/>
+                            </ReactTooltip>
+                    </span>
+                <span>{I18n.t(`collaboration.status.${collaboration.status}`)}</span>
+            </div>
+        );
+    }
 
-        return <UnitHeader obj={collaboration}
-                           firstTime={user.admin ? this.onBoarding : undefined}
-                           history={(user.admin && allowedToEdit) && this.props.history}
-                           auditLogPath={`collaborations/${collaboration.id}`}
-                           breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
-                           name={collaboration.name}
-                           dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
-                           actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}>
+
+    getUnitHeader = (user, collaboration, allowedToEdit, showMemberView) => {
+        return (<UnitHeader obj={collaboration}
+                            firstTime={user.admin ? this.onBoarding : undefined}
+                            history={(user.admin && allowedToEdit) && this.props.history}
+                            auditLogPath={`collaborations/${collaboration.id}`}
+                            breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
+                            name={collaboration.name}
+                            dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
+                            actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}>
             <p>{collaboration.description}</p>
-            <div className="org-attributes-container">
+            <div className="org-attributes-container-grid">
                 <div className="org-attributes">
                     <span>{I18n.t("collaboration.joinRequests")}</span>
                     <span className="contains-copy">
@@ -479,14 +507,16 @@ class CollaborationDetail extends React.Component {
                     <span>{I18n.t("collaboration.discloseMembers")}</span>
                     <span>{I18n.t(`forms.${collaboration.disclose_email_information && collaboration.disclose_member_information ? "yes" : "no"}`)}</span>
                 </div>
-                {collaboration.accepted_user_policy && <div className="org-attributes">
+                <div className="org-attributes">
                     <span>{I18n.t("collaboration.privacyPolicy")}</span>
+                    {collaboration.accepted_user_policy &&
                     <span><a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
-                             target="_blank">{collaboration.accepted_user_policy}</a></span>
-                </div>}
-
+                             target="_blank">{collaboration.accepted_user_policy}</a></span>}
+                    {!collaboration.accepted_user_policy && <span>{I18n.t("service.none")}</span>}
+                </div>
+                {this.getCollaborationStatus(collaboration)}
             </div>
-        </UnitHeader>;
+        </UnitHeader>);
     }
 
     render() {
