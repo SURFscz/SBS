@@ -29,6 +29,7 @@ import CroppedImageField from "../components/redesign/CroppedImageField";
 import EmailField from "../components/EmailField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import DateField from "../components/DateField";
 
 class CollaborationForm extends React.Component {
 
@@ -44,6 +45,7 @@ class CollaborationForm extends React.Component {
             message: "",
             email: "",
             accepted_user_policy: "",
+            expiry_date: null,
             disclose_email_information: true,
             disclose_member_information: true,
             disable_join_requests: false,
@@ -230,6 +232,7 @@ class CollaborationForm extends React.Component {
                 website_url,
                 administrators,
                 message,
+                expiry_date,
                 accepted_user_policy,
                 organisation,
                 isCollaborationRequest,
@@ -248,6 +251,7 @@ class CollaborationForm extends React.Component {
                 administrators,
                 message,
                 accepted_user_policy,
+                expiry_date,
                 organisation_id: organisation.value,
                 disable_join_requests,
                 current_user_admin,
@@ -376,6 +380,7 @@ class CollaborationForm extends React.Component {
             administrators,
             message,
             accepted_user_policy,
+            expiry_date,
             organisation,
             organisations,
             email,
@@ -520,6 +525,15 @@ class CollaborationForm extends React.Component {
                                 placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
                                 externalLink={true}
                                 name={I18n.t("collaboration.accepted_user_policy")}/>
+                    <span>{`${expiry_date} expiry_date`}</span>
+                    <DateField value={expiry_date}
+                               onChange={e => {
+                                   debugger
+                                   this.setState({expiry_date: e})
+                               }}
+                               allowNull={true}
+                               name={I18n.t("collaboration.expiryDate")}
+                               toolTip={I18n.t("collaboration.expiryDateTooltip")}/>
 
                     {!isCollaborationRequest && <CheckBox name="disable_join_requests"
                                                           value={disable_join_requests}

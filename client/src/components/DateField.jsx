@@ -14,7 +14,7 @@ export default class DateField extends React.Component {
     toggle = () => this.component.setOpen(true);
 
     validateOnBlur = e => {
-        const {onChange, maxDate = null, minDate = null} = this.props;
+        const {onChange, maxDate = null, minDate = null, allowNull = false} = this.props;
 
         if (e && e.target) {
             const minimalDate = minDate || moment().add(1, "day").toDate();
@@ -27,14 +27,17 @@ export default class DateField extends React.Component {
                     setTimeout(() => onChange(moment().add(16, "days").toDate()),250);
                 }
             } else {
-                setTimeout(() => onChange(moment().add(16, "days").toDate()),250);
+                if (!allowNull) {
+                    setTimeout(() => onChange(moment().add(16, "days").toDate()),250);
+                }
+
             }
         }
     }
 
     render() {
         const {
-            onChange, name, value, disabled = false, maxDate = null, minDate = null, toolTip = null
+            onChange, name, value, disabled = false, maxDate = null, minDate = null, toolTip = null, allowNull = false
         } = this.props;
         const minimalDate = minDate || moment().add(1, "day").endOf("day").toDate();
         return (
@@ -53,7 +56,7 @@ export default class DateField extends React.Component {
                         ref={ref => this.component = ref}
                         name={name}
                         id={name}
-                        selected={value || moment().add(16, "days").toDate()}
+                        selected={value || allowNull ? null : moment().add(16, "days").toDate()}
                         preventOpenOnFocus
                         dateFormat={"dd/MM/yyyy"}
                         onChange={onChange}
@@ -78,6 +81,7 @@ DateField.propTypes = {
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     maxDate: PropTypes.object,
+    allowNull: PropTypes.bool,
     tooltip: PropTypes.string,
     className: PropTypes.string,
 };

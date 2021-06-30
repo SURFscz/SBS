@@ -555,6 +555,8 @@ I18n.translations.en = {
         disabled: "Disabled",
         enabled: "Copy link",
         privacyPolicy: "Acceptable Use Policy",
+        expiryDate: "End date",
+        expiryDateTooltip: "The end date of the collaboration<br/>After this date the collaboration<br/>will be suspended and users of<br/>this CO can no longer use services",
         discloseMembers: "Disclose member info",
         discloseMemberInformation: "Disclose member information",
         discloseMemberInformationTooltip: "When checked the names<br/>of members are disclosed to other members",
@@ -1264,10 +1266,10 @@ I18n.translations.en = {
         parentUpdated: "Existing {{collection}} was updated and is linked to {{parent}}",
         parentDeleted: "Existing {{collection}} deleted from {{parent}}",
         activities: {
-          tables: "All audit log tables",
-          tablesTooltip: "Select all tables<br/>that you want to include.<br/><br/> If you select none<br/>then no filtering is<br/>done on table type.",
-          tablesPlaceHolder: "Select tables",
-          submit: "Fetch"
+            tables: "All audit log tables",
+            tablesTooltip: "Select all tables<br/>that you want to include.<br/><br/> If you select none<br/>then no filtering is<br/>done on table type.",
+            tablesPlaceHolder: "Select tables",
+            submit: "Fetch"
         },
         tables: {
             "api_keys": "API key",
