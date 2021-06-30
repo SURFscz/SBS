@@ -15,6 +15,16 @@ from server.test.seed import seed
 system_api = Blueprint("system_api", __name__, url_prefix="/api/system")
 
 
+@system_api.route("/expire_collaboration", strict_slashes=False, methods=["PUT"])
+@json_endpoint
+def do_expire_collaboration():
+    confirm_write_access()
+
+    from server.cron.collaboration_expiration import expire_collaboration
+
+    return expire_collaboration(current_app), 201
+
+
 @system_api.route("/suspend_users", strict_slashes=False, methods=["PUT"])
 @json_endpoint
 def do_suspend_users():

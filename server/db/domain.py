@@ -6,6 +6,7 @@ from sqlalchemy.orm import column_property
 
 from server.db.audit_mixin import Base, metadata
 from server.db.db import db
+from server.db.defaults import STATUS_ACTIVE
 from server.db.logo_mixin import LogoMixin
 
 
@@ -157,7 +158,7 @@ class Collaboration(Base, db.Model, LogoMixin):
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
     global_urn = db.Column("global_urn", db.Text, nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
-    status = db.Column("status", db.String(length=255), nullable=False, default="active")
+    status = db.Column("status", db.String(length=255), nullable=False, default=STATUS_ACTIVE)
     last_activity_date = db.Column("last_activity_date", db.DateTime(timezone=True), nullable=False,
                                    server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
     expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)

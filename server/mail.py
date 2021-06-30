@@ -1,8 +1,8 @@
 # -*- coding: future_fstrings -*-
+import datetime
 import logging
 import os
 import uuid
-from datetime import datetime
 from threading import Thread
 
 from flask import current_app, render_template
@@ -18,7 +18,9 @@ from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
     COLLABORATION_INVITATION_MAIL, ACCEPTED_JOIN_REQUEST_MAIL, DENIED_JOIN_REQUEST_MAIL, \
     ACCEPTED_COLLABORATION_REQUEST_MAIL, DENIED_COLLABORATION_REQUEST_MAIL, SERVICE_CONNECTION_REQUEST_MAIL, \
     ACCEPTED_SERVICE_CONNECTTION_REQUEST_MAIL, DENIED_SERVICE_CONNECTTION_REQUEST_MAIL, SUSPEND_NOTIFICATION_MAIL, \
-    RESET_MFA_TOKEN_MAIL
+    RESET_MFA_TOKEN_MAIL, COLLABORATION_EXPIRES_WARNING_MAIL, \
+    COLLABORATION_EXPIRED_NOTIFICATION_MAIL, COLLABORATION_SUSPENDED_NOTIFICATION_MAIL, \
+    COLLABORATION_SUSPENSION_WARNING_MAIL
 
 
 def _send_async_email(ctx, msg, mail):
@@ -82,6 +84,16 @@ def _store_mail(user, mail_type, recipients):
     user_mail = UserMail(user_id=user_id, name=mail_type, recipient=recipient)
     db.session.merge(user_mail)
     db.session.commit()
+
+
+def _get_coll_emails(collaboration, mail_type):
+    org_members = [m.user.email for m in collaboration.organisation.organisation_memberships]
+    coll_admin = [m.user.email for m in collaboration.collaboration_memberships if m.role == "admin"]
+    recipients = org_members + coll_admin
+
+    for r in recipients:
+        _store_mail(r, mail_type, recipients)
+    return recipients
 
 
 def mail_collaboration_join_request(context, collaboration, recipients, preview=False):
@@ -150,7 +162,7 @@ def mail_collaboration_invitation(context, collaboration, recipients, preview=Fa
 
 def mail_accepted_declined_join_request(context, join_request, accepted, recipients, preview=False):
     if not preview:
-        _store_mail(context["user"], ACCEPTED_JOIN_REQUEST_MAIL if accepted else DENIED_JOIN_REQUEST_MAIL,recipients)
+        _store_mail(context["user"], ACCEPTED_JOIN_REQUEST_MAIL if accepted else DENIED_JOIN_REQUEST_MAIL, recipients)
     part = "accepted" if accepted else "declined"
     admins = [m.user for m in join_request.collaboration.collaboration_memberships if m.role == "admin"]
     return _do_send_mail(
@@ -229,7 +241,7 @@ def mail_error(environment, current_user, recipients, tb):
         subject=f"Error on {environment}",
         recipients=recipients,
         template="error_notification",
-        context={"environment": environment, "tb": tb, "date": datetime.now(), "current_user": current_user},
+        context={"environment": environment, "tb": tb, "date": datetime.datetime.now(), "current_user": current_user},
         preview=False)
 
 
@@ -239,7 +251,8 @@ def mail_feedback(environment, message, current_user, recipients):
         subject=f"Feedback on {environment} from {current_user.name}",
         recipients=recipients,
         template="feedback",
-        context={"environment": environment, "message": message, "date": datetime.now(), "current_user": current_user},
+        context={"environment": environment, "message": message, "date": datetime.datetime.now(),
+                 "current_user": current_user},
         preview=False)
 
 
@@ -253,7 +266,7 @@ def mail_platform_admins(obj):
             recipients=[mail_cfg.beheer_email],
             template="platform_notification",
             context={"environment": mail_cfg.environment,
-                     "date": datetime.now(),
+                     "date": datetime.datetime.now(),
                      "object_type": type(obj).__name__,
                      "current_user": current_user,
                      "obj": obj},
@@ -285,7 +298,7 @@ def mail_account_deletion(user):
             recipients=[mail_cfg.beheer_email],
             template="user_account_deleted",
             context={"environment": mail_cfg.environment,
-                     "date": datetime.now(),
+                     "date": datetime.datetime.now(),
                      "user": user},
             preview=False
         )
@@ -298,5 +311,44 @@ def mail_reset_token(admin_email, user, message):
         recipients=[admin_email],
         template="user_reset_mfa_token",
         context={"user": user, "message": message},
+        preview=False
+    )
+
+
+def mail_collaboration_expires_notification(collaboration, is_warning):
+    mail_type = COLLABORATION_EXPIRES_WARNING_MAIL if is_warning else COLLABORATION_EXPIRED_NOTIFICATION_MAIL
+    recipients = _get_coll_emails(collaboration, mail_type)
+
+    threshold = current_app.collaboration_expiration.expired_warning_mail_days_threshold
+    if is_warning:
+        subject = f"Collaboration {collaboration.name} will expire in {threshold} days"
+    else:
+        subject = f"Collaboration {collaboration.name} has expired"
+    _do_send_mail(
+        subject=subject,
+        recipients=[recipients],
+        template="collaboration_expires_warning" if is_warning else "collaboration_expired_notification",
+        context={"salutation": "Dear", "collaboration": collaboration},
+        preview=False
+    )
+
+
+def mail_collaboration_suspension_notification(collaboration, is_warning):
+    mail_type = COLLABORATION_SUSPENDED_NOTIFICATION_MAIL if is_warning else COLLABORATION_SUSPENSION_WARNING_MAIL
+    recipients = _get_coll_emails(collaboration, mail_type)
+
+    cfq = current_app.collaboration_suspension
+    threshold = cfq.inactivity_warning_mail_days_threshold
+    if is_warning:
+        subject = f"Collaboration {collaboration.name} will be suspended in {threshold} days"
+    else:
+        subject = f"Collaboration {collaboration.name} has been suspended"
+    now = datetime.datetime.utcnow()
+    _do_send_mail(
+        subject=subject,
+        recipients=[recipients],
+        template="collaboration_expires_warning" if is_warning else "collaboration_expired_notification",
+        context={"salutation": "Dear", "now": now, "collaboration": collaboration,
+                 "suspension_date": now + datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold)},
         preview=False
     )

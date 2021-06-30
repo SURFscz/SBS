@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SRAM 2fa token reset{% endblock %}
+{% block title %}SURF 2fa token reset{% endblock %}
 {% block content %}
 
 Second-factor authentication reset token.

@@ -30,6 +30,7 @@ import EmailField from "../components/EmailField";
 import {isUserAllowed, ROLES} from "../utils/UserRole";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import DateField from "../components/DateField";
+import moment from "moment";
 
 class CollaborationForm extends React.Component {
 
@@ -82,13 +83,15 @@ class CollaborationForm extends React.Component {
                     short_name: organisation.short_name
                 };
                 this.updateBreadCrumb(orgOption, collaboration, false, false);
+                const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).toDate() : null;
                 this.setState({
                     ...collaboration,
                     collaboration: collaboration,
                     organisation: orgOption,
                     organisations: [orgOption],
                     isNew: false,
-                    loading: false
+                    loading: false,
+                    expiry_date: expiryDate
                 });
             });
         } else {
@@ -251,7 +254,7 @@ class CollaborationForm extends React.Component {
                 administrators,
                 message,
                 accepted_user_policy,
-                expiry_date,
+                expiry_date: expiry_date ? expiry_date.getTime() / 1000 : null,
                 organisation_id: organisation.value,
                 disable_join_requests,
                 current_user_admin,
@@ -292,6 +295,7 @@ class CollaborationForm extends React.Component {
                 collaboration,
                 administrators,
                 message,
+                expiry_date,
                 accepted_user_policy,
                 organisation,
                 disable_join_requests,
@@ -308,6 +312,7 @@ class CollaborationForm extends React.Component {
                 logo,
                 identifier: collaboration.identifier,
                 administrators,
+                expiry_date: expiry_date ? expiry_date.getTime() / 1000 : null,
                 message,
                 accepted_user_policy,
                 organisation_id: organisation.value,
@@ -525,15 +530,13 @@ class CollaborationForm extends React.Component {
                                 placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
                                 externalLink={true}
                                 name={I18n.t("collaboration.accepted_user_policy")}/>
-                    <span>{`${expiry_date} expiry_date`}</span>
-                    <DateField value={expiry_date}
-                               onChange={e => {
-                                   debugger
-                                   this.setState({expiry_date: e})
-                               }}
+
+                    {!isCollaborationRequest && <DateField value={expiry_date}
+                               onChange={e => this.setState({expiry_date: e})}
                                allowNull={true}
+                               showYearDropdown={true}
                                name={I18n.t("collaboration.expiryDate")}
-                               toolTip={I18n.t("collaboration.expiryDateTooltip")}/>
+                               toolTip={I18n.t("collaboration.expiryDateTooltip")}/>}
 
                     {!isCollaborationRequest && <CheckBox name="disable_join_requests"
                                                           value={disable_join_requests}

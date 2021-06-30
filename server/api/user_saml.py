@@ -8,6 +8,7 @@ from flask import Blueprint, current_app, request as current_request
 from server.api.base import json_endpoint, query_param, send_error_mail
 from server.auth.security import confirm_read_access
 from server.db.db import db
+from server.db.defaults import STATUS_ACTIVE
 from server.db.domain import User, Service
 from server.logger.context_logger import ctx_logger
 
@@ -17,6 +18,7 @@ USER_UNKNOWN = 1
 USER_IS_SUSPENDED = 2
 SERVICE_UNKNOWN = 3
 SERVICE_NOT_CONNECTED = 4
+COLLABORATION_NOT_ACTIVE = 5
 
 # Independent mapping, so different attribute names can be send back
 custom_saml_mapping = {
@@ -58,10 +60,20 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
         connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
         if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
             connected_collaborations.append(cm.collaboration)
+
     if not connected_collaborations:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to any of the user collaborations")
         return not_authorized_func(service.name, SERVICE_NOT_CONNECTED)
+
+    if all(coll.status != STATUS_ACTIVE for coll in connected_collaborations):
+        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
+                     f" as the service is not connected to active collaborations")
+        return not_authorized_func(service.name, COLLABORATION_NOT_ACTIVE)
+
+    for coll in connected_collaborations:
+        coll.last_activity_date = datetime.now()
+        db.session.merge(coll)
 
     user.last_accessed_date = datetime.now()
     user.last_login_date = datetime.now()
