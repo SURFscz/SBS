@@ -16,6 +16,11 @@ class TestPlsc(AbstractTest):
         self.assertEqual("sarah@uva.org", sarah["email"])
         self.assertEqual("sarah", sarah["username"])
         self.assertEqual("some-lame-key", sarah["ssh_keys"][0])
+        # Edge case due to the seed data - just ensure it does not break
+        self.assertEqual("None", sarah["last_login_date"])
+
+        to_be_deleted = next(u for u in users_ if u["name"] == "to_be_deleted")
+        self.assertEqual("2019-12-08 08:49:21", to_be_deleted["last_login_date"])
 
         services_ = res["services"]
         self.assertEqual(8, len(services_))
