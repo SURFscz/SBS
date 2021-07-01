@@ -47,6 +47,9 @@ export function sortObjects(objects, attribute, reverse) {
 }
 
 export function valueForSort(attribute, obj) {
+    if (attribute.endsWith("_date")) {
+        return obj[attribute] || Number.MAX_SAFE_INTEGER;
+    }
     const val = obj[attribute];
     if (moment.isMoment(val)) {
         return val.unix();
