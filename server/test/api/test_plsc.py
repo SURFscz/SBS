@@ -20,7 +20,7 @@ class TestPlsc(AbstractTest):
         self.assertEqual("None", sarah["last_login_date"])
 
         to_be_deleted = next(u for u in users_ if u["name"] == "to_be_deleted")
-        self.assertEqual("2019-12-08 08:49:21", to_be_deleted["last_login_date"])
+        self.assertIsNotNone(to_be_deleted["last_login_date"])
 
         services_ = res["services"]
         self.assertEqual(8, len(services_))

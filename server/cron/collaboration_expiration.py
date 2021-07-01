@@ -4,9 +4,8 @@ import logging
 import time
 
 from flask import jsonify
-from sqlalchemy import text
 
-from server.cron.schedule import obtain_lock
+from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_ACTIVE
 from server.db.domain import Collaboration
@@ -68,5 +67,5 @@ def _do_expire_collaboration(app):
                 "collaborations_deleted": jsonify(collaborations_deleted).json}
 
 
-def suspend_users(app):
-    obtain_lock(app,collaboration_expiration_lock_name, _do_expire_collaboration, _result_container)
+def expire_collaboration(app):
+    return obtain_lock(app, collaboration_expiration_lock_name, _do_expire_collaboration, _result_container)
