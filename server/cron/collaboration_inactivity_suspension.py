@@ -5,7 +5,7 @@ import time
 
 from flask import jsonify
 
-from server.cron.schedule import obtain_lock
+from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_ACTIVE
 from server.db.domain import Collaboration
@@ -38,7 +38,7 @@ def _do_suspend_collaboration(app):
 
         for coll in collaborations_warned:
             mail_collaboration_expires_notification(coll, True)
-        TODO
+        # TODO finsh
         collaborations_expired = Collaboration.query \
             .filter(Collaboration.status == STATUS_ACTIVE) \
             .filter(Collaboration.expiry_date < now).all()  # noqa: E712
@@ -67,4 +67,4 @@ def _do_suspend_collaboration(app):
 
 
 def suspend_collaboration(app):
-    obtain_lock(app, collaboration_inactivity_suspension_lock_name, _do_suspend_collaboration, _result_container)
+    return obtain_lock(app, collaboration_inactivity_suspension_lock_name, _do_suspend_collaboration, _result_container)

@@ -3,9 +3,7 @@ import datetime
 import logging
 import time
 
-from sqlalchemy import text
-
-from server.cron.schedule import obtain_lock
+from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.domain import User, SuspendNotification, UserNameHistory
 from server.mail import mail_suspend_notification
@@ -109,4 +107,4 @@ def _do_suspend_users(app):
 
 
 def suspend_users(app):
-    obtain_lock(app,suspend_users_lock_name, _do_suspend_users, _result_container)
+    return obtain_lock(app, suspend_users_lock_name, _do_suspend_users, _result_container)

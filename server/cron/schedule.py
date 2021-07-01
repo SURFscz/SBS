@@ -4,14 +4,13 @@ import logging
 import threading
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from sqlalchemy import text
 
 from server.cron.cleanup_non_open_requests import cleanup_non_open_requests
 from server.cron.collaboration_expiration import expire_collaboration
+from server.cron.collaboration_inactivity_suspension import suspend_collaboration
 from server.cron.idp_metadata_parser import parse_idp_metadata
 from server.cron.outstanding_requests import outstanding_requests
 from server.cron.user_suspending import suspend_users
-from server.db.db import db
 
 
 def start_scheduling(app):
@@ -26,6 +25,9 @@ def start_scheduling(app):
     if app.app_config.collaboration_expiration.enabled:
         scheduler.add_job(func=expire_collaboration, trigger="cron", kwargs={"app": app}, day="*",
                           hour=app.app_config.collaboration_expiration.cron_hour_of_day)
+    if app.app_config.collaboration_suspension.enabled:
+        scheduler.add_job(func=suspend_collaboration, trigger="cron", kwargs={"app": app}, day="*",
+                          hour=app.app_config.collaboration_suspension.cron_hour_of_day)
     if app.app_config.user_requests_retention.enabled:
         scheduler.add_job(func=cleanup_non_open_requests, trigger="cron", kwargs={"app": app}, day="*",
                           hour=app.app_config.user_requests_retention.cron_hour_of_day)
@@ -45,14 +47,3 @@ def start_scheduling(app):
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
     return scheduler
-
-
-def obtain_lock(app, lock_name, success, failure):
-    with app.app_context():
-        session = db.create_session(options={})()
-        try:
-            result = session.execute(text(f"SELECT GET_LOCK('{lock_name}', 3)"))
-            lock_obtained = next(result, (0,))[0]
-            return success(app) if lock_obtained else failure()
-        finally:
-            session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))
