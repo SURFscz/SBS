@@ -176,6 +176,7 @@ I18n.translations.nl = {
             inviteSend: "Uitnodiging {{date}}",
             expiredAt: "Verlopen {{date}}",
             accepted: "Actief",
+            suspended: "Geschorst",
             new: "Voeg leden toe",
             remove: "Verwijder",
             mail: "Mail",
