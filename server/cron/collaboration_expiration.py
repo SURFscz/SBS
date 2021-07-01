@@ -67,5 +67,6 @@ def _do_expire_collaboration(app):
                 "collaborations_deleted": jsonify(collaborations_deleted).json}
 
 
-def expire_collaboration(app):
-    return obtain_lock(app, collaboration_expiration_lock_name, _do_expire_collaboration, _result_container)
+def expire_collaborations(app, wait_time=3):
+    return obtain_lock(app, collaboration_expiration_lock_name, _do_expire_collaboration, _result_container,
+                       wait_time=wait_time)

@@ -87,13 +87,13 @@ def _store_mail(user, mail_type, recipients):
 
 
 def _get_coll_emails(collaboration, mail_type):
-    org_members = [m.user.email for m in collaboration.organisation.organisation_memberships]
-    coll_admin = [m.user.email for m in collaboration.collaboration_memberships if m.role == "admin"]
+    org_members = [m.user for m in collaboration.organisation.organisation_memberships]
+    coll_admin = [m.user for m in collaboration.collaboration_memberships if m.role == "admin"]
     recipients = org_members + coll_admin
-
+    emails = [r.email for r in recipients]
     for r in recipients:
-        _store_mail(r, mail_type, recipients)
-    return recipients
+        _store_mail(r, mail_type, emails)
+    return emails
 
 
 def mail_collaboration_join_request(context, collaboration, recipients, preview=False):
@@ -319,14 +319,14 @@ def mail_collaboration_expires_notification(collaboration, is_warning):
     mail_type = COLLABORATION_EXPIRES_WARNING_MAIL if is_warning else COLLABORATION_EXPIRED_NOTIFICATION_MAIL
     recipients = _get_coll_emails(collaboration, mail_type)
 
-    threshold = current_app.collaboration_expiration.expired_warning_mail_days_threshold
+    threshold = current_app.app_config.collaboration_expiration.expired_warning_mail_days_threshold
     if is_warning:
         subject = f"Collaboration {collaboration.name} will expire in {threshold} days"
     else:
         subject = f"Collaboration {collaboration.name} has expired"
     _do_send_mail(
         subject=subject,
-        recipients=[recipients],
+        recipients=recipients,
         template="collaboration_expires_warning" if is_warning else "collaboration_expired_notification",
         context={"salutation": "Dear", "collaboration": collaboration},
         preview=False
@@ -337,7 +337,7 @@ def mail_collaboration_suspension_notification(collaboration, is_warning):
     mail_type = COLLABORATION_SUSPENDED_NOTIFICATION_MAIL if is_warning else COLLABORATION_SUSPENSION_WARNING_MAIL
     recipients = _get_coll_emails(collaboration, mail_type)
 
-    cfq = current_app.collaboration_suspension
+    cfq = current_app.app_config.collaboration_suspension
     threshold = cfq.inactivity_warning_mail_days_threshold
     if is_warning:
         subject = f"Collaboration {collaboration.name} will be suspended in {threshold} days"
@@ -346,7 +346,7 @@ def mail_collaboration_suspension_notification(collaboration, is_warning):
     now = datetime.datetime.utcnow()
     _do_send_mail(
         subject=subject,
-        recipients=[recipients],
+        recipients=recipients,
         template="collaboration_expires_warning" if is_warning else "collaboration_expired_notification",
         context={"salutation": "Dear", "now": now, "collaboration": collaboration,
                  "suspension_date": now + datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold)},

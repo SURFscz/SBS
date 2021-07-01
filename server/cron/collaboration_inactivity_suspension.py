@@ -7,9 +7,9 @@ from flask import jsonify
 
 from server.cron.shared import obtain_lock
 from server.db.db import db
-from server.db.defaults import STATUS_EXPIRED, STATUS_ACTIVE
+from server.db.defaults import STATUS_ACTIVE, STATUS_SUSPENDED
 from server.db.domain import Collaboration
-from server.mail import mail_collaboration_expires_notification
+from server.mail import mail_collaboration_expires_notification, mail_collaboration_suspension_notification
 
 collaboration_inactivity_suspension_lock_name = "collaboration_inactivity_suspension_lock_name"
 
@@ -30,41 +30,44 @@ def _do_suspend_collaboration(app):
         logger = logging.getLogger("scheduler")
         logger.info("Start running collaboration_suspension job")
 
-        notification_start_date = now + datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold - 1)
-        notification_end_date = now + datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold)
+        notification_start_date = now - datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold)
+        notification_end_date = now - datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold - 1)
         collaborations_warned = Collaboration.query \
             .filter(Collaboration.last_activity_date > notification_start_date) \
             .filter(Collaboration.last_activity_date < notification_end_date).all()  # noqa: E712
 
         for coll in collaborations_warned:
-            mail_collaboration_expires_notification(coll, True)
-        # TODO finsh
-        collaborations_expired = Collaboration.query \
+            mail_collaboration_suspension_notification(coll, True)
+
+        suspension_end_date = now - datetime.timedelta(days=cfq.collaboration_inactivity_days_threshold - 1)
+        collaborations_suspended = Collaboration.query \
             .filter(Collaboration.status == STATUS_ACTIVE) \
-            .filter(Collaboration.expiry_date < now).all()  # noqa: E712
-        for coll in collaborations_expired:
+            .filter(Collaboration.last_activity_date < suspension_end_date).all()  # noqa: E712
+        for coll in collaborations_suspended:
             mail_collaboration_expires_notification(coll, False)
-            coll.status = STATUS_EXPIRED
+            coll.status = STATUS_SUSPENDED
             db.session.merge(coll)
-        if collaborations_expired:
+        if collaborations_suspended:
             db.session.commit()
 
-        deletion_date = now - datetime.timedelta(days=cfq.expired_collaborations_days_threshold - 1)
+        threshold_for_deletion = cfq.collaboration_inactivity_days_threshold + cfq.collaboration_deletion_days_threshold
+        deletion_date = now - datetime.timedelta(days=threshold_for_deletion)
         collaborations_deleted = Collaboration.query \
-            .filter(Collaboration.status == STATUS_EXPIRED) \
-            .filter(Collaboration.expiry_date < deletion_date).all()  # noqa: E712
+            .filter(Collaboration.status == STATUS_SUSPENDED) \
+            .filter(Collaboration.last_activity_date < deletion_date).all()  # noqa: E712
         for coll in collaborations_deleted:
             db.session.delete(coll)
         if collaborations_deleted:
             db.session.commit()
 
         end = int(time.time() * 1000.0)
-        logger.info(f"Finished running expire_collaboration job in {end - start} ms")
+        logger.info(f"Finished running collaboration_suspension job in {end - start} ms")
 
         return {"collaborations_warned": jsonify(collaborations_warned).json,
-                "collaborations_expired": jsonify(collaborations_expired).json,
+                "collaborations_suspended": jsonify(collaborations_suspended).json,
                 "collaborations_deleted": jsonify(collaborations_deleted).json}
 
 
-def suspend_collaboration(app):
-    return obtain_lock(app, collaboration_inactivity_suspension_lock_name, _do_suspend_collaboration, _result_container)
+def suspend_collaborations(app, wait_time=3):
+    return obtain_lock(app, collaboration_inactivity_suspension_lock_name, _do_suspend_collaboration, _result_container,
+                       wait_time=wait_time)
