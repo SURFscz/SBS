@@ -7,7 +7,8 @@ import {
     createCollaborationMembershipRole,
     deleteCollaborationMembership,
     health,
-    organisationByUserSchacHomeOrganisation
+    organisationByUserSchacHomeOrganisation,
+    unsuspendCollaboration
 } from "../api";
 import "./CollaborationDetail.scss";
 import I18n from "i18n-js";
@@ -321,7 +322,8 @@ class CollaborationDetail extends React.Component {
                 confirmationDialogOpen: true,
                 confirmationQuestion: I18n.t("collaborationDetail.deleteYourselfMemberConfirmation"),
                 confirmationDialogAction: this.doDeleteMe,
-                lastAdminWarning: lastAdminWarning
+                lastAdminWarning: lastAdminWarning,
+                isWarning: true
             });
         } else {
             this.doDeleteMe();
@@ -424,6 +426,25 @@ class CollaborationDetail extends React.Component {
         </UnitHeader>;
     }
 
+    unsuspend = showConfirmation => () => {
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationQuestion: I18n.t("unsuspend.confirmation"),
+                confirmationDialogAction: this.unsuspend(false),
+                isWarning: false
+            });
+        } else {
+            this.setState({loading: true});
+            unsuspendCollaboration(this.state.collaboration.id).then(() => {
+                this.componentDidMount(() => {
+                    this.setState({loading: false});
+                    setFlash(I18n.t("unsuspend.flash", {name: this.state.collaboration.name}));
+                })
+            });
+        }
+    }
+
     getActions = (user, collaboration, allowedToEdit, showMemberView) => {
         const actions = [];
         if (allowedToEdit && showMemberView) {
@@ -431,6 +452,13 @@ class CollaborationDetail extends React.Component {
                 svg: PencilIcon,
                 name: I18n.t("home.edit"),
                 perform: () => this.props.history.push("/edit-collaboration/" + collaboration.id)
+            });
+        }
+        if (allowedToEdit && showMemberView && collaboration.status === "suspended") {
+            actions.push({
+                icon: "unlock",
+                name: I18n.t("home.unsuspend"),
+                perform: this.unsuspend(true)
             });
         }
         const isMember = collaboration.collaboration_memberships.some(m => m.user_id === user.id);
@@ -459,7 +487,7 @@ class CollaborationDetail extends React.Component {
             this.componentDidMount(() => {
                 this.setState({loading: false});
                 setFlash(I18n.t("collaborationDetail.flash.meAdded", {name: collaboration.name}));
-            })
+            });
         })
     }
 
@@ -524,7 +552,8 @@ class CollaborationDetail extends React.Component {
         const {
             collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
-            collaborationJoinRequest, joinRequestDialogOpen, alreadyMember, lastAdminWarning
+            collaborationJoinRequest, joinRequestDialogOpen, alreadyMember, lastAdminWarning,
+            isWarning
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -533,7 +562,8 @@ class CollaborationDetail extends React.Component {
         const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
         return (
             <>
-                {(adminOfCollaboration && showMemberView) && this.getUnitHeader(user, collaboration, allowedToEdit, showMemberView)}
+                {(adminOfCollaboration && showMemberView) &&
+                this.getUnitHeader(user, collaboration, allowedToEdit, showMemberView)}
                 {(!showMemberView || !adminOfCollaboration) &&
                 this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
 
@@ -552,7 +582,7 @@ class CollaborationDetail extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
-                                    isWarning={true}
+                                    isWarning={isWarning}
                                     question={confirmationQuestion}>
                     {lastAdminWarning &&
                     <LastAdminWarning organisation={collaboration.organisation} currentUserDeleted={true}
