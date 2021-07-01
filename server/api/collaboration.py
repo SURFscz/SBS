@@ -274,6 +274,20 @@ def collaboration_invites():
     return None, 201
 
 
+@collaboration_api.route("/unsuspend", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def unsuspend():
+    data = current_request.get_json()
+    collaboration_id = data["collaboration_id"]
+    confirm_collaboration_admin(collaboration_id)
+    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration.last_activity_date = datetime.now()
+    collaboration.status = STATUS_ACTIVE
+    db.session.merge(collaboration)
+    db.session.commit()
+    return {}, 201
+
+
 @collaboration_api.route("/invites-preview", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def collaboration_invites_preview():

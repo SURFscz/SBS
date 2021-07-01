@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import datetime
 import json
 import time
 
@@ -577,3 +578,15 @@ class TestCollaboration(AbstractTest):
 
     def test_collaboration_update_expiration_date_with_suspended(self):
         self._do_test_collaboration_update_expiration_date(STATUS_SUSPENDED, None, STATUS_ACTIVE)
+
+    def test_unsuspend(self):
+        coll = self.find_entity_by_name(Collaboration, ai_computing_name)
+        coll.last_activity_date = datetime.datetime.now() - datetime.timedelta(days=365)
+        coll.status = STATUS_SUSPENDED
+        db.session.merge(coll)
+        db.session.commit()
+
+        self.put("/api/collaborations/unsuspend", body={"collaboration_id": coll.id})
+        coll = self.find_entity_by_name(Collaboration, ai_computing_name)
+        self.assertEqual(STATUS_ACTIVE, coll.status)
+        self.assertTrue(coll.last_activity_date > datetime.datetime.now() - datetime.timedelta(hours=1))

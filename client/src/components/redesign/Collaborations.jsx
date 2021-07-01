@@ -121,8 +121,10 @@ export default class Collaborations extends React.PureComponent {
                         const warning = days < 60;
                         return <div>
                             <span className={warning ? "warning" : ""}>{moment(expiryDate).format("LL")}</span>
-                            {warning &&
+                            {(warning && collaboration.status === "active") &&
                             <span className="warning">{I18n.t("collaboration.expiryDateWarning", {nbr: days})}</span>}
+                            {(collaboration.status === "expired") &&
+                            <span className="warning">{I18n.t("collaboration.expiryDateExpired", {nbr: days})}</span>}
                         </div>;
                     }
                     return I18n.t("service.none");
@@ -140,6 +142,9 @@ export default class Collaborations extends React.PureComponent {
                     const warning = days > 60;
                     return <div>
                         <span className={warning ? "warning" : ""}>{moment(lastActivityDate).format("LL")}</span>
+                        {collaboration.status === "suspended" && <span className="warning">
+                            {I18n.t("collaboration.lastActivitySuspended")}
+                        </span>}
                     </div>;
                 }
             });

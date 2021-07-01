@@ -284,6 +284,10 @@ export function mayRequestCollaboration() {
     return fetchJson("/api/collaborations/may_request_collaboration");
 }
 
+export function unsuspendCollaboration(collaborationId) {
+    return postPutJson("/api/collaborations/unsuspend", {collaboration_id: collaborationId}, "put");
+}
+
 //Organisations
 export function myOrganisationsLite() {
     return fetchJson(`/api/organisations/mine_lite`);
