@@ -35,30 +35,38 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
             }
 
             &.name {
-                width: 25%;
+                width: 20%;
                 padding-left: 15px;
             }
 
             &.organisation__name {
-                width: 25%;
+                width: 20%;
+            }
+
+            &.expiry_date {
+                width: 18%;
+            }
+
+            &.last_activity_date {
+                width: 10%;
             }
 
             &.fromCollaboration {
-                width: 15%;
+                width: 10%;
             }
 
             &.collaboration_memberships_count {
-                width: 15%;
+                width: 10%;
                 text-align: center;
             }
 
             &.role {
-                width: 20%;
+                width: 15%;
                 text-align: center;
             }
 
             &.invitations_count {
-                width: 15%;
+                width: 10%;
                 text-align: center;
             }
         }
@@ -78,6 +86,18 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
 
             &.collaboration_memberships_count {
                 text-align: center;
+            }
+
+            &.expiry_date {
+                span.warning {
+                    color: $red;
+                    display: block;
+                    font-weight: bold;
+
+                    &:last-child {
+                        margin-top: 6px;
+                    }
+                }
             }
 
             &.role {

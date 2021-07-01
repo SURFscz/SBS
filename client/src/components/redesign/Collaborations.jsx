@@ -10,6 +10,7 @@ import {allCollaborations, mayRequestCollaboration, myCollaborations} from "../.
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
+import moment from "moment";
 
 export default class Collaborations extends React.PureComponent {
 
@@ -68,7 +69,10 @@ export default class Collaborations extends React.PureComponent {
             return <SpinnerField/>;
         }
         const {collaborations} = standalone ? this.state : this.props;
-        const {modelName = "collaborations", organisation, mayCreate = true, showOrigin = false} = this.props;
+        const {
+            modelName = "collaborations", organisation, mayCreate = true, showOrigin = false,
+            showExpiryDate = false, showLastActivityDate = false
+        } = this.props;
 
         if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
             return this.noCollaborations(organisation);
@@ -105,6 +109,41 @@ export default class Collaborations extends React.PureComponent {
                         <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
                 }
             }];
+        if (showExpiryDate) {
+            columns.push({
+                key: "expiry_date",
+                header: I18n.t("collaboration.expiryDate"),
+                mapper: collaboration => {
+                    if (collaboration.expiry_date) {
+                        const today = new Date().getTime();
+                        const expiryDate = collaboration.expiry_date * 1000;
+                        const days = Math.round((expiryDate - today) / (1000 * 60 * 60 * 24));
+                        const warning = days < 60;
+                        return <div>
+                            <span className={warning ? "warning" : ""}>{moment(expiryDate).format("LL")}</span>
+                            {warning &&
+                            <span className="warning">{I18n.t("collaboration.expiryDateWarning", {nbr: days})}</span>}
+                        </div>;
+                    }
+                    return I18n.t("service.none");
+                }
+            });
+        }
+        if (showLastActivityDate) {
+            columns.push({
+                key: "last_activity_date",
+                header: I18n.t("collaboration.lastActivityDate"),
+                mapper: collaboration => {
+                    const today = new Date().getTime();
+                    const lastActivityDate = collaboration.last_activity_date * 1000;
+                    const days = Math.round((today - lastActivityDate) / (1000 * 60 * 60 * 24));
+                    const warning = days > 60;
+                    return <div>
+                        <span className={warning ? "warning" : ""}>{moment(lastActivityDate).format("LL")}</span>
+                    </div>;
+                }
+            });
+        }
         if (showOrigin) {
             columns.push({
                 key: "fromCollaboration",
@@ -129,7 +168,7 @@ export default class Collaborations extends React.PureComponent {
                       rowLinkMapper={() => this.openCollaboration}
                       columns={allColumns}
                       showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
-                      newEntityPath={`/new-collaboration${organisationQueryParam}`}
+                      newEntityPath={` / new - collaboration${organisationQueryParam}`}
                       loading={loading}
                       {...this.props}/>
         )

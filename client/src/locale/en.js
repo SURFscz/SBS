@@ -557,6 +557,8 @@ I18n.translations.en = {
         enabled: "Copy link",
         privacyPolicy: "Acceptable Use Policy",
         expiryDate: "End date",
+        expiryDateWarning: "Will expire in {{nbr}} days!",
+        lastActivityDate: "Last activity",
         expiryDateTooltip: "The end date of the collaboration<br/>After this date the collaboration<br/>will be suspended and users of<br/>this CO can no longer use services",
         discloseMembers: "Disclose member info",
         discloseMemberInformation: "Disclose member information",

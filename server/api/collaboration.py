@@ -436,7 +436,7 @@ def _validate_collaboration(data, organisation, new_collaboration=True):
     else:
         data["expiry_date"] = None
     # Check if the status needs updating
-    if new_collaboration:
+    if new_collaboration or "status" not in data:
         data["status"] = STATUS_ACTIVE
     else:
         collaboration = Collaboration.query.get(data["id"])

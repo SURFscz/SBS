@@ -466,6 +466,7 @@ class CollaborationDetail extends React.Component {
     getCollaborationStatus = collaboration => {
         const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).format("LL") : I18n.t("service.none");
         const lastActivityDate = moment(collaboration.last_activity_date * 1000).format("LL");
+        const className = collaboration.status !== "active" ? "warning" : "";
         return (
             <div className="org-attributes">
                     <span className="contains-tooltip">{I18n.t(`collaboration.status.name`)}
@@ -478,7 +479,7 @@ class CollaborationDetail extends React.Component {
                                       }}/>
                             </ReactTooltip>
                     </span>
-                <span>{I18n.t(`collaboration.status.${collaboration.status}`)}</span>
+                <span className={className}>{I18n.t(`collaboration.status.${collaboration.status}`)}</span>
             </div>
         );
     }
