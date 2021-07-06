@@ -61,6 +61,7 @@ I18n.translations.en = {
     home: {
         sram: "SURF RESEARCH ACCESS MANAGEMENT PLATFORM",
         edit: "Edit",
+        unsuspend: "Unsuspend",
         history: "History",
         details: "Details",
         backToHome: "Back to home",
@@ -176,6 +177,7 @@ I18n.translations.en = {
             inviteSend: "Invite sent {{date}}",
             expiredAt: "Expired on {{date}}",
             accepted: "Active",
+            suspended: "Suspended",
             new: "Add member(s)",
             remove: "Delete",
             mail: "Compose email",
@@ -555,6 +557,12 @@ I18n.translations.en = {
         disabled: "Disabled",
         enabled: "Copy link",
         privacyPolicy: "Acceptable Use Policy",
+        expiryDate: "End date",
+        expiryDateWarning: "Will expire in {{nbr}} days!",
+        expiryDateExpired: "Expired!",
+        lastActivityDate: "Last activity",
+        lastActivitySuspended: "Suspended!",
+        expiryDateTooltip: "The end date of the collaboration. After this date the collaboration will be suspended and its members can no longer use services",
         discloseMembers: "Disclose member info",
         discloseMemberInformation: "Disclose member information",
         discloseMemberInformationTooltip: "When checked the names of members are disclosed to other members",
@@ -590,6 +598,15 @@ I18n.translations.en = {
         manager: "Manager",
         admin: "Admin",
         member: "Regular user",
+        status: {
+            name: "Status",
+            active: "Active",
+            suspended: "Suspended",
+            expired: "Expired",
+            activeTooltip: "This collaboration is active and ready for business.",
+            suspendedTooltip: "This collaboration is suspended due to long inactivity. It was used for the last time on {{lastActivityDate}}.",
+            expiredTooltip: "This collaboration is expired due to the expiry date. It has expires on {{expiryDate}}. It can be activated by setting a new end date.",
+        },
         flash: {
             created: "Collaboration {{name}} was successfully created",
             requested: "Collaboration {{name}} was successfully requested"
@@ -1264,10 +1281,10 @@ I18n.translations.en = {
         parentUpdated: "Existing {{collection}} was updated and is linked to {{parent}}",
         parentDeleted: "Existing {{collection}} deleted from {{parent}}",
         activities: {
-          tables: "All audit log tables",
-          tablesTooltip: "Select all tables that you want to include If you select none then no filtering is done on table type.",
-          tablesPlaceHolder: "Select tables",
-          submit: "Fetch"
+            tables: "All audit log tables",
+            tablesTooltip: "Select all tables that you want to include If you select none then no filtering is done on table type.",
+            tablesPlaceHolder: "Select tables",
+            submit: "Fetch"
         },
         tables: {
             "api_keys": "API key",
