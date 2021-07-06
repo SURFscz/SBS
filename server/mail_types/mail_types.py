@@ -28,3 +28,11 @@ ACCEPTED_SERVICE_CONNECTTION_REQUEST_MAIL = "accepted_service_connecttion_reques
 SUSPEND_NOTIFICATION_MAIL = "suspend_notification_mail"
 
 RESET_MFA_TOKEN_MAIL = "reset_mfa_token_mail"
+
+COLLABORATION_EXPIRES_WARNING_MAIL = "collaboration_expires_warning_mail"
+
+COLLABORATION_EXPIRED_NOTIFICATION_MAIL = "collaboration_expired_notification_mail"
+
+COLLABORATION_SUSPENSION_WARNING_MAIL = "collaboration_suspension_warning_mail"
+
+COLLABORATION_SUSPENDED_NOTIFICATION_MAIL = "collaboration_suspended_notification_mail"

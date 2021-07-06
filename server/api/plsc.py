@@ -54,11 +54,11 @@ def sync():
     rs = db.engine.execute("SELECT collaboration_membership_id, group_id FROM collaboration_memberships_groups")
     collaboration_memberships_groups = [{"collaboration_membership_id": row[0], "group_id": row[1]} for row in rs]
 
-    rs = db.engine.execute("SELECT id, identifier, name, short_name, global_urn, organisation_id from collaborations")
+    rs = db.engine.execute("SELECT id, identifier, name, short_name, global_urn, organisation_id, status "
+                           "from collaborations")
     collaborations = [
         {"id": row[0], "identifier": row[1], "name": row[2], "short_name": row[3], "global_urn": row[4],
-         'organisation_id': row[5]} for row in
-        rs]
+         'organisation_id': row[5], "status": row[6]} for row in rs]
 
     rs = db.engine.execute(
         "SELECT id, name, short_name, global_urn, identifier, collaboration_id, description FROM `groups`")
@@ -97,11 +97,11 @@ def sync():
     result["services"] = services
 
     rs = db.engine.execute("SELECT id, uid, name, given_name, family_name, email, scoped_affiliation, "
-                           "eduperson_principal_name, username FROM users")
+                           "eduperson_principal_name, username, last_login_date FROM users")
     for row in rs:
         user_row = {"id": row[0], "uid": row[1], "name": row[2], "given_name": row[3], "family_name": row[4],
                     "email": row[5], "scoped_affiliation": row[6], "eduperson_principal_name": row[7],
-                    "username": row[8]}
+                    "username": row[8], "last_login_date": str(row[9])}
         rs_ssh_keys = db.engine.execute(f"SELECT ssh_value FROM ssh_keys WHERE user_id = {row[0]}")
         user_row["ssh_keys"] = [r[0] for r in rs_ssh_keys]
         result["users"].append(user_row)

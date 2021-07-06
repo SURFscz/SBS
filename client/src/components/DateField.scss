@@ -73,5 +73,10 @@
                 background-color: $background;
             }
         }
+
+        .react-datepicker__close-icon {
+            top: -22px;
+            right: -10px;
+        }
     }
 }

@@ -477,7 +477,7 @@ def delete_user():
 @user_api.route("/error", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def error():
-    js_dump = json.dumps(current_request.json)
+    js_dump = json.dumps(current_request.json, default=str)
     ctx_logger("user").exception(js_dump)
     mail_conf = current_app.app_config.mail
     if mail_conf.send_js_exceptions and not os.environ.get("TESTING"):

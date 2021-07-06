@@ -10,6 +10,7 @@ from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin
 from server.db.db import db
+from server.db.defaults import STATUS_ACTIVE
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, User
 from server.db.models import update, save, delete
 from server.mail import mail_platform_admins
@@ -196,7 +197,7 @@ def save_service():
     data = current_request.get_json()
     _validate_ip_networks(data)
 
-    data["status"] = "active"
+    data["status"] = STATUS_ACTIVE
 
     res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]

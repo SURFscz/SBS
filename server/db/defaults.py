@@ -1,11 +1,15 @@
 # -*- coding: future_fstrings -*-
 import re
-from datetime import datetime, date, time, timedelta
 from collections.abc import Iterable
+from datetime import datetime, date, time, timedelta
 
 from werkzeug.exceptions import BadRequest
 
 full_text_search_autocomplete_limit = 16
+
+STATUS_ACTIVE = "active"
+STATUS_EXPIRED = "expired"
+STATUS_SUSPENDED = "suspended"
 
 
 def default_expiry_date(json_dict=None):

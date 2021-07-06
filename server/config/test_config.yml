@@ -140,3 +140,23 @@ user_requests_retention:
   outstanding_join_request_days_threshold: 21
   # How long before we delete approved / denied CO requests
   outstanding_coll_request_days_threshold: 21
+
+collaboration_expiration:
+  # Do we daily check for CO's that will be deleted because they have been expired?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long after expiration do we actually delete expired collaborations
+  expired_collaborations_days_threshold: 90
+  # How many days before actual expiration do we mail the organisation members
+  expired_warning_mail_days_threshold: 5
+
+collaboration_suspension:
+  # Do we daily check for CO's that will be suspended because of inactivity?
+  enabled: True
+  cron_hour_of_day: 10
+  # After how many days of inactivity do we suspend collaborations
+  collaboration_inactivity_days_threshold: 360
+  # How many days before actual suspension do we mail the organisation members
+  inactivity_warning_mail_days_threshold: 5
+  # After how many days after suspension do we actually delete the collaboration
+  collaboration_deletion_days_threshold: 90

@@ -62,6 +62,7 @@ I18n.translations.nl = {
         sram: "RESEARCH ACCESS MANAGEMENT PLATFORM",
         edit: "Wijzig",
         history: "Geschiedenis",
+        unsuspend: "Ontschorsen",
         details: "Details",
         backToHome: "Terug naar home",
         firstTime: "Onboarding",
@@ -176,6 +177,7 @@ I18n.translations.nl = {
             inviteSend: "Uitnodiging {{date}}",
             expiredAt: "Verlopen {{date}}",
             accepted: "Actief",
+            suspended: "Geschorst",
             new: "Voeg leden toe",
             remove: "Verwijder",
             mail: "Mail",
@@ -504,7 +506,7 @@ I18n.translations.nl = {
         role: "Rol",
         member: "Lid",
         manager: "Manager",
-        admin: "Administrator",
+        admin: "Admin",
         organisation: "Organisatie",
         organisations: "Organisaties",
         sbs: "Applicatie",
@@ -555,6 +557,12 @@ I18n.translations.nl = {
         disabled: "Uitgeschakeld",
         enabled: "Copy link",
         privacyPolicy: "Privacy policy",
+        expiryDate: "Eind datum",
+        expiryDateWarning: "Zal verlopen over {{nbr}} dagen!",
+        expiryDateExpired: "Verlopen!!!",
+        lastActivityDate: "Laatste activiteit",
+        lastActivitySuspended: "Geschorst!!!",
+        expiryDateTooltip: "De einddatum van de samenwerking.<br/>Na deze datum wordt de samenwerking<br/> opgeschort en kunnen gebruikers van<br/>deze CO geen gebruik meer maken van services",
         discloseMembers: "Toon leden info",
         discloseMemberInformation: "Informatie van leden tonen",
         discloseMemberInformationTooltip: "Indien aangevinkt, dan wordt<br/>informatie van leden aan andere leden getoond",
@@ -590,6 +598,16 @@ I18n.translations.nl = {
         manager: "Manager",
         admin: "CO-Admin",
         member: "Normale gebruiker",
+        status: {
+            name: "Status",
+            active: "Actief",
+            suspended: "Geschorst",
+            expired: "Verlopen",
+            activeTooltip: "This collaboration is active<br/>and ready for business.",
+            suspendedTooltip: "This collaboration is suspended<br/> due to long inactivity.<br/><br/>It was used for the<br/>last time on {{lastActivityDate}}.",
+            expiredTooltip: "This collaboration is expired<br/> due to the expiry date.<br/><br/>It has expires on {{expiryDate}}.<br/>It can be activated by setting a new end date.",
+        },
+
         flash: {
             created: "Samenwerking {{name}} is met succes aangemaakt.",
             requested: "Samenwerking {{name}} is met succes aangevraagd."
@@ -1612,7 +1630,12 @@ I18n.translations.nl = {
         info2: "Je bent niet succesvol ingelogd bij SURF Research Access Management omdat je account is opgeschort, en daarom heb je geen toegang tot <i>{{name}}</i>. Geen van de samenwerkingsverbanden waar je momenteel een lid van, hebben toegang tot <i>{{name}}</i> ingeschakeld. Neem contact op met uw samenwerkingsbeheerder(s) om toegang tot deze service in te schakelen.",
         info3: "Je bent succesvol ingelogd bij SURF Research Access Management (SRAM), maar de service <i>{{name}}</i> is onbekend binnen SRAM.",
         info4: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. De samenwerking(en) waar je momenteel lid van bent, hebben <i>{{name}}</i> niet beschikbaar gemaakt. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen."
+    },
+    unsuspend: {
+        confirmation: "Weet je zeker dat je deze samenwerking weer wilt activeren?",
+        flash: "Samenwerking {{name}} is weer actief"
     }
+
 };
 
 export default I18n.translations.nl;

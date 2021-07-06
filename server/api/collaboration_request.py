@@ -10,7 +10,7 @@ from server.api.base import json_endpoint, STATUS_OPEN, STATUS_APPROVED, STATUS_
 from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
 from server.auth.security import current_user_id, current_user_name, \
     confirm_organisation_admin_or_manager
-from server.db.defaults import cleanse_short_name
+from server.db.defaults import cleanse_short_name, STATUS_ACTIVE
 from server.db.domain import User, Organisation, CollaborationRequest, Collaboration, CollaborationMembership, db, \
     SchacHomeOrganisation
 from server.db.models import save, delete
@@ -107,6 +107,7 @@ def approve_request(collaboration_request_id):
         data[attr] = client_data.get(attr, None)
     assign_global_urn_to_collaboration(collaboration_request.organisation, data)
 
+    data["status"] = STATUS_ACTIVE
     res = save(Collaboration, custom_json=data)
     collaboration = res[0]
 

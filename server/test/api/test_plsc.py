@@ -16,6 +16,11 @@ class TestPlsc(AbstractTest):
         self.assertEqual("sarah@uva.org", sarah["email"])
         self.assertEqual("sarah", sarah["username"])
         self.assertEqual("some-lame-key", sarah["ssh_keys"][0])
+        # Edge case due to the seed data - just ensure it does not break
+        self.assertEqual("None", sarah["last_login_date"])
+
+        to_be_deleted = next(u for u in users_ if u["name"] == "to_be_deleted")
+        self.assertIsNotNone(to_be_deleted["last_login_date"])
 
         services_ = res["services"]
         self.assertEqual(8, len(services_))
@@ -24,6 +29,7 @@ class TestPlsc(AbstractTest):
         self.assertEqual(wiki["name"], "Wiki")
 
         collaborations = flatten([org["collaborations"] for org in res["organisations"] if org["name"] == uuc_name])
+        self.assertEqual("active", collaborations[0]["status"])
         groups = flatten([coll["groups"] for coll in collaborations if coll["name"] == ai_computing_name])
         ai_researchers = list(filter(lambda group: group["name"] == ai_researchers_group, groups))[0]
         self.assertIsNotNone(ai_researchers["description"])

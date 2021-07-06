@@ -43,6 +43,7 @@
 
 span.contains-copy {
     position: relative;
+    width: 88px!important;
 
     section.copy-to-clipboard {
         position: absolute;
@@ -56,6 +57,14 @@ span.contains-copy {
             width: 24px;
             height: auto;
         }
+    }
+}
+
+span.contains-tooltip {
+    svg {
+        color: $blue;
+        width: 22px;
+        margin-left: 3px;
     }
 }
 
