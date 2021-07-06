@@ -620,6 +620,14 @@ export function suspendUsers() {
     return postPutJson("/api/system/suspend_users", {}, "PUT");
 }
 
+export function suspendCollaborations() {
+    return postPutJson("/api/system/suspend_collaborations", {}, "PUT");
+}
+
+export function expireCollaborations() {
+    return postPutJson("/api/system/expire_collaborations", {}, "PUT");
+}
+
 export function outstandingRequests() {
     return fetchJson("/api/system/outstanding_requests");
 }

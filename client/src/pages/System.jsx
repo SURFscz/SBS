@@ -8,8 +8,10 @@ import {
     clearAuditLogs,
     dbSeed,
     dbStats,
+    expireCollaborations,
     health,
     outstandingRequests,
+    suspendCollaborations,
     suspendUsers
 } from "../api";
 import Button from "../components/Button";
@@ -39,6 +41,8 @@ class System extends React.Component {
         this.state = {
             tab: "cron",
             suspendedUsers: {},
+            suspendedCollaborations: {},
+            expiredCollaborations: {},
             outstandingRequests: {},
             cleanedRequests: {},
             databaseStats: [],
@@ -75,6 +79,8 @@ class System extends React.Component {
     clear = () => {
         this.setState({
             suspendedUsers: {},
+            suspendedCollaborations: {},
+            expiredCollaborations: {},
             outstandingRequests: {},
             cleanedRequests: {},
             databaseStats: [],
@@ -91,13 +97,17 @@ class System extends React.Component {
         window.location.href = window.location.href;
     }
 
-    getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests) => {
+    getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations) => {
         return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}
                      icon={<FontAwesomeIcon icon="clock"/>}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
                     {this.renderDailyCron()}
                     {this.renderDailyCronResults(suspendedUsers)}
+                    {this.renderExpiredCollaborations()}
+                    {this.renderExpiredCollaborationsResults(expiredCollaborations)}
+                    {this.renderSuspendedCollaborations()}
+                    {this.renderSuspendedCollaborationsResults(suspendedCollaborations)}
                     {this.renderOutstandingRequests()}
                     {this.renderOutstandingRequestsResults(outstandingRequests)}
                     {this.renderCleanedRequests()}
@@ -246,6 +256,20 @@ class System extends React.Component {
         });
     }
 
+    doExpireCollaborations = () => {
+        this.setState({busy: true})
+        expireCollaborations().then(res => {
+            this.setState({expiredCollaborations: res, busy: false});
+        });
+    }
+
+    doSuspendCollaborations = () => {
+        this.setState({busy: true})
+        suspendCollaborations().then(res => {
+            this.setState({suspendedCollaborations: res, busy: false});
+        });
+    }
+
     doOutstandingRequests = () => {
         this.setState({busy: true})
         outstandingRequests().then(res => {
@@ -313,6 +337,36 @@ class System extends React.Component {
         );
     }
 
+    renderExpiredCollaborations = () => {
+        const {expiredCollaborations} = this.state;
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.runExpiredCollaborations")}</p>
+                <div className="actions">
+                    {isEmpty(expiredCollaborations) && <Button txt={I18n.t("system.runDailyJobs")}
+                                                               onClick={this.doExpireCollaborations}/>}
+                    {!isEmpty(expiredCollaborations) && <Button txt={I18n.t("system.clear")}
+                                                                onClick={this.clear} cancelButton={true}/>}
+                </div>
+            </div>
+        );
+    }
+
+    renderSuspendedCollaborations = () => {
+        const {suspendedCollaborations} = this.state;
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.runSuspendedCollaborations")}</p>
+                <div className="actions">
+                    {isEmpty(suspendedCollaborations) && <Button txt={I18n.t("system.runDailyJobs")}
+                                                                 onClick={this.doSuspendCollaborations}/>}
+                    {!isEmpty(suspendedCollaborations) && <Button txt={I18n.t("system.clear")}
+                                                                  onClick={this.clear} cancelButton={true}/>}
+                </div>
+            </div>
+        );
+    }
+
     renderOutstandingRequests = () => {
         const {outstandingRequests} = this.state;
         return (
@@ -364,6 +418,66 @@ class System extends React.Component {
                 </div>
             </div>
         );
+    }
+
+    renderExpiredCollaborationsResults = expiredCollaborations => {
+        return (
+            <div className="results">
+                {!isEmpty(expiredCollaborations) && <div className="results">
+                    <table className="expired-collaborations">
+                        <thead>
+                        <tr>
+                            <th>{I18n.t("system.action")}</th>
+                            <th>{I18n.t("system.results")}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {Object.keys(expiredCollaborations).map(key =>
+                            <tr key={key}>
+                                <td className="action">{I18n.t(`system.${key}`)}</td>
+                                <td>
+                                    {!isEmpty(expiredCollaborations[key]) && <ul>
+                                        {expiredCollaborations[key].map(coll => <li>{coll.name}</li>)}
+                                    </ul>}
+                                    {isEmpty(expiredCollaborations[key]) && <span>None</span>}
+                                </td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                </div>}
+            </div>)
+
+    }
+
+    renderSuspendedCollaborationsResults = suspendedCollaborations => {
+        return (
+            <div className="results">
+                {!isEmpty(suspendedCollaborations) && <div className="results">
+                    <table className="suspended-collaborations">
+                        <thead>
+                        <tr>
+                            <th>{I18n.t("system.action")}</th>
+                            <th>{I18n.t("system.results")}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {Object.keys(suspendedCollaborations).map(key =>
+                            <tr key={key}>
+                                <td className="action">{I18n.t(`system.${key}`)}</td>
+                                <td>
+                                    {!isEmpty(suspendedCollaborations[key]) && <ul>
+                                        {suspendedCollaborations[key].map(coll => <li>{coll.name}</li>)}
+                                    </ul>}
+                                    {isEmpty(suspendedCollaborations[key]) && <span>None</span>}
+                                </td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                </div>}
+            </div>)
+
     }
 
     renderDailyCronResults = suspendedUsers => {
@@ -476,7 +590,7 @@ class System extends React.Component {
         const {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
-            limit, query, selectedTables
+            limit, query, selectedTables, expiredCollaborations, suspendedCollaborations
         } = this.state;
         const {config} = this.props;
 
@@ -484,7 +598,7 @@ class System extends React.Component {
             return <SpinnerField/>
         }
         const tabs = [
-            this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests),
+            this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables)

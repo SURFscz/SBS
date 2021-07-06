@@ -328,7 +328,8 @@ def mail_collaboration_expires_notification(collaboration, is_warning):
         subject=subject,
         recipients=recipients,
         template="collaboration_expires_warning" if is_warning else "collaboration_expired_notification",
-        context={"salutation": "Dear", "collaboration": collaboration},
+        context={"salutation": "Dear", "collaboration": collaboration,
+                 "expiry_date": collaboration.expiry_date.strftime("%b %d %Y")},
         preview=False
     )
 
@@ -347,8 +348,8 @@ def mail_collaboration_suspension_notification(collaboration, is_warning):
     _do_send_mail(
         subject=subject,
         recipients=recipients,
-        template="collaboration_expires_warning" if is_warning else "collaboration_expired_notification",
-        context={"salutation": "Dear", "now": now, "collaboration": collaboration,
+        template="collaboration_suspension_warning" if is_warning else "collaboration_suspensed_notification",
+        context={"salutation": "Dear", "now": now.strftime("%b %d %Y"), "collaboration": collaboration,
                  "suspension_date": now + datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold)},
         preview=False
     )

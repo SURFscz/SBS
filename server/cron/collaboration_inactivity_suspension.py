@@ -9,7 +9,7 @@ from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_SUSPENDED
 from server.db.domain import Collaboration
-from server.mail import mail_collaboration_expires_notification, mail_collaboration_suspension_notification
+from server.mail import mail_collaboration_suspension_notification
 
 collaboration_inactivity_suspension_lock_name = "collaboration_inactivity_suspension_lock_name"
 
@@ -39,17 +39,6 @@ def _do_suspend_collaboration(app):
         for coll in collaborations_warned:
             mail_collaboration_suspension_notification(coll, True)
 
-        suspension_end_date = now - datetime.timedelta(days=cfq.collaboration_inactivity_days_threshold - 1)
-        collaborations_suspended = Collaboration.query \
-            .filter(Collaboration.status == STATUS_ACTIVE) \
-            .filter(Collaboration.last_activity_date < suspension_end_date).all()  # noqa: E712
-        for coll in collaborations_suspended:
-            mail_collaboration_expires_notification(coll, False)
-            coll.status = STATUS_SUSPENDED
-            db.session.merge(coll)
-        if collaborations_suspended:
-            db.session.commit()
-
         threshold_for_deletion = cfq.collaboration_inactivity_days_threshold + cfq.collaboration_deletion_days_threshold
         deletion_date = now - datetime.timedelta(days=threshold_for_deletion)
         collaborations_deleted = Collaboration.query \
@@ -57,8 +46,19 @@ def _do_suspend_collaboration(app):
             .filter(Collaboration.last_activity_date < deletion_date).all()  # noqa: E712
         for coll in collaborations_deleted:
             db.session.delete(coll)
-        if collaborations_deleted:
-            db.session.commit()
+
+        suspension_end_date = now - datetime.timedelta(days=cfq.collaboration_inactivity_days_threshold - 1)
+        collaborations_suspended = Collaboration.query \
+            .filter(Collaboration.status == STATUS_ACTIVE) \
+            .filter(Collaboration.last_activity_date < suspension_end_date).all()  # noqa: E712
+        for coll in collaborations_suspended:
+            mail_collaboration_suspension_notification(coll, False)
+            coll.status = STATUS_SUSPENDED
+            # Need to mark this field dirty otherwise the DB default kicks in
+            coll.last_activity_date = coll.last_activity_date + datetime.timedelta(seconds=5)
+            db.session.merge(coll)
+
+        db.session.commit()
 
         end = int(time.time() * 1000.0)
         logger.info(f"Finished running collaboration_suspension job in {end - start} ms")

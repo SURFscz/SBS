@@ -3,7 +3,7 @@
 {% block content %}
 Collaboration expired notification
 
-Collaboration {{ collaboration.name }} has expired on {{ collaboration.expiry_date }}.
+Collaboration {{ collaboration.name }} has expired on {{ expiry_date }}.
 Click the link below to view this collaboration.
 {{ base_url }}/collaborations/{{ collaboration.id }}
 
