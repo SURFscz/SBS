@@ -3,8 +3,7 @@ import datetime
 import logging
 import time
 
-from sqlalchemy import text
-
+from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.domain import User, SuspendNotification, UserNameHistory
 from server.mail import mail_suspend_notification
@@ -107,12 +106,5 @@ def _do_suspend_users(app):
         return results
 
 
-def suspend_users(app):
-    with app.app_context():
-        session = db.create_session(options={})()
-        try:
-            result = session.execute(text(f"SELECT GET_LOCK('{suspend_users_lock_name}', 3)"))
-            lock_obtained = next(result, (0,))[0]
-            return _do_suspend_users(app) if lock_obtained else _result_container()
-        finally:
-            session.execute(text(f"SELECT RELEASE_LOCK('{suspend_users_lock_name}')"))
+def suspend_users(app, wait_time=3):
+    return obtain_lock(app, suspend_users_lock_name, _do_suspend_users, _result_container, wait_time=wait_time)

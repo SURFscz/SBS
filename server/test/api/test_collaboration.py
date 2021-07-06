@@ -1,6 +1,10 @@
 # -*- coding: future_fstrings -*-
+import datetime
 import json
+import time
 
+from server.db.db import db
+from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER, RESTRICTED_CO_API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
@@ -72,6 +76,7 @@ class TestCollaboration(AbstractTest):
             self.assertIsNotNone(collaboration["id"])
             self.assertIsNotNone(collaboration["identifier"])
             self.assertEqual("uuc:new_short_name", collaboration["global_urn"])
+            self.assertEqual(STATUS_ACTIVE, collaboration["status"])
             self.assertEqual(2, len(outbox))
             self.assertTrue(
                 "You have been invited by urn:john to join collaboration new_collaboration" in outbox[0].html)
@@ -551,3 +556,37 @@ class TestCollaboration(AbstractTest):
 
     def test_no_access_allowed(self):
         self._access_allowed("urn:roger", response_status_code=403)
+
+    def _do_test_collaboration_update_expiration_date(self, pre_status, expiry_date, post_status):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        collaboration.status = pre_status
+        db.session.merge(collaboration)
+        db.session.commit()
+
+        self.login()
+        collaboration = self.get(f"/api/collaborations/{collaboration.id}", with_basic_auth=False)
+        collaboration["expiry_date"] = expiry_date
+        collaboration = self.put("/api/collaborations", body=collaboration)
+        self.assertEqual(post_status, collaboration["status"])
+
+    def test_collaboration_update_expiration_date_with_expiry_date(self):
+        self._do_test_collaboration_update_expiration_date(STATUS_EXPIRED, time.time() + (60 * 60 * 24 * 365),
+                                                           STATUS_ACTIVE)
+
+    def test_collaboration_update_expiration_date_without_expiry_date(self):
+        self._do_test_collaboration_update_expiration_date(STATUS_EXPIRED, None, STATUS_ACTIVE)
+
+    def test_collaboration_update_expiration_date_with_suspended(self):
+        self._do_test_collaboration_update_expiration_date(STATUS_SUSPENDED, None, STATUS_ACTIVE)
+
+    def test_unsuspend(self):
+        coll = self.find_entity_by_name(Collaboration, ai_computing_name)
+        coll.last_activity_date = datetime.datetime.now() - datetime.timedelta(days=365)
+        coll.status = STATUS_SUSPENDED
+        db.session.merge(coll)
+        db.session.commit()
+
+        self.put("/api/collaborations/unsuspend", body={"collaboration_id": coll.id})
+        coll = self.find_entity_by_name(Collaboration, ai_computing_name)
+        self.assertEqual(STATUS_ACTIVE, coll.status)
+        self.assertTrue(coll.last_activity_date > datetime.datetime.now() - datetime.timedelta(hours=1))

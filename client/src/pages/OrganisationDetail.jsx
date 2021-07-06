@@ -128,7 +128,8 @@ class OrganisationDetail extends React.Component {
     getCollaborationsTab = organisation => {
         return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.orgCollaborations")}
                      icon={<CollaborationsIcon/>}>
-            <Collaborations {...this.props} collaborations={organisation.collaborations} organisation={organisation}/>
+            <Collaborations {...this.props} collaborations={organisation.collaborations}
+                            organisation={organisation} showExpiryDate={true} showLastActivityDate={true}/>
         </div>)
     }
 

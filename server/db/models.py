@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+# -*- coding: future_fstrings -*-
 import datetime
 
 from flask import request, session, g as request_context
@@ -17,7 +18,8 @@ deserialization_mapping = {"users": User, "collaboration_memberships": Collabora
                            "services": Service, "aups": Aup, "ip_networks": IpNetwork, "groups": Group}
 
 forbidden_fields = ["created_at", "updated_at"]
-date_fields = ["start_date", "end_date", "created_at", "updated_at", "last_accessed_date", "last_login_date"]
+date_fields = ["start_date", "end_date", "created_at", "updated_at", "last_accessed_date", "last_login_date",
+               "last_activity_date"]
 
 
 def flatten(coll):

@@ -1,5 +1,6 @@
 # -*- coding: future_fstrings -*-
 import uuid
+from datetime import datetime, timedelta
 from secrets import token_urlsafe
 
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
@@ -13,7 +14,8 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager
 from server.db.db import db
-from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name
+from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name, \
+    STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation
 from server.db.models import update, save, delete
@@ -272,6 +274,20 @@ def collaboration_invites():
     return None, 201
 
 
+@collaboration_api.route("/unsuspend", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def unsuspend():
+    data = current_request.get_json()
+    collaboration_id = data["collaboration_id"]
+    confirm_collaboration_admin(collaboration_id)
+    collaboration = Collaboration.query.get(collaboration_id)
+    collaboration.last_activity_date = datetime.now()
+    collaboration.status = STATUS_ACTIVE
+    db.session.merge(collaboration)
+    db.session.commit()
+    return {}, 201
+
+
 @collaboration_api.route("/invites-preview", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def collaboration_invites_preview():
@@ -393,7 +409,6 @@ def save_restricted_collaboration():
 
 
 def do_save_collaboration(data, organisation, user, current_user_admin=True):
-    data["status"] = "active"
     _validate_collaboration(data, organisation)
 
     administrators = data.get("administrators", [])
@@ -428,6 +443,22 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
 
 def _validate_collaboration(data, organisation, new_collaboration=True):
     cleanse_short_name(data)
+    expiry_date = data.get("expiry_date")
+    if expiry_date:
+        dt = datetime.utcfromtimestamp(int(expiry_date)) + timedelta(hours=4)
+        data["expiry_date"] = datetime(year=dt.year, month=dt.month, day=dt.day, hour=0, minute=0, second=0)
+    else:
+        data["expiry_date"] = None
+    # Check if the status needs updating
+    if new_collaboration or "status" not in data:
+        data["status"] = STATUS_ACTIVE
+    else:
+        collaboration = Collaboration.query.get(data["id"])
+        if collaboration.status == STATUS_EXPIRED and (not expiry_date or data["expiry_date"] > datetime.now()):
+            data["status"] = STATUS_ACTIVE
+        if collaboration.status == STATUS_SUSPENDED:
+            data["status"] = STATUS_ACTIVE
+
     if _do_name_exists(data["name"], organisation.id,
                        existing_collaboration="" if new_collaboration else data["name"]):
         raise BadRequest(f"Collaboration with name '{data['name']}' already exists within "

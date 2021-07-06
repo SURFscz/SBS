@@ -32,6 +32,11 @@ div.org-attributes-container {
                 }
             }
 
+            &.warning {
+                font-weight: bold;
+                color: $red;
+            }
+
             a {
                 max-width: 240px;
                 text-overflow: ellipsis;
@@ -78,6 +83,11 @@ div.org-attributes-container-grid {
                 &.no-break {
                     max-width: 400px;
                 }
+            }
+
+            &.warning {
+                font-weight: bold;
+                color: $red;
             }
 
             a {

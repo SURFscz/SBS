@@ -54,7 +54,7 @@ class UnitHeader extends React.Component {
                         {showDropDown && <UnitHeaderActionMenu actions={actions}
                                                                firstTime={firstTime}
                                                                auditLogPath={auditLogPath}
-                                                               close={() => this.setState({showDropDown: false})}
+                                                               close={() => this.setState({showDropDown: true})}
                                                                history={history}
                                                                queryParam={queryParam}/>}
                     </div>}
