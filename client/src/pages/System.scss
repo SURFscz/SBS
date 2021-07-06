@@ -70,7 +70,7 @@
                 margin: 10px 0;
             }
 
-            table.table-counts, table.suspended-users {
+            table.table-counts, table.suspended-users, table.suspended-collaborations, table.expired-collaborations {
                 width: 100%;
                 margin-top: 25px;
 
@@ -78,7 +78,6 @@
                     text-align: left;
                     padding: 5px;
                     width: 50%;
-
                 }
 
                 tbody {
