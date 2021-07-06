@@ -68,9 +68,11 @@ def _get_authorization_url(state=None):
         "response_mode": "query",
         "response_type": "code",
         "scope": scopes,
-        "acr_values": ACR_VALUES,
         "redirect_uri": oidc_config.redirect_uri
     }
+    if oidc_config.second_factor_authentication_required:
+        params["acr_values"] = ACR_VALUES
+
     args = urllib.parse.urlencode(params)
     authorization_endpoint = f"{oidc_config.authorization_endpoint}?{args}"
     return authorization_endpoint

@@ -150,7 +150,7 @@ def mail_collaboration_invitation(context, collaboration, recipients, preview=Fa
 
 def mail_accepted_declined_join_request(context, join_request, accepted, recipients, preview=False):
     if not preview:
-        _store_mail(context["user"], ACCEPTED_JOIN_REQUEST_MAIL if accepted else DENIED_JOIN_REQUEST_MAIL,recipients)
+        _store_mail(context["user"], ACCEPTED_JOIN_REQUEST_MAIL if accepted else DENIED_JOIN_REQUEST_MAIL, recipients)
     part = "accepted" if accepted else "declined"
     admins = [m.user for m in join_request.collaboration.collaboration_memberships if m.role == "admin"]
     return _do_send_mail(
