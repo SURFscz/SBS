@@ -1629,6 +1629,10 @@ I18n.translations.en = {
         info2: "You've not successfully logged into SURF Research Access Management as your account is suspended, and therefore you don't have access to <i>{{name}}</i>. None of the collaborations you are currently a member of, have enabled access to <i>{{name}}</i>. Contact your admin(s) to enable access to this service.",
         info3: "You've successfully logged into SURF Research Access Management (SRAM), but the service <i>{{name}}</i> is unknown in SRAM.",
         info4: "You've successfully logged into SURF Research Access Management, but unfortunately you don't have access to <i>{{name}}</i>. None of the collaborations you are currently a member of, have enabled access to <i>{{name}}</i>. Contact your admin(s) to enable access to this service."
+    },
+    unsuspend: {
+        confirmation: "Are you sure you want to unsuspend this collaboration?",
+        flash: "Collaboration {{name}} is active again"
     }
 };
 
