@@ -14,6 +14,7 @@
         border: 1px solid $lighter-grey;
         background-color: $lightest-grey;
         color: $dark-grey;
+        max-width: 280px;
     }
 
     .__react_component_tooltip.place-top:after {
