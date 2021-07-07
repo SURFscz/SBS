@@ -15,7 +15,8 @@ class TestCollaborationInactivitySuspension(AbstractTest):
     def _setup_data(self):
         now = datetime.datetime.utcnow()
         cfq = self.app.app_config.collaboration_suspension
-        threshold_upper = datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold)
+        threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
+        threshold_upper = datetime.timedelta(days=threshold_for_warning)
         warning_start_date = now - threshold_upper + datetime.timedelta(hours=12)
         coll = self.find_entity_by_name(Collaboration, ai_computing_name)
         # Will cause warning email

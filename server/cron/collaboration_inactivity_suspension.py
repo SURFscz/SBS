@@ -30,8 +30,9 @@ def _do_suspend_collaboration(app):
         logger = logging.getLogger("scheduler")
         logger.info("Start running collaboration_suspension job")
 
-        notification_start_date = now - datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold)
-        notification_end_date = now - datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold - 1)
+        threshold_for_warning = cfq.collaboration_inactivity_days_threshold - cfq.inactivity_warning_mail_days_threshold
+        notification_start_date = now - datetime.timedelta(days=threshold_for_warning)
+        notification_end_date = now - datetime.timedelta(days=threshold_for_warning - 1)
         collaborations_warned = Collaboration.query \
             .filter(Collaboration.last_activity_date > notification_start_date) \
             .filter(Collaboration.last_activity_date < notification_end_date).all()  # noqa: E712
