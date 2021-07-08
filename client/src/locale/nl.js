@@ -1030,6 +1030,8 @@ I18n.translations.nl = {
         fileExtensionError: "Alleen bestanden met een .csv extensie zijn toegestaan.",
         expiryDate: "Verloopdatum",
         expiryDateTooltip: "De verloopdatum van de uitnodiging Na deze datum kan de uitnodiging niet meer gebruikt worden.",
+        membershipExpiryDate: "Membership expiry date",
+        membershipExpiryDateTooltip: "The expiry date of the membership once the invitation has been accepted. After this date the membership will expire and this membership can't be used to login to services connected to this collaboration.",
         flash: {
             inviteDeclined: "Uitnodiging voor samenwerking {{name}} is afgewezen.",
             inviteAccepted: "Uitnodiging voor samenwerking {{name}} is geaccepteerd.",
