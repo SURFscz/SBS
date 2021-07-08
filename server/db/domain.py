@@ -87,6 +87,8 @@ class CollaborationMembership(Base, db.Model):
     __tablename__ = "collaboration_memberships"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     role = db.Column("role", db.String(length=255), nullable=False)
+    status = db.Column("status", db.String(length=255), nullable=False, default=STATUS_ACTIVE)
+    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="collaboration_memberships")
     invitation_id = db.Column(db.Integer(), db.ForeignKey("invitations.id"))
@@ -128,6 +130,7 @@ class Invitation(Base, db.Model):
     denied = db.Column("denied", db.Boolean(), nullable=True)
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
     expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
+    membership_expiry_date = db.Column("membership_expiry_date", db.DateTime(timezone=True), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
