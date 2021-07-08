@@ -192,7 +192,7 @@ I18n.translations.en = {
             title: "Organisations",
             noEntities: "There are no organisations yet...",
             searchPlaceHolder: "Search organisations...",
-            new: "New service",
+            new: "New organisation",
             name: "Name",
             memberCount: "Members",
             collaborationCount: "Collaborations",
@@ -1029,6 +1029,8 @@ I18n.translations.en = {
         fileExtensionError: "Only .csv extension files are allowed",
         expiryDate: "Expiry date",
         expiryDateTooltip: "The expiry date of the invitation After this date the invitation can not be accepted anymore",
+        membershipExpiryDate: "Membership expiry date",
+        membershipExpiryDateTooltip: "The expiry date of the membership once the invitation has been accepted. After this date the membership will expire and this membership can't be used to login to services connected to this collaboration.",
         flash: {
             inviteDeclined: "Invitation for collaboration {{name}} was declined.",
             inviteAccepted: "Invitation for collaboration {{name}} was accepted.",

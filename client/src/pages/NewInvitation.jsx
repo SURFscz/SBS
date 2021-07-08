@@ -47,6 +47,7 @@ class NewInvitation extends React.Component {
             fileInputKey: new Date().getMilliseconds(),
             intended_role: "member",
             message: "",
+            membership_expiry_date: null,
             expiry_date: moment().add(16, "days").toDate(),
             initial: true,
             confirmationDialogOpen: false,
@@ -119,12 +120,13 @@ class NewInvitation extends React.Component {
         if (this.isValid()) {
             const {
                 administrators, message, collaboration, expiry_date, fileEmails, intended_role,
-                selectedGroup
+                selectedGroup, membership_expiry_date
             } = this.state;
             this.setState({loading: true});
             collaborationInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
+                membership_expiry_date: membership_expiry_date ? membership_expiry_date.getTime() / 1000 : null,
                 intended_role: intended_role,
                 collaboration_id: collaboration.id,
                 groups: selectedGroup.map(ag => ag.value),
@@ -241,7 +243,7 @@ class NewInvitation extends React.Component {
     }
 
     invitationForm = (email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators,
-                      intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup) =>
+                      intended_role, message, expiry_date, disabledSubmit, groups, selectedGroup, membership_expiry_date) =>
         <div className={"invitation-form"}>
 
             <EmailField value={email}
@@ -284,6 +286,13 @@ class NewInvitation extends React.Component {
                        name={I18n.t("invitation.expiryDate")}
                        toolTip={I18n.t("invitation.expiryDateTooltip")}/>
 
+            <DateField value={membership_expiry_date}
+                               onChange={e => this.setState({membership_expiry_date: e})}
+                               allowNull={true}
+                               showYearDropdown={true}
+                               name={I18n.t("invitation.membershipExpiryDate")}
+                               toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
+
             {this.renderActions(disabledSubmit, true)}
         </div>;
 
@@ -305,6 +314,7 @@ class NewInvitation extends React.Component {
             initial,
             administrators,
             expiry_date,
+            membership_expiry_date,
             collaboration,
             intended_role,
             confirmationDialogOpen,
@@ -337,7 +347,7 @@ class NewInvitation extends React.Component {
                     <div className="new-collaboration-invitation">
                         {this.invitationForm(email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
                             administrators, intended_role, message, expiry_date, disabledSubmit, groups,
-                            selectedGroup)}
+                            selectedGroup, membership_expiry_date)}
                     </div>
                 </div>
             </>)

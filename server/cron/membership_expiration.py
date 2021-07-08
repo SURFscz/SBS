@@ -8,10 +8,10 @@ from flask import jsonify
 from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED, STATUS_ACTIVE
-from server.db.domain import Collaboration
-from server.mail import mail_collaboration_expires_notification
+from server.db.domain import CollaborationMembership
+from server.mail import mail_membership_expires_notification
 
-collaboration_membership_expiration_lock_name = "collaboration_membership_expiration_lock_name"
+membership_expiration_lock_name = "membership_expiration_lock_name"
 
 
 def _result_container():
@@ -22,49 +22,49 @@ def _result_container():
 
 def _do_expire_memberships(app):
     with app.app_context():
-        cfq = app.app_config.collaboration_expiration
+        cfq = app.app_config.membership_expiration
 
         now = datetime.datetime.utcnow()
 
         start = int(time.time() * 1000.0)
         logger = logging.getLogger("scheduler")
-        logger.info("Start running expire_collaboration job")
+        logger.info("Start running expire_memberships job")
 
         notification_start_date = now + datetime.timedelta(days=cfq.expired_warning_mail_days_threshold - 1)
         notification_end_date = now + datetime.timedelta(days=cfq.expired_warning_mail_days_threshold)
-        collaborations_warned = Collaboration.query \
-            .filter(Collaboration.status == STATUS_ACTIVE) \
-            .filter(Collaboration.expiry_date > notification_start_date) \
-            .filter(Collaboration.expiry_date < notification_end_date).all()  # noqa: E712
+        memberships_warned = CollaborationMembership.query \
+            .filter(CollaborationMembership.status == STATUS_ACTIVE) \
+            .filter(CollaborationMembership.expiry_date > notification_start_date) \
+            .filter(CollaborationMembership.expiry_date < notification_end_date).all()  # noqa: E712
 
-        for coll in collaborations_warned:
-            mail_collaboration_expires_notification(coll, True)
+        for membership in memberships_warned:
+            mail_membership_expires_notification(membership, True)
 
-        deletion_date = now - datetime.timedelta(days=cfq.expired_collaborations_days_threshold - 1)
-        collaborations_deleted = Collaboration.query \
-            .filter(Collaboration.status == STATUS_EXPIRED) \
-            .filter(Collaboration.expiry_date < deletion_date).all()  # noqa: E712
-        for coll in collaborations_deleted:
-            db.session.delete(coll)
+        deletion_date = now - datetime.timedelta(days=cfq.expired_memberships_days_threshold - 1)
+        memberships_deleted = CollaborationMembership.query \
+            .filter(CollaborationMembership.status == STATUS_EXPIRED) \
+            .filter(CollaborationMembership.expiry_date < deletion_date).all()  # noqa: E712
+        for membership in memberships_deleted:
+            db.session.delete(membership)
 
-        collaborations_expired = Collaboration.query \
-            .filter(Collaboration.status == STATUS_ACTIVE) \
-            .filter(Collaboration.expiry_date < now).all()  # noqa: E712
-        for coll in collaborations_expired:
-            mail_collaboration_expires_notification(coll, False)
-            coll.status = STATUS_EXPIRED
-            db.session.merge(coll)
+        memberships_expired = CollaborationMembership.query \
+            .filter(CollaborationMembership.status == STATUS_ACTIVE) \
+            .filter(CollaborationMembership.expiry_date < now).all()  # noqa: E712
+        for membership in memberships_expired:
+            mail_membership_expires_notification(coll, False)
+            membership.status = STATUS_EXPIRED
+            db.session.merge(membership)
 
         db.session.commit()
 
         end = int(time.time() * 1000.0)
-        logger.info(f"Finished running expire_collaboration job in {end - start} ms")
+        logger.info(f"Finished running expire_memberships job in {end - start} ms")
 
-        return {"collaborations_warned": jsonify(collaborations_warned).json,
-                "collaborations_expired": jsonify(collaborations_expired).json,
-                "collaborations_deleted": jsonify(collaborations_deleted).json}
+        return {"memberships_warned": jsonify(memberships_warned).json,
+                "memberships_expired": jsonify(memberships_expired).json,
+                "memberships_deleted": jsonify(memberships_deleted).json}
 
 
 def expire_memberships(app, wait_time=3):
-    return obtain_lock(app, collaboration_membership_expiration_lock_name, _do_expire_memberships, _result_container,
+    return obtain_lock(app, membership_expiration_lock_name, _do_expire_memberships, _result_container,
                        wait_time=wait_time)
