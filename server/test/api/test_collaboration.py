@@ -383,13 +383,15 @@ class TestCollaboration(AbstractTest):
                 "collaboration_id": collaboration_id,
                 "administrators": ["new@example.org", "pop@example.org"],
                 "message": "Please join",
+                "membership_expiry_date": int(time.time() * 1e3),
                 "intended_role": "admin"
             })
             post_count = Invitation.query.count()
             self.assertEqual(2, len(outbox))
             self.assertEqual(pre_count + 2, post_count)
-            invitations = Invitation.query.filter(Invitation.invitee_email == "new@example.org").all()
-            self.assertEqual("admin", invitations[0].intended_role)
+            invitation = Invitation.query.filter(Invitation.invitee_email == "new@example.org").first()
+            self.assertEqual("admin", invitation.intended_role)
+            self.assertIsNotNone(invitation.membership_expiry_date)
 
     def test_collaboration_invites_preview(self):
         self.login("urn:john")

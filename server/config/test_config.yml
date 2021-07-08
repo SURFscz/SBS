@@ -160,3 +160,12 @@ collaboration_suspension:
   inactivity_warning_mail_days_threshold: 5
   # After how many days after suspension do we actually delete the collaboration
   collaboration_deletion_days_threshold: 90
+
+collaboration_membership_expiration:
+  # Do we daily check for memberships that will be deleted because they have been expired?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long after expiration do we actually delete expired memberships
+  expired_collaborations_days_threshold: 90
+  # How many days before actual expiration do we mail the co admin and member
+  expired_warning_mail_days_threshold: 14

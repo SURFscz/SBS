@@ -258,11 +258,15 @@ def collaboration_invites():
     collaboration = Collaboration.query.get(collaboration_id)
     user = User.query.get(current_user_id())
 
+    membership_expiry_date = data.get("membership_expiry_date")
+    if membership_expiry_date:
+        membership_expiry_date = datetime.fromtimestamp(data.get("membership_expiry_date") / 1e3)
+
     for administrator in administrators:
         invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
                                 collaboration=collaboration, user=user, groups=groups,
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
-                                created_by=user.uid)
+                                membership_expiry_date=membership_expiry_date , created_by=user.uid)
         invitation = db.session.merge(invitation)
         mail_collaboration_invitation({
             "salutation": "Dear",
