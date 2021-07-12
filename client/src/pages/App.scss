@@ -15,6 +15,7 @@
         background-color: $lightest-grey;
         color: $dark-grey;
         max-width: 280px;
+        word-break: break-word;
     }
 
     .__react_component_tooltip.place-top:after {

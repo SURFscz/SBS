@@ -266,7 +266,7 @@ def collaboration_invites():
         invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
                                 collaboration=collaboration, user=user, groups=groups,
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
-                                membership_expiry_date=membership_expiry_date , created_by=user.uid)
+                                membership_expiry_date=membership_expiry_date, created_by=user.uid)
         invitation = db.session.merge(invitation)
         mail_collaboration_invitation({
             "salutation": "Dear",

@@ -1,7 +1,9 @@
 # -*- coding: future_fstrings -*-
+import time
+
 from server.db.domain import CollaborationMembership, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name
+from server.test.seed import ai_computing_name, sarah_name
 
 
 class TestCollaborationMembership(AbstractTest):
@@ -65,3 +67,21 @@ class TestCollaborationMembership(AbstractTest):
             .filter(CollaborationMembership.collaboration_id == collaboration.id) \
             .one()
         self.assertEqual("admin", collaboration_membership.role)
+
+    def test_update_expiry_date(self):
+        self.login("urn:admin")
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        sarah = self.find_entity_by_name(User, sarah_name)
+        memberships = sarah.collaboration_memberships
+        membership = next(
+            cm for cm in memberships if cm.user_id == sarah.id and cm.collaboration.id == collaboration.id)
+
+        self.put("/api/collaboration_memberships/expiry",
+                 body={"collaboration_id": collaboration.id, "membership_id": membership.id,
+                       "expiry_date": int(time.time())}, with_basic_auth=False)
+        self.assertIsNotNone(CollaborationMembership.query.get(membership.id).expiry_date)
+
+        self.put("/api/collaboration_memberships/expiry",
+                 body={"collaboration_id": collaboration.id, "membership_id": membership.id,
+                       "expiry_date": None}, with_basic_auth=False)
+        self.assertIsNone(CollaborationMembership.query.get(membership.id).expiry_date)

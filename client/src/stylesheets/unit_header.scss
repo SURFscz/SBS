@@ -83,6 +83,10 @@ div.org-attributes-container-grid {
                 &.no-break {
                     max-width: 400px;
                 }
+
+                &.tooltip-wrapper-inner {
+                    word-break: break-word;
+                }
             }
 
             &.warning {

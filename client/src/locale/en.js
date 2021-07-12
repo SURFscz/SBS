@@ -176,6 +176,8 @@ I18n.translations.en = {
             status: "Status",
             inviteSend: "Invite sent {{date}}",
             expiredAt: "Expired on {{date}}",
+            membershipExpiresAt: "Expires on {{date}}",
+            membershipExpiredAt: "Expired on {{date}}",
             accepted: "Active",
             suspended: "Suspended",
             new: "Add member(s)",
@@ -636,7 +638,8 @@ I18n.translations.en = {
             entitiesDeleted: "Membership / invitations are successfully deleted",
             memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
             meAdded: "Successfully added you as member of {{name}}",
-            memberActivated: "Member {{name}} has been sent an email with an activation link"
+            memberActivated: "Member {{name}} has been sent an email with an activation link",
+            memberExpiryDateUpdated: "Member {{name}} has an updated expiry date {{expiryDate}}"
         },
         infoBlocks: "Dashboard collaboration {{name}}",
         searchPlaceHolder: "Search for members",
@@ -1641,6 +1644,12 @@ I18n.translations.en = {
     unsuspend: {
         confirmation: "Are you sure you want to unsuspend this collaboration?",
         flash: "Collaboration {{name}} is active again"
+    },
+    organisationMembership: {
+        membership: "Membership of {{name}} will expire at {{date}}.",
+        expiredMembership: "This membership has expired at {{date}}. Update the end date to activate this user.",
+        expiryDate: "End date",
+        expiryDateTooltip: "The end date of the membership. After this date the membership will be suspended and this member can no longer use the services",
     }
 };
 

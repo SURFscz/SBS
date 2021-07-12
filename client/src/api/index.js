@@ -446,6 +446,14 @@ export function updateCollaborationMembershipRole(collaborationId, userId, role,
     }, "put", showErrorDialog)
 }
 
+export function updateCollaborationMembershipExpiryDate(collaborationId, membershipId, expiryDate) {
+    return postPutJson("/api/collaboration_memberships/expiry", {
+        collaboration_id: collaborationId,
+        membership_id: membershipId,
+        expiry_date: expiryDate
+    }, "put")
+}
+
 export function createCollaborationMembershipRole(collaborationId) {
     return postPutJson("/api/collaboration_memberships", {
         collaborationId: collaborationId

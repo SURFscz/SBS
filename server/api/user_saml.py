@@ -19,6 +19,7 @@ USER_IS_SUSPENDED = 2
 SERVICE_UNKNOWN = 3
 SERVICE_NOT_CONNECTED = 4
 COLLABORATION_NOT_ACTIVE = 5
+MEMBERSHIP_NOT_ACTIVE = 6
 
 # Independent mapping, so different attribute names can be send back
 custom_saml_mapping = {
@@ -56,10 +57,12 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
         return not_authorized_func(service.name, USER_IS_SUSPENDED)
 
     connected_collaborations = []
+    memberships = []
     for cm in user.collaboration_memberships:
         connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
         if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
             connected_collaborations.append(cm.collaboration)
+            memberships.append(cm)
 
     if not connected_collaborations:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
@@ -70,6 +73,12 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to active collaborations")
         return not_authorized_func(service.name, COLLABORATION_NOT_ACTIVE)
+
+    now = datetime.now()
+    if all(m.expiry_date and m.expiry_date < now for m in memberships):
+        logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
+                     f" as none of the memberships are active")
+        return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)
 
     for coll in connected_collaborations:
         coll.last_activity_date = datetime.now()

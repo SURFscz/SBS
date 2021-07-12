@@ -235,7 +235,7 @@
         display: inline-block;
         border-radius: 12px;
         min-width: 75px;
-        max-height: 28px;
+        max-height: 68px;
         padding: 4px 15px;
         font-weight: bold;
         word-break: keep-all;
@@ -243,6 +243,12 @@
 
         @media (max-width: $compact-medium) {
             display: none;
+        }
+
+        span.inner {
+            display: block;
+            font-weight: lighter;
+            font-size: 14px;
         }
 
         &.me {
@@ -263,6 +269,11 @@
         &.accepted {
             background-color: $light-green;
             color: black;
+        }
+
+        &.expired {
+            background-color: $error-red;
+            color: white;
         }
 
         &.admin {
