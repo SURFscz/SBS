@@ -176,6 +176,8 @@ I18n.translations.nl = {
             status: "Status",
             inviteSend: "Uitnodiging {{date}}",
             expiredAt: "Verlopen {{date}}",
+            membershipExpiresAt: "Verloopt {{date}}",
+            membershipExpiredAt: "Verlopen {{date}}",
             accepted: "Actief",
             suspended: "Geschorst",
             new: "Voeg leden toe",
@@ -637,7 +639,8 @@ I18n.translations.nl = {
             entitiesDeleted: "Lidmaatschap / uitnodigingen zijn verwijderd",
             memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
             meAdded: "Je bent toegevoegd als lid van {{name}}",
-            memberActivated: "Lid {{name}} heeft een e-mail met een activeringslink ontvangen"
+            memberActivated: "Lid {{name}} heeft een e-mail met een activeringslink ontvangen",
+            memberExpiryDateUpdated: "Lid {{name}} heeft een nieuwe verloopdatum {{expiryDate}}"
         },
         infoBlocks: "Dashboard samenwerking {{name}}",
         searchPlaceHolder: "Zoek leden",
@@ -1642,6 +1645,12 @@ I18n.translations.nl = {
     unsuspend: {
         confirmation: "Weet je zeker dat je deze samenwerking weer wilt activeren?",
         flash: "Samenwerking {{name}} is weer actief"
+    },
+    organisationMembership: {
+        membership: "Lidmaatschap van {{name}} verloopt op {{date}}.",
+        expiredMembership: "Dit lidmaatschap is verlopen op {{date}}. Verander de einddatum om de gebruiker weer actief te maken.",
+        expiryDate: "Eind datum",
+        expiryDateTooltip: "De einddatum van dit lidmaatschap. Na deze datum wordt het lidmaatschap opgeschort en kan de gebruiker niet meer de diensten van deze samenwerking gebruiken.",
     }
 
 };

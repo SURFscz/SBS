@@ -383,7 +383,7 @@ class TestCollaboration(AbstractTest):
                 "collaboration_id": collaboration_id,
                 "administrators": ["new@example.org", "pop@example.org"],
                 "message": "Please join",
-                "membership_expiry_date": int(time.time() * 1e3),
+                "membership_expiry_date": int(time.time()),
                 "intended_role": "admin"
             })
             post_count = Invitation.query.count()
