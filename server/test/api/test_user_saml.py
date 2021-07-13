@@ -1,12 +1,13 @@
 # -*- coding: future_fstrings -*-
+import datetime
 import os
 
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
-from server.db.domain import Collaboration
+from server.db.domain import Collaboration, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import john_name, uuc_scheduler_entity_id, service_network_entity_id, service_mail_entity_id, \
-    ai_computing_name
+    ai_computing_name, sarah_name
 
 
 class TestUserSaml(AbstractTest):
@@ -115,3 +116,17 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
                          "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=5")
+
+    def test_proxy_authz_not_active_membership(self):
+        sarah = self.find_entity_by_name(User, sarah_name)
+        past = datetime.datetime.now() - datetime.timedelta(days=5)
+        for cm in sarah.collaboration_memberships:
+            cm.expiry_date = past
+            db.session.merge(cm)
+        db.session.commit()
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id})
+        self.assertEqual(res["status"]["result"], "unauthorized")
+        self.assertEqual(res["status"]["redirect_url"],
+                         "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=6")

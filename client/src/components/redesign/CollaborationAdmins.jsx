@@ -10,13 +10,14 @@ import {
     deleteCollaborationMembership,
     invitationDelete,
     invitationResend,
+    updateCollaborationMembershipExpiryDate,
     updateCollaborationMembershipRole
 } from "../../api";
 import {setFlash} from "../../utils/Flash";
 import "./CollaborationAdmins.scss";
 import Select from "react-select";
 import {emitter} from "../../utils/Events";
-import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
+import {dateFromEpoch, isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -31,6 +32,7 @@ import ErrorIndicator from "./ErrorIndicator";
 import Tooltip from "./Tooltip";
 import ReactTooltip from "react-tooltip";
 import LastAdminWarning from "./LastAdminWarning";
+import DateField from "../DateField";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.admin`)},
@@ -49,7 +51,10 @@ class CollaborationAdmins extends React.Component {
         this.state = {
             selectedMembers: {},
             allSelected: false,
+            expiryDate: null,
+            originalExpiryDate: null,
             selectedInvitationId: null,
+            selectedMembershipId: null,
             message: "",
             confirmationDialogOpen: false,
             confirmationDialogAction: () => true,
@@ -92,6 +97,8 @@ class CollaborationAdmins extends React.Component {
             filterOptions: filterOptions.concat(groupOptions),
             loading: false,
             selectedInvitationId: null,
+            selectedMembershipId: null,
+            expiryDate: null,
             message: "",
             allSelected: false,
             confirmationDialogOpen: false
@@ -109,7 +116,7 @@ class CollaborationAdmins extends React.Component {
         const lastAdminWarning = admins.length === 1 && selectedOption.value !== "admin";
         const canStay = isUserAllowed(ROLES.ORG_MANAGER, currentUser, collaboration.organisation_id);
         if ((member.user_id === currentUser.id && !canStay) || lastAdminWarning) {
-            const lastAdminWarningUser= lastAdminWarning && member.user_id === currentUser.id;
+            const lastAdminWarningUser = lastAdminWarning && member.user_id === currentUser.id;
             this.setState({
                 confirmationDialogOpen: true,
                 lastAdminWarning: lastAdminWarning,
@@ -152,6 +159,24 @@ class CollaborationAdmins extends React.Component {
             });
         }
     };
+
+    updateExpiryDate = () => {
+        const {selectedMembershipId, expiryDate} = this.state;
+        const {collaboration} = this.props;
+        const member = collaboration.collaboration_memberships.find(cm => cm.id === selectedMembershipId)
+        this.setState({loading: true});
+        const expiryDateNbr = expiryDate ? expiryDate.getTime() / 1000 : null;
+        updateCollaborationMembershipExpiryDate(collaboration.id, selectedMembershipId, expiryDateNbr)
+            .then(() => {
+                this.props.refresh(this.componentDidMount);
+                setFlash(I18n.t("collaborationDetail.flash.memberExpiryDateUpdated", {
+                    name: member.user.name,
+                    expiryDate: expiryDate ? moment(expiryDate.expiry_date * 1000).format("LL") : ""
+                }));
+            }).catch(() => {
+            this.handle404("member");
+        });
+    }
 
     onCheck = memberShip => e => {
         const {selectedMembers, allSelected} = this.state;
@@ -201,10 +226,34 @@ class CollaborationAdmins extends React.Component {
         this.setState({selectedInvitationId: selectedInvitation.id, message: selectedInvitation.message});
     };
 
+    gotoMembership = membership => e => {
+        stopEvent(e);
+        const {collaboration} = this.props;
+        const selectedMembership = collaboration.collaboration_memberships.find(i => i.id === membership.id);
+        const expiryDate = selectedMembership.expiry_date;
+        this.setState({
+            selectedMembershipId: selectedMembership.id,
+            expiryDate: expiryDate ? moment(expiryDate * 1000).toDate() : null,
+            originalExpiryDate: selectedMembership.expiry_date
+        });
+    };
+
     getSelectedInvitation = () => {
         const {selectedInvitationId} = this.state;
+        if (!selectedInvitationId) {
+            return null;
+        }
         const {collaboration} = this.props;
         return (collaboration.invitations || []).find(i => i.id === selectedInvitationId);
+    }
+
+    getSelectedMembership = () => {
+        const {selectedMembershipId} = this.state;
+        if (!selectedMembershipId) {
+            return null;
+        }
+        const {collaboration} = this.props;
+        return (collaboration.collaboration_memberships || []).find(i => i.id === selectedMembershipId);
     }
 
     handle404 = key => {
@@ -353,26 +402,31 @@ class CollaborationAdmins extends React.Component {
         );
     }
 
-    getImpersonateMapper = entity => {
+    getImpersonateMapper = isAdminOfCollaboration => entity => {
         const {user: currentUser, showMemberView} = this.props;
         const {impersonation_allowed} = this.props.config;
 
         if (entity.invite) {
             return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
         }
-        if (!currentUser.admin || entity.user.id === currentUser.id || showMemberView || !impersonation_allowed) {
-            return null;
-        }
-        return (<div className="impersonate" onClick={() =>
-            emitter.emit("impersonation",
-                {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
-            <HandIcon/>
+        const showImpersonation = currentUser.admin && entity.user.id !== currentUser.id && !showMemberView && impersonation_allowed;
+        const showOpenButton = isAdminOfCollaboration && !showMemberView
+        return (<div className="impersonation">
+            {showImpersonation && <HandIcon className="impersonate" onClick={() =>
+                emitter.emit("impersonation",
+                    {"user": entity.user, "callback": () => this.props.history.push("/home")})}/>}
+            {showOpenButton && <Button className={showImpersonation ? "" : "orphan"} onClick={this.gotoMembership(entity)} txt={I18n.t("forms.open")} small={true}/>}
         </div>);
     }
 
     cancelSideScreen = e => {
         stopEvent(e);
-        this.setState({selectedInvitationId: null, message: "", confirmationDialogOpen: false});
+        this.setState({
+            selectedInvitationId: null,
+            selectedMembershipId: null,
+            message: "",
+            confirmationDialogOpen: false
+        });
     }
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
@@ -440,7 +494,7 @@ class CollaborationAdmins extends React.Component {
             this.cancelSideScreen);
     };
 
-    renderSelectedInvitation = (collabortion, invitation) => {
+    renderSelectedInvitation = invitation => {
         const {
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
             isWarning, message, confirmationTxt
@@ -498,7 +552,44 @@ class CollaborationAdmins extends React.Component {
                     </section>
                 </div>
             </div>)
+    }
 
+    renderSelectedMembership = membership => {
+        const {expiryDate, originalExpiryDate} = this.state;
+        const isExpired = isInvitationExpired({expiry_date: originalExpiryDate});
+        const expiredMessage = isExpired ? I18n.t("organisationMembership.expiredMembership",
+            {date: moment(originalExpiryDate * 1000).format("LL"), name: membership.user.name}) : null;
+        const header = originalExpiryDate ?
+            I18n.t("organisationMembership.membershipWithExpiry", {
+                date: moment(originalExpiryDate * 1000).format("LL"),
+                name: membership.user.name
+            }) :
+            I18n.t("organisationMembership.membership", {name: membership.user.name})
+
+        return (
+            <div className="collaboration-invitation-details-container">
+                <div>
+                    <a className="back-to-org-members" onClick={this.cancelSideScreen} href={"/cancel"}>
+                        <ChevronLeft/>{I18n.t("models.orgMembers.backToMembers")}
+                    </a>
+                </div>
+                <div className="collaboration-invitation-form">
+                    {isExpired && <h2><ErrorIndicator msg={expiredMessage} standalone={true}/></h2>}
+                    {!isExpired && <h2>{header}</h2>}
+                    <DateField value={expiryDate}
+                               onChange={e => this.setState({expiryDate: e})}
+                               allowNull={true}
+                               showYearDropdown={true}
+                               name={I18n.t("organisationMembership.expiryDate")}
+                               toolTip={I18n.t("organisationMembership.expiryDateTooltip")}/>
+
+                    <section className="actions">
+                        <Button cancelButton={true} txt={I18n.t("forms.close")} onClick={this.cancelSideScreen}/>
+                        <Button txt={I18n.t("organisationMembership.update")}
+                                onClick={this.updateExpiryDate}/>
+                    </section>
+                </div>
+            </div>)
     }
 
     renderSelectRole = (entity, isAdminOfCollaboration) => {
@@ -515,6 +606,26 @@ class CollaborationAdmins extends React.Component {
                        isDisabled={!isAdminOfCollaboration}/>
     }
 
+    renderMember = membership => {
+        const expired = isInvitationExpired(membership);
+        if (expired) {
+            return <span className="person-role expired">
+                {I18n.t("models.orgMembers.membershipExpiredAt", {date: dateFromEpoch(membership.expiry_date)})}
+            </span>
+        }
+        return <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}
+            {(membership.expiry_date && !expired) && <span
+                className="inner">{I18n.t("models.orgMembers.membershipExpiresAt", {date: dateFromEpoch(membership.expiry_date)})}</span>}
+        </span>
+    }
+
+    rowLinkMapper = (isAdminOfCollaboration, showMemberView) => entity => {
+        if (isAdminOfCollaboration && !showMemberView) {
+            return entity.invite ? this.gotoInvitation : this.gotoMembership
+        }
+        return null;
+    }
+
     render() {
         const {user: currentUser, collaboration, isAdminView, showMemberView} = this.props;
         const {
@@ -527,7 +638,11 @@ class CollaborationAdmins extends React.Component {
         }
         const selectedInvitation = this.getSelectedInvitation();
         if (selectedInvitation) {
-            return this.renderSelectedInvitation(collaboration, selectedInvitation);
+            return this.renderSelectedInvitation(selectedInvitation);
+        }
+        const selectedMembership = this.getSelectedMembership();
+        if (selectedMembership) {
+            return this.renderSelectedMembership(selectedMembership);
         }
 
         const isAdminOfCollaboration = isUserAllowed(ROLES.COLL_ADMIN, currentUser, collaboration.organisation_id, collaboration.id) && !showMemberView;
@@ -586,25 +701,28 @@ class CollaborationAdmins extends React.Component {
                 key: "status",
                 header: I18n.t("models.orgMembers.status"),
                 mapper: entity => {
-                    const isExpired = entity.invite && isInvitationExpired(entity);
-                    return entity.invite ?
-                        <span
-                            className={`person-role invite ${isExpired ? "expired" : ""}`}>
+                    if (isAdminOfCollaboration || entity.user.id === currentUser.id) {
+                        const isExpired = entity.invite && isInvitationExpired(entity);
+                        return entity.invite ?
+                            <span
+                                className={`person-role invite ${isExpired ? "expired" : ""}`}>
                             {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
                                 I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
                         </span> :
-                        <span className="person-role accepted">{I18n.t("models.orgMembers.accepted")}</span>
+                            this.renderMember(entity);
+                    }
+                    return null;
                 }
             },
             {
                 nonSortable: true,
                 key: "impersonate",
                 header: "",
-                mapper: this.getImpersonateMapper
+                mapper: this.getImpersonateMapper(isAdminOfCollaboration)
             },
         ];
-        if (!isAdminOfCollaboration) {
-            columns = columns.filter(col => col.key !== "status");
+        if (!isAdminOfCollaboration || showMemberView) {
+            columns = columns.filter(col => col.key !== "impersonate");
         }
         const doHideInvitees = hideInvitees || showMemberView;
         const filteredEntities = this.filterEntities(isAdminView, members, filterValue, collaboration, doHideInvitees,
@@ -628,7 +746,7 @@ class CollaborationAdmins extends React.Component {
                           searchCallback={this.searchCallback}
                           columns={(isAdminOfCollaboration || collaboration.disclose_email_information) ? columns : columns.slice(1)}
                           loading={false}
-                          rowLinkMapper={entity => entity.invite && this.gotoInvitation}
+                          rowLinkMapper={this.rowLinkMapper(isAdminOfCollaboration, showMemberView)}
                           showNew={isAdminOfCollaboration}
                           filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees, isAdminOfCollaboration)}
                           actions={this.actionButtons(collaboration, isAdminOfCollaboration, selectedMembers, filteredEntities)}

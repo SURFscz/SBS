@@ -37,13 +37,19 @@
 
 }
 
+.collaboration-inactive {
+    .org-attributes:last-child {
+        margin-top: 10px;
+    }
+}
+
 .join-request-action {
     margin-left: auto;
 }
 
 span.contains-copy {
     position: relative;
-    width: 88px!important;
+    width: 88px !important;
 
     section.copy-to-clipboard {
         position: absolute;

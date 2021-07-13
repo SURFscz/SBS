@@ -14,8 +14,11 @@ export function dateFromEpoch(epoch) {
 }
 
 export const isInvitationExpired = invitation => {
-        const today = moment();
-        const inp = moment(invitation.expiry_date * 1000);
-        return today.isAfter(inp);
+    if (!invitation.expiry_date) {
+        return false;
     }
+    const today = moment();
+    const inp = moment(invitation.expiry_date * 1000);
+    return today.isAfter(inp);
+}
 

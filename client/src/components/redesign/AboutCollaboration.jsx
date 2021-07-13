@@ -65,8 +65,8 @@ class AboutCollaboration extends React.Component {
                         </span>}
                         <ul className="services">
                             {services.sort((a, b) => a.name.localeCompare(b.name)).map(service =>
-                                <div className="service-button">
-                                    <li key={service.name} onClick={this.openServiceUri(service)}
+                                <div className="service-button" key={service.name}>
+                                    <li onClick={this.openServiceUri(service)}
                                         className={`${service.uri ? "uri" : ""}`}>
                                         {service.logo && <Logo src={service.logo} alt={service.name}/>}
                                         <span className="border-left">{service.name}</span>
@@ -99,6 +99,7 @@ class AboutCollaboration extends React.Component {
                             {m.user.name}
                                     {m.role === "admin" &&
                                     <span className="role">{` (${I18n.t("models.collaboration.admin")})`}</span>}
+                                    {m.user.id === user.id && <span className="role">{` (${I18n.t("models.collaboration.admin")})`}</span>}
                                 </span>}
                             </li>)}
                         </ul>

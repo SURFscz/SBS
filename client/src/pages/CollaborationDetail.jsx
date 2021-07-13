@@ -421,6 +421,7 @@ class CollaborationDetail extends React.Component {
                 </section>
                 <section className="collaboration-inactive">
                     {this.getCollaborationStatus(collaboration)}
+                    {this.getMembershipStatus(collaboration, user)}
                 </section>
             </div>
         </UnitHeader>;
@@ -512,6 +513,36 @@ class CollaborationDetail extends React.Component {
         );
     }
 
+
+    getMembershipStatus = (collaboration, user) => {
+        const membership = collaboration.collaboration_memberships.find(cm => cm.user.id === user.id);
+        const expiryDate = membership.expiry_date ? moment(membership.expiry_date * 1000).format("LL") : I18n.t("service.none");
+        const className = membership.status !== "active" ? "warning" : "";
+        let status;
+        if (membership.expiry_date && membership.status === "expired") {
+            status = "expired";
+        } else if (membership.expiry_date && membership.status === "active") {
+            status = "activeWithExpiryDate";
+        } else {
+            status = "active";
+        }
+        return (
+            <div className="org-attributes">
+                    <span className="contains-tooltip">{I18n.t(`organisationMembership.status.name`)}
+                        <FontAwesomeIcon data-tip data-for="membership-status" icon="info-circle"/>
+                            <ReactTooltip id="membership-status" type="light" effect="solid" data-html={true}>
+                                <span className="tooltip-wrapper-inner"
+                                      dangerouslySetInnerHTML={{
+                                          __html: I18n.t(`organisationMembership.status.${status}Tooltip`,
+                                              {date: expiryDate})
+                                      }}/>
+                            </ReactTooltip>
+                    </span>
+                <span
+                    className={className}>{I18n.t(`organisationMembership.status.${status}`, {date: expiryDate})}</span>
+            </div>
+        );
+    }
 
     getUnitHeader = (user, collaboration, allowedToEdit, showMemberView) => {
         return (<UnitHeader obj={collaboration}
