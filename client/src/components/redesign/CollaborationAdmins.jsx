@@ -415,7 +415,7 @@ class CollaborationAdmins extends React.Component {
             {showImpersonation && <HandIcon className="impersonate" onClick={() =>
                 emitter.emit("impersonation",
                     {"user": entity.user, "callback": () => this.props.history.push("/home")})}/>}
-            {showOpenButton && <Button onClick={this.gotoMembership(entity)} txt={I18n.t("forms.open")} small={true}/>}
+            {showOpenButton && <Button className={showImpersonation ? "" : "orphan"} onClick={this.gotoMembership(entity)} txt={I18n.t("forms.open")} small={true}/>}
         </div>);
     }
 

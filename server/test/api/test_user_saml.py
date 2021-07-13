@@ -117,7 +117,7 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(res["status"]["redirect_url"],
                          "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=5")
 
-    def test_proxy_authz_not_active_user(self):
+    def test_proxy_authz_not_active_membership(self):
         sarah = self.find_entity_by_name(User, sarah_name)
         past = datetime.datetime.now() - datetime.timedelta(days=5)
         for cm in sarah.collaboration_memberships:

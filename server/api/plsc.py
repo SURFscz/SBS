@@ -47,9 +47,10 @@ def sync():
     rs = db.engine.execute("SELECT role, user_id, organisation_id FROM organisation_memberships")
     organisation_memberships = [{"role": row[0], "user_id": row[1], "organisation_id": row[2]} for row in rs]
 
-    rs = db.engine.execute("SELECT id, role, user_id, collaboration_id FROM collaboration_memberships")
-    collaboration_memberships = [{"id": row[0], "role": row[1], "user_id": row[2], "collaboration_id": row[3]} for row
-                                 in rs]
+    rs = db.engine.execute("SELECT id, role, user_id, collaboration_id, status FROM collaboration_memberships")
+    collaboration_memberships = [
+        {"id": row[0], "role": row[1], "user_id": row[2], "collaboration_id": row[3], "status": row[4]} for row
+        in rs]
 
     rs = db.engine.execute("SELECT collaboration_membership_id, group_id FROM collaboration_memberships_groups")
     collaboration_memberships_groups = [{"collaboration_membership_id": row[0], "group_id": row[1]} for row in rs]
