@@ -438,6 +438,10 @@ export function deleteCollaborationMembership(collaborationId, userId, showError
     return fetchDelete(`/api/collaboration_memberships/${collaborationId}/${userId}`, showErrorDialog)
 }
 
+export function expireCollaborationMemberships() {
+    return postPutJson("/api/system/expire_memberships", {}, "PUT");
+}
+
 export function updateCollaborationMembershipRole(collaborationId, userId, role, showErrorDialog = true) {
     return postPutJson("/api/collaboration_memberships", {
         collaborationId: collaborationId,

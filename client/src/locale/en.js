@@ -1404,6 +1404,7 @@ I18n.translations.en = {
         title: "System maintenance",
         runDailyJobsInfo: "Run the daily cron job to send notification mails and potentially suspend users that have not logged in for the configured period",
         runExpiredCollaborations: "Run the job to expire collaborations that have an expiry date before today",
+        runExpiredMemberships: "Run the job to expire memberships that have an expiry date before today",
         runSuspendedCollaborations: "Run the job to suspend collaborations that have had no activity for X days",
         runDailyJobs: "Trigger",
         runOutdatedRequestsInfo: "Run the cron job to report all open outdated join requests and new collaboration requests for the configured threshold",
@@ -1420,6 +1421,9 @@ I18n.translations.en = {
         collaborations_expired: "Collaborations expired",
         collaborations_suspended: "Collaborations suspended",
         collaborations_warned: "Collaboration admins warned",
+        memberships_deleted: "Expired memberships deleted",
+        memberships_expired: "Memberships expired",
+        memberships_warned: "Membership users warned",
         runDbStatsInfo: "Database table counts",
         runDbStats: "Fetch",
         name: "Table name",
@@ -1646,10 +1650,12 @@ I18n.translations.en = {
         flash: "Collaboration {{name}} is active again"
     },
     organisationMembership: {
-        membership: "Membership of {{name}} will expire at {{date}}.",
-        expiredMembership: "This membership has expired at {{date}}. Update the end date to activate this user.",
+        membership: "Membership of {{name}} has no end date.",
+        membershipWithExpiry: "Membership of {{name}} will expire at {{date}}.",
+        expiredMembership: "This membership has expired at {{date}}. Update the end date to activate {{name}}.",
         expiryDate: "End date",
         expiryDateTooltip: "The end date of the membership. After this date the membership will be suspended and this member can no longer use the services",
+        update: "Update"
     }
 };
 

@@ -25,6 +25,7 @@ john_name = "John Doe"
 mike_name = "Mike Doe"
 james_name = "James Byrd"
 sarah_name = "Sarah Cross"
+jane_name = "Jane Doe"
 
 schac_home_organisation = "example.org"
 schac_home_organisation_uuc = "rug.nl"
@@ -126,7 +127,7 @@ def seed(db, app_config, skip_seed=False):
     sarah = User(uid="urn:sarah", name=sarah_name, email="sarah@uva.org", application_uid="sarah_application_uid",
                  username="sarah")
     betty = User(uid="urn:betty", name="betty", email="betty@uuc.org", username="betty")
-    jane = User(uid="urn:jane", name="Jane Doe", email="jane@ucc.org", username="jane",
+    jane = User(uid="urn:jane", name=jane_name, email="jane@ucc.org", username="jane",
                 entitlement="urn:mace:surf.nl:sram:allow-create-co")
     paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
                 schac_home_organisation="example.com")
