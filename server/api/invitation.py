@@ -102,6 +102,7 @@ def invitations_accept():
     collaboration_membership = CollaborationMembership(user_id=user_id,
                                                        collaboration_id=collaboration.id,
                                                        role=role,
+                                                       expiry_date=invitation.membership_expiry_date,
                                                        created_by=invitation.user.uid,
                                                        updated_by=invitation.user.uid)
     collaboration_membership = db.session.merge(collaboration_membership)

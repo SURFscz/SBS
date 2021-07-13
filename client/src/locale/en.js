@@ -176,6 +176,8 @@ I18n.translations.en = {
             status: "Status",
             inviteSend: "Invite sent {{date}}",
             expiredAt: "Expired on {{date}}",
+            membershipExpiresAt: "Expires on {{date}}",
+            membershipExpiredAt: "Expired on {{date}}",
             accepted: "Active",
             suspended: "Suspended",
             new: "Add member(s)",
@@ -636,7 +638,8 @@ I18n.translations.en = {
             entitiesDeleted: "Membership / invitations are successfully deleted",
             memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
             meAdded: "Successfully added you as member of {{name}}",
-            memberActivated: "Member {{name}} has been sent an email with an activation link"
+            memberActivated: "Member {{name}} has been sent an email with an activation link",
+            memberExpiryDateUpdated: "Member {{name}} has an updated expiry date {{expiryDate}}"
         },
         infoBlocks: "Dashboard collaboration {{name}}",
         searchPlaceHolder: "Search for members",
@@ -1029,6 +1032,8 @@ I18n.translations.en = {
         fileExtensionError: "Only .csv extension files are allowed",
         expiryDate: "Expiry date",
         expiryDateTooltip: "The expiry date of the invitation After this date the invitation can not be accepted anymore",
+        membershipExpiryDate: "Membership expiry date",
+        membershipExpiryDateTooltip: "The expiry date of the membership once the invitation has been accepted. After this date the membership will expire and this membership can't be used to login to services connected to this collaboration.",
         flash: {
             inviteDeclined: "Invitation for collaboration {{name}} was declined.",
             inviteAccepted: "Invitation for collaboration {{name}} was accepted.",
@@ -1399,6 +1404,7 @@ I18n.translations.en = {
         title: "System maintenance",
         runDailyJobsInfo: "Run the daily cron job to send notification mails and potentially suspend users that have not logged in for the configured period",
         runExpiredCollaborations: "Run the job to expire collaborations that have an expiry date before today",
+        runExpiredMemberships: "Run the job to expire memberships that have an expiry date before today",
         runSuspendedCollaborations: "Run the job to suspend collaborations that have had no activity for X days",
         runDailyJobs: "Trigger",
         runOutdatedRequestsInfo: "Run the cron job to report all open outdated join requests and new collaboration requests for the configured threshold",
@@ -1415,6 +1421,9 @@ I18n.translations.en = {
         collaborations_expired: "Collaborations expired",
         collaborations_suspended: "Collaborations suspended",
         collaborations_warned: "Collaboration admins warned",
+        memberships_deleted: "Expired memberships deleted",
+        memberships_expired: "Memberships expired",
+        memberships_warned: "Membership users warned",
         runDbStatsInfo: "Database table counts",
         runDbStats: "Fetch",
         name: "Table name",
@@ -1639,6 +1648,23 @@ I18n.translations.en = {
     unsuspend: {
         confirmation: "Are you sure you want to unsuspend this collaboration?",
         flash: "Collaboration {{name}} is active again"
+    },
+    organisationMembership: {
+        membership: "Membership of {{name}} has no end date.",
+        membershipWithExpiry: "Membership of {{name}} will expire at {{date}}.",
+        expiredMembership: "This membership has expired at {{date}}. Update the end date to activate {{name}}.",
+        expiryDate: "End date",
+        expiryDateTooltip: "The end date of the membership. After this date the membership will be suspended and this member can no longer use the services",
+        update: "Update",
+        status: {
+            name: "Membership",
+            active: "Active",
+            expired: "Expired",
+            activeWithExpiryDate: "Expiry date: {{date}}",
+            activeTooltip: "Your membership has no end date.",
+            expiredTooltip: "Your membership was expired on {{date}}. Please contact the admins of this collaboration to request activation.",
+            activeWithExpiryDateTooltip: "Your membership is active, however it does expires on {{date}}."
+        }
     }
 };
 

@@ -176,6 +176,8 @@ I18n.translations.nl = {
             status: "Status",
             inviteSend: "Uitnodiging {{date}}",
             expiredAt: "Verlopen {{date}}",
+            membershipExpiresAt: "Verloopt {{date}}",
+            membershipExpiredAt: "Verlopen {{date}}",
             accepted: "Actief",
             suspended: "Geschorst",
             new: "Voeg leden toe",
@@ -637,7 +639,8 @@ I18n.translations.nl = {
             entitiesDeleted: "Lidmaatschap / uitnodigingen zijn verwijderd",
             memberUpdated: "De rol of lidmaatschap van {{name}} is bijgewerkt naar {{role}}.",
             meAdded: "Je bent toegevoegd als lid van {{name}}",
-            memberActivated: "Lid {{name}} heeft een e-mail met een activeringslink ontvangen"
+            memberActivated: "Lid {{name}} heeft een e-mail met een activeringslink ontvangen",
+            memberExpiryDateUpdated: "Lid {{name}} heeft een nieuwe verloopdatum {{expiryDate}}"
         },
         infoBlocks: "Dashboard samenwerking {{name}}",
         searchPlaceHolder: "Zoek leden",
@@ -1030,6 +1033,8 @@ I18n.translations.nl = {
         fileExtensionError: "Alleen bestanden met een .csv extensie zijn toegestaan.",
         expiryDate: "Verloopdatum",
         expiryDateTooltip: "De verloopdatum van de uitnodiging Na deze datum kan de uitnodiging niet meer gebruikt worden.",
+        membershipExpiryDate: "Membership expiry date",
+        membershipExpiryDateTooltip: "The expiry date of the membership once the invitation has been accepted. After this date the membership will expire and this membership can't be used to login to services connected to this collaboration.",
         flash: {
             inviteDeclined: "Uitnodiging voor samenwerking {{name}} is afgewezen.",
             inviteAccepted: "Uitnodiging voor samenwerking {{name}} is geaccepteerd.",
@@ -1400,6 +1405,7 @@ I18n.translations.nl = {
         title: "Systeemonderhoud",
         runDailyJobsInfo: "Voer de dagelijkse cron-taak uit om notificatie-e-mails te verzenden en mogelijk gebruikers op te schorten die zich gedurende de geconfigureerde periode niet hebben aangemeld",
         runExpiredCollaborations: "Run the job to expire collaborations that have an expiry date before today",
+        runExpiredMemberships: "Run the job to expire memberships that have an expiry date before today",
         runSuspendedCollaborations: "Run the job to suspend collaborations that have had no activity for X days",
         runDailyJobs: "Trigger",
         runOutdatedRequestsInfo: "Voer de cron-taak uit om alle verouderde open join-verzoeken en nieuwe samenwerkingsverzoeken voor de geconfigureerde drempel te rapporteren",
@@ -1416,6 +1422,9 @@ I18n.translations.nl = {
         collaborations_expired: "Collaborations expired",
         collaborations_suspended: "Collaborations suspended",
         collaborations_warned: "Collaboration admins warned",
+        memberships_deleted: "Expired memberships deleted",
+        memberships_expired: "Memberships expired",
+        memberships_warned: "Membership users warned",
         runDbStatsInfo: "Database tabellen en aantallen",
         runDbStats: "Haal op",
         name: "Tabelnaam",
@@ -1640,6 +1649,23 @@ I18n.translations.nl = {
     unsuspend: {
         confirmation: "Weet je zeker dat je deze samenwerking weer wilt activeren?",
         flash: "Samenwerking {{name}} is weer actief"
+    },
+    organisationMembership: {
+        membership: "Lidmaatschap van {{name}} heeft geen einddatum.",
+        membershipWithExpiry: "Lidmaatschap van {{name}} verloopt op {{date}}.",
+        expiredMembership: "Dit lidmaatschap is verlopen op {{date}}. Verander de einddatum om {{name}} weer actief te maken.",
+        expiryDate: "Eind datum",
+        expiryDateTooltip: "De einddatum van dit lidmaatschap. Na deze datum wordt het lidmaatschap opgeschort en kan de gebruiker niet meer de diensten van deze samenwerking gebruiken.",
+        update: "Bijwerken",
+        status: {
+            name: "Lidmaatschap",
+            active: "Actief",
+            expired: "Verlopen",
+            activeWithExpiryDate: "Verloop datum: {{date}}",
+            activeTooltip: "Je lidmaatschap heeft geen einddatum.",
+            expiredTooltip: "Je lidmaatschap is verlopen op {{date}}. Neem contact op met de admins van deze samenwerking om activatie te verzoeken.",
+            activeWithExpiryDateTooltip: "je lidmaatschap is actief, maar het verloopt wel op {{date}}."
+        }
     }
 
 };

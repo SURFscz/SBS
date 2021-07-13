@@ -1,0 +1,18 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURF Membership expires notification{% endblock %}
+{% block content %}
+
+Membership expires notification
+
+Membership for user {{ membership.user.name }} in {{ membership.collaboration.name }} will expire on {{ expiry_date }}.
+
+Click the link below to view this membership
+
+{{ base_url }}/collaborations/{{ membership.collaboration.id }}
+
+{{ salutation }},
+Please login and change the expiry date of {{ membership.collaboration.name }} to avoid that
+the user {{ membership.user.name }} of this collaboration
+can not login anymore on the services of this collaboration.
+
+{% endblock %}

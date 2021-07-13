@@ -82,7 +82,8 @@ class Organisations extends React.Component {
             }]
         return (
             <Entities entities={organisations}
-                      modelName="organisations" searchAttributes={["name","schacHomes"]}
+                      modelName="organisations"
+                      searchAttributes={["name","schacHomes"]}
                       defaultSort="name"
                       columns={columns}
                       rowLinkMapper={() => this.openOrganisation}
