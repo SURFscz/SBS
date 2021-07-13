@@ -1655,7 +1655,16 @@ I18n.translations.en = {
         expiredMembership: "This membership has expired at {{date}}. Update the end date to activate {{name}}.",
         expiryDate: "End date",
         expiryDateTooltip: "The end date of the membership. After this date the membership will be suspended and this member can no longer use the services",
-        update: "Update"
+        update: "Update",
+        status: {
+            name: "Membership",
+            active: "Active",
+            expired: "Expired",
+            activeWithExpiryDate: "Expiry date: {{date}}",
+            activeTooltip: "Your membership has no end date.",
+            expiredTooltip: "Your membership was expired on {{date}}. Please contact the admins of this collaboration to request activation.",
+            activeWithExpiryDateTooltip: "Your membership is active, however it does expires on {{date}}."
+        }
     }
 };
 

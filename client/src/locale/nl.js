@@ -1656,7 +1656,16 @@ I18n.translations.nl = {
         expiredMembership: "Dit lidmaatschap is verlopen op {{date}}. Verander de einddatum om {{name}} weer actief te maken.",
         expiryDate: "Eind datum",
         expiryDateTooltip: "De einddatum van dit lidmaatschap. Na deze datum wordt het lidmaatschap opgeschort en kan de gebruiker niet meer de diensten van deze samenwerking gebruiken.",
-        update: "Bijwerken"
+        update: "Bijwerken",
+        status: {
+            name: "Lidmaatschap",
+            active: "Actief",
+            expired: "Verlopen",
+            activeWithExpiryDate: "Verloop datum: {{date}}",
+            activeTooltip: "Je lidmaatschap heeft geen einddatum.",
+            expiredTooltip: "Je lidmaatschap is verlopen op {{date}}. Neem contact op met de admins van deze samenwerking om activatie te verzoeken.",
+            activeWithExpiryDateTooltip: "je lidmaatschap is actief, maar het verloopt wel op {{date}}."
+        }
     }
 
 };

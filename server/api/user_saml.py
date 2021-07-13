@@ -71,13 +71,13 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
 
     if all(coll.status != STATUS_ACTIVE for coll in connected_collaborations):
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
-                     f" as the service is not connected to active collaborations")
+                     f" as the service is not connected to any active collaborations")
         return not_authorized_func(service.name, COLLABORATION_NOT_ACTIVE)
 
     now = datetime.now()
     if all(m.expiry_date and m.expiry_date < now for m in memberships):
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
-                     f" as none of the memberships are active")
+                     f" as none of the collaboration memberships are active")
         return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)
 
     for coll in connected_collaborations:

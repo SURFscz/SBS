@@ -30,6 +30,7 @@ class TestPlsc(AbstractTest):
 
         collaborations = flatten([org["collaborations"] for org in res["organisations"] if org["name"] == uuc_name])
         self.assertEqual("active", collaborations[0]["status"])
+        self.assertEqual("active", collaborations[0]["collaboration_memberships"][0]["status"])
         groups = flatten([coll["groups"] for coll in collaborations if coll["name"] == ai_computing_name])
         ai_researchers = list(filter(lambda group: group["name"] == ai_researchers_group, groups))[0]
         self.assertIsNotNone(ai_researchers["description"])
