@@ -1405,6 +1405,7 @@ I18n.translations.nl = {
         title: "Systeemonderhoud",
         runDailyJobsInfo: "Voer de dagelijkse cron-taak uit om notificatie-e-mails te verzenden en mogelijk gebruikers op te schorten die zich gedurende de geconfigureerde periode niet hebben aangemeld",
         runExpiredCollaborations: "Run the job to expire collaborations that have an expiry date before today",
+        runExpiredMemberships: "Run the job to expire memberships that have an expiry date before today",
         runSuspendedCollaborations: "Run the job to suspend collaborations that have had no activity for X days",
         runDailyJobs: "Trigger",
         runOutdatedRequestsInfo: "Voer de cron-taak uit om alle verouderde open join-verzoeken en nieuwe samenwerkingsverzoeken voor de geconfigureerde drempel te rapporteren",
@@ -1647,10 +1648,12 @@ I18n.translations.nl = {
         flash: "Samenwerking {{name}} is weer actief"
     },
     organisationMembership: {
-        membership: "Lidmaatschap van {{name}} verloopt op {{date}}.",
-        expiredMembership: "Dit lidmaatschap is verlopen op {{date}}. Verander de einddatum om de gebruiker weer actief te maken.",
+        membership: "Lidmaatschap van {{name}} heeft geen einddatum.",
+        membershipWithExpiry: "Lidmaatschap van {{name}} verloopt op {{date}}.",
+        expiredMembership: "Dit lidmaatschap is verlopen op {{date}}. Verander de einddatum om {{name}} weer actief te maken.",
         expiryDate: "Eind datum",
         expiryDateTooltip: "De einddatum van dit lidmaatschap. Na deze datum wordt het lidmaatschap opgeschort en kan de gebruiker niet meer de diensten van deze samenwerking gebruiken.",
+        update: "Bijwerken"
     }
 
 };

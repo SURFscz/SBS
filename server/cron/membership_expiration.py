@@ -45,13 +45,17 @@ def _do_expire_memberships(app):
             .filter(CollaborationMembership.status == STATUS_EXPIRED) \
             .filter(CollaborationMembership.expiry_date < deletion_date).all()  # noqa: E712
         for membership in memberships_deleted:
+            # ensure we have the user and collaboration in the json
+            membership.user.name
+            membership.collaboration.name
             db.session.delete(membership)
+        memberships_deleted_json = jsonify(memberships_deleted).json
 
         memberships_expired = CollaborationMembership.query \
             .filter(CollaborationMembership.status == STATUS_ACTIVE) \
             .filter(CollaborationMembership.expiry_date < now).all()  # noqa: E712
         for membership in memberships_expired:
-            mail_membership_expires_notification(coll, False)
+            mail_membership_expires_notification(membership, False)
             membership.status = STATUS_EXPIRED
             db.session.merge(membership)
 
@@ -62,7 +66,7 @@ def _do_expire_memberships(app):
 
         return {"memberships_warned": jsonify(memberships_warned).json,
                 "memberships_expired": jsonify(memberships_expired).json,
-                "memberships_deleted": jsonify(memberships_deleted).json}
+                "memberships_deleted": memberships_deleted_json}
 
 
 def expire_memberships(app, wait_time=3):
