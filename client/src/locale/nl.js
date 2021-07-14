@@ -603,11 +603,13 @@ I18n.translations.nl = {
         status: {
             name: "Status",
             active: "Actief",
+            activeWithExpiryDate: "Einddatum: {{expiryDate}}",
             suspended: "Geschorst",
             expired: "Verlopen",
-            activeTooltip: "This collaboration is active and ready for business.",
-            suspendedTooltip: "This collaboration is suspended due to long inactivity. It was used for the last time on {{lastActivityDate}}.",
-            expiredTooltip: "This collaboration is expired due to the expiry date. It has expires on {{expiryDate}}. It can be activated by setting a new end date.",
+            activeTooltip: "Deze samenwerking is actief.",
+            suspendedTooltip: "Deze samenwerking is opgeschort wegens langdurige inactiviteit. Het is voor het laatst gebruikt op {{lastActivityDate}}.",
+            expiredTooltip: "Deze samenwerking is opgeschort wegens de einddatum. Het is verlopen op {{expiryDate}} en kan opnieuw worden geactiveerd door een nieuwe einddatum in te stellen.",
+            activeWithExpiryDateTooltip: "Deze samenwerking is actief, maar verloopt op {{expiryDate}}."
         },
 
         flash: {
