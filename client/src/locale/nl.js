@@ -1644,7 +1644,9 @@ I18n.translations.nl = {
         info1: "Je bent niet succesvol ingelogd bij SURF Research Access Management en je hebt dus geen toegang tot <i>{{name}}</i>.",
         info2: "Je bent niet succesvol ingelogd bij SURF Research Access Management omdat je account is opgeschort, en daarom heb je geen toegang tot <i>{{name}}</i>. Geen van de samenwerkingsverbanden waar je momenteel een lid van, hebben toegang tot <i>{{name}}</i> ingeschakeld. Neem contact op met de samenwerkingsbeheerder(s) om toegang tot deze dienst in te schakelen.",
         info3: "Je bent succesvol ingelogd bij SURF Research Access Management (SRAM), maar de dienst <i>{{name}}</i> is onbekend binnen SRAM.",
-        info4: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. De samenwerking(en) waar je momenteel lid van bent, hebben <i>{{name}}</i> niet beschikbaar gemaakt. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen."
+        info4: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. De samenwerking(en) waar je momenteel lid van bent, hebben <i>{{name}}</i> niet beschikbaar gemaakt. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen.",
+        info5: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. De samenwerking(en) waar je momenteel lid van bent zijn niet meer actief. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen.",
+        info6: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen.",
     },
     unsuspend: {
         confirmation: "Weet je zeker dat je deze samenwerking weer wilt activeren?",
