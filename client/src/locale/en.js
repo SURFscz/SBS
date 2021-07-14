@@ -603,11 +603,13 @@ I18n.translations.en = {
         status: {
             name: "Status",
             active: "Active",
+            activeWithExpiryDate: "Expiry date: {{expiryDate}}",
             suspended: "Suspended",
             expired: "Expired",
             activeTooltip: "This collaboration is active and ready for business.",
             suspendedTooltip: "This collaboration is suspended due to long inactivity. It was used for the last time on {{lastActivityDate}}.",
             expiredTooltip: "This collaboration is expired due to the expiry date. It has expires on {{expiryDate}}. It can be activated by setting a new end date.",
+            activeWithExpiryDateTooltip: "This collaboration is active, however it does expiry on {{expiryDate}}."
         },
         flash: {
             created: "Collaboration {{name}} was successfully created",
@@ -1665,7 +1667,7 @@ I18n.translations.en = {
             activeWithExpiryDate: "Expiry date: {{date}}",
             activeTooltip: "Your membership has no end date.",
             expiredTooltip: "Your membership was expired on {{date}}. Please contact the admins of this collaboration to request activation.",
-            activeWithExpiryDateTooltip: "Your membership is active, however it does expires on {{date}}."
+            activeWithExpiryDateTooltip: "Your membership is active, however it does expiry on {{date}}."
         }
     }
 };

@@ -552,7 +552,7 @@ class System extends React.Component {
                                 <td className="action">{I18n.t(`system.${key}`)}</td>
                                 <td>
                                     {!isEmpty(suspendedUsers[key]) && <ul>
-                                        {suspendedUsers[key].map(email => <li>{email}</li>)}
+                                        {suspendedUsers[key].map(email => <li key={email}>{email}</li>)}
                                     </ul>}
                                     {isEmpty(suspendedUsers[key]) && <span>None</span>}
                                 </td>
