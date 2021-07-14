@@ -95,7 +95,7 @@ class Users extends React.Component {
                       defaultSort="name"
                       filters={moreToShow && this.moreResultsAvailable()}
                       columns={columns}
-                      customNoEntities={noResults && I18n.t("models.allUsers.noResults")}
+                      customNoEntities={noResults ? I18n.t("models.allUsers.noResults") : I18n.t("models.allUsers.noEntities")}
                       loading={false}
                       inputFocus={true}
                       customSearch={this.search}
