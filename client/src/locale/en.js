@@ -1295,7 +1295,7 @@ I18n.translations.en = {
         },
         tables: {
             "api_keys": "API key",
-            // "aups": "Acceptable User Policy",
+            "aups": "Acceptable User Policy",
             "collaboration_memberships": "Collaboration membership",
             "collaboration_memberships_groups": "Group membership",
             "collaboration_requests": "Collaboration request",

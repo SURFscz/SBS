@@ -1296,7 +1296,7 @@ I18n.translations.nl = {
         },
         tables: {
             "api_keys": "API key",
-            // "aups": "Acceptable User Policy",
+            "aups": "Acceptable User Policy",
             "collaboration_memberships": "Lidmaatschap",
             "collaboration_memberships_groups": "Groepslidmaatschap",
             "collaboration_requests": "Samenwerkingsverzoek",
