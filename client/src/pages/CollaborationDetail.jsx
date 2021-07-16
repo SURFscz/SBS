@@ -517,6 +517,9 @@ class CollaborationDetail extends React.Component {
 
     getMembershipStatus = (collaboration, user) => {
         const membership = collaboration.collaboration_memberships.find(cm => cm.user.id === user.id);
+        if (!membership) {
+            return null;
+        }
         const expiryDate = membership.expiry_date ? moment(membership.expiry_date * 1000).format("LL") : I18n.t("service.none");
         const className = membership.status !== "active" ? "warning" : "";
         let status;

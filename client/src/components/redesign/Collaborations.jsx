@@ -117,7 +117,7 @@ export default class Collaborations extends React.PureComponent {
                     if (collaboration.expiry_date) {
                         const today = new Date().getTime();
                         const expiryDate = collaboration.expiry_date * 1000;
-                        const days = Math.round((expiryDate - today) / (1000 * 60 * 60 * 24));
+                        const days = Math.max(1, Math.round((expiryDate - today) / (1000 * 60 * 60 * 24)));
                         const warning = days < 60;
                         return <div>
                             <span className={warning ? "warning" : ""}>{moment(expiryDate).format("LL")}</span>
