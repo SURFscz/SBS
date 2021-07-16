@@ -1,5 +1,6 @@
 # -*- coding: future_fstrings -*-
 from server.api.base import STATUS_DENIED, STATUS_APPROVED
+from server.cron.schedule import start_scheduling
 from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
@@ -50,6 +51,14 @@ class TestSystem(AbstractTest):
         self.app.app_config.feature.seed_allowed = 0
         self.get("/api/system/seed", response_status_code=400)
         self.app.app_config.feature.seed_allowed = 1
+
+    def test_scheduled_jobs(self):
+        jobs = self.get("/api/system/scheduled_jobs")
+        self.assertEqual(0, len(jobs))
+
+        start_scheduling(self.app)
+        jobs = self.get("/api/system/scheduled_jobs")
+        self.assertEqual(7, len(jobs))
 
     def test_clear_audit_logs(self):
         self.login("urn:sarah")

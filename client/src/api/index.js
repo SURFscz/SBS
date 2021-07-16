@@ -640,6 +640,10 @@ export function expireCollaborations() {
     return postPutJson("/api/system/expire_collaborations", {}, "PUT");
 }
 
+export function scheduledJobs() {
+    return fetchJson("/api/system/scheduled_jobs");
+}
+
 export function outstandingRequests() {
     return fetchJson("/api/system/outstanding_requests");
 }

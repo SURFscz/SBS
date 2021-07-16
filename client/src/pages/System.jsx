@@ -8,10 +8,11 @@ import {
     clearAuditLogs,
     dbSeed,
     dbStats,
-    expireCollaborations,
     expireCollaborationMemberships,
+    expireCollaborations,
     health,
     outstandingRequests,
+    scheduledJobs,
     suspendCollaborations,
     suspendUsers
 } from "../api";
@@ -30,6 +31,7 @@ import MemberCollaborationRequests from "../components/redesign/MemberCollaborat
 import {logout} from "../utils/Login";
 import {filterAuditLogs} from "../utils/AuditLog";
 import SelectField from "../components/SelectField";
+import moment from "moment";
 
 const options = [25, 50, 100, 150, 200, 250, "All"].map(nbr => ({value: nbr, label: nbr}));
 
@@ -48,6 +50,7 @@ class System extends React.Component {
             outstandingRequests: {},
             cleanedRequests: {},
             databaseStats: [],
+            cronJobs: [],
             seedResult: null,
             confirmationDialogOpen: false,
             confirmationDialogQuestion: undefined,
@@ -87,6 +90,7 @@ class System extends React.Component {
             outstandingRequests: {},
             cleanedRequests: {},
             databaseStats: [],
+            cronJobs: [],
             seedResult: null,
             query: "",
             auditLogs: {audit_logs: []},
@@ -100,7 +104,8 @@ class System extends React.Component {
         window.location.href = window.location.href;
     }
 
-    getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations, expiredMemberships) => {
+    getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations,
+                  expiredMemberships, cronJobs) => {
         return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}
                      icon={<FontAwesomeIcon icon="clock"/>}>
             <div className="mod-system">
@@ -117,6 +122,8 @@ class System extends React.Component {
                     {this.renderOutstandingRequestsResults(outstandingRequests)}
                     {this.renderCleanedRequests()}
                     {this.renderCleanedRequestsResults(cleanedRequests)}
+                    {this.renderCronJobs()}
+                    {this.renderCronJobsResults(cronJobs)}
                 </section>
             </div>
         </div>)
@@ -296,6 +303,13 @@ class System extends React.Component {
         });
     }
 
+    doCronJobs = () => {
+        this.setState({busy: true})
+        scheduledJobs().then(res => {
+            this.setState({cronJobs: res, busy: false});
+        });
+    }
+
     doClearAuditLogs = showConfirmation => {
         if (showConfirmation) {
             this.confirm(() => this.doClearAuditLogs(false), I18n.t("system.runClearAuditLogsConfirmation"));
@@ -371,9 +385,9 @@ class System extends React.Component {
                 <p>{I18n.t("system.runExpiredMemberships")}</p>
                 <div className="actions">
                     {isEmpty(expiredMemberships) && <Button txt={I18n.t("system.runDailyJobs")}
-                                                               onClick={this.doExpireMemberships}/>}
+                                                            onClick={this.doExpireMemberships}/>}
                     {!isEmpty(expiredMemberships) && <Button txt={I18n.t("system.clear")}
-                                                                onClick={this.clear} cancelButton={true}/>}
+                                                             onClick={this.clear} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -419,6 +433,21 @@ class System extends React.Component {
                                                          onClick={this.doCleanupNonOpenRequests}/>}
                     {!isEmpty(cleanedRequests) && <Button txt={I18n.t("system.clear")}
                                                           onClick={this.clear} cancelButton={true}/>}
+                </div>
+            </div>
+        );
+    }
+
+    renderCronJobs = () => {
+        const {cronJobs} = this.state;
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.showDailyJobsInfo")}</p>
+                <div className="actions">
+                    {isEmpty(cronJobs) && <Button txt={I18n.t("system.showDailyJobs")}
+                                                  onClick={this.doCronJobs}/>}
+                    {!isEmpty(cronJobs) && <Button txt={I18n.t("system.clear")}
+                                                   onClick={this.clear} cancelButton={true}/>}
                 </div>
             </div>
         );
@@ -493,7 +522,8 @@ class System extends React.Component {
                                 <td className="action">{I18n.t(`system.${key}`)}</td>
                                 <td>
                                     {!isEmpty(expiredMemberships[key]) && <ul>
-                                        {expiredMemberships[key].map(mb => <li>{`${mb.user.name} (${mb.collaboration.name})`}</li>)}
+                                        {expiredMemberships[key].map(mb =>
+                                            <li>{`${mb.user.name} (${mb.collaboration.name})`}</li>)}
                                     </ul>}
                                     {isEmpty(expiredMemberships[key]) && <span>None</span>}
                                 </td>
@@ -578,6 +608,30 @@ class System extends React.Component {
         )
     }
 
+    renderCronJobsResults = cronJobs => {
+        return (
+            <div className="results">
+                {!isEmpty(cronJobs) && <div className="results">
+                    <table className="table-counts">
+                        <thead>
+                        <tr>
+                            <th>{I18n.t("system.jobName")}</th>
+                            <th>{I18n.t("system.jobNextRun")}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {cronJobs.map((job, i) => <tr key={i}>
+                            <td>{job.name}</td>
+                            <td>{moment(job.next_run_time * 1000).format("LLLL")}</td>
+                        </tr>)}
+                        </tbody>
+                    </table>
+
+                </div>}
+            </div>
+        )
+    }
+
     renderCleanedRequestsResults = cleanedRequests => {
         const collaboration_requests = cleanedRequests.collaboration_requests;
         const join_requests = cleanedRequests.collaboration_join_requests;
@@ -645,7 +699,7 @@ class System extends React.Component {
         const {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
-            limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships
+            limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs
         } = this.state;
         const {config} = this.props;
 
@@ -653,7 +707,8 @@ class System extends React.Component {
             return <SpinnerField/>
         }
         const tabs = [
-            this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations, expiredMemberships),
+            this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations, expiredMemberships,
+                cronJobs),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables)

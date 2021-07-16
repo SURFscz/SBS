@@ -104,6 +104,19 @@ def run_seed():
     return {}, 201
 
 
+@system_api.route("/scheduled_jobs", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def scheduled_jobs():
+    confirm_write_access()
+
+    if not hasattr(current_app, "scheduler"):
+        return [], 200
+
+    jobs = current_app.scheduler.get_jobs()
+
+    return [{"name": job.name, "next_run_time": job.next_run_time} for job in jobs], 200
+
+
 @system_api.route("/clean_slate", strict_slashes=False, methods=["DELETE"])
 @json_endpoint
 def clean_slate():
