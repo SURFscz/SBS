@@ -272,7 +272,8 @@ def mail_platform_admins(obj):
                      "object_type": type(obj).__name__,
                      "current_user": current_user,
                      "obj": obj},
-            preview=False
+            preview=False,
+            working_outside_of_request_context=True
         )
 
 
@@ -332,7 +333,8 @@ def mail_collaboration_expires_notification(collaboration, is_warning):
         template="collaboration_expires_warning" if is_warning else "collaboration_expired_notification",
         context={"salutation": "Dear", "collaboration": collaboration,
                  "expiry_date": collaboration.expiry_date.strftime("%b %d %Y")},
-        preview=False
+        preview=False,
+        working_outside_of_request_context=True
     )
 
 
@@ -353,7 +355,8 @@ def mail_collaboration_suspension_notification(collaboration, is_warning):
         template="collaboration_suspension_warning" if is_warning else "collaboration_suspensed_notification",
         context={"salutation": "Dear", "now": now.strftime("%b %d %Y"), "collaboration": collaboration,
                  "suspension_date": now + datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold)},
-        preview=False
+        preview=False,
+        working_outside_of_request_context=True
     )
 
 
@@ -372,5 +375,6 @@ def mail_membership_expires_notification(membership, is_warning):
         template="membership_expires_warning" if is_warning else "membership_expired_notification",
         context={"salutation": "Dear", "membership": membership,
                  "expiry_date": membership.expiry_date.strftime("%b %d %Y")},
-        preview=False
+        preview=False,
+        working_outside_of_request_context=True
     )

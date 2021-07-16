@@ -16,36 +16,30 @@ from server.cron.user_suspending import suspend_users
 
 def start_scheduling(app):
     scheduler = BackgroundScheduler()
-    retention = app.app_config.retention
-    scheduler.add_job(func=suspend_users, trigger="cron", kwargs={"app": app}, day="*", hour=retention.cron_hour_of_day)
-    scheduler.add_job(func=parse_idp_metadata, trigger="cron", kwargs={"app": app}, day="*",
-                      hour=retention.cron_hour_of_day)
-    if app.app_config.platform_admin_notifications.enabled:
-        scheduler.add_job(func=outstanding_requests, trigger="cron", kwargs={"app": app}, day="*",
-                          hour=app.app_config.platform_admin_notifications.cron_hour_of_day)
-    if app.app_config.collaboration_expiration.enabled:
-        scheduler.add_job(func=expire_collaborations, trigger="cron", kwargs={"app": app}, day="*",
-                          hour=app.app_config.collaboration_expiration.cron_hour_of_day)
-    if app.app_config.collaboration_suspension.enabled:
-        scheduler.add_job(func=suspend_collaborations, trigger="cron", kwargs={"app": app}, day="*",
-                          hour=app.app_config.collaboration_suspension.cron_hour_of_day)
-    if app.app_config.membership_expiration.enabled:
-        scheduler.add_job(func=expire_memberships, trigger="cron", kwargs={"app": app}, day="*",
-                          hour=app.app_config.membership_expiration.cron_hour_of_day)
-    if app.app_config.user_requests_retention.enabled:
-        scheduler.add_job(func=cleanup_non_open_requests, trigger="cron", kwargs={"app": app}, day="*",
-                          hour=app.app_config.user_requests_retention.cron_hour_of_day)
+    cfq = app.app_config
+    retention = cfq.retention
+    options = {"trigger": "cron", "kwargs": {"app": app}, "day": "*",
+               "misfire_grace_time": 60 * 60 * 12, "coalesce": True}
+    scheduler.add_job(func=suspend_users, hour=retention.cron_hour_of_day, **options)
+    scheduler.add_job(func=parse_idp_metadata, hour=retention.cron_hour_of_day, **options)
+    if cfq.platform_admin_notifications.enabled:
+        scheduler.add_job(func=outstanding_requests, hour=cfq.platform_admin_notifications.cron_hour_of_day, **options)
+    if cfq.collaboration_expiration.enabled:
+        scheduler.add_job(func=expire_collaborations, hour=cfq.collaboration_expiration.cron_hour_of_day, **options)
+    if cfq.collaboration_suspension.enabled:
+        scheduler.add_job(func=suspend_collaborations, hour=cfq.collaboration_suspension.cron_hour_of_day, **options)
+    if cfq.membership_expiration.enabled:
+        scheduler.add_job(func=expire_memberships, hour=cfq.membership_expiration.cron_hour_of_day, **options)
+    if cfq.user_requests_retention.enabled:
+        scheduler.add_job(func=cleanup_non_open_requests, hour=cfq.user_requests_retention.cron_hour_of_day, **options)
     scheduler.start()
 
     logger = logging.getLogger("scheduler")
     jobs = scheduler.get_jobs()
+    for job in jobs:
+        logger.info(f"Running {job.name} job at {job.next_run_time}")
 
-    logger.info(f"Running next suspend_users job at {jobs[0].next_run_time}")
-    logger.info(f"Running next parse_idp_metadata job at {jobs[1].next_run_time}")
-    if app.app_config.platform_admin_notifications.enabled:
-        logger.info(f"Running next outstanding_requests job at {jobs[2].next_run_time}")
-
-    if app.app_config.metadata.get("parse_at_startup", False):
+    if cfq.metadata.get("parse_at_startup", False):
         threading.Thread(target=parse_idp_metadata, args=(app,)).start()
 
     # Shut down the scheduler when exiting the app
