@@ -389,7 +389,7 @@ def save_restricted_collaboration():
 
     if not organisation:
         raise BadRequest(f"Default organisation for restricted co "
-                         f"{restricted_co_config.default_organisation} does not exists")
+                         f"{restricted_co_config.default_organisation} does not exist")
 
     data["organisation_id"] = organisation.id
 
