@@ -44,4 +44,5 @@ def start_scheduling(app):
 
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
+    app.scheduler = scheduler
     return scheduler
