@@ -1435,7 +1435,7 @@ I18n.translations.nl = {
         runDbStats: "Haal op",
         name: "Tabelnaam",
         count: "Aantal records",
-        activity: "Alle recente activiteit uit de audit-logs",
+        activity: "Alle recente activiteit uit de audit-logs ({{count}})",
         searchPlaceholder: "Zoek audit-logs...",
         runDbSeedConfirmation: "Weet je het zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle gegevens en voeg de testgegevens toe",

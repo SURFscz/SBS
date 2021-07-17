@@ -172,7 +172,7 @@ class System extends React.Component {
                 <div className="mod-system">
                     <section className={"info-block-container"}>
                         <section className="search-activity">
-                            <p>{I18n.t("system.activity")}</p>
+                            <p>{I18n.t("system.activity", {count: filteredAuditLogs.length})}</p>
                             {config.seed_allowed &&
                             <Button warningButton={true} onClick={() => this.doClearAuditLogs(true)}/>}
                             <div className={`search ${config.seed_allowed ? "" : "no-clear-logs"}`}>

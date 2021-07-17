@@ -1,5 +1,6 @@
 # -*- coding: future_fstrings -*-
 import base64
+import datetime
 from io import BytesIO
 from secrets import token_urlsafe
 from time import time
@@ -117,8 +118,9 @@ def verify2fa():
     if totp.verify(totp_value):
         if not user.second_factor_auth:
             user.second_factor_auth = secret
-            user = db.session.merge(user)
-            db.session.commit()
+        user.last_login_date = datetime.datetime.now()
+        user = db.session.merge(user)
+        db.session.commit()
         store_user_in_session(user, True)
         location = session.get("original_destination", current_app.app_config.base_url)
         in_proxy_flow = session.get("in_proxy_flow", False)

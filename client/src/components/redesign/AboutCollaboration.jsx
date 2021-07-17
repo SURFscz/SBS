@@ -95,12 +95,11 @@ class AboutCollaboration extends React.Component {
                         </div>
                         <ul>
                             {memberships.map(m => <li key={m.id}>
-                                {<span className="member">
-                            {m.user.name}
+                                <span className="member">
+                                    {m.user.name}
                                     {m.role === "admin" &&
                                     <span className="role">{` (${I18n.t("models.collaboration.admin")})`}</span>}
-                                    {m.user.id === user.id && <span className="role">{` (${I18n.t("models.collaboration.admin")})`}</span>}
-                                </span>}
+                                </span>
                             </li>)}
                         </ul>
                         {collaboration.collaboration_memberships.length > memberCutOff &&
