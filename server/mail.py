@@ -286,6 +286,7 @@ def mail_outstanding_requests(collaboration_requests, collaboration_join_request
         template="platform_notification_outstanding_requests",
         context={"environment": mail_cfg.environment,
                  "admin_cfg": admin_cfg,
+                 "base_url": current_app.app_config.base_url,
                  "collaboration_join_requests": collaboration_join_requests,
                  "collaboration_requests": collaboration_requests},
         preview=False,
@@ -332,6 +333,7 @@ def mail_collaboration_expires_notification(collaboration, is_warning):
         recipients=recipients,
         template="collaboration_expires_warning" if is_warning else "collaboration_expired_notification",
         context={"salutation": "Dear", "collaboration": collaboration,
+                 "base_url": current_app.app_config.base_url,
                  "expiry_date": collaboration.expiry_date.strftime("%b %d %Y")},
         preview=False,
         working_outside_of_request_context=True
@@ -354,6 +356,7 @@ def mail_collaboration_suspension_notification(collaboration, is_warning):
         recipients=recipients,
         template="collaboration_suspension_warning" if is_warning else "collaboration_suspensed_notification",
         context={"salutation": "Dear", "now": now.strftime("%b %d %Y"), "collaboration": collaboration,
+                 "base_url": current_app.app_config.base_url,
                  "suspension_date": now + datetime.timedelta(days=cfq.inactivity_warning_mail_days_threshold)},
         preview=False,
         working_outside_of_request_context=True
@@ -374,6 +377,7 @@ def mail_membership_expires_notification(membership, is_warning):
         recipients=recipients,
         template="membership_expires_warning" if is_warning else "membership_expired_notification",
         context={"salutation": "Dear", "membership": membership,
+                 "base_url": current_app.app_config.base_url,
                  "expiry_date": membership.expiry_date.strftime("%b %d %Y")},
         preview=False,
         working_outside_of_request_context=True
