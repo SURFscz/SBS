@@ -1,7 +1,7 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF Collaboration suspension notification{% endblock %}
+{% block title %}SURF collaboration suspension notification{% endblock %}
 {% block content %}
-Collaboration expires notification
+Collaboration suspension notification
 
 Collaboration {{ collaboration.name }} will be suspended on {{ last_activity_date }}.
 Click the link below to view this collaboration.

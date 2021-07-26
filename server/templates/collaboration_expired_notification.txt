@@ -1,9 +1,9 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF Collaboration expired notification{% endblock %}
+{% block title %}SURF collaboration suspended notification{% endblock %}
 {% block content %}
-Collaboration expired notification
+Collaboration suspended notification
 
-Collaboration {{ collaboration.name }} has expired on {{ expiry_date }}.
+Collaboration {{ collaboration.name }} was suspended on {{ expiry_date }}.
 Click the link below to view this collaboration.
 {{ base_url }}/collaborations/{{ collaboration.id }}
 

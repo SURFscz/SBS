@@ -1,13 +1,13 @@
 {% extends "mail_layout.html" %}
-{% block title %}SURF Membership expires notification{% endblock %}
+{% block title %}SURF Membership suspension notification{% endblock %}
 {% block content %}
 
 <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
     <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
-        Membership expires notification
+        Membership suspension notification
     </p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        Membership for user {{ membership.user.name }} in {{ membership.collaboration.name }} will expire on {{ expiry_date }}.</p>
+        Membership for user {{ membership.user.name }} in {{ membership.collaboration.name }} will be suspended on {{ expiry_date }}.</p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
         Click the button below to view this membership .</p>
     <a class="button" href="{{ base_url }}/collaborations/{{ membership.collaboration.id }}"
@@ -16,7 +16,7 @@
 </div>
 <div class="mail-end" style="padding: 30px 0 0 60px;background-color: #f5f5f5;">
     <p>{{ salutation }},</p>
-    <p>Please login and change the expiry date of {{ membership.collaboration.name }} to avoid that
+    <p>Please login and change the suspension date of {{ membership.collaboration.name }} to avoid that
         the user {{ membership.user.name }} of this collaboration
         can not login anymore on the services of this collaboration.</p>
 
