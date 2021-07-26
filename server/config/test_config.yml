@@ -82,7 +82,7 @@ aup:
 
 base_url: http://localhost:3000/
 base_server_url: http://localhost:8080
-wiki_link: https://wiki.surfnet.nl/display/sram
+wiki_link: https://edu.nl/vw3jx
 
 admin_users:
   - uid: "urn:john"
