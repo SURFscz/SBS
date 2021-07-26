@@ -57,7 +57,7 @@ class TestServiceConnectionRequest(AbstractTest):
             self.assertEqual(pre_count + 1, post_count)
 
             mail_msg = outbox[0]
-            self.assertTrue("You receive this email, because you are an admin of this collaboration" in mail_msg.html)
+            self.assertTrue("You received this email, because you are an admin of this collaboration" in mail_msg.html)
             req = ServiceConnectionRequest.query.filter(ServiceConnectionRequest.service_id == service.id).first()
             self.assertEqual(True, req.is_member_request)
 
