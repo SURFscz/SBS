@@ -425,4 +425,34 @@ def seed(db, app_config, skip_seed=False):
     _persist(db, service_connection_request_network, service_connection_request_wiki,
              service_connection_request_wireless)
 
+    users = []
+    for i in range(1, 1000):
+        user = User(uid=f"urn:persoon:numero{i:03d}",
+                    name=f"Piet Doe de {i}de",
+                    email=f"pietdoe{i}@example.org",
+                    username=f"pietdoe{i}",
+                    schac_home_organisation="harderwijk.edu")
+        users.append(user)
+        _persist(db, user)
+
+    for i in range(1, 300):
+        co = Collaboration(name=f"Samenwerking Numero {i}",
+                           identifier=str(uuid.uuid4()),
+                           short_name=f"co_nr_{i:03d}",
+                           global_urn=f"ucc:co_nr_{i:03d}",
+                           description="Een van vele COs",
+                           logo=_read_image("computing.jpeg"),
+                           organisation=uuc,
+                           services=[mail, network],
+                           join_requests=[],
+                           invitations=[],
+                           website_url="https://www.google.nl",
+                           accepted_user_policy="https://www.google.nl",
+                           disclose_email_information=True,
+                           disclose_member_information=True)
+        co_member1 = CollaborationMembership(role="admin",  user=users[3 * i + 0], collaboration=co)
+        co_member2 = CollaborationMembership(role="member", user=users[3 * i + 1], collaboration=co)
+        co_member3 = CollaborationMembership(role="member", user=users[3 * i + 2], collaboration=co)
+        _persist(db, co, co_member1, co_member2, co_member3)
+
     db.session.commit()
