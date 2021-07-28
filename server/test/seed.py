@@ -450,7 +450,7 @@ def seed(db, app_config, skip_seed=False):
                            accepted_user_policy="https://www.google.nl",
                            disclose_email_information=True,
                            disclose_member_information=True)
-        co_member1 = CollaborationMembership(role="admin",  user=users[3 * i + 0], collaboration=co)
+        co_member1 = CollaborationMembership(role="admin", user=users[3 * i + 0], collaboration=co)
         co_member2 = CollaborationMembership(role="member", user=users[3 * i + 1], collaboration=co)
         co_member3 = CollaborationMembership(role="member", user=users[3 * i + 2], collaboration=co)
         _persist(db, co, co_member1, co_member2, co_member3)
