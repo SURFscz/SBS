@@ -435,8 +435,6 @@ def seed(db, app_config, skip_seed=False):
         users.append(user)
     _persist(db, *users)
 
-    cos = []
-    co_members = []
     for i in range(1, 40):
         co = Collaboration(name=f"Samenwerking Numero {i}",
                            identifier=str(uuid.uuid4()),
@@ -452,12 +450,10 @@ def seed(db, app_config, skip_seed=False):
                            accepted_user_policy="https://www.google.nl",
                            disclose_email_information=True,
                            disclose_member_information=True)
-        cos.append(co)
-        co_members.append(CollaborationMembership(role="admin", user=users[2 * i + 0], collaboration=co))
-        co_members.append(CollaborationMembership(role="member", user=users[2 * i + 1], collaboration=co))
-        co_members.append(CollaborationMembership(role="member", user=users[2 * i + 2], collaboration=co))
-        co_members.append(CollaborationMembership(role="member", user=users[2 * i + 3], collaboration=co))
-    _persist(db, *cos)
-    _persist(db, *co_members)
+        _persist(db, co)
+        _persist(db, CollaborationMembership(role="admin", user=users[2 * i + 0], collaboration=co))
+        _persist(db, CollaborationMembership(role="member", user=users[2 * i + 1], collaboration=co))
+        _persist(db, CollaborationMembership(role="member", user=users[2 * i + 2], collaboration=co))
+        _persist(db, CollaborationMembership(role="member", user=users[2 * i + 3], collaboration=co))
 
     db.session.commit()
