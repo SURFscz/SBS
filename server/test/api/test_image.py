@@ -18,7 +18,7 @@ class TestImage(AbstractTest):
 
     def test_logo_url(self):
         collaborations = self.get("/api/collaborations/all")
-        self.assertEqual(4, len(collaborations))
+        self.assertEqual(43, len(collaborations))
         pattern = re.compile(r"^http://localhost:8080/api/images/collaborations/([a-z0-9-]+)$")
         for coll in collaborations:
             self.assertTrue(pattern.match(coll["logo"]))
