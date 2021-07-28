@@ -426,7 +426,7 @@ def seed(db, app_config, skip_seed=False):
              service_connection_request_wireless)
 
     users = []
-    for i in range(1, 1000):
+    for i in range(1, 84):
         user = User(uid=f"urn:persoon:numero{i:03d}",
                     name=f"Piet Doe de {i}de",
                     email=f"pietdoe{i}@example.org",
@@ -437,7 +437,7 @@ def seed(db, app_config, skip_seed=False):
 
     cos = []
     co_members = []
-    for i in range(1, 300):
+    for i in range(1, 40):
         co = Collaboration(name=f"Samenwerking Numero {i}",
                            identifier=str(uuid.uuid4()),
                            short_name=f"co_nr_{i:03d}",
@@ -453,9 +453,10 @@ def seed(db, app_config, skip_seed=False):
                            disclose_email_information=True,
                            disclose_member_information=True)
         cos.append(co)
-        co_members.append(CollaborationMembership(role="admin", user=users[3 * i + 0], collaboration=co))
-        co_members.append(CollaborationMembership(role="member", user=users[3 * i + 1], collaboration=co))
-        co_members.append(CollaborationMembership(role="member", user=users[3 * i + 2], collaboration=co))
+        co_members.append(CollaborationMembership(role="admin", user=users[2 * i + 0], collaboration=co))
+        co_members.append(CollaborationMembership(role="member", user=users[2 * i + 1], collaboration=co))
+        co_members.append(CollaborationMembership(role="member", user=users[2 * i + 2], collaboration=co))
+        co_members.append(CollaborationMembership(role="member", user=users[2 * i + 3], collaboration=co))
     _persist(db, *cos)
     _persist(db, *co_members)
 
