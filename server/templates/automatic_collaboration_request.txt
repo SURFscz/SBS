@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF Collaboration notification{% endblock %}
+{% block title %}SURF collaboration notification{% endblock %}
 {% block content %}
 
 {{ salutation }},
@@ -10,13 +10,13 @@ The explanation for this new collaboration:
 {{ message }}
 
 {% if organisation.collaboration_creation_allowed %}
-The Collaboration is created without a Collaboration request, because the Organisation is configured
-to automatically approve Collaboration requests</p>
+The collaboration is created without a collaboration request, because the organisation is configured
+to automatically approve collaboration requests</p>
 {% else %}
-The Collaboration is created without a Collaboration request, because the user {{ user.name }} has the
+The collaboration is created without a collaboration request, because the user {{ user.name }} has the
 entitlement {{ collaboration_creation_allowed_entitlement }}.
 {% endif %}
 
-Click {{base_url}}/collaborations/{{ collaboration.id }} to login and view the new Collaboration
+Click {{base_url}}/collaborations/{{ collaboration.id }} to login and view the new collaboration
 
 {% endblock %}

@@ -5,7 +5,7 @@
 Hi,
 User {{ current_user.name }} has created an {{ object_type }} on environment {{ environment }} at {{ date }}:
 
-This mail is automatically send and can be suppressed by changing the <i>platform_admin_notifications</i> section
+This email is automatically sent and can be suppressed by changing the <i>platform_admin_notifications</i> section
         of the configuration for environment {{ environment }}
 
 Name: {{ obj.name }}

@@ -46,7 +46,7 @@ class TestCollaborationRequest(AbstractTest):
             self.assertEqual("new_collaboratio", collaboration.short_name)
             mail_msg = outbox[0]
             self.assertEqual(f"New collaboration {collaboration.name} created in {organisation.name}", mail_msg.subject)
-            self.assertTrue("automatically approve Collaboration requests" in mail_msg.html)
+            self.assertTrue("automatically approve collaboration requests" in mail_msg.html)
 
     def test_request_collaboration_collaboration_creation_allowed_entitlement(self):
         organisation = self.find_entity_by_name(Organisation, amsterdam_uva_name)
