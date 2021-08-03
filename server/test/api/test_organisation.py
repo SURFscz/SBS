@@ -33,7 +33,7 @@ class TestOrganisation(AbstractTest):
         self.assertEqual(2, len(organisations))
 
         organisation = organisations[0]
-        self.assertEqual(2, organisation["collaborations_count"])
+        self.assertEqual(41, organisation["collaborations_count"])
         self.assertEqual(4, organisation["organisation_memberships_count"])
 
     def test_identity_provider_display_name(self):

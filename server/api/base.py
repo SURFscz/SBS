@@ -21,9 +21,8 @@ base_api = Blueprint("base_api", __name__, url_prefix="/")
 
 white_listing = ["health", "config", "info", "api/users/authorization", "api/aup", "api/users/resume-session",
                  "api/users/me", "/api/images/", "api/service_connection_requests/find_by_hash",
-                 "api/service_connection_requests/approve", "/api/mfa/jwks", "/api/mfa/sfo"
-                                                                             "/api/organisation_invitations/find_by_hash",
-                 "/api/invitations/find_by_hash",
+                 "api/service_connection_requests/approve", "/api/mfa/jwks", "/api/mfa/sfo",
+                 "/api/organisation_invitations/find_by_hash", "/api/invitations/find_by_hash",
                  "api/service_connection_requests/deny", "/api/mock", "/api/users/error"]
 
 mfa_listing = ["/get2fa", "/verify2fa", "/token_reset_request", "/reset2fa"]
