@@ -516,7 +516,7 @@ class CollaborationDetail extends React.Component {
 
 
     getMembershipStatus = (collaboration, user) => {
-        const membership = collaboration.collaboration_memberships.find(cm => cm.user.id === user.id);
+        const membership = collaboration.collaboration_memberships.find(cm => cm.user_id === user.id);
         if (!membership) {
             return null;
         }
