@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF Feedback{% endblock %}
+{% block title %}SURF feedback{% endblock %}
 {% block content %}
 
 Hi,
