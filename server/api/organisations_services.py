@@ -45,7 +45,7 @@ def add_collaborations_services():
 @organisations_services_api.route("/<organisation_id>/<service_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_organisations_services(organisation_id, service_id):
-    confirm_organisation_admin(organisation_id)
+    confirm_organisation_admin_or_manager(organisation_id)
 
     organisation = Organisation.query.get(organisation_id)
 
