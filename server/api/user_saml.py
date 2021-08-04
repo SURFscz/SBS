@@ -123,6 +123,7 @@ def attributes():
     service_entity_id = query_param("service_entity_id")
 
     def not_authorized_func(_, status):
+        logger = ctx_logger("user_api")
         if status == USER_UNKNOWN:
             return {"error": f"user {uid} is unknown"}, 404
         elif status == USER_IS_SUSPENDED:
