@@ -1,13 +1,13 @@
 {% extends "mail_layout.html" %}
-{% block title %}SURF Collaboration expired notification{% endblock %}
+{% block title %}SURF collaboration suspended notification{% endblock %}
 {% block content %}
 
 <div class="mail-head" style="background-color: #f5f5f5;padding: 30px 0 20px 60px;">
     <p class="title" style="font-weight: 600;font-size: 38px;line-height: 38px; margin: 0;">
-        Collaboration expired notification
+        Collaboration suspended notification
     </p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
-        Collaboration {{ collaboration.name }} has expired on {{ expiry_date }}.</p>
+        Collaboration {{ collaboration.name }} was suspended on {{ expiry_date }}.</p>
     <p class="mail-subtitle" style="font-weight: 300;font-size: 26px;line-height: 30px; margin: 0.6em;">
         Click the button below to view this collaboration.</p>
     <a class="button" href="{{ base_url }}/collaborations/{{ collaboration.id }}"

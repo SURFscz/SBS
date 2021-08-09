@@ -17,7 +17,7 @@ I18n.translations.en = {
             profile: "Profile",
             logout: "Logout",
             feedback: "Provide feedback",
-            helpUrl: "https://wiki.surfnet.nl/display/sram"
+            helpUrl: "https://edu.nl/vw3jx"
         },
     },
     breadcrumb: {
@@ -1396,11 +1396,11 @@ I18n.translations.en = {
         tips: "Need tips or info?",
         help: "Help & FAQ",
         product: "SRAM is a service by",
-        productLink: "https://wiki.surfnet.nl/display/sram",
+        productLink: "https://edu.nl/vw3jx",
         surf: "SURF",
         surfLink: "https://surf.nl",
         privacy: "Terms & Privacy",
-        privacyLink: "https://wiki.surfnet.nl/display/SRAM/SRAM+-+Privacy+Policy"
+        privacyLink: "https://edu.nl/93cdm"
     },
     system: {
         title: "System maintenance",
@@ -1503,7 +1503,7 @@ I18n.translations.en = {
         disclaimer: "We will use this information, in conjunction with other information we may have regarding your account, to fix problems, improve our products and help you. " +
             "We may follow up with you regarding your feedback using the email address associated with your account. " +
             "You are responsible for ensuring that your feedback does not contain any confidential, sensitive, or personal information. " +
-            "For more information, please review our <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://wiki.surfnet.nl/display/SRAM/SRAM+-+Privacy+Policy\">Privacy Notice</a>.",
+            "For more information, please review our <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://edu.nl/93cdm\">Privacy Notice</a>.",
         help: "Need help?",
         helpInfo: "For questions or issues, please reach out to us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>",
         send: "Send feedback",

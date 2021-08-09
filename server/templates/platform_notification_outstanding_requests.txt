@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF Feedback{% endblock %}
+{% block title %}SURF feedback{% endblock %}
 {% block content %}
 
 Hi,
@@ -20,7 +20,7 @@ The following collaboration join requests in {{ environment }} have been outstan
     {% endfor %}
 {% endif %}
 
-This mail is automatically send and can be suppressed by changing the <i>platform_admin_notifications</i> section
+This email is automatically sent and can be suppressed by changing the <i>platform_admin_notifications</i> section
     of the configuration for environment {{ environment }}
 
 {% endblock %}

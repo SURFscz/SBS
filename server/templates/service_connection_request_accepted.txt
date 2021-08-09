@@ -1,12 +1,12 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF New service connection request accepted{% endblock %}
+{% block title %}SURF new service connection request accepted{% endblock %}
 {% block content %}
 
 {{ salutation }},
 Your request to have access to service {{ service.name }} for collaboration {{ collaboration.name }}
 has been accepted by the contact person {{ service.contact_email }} of the service.
 
-Login to viwe the collaboration:
+Login to view the collaboration:
 {{ base_url }}/collaborations/{{ collaboration.id }}
 
 {% endblock %}

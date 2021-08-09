@@ -1,10 +1,10 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF Collaboration invite{% endblock %}
+{% block title %}SURF collaboration invite{% endblock %}
 {% block content %}
 {{ invitation.user.name }} invited you to join collaboration
 {{ invitation.collaboration.name }} as{{ invitation_role(invitation.intended_role) }}.
 {% if invitation.intended_role == "admin" %}
-As a CO manager you are responsible for managing users and authorizations for this collaboration.
+As an administrator you are responsible for managing members and authorizations for this collaboration.
 More information about administrative duties can be found at the {{ wiki_link }}.
 {% endif %}
 Please read below what steps you must take to accept this invitation.
@@ -17,7 +17,7 @@ To accept this invitation, please click 'Login to accept this invitation'. After
 you can review and accept the invitation and join the collaboration.
 
 If you do not want to accept this invitation, please click 'Decline this invitation' or simply ignore this email.
-The invitation automatically expires after {{ expiry_period }}.
+The invitation will automatically expire after {{ expiry_period }}.
 
 Accept link:
 {{ base_url }}/invitations/accept/{{ invitation.hash }}

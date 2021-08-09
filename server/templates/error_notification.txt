@@ -1,5 +1,5 @@
 {% extends "mail_layout.txt" %}
-{% block title %}SURF Error notification{% endblock %}
+{% block title %}SURF error notification{% endblock %}
 {% block content %}
 
 Hi,
