@@ -123,12 +123,16 @@ def attributes():
     service_entity_id = query_param("service_entity_id")
 
     def not_authorized_func(_, status):
+        logger = ctx_logger("user_api")
         if status == USER_UNKNOWN:
             return {"error": f"user {uid} is unknown"}, 404
-        if status == USER_IS_SUSPENDED:
+        elif status == USER_IS_SUSPENDED:
             return {"error": f"user {uid} is suspended"}, 404
-        if status == SERVICE_UNKNOWN or status == SERVICE_NOT_CONNECTED:
+        elif status == SERVICE_UNKNOWN or status == SERVICE_NOT_CONNECTED or status == COLLABORATION_NOT_ACTIVE:
             return {}, 200
+        else:
+            logger.error(f"Unhandled status {status} in not_authorized_func")
+            raise Exception(f"Unhandled status {status} in not_authorized_func")
 
     def authorized_func(user, memberships):
         # gather regular user attributes

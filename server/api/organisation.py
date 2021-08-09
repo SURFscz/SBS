@@ -264,7 +264,7 @@ def save_organisation():
     data["identifier"] = str(uuid.uuid4())
 
     administrators = data.get("administrators", [])
-    intended_role = data.get("intended_role", "manager")
+    intended_role = data.get("intended_role", "admin")
     message = data.get("message", None)
 
     res = save(Organisation, custom_json=data)

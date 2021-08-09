@@ -39,7 +39,7 @@ class TestService(AbstractTest):
         self.login("urn:john")
         service = self.get(f"api/services/{service.id}", with_basic_auth=False)
         self.assertEqual(1, len(service["organisations"]))
-        self.assertEqual(2, len(service["service_organisation_collaborations"]))
+        self.assertEqual(41, len(service["service_organisation_collaborations"]))
 
         logo_data = self.client.get(service["logo"]).data
         self.assertEqual(logo, logo_data)
@@ -122,7 +122,7 @@ class TestService(AbstractTest):
         self.assertTrue(len(services) > 0)
 
         service_mail = self.find_by_name(services, service_mail_name)
-        self.assertEqual(1, service_mail["collaborations_count"])
+        self.assertEqual(40, service_mail["collaborations_count"])
         self.assertEqual(2, len(service_mail["allowed_organisations"]))
 
         service_uuc = self.find_by_name(services, uuc_scheduler_name)
