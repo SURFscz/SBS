@@ -16,6 +16,7 @@ import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import {isEmpty} from "../utils/Utils";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 class UserInvitation extends React.Component {
 
@@ -35,7 +36,7 @@ class UserInvitation extends React.Component {
             confirmationDialogQuestion: "",
             confirmationDialogAction: () => true,
             cancelDialogAction: this.closeConfirmationDialog,
-            loading: false,
+            loading: true,
             skippedLoginStep: false
         };
     }
@@ -58,7 +59,7 @@ class UserInvitation extends React.Component {
                     skippedLoginStep = isEmpty(step1);
                     window.localStorage.removeItem("step1");
                 }
-                this.setState({invite: json, isExpired: isExpired, loading: true, skippedLoginStep: skippedLoginStep});
+                this.setState({invite: json, isExpired: isExpired, loading: false, skippedLoginStep: skippedLoginStep});
             }).catch(() => {
                 this.props.history.push("/404");
             });
@@ -169,7 +170,11 @@ class UserInvitation extends React.Component {
     render() {
         const {user, isOrganisationInvite} = this.props;
         const { invite, isExpired, errorOccurred, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogQuestion, confirmationDialogAction, skippedLoginStep } = this.state;
+            confirmationDialogQuestion, confirmationDialogAction, skippedLoginStep, loading } = this.state;
+        if (loading) {
+            return <SpinnerField/>
+        }
+
         const expiredMessage = I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")});
         return (
             <div className="mod-user-invitation">
