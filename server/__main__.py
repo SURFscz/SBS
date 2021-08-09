@@ -92,8 +92,8 @@ def page_not_found(_):
 
 logger = logging.getLogger("main")
 logger.info(f"Initialize server with profile {profile}")
-
-app = Flask(__name__)
+current_path = os.path.dirname(os.path.realpath(__file__)).replace("server", "instance")
+app = Flask(__name__, instance_path=current_path) if is_local else Flask(__name__)
 app.secret_key = config.secret_key
 
 app.register_blueprint(base_api)

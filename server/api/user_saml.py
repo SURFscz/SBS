@@ -171,7 +171,7 @@ def proxy_authz():
                }, 200
 
     def authorized_func(user, memberships):
-        eppn_scope = current_app.app_config.eppn_scope
+        eppn_scope = current_app.app_config.eppn_scope.strip()
         result = {
             "status": {
                 "result": "authorized",
