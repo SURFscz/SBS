@@ -33,6 +33,7 @@ import Tooltip from "./Tooltip";
 import ReactTooltip from "react-tooltip";
 import LastAdminWarning from "./LastAdminWarning";
 import DateField from "../DateField";
+import InstituteColumn from "./InstitueColumn";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.admin`)},
@@ -689,7 +690,7 @@ class CollaborationAdmins extends React.Component {
             {
                 key: "user__schac_home_organisation",
                 header: I18n.t("models.users.institute"),
-                mapper: entity => entity.invite ? "" : entity.user.schac_home_organisation
+                mapper: entity => <InstituteColumn entity={entity} currentUser={currentUser}/>
             },
             {
                 key: "role",

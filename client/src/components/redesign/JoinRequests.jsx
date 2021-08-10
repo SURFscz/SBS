@@ -16,6 +16,7 @@ import moment from "moment";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import Tooltip from "./Tooltip";
 import Select from "react-select";
+import InstituteColumn from "./InstitueColumn";
 
 const allValue = "all";
 
@@ -274,7 +275,7 @@ class JoinRequests extends React.Component {
             {
                 key: "user__schac_home_organisation",
                 header: I18n.t("models.users.institute"),
-                mapper: entity => entity.user.schac_home_organisation
+                mapper: entity => <InstituteColumn entity={entity} currentUser={currentUser}/>
             },
             {
                 nonSortable: true,
