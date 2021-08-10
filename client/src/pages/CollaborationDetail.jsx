@@ -420,8 +420,8 @@ class CollaborationDetail extends React.Component {
                     </ul>
                 </section>
                 <section className="collaboration-inactive">
-                    {this.getCollaborationStatus(collaboration)}
-                    {this.getMembershipStatus(collaboration, user)}
+                    {!collaborationJoinRequest && this.getCollaborationStatus(collaboration)}
+                    {!collaborationJoinRequest && this.getMembershipStatus(collaboration, user)}
                 </section>
             </div>
         </UnitHeader>;

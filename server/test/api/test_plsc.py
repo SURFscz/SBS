@@ -11,7 +11,7 @@ class TestPlsc(AbstractTest):
         self.assertEqual(2, len(res["organisations"]))
 
         users_ = res["users"]
-        self.assertEqual(100, len(users_))
+        self.assertEqual(17, len(users_))
         sarah = next(u for u in users_ if u["name"] == sarah_name)
         self.assertEqual("sarah@uva.org", sarah["email"])
         self.assertEqual("sarah", sarah["username"])

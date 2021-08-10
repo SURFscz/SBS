@@ -110,7 +110,7 @@ class TestUser(AbstractTest):
 
         res = self.get("/api/users/search", query_data={"q": "*",
                                                         "collaboration_admins": True})
-        self.assertEqual(16, len(res))
+        self.assertEqual(2, len(res))
 
         res = self.get("/api/users/search", query_data={"q": "*",
                                                         "organisation_admins": True})
@@ -332,7 +332,7 @@ class TestUser(AbstractTest):
         self.assertEqual("james@example.org", res[0]["email"])
 
         res = self.get("/api/users/query", query_data={"q": "@EX"})
-        self.assertEqual(16, len(res))
+        self.assertEqual(13, len(res))
 
         # Ensure max limit of 16 - full_text_search_autocomplete_limit
         res = self.get("/api/users/query", query_data={"q": "@"})
