@@ -10,7 +10,8 @@ export default function InstituteColumn({entity, currentUser, greyed=true}) {
     if (entity.invite) {
         txt = "";
     } else {
-        txt = entity.user.schac_home_organisation || I18n.t("models.users.instituteUnknown")
+        txt = entity.user.schac_home_organisation || I18n.t("models.users.instituteUnknown");
+        greyed = greyed && !entity.user.schac_home_organisation;
     }
     return (
         <div className={`institute-column ${greyed ? 'greyed' : ''}`}>
