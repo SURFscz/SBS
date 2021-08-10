@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 
+from server.api.base import white_listing
 from server.test.abstract_test import AbstractTest
 
 
@@ -36,3 +37,6 @@ class TestBase(AbstractTest):
 
     def test_401(self):
         self.get("/api/users/search", with_basic_auth=False, response_status_code=401)
+
+    def test_white_listing(self):
+        self.assertEqual(17, len(white_listing))

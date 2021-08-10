@@ -226,10 +226,11 @@ class TestUser(AbstractTest):
         self.get("/api/users/platform_admins", with_basic_auth=False, response_status_code=403)
 
     def test_authorization(self):
-        res = self.get("/api/users/authorization", query_data={"state": "http://localhost/redirect"})
+        res = self.get("/api/users/authorization", query_data={"state": "http://localhost/redirect"},
+                       with_basic_auth=False)
         self.assertTrue("authorization_endpoint" in res)
 
-        res = self.get("/api/users/authorization")
+        res = self.get("/api/users/authorization", with_basic_auth=False)
         query_dict = dict(parse.parse_qs(parse.urlsplit(res["authorization_endpoint"]).query))
         self.assertListEqual(["http://localhost/redirect"], query_dict["state"])
 
