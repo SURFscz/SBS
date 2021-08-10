@@ -39,7 +39,7 @@ class TestService(AbstractTest):
         self.login("urn:john")
         service = self.get(f"api/services/{service.id}", with_basic_auth=False)
         self.assertEqual(1, len(service["organisations"]))
-        self.assertEqual(41, len(service["service_organisation_collaborations"]))
+        self.assertEqual(2, len(service["service_organisation_collaborations"]))
 
         logo_data = self.client.get(service["logo"]).data
         self.assertEqual(logo, logo_data)
@@ -57,8 +57,10 @@ class TestService(AbstractTest):
         self.assertEqual(uuc_name, res["allowed_organisations"][0]["name"])
 
     def test_service_new(self):
+        self.login()
         service = self.post("/api/services", body={
-            "entity_id": "https://new_service", "name": "new_service",
+            "entity_id": "https://new_service",
+            "name": "new_service",
             "ip_networks": [{"network_value": "2001:db8:f00f:bab::/64"}, {"network_value": "192.0.2.0/24"}]
         })
 
@@ -122,7 +124,7 @@ class TestService(AbstractTest):
         self.assertTrue(len(services) > 0)
 
         service_mail = self.find_by_name(services, service_mail_name)
-        self.assertEqual(40, service_mail["collaborations_count"])
+        self.assertEqual(1, service_mail["collaborations_count"])
         self.assertEqual(2, len(service_mail["allowed_organisations"]))
 
         service_uuc = self.find_by_name(services, uuc_scheduler_name)

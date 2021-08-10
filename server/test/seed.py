@@ -98,7 +98,7 @@ def _persist(db, *objs):
         db.session.add(obj)
 
 
-def seed(db, app_config, skip_seed=False):
+def seed(db, app_config, skip_seed=False, perf_test=False):
     tables = reversed(metadata.sorted_tables)
     for table in tables:
         db.session.execute(table.delete())
@@ -424,36 +424,36 @@ def seed(db, app_config, skip_seed=False):
                                                                    service=wireless, is_member_request=True)
     _persist(db, service_connection_request_network, service_connection_request_wiki,
              service_connection_request_wireless)
+    if perf_test:
+        users = []
+        for i in range(1, 84):
+            user = User(uid=f"urn:persoon:numero{i:03d}",
+                        name=f"Piet Doe de {i}de",
+                        email=f"pietdoe{i}@example.org",
+                        username=f"pietdoe{i}",
+                        schac_home_organisation="harderwijk.edu")
+            users.append(user)
+        _persist(db, *users)
 
-    users = []
-    for i in range(1, 84):
-        user = User(uid=f"urn:persoon:numero{i:03d}",
-                    name=f"Piet Doe de {i}de",
-                    email=f"pietdoe{i}@example.org",
-                    username=f"pietdoe{i}",
-                    schac_home_organisation="harderwijk.edu")
-        users.append(user)
-    _persist(db, *users)
-
-    for i in range(1, 40):
-        co = Collaboration(name=f"Samenwerking Numero {i}",
-                           identifier=str(uuid.uuid4()),
-                           short_name=f"co_nr_{i:03d}",
-                           global_urn=f"ucc:co_nr_{i:03d}",
-                           description="Een van vele COs",
-                           logo=_read_image("computing.jpeg"),
-                           organisation=uuc,
-                           services=[mail, network],
-                           join_requests=[],
-                           invitations=[],
-                           website_url="https://www.google.nl",
-                           accepted_user_policy="https://www.google.nl",
-                           disclose_email_information=True,
-                           disclose_member_information=True)
-        _persist(db, co)
-        _persist(db, CollaborationMembership(role="admin", user=users[2 * i + 0], collaboration=co))
-        _persist(db, CollaborationMembership(role="member", user=users[2 * i + 1], collaboration=co))
-        _persist(db, CollaborationMembership(role="member", user=users[2 * i + 2], collaboration=co))
-        _persist(db, CollaborationMembership(role="member", user=users[2 * i + 3], collaboration=co))
+        for i in range(1, 40):
+            co = Collaboration(name=f"Samenwerking Numero {i}",
+                               identifier=str(uuid.uuid4()),
+                               short_name=f"co_nr_{i:03d}",
+                               global_urn=f"ucc:co_nr_{i:03d}",
+                               description="Een van vele COs",
+                               logo=_read_image("computing.jpeg"),
+                               organisation=uuc,
+                               services=[mail, network],
+                               join_requests=[],
+                               invitations=[],
+                               website_url="https://www.google.nl",
+                               accepted_user_policy="https://www.google.nl",
+                               disclose_email_information=True,
+                               disclose_member_information=True)
+            _persist(db, co)
+            _persist(db, CollaborationMembership(role="admin", user=users[2 * i + 0], collaboration=co))
+            _persist(db, CollaborationMembership(role="member", user=users[2 * i + 1], collaboration=co))
+            _persist(db, CollaborationMembership(role="member", user=users[2 * i + 2], collaboration=co))
+            _persist(db, CollaborationMembership(role="member", user=users[2 * i + 3], collaboration=co))
 
     db.session.commit()

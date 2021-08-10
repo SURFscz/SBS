@@ -99,7 +99,7 @@ def run_seed():
     if not current_app.app_config.feature.seed_allowed:
         raise BadRequest("seed not allowed in this environment")
 
-    seed(db, current_app.app_config)
+    seed(db, current_app.app_config, skip_seed=False, perf_test=True)
 
     return {}, 201
 
