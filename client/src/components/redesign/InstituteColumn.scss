@@ -1,0 +1,14 @@
+@import "../../stylesheets/vars.scss";
+
+.institute-column {
+    display: flex;
+
+    &.greyed {
+        color: $dark-grey;
+    }
+
+    svg {
+        color: $blue;
+        margin-left: 3px;
+    }
+}

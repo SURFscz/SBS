@@ -8,6 +8,7 @@ import {ReactComponent as PlatformAdminIcon} from "../../icons/users.svg";
 import "./PlatformAdmins.scss";
 import UserColumn from "./UserColumn";
 import Tooltip from "./Tooltip";
+import InstituteColumn from "./InstitueColumn";
 
 
 class PlatformAdmins extends React.Component {
@@ -45,6 +46,7 @@ class PlatformAdmins extends React.Component {
             {
                 key: "schac_home_organisation",
                 header: I18n.t("models.users.institute"),
+                mapper: user => <InstituteColumn entity={{user:user}} currentUser={currentUser}/>
             },
             {
                 key: "role",

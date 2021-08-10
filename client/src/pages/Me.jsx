@@ -12,6 +12,7 @@ import {validateSSHKey,} from "../validations/regExps";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
+import InstituteColumn from "../components/redesign/InstitueColumn";
 
 class Me extends React.Component {
 
@@ -159,7 +160,7 @@ class Me extends React.Component {
         const d = new Date(0);
         d.setUTCSeconds(createdAt);
         const values = {"created_at": d.toUTCString()};
-        const attributes = ["name", "email", "username", "schac_home_organisation", "created_at"];
+        const attributes = ["name", "email", "username", "created_at"];
         const mfaValue = user.second_factor_auth ? I18n.t("mfa.profile.handledBySRAM") :
             I18n.t("mfa.profile.handledByIdp", {name: user.schac_home_organisation || I18n.t("mfa.profile.institution")});
         return (
@@ -172,6 +173,11 @@ class Me extends React.Component {
                             <span className="attribute-value">{values[attribute] || user[attribute] || "-"}</span>
                         </div>)
                     }
+                    <div className={"attributes"} key={"schac_home_organisation"}>
+                        <span className="attribute-key">{I18n.t("profile.schac_home_organisation")}</span>
+                        <InstituteColumn entity={{user:user}} currentUser={user} greyed={false}/>
+                    </div>
+
                     {config.second_factor_authentication_required && <div className="second-factor">
                         <InputField value={mfaValue}
                                     name={I18n.t("mfa.profile.name")}

@@ -11,6 +11,7 @@ import Tooltip from "./Tooltip";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import debounce from "lodash.debounce";
 import SpinnerField from "./SpinnerField";
+import InstituteColumn from "./InstitueColumn";
 
 
 class Users extends React.Component {
@@ -75,6 +76,7 @@ class Users extends React.Component {
             {
                 key: "schac_home_organisation",
                 header: I18n.t("models.users.institute"),
+                mapper: user => <InstituteColumn entity={{user:user}} currentUser={currentUser}/>
             },
             {
                 key: "affiliation",

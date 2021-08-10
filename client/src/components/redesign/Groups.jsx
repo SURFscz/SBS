@@ -32,6 +32,7 @@ import ClipBoardCopy from "./ClipBoardCopy";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
 import Tooltip from "./Tooltip";
+import InstituteColumn from "./InstitueColumn";
 
 class Groups extends React.Component {
 
@@ -177,7 +178,7 @@ class Groups extends React.Component {
             {
                 key: "user__schac_home_organisation",
                 header: I18n.t("models.users.institute"),
-                mapper: membership => membership.user.schac_home_organisation
+                mapper: membership => <InstituteColumn entity={membership} currentUser={currentUser}/>
             },
         ];
         if (mayCreateGroups) {

@@ -30,6 +30,7 @@ import ErrorIndicator from "./ErrorIndicator";
 import Tooltip from "./Tooltip";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import ReactTooltip from "react-tooltip";
+import InstituteColumn from "./InstitueColumn";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
@@ -388,7 +389,7 @@ class OrganisationAdmins extends React.Component {
             {
                 key: "user__schac_home_organisation",
                 header: I18n.t("models.users.institute"),
-                mapper: entity => entity.invite ? "" : entity.user.schac_home_organisation
+                mapper: entity => <InstituteColumn entity={entity} currentUser={currentUser}/>
             },
             {
                 key: "role",
