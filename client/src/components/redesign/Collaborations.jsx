@@ -173,7 +173,7 @@ export default class Collaborations extends React.PureComponent {
                       rowLinkMapper={() => this.openCollaboration}
                       columns={allColumns}
                       showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
-                      newEntityPath={` / new - collaboration${organisationQueryParam}`}
+                      newEntityPath={`/new-collaboration${organisationQueryParam}`}
                       loading={loading}
                       {...this.props}/>
         )
