@@ -68,9 +68,14 @@ span.contains-copy {
 
 span.contains-tooltip {
     svg {
-        color: $blue;
+        color: $lighter-grey;
         width: 22px;
         margin-left: 3px;
+        cursor: pointer;
+
+        &:hover {
+            color: darken($light-blue, 20%);
+        }
     }
 }
 

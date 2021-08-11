@@ -92,7 +92,13 @@
                 padding: 5px;
 
                 .tooltip-container {
-                    color: $blue;
+                    color: $lighter-grey;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: darken($light-blue, 20%);
+                    }
+
                 }
             }
         }
