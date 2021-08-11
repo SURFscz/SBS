@@ -70,6 +70,7 @@ div.checkbox {
         color: $lighter-grey;
         margin-left: 8px;
         font-size: 16px;
+        cursor: pointer;
 
         &:hover {
             color: darken($light-blue, 20%);
