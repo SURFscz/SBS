@@ -45,7 +45,7 @@ class AboutCollaboration extends React.Component {
         const {collaboration, user, showMemberView, isJoinRequest} = this.props;
         const isAllowedToSeeMembers = !isJoinRequest &&
             isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id) && !showMemberView;
-        const services = isJoinRequest ? collaboration.services : removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
+        const services = isJoinRequest ? removeDuplicates(collaboration.services, "id") : removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
         const {collaboration_memberships} = collaboration
         const memberships = isJoinRequest ? [] : collaboration_memberships
             .sort((m1, m2) => m1.role.localeCompare(m2.role))
