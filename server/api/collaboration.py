@@ -48,6 +48,7 @@ def collaboration_by_identifier():
         .filter(Collaboration.identifier == identifier).one()
     admins = [m.user.name for m in collaboration.collaboration_memberships if m.role == "admin"]
     services = [{"name": s.name, "logo": s.logo} for s in collaboration.services]
+    services += [{"name": s.name, "logo": s.logo} for s in collaboration.organisation.services]
     return {"id": collaboration.id, "name": collaboration.name, "admins": admins,
             "member_count": len(collaboration.collaboration_memberships),
             "services": services,

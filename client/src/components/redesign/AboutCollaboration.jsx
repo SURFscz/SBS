@@ -78,7 +78,7 @@ class AboutCollaboration extends React.Component {
                                                  msg={I18n.t("models.collaboration.servicesHoover", {uri: service.uri})}/>
                                         </span>}
                                     </li>
-                                    <a href={`/${service.name}`} onClick={this.openService(service)}>{I18n.t("models.collaboration.instructions")}</a>
+                                    {!isJoinRequest && <a href={`/${service.name}`} onClick={this.openService(service)}>{I18n.t("models.collaboration.instructions")}</a>}
                                 </div>
                             )}
                         </ul>
