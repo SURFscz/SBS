@@ -29,6 +29,7 @@ class TestCollaboration(AbstractTest):
                              "logo", "description", "member_count", "group_count", "services", "website_url",
                              "disclose_member_information"},
                             set(collaboration.keys()))
+        self.assertEqual(4, len(collaboration["services"]))
 
     def test_search(self):
         self.login("urn:john")
