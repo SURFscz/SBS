@@ -106,6 +106,8 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
     # entitlement, will confuse Services, and the spec fails to make clear what the usecase is, exactly.
     memberships = set()
     for collaboration in connected_collaborations:
+        # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
+        memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}")
         memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:{collaboration.short_name}")
         for g in collaboration.groups:
             memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:"
