@@ -22,6 +22,7 @@ class TestUserSaml(AbstractTest):
         self.assertListEqual(res["uid"], ["john"])
         self.assertEqual(1, len(res["sshKey"]))
         self.assertSetEqual(set(res["eduPersonEntitlement"]), {
+            "urn:example:sbs:group:uuc",
             "urn:example:sbs:group:uuc:ai_computing",
             "urn:example:sbs:group:uuc:ai_computing:ai_dev",
             "urn:example:sbs:group:uuc:ai_computing:ai_res"
@@ -78,7 +79,8 @@ class TestUserSaml(AbstractTest):
         res = self.get("/api/users/attributes",
                        query_data={"uid": "urn:sarah", "service_entity_id": service_mail_entity_id})
         entitlements = res["eduPersonEntitlement"]
-        self.assertListEqual(["urn:example:sbs:group:uuc:ai_computing",
+        self.assertListEqual(["urn:example:sbs:group:uuc",
+                              "urn:example:sbs:group:uuc:ai_computing",
                               "urn:example:sbs:group:uuc:ai_computing:ai_dev",
                               "urn:example:sbs:group:uuc:ai_computing:ai_res"
                               ], sorted(entitlements))
@@ -88,7 +90,8 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
-        self.assertListEqual(["urn:example:sbs:group:uuc:ai_computing",
+        self.assertListEqual(["urn:example:sbs:group:uuc",
+                              "urn:example:sbs:group:uuc:ai_computing",
                               "urn:example:sbs:group:uuc:ai_computing:ai_dev",
                               "urn:example:sbs:group:uuc:ai_computing:ai_res"
                               ], sorted(entitlements))
