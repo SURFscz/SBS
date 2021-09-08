@@ -141,7 +141,7 @@ I18n.translations.nl = {
             subProfile: "Je bent ingelogd met je instellingsaccount",
             subOtherProfile: "Het account van {{name}} is aangemaakt op {{date}}",
             institute: "Instelling",
-            instituteUnknown: "Onbekend",
+            instituteUnknown: "onbekend",
             instituteUnknownMeTooltip: "Je instelling heeft het identificerende attribuut 'shacHomeOrganization' niet vrijgegeven.",
             instituteUnknownTooltip: "De instelling van deze gebruiker heeft het identificerende attribuut 'shacHomeOrganization' niet vrijgegeven.",
             role: "Rol",
