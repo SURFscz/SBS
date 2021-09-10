@@ -8,15 +8,15 @@ import Button from "../components/Button";
 import InputField from "../components/InputField";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
-import {stopEvent} from "../utils/Utils";
+import {isEmpty, stopEvent} from "../utils/Utils";
 
 class SecondFactorAuthentication extends React.Component {
 
     constructor(props, context) {
         super(props, context);
         this.state = {
-            totp: "",
-            newTotp: "",
+            totp: Array(6).fill(""),
+            newTotp: Array(6).fill(""),
             qrCode: null,
             busy: false,
             loading: true,
@@ -30,6 +30,8 @@ class SecondFactorAuthentication extends React.Component {
             resetCode: "",
             resetCodeError: null
         };
+        this.totpRefs = Array(6).fill("");
+        this.totpNewRefs = Array(6).fill("");
     }
 
     componentDidMount() {
@@ -49,10 +51,29 @@ class SecondFactorAuthentication extends React.Component {
         }
     }
 
+    onChangeTotp = (index, attributeName, refs, onLastEntryVerify) => e => {
+        const val = e.target.value;
+        if (isNaN(val)) {
+            return;
+        }
+        const totp = this.state[attributeName];
+        const newValue = [...totp];
+        newValue[index] = e.target.value;
+        this.setState({[attributeName]: newValue}, () => {
+            if (index !== 5) {
+                refs[index + 1].focus();
+            } else if (onLastEntryVerify) {
+                this.verify();
+            } else {
+                this.totpNewRefs[0].focus();
+            }
+        });
+    }
+
     focusCode = () => {
         setTimeout(() => {
-            if (this.ref) {
-                this.ref.focus();
+            if (this.totpRefs && this.totpRefs[0] !== "") {
+                this.totpRefs[0].focus();
             }
         }, 350);
     }
@@ -124,21 +145,32 @@ class SecondFactorAuthentication extends React.Component {
         const {totp, newTotp} = this.state;
         const {update} = this.props;
         if (update) {
-            update2fa(newTotp, totp).then(() => {
+            update2fa(newTotp.join(""), totp.join("")).then(() => {
                 this.props.history.push("/profile");
                 setFlash(I18n.t("mfa.update.flash"));
             }).catch(e => {
                 if (e.response && e.response.json) {
                     e.response.json().then(res => {
-                        this.setState({
+                        const newState = {
                             busy: false,
-                            error: res.current_totp, newError: res.new_totp
-                        });
+                            error: res.current_totp,
+                            newError: res.new_totp,
+                        };
+                        let focusField = null;
+                        if (res.new_totp) {
+                            newState.newTotp = Array(6).fill("");
+                            focusField = this.totpNewRefs[0];
+                        }
+                        if (res.current_totp) {
+                            newState.totp = Array(6).fill("");
+                            focusField = this.totpRefs[0];
+                        }
+                        this.setState(newState, () => focusField.focus());
                     })
                 }
             });
         } else {
-            verify2fa(totp).then(r => {
+            verify2fa(totp.join("")).then(r => {
                 if (r.in_proxy_flow) {
                     window.location.href = r.location;
                 } else {
@@ -148,7 +180,8 @@ class SecondFactorAuthentication extends React.Component {
                     });
                 }
             }).catch(() => {
-                this.setState({busy: false, error: true})
+                this.setState({busy: false, error: true, totp: Array(6).fill("")},
+                    () => this.totpRefs[0].focus());
             });
         }
     }
@@ -199,7 +232,7 @@ class SecondFactorAuthentication extends React.Component {
     }
 
     renderVerificationCode = (totp, busy, showExplanation, error) => {
-        const verifyDisabled = totp.length !== 6 || busy;
+        const verifyDisabled = isEmpty(totp[5]) || busy;
         return (
             <div>
                 <section className="register-header">
@@ -211,12 +244,7 @@ class SecondFactorAuthentication extends React.Component {
                 </section>
                 <div className="step-actions center">
                     <div className="input-field-container">
-                        <InputField value={totp}
-                                    maxLength={6}
-                                    onRef={ref => this.ref = ref}
-                                    onEnter={this.verify}
-                                    placeholder={I18n.t("mfa.register.verificationCodePlaceholder")}
-                                    onChange={e => this.setState({totp: e.target.value})}/>
+                        {this.totpValueContainer(totp, "totp", this.totpRefs, true)}
                         {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
                     </div>
                 </div>
@@ -261,9 +289,30 @@ class SecondFactorAuthentication extends React.Component {
         )
     }
 
+    totpValueContainer = (totp, attributeName, refs, onLastEntryVerify, disableNewTotp = false) => {
+            return (
+            <div className="totp-value-container">
+                {Array(6).fill("").map((val, index) =>
+                    <input type="text"
+                           key={`${attributeName}_${index}`}
+                           disabled={(totp[index] || "").length === 0 && ((index !== 0 && totp[index - 1] === "") ||
+                                       (disableNewTotp && this.state.totp[5] === ""))}
+                           value={totp[index] || ""}
+                           onChange={this.onChangeTotp(index, attributeName, refs, onLastEntryVerify)}
+                           maxLength={1}
+                           ref={ref => {
+                               refs[index] = ref;
+                           }}
+                           className="totp-value"/>
+                )}
+            </div>
+
+        );
+    }
+
     renderRegistration = (qrCode, totp, newTotp, idp_name, busy, error, newError, update) => {
-        const verifyDisabled = totp.length !== 6 || busy;
-        const updateDisabled = totp.length !== 6 || newTotp.length !== 6 || busy;
+        const verifyDisabled = isEmpty(totp[5]) || busy;
+        const updateDisabled = isEmpty(totp[5]) || isEmpty(newTotp[5]) || busy;
         const action = update ? "update" : "register";
         return (
             <div>
@@ -291,11 +340,7 @@ class SecondFactorAuthentication extends React.Component {
                         <div className="step-actions">
                             <h3>{I18n.t("mfa.update.currentCode")}</h3>
                             <span>{I18n.t("mfa.update.currentCodeInfo")}</span>
-                            <InputField value={totp}
-                                        maxLength={6}
-                                        onRef={ref => this.ref = ref}
-                                        placeholder={I18n.t("mfa.register.verificationCodePlaceholder")}
-                                        onChange={e => this.setState({totp: e.target.value})}/>
+                            {this.totpValueContainer(totp, "totp", this.totpRefs, false)}
                             {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
                         </div>
                     </div>
@@ -327,23 +372,14 @@ class SecondFactorAuthentication extends React.Component {
                         <div className="step-actions">
                             <h3>{I18n.t("mfa.register.verificationCode")}</h3>
                             <span>{I18n.t(`mfa.${action}.verificationCodeInfo`)}</span>
-                            {!update && <div>
-                                <InputField value={totp}
-                                            maxLength={6}
-                                            onEnter={this.verify}
-                                            onRef={ref => this.ref = ref}
-                                            placeholder={I18n.t("mfa.register.verificationCodePlaceholder")}
-                                            onChange={e => this.setState({totp: e.target.value})}/>
+                            {!update && <>
+                                {this.totpValueContainer(totp, "totp", this.totpRefs, true)}
                                 {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
-                            </div>}
-                            {update && <div>
-                                <InputField value={newTotp}
-                                            maxLength={6}
-                                            onEnter={this.verify}
-                                            placeholder={I18n.t("mfa.register.verificationCodePlaceholder")}
-                                            onChange={e => this.setState({newTotp: e.target.value})}/>
-                                {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
-                            </div>}
+                            </>}
+                            {update && <>
+                                {this.totpValueContainer(newTotp, "newTotp", this.totpNewRefs, true, true)}
+                                {newError && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
+                            </>}
                         </div>
                     </div>
                 </section>
