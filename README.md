@@ -6,8 +6,9 @@ Research Access Management
 
 ### [Overview Requirements](#system-requirements)
 
-- Python 3.6.x
-- MySQL v8.x
+- Python 3.7.x
+- MySQL v5.7.x or MariaDB 10.x
+- Redis v6.x
 - Yarn 1.x
 - node
 
