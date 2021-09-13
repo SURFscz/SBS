@@ -14,15 +14,15 @@ from server.cron.user_suspending import suspend_users
 def start_scheduling(app):
     scheduler = BackgroundScheduler()
     retention = app.app_config.retention
-    scheduler.add_job(func=suspend_users, trigger="cron", kwargs={"app": app}, day="*", hour=retention.cron_hour_of_day)
+    scheduler.add_job(func=suspend_users, trigger="cron", kwargs={"app": app}, day="*", hour=retention.cron_hour_of_day, timezone='UTC')
     scheduler.add_job(func=parse_idp_metadata, trigger="cron", kwargs={"app": app}, day="*",
-                      hour=retention.cron_hour_of_day)
+                      hour=retention.cron_hour_of_day, timezone='UTC')
     if app.app_config.platform_admin_notifications.enabled:
         scheduler.add_job(func=outstanding_requests, trigger="cron", kwargs={"app": app}, day="*",
-                          hour=app.app_config.platform_admin_notifications.cron_hour_of_day)
+                          hour=app.app_config.platform_admin_notifications.cron_hour_of_day, timezone='UTC')
     if app.app_config.user_requests_retention.enabled:
         scheduler.add_job(func=cleanup_non_open_requests, trigger="cron", kwargs={"app": app}, day="*",
-                          hour=app.app_config.user_requests_retention.cron_hour_of_day)
+                          hour=app.app_config.user_requests_retention.cron_hour_of_day, timezone='UTC')
     scheduler.start()
 
     logger = logging.getLogger("scheduler")
