@@ -17,6 +17,7 @@ class TestUserSaml(AbstractTest):
         self.assertListEqual(res["uid"], ["john"])
         self.assertEqual(1, len(res["sshKey"]))
         self.assertSetEqual(set(res["eduPersonEntitlement"]), {
+            "urn:example:sbs:group:uuc",
             "urn:example:sbs:group:uuc:ai_computing",
             "urn:example:sbs:group:uuc:ai_computing:ai_dev",
             "urn:example:sbs:group:uuc:ai_computing:ai_res"

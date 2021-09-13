@@ -99,6 +99,8 @@ def attributes():
 
     memberships = set()
     for cm in user.collaboration_memberships:
+        # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
+        memberships.add(f"{namespace}:group:{cm.collaboration.organisation.short_name}")
         memberships.add(f"{namespace}:group:{cm.collaboration.organisation.short_name}:{cm.collaboration.short_name}")
         for g in cm.collaboration.groups:
             memberships.add(f"{namespace}:group:{cm.collaboration.organisation.short_name}:"
