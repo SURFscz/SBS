@@ -18,7 +18,7 @@ def start_scheduling(app):
     scheduler = BackgroundScheduler()
     cfq = app.app_config
     retention = cfq.retention
-    options = {"trigger": "cron", "kwargs": {"app": app}, "day": "*",
+    options = {"trigger": "cron", "kwargs": {"app": app}, "day": "*", "timezone": 'UTC',
                "misfire_grace_time": 60 * 60 * 12, "coalesce": True}
     scheduler.add_job(func=suspend_users, hour=retention.cron_hour_of_day, **options)
     scheduler.add_job(func=parse_idp_metadata, hour=retention.cron_hour_of_day, **options)

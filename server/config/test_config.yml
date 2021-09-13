@@ -123,6 +123,7 @@ service_bus:
   user: "sbs"
   password: "changethispassword"
 
+# note: all cron hours below ae in UTC
 platform_admin_notifications:
   # Do we daily check for CO join_requests and CO requests and send a summary mail to beheer_email?
   enabled: True
