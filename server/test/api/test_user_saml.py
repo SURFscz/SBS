@@ -80,8 +80,15 @@ class TestUserSaml(AbstractTest):
                        query_data={"uid": "urn:sarah", "service_entity_id": service_mail_entity_id})
         entitlements = res["eduPersonEntitlement"]
         self.assertListEqual(["urn:example:sbs:group:uuc",
+                              "urn:example:sbs:group:uuc:ai_computing"
+                              ], sorted(entitlements))
+
+    def test_attributes_user_limit_linked_collaborations_including_group(self):
+        res = self.get("/api/users/attributes",
+                       query_data={"uid": "urn:jane", "service_entity_id": service_network_entity_id})
+        entitlements = res["eduPersonEntitlement"]
+        self.assertListEqual(["urn:example:sbs:group:uuc",
                               "urn:example:sbs:group:uuc:ai_computing",
-                              "urn:example:sbs:group:uuc:ai_computing:ai_dev",
                               "urn:example:sbs:group:uuc:ai_computing:ai_res"
                               ], sorted(entitlements))
 
@@ -91,13 +98,24 @@ class TestUserSaml(AbstractTest):
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual(["urn:example:sbs:group:uuc",
-                              "urn:example:sbs:group:uuc:ai_computing",
-                              "urn:example:sbs:group:uuc:ai_computing:ai_dev",
-                              "urn:example:sbs:group:uuc:ai_computing:ai_res"
+                              "urn:example:sbs:group:uuc:ai_computing"
                               ], sorted(entitlements))
         self.assertListEqual(["sarah@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["sarah"], attrs["uid"])
         self.assertIsNotNone(attrs["sshkey"][0])
+
+    def test_proxy_authz_including_groups(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:jane", "service_id": service_network_entity_id})
+        attrs = res["attributes"]
+        entitlements = attrs["eduPersonEntitlement"]
+        self.assertListEqual(["urn:example:sbs:group:uuc",
+                              "urn:example:sbs:group:uuc:ai_computing",
+                              "urn:example:sbs:group:uuc:ai_computing:ai_res"
+                              ], sorted(entitlements))
+        self.assertListEqual(["jane@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
+        self.assertListEqual(["jane"], attrs["uid"])
+        self.assertEqual(0, len(attrs["sshkey"]))
 
     def test_proxy_authz_suspended(self):
         self.mark_user_suspended(john_name)
