@@ -105,8 +105,6 @@ class CollaborationMembership(Base, db.Model):
                            nullable=False)
 
 
-
-
 organisations_services_association = db.Table(
     "organisations_services",
     metadata,
@@ -330,7 +328,6 @@ class Group(Base, db.Model):
 
     def is_member(self, user_id):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
-
 
 
 class JoinRequest(Base, db.Model):
