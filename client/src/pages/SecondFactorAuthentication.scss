@@ -156,4 +156,18 @@
         }
 
     }
+
+    div.totp-value-container {
+        display: flex;
+        margin-top: 15px;
+        width: 330px;
+        justify-content: space-between;
+
+        input.totp-value {
+            width: 40px;
+            padding-left: 14px;
+            height: 40px;
+            font-size: 22px;
+        }
+    }
 }
