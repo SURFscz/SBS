@@ -51,6 +51,13 @@ class SecondFactorAuthentication extends React.Component {
         }
     }
 
+    onKeyDownTotp = (index, refs) => e => {
+        if ((e.key === "Delete" || e.key === "Backspace") && index > 0 && e.target.value === "") {
+            refs[index - 1].focus();
+        }
+        return true;
+    }
+
     onChangeTotp = (index, attributeName, refs, onLastEntryVerify) => e => {
         const val = e.target.value;
         if (isNaN(val)) {
@@ -299,6 +306,7 @@ class SecondFactorAuthentication extends React.Component {
                                        (disableNewTotp && this.state.totp[5] === ""))}
                            value={totp[index] || ""}
                            onChange={this.onChangeTotp(index, attributeName, refs, onLastEntryVerify)}
+                           onKeyDown={this.onKeyDownTotp(index, refs)}
                            maxLength={1}
                            ref={ref => {
                                refs[index] = ref;
