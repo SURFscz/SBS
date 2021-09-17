@@ -110,8 +110,9 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
         memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}")
         memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:{collaboration.short_name}")
         for g in collaboration.groups:
-            memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:"
-                            f"{collaboration.short_name}:{g.short_name}")
+            if g.is_member(user.id):
+                memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:"
+                                f"{collaboration.short_name}:{g.short_name}")
 
     logger.info(f"Returning attributes {memberships} for user {uid} and service_entity_id {service_entity_id}")
     return authorized_func(user, memberships)

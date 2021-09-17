@@ -105,6 +105,8 @@ class CollaborationMembership(Base, db.Model):
                            nullable=False)
 
 
+
+
 organisations_services_association = db.Table(
     "organisations_services",
     metadata,
@@ -325,6 +327,10 @@ class Group(Base, db.Model):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+    def is_member(self, user_id):
+        return len(list(filter(lambda membership: membership.user_id == user_id, self.collaboration_memberships))) > 0
+
 
 
 class JoinRequest(Base, db.Model):
