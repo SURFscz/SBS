@@ -8,6 +8,10 @@ on:
   # Triggers the workflow on push or pull request events
   push:
   pull_request:
+  release:
+    tags:
+      - 'v*'
+    types: [published]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -142,3 +146,21 @@ jobs:
         env:
           CI: true
           VNM_DIR: ~/.nvm
+
+      - name: Get version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
+        id: version
+
+      - name: Create Asset
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          cd ..
+          tar -zcf SBS-client-${{ steps.version.outputs.version }}.tgz client/
+
+      - name: Upload Asset
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            SBS-client-${{ steps.version.outputs.version }}.tgz
