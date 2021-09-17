@@ -151,3 +151,7 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
                          "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=6")
+
+    def test_non_member_users_access_allowed(self):
+        res = self.get("/api/users/attributes", query_data={"uid": "urn:jane", "service_entity_id": "https://wireless"})
+        self.assertEqual(0, len(res["eduPersonEntitlement"]))

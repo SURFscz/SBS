@@ -728,6 +728,8 @@ I18n.translations.nl = {
         accessAllowedForAll: "Beschikbaar voor alle organisaties?",
         accessAllowedForAllTooltip: "Is deze dienst voor alle huidige en toekomstige organisaties standaard beschikbaar?",
         accessAllowedForAllInfo: "Alle organisaties zijn standaard beschikbaar voor deze dienst",
+        nonMemberUsersAccessAllowed: "Toegankelijk voor alle gebruikers?",
+        nonMemberUsersAccessAllowedTooltip: "Hebben alle gebruikers toegang tot deze service zonder lid te zijn van een gekoppelde samenwerking?",
         whiteListed: "Whitelisted?",
         whiteListedTooltip: "Kan deze dienst direct worden gekoppeld op nieuwe beperkte samenwerkingen die via de API aangemaakt worden? Merk op dat het ook mogelijk is dit te configureren in het configuratiebestand op de server.",
         sirtfiCompliant: "Sirtfi compliant?",

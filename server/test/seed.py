@@ -251,7 +251,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
                        public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
                        logo=_read_image("wireless.png"), accepted_user_policy="https://google.nl",
-                       allowed_organisations=[uuc, uva], uri="https://wireless")
+                       allowed_organisations=[uuc, uva], uri="https://wireless", non_member_users_access_allowed=True)
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True, logo=_read_image("cloud.jpg"),
                     allowed_organisations=[uuc, uva])

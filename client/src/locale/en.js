@@ -727,6 +727,8 @@ I18n.translations.en = {
         accessAllowedForAll: "Enabled for all organisations?",
         accessAllowedForAllTooltip: "Is this service for all current and future organisations by default enabled?",
         accessAllowedForAllInfo: "All organisations are enabled by default for this service",
+        nonMemberUsersAccessAllowed: "Accessible for all users?",
+        nonMemberUsersAccessAllowedTooltip: "Can all members access this service without being a member of a connected Collaboration",
         whiteListed: "Whitelisted?",
         whiteListedTooltip: "Can this service directly be connected to new restricted collaborations created by the API? Note that it also possible to configure this in the Server configuration file.",
         sirtfiCompliant: "Sirtfi compliant?",

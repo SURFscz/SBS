@@ -45,13 +45,13 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
         logger.error(msg)
         send_error_mail(tb=msg, session_exists=False)
         return not_authorized_func(service_entity_id, SERVICE_UNKNOWN)
-
+    no_free_ride = not service.non_member_users_access_allowed
     user = User.query.filter(User.uid == uid).first()
     if not user:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the user is unknown")
         return not_authorized_func(service.name, USER_UNKNOWN)
-    if user.suspended:
+    if user.suspended and no_free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the user is suspended")
         return not_authorized_func(service.name, USER_IS_SUSPENDED)
@@ -64,18 +64,18 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
             connected_collaborations.append(cm.collaboration)
             memberships.append(cm)
 
-    if not connected_collaborations:
+    if not connected_collaborations and no_free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to any of the user collaborations")
         return not_authorized_func(service.name, SERVICE_NOT_CONNECTED)
 
-    if all(coll.status != STATUS_ACTIVE for coll in connected_collaborations):
+    if all(coll.status != STATUS_ACTIVE for coll in connected_collaborations) and no_free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as the service is not connected to any active collaborations")
         return not_authorized_func(service.name, COLLABORATION_NOT_ACTIVE)
 
     now = datetime.now()
-    if all(m.expiry_date and m.expiry_date < now for m in memberships):
+    if all(m.expiry_date and m.expiry_date < now for m in memberships) and no_free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as none of the collaboration memberships are active")
         return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)
