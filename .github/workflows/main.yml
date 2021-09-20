@@ -147,19 +147,23 @@ jobs:
           CI: true
           VNM_DIR: ~/.nvm
 
-      - name: Get version
+      - name: Get tag
         if: startsWith(github.ref, 'refs/tags/')
-        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
-        id: version
+        shell: bash
+        run: |
+          BASENAME=SBS-client-build
+          echo ::set-output name=file::${BASENAME}-${GITHUB_REF#refs/tags/}.tgz
+        id: tag
 
       - name: Create Asset
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          tar -zcf SBS-client-${{ steps.version.outputs.version }}.tgz client/
+          cd client
+          tar -zcf ${{ steps.tag.outputs.file }} build/
 
       - name: Upload Asset
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            SBS-client-${{ steps.version.outputs.version }}.tgz
+            client/${{ steps.tag.outputs.file }}
