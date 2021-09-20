@@ -26,6 +26,10 @@ def evict_from_cache(object_type, sid):
     current_app.redis_client.delete(_redis_key(object_type, sid))
 
 
+def logo_url(object_type, sid):
+    return f"{current_app.app_config.base_server_url}/api/images/{object_type}/{sid}"
+
+
 class LogoMixin(object):
 
     def __getattribute__(self, name):
@@ -39,6 +43,6 @@ class LogoMixin(object):
             redis_key = _redis_key(object_type, sid)
             if not current_app.redis_client.exists(redis_key):
                 current_app.redis_client.set(redis_key, logo)
-            return f"{current_app.app_config.base_server_url}/api/images/{object_type}/{sid}"
+            return logo_url(object_type, sid)
 
         return object.__getattribute__(self, name)

@@ -9,6 +9,11 @@ class TestPlsc(AbstractTest):
     def test_fetch(self):
         res = self.get("/api/plsc/sync")
         self.assertEqual(2, len(res["organisations"]))
+        logo = res["organisations"][0]["logo"]
+        self.assertTrue(logo.startswith, "http://localhost:8080/api/images/organisations/")
+
+        res_image = self.client.get(logo.replace("http://localhost:8080", ""))
+        self.assertIsNotNone(res_image.data)
 
         users_ = res["users"]
         self.assertEqual(17, len(users_))
@@ -27,10 +32,20 @@ class TestPlsc(AbstractTest):
         wiki = next(s for s in services_ if s["entity_id"] == service_wiki_entity_id)
         self.assertEqual(wiki["contact_email"], "help@wiki.com")
         self.assertEqual(wiki["name"], "Wiki")
+        self.assertTrue(wiki["logo"].startswith, "http://localhost:8080/api/images/services/")
+
+        res_image = self.client.get(wiki["logo"].replace("http://localhost:8080", ""))
+        self.assertIsNotNone(res_image.data)
 
         collaborations = flatten([org["collaborations"] for org in res["organisations"] if org["name"] == uuc_name])
         self.assertEqual("active", collaborations[0]["status"])
         self.assertEqual("active", collaborations[0]["collaboration_memberships"][0]["status"])
+
+        logo = collaborations[0]["logo"]
+        self.assertTrue(logo.startswith, "http://localhost:8080/api/images/collaborations/")
+        res_image = self.client.get(logo.replace("http://localhost:8080", ""))
+        self.assertIsNotNone(res_image.data)
+
         groups = flatten([coll["groups"] for coll in collaborations if coll["name"] == ai_computing_name])
         ai_researchers = list(filter(lambda group: group["name"] == ai_researchers_group, groups))[0]
         self.assertIsNotNone(ai_researchers["description"])
