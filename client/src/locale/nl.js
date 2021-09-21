@@ -563,7 +563,10 @@ I18n.translations.nl = {
         enabled: "Kopieer",
         privacyPolicy: "Privacy policy",
         expiryDate: "Einddatum",
-        expiryDateWarning: "Verloopt over {{nbr}} dagen!",
+        expiryDateWarning: {
+            one: "Verloopt over 1 dag!",
+            other: "Verloopt over {{nbr}} dagen!"
+        },
         expiryDateExpired: "Verlopen!",
         lastActivityDate: "Laatste activiteit",
         lastActivitySuspended: "Geschorst",

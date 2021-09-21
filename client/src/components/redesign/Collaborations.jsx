@@ -122,7 +122,9 @@ export default class Collaborations extends React.PureComponent {
                         return <div>
                             <span className={warning ? "warning" : ""}>{moment(expiryDate).format("LL")}</span>
                             {(warning && collaboration.status === "active") &&
-                            <span className="warning">{I18n.t("collaboration.expiryDateWarning", {nbr: days})}</span>}
+                            <span className="warning">
+                            {I18n.p(days, "collaboration.expiryDateWarning", {nbr: days})}
+                            </span>}
                             {(collaboration.status === "expired") &&
                             <span className="warning">{I18n.t("collaboration.expiryDateExpired", {nbr: days})}</span>}
                         </div>;
