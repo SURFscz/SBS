@@ -563,7 +563,10 @@ I18n.translations.en = {
         enabled: "Copy link",
         privacyPolicy: "Acceptable Use Policy",
         expiryDate: "Expiration date",
-        expiryDateWarning: "Will expire in {{nbr}} days!",
+        expiryDateWarning: {
+            one: "Will expire in one day!",
+            other: "Will expire in {{nbr}} days!"
+        },
         expiryDateExpired: "Expired!",
         lastActivityDate: "Last activity",
         lastActivitySuspended: "Suspended!",
