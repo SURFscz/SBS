@@ -61,7 +61,7 @@ I18n.translations.en = {
     home: {
         sram: "SURF RESEARCH ACCESS MANAGEMENT PLATFORM",
         edit: "Edit",
-        unsuspend: "Unsuspend",
+        unsuspend: "Revert suspension",
         history: "History",
         details: "Details",
         backToHome: "Back to home",
@@ -120,7 +120,7 @@ I18n.translations.en = {
         image: "Image must at least be 300x120 pixels and smaller then 2MB.",
         dragImage: "Drag and resize the crop area until you're happy with the result. Then hit apply.",
         imageToLarge: "Image is larger then 2MB.",
-        imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
+        imageDeleteConfirmation: "Are you sure you want to delete this image? You cannot revert this and you'll have to select a new image",
         imageRequired: "Image is required",
         whiteSpace: "Fit the image",
         no: "No"
@@ -557,17 +557,17 @@ I18n.translations.en = {
         joinRequestUrlTooltip: "URL for non-members to join this collaboration. You can for instance email this URL or publish it on a website etc.",
         joinRequestUrlDisabled: "Join request are disabled for this collaboration",
         disableJoinRequests: "Disable join request for this collaboration.",
-        disableJoinRequestsTooltip: "When checked non-members of this collaboration can not issue a join request.",
+        disableJoinRequestsTooltip: "When checked non-members of this collaboration cannot issue a join request.",
         joinRequests: "Join request URL",
         disabled: "Disabled",
         enabled: "Copy link",
         privacyPolicy: "Acceptable Use Policy",
-        expiryDate: "End date",
-        expiryDateWarning: "Will expire in {{nbr}} day(s)!",
+        expiryDate: "Expiration date",
+        expiryDateWarning: "Will expire in {{nbr}} days!",
         expiryDateExpired: "Expired!",
         lastActivityDate: "Last activity",
         lastActivitySuspended: "Suspended!",
-        expiryDateTooltip: "The end date of the collaboration. After this date the collaboration will be suspended and its members can no longer use services",
+        expiryDateTooltip: "The expiration date of the collaboration, after which its members can no longer use its services",
         discloseMembers: "Disclose member info",
         discloseMemberInformation: "Disclose member information",
         discloseMemberInformationTooltip: "When checked the names of members are disclosed to other members",
@@ -606,13 +606,13 @@ I18n.translations.en = {
         status: {
             name: "Status",
             active: "Active",
-            activeWithExpiryDate: "Expiry date: {{expiryDate}}",
+            activeWithExpiryDate: "Expiration date: {{expiryDate}}",
             suspended: "Suspended",
             expired: "Expired",
             activeTooltip: "This collaboration is active and ready for business.",
-            suspendedTooltip: "This collaboration is suspended due to long inactivity. It was used for the last time on {{lastActivityDate}}.",
-            expiredTooltip: "This collaboration is expired due to the expiry date. It has expires on {{expiryDate}}. It can be activated by setting a new end date.",
-            activeWithExpiryDateTooltip: "This collaboration is active, however it does expiry on {{expiryDate}}."
+            suspendedTooltip: "This collaboration was suspended due to inactivity. It was last used on {{lastActivityDate}}.",
+            expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date.",
+            activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}."
         },
         flash: {
             created: "Collaboration {{name}} was successfully created",
@@ -635,7 +635,7 @@ I18n.translations.en = {
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send them an email with an activation link.",
         lastAdminWarning: "You are leaving this collaboration without admins. After this, management of the collaboration can only be carried out by the admins of organisation {{name}}",
         lastAdminWarningUser: "You are the last admin in this collaboration. After you leave, management of the collaboration can only be carried out by the admins of organisation {{name}}",
-        activateMemberTooltip: "Click to re-activate this suspended user. Suspended users can not login",
+        activateMemberTooltip: "Revert this user's suspension. Suspended users cannot login",
         flash: {
             updated: "Collaboration {{name}} was successfully updated",
             deleted: "Collaboration {{name}} was successfully deleted",
@@ -644,7 +644,7 @@ I18n.translations.en = {
             memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
             meAdded: "Successfully added you as member of {{name}}",
             memberActivated: "Member {{name}} has been sent an email with an activation link",
-            memberExpiryDateUpdated: "Member {{name}} has an updated expiry date {{expiryDate}}"
+            memberExpiryDateUpdated: "Membership of {{name}} has an updated expiration date {{expiryDate}}"
         },
         infoBlocks: "Dashboard collaboration {{name}}",
         searchPlaceHolder: "Search for members",
@@ -955,8 +955,8 @@ I18n.translations.en = {
         organisationAdministrators: "Admins",
         requiredAdministrator: "At least one admin email address is required for an invitation for an organisation",
         role: "Intended role",
-        expiryDate: "Expiry date",
-        expiryDateTooltip: "The expiry date of the invitation After this date the invitation can not be accepted anymore",
+        expiryDate: "Expiration date",
+        expiryDateTooltip: "The expiration date of the invitation, after which the invitation cannot be accepted",
         message: "Message",
         messageTooltip: "The user {{name}} has invited you with this message",
         fileImportResult: "Imported {{nbr}} email addresses from {{fileName}}",
@@ -970,8 +970,8 @@ I18n.translations.en = {
         declineInvitation: "Are you sure you want to decline this invitation?",
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
-        expired: "This invitation expired on {{expiry_date}} and can not be accepted anymore.",
-        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiry date to 14 days.",
+        expired: "This invitation expired on {{expiry_date}} and cannot be accepted anymore.",
+        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiration date to 14 days.",
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} was declined.",
             inviteDeleted: "Invitation for organisation {{name}} was deleted.",
@@ -1032,15 +1032,15 @@ I18n.translations.en = {
         declineInvitation: "Are you sure you want to decline this invitation?",
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
-        expired: "This invitation expired on {{expiry_date}} and can not be accepted anymore.",
-        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiry date to 14 days.",
+        expired: "This invitation expired on {{expiry_date}} and cannot be accepted anymore.",
+        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiration date to 14 days.",
         filePlaceholder: "Select csv or txt file...",
         fileImportResult: "Imported {{nbr}} email addresses from {{fileName}}",
         fileExtensionError: "Only .csv extension files are allowed",
-        expiryDate: "Expiry date",
-        expiryDateTooltip: "The expiry date of the invitation After this date the invitation can not be accepted anymore",
-        membershipExpiryDate: "Membership expiry date",
-        membershipExpiryDateTooltip: "The expiry date of the membership once the invitation has been accepted. After this date the membership will expire and this membership can't be used to login to services connected to this collaboration.",
+        expiryDate: "Expiration date",
+        expiryDateTooltip: "The expiration date of the invitation, after which the invitation cannot be accepted",
+        membershipExpiryDate: "Membership expiration date",
+        membershipExpiryDateTooltip: "The expiration date of the membership once the invitation has been accepted. After this date the membership will expire and this membership cannot be used to login to services connected to this collaboration.",
         flash: {
             inviteDeclined: "Invitation for collaboration {{name}} was declined.",
             inviteAccepted: "Invitation for collaboration {{name}} was accepted.",
@@ -1057,8 +1057,8 @@ I18n.translations.en = {
         noServiceConnectRequests: "This collaboration has no outstanding service Connect Requests.",
         searchServices: "Search, select and add services to the available services within collaboration {{name}}",
         deleteServiceTooltip: "Make this service unavailable in the collaboration {{name}}. <strong>NOTE</strong>: the service itself is NOT deleted. It is only not available anymore for groups within this collaboration.",
-        notAllowedOrganisation: "Service '{{service}}' can not be added to collaboration '{{collaboration}}'. The service configuration excludes it from organisation '{{organisation}}'.",
-        automaticConnectionNotAllowed: "Service '{{service}}' can not be automatically added to collaboration '{{collaboration}}'. The service configuration dictates that a service connect request must be submitted. Please add your motivation and submit this form.",
+        notAllowedOrganisation: "Service '{{service}}' cannot be added to collaboration '{{collaboration}}'. The service configuration excludes it from organisation '{{organisation}}'.",
+        automaticConnectionNotAllowed: "Service '{{service}}' cannot be automatically added to collaboration '{{collaboration}}'. The service configuration dictates that a service connect request must be submitted. Please add your motivation and submit this form.",
         motivation: "Motivation",
         motivationPlaceholder: "Your motivation to request a service connection",
         send: "Send",
@@ -1207,7 +1207,7 @@ I18n.translations.en = {
         invitation: {
             invitee_email: "Email",
             intended_role: "Role",
-            expiry_date: "Expiry date",
+            expiry_date: "Expiration date",
             actions: ""
         },
     },
@@ -1330,15 +1330,15 @@ I18n.translations.en = {
         subTitle: "These are all the collaborations you are a member of. Choose one or more to link service <strong>{{name}}</strong> to in order for you to have access to this service.",
         titleAlreadyLinked: "Service {{name}} is already linked to your collaboration {{collaboration}}",
         subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this service. However you already have access to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleLinkNotAllowed: "Service {{name}} can not be linked to any of your collaborations",
+        titleLinkNotAllowed: "Service {{name}} cannot be linked to any of your collaborations",
         subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleNoAutomaticConnection: "Service {{name}} can not be linked to any of your collaborations",
+        titleNoAutomaticConnection: "Service {{name}} cannot be linked to any of your collaborations",
         subTitleNoAutomaticConnection: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However this service does not allow for automatic connections. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleRedirectMismatch: "Service {{name}} can not be linked to any of your collaborations",
+        titleRedirectMismatch: "Service {{name}} cannot be linked to any of your collaborations",
         subTitleRedirectMismatch: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However the provided redirect URI is not valid. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleNoCollaborations: "Service {{name}} can not be linked to any of your collaborations",
+        titleNoCollaborations: "Service {{name}} cannot be linked to any of your collaborations",
         subTitleNoCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleOutstandingServiceConnectionRequest: "Service {{name}} can not be linked to any of your collaborations",
+        titleOutstandingServiceConnectionRequest: "Service {{name}} cannot be linked to any of your collaborations",
         subTitleOutstandingServiceConnectionRequest: "There are already outstanding service connection request(s) for all of your collaborations: {{details}}. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         collaboration: {
             name: "Collaboration",
@@ -1346,9 +1346,9 @@ I18n.translations.en = {
             organisation: "Organisation",
             actions: "Link",
             tooltips: "",
-            linkNotAllowed: "You can not link this service to this collaboration, because the organisation of this collaboration is not allowed to link this service",
-            alreadyLinked: "You can not link this service to this collaboration, because the service is already available in this collaboration",
-            outstandingServiceConnectionRequest: "You can not link this service to this collaboration, because there is already an outstanding request to connect the service to this collaboration"
+            linkNotAllowed: "You cannot link this service to this collaboration, because the organisation of this collaboration is not allowed to link this service",
+            alreadyLinked: "You cannot link this service to this collaboration, because the service is already available in this collaboration",
+            outstandingServiceConnectionRequest: "You cannot link this service to this collaboration, because there is already an outstanding request to connect the service to this collaboration"
         },
         role: {
             admin: "Admin",
@@ -1359,7 +1359,7 @@ I18n.translations.en = {
         motivation: "Service {{serviceName}} redirected the user {{userName}} to connect a collaboration to this service",
         result: {
             completed: "The service {{serviceName}} is now accessible for you. Click the button below to go to this service.",
-            requested: "Access to service {{serviceName}} has been requested. Until the request is granted you can not access this service.",
+            requested: "Access to service {{serviceName}} has been requested. Until the request is granted you cannot access this service.",
         },
     },
     confirmation: {
@@ -1410,8 +1410,8 @@ I18n.translations.en = {
     system: {
         title: "System maintenance",
         runDailyJobsInfo: "Run the daily cron job to send notification mails and potentially suspend users that have not logged in for the configured period",
-        runExpiredCollaborations: "Run the job to expire collaborations that have an expiry date before today",
-        runExpiredMemberships: "Run the job to expire memberships that have an expiry date before today",
+        runExpiredCollaborations: "Run the job to expire collaborations that have an expiration date before today",
+        runExpiredMemberships: "Run the job to expire memberships that have an expiration date before today",
         runSuspendedCollaborations: "Run the job to suspend collaborations that have had no activity for X days",
         runDailyJobs: "Trigger",
         showDailyJobs: "Show",
@@ -1424,8 +1424,8 @@ I18n.translations.en = {
         runCleanedRequests: "Delete",
         action: "Action",
         results: "Results",
-        first_suspend_notification: "First suspend notification email sent",
-        second_suspend_notification: "Second suspend notification email sent",
+        first_suspend_notification: "First suspension notification email sent",
+        second_suspend_notification: "Second suspension notification email sent",
         suspended: "Users who are marked as suspended",
         deleted: "Suspended users who are deleted",
         collaborations_deleted: "Expired collaborations deleted",
@@ -1659,24 +1659,24 @@ I18n.translations.en = {
         info6: "You've successfully logged into SURF Research Access Management, but unfortunately you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired. Contact your admin(s) to enable access to this service."
     },
     unsuspend: {
-        confirmation: "Are you sure you want to unsuspend this collaboration?",
+        confirmation: "Are you sure you want to revert suspension this collaboration?",
         flash: "Collaboration {{name}} is active again"
     },
     organisationMembership: {
-        membership: "Membership of {{name}} has no end date.",
+        membership: "Membership of {{name}} has no expiration date.",
         membershipWithExpiry: "Membership of {{name}} will expire at {{date}}.",
-        expiredMembership: "This membership has expired at {{date}}. Update the end date to activate {{name}}.",
-        expiryDate: "End date",
-        expiryDateTooltip: "The end date of the membership. After this date the membership will be suspended and this member can no longer use the services",
+        expiredMembership: "This membership has expired at {{date}}. Update the expiration date to activate {{name}}'s membership.",
+        expiryDate: "Expiration date",
+        expiryDateTooltip: "The expiration date of the membership. After this date the membership will be suspended and this member can no longer use the services",
         update: "Update",
         status: {
             name: "Membership",
             active: "Active",
             expired: "Expired",
-            activeWithExpiryDate: "Expiry date: {{date}}",
-            activeTooltip: "Your membership has no end date.",
-            expiredTooltip: "Your membership was expired on {{date}}. Please contact the admins of this collaboration to request activation.",
-            activeWithExpiryDateTooltip: "Your membership is active, however it does expiry on {{date}}."
+            activeWithExpiryDate: "Expiration date: {{date}}",
+            activeTooltip: "Your membership has no expiration date.",
+            expiredTooltip: "Your membership has expired on {{date}}. Please contact the admins of this collaboration for help.",
+            activeWithExpiryDateTooltip: "Your membership is active, however will expire at {{date}}."
         }
     }
 };
