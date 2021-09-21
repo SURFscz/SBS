@@ -1425,7 +1425,7 @@ I18n.translations.en = {
         action: "Action",
         results: "Results",
         first_suspend_notification: "First suspension notification email sent",
-        second_suspend_notification: "Second suspensionb notification email sent",
+        second_suspend_notification: "Second suspension notification email sent",
         suspended: "Users who are marked as suspended",
         deleted: "Suspended users who are deleted",
         collaborations_deleted: "Expired collaborations deleted",
