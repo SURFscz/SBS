@@ -905,7 +905,7 @@ I18n.translations.nl = {
         searchPlaceHolderCollaborations: "Zoek samenwerkingen",
         update: "Bijwerken",
         delete: "Verwijderen",
-        deleteMemberConfirmation: "Weet je zeker dat je het organisatielidmaatschap van {{name}} wil verwijderen?",
+        deleteMemberConfirmation: "Weet je zeker dat je deze organisatiebeheerders en -managers wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze organisatie wilt verlaten? Je kan dit niet terugdraaien.",
         deleteApiKeyConfirmation: "Weet je zeker dat je deze API-sleutel wilt verwijderen?",
         deleteCollaborationConfirmation: "Weet je zeker dat je samenwerking {{name}} wil verwijderen?",
