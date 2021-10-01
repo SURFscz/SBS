@@ -49,6 +49,11 @@
 
         tbody {
             td {
+                &.check svg.information-circle {
+                    width: 20px;
+                    height: 20px;
+                }
+
                 &.status {
                     text-align: center;
                 }

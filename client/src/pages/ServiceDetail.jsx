@@ -209,7 +209,7 @@ class ServiceDetail extends React.Component {
                         <div className="org-attributes">
                             <span>{I18n.t("service.contact_email")}</span>
                             <span>{service.contact_email ?
-                                <a href={`mailto:${service.contact_email}`}>{I18n.t("service.contact")}</a> : I18n.t("service.none")}</span>
+                                <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a> : I18n.t("service.none")}</span>
                         </div>
                         <div className="org-attributes">
                             <span>{I18n.t("service.whiteListed")}</span>

@@ -279,7 +279,7 @@ class Service(Base, db.Model, LogoMixin):
     address = db.Column("address", db.Text(), nullable=True)
     identity_type = db.Column("identity_type", db.String(length=255), nullable=True)
     uri = db.Column("uri", db.String(length=255), nullable=True)
-    accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
+    accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
     public_visible = db.Column("public_visible", db.Boolean(), nullable=True, default=True)
     automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
