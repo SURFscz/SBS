@@ -47,7 +47,15 @@ import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
+import * as Showdown from "showdown";
+import {sanitizeHtml} from "../utils/Markdown";
 
+const converter = new Showdown.Converter({
+    tables: true,
+    simplifiedAutoLink: true,
+    strikethrough: true,
+    tasklists: true
+});
 
 class CollaborationDetail extends React.Component {
 
@@ -413,8 +421,9 @@ class CollaborationDetail extends React.Component {
                         <li className="collaboration-url">
                             <Tooltip children={<PrivacyIcon/>} id={"globe-icon"} msg={I18n.t("tooltips.aup")}/>
                             <span>
-                            <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
-                               target="_blank">{collaboration.accepted_user_policy}</a>
+                            <Tooltip id={"accepted_user_policy"}
+                             msg={sanitizeHtml(converter.makeHtml(collaboration.accepted_user_policy))}
+                             children={<span className={"accepted_user_policy"}>{I18n.t("forms.yes")}</span>}/>
                         </span>
                         </li>}
                     </ul>
@@ -577,8 +586,10 @@ class CollaborationDetail extends React.Component {
                 <div className="org-attributes">
                     <span>{I18n.t("collaboration.privacyPolicy")}</span>
                     {collaboration.accepted_user_policy &&
-                    <span><a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
-                             target="_blank">{collaboration.accepted_user_policy}</a></span>}
+                    <Tooltip id={"accepted_user_policy"}
+                             msg={sanitizeHtml(converter.makeHtml(collaboration.accepted_user_policy))}
+                             children={<span className={"accepted_user_policy"}>{I18n.t("forms.yes")}</span>}/>
+                    }
                     {!collaboration.accepted_user_policy && <span>{I18n.t("service.none")}</span>}
                 </div>
                 {this.getCollaborationStatus(collaboration)}

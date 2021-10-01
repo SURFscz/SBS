@@ -1575,7 +1575,8 @@ I18n.translations.nl = {
         invitations: "Genodigde",
         joinRequest: "Deelnameverzoek",
         manager: "Manager",
-        platformAdmin: "Goddess divinity"
+        platformAdmin: "Goddess divinity",
+        oneAdminWarning: "Een organisatie heeft ten minste 1 admin nodig."
     },
     notFound: {
         msg: "Mmmm, het lijkt erop dat je op de een of andere manier een link hebt gekregen waar we je niet mee kunnen helpen. Sorry daarvoor." +

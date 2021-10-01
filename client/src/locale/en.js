@@ -1568,13 +1568,14 @@ I18n.translations.en = {
         members: "Composition of this collaboration",
         admins: "Admin(s) of this collaboration",
         collaborationUrl: "More information about this collaboration",
-        aup: "Acceptable use policy for this collaboration",
+        aup: "Acceptable use policy for this collaboration. This is an addition to the SRAM AUP, which applies to all collaborations.",
         user: "User",
         admin: "Admin",
         invitations: "Invitee",
         joinRequest: "Join request",
         manager: "Manager",
-        platformAdmin: "Goddess divinity"
+        platformAdmin: "Goddess divinity",
+        oneAdminWarning: "An organisation requires at least one admin.",
     },
     notFound: {
         msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that " +

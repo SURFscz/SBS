@@ -1,4 +1,5 @@
 @import "../stylesheets/vars.scss";
+@import "../stylesheets/mde_preview.scss";
 
 .unit-info {
     margin-top: 6px;
@@ -35,6 +36,10 @@
 
     }
 
+}
+
+div.org-attributes-container-grid div.org-attributes span.accepted_user_policy {
+    font-weight: normal !important;
 }
 
 .collaboration-inactive {

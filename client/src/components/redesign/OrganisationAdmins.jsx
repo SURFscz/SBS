@@ -31,6 +31,7 @@ import Tooltip from "./Tooltip";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import ReactTooltip from "react-tooltip";
 import InstituteColumn from "./InstitueColumn";
+import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 
 const roles = [
     {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
@@ -359,12 +360,16 @@ class OrganisationAdmins extends React.Component {
                 key: "check",
                 // header: <CheckBox value={allSelected} name={"allSelected"}
                 //                   onChange={this.allSelected}/>,
-                mapper: entity => <div className="check">
-                    {(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
-                        (!noMoreAdminsToCheck || selectedMembers[entity.id].selected))) &&
-                    <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
-                              value={(selectedMembers[entity.id] || {}).selected || false}/>}
-                </div>
+                mapper: entity => {
+                    const displayCheckbox = entity.invite || entity.role === "manager" || (!oneAdminLeft &&
+                        (!noMoreAdminsToCheck || selectedMembers[entity.id].selected));
+                    return <div className="check">
+                        {displayCheckbox && <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
+                                  value={(selectedMembers[entity.id] || {}).selected || false}/>}
+                        {!displayCheckbox &&
+                            <Tooltip children={<InformationCircle/>} id={"admin-warning"} msg={I18n.t("tooltips.oneAdminWarning")}/>}
+                    </div>
+                }
             },
             {
                 nonSortable: true,
