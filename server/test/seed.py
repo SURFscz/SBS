@@ -82,7 +82,7 @@ ssh_service_connection_request_hash = token_urlsafe()
 wireless_service_connection_request_hash = token_urlsafe()
 
 
-def _read_image(file_name):
+def read_image(file_name):
     file = f"{os.path.dirname(os.path.realpath(__file__))}/images/{file_name}"
     with open(file, "rb") as f:
         c = f.read()
@@ -199,7 +199,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     _persist(db, aup)
 
     uuc = Organisation(name=uuc_name, short_name="uuc", identifier=str(uuid.uuid4()),
-                       description="Unincorporated Urban Community", logo=_read_image("uuc.jpeg"),
+                       description="Unincorporated Urban Community", logo=read_image("uuc.jpeg"),
                        created_by="urn:admin", updated_by="urnadmin", category="Research",
                        on_boarding_msg="We are using **SRAM** to provide access to the following research tools:"
                                        "\n- Wiki\n- Cloud\n- Awesome things...\n\nIf you want to join one of our "
@@ -207,7 +207,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                        "\n<br/><br/>\nHappy researching,\n\n*UUC support*",
                        collaboration_creation_allowed=True)
     uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam", identifier=str(uuid.uuid4()),
-                       created_by="urn:admin", updated_by="urn:admin", short_name="uva", logo=_read_image("uva.jpg"),
+                       created_by="urn:admin", updated_by="urn:admin", short_name="uva", logo=read_image("uva.jpg"),
                        category="University")
     _persist(db, uuc, uva)
 
@@ -246,43 +246,43 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
              organisation_membership_jane, organisation_membership_paul_uuc, organisation_membership_paul_uva)
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
-                   public_visible=True, automatic_connection_allowed=True, logo=_read_image("email.jpeg"),
+                   public_visible=True, automatic_connection_allowed=True, logo=read_image("email.jpeg"),
                    accepted_user_policy="https://google.nl", allowed_organisations=[uuc, uva])
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
                        public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
-                       logo=_read_image("wireless.png"), accepted_user_policy="https://google.nl",
+                       logo=read_image("wireless.png"), accepted_user_policy="https://google.nl",
                        allowed_organisations=[uuc, uva], uri="https://wireless", non_member_users_access_allowed=True)
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
-                    public_visible=True, automatic_connection_allowed=True, logo=_read_image("cloud.jpg"),
+                    public_visible=True, automatic_connection_allowed=True, logo=read_image("cloud.jpg"),
                     allowed_organisations=[uuc, uva])
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
-                      description="SURF Storage Service", logo=_read_image("storage.jpeg"),
+                      description="SURF Storage Service", logo=read_image("storage.jpeg"),
                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
                       white_listed=True, accepted_user_policy="https://google.nl")
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
                        "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
-                   public_visible=True, automatic_connection_allowed=False, logo=_read_image("wiki.jpeg"),
+                   public_visible=True, automatic_connection_allowed=False, logo=read_image("wiki.jpeg"),
                    allowed_organisations=[uuc, uva], contact_email="help@wiki.com",
                    accepted_user_policy="https://google.nl")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
-                      contact_email="help@network.com", logo=_read_image("network.jpeg"),
+                      contact_email="help@network.com", logo=read_image("network.jpeg"),
                       public_visible=False, automatic_connection_allowed=True,
                       allowed_organisations=[uuc])
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
-                              contact_email="help@ssh.com", logo=_read_image("ssh_uva.png"),
+                              contact_email="help@ssh.com", logo=read_image("ssh_uva.png"),
                               public_visible=False, automatic_connection_allowed=False,
                               allowed_organisations=[uva], research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True)
 
     uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=uuc_scheduler_name,
                             accepted_user_policy="https://google.nl",
-                            description="UUC Scheduler Service", logo=_read_image("scheduler_uuc.jpeg"),
+                            description="UUC Scheduler Service", logo=read_image("scheduler_uuc.jpeg"),
                             public_visible=True, automatic_connection_allowed=False, allowed_organisations=[uuc])
 
     _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler)
@@ -294,7 +294,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  identifier=collaboration_ai_computing_uuid,
                                  global_urn=f"ucc:{ai_computing_short_name}",
                                  description="Artifical Intelligence computing for the Unincorporated Urban Community",
-                                 logo=_read_image("computing.jpeg"),
+                                 logo=read_image("computing.jpeg"),
                                  organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[],
                                  short_name=ai_computing_short_name,
@@ -308,7 +308,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  identifier=collaboration_uva_researcher_uuid,
                                  website_url="https://www.google.nl",
                                  description="University of Amsterdam Research - Urban Crowd Control",
-                                 logo=_read_image("research.jpeg"),
+                                 logo=read_image("research.jpeg"),
                                  organisation=uva, services=[cloud, storage, wiki],
                                  join_requests=[], invitations=[],
                                  disclose_member_information=True)
@@ -317,7 +317,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  global_urn=f"ucc:{uuc_teachers_name}",
                                  website_url="https://www.google.nl",
                                  description="UUC Teachers",
-                                 logo=_read_image("teachers.jpeg"),
+                                 logo=read_image("teachers.jpeg"),
                                  organisation=uuc, services=[],
                                  join_requests=[], invitations=[],
                                  short_name="uuc_teachers_short_name",
@@ -327,7 +327,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                              short_name="uu_short",
                                              global_urn="uva:uu_short",
                                              website_url="https://www.google.nl",
-                                             logo=_read_image("uu.png"),
+                                             logo=read_image("uu.png"),
                                              identifier=str(uuid.uuid4()),
                                              description="UU", disable_join_requests=True, organisation=uva,
                                              services=[],
@@ -401,11 +401,11 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     _persist(db, invitation, invitation_uva, invitation_noway)
 
     collaboration_request_1 = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
-                                                   website_url="https://google.com", logo=_read_image("request.jpg"),
+                                                   website_url="https://google.com", logo=read_image("request.jpg"),
                                                    status=STATUS_OPEN, message="For research", organisation=uuc,
                                                    requester=peter)
     collaboration_request_2 = CollaborationRequest(name="Polse", short_name="polse",
-                                                   website_url="https://www.pols.me/", logo=_read_image("pols.jpg"),
+                                                   website_url="https://www.pols.me/", logo=read_image("pols.jpg"),
                                                    status=STATUS_OPEN, message="For research", organisation=uuc,
                                                    requester=peter)
     _persist(db, collaboration_request_1, collaboration_request_2)
@@ -441,7 +441,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                short_name=f"co_nr_{i:03d}",
                                global_urn=f"ucc:co_nr_{i:03d}",
                                description="Een van vele COs",
-                               logo=_read_image("computing.jpeg"),
+                               logo=read_image("computing.jpeg"),
                                organisation=uuc,
                                services=[mail, network],
                                join_requests=[],

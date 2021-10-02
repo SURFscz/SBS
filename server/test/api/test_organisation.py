@@ -3,7 +3,8 @@
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation
+from server.test.seed import uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation, \
+    read_image
 
 
 class TestOrganisation(AbstractTest):
@@ -235,9 +236,14 @@ class TestOrganisation(AbstractTest):
         self.login("urn:mary")
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
+        uuid4_value = organisation["uuid4"]
 
         organisation["name"] = "changed"
+        organisation["logo"] = read_image("storage.jpeg")
         organisation = self.put("/api/organisations", body=organisation)
+
+        new_uuid4_value = organisation["uuid4"]
+        self.assertNotEqual(uuid4_value, new_uuid4_value)
         self.assertEqual("changed", organisation["name"])
 
     def test_organisation_invites(self):
