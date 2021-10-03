@@ -381,17 +381,18 @@ I18n.translations.en = {
         },
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here access to research services for research collaborations is managed.",
-            invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
-            followingSteps: "Please take the following steps:",
+            invited: "You have been invited to join {{type}} <strong>'{{collaboration}}'</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
+            followingSteps: "SURF Research Access Management gives members of research collaborations fast and secure access to research services.</br> You can login with your institution account or eduID.",
             steps: {
                 progress: "{{now}} of {{total}}",
                 login: "Login",
                 next: "Next: {{step}}",
-                invite: "Accept the invite",
-                collaborate: "Collaborate!"
+                invite: "Join the collaboration",
+                collaborate: "Collaborate!",
+                aup: "Accept our AUP"
             },
             login: "Please login to identify yourself",
-            loginWithSub: "Please login to identify yourself<sup> *</sup>",
+            loginWithSub: "Login to accept the invite",
             loginTip: "You can use your institution account to login, or use a guest account like eduID",
             accept: "I accept these terms",
             noAccept: "No, I don't agree",
@@ -1584,27 +1585,26 @@ I18n.translations.en = {
     },
     mfa: {
         register: {
-            title: "Configure two-factor authentication",
-            info1: "You have successfully signed in at {{name}} with your username and password.",
-            info2: "For SURF Research Access Management, a more secure way of signing in is required. Please register for two-factor authentication.",
-            step: "Step {{nbr}}",
-            getApp: "Get the app",
-            getAppInfo: "Download and install the Google Authenticator or Microsoft Authenticator app.",
-            scan: "Scan this QR-code",
-            scanInfo: "Open the authenticator app and:",
-            scanSteps: [
-                "Tap the '+' icon in the app",
-                "Scan the QR-code below using your phone's camera"
-            ],
-            verificationCode: "Enter authentication code",
-            verificationCodeInfo: "Once the QR-code above is scanned, enter the 6-digit authentication code from the app",
-            verificationCodePlaceholder: "6-digit code",
-            verify: "Verify and activate"
+            title: "Two factor authentication required",
+            titleUpdate: "Add two factor authentication device",
+            info1: "You have successfully signed in with a username and password at {{name}}. SURF Research Access Management requires two-factor authentication. This means an extra check to verify it's you.",
+            info2: "To setup two factor authentication, take the following steps.",
+            getApp: "1. Add SRAM to your authenticator app",
+            getAppUpdate: "2. Add SRAM to your authenticator app",
+            new: "new ",
+            getAppInfo: "Open or install the <a href=\"https://apps.apple.com/us/app/google-authenticator/id388497605\" target=\"_blank\">Google</a> or <a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=en&gl=US\" target=\"_blank\">Microsoft</a> Authenticator app on your {{new}}mobile device",
+            addSRAM: "Tap the '+' icon in the app",
+            scan: "Scan the QR code using your devices's camera",
+            verificationCode: "2. Enter verification code",
+            verificationCodeUpdate: "3. Enter verification code",
+            verificationCodeInfo: "Enter the verification code you see in the app",
+            verify: "Verify and activate",
+            next: "Next"
         },
         update: {
             info1: "To update your two-factor authentication, please follow the steps below.",
             info2: "You will need to have access to the authenticator app that you are currently using to sign in to SURF Research Access Management, as well as to the new authenticator app that you wish to use for future logins.",
-            currentCode: "Enter current verification code",
+            currentCode: "1. Enter current verification code",
             currentCodeInfo: "Enter the 6-digit authentication code from your current authenticator app.",
             scanInfo: "Open your new authenticator app and:",
             verificationCodeInfo: "Once the QR-code above is scanned, enter the 6-digit authentication code from your new authenticator app.",
