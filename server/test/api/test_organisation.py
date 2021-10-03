@@ -260,7 +260,7 @@ class TestOrganisation(AbstractTest):
             post_count = OrganisationInvitation.query.count()
             self.assertEqual(2, len(outbox))
             self.assertTrue(
-                f"You have been invited by urn:john to join organisation {uuc_name}" in outbox[0].html)
+                f"You have been invited by urn:john to join organisation '{uuc_name}'" in outbox[0].html)
             self.assertEqual(pre_count + 2, post_count)
 
     def test_organisation_save_with_invites(self):
