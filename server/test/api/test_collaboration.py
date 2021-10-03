@@ -80,7 +80,7 @@ class TestCollaboration(AbstractTest):
             self.assertEqual(STATUS_ACTIVE, collaboration["status"])
             self.assertEqual(2, len(outbox))
             self.assertTrue(
-                "You have been invited by urn:john to join collaboration new_collaboration" in outbox[0].html)
+                "You have been invited by urn:john to join collaboration 'new_collaboration'" in outbox[0].html)
 
             count = self._collaboration_membership_count(collaboration)
             self.assertEqual(0, count)
