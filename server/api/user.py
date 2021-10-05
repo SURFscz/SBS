@@ -232,6 +232,7 @@ def resume_session():
     uid = user_info_json["sub"]
     user = User.query.filter(User.uid == uid).first()
     if not user:
+        # Don't - redirect to AUP page
         user = User(uid=uid, created_by="system", updated_by="system")
         add_user_claims(user_info_json, uid, user)
 
