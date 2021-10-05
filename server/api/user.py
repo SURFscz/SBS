@@ -3,9 +3,9 @@ import datetime
 import itertools
 import json
 import os
-import re
 import subprocess
 import tempfile
+import unicodedata
 import urllib.parse
 import uuid
 
@@ -29,7 +29,7 @@ from server.db.domain import User, OrganisationMembership, CollaborationMembersh
     UserNameHistory, SshKey
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
-import unicodedata
+
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 

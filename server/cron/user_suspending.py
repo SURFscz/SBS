@@ -6,7 +6,7 @@ import time
 from server.cron.shared import obtain_lock
 from server.db.db import db
 from server.db.domain import User, SuspendNotification, UserNameHistory
-from server.mail import mail_suspend_notification
+from server.mail import mail_suspend_notification, mail_suspended_account_deletion
 
 suspend_users_lock_name = "suspend_users_lock"
 
@@ -95,6 +95,7 @@ def _do_suspend_users(app):
                 if history_not_exists:
                     user_name_history = UserNameHistory(username=user.username)
                     db.session.merge(user_name_history)
+            mail_suspended_account_deletion(user)
             db.session.delete(user)
 
         if len(users) > 0 or len(suspended_users) > 0:
