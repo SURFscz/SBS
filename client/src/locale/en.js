@@ -382,7 +382,7 @@ I18n.translations.en = {
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here access to research services for research collaborations is managed.",
             invited: "You have been invited to join {{type}} <strong>'{{collaboration}}'</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
-            followingSteps: "SURF Research Access Management gives members of research collaborations fast and secure access to research services.</br> You can login with your institution account or eduID.",
+            followingSteps: "SURF Research Access Management gives members of research collaborations fast and secure access to research services.</br></br>You can login with your institution account or eduID.",
             steps: {
                 progress: "{{now}} of {{total}}",
                 login: "Login",
@@ -1216,13 +1216,14 @@ I18n.translations.en = {
         },
     },
     aup: {
-        title1: "In order to use SURF Research Access Management, you need to agree to the below Acceptable Use Policy.",
-        title2: "Please read the document and if agreed check the box and proceed to the validation of your personal information.",
-        title3: "For more information we supply contact information at the end of the AUP.",
-        downloadPdf: "Download AUP (pdf)",
-        agreeWithTerms: "I agree with the SRAM Acceptable Usage Policy",
-        continueToValidation: "Store decision and continue",
-        agreed: "Your agreement with {{name}} has been saved."
+        info: "We are ready to create your SRAM profile with the following information.",
+        name: "Display name.",
+        email: "Email address",
+        title: "Acceptable use policy",
+        disclaimer: "By logging on to SRAM, you become a user and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of out AUP.</a>",
+        agreeWithTerms: "I hereby certify that I have read the AUP and that accept them",
+        onward: "Looks good, onwards",
+        agreedFlash: "Your agreement with {{name}} has been saved."
     },
     collaborationRequest: {
         title: {

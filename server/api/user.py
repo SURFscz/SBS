@@ -42,6 +42,7 @@ def _user_query():
                  .subqueryload(CollaborationMembership.collaboration)) \
         .options(joinedload(User.join_requests)
                  .subqueryload(JoinRequest.collaboration)) \
+        .options(joinedload(User.aups)) \
         .options(joinedload(User.collaboration_requests)
                  .subqueryload(CollaborationRequest.organisation))
 
@@ -279,7 +280,7 @@ def me():
 
         # Do not expose the actual secret of second_factor_auth
         user_from_session["second_factor_auth"] = bool(user_from_db.second_factor_auth)
-        # Do not send all information is second_factor is required
+        # Do not send all information if second_factor is required
         if not user_from_session["second_factor_confirmed"]:
             return user_from_session, 200
 

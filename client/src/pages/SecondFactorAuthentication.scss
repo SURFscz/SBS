@@ -39,8 +39,7 @@
 
             svg {
                 margin-right: 20px;
-                height: 20px;
-                width: 26px;
+                width: 80px;
             }
         }
 
@@ -130,6 +129,7 @@
 
     ul {
         padding: 0 $medium-padding;
+        margin-left: 15px;
         list-style: initial;
 
         li {

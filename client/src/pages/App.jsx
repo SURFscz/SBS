@@ -5,7 +5,7 @@ import I18n from "i18n-js";
 import Header from "../components/Header";
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
-import {config, me, other, refreshUser, reportError} from "../api";
+import {aupLinks, config, me, other, refreshUser, reportError} from "../api";
 import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/ErrorDialog";
@@ -54,6 +54,7 @@ class App extends React.Component {
         this.state = {
             loading: true,
             currentUser: {},
+            aupConfig: {},
             config: {},
             impersonator: null,
             reloading: false,
@@ -96,6 +97,12 @@ class App extends React.Component {
         }
     };
 
+    aupConfirmed = (user, aupVersion) => {
+        if (!user.guest && user.aups && user.aups.find(aup => aup.au_version === aupVersion)) {
+            user.aupConfirmed = true;
+        }
+    }
+
     markUserAdmin = user => {
         const {config} = this.state;
         if (config.admin_users_upgrade && user.admin && !user.confirmed_super_user) {
@@ -113,10 +120,13 @@ class App extends React.Component {
         } else {
             config().then(res => {
                 this.setState({config: res},
-                    () => me(res).then(currentUser => {
+                    () => Promise.all([me(res), aupLinks()]).then(results => {
+                        const currentUser = results[0];
+                        debugger;
                         if (currentUser && currentUser.uid) {
                             const user = this.markUserAdmin(currentUser);
-                            this.setState({currentUser: user, loading: false});
+                            this.aupConfirmed(user, results[1].version);
+                            this.setState({currentUser: user, aupConfig: results[1], loading: false});
                             if (currentUser.successfully_activated) {
                                 setFlash(I18n.t("login.successfullyActivated"))
                             }
