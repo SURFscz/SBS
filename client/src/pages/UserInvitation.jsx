@@ -1,5 +1,7 @@
 import React from "react";
 import {
+    agreeAup,
+    aupLinks,
     invitationAccept,
     invitationByHash,
     invitationDecline,
@@ -37,7 +39,8 @@ class UserInvitation extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: this.closeConfirmationDialog,
             loading: true,
-            skippedLoginStep: false
+            skippedLoginStep: false,
+            aup: {}, agreed: false
         };
     }
 
@@ -46,8 +49,11 @@ class UserInvitation extends React.Component {
         const today = moment();
         if (params.hash) {
             const {isOrganisationInvite} = this.props;
-            const promise = isOrganisationInvite ? organisationInvitationByHash(params.hash) : invitationByHash(params.hash);
-            promise.then(json => {
+            Promise.all([
+                isOrganisationInvite ? organisationInvitationByHash(params.hash) : invitationByHash(params.hash),
+                aupLinks()
+            ]).then(res => {
+                const json = res[0];
                 const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                 const {user} = this.props;
                 let skippedLoginStep = false;
@@ -71,8 +77,10 @@ class UserInvitation extends React.Component {
     accept = () => {
         const {invite} = this.state;
         const {isOrganisationInvite} = this.props;
-        const promise = isOrganisationInvite ? organisationInvitationAccept(invite) : invitationAccept(invite);
-        promise.then(() => {
+        Promise.all([
+            isOrganisationInvite ? organisationInvitationAccept(invite) : invitationAccept(invite),
+            agreeAup()
+        ]).then(() => {
             this.props.refreshUser(() => {
                 this.props.history.push(`/${isOrganisationInvite ? "organisations" : "collaborations"}/${isOrganisationInvite ? invite.organisation_id : invite.collaboration_id}?first=true`);
             });

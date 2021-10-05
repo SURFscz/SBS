@@ -15,13 +15,14 @@ aup_api = Blueprint("aup_api", __name__, url_prefix="/api/aup")
 def links():
     return {
                "url_aup_en": current_app.app_config.aup.url_aup_en,
-               "url_aup_nl": current_app.app_config.aup.url_aup_nl
+               "url_aup_nl": current_app.app_config.aup.url_aup_nl,
+               "version": str(current_app.app_config.aup.version),
            }, 200
 
 
 @aup_api.route("/agree", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def agreed_aup():
-    aup = Aup(au_version=current_app.app_config.aup.pdf, user_id=current_user_id())
+    aup = Aup(au_version=str(current_app.app_config.aup.version), user_id=current_user_id())
     aup_json = jsonify(aup).json
     return save(Aup, custom_json=aup_json, allow_child_cascades=False)
