@@ -298,7 +298,7 @@ def mail_account_deletion(user):
     mail_cfg = current_app.app_config.mail
     if mail_cfg.account_deletion_notifications_enabled:
         _do_send_mail(
-            subject=f"User {user.email} has deleted his/ hers account in environment {mail_cfg.environment}",
+            subject=f"User {user.email} has deleted their account in environment {mail_cfg.environment}",
             recipients=[mail_cfg.beheer_email],
             template="user_account_deleted",
             context={"environment": mail_cfg.environment,
