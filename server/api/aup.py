@@ -14,9 +14,8 @@ aup_api = Blueprint("aup_api", __name__, url_prefix="/api/aup")
 @json_endpoint
 def links():
     return {
-               "pdf_link": current_app.app_config.aup.pdf_link,
-               "pdf": current_app.app_config.aup.pdf,
-               "html": read_file(f"./static/{current_app.app_config.aup.html}")
+               "url_aup_en": current_app.app_config.aup.url_aup_en,
+               "url_aup_nl": current_app.app_config.aup.url_aup_nl
            }, 200
 
 
