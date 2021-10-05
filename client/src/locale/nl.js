@@ -448,7 +448,7 @@ I18n.translations.nl = {
         ssh_keyTooltip: "Je publieke SSH-sleutel zal worden uitgewisseld met de diensten waar je toegang toe hebt. Je kunt je publieke SSH-sleutel ook uploaden.",
         sshKeyError: "Ongeldige SSH-sleutel",
         sshConvertInfo: "Je publieke SSH-sleutel wordt geconverteerd naar het bestandsformaat <code>OpenSSH-key</code> bij het opslaan van het profiel",
-        update: "Bijwerken",
+        update: "Opslaan",
         flash: {
             updated: "Je profiel is bijgewerkt"
         },
@@ -627,7 +627,7 @@ I18n.translations.nl = {
         backToCollaborations: "Terug naar mijn samenwerkingen",
         backToHome: "Terug naar mijn dashboard",
         backToCollaborationDetail: "Terug naar mijn samenwerking {{name}}",
-        update: "Bijwerken",
+        update: "Opslaan",
         delete: "Verwijderen",
         deleteConfirmation: "Weet je zeker dat je deze samenwerking wilt verwijderen?",
         deleteMemberConfirmation: "Weet je zeker dat je {{name}} als lid voor deze samenwerking wilt verwijderen?",
@@ -757,7 +757,7 @@ I18n.translations.nl = {
         required: "De dienst heeft {{attribute}} nodig.",
         deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen?",
         add: "Aanmaken",
-        update: "Wijzigen",
+        update: "Opslaan",
         delete: "Verwijderen",
         cancel: "Annuleren",
         flash: {
@@ -902,7 +902,7 @@ I18n.translations.nl = {
         noServices: "Er zijn geen standaarddiensten voor deze organisatie.",
         configureServices: "Configureer diensten",
         searchPlaceHolderCollaborations: "Zoek samenwerkingen",
-        update: "Bijwerken",
+        update: "Opslaan",
         delete: "Verwijderen",
         deleteMemberConfirmation: "Weet je zeker dat je deze organisatiebeheerders en -managers wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze organisatie wilt verlaten? Je kan dit niet terugdraaien.",
@@ -1166,7 +1166,7 @@ I18n.translations.nl = {
             in_active: "Inactief"
         },
         add: "Maak aan",
-        update: "Werk bij",
+        update: "Opslaan",
         delete: "Verwijder",
         cancel: "Annuleer",
         flash: {
@@ -1608,7 +1608,7 @@ I18n.translations.nl = {
             currentCodeInfo: "Voer de 6-cijferige authenticatiecode van je huidige authenticator-app in.",
             scanInfo: "Open je nieuwe authenticator-app en:",
             verificationCodeInfo: "Zodra de QR-code hierboven is gescand, voer je de 6-cijferige authenticatiecode van je nieuwe authenticator-app in.",
-            verify: "Verifiëren en bijwerken",
+            verify: "Verifiëren en opslaan",
             flash: "Je tweedefactorauthenticatie is aangepast voor je nieuwe authenticator app"
         },
         verify: {
@@ -1672,7 +1672,7 @@ I18n.translations.nl = {
         expiredMembership: "Dit lidmaatschap is verlopen op {{date}}. Pas de einddatum van het lidmaatschap aan om {{name}} weer lid te maken.",
         expiryDate: "Einddatum",
         expiryDateTooltip: "De einddatum van dit lidmaatschap. Hierna verloopt het lidmaatschap en kan de gebruiker geen gebruikmaken van de diensten van deze samenwerking.",
-        update: "Bijwerken",
+        update: "Opslaan",
         status: {
             name: "Lidmaatschap",
             active: "Actief",
