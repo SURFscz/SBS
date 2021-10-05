@@ -162,7 +162,7 @@ class TestUser(AbstractTest):
     def test_update(self):
         self.login("urn:roger")
 
-        body = {"ssh_keys": [{"ssh_value": "ssh_key"}],
+        body = {"ssh_keys": [{"ssh_value": "ssh_key\0\n\r"}],
                 "email": "bogus"}
 
         self.put("/api/users", body, with_basic_auth=False)
