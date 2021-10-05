@@ -3,6 +3,7 @@ import datetime
 import itertools
 import json
 import os
+import re
 import subprocess
 import tempfile
 import urllib.parse
@@ -28,7 +29,7 @@ from server.db.domain import User, OrganisationMembership, CollaborationMembersh
     UserNameHistory, SshKey
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
-
+import unicodedata
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
@@ -373,7 +374,8 @@ def update_user():
             db.session.merge(ssh_key)
     new_ssh_keys = [ssh_key for ssh_key in ssh_keys_json if "id" not in ssh_key]
     for ssh_key in new_ssh_keys:
-        db.session.merge(SshKey(ssh_value=ssh_key["ssh_value"], user_id=user.id))
+        ssh_value = "".join(ch for ch in ssh_key["ssh_value"] if unicodedata.category(ch)[0] != "C")
+        db.session.merge(SshKey(ssh_value=ssh_value, user_id=user.id))
 
     user.updated_by = user.uid
     db.session.merge(user)
