@@ -1,0 +1,9 @@
+{% extends "mail_layout.html" %}
+{% block title %}SURF platform account deletion notification {% endblock %}
+{% block content %}
+
+    <p>Hi,</p>
+    <p>User {{ user.name }} ({{ user.uid }}) is deleted on environment {{ environment }}
+    at {{ date }}, because of inactivity by the suspended users cron job<</p>
+
+{% endblock %}

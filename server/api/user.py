@@ -6,6 +6,7 @@ import os
 import re
 import subprocess
 import tempfile
+import unicodedata
 import urllib.parse
 import uuid
 
