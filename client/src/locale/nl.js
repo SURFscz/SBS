@@ -617,7 +617,6 @@ I18n.translations.nl = {
             expiredTooltip: "Deze samenwerking is verlopen op {{expiryDate}}. Heractiveren kan door een nieuwe einddatum in te stellen.",
             activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}."
         },
-
         flash: {
             created: "Samenwerking {{name}} is met succes aangemaakt.",
             requested: "Samenwerking {{name}} is met succes aangevraagd."
@@ -1684,7 +1683,6 @@ I18n.translations.nl = {
             activeWithExpiryDateTooltip: "je lidmaatschap is actief, maar verloopt op {{date}}."
         }
     }
-
 };
 
 export default I18n.translations.nl;
