@@ -1655,6 +1655,7 @@ I18n.translations.nl = {
     },
     sfo: {
         title: "Je hebt helaas geen toegang tot <i>{{name}}</i>",
+        info: "Bad luck...",
         info1: "Je bent niet succesvol ingelogd bij SURF Research Access Management en je hebt dus geen toegang tot <i>{{name}}</i>.",
         info2: "Je bent niet succesvol ingelogd bij SURF Research Access Management omdat je account is geschorst, en daarom heb je geen toegang tot <i>{{name}}</i>. Geen van de samenwerkingsverbanden waar je momenteel een lid van, hebben toegang tot <i>{{name}}</i> ingeschakeld. Neem contact op met de samenwerkingsbeheerder(s) om toegang tot deze dienst in te schakelen.",
         info3: "Je bent succesvol ingelogd bij SURF Research Access Management (SRAM), maar de dienst <i>{{name}}</i> is onbekend binnen SRAM.",

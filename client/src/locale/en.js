@@ -1656,6 +1656,7 @@ I18n.translations.en = {
     },
     sfo: {
         title: "Whoops, no access to <i>{{name}}</i>",
+        info: "Bad luck...",
         info1: "You've not successfully logged into SURF Research Access Management, and therefore you don't have access to <i>{{name}}</i>.",
         info2: "You've not successfully logged into SURF Research Access Management as your account is suspended, and therefore you don't have access to <i>{{name}}</i>. None of the collaborations you are currently a member of, have enabled access to <i>{{name}}</i>. Contact your admin(s) to enable access to this service.",
         info3: "You've successfully logged into SURF Research Access Management (SRAM), but the service <i>{{name}}</i> is unknown in SRAM.",
