@@ -1215,13 +1215,15 @@ I18n.translations.nl = {
         },
     },
     aup: {
-        title1: "Om SURF Research Access Management te kunnen gebruiken, moet je akkoord gaan met de onderstaande Acceptable Use Policy.",
-        title2: "Lees het document en vink indien akkoord het vakje aan en ga door met de controle van je persoonlijke gegevens.",
-        title3: "Voor het geval je vragen of opmerkingen hebt, vermelden we onderin de tekst hoe je contact op kunt nemen.",
-        downloadPdf: "Download het beleid acceptabel gebruik (pdf)",
-        agreeWithTerms: "Ik ga akkoord met het beleid voor acceptabel gebruik van SRAM",
-        continueToValidation: "Opslaan en doorgaan",
-        agreed: "Uw overeenkomst met {{name}} is opgeslagen."
+        hi: "Hi {{name}},",
+        info: "We are ready to create your SRAM profile.",
+        name: "Display name.",
+        email: "Email address",
+        title: "Acceptable use policy",
+        disclaimer: "By logging on to SRAM, you become a user and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of our AUP.</a>",
+        agreeWithTerms: "I hereby certify that I have read the AUP and that accept them",
+        onward: "Looks good, onwards",
+        agreedFlash: "Your agreement with {{name}} has been saved."
     },
     collaborationRequest: {
         title: {

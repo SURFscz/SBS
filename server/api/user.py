@@ -3,7 +3,6 @@ import datetime
 import itertools
 import json
 import os
-import re
 import subprocess
 import tempfile
 import unicodedata
@@ -30,7 +29,7 @@ from server.db.domain import User, OrganisationMembership, CollaborationMembersh
     UserNameHistory, SshKey
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
-import unicodedata
+
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
@@ -48,12 +47,13 @@ def _user_query():
 
 
 def _user_json_response(user):
+    sec_fac_required = current_app.app_config.oidc.second_factor_authentication_required
     is_admin = {"admin": is_admin_user(user),
-                "second_factor_confirmed": True,
+                "second_factor_confirmed": bool(user.second_factor_auth) or not sec_fac_required,
                 "guest": False,
                 "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
-    return {**json_user, **is_admin, }, 200
+    return {**json_user, **is_admin}, 200
 
 
 def _get_authorization_url(state=None):
@@ -232,7 +232,6 @@ def resume_session():
     uid = user_info_json["sub"]
     user = User.query.filter(User.uid == uid).first()
     if not user:
-        # Don't - redirect to AUP page
         user = User(uid=uid, created_by="system", updated_by="system")
         add_user_claims(user_info_json, uid, user)
 
@@ -254,8 +253,12 @@ def resume_session():
     user = db.session.merge(user)
     db.session.commit()
 
-    store_user_in_session(user, second_factor_confirmed)
-    if second_factor_confirmed:
+    user_accepted_aup = user.has_agreed_with_aup()
+    store_user_in_session(user, second_factor_confirmed, user_accepted_aup)
+
+    if not user_accepted_aup:
+        location = f"{current_app.app_config.base_url}/aup"
+    elif second_factor_confirmed:
         location = session.get("original_destination", current_app.app_config.base_url)
     else:
         location = f"{current_app.app_config.base_url}/2fa"
@@ -444,7 +447,7 @@ def upgrade_super_user():
     user = db.session.merge(user)
     db.session.commit()
 
-    store_user_in_session(user, True)
+    store_user_in_session(user, True, user.has_agreed_with_aup())
 
     response = redirect(current_app.app_config.feature.admin_users_upgrade_redirect_url)
     response.headers.set("x-session-alive", "true")

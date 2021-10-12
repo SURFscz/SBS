@@ -33,11 +33,11 @@ class TestCollaboration(AbstractTest):
 
     def test_search(self):
         self.login("urn:john")
-        res = self.get("/api/collaborations/search", query_data={"q": "ComPuti"})
+        res = self.get("/api/collaborations/search", query_data={"q": "ComPuti"}, with_basic_auth=False)
         self.assertEqual(1, len(res))
 
     def test_search_forbidden(self):
-        self.login("unr:roger")
+        self.login("urn:roger")
         self.get("/api/collaborations/search", query_data={"q": "ComPuti"}, response_status_code=403,
                  with_basic_auth=False)
 

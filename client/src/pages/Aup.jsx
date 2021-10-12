@@ -3,60 +3,43 @@ import {withRouter} from "react-router-dom";
 import I18n from "i18n-js";
 import "./Aup.scss";
 import Button from "../components/Button";
-import {agreeAup, aupLinks} from "../api";
+import {agreeAup} from "../api";
 import CheckBox from "../components/CheckBox";
-import {getParameterByName} from "../utils/QueryParameters";
 
 
 class Aup extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.state = {aup: {}, agreed: false};
+        this.state = {agreed: false};
     }
 
-    componentDidMount() {
-        aupLinks().then(res => this.setState({"aup": res}));
-    }
-
-    agreeWith = () => agreeAup().then(() => {
-        const {action} = this.props;
-        if (action) {
-            action();
-        } else {
-            this.props.refreshUser(() => {
-                const location = getParameterByName("state", window.location.search) || "/home";
-                this.props.history.push(location);
-            });
-        }
+    agreeWith = () => agreeAup().then(res => {
+        this.props.refreshUser(user => {
+            const url = new URL(res.location);
+            this.props.history.push(url.pathname + url.search);
+        });
     });
 
     render() {
-        const {aup, agreed} = this.state;
-        const {currentUser} = this.props;
+        const {agreed} = this.state;
+        const {currentUser, aupConfig} = this.props;
+        const url = I18n.locale === "en" ? aupConfig.url_aup_en : aupConfig.url_aup_nl;
         return (
             <div className="mod-aup">
-
-                <p dangerouslySetInnerHTML={{__html: I18n.t("aup.info")}}/>
-                <table className="user-info">
-                    <thead/>
-                    <tbody>
-                        <tr>
-                            <td>{I18n.t("aup.name")}</td>
-                            <td>{`${currentUser.given_name} ${currentUser.family_name}`}</td>
-                        </tr>
-                        <tr>
-                            <td>{I18n.t("aup.email")}</td>
-                            <td>{currentUser.email}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <h1>{I18n.t("aup.hi", {name: currentUser.given_name || currentUser.name})}</h1>
+                <div className="disclaimer">
+                    <p dangerouslySetInnerHTML={{__html: I18n.t("aup.info")}}/>
+                </div>
                 <h2 dangerouslySetInnerHTML={{__html: I18n.t("aup.title")}}/>
-                <p dangerouslySetInnerHTML={{__html: I18n.t("aup.disclaimer")}}/>
-                <CheckBox name="aup" value={agreed} info={I18n.t("aup.agreeWithTerms")}
-                           onChange={e => this.setState({agreed: !agreed})}/>
+                <p className="" dangerouslySetInnerHTML={{__html: I18n.t("aup.disclaimer", {url: url})}}/>
+                <div className="terms">
+                    <CheckBox name="aup" value={agreed} info={I18n.t("aup.agreeWithTerms")}
+                              onChange={() => this.setState({agreed: !agreed})}/>
+                </div>
                 <Button className="proceed" onClick={this.agreeWith}
-                         txt={I18n.t("aup.onward")} disabled={!agreed}/>
+                        txt={I18n.t("aup.onward")} disabled={!agreed}/>
+
             </div>
         )
     }

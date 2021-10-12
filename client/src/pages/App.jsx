@@ -44,6 +44,7 @@ import DeadEnd from "./DeadEnd";
 import SecondFactorAuthentication from "./SecondFactorAuthentication";
 import ServiceDenied from "./ServiceDenied";
 import UserDetail from "./UserDetail";
+import Aup from "./Aup";
 
 addIcons();
 
@@ -97,17 +98,14 @@ class App extends React.Component {
         }
     };
 
-    aupConfirmed = (user, aupVersion) => {
-        if (!user.guest && user.aups && user.aups.find(aup => aup.au_version === aupVersion)) {
-            user.aupConfirmed = true;
-        }
-    }
-
-    markUserAdmin = user => {
+    markUserAdmin = (user, aupConfig) => {
         const {config} = this.state;
         if (config.admin_users_upgrade && user.admin && !user.confirmed_super_user) {
             user.admin = false;
             user.needsSuperUserConfirmation = true;
+        }
+        if (user.user_accepted_aup || (!user.guest && user.aups && user.aups.find(aup => aup.au_version === aupConfig.version))) {
+            user.aupConfirmed = true;
         }
         return user;
     }
@@ -118,14 +116,13 @@ class App extends React.Component {
         if (location.href.indexOf("error") > -1) {
             this.setState({loading: false});
         } else {
-            config().then(res => {
-                this.setState({config: res},
-                    () => Promise.all([me(res), aupLinks()]).then(results => {
-                        const currentUser = results[0];
+            Promise.all([config(), aupLinks()]).then(res => {
+                this.setState({config: res[0], aupConfig: res[1]},
+                    () => me(res).then(results => {
+                        const currentUser = results;
                         if (currentUser && currentUser.uid) {
-                            const user = this.markUserAdmin(currentUser);
-                            this.aupConfirmed(user, results[1].version);
-                            this.setState({currentUser: user, aupConfig: results[1], loading: false});
+                            const user = this.markUserAdmin(currentUser, res[1]);
+                            this.setState({currentUser: user, loading: false});
                             if (currentUser.successfully_activated) {
                                 setFlash(I18n.t("login.successfullyActivated"))
                             }
@@ -155,16 +152,17 @@ class App extends React.Component {
         const {user: selectedUser, callback} = res;
         if (isEmpty(selectedUser)) {
             me(this.state.config).then(currentUser => {
+                const {aupConfig} = this.state;
                 this.setState({
-                    currentUser: this.markUserAdmin(currentUser),
+                    currentUser: this.markUserAdmin(currentUser, aupConfig),
                     impersonator: null,
                     loading: false
                 }, callback);
             });
         } else {
             other(selectedUser.uid).then(user => {
-                const {currentUser, impersonator} = this.state;
-                const newUser = this.markUserAdmin(user);
+                const {currentUser, impersonator, aupConfig} = this.state;
+                const newUser = this.markUserAdmin(user, aupConfig);
                 this.setState({currentUser: newUser, impersonator: impersonator || currentUser}, callback);
             });
         }
@@ -172,15 +170,15 @@ class App extends React.Component {
 
     refreshUserMemberships = callback => {
         refreshUser().then(json => {
-            const {impersonator} = this.state;
-            const user = this.markUserAdmin(json);
-            this.setState({currentUser: user, impersonator: impersonator}, () => callback && callback());
+            const {impersonator, aupConfig} = this.state;
+            const user = this.markUserAdmin(json, aupConfig);
+            this.setState({currentUser: user, impersonator: impersonator}, () => callback && callback(user));
         });
     };
 
     render() {
         const {
-            loading, errorDialogAction, errorDialogOpen, currentUser, impersonator, config, reloading
+            loading, errorDialogAction, errorDialogOpen, currentUser, impersonator, config, reloading, aupConfig
         } = this.state;
         if (loading) {
             return null; // render null when app is not ready yet
@@ -236,6 +234,12 @@ class App extends React.Component {
                                                                             refreshUser={this.refreshUserMemberships}
                                                                             update={true}
                                                                             {...props}/>}/>
+                        <Route path="/aup"
+                               render={props => <Aup currentUser={currentUser}
+                                                     refreshUser={this.refreshUserMemberships}
+                                                     aupConfig={aupConfig}
+                                                     {...props}/>}/>
+
                         <Route path="/registration"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}

@@ -4,6 +4,9 @@ import {login} from "../utils/Login";
 
 export function ProtectedRoute({currentUser, Component, redirectToLogin = true, ...res}) {
     if (!currentUser.guest) {
+        if (!currentUser.aupConfirmed) {
+            return <Redirect to="/aup"/>
+        }
         if (currentUser.second_factor_confirmed) {
             return <Route render={props => <Component user={currentUser} {...res} {...props}/>}/>;
         }

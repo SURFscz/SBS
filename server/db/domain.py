@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 from uuid import uuid4
 
+from flask import current_app
 from sqlalchemy import select, func
 from sqlalchemy.orm import column_property
 
@@ -55,6 +56,9 @@ class User(Base, db.Model):
                                             passive_deletes=True)
     mfa_reset_token = db.Column("mfa_reset_token", db.String(length=512), nullable=True)
     user_mails = db.relationship("UserMail", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
+
+    def has_agreed_with_aup(self):
+        return len([aup for aup in self.aups if aup.au_version == str(current_app.app_config.aup.version)]) > 0
 
 
 services_organisations_association = db.Table(
@@ -285,7 +289,8 @@ class Service(Base, db.Model, LogoMixin):
     automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
     access_allowed_for_all = db.Column("access_allowed_for_all", db.Boolean(), nullable=True, default=False)
     white_listed = db.Column("white_listed", db.Boolean(), nullable=True, default=False)
-    non_member_users_access_allowed = db.Column("non_member_users_access_allowed", db.Boolean(), nullable=True, default=False)
+    non_member_users_access_allowed = db.Column("non_member_users_access_allowed", db.Boolean(), nullable=True,
+                                                default=False)
     research_scholarship_compliant = db.Column("research_scholarship_compliant", db.Boolean(),
                                                nullable=True,
                                                default=False)

@@ -106,7 +106,6 @@ class NewInvitation extends React.Component {
         });
     }
 
-
     cancel = () => {
         this.setState({confirmationDialogOpen: true});
     };

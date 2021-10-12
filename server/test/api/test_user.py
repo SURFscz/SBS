@@ -9,9 +9,10 @@ from flask import current_app
 
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
-from server.db.domain import Organisation, Collaboration, User
+from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name
+from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name, \
+    collaboration_ai_computing_uuid
 from server.tools import read_file
 
 
@@ -338,3 +339,15 @@ class TestUser(AbstractTest):
         # Ensure max limit of 16 - full_text_search_autocomplete_limit
         res = self.get("/api/users/query", query_data={"q": "@"})
         self.assertEqual(full_text_search_autocomplete_limit, len(res))
+
+    def test_aup_agreed(self):
+        john = self.find_entity_by_name(User, john_name)
+        aups = Aup.query.filter(Aup.user == john).all()
+        for aup in aups:
+            db.session.delete(aup)
+
+        self.login()
+        res = self.get("/api/collaborations/find_by_identifier",
+                       query_data={"identifier": collaboration_ai_computing_uuid},
+                       with_basic_auth=False, response_status_code=401)
+        self.assertEqual("AUP not accepted", res["message"])

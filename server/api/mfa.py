@@ -121,7 +121,7 @@ def verify2fa():
         user.last_login_date = datetime.datetime.now()
         user = db.session.merge(user)
         db.session.commit()
-        store_user_in_session(user, True)
+        store_user_in_session(user, True, user.has_agreed_with_aup())
         location = session.get("original_destination", current_app.app_config.base_url)
         in_proxy_flow = session.get("in_proxy_flow", False)
         if in_proxy_flow:
@@ -192,7 +192,7 @@ def sfo():
     # need to remember this if the user response comes back
     session["in_proxy_flow"] = True
 
-    store_user_in_session(user, False)
+    store_user_in_session(user, False, user.has_agreed_with_aup())
 
     return redirect(f"{current_app.app_config.base_url}/2fa")
 
