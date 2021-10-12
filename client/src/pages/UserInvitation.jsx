@@ -1,5 +1,7 @@
 import React from "react";
 import {
+    agreeAup,
+    aupLinks,
     invitationAccept,
     invitationByHash,
     invitationDecline,
@@ -37,7 +39,8 @@ class UserInvitation extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: this.closeConfirmationDialog,
             loading: true,
-            skippedLoginStep: false
+            skippedLoginStep: false,
+            aup: {}, agreed: false
         };
     }
 
@@ -46,8 +49,11 @@ class UserInvitation extends React.Component {
         const today = moment();
         if (params.hash) {
             const {isOrganisationInvite} = this.props;
-            const promise = isOrganisationInvite ? organisationInvitationByHash(params.hash) : invitationByHash(params.hash);
-            promise.then(json => {
+            Promise.all([
+                isOrganisationInvite ? organisationInvitationByHash(params.hash) : invitationByHash(params.hash),
+                aupLinks()
+            ]).then(res => {
+                const json = res[0];
                 const isExpired = today.isAfter(moment(json.expiry_date * 1000));
                 const {user} = this.props;
                 let skippedLoginStep = false;
@@ -71,8 +77,10 @@ class UserInvitation extends React.Component {
     accept = () => {
         const {invite} = this.state;
         const {isOrganisationInvite} = this.props;
-        const promise = isOrganisationInvite ? organisationInvitationAccept(invite) : invitationAccept(invite);
-        promise.then(() => {
+        Promise.all([
+            isOrganisationInvite ? organisationInvitationAccept(invite) : invitationAccept(invite),
+            agreeAup()
+        ]).then(() => {
             this.props.refreshUser(() => {
                 this.props.history.push(`/${isOrganisationInvite ? "organisations" : "collaborations"}/${isOrganisationInvite ? invite.organisation_id : invite.collaboration_id}?first=true`);
             });
@@ -120,11 +128,11 @@ class UserInvitation extends React.Component {
         });
     };
 
-    renderAcceptInvitationStep = (isOrganisationInvite, invite, skippedLoginStep) => {
+    renderAUPStep = (isOrganisationInvite, invite, skippedLoginStep) => {
         const hasAup = !isOrganisationInvite && invite.collaboration.accepted_user_policy;
-        const circleClassName = skippedLoginStep ? "circle two-quarters" : "circle two-third"
+        const circleClassName = "circle full";
         const stepNow = skippedLoginStep ? "1" : "2";
-        const stepTotal = skippedLoginStep ? "2" : "3";
+        const stepTotal = skippedLoginStep ? "1" : "2";
         return (
             <section className="step-container">
                 <div className="step">
@@ -132,13 +140,14 @@ class UserInvitation extends React.Component {
                         <span>{I18n.t("models.invitation.steps.progress", {now: stepNow, total: stepTotal})}</span>
                     </div>
                     <div className="step-actions">
-                        <h1>{I18n.t("models.invitation.steps.invite")}</h1>
+                        <h1>{I18n.t("models.invitation.steps.aup")}</h1>
                         <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.collaborate")})}</span>
                     </div>
                 </div>
                 {!isOrganisationInvite && <div className="disclaimer">
                     <p>{I18n.t("models.invitation.disclaimer")}</p>
-                    {hasAup && <p dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.disclaimerAup", {aup: invite.collaboration.accepted_user_policy})}}/>}
+                    {hasAup &&
+                    <p dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.disclaimerAup", {aup: invite.collaboration.accepted_user_policy})}}/>}
                     <p>{I18n.t("models.invitation.disclaimerQuestions")}</p>
                 </div>}
                 <Button onClick={this.accept}
@@ -153,24 +162,27 @@ class UserInvitation extends React.Component {
         return (
             <section className="step-container">
                 <div className="step">
-                    <div className="circle one-third">
-                        <span>{I18n.t("models.invitation.steps.progress", {now: "1", total: "3"})}</span>
+                    <div className="circle two-quarters">
+                        <span>{I18n.t("models.invitation.steps.progress", {now: "1", total: "2"})}</span>
                     </div>
                     <div className="step-actions">
                         <h1>{I18n.t("models.invitation.steps.login")}</h1>
                         <span>{I18n.t("models.invitation.steps.next", {step: I18n.t("models.invitation.steps.invite")})}</span>
                     </div>
                 </div>
+                <p className="info"
+                           dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.followingSteps")}}/>
                 <Button onClick={login} html={I18n.t("models.invitation.loginWithSub")} txt="login"/>
-                <p className="tip"><sup>*</sup>{I18n.t("models.invitation.loginTip")}</p>
             </section>
         )
     }
 
     render() {
         const {user, isOrganisationInvite} = this.props;
-        const { invite, isExpired, errorOccurred, confirmationDialogOpen, cancelDialogAction,
-            confirmationDialogQuestion, confirmationDialogAction, skippedLoginStep, loading } = this.state;
+        const {
+            invite, isExpired, errorOccurred, confirmationDialogOpen, cancelDialogAction,
+            confirmationDialogQuestion, confirmationDialogAction, skippedLoginStep, loading
+        } = this.state;
         if (loading) {
             return <SpinnerField/>
         }
@@ -188,18 +200,18 @@ class UserInvitation extends React.Component {
                     {isExpired &&
                     <p className="expired"><ErrorIndicator msg={expiredMessage}/></p>}
                     {!isExpired && <div className="invitation-inner">
-                        <p className="info">{I18n.t("models.invitation.welcome")}</p>
                         <section className="invitation">
-                            <span dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.invited", {
-                                type: isOrganisationInvite ? I18n.t("welcomeDialog.organisation") : I18n.t("welcomeDialog.collaboration"),
-                                collaboration: isOrganisationInvite ? invite.organisation.name : invite.collaboration.name,
-                                inviter: invite.user.name,
-                                email: invite.user.email
-                            })}}/>
+                            <span dangerouslySetInnerHTML={{
+                                __html: I18n.t("models.invitation.invited", {
+                                    type: isOrganisationInvite ? I18n.t("welcomeDialog.organisation") : I18n.t("welcomeDialog.collaboration"),
+                                    collaboration: isOrganisationInvite ? invite.organisation.name : invite.collaboration.name,
+                                    inviter: invite.user.name,
+                                    email: invite.user.email
+                                })
+                            }}/>
                         </section>
-                        <p className="info">{I18n.t("models.invitation.followingSteps")}</p>
                         {user.guest && this.renderLoginStep()}
-                        {!user.guest && this.renderAcceptInvitationStep(isOrganisationInvite, invite, skippedLoginStep)}
+                        {!user.guest && this.renderAUPStep(isOrganisationInvite, invite, skippedLoginStep)}
                     </div>}
 
                 </div>}

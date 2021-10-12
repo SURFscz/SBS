@@ -27,7 +27,7 @@ export default function ServiceDenied() {
                     loop
                     src={service_denied}
                     style={{height: "auto", width: "85px", "maxWidth": "85px"}}/>
-                {<span dangerouslySetInnerHTML={{__html: I18n.t(`sfo.info${status}`, {name: serviceName})}}/>}
+                {<span dangerouslySetInnerHTML={{__html: I18n.t(`sfo.info${status || ""}`, {name: serviceName})}}/>}
             </div>
         </div>
     );
