@@ -9,6 +9,8 @@ import App from './pages/App';
 import {getParameterByName} from "./utils/QueryParameters";
 import {isEmpty} from "./utils/Utils";
 import moment from "moment-timezone";
+import 'moment/locale/nl';
+import 'moment/locale/en-gb';
 import I18n from "i18n-js";
 import Cookies from "js-cookie";
 import "./locale/en";

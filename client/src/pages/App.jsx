@@ -122,7 +122,6 @@ class App extends React.Component {
                 this.setState({config: res},
                     () => Promise.all([me(res), aupLinks()]).then(results => {
                         const currentUser = results[0];
-                        debugger;
                         if (currentUser && currentUser.uid) {
                             const user = this.markUserAdmin(currentUser);
                             this.aupConfirmed(user, results[1].version);
