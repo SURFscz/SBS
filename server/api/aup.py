@@ -1,16 +1,15 @@
 # -*- coding: future_fstrings -*-
-from flask import Blueprint, current_app, jsonify
+from flask import Blueprint, current_app, jsonify, session
 
 from server.api.base import json_endpoint
 from server.auth.security import current_user_id
 from server.db.domain import Aup
 from server.db.models import save
-from server.tools import read_file
 
 aup_api = Blueprint("aup_api", __name__, url_prefix="/api/aup")
 
 
-@aup_api.route("/", methods=["GET"], strict_slashes=False)
+@aup_api.route("/info", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def links():
     return {
@@ -23,6 +22,11 @@ def links():
 @aup_api.route("/agree", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def agreed_aup():
-    aup = Aup(au_version=str(current_app.app_config.aup.version), user_id=current_user_id())
-    aup_json = jsonify(aup).json
-    return save(Aup, custom_json=aup_json, allow_child_cascades=False)
+    user_id = current_user_id()
+    version = str(current_app.app_config.aup.version)
+    if Aup.query.filter(Aup.user_id == user_id, Aup.au_version == version).count() == 0:
+        aup = Aup(au_version=version, user_id=user_id)
+        save(Aup, custom_json=jsonify(aup).json, allow_child_cascades=False)
+    session["user"] = {**session["user"], **{"user_accepted_aup": True}}
+    location = session.get("original_destination", current_app.app_config.base_url)
+    return {"location": location}, 201

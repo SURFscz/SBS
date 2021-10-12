@@ -92,7 +92,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && true) {
+    if (config.local && false) {
         let sub = "urn:john";
         // sub = "urn:sarah";
         // sub = "urn:james";
@@ -538,7 +538,7 @@ export function deleteApiKey(id) {
 
 //Aup
 export function aupLinks() {
-    return fetchJson("/api/aup");
+    return fetchJson("/api/aup/info");
 }
 
 export function agreeAup() {

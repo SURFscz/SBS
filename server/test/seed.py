@@ -95,6 +95,9 @@ def _persist(db, *objs):
         for attr in required_attrs:
             if hasattr(obj, attr):
                 setattr(obj, attr, "urn:admin")
+        if isinstance(obj, User):
+            aup = Aup(au_version="1", user=obj)
+            db.session.add(aup)
         db.session.add(obj)
 
 
@@ -194,9 +197,6 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     _persist(db, user_one_suspend_notification1, user_two_suspend_notification1, user_two_suspend_notification2,
              user_suspended_notification1, user_suspended_notification2)
-
-    aup = Aup(au_version=app_config.aup.pdf, user=john)
-    _persist(db, aup)
 
     uuc = Organisation(name=uuc_name, short_name="uuc", identifier=str(uuid.uuid4()),
                        description="Unincorporated Urban Community", logo=read_image("uuc.jpeg"),
@@ -424,6 +424,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                                                    service=wireless, is_member_request=True)
     _persist(db, service_connection_request_network, service_connection_request_wiki,
              service_connection_request_wireless)
+
     if perf_test:
         users = []
         for i in range(1, 84):

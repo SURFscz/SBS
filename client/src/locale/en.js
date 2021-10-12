@@ -1216,11 +1216,12 @@ I18n.translations.en = {
         },
     },
     aup: {
-        info: "We are ready to create your SRAM profile with the following information.",
+        hi: "Hi {{name}},",
+        info: "We are ready to create your SRAM profile.",
         name: "Display name.",
         email: "Email address",
         title: "Acceptable use policy",
-        disclaimer: "By logging on to SRAM, you become a user and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of out AUP.</a>",
+        disclaimer: "By logging on to SRAM, you become a user and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of our AUP.</a>",
         agreeWithTerms: "I hereby certify that I have read the AUP and that accept them",
         onward: "Looks good, onwards",
         agreedFlash: "Your agreement with {{name}} has been saved."
