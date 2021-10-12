@@ -3,6 +3,7 @@ import datetime
 import itertools
 import json
 import os
+import re
 import subprocess
 import tempfile
 import unicodedata
@@ -29,7 +30,7 @@ from server.db.domain import User, OrganisationMembership, CollaborationMembersh
     UserNameHistory, SshKey
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
-
+import unicodedata
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
@@ -41,6 +42,7 @@ def _user_query():
                  .subqueryload(CollaborationMembership.collaboration)) \
         .options(joinedload(User.join_requests)
                  .subqueryload(JoinRequest.collaboration)) \
+        .options(joinedload(User.aups)) \
         .options(joinedload(User.collaboration_requests)
                  .subqueryload(CollaborationRequest.organisation))
 
@@ -230,6 +232,7 @@ def resume_session():
     uid = user_info_json["sub"]
     user = User.query.filter(User.uid == uid).first()
     if not user:
+        # Don't - redirect to AUP page
         user = User(uid=uid, created_by="system", updated_by="system")
         add_user_claims(user_info_json, uid, user)
 
@@ -278,7 +281,7 @@ def me():
 
         # Do not expose the actual secret of second_factor_auth
         user_from_session["second_factor_auth"] = bool(user_from_db.second_factor_auth)
-        # Do not send all information is second_factor is required
+        # Do not send all information if second_factor is required
         if not user_from_session["second_factor_confirmed"]:
             return user_from_session, 200
 
