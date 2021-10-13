@@ -1587,21 +1587,23 @@ I18n.translations.nl = {
     mfa: {
         register: {
             title: "Tweede-factor-authenticatie is vereist",
+            titleUpdate: "Voeg een Tweede-factor-authenticatie apparaat toe",
             info1: "Je bent succesvol ingelogd met een gebruikersnaam en wachtwoord bij {{name}}. SURF Research Access Management vereist tweede-factor-authenticatie. Dit betekent een extra controle om te verifiëren dat jij het bent.",
             info2: "Voer de volgende stappen uit om tweede-factor-authenticatie in te stellen:",
             step: "Stap {{nbr}}",
             getApp: "Download de app",
+            unknownIdp: "een onbekende organisatie",
+            getAppUpdate: "2. Voeg SRAM toe aan je authenticator app",
+            new: "nieuw",
             getAppInfo: "Download en installeer de Google Authenticator of Microsoft Authenticator.",
+            addSRAM: "Klik op het '+' icoon in de app",
             scan: "Scan deze QR-code",
             scanInfo: "Open de authenticator-app en:",
-            scanSteps: [
-                "Tik op het '+' icoon in de app",
-                "Scan de onderstaande QR-code met de camera van je telefoon"
-            ],
-            verificationCode: "Voer verificatiecode in",
+            verificationCode: "2. Voer verificatiecode in",
+            verificationCodeUpdate: "3. Voer verificatiecode in",
             verificationCodeInfo: "Zodra de QR-code hierboven is gescand, voer je de 6-cijferige verificatiecode van de app in",
-            verificationCodePlaceholder: "6-cijferige code",
-            verify: "Verifiëren en activeren"
+            verify: "Verifiëren en activeren",
+            next: "Volgende"
         },
         update: {
             "info1": "Volg de onderstaande stappen om je tweedefactorauthenticatie bij te werken.",

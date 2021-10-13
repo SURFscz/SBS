@@ -164,7 +164,7 @@ class Collaboration(Base, db.Model, LogoMixin):
     uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     short_name = db.Column("short_name", db.String(length=255), nullable=True)
     global_urn = db.Column("global_urn", db.Text, nullable=True)
-    accepted_user_policy = db.Column("accepted_user_policy", db.String(length=255), nullable=True)
+    accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     status = db.Column("status", db.String(length=255), nullable=False, default=STATUS_ACTIVE)
     last_activity_date = db.Column("last_activity_date", db.DateTime(timezone=True), nullable=False,
                                    server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))

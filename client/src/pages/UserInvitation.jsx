@@ -49,27 +49,24 @@ class UserInvitation extends React.Component {
         const today = moment();
         if (params.hash) {
             const {isOrganisationInvite} = this.props;
-            Promise.all([
-                isOrganisationInvite ? organisationInvitationByHash(params.hash) : invitationByHash(params.hash),
-                aupLinks()
-            ]).then(res => {
-                const json = res[0];
-                const isExpired = today.isAfter(moment(json.expiry_date * 1000));
+            const promise = isOrganisationInvite ? organisationInvitationByHash(params.hash) : invitationByHash(params.hash)
+            promise.then(res => {
+                const isExpired = today.isAfter(moment(res.expiry_date * 1000));
                 const {user} = this.props;
                 let skippedLoginStep = false;
                 if (user.guest) {
                     //We need to store that we skip step 1
                     window.localStorage.setItem("step1", "true");
                 } else {
-                    const step1 = window.localStorage.getItem("step1");
-                    skippedLoginStep = isEmpty(step1);
-                    window.localStorage.removeItem("step1");
+                    this.props.history.push(`/collaborations-invite/${params.hash}`);
                 }
-                this.setState({invite: json, isExpired: isExpired, loading: false, skippedLoginStep: skippedLoginStep});
-            }).catch(() => {
+                this.setState({invite: res, isExpired: isExpired, loading: false, skippedLoginStep: skippedLoginStep});
+            }).catch(e => {
+                debugger;
                 this.props.history.push("/404");
             });
         } else {
+            debugger;
             this.props.history.push("/404");
         }
     };
