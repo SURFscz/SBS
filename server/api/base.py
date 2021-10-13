@@ -46,6 +46,10 @@ def auth_filter(app_config):
             is_whitelisted_url = True
             session["destination_url"] = url
 
+    if "user" in session and "admin" in session["user"] and session["user"]["admin"]:
+        request_context.is_authorized_api_call = False
+        return
+
     if "user" in session and not session["user"].get("guest"):
         if not session["user"].get("user_accepted_aup") and "api/aup/agree" not in url and not is_whitelisted_url:
             raise Unauthorized(description="AUP not accepted")

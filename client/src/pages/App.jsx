@@ -104,8 +104,9 @@ class App extends React.Component {
             user.admin = false;
             user.needsSuperUserConfirmation = true;
         }
-        if (user.user_accepted_aup || (!user.guest && user.aups && user.aups.find(aup => aup.au_version === aupConfig.version))) {
+        if (user.user_accepted_aup || (user.aups && user.aups.find(aup => aup.au_version === aupConfig.version))) {
             user.aupConfirmed = true;
+            user.user_accepted_aup = true;
         }
         return user;
     }
@@ -301,12 +302,6 @@ class App extends React.Component {
                         <Route path="/service-connection-requests/:hash"
                                render={props => <ServiceConnectionRequest {...props}/>}/>
 
-                        <Route exact path="/organisation-invitations/:action/:hash"
-                               render={props => <UserInvitation user={currentUser}
-                                                                isOrganisationInvite={true}
-                                                                refreshUser={this.refreshUserMemberships}
-                                                                {...props}/>}/>
-
                         <Route exact path="/new-organisation-invite/:organisation_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
                                                                 Component={NewOrganisationInvitation}
@@ -318,8 +313,20 @@ class App extends React.Component {
                                                                 {...props}/>}/>
 
                         <Route exact path="/invitations/:action/:hash"
+                               render={props => currentUser.guest ?
+                                   <UserInvitation user={currentUser}
+                                                   isOrganisationInvite={false}
+                                                   refreshUser={this.refreshUserMemberships}
+                                                   {...props}/>
+                                   : <ProtectedRoute config={config}
+                                                     currentUser={currentUser}
+                                                     refreshUser={this.refreshUserMemberships}
+                                                     Component={CollaborationDetail} {...props}/>
+                               }/>
+
+                        <Route exact path="/organisation-invitations/:action/:hash"
                                render={props => <UserInvitation user={currentUser}
-                                                                isOrganisationInvite={false}
+                                                                isOrganisationInvite={true}
                                                                 refreshUser={this.refreshUserMemberships}
                                                                 {...props}/>}/>
 
@@ -373,9 +380,9 @@ class App extends React.Component {
                                    refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
                         {currentUser.admin && <Route exact path="/users/:id/:tab?"
-                               render={props => <ProtectedRoute config={config}
-                                                                currentUser={currentUser}
-                                                                Component={UserDetail} {...props}/>}/>}
+                                                     render={props => <ProtectedRoute config={config}
+                                                                                      currentUser={currentUser}
+                                                                                      Component={UserDetail} {...props}/>}/>}
 
                         <Route path="/system/:tab?"
                                render={props => <ProtectedRoute

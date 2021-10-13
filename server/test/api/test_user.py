@@ -12,7 +12,7 @@ from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name, \
-    collaboration_ai_computing_uuid
+    collaboration_ai_computing_uuid, sarah_name
 from server.tools import read_file
 
 
@@ -341,12 +341,12 @@ class TestUser(AbstractTest):
         self.assertEqual(full_text_search_autocomplete_limit, len(res))
 
     def test_aup_agreed(self):
-        john = self.find_entity_by_name(User, john_name)
-        aups = Aup.query.filter(Aup.user == john).all()
+        sarah = self.find_entity_by_name(User, sarah_name)
+        aups = Aup.query.filter(Aup.user == sarah).all()
         for aup in aups:
             db.session.delete(aup)
 
-        self.login()
+        self.login("urn:sarah")
         res = self.get("/api/collaborations/find_by_identifier",
                        query_data={"identifier": collaboration_ai_computing_uuid},
                        with_basic_auth=False, response_status_code=401)

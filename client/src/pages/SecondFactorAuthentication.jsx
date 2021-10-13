@@ -41,7 +41,7 @@ class SecondFactorAuthentication extends React.Component {
             get2fa().then(res => {
                 this.setState({
                     qrCode: res.qr_code_base64,
-                    idp_name: res.idp_name,
+                    idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
                     loading: false
                 });
                 this.focusCode();

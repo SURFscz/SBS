@@ -4,13 +4,13 @@ import re
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app, g as request_context
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Conflict, Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
 from server.db.defaults import default_expiry_date
-from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User
+from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
 from server.db.models import delete
 from server.mail import mail_collaboration_invitation
 
@@ -34,7 +34,15 @@ def _invitation_query():
 @json_endpoint
 def invitations_by_hash():
     hash_value = query_param("hash")
-    invitation = _invitation_query() \
+    invitation_query = _invitation_query()
+    invitation = invitation_query \
+        .options(selectinload(Invitation.groups)) \
+        .options(selectinload(Invitation.collaboration).selectinload(Collaboration.collaboration_memberships)
+                 .selectinload(CollaborationMembership.user)) \
+        .options(selectinload(Invitation.collaboration).selectinload(Collaboration.groups)) \
+        .options(selectinload(Invitation.collaboration).selectinload(Collaboration.services)) \
+        .options(selectinload(Invitation.collaboration).selectinload(Collaboration.organisation)
+                 .selectinload(Organisation.services)) \
         .filter(Invitation.hash == hash_value) \
         .one()
     return invitation, 200
