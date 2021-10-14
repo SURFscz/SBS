@@ -4,6 +4,7 @@ import I18n from "i18n-js";
 import {ReactComponent as InformationIcon} from "../icons/informational.svg";
 import "./WelcomeDialog.scss";
 import Button from "./Button";
+import "react-mde/lib/styles/css/react-mde-all.css";
 import OrganisationEn from "./welcome/OrganisationEn";
 import CollaborationEn from "./welcome/CollaborationEn";
 import OrganisationNl from "./welcome/OrganisationNl";
@@ -11,6 +12,8 @@ import CollaborationNL from "./welcome/CollaborationNl";
 import {ROLES} from "../utils/UserRole";
 import ToggleSwitch from "./redesign/ToggleSwitch";
 import {isEmpty} from "../utils/Utils";
+import {convertToHtml} from "../utils/Markdown";
+import CheckBox from "./CheckBox";
 
 export default function WelcomeDialog({
                                           name,
@@ -24,6 +27,7 @@ export default function WelcomeDialog({
                                       }) {
 
     const [toggleRole, setToggleRole] = useState(role);
+    const [disabled, setDisabled] = useState(collaboration && collaboration.accepted_user_policy);
 
     const doToggleRole = () => {
         if (organisation) {
@@ -32,6 +36,7 @@ export default function WelcomeDialog({
             setToggleRole(toggleRole === ROLES.COLL_ADMIN ? ROLES.COLL_MEMBER : ROLES.COLL_ADMIN);
         }
     }
+
     return (
         <Modal
             isOpen={isOpen}
@@ -60,11 +65,24 @@ export default function WelcomeDialog({
                 {(!organisation && I18n.locale === "nl") && <CollaborationNL role={toggleRole}/>}
             </section>
             {(collaboration && !isEmpty(collaboration.accepted_user_policy)) &&
-            <section className="accepted_user_policy">
-                {JSON.stringify(collaboration.accepted_user_policy)}
+            <section className="accepted-user-policy-container">
+                <h2>{I18n.t("aup.collaboration.title")}</h2>
+                <p>{I18n.t("aup.collaboration.info")}</p>
+                <div className="mde-preview-content accepted-user-policy">
+                    <div className="inner-accepted-user-policy">
+                        <p dangerouslySetInnerHTML={{
+                            __html: convertToHtml(collaboration.accepted_user_policy, true)
+                        }}/>
+                    </div>
+                </div>
+                <div className="terms">
+                    <CheckBox name="aup" value={!disabled} info={I18n.t("aup.collaboration.agreeWithTerms")}
+                              onChange={() => setDisabled(!disabled)}/>
+                </div>
             </section>}
             <Button
                 txt={I18n.t("welcomeDialog.ok", {type: organisation ? I18n.t("welcomeDialog.organisation") : I18n.t("welcomeDialog.collaboration")})}
+                disabled={disabled}
                 onClick={close}/>
         </Modal>
     );

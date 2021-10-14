@@ -546,9 +546,8 @@ class CollaborationDetail extends React.Component {
         const {invitation, isInvitation} = this.state;
         if (isInvitation) {
             invitationAccept(invitation).then(() => {
-                this.props.refreshUser(() => {
-                    this.props.history.push(`/collaborations"}/${invitation.collaboration_id}`);
-                });
+                //brute force as the component is the same - known router limitation
+                window.location.href = `/collaborations/${invitation.collaboration_id}`;
             }).catch(e => {
                 if (e.response && e.response.json) {
                     e.response.json().then(res => {
@@ -644,13 +643,19 @@ class CollaborationDetail extends React.Component {
             collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
             collaborationJoinRequest, joinRequestDialogOpen, alreadyMember, lastAdminWarning,
-            isWarning, isInvitation
+            isWarning, isInvitation, invitation
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
         const {user, refreshUser} = this.props;
         const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
+        let role;
+        if (isInvitation) {
+            role = invitation.intended_role === "admin" ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER;
+        } else  {
+            role = adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER;
+        }
         return (
             <>
                 {(adminOfCollaboration && showMemberView) &&
@@ -660,7 +665,7 @@ class CollaborationDetail extends React.Component {
 
                 <WelcomeDialog name={collaboration.name}
                                isOpen={firstTime}
-                               role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
+                               role={role}
                                organisation={null}
                                collaboration={collaboration}
                                isAdmin={user.admin}

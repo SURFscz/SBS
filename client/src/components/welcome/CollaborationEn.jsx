@@ -16,7 +16,7 @@ export default function CollaborationEn({role}) {
             <p>As a member of a collaboration, you can access all services that are connected to this
                 collaboration. Accounts for you have been created automatically.</p>
             <p>As a member you can also see your fellow members and contact details.</p>
-            <p>Happy researching!</p>
+            <p className="no-margin">Happy researching!</p>
         </div>}
             {role === ROLES.COLL_ADMIN  && <div>
                 <p>As an collaboration admin, here's what you can do:</p>
