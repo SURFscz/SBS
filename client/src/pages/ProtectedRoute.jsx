@@ -10,7 +10,7 @@ export function ProtectedRoute({currentUser, Component, redirectToLogin = true, 
         if (currentUser.second_factor_confirmed) {
             return <Route render={props => <Component user={currentUser} {...res} {...props}/>}/>;
         }
-        return <Redirect to="/2fa"/>
+        return <Redirect to="/2fa"/>;
     } else if (redirectToLogin) {
         setTimeout(login, 5);
         return null;
