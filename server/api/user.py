@@ -46,10 +46,10 @@ def _user_query():
                  .subqueryload(CollaborationRequest.organisation))
 
 
-def _user_json_response(user):
-    sec_fac_required = current_app.app_config.oidc.second_factor_authentication_required
+def _user_json_response(user, auto_set_second_factor_confirmed):
+    second_factor_confirmed = auto_set_second_factor_confirmed or session["user"]["second_factor_confirmed"]
     is_admin = {"admin": is_admin_user(user),
-                "second_factor_confirmed": bool(user.second_factor_auth) or not sec_fac_required,
+                "second_factor_confirmed": second_factor_confirmed,
                 "guest": False,
                 "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
@@ -306,7 +306,7 @@ def me():
 def refresh():
     user_id = current_user_id()
     user = _user_query().filter(User.id == user_id).one()
-    return _user_json_response(user)
+    return _user_json_response(user, False)
 
 
 @user_api.route("/suspended", strict_slashes=False)
@@ -396,7 +396,7 @@ def other():
 
     uid = query_param("uid")
     user = _user_query().filter(User.uid == uid).one()
-    return _user_json_response(user)
+    return _user_json_response(user, True)
 
 
 @user_api.route("/find_by_id", strict_slashes=False)
