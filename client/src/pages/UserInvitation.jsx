@@ -1,7 +1,6 @@
 import React from "react";
 import {
     agreeAup,
-    aupLinks,
     invitationAccept,
     invitationByHash,
     invitationDecline,
@@ -17,7 +16,6 @@ import moment from "moment";
 import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
-import {isEmpty} from "../utils/Utils";
 import SpinnerField from "../components/redesign/SpinnerField";
 
 class UserInvitation extends React.Component {
@@ -168,7 +166,7 @@ class UserInvitation extends React.Component {
                     </div>
                 </div>
                 <p className="info"
-                           dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.followingSteps")}}/>
+                   dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.followingSteps")}}/>
                 <Button onClick={login} html={I18n.t("models.invitation.loginWithSub")} txt="login"/>
             </section>
         )

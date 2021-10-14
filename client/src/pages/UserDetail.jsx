@@ -74,8 +74,8 @@ class UserDetail extends React.Component {
                     <label>{I18n.t("models.collaborations.title")}</label>
                     {isEmpty(user.collaboration_memberships) && "-"}
                     {!isEmpty(user.collaboration_memberships) && <ul>
-                        {user.collaboration_memberships.map(ms =>
-                            <li>{`${ms.collaboration.name} (${I18n.t('profile.' + ms.role)})`}</li>)}
+                        {user.collaboration_memberships.map((ms, index) =>
+                            <li key={`${ms.role}_${index}`}>{`${ms.collaboration.name} (${I18n.t('profile.' + ms.role)})`}</li>)}
                     </ul>}
                 </div>
                 <div className="input-field">

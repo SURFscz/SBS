@@ -164,6 +164,8 @@ class App extends React.Component {
             other(selectedUser.uid).then(user => {
                 const {currentUser, impersonator, aupConfig} = this.state;
                 const newUser = this.markUserAdmin(user, aupConfig);
+                //avoid 2fa registration / validation
+                newUser.second_factor_confirmed = true;
                 this.setState({currentUser: newUser, impersonator: impersonator || currentUser}, callback);
             });
         }
