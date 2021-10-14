@@ -327,10 +327,17 @@ class App extends React.Component {
                                }/>
 
                         <Route exact path="/organisation-invitations/:action/:hash"
-                               render={props => <UserInvitation user={currentUser}
-                                                                isOrganisationInvite={true}
-                                                                refreshUser={this.refreshUserMemberships}
-                                                                {...props}/>}/>
+                               render={props => currentUser.guest ?
+                                   <UserInvitation user={currentUser}
+                                                   isOrganisationInvite={true}
+                                                   refreshUser={this.refreshUserMemberships}
+                                                   {...props}/>
+                                   : <ProtectedRoute
+                                       currentUser={currentUser}
+                                       refreshUser={this.refreshUserMemberships}
+                                       config={config}
+                                       Component={OrganisationDetail} {...props}/>
+                               }/>
 
                         <Route exact path="/collaboration-requests/:id"
                                render={props => <ProtectedRoute currentUser={currentUser}

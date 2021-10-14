@@ -388,6 +388,7 @@ I18n.translations.nl = {
                 login: "Inloggen",
                 next: "Hierna: {{step}}",
                 invite: "Doe mee met de samenwerking",
+                inviteOrg: "Doe mee met de organisatie",
                 collaborate: "Samenwerken!",
             },
             login: "Log in om je te identificeren",
@@ -1216,14 +1217,19 @@ I18n.translations.nl = {
     },
     aup: {
         hi: "Hi {{name}},",
-        info: "We are ready to create your SRAM profile.",
-        name: "Display name.",
-        email: "Email address",
+        info: "Je SRAM profiel is bijna aangemaakt.",
+        name: "Naam.",
+        email: "Email-adres",
         title: "Acceptable use policy",
-        disclaimer: "By logging on to SRAM, you become a user and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of our AUP.</a>",
-        agreeWithTerms: "I hereby certify that I have read the AUP and that accept them",
-        onward: "Looks good, onwards",
-        agreedFlash: "Your agreement with {{name}} has been saved."
+        disclaimer: "Door in te loggen op SRAM, wordt je een gebruiker en ga je akkoord met de <a href=\"{{url}}\" target=\"_blank\">voorwaarden van onze AUP.</a>",
+        agreeWithTerms: "Hierbij verklaar ik dat ik de AUP heb gelezen en deze accepteer",
+        onward: "Ziet er goed uit, verder",
+        agreedFlash: "Je akko0rd met {{name}} is opgeslagen.",
+        collaboration: {
+            title: "Aanvullende voorwaarden voor de Acceptable use policy",
+            info: "Voor deze samenwerking zijn er enkele aanvullingen op de algemene SRAM AUP. Je moet deze voorwaarden accepteren om lid te kunnen worden van deze samenwerking.",
+            agreeWithTerms: "Ik verklaar hierbij dat ik deze voorwaarden heb gelezen en dat ik ze accepteer",
+        }
     },
     collaborationRequest: {
         title: {

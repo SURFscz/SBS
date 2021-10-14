@@ -388,6 +388,7 @@ I18n.translations.en = {
                 login: "Login",
                 next: "Next: {{step}}",
                 invite: "Join the collaboration",
+                inviteOrg: "Join the organisation",
                 collaborate: "Collaborate!"
             },
             login: "Please login to identify yourself",
@@ -1221,9 +1222,14 @@ I18n.translations.en = {
         email: "Email address",
         title: "Acceptable use policy",
         disclaimer: "By logging on to SRAM, you become a user and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of our AUP.</a>",
-        agreeWithTerms: "I hereby certify that I have read the AUP and that accept them",
+        agreeWithTerms: "I hereby certify that I have read the AUP and that I accept them",
         onward: "Looks good, onwards",
-        agreedFlash: "Your agreement with {{name}} has been saved."
+        agreedFlash: "Your agreement with {{name}} has been saved.",
+        collaboration: {
+            title: "Additional terms to the Acceptable use policy",
+            info: "For this collaboration, there are some additions to the general SRAM AUP. You need to accept these additions to be able to join this collaboration.",
+            agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
+        }
     },
     collaborationRequest: {
         title: {

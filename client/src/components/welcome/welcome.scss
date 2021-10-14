@@ -8,5 +8,9 @@
 
     p {
         margin-bottom: 25px;
+
+        &.no-margin {
+            margin-bottom: 0;
+        }
     }
 }

@@ -2,7 +2,7 @@
 import datetime
 
 from flask import Blueprint, request as current_request, current_app
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param
@@ -28,7 +28,11 @@ def _organisation_invitation_query():
 @json_endpoint
 def organisation_invitations_by_hash():
     hash_value = query_param("hash")
-    organisation_invitation = _organisation_invitation_query() \
+    invitation_query = _organisation_invitation_query()
+    organisation_invitation = invitation_query \
+        .options(selectinload(OrganisationInvitation.organisation).selectinload(Organisation.organisation_memberships)
+                 .selectinload(OrganisationMembership.user)) \
+        .options(selectinload(OrganisationInvitation.organisation).selectinload(Organisation.services)) \
         .filter(OrganisationInvitation.hash == hash_value) \
         .one()
     return organisation_invitation, 200
