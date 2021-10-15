@@ -263,6 +263,18 @@ class TestOrganisation(AbstractTest):
                 f"You have been invited by urn:john to join organisation '{uuc_name}'" in outbox[0].html)
             self.assertEqual(pre_count + 2, post_count)
 
+    def test_organisation_invites_with_empty_intended_role(self):
+        self.login("urn:john")
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        self.put("/api/organisations/invites", body={
+            "organisation_id": organisation_id,
+            "administrators": ["new@example.org"],
+            "intended_role": ""
+        })
+        invitation = OrganisationInvitation.query \
+            .filter(OrganisationInvitation.invitee_email == "new@example.org").first()
+        self.assertEqual("manager", invitation.intended_role)
+
     def test_organisation_save_with_invites(self):
         pre_count = OrganisationInvitation.query.count()
         self.login("urn:john")

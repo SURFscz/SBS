@@ -248,7 +248,9 @@ def collaboration_invites():
 
     administrators = data.get("administrators", [])
     message = data.get("message", None)
-    intended_role = data.get("intended_role", "member")
+    intended_role = data.get("intended_role")
+    intended_role = "member" if intended_role not in ["admin", "member"] else intended_role
+
     group_ids = data.get("groups", [])
 
     groups = Group.query \
