@@ -394,14 +394,14 @@ class TestCollaboration(AbstractTest):
         self.login("urn:john")
         collaboration_id = self._find_by_identifier()["id"]
         mail = self.app.mail
-        self.put("/api/collaborations/invites", body={
-            "collaboration_id": collaboration_id,
-            "administrators": ["new@example.org", "pop@example.org"],
-            "message": "Please join",
-            "membership_expiry_date": int(time.time()),
-            "intended_role": "admin"
-        })
         with mail.record_messages() as outbox:
+            self.put("/api/collaborations/invites", body={
+                "collaboration_id": collaboration_id,
+                "administrators": ["new@example.org", "pop@example.org"],
+                "message": "Please join",
+                "membership_expiry_date": int(time.time()),
+                "intended_role": "admin"
+            })
             post_count = Invitation.query.count()
             self.assertEqual(2, len(outbox))
             self.assertEqual(pre_count + 2, post_count)
