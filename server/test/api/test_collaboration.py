@@ -394,20 +394,31 @@ class TestCollaboration(AbstractTest):
         self.login("urn:john")
         collaboration_id = self._find_by_identifier()["id"]
         mail = self.app.mail
+        self.put("/api/collaborations/invites", body={
+            "collaboration_id": collaboration_id,
+            "administrators": ["new@example.org", "pop@example.org"],
+            "message": "Please join",
+            "membership_expiry_date": int(time.time()),
+            "intended_role": "admin"
+        })
         with mail.record_messages() as outbox:
-            self.put("/api/collaborations/invites", body={
-                "collaboration_id": collaboration_id,
-                "administrators": ["new@example.org", "pop@example.org"],
-                "message": "Please join",
-                "membership_expiry_date": int(time.time()),
-                "intended_role": "admin"
-            })
             post_count = Invitation.query.count()
             self.assertEqual(2, len(outbox))
             self.assertEqual(pre_count + 2, post_count)
             invitation = Invitation.query.filter(Invitation.invitee_email == "new@example.org").first()
             self.assertEqual("admin", invitation.intended_role)
             self.assertIsNotNone(invitation.membership_expiry_date)
+
+    def test_collaboration_invites_no_intended_role(self):
+        self.login("urn:john")
+        collaboration_id = self._find_by_identifier()["id"]
+        self.put("/api/collaborations/invites", body={
+            "collaboration_id": collaboration_id,
+            "administrators": ["new@example.org"],
+            "intended_role": ""
+        })
+        invitation = Invitation.query.filter(Invitation.invitee_email == "new@example.org").first()
+        self.assertEqual("member", invitation.intended_role)
 
     def test_collaboration_invites_preview(self):
         self.login("urn:john")
