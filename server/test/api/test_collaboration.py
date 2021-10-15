@@ -3,6 +3,8 @@ import datetime
 import json
 import time
 
+from sqlalchemy import text
+
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User
@@ -232,6 +234,19 @@ class TestCollaboration(AbstractTest):
         collaboration["name"] = "changed"
         collaboration = self.put("/api/collaborations", body=collaboration)
         self.assertEqual("changed", collaboration["name"])
+
+    def test_collaboration_update_with_logo(self):
+        collaboration_id = self._find_by_identifier()["id"]
+        self.login()
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
+        collaboration["name"] = "changed"
+        collaboration["logo"] = "https://bogus"
+        self.put("/api/collaborations", body=collaboration)
+
+        rows = db.session.execute(text(f"SELECT logo FROM collaborations WHERE id = {collaboration_id}"))
+        self.assertEqual(1, rows.rowcount)
+        for row in rows:
+            self.assertFalse(row["logo"].startswith("http"))
 
     def test_collaboration_update_short_name(self):
         collaboration_id = self._find_by_identifier()["id"]
