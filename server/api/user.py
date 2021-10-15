@@ -207,9 +207,7 @@ def resume_session():
     response = requests.post(oidc_config.token_endpoint, data=urllib.parse.urlencode(payload),
                              headers=headers, auth=(oidc_config.client_id, oidc_config.client_secret))
     if response.status_code != 200:
-        error_msg = f"Server error: Token endpoint error (http {response.status_code}"
-        logger.error(error_msg)
-        return redirect(f"{current_app.app_config.base_url}/error")
+        return _redirect_with_error(logger, f"Server error: Token endpoint error (http {response.status_code}")
 
     token_json = response.json()
     access_token = token_json["access_token"]
@@ -221,9 +219,7 @@ def resume_session():
 
     response = requests.get(oidc_config.userinfo_endpoint, headers=headers)
     if response.status_code != 200:
-        error_msg = f"Server error: User info endpoint error (http {response.status_code}"
-        logger.error(error_msg)
-        return redirect(f"{current_app.app_config.base_url}/error")
+        return _redirect_with_error(logger, f"Server error: User info endpoint error (http {response.status_code}")
 
     logger = ctx_logger("user")
     user_info_json = response.json()
@@ -245,6 +241,7 @@ def resume_session():
 
     encoded_id_token = token_json["id_token"]
     id_token = decode_jwt_token(encoded_id_token)
+
     no_mfa_required = not oidc_config.second_factor_authentication_required
     idp_mfa = id_token.get("acr") == ACR_VALUES
     second_factor_confirmed = no_mfa_required or idp_mfa
@@ -265,6 +262,11 @@ def resume_session():
         location = session.get("original_destination", current_app.app_config.base_url)
 
     return redirect(location)
+
+
+def _redirect_with_error(logger, error_msg):
+    logger.error(error_msg)
+    return redirect(f"{current_app.app_config.base_url}/error")
 
 
 @user_api.route("/me", strict_slashes=False)

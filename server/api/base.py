@@ -12,6 +12,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
 from server.auth.security import secure_hash, current_user
+from server.auth.urls import white_listing, mfa_listing, external_api_listing
 from server.db.db import db
 from server.db.domain import ApiKey
 from server.logger.context_logger import ctx_logger
@@ -19,17 +20,6 @@ from server.mail import mail_error
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
-white_listing = ["health", "config", "info", "api/users/authorization", "api/aup/info", "api/users/resume-session",
-                 "api/users/me", "/api/images/", "api/service_connection_requests/find_by_hash",
-                 "api/service_connection_requests/approve", "/api/mfa/jwks", "/api/mfa/sfo",
-                 "/api/organisation_invitations/find_by_hash", "/api/invitations/find_by_hash",
-                 "api/service_connection_requests/deny", "/api/mock", "/api/users/error"]
-
-mfa_listing = ["/get2fa", "/verify2fa", "/token_reset_request", "/reset2fa"]
-
-external_api_listing = ["api/collaborations/v1", "api/collaborations/v1/restricted",
-                        "api/collaborations_services/v1/connect_collaboration_service",
-                        "/api/invitations/v1/collaboration_invites"]
 
 STATUS_OPEN = "open"
 STATUS_DENIED = "denied"
