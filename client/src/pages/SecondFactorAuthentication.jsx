@@ -132,19 +132,21 @@ class SecondFactorAuthentication extends React.Component {
         const admin = respondents.find(respondent => respondent.selected);
         tokenResetRequest(admin, message).then(() => {
             setFlash(I18n.t("mfa.lost.flash"));
-            this.setState({showExplanation: false, message: ""})
+            this.setState({showExplanation: false, message: ""});
         });
     }
 
     submitResetCode = () => {
+        this.setState({loading: true});
         const {resetCode} = this.state;
         reset2fa(resetCode)
             .then(() => {
                 this.props.refreshUser(() => {
-                    this.setState({showEnterToken: false})
+                    this.setState({resetCode: false, showEnterToken: false});
+                    this.componentDidMount();
                 })
             }).catch(e => {
-            this.setState({resetCodeError: true})
+            this.setState({resetCodeError: true, loading: false});
         });
     }
 
