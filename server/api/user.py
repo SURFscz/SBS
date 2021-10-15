@@ -259,10 +259,11 @@ def resume_session():
 
     if not user_accepted_aup:
         location = f"{current_app.app_config.base_url}/aup"
-    elif second_factor_confirmed:
-        location = session.get("original_destination", current_app.app_config.base_url)
-    else:
+    elif not second_factor_confirmed:
         location = f"{current_app.app_config.base_url}/2fa"
+    else:
+        location = session.get("original_destination", current_app.app_config.base_url)
+
     return redirect(location)
 
 
