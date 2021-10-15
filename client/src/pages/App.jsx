@@ -45,6 +45,7 @@ import SecondFactorAuthentication from "./SecondFactorAuthentication";
 import ServiceDenied from "./ServiceDenied";
 import UserDetail from "./UserDetail";
 import Aup from "./Aup";
+import RefreshRoute from "./RefreshRoute";
 
 addIcons();
 
@@ -98,15 +99,11 @@ class App extends React.Component {
         }
     };
 
-    markUserAdmin = (user, aupConfig) => {
+    markUserAdmin = user => {
         const {config} = this.state;
         if (config.admin_users_upgrade && user.admin && !user.confirmed_super_user) {
             user.admin = false;
             user.needsSuperUserConfirmation = true;
-        }
-        if (user.user_accepted_aup || (user.aups && user.aups.find(aup => aup.au_version === aupConfig.version))) {
-            user.aupConfirmed = true;
-            user.user_accepted_aup = true;
         }
         return user;
     }
@@ -122,7 +119,7 @@ class App extends React.Component {
                     () => me(res).then(results => {
                         const currentUser = results;
                         if (currentUser && currentUser.uid) {
-                            const user = this.markUserAdmin(currentUser, res[1]);
+                            const user = this.markUserAdmin(currentUser);
                             this.setState({currentUser: user, loading: false});
                             if (currentUser.successfully_activated) {
                                 setFlash(I18n.t("login.successfullyActivated"))
@@ -153,19 +150,16 @@ class App extends React.Component {
         const {user: selectedUser, callback} = res;
         if (isEmpty(selectedUser)) {
             me(this.state.config).then(currentUser => {
-                const {aupConfig} = this.state;
                 this.setState({
-                    currentUser: this.markUserAdmin(currentUser, aupConfig),
+                    currentUser: this.markUserAdmin(currentUser),
                     impersonator: null,
                     loading: false
                 }, callback);
             });
         } else {
             other(selectedUser.uid).then(user => {
-                const {currentUser, impersonator, aupConfig} = this.state;
-                const newUser = this.markUserAdmin(user, aupConfig);
-                //avoid 2fa registration / validation
-                newUser.second_factor_confirmed = true;
+                const {currentUser, impersonator} = this.state;
+                const newUser = this.markUserAdmin(user);
                 this.setState({currentUser: newUser, impersonator: impersonator || currentUser}, callback);
             });
         }
@@ -173,8 +167,8 @@ class App extends React.Component {
 
     refreshUserMemberships = callback => {
         refreshUser().then(json => {
-            const {impersonator, aupConfig} = this.state;
-            const user = this.markUserAdmin(json, aupConfig);
+            const {impersonator} = this.state;
+            const user = this.markUserAdmin(json);
             this.setState({currentUser: user, impersonator: impersonator}, () => callback && callback(user));
         });
     };
@@ -401,6 +395,9 @@ class App extends React.Component {
 
                         <Route path="/dead-end"
                                render={props => <DeadEnd {...props}/>}/>
+
+                        <Route path="/refresh-route/:path"
+                               render={props => <RefreshRoute {...props}/>}/>
 
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>
 

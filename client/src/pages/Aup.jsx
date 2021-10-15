@@ -14,6 +14,14 @@ class Aup extends React.Component {
         this.state = {agreed: false};
     }
 
+    componentDidMount = () => {
+        const {currentUser}  = this.props;
+        if (currentUser.user_accepted_aup) {
+            this.props.history.push("/home");
+        }
+    }
+
+
     agreeWith = () => agreeAup().then(res => {
         this.props.refreshUser(user => {
             const url = new URL(res.location);

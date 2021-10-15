@@ -1,3 +1,4 @@
+
 import React from "react";
 import "./NotFound.scss";
 import {Player} from '@lottiefiles/react-lottie-player';
