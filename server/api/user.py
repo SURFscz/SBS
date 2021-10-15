@@ -50,6 +50,7 @@ def _user_json_response(user, auto_set_second_factor_confirmed):
     second_factor_confirmed = auto_set_second_factor_confirmed or session["user"]["second_factor_confirmed"]
     is_admin = {"admin": is_admin_user(user),
                 "second_factor_confirmed": second_factor_confirmed,
+                "user_accepted_aup": user.has_agreed_with_aup(),
                 "guest": False,
                 "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
@@ -396,6 +397,7 @@ def other():
 
     uid = query_param("uid")
     user = _user_query().filter(User.uid == uid).one()
+    # avoid 2fa registration / validation
     return _user_json_response(user, True)
 
 

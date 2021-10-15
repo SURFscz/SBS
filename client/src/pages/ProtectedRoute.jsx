@@ -4,13 +4,13 @@ import {login} from "../utils/Login";
 
 export function ProtectedRoute({currentUser, Component, redirectToLogin = true, ...res}) {
     if (!currentUser.guest) {
-        if (!currentUser.aupConfirmed) {
+        if (!currentUser.user_accepted_aup) {
             return <Redirect to="/aup"/>
         }
-        if (currentUser.second_factor_confirmed) {
-            return <Route render={props => <Component user={currentUser} {...res} {...props}/>}/>;
+        if (!currentUser.second_factor_confirmed) {
+            return <Redirect to="/2fa"/>;
         }
-        return <Redirect to="/2fa"/>;
+        return <Route render={props => <Component user={currentUser} {...res} {...props}/>}/>;
     } else if (redirectToLogin) {
         setTimeout(login, 5);
         return null;

@@ -175,8 +175,10 @@ class OrganisationDetail extends React.Component {
         const {invitation, isInvitation} = this.state;
         if (isInvitation) {
             organisationInvitationAccept(invitation).then(() => {
-                //brute force as the component is the same - known router limitation
-                window.location.href = `/organisations/${invitation.organisation_id}`;
+                this.props.refreshUser(() => {
+                    const path = encodeURIComponent(`/organisations/${invitation.organisation_id}`);
+                    this.props.history.push(`/refresh-route/${path}`);
+                });
             }).catch(e => {
                 if (e.response && e.response.json) {
                     e.response.json().then(res => {
