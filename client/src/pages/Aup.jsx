@@ -5,20 +5,27 @@ import "./Aup.scss";
 import Button from "../components/Button";
 import {agreeAup} from "../api";
 import CheckBox from "../components/CheckBox";
+import {login} from "../utils/Login";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 
 class Aup extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.state = {agreed: false};
+        this.state = {agreed: false, loading: true};
     }
 
     componentDidMount = () => {
-        const {currentUser}  = this.props;
-        if (currentUser.user_accepted_aup) {
+        const {currentUser} = this.props;
+        if (currentUser.guest) {
+            setTimeout(login, 5);
+        } else if (currentUser.user_accepted_aup) {
             this.props.history.push("/home");
+        } else {
+            this.setState({loading: false})
         }
+
     }
 
 
@@ -30,9 +37,12 @@ class Aup extends React.Component {
     });
 
     render() {
-        const {agreed} = this.state;
+        const {agreed, loading} = this.state;
         const {currentUser, aupConfig} = this.props;
         const url = I18n.locale === "en" ? aupConfig.url_aup_en : aupConfig.url_aup_nl;
+        if (loading) {
+            return <SpinnerField/>;
+        }
         return (
             <div className="mod-aup">
                 <h1>{I18n.t("aup.hi", {name: currentUser.given_name || currentUser.name})}</h1>

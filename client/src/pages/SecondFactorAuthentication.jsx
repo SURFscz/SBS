@@ -10,6 +10,7 @@ import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import {ReactComponent as InformationIcon} from "../icons/informational.svg";
+import {login} from "../utils/Login";
 
 class SecondFactorAuthentication extends React.Component {
 
@@ -37,7 +38,11 @@ class SecondFactorAuthentication extends React.Component {
 
     componentDidMount() {
         const {user, update} = this.props;
-        if (!user.second_factor_auth || update) {
+        if (user.guest) {
+            setTimeout(login, 5);
+        } else if (user.second_factor_confirmed && !update) {
+            this.props.history.push("/home")
+        } else if (!user.second_factor_auth || update) {
             get2fa().then(res => {
                 this.setState({
                     qrCode: res.qr_code_base64,
