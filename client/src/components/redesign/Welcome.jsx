@@ -6,18 +6,10 @@ import {isEmpty} from "../../utils/Utils";
 import {ReactComponent as InformationIcon} from "../../icons/informational.svg";
 import SpinnerField from "./SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
-import * as Showdown from "showdown";
 import Button from "../Button";
 import {AppStore} from "../../stores/AppStore";
-import {sanitizeHtml} from "../../utils/Markdown";
+import {convertToHtml} from "../../utils/Markdown";
 import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
-
-const converter = new Showdown.Converter({
-    tables: true,
-    simplifiedAutoLink: true,
-    strikethrough: true,
-    tasklists: true
-});
 
 class Welcome extends React.Component {
 
@@ -70,7 +62,7 @@ class Welcome extends React.Component {
                     <div className="instructions mde-preview">
                         <div className="mde-preview-content">
                             <p dangerouslySetInnerHTML={{
-                                __html: sanitizeHtml(converter.makeHtml(organisation.on_boarding_msg))
+                                __html: convertToHtml(organisation.on_boarding_msg)
                             }}/>
                         </div>
                     </div>

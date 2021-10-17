@@ -141,8 +141,8 @@ def transform_json(cls, json_dict, allow_child_cascades=True, allowed_child_coll
 
     def _parse(item):
         if isinstance(item[1], list):
-            cls = deserialization_mapping[item[0]]
-            return item[0], list(map(lambda i: cls(**_do_transform(i.items())), item[1]))
+            cls_child = deserialization_mapping[item[0]]
+            return item[0], list(map(lambda i: cls_child(**_do_transform(i.items())), item[1]))
         return item
 
     cleanse_json(json_dict, cls=cls, allow_child_cascades=allow_child_cascades,

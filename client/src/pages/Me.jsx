@@ -13,6 +13,7 @@ import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import InstituteColumn from "../components/redesign/InstitueColumn";
+import moment from "moment";
 
 class Me extends React.Component {
 
@@ -159,7 +160,7 @@ class Me extends React.Component {
         const createdAt = user.created_at;
         const d = new Date(0);
         d.setUTCSeconds(createdAt);
-        const values = {"created_at": d.toUTCString()};
+        const values = {"created_at": moment(d).format("LLLL")};
         const attributes = ["name", "email", "username", "created_at"];
         const mfaValue = user.second_factor_auth ? I18n.t("mfa.profile.handledBySRAM") :
             I18n.t("mfa.profile.handledByIdp", {name: user.schac_home_organisation || I18n.t("mfa.profile.institution")});

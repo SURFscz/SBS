@@ -49,15 +49,7 @@ import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
-import * as Showdown from "showdown";
-import {sanitizeHtml} from "../utils/Markdown";
-
-const converter = new Showdown.Converter({
-    tables: true,
-    simplifiedAutoLink: true,
-    strikethrough: true,
-    tasklists: true
-});
+import {convertToHtml} from "../utils/Markdown";
 
 class CollaborationDetail extends React.Component {
 
@@ -441,7 +433,7 @@ class CollaborationDetail extends React.Component {
                             <Tooltip children={<PrivacyIcon/>} id={"globe-icon"} msg={I18n.t("tooltips.aup")}/>
                             <span>
                             <Tooltip id={"accepted_user_policy"}
-                                     msg={sanitizeHtml(converter.makeHtml(collaboration.accepted_user_policy))}
+                                     msg={convertToHtml(collaboration.accepted_user_policy)}
                                      children={<span className={"accepted_user_policy"}>{I18n.t("forms.yes")}</span>}/>
                         </span>
                         </li>}
@@ -630,7 +622,7 @@ class CollaborationDetail extends React.Component {
                     <span>{I18n.t("collaboration.privacyPolicy")}</span>
                     {collaboration.accepted_user_policy &&
                     <Tooltip id={"accepted_user_policy"}
-                             msg={sanitizeHtml(converter.makeHtml(collaboration.accepted_user_policy))}
+                             msg={convertToHtml(collaboration.accepted_user_policy)}
                              children={<span className={"accepted_user_policy"}>{I18n.t("forms.yes")}</span>}/>
                     }
                     {!collaboration.accepted_user_policy && <span>{I18n.t("service.none")}</span>}
@@ -655,7 +647,7 @@ class CollaborationDetail extends React.Component {
         let role;
         if (isInvitation) {
             role = invitation.intended_role === "admin" ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER;
-        } else  {
+        } else {
             role = adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER;
         }
         return (
