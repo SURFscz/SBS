@@ -64,7 +64,7 @@ class OrganisationDetail extends React.Component {
                     isInvitation: true,
                     tabs: this.getTabs(res.organisation, config, false)
                 });
-            })
+            }).catch(() => this.props.history.push("/404"));
         } else if (params.id) {
             organisationById(params.id)
                 .then(json => {
@@ -183,8 +183,8 @@ class OrganisationDetail extends React.Component {
                 if (e.response && e.response.json) {
                     e.response.json().then(res => {
                         if (res.message && res.message.indexOf("already a member") > -1) {
-                            this.setState({errorOccurred: true}, () =>
-                                setFlash(I18n.t("invitation.flash.alreadyMember"), "error"));
+                            this.setState({errorOccurred: true, firstTime: false}, () =>
+                                setFlash(I18n.t("organisationInvitation.flash.alreadyMember"), "error"));
                         }
                     });
                 } else {
