@@ -97,7 +97,7 @@ class CollaborationDetail extends React.Component {
                     isInvitation: true,
                     tabs: [this.getAboutTab(res.collaboration, true, false)]
                 });
-            })
+            }).catch(() => this.props.history.push("/404"));
         } else if (params.id) {
             const collaboration_id = parseInt(params.id, 10);
             collaborationAccessAllowed(collaboration_id)
@@ -546,8 +546,8 @@ class CollaborationDetail extends React.Component {
                 if (e.response && e.response.json) {
                     e.response.json().then(res => {
                         if (res.message && res.message.indexOf("already a member") > -1) {
-                            this.setState({errorOccurred: true}, () =>
-                                setFlash(I18n.t("invitation.flash.alreadyMember"), "error"));
+                            this.setState({errorOccurred: true, firstTime: false}, () =>
+                                setFlash(I18n.t("invitation.flash.alreadyMember", {"name": invitation.collaboration.name}), "error"));
                         }
                     });
                 } else {
