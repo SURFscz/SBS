@@ -116,7 +116,7 @@ class App extends React.Component {
         } else {
             Promise.all([config(), aupLinks()]).then(res => {
                 this.setState({config: res[0], aupConfig: res[1]},
-                    () => me(res).then(results => {
+                    () => me(res[0]).then(results => {
                         const currentUser = results;
                         if (currentUser && currentUser.uid) {
                             const user = this.markUserAdmin(currentUser);

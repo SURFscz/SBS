@@ -100,7 +100,7 @@ feature:
   admin_users_upgrade_url: http://localhost:8080/api/users/upgrade_super_user
   admin_users_upgrade_redirect_url: http://localhost:3000
   seed_allowed: True
-  api_keys_enabled: False
+  api_keys_enabled: True
   feedback_enabled: True
   impersonation_allowed: True
 

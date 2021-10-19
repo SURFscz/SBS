@@ -443,7 +443,8 @@ def attribute_aggregation():
 def upgrade_super_user():
     session.modified = True
 
-    user = User.query.filter(User.id == current_user_id()).one()
+    user_id = current_user_id()
+    user = User.query.filter(User.id == user_id).one()
 
     if not is_admin_user(user):
         raise Forbidden("Must be admin user")
