@@ -95,7 +95,8 @@ cd client
 CI=true yarn test
 ```
 With the environment variable `CONFIG=config/test_config.yml` the test database is used. After you ran one or all of the tests
-the database is left with the test data seed.
+the database is left with the test data seed. If you want to skip the login process when developing local then add the following to your
+environment: OPEN_MAIL_IN_BROWSER=1;PROFILE=local;CONFIG=config/test_config.yml;ALLOW_MOCK_USER_API=1
 
 ### [Deployment](#deployment)
 
