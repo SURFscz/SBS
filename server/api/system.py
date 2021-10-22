@@ -2,13 +2,14 @@
 
 from flask import current_app, Blueprint, request as current_request
 from sqlalchemy import text
+from sqlalchemy.orm import joinedload
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_write_access, current_user_id
 from server.db.audit_mixin import metadata
 from server.db.db import db
-from server.db.domain import User
+from server.db.domain import User, Organisation, OrganisationMembership, OrganisationInvitation
 from server.mail import mail_feedback
 from server.test.seed import seed
 
@@ -155,3 +156,19 @@ def feedback():
     user = User.query.get(current_user_id())
     mail_feedback(mail_conf.environment, message, user, [mail_conf.info_email])
     return {}, 201
+
+
+@system_api.route("/validations", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def validations():
+    confirm_write_access()
+    subquery = ~OrganisationMembership.query \
+        .filter(OrganisationMembership.role == "admin") \
+        .filter(OrganisationMembership.organisation_id == Organisation.id) \
+        .exists()
+    organisations = Organisation.query.filter(subquery).all()
+    organisation_invitations = OrganisationInvitation.query \
+        .options(joinedload(OrganisationInvitation.organisation)) \
+        .all()
+
+    return {"organisations": organisations, "organisation_invitations": organisation_invitations}, 200

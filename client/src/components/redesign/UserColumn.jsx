@@ -7,16 +7,16 @@ export default function UserColumn({entity, currentUser, gotoInvitation, hideEma
     return (
         <div className="user-name-email-container">
             <div className="user-name-email">
-                <span className="name">{entity.invite ? "-" : entity.user.name}</span>
+                <span className="name">{entity.invite ? "-" : entity.user && entity.user.name}</span>
                 {entity.invite &&
                 <span className="email">
                     {gotoInvitation && <a href="/invite" onClick={gotoInvitation(entity)}>{entity.invitee_email}</a>}
                     {!gotoInvitation && <span>{entity.invitee_email}</span>}
                 </span>}
-                {(!entity.invite && !hideEmail) && <span className="email">{entity.user.email}</span>}
+                {(!entity.invite && !hideEmail) && <span className="email">{entity.user && entity.user.email}</span>}
 
             </div>
-            {(!entity.invite && entity.user.id === currentUser.id && showMe) &&
+            {(showMe && !entity.invite && entity.user.id === currentUser.id) &&
             <span className="person-role me">{I18n.t("models.users.me")}</span>}
         </div>
     );

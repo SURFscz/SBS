@@ -4,6 +4,7 @@ import I18n from "i18n-js";
 import {
     auditLogsActivity,
     cleanSlate,
+    validations,
     cleanupNonOpenRequests,
     clearAuditLogs,
     dbSeed,
@@ -32,6 +33,7 @@ import {logout} from "../utils/Login";
 import {filterAuditLogs} from "../utils/AuditLog";
 import SelectField from "../components/SelectField";
 import moment from "moment";
+import OrganisationInvitations from "../components/redesign/OrganisationInvitations";
 
 const options = [25, 50, 100, 150, 200, 250, "All"].map(nbr => ({value: nbr, label: nbr}));
 
@@ -40,9 +42,10 @@ class System extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.allTables = Object.entries(I18n.translations[I18n.locale].history.tables)
-            .map(arr => ({value: arr[0], label: arr[1]}));
+            .map(arr => ({value: arr[0], label: arr[1]}))
+            .sort((t1, t2) => t1.label.localeCompare(t2.label));
         this.state = {
-            tab: "cron",
+            tab: "validations",
             suspendedUsers: {},
             suspendedCollaborations: {},
             expiredCollaborations: {},
@@ -59,6 +62,7 @@ class System extends React.Component {
             busy: false,
             auditLogs: {audit_logs: []},
             filteredAuditLogs: {audit_logs: []},
+            validationData: {"organisations": [], "organisation_invitations": []},
             limit: options[1],
             query: "",
             selectedTables: []
@@ -224,6 +228,23 @@ class System extends React.Component {
         });
     }
 
+    getValidationTab = validationData => {
+        const organisation_invitations = validationData.organisation_invitations;
+        const organisations = validationData.organisations;
+        debugger;
+        return (<div key="validations" name="validations" label={I18n.t("home.tabs.validation")}
+                     icon={<FontAwesomeIcon icon="calendar-check"/>}>
+            <div className="mod-system">
+                <section className="info-block-container">
+                    <OrganisationInvitations organisation_invitations={organisation_invitations} refresh={callback => this.componentDidMount(callback)}/>
+                </section>
+                <section className="info-block-container">
+                    <span>TODO</span>
+                </section>
+            </div>
+        </div>)
+
+    }
     getDatabaseTab = (databaseStats, config) => {
         return (<div key="database" name="database" label={I18n.t("home.tabs.database")}
                      icon={<FontAwesomeIcon icon="database"/>}>
@@ -686,6 +707,11 @@ class System extends React.Component {
                     busy: false
                 });
             });
+        } else if (name === "validations") {
+            validations().then(res => this.setState({
+                validationData: res,
+                busy: false
+            }))
         } else {
             this.setState({busy: false});
         }
@@ -699,7 +725,8 @@ class System extends React.Component {
         const {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
-            limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs
+            limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
+            validationData
         } = this.state;
         const {config} = this.props;
 
@@ -707,6 +734,7 @@ class System extends React.Component {
             return <SpinnerField/>
         }
         const tabs = [
+            this.getValidationTab(validationData),
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations, expiredMemberships,
                 cronJobs),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
