@@ -562,7 +562,7 @@ I18n.translations.nl = {
         joinRequests: "Uitnodigings-URL",
         disabled: "Uitgeschakeld",
         enabled: "Kopieer",
-        privacyPolicy: "Privacy policy",
+        privacyPolicy: "Acceptable Use Policy",
         expiryDate: "Einddatum",
         expiryDateWarning: {
             one: "Verloopt over 1 dag!",
