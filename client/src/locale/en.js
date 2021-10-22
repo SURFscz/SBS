@@ -95,7 +95,8 @@ I18n.translations.en = {
             cron: "Cron",
             seed: "Seed",
             database: "Database",
-            activity: "Activity"
+            activity: "Activity",
+            validation: "Validation"
         }
     },
     forms: {

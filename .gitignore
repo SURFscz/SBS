@@ -119,3 +119,4 @@ sbs-api.wsgi
 server/static/disclaimer.css
 git.info
 acc_config.yml
+scraps

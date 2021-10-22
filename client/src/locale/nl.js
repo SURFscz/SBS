@@ -95,7 +95,8 @@ I18n.translations.nl = {
             cron: "Cron",
             seed: "Seed",
             database: "Database",
-            activity: "Activiteit"
+            activity: "Activiteit",
+            validation: "Validatie"
         }
     },
     forms: {
