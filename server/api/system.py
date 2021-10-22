@@ -169,6 +169,7 @@ def validations():
     organisations = Organisation.query.filter(subquery).all()
     organisation_invitations = OrganisationInvitation.query \
         .options(joinedload(OrganisationInvitation.organisation)) \
+        .options(joinedload(OrganisationInvitation.user)) \
         .all()
 
     return {"organisations": organisations, "organisation_invitations": organisation_invitations}, 200

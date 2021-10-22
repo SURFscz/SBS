@@ -31,11 +31,6 @@ class OrganisationInvitations extends React.Component {
         }
     }
 
-    componentDidMount = () => {
-        const {organisation_invitations} = this.props;
-        organisation_invitations.forEach(invite => invite.invite = true);
-        debugger;
-    }
     gotoInvitation = invitation => e => {
         stopEvent(e);
         const {organisation_invitations} = this.props;
@@ -116,7 +111,7 @@ class OrganisationInvitations extends React.Component {
                                     question={confirmationQuestion}/>
                 <div>
                     <a className="back-to-org-members" onClick={this.cancelSideScreen} href={"/cancel"}>
-                        <ChevronLeft/>{I18n.t("models.orgMembers.backToMembers")}
+                        <ChevronLeft/>{I18n.t("models.orgInvitations.backToMembers")}
                     </a>
                 </div>
                 <div className="organisation-invitation-form">
@@ -192,7 +187,7 @@ class OrganisationInvitations extends React.Component {
                                               gotoInvitation={this.gotoInvitation}/>
             },
             {
-                key: "role",
+                key: "intended_role",
                 header: I18n.t("models.users.role"),
                 mapper: entity => <span className="member-role">{I18n.t(`organisation.${entity.intended_role}`)}</span>
             },
@@ -219,11 +214,11 @@ class OrganisationInvitations extends React.Component {
                                     question={confirmationQuestion}/>
 
                 <Entities entities={organisation_invitations}
-                          modelName="orgMembers"
+                          modelName="orgInvitations"
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name"
                           columns={columns}
-                          rowLinkMapper={this.gotoInvitation}
+                          rowLinkMapper={() => this.gotoInvitation}
                           loading={false}
                           {...this.props}/>
             </>

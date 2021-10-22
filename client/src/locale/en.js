@@ -194,6 +194,12 @@ I18n.translations.en = {
             mailTooltipDisabled: "First select users to email",
             mailTooltip: "Email all selected members"
         },
+        orgInvitations: {
+            title: "Open organisation invitations",
+            noEntities: "There are no open organisation invitations...",
+            searchPlaceHolder: "Search invitations...",
+            backToMembers: "Back to all invitations...",
+        },
         organisations: {
             title: "Organisations",
             noEntities: "There are no organisations yet...",

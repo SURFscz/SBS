@@ -230,8 +230,7 @@ class System extends React.Component {
 
     getValidationTab = validationData => {
         const organisation_invitations = validationData.organisation_invitations;
-        const organisations = validationData.organisations;
-        debugger;
+        // const organisations = validationData.organisations;
         return (<div key="validations" name="validations" label={I18n.t("home.tabs.validation")}
                      icon={<FontAwesomeIcon icon="calendar-check"/>}>
             <div className="mod-system">
@@ -708,10 +707,13 @@ class System extends React.Component {
                 });
             });
         } else if (name === "validations") {
-            validations().then(res => this.setState({
-                validationData: res,
-                busy: false
-            }))
+            validations().then(res => {
+                res.organisation_invitations.forEach(inv => inv.invite = true);
+                this.setState({
+                    validationData: res,
+                    busy: false
+                })
+            })
         } else {
             this.setState({busy: false});
         }
