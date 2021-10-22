@@ -1510,7 +1510,7 @@ I18n.translations.en = {
         createCollTxt: "Create a collaboration",
         createCollRequestTxt: "Start a new collaboration",
         contact: "Contact SRAM helpdesk",
-        contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> and let us know what you were expecting, or if you have any questions. We'll try to respond asap."
+        contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you need help."
     },
     feedback: {
         title: "Provide Feedback",
