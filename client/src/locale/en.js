@@ -1595,7 +1595,7 @@ I18n.translations.en = {
             title: "Two factor authentication required",
             titleUpdate: "Add two factor authentication device",
             info1: "You have successfully signed in with a username and password at {{name}}. SURF Research Access Management requires two-factor authentication. This means an extra check to verify it's you.",
-            info2: "To setup two factor authentication, take the following steps.",
+            info2: "To setup two factor authentication, take the following steps:",
             step: "Stap {{nbr}}",
             getApp: "1. Add SRAM to your authenticator app",
             unknownIdp: "an unknown organisation",
