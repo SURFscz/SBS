@@ -14,6 +14,8 @@ import moment from "moment";
 import ErrorIndicator from "./ErrorIndicator";
 import Tooltip from "./Tooltip";
 import Logo from "./Logo";
+import {organisationInvitationDelete, organisationInvitationResend} from "../../api";
+import SpinnerField from "./SpinnerField";
 
 class OrganisationInvitations extends React.Component {
 
@@ -27,7 +29,7 @@ class OrganisationInvitations extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
-            loading: true
+            loading: false
         }
     }
 
@@ -46,7 +48,7 @@ class OrganisationInvitations extends React.Component {
 
     cancelSideScreen = e => {
         stopEvent(e);
-        this.setState({selectedInvitationId: null, message: "", confirmationDialogOpen: false});
+        this.setState({selectedInvitationId: null, message: "", confirmationDialogOpen: false, loading: false});
     }
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
@@ -65,10 +67,14 @@ class OrganisationInvitations extends React.Component {
     doDelete = () => {
         const invitation = this.getSelectedInvitation();
         const {refresh} = this.props;
-        refresh(() => {
-            this.cancelSideScreen();
-            I18n.t("organisationInvitation.flash.inviteDeleted", {name: invitation.organisation.name});
-        });
+        this.setState({loading: true});
+        organisationInvitationDelete(invitation.id, false).then(() => {
+            refresh(() => {
+                this.cancelSideScreen();
+                I18n.t("organisationInvitation.flash.inviteDeleted", {name: invitation.organisation.name});
+            });
+
+        })
     };
 
     resend = () => {
@@ -83,13 +89,17 @@ class OrganisationInvitations extends React.Component {
     };
 
     doResend = () => {
-        const invitation = this.getSelectedInvitation();
+        const {message} = this.state;
         const {refresh} = this.props;
-        refresh(() => {
-            this.cancelSideScreen();
-            I18n.t("organisationInvitation.flash.inviteResend", {name: invitation.organisation.name});
-        })
-
+        const invitation = this.getSelectedInvitation();
+        this.setState({loading: true});
+        organisationInvitationResend({...invitation, message}, false)
+            .then(() => {
+                refresh(() => {
+                    this.cancelSideScreen();
+                    I18n.t("organisationInvitation.flash.inviteResend", {name: invitation.organisation.name});
+                })
+            })
     };
 
     renderSelectedInvitation = invitation => {
@@ -156,9 +166,12 @@ class OrganisationInvitations extends React.Component {
     render() {
         const {organisation_invitations} = this.props;
         const {
-            confirmationDialogOpen, cancelDialogAction,
+            confirmationDialogOpen, cancelDialogAction, loading,
             confirmationDialogAction, confirmationQuestion, confirmationTxt
         } = this.state;
+        if (loading) {
+            return <SpinnerField/>
+        }
         const selectedInvitation = this.getSelectedInvitation();
         if (selectedInvitation) {
             return this.renderSelectedInvitation(selectedInvitation);
@@ -219,7 +232,7 @@ class OrganisationInvitations extends React.Component {
                           defaultSort="name"
                           columns={columns}
                           rowLinkMapper={() => this.gotoInvitation}
-                          loading={false}
+                          loading={loading}
                           {...this.props}/>
             </>
         )
