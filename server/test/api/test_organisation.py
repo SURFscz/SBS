@@ -31,7 +31,7 @@ class TestOrganisation(AbstractTest):
         organisations = self.get("/api/organisations/all",
                                  headers=API_AUTH_HEADER,
                                  with_basic_auth=False)
-        self.assertEqual(2, len(organisations))
+        self.assertEqual(3, len(organisations))
 
         organisation = organisations[0]
         self.assertEqual(2, organisation["collaborations_count"])
@@ -115,14 +115,14 @@ class TestOrganisation(AbstractTest):
                                  with_basic_auth=False)
         self.assertIsNotNone(organisation["id"])
         self.assertEqual("new_organisation", organisation["name"])
-        self.assertEqual(3, Organisation.query.count())
+        self.assertEqual(4, Organisation.query.count())
 
         organisation["name"] = "changed"
         organisation = self.put("/api/organisations", body=organisation)
         self.assertEqual("changed", organisation["name"])
 
         self.delete("/api/organisations", primary_key=organisation["id"])
-        self.assertEqual(2, Organisation.query.count())
+        self.assertEqual(3, Organisation.query.count())
 
     def test_organisation_update_short_name(self):
         self.login("urn:mary")
@@ -214,7 +214,7 @@ class TestOrganisation(AbstractTest):
     def test_my_organisations_lite_super_user(self):
         self.login("urn:john")
         res = self.get("/api/organisations/mine_lite")
-        self.assertEqual(2, len(res))
+        self.assertEqual(3, len(res))
 
     def test_my_organisations_lite_admin(self):
         self.login("urn:mary")

@@ -100,3 +100,8 @@ class TestSystem(AbstractTest):
         self.app.app_config.feature.seed_allowed = 0
         self.delete("/api/system/clean_slate", response_status_code=400)
         self.app.app_config.feature.seed_allowed = 1
+
+    def test_validations(self):
+        res = self.get("/api/system/validations", response_status_code=200)
+        self.assertEqual(2, len(res["organisation_invitations"]))
+        self.assertEqual(1, len(res["organisations"]))

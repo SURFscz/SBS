@@ -8,7 +8,7 @@ class TestPlsc(AbstractTest):
 
     def test_fetch(self):
         res = self.get("/api/plsc/sync")
-        self.assertEqual(2, len(res["organisations"]))
+        self.assertEqual(3, len(res["organisations"]))
         logo = res["organisations"][0]["logo"]
         self.assertTrue(logo.startswith, "http://localhost:8080/api/images/organisations/")
 
