@@ -198,7 +198,13 @@ I18n.translations.en = {
             title: "Open organisation invitations",
             noEntities: "There are no open organisation invitations...",
             searchPlaceHolder: "Search invitations...",
-            backToMembers: "Back to all invitations...",
+            backToMembers: "Back to open invitations...",
+            orgName: "Organisation"
+        },
+        organisationsWithoutAdmin: {
+            title: "Organisations without administrators",
+            noEntities: "There are no organisations without admins...",
+            searchPlaceHolder: "Search organisations...",
         },
         organisations: {
             title: "Organisations",
