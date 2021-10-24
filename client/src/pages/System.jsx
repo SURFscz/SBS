@@ -34,6 +34,7 @@ import {filterAuditLogs} from "../utils/AuditLog";
 import SelectField from "../components/SelectField";
 import moment from "moment";
 import OrganisationInvitations from "../components/redesign/OrganisationInvitations";
+import OrganisationsWithoutAdmin from "../components/redesign/OrganisationsWithoutAdmin";
 
 const options = [25, 50, 100, 150, 200, 250, "All"].map(nbr => ({value: nbr, label: nbr}));
 
@@ -65,7 +66,8 @@ class System extends React.Component {
             validationData: {"organisations": [], "organisation_invitations": []},
             limit: options[1],
             query: "",
-            selectedTables: []
+            selectedTables: [],
+            showOrganisationsWithoutAdmin: true
         }
     }
 
@@ -74,7 +76,6 @@ class System extends React.Component {
             const params = this.props.match.params;
             const tab = params.tab || this.state.tab;
             this.tabChanged(tab);
-
             AppStore.update(s => {
                 s.breadcrumb.paths = [
                     {path: "/", value: I18n.t("breadcrumb.home")},
@@ -228,18 +229,23 @@ class System extends React.Component {
         });
     }
 
-    getValidationTab = validationData => {
+    toggleShowOrganisationsWithoutAdmin = show => this.setState({showOrganisationsWithoutAdmin: show});
+
+    getValidationTab = (validationData, showOrganisationsWithoutAdmin) => {
         const organisation_invitations = validationData.organisation_invitations;
-        // const organisations = validationData.organisations;
+        const organisations = validationData.organisations;
         return (<div key="validations" name="validations" label={I18n.t("home.tabs.validation")}
                      icon={<FontAwesomeIcon icon="calendar-check"/>}>
             <div className="mod-system">
                 <section className="info-block-container">
-                    <OrganisationInvitations organisation_invitations={organisation_invitations} refresh={callback => this.componentDidMount(callback)}/>
+                    <OrganisationInvitations organisation_invitations={organisation_invitations}
+                                             toggleShowOrganisationsWithoutAdmin={this.toggleShowOrganisationsWithoutAdmin}
+                                             refresh={callback => this.componentDidMount(callback)}/>
                 </section>
+                {showOrganisationsWithoutAdmin &&
                 <section className="info-block-container">
-                    <span>TODO</span>
-                </section>
+                    <OrganisationsWithoutAdmin organisations={organisations} {...this.props}/>
+                </section>}
             </div>
         </div>)
 
@@ -711,9 +717,10 @@ class System extends React.Component {
                 res.organisation_invitations.forEach(inv => inv.invite = true);
                 this.setState({
                     validationData: res,
+                    showOrganisationsWithoutAdmin: true,
                     busy: false
                 })
-            })
+            });
         } else {
             this.setState({busy: false});
         }
@@ -728,7 +735,7 @@ class System extends React.Component {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
-            validationData
+            validationData, showOrganisationsWithoutAdmin
         } = this.state;
         const {config} = this.props;
 
@@ -736,7 +743,7 @@ class System extends React.Component {
             return <SpinnerField/>
         }
         const tabs = [
-            this.getValidationTab(validationData),
+            this.getValidationTab(validationData, showOrganisationsWithoutAdmin),
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations, expiredMemberships,
                 cronJobs),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,

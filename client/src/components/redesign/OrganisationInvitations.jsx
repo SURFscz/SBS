@@ -1,9 +1,8 @@
 import React from "react";
 import I18n from "i18n-js";
 import Entities from "./Entities";
-import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
-import "./OrganisationAdmins.scss";
+import "./OrganisationInvitations.scss";
 import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import {stopEvent} from "../../utils/Utils";
 import Button from "../Button";
@@ -12,10 +11,10 @@ import UserColumn from "./UserColumn";
 import InputField from "../InputField";
 import moment from "moment";
 import ErrorIndicator from "./ErrorIndicator";
-import Tooltip from "./Tooltip";
 import Logo from "./Logo";
 import {organisationInvitationDelete, organisationInvitationResend} from "../../api";
 import SpinnerField from "./SpinnerField";
+import {setFlash} from "../../utils/Flash";
 
 class OrganisationInvitations extends React.Component {
 
@@ -35,9 +34,10 @@ class OrganisationInvitations extends React.Component {
 
     gotoInvitation = invitation => e => {
         stopEvent(e);
-        const {organisation_invitations} = this.props;
-        const selectedInvitation = organisation_invitations.find(i => i.id === invitation.id)
+        const {organisation_invitations, toggleShowOrganisationsWithoutAdmin} = this.props;
+        const selectedInvitation = organisation_invitations.find(i => i.id === invitation.id);
         this.setState({selectedInvitationId: selectedInvitation.id, message: selectedInvitation.message});
+        toggleShowOrganisationsWithoutAdmin(false);
     };
 
     getSelectedInvitation = () => {
@@ -48,7 +48,9 @@ class OrganisationInvitations extends React.Component {
 
     cancelSideScreen = e => {
         stopEvent(e);
+        const {toggleShowOrganisationsWithoutAdmin} = this.props;
         this.setState({selectedInvitationId: null, message: "", confirmationDialogOpen: false, loading: false});
+        toggleShowOrganisationsWithoutAdmin(true);
     }
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
@@ -71,7 +73,7 @@ class OrganisationInvitations extends React.Component {
         organisationInvitationDelete(invitation.id, false).then(() => {
             refresh(() => {
                 this.cancelSideScreen();
-                I18n.t("organisationInvitation.flash.inviteDeleted", {name: invitation.organisation.name});
+                setFlash(I18n.t("organisationInvitation.flash.inviteDeleted", {name: invitation.organisation.name}));
             });
 
         })
@@ -97,7 +99,7 @@ class OrganisationInvitations extends React.Component {
             .then(() => {
                 refresh(() => {
                     this.cancelSideScreen();
-                    I18n.t("organisationInvitation.flash.inviteResend", {name: invitation.organisation.name});
+                    setFlash(I18n.t("organisationInvitation.flash.inviteResend", {name: invitation.organisation.name}));
                 })
             })
     };
@@ -185,12 +187,10 @@ class OrganisationInvitations extends React.Component {
                 mapper: invitation => <Logo src={invitation.organisation.logo}/>
             },
             {
-                nonSortable: true,
-                key: "icon",
-                header: "",
-                mapper: entity => <div className="member-icon">
-                    <Tooltip children={<InviteIcon/>} id={"invite-icon"} msg={I18n.t("tooltips.invitations")}/>
-                </div>
+                nonSortable: false,
+                key: "organisation_name",
+                header: I18n.t("models.orgInvitations.orgName"),
+                mapper: entity => <span>{entity.organisation.name}</span>
             },
             {
                 nonSortable: true,
@@ -202,7 +202,7 @@ class OrganisationInvitations extends React.Component {
             {
                 key: "intended_role",
                 header: I18n.t("models.users.role"),
-                mapper: entity => <span className="member-role">{I18n.t(`organisation.${entity.intended_role}`)}</span>
+                mapper: entity => <span>{I18n.t(`organisation.${entity.intended_role}`)}</span>
             },
             {
                 nonSortable: true,
