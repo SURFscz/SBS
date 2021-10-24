@@ -209,7 +209,10 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     uva = Organisation(name=amsterdam_uva_name, description="University of Amsterdam", identifier=str(uuid.uuid4()),
                        created_by="urn:admin", updated_by="urn:admin", short_name="uva", logo=read_image("uva.jpg"),
                        category="University")
-    _persist(db, uuc, uva)
+    tue = Organisation(name="TUE", description="University of Eindhoven", identifier=str(uuid.uuid4()),
+                       created_by="urn:admin", updated_by="urn:admin", short_name="tue", logo=read_image("tue.jpeg"),
+                       category="University")
+    _persist(db, uuc, uva, tue)
 
     shouuc = SchacHomeOrganisation(name=schac_home_organisation_uuc, organisation=uuc, created_by="urn:admin",
                                    updated_by="urn:admin")
