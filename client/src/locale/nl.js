@@ -95,7 +95,8 @@ I18n.translations.nl = {
             cron: "Cron",
             seed: "Seed",
             database: "Database",
-            activity: "Activiteit"
+            activity: "Activiteit",
+            validation: "Validatie"
         }
     },
     forms: {
@@ -192,6 +193,18 @@ I18n.translations.nl = {
             removeTooltip: "Verwijder alle geselecteerde leden",
             mailTooltipDisabled: "Selecteer eerst gebruikers om te e-mailen",
             mailTooltip: "E-mail alle geselecteerde leden",
+        },
+        orgInvitations: {
+            title: "Openstaande organisatie uitnodigingen",
+            noEntities: "Er zijn geen openstaande organisatie uitnodigingen...",
+            searchPlaceHolder: "Zoek uitnodigingen...",
+            backToMembers: "Terug naar openstaande uitnodigingen...",
+            orgName: "Organisatie"
+        },
+        organisationsWithoutAdmin: {
+            title: "Organisaties zonder beheerders",
+            noEntities: "Er zijn geen organisaties zonder beheerders...",
+            searchPlaceHolder: "Zoek organisaties...",
         },
         organisations: {
             title: "Organisaties",

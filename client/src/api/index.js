@@ -668,6 +668,10 @@ export function cleanSlate() {
     return fetchDelete("/api/system/clean_slate");
 }
 
+export function validations() {
+    return fetchJson("/api/system/validations");
+}
+
 export function feedback(message) {
     return postPutJson("/api/system/feedback", {message}, "POST");
 }

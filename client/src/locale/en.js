@@ -95,7 +95,8 @@ I18n.translations.en = {
             cron: "Cron",
             seed: "Seed",
             database: "Database",
-            activity: "Activity"
+            activity: "Activity",
+            validation: "Validation"
         }
     },
     forms: {
@@ -192,6 +193,18 @@ I18n.translations.en = {
             removeTooltip: "Delete all selected members",
             mailTooltipDisabled: "First select users to email",
             mailTooltip: "Email all selected members"
+        },
+        orgInvitations: {
+            title: "Open organisation invitations",
+            noEntities: "There are no open organisation invitations...",
+            searchPlaceHolder: "Search invitations...",
+            backToMembers: "Back to open invitations...",
+            orgName: "Organisation"
+        },
+        organisationsWithoutAdmin: {
+            title: "Organisations without administrators",
+            noEntities: "There are no organisations without admins...",
+            searchPlaceHolder: "Search organisations...",
         },
         organisations: {
             title: "Organisations",
