@@ -15,8 +15,10 @@ import {
     outstandingRequests,
     scheduledJobs,
     suspendCollaborations,
-    suspendUsers
+    suspendUsers,
+    plscSync
 } from "../api";
+import ReactJson from 'react-json-view'
 import Button from "../components/Button";
 import {isEmpty} from "../utils/Utils";
 import UnitHeader from "../components/redesign/UnitHeader";
@@ -67,7 +69,8 @@ class System extends React.Component {
             limit: options[1],
             query: "",
             selectedTables: [],
-            showOrganisationsWithoutAdmin: true
+            showOrganisationsWithoutAdmin: true,
+            plscData: {}
         }
     }
 
@@ -227,6 +230,18 @@ class System extends React.Component {
             filteredAuditLogs: filteredAuditLogs,
             query: query
         });
+    }
+
+    getPlscTab = plscData => {
+        return (<div key="plsc" name="plsc" label={I18n.t("home.tabs.plsc")}
+                     icon={<FontAwesomeIcon icon="table"/>}>
+            <div className="mod-system">
+                <section className="info-block-container">
+                    <ReactJson src={plscData} />
+                </section>
+            </div>
+        </div>)
+
     }
 
     toggleShowOrganisationsWithoutAdmin = show => this.setState({showOrganisationsWithoutAdmin: show});
@@ -721,6 +736,8 @@ class System extends React.Component {
                     busy: false
                 })
             });
+        } else if (name === "plsc") {
+            plscSync().then(res => this.setState({plscData: res, busy: false}));
         } else {
             this.setState({busy: false});
         }
@@ -735,7 +752,7 @@ class System extends React.Component {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
-            validationData, showOrganisationsWithoutAdmin
+            validationData, showOrganisationsWithoutAdmin, plscData
         } = this.state;
         const {config} = this.props;
 
@@ -748,7 +765,8 @@ class System extends React.Component {
                 cronJobs),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
             this.getDatabaseTab(databaseStats, config),
-            this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables)
+            this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables),
+            this.getPlscTab(plscData)
         ]
         return (
             <div className="mod-system-container">

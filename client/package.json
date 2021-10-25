@@ -29,6 +29,7 @@
         "react-datepicker": "3.4.1",
         "react-dom": "^16.13.1",
         "react-image-crop": "^8.6.6",
+        "react-json-view": "^1.21.3",
         "react-md-spinner": "^1.0.0",
         "react-mde": "^11.0.0",
         "react-modal": "^3.11.2",
