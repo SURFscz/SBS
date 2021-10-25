@@ -272,6 +272,13 @@ class NewInvitation extends React.Component {
                          placeholder={I18n.t("invitation.groupsPlaceHolder")}
                          onChange={this.selectedGroupsChanged}/>
 
+            <DateField value={membership_expiry_date}
+                               onChange={e => this.setState({membership_expiry_date: e})}
+                               allowNull={true}
+                               showYearDropdown={true}
+                               name={I18n.t("invitation.membershipExpiryDate")}
+                               toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
+
             <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                         placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}
                         name={I18n.t("collaboration.message")}
@@ -285,12 +292,6 @@ class NewInvitation extends React.Component {
                        name={I18n.t("invitation.expiryDate")}
                        toolTip={I18n.t("invitation.expiryDateTooltip")}/>
 
-            <DateField value={membership_expiry_date}
-                               onChange={e => this.setState({membership_expiry_date: e})}
-                               allowNull={true}
-                               showYearDropdown={true}
-                               name={I18n.t("invitation.membershipExpiryDate")}
-                               toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
 
             {this.renderActions(disabledSubmit, true)}
         </div>;
