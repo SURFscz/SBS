@@ -675,3 +675,7 @@ export function validations() {
 export function feedback(message) {
     return postPutJson("/api/system/feedback", {message}, "POST");
 }
+
+export function plscSync() {
+    return fetchJson("/api/plsc/sync");
+}
