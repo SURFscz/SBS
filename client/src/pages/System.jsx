@@ -18,7 +18,7 @@ import {
     suspendUsers,
     plscSync
 } from "../api";
-import ReactJson from 'react-json-view'
+import ReactJson from "react-json-view";
 import Button from "../components/Button";
 import {isEmpty} from "../utils/Utils";
 import UnitHeader from "../components/redesign/UnitHeader";
