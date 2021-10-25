@@ -297,7 +297,7 @@ I18n.translations.nl = {
         coAdmins: {
             searchPlaceHolder: "Zoek beheerders...",
             title: "Beheerders",
-            new: "Voeg beheeerder(s) toe",
+            new: "Voeg beheerder(s) toe",
             noEntities: "Er zijn geen beheerder",
         },
         members: {
