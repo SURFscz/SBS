@@ -59,7 +59,7 @@ I18n.translations.en = {
         closeBrowserAfterDelete: "To finish the deletion of your account you'll have to close your browser."
     },
     home: {
-        sram: "SURF RESEARCH ACCESS MANAGEMENT PLATFORM",
+        sram: "SURF Research Access Management platform",
         edit: "Edit",
         unsuspend: "Revert suspension",
         history: "History",
@@ -543,7 +543,7 @@ I18n.translations.en = {
         invitations: "Invitations",
         services: "Services",
         add: "Create new collaboration",
-        searchPlaceHolder: "SEARCH FOR ALL COLLABORATIONS..."
+        searchPlaceHolder: "Search for all collaborations"
     },
     accessTypes: {
         open: "Open",
@@ -688,13 +688,13 @@ I18n.translations.en = {
         invitations: "Invitations",
         collaborationRequests: "Collaboration requests",
         add: "Create new service",
-        searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS...",
+        searchPlaceHolder: "Search for all organisations",
         deleteConfirmation: "Are you sure you want to delete service {{name}}?"
     },
     services: {
         title: "Services",
         add: "Create new service",
-        searchPlaceHolder: "SEARCH FOR ALL SERVICES..."
+        searchPlaceHolder: "Search for all services"
     },
     service: {
         about: "About the service",
@@ -1074,7 +1074,7 @@ I18n.translations.en = {
         noServices: "This collaboration has no services connected.",
         noServiceConnectRequests: "This collaboration has no outstanding service Connect Requests.",
         searchServices: "Search, select and add services to the available services within collaboration {{name}}",
-        deleteServiceTooltip: "Make this service unavailable in the collaboration {{name}}. <strong>NOTE</strong>: the service itself is NOT deleted. It is only not available anymore for groups within this collaboration.",
+        deleteServiceTooltip: "Make this service unavailable in the collaboration {{name}}. <strong>Note</strong>: the service itself is <strong>not</strong> deleted. It is only not available anymore for groups within this collaboration.",
         notAllowedOrganisation: "Service '{{service}}' cannot be added to collaboration '{{collaboration}}'. The service configuration excludes it from organisation '{{organisation}}'.",
         automaticConnectionNotAllowed: "Service '{{service}}' cannot be automatically added to collaboration '{{collaboration}}'. The service configuration dictates that a service connect request must be submitted. Please add your motivation and submit this form.",
         motivation: "Motivation",
@@ -1114,7 +1114,7 @@ I18n.translations.en = {
         connectedServices: "Connected services to {{name}}",
         noServices: "This organisation has no services connected.",
         searchServices: "Search, select and add services to the available services within organisation {{name}}.",
-        deleteServiceTooltip: "Make this service unavailable in the organisation {{name}}. <strong>NOTE</strong>: the service itself is NOT deleted. It is only not available anymore for the members of the collaborations on this organisation",
+        deleteServiceTooltip: "Make this service unavailable in the organisation {{name}}. <strong>Note</strong>: the service itself is NOT deleted. It is only not available anymore for the members of the collaborations on this organisation",
         notAllowedOrganisation: "This service cannot be enabled for al collaborations because it does not allow automatic connections to collaborations. Connections can still be requested by individual collaborations in your organisation.",
         notEnabledOrganisation: "This service cannot be enabled for al collaborations because this organisation is not allowed access to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         serviceRestrictedOrganisation: "This service cannot be enabled for al collaborations because this organisation is configured services restricted. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
@@ -1202,12 +1202,12 @@ I18n.translations.en = {
         searchServices: "Search, select and add services to the available services for the group {{name}}",
         connectedServices: "Connected services to {{name}}",
         deleteServiceWarning: "Warning: Unlinking services from the group deletes all user information specific for that service and all linked memberships",
-        deleteServiceTooltip: "Make this service unavailable in the group {{name}} <strong>NOTE</strong>: the service itself is NOT deleted. It is only no longer available for this group",
+        deleteServiceTooltip: "Make this service unavailable in the group {{name}} <strong>Note</strong>: the service itself is <strong>not</strong> deleted. It is only no longer available for this group",
         searchMembers: "Search, select and add members to the group {{name}}",
         connectedMembers: "Members of {{name}}",
         deleteMemberWarning: "Warning: Unlinking memberships from the group deletes all user information specific for that membership and all linked services",
-        deleteMemberTooltip: "Remove this member from the group {{name}} <strong>NOTE</strong>: the user itself is NOT deleted. They are only no longer a member of this groups",
-        deleteInvitationTooltip: "Remove this invitation from the group {{name}} <strong>NOTE</strong>: the invitation itself is NOT deleted. They will not be added as a member of this group when the invitation is accepted",
+        deleteMemberTooltip: "Remove this member from the group {{name}} <strong>Note</strong>: the user itself is NOT deleted. They are only no longer a member of this groups",
+        deleteInvitationTooltip: "Remove this invitation from the group {{name}} <strong>Note</strong>: the invitation itself is NOT deleted. They will not be added as a member of this group when the invitation is accepted",
         service: {
             actions: "",
             name: "Name",
@@ -1420,7 +1420,7 @@ I18n.translations.en = {
     not_found: {
         title: "404",
         description_html: "The requested page could not be found",
-        loginLink: "LOGIN"
+        loginLink: "Login"
     },
     footer: {
         tips: "Need tips or info?",
