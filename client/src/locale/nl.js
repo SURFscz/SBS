@@ -747,7 +747,7 @@ I18n.translations.nl = {
         accessAllowedForAllInfo: "Alle organisaties zijn standaard beschikbaar voor deze dienst",
         nonMemberUsersAccessAllowed: "Toegankelijk voor alle gebruikers?",
         nonMemberUsersAccessAllowedTooltip: "Hebben alle gebruikers toegang tot deze service zonder lid te zijn van een gekoppelde samenwerking?",
-        whiteListed: "Whitelisted?",
+        whiteListed: "Op allow list?",
         whiteListedTooltip: "Kan deze dienst direct worden gekoppeld op nieuwe beperkte samenwerkingen die via de API aangemaakt worden? Merk op dat het ook mogelijk is dit te configureren in het configuratiebestand op de server.",
         sirtfiCompliant: "Sirtfi compliant?",
         sirtfiCompliantTooltip: "Het Security Incident Response Trust Framework for Federated Identity (Sirtfi) heeft als doel coördinatie van incidenten die organisatiegrenzen overstijgen te vereenvoudigen. Dit 'assurance framework' biedt een aantal 'assertions' waarmee een organisatie kan aangeven of ze Sirtfi compliant zijn.",

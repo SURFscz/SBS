@@ -747,7 +747,7 @@ I18n.translations.en = {
         accessAllowedForAllInfo: "All organisations are enabled by default for this service",
         nonMemberUsersAccessAllowed: "Accessible for all users?",
         nonMemberUsersAccessAllowedTooltip: "Can all members access this service without being a member of a connected Collaboration",
-        whiteListed: "Whitelisted?",
+        whiteListed: "On allow list?",
         whiteListedTooltip: "Can this service directly be connected to new restricted collaborations created by the API? Note that it also possible to configure this in the Server configuration file.",
         sirtfiCompliant: "Sirtfi compliant?",
         sirtfiCompliantTooltip: "The Security Incident Response Trust Framework for Federated Identity (Sirtfi) aims to enable the coordination of incident response across federated organisations. This assurance framework comprises a list of assertions which an organisation can attest in order to be declared Sirtfi compliant.",
