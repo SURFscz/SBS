@@ -59,7 +59,7 @@ I18n.translations.nl = {
         closeBrowserAfterDelete: "Om het verwijderen van je account te voltooien, moet je je browser sluiten."
     },
     home: {
-        sram: "RESEARCH ACCESS MANAGEMENT PLATFORM",
+        sram: "SURF research access management platform",
         edit: "Wijzig",
         history: "Geschiedenis",
         unsuspend: "Schorsing ongedaan maken",
@@ -543,7 +543,7 @@ I18n.translations.nl = {
         invitations: "Uitnodigingen",
         services: "Diensten",
         add: "Nieuwe samenwerking",
-        searchPlaceHolder: "ZOEK OP ALLE SAMENWERKINGEN..."
+        searchPlaceHolder: "Zoek op alle samenwerkingen"
     },
     accessTypes: {
         open: "Open",
@@ -615,7 +615,7 @@ I18n.translations.nl = {
         required: "{{attribute}} moet worden ingevuld voor een samenwerking.",
         administrators: "Beheerders",
         administratorsPlaceholder: "Nodig beheerders uit per e-mail",
-        administratorsTooltip: "Beheerders van een samenwerking kunnen de samenwerking aanpassen en leden uitnodigen. Voer e-mailadressen in, gescheiden door een komma, spatie of punt-komma, of druk ENTER na elk adres.",
+        administratorsTooltip: "Beheerders van een samenwerking kunnen de samenwerking aanpassen en leden uitnodigen. Voer e-mailadressen in, gescheiden door een komma, spatie of punt-komma, of druk enter na elk adres.",
         members: "Normale gebruikers",
         selectRole: "Selecteer een rol.",
         manager: "Manager",
@@ -688,13 +688,13 @@ I18n.translations.nl = {
         invitations: "Uitnodigingen",
         collaborationRequests: "Samenwerkingsaanvragen",
         add: "Nieuwe organisatie maken",
-        searchPlaceHolder: "DOORZOEK ALLE ORGANISATIES",
+        searchPlaceHolder: "Doorzoek alle organisaties",
         deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen?"
     },
     services: {
         title: "Diensten",
         add: "Nieuwe dienst",
-        searchPlaceHolder: "DOORZOEK ALLE DIENSTEN"
+        searchPlaceHolder: "Doorzoek alle diensten"
     },
     service: {
         about: "Over de dienst",
@@ -1074,7 +1074,7 @@ I18n.translations.nl = {
         noServices: "Deze samenwerking heeft geen gekoppelde diensten.",
         noServiceConnectRequests: "Deze samenwerking heeft geen openstaande dienstkoppelverzoeken.",
         searchServices: "Zoek, kies en voeg diensten toe aan samenwerking {{name}}",
-        deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor samenwerking {{name}}. <strong>Let op</strong>: de dienst wordt niet verwijderd, alleen onbeschikbaar voor groepen van deze samenwerking.",
+        deleteServiceTooltip: "Maak deze dienst ontoegankelijk voor samenwerking {{name}}. <strong>Let op</strong>: de dienst wordt <strong>niet</strong> verwijderd, alleen onbeschikbaar voor groepen van deze samenwerking.",
         notAllowedOrganisation: "Dienst '{{service}}' kan niet toegoegd worden aan samenwerking '{{collaboration}}'. De configuratie van de dienst laat een koppeling met organisation '{{organisation}}' niet toe.",
         automaticConnectionNotAllowed: "Dienst '{{service}}' kan niet automatisch worden toegevoegd aan de samenwerking '{{collaboration}}'. De dienst is zo geconfigureerd dat er eerst een dienstkoppelverzoek moet worden gedaan. Schrijf je motivatie voor de koppeling hieronder en verstuur het formulier.",
         motivation: "Motivatie",
@@ -1420,7 +1420,7 @@ I18n.translations.nl = {
     not_found: {
         title: "404",
         description_html: "Deze pagina kan niet worden gevonden.",
-        loginLink: "LOGIN"
+        loginLink: "Login"
     },
     footer: {
         tips: "Tips of help nodig?",
