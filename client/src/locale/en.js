@@ -266,7 +266,7 @@ I18n.translations.en = {
             invitationsCount: "Invitations",
             allMembers: "All members ({{count}})",
             group: "Group {{name}} ({{count}})",
-            hideInvites: "Hide invitees",
+            hideInvites: "Hide invitations",
             noCollaborations: "There are no collaborations yet within your organisation. Why don't you create the first one?",
         },
         serviceOrganisations: {
