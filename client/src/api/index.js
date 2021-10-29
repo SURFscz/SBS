@@ -194,6 +194,10 @@ export function serviceEntityIdExists(entityId, existingService = null) {
     return fetchJson(`/api/services/entity_id_exists?entity_id=${encodeURIComponent(entityId)}&existing_service=${encodeURIComponent(existingService)}`);
 }
 
+export function serviceAbbreviationExists(abbreviation, existingService = null) {
+    return fetchJson(`/api/services/abbreviation_exists?abbreviation=${encodeURIComponent(abbreviation)}&existing_service=${encodeURIComponent(existingService)}`);
+}
+
 export function serviceById(id) {
     return fetchJson(`/api/services/${id}`, {}, {}, false);
 }
@@ -678,4 +682,24 @@ export function feedback(message) {
 
 export function plscSync() {
     return fetchJson("/api/plsc/sync");
+}
+//Service groups
+export function serviceGroupNameExists(name, serviceId, existingGroup = null) {
+    return fetchJson(`/api/servicegroups/name_exists?name=${encodeURIComponent(name)}&service_id=${serviceId}&existing_service_group=${encodeURIComponent(existingGroup)}`);
+}
+
+export function serviceGroupShortNameExists(shortName, serviceId, existingGroup = null) {
+    return fetchJson(`/api/servicegroups/short_name_exists?short_name=${encodeURIComponent(shortName)}&service_id=${serviceId}&existing_service_group=${encodeURIComponent(existingGroup)}`);
+}
+
+export function createServiceGroup(group) {
+    return postPutJson("/api/servicegroups", group, "post");
+}
+
+export function updateServiceGroup(group) {
+    return postPutJson("/api/servicegroups", group, "put");
+}
+
+export function deleteServiceGroup(id) {
+    return fetchDelete(`/api/servicegroups/${id}`)
 }

@@ -2,7 +2,7 @@ import React from "react";
 import {
     createService,
     deleteService,
-    ipNetworks,
+    ipNetworks, serviceAbbreviationExists,
     serviceById,
     serviceEntityIdExists,
     serviceNameExists,
@@ -16,7 +16,7 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty} from "../utils/Utils";
-import {validEmailRegExp} from "../validations/regExps";
+import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
@@ -37,6 +37,7 @@ class Service extends React.Component {
     initialState = () => ({
         service: {},
         name: "",
+        abbreviation: "",
         logo: "",
         entity_id: "",
         description: "",
@@ -53,7 +54,7 @@ class Service extends React.Component {
         sirtfi_compliant: false,
         contact_email: "",
         ip_networks: [],
-        required: ["name", "entity_id", "logo"],
+        required: ["name", "entity_id", "abbreviation", "logo"],
         alreadyExists: {},
         initial: true,
         isNew: true,
@@ -131,6 +132,11 @@ class Service extends React.Component {
     validateServiceEntityId = e =>
         serviceEntityIdExists(e.target.value, this.state.isNew ? null : this.state.service.entity_id).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, entity_id: json}});
+        });
+
+    validateServiceAbbreviation = e =>
+        serviceAbbreviationExists(sanitizeShortName(e.target.value), this.state.isNew ? null : this.state.service.abbreviation).then(json => {
+            this.setState({alreadyExists: {...this.state.alreadyExists, abbreviation: json}});
         });
 
     validateEmail = e => {
@@ -302,7 +308,7 @@ class Service extends React.Component {
         </div>);
     }
 
-    serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
+    serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, logo) => {
@@ -353,6 +359,25 @@ class Service extends React.Component {
                 })}/>}
                 {(!initial && isEmpty(entity_id)) && <ErrorIndicator msg={I18n.t("service.required", {
                     attribute: I18n.t("service.entity_id").toLowerCase()
+                })}/>}
+
+                <InputField value={abbreviation} onChange={e => this.setState({
+                    abbreviation: sanitizeShortName(e.target.value),
+                    alreadyExists: {...this.state.alreadyExists, abbreviation: false}
+                })}
+                            placeholder={I18n.t("service.abbreviationPlaceHolder")}
+                            onBlur={this.validateServiceAbbreviation}
+                            name={I18n.t("service.abbreviation")}
+                            toolTip={I18n.t("service.abbreviationTooltip")}
+                            error={alreadyExists.abbreviation || (!initial && isEmpty(abbreviation))}
+                            copyClipBoard={false}
+                            disabled={!isAdmin}/>
+                {alreadyExists.abbreviation && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
+                    attribute: I18n.t("service.abbreviation").toLowerCase(),
+                    value: abbreviation
+                })}/>}
+                {(!initial && isEmpty(abbreviation)) && <ErrorIndicator msg={I18n.t("service.required", {
+                    attribute: I18n.t("service.abbreviation").toLowerCase()
                 })}/>}
 
                 {!isNew && <InputField value={serviceRequestUrl}
@@ -472,11 +497,33 @@ class Service extends React.Component {
     render() {
         //status,address, identity_type
         const {
-            alreadyExists, service, initial, confirmationDialogOpen, cancelDialogAction, name,
-            entity_id, description, uri, accepted_user_policy, contact_email,
-            confirmationDialogAction, leavePage, isNew, invalidInputs, automatic_connection_allowed,
-            access_allowed_for_all, non_member_users_access_allowed, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-            research_scholarship_compliant, ip_networks, logo, warning, loading
+            alreadyExists,
+            service,
+            initial,
+            confirmationDialogOpen,
+            cancelDialogAction,
+            name,
+            entity_id,
+            abbreviation,
+            description,
+            uri,
+            accepted_user_policy,
+            contact_email,
+            confirmationDialogAction,
+            leavePage,
+            isNew,
+            invalidInputs,
+            automatic_connection_allowed,
+            access_allowed_for_all,
+            non_member_users_access_allowed,
+            white_listed,
+            sirtfi_compliant,
+            code_of_conduct_compliant,
+            research_scholarship_compliant,
+            ip_networks,
+            logo,
+            warning,
+            loading
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -502,7 +549,7 @@ class Service extends React.Component {
                                         isWarning={warning}
                                         question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
 
-                    {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, description, uri, automatic_connection_allowed,
+                    {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
                         isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, logo)}

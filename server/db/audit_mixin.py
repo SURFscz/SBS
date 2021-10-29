@@ -24,7 +24,7 @@ relationship_configuration = {
     "groups": ["collaboration_memberships", "invitations"],
     "collaborations": ["services"],
     "organisations": ["services"],
-    "services": ["allowed_organisations"]
+    "services": ["allowed_organisations", "service_groups"]
 }
 
 
@@ -101,6 +101,7 @@ parent_configuration = {
     "collaboration_requests": ("organisation_id", "organisations"),
     "service_connection_requests": ("collaboration_id", "collaborations"),
     "ip_networks": ("service_id", "services"),
+    "service_groups": ("service_id", "services")
 }
 
 

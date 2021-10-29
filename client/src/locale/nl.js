@@ -132,7 +132,8 @@ I18n.translations.nl = {
         impersonate: "Imitatie",
         services: "Diensten",
         serviceRequest: "Dienstverzoek",
-        apiKeys: "API keys"
+        apiKeys: "API keys",
+        serviceGroups: "Service groups"
     },
     models: {
         users: {
@@ -454,7 +455,22 @@ I18n.translations.nl = {
             details: "Dienst koppelverzoek gemaakt door {{name}} op {{date}} voor samenwerking {{collaborationName}}",
             requester: "Aanvrager",
             name: "Samenwerking"
-        }
+        },
+        serviceGroups: {
+            backToGroups: "Terug naar alle dienstgroepen",
+            autoProvisionMembersTooltip: "Vink aan om automatisch alle bestaande leden en nieuwe leden toe te voegen aan deze groep als deze wordt aangemaakt",
+            title: "Dienstgroepen",
+            searchPlaceHolder: "Zoek dienstgroepen...",
+            noEntities: "Geen dienstgroepen gevonden",
+            new: "Nieuwe dienstgroep",
+            edit: "Wijzig",
+            name: "Naam",
+            description: "Omschrijving",
+            autoProvisioning: "Iedereen automatisch lid",
+            on: "Aan",
+            off: "Uit"
+        },
+
     },
     user: {
         titleUpdate: "Werk de sleutels in je gebruikersprofiel bij",
@@ -713,6 +729,9 @@ I18n.translations.nl = {
         entity_id: "Entity ID",
         entity_idPlaceHolder: "De unieke entity ID van de dienst",
         entity_idTooltip: "De unieke entity ID van de dienst koppelt de dienst in SRAM aan de daadwerkelijke externe dienstaanbieder",
+        abbreviation: "Afkorting",
+        abbreviationPlaceHolder: "De unieke afkorting van deze dient",
+        abbreviationTooltip: "De unieke afkorting van een service wordt gebruikt als prefix voor groepen van deze service",
         service_request: "Dienst request URL",
         service_requestTooltip: "De URL van een dienst om een koppeling aan te vragen tussen een samenwerking en deze dienst als de gebruiker geen toegang heeft tot deze dienst",
         service_requestError: "Vereist een valide URL en automatische connectie moet toegestaan zijn",
@@ -906,6 +925,7 @@ I18n.translations.nl = {
         service: {
             name: "Naam",
             entity_id: "Entity ID",
+            abbreviation: "Afkorting",
             description: "Omschrijving",
             actions: "",
         },
@@ -1089,6 +1109,7 @@ I18n.translations.nl = {
             open: "",
             actions: "",
             name: "Naam",
+            abbreviation: "Afkorting",
             entity_id: "Entity ID",
             description: "Beschrijving"
         },
@@ -1339,6 +1360,7 @@ I18n.translations.nl = {
             "organisations": "Organisatie",
             "organisations_services": "Dienst",
             "service_connection_requests": "Koppelverzoek",
+            "service_groups": "Service groups",
             "services": "Dienst",
             "services_collaborations": "Dienst",
             "users": "Gebruiker",
