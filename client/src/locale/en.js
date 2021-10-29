@@ -132,7 +132,8 @@ I18n.translations.en = {
         impersonate: "Impersonate",
         services: "Services",
         serviceRequest: "Service request",
-        apiKeys: "API keys"
+        apiKeys: "API keys",
+        serviceGroups: "Service groups"
     },
     models: {
         users: {
@@ -454,7 +455,22 @@ I18n.translations.en = {
             details: "Service connection request made by {{name}} on {{date}} for collaboration {{collaborationName}}",
             requester: "Requester",
             name: "Collaboration"
-        }
+        },
+        serviceGroups: {
+            backToGroups: "Back to all service groups",
+            autoProvisionMembersTooltip: "Check to ensure all existing and future new collaboration members are added to this group when it is created",
+            title: "Service groups",
+            searchPlaceHolder: "Search for service groups...",
+            noEntities: "No service groups were found",
+            new: "Create new service group",
+            edit: "Edit",
+            name: "Name",
+            description: "Description",
+            autoProvisioning: "Auto provisioning",
+            on: "On",
+            off: "Off"
+        },
+
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -713,6 +729,9 @@ I18n.translations.en = {
         entity_id: "Entity ID",
         entity_idPlaceHolder: "The unique entity ID of the service",
         entity_idTooltip: "The unique entity ID of the service links the service in SRAM to the actual external service Provider",
+        abbreviation: "Abbreviation",
+        abbreviationPlaceHolder: "The unique abbreviation of this service",
+        abbreviationTooltip: "The unique abbreviation of the service is used as a prefix for any groups you create",
         service_request: "Service Request URL",
         service_requestTooltip: "The URL for a service to request a connection between a collaboration and this service if the User does not have access to this service",
         service_requestError: "Requires a valid URI and Automatic connection allowed set to True",
@@ -906,6 +925,7 @@ I18n.translations.en = {
         service: {
             name: "Name",
             entity_id: "Entity ID",
+            abbreviation: "Abbreviation",
             description: "Description",
             actions: "",
         },
@@ -1090,6 +1110,7 @@ I18n.translations.en = {
             actions: "",
             name: "Name",
             entity_id: "Entity ID",
+            abbreviation: "Abbreviation",
             description: "Description"
         },
         serviceConnectionRequest: {
@@ -1339,6 +1360,7 @@ I18n.translations.en = {
             "organisations": "Organisation",
             "organisations_services": "Organisation service",
             "service_connection_requests": "Service connection request",
+            "service_groups": "Service groups",
             "services": "Service",
             "services_collaborations": "Collaboration service",
             "users": "User",

@@ -282,6 +282,7 @@ class Service(Base, db.Model, LogoMixin):
     uuid4 = db.Column("uuid4", db.String(length=255), nullable=False, default=gen_uuid4)
     address = db.Column("address", db.Text(), nullable=True)
     identity_type = db.Column("identity_type", db.String(length=255), nullable=True)
+    abbreviation = db.Column("abbreviation", db.String(length=255), nullable=False)
     uri = db.Column("uri", db.String(length=255), nullable=True)
     accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
@@ -304,6 +305,8 @@ class Service(Base, db.Model, LogoMixin):
     ip_networks = db.relationship("IpNetwork", cascade="all, delete-orphan", passive_deletes=True)
     service_connection_requests = db.relationship("ServiceConnectionRequest", back_populates="service",
                                                   cascade="all, delete-orphan", passive_deletes=True)
+    service_groups = db.relationship("ServiceGroup", back_populates="service", cascade="all, delete-orphan",
+                                     passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -498,5 +501,20 @@ class UserMail(Base, db.Model):
     recipient = db.Column("recipient", db.String(length=255), nullable=True)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User", back_populates="user_mails")
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+
+
+class ServiceGroup(Base, db.Model):
+    __tablename__ = "service_groups"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=False)
+    short_name = db.Column("short_name", db.String(length=255), nullable=True)
+    description = db.Column("description", db.Text(), nullable=True)
+    auto_provision_members = db.Column("auto_provision_members", db.Boolean(), nullable=True, default=False)
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    service = db.relationship("Service", back_populates="service_groups")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)

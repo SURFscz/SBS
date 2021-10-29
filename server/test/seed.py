@@ -13,7 +13,7 @@ from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
-    ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey
+    ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup
 
 collaboration_request_name = "New Collaboration"
 
@@ -72,6 +72,9 @@ service_cloud_name = "Cloud"
 service_wiki_name = "Wiki"
 service_ssh_uva_name = "SSH UvA"
 uuc_scheduler_name = "uuc_scheduler_name"
+
+service_group_mail_name = "service_group_mail_name"
+service_group_wiki_name = "service_group_wiki_name"
 
 ai_researchers_group = "AI researchers"
 ai_researchers_group_short_name = "ai_res"
@@ -250,16 +253,16 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     mail = Service(entity_id=service_mail_entity_id, name=service_mail_name, contact_email=john.email,
                    public_visible=True, automatic_connection_allowed=True, logo=read_image("email.jpeg"),
-                   accepted_user_policy="https://google.nl", allowed_organisations=[uuc, uva])
+                   accepted_user_policy="https://google.nl", allowed_organisations=[uuc, uva], abbreviation="mail")
     wireless = Service(entity_id="https://wireless", name=service_wireless_name, description="Network Wireless Service",
                        public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
-                       logo=read_image("wireless.png"), accepted_user_policy="https://google.nl",
+                       logo=read_image("wireless.png"), accepted_user_policy="https://google.nl", abbreviation="wire",
                        allowed_organisations=[uuc, uva], uri="https://wireless", non_member_users_access_allowed=True)
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True, logo=read_image("cloud.jpg"),
-                    allowed_organisations=[uuc, uva])
+                    allowed_organisations=[uuc, uva], abbreviation="cloud")
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
-                      description="SURF Storage Service", logo=read_image("storage.jpeg"),
+                      description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email,
                       white_listed=True, accepted_user_policy="https://google.nl")
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
@@ -267,28 +270,40 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                        "SamenwerkingBeheerSysteem%29+-+SBS#CollaborationManagementSystem"
                        "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
                    public_visible=True, automatic_connection_allowed=False, logo=read_image("wiki.jpeg"),
-                   allowed_organisations=[uuc, uva], contact_email="help@wiki.com",
+                   allowed_organisations=[uuc, uva], contact_email="help@wiki.com", abbreviation="wiki",
                    accepted_user_policy="https://google.nl")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
                       contact_email="help@network.com", logo=read_image("network.jpeg"),
-                      public_visible=False, automatic_connection_allowed=True,
+                      public_visible=False, automatic_connection_allowed=True, abbreviation="network",
                       allowed_organisations=[uuc])
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
                               contact_email="help@ssh.com", logo=read_image("ssh_uva.png"),
-                              public_visible=False, automatic_connection_allowed=False,
+                              public_visible=False, automatic_connection_allowed=False, abbreviation="service_ssh",
                               allowed_organisations=[uva], research_scholarship_compliant=True,
                               code_of_conduct_compliant=True, sirtfi_compliant=True)
 
     uuc_scheduler = Service(entity_id=uuc_scheduler_entity_id, name=uuc_scheduler_name,
-                            accepted_user_policy="https://google.nl",
+                            accepted_user_policy="https://google.nl", abbreviation="uuc_scheduler",
                             description="UUC Scheduler Service", logo=read_image("scheduler_uuc.jpeg"),
                             public_visible=True, automatic_connection_allowed=False, allowed_organisations=[uuc])
 
     _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler)
+
+    service_group_mail = ServiceGroup(name=service_group_mail_name,
+                                      short_name="mail",
+                                      auto_provision_members=True,
+                                      description="Mail group",
+                                      service=mail)
+    service_group_wiki = ServiceGroup(name=service_group_wiki_name,
+                                      short_name="wiki",
+                                      auto_provision_members=False,
+                                      description="Wiki group",
+                                      service=wiki)
+    _persist(db, service_group_mail, service_group_wiki)
 
     uuc.services.append(uuc_scheduler)
     uuc.services.append(wiki)

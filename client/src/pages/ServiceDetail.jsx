@@ -15,6 +15,8 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import {removeDuplicates} from "../utils/Utils";
 import {actionMenuUserRole} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
+import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
+import ServiceGroups from "../components/redesign/ServiceGroups";
 
 class ServiceDetail extends React.Component {
 
@@ -44,6 +46,7 @@ class ServiceDetail extends React.Component {
                         const tabs = [
                             this.getOrganisationsTab(service, organisations),
                             this.getCollaborationsTab(service),
+                            this.getServiceGroupsTab(service),
                             this.getServiceConnectionRequest(service, serviceConnectionRequests)
                         ];
                         this.afterFetch(params, service, organisations, serviceConnectionRequests, tabs);
@@ -92,6 +95,7 @@ class ServiceDetail extends React.Component {
                 const tabs = [
                     this.getOrganisationsTab(service, organisations),
                     this.getCollaborationsTab(service),
+                    this.getServiceGroupsTab(service),
                     this.getServiceConnectionRequest(service, serviceConnectionRequests)];
                 this.setState({
                     service: service,
@@ -109,6 +113,14 @@ class ServiceDetail extends React.Component {
                      icon={<OrganisationsIcon/>}>
             <ServiceOrganisations {...this.props} refresh={this.refresh} service={service}
                                   organisations={organisations}/>
+        </div>)
+    }
+
+    getServiceGroupsTab = (service) => {
+        return (<div key="groups" name="groups" label={I18n.t("home.tabs.groups")}
+                     icon={<GroupsIcon/>}>
+            {<ServiceGroups {...this.props} service={service}
+                            refresh={this.refresh}/>}
         </div>)
     }
 

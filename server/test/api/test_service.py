@@ -61,11 +61,13 @@ class TestService(AbstractTest):
         service = self.post("/api/services", body={
             "entity_id": "https://new_service",
             "name": "new_service",
+            "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "ip_networks": [{"network_value": "2001:db8:f00f:bab::/64"}, {"network_value": "192.0.2.0/24"}]
         })
 
         self.assertIsNotNone(service["id"])
         self.assertEqual("new_service", service["name"])
+        self.assertEqual("qwoookaaaaaaaaaa", service["abbreviation"])
         self.assertEqual(2, len(service["ip_networks"]))
         self.assertEqual("2001:db8:f00f:bab::/64", service["ip_networks"][0]["network_value"])
 
