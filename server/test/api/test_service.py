@@ -120,6 +120,24 @@ class TestService(AbstractTest):
                        query_data={"entity_id": "https://xyz", "existing_service": "https://xyz"})
         self.assertEqual(False, res)
 
+    def test_service_abbreviation_exists(self):
+        res = self.get("/api/services/abbreviation_exists", query_data={"abbreviation": "mail"})
+        self.assertEqual(True, res)
+
+        res = self.get("/api/services/abbreviation_exists",
+                       query_data={"abbreviation": "mail", "existing_service": "mail"})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/services/abbreviation_exists", query_data={"abbreviation": "xyc"})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/services/abbreviation_exists",
+                       query_data={"abbreviation": "xyc", "existing_service": "xyc"})
+        self.assertEqual(False, res)
+
+    def test_abbreviation_error(self):
+        self.post("/api/services", response_status_code=400)
+
     def test_services_all(self):
         self.login("urn:sarah")
         services = self.get("/api/services/all", with_basic_auth=False)

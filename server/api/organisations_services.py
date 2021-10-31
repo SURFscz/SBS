@@ -3,6 +3,7 @@ from flask import Blueprint, request as current_request
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
+from server.api.service_group import create_service_groups
 from server.auth.security import confirm_organisation_admin_or_manager, confirm_write_access
 from server.db.db import db
 from server.db.domain import Service, Organisation
@@ -38,6 +39,10 @@ def add_collaborations_services():
 
     organisation.services.append(service)
     db.session.merge(organisation)
+    # Create groups from service_groups
+    for collaboration in organisation.collaborations:
+        create_service_groups(service, collaboration)
+
     return None, 201
 
 

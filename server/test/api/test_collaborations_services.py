@@ -1,10 +1,11 @@
 # -*- coding: future_fstrings -*-
 import json
 
+from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, ai_computing_name, service_cloud_name, uva_research_name, \
-    service_network_name, service_wiki_name, uuc_secret
+    service_network_name, service_wiki_name, uuc_secret, service_group_wiki_name
 
 
 class TestCollaborationsServices(AbstractTest):
@@ -48,6 +49,28 @@ class TestCollaborationsServices(AbstractTest):
         })
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(3, len(collaboration["services"]))
+
+    def test_add_collaborations_services_with_service_groups(self):
+        self.login("urn:john")
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        self.assertEqual(2, len(collaboration.groups))
+        collaboration_id = collaboration.id
+        service_wiki = self.find_entity_by_name(Service, service_wiki_name)
+        service_wiki.automatic_connection_allowed = True
+        db.session.merge(service_wiki)
+        db.session.commit()
+
+        service_wiki_id = service_wiki.id
+
+        self.put("/api/collaborations_services/", body={
+            "collaboration_id": collaboration_id,
+            "service_id": service_wiki_id
+        })
+        # Reload
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        self.assertEqual(3, len(collaboration.groups))
+        group = list(filter(lambda item: item.name == service_group_wiki_name, collaboration.groups))[0]
+        self.assertEqual(0, len(group.collaboration_memberships))
 
     def test_add_collaborations_services_forbidden(self):
         self.login("urn:admin")
