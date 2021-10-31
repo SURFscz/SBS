@@ -173,7 +173,11 @@ I18n.translations.en = {
             me: "You",
             moreResults: "There are more results then shown, please refine your search.",
             noResults: "No users were found...",
-            activity: "User history"
+            activity: "User history",
+            showSsh: "Show",
+            ssh: {
+                title: "Public SSH keys of {{name}}"
+            }
         },
         orgMembers: {
             title: "Organisation admin & managers",

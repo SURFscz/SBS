@@ -173,7 +173,11 @@ I18n.translations.nl = {
             me: "Jij",
             moreResults: "Er zijn nog meer zoekresultaten, verfijn je zoekterm.",
             noResults: "Geen gebruikers gevonden...",
-            activity: "User-historie"
+            activity: "User-historie",
+            showSsh: "Toon",
+            ssh: {
+                title: "Publieke SSH keys van {{name}}"
+            }
         },
         orgMembers: {
             title: "Organisatiebeheerder & -managers",
