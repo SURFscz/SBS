@@ -52,7 +52,7 @@ def add_user_claims(user_info_json, uid, user, replace_none_values=True):
             if val or replace_none_values:
                 setattr(user, attr, val)
     if not user.name:
-        name = " ".join(list(filter(lambda x: x, [user.given_name, user.family_name]))).strip()
+        name = f"{user.given_name} {user.family_name}".strip()
         user.name = name if name else uid
     if "voperson_external_id" in user_info_json and user_info_json["voperson_external_id"]:
         voperson_external_id = user_info_json["voperson_external_id"]

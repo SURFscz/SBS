@@ -96,7 +96,7 @@ I18n.translations.en = {
             seed: "Seed",
             database: "Database",
             activity: "Activity",
-            validation: "Validation",
+            validation: "Actions",
             plsc: "LDAP sync"
         }
     },

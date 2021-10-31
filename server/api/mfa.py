@@ -115,7 +115,7 @@ def verify2fa():
     data = current_request.get_json()
     totp_value = data["totp"]
     totp = pyotp.TOTP(secret)
-    if totp.verify(totp_value):
+    if totp.verify(totp_value, valid_window=1):
         if not user.second_factor_auth:
             user.second_factor_auth = secret
         user.last_login_date = datetime.datetime.now()

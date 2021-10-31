@@ -96,7 +96,7 @@ I18n.translations.nl = {
             seed: "Seed",
             database: "Database",
             activity: "Activiteit",
-            validation: "Validatie",
+            validation: "Acties",
             plsc: "LDAP sync"
         }
     },
