@@ -87,5 +87,10 @@
         row-gap: 1em;
         column-gap: 15px;
         padding: $medium-padding;
+
+        div.ssh-keys {
+            display: flex;
+            flex-direction: column;
+        }
     }
 }

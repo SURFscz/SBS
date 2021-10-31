@@ -2,18 +2,20 @@ import React from "react";
 import {auditLogsUser, findUserById} from "../api";
 import I18n from "i18n-js";
 import "./UserDetail.scss";
+
 import {AppStore} from "../stores/AppStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import {filterAuditLogs} from "../utils/AuditLog";
 import InputField from "../components/InputField";
-import {isEmpty} from "../utils/Utils";
+import {isEmpty, stopEvent} from "../utils/Utils";
 import {ReactComponent as PersonIcon} from "../icons/personal_info.svg";
 
 import UnitHeader from "../components/redesign/UnitHeader";
 import SpinnerField from "../components/redesign/SpinnerField";
 import Tabs from "../components/Tabs";
 import Activity from "../components/Activity";
+import UserDetailSshDialog from "./UserDetailSshDialog";
 
 class UserDetail extends React.Component {
 
@@ -26,7 +28,8 @@ class UserDetail extends React.Component {
             filteredAuditLogs: [],
             tab: "details",
             tabs: [],
-            query: ""
+            query: "",
+            showSshKeys: false
         }
     }
 
@@ -60,8 +63,12 @@ class UserDetail extends React.Component {
                                                     name={I18n.t(`models.allUsers.${attr}`)}/>)}
                 <InputField noInput={true} disabled={true} value={moment(user.last_login_date * 1000).format("LLL")}
                             name={I18n.t("models.allUsers.last_login_date")}/>
-                <InputField noInput={true} disabled={true} value={user.ssh_keys.length}
-                            name={I18n.t("user.ssh_key")}/>
+                <div className="ssh-keys">
+                    <InputField noInput={true} disabled={true} value={user.ssh_keys.length}
+                                name={I18n.t("user.ssh_key")}/>
+                    {user.ssh_keys.length > 0 &&
+                    <a href="/ssh" onClick={this.toggleSsh}>{I18n.t("models.allUsers.showSsh")}</a>}
+                </div>
                 <div className="input-field">
                     <label>{I18n.t("models.organisations.title")}</label>
                     {isEmpty(user.organisation_memberships) && "-"}
@@ -117,6 +124,11 @@ class UserDetail extends React.Component {
         </div>)
     }
 
+    toggleSsh = e => {
+        stopEvent(e);
+        this.setState({showSshKeys: !this.state.showSshKeys})
+    }
+
     onChangeQuery = e => {
         const query = e.target.value;
         const {auditLogs} = this.state;
@@ -134,7 +146,7 @@ class UserDetail extends React.Component {
     }
 
     render() {
-        const {loading, tab, user, filteredAuditLogs, query} = this.state;
+        const {loading, tab, user, filteredAuditLogs, query, showSshKeys} = this.state;
         if (loading) {
             return <SpinnerField/>
         }
@@ -156,6 +168,7 @@ class UserDetail extends React.Component {
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}
                 </Tabs>
+                {showSshKeys && <UserDetailSshDialog user={user} toggle={this.toggleSsh}/>}
             </div>);
     };
 
