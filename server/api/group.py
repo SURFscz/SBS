@@ -91,14 +91,17 @@ def save_group():
     collaboration_id = data["collaboration_id"]
     confirm_collaboration_admin(collaboration_id)
 
-    _assign_global_urn(collaboration_id, data)
+    res = create_group(collaboration_id, data)
+
+    return res
+
+
+def create_group(collaboration_id, data):
     cleanse_short_name(data)
+    _assign_global_urn(collaboration_id, data)
     data["identifier"] = str(uuid.uuid4())
-
     res = save(Group, custom_json=data, allow_child_cascades=False)
-
     auto_provision_all_members_and_invites(res[0])
-
     return res
 
 

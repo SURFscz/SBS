@@ -11,7 +11,7 @@ from server.db.domain import Collaboration, Organisation, Invitation, Collaborat
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER, RESTRICTED_CO_API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
     ai_computing_short_name, service_network_entity_id, service_wiki_entity_id, service_storage_entity_id, \
-    service_cloud_entity_id, uuc_teachers_name
+    service_cloud_entity_id, uuc_teachers_name, service_mail_entity_id
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -154,6 +154,7 @@ class TestCollaboration(AbstractTest):
                             "short_name": "short_org_name",
                             "connected_services": [service_network_entity_id,
                                                    service_wiki_entity_id,
+                                                   service_mail_entity_id,
                                                    service_storage_entity_id,
                                                    service_cloud_entity_id]
                         },
@@ -162,11 +163,15 @@ class TestCollaboration(AbstractTest):
                         response_status_code=201)
 
         self.assertEqual("uuc:short_org_name", res["global_urn"])
-        self.assertListEqual([service_cloud_entity_id, service_storage_entity_id],
-                             list(map(lambda s: s["entity_id"], res["services"])))
+        self.assertListEqual(sorted([service_cloud_entity_id, service_mail_entity_id, service_storage_entity_id]),
+                             sorted(list(map(lambda s: s["entity_id"], res["services"]))))
 
         collaboration = self.find_entity_by_name(Collaboration, res["name"])
         self.assertEqual(1, len(collaboration.collaboration_memberships))
+        group = collaboration.groups[0]
+        self.assertEqual("mail_mail", group.short_name)
+        self.assertEqual(True, group.auto_provision_members)
+        self.assertEqual(1, len(group.collaboration_memberships))
 
         admin = collaboration.collaboration_memberships[0]
         self.assertEqual("admin", admin.role)

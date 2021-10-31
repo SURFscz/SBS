@@ -56,7 +56,7 @@ eppn_scope: "test.sram.surf.nl"
 collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
 restricted_co:
-  services_white_list: [ "https://cloud" ]
+  services_white_list: [ "https://cloud", "https://mail" ]
   default_organisation: "rug.nl"
 
 mail:

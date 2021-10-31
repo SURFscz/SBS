@@ -21,10 +21,8 @@ import InputField from "../InputField";
 import CheckBox from "../CheckBox";
 import moment from "moment";
 import {sanitizeShortName} from "../../validations/regExps";
-import ClipBoardCopy from "./ClipBoardCopy";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
-import OrganisationServicesExplanation from "../explanations/OrganisationServices";
 import ServiceGroupsExplanation from "../explanations/ServicesGroups";
 
 class ServiceGroups extends React.Component {

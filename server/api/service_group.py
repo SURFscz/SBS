@@ -5,13 +5,26 @@ from sqlalchemy import func
 from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param
+from server.api.group import create_group
 from server.auth.security import confirm_write_access
 from server.db.defaults import cleanse_short_name
-from server.db.domain import ServiceGroup
+from server.db.domain import ServiceGroup, Service, Collaboration
 from server.db.models import update, save, delete
 from server.schemas import json_schema_validator
 
 service_group_api = Blueprint("service_group_api", __name__, url_prefix="/api/servicegroups")
+
+
+def create_service_groups(service: Service, collaboration: Collaboration):
+    for service_group in service.service_groups:
+        data = {
+            "name": service_group.name,
+            "description": service_group.description,
+            "short_name": f"{service.abbreviation}_{service_group.short_name}",
+            "collaboration_id": collaboration.id,
+            "auto_provision_members": service_group.auto_provision_members
+        }
+        create_group(collaboration.id, data)
 
 
 @service_group_api.route("/name_exists", strict_slashes=False)
