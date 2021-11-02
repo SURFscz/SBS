@@ -1641,7 +1641,7 @@ I18n.translations.nl = {
             unknownIdp: "een onbekende organisatie",
             getAppUpdate: "2. Voeg SRAM toe aan je authenticator-app",
             new: "nieuw",
-            getAppInfo: "Open of installeer de <a href=\"https://apps.apple.com/nl/app/google-authenticator/id388497605\" target=\"_blank\">Google</a> of <a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=nl&gl=NL\" target=\"_blank\">Microsoft</a> authenticator-app op je {{new}}mobiele apparaat",
+            getAppInfo: "Open of installeer de Google (<a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=nl&gl=NL\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/nl/app/google-authenticator/id388497605\" target=\"_blank\">iOS</a>) of Microsoft (<a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=nl&gl=NL\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/microsoft-authenticator/id983156458\" target=\"_blank\">iOS</a>) authenticator-app op je {{new}}mobiele apparaat",
             addSRAM: "Klik op het plusje (+) in de app",
             scan: "Scan de QR-code met de camera van je apparaat",
             scanInfo: "Open de authenticator-app en:",
