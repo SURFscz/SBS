@@ -1641,7 +1641,7 @@ I18n.translations.en = {
             unknownIdp: "an unknown organisation",
             getAppUpdate: "2. Add SRAM to your authenticator app",
             new: "new ",
-            getAppInfo: "Open or install the <a href=\"https://apps.apple.com/us/app/google-authenticator/id388497605\" target=\"_blank\">Google</a> or <a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=en&gl=US\" target=\"_blank\">Microsoft</a> Authenticator app on your {{new}}mobile device",
+            getAppInfo: "Open or install the Google (<a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/google-authenticator/id388497605\" target=\"_blank\">iOS</a>) of Microsoft (<a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/microsoft-authenticator/id983156458\" target=\"_blank\">iOS</a>) Authenticator app on your {{new}}mobile device",
             addSRAM: "Tap the '+' icon in the app",
             scan: "Scan the QR code using your devices's camera",
             scanInfo: "Open the authenticator app and:",
