@@ -249,7 +249,7 @@ I18n.translations.nl = {
             addToCO: "Koppel aan samenwerking",
             removeFromOrg: "Ontkoppel van organisatie",
             addToOrg: "Voeg toe aan organisatie",
-            mandatory: "Ingeschakeld voor alle samenwerkingen",
+            mandatory: "Verplicht voor alle samenwerkingen",
             requestConnection: "Vraag koppeling aan",
             backToServices: "Terug naar diensten",
             connectionRequest: "Vraag koppeling aan met {{name}}",

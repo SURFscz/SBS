@@ -249,7 +249,7 @@ I18n.translations.en = {
             addToCO: "Connect to collaboration",
             removeFromOrg: "Remove from organisation",
             addToOrg: "Add to organisation",
-            mandatory: "Enabled for all collaborations",
+            mandatory: "Mandatory for all collaborations",
             requestConnection: "Request connection",
             backToServices: "Back to services",
             connectionRequest: "Request connection to {{name}}",
