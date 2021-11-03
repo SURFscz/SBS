@@ -17,7 +17,6 @@ depends_on = None
 
 def upgrade():
     conn = op.get_bind()
-    conn.execute(text("ALTER TABLE `groups` ADD UNIQUE INDEX group_name(`name`, `collaboration_id`)"))
     conn.execute(text("ALTER TABLE `groups` ADD UNIQUE INDEX group_short_name(`short_name`, `collaboration_id`)"))
 
 
