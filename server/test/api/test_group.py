@@ -101,3 +101,21 @@ class TestGroup(AbstractTest):
         group_id = self.find_entity_by_name(Group, ai_researchers_group).id
         self.delete("/api/groups", primary_key=group_id)
         self.delete("/api/groups", primary_key=group_id, response_status_code=404)
+
+    def test_create_group_duplicate(self):
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        name = "AI developers"
+        short_name = "ai_dev"
+        res = self.post("/api/groups/", body={
+            "name": name,
+            "short_name": "unique",
+            "collaboration_id": collaboration_id,
+        })
+        self.assertEqual(0, len(res))
+
+        res = self.post("/api/groups/", body={
+            "name": "unique",
+            "short_name": short_name,
+            "collaboration_id": collaboration_id,
+        })
+        self.assertEqual(0, len(res))
