@@ -98,6 +98,11 @@ def save_group():
 
 def create_group(collaboration_id, data):
     cleanse_short_name(data)
+    # Check uniqueness of name and short_name of group for the collaboration
+    collaboration = Collaboration.query.get(collaboration_id)
+    duplicates = [g.id for g in collaboration.groups if g.name == data["name"] or g.short_name == data["short_name"]]
+    if duplicates:
+        return {}, 201
     _assign_global_urn(collaboration_id, data)
     data["identifier"] = str(uuid.uuid4())
     res = save(Group, custom_json=data, allow_child_cascades=False)
@@ -109,7 +114,7 @@ def _assign_global_urn(collaboration_id, data):
     collaboration = Collaboration.query \
         .join(Collaboration.organisation) \
         .options(contains_eager(Collaboration.organisation)) \
-        .filter(Collaboration.id == collaboration_id)\
+        .filter(Collaboration.id == collaboration_id) \
         .one()
     data["global_urn"] = f"{collaboration.organisation.short_name}:{collaboration.short_name}:{data['short_name']}"
 
