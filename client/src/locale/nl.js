@@ -1432,8 +1432,8 @@ I18n.translations.nl = {
         leave: "Verlaat deze pagina"
     },
     tabs: {
-        invitation_form: "Uitnodiging details",
-        invitation_preview: "Uitnodiging preview",
+        invitation_form: "Uitnodigingsdetails",
+        invitation_preview: "Uitnodigingspreview",
         form: "Details",
         history: "Historie"
     },
