@@ -761,7 +761,7 @@ I18n.translations.nl = {
             "</ul> ",
         networkPlaceholder: "IPv4-of IPv6-adres met optioneel subnet",
         networkError: "Die {{prefix}} subnetomvang is niet toegestaan. Maximaal toegestane prefix voor IPv{{version}} is {{max}}",
-        networkSyntaxError: "De prefix {prefix} is niet toegestaan. Maximaal toegestane prefix voor IPv{version} is {max}",
+        networkSyntaxError: "Dit is geen geldig IPv4- of IPv6-adres",
         networkInfo: "Laagste IP: {lower}, hoogste IP: {higher}, # adressen: {num_addresses}, versie: IPv{version}",
         automaticConnectionAllowed: "Automatische connectie toestaan?",
         automaticConnectionAllowedTooltip: "Kunnen samenwerkingen deze dienst koppelen zonder expliciete toestemming van de diensteigenaar?",
