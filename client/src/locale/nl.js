@@ -734,7 +734,7 @@ I18n.translations.nl = {
         entity_idPlaceHolder: "De unieke entity ID van de dienst",
         entity_idTooltip: "De unieke entity ID van de dienst koppelt de dienst in SRAM aan de daadwerkelijke externe dienstaanbieder",
         abbreviation: "Afkorting",
-        abbreviationPlaceHolder: "De unieke afkorting van deze dient",
+        abbreviationPlaceHolder: "De unieke afkorting van deze dienst",
         abbreviationTooltip: "De unieke afkorting van een service wordt gebruikt als prefix voor groepen van deze service",
         service_request: "Dienst request URL",
         service_requestTooltip: "De URL van een dienst om een koppeling aan te vragen tussen een samenwerking en deze dienst als de gebruiker geen toegang heeft tot deze dienst",
