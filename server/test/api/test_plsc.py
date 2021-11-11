@@ -41,6 +41,8 @@ class TestPlsc(AbstractTest):
         self.assertEqual("active", collaborations[0]["status"])
         self.assertEqual("active", collaborations[0]["collaboration_memberships"][0]["status"])
 
+        self.assertEqual("https://www.google.nl", collaborations[0]["website_url"])
+
         logo = collaborations[0]["logo"]
         self.assertTrue(logo.startswith, "http://localhost:8080/api/images/collaborations/")
         res_image = self.client.get(logo.replace("http://localhost:8080", ""))
