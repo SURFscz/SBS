@@ -165,7 +165,6 @@ class TestUser(AbstractTest):
 
         body = {"ssh_keys": [{"ssh_value": "ssh_key\0\n\r"}],
                 "email": "bogus"}
-
         self.put("/api/users", body, with_basic_auth=False)
 
         roger = User.query.filter(User.uid == "urn:roger").one()
@@ -351,3 +350,13 @@ class TestUser(AbstractTest):
                        query_data={"identifier": collaboration_ai_computing_uuid},
                        with_basic_auth=False, response_status_code=401)
         self.assertEqual("AUP not accepted", res["message"])
+
+    def test_update_ssh_control_char(self):
+        self.login("urn:james")
+        ssh_key = User.query.filter(User.uid == "urn:james").one().ssh_keys[0]
+        pub = self.read_file("1.pub")
+        body = {"ssh_keys": [{"id": ssh_key.id, "ssh_value": pub}]}
+        self.put("/api/users", body, with_basic_auth=False)
+
+        james = User.query.filter(User.uid == "urn:james").one()
+        self.assertEqual("AA😡C", james.ssh_keys[0].ssh_value)

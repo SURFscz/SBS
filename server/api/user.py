@@ -380,7 +380,7 @@ def update_user():
             db.session.delete(ssh_key)
         else:
             existing_ssh_key = next(s for s in ssh_keys_json if int(s.get("id", -1)) == ssh_key.id)
-            ssh_key.ssh_value = existing_ssh_key["ssh_value"]
+            ssh_key.ssh_value = "".join(ch for ch in existing_ssh_key["ssh_value"] if unicodedata.category(ch)[0] != "C")
             db.session.merge(ssh_key)
     new_ssh_keys = [ssh_key for ssh_key in ssh_keys_json if "id" not in ssh_key]
     for ssh_key in new_ssh_keys:
