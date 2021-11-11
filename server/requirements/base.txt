@@ -13,7 +13,7 @@ Flask-SQLAlchemy==2.5.1
 future_fstrings==1.2.0
 jinja2==2.11.3
 munch==2.5.0
-paho-mqtt==1.5.1
+paho-mqtt==1.6.1
 python2-secrets==1.0.5
 pytz==2020.1
 requests==2.25.1
