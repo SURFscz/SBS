@@ -8,7 +8,7 @@ flask-jsonschema-validator==0.0.4
 flask-mail==0.9.1
 flask==1.1.2
 flask_jsontools==0.1.7
-flask_migrate==2.7.0
+flask_migrate==3.1.0
 Flask-SQLAlchemy==2.5.1
 future_fstrings==1.2.0
 jinja2==2.11.3
