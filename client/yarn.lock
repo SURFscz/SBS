@@ -1456,10 +1456,10 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@lottiefiles/react-lottie-player@^2.2.2":
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/@lottiefiles/react-lottie-player/-/react-lottie-player-2.2.2.tgz#8513f79f0ea1ed99471f6ff882e92ddb2b7d6b29"
-  integrity sha512-PgCezQAFk+xnNwC3EJolvHJm2P3KiVn6RbvX+inLo/9IQu/iDoyj/30F9Ge5LgCJe+UIZ2uDR0SaV6ro18B1Hg==
+"@lottiefiles/react-lottie-player@^3.0.7":
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/@lottiefiles/react-lottie-player/-/react-lottie-player-3.0.7.tgz#2a821d7418afd8325221d8f56fc3468429a564f4"
+  integrity sha512-yWriD1B3E2M35gIKkIl6dZnIft0StOYg+RGBmWDa3makUTf34HRL6NDSwFXZFWO4IuyEIfjsttYy84RCn1fvJg==
   dependencies:
     lottie-web "^5.6.0"
 
