@@ -59,7 +59,7 @@ I18n.translations.nl = {
         closeBrowserAfterDelete: "Om het verwijderen van je account te voltooien, moet je je browser sluiten."
     },
     home: {
-        sram: "SURF research access management platform",
+        sram: "SURF research access management",
         edit: "Wijzig",
         history: "Geschiedenis",
         unsuspend: "Schorsing ongedaan maken",

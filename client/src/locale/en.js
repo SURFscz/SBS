@@ -59,7 +59,7 @@ I18n.translations.en = {
         closeBrowserAfterDelete: "To finish the deletion of your account you'll have to close your browser."
     },
     home: {
-        sram: "SURF Research Access Management platform",
+        sram: "SURF Research Access Management",
         edit: "Edit",
         unsuspend: "Revert suspension",
         history: "History",
