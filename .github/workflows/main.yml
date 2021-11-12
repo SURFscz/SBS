@@ -56,7 +56,7 @@ jobs:
         run: >
           mysql -uroot -proot -h127.0.0.1 -e "
             DROP DATABASE IF EXISTS sbs_test;
-            CREATE DATABASE IF NOT EXISTS sbs_test;
+            CREATE DATABASE IF NOT EXISTS sbs_test DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
             CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
             GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
           "
