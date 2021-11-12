@@ -238,7 +238,7 @@ I18n.translations.nl = {
             titleRequestedColl: "Aangevraagd door gebruikers voor de samenwerking ({{count}})",
             titleAvailableOrg: "Beschikbaar voor deze organisatie ({{count}})",
             titleUsedColl: "Gebruikt door deze samenwerking ({{count}})",
-            titleUsedOrg: "Ingeschakeld door deze organisatie ({{count}})",
+            titleUsedOrg: "Verplicht door deze organisatie ({{count}})",
             awaitingApproval: "Koppeling in afwachting van goedkeuring",
             automaticConnectionAllowed: "Automatische koppeling toegestaan",
             requiredByOrganisation: "Ingeschakeld door organisatie",
