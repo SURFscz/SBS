@@ -238,7 +238,7 @@ I18n.translations.en = {
             titleRequestedColl: "Requested by members for this collaboration ({{count}})",
             titleAvailableOrg: "Available for this organisation ({{count}})",
             titleUsedColl: "Used by this collaboration ({{count}})",
-            titleUsedOrg: "Enabled by this organisation ({{count}})",
+            titleUsedOrg: "Mandated by this organisation ({{count}})",
             awaitingApproval: "Connection awaiting approval",
             automaticConnectionAllowed: "Automatic connection allowed",
             requiredByOrganisation: "Enabled by organisation",
