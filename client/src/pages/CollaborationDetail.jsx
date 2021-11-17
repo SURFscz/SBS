@@ -49,7 +49,6 @@ import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
-import {convertToHtml} from "../utils/Markdown";
 
 class CollaborationDetail extends React.Component {
 
@@ -432,9 +431,8 @@ class CollaborationDetail extends React.Component {
                         <li className="collaboration-url">
                             <Tooltip children={<PrivacyIcon/>} id={"globe-icon"} msg={I18n.t("tooltips.aup")}/>
                             <span>
-                            <Tooltip id={"accepted_user_policy"}
-                                     msg={convertToHtml(collaboration.accepted_user_policy)}
-                                     children={<span className={"accepted_user_policy"}>{I18n.t("forms.yes")}</span>}/>
+                            <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
+                               target="_blank">{collaboration.accepted_user_policy}</a>
                         </span>
                         </li>}
                     </ul>
@@ -621,10 +619,8 @@ class CollaborationDetail extends React.Component {
                 <div className="org-attributes">
                     <span>{I18n.t("collaboration.privacyPolicy")}</span>
                     {collaboration.accepted_user_policy &&
-                    <Tooltip id={"accepted_user_policy"}
-                             msg={convertToHtml(collaboration.accepted_user_policy)}
-                             children={<span className={"accepted_user_policy"}>{I18n.t("forms.yes")}</span>}/>
-                    }
+                    <span><a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
+                             target="_blank">{collaboration.accepted_user_policy}</a></span>}
                     {!collaboration.accepted_user_policy && <span>{I18n.t("service.none")}</span>}
                 </div>
                 {this.getCollaborationStatus(collaboration)}

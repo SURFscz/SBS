@@ -31,7 +31,6 @@ import {isUserAllowed, ROLES} from "../utils/UserRole";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import DateField from "../components/DateField";
 import moment from "moment";
-import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 
 class CollaborationForm extends React.Component {
 
@@ -526,11 +525,11 @@ class CollaborationForm extends React.Component {
                                 externalLink={true}
                                 name={I18n.t("collaboration.websiteUrl")}/>
 
-                    <OrganisationOnBoarding
-                            on_boarding_msg={accepted_user_policy}
-                            tooltip={"tooltips.aup"}
-                            title={I18n.t("collaboration.accepted_user_policy")}
-                            saveOnBoarding={val => this.setState({accepted_user_policy: val})}/>
+                    <InputField value={accepted_user_policy}
+                                onChange={e => this.setState({accepted_user_policy: e.target.value})}
+                                placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
+                                externalLink={true}
+                                name={I18n.t("collaboration.accepted_user_policy")}/>
 
                     {!isCollaborationRequest && <DateField value={expiry_date}
                                onChange={e => this.setState({expiry_date: e})}
