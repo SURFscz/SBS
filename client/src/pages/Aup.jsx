@@ -3,56 +3,61 @@ import {withRouter} from "react-router-dom";
 import I18n from "i18n-js";
 import "./Aup.scss";
 import Button from "../components/Button";
-import {agreeAup, aupLinks} from "../api";
+import {agreeAup} from "../api";
 import CheckBox from "../components/CheckBox";
-import {getParameterByName} from "../utils/QueryParameters";
-import {stopEvent} from "../utils/Utils";
+import {login} from "../utils/Login";
+import SpinnerField from "../components/redesign/SpinnerField";
 
 
 class Aup extends React.Component {
 
     constructor(props, context) {
         super(props, context);
-        this.state = {aup: {}, agreed: false};
+        this.state = {agreed: false, loading: true};
     }
 
-    componentDidMount() {
-        aupLinks().then(res => this.setState({"aup": res}));
+    componentDidMount = () => {
+        const {currentUser} = this.props;
+        if (currentUser.guest) {
+            setTimeout(login, 5);
+        } else if (currentUser.user_accepted_aup) {
+            this.props.history.push("/home");
+        } else {
+            this.setState({loading: false})
+        }
+
     }
 
-    agreeWith = e => agreeAup().then(() => {
-        stopEvent(e);
+
+    agreeWith = () => agreeAup().then(res => {
         this.props.refreshUser(() => {
-            const location = getParameterByName("state", window.location.search) || "/home";
-            this.props.history.push(location);
+            const url = new URL(res.location);
+            this.props.history.push(url.pathname + url.search);
         });
     });
 
     render() {
-        const {aup, agreed} = this.state;
-        const {currentUser} = this.props;
+        const {agreed, loading} = this.state;
+        const {currentUser, aupConfig} = this.props;
+        const url = I18n.locale === "en" ? aupConfig.url_aup_en : aupConfig.url_aup_nl;
+        if (loading) {
+            return <SpinnerField/>;
+        }
         return (
             <div className="mod-aup">
-
-                <div className="intro">
-                    {<p dangerouslySetInnerHTML={{__html: I18n.t("aup.title1")}}/>}
-                    {<p dangerouslySetInnerHTML={{__html: I18n.t("aup.title2")}}/>}
-                    {!currentUser.guest && <p dangerouslySetInnerHTML={{__html: I18n.t("aup.title3")}}/>}
+                <h1>{I18n.t("aup.hi", {name: currentUser.given_name || currentUser.name})}</h1>
+                <div className="disclaimer">
+                    <p dangerouslySetInnerHTML={{__html: I18n.t("aup.info")}}/>
                 </div>
-
-                <div className="htmlAup" dangerouslySetInnerHTML={{__html: aup.html}}/>
-
-                <div className="download">
-                    {!currentUser.guest && <CheckBox name="aup" value={agreed} info={I18n.t("aup.agreeWithTerms")}
-                                                     onChange={e => this.setState({agreed: !agreed})}/>}
-                    <a href={aup.pdf_link} className="pdf" download={aup.pdf} target="_blank" rel="noopener noreferrer">
-                        {I18n.t("aup.downloadPdf")}
-                    </a>
+                <h2 dangerouslySetInnerHTML={{__html: I18n.t("aup.title")}}/>
+                <p className="" dangerouslySetInnerHTML={{__html: I18n.t("aup.disclaimer", {url: url})}}/>
+                <div className="terms">
+                    <CheckBox name="aup" value={agreed} info={I18n.t("aup.agreeWithTerms")}
+                              onChange={() => this.setState({agreed: !agreed})}/>
                 </div>
+                <Button className="proceed" onClick={this.agreeWith}
+                        txt={I18n.t("aup.onward")} disabled={!agreed}/>
 
-
-                {!currentUser.guest && <Button className="proceed" onClick={this.agreeWith}
-                                               txt={I18n.t("aup.continueToValidation")} disabled={!agreed}/>}
             </div>
         )
     }

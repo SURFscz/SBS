@@ -9,6 +9,8 @@ import InputField from "../components/InputField";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 import {isEmpty, stopEvent} from "../utils/Utils";
+import {ReactComponent as InformationIcon} from "../icons/informational.svg";
+import {login} from "../utils/Login";
 
 class SecondFactorAuthentication extends React.Component {
 
@@ -36,11 +38,15 @@ class SecondFactorAuthentication extends React.Component {
 
     componentDidMount() {
         const {user, update} = this.props;
-        if (!user.second_factor_auth || update) {
+        if (user.guest) {
+            setTimeout(login, 5);
+        } else if (user.second_factor_confirmed && !update) {
+            this.props.history.push("/home")
+        } else if (!user.second_factor_auth || update) {
             get2fa().then(res => {
                 this.setState({
                     qrCode: res.qr_code_base64,
-                    idp_name: res.idp_name,
+                    idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
                     loading: false
                 });
                 this.focusCode();
@@ -131,19 +137,21 @@ class SecondFactorAuthentication extends React.Component {
         const admin = respondents.find(respondent => respondent.selected);
         tokenResetRequest(admin, message).then(() => {
             setFlash(I18n.t("mfa.lost.flash"));
-            this.setState({showExplanation: false, message: ""})
+            this.setState({showExplanation: false, message: ""});
         });
     }
 
     submitResetCode = () => {
+        this.setState({loading: true});
         const {resetCode} = this.state;
         reset2fa(resetCode)
             .then(() => {
                 this.props.refreshUser(() => {
-                    this.setState({showEnterToken: false})
+                    this.setState({resetCode: false, showEnterToken: false});
+                    this.componentDidMount();
                 })
             }).catch(e => {
-            this.setState({resetCodeError: true})
+            this.setState({resetCodeError: true, loading: false});
         });
     }
 
@@ -297,13 +305,13 @@ class SecondFactorAuthentication extends React.Component {
     }
 
     totpValueContainer = (totp, attributeName, refs, onLastEntryVerify, disableNewTotp = false) => {
-            return (
+        return (
             <div className="totp-value-container">
                 {Array(6).fill("").map((val, index) =>
                     <input type="text"
                            key={`${attributeName}_${index}`}
                            disabled={(totp[index] || "").length === 0 && ((index !== 0 && totp[index - 1] === "") ||
-                                       (disableNewTotp && this.state.totp[5] === ""))}
+                               (disableNewTotp && this.state.totp[5] === ""))}
                            value={totp[index] || ""}
                            onChange={this.onChangeTotp(index, attributeName, refs, onLastEntryVerify)}
                            onKeyDown={this.onKeyDownTotp(index, refs)}
@@ -325,75 +333,62 @@ class SecondFactorAuthentication extends React.Component {
         return (
             <div>
                 <section className="register-header">
-                    <h1>{I18n.t("mfa.register.title")}</h1>
-                    <p>{I18n.t(`mfa.${action}.info1`, {name: idp_name})}</p>
+                    <h1>{I18n.t(`mfa.register.${update ? "titleUpdate" : "title"}`)}</h1>
+                    <div className="information">
+                        <InformationIcon/>
+                        <p>{I18n.t(`mfa.${action}.info1`, {name: idp_name})}</p>
+                    </div>
                     <p>{I18n.t(`mfa.${action}.info2`)}</p>
                 </section>
-                {!update && <section className="step-container">
-                    <div className="step">
-                        <div className="circle one-third">
-                            <span>{I18n.t("mfa.register.step", {nbr: "1"})}</span>
-                        </div>
-                        <div className="step-actions">
-                            <h3>{I18n.t("mfa.register.getApp")}</h3>
-                            <span>{I18n.t("mfa.register.getAppInfo")}</span>
-                        </div>
+                {!update && <div className="step">
+                    <h1>{I18n.t("mfa.register.getApp")}</h1>
+                    <ul>
+                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : ""})}}/>
+                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.addSRAM")}}/>
+                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.scan")}}/>
+                    </ul>
+                    <div className="qr-code-container">
+                        <img alt="QR code" src={`data:image/png;base64,${qrCode}`}/>
                     </div>
-                </section>}
-                {update && <section className="step-container">
-                    <div className="step">
-                        <div className="circle one-third">
-                            <span>{I18n.t("mfa.register.step", {nbr: "1"})}</span>
-                        </div>
-                        <div className="step-actions">
-                            <h3>{I18n.t("mfa.update.currentCode")}</h3>
-                            <span>{I18n.t("mfa.update.currentCodeInfo")}</span>
-                            {this.totpValueContainer(totp, "totp", this.totpRefs, false)}
-                            {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
-                        </div>
+                </div>}
+                {update &&
+                <div className="step">
+                    <h1>{I18n.t("mfa.update.currentCode")}</h1>
+                    <div className="step-actions">
+                        <p>{I18n.t("mfa.update.currentCodeInfo")}</p>
+                        {this.totpValueContainer(totp, "totp", this.totpRefs, false)}
+                        {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
                     </div>
-                </section>}
-                <section className="step-container">
-                    <div className="step clear">
-                        <div className="circle two-third">
-                            <span>{I18n.t("mfa.register.step", {nbr: "2"})}</span>
-                        </div>
-                        <div className="step-actions">
-                            <h3>{I18n.t("mfa.register.scan")}</h3>
-                            <span>{I18n.t(`mfa.${action}.scanInfo`)}</span>
-                            <ul>
-                                {I18n.translations[I18n.locale].mfa.register.scanSteps.map((option, i) =>
-                                    <li key={i} dangerouslySetInnerHTML={{__html: option}}/>)}
-                            </ul>
-                            <div className="qr-code-container">
-                                <img alt="QR code" src={`data:image/png;base64,${qrCode}`}/>
-                            </div>
+                </div>}
+                {update && <div className="step">
+                    {update ? <h1>{I18n.t("mfa.register.getAppUpdate")}</h1> : <h1>{I18n.t("mfa.register.getApp")}</h1>}
+                    <ul>
+                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.getAppInfo", {new: update ? I18n.t("mfa.register.new") : " "})}}/>
+                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.addSRAM")}}/>
+                        <li dangerouslySetInnerHTML={{__html: I18n.t("mfa.register.scan")}}/>
+                    </ul>
+                    <div className="qr-code-container">
+                        <img alt="QR code" src={`data:image/png;base64,${qrCode}`}/>
+                    </div>
+                </div>}
 
-                        </div>
+                <div className="step">
+                    <div className="step-actions">
+                        {update ? <h1>{I18n.t("mfa.register.verificationCodeUpdate")}</h1> : <h1>{I18n.t("mfa.register.verificationCode")}</h1>}
+                        <p>{I18n.t("mfa.register.verificationCodeInfo")}</p>
+                        {!update && <>
+                            {this.totpValueContainer(totp, "totp", this.totpRefs, true)}
+                            {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
+                        </>}
+                        {update && <>
+                            {this.totpValueContainer(newTotp, "newTotp", this.totpNewRefs, true, true)}
+                            {newError && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
+                        </>}
                     </div>
-                </section>
-                <section className="step-container">
-                    <div className="step">
-                        <div className="circle full">
-                            <span>{I18n.t("mfa.register.step", {nbr: "3"})}</span>
-                        </div>
-                        <div className="step-actions">
-                            <h3>{I18n.t("mfa.register.verificationCode")}</h3>
-                            <span>{I18n.t(`mfa.${action}.verificationCodeInfo`)}</span>
-                            {!update && <>
-                                {this.totpValueContainer(totp, "totp", this.totpRefs, true)}
-                                {error && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
-                            </>}
-                            {update && <>
-                                {this.totpValueContainer(newTotp, "newTotp", this.totpNewRefs, true, true)}
-                                {newError && <span className="error">{I18n.t("mfa.verify.invalid")}</span>}
-                            </>}
-                        </div>
-                    </div>
-                </section>
+                </div>
                 {!update &&
-                <Button disabled={verifyDisabled} onClick={this.verify} html={I18n.t("mfa.register.verify")}
-                        txt="login"/>}
+                <Button disabled={verifyDisabled} onClick={this.verify} html={I18n.t("mfa.register.next")}
+                        txt={I18n.t("mfa.register.next")}/>}
                 {update && <section className="actions">
                     <Button cancelButton={true} onClick={this.cancel} html={I18n.t("forms.cancel")}
                             txt="cancel"/>

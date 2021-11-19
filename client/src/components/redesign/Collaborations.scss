@@ -35,7 +35,7 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
             }
 
             &.name {
-                width: 20%;
+                width: 30%;
                 padding-left: 15px;
             }
 
@@ -48,25 +48,25 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
             }
 
             &.last_activity_date {
-                width: 10%;
+                width: 8%;
             }
 
             &.fromCollaboration {
-                width: 10%;
+                width: 8%;
             }
 
             &.collaboration_memberships_count {
-                width: 10%;
+                width: 8%;
                 text-align: center;
             }
 
             &.role {
-                width: 15%;
+                width: 13%;
                 text-align: center;
             }
 
             &.invitations_count {
-                width: 10%;
+                width: 8%;
                 text-align: center;
             }
         }

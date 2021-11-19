@@ -1,5 +1,5 @@
 database:
-  uri: "mysql+pymysql://sbs:sbs@localhost/sbs_test"
+  uri: "mysql+pymysql://sbs:sbs@localhost/sbs_test?charset=utf8mb4"
 
 secret_key: secret
 
@@ -56,7 +56,7 @@ eppn_scope: "test.sram.surf.nl"
 collaboration_creation_allowed_entitlement: "urn:example:sbs:allow-create-co"
 
 restricted_co:
-  services_white_list: [ "https://cloud" ]
+  services_white_list: [ "https://cloud", "https://mail" ]
   default_organisation: "rug.nl"
 
 mail:
@@ -76,9 +76,9 @@ mail:
   environment: local
 
 aup:
-  pdf: SURFresearch-Access-Management-AUP-01122019-0001.pdf
-  pdf_link: http://localhost:8080/static/SURFresearch-Access-Management-AUP-01122019-0001.pdf
-  html: SURFresearch-Access-Management-AUP-01122019-0001.html
+  version: 1
+  url_aup_en: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
+  url_aup_nl: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
 
 base_url: http://localhost:3000/
 base_server_url: http://localhost:8080
@@ -100,7 +100,7 @@ feature:
   admin_users_upgrade_url: http://localhost:8080/api/users/upgrade_super_user
   admin_users_upgrade_redirect_url: http://localhost:3000
   seed_allowed: True
-  api_keys_enabled: False
+  api_keys_enabled: True
   feedback_enabled: True
   impersonation_allowed: True
 

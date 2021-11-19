@@ -22,25 +22,24 @@ class UnitHeaderActionMenu extends React.Component {
         const {actions, history, auditLogPath, firstTime, queryParam} = this.props;
         return <div className="action-menu" ref={ref => this.ref = ref}
                     tabIndex={1}
-                    onBlur={() => setTimeout(this.props.close, 250)}
-                >
+                    onBlur={() => setTimeout(this.props.close, 250)}>
             <ul>
-                {actions.map(action => <li key={action.name}>
+                {actions.map(action => <li key={action.name} onClick={this.performAction(action.perform)}>
                     {action.icon && <FontAwesomeIcon icon={action.icon}/>}
                     {action.svg && <action.svg/>}
-                    <a href={"/" + action.name} onClick={this.performAction(action.perform)}>{action.name}</a>
+                    <a href={"/" + action.name} >{action.name}</a>
                 </li>)}
                 {(history && auditLogPath) &&
-                <li>
+                <li onClick={() => this.props.history.push(`/audit-logs/${auditLogPath}?${queryParam}`)}>
                     <FontAwesomeIcon icon="history"/>
                     <Link to={`/audit-logs/${auditLogPath}?${queryParam}`}>
                         {I18n.t("home.history")}
                     </Link>
                 </li>}
                 {firstTime &&
-                <li>
+                <li onClick={this.performAction(firstTime)}>
                     <FontAwesomeIcon icon="plane-departure"/>
-                    <a href={"/" + I18n.t("home.firstTime")} onClick={this.performAction(firstTime)}>
+                    <a href={"/" + I18n.t("home.firstTime")} >
                         {I18n.t("home.firstTime")}
                     </a>
                 </li>}

@@ -3,6 +3,7 @@ from flask import Blueprint, request as current_request, g as request_context
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint
+from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_write_access
 from server.db.db import db
 from server.db.domain import Service, Collaboration
@@ -29,6 +30,10 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
 
     collaboration.services.append(service)
     db.session.merge(collaboration)
+
+    # Create groups from service_groups
+    create_service_groups(service, collaboration)
+
     return 1
 
 

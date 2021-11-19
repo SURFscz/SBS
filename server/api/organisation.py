@@ -231,7 +231,9 @@ def organisation_invites():
     confirm_organisation_admin(organisation_id)
 
     administrators = data.get("administrators", [])
-    intended_role = data.get("intended_role", "manager")
+    intended_role = data.get("intended_role")
+    intended_role = "manager" if intended_role not in ["admin", "manager"] else intended_role
+
     message = data.get("message", None)
 
     organisation = Organisation.query.get(organisation_id)

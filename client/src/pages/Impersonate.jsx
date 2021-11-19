@@ -65,7 +65,6 @@ class Impersonate extends React.Component {
                     {path: "/", value: I18n.t("breadcrumb.impersonate")}
                 ];
             });
-
         })
     };
 
@@ -74,7 +73,17 @@ class Impersonate extends React.Component {
         if (initial && isEmpty(selectedUser)) {
             this.setState({initial: false});
         } else {
-            emitter.emit("impersonation", {user: selectedUser, callback: () => this.props.history.push("/home")});
+            AppStore.update(s => {
+                s.breadcrumb.paths = [];
+                s.sideComponent = null;
+            });
+            emitter.emit("impersonation", {
+                user: selectedUser, callback: () => {
+                    // setTimeout(() => {
+                        this.props.history.push("/aup");
+                    // }, 500)
+                }
+            });
             this.setState({
                 selectedUser: null, query: "", initial: true, collaboration: null,
                 organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false,

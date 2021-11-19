@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import tempfile
+import unicodedata
 import urllib.parse
 import uuid
 
@@ -40,17 +41,20 @@ def _user_query():
                  .subqueryload(CollaborationMembership.collaboration)) \
         .options(joinedload(User.join_requests)
                  .subqueryload(JoinRequest.collaboration)) \
+        .options(joinedload(User.aups)) \
         .options(joinedload(User.collaboration_requests)
                  .subqueryload(CollaborationRequest.organisation))
 
 
-def _user_json_response(user):
+def _user_json_response(user, auto_set_second_factor_confirmed):
+    second_factor_confirmed = auto_set_second_factor_confirmed or session["user"]["second_factor_confirmed"]
     is_admin = {"admin": is_admin_user(user),
-                "second_factor_confirmed": True,
+                "second_factor_confirmed": second_factor_confirmed,
+                "user_accepted_aup": user.has_agreed_with_aup(),
                 "guest": False,
                 "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
-    return {**json_user, **is_admin, }, 200
+    return {**json_user, **is_admin}, 200
 
 
 def _get_authorization_url(state=None):
@@ -203,9 +207,7 @@ def resume_session():
     response = requests.post(oidc_config.token_endpoint, data=urllib.parse.urlencode(payload),
                              headers=headers, auth=(oidc_config.client_id, oidc_config.client_secret))
     if response.status_code != 200:
-        error_msg = f"Server error: Token endpoint error (http {response.status_code}"
-        logger.error(error_msg)
-        return redirect(f"{current_app.app_config.base_url}/error")
+        return _redirect_with_error(logger, f"Server error: Token endpoint error (http {response.status_code}")
 
     token_json = response.json()
     access_token = token_json["access_token"]
@@ -217,9 +219,7 @@ def resume_session():
 
     response = requests.get(oidc_config.userinfo_endpoint, headers=headers)
     if response.status_code != 200:
-        error_msg = f"Server error: User info endpoint error (http {response.status_code}"
-        logger.error(error_msg)
-        return redirect(f"{current_app.app_config.base_url}/error")
+        return _redirect_with_error(logger, f"Server error: User info endpoint error (http {response.status_code}")
 
     logger = ctx_logger("user")
     user_info_json = response.json()
@@ -241,6 +241,7 @@ def resume_session():
 
     encoded_id_token = token_json["id_token"]
     id_token = decode_jwt_token(encoded_id_token)
+
     no_mfa_required = not oidc_config.second_factor_authentication_required
     idp_mfa = id_token.get("acr") == ACR_VALUES
     second_factor_confirmed = no_mfa_required or idp_mfa
@@ -250,12 +251,22 @@ def resume_session():
     user = db.session.merge(user)
     db.session.commit()
 
-    store_user_in_session(user, second_factor_confirmed)
-    if second_factor_confirmed:
-        location = session.get("original_destination", current_app.app_config.base_url)
-    else:
+    user_accepted_aup = user.has_agreed_with_aup()
+    store_user_in_session(user, second_factor_confirmed, user_accepted_aup)
+
+    if not user_accepted_aup:
+        location = f"{current_app.app_config.base_url}/aup"
+    elif not second_factor_confirmed:
         location = f"{current_app.app_config.base_url}/2fa"
+    else:
+        location = session.get("original_destination", current_app.app_config.base_url)
+
     return redirect(location)
+
+
+def _redirect_with_error(logger, error_msg):
+    logger.error(error_msg)
+    return redirect(f"{current_app.app_config.base_url}/error")
 
 
 @user_api.route("/me", strict_slashes=False)
@@ -277,7 +288,7 @@ def me():
 
         # Do not expose the actual secret of second_factor_auth
         user_from_session["second_factor_auth"] = bool(user_from_db.second_factor_auth)
-        # Do not send all information is second_factor is required
+        # Do not send all information if second_factor is required
         if not user_from_session["second_factor_confirmed"]:
             return user_from_session, 200
 
@@ -299,7 +310,7 @@ def me():
 def refresh():
     user_id = current_user_id()
     user = _user_query().filter(User.id == user_id).one()
-    return _user_json_response(user)
+    return _user_json_response(user, False)
 
 
 @user_api.route("/suspended", strict_slashes=False)
@@ -369,11 +380,12 @@ def update_user():
             db.session.delete(ssh_key)
         else:
             existing_ssh_key = next(s for s in ssh_keys_json if int(s.get("id", -1)) == ssh_key.id)
-            ssh_key.ssh_value = existing_ssh_key["ssh_value"]
+            ssh_key.ssh_value = "".join(ch for ch in existing_ssh_key["ssh_value"] if unicodedata.category(ch)[0] != "C")
             db.session.merge(ssh_key)
     new_ssh_keys = [ssh_key for ssh_key in ssh_keys_json if "id" not in ssh_key]
     for ssh_key in new_ssh_keys:
-        db.session.merge(SshKey(ssh_value=ssh_key["ssh_value"], user_id=user.id))
+        ssh_value = "".join(ch for ch in ssh_key["ssh_value"] if unicodedata.category(ch)[0] != "C")
+        db.session.merge(SshKey(ssh_value=ssh_value, user_id=user.id))
 
     user.updated_by = user.uid
     db.session.merge(user)
@@ -388,7 +400,8 @@ def other():
 
     uid = query_param("uid")
     user = _user_query().filter(User.uid == uid).one()
-    return _user_json_response(user)
+    # avoid 2fa registration / validation
+    return _user_json_response(user, True)
 
 
 @user_api.route("/find_by_id", strict_slashes=False)
@@ -430,7 +443,8 @@ def attribute_aggregation():
 def upgrade_super_user():
     session.modified = True
 
-    user = User.query.filter(User.id == current_user_id()).one()
+    user_id = current_user_id()
+    user = User.query.filter(User.id == user_id).one()
 
     if not is_admin_user(user):
         raise Forbidden("Must be admin user")
@@ -439,7 +453,7 @@ def upgrade_super_user():
     user = db.session.merge(user)
     db.session.commit()
 
-    store_user_in_session(user, True)
+    store_user_in_session(user, True, user.has_agreed_with_aup())
 
     response = redirect(current_app.app_config.feature.admin_users_upgrade_redirect_url)
     response.headers.set("x-session-alive", "true")

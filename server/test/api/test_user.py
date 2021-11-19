@@ -9,9 +9,10 @@ from flask import current_app
 
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
-from server.db.domain import Organisation, Collaboration, User
+from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
-from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name
+from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name, \
+    collaboration_ai_computing_uuid, sarah_name
 from server.tools import read_file
 
 
@@ -162,9 +163,8 @@ class TestUser(AbstractTest):
     def test_update(self):
         self.login("urn:roger")
 
-        body = {"ssh_keys": [{"ssh_value": "ssh_key"}],
+        body = {"ssh_keys": [{"ssh_value": "ssh_key\0\n\r"}],
                 "email": "bogus"}
-
         self.put("/api/users", body, with_basic_auth=False)
 
         roger = User.query.filter(User.uid == "urn:roger").one()
@@ -338,3 +338,25 @@ class TestUser(AbstractTest):
         # Ensure max limit of 16 - full_text_search_autocomplete_limit
         res = self.get("/api/users/query", query_data={"q": "@"})
         self.assertEqual(full_text_search_autocomplete_limit, len(res))
+
+    def test_aup_agreed(self):
+        sarah = self.find_entity_by_name(User, sarah_name)
+        aups = Aup.query.filter(Aup.user == sarah).all()
+        for aup in aups:
+            db.session.delete(aup)
+
+        self.login("urn:sarah")
+        res = self.get("/api/collaborations/find_by_identifier",
+                       query_data={"identifier": collaboration_ai_computing_uuid},
+                       with_basic_auth=False, response_status_code=401)
+        self.assertEqual("AUP not accepted", res["message"])
+
+    def test_update_ssh_control_char(self):
+        self.login("urn:james")
+        ssh_key = User.query.filter(User.uid == "urn:james").one().ssh_keys[0]
+        pub = self.read_file("1.pub")
+        body = {"ssh_keys": [{"id": ssh_key.id, "ssh_value": pub}]}
+        self.put("/api/users", body, with_basic_auth=False)
+
+        james = User.query.filter(User.uid == "urn:james").one()
+        self.assertEqual("AA😡C", james.ssh_keys[0].ssh_value)

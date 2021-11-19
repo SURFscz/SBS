@@ -10,6 +10,7 @@ from sqlalchemy.orm import aliased, load_only, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
+from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager
@@ -248,7 +249,9 @@ def collaboration_invites():
 
     administrators = data.get("administrators", [])
     message = data.get("message", None)
-    intended_role = data.get("intended_role", "member")
+    intended_role = data.get("intended_role")
+    intended_role = "member" if intended_role not in ["admin", "member"] else intended_role
+
     group_ids = data.get("groups", [])
 
     groups = Group.query \
@@ -401,12 +404,12 @@ def save_restricted_collaboration():
     collaboration = res[0]
 
     if connected_services:
-        applied_connected_services = []
         services = Service.query.filter(Service.entity_id.in_(connected_services)).all()
         for service in services:
             if service.white_listed or service.entity_id in restricted_co_config.services_white_list:
                 collaboration.services.append(service)
-                applied_connected_services.append(service.entity_id)
+                # Create groups from service_groups
+                create_service_groups(service, collaboration)
 
         db.session.merge(collaboration)
 

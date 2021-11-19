@@ -3,13 +3,15 @@ import datetime
 import json
 import time
 
+from sqlalchemy import text
+
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER, RESTRICTED_CO_API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
     ai_computing_short_name, service_network_entity_id, service_wiki_entity_id, service_storage_entity_id, \
-    service_cloud_entity_id, uuc_teachers_name
+    service_cloud_entity_id, uuc_teachers_name, service_mail_entity_id
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -33,11 +35,11 @@ class TestCollaboration(AbstractTest):
 
     def test_search(self):
         self.login("urn:john")
-        res = self.get("/api/collaborations/search", query_data={"q": "ComPuti"})
+        res = self.get("/api/collaborations/search", query_data={"q": "ComPuti"}, with_basic_auth=False)
         self.assertEqual(1, len(res))
 
     def test_search_forbidden(self):
-        self.login("unr:roger")
+        self.login("urn:roger")
         self.get("/api/collaborations/search", query_data={"q": "ComPuti"}, response_status_code=403,
                  with_basic_auth=False)
 
@@ -80,7 +82,7 @@ class TestCollaboration(AbstractTest):
             self.assertEqual(STATUS_ACTIVE, collaboration["status"])
             self.assertEqual(2, len(outbox))
             self.assertTrue(
-                "You have been invited by urn:john to join collaboration new_collaboration" in outbox[0].html)
+                "You have been invited by urn:john to join collaboration 'new_collaboration'" in outbox[0].html)
 
             count = self._collaboration_membership_count(collaboration)
             self.assertEqual(0, count)
@@ -152,6 +154,7 @@ class TestCollaboration(AbstractTest):
                             "short_name": "short_org_name",
                             "connected_services": [service_network_entity_id,
                                                    service_wiki_entity_id,
+                                                   service_mail_entity_id,
                                                    service_storage_entity_id,
                                                    service_cloud_entity_id]
                         },
@@ -160,11 +163,15 @@ class TestCollaboration(AbstractTest):
                         response_status_code=201)
 
         self.assertEqual("uuc:short_org_name", res["global_urn"])
-        self.assertListEqual([service_cloud_entity_id, service_storage_entity_id],
-                             list(map(lambda s: s["entity_id"], res["services"])))
+        self.assertListEqual(sorted([service_cloud_entity_id, service_mail_entity_id, service_storage_entity_id]),
+                             sorted(list(map(lambda s: s["entity_id"], res["services"]))))
 
         collaboration = self.find_entity_by_name(Collaboration, res["name"])
         self.assertEqual(1, len(collaboration.collaboration_memberships))
+        group = collaboration.groups[0]
+        self.assertEqual("mail_mail", group.short_name)
+        self.assertEqual(True, group.auto_provision_members)
+        self.assertEqual(1, len(group.collaboration_memberships))
 
         admin = collaboration.collaboration_memberships[0]
         self.assertEqual("admin", admin.role)
@@ -232,6 +239,19 @@ class TestCollaboration(AbstractTest):
         collaboration["name"] = "changed"
         collaboration = self.put("/api/collaborations", body=collaboration)
         self.assertEqual("changed", collaboration["name"])
+
+    def test_collaboration_update_with_logo(self):
+        collaboration_id = self._find_by_identifier()["id"]
+        self.login()
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
+        collaboration["name"] = "changed"
+        collaboration["logo"] = "https://bogus"
+        self.put("/api/collaborations", body=collaboration)
+
+        rows = db.session.execute(text(f"SELECT logo FROM collaborations WHERE id = {collaboration_id}"))
+        self.assertEqual(1, rows.rowcount)
+        for row in rows:
+            self.assertFalse(row["logo"].startswith("http"))
 
     def test_collaboration_update_short_name(self):
         collaboration_id = self._find_by_identifier()["id"]
@@ -393,6 +413,17 @@ class TestCollaboration(AbstractTest):
             invitation = Invitation.query.filter(Invitation.invitee_email == "new@example.org").first()
             self.assertEqual("admin", invitation.intended_role)
             self.assertIsNotNone(invitation.membership_expiry_date)
+
+    def test_collaboration_invites_no_intended_role(self):
+        self.login("urn:john")
+        collaboration_id = self._find_by_identifier()["id"]
+        self.put("/api/collaborations/invites", body={
+            "collaboration_id": collaboration_id,
+            "administrators": ["new@example.org"],
+            "intended_role": ""
+        })
+        invitation = Invitation.query.filter(Invitation.invitee_email == "new@example.org").first()
+        self.assertEqual("member", invitation.intended_role)
 
     def test_collaboration_invites_preview(self):
         self.login("urn:john")

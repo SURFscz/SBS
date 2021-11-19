@@ -7,6 +7,8 @@ import {
     createCollaborationMembershipRole,
     deleteCollaborationMembership,
     health,
+    invitationAccept,
+    invitationByHash,
     organisationByUserSchacHomeOrganisation,
     unsuspendCollaboration
 } from "../api";
@@ -47,7 +49,7 @@ import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
-
+import {convertToHtml} from "../utils/Markdown";
 
 class CollaborationDetail extends React.Component {
 
@@ -58,6 +60,7 @@ class CollaborationDetail extends React.Component {
             label: I18n.t(`profile.${role}`)
         }));
         this.state = {
+            invitation: null,
             collaboration: null,
             schacHomeOrganisation: null,
             adminOfCollaboration: false,
@@ -66,6 +69,7 @@ class CollaborationDetail extends React.Component {
             alreadyMember: false,
             loading: true,
             firstTime: false,
+            isInvitation: false,
             tab: "admins",
             tabs: [],
             confirmationDialogOpen: false,
@@ -79,7 +83,22 @@ class CollaborationDetail extends React.Component {
 
     componentDidMount = callback => {
         const params = this.props.match.params;
-        if (params.id) {
+        if (params.hash) {
+            invitationByHash(params.hash).then(res => {
+                this.setState({
+                    invitation: res,
+                    collaboration: res.collaboration,
+                    loading: false,
+                    firstTime: true,
+                    adminOfCollaboration: false,
+                    schacHomeOrganisation: "",
+                    confirmationDialogOpen: false,
+                    tab: "about",
+                    isInvitation: true,
+                    tabs: [this.getAboutTab(res.collaboration, true, false)]
+                });
+            }).catch(() => this.props.history.push("/404"));
+        } else if (params.id) {
             const collaboration_id = parseInt(params.id, 10);
             collaborationAccessAllowed(collaboration_id)
                 .then(json => {
@@ -413,8 +432,9 @@ class CollaborationDetail extends React.Component {
                         <li className="collaboration-url">
                             <Tooltip children={<PrivacyIcon/>} id={"globe-icon"} msg={I18n.t("tooltips.aup")}/>
                             <span>
-                            <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
-                               target="_blank">{collaboration.accepted_user_policy}</a>
+                            <Tooltip id={"accepted_user_policy"}
+                                     msg={convertToHtml(collaboration.accepted_user_policy)}
+                                     children={<span className={"accepted_user_policy"}>{I18n.t("forms.yes")}</span>}/>
                         </span>
                         </li>}
                     </ul>
@@ -514,6 +534,30 @@ class CollaborationDetail extends React.Component {
         );
     }
 
+    doAcceptInvitation = () => {
+        const {invitation, isInvitation} = this.state;
+        if (isInvitation) {
+            invitationAccept(invitation).then(() => {
+                this.props.refreshUser(() => {
+                    const path = encodeURIComponent(`/collaborations/${invitation.collaboration_id}`);
+                    this.props.history.push(`/refresh-route/${path}`);
+                });
+            }).catch(e => {
+                if (e.response && e.response.json) {
+                    e.response.json().then(res => {
+                        if (res.message && res.message.indexOf("already a member") > -1) {
+                            this.setState({errorOccurred: true, firstTime: false}, () =>
+                                setFlash(I18n.t("invitation.flash.alreadyMember", {"name": invitation.collaboration.name}), "error"));
+                        }
+                    });
+                } else {
+                    throw e;
+                }
+            });
+        } else {
+            this.setState({firstTime: false});
+        }
+    }
 
     getMembershipStatus = (collaboration, user) => {
         if (!user || !collaboration) {
@@ -577,8 +621,10 @@ class CollaborationDetail extends React.Component {
                 <div className="org-attributes">
                     <span>{I18n.t("collaboration.privacyPolicy")}</span>
                     {collaboration.accepted_user_policy &&
-                    <span><a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
-                             target="_blank">{collaboration.accepted_user_policy}</a></span>}
+                    <Tooltip id={"accepted_user_policy"}
+                             msg={convertToHtml(collaboration.accepted_user_policy)}
+                             children={<span className={"accepted_user_policy"}>{I18n.t("forms.yes")}</span>}/>
+                    }
                     {!collaboration.accepted_user_policy && <span>{I18n.t("service.none")}</span>}
                 </div>
                 {this.getCollaborationStatus(collaboration)}
@@ -591,13 +637,19 @@ class CollaborationDetail extends React.Component {
             collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
             collaborationJoinRequest, joinRequestDialogOpen, alreadyMember, lastAdminWarning,
-            isWarning
+            isWarning, isInvitation, invitation
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
         const {user, refreshUser} = this.props;
         const allowedToEdit = isUserAllowed(ROLES.COLL_ADMIN, user, collaboration.organisation_id, collaboration.id);
+        let role;
+        if (isInvitation) {
+            role = invitation.intended_role === "admin" ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER;
+        } else {
+            role = adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER;
+        }
         return (
             <>
                 {(adminOfCollaboration && showMemberView) &&
@@ -605,11 +657,14 @@ class CollaborationDetail extends React.Component {
                 {(!showMemberView || !adminOfCollaboration) &&
                 this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
 
-                <WelcomeDialog name={collaboration.name} isOpen={firstTime}
-                               role={adminOfCollaboration ? ROLES.COLL_ADMIN : ROLES.COLL_MEMBER}
-                               isOrganisation={false}
+                <WelcomeDialog name={collaboration.name}
+                               isOpen={firstTime}
+                               role={role}
+                               organisation={null}
+                               collaboration={collaboration}
                                isAdmin={user.admin}
-                               close={() => this.setState({firstTime: false})}/>
+                               isInvitation={isInvitation}
+                               close={this.doAcceptInvitation}/>
 
                 <JoinRequestDialog collaboration={collaboration}
                                    isOpen={joinRequestDialogOpen}

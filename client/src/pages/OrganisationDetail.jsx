@@ -1,5 +1,10 @@
 import React from "react";
-import {deleteOrganisationMembership, organisationById} from "../api";
+import {
+    deleteOrganisationMembership,
+    organisationById,
+    organisationInvitationAccept,
+    organisationInvitationByHash
+} from "../api";
 import "./OrganisationDetail.scss";
 import I18n from "i18n-js";
 import {isEmpty} from "../utils/Utils";
@@ -30,6 +35,7 @@ class OrganisationDetail extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
+            invitation: null,
             organisation: {},
             loading: true,
             tab: "collaborations",
@@ -44,7 +50,22 @@ class OrganisationDetail extends React.Component {
 
     componentDidMount = callBack => {
         const params = this.props.match.params;
-        if (params.id) {
+        if (params.hash) {
+            organisationInvitationByHash(params.hash).then(res => {
+                const {config} = this.props;
+                this.setState({
+                    invitation: res,
+                    organisation: res.organisation,
+                    adminOfOrganisation: false,
+                    managerOfOrganisation: true,
+                    loading: false,
+                    firstTime: true,
+                    confirmationDialogOpen: false,
+                    isInvitation: true,
+                    tabs: this.getTabs(res.organisation, config, false)
+                });
+            }).catch(() => this.props.history.push("/404"));
+        } else if (params.id) {
             organisationById(params.id)
                 .then(json => {
                     const {user, config} = this.props;
@@ -150,6 +171,31 @@ class OrganisationDetail extends React.Component {
             this.props.history.replace(`/organisations/${orgId}/${name}`));
     }
 
+    doAcceptInvitation = () => {
+        const {invitation, isInvitation} = this.state;
+        if (isInvitation) {
+            organisationInvitationAccept(invitation).then(() => {
+                this.props.refreshUser(() => {
+                    const path = encodeURIComponent(`/organisations/${invitation.organisation_id}`);
+                    this.props.history.push(`/refresh-route/${path}`);
+                });
+            }).catch(e => {
+                if (e.response && e.response.json) {
+                    e.response.json().then(res => {
+                        if (res.message && res.message.indexOf("already a member") > -1) {
+                            this.setState({errorOccurred: true, firstTime: false}, () =>
+                                setFlash(I18n.t("organisationInvitation.flash.alreadyMember"), "error"));
+                        }
+                    });
+                } else {
+                    throw e;
+                }
+            });
+        } else {
+            this.setState({firstTime: false});
+        }
+    }
+
     doDeleteMe = () => {
         this.setState({confirmationDialogOpen: false, loading: true});
         const {user} = this.props;
@@ -201,19 +247,31 @@ class OrganisationDetail extends React.Component {
     render() {
         const {
             tabs, organisation, loading, tab, firstTime, adminOfOrganisation,
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
+            isInvitation, invitation
         } = this.state;
         const {user} = this.props;
         if (loading) {
             return <SpinnerField/>;
         }
+
+        let role;
+        if (isInvitation) {
+            role = invitation.intended_role === "admin" ? ROLES.ORG_ADMIN : ROLES.ORG_MANAGER;
+        } else {
+            role = adminOfOrganisation ? ROLES.ORG_ADMIN : ROLES.ORG_MANAGER;
+        }
+
         return (
             <div className="mod-organisation-container">
-                {<WelcomeDialog name={organisation.name} isOpen={firstTime}
-                                role={adminOfOrganisation ? ROLES.ORG_ADMIN : ROLES.ORG_MANAGER}
-                                isOrganisation={true}
+                {<WelcomeDialog name={organisation.name}
+                                isOpen={firstTime}
+                                role={role}
+                                organisation={organisation}
+                                collaboration={null}
                                 isAdmin={user.admin}
-                                close={() => this.setState({firstTime: false})}/>}
+                                isInvitation={isInvitation}
+                                close={this.doAcceptInvitation}/>}
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
@@ -233,7 +291,7 @@ class OrganisationDetail extends React.Component {
                     <div className="org-attributes-container">
                         <div className="org-attributes">
                             <span>{I18n.t("organisation.schacHomeOrganisationShortName")}</span>
-                            <span>{isEmpty(organisation.schac_home_organisations) ? I18n.t("service.none") :  organisation.schac_home_organisations.map(sho => sho.name).join(", ")}</span>
+                            <span>{isEmpty(organisation.schac_home_organisations) ? I18n.t("service.none") : organisation.schac_home_organisations.map(sho => sho.name).join(", ")}</span>
                         </div>
                         <div className="org-attributes">
                             <span>{I18n.t("organisation.collaborationCreationAllowed")}</span>

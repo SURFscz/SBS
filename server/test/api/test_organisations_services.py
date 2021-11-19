@@ -3,7 +3,7 @@
 from server.db.domain import Service, Organisation
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_wiki_name, uuc_name, service_wireless_name, \
-    service_ssh_uva_name
+    service_ssh_uva_name, service_mail_name, service_group_mail_name
 
 
 class TestOrganisationsServices(AbstractTest):
@@ -34,6 +34,15 @@ class TestOrganisationsServices(AbstractTest):
     def test_add_organisations_services_no_automatic_connection_allowed(self):
         res = self._do_add_organisations_services(uuc_name, service_wiki_name, response_status_code=400)
         self.assertEqual("automatic_connection_not_allowed", res["message"])
+
+    def test_add_organisations_services_with_service_groups(self):
+        self._do_add_organisations_services(uuc_name, service_mail_name)
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        self.assertEqual(3, len(organisation.services))
+        # We need to assert that for every collaboration in the organisation a (service) group was added: mail_mail
+        for collaboration in organisation.collaborations:
+            group = list(filter(lambda item: item.name == service_group_mail_name, collaboration.groups))[0]
+            self.assertEqual("mail_mail", group.short_name)
 
     def test_delete_organisations_services(self):
         uuc = self.find_entity_by_name(Organisation, uuc_name)

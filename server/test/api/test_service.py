@@ -61,11 +61,13 @@ class TestService(AbstractTest):
         service = self.post("/api/services", body={
             "entity_id": "https://new_service",
             "name": "new_service",
+            "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "ip_networks": [{"network_value": "2001:db8:f00f:bab::/64"}, {"network_value": "192.0.2.0/24"}]
         })
 
         self.assertIsNotNone(service["id"])
         self.assertEqual("new_service", service["name"])
+        self.assertEqual("qwoookaaaaaaaaaa", service["abbreviation"])
         self.assertEqual(2, len(service["ip_networks"]))
         self.assertEqual("2001:db8:f00f:bab::/64", service["ip_networks"][0]["network_value"])
 
@@ -117,6 +119,24 @@ class TestService(AbstractTest):
         res = self.get("/api/services/entity_id_exists",
                        query_data={"entity_id": "https://xyz", "existing_service": "https://xyz"})
         self.assertEqual(False, res)
+
+    def test_service_abbreviation_exists(self):
+        res = self.get("/api/services/abbreviation_exists", query_data={"abbreviation": "mail"})
+        self.assertEqual(True, res)
+
+        res = self.get("/api/services/abbreviation_exists",
+                       query_data={"abbreviation": "mail", "existing_service": "mail"})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/services/abbreviation_exists", query_data={"abbreviation": "xyc"})
+        self.assertEqual(False, res)
+
+        res = self.get("/api/services/abbreviation_exists",
+                       query_data={"abbreviation": "xyc", "existing_service": "xyc"})
+        self.assertEqual(False, res)
+
+    def test_abbreviation_error(self):
+        self.post("/api/services", response_status_code=400)
 
     def test_services_all(self):
         self.login("urn:sarah")

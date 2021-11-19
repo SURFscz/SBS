@@ -1,0 +1,45 @@
+table.organisationsWithoutAdmin {
+
+    thead {
+        th {
+            &.name {
+                width: 45%;
+                padding-left: 15px;
+            }
+
+            &.category {
+                width: 20%;
+            }
+
+            &.schacHomes {
+                width: 25%;
+            }
+
+            &.organisation_memberships_count {
+                width: 10%;
+                text-align: center;
+            }
+
+            &.collaborations_count {
+                width: 10%;
+                text-align: center;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.organisation_memberships_count {
+                text-align: center;
+            }
+
+            &.collaborations_count {
+                text-align: center;
+            }
+        }
+    }
+}

@@ -31,6 +31,7 @@ def _get_impersonated_session():
                 "name": impersonate_name,
                 "email": impersonate_mail,
                 "admin": is_admin_user({"uid": impersonate_uid}),
+                "second_factor_confirmed": True,
                 "guest": False,
                 "confirmed_admin": False
             }

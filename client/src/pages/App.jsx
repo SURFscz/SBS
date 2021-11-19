@@ -5,7 +5,7 @@ import I18n from "i18n-js";
 import Header from "../components/Header";
 import NotFound from "../pages/NotFound";
 import ServerError from "../pages/ServerError";
-import {config, me, other, refreshUser, reportError} from "../api";
+import {aupLinks, config, me, other, refreshUser, reportError} from "../api";
 import "../locale/en";
 import "../locale/nl";
 import ErrorDialog from "../components/ErrorDialog";
@@ -44,6 +44,8 @@ import DeadEnd from "./DeadEnd";
 import SecondFactorAuthentication from "./SecondFactorAuthentication";
 import ServiceDenied from "./ServiceDenied";
 import UserDetail from "./UserDetail";
+import Aup from "./Aup";
+import RefreshRoute from "./RefreshRoute";
 
 addIcons();
 
@@ -54,6 +56,7 @@ class App extends React.Component {
         this.state = {
             loading: true,
             currentUser: {},
+            aupConfig: {},
             config: {},
             impersonator: null,
             reloading: false,
@@ -111,9 +114,10 @@ class App extends React.Component {
         if (location.href.indexOf("error") > -1) {
             this.setState({loading: false});
         } else {
-            config().then(res => {
-                this.setState({config: res},
-                    () => me(res).then(currentUser => {
+            Promise.all([config(), aupLinks()]).then(res => {
+                this.setState({config: res[0], aupConfig: res[1]},
+                    () => me(res[0]).then(results => {
+                        const currentUser = results;
                         if (currentUser && currentUser.uid) {
                             const user = this.markUserAdmin(currentUser);
                             this.setState({currentUser: user, loading: false});
@@ -165,13 +169,13 @@ class App extends React.Component {
         refreshUser().then(json => {
             const {impersonator} = this.state;
             const user = this.markUserAdmin(json);
-            this.setState({currentUser: user, impersonator: impersonator}, () => callback && callback());
+            this.setState({currentUser: user, impersonator: impersonator}, () => callback && callback(user));
         });
     };
 
     render() {
         const {
-            loading, errorDialogAction, errorDialogOpen, currentUser, impersonator, config, reloading
+            loading, errorDialogAction, errorDialogOpen, currentUser, impersonator, config, reloading, aupConfig
         } = this.state;
         if (loading) {
             return null; // render null when app is not ready yet
@@ -223,10 +227,18 @@ class App extends React.Component {
                                                                             refreshUser={this.refreshUserMemberships}
                                                                             {...props}/>}/>
                         <Route path="/2fa-update"
-                               render={props => <SecondFactorAuthentication user={currentUser}
-                                                                            refreshUser={this.refreshUserMemberships}
-                                                                            update={true}
-                                                                            {...props}/>}/>
+                               render={props => <ProtectedRoute config={config}
+                                                                currentUser={currentUser}
+                                                                user={currentUser}
+                                                                update={true}
+                                                                refreshUser={this.refreshUserMemberships}
+                                                                Component={SecondFactorAuthentication} {...props}/>}/>
+                        <Route path="/aup"
+                               render={props => <Aup currentUser={currentUser}
+                                                     refreshUser={this.refreshUserMemberships}
+                                                     aupConfig={aupConfig}
+                                                     {...props}/>}/>
+
                         <Route path="/registration"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}
@@ -288,12 +300,6 @@ class App extends React.Component {
                         <Route path="/service-connection-requests/:hash"
                                render={props => <ServiceConnectionRequest {...props}/>}/>
 
-                        <Route exact path="/organisation-invitations/:action/:hash"
-                               render={props => <UserInvitation user={currentUser}
-                                                                isOrganisationInvite={true}
-                                                                refreshUser={this.refreshUserMemberships}
-                                                                {...props}/>}/>
-
                         <Route exact path="/new-organisation-invite/:organisation_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
                                                                 Component={NewOrganisationInvitation}
@@ -305,10 +311,29 @@ class App extends React.Component {
                                                                 {...props}/>}/>
 
                         <Route exact path="/invitations/:action/:hash"
-                               render={props => <UserInvitation user={currentUser}
-                                                                isOrganisationInvite={false}
-                                                                refreshUser={this.refreshUserMemberships}
-                                                                {...props}/>}/>
+                               render={props => currentUser.guest ?
+                                   <UserInvitation user={currentUser}
+                                                   isOrganisationInvite={false}
+                                                   refreshUser={this.refreshUserMemberships}
+                                                   {...props}/>
+                                   : <ProtectedRoute config={config}
+                                                     currentUser={currentUser}
+                                                     refreshUser={this.refreshUserMemberships}
+                                                     Component={CollaborationDetail} {...props}/>
+                               }/>
+
+                        <Route exact path="/organisation-invitations/:action/:hash"
+                               render={props => currentUser.guest ?
+                                   <UserInvitation user={currentUser}
+                                                   isOrganisationInvite={true}
+                                                   refreshUser={this.refreshUserMemberships}
+                                                   {...props}/>
+                                   : <ProtectedRoute
+                                       currentUser={currentUser}
+                                       refreshUser={this.refreshUserMemberships}
+                                       config={config}
+                                       Component={OrganisationDetail} {...props}/>
+                               }/>
 
                         <Route exact path="/collaboration-requests/:id"
                                render={props => <ProtectedRoute currentUser={currentUser}
@@ -360,9 +385,9 @@ class App extends React.Component {
                                    refreshUser={this.refreshUserMemberships} {...props}/>}/>
 
                         {currentUser.admin && <Route exact path="/users/:id/:tab?"
-                               render={props => <ProtectedRoute config={config}
-                                                                currentUser={currentUser}
-                                                                Component={UserDetail} {...props}/>}/>}
+                                                     render={props => <ProtectedRoute config={config}
+                                                                                      currentUser={currentUser}
+                                                                                      Component={UserDetail} {...props}/>}/>}
 
                         <Route path="/system/:tab?"
                                render={props => <ProtectedRoute
@@ -372,6 +397,9 @@ class App extends React.Component {
 
                         <Route path="/dead-end"
                                render={props => <DeadEnd {...props}/>}/>
+
+                        <Route path="/refresh-route/:path"
+                               render={props => <RefreshRoute {...props}/>}/>
 
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>
 
