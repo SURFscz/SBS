@@ -161,9 +161,9 @@ jobs:
 
       - name: Create Artifact
         uses: actions/upload-artifact@v2
-          with:
-            name: "sbs-build"
-            path: "client/${{ steps.tag.outputs.file }}"
+        with:
+          name: "sbs-build"
+          path: "client/${{ steps.tag.outputs.file }}"
 
       - name: Create Release
         if: "GITHUB_REF_TYPE=='tag'"
