@@ -144,10 +144,6 @@ jobs:
         env:
           VNM_DIR: ~/.nvm
 
-      # Setup tmate session
-      #- name: Setup tmate session
-        #uses: mxschmitt/action-tmate@v3
-
       - name: Run tests
         shell: bash
         run: |
@@ -170,6 +166,9 @@ jobs:
       - name: debug list files
         run: |
           git ls-files -t
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
       - name: Create build file
         run: |
