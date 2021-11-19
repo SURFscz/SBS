@@ -107,6 +107,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Run errands
+        run: |
+          sudo apt -y install curl
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -118,13 +125,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Run errands
-        run: |
-          sudo apt -y install curl
-
-      - name: Checkout
-        uses: actions/checkout@v2
 
       - name: Use Node.js 12
         uses: actions/setup-node@v1
