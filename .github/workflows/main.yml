@@ -156,7 +156,6 @@ jobs:
           VNM_DIR: ~/.nvm
 
       - name: Get tag
-        if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
           BASENAME=sbs-build
