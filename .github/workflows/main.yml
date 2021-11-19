@@ -180,4 +180,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            client/${{ steps.tag.outputs.file }}
+            ${{ steps.tag.outputs.file }}
