@@ -22,10 +22,17 @@ export default class Header extends React.PureComponent {
         };
     }
 
+    UNSAFE_componentWillReceiveProps = nextProps => {
+        if (nextProps.currentUser.user_accepted_aup) {
+            organisationByUserSchacHomeOrganisation()
+                .then(res => this.setState({organisation: res}));
+        }
+    };
+
     componentDidMount() {
         emitter.addListener("impersonation", this.impersonate);
         const {currentUser} = this.props;
-        if (!currentUser.guest && currentUser.second_factor_confirmed) {
+        if (!currentUser.guest && currentUser.second_factor_confirmed && currentUser.user_accepted_aup) {
             organisationByUserSchacHomeOrganisation()
                 .then(res => this.setState({organisation: res}));
         }
@@ -75,7 +82,7 @@ export default class Header extends React.PureComponent {
 
                 <div className="header" onClick={this.toggleStyle}>
                     <Link className="logo" to="/"><Logo/></Link>
-                    {showProfile &&
+                    {(showProfile && currentUser.user_accepted_aup) &&
                     <div className="user-profile" onClick={() => this.setState({dropDownActive: !dropDownActive})}>
                         {this.renderProfileLink(currentUser, orangeMode)}
                         {dropDownActive &&

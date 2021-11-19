@@ -12,6 +12,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
 from server.auth.security import secure_hash, current_user
+from server.auth.urls import white_listing, mfa_listing, external_api_listing
 from server.db.db import db
 from server.db.domain import ApiKey
 from server.logger.context_logger import ctx_logger
@@ -19,17 +20,6 @@ from server.mail import mail_error
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
-white_listing = ["health", "config", "info", "api/users/authorization", "api/aup", "api/users/resume-session",
-                 "api/users/me", "/api/images/", "api/service_connection_requests/find_by_hash",
-                 "api/service_connection_requests/approve", "/api/mfa/jwks", "/api/mfa/sfo",
-                 "/api/organisation_invitations/find_by_hash", "/api/invitations/find_by_hash",
-                 "api/service_connection_requests/deny", "/api/mock", "/api/users/error"]
-
-mfa_listing = ["/get2fa", "/verify2fa", "/token_reset_request", "/reset2fa"]
-
-external_api_listing = ["api/collaborations/v1", "api/collaborations/v1/restricted",
-                        "api/collaborations_services/v1/connect_collaboration_service",
-                        "/api/invitations/v1/collaboration_invites"]
 
 STATUS_OPEN = "open"
 STATUS_DENIED = "denied"
@@ -40,7 +30,21 @@ def auth_filter(app_config):
     url = current_request.base_url
     oidc_config = current_app.app_config.oidc
 
+    is_whitelisted_url = False
+    for u in white_listing:
+        if u in url:
+            is_whitelisted_url = True
+            session["destination_url"] = url
+
+    if "user" in session and "admin" in session["user"] and session["user"]["admin"]:
+        request_context.is_authorized_api_call = False
+        return
+
     if "user" in session and not session["user"].get("guest"):
+        if not session["user"].get("user_accepted_aup") and "api/aup/agree" not in url and not is_whitelisted_url:
+            raise Unauthorized(description="AUP not accepted")
+        if "api/aup/agree" in url or "api/users/refresh" in url:
+            return
         if not oidc_config.second_factor_authentication_required or session["user"].get("second_factor_confirmed"):
             request_context.is_authorized_api_call = False
             return
@@ -48,12 +52,6 @@ def auth_filter(app_config):
             for u in mfa_listing:
                 if u in url:
                     return
-
-    is_whitelisted_url = False
-    for u in white_listing:
-        if u in url:
-            is_whitelisted_url = True
-            session["destination_url"] = url
 
     is_external_api_url = False
     for u in external_api_listing:
@@ -113,18 +111,6 @@ def _audit_trail():
         ctx_logger("base").info(f"Path {current_request.path} {method} {json.dumps(body, default=str)}")
 
 
-def _service_status(body):
-    if current_app.app_config.service_bus.enabled:
-        method = current_request.method
-        path = current_request.path
-        endpoint = path.rsplit('/', 1)[-1]
-        if method in _audit_trail_methods and endpoint != 'error':
-            msg = jsonify(body).get_data() if isinstance(body, db.Model) else json.dumps(body, default=str)
-            method = method.lower()
-            topic = f"sbs{path}/{method}"
-            current_app.mqtt.publish(topic, msg)
-
-
 def send_error_mail(tb, session_exists=True):
     mail_conf = current_app.app_config.mail
     if mail_conf.send_exceptions and not os.environ.get("TESTING"):
@@ -145,7 +131,6 @@ def json_endpoint(f):
             _audit_trail()
             _add_custom_header(response)
             db.session.commit()
-            _service_status(body)
             return response, status
         except Exception as e:
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),

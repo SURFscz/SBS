@@ -33,6 +33,7 @@ def login_user():
         "uid": user.uid,
         "name": user.name,
         "email": user.email,
+        "user_accepted_aup": user.has_agreed_with_aup(),
         "second_factor_confirmed": True
     }
     session["user"] = {**session_data, **res}

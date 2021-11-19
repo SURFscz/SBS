@@ -41,16 +41,16 @@ def _do_service_connection_request(hash, approved):
     if approved:
         connect_service_collaboration(service.id, collaboration.id, force=True)
 
-    db.session.delete(service_connection_request)
-
     requester = service_connection_request.requester
-    context = {"salutation": f"Dear {service_connection_request.requester.name},",
+    context = {"salutation": f"Dear {requester.name},",
                "base_url": current_app.app_config.base_url,
                "service": service,
                "collaboration": collaboration,
                "user": requester}
     mail_accepted_declined_service_connection_request(context, service.name, collaboration.name, approved,
                                                       [requester.email])
+    db.session.delete(service_connection_request)
+
     return {}, 201
 
 

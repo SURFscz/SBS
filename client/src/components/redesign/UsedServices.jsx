@@ -6,7 +6,8 @@ import {
     deleteCollaborationServices,
     deleteServiceConnectionRequest,
     denyServiceConnectionRequestByHash,
-    requestServiceConnection, resendServiceConnectionRequests
+    requestServiceConnection,
+    resendServiceConnectionRequests
 } from "../../api";
 import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 

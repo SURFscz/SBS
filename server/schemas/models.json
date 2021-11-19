@@ -82,6 +82,16 @@
             "organisation_id",
             "service_id"
         ]
+    },
+    "service_groups": {
+        "type": "object",
+        "properties": {
+            "service_id": {
+                "type": "integer"
+            }
+        },
+        "required": [
+            "service_id"
+        ]
     }
-
 }

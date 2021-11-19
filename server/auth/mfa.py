@@ -33,13 +33,14 @@ def _refresh_public_keys():
     public_keys = {jwk["kid"]: _get_algorithm(jwk).from_jwk(json.dumps(jwk)) for jwk in jwks["keys"]}
 
 
-def store_user_in_session(user, second_factor_confirmed):
+def store_user_in_session(user, second_factor_confirmed, user_accepted_aup):
     # The session is stored as a cookie in the browser. We therefore minimize the content
     res = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
     session_data = {
         "id": user.id,
         "uid": user.uid,
         "second_factor_confirmed": second_factor_confirmed,
+        "user_accepted_aup": user_accepted_aup,
         "name": user.name,
         "email": user.email
     }

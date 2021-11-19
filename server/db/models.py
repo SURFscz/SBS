@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 # -*- coding: future_fstrings -*-
 import datetime
+from uuid import uuid4
 
 from flask import request, session, g as request_context
 from werkzeug.exceptions import BadRequest
@@ -41,10 +42,6 @@ def _merge(cls, d):
     o = cls(**d)
     merged = db.session.merge(o)
     db.session.commit()
-    if hasattr(merged, "logo"):
-        object_type = str(cls._sa_class_manager.mapper.persist_selectable.name)
-        uuid4 = getattr(merged, "uuid4")
-        evict_from_cache(object_type, uuid4)
     return merged
 
 
@@ -77,18 +74,23 @@ def save(cls, custom_json=None, allow_child_cascades=True, allowed_child_collect
 
 def update(cls, custom_json=None, allow_child_cascades=True, allowed_child_collections=[]):
     json_dict = request.get_json() if custom_json is None else custom_json
-    # URL replacement should not override base64 encoded image
-    if "logo" in json_dict and json_dict["logo"] and json_dict["logo"].startswith("http"):
-        del json_dict["logo"]
+    pk = [coll.name for coll in cls.__table__.columns._all_columns if coll.primary_key][0]
+    # This will raise a NoResultFound and result in a 404
+    instance = cls.query.filter(cls.__dict__[pk] == json_dict[pk]).one()
+    if "logo" in json_dict and json_dict["logo"]:
+        if json_dict["logo"].startswith("http"):
+            # URL replacement should not override base64 encoded image
+            del json_dict["logo"]
+        else:
+            # Force new URL for logo as otherwise the browser cache prevent loading new image
+            json_dict["uuid4"] = str(uuid4())
+            object_type = str(cls._sa_class_manager.mapper.persist_selectable.name)
+            evict_from_cache(object_type, instance.uuid4)
 
     add_audit_trail_data(cls, json_dict)
     json_dict = transform_json(cls, json_dict, allow_child_cascades=allow_child_cascades,
                                allowed_child_collections=allowed_child_collections)
 
-    pk = [coll.name for coll in cls.__table__.columns._all_columns if coll.primary_key][0]
-
-    # This will raise a NoResultFound and result in a 404
-    cls.query.filter(cls.__dict__[pk] == json_dict[pk]).one()
     validate(cls, json_dict, is_new_instance=False)
     return _merge(cls, json_dict), 201
 
@@ -139,8 +141,8 @@ def transform_json(cls, json_dict, allow_child_cascades=True, allowed_child_coll
 
     def _parse(item):
         if isinstance(item[1], list):
-            cls = deserialization_mapping[item[0]]
-            return item[0], list(map(lambda i: cls(**_do_transform(i.items())), item[1]))
+            cls_child = deserialization_mapping[item[0]]
+            return item[0], list(map(lambda i: cls_child(**_do_transform(i.items())), item[1]))
         return item
 
     cleanse_json(json_dict, cls=cls, allow_child_cascades=allow_child_cascades,

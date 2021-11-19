@@ -3,15 +3,16 @@
     .mde-preview-content {
         h3 {
             color: $primary-orange;
+            font-size: 18px;
         }
 
         p {
             margin: 0!important;
         }
 
-        ul {
+        ul, ol {
             list-style: initial;
-            padding: 20px 5px 0 20px;
+            padding: 15px 5px 15px 20px;
 
             li {
                 padding: 2px 0;

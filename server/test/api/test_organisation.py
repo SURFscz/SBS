@@ -3,7 +3,8 @@
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
-from server.test.seed import uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation
+from server.test.seed import uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation, \
+    read_image
 
 
 class TestOrganisation(AbstractTest):
@@ -30,7 +31,7 @@ class TestOrganisation(AbstractTest):
         organisations = self.get("/api/organisations/all",
                                  headers=API_AUTH_HEADER,
                                  with_basic_auth=False)
-        self.assertEqual(2, len(organisations))
+        self.assertEqual(3, len(organisations))
 
         organisation = organisations[0]
         self.assertEqual(2, organisation["collaborations_count"])
@@ -114,14 +115,14 @@ class TestOrganisation(AbstractTest):
                                  with_basic_auth=False)
         self.assertIsNotNone(organisation["id"])
         self.assertEqual("new_organisation", organisation["name"])
-        self.assertEqual(3, Organisation.query.count())
+        self.assertEqual(4, Organisation.query.count())
 
         organisation["name"] = "changed"
         organisation = self.put("/api/organisations", body=organisation)
         self.assertEqual("changed", organisation["name"])
 
         self.delete("/api/organisations", primary_key=organisation["id"])
-        self.assertEqual(2, Organisation.query.count())
+        self.assertEqual(3, Organisation.query.count())
 
     def test_organisation_update_short_name(self):
         self.login("urn:mary")
@@ -213,7 +214,7 @@ class TestOrganisation(AbstractTest):
     def test_my_organisations_lite_super_user(self):
         self.login("urn:john")
         res = self.get("/api/organisations/mine_lite")
-        self.assertEqual(2, len(res))
+        self.assertEqual(3, len(res))
 
     def test_my_organisations_lite_admin(self):
         self.login("urn:mary")
@@ -235,9 +236,14 @@ class TestOrganisation(AbstractTest):
         self.login("urn:mary")
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
         organisation = self.get(f"/api/organisations/{organisation_id}")
+        uuid4_value = organisation["uuid4"]
 
         organisation["name"] = "changed"
+        organisation["logo"] = read_image("storage.jpeg")
         organisation = self.put("/api/organisations", body=organisation)
+
+        new_uuid4_value = organisation["uuid4"]
+        self.assertNotEqual(uuid4_value, new_uuid4_value)
         self.assertEqual("changed", organisation["name"])
 
     def test_organisation_invites(self):
@@ -254,8 +260,20 @@ class TestOrganisation(AbstractTest):
             post_count = OrganisationInvitation.query.count()
             self.assertEqual(2, len(outbox))
             self.assertTrue(
-                f"You have been invited by urn:john to join organisation {uuc_name}" in outbox[0].html)
+                f"You have been invited by urn:john to join organisation '{uuc_name}'" in outbox[0].html)
             self.assertEqual(pre_count + 2, post_count)
+
+    def test_organisation_invites_with_empty_intended_role(self):
+        self.login("urn:john")
+        organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        self.put("/api/organisations/invites", body={
+            "organisation_id": organisation_id,
+            "administrators": ["new@example.org"],
+            "intended_role": ""
+        })
+        invitation = OrganisationInvitation.query \
+            .filter(OrganisationInvitation.invitee_email == "new@example.org").first()
+        self.assertEqual("manager", invitation.intended_role)
 
     def test_organisation_save_with_invites(self):
         pre_count = OrganisationInvitation.query.count()

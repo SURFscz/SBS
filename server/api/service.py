@@ -10,7 +10,7 @@ from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin
 from server.db.db import db
-from server.db.defaults import STATUS_ACTIVE
+from server.db.defaults import STATUS_ACTIVE, cleanse_short_name
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, User
 from server.db.models import update, save, delete
 from server.mail import mail_platform_admins
@@ -94,6 +94,20 @@ def entity_id_exists():
     return org is not None, 200
 
 
+@service_api.route("/abbreviation_exists", strict_slashes=False)
+@json_endpoint
+def abbreviation_exists():
+    confirm_write_access()
+
+    abbreviation = query_param("abbreviation")
+    existing_service = query_param("existing_service", required=False, default="")
+    org = Service.query.options(load_only("id")) \
+        .filter(func.lower(Service.abbreviation) == func.lower(abbreviation)) \
+        .filter(func.lower(Service.abbreviation) != func.lower(existing_service)) \
+        .first()
+    return org is not None, 200
+
+
 @service_api.route("/find_by_entity_id", strict_slashes=False)
 @json_endpoint
 def service_by_entity_id():
@@ -135,7 +149,8 @@ def service_by_id(service_id):
             .options(selectinload(Service.collaborations).selectinload(Collaboration.organisation)) \
             .options(selectinload(Service.organisations)) \
             .options(selectinload(Service.allowed_organisations)) \
-            .options(selectinload(Service.ip_networks))
+            .options(selectinload(Service.ip_networks)) \
+            .options(selectinload(Service.service_groups))
         service = query.filter(Service.id == service_id).one()
         res = jsonify(service).json
         res["service_organisation_collaborations"] = []
@@ -198,6 +213,7 @@ def save_service():
     _validate_ip_networks(data)
 
     data["status"] = STATUS_ACTIVE
+    cleanse_short_name(data, "abbreviation")
 
     res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
@@ -223,6 +239,7 @@ def update_service():
     data = current_request.get_json()
 
     _validate_ip_networks(data)
+    cleanse_short_name(data, "abbreviation")
 
     res = update(Service, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]

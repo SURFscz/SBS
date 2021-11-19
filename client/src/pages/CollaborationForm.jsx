@@ -31,6 +31,7 @@ import {isUserAllowed, ROLES} from "../utils/UserRole";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import DateField from "../components/DateField";
 import moment from "moment";
+import OrganisationOnBoarding from "../components/OrganisationOnBoarding";
 
 class CollaborationForm extends React.Component {
 
@@ -136,8 +137,8 @@ class CollaborationForm extends React.Component {
     updateBreadCrumb = (organisation, collaboration, autoCreateCollaborationRequest, isCollaborationRequest) => {
         const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
         const {user} = this.props;
-        const accessAllowedToOrg = collaboration && isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id);
-        if (organisation && accessAllowedToOrg) {
+        const accessAllowedToOrg = organisation && isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id);
+        if (accessAllowedToOrg) {
             paths.push({
                 path: `/organisations/${organisation.value}`,
                 value: I18n.t("breadcrumb.organisation", {name: organisation.label})
@@ -467,10 +468,25 @@ class CollaborationForm extends React.Component {
                         {isNew && <CheckBox name="use-org-logo" value={useOrganisationLogo}
                                             onChange={e => {
                                                 const checked = e.target.checked;
-                                                this.setState({
-                                                    useOrganisationLogo: !useOrganisationLogo,
-                                                    logo: checked ? organisation.logo : ""
-                                                });
+                                                if (checked) {
+                                                    fetch(organisation.logo).then(res => {
+                                                        res.blob().then(content => {
+                                                            const reader = new FileReader();
+                                                            reader.onload = ({target: {result}}) => {
+                                                                this.setState({
+                                                                    useOrganisationLogo: !useOrganisationLogo,
+                                                                    logo: result.substring(result.indexOf(",") + 1)
+                                                                });
+                                                            };
+                                                            reader.readAsDataURL(content);
+                                                        })
+                                                    });
+                                                } else {
+                                                    this.setState({
+                                                        useOrganisationLogo: !useOrganisationLogo,
+                                                        logo: ""
+                                                    });
+                                                }
                                             }}
                                             info={I18n.t("collaboration.useOrganisationLogo")}/>}
                     </div>
@@ -525,18 +541,18 @@ class CollaborationForm extends React.Component {
                                 externalLink={true}
                                 name={I18n.t("collaboration.websiteUrl")}/>
 
-                    <InputField value={accepted_user_policy}
-                                onChange={e => this.setState({accepted_user_policy: e.target.value})}
-                                placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
-                                externalLink={true}
-                                name={I18n.t("collaboration.accepted_user_policy")}/>
+                    <OrganisationOnBoarding
+                        on_boarding_msg={accepted_user_policy}
+                        tooltip={"tooltips.aup"}
+                        title={I18n.t("collaboration.accepted_user_policy")}
+                        saveOnBoarding={val => this.setState({accepted_user_policy: val})}/>
 
                     {!isCollaborationRequest && <DateField value={expiry_date}
-                               onChange={e => this.setState({expiry_date: e})}
-                               allowNull={true}
-                               showYearDropdown={true}
-                               name={I18n.t("collaboration.expiryDate")}
-                               toolTip={I18n.t("collaboration.expiryDateTooltip")}/>}
+                                                           onChange={e => this.setState({expiry_date: e})}
+                                                           allowNull={true}
+                                                           showYearDropdown={true}
+                                                           name={I18n.t("collaboration.expiryDate")}
+                                                           toolTip={I18n.t("collaboration.expiryDateTooltip")}/>}
 
                     {!isCollaborationRequest && <CheckBox name="disable_join_requests"
                                                           value={disable_join_requests}

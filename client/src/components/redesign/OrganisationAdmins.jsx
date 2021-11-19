@@ -31,11 +31,7 @@ import Tooltip from "./Tooltip";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import ReactTooltip from "react-tooltip";
 import InstituteColumn from "./InstitueColumn";
-
-const roles = [
-    {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
-    {value: "manager", label: I18n.t(`organisation.organisationShortRoles.manager`)}
-];
+import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 
 class OrganisationAdmins extends React.Component {
 
@@ -265,6 +261,22 @@ class OrganisationAdmins extends React.Component {
             this.cancelSideScreen)
     };
 
+    renderSelectRole = (entity, isAdmin, oneAdminLeft, noMoreAdminsToCheck, selectedMembers) => {
+        if (entity.invite) {
+            return <span className="member-role">{I18n.t(`organisation.${entity.intended_role}`)}</span>;
+        }
+        const roles = [
+            {value: "admin", label: I18n.t(`organisation.organisationShortRoles.admin`)},
+            {value: "manager", label: I18n.t(`organisation.organisationShortRoles.manager`)}
+        ];
+        return <Select
+            value={roles.find(option => option.value === entity.role)}
+            options={roles}
+            classNamePrefix={`select-member-role`}
+            onChange={this.changeMemberRole(entity)}
+            isDisabled={!isAdmin || !(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
+                (!noMoreAdminsToCheck || selectedMembers[entity.id].selected)))}/>
+    }
 
     renderSelectedInvitation = (organisation, invitation) => {
         const {
@@ -359,12 +371,17 @@ class OrganisationAdmins extends React.Component {
                 key: "check",
                 // header: <CheckBox value={allSelected} name={"allSelected"}
                 //                   onChange={this.allSelected}/>,
-                mapper: entity => <div className="check">
-                    {(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
-                        (!noMoreAdminsToCheck || selectedMembers[entity.id].selected))) &&
-                    <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
-                              value={(selectedMembers[entity.id] || {}).selected || false}/>}
-                </div>
+                mapper: entity => {
+                    const displayCheckbox = entity.invite || entity.role === "manager" || (!oneAdminLeft &&
+                        (!noMoreAdminsToCheck || selectedMembers[entity.id].selected));
+                    return <div className="check">
+                        {displayCheckbox && <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
+                                                      value={(selectedMembers[entity.id] || {}).selected || false}/>}
+                        {!displayCheckbox &&
+                        <Tooltip children={<InformationCircle/>} id={"admin-warning"}
+                                 msg={I18n.t("tooltips.oneAdminWarning")}/>}
+                    </div>
+                }
             },
             {
                 nonSortable: true,
@@ -395,13 +412,7 @@ class OrganisationAdmins extends React.Component {
                 key: "role",
                 header: I18n.t("models.users.role"),
                 className: !isAdmin ? "not-allowed" : "",
-                mapper: entity => entity.invite ? null : <Select
-                    value={roles.find(option => option.value === entity.role)}
-                    options={roles}
-                    classNamePrefix={`select-member-role`}
-                    onChange={this.changeMemberRole(entity)}
-                    isDisabled={!isAdmin || !(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
-                        (!noMoreAdminsToCheck || selectedMembers[entity.id].selected)))}/>
+                mapper: entity => this.renderSelectRole(entity, isAdmin, oneAdminLeft, noMoreAdminsToCheck, selectedMembers)
             },
             {
                 nonSortable: true,

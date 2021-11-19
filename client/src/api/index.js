@@ -92,7 +92,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && false) {
+    if (config.local && true) {
         let sub = "urn:john";
         // sub = "urn:sarah";
         // sub = "urn:james";
@@ -192,6 +192,10 @@ export function serviceNameExists(name, existingService = null) {
 
 export function serviceEntityIdExists(entityId, existingService = null) {
     return fetchJson(`/api/services/entity_id_exists?entity_id=${encodeURIComponent(entityId)}&existing_service=${encodeURIComponent(existingService)}`);
+}
+
+export function serviceAbbreviationExists(abbreviation, existingService = null) {
+    return fetchJson(`/api/services/abbreviation_exists?abbreviation=${encodeURIComponent(abbreviation)}&existing_service=${encodeURIComponent(existingService)}`);
 }
 
 export function serviceById(id) {
@@ -538,7 +542,7 @@ export function deleteApiKey(id) {
 
 //Aup
 export function aupLinks() {
-    return fetchJson("/api/aup");
+    return fetchJson("/api/aup/info");
 }
 
 export function agreeAup() {
@@ -668,6 +672,34 @@ export function cleanSlate() {
     return fetchDelete("/api/system/clean_slate");
 }
 
+export function validations() {
+    return fetchJson("/api/system/validations");
+}
+
 export function feedback(message) {
     return postPutJson("/api/system/feedback", {message}, "POST");
+}
+
+export function plscSync() {
+    return fetchJson("/api/plsc/sync");
+}
+//Service groups
+export function serviceGroupNameExists(name, serviceId, existingGroup = null) {
+    return fetchJson(`/api/servicegroups/name_exists?name=${encodeURIComponent(name)}&service_id=${serviceId}&existing_service_group=${encodeURIComponent(existingGroup)}`);
+}
+
+export function serviceGroupShortNameExists(shortName, serviceId, existingGroup = null) {
+    return fetchJson(`/api/servicegroups/short_name_exists?short_name=${encodeURIComponent(shortName)}&service_id=${serviceId}&existing_service_group=${encodeURIComponent(existingGroup)}`);
+}
+
+export function createServiceGroup(group) {
+    return postPutJson("/api/servicegroups", group, "post");
+}
+
+export function updateServiceGroup(group) {
+    return postPutJson("/api/servicegroups", group, "put");
+}
+
+export function deleteServiceGroup(id) {
+    return fetchDelete(`/api/servicegroups/${id}`)
 }

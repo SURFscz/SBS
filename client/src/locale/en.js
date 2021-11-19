@@ -59,9 +59,9 @@ I18n.translations.en = {
         closeBrowserAfterDelete: "To finish the deletion of your account you'll have to close your browser."
     },
     home: {
-        sram: "SURF RESEARCH ACCESS MANAGEMENT PLATFORM",
+        sram: "SURF Research Access Management",
         edit: "Edit",
-        unsuspend: "Unsuspend",
+        unsuspend: "Revert suspension",
         history: "History",
         details: "Details",
         backToHome: "Back to home",
@@ -95,7 +95,9 @@ I18n.translations.en = {
             cron: "Cron",
             seed: "Seed",
             database: "Database",
-            activity: "Activity"
+            activity: "Activity",
+            validation: "Actions",
+            plsc: "LDAP sync"
         }
     },
     forms: {
@@ -120,7 +122,7 @@ I18n.translations.en = {
         image: "Image must at least be 300x120 pixels and smaller then 2MB.",
         dragImage: "Drag and resize the crop area until you're happy with the result. Then hit apply.",
         imageToLarge: "Image is larger then 2MB.",
-        imageDeleteConfirmation: "Are you sure you want to delete this image? You can not revert this and you'll have to select a new image",
+        imageDeleteConfirmation: "Are you sure you want to delete this image? You cannot revert this and you'll have to select a new image",
         imageRequired: "Image is required",
         whiteSpace: "Fit the image",
         no: "No"
@@ -130,7 +132,8 @@ I18n.translations.en = {
         impersonate: "Impersonate",
         services: "Services",
         serviceRequest: "Service request",
-        apiKeys: "API keys"
+        apiKeys: "API keys",
+        serviceGroups: "Service groups"
     },
     models: {
         users: {
@@ -170,7 +173,11 @@ I18n.translations.en = {
             me: "You",
             moreResults: "There are more results then shown, please refine your search.",
             noResults: "No users were found...",
-            activity: "User history"
+            activity: "User history",
+            showSsh: "Show",
+            ssh: {
+                title: "Public SSH keys of {{name}}"
+            }
         },
         orgMembers: {
             title: "Organisation admin & managers",
@@ -192,6 +199,18 @@ I18n.translations.en = {
             removeTooltip: "Delete all selected members",
             mailTooltipDisabled: "First select users to email",
             mailTooltip: "Email all selected members"
+        },
+        orgInvitations: {
+            title: "Open organisation invitations",
+            noEntities: "There are no open organisation invitations...",
+            searchPlaceHolder: "Search invitations...",
+            backToMembers: "Back to open invitations...",
+            orgName: "Organisation"
+        },
+        organisationsWithoutAdmin: {
+            title: "Organisations without administrators",
+            noEntities: "There are no organisations without admins...",
+            searchPlaceHolder: "Search organisations...",
         },
         organisations: {
             title: "Organisations",
@@ -219,18 +238,18 @@ I18n.translations.en = {
             titleRequestedColl: "Requested by members for this collaboration ({{count}})",
             titleAvailableOrg: "Available for this organisation ({{count}})",
             titleUsedColl: "Used by this collaboration ({{count}})",
-            titleUsedOrg: "Enabled by this organisation ({{count}})",
+            titleUsedOrg: "Mandated by this organisation ({{count}})",
             awaitingApproval: "Connection awaiting approval",
             automaticConnectionAllowed: "Automatic connection allowed",
             requiredByOrganisation: "Enabled by organisation",
             memberServiceRequest: "Member service connection request",
-            removeFromCO: "Remove from collaboration",
+            removeFromCO: "Disconnect from collaboration",
             deleteConnectionRequest: "Delete connection request",
             resendConnectionRequest: "Resend connection request",
-            addToCO: "Add to collaboration",
+            addToCO: "Connect to collaboration",
             removeFromOrg: "Remove from organisation",
             addToOrg: "Add to organisation",
-            mandatory: "Enabled for all collaborations",
+            mandatory: "Mandatory for all collaborations",
             requestConnection: "Request connection",
             backToServices: "Back to services",
             connectionRequest: "Request connection to {{name}}",
@@ -252,7 +271,7 @@ I18n.translations.en = {
             invitationsCount: "Invitations",
             allMembers: "All members ({{count}})",
             group: "Group {{name}} ({{count}})",
-            hideInvites: "Hide invitees",
+            hideInvites: "Hide invitations",
             noCollaborations: "There are no collaborations yet within your organisation. Why don't you create the first one?",
         },
         serviceOrganisations: {
@@ -381,17 +400,18 @@ I18n.translations.en = {
         },
         invitation: {
             welcome: "Welcome to SURF Research Access Management. Here access to research services for research collaborations is managed.",
-            invited: "You have been invited to join {{type}} <strong>{{collaboration}}</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
-            followingSteps: "Please take the following steps:",
+            invited: "You have been invited to join {{type}} <strong>'{{collaboration}}'</strong> by <a href=\"mailto:{{email}}\">{{inviter}}</a>",
+            followingSteps: "SURF Research Access Management gives members of research collaborations fast and secure access to research services.</br></br>You can login with your institution account or eduID.",
             steps: {
                 progress: "{{now}} of {{total}}",
                 login: "Login",
                 next: "Next: {{step}}",
-                invite: "Accept the invite",
+                invite: "Join the collaboration",
+                inviteOrg: "Join the organisation",
                 collaborate: "Collaborate!"
             },
             login: "Please login to identify yourself",
-            loginWithSub: "Please login to identify yourself<sup> *</sup>",
+            loginWithSub: "Login to accept the invite",
             loginTip: "You can use your institution account to login, or use a guest account like eduID",
             accept: "I accept these terms",
             noAccept: "No, I don't agree",
@@ -439,7 +459,22 @@ I18n.translations.en = {
             details: "Service connection request made by {{name}} on {{date}} for collaboration {{collaborationName}}",
             requester: "Requester",
             name: "Collaboration"
-        }
+        },
+        serviceGroups: {
+            backToGroups: "Back to all service groups",
+            autoProvisionMembersTooltip: "Check to ensure all existing and future new collaboration members are added to this group when it is created",
+            title: "Service groups",
+            searchPlaceHolder: "Search for service groups...",
+            noEntities: "No service groups were found",
+            new: "Create new service group",
+            edit: "Edit",
+            name: "Name",
+            description: "Description",
+            autoProvisioning: "Auto provisioning",
+            on: "On",
+            off: "Off"
+        },
+
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -528,7 +563,7 @@ I18n.translations.en = {
         invitations: "Invitations",
         services: "Services",
         add: "Create new collaboration",
-        searchPlaceHolder: "SEARCH FOR ALL COLLABORATIONS..."
+        searchPlaceHolder: "Search for all collaborations"
     },
     accessTypes: {
         open: "Open",
@@ -557,17 +592,20 @@ I18n.translations.en = {
         joinRequestUrlTooltip: "URL for non-members to join this collaboration. You can for instance email this URL or publish it on a website etc.",
         joinRequestUrlDisabled: "Join request are disabled for this collaboration",
         disableJoinRequests: "Disable join request for this collaboration.",
-        disableJoinRequestsTooltip: "When checked non-members of this collaboration can not issue a join request.",
+        disableJoinRequestsTooltip: "When checked non-members of this collaboration cannot issue a join request.",
         joinRequests: "Join request URL",
         disabled: "Disabled",
         enabled: "Copy link",
         privacyPolicy: "Acceptable Use Policy",
-        expiryDate: "End date",
-        expiryDateWarning: "Will expire in {{nbr}} day(s)!",
+        expiryDate: "Expiration date",
+        expiryDateWarning: {
+            one: "Will expire in one day!",
+            other: "Will expire in {{nbr}} days!"
+        },
         expiryDateExpired: "Expired!",
         lastActivityDate: "Last activity",
         lastActivitySuspended: "Suspended!",
-        expiryDateTooltip: "The end date of the collaboration. After this date the collaboration will be suspended and its members can no longer use services",
+        expiryDateTooltip: "The expiration date of the collaboration, after which its members can no longer use its services",
         discloseMembers: "Disclose member info",
         discloseMemberInformation: "Disclose member information",
         discloseMemberInformationTooltip: "When checked the names of members are disclosed to other members",
@@ -606,13 +644,13 @@ I18n.translations.en = {
         status: {
             name: "Status",
             active: "Active",
-            activeWithExpiryDate: "Expiry date: {{expiryDate}}",
+            activeWithExpiryDate: "Expiration date: {{expiryDate}}",
             suspended: "Suspended",
             expired: "Expired",
             activeTooltip: "This collaboration is active and ready for business.",
-            suspendedTooltip: "This collaboration is suspended due to long inactivity. It was used for the last time on {{lastActivityDate}}.",
-            expiredTooltip: "This collaboration is expired due to the expiry date. It has expires on {{expiryDate}}. It can be activated by setting a new end date.",
-            activeWithExpiryDateTooltip: "This collaboration is active, however it does expiry on {{expiryDate}}."
+            suspendedTooltip: "This collaboration was suspended due to inactivity. It was last used on {{lastActivityDate}}.",
+            expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date.",
+            activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}."
         },
         flash: {
             created: "Collaboration {{name}} was successfully created",
@@ -635,7 +673,7 @@ I18n.translations.en = {
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send them an email with an activation link.",
         lastAdminWarning: "You are leaving this collaboration without admins. After this, management of the collaboration can only be carried out by the admins of organisation {{name}}",
         lastAdminWarningUser: "You are the last admin in this collaboration. After you leave, management of the collaboration can only be carried out by the admins of organisation {{name}}",
-        activateMemberTooltip: "Click to re-activate this suspended user. Suspended users can not login",
+        activateMemberTooltip: "Revert this user's suspension. Suspended users cannot login",
         flash: {
             updated: "Collaboration {{name}} was successfully updated",
             deleted: "Collaboration {{name}} was successfully deleted",
@@ -644,7 +682,7 @@ I18n.translations.en = {
             memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
             meAdded: "Successfully added you as member of {{name}}",
             memberActivated: "Member {{name}} has been sent an email with an activation link",
-            memberExpiryDateUpdated: "Member {{name}} has an updated expiry date {{expiryDate}}"
+            memberExpiryDateUpdated: "Membership of {{name}} has an updated expiration date {{expiryDate}}"
         },
         infoBlocks: "Dashboard collaboration {{name}}",
         searchPlaceHolder: "Search for members",
@@ -670,13 +708,13 @@ I18n.translations.en = {
         invitations: "Invitations",
         collaborationRequests: "Collaboration requests",
         add: "Create new service",
-        searchPlaceHolder: "SEARCH FOR ALL ORGANISATIONS...",
+        searchPlaceHolder: "Search for all organisations",
         deleteConfirmation: "Are you sure you want to delete service {{name}}?"
     },
     services: {
         title: "Services",
         add: "Create new service",
-        searchPlaceHolder: "SEARCH FOR ALL SERVICES..."
+        searchPlaceHolder: "Search for all services"
     },
     service: {
         about: "About the service",
@@ -695,6 +733,9 @@ I18n.translations.en = {
         entity_id: "Entity ID",
         entity_idPlaceHolder: "The unique entity ID of the service",
         entity_idTooltip: "The unique entity ID of the service links the service in SRAM to the actual external service Provider",
+        abbreviation: "Abbreviation",
+        abbreviationPlaceHolder: "The unique abbreviation of this service",
+        abbreviationTooltip: "The unique abbreviation of the service is used as a prefix for any groups you create",
         service_request: "Service Request URL",
         service_requestTooltip: "The URL for a service to request a connection between a collaboration and this service if the User does not have access to this service",
         service_requestError: "Requires a valid URI and Automatic connection allowed set to True",
@@ -729,7 +770,7 @@ I18n.translations.en = {
         accessAllowedForAllInfo: "All organisations are enabled by default for this service",
         nonMemberUsersAccessAllowed: "Accessible for all users?",
         nonMemberUsersAccessAllowedTooltip: "Can all members access this service without being a member of a connected Collaboration",
-        whiteListed: "Whitelisted?",
+        whiteListed: "On allow list?",
         whiteListedTooltip: "Can this service directly be connected to new restricted collaborations created by the API? Note that it also possible to configure this in the Server configuration file.",
         sirtfiCompliant: "Sirtfi compliant?",
         sirtfiCompliantTooltip: "The Security Incident Response Trust Framework for Federated Identity (Sirtfi) aims to enable the coordination of incident response across federated organisations. This assurance framework comprises a list of assertions which an organisation can attest in order to be declared Sirtfi compliant.",
@@ -888,6 +929,7 @@ I18n.translations.en = {
         service: {
             name: "Name",
             entity_id: "Entity ID",
+            abbreviation: "Abbreviation",
             description: "Description",
             actions: "",
         },
@@ -901,7 +943,7 @@ I18n.translations.en = {
         searchPlaceHolderCollaborations: "Search for collaborations",
         update: "Update",
         delete: "Delete",
-        deleteMemberConfirmation: "Are you sure you want to delete the checked organisation memberships / invitations?",
+        deleteMemberConfirmation: "Are you sure you want to delete these organisation admins and managers?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this organisation? You won't be able to revert this.",
         deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
         deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}?",
@@ -955,8 +997,8 @@ I18n.translations.en = {
         organisationAdministrators: "Admins",
         requiredAdministrator: "At least one admin email address is required for an invitation for an organisation",
         role: "Intended role",
-        expiryDate: "Expiry date",
-        expiryDateTooltip: "The expiry date of the invitation After this date the invitation can not be accepted anymore",
+        expiryDate: "Invitation valid until",
+        expiryDateTooltip: "The expiration date of the invitation, after which the invitation cannot be accepted",
         message: "Message",
         messageTooltip: "The user {{name}} has invited you with this message",
         fileImportResult: "Imported {{nbr}} email addresses from {{fileName}}",
@@ -970,8 +1012,8 @@ I18n.translations.en = {
         declineInvitation: "Are you sure you want to decline this invitation?",
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
-        expired: "This invitation expired on {{expiry_date}} and can not be accepted anymore.",
-        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiry date to 14 days.",
+        expired: "This invitation expired on {{expiry_date}} and cannot be accepted anymore.",
+        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiration date to 14 days.",
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} was declined.",
             inviteDeleted: "Invitation for organisation {{name}} was deleted.",
@@ -1009,7 +1051,7 @@ I18n.translations.en = {
         inviteesTooltip: "This personal message is included in the email sent to the persons you invite",
         intendedRole: "Permissions",
         intendedRoleTooltip: "The permissions granted to all invitees. Admins of a collaboration can edit their collaborations and invite members. Regular users can only use the services of their groups.",
-        intendedRoleOrganisation: "Organisation Permissions",
+        intendedRoleOrganisation: "Role",
         intendedRoleTooltipOrganisation: "The permissions granted to all invitees. Admins of a organisation can edit their organisation and invite members. Managers can can create, approve and manage collaborations",
         invitee_email: "Invitee email",
         groupsPlaceHolder: "Select Groups",
@@ -1032,15 +1074,15 @@ I18n.translations.en = {
         declineInvitation: "Are you sure you want to decline this invitation?",
         deleteInvitation: "Are you sure you want to delete this invitation?",
         resendInvitation: "Are you sure you want to resend this invitation?",
-        expired: "This invitation expired on {{expiry_date}} and can not be accepted anymore.",
-        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiry date to 14 days.",
+        expired: "This invitation expired on {{expiry_date}} and cannot be accepted anymore.",
+        expiredAdmin: "This invitation expired on {{expiry_date}}. Resend the invitation to reset the expiration date to 14 days.",
         filePlaceholder: "Select csv or txt file...",
         fileImportResult: "Imported {{nbr}} email addresses from {{fileName}}",
         fileExtensionError: "Only .csv extension files are allowed",
-        expiryDate: "Expiry date",
-        expiryDateTooltip: "The expiry date of the invitation After this date the invitation can not be accepted anymore",
-        membershipExpiryDate: "Membership expiry date",
-        membershipExpiryDateTooltip: "The expiry date of the membership once the invitation has been accepted. After this date the membership will expire and this membership can't be used to login to services connected to this collaboration.",
+        expiryDate: "Invitation expires on",
+        expiryDateTooltip: "The expiration date of the invitation, after which the invitation cannot be accepted",
+        membershipExpiryDate: "Membership expires on",
+        membershipExpiryDateTooltip: "The expiration date of the membership once the invitation has been accepted. After this date the membership will expire and this membership cannot be used to login to services connected to this collaboration.",
         flash: {
             inviteDeclined: "Invitation for collaboration {{name}} was declined.",
             inviteAccepted: "Invitation for collaboration {{name}} was accepted.",
@@ -1056,9 +1098,9 @@ I18n.translations.en = {
         noServices: "This collaboration has no services connected.",
         noServiceConnectRequests: "This collaboration has no outstanding service Connect Requests.",
         searchServices: "Search, select and add services to the available services within collaboration {{name}}",
-        deleteServiceTooltip: "Make this service unavailable in the collaboration {{name}}. <strong>NOTE</strong>: the service itself is NOT deleted. It is only not available anymore for groups within this collaboration.",
-        notAllowedOrganisation: "Service '{{service}}' can not be added to collaboration '{{collaboration}}'. The service configuration excludes it from organisation '{{organisation}}'.",
-        automaticConnectionNotAllowed: "Service '{{service}}' can not be automatically added to collaboration '{{collaboration}}'. The service configuration dictates that a service connect request must be submitted. Please add your motivation and submit this form.",
+        deleteServiceTooltip: "Make this service unavailable in the collaboration {{name}}. <strong>Note</strong>: the service itself is <strong>not</strong> deleted. It is only not available anymore for groups within this collaboration.",
+        notAllowedOrganisation: "Service '{{service}}' cannot be added to collaboration '{{collaboration}}'. The service configuration excludes it from organisation '{{organisation}}'.",
+        automaticConnectionNotAllowed: "Service '{{service}}' cannot be automatically added to collaboration '{{collaboration}}'. The service configuration dictates that a service connect request must be submitted. Please add your motivation and submit this form.",
         motivation: "Motivation",
         motivationPlaceholder: "Your motivation to request a service connection",
         send: "Send",
@@ -1072,6 +1114,7 @@ I18n.translations.en = {
             actions: "",
             name: "Name",
             entity_id: "Entity ID",
+            abbreviation: "Abbreviation",
             description: "Description"
         },
         serviceConnectionRequest: {
@@ -1096,7 +1139,7 @@ I18n.translations.en = {
         connectedServices: "Connected services to {{name}}",
         noServices: "This organisation has no services connected.",
         searchServices: "Search, select and add services to the available services within organisation {{name}}.",
-        deleteServiceTooltip: "Make this service unavailable in the organisation {{name}}. <strong>NOTE</strong>: the service itself is NOT deleted. It is only not available anymore for the members of the collaborations on this organisation",
+        deleteServiceTooltip: "Make this service unavailable in the organisation {{name}}. <strong>Note</strong>: the service itself is NOT deleted. It is only not available anymore for the members of the collaborations on this organisation",
         notAllowedOrganisation: "This service cannot be enabled for al collaborations because it does not allow automatic connections to collaborations. Connections can still be requested by individual collaborations in your organisation.",
         notEnabledOrganisation: "This service cannot be enabled for al collaborations because this organisation is not allowed access to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         serviceRestrictedOrganisation: "This service cannot be enabled for al collaborations because this organisation is configured services restricted. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
@@ -1184,12 +1227,12 @@ I18n.translations.en = {
         searchServices: "Search, select and add services to the available services for the group {{name}}",
         connectedServices: "Connected services to {{name}}",
         deleteServiceWarning: "Warning: Unlinking services from the group deletes all user information specific for that service and all linked memberships",
-        deleteServiceTooltip: "Make this service unavailable in the group {{name}} <strong>NOTE</strong>: the service itself is NOT deleted. It is only no longer available for this group",
+        deleteServiceTooltip: "Make this service unavailable in the group {{name}} <strong>Note</strong>: the service itself is <strong>not</strong> deleted. It is only no longer available for this group",
         searchMembers: "Search, select and add members to the group {{name}}",
         connectedMembers: "Members of {{name}}",
         deleteMemberWarning: "Warning: Unlinking memberships from the group deletes all user information specific for that membership and all linked services",
-        deleteMemberTooltip: "Remove this member from the group {{name}} <strong>NOTE</strong>: the user itself is NOT deleted. They are only no longer a member of this groups",
-        deleteInvitationTooltip: "Remove this invitation from the group {{name}} <strong>NOTE</strong>: the invitation itself is NOT deleted. They will not be added as a member of this group when the invitation is accepted",
+        deleteMemberTooltip: "Remove this member from the group {{name}} <strong>Note</strong>: the user itself is NOT deleted. They are only no longer a member of this groups",
+        deleteInvitationTooltip: "Remove this invitation from the group {{name}} <strong>Note</strong>: the invitation itself is NOT deleted. They will not be added as a member of this group when the invitation is accepted",
         service: {
             actions: "",
             name: "Name",
@@ -1207,18 +1250,25 @@ I18n.translations.en = {
         invitation: {
             invitee_email: "Email",
             intended_role: "Role",
-            expiry_date: "Expiry date",
+            expiry_date: "Expiration date",
             actions: ""
         },
     },
     aup: {
-        title1: "In order to use SURF Research Access Management, you need to agree to the below Acceptable Use Policy.",
-        title2: "Please read the document and if agreed check the box and proceed to the validation of your personal information.",
-        title3: "For more information we supply contact information at the end of the AUP.",
-        downloadPdf: "Download AUP (pdf)",
-        agreeWithTerms: "I agree with the SRAM Acceptable Usage Policy",
-        continueToValidation: "Store decision and continue",
-        agreed: "Your agreement with {{name}} has been saved."
+        hi: "Hi {{name}},",
+        info: "We are ready to create your SRAM profile.",
+        name: "Display name.",
+        email: "Email address",
+        title: "Acceptable use policy",
+        disclaimer: "By logging on to SRAM, you become a user and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of our AUP.</a>",
+        agreeWithTerms: "I hereby certify that I have read the AUP and that I accept them",
+        onward: "Looks good, onwards",
+        agreedFlash: "Your agreement with {{name}} has been saved.",
+        collaboration: {
+            title: "Additional terms to the Acceptable use policy",
+            info: "For this collaboration, there are some additions to the general SRAM AUP. You need to accept these additions to be able to join this collaboration.",
+            agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
+        }
     },
     collaborationRequest: {
         title: {
@@ -1314,6 +1364,7 @@ I18n.translations.en = {
             "organisations": "Organisation",
             "organisations_services": "Organisation service",
             "service_connection_requests": "Service connection request",
+            "service_groups": "Service groups",
             "services": "Service",
             "services_collaborations": "Collaboration service",
             "users": "User",
@@ -1330,15 +1381,15 @@ I18n.translations.en = {
         subTitle: "These are all the collaborations you are a member of. Choose one or more to link service <strong>{{name}}</strong> to in order for you to have access to this service.",
         titleAlreadyLinked: "Service {{name}} is already linked to your collaboration {{collaboration}}",
         subTitleAlreadyLinked: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations to this service. However you already have access to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleLinkNotAllowed: "Service {{name}} can not be linked to any of your collaborations",
+        titleLinkNotAllowed: "Service {{name}} cannot be linked to any of your collaborations",
         subTitleLinkNotAllowed: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However none of your collaborations can be linked to this service. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleNoAutomaticConnection: "Service {{name}} can not be linked to any of your collaborations",
+        titleNoAutomaticConnection: "Service {{name}} cannot be linked to any of your collaborations",
         subTitleNoAutomaticConnection: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However this service does not allow for automatic connections. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleRedirectMismatch: "Service {{name}} can not be linked to any of your collaborations",
+        titleRedirectMismatch: "Service {{name}} cannot be linked to any of your collaborations",
         subTitleRedirectMismatch: "The service <strong>{{name}}</strong> redirected you this page to connect one of your collaborations. However the provided redirect URI is not valid. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleNoCollaborations: "Service {{name}} can not be linked to any of your collaborations",
+        titleNoCollaborations: "Service {{name}} cannot be linked to any of your collaborations",
         subTitleNoCollaborations: "You are not a member of any collaboration. To use service <strong>{{name}}</strong> you need to be a member of at least one collaboration. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
-        titleOutstandingServiceConnectionRequest: "Service {{name}} can not be linked to any of your collaborations",
+        titleOutstandingServiceConnectionRequest: "Service {{name}} cannot be linked to any of your collaborations",
         subTitleOutstandingServiceConnectionRequest: "There are already outstanding service connection request(s) for all of your collaborations: {{details}}. Please contact <a href=\"mailto:sram-support@surf.nl\">sram-support@surf.nl</a> to resolve this issue.",
         collaboration: {
             name: "Collaboration",
@@ -1346,9 +1397,9 @@ I18n.translations.en = {
             organisation: "Organisation",
             actions: "Link",
             tooltips: "",
-            linkNotAllowed: "You can not link this service to this collaboration, because the organisation of this collaboration is not allowed to link this service",
-            alreadyLinked: "You can not link this service to this collaboration, because the service is already available in this collaboration",
-            outstandingServiceConnectionRequest: "You can not link this service to this collaboration, because there is already an outstanding request to connect the service to this collaboration"
+            linkNotAllowed: "You cannot link this service to this collaboration, because the organisation of this collaboration is not allowed to link this service",
+            alreadyLinked: "You cannot link this service to this collaboration, because the service is already available in this collaboration",
+            outstandingServiceConnectionRequest: "You cannot link this service to this collaboration, because there is already an outstanding request to connect the service to this collaboration"
         },
         role: {
             admin: "Admin",
@@ -1359,7 +1410,7 @@ I18n.translations.en = {
         motivation: "Service {{serviceName}} redirected the user {{userName}} to connect a collaboration to this service",
         result: {
             completed: "The service {{serviceName}} is now accessible for you. Click the button below to go to this service.",
-            requested: "Access to service {{serviceName}} has been requested. Until the request is granted you can not access this service.",
+            requested: "Access to service {{serviceName}} has been requested. Until the request is granted you cannot access this service.",
         },
     },
     confirmation: {
@@ -1395,7 +1446,7 @@ I18n.translations.en = {
     not_found: {
         title: "404",
         description_html: "The requested page could not be found",
-        loginLink: "LOGIN"
+        loginLink: "Login"
     },
     footer: {
         tips: "Need tips or info?",
@@ -1410,8 +1461,8 @@ I18n.translations.en = {
     system: {
         title: "System maintenance",
         runDailyJobsInfo: "Run the daily cron job to send notification mails and potentially suspend users that have not logged in for the configured period",
-        runExpiredCollaborations: "Run the job to expire collaborations that have an expiry date before today",
-        runExpiredMemberships: "Run the job to expire memberships that have an expiry date before today",
+        runExpiredCollaborations: "Run the job to expire collaborations that have an expiration date before today",
+        runExpiredMemberships: "Run the job to expire memberships that have an expiration date before today",
         runSuspendedCollaborations: "Run the job to suspend collaborations that have had no activity for X days",
         runDailyJobs: "Trigger",
         showDailyJobs: "Show",
@@ -1424,8 +1475,8 @@ I18n.translations.en = {
         runCleanedRequests: "Delete",
         action: "Action",
         results: "Results",
-        first_suspend_notification: "First suspend notification email sent",
-        second_suspend_notification: "Second suspend notification email sent",
+        first_suspend_notification: "First suspension notification email sent",
+        second_suspend_notification: "Second suspension notification email sent",
         suspended: "Users who are marked as suspended",
         deleted: "Suspended users who are deleted",
         collaborations_deleted: "Expired collaborations deleted",
@@ -1499,7 +1550,7 @@ I18n.translations.en = {
         createCollTxt: "Create a collaboration",
         createCollRequestTxt: "Start a new collaboration",
         contact: "Contact SRAM helpdesk",
-        contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> and let us know what you were expecting, or if you have any questions. We'll try to respond asap."
+        contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you need help."
     },
     feedback: {
         title: "Provide Feedback",
@@ -1565,13 +1616,14 @@ I18n.translations.en = {
         members: "Composition of this collaboration",
         admins: "Admin(s) of this collaboration",
         collaborationUrl: "More information about this collaboration",
-        aup: "Acceptable use policy for this collaboration",
+        aup: "Acceptable use policy for this collaboration. This is an addition to the SRAM AUP, which applies to all collaborations.",
         user: "User",
         admin: "Admin",
         invitations: "Invitee",
         joinRequest: "Join request",
         manager: "Manager",
-        platformAdmin: "Goddess divinity"
+        platformAdmin: "Goddess divinity",
+        oneAdminWarning: "An organisation requires at least one admin.",
     },
     notFound: {
         msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that " +
@@ -1580,27 +1632,29 @@ I18n.translations.en = {
     },
     mfa: {
         register: {
-            title: "Configure two-factor authentication",
-            info1: "You have successfully signed in at {{name}} with your username and password.",
-            info2: "For SURF Research Access Management, a more secure way of signing in is required. Please register for two-factor authentication.",
-            step: "Step {{nbr}}",
-            getApp: "Get the app",
-            getAppInfo: "Download and install the Google Authenticator or Microsoft Authenticator app.",
-            scan: "Scan this QR-code",
+            title: "Two factor authentication required",
+            titleUpdate: "Add two factor authentication device",
+            info1: "You have successfully signed in with a username and password at {{name}}. SURF Research Access Management requires two-factor authentication. This means an extra check to verify it's you.",
+            info2: "To setup two factor authentication, take the following steps:",
+            step: "Stap {{nbr}}",
+            getApp: "1. Add SRAM to your authenticator app",
+            unknownIdp: "an unknown organisation",
+            getAppUpdate: "2. Add SRAM to your authenticator app",
+            new: "new ",
+            getAppInfo: "Open or install the Google (<a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/google-authenticator/id388497605\" target=\"_blank\">iOS</a>) of Microsoft (<a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/microsoft-authenticator/id983156458\" target=\"_blank\">iOS</a>) Authenticator app on your {{new}}mobile device",
+            addSRAM: "Tap the '+' icon in the app",
+            scan: "Scan the QR code using your devices's camera",
             scanInfo: "Open the authenticator app and:",
-            scanSteps: [
-                "Tap the '+' icon in the app",
-                "Scan the QR-code below using your phone's camera"
-            ],
-            verificationCode: "Enter authentication code",
-            verificationCodeInfo: "Once the QR-code above is scanned, enter the 6-digit authentication code from the app",
-            verificationCodePlaceholder: "6-digit code",
-            verify: "Verify and activate"
+            verificationCode: "2. Enter verification code",
+            verificationCodeUpdate: "3. Enter verification code",
+            verificationCodeInfo: "Enter the verification code you see in the app",
+            verify: "Verify and activate",
+            next: "Next"
         },
         update: {
             info1: "To update your two-factor authentication, please follow the steps below.",
             info2: "You will need to have access to the authenticator app that you are currently using to sign in to SURF Research Access Management, as well as to the new authenticator app that you wish to use for future logins.",
-            currentCode: "Enter current verification code",
+            currentCode: "1. Enter current verification code",
             currentCodeInfo: "Enter the 6-digit authentication code from your current authenticator app.",
             scanInfo: "Open your new authenticator app and:",
             verificationCodeInfo: "Once the QR-code above is scanned, enter the 6-digit authentication code from your new authenticator app.",
@@ -1651,6 +1705,7 @@ I18n.translations.en = {
     },
     sfo: {
         title: "Whoops, no access to <i>{{name}}</i>",
+        info: "Bad luck...",
         info1: "You've not successfully logged into SURF Research Access Management, and therefore you don't have access to <i>{{name}}</i>.",
         info2: "You've not successfully logged into SURF Research Access Management as your account is suspended, and therefore you don't have access to <i>{{name}}</i>. None of the collaborations you are currently a member of, have enabled access to <i>{{name}}</i>. Contact your admin(s) to enable access to this service.",
         info3: "You've successfully logged into SURF Research Access Management (SRAM), but the service <i>{{name}}</i> is unknown in SRAM.",
@@ -1659,24 +1714,24 @@ I18n.translations.en = {
         info6: "You've successfully logged into SURF Research Access Management, but unfortunately you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired. Contact your admin(s) to enable access to this service."
     },
     unsuspend: {
-        confirmation: "Are you sure you want to unsuspend this collaboration?",
+        confirmation: "Are you sure you want to revert suspension this collaboration?",
         flash: "Collaboration {{name}} is active again"
     },
     organisationMembership: {
-        membership: "Membership of {{name}} has no end date.",
+        membership: "Membership of {{name}} has no expiration date.",
         membershipWithExpiry: "Membership of {{name}} will expire at {{date}}.",
-        expiredMembership: "This membership has expired at {{date}}. Update the end date to activate {{name}}.",
-        expiryDate: "End date",
-        expiryDateTooltip: "The end date of the membership. After this date the membership will be suspended and this member can no longer use the services",
+        expiredMembership: "This membership has expired at {{date}}. Update the expiration date to activate {{name}}'s membership.",
+        expiryDate: "Expiration date",
+        expiryDateTooltip: "The expiration date of the membership. After this date the membership will be suspended and this member can no longer use the services",
         update: "Update",
         status: {
             name: "Membership",
             active: "Active",
             expired: "Expired",
-            activeWithExpiryDate: "Expiry date: {{date}}",
-            activeTooltip: "Your membership has no end date.",
-            expiredTooltip: "Your membership was expired on {{date}}. Please contact the admins of this collaboration to request activation.",
-            activeWithExpiryDateTooltip: "Your membership is active, however it does expiry on {{date}}."
+            activeWithExpiryDate: "Expiration date: {{date}}",
+            activeTooltip: "Your membership has no expiration date.",
+            expiredTooltip: "Your membership has expired on {{date}}. Please contact the admins of this collaboration for help.",
+            activeWithExpiryDateTooltip: "Your membership is active, however will expire at {{date}}."
         }
     }
 };

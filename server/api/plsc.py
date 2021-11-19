@@ -5,6 +5,7 @@ from flask import Blueprint
 from server.api.base import json_endpoint
 from server.auth.security import confirm_read_access
 from server.db.db import db
+from server.db.logo_mixin import logo_url
 
 plsc_api = Blueprint("plsc_api", __name__, url_prefix="/api/plsc")
 
@@ -35,8 +36,9 @@ def sync():
     rs = db.engine.execute("SELECT name, organisation_id FROM schac_home_organisations")
     schac_home_organisations = [{"name": row[0], "organisation_id": row[1]} for row in rs]
 
-    rs = db.engine.execute("SELECT id, name, entity_id, contact_email FROM services")
-    services = [{"id": row[0], "name": row[1], "entity_id": row[2], "contact_email": row[3]} for row in rs]
+    rs = db.engine.execute("SELECT id, name, entity_id, contact_email, uuid4 FROM services")
+    services = [{"id": row[0], "name": row[1], "entity_id": row[2], "contact_email": row[3],
+                 "logo": logo_url("services", row[4])} for row in rs]
 
     rs = db.engine.execute("SELECT service_id, organisation_id FROM services_organisations")
     services_organisations = [{"service_id": row[0], "organisation_id": row[1]} for row in rs]
@@ -55,11 +57,12 @@ def sync():
     rs = db.engine.execute("SELECT collaboration_membership_id, group_id FROM collaboration_memberships_groups")
     collaboration_memberships_groups = [{"collaboration_membership_id": row[0], "group_id": row[1]} for row in rs]
 
-    rs = db.engine.execute("SELECT id, identifier, name, short_name, global_urn, organisation_id, status, description "
-                           "from collaborations")
+    rs = db.engine.execute("SELECT id, identifier, name, short_name, global_urn, organisation_id, status, description, "
+                           "uuid4, website_url from collaborations")
     collaborations = [
         {"id": row[0], "identifier": row[1], "name": row[2], "short_name": row[3], "global_urn": row[4],
-         'organisation_id': row[5], "status": row[6], "description": row[7]} for row in rs]
+         'organisation_id': row[5], "status": row[6], "description": row[7],
+         "logo": logo_url("collaborations", row[8]), "website_url": row[9]} for row in rs]
 
     rs = db.engine.execute(
         "SELECT id, name, short_name, global_urn, identifier, collaboration_id, description FROM `groups`")
@@ -82,12 +85,13 @@ def sync():
             _find_by_identifiers(services, "id", [si["service_id"] for si in service_identifiers]))
         coll["collaboration_memberships"] = _find_by_id(collaboration_memberships, "collaboration_id", collaboration_id)
 
-    rs = db.engine.execute("SELECT id, name, identifier, short_name FROM organisations")
+    rs = db.engine.execute("SELECT id, name, identifier, short_name, uuid4 FROM organisations")
     for row in rs:
         organisation_id = row[0]
         service_identifiers = _find_by_id(services_organisations, "organisation_id", organisation_id)
         result["organisations"].append({
             "id": organisation_id, "name": row[1], "identifier": row[2], "short_name": row[3],
+            "logo": logo_url("organisations", row[4]),
             "schac_home_organisations": _find_by_id(schac_home_organisations, "organisation_id", organisation_id),
             "organisation_memberships": _find_by_id(organisation_memberships, "organisation_id", organisation_id),
             "collaborations": _find_by_id(collaborations, "organisation_id", organisation_id),

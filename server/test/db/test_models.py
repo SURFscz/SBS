@@ -25,7 +25,7 @@ class TestModels(AbstractTest):
             self.assertEqual(collaboration.collaboration_memberships[0].created_by, "system")
 
     def test_validation_error(self):
-        self.post("/api/services", response_status_code=400)
+        self.post("/api/services", body={"abbreviation": "abb"}, response_status_code=400)
 
     def test_parse_date_fields(self):
         json_dict = {"updated_at": 1549367857 * 1000}
@@ -33,4 +33,5 @@ class TestModels(AbstractTest):
         self.assertTrue(isinstance(json_dict["updated_at"], datetime.datetime))
 
     def test_update_not_found(self):
-        self.put("/api/services", body={"id": -1, "entity_id": "some", "name": "some"}, response_status_code=404)
+        self.put("/api/services", body={"id": -1, "entity_id": "some", "name": "some", "abbreviation": "abbreviation"},
+                 response_status_code=404)

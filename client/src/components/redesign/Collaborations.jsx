@@ -12,6 +12,7 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import moment from "moment";
 
+
 export default class Collaborations extends React.PureComponent {
 
     constructor(props, context) {
@@ -122,7 +123,9 @@ export default class Collaborations extends React.PureComponent {
                         return <div>
                             <span className={warning ? "warning" : ""}>{moment(expiryDate).format("LL")}</span>
                             {(warning && collaboration.status === "active") &&
-                            <span className="warning">{I18n.t("collaboration.expiryDateWarning", {nbr: days})}</span>}
+                            <span className="warning">
+                            {I18n.p(days, "collaboration.expiryDateWarning", {nbr: days})}
+                            </span>}
                             {(collaboration.status === "expired") &&
                             <span className="warning">{I18n.t("collaboration.expiryDateExpired", {nbr: days})}</span>}
                         </div>;
@@ -141,7 +144,7 @@ export default class Collaborations extends React.PureComponent {
                     const days = Math.round((today - lastActivityDate) / (1000 * 60 * 60 * 24));
                     const warning = days > 60;
                     return <div>
-                        <span className={warning ? "warning" : ""}>{moment(lastActivityDate).format("LL")}</span>
+                        <span className={warning ? "warning" : ""}>{moment(lastActivityDate).format("L")}</span>
                         {collaboration.status === "suspended" && <span className="warning">
                             {I18n.t("collaboration.lastActivitySuspended")}
                         </span>}

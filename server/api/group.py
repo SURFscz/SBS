@@ -3,7 +3,7 @@ import uuid
 
 from flask import Blueprint, request as current_request
 from sqlalchemy import func
-from sqlalchemy.orm import load_only, contains_eager
+from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param
 from server.api.group_members import do_add_group_members
@@ -91,23 +91,26 @@ def save_group():
     collaboration_id = data["collaboration_id"]
     confirm_collaboration_admin(collaboration_id)
 
-    _assign_global_urn(collaboration_id, data)
-    cleanse_short_name(data)
-    data["identifier"] = str(uuid.uuid4())
-
-    res = save(Group, custom_json=data, allow_child_cascades=False)
-
-    auto_provision_all_members_and_invites(res[0])
+    res = create_group(collaboration_id, data)
 
     return res
 
 
-def _assign_global_urn(collaboration_id, data):
-    collaboration = Collaboration.query \
-        .join(Collaboration.organisation) \
-        .options(contains_eager(Collaboration.organisation)) \
-        .filter(Collaboration.id == collaboration_id)\
-        .one()
+def create_group(collaboration_id, data):
+    cleanse_short_name(data)
+    # Check uniqueness of name and short_name of group for the collaboration
+    collaboration = Collaboration.query.get(collaboration_id)
+    duplicates = [g.id for g in collaboration.groups if g.name == data["name"] or g.short_name == data["short_name"]]
+    if duplicates:
+        return {}, 201
+    _assign_global_urn(collaboration, data)
+    data["identifier"] = str(uuid.uuid4())
+    res = save(Group, custom_json=data, allow_child_cascades=False)
+    auto_provision_all_members_and_invites(res[0])
+    return res
+
+
+def _assign_global_urn(collaboration, data):
     data["global_urn"] = f"{collaboration.organisation.short_name}:{collaboration.short_name}:{data['short_name']}"
 
 
@@ -118,8 +121,8 @@ def update_group():
 
     collaboration_id = int(data["collaboration_id"])
     confirm_collaboration_admin(collaboration_id)
-
-    _assign_global_urn(collaboration_id, data)
+    collaboration = Collaboration.query.get(collaboration_id)
+    _assign_global_urn(collaboration, data)
     cleanse_short_name(data)
 
     res = update(Group, custom_json=data, allow_child_cascades=False)

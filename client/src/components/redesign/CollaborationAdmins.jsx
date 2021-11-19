@@ -35,11 +35,6 @@ import LastAdminWarning from "./LastAdminWarning";
 import DateField from "../DateField";
 import InstituteColumn from "./InstitueColumn";
 
-const roles = [
-    {value: "admin", label: I18n.t(`organisation.admin`)},
-    {value: "member", label: I18n.t(`organisation.member`)}
-];
-
 const memberFilterValue = "members";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
@@ -416,7 +411,9 @@ class CollaborationAdmins extends React.Component {
             {showImpersonation && <HandIcon className="impersonate" onClick={() =>
                 emitter.emit("impersonation",
                     {"user": entity.user, "callback": () => this.props.history.push("/home")})}/>}
-            {showOpenButton && <Button className={showImpersonation ? "" : "orphan"} onClick={this.gotoMembership(entity)} txt={I18n.t("forms.open")} small={true}/>}
+            {showOpenButton &&
+            <Button className={showImpersonation ? "" : "orphan"} onClick={this.gotoMembership(entity)}
+                    txt={I18n.t("forms.open")} small={true}/>}
         </div>);
     }
 
@@ -600,6 +597,10 @@ class CollaborationAdmins extends React.Component {
         if (!isAdminOfCollaboration) {
             return <span className="member-role">{I18n.t(`organisation.${entity.role}`)}</span>;
         }
+        const roles = [
+            {value: "admin", label: I18n.t(`organisation.admin`)},
+            {value: "member", label: I18n.t(`organisation.member`)}
+        ];
         return <Select value={roles.find(option => option.value === entity.role)}
                        options={roles}
                        classNamePrefix={`select-member-role`}

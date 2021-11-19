@@ -4,6 +4,7 @@ import I18n from "i18n-js";
 import {
     auditLogsActivity,
     cleanSlate,
+    validations,
     cleanupNonOpenRequests,
     clearAuditLogs,
     dbSeed,
@@ -14,8 +15,10 @@ import {
     outstandingRequests,
     scheduledJobs,
     suspendCollaborations,
-    suspendUsers
+    suspendUsers,
+    plscSync
 } from "../api";
+import ReactJson from "react-json-view";
 import Button from "../components/Button";
 import {isEmpty} from "../utils/Utils";
 import UnitHeader from "../components/redesign/UnitHeader";
@@ -32,6 +35,8 @@ import {logout} from "../utils/Login";
 import {filterAuditLogs} from "../utils/AuditLog";
 import SelectField from "../components/SelectField";
 import moment from "moment";
+import OrganisationInvitations from "../components/redesign/OrganisationInvitations";
+import OrganisationsWithoutAdmin from "../components/redesign/OrganisationsWithoutAdmin";
 
 const options = [25, 50, 100, 150, 200, 250, "All"].map(nbr => ({value: nbr, label: nbr}));
 
@@ -40,9 +45,10 @@ class System extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.allTables = Object.entries(I18n.translations[I18n.locale].history.tables)
-            .map(arr => ({value: arr[0], label: arr[1]}));
+            .map(arr => ({value: arr[0], label: arr[1]}))
+            .sort((t1, t2) => t1.label.localeCompare(t2.label));
         this.state = {
-            tab: "cron",
+            tab: "validations",
             suspendedUsers: {},
             suspendedCollaborations: {},
             expiredCollaborations: {},
@@ -59,9 +65,12 @@ class System extends React.Component {
             busy: false,
             auditLogs: {audit_logs: []},
             filteredAuditLogs: {audit_logs: []},
+            validationData: {"organisations": [], "organisation_invitations": []},
             limit: options[1],
             query: "",
-            selectedTables: []
+            selectedTables: [],
+            showOrganisationsWithoutAdmin: true,
+            plscData: {}
         }
     }
 
@@ -70,7 +79,6 @@ class System extends React.Component {
             const params = this.props.match.params;
             const tab = params.tab || this.state.tab;
             this.tabChanged(tab);
-
             AppStore.update(s => {
                 s.breadcrumb.paths = [
                     {path: "/", value: I18n.t("breadcrumb.home")},
@@ -224,6 +232,39 @@ class System extends React.Component {
         });
     }
 
+    getPlscTab = plscData => {
+        return (<div key="plsc" name="plsc" label={I18n.t("home.tabs.plsc")}
+                     icon={<FontAwesomeIcon icon="table"/>}>
+            <div className="mod-system">
+                <section className="info-block-container">
+                    <ReactJson src={plscData} />
+                </section>
+            </div>
+        </div>)
+
+    }
+
+    toggleShowOrganisationsWithoutAdmin = show => this.setState({showOrganisationsWithoutAdmin: show});
+
+    getValidationTab = (validationData, showOrganisationsWithoutAdmin) => {
+        const organisation_invitations = validationData.organisation_invitations;
+        const organisations = validationData.organisations;
+        return (<div key="validations" name="validations" label={I18n.t("home.tabs.validation")}
+                     icon={<FontAwesomeIcon icon="calendar-check"/>}>
+            <div className="mod-system">
+                <section className="info-block-container">
+                    <OrganisationInvitations organisation_invitations={organisation_invitations}
+                                             toggleShowOrganisationsWithoutAdmin={this.toggleShowOrganisationsWithoutAdmin}
+                                             refresh={callback => this.componentDidMount(callback)}/>
+                </section>
+                {showOrganisationsWithoutAdmin &&
+                <section className="info-block-container">
+                    <OrganisationsWithoutAdmin organisations={organisations} {...this.props}/>
+                </section>}
+            </div>
+        </div>)
+
+    }
     getDatabaseTab = (databaseStats, config) => {
         return (<div key="database" name="database" label={I18n.t("home.tabs.database")}
                      icon={<FontAwesomeIcon icon="database"/>}>
@@ -686,6 +727,17 @@ class System extends React.Component {
                     busy: false
                 });
             });
+        } else if (name === "validations") {
+            validations().then(res => {
+                res.organisation_invitations.forEach(inv => inv.invite = true);
+                this.setState({
+                    validationData: res,
+                    showOrganisationsWithoutAdmin: true,
+                    busy: false
+                })
+            });
+        } else if (name === "plsc") {
+            plscSync().then(res => this.setState({plscData: res, busy: false}));
         } else {
             this.setState({busy: false});
         }
@@ -699,7 +751,8 @@ class System extends React.Component {
         const {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
-            limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs
+            limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
+            validationData, showOrganisationsWithoutAdmin, plscData
         } = this.state;
         const {config} = this.props;
 
@@ -707,11 +760,13 @@ class System extends React.Component {
             return <SpinnerField/>
         }
         const tabs = [
+            this.getValidationTab(validationData, showOrganisationsWithoutAdmin),
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations, expiredMemberships,
                 cronJobs),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
             this.getDatabaseTab(databaseStats, config),
-            this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables)
+            this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables),
+            this.getPlscTab(plscData)
         ]
         return (
             <div className="mod-system-container">

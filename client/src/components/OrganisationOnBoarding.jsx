@@ -29,14 +29,14 @@ export default class OrganisationOnBoarding extends React.Component {
 
     render() {
         const {selectedTab} = this.state;
-        const {on_boarding_msg} = this.props;
+        const {on_boarding_msg, tooltip, title} = this.props;
         return (
             <div className="organisation-onboarding">
-                <label className="label">{I18n.t("organisation.onBoarding.label")}</label>
+                <label className="label">{title || I18n.t("organisation.onBoarding.label")}</label>
                 <span className="tool-tip-section">
                         <span data-tip data-for="on-boarding"><FontAwesomeIcon icon="info-circle"/></span>
                         <ReactTooltip id="on-boarding" type="light" effect="solid" data-html={true}>
-                            <p dangerouslySetInnerHTML={{__html: I18n.t("organisation.onBoarding.tooltip")}}/>
+                            <p dangerouslySetInnerHTML={{__html: I18n.t(tooltip || "organisation.onBoarding.tooltip")}}/>
                         </ReactTooltip>
                     </span>
                 <div className="container">
@@ -66,6 +66,8 @@ export default class OrganisationOnBoarding extends React.Component {
 
 OrganisationOnBoarding.propTypes = {
     on_boarding_msg: PropTypes.string,
-    saveOnBoarding: PropTypes.func
+    saveOnBoarding: PropTypes.func,
+    tooltip: PropTypes.string,
+    title: PropTypes.string,
 };
 
