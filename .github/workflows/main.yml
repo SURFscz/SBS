@@ -163,12 +163,8 @@ jobs:
           echo ::set-output name=file::${BASENAME}-${GITHUB_REF_NAME}.tar.xz
         id: tag
 
-      - name: debug list files
-        run: |
-          git ls-files -t
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      #- name: Setup tmate session
+      #  uses: mxschmitt/action-tmate@v3
 
       - name: Create build file
         run: |
