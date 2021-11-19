@@ -155,6 +155,10 @@ jobs:
           echo ::set-output name=file::${BASENAME}-${GITHUB_REF_NAME}.tar.xz
         id: tag
 
+      - name: debug list files
+        run: |
+          git ls-files -t
+
       - name: Create build file
         run: |
           tar -cJf ${{ steps.tag.outputs.file }} $(git ls-files) client/build
