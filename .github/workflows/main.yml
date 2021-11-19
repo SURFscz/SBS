@@ -8,6 +8,10 @@ on:
   # Triggers the workflow on push or pull request events
   push:
   pull_request:
+  release:
+    tags:
+      - 'v*'
+    types: [published]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -110,6 +114,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
       - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
@@ -128,10 +144,6 @@ jobs:
         env:
           VNM_DIR: ~/.nvm
 
-      # Setup tmate session
-      #- name: Setup tmate session
-        #uses: mxschmitt/action-tmate@v3
-
       - name: Run tests
         shell: bash
         run: |
@@ -142,3 +154,30 @@ jobs:
         env:
           CI: true
           VNM_DIR: ~/.nvm
+
+      - name: Get tag
+        shell: bash
+        run: |
+          BASENAME=sbs
+          echo ::set-output name=file::${BASENAME}-${GITHUB_REF_TYPE}=${GITHUB_REF_NAME//\//+}.tar.xz
+        id: tag
+
+      #- name: Setup tmate session
+      #  uses: mxschmitt/action-tmate@v3
+
+      - name: Create build file
+        run: |
+          tar -cJ --transform 's,^\./,sbs/,' -f ${{ steps.tag.outputs.file }} --force-local $(git ls-files) client/build
+
+      - name: Create Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: "sbs-build"
+          path: "${{ steps.tag.outputs.file }}"
+
+      - name: Create Release
+        if: "github.ref_type=='tag'"
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ steps.tag.outputs.file }}
