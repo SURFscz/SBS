@@ -114,8 +114,9 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
                 memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:"
                                 f"{collaboration.short_name}:{g.short_name}")
 
-    logger.info(f"Returning attributes {memberships} for user {uid} and service_entity_id {service_entity_id}")
-    return authorized_func(user, memberships)
+    attributes, http_status = authorized_func(user, memberships)
+    logger.info(f"Returning attributes {attributes} for user {uid} and service_entity_id {service_entity_id}")
+    return attributes, http_status
 
 
 # Endpoint for SATOSA/eduteams
