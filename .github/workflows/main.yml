@@ -166,7 +166,7 @@ jobs:
           path: "client/${{ steps.tag.outputs.file }}"
 
       - name: Create Release
-        if: "GITHUB_REF_TYPE=='tag'"
+        if: "github.ref_type=='tag'"
         uses: softprops/action-gh-release@v1
         with:
           files: |
