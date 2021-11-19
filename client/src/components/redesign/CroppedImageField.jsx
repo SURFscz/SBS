@@ -4,7 +4,7 @@ import I18n from "i18n-js";
 import {ReactComponent as NotFoundIcon} from "../../icons/image-not-found.svg";
 import "./CroppedImageField.scss";
 import {isEmpty} from "../../utils/Utils";
-import "react-image-crop/lib/ReactCrop.scss";
+import "react-image-crop/dist/ReactCrop.css";
 import Logo from "./Logo";
 import Button from "../Button";
 import CroppedImageDialog from "./CroppedImageDialog";
