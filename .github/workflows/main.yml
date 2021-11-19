@@ -159,7 +159,7 @@ jobs:
         shell: bash
         run: |
           BASENAME=sbs
-          echo ::set-output name=file::${BASENAME}-${GITHUB_REF_TYPE}:${GITHUB_REF_NAME//\//+}.tar.xz
+          echo ::set-output name=file::${BASENAME}-${GITHUB_REF_TYPE}=${GITHUB_REF_NAME//\//+}.tar.xz
         id: tag
 
       #- name: Setup tmate session
