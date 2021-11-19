@@ -158,8 +158,8 @@ jobs:
       - name: Get tag
         shell: bash
         run: |
-          BASENAME=sbs-build
-          echo ::set-output name=file::${BASENAME}-${GITHUB_REF_NAME}.tar.xz
+          BASENAME=sbs
+          echo ::set-output name=file::${BASENAME}_${GITHUB_REF_TYPE}:${GITHUB_REF_NAME//\//+}.tar.xz
         id: tag
 
       #- name: Setup tmate session
@@ -167,13 +167,13 @@ jobs:
 
       - name: Create build file
         run: |
-          tar -cJf ${{ steps.tag.outputs.file }} $(git ls-files) client/build
+          tar -cJ --transform 's,^\./,sbs/,' -f ${{ steps.tag.outputs.file }} $(git ls-files) client/build
 
       - name: Create Artifact
         uses: actions/upload-artifact@v2
         with:
           name: "sbs-build"
-          path: "client/${{ steps.tag.outputs.file }}"
+          path: "${{ steps.tag.outputs.file }}"
 
       - name: Create Release
         if: "github.ref_type=='tag'"
