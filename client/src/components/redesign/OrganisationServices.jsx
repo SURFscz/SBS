@@ -14,6 +14,8 @@ import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
 import MissingServices from "../MissingServices";
+import Tooltip from "./Tooltip";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class OrganisationServices extends React.Component {
 
@@ -111,6 +113,9 @@ class OrganisationServices extends React.Component {
             }
         }
         const disabled = !allowed || !service.allowed || service.notAllowedServicesRestricted;
+        if (disabled) {
+            return <Tooltip children={<FontAwesomeIcon icon="info-circle"/>} id={`not-allowed-${service.id}`} msg={tooltip}/>
+        }
         return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={disabled}
                              value={value} animate={false} tooltip={tooltip}/>
     }

@@ -215,25 +215,6 @@ class CollaborationAdmins extends React.Component {
         this.setState({allSelected: val, selectedMembers: newSelectedMembers});
     }
 
-    gotoInvitation = invitation => e => {
-        stopEvent(e);
-        const {collaboration} = this.props;
-        const selectedInvitation = collaboration.invitations.find(i => i.id === invitation.id)
-        this.setState({selectedInvitationId: selectedInvitation.id, message: selectedInvitation.message});
-    };
-
-    gotoMembership = membership => e => {
-        stopEvent(e);
-        const {collaboration} = this.props;
-        const selectedMembership = collaboration.collaboration_memberships.find(i => i.id === membership.id);
-        const expiryDate = selectedMembership.expiry_date;
-        this.setState({
-            selectedMembershipId: selectedMembership.id,
-            expiryDate: expiryDate ? moment(expiryDate * 1000).toDate() : null,
-            originalExpiryDate: selectedMembership.expiry_date
-        });
-    };
-
     getSelectedInvitation = () => {
         const {selectedInvitationId} = this.state;
         if (!selectedInvitationId) {
@@ -344,6 +325,10 @@ class CollaborationAdmins extends React.Component {
             .filter(v => filteredEntities.find(e => e.id === v.ref.id && e.invite === v.ref.invite));
         const hrefValue = encodeURI(selected.map(v => v.ref.invite ? v.ref.invitee_email : v.ref.user.email).join(","));
         const disabled = selected.length === 0;
+        const showResendInvite = selected.length > 0 && selected.every(s => s.invite === true && this.isExpiredInvitation(s.ref));
+        if (showResendInvite) {
+            debugger;
+        }
         const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc="
         return (
             <div className="admin-actions">
@@ -398,33 +383,19 @@ class CollaborationAdmins extends React.Component {
         );
     }
 
-    getImpersonateMapper = isAdminOfCollaboration => entity => {
+    getImpersonateMapper = entity => {
         const {user: currentUser, showMemberView} = this.props;
         const {impersonation_allowed} = this.props.config;
 
         if (entity.invite) {
-            return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
+            return null;
         }
         const showImpersonation = currentUser.admin && entity.user.id !== currentUser.id && !showMemberView && impersonation_allowed;
-        const showOpenButton = isAdminOfCollaboration && !showMemberView
         return (<div className="impersonation">
             {showImpersonation && <HandIcon className="impersonate" onClick={() =>
                 emitter.emit("impersonation",
                     {"user": entity.user, "callback": () => this.props.history.push("/home")})}/>}
-            {showOpenButton &&
-            <Button className={showImpersonation ? "" : "orphan"} onClick={this.gotoMembership(entity)}
-                    txt={I18n.t("forms.open")} small={true}/>}
         </div>);
-    }
-
-    cancelSideScreen = e => {
-        stopEvent(e);
-        this.setState({
-            selectedInvitationId: null,
-            selectedMembershipId: null,
-            message: "",
-            confirmationDialogOpen: false
-        });
     }
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
@@ -492,14 +463,19 @@ class CollaborationAdmins extends React.Component {
             this.cancelSideScreen);
     };
 
+    isExpiredInvitation = invitation => {
+        const today = moment();
+        const inp = moment(invitation.expiry_date * 1000);
+        return today.isAfter(inp);
+    }
+
     renderSelectedInvitation = invitation => {
         const {
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
             isWarning, message, confirmationTxt
         } = this.state;
-        const today = moment();
         const inp = moment(invitation.expiry_date * 1000);
-        const isExpired = today.isAfter(inp);
+        const isExpired = this.isExpiredInvitation(invitation);
         const expiredMessage = isExpired ? I18n.t("organisationInvitation.expiredAdmin", {expiry_date: inp.format("LL")}) : null;
         return (
             <div className="collaboration-invitation-details-container">
@@ -542,11 +518,6 @@ class CollaborationAdmins extends React.Component {
                                 multiline={true}/>
 
                     <section className="actions">
-                        <Button warningButton={true} txt={I18n.t("organisationInvitation.delete")}
-                                onClick={this.delete}/>
-                        <Button cancelButton={true} txt={I18n.t("forms.close")} onClick={this.cancelSideScreen}/>
-                        <Button txt={I18n.t("organisationInvitation.resend")}
-                                onClick={this.resend}/>
                     </section>
                 </div>
             </div>)
@@ -621,13 +592,6 @@ class CollaborationAdmins extends React.Component {
         </span>
     }
 
-    rowLinkMapper = (isAdminOfCollaboration, showMemberView) => entity => {
-        if (isAdminOfCollaboration && !showMemberView) {
-            return entity.invite ? this.gotoInvitation : this.gotoMembership
-        }
-        return null;
-    }
-
     render() {
         const {user: currentUser, collaboration, isAdminView, showMemberView} = this.props;
         const {
@@ -685,8 +649,7 @@ class CollaborationAdmins extends React.Component {
                 key: "name",
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={currentUser}
-                                              hideEmail={showMemberView && !collaboration.disclose_email_information}
-                                              gotoInvitation={this.gotoInvitation}/>
+                                              hideEmail={showMemberView && !collaboration.disclose_email_information}/>
             },
             {
                 key: "user__schac_home_organisation",
@@ -720,7 +683,7 @@ class CollaborationAdmins extends React.Component {
                 nonSortable: true,
                 key: "impersonate",
                 header: "",
-                mapper: this.getImpersonateMapper(isAdminOfCollaboration)
+                mapper: this.getImpersonateMapper
             },
         ];
         if (!isAdminOfCollaboration || showMemberView) {
@@ -748,7 +711,6 @@ class CollaborationAdmins extends React.Component {
                           searchCallback={this.searchCallback}
                           columns={(isAdminOfCollaboration || collaboration.disclose_email_information) ? columns : columns.slice(1)}
                           loading={false}
-                          rowLinkMapper={this.rowLinkMapper(isAdminOfCollaboration, showMemberView)}
                           showNew={isAdminOfCollaboration}
                           filters={isAdminView ? null : this.filter(filterOptions, filterValue, hideInvitees, isAdminOfCollaboration)}
                           actions={this.actionButtons(collaboration, isAdminOfCollaboration, selectedMembers, filteredEntities)}

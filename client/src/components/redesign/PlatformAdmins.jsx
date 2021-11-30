@@ -41,7 +41,7 @@ class PlatformAdmins extends React.Component {
             {
                 key: "name",
                 header: I18n.t("models.users.name_email"),
-                mapper: user => <UserColumn entity={{user:user}} currentUser={currentUser} gotoInvitation={this.gotoInvitation}/>
+                mapper: user => <UserColumn entity={{user:user}} currentUser={currentUser}/>
             },
             {
                 key: "schac_home_organisation",

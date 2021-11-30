@@ -264,7 +264,7 @@ class SecondFactorAuthentication extends React.Component {
                     </div>
                 </div>
                 <Button disabled={verifyDisabled} onClick={this.verify} html={I18n.t("mfa.verify.signIn")}
-                        txt="login"/>
+                        txt="login" centralize={true}/>
                 <div className="explain">
                     <span>{I18n.t("mfa.verify.problems")}</span>
                     <a href="/reset-token" onClick={this.openResetRequest}>{I18n.t("mfa.verify.resetRequest")}</a>
@@ -388,7 +388,7 @@ class SecondFactorAuthentication extends React.Component {
                 </div>
                 {!update &&
                 <Button disabled={verifyDisabled} onClick={this.verify} html={I18n.t("mfa.register.next")}
-                        txt={I18n.t("mfa.register.next")}/>}
+                        txt={I18n.t("mfa.register.next")} centralize={true}/>}
                 {update && <section className="actions">
                     <Button cancelButton={true} onClick={this.cancel} html={I18n.t("forms.cancel")}
                             txt="cancel"/>

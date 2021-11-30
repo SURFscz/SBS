@@ -174,7 +174,15 @@ class ServiceDetail extends React.Component {
         if (service.research_scholarship_compliant) {
             compliancies.push("R&S")
         }
-        return compliancies.length === 0 ? I18n.t("service.none") : compliancies.join(", ");
+        if (compliancies.length === 0) {
+            return null;
+        }
+        let compliant = compliancies.join(` ${I18n.t("service.compliancySeparator")} `);
+        if (compliancies.length > 2) {
+            const upToLast = compliancies.slice(0, compliancies.length - 1).join(", ");
+            compliant = `${upToLast} ${I18n.t("service.compliancySeparator")} ${compliancies[compliancies.length - 1]}`
+        }
+        return I18n.t("service.compliancyLong", {compliant: compliant});
     }
 
     getActions = (user, service) => {
@@ -215,25 +223,19 @@ class ServiceDetail extends React.Component {
                                 I18n.t("service.none")}</span>
                         </div>
                         <div className="org-attributes">
-                            <span>{I18n.t("service.compliancyShort")}</span>
-                            <span>{this.compliancy(service)}</span>
-                        </div>
-                        <div className="org-attributes">
                             <span>{I18n.t("service.contact_email")}</span>
                             <span>{service.contact_email ?
                                 <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a> : I18n.t("service.none")}</span>
                         </div>
-                        <div className="org-attributes">
-                            <span>{I18n.t("service.whiteListed")}</span>
-                            <span>{service.white_listed ? I18n.t("forms.yes") : I18n.t("forms.no")}</span>
-                        </div>
-
                         <div className="org-attributes">
                             <span>{I18n.t("service.accepted_user_policy")}</span>
                             {service.accepted_user_policy && <span>
                                 <a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">
                                     {service.accepted_user_policy}</a></span>}
                             {!service.accepted_user_policy && <span>{I18n.t("service.none")}</span>}
+                        </div>
+                        <div className="org-attributes">
+                            <span className={"orphan"}>{this.compliancy(service)}</span>
                         </div>
                     </div>
                 </UnitHeader>

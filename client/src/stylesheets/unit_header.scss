@@ -58,14 +58,26 @@ div.org-attributes-container-grid {
     display: grid;
     width: 100%;
     grid-template-columns: 2fr 1fr;
+
     row-gap: 1em;
     column-gap: 10px;
 
     @media (max-width: $compact-medium) {
         flex-direction: column;
     }
+}
 
+div.org-attributes-container-flex {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 
+    div.org-attributes {
+        margin-bottom: 3px;
+    }
+}
+
+div.org-attributes-container-grid, div.org-attributes-container-flex {
     div.org-attributes {
 
         span {
