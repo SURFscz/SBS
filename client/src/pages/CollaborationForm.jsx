@@ -509,15 +509,15 @@ class CollaborationForm extends React.Component {
                     {(!initial && isEmpty(short_name)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
                         attribute: I18n.t("collaboration.shortName").toLowerCase()
                     })}/>}
-                    {user.admin && <InputField value={`${organisation.short_name}:${short_name}`}
+                    <InputField value={`${organisation.short_name}:${short_name}`}
                                                name={I18n.t("collaboration.globalUrn")}
                                                copyClipBoard={true}
                                                toolTip={I18n.t("collaboration.globalUrnTooltip")}
-                                               disabled={true}/>}
+                                               disabled={true}/>
 
                     {(!isCollaborationRequest && !isNew) &&
                     <InputField value={joinRequestUrl}
-                                name={I18n.t("collaboration.joinRequestUrl")}
+                                name={I18n.t("collaboration.joinRequests")}
                                 copyClipBoard={true}
                                 toolTip={I18n.t("collaboration.joinRequestUrlTooltip")}
                                 disabled={true}/>}

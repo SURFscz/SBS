@@ -49,16 +49,12 @@
 }
 
 span.contains-copy {
-    position: relative;
-    width: 88px !important;
+    display: flex;
 
     section.copy-to-clipboard {
-        position: absolute;
         border: none;
         padding: 0;
         display: inline-block;
-        right: 1px;
-        top: -2px;
 
         svg {
             width: 24px;

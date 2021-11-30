@@ -289,15 +289,18 @@ class OrganisationDetail extends React.Component {
 
                     <p>{organisation.description}</p>
                     <div className="org-attributes-container">
-                        <div className="org-attributes">
-                            <span>{I18n.t("organisation.schacHomeOrganisationShortName")}</span>
-                            <span>{isEmpty(organisation.schac_home_organisations) ? I18n.t("service.none") : organisation.schac_home_organisations.map(sho => sho.name).join(", ")}</span>
-                        </div>
-                        <div className="org-attributes">
-                            <span>{I18n.t("organisation.collaborationCreationAllowed")}</span>
-                            <span>{I18n.t(`forms.${organisation.collaboration_creation_allowed ? "yes" : "no"}`)}</span>
-                        </div>
+                        {!isEmpty(organisation.schac_home_organisations) && <div className="org-attributes">
+                            <span>{organisation.schac_home_organisations.length > 1 ? I18n.t("organisation.schacHomeOrganisationShortNames") :
+                                I18n.t("organisation.schacHomeOrganisationShortName")}</span>
+                            <ul>
+                                {organisation.schac_home_organisations.map(sho => <li>{sho.name}</li>)}
+                            </ul>
+                        </div>}
                     </div>
+                     {!isEmpty(organisation.schac_home_organisations) && <span className="org-attributes-after">
+                                {I18n.t(`organisation.${organisation.collaboration_creation_allowed ? "collaborationCreationIsAllowed" : "collaborationCreationNotAllowed"}`
+                                    , {schacHome: I18n.t(`organisation.${organisation.schac_home_organisations.length === 1 ? "singleSchacHome" : "multipleSchacHome"}`)})}
+                            </span>}
                 </UnitHeader>
                 <Tabs activeTab={tab} tabChanged={this.tabChanged}>
                     {tabs}

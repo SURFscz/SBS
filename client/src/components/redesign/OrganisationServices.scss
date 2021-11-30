@@ -6,6 +6,7 @@
     flex-direction: column;
 }
 
+
 table.organisationServicesUsed {
 
     thead {
@@ -30,6 +31,17 @@ table.organisationServicesUsed {
 
             &.allowed {
                 text-align: right;
+
+                svg.fa-info-circle {
+                    color: $lighter-grey;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: darken($light-blue, 20%);
+                    }
+
+                    margin-left: 3px;
+                }
             }
         }
     }

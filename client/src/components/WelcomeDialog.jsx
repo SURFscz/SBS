@@ -82,7 +82,7 @@ export default function WelcomeDialog({
             </section>}
             <Button
                 txt={I18n.t("welcomeDialog.ok", {type: organisation ? I18n.t("welcomeDialog.organisation") : I18n.t("welcomeDialog.collaboration")})}
-                disabled={disabled}
+                disabled={disabled} centralize={true}
                 onClick={close}/>
         </Modal>
     );

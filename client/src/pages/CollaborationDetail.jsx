@@ -511,23 +511,20 @@ class CollaborationDetail extends React.Component {
     }
 
     getCollaborationStatus = collaboration => {
-        const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).format("LL") : I18n.t("service.none");
-        const lastActivityDate = moment(collaboration.last_activity_date * 1000).format("LL");
+        if (!collaboration.expiry_date) {
+            return null;
+        }
+        const expiryDate = moment(collaboration.expiry_date * 1000).format("LL");
+        // const lastActivityDate = moment(collaboration.last_activity_date * 1000).format("LL");
         const className = collaboration.status !== "active" ? "warning" : "";
         const status = (collaboration.status === "active" && collaboration.expiry_date) ? "activeWithExpiryDate" : collaboration.status;
         return (
             <div className="org-attributes">
-                    <span className="contains-tooltip">{I18n.t(`collaboration.status.name`)}
-                        <FontAwesomeIcon data-tip data-for="collaboration-status" icon="info-circle"/>
-                            <ReactTooltip id="collaboration-status" type="light" effect="solid" data-html={true}>
-                                <span className="tooltip-wrapper-inner"
-                                      dangerouslySetInnerHTML={{
-                                          __html: I18n.t(`collaboration.status.${status}Tooltip`,
-                                              {expiryDate: expiryDate, lastActivityDate: lastActivityDate})
-                                      }}/>
-                            </ReactTooltip>
-                    </span>
-                <span className={className}>{I18n.t(`collaboration.status.${status}`, {expiryDate: expiryDate})}</span>
+                <span className={`${className} contains-tooltip`}>{I18n.t(`collaboration.status.${status}`, {expiryDate: expiryDate})}</span>
+                    {/*<Tooltip children={<FontAwesomeIcon icon="info-circle"/>} id={`collaboration-${collaboration.id}`}*/}
+                    {/*         msg={I18n.t(`collaboration.status.${status}Tooltip`,*/}
+                    {/*             {expiryDate: expiryDate, lastActivityDate: lastActivityDate})}/>*/}
+
             </div>
         );
     }
@@ -594,6 +591,7 @@ class CollaborationDetail extends React.Component {
     }
 
     getUnitHeader = (user, collaboration, allowedToEdit, showMemberView) => {
+        const joinRequestUrl = `${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`
         return (<UnitHeader obj={collaboration}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             history={(user.admin && allowedToEdit) && this.props.history}
@@ -603,27 +601,33 @@ class CollaborationDetail extends React.Component {
                             dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
                             actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}>
             <p>{collaboration.description}</p>
-            <div className="org-attributes-container-grid">
+            <div className="org-attributes-container-flex">
                 <div className="org-attributes">
-                    <span>{I18n.t("collaboration.joinRequests")}</span>
                     <span className="contains-copy">
-                        {I18n.t(`collaboration.${collaboration.disable_join_requests ? "disabled" : "enabled"}`)}
-                        {!collaboration.disable_join_requests && <ClipBoardCopy
-                            txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}/>}
+                        {collaboration.disable_join_requests && I18n.t("collaboration.noJoinRequests")}
+                        {!collaboration.disable_join_requests && <span>
+                            <a href={joinRequestUrl} target="_blank"
+                               rel="noopener noreferrer">{I18n.t("collaboration.joinRequests")}</a>
+                            <ClipBoardCopy
+                                txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}/></span>}
                     </span>
                 </div>
                 <div className="org-attributes">
-                    <span>{I18n.t("collaboration.discloseMembers")}</span>
-                    <span>{I18n.t(`forms.${collaboration.disclose_email_information && collaboration.disclose_member_information ? "yes" : "no"}`)}</span>
-                </div>
-                <div className="org-attributes">
-                    <span>{I18n.t("collaboration.privacyPolicy")}</span>
-                    {collaboration.accepted_user_policy &&
-                    <span><a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
-                             target="_blank">{collaboration.accepted_user_policy}</a></span>}
-                    {!collaboration.accepted_user_policy && <span>{I18n.t("service.none")}</span>}
+                        <span className="contains-copy">
+                        {!collaboration.accepted_user_policy && I18n.t("collaboration.noAup")}
+                            {collaboration.accepted_user_policy && <span>
+                            <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
+                               target="_blank">{I18n.t("collaboration.aup")}</a>
+                            <ClipBoardCopy txt={collaboration.accepted_user_policy}/></span>}
+                    </span>
                 </div>
                 {this.getCollaborationStatus(collaboration)}
+                <div className="org-attributes">
+                    {(collaboration.disclose_email_information || collaboration.disclose_member_information) &&
+                    <span>{I18n.t("collaboration.discloseMembers")}</span>}
+                    {(!collaboration.disclose_email_information && !collaboration.disclose_member_information) &&
+                    <span>{I18n.t("collaboration.discloseNoMembers")}</span>}
+                </div>
             </div>
         </UnitHeader>);
     }

@@ -1,5 +1,16 @@
 @import "../stylesheets/vars.scss";
 
+section.button-container {
+    display: flex;
+
+    a.button, label.button {
+        min-width: 140px !important;
+        max-width: 340px !important;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
 a.button, label.button {
     display: inline-block;
     padding: 6px 15px;
