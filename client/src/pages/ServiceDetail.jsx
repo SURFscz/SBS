@@ -109,7 +109,8 @@ class ServiceDetail extends React.Component {
     };
 
     getOrganisationsTab = (service, organisations) => {
-        return (<div key="organisations" name="organisations" label={I18n.t("home.tabs.serviceOrganisations")}
+        return (<div key="organisations" name="organisations"
+                     label={I18n.t("home.tabs.serviceOrganisations", {count:organisations.length})}
                      icon={<OrganisationsIcon/>}>
             <ServiceOrganisations {...this.props} refresh={this.refresh} service={service}
                                   organisations={organisations}/>
@@ -117,7 +118,8 @@ class ServiceDetail extends React.Component {
     }
 
     getServiceGroupsTab = (service) => {
-        return (<div key="groups" name="groups" label={I18n.t("home.tabs.groups")}
+        return (<div key="groups" name="groups"
+                     label={I18n.t("home.tabs.groups", {count: service.service_groups.length})}
                      icon={<GroupsIcon/>}>
             {<ServiceGroups {...this.props} service={service}
                             refresh={this.refresh}/>}
@@ -131,7 +133,8 @@ class ServiceDetail extends React.Component {
         collFromOrganisations.forEach(coll => coll.fromCollaboration = false);
         const colls = removeDuplicates(collaborations.concat(collFromOrganisations), "id");
         return (
-            <div key="collaborations" name="collaborations" label={I18n.t("home.tabs.serviceCollaborations")}
+            <div key="collaborations" name="collaborations"
+                 label={I18n.t("home.tabs.serviceCollaborations", {count: colls.length})}
                  icon={<CollaborationsIcon/>}>
                 <Collaborations mayCreate={false}
                                 showOrigin={true}
@@ -145,7 +148,8 @@ class ServiceDetail extends React.Component {
         const nbr = (serviceConnectionRequests || []).length;
         return (
             <div key="serviceConnectionRequests" name="serviceConnectionRequests"
-                 label={I18n.t("home.tabs.serviceConnectionRequests")} icon={<ServiceConnectionRequestsIcon/>}
+                 label={I18n.t("home.tabs.serviceConnectionRequests", {count: serviceConnectionRequests.length})}
+                 icon={<ServiceConnectionRequestsIcon/>}
                  notifier={nbr > 0 ? nbr : null}>
                 <ServiceConnectionRequests
                     service={service}

@@ -30,6 +30,23 @@ def _invitation_query():
         .options(joinedload(Invitation.groups))
 
 
+def do_resend(invitation_id):
+    invitation = _invitation_query() \
+        .filter(Invitation.id == invitation_id) \
+        .one()
+    confirm_collaboration_admin(invitation.collaboration_id)
+    invitation.expiry_date = default_expiry_date()
+    invitation.created_at = datetime.date.today(),
+    db.session.merge(invitation)
+    mail_collaboration_invitation({
+        "salutation": "Dear",
+        "invitation": invitation,
+        "base_url": current_app.app_config.base_url,
+        "wiki_link": current_app.app_config.wiki_link,
+        "recipient": invitation.invitee_email
+    }, invitation.collaboration, [invitation.invitee_email])
+
+
 @invitations_api.route("/find_by_hash", strict_slashes=False)
 @json_endpoint
 def invitations_by_hash():
@@ -142,22 +159,16 @@ def invitations_decline():
 @json_endpoint
 def invitations_resend():
     data = current_request.get_json()
-    invitation = _invitation_query() \
-        .filter(Invitation.id == data["id"]) \
-        .one()
-    confirm_collaboration_admin(invitation.collaboration_id)
+    do_resend(data["id"])
+    return None, 201
 
-    invitation.expiry_date = default_expiry_date()
-    invitation.created_at = datetime.date.today(),
-    db.session.merge(invitation)
 
-    mail_collaboration_invitation({
-        "salutation": "Dear",
-        "invitation": invitation,
-        "base_url": current_app.app_config.base_url,
-        "wiki_link": current_app.app_config.wiki_link,
-        "recipient": invitation.invitee_email
-    }, invitation.collaboration, [invitation.invitee_email])
+@invitations_api.route("/resend_bulk", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def invitations_resend_bulk():
+    data = current_request.get_json()
+    for invitation in data:
+        do_resend(invitation["id"])
     return None, 201
 
 

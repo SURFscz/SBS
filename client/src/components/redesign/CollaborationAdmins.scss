@@ -40,6 +40,7 @@
 
     .member-filter {
         display: flex;
+        margin: 0 auto;
         @media (max-width: $compact-medium) {
             flex-direction: column;
         }
@@ -47,7 +48,7 @@
 
         .member-filter-select {
             width: 290px;
-            margin: 0 25px 0 50px;
+            margin: 0 25px 0 0;
             @media (max-width: $compact-medium) {
                 margin: 15px 0;
             }
@@ -77,17 +78,17 @@
                 }
 
                 &.role {
-                    width: 15%;
+                    width: 20%;
                     padding-left: 5px;
                 }
 
-                &.status {
-                    width: 25%;
-                    text-align: center;
+                &.expiry_date {
+                    width: 20%;
                 }
 
                 &.impersonate {
-                    width: 120px;
+                    width: 40px;
+                    text-align: right;
                 }
             }
         }
@@ -106,6 +107,38 @@
                     text-align: right;
                 }
 
+                &.expiry_date {
+                    text-align: left;
+
+                    div.date-field-container {
+
+                        div.date-field {
+                            margin: 0 0 0 auto;
+
+                            label.date-picker-container {
+                                width: 160px;
+                            }
+
+                            .react-datepicker-wrapper {
+                                width: 160px;
+                            }
+
+                            .react-datepicker__input-container {
+                                input[type="text"] {
+                                    padding: 10px;
+                                    font-size: 14px;
+                                    height: 38px;
+
+                                }
+
+                                .react-datepicker__close-icon {
+                                    top: -22px;
+                                    right: -10px;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 

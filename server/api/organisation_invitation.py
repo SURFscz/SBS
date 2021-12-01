@@ -24,6 +24,22 @@ def _organisation_invitation_query():
         .options(joinedload(OrganisationInvitation.user))
 
 
+def do_resend(organisation_invitation_id):
+    organisation_invitation = _organisation_invitation_query() \
+        .filter(OrganisationInvitation.id == organisation_invitation_id) \
+        .one()
+    confirm_organisation_admin(organisation_invitation.organisation_id)
+    organisation_invitation.expiry_date = default_expiry_date()
+    organisation_invitation.created_at = datetime.date.today(),
+    organisation_invitation = db.session.merge(organisation_invitation)
+    mail_organisation_invitation({
+        "salutation": "Dear",
+        "invitation": organisation_invitation,
+        "base_url": current_app.app_config.base_url,
+        "recipient": organisation_invitation.invitee_email
+    }, organisation_invitation.organisation, [organisation_invitation.invitee_email])
+
+
 @organisation_invitations_api.route("/find_by_hash", strict_slashes=False)
 @json_endpoint
 def organisation_invitations_by_hash():
@@ -80,25 +96,17 @@ def organisation_invitations_decline():
 @json_endpoint
 def organisation_invitations_resend():
     data = current_request.get_json()
+    organisation_invitation_id = data["id"]
+    do_resend(organisation_invitation_id)
+    return None, 201
 
-    organisation_invitation = _organisation_invitation_query() \
-        .filter(OrganisationInvitation.id == data["id"]) \
-        .one()
-    confirm_organisation_admin(organisation_invitation.organisation_id)
 
-    organisation_invitation.expiry_date = default_expiry_date()
-    organisation_invitation.created_at = datetime.date.today(),
-    if "message" in data:
-        organisation_invitation.message = data["message"]
-
-    organisation_invitation = db.session.merge(organisation_invitation)
-
-    mail_organisation_invitation({
-        "salutation": "Dear",
-        "invitation": organisation_invitation,
-        "base_url": current_app.app_config.base_url,
-        "recipient": organisation_invitation.invitee_email
-    }, organisation_invitation.organisation, [organisation_invitation.invitee_email])
+@organisation_invitations_api.route("/resend_bulk", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def invitations_resend_bulk():
+    data = current_request.get_json()
+    for invitation in data:
+        do_resend(invitation["id"])
     return None, 201
 
 

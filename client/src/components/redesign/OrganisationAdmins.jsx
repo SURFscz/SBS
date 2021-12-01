@@ -5,11 +5,10 @@ import {ReactComponent as UserIcon} from "../../icons/users.svg";
 import {ReactComponent as InviteIcon} from "../../icons/single-neutral-question.svg";
 import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
 import CheckBox from "../CheckBox";
-import {ReactComponent as ChevronLeft} from "../../icons/chevron-left.svg";
 import {
     deleteOrganisationMembership,
+    organisationInvitationBulkResend,
     organisationInvitationDelete,
-    organisationInvitationResend,
     updateOrganisationMembershipRole
 } from "../../api";
 import {setFlash} from "../../utils/Flash";
@@ -17,21 +16,21 @@ import "./OrganisationAdmins.scss";
 import Select from "react-select";
 import {emitter} from "../../utils/Events";
 import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
-import {stopEvent} from "../../utils/Utils";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ConfirmationDialog from "../ConfirmationDialog";
 import UserColumn from "./UserColumn";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import SpinnerField from "./SpinnerField";
-import InputField from "../InputField";
-import moment from "moment";
-import ErrorIndicator from "./ErrorIndicator";
 import Tooltip from "./Tooltip";
 import {ReactComponent as MembersIcon} from "../../icons/single-neutral.svg";
 import ReactTooltip from "react-tooltip";
 import InstituteColumn from "./InstitueColumn";
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
+import {isEmpty} from "../../utils/Utils";
+
+const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
+const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
 
 class OrganisationAdmins extends React.Component {
 
@@ -39,8 +38,6 @@ class OrganisationAdmins extends React.Component {
         super(props, context);
         this.state = {
             selectedMembers: {},
-            allSelected: false,
-            selectedInvitationId: null,
             message: "",
             confirmationDialogOpen: false,
             confirmationTxt: I18n.t("confirmationDialog.confirm"),
@@ -53,15 +50,21 @@ class OrganisationAdmins extends React.Component {
     }
 
     componentDidMount = () => {
+        this.setState({loading: true});
         const {organisation} = this.props;
         const admins = organisation.organisation_memberships;
         const invites = organisation.organisation_invitations;
         const entities = admins.concat(invites);
         const selectedMembers = entities.reduce((acc, entity) => {
-            acc[entity.id] = {selected: false, ref: entity};
+            acc[this.getIdentifier(entity)] = {selected: false, ref: entity, invite: !isEmpty(entity.intended_role)};
             return acc;
         }, {})
-        this.setState({selectedMembers, loading: false, selectedInvitationId: null, message: ""});
+        this.setState({selectedMembers, loading: false, confirmationDialogOpen: false});
+    }
+
+    getIdentifier = entity => {
+        const invite = !isEmpty(entity.intended_role);
+        return entity.id + (invite ? INVITE_IDENTIFIER : MEMBER_IDENTIFIER);
     }
 
     changeMemberRole = member => selectedOption => {
@@ -105,39 +108,17 @@ class OrganisationAdmins extends React.Component {
     };
 
     onCheck = memberShip => e => {
-        const {selectedMembers, allSelected} = this.state;
-        const checked = e.target.checked;
-        selectedMembers[memberShip.id].selected = checked;
-        this.setState({selectedMembers: {...selectedMembers}});
-        this.setState({selectedMembers: {...selectedMembers}, allSelected: checked ? allSelected : false});
-
-    }
-
-    allSelected = e => {
         const {selectedMembers} = this.state;
-        const val = e.target.checked;
-        Object.keys(selectedMembers).forEach(id => selectedMembers[id].selected = val);
-        const newSelectedMembers = {...selectedMembers};
-        this.setState({allSelected: val, ...newSelectedMembers});
-    }
-
-    gotoInvitation = invitation => e => {
-        stopEvent(e);
-        const {organisation} = this.props;
-        const selectedInvitation = organisation.organisation_invitations.find(i => i.id === invitation.id)
-        this.setState({selectedInvitationId: selectedInvitation.id, message: selectedInvitation.message});
-    };
-
-    getSelectedInvitation = () => {
-        const {selectedInvitationId} = this.state;
-        const {organisation} = this.props;
-        return organisation.organisation_invitations.find(i => i.id === selectedInvitationId);
+        const checked = e.target.checked;
+        selectedMembers[this.getIdentifier(memberShip)].selected = checked;
+        this.setState({selectedMembers: {...selectedMembers}});
     }
 
     remove = showConfirmation => () => {
         if (showConfirmation) {
             this.setState({
                 confirmationDialogOpen: true,
+                isWarning: true,
                 confirmationDialogAction: this.remove(false),
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
                 confirmationQuestion: I18n.t("organisationDetail.deleteMemberConfirmation"),
@@ -170,19 +151,26 @@ class OrganisationAdmins extends React.Component {
         }
     }
 
-    refreshAndFlash = (promise, flashMsg, callback) => {
-        this.setState({loading: true});
-        promise
-            .then(() => {
-                this.props.refresh(() => {
-                    this.componentDidMount();
-                    setFlash(flashMsg);
-                    callback && callback();
-                });
-            }).catch(() => {
-            this.handle404("invitation");
-        });
-    }
+    resend = showConfirmation => () => {
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                isWarning: false,
+                confirmationQuestion: I18n.t("organisationInvitation.resendInvitations"),
+                confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                cancelDialogAction: this.closeConfirmationDialog,
+                confirmationDialogAction: this.resend(false)
+            });
+        } else {
+            const {selectedMembers} = this.state;
+            const invitations = Object.values(selectedMembers).filter(sel => sel.selected).map(sel => sel.ref).map(inv => ({id: inv.id}));
+            const {organisation} = this.props;
+            organisationInvitationBulkResend(invitations, false).then(() => {
+                this.props.refresh(this.componentDidMount);
+                setFlash(I18n.t("organisationInvitation.flash.invitesResend", {name: organisation.name}));
+            });
+        }
+    };
 
     handle404 = key => {
         this.setState({
@@ -199,67 +187,37 @@ class OrganisationAdmins extends React.Component {
     }
 
     actionButtons = selectedMembers => {
-        const anySelected = Object.values(selectedMembers).some(v => v.selected);
+        const selected = Object.values(selectedMembers).filter(v => v.selected);
+        const anySelected = selected.length > 0;
+        const showResendInvite = anySelected && selected.every(s => s.invite && isInvitationExpired(s.ref));
         return (
             <div className="admin-actions">
-                <span data-tip data-for="delete-members">
-                <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
-                        disabled={!anySelected}
-                        icon={<FontAwesomeIcon icon="trash"/>}/>
-                <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
-                              place="bottom">
+                <div data-tip data-for="delete-members">
+                    <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
+                            disabled={!anySelected}
+                            icon={<FontAwesomeIcon icon="trash"/>}/>
+                    <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
+                                  place="bottom">
                     <span
                         dangerouslySetInnerHTML={{__html: !anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}}/>
-            </ReactTooltip>
-                    </span>
+                    </ReactTooltip>
+                </div>
+
+                <div data-tip data-for="resend-invites">
+                    <Button onClick={this.resend(true)} txt={I18n.t("models.orgMembers.resend")}
+                            disabled={!showResendInvite}
+                            icon={<FontAwesomeIcon icon="voicemail"/>}/>
+                    <ReactTooltip id="resend-invites" type="light" effect="solid" data-html={true}
+                                  place="bottom">
+                        <span
+                            dangerouslySetInnerHTML={{__html: !showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}}/>
+                    </ReactTooltip>
+                </div>
+
             </div>);
     }
 
-    cancelSideScreen = e => {
-        stopEvent(e);
-        this.setState({selectedInvitationId: null, message: "", confirmationDialogOpen: false});
-    }
-
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
-
-    delete = () => {
-        this.setState({
-            confirmationDialogOpen: true,
-            leavePage: false,
-            isWarning: true,
-            confirmationQuestion: I18n.t("organisationInvitation.deleteInvitation"),
-            cancelDialogAction: this.closeConfirmationDialog,
-            confirmationDialogAction: this.doDelete
-        });
-    };
-
-    doDelete = () => {
-        const invitation = this.getSelectedInvitation();
-        const {organisation} = this.props;
-        this.refreshAndFlash(organisationInvitationDelete(invitation.id, false),
-            I18n.t("organisationInvitation.flash.inviteDeleted", {name: organisation.name}),
-            this.cancelSideScreen)
-    };
-
-    resend = () => {
-        this.setState({
-            confirmationDialogOpen: true,
-            leavePage: false,
-            isWarning: false,
-            confirmationQuestion: I18n.t("organisationInvitation.resendInvitation"),
-            cancelDialogAction: this.closeConfirmationDialog,
-            confirmationDialogAction: this.doResend
-        });
-    };
-
-    doResend = () => {
-        const invitation = this.getSelectedInvitation();
-        const {organisation} = this.props;
-        const {message} = this.state;
-        this.refreshAndFlash(organisationInvitationResend({...invitation, message}, false),
-            I18n.t("organisationInvitation.flash.inviteResend", {name: organisation.name}),
-            this.cancelSideScreen)
-    };
 
     renderSelectRole = (entity, isAdmin, oneAdminLeft, noMoreAdminsToCheck, selectedMembers) => {
         if (entity.invite) {
@@ -275,84 +233,18 @@ class OrganisationAdmins extends React.Component {
             classNamePrefix={`select-member-role`}
             onChange={this.changeMemberRole(entity)}
             isDisabled={!isAdmin || !(entity.invite || entity.role === "manager" || (!oneAdminLeft &&
-                (!noMoreAdminsToCheck || selectedMembers[entity.id].selected)))}/>
+                (!noMoreAdminsToCheck || selectedMembers[this.getIdentifier(entity)].selected)))}/>
     }
-
-    renderSelectedInvitation = (organisation, invitation) => {
-        const {
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
-            isWarning, message, confirmationTxt
-        } = this.state;
-        const today = moment();
-        const inp = moment(invitation.expiry_date * 1000);
-        const isExpired = today.isAfter(inp);
-        const expiredMessage = isExpired ? I18n.t("organisationInvitation.expiredAdmin", {expiry_date: inp.format("LL")}) : null;
-        return (
-            <div className="organisation-invitation-details-container">
-                <ConfirmationDialog isOpen={confirmationDialogOpen}
-                                    cancel={cancelDialogAction}
-                                    isWarning={isWarning}
-                                    confirmationTxt={confirmationTxt}
-                                    confirm={confirmationDialogAction}
-                                    question={confirmationQuestion}/>
-                <div>
-                    <a className="back-to-org-members" onClick={this.cancelSideScreen} href={"/cancel"}>
-                        <ChevronLeft/>{I18n.t("models.orgMembers.backToMembers")}
-                    </a>
-                </div>
-                <div className="organisation-invitation-form">
-                    {isExpired && <ErrorIndicator msg={expiredMessage} standalone={true}/>}
-                    <h2>{I18n.t("models.orgMembers.invitation",
-                        {
-                            date: moment(invitation.created_at * 1000).format("LL"),
-                            inviter: invitation.user.name,
-                            email: invitation.invitee_email
-                        })}</h2>
-                    <div className={"organisation-meta"}>
-                        <InputField value={I18n.t(`organisation.organisationRoles.${invitation.intended_role}`)}
-                                    noInput={true}
-                                    name={I18n.t("organisationInvitation.role")}
-                                    disabled={true}/>
-
-                        <InputField value={moment(invitation.expiry_date * 1000).format("LL")}
-                                    noInput={true}
-                                    name={I18n.t("organisationInvitation.expiryDate")}
-                                    disabled={true}/>
-                    </div>
-                    <InputField value={message}
-                                name={I18n.t("organisationInvitation.message")}
-                                toolTip={I18n.t("organisationInvitation.messageTooltip", {name: invitation.user.name})}
-                                onChange={e => this.setState({message: e.target.value})}
-                                large={true}
-                                multiline={true}/>
-
-                    <section className="actions">
-                        <Button warningButton={true} txt={I18n.t("organisationInvitation.delete")}
-                                onClick={this.delete}/>
-                        <Button cancelButton={true} txt={I18n.t("forms.close")} onClick={this.cancelSideScreen}/>
-                        <Button txt={I18n.t("organisationInvitation.resend")}
-                                onClick={this.resend}/>
-                    </section>
-                </div>
-            </div>)
-
-    }
-
 
     render() {
         const {user: currentUser, organisation} = this.props;
         const {
-            selectedMembers, confirmationDialogOpen, cancelDialogAction,
+            selectedMembers, confirmationDialogOpen, cancelDialogAction, isWarning,
             confirmationDialogAction, confirmationQuestion, loading, confirmationTxt
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
-        const selectedInvitation = this.getSelectedInvitation();
-        if (selectedInvitation) {
-            return this.renderSelectedInvitation(organisation, selectedInvitation);
-        }
-
         const admins = organisation.organisation_memberships;
         const invites = organisation.organisation_invitations;
         invites.forEach(invite => invite.invite = true);
@@ -369,14 +261,12 @@ class OrganisationAdmins extends React.Component {
             {
                 nonSortable: true,
                 key: "check",
-                // header: <CheckBox value={allSelected} name={"allSelected"}
-                //                   onChange={this.allSelected}/>,
                 mapper: entity => {
                     const displayCheckbox = entity.invite || entity.role === "manager" || (!oneAdminLeft &&
-                        (!noMoreAdminsToCheck || selectedMembers[entity.id].selected));
+                        (!noMoreAdminsToCheck || selectedMembers[this.getIdentifier(entity)].selected));
                     return <div className="check">
                         {displayCheckbox && <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
-                                                      value={(selectedMembers[entity.id] || {}).selected || false}/>}
+                                                      value={(selectedMembers[this.getIdentifier(entity)] || {}).selected || false}/>}
                         {!displayCheckbox &&
                         <Tooltip children={<InformationCircle/>} id={"admin-warning"}
                                  msg={I18n.t("tooltips.oneAdminWarning")}/>}
@@ -434,13 +324,7 @@ class OrganisationAdmins extends React.Component {
                 key: "impersonate",
                 header: "",
                 mapper: entity => {
-                    if (!isAdmin) {
-                        return null;
-                    }
-                    if (entity.invite) {
-                        return <Button onClick={this.gotoInvitation(entity)} txt={I18n.t("forms.open")} small={true}/>
-                    }
-                    if (!currentUser.admin || entity.user.id === currentUser.id || !impersonation_allowed) {
+                    if (!currentUser.admin || entity.invite || entity.user.id === currentUser.id || !impersonation_allowed) {
                         return null;
                     }
                     return (<div className="impersonate" onClick={() =>
@@ -456,7 +340,7 @@ class OrganisationAdmins extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
-                                    isWarning={true}
+                                    isWarning={isWarning}
                                     confirmationTxt={confirmationTxt}
                                     question={confirmationQuestion}/>
 
@@ -467,6 +351,7 @@ class OrganisationAdmins extends React.Component {
                           columns={isAdmin ? columns : columns.slice(1)}
                           rowLinkMapper={entity => (entity.invite && isAdmin) && this.gotoInvitation}
                           loading={false}
+                          hideTitle={true}
                           showNew={isAdmin}
                           actions={(isAdmin && entities.length > 0) ? this.actionButtons(selectedMembers) : null}
                           newEntityPath={`/new-organisation-invite/${organisation.id}`}

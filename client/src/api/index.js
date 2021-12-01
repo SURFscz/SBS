@@ -398,6 +398,10 @@ export function organisationInvitationResend(organisationInvitation, showErrorDi
     return postPutJson("/api/organisation_invitations/resend", organisationInvitation, "put", showErrorDialog);
 }
 
+export function organisationInvitationBulkResend(organisationInvitations, showErrorDialog = true) {
+    return postPutJson("/api/organisation_invitations/resend_bulk", organisationInvitations, "put", showErrorDialog);
+}
+
 export function organisationInvitationDelete(organisationInvitationId, showErrorDialog = true) {
     return fetchDelete(`/api/organisation_invitations/${organisationInvitationId}`, showErrorDialog);
 }
@@ -418,6 +422,10 @@ export function invitationDecline(invitation) {
 
 export function invitationResend(invitation, showErrorDialog = true) {
     return postPutJson("/api/invitations/resend", invitation, "put", showErrorDialog);
+}
+
+export function invitationBulkResend(invitations, showErrorDialog = true) {
+    return postPutJson("/api/invitations/resend_bulk", invitations, "put", showErrorDialog);
 }
 
 export function invitationDelete(invitationId, showErrorDialog = true) {

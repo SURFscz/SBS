@@ -43,7 +43,7 @@ export default class DateField extends React.Component {
         const minimalDate = minDate || moment().add(1, "day").endOf("day").toDate();
         return (
             <div className="date-field">
-                <label className="date-field-label" htmlFor={name}>{name}
+                {name && <label className="date-field-label" htmlFor={name}>{name}
                     {toolTip &&
                     <span className="tool-tip-section">
                         <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
@@ -51,7 +51,7 @@ export default class DateField extends React.Component {
                             <p dangerouslySetInnerHTML={{__html: toolTip}}/>
                         </ReactTooltip>
                     </span>}
-                </label>
+                </label>}
                 <label className={"date-picker-container"} htmlFor={name}>
                     <DatePicker
                         ref={ref => this.component = ref}
@@ -79,7 +79,7 @@ export default class DateField extends React.Component {
 }
 
 DateField.propTypes = {
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string,
     value: PropTypes.object,
     onChange: PropTypes.func,
     disabled: PropTypes.bool,

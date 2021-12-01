@@ -62,9 +62,15 @@ class Services extends React.Component {
                 header: I18n.t("models.services.collaborationCount")
             }];
         return (
-            <Entities entities={services} modelName="services" searchAttributes={["name"]}
-                      defaultSort="name" columns={columns} showNew={user.admin} newEntityPath={"/new-service"}
+            <Entities entities={services}
+                      modelName="services"
+                      searchAttributes={["name"]}
+                      defaultSort="name"
+                      columns={columns}
+                      showNew={user.admin}
+                      newEntityPath={"/new-service"}
                       loading={loading}
+                      hideTitle={true}
                       rowLinkMapper={() => this.openService}
                       {...this.props}/>
         )

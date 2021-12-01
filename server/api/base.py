@@ -107,7 +107,8 @@ def _audit_trail():
     if method in _audit_trail_methods:
         # Prevent logo base64 logging
         body = current_request.json if method != "DELETE" else {}
-        body.pop("logo", None)
+        if isinstance(body, dict):
+            body.pop("logo", None)
         ctx_logger("base").info(f"Path {current_request.path} {method} {json.dumps(body, default=str)}")
 
 

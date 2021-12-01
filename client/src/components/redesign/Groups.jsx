@@ -509,6 +509,7 @@ class Groups extends React.Component {
                           defaultSort="name"
                           rowLinkMapper={() => this.gotoGroup}
                           columns={columns}
+                          hideTitle={true}
                           loading={loading}
                           showNew={mayCreateGroups}
                           newEntityFunc={() => this.setState(this.newGroupState())}

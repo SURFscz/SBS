@@ -76,7 +76,7 @@ class Users extends React.Component {
             {
                 key: "schac_home_organisation",
                 header: I18n.t("models.users.institute"),
-                mapper: user => <InstituteColumn entity={{user:user}} currentUser={currentUser}/>
+                mapper: user => <InstituteColumn entity={{user: user}} currentUser={currentUser}/>
             },
             {
                 key: "affiliation",
@@ -90,6 +90,7 @@ class Users extends React.Component {
                 key: "uid",
                 header: I18n.t("models.allUsers.uid")
             }]
+        let count = users.length;
         return (<div className="mod-users">
             {searching && <SpinnerField/>}
             <Entities entities={users}
@@ -97,6 +98,7 @@ class Users extends React.Component {
                       defaultSort="name"
                       filters={moreToShow && this.moreResultsAvailable()}
                       columns={columns}
+                      title={count === 0 ? " " : I18n.t(`models.allUsers.${count === 1 ? "foundSingle" : "found"}`, {count})}
                       customNoEntities={noResults ? I18n.t("models.allUsers.noResults") : I18n.t("models.allUsers.noEntities")}
                       loading={false}
                       inputFocus={true}

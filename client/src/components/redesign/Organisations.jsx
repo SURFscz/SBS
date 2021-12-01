@@ -86,6 +86,7 @@ class Organisations extends React.Component {
                       searchAttributes={["name","schacHomes"]}
                       defaultSort="name"
                       columns={columns}
+                      hideTitle={true}
                       rowLinkMapper={() => this.openOrganisation}
                       showNew={currentUser.admin}
                       newEntityPath={"/new-organisation"}

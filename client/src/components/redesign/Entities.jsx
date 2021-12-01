@@ -50,27 +50,32 @@ class Entities extends React.Component {
         }
     }
 
-    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch) => {
+    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch, hideTitle) => {
         return (
             <section className="entities-search">
-
-                <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>
-                {explain && <FontAwesomeIcon className="help" icon="question-circle"
-                                             id="impersonate_close_explanation"
-                                             onClick={() => this.setState({showExplanation: true})}/>}
-                {filters}
-                {showNew && <Button onClick={this.newEntity} className="plus"
-                                    txt={I18n.t(`models.${modelName}.new`)}/>
+                {showNew &&
+                <Button onClick={this.newEntity} className={`plus ${hideTitle && !filters ? "no-title" : ""}`}
+                        txt={I18n.t(`models.${modelName}.new`)}/>
                 }
-                {(!isEmpty(searchAttributes) || customSearch) &&
+                {!hideTitle && <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>}
+                {filters}
+
+
                 <div className={`search ${showNew ? "" : "standalone"}`}>
-                    <input type="text"
-                           onChange={this.queryChanged}
-                           ref={ref => this.input = ref}
-                           value={query}
-                           placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
-                    <FontAwesomeIcon icon="search"/>
-                </div>}
+                    {explain && <FontAwesomeIcon className="help" icon="question-circle"
+                                                 id="impersonate_close_explanation"
+                                                 onClick={() => this.setState({showExplanation: true})}/>}
+                    {(!isEmpty(searchAttributes) || customSearch) && <div>
+
+                        <input type="text"
+                               onChange={this.queryChanged}
+                               ref={ref => this.input = ref}
+                               value={query}
+                               placeholder={I18n.t(`models.${modelName}.searchPlaceHolder`)}/>
+                        <FontAwesomeIcon icon="search"/>
+                    </div>}
+
+                </div>
             </section>
         );
     };
@@ -151,7 +156,7 @@ class Entities extends React.Component {
         const {
             modelName, entities, showNew, searchAttributes, columns, children, loading, customSearch,
             actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = "",
-            customNoEntities
+            customNoEntities, hideTitle
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -167,7 +172,7 @@ class Entities extends React.Component {
                     isVisible={showExplanation}>
                     {explain}
                 </Explain>}
-                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch)}
+                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch, hideTitle)}
                 {actions}
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children,
                     rowLinkMapper, customNoEntities)}
@@ -196,7 +201,8 @@ Entities.propTypes = {
     actions: PropTypes.any,
     filters: PropTypes.any,
     explain: PropTypes.any,
-    inputFocus: PropTypes.bool
+    inputFocus: PropTypes.bool,
+    hideTitle: PropTypes.bool
 };
 
 export default Entities;

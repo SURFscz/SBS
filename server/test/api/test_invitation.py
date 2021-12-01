@@ -78,6 +78,15 @@ class TestInvitation(AbstractTest):
             self.assertListEqual(["curious@ex.org"], mail_msg.recipients)
             self.assertTrue("http://localhost:3000/invitations/accept/" in mail_msg.html)
 
+    def test_resend_bulk(self):
+        invitation_identifiers = []
+        for invitation in Invitation.query.all():
+            invitation_identifiers.append({"id": invitation.id})
+        mail = self.app.mail
+        with mail.record_messages() as outbox:
+            self.put("/api/invitations/resend_bulk", body=invitation_identifiers)
+            self.assertEqual(3, len(outbox))
+
     def test_resend_not_found(self):
         self.put("/api/invitations/resend", body={"id": "nope"}, response_status_code=404)
 

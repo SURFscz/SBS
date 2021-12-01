@@ -377,6 +377,7 @@ class ServiceGroups extends React.Component {
                           rowLinkMapper={() => this.gotoGroup}
                           columns={columns}
                           loading={loading}
+                          hideTitle={true}
                           showNew={mayCreateGroups}
                           newEntityFunc={() => this.setState(this.newGroupState())}
                           explain={<ServiceGroupsExplanation/>}
