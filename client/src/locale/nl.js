@@ -1741,6 +1741,7 @@ I18n.translations.nl = {
         expiredMembership: "Dit lidmaatschap is verlopen op {{date}}. Pas de einddatum van het lidmaatschap aan om {{name}} weer lid te maken.",
         expiryDate: "Einddatum",
         expiryDateTooltip: "De einddatum van dit lidmaatschap. Hierna verloopt het lidmaatschap en kan de gebruiker geen gebruikmaken van de diensten van deze samenwerking.",
+        member: "Lidmaatschap",
         update: "Opslaan",
         status: {
             name: "Lidmaatschap",

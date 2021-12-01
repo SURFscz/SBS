@@ -17,7 +17,7 @@ import {setFlash} from "../../utils/Flash";
 import "./CollaborationAdmins.scss";
 import Select from "react-select";
 import {emitter} from "../../utils/Events";
-import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
+import {dateFromEpoch, isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -31,6 +31,8 @@ import ReactTooltip from "react-tooltip";
 import LastAdminWarning from "./LastAdminWarning";
 import DateField from "../DateField";
 import InstituteColumn from "./InstitueColumn";
+import {ReactComponent as ChevronUp} from "../../icons/chevron-up.svg";
+import {ReactComponent as ChevronDown} from "../../icons/chevron-down.svg";
 
 const memberFilterValue = "members";
 
@@ -56,6 +58,7 @@ class CollaborationAdmins extends React.Component {
             filterValue: {value: memberFilterValue, label: ""},
             hideInvitees: false,
             resultAfterSearch: false,
+            openExpirationFields: {},
             loading: true
         }
     }
@@ -67,6 +70,10 @@ class CollaborationAdmins extends React.Component {
         const entities = admins.concat(invites);
         const selectedMembers = entities.reduce((acc, entity) => {
             acc[this.getIdentifier(entity)] = {selected: false, ref: entity, invite: !isEmpty(entity.intended_role)};
+            return acc;
+        }, {});
+        const openExpirationFields = collaboration.collaboration_memberships.reduce((acc, entity) => {
+            acc[this.getIdentifier(entity)] = false;
             return acc;
         }, {});
         const filterOptions = [{
@@ -88,7 +95,8 @@ class CollaborationAdmins extends React.Component {
             selectedMemberExpiryDate: null,
             selectedMemberId: null,
             allSelected: false,
-            confirmationDialogOpen: false
+            confirmationDialogOpen: false,
+            openExpirationFields: openExpirationFields
         });
     }
 
@@ -158,7 +166,10 @@ class CollaborationAdmins extends React.Component {
                 }),
                 isWarning: false,
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
-                cancelDialogAction: this.closeConfirmationDialog,
+                cancelDialogAction:() => {
+                    this.closeConfirmationDialog();
+                    this.toggleExpirationDateField(member);
+                },
                 confirmationDialogAction: () => this.updateExpiryDate(member, expiryDate, false)
             });
         } else {
@@ -462,14 +473,46 @@ class CollaborationAdmins extends React.Component {
                        isDisabled={!isAdminOfCollaboration}/>
     }
 
-    renderExpiryDate = (entity, adminOfCollaboration) => {
+    toggleExpirationDateField = entity => {
+        const {openExpirationFields} = this.state;
+        const identifier = this.getIdentifier(entity);
+        const isOpen = openExpirationFields[identifier];
+        const closeExpiration = {[identifier]: !isOpen}
+        this.setState({
+            openExpirationFields: {...openExpirationFields, ...closeExpiration}
+        });
+    }
+
+    renderExpiryDate = (entity, openExpirationFields, adminOfCollaboration) => {
+        const expired = isInvitationExpired(entity);
+        let className = "active"
+        let status = I18n.t("models.orgMembers.accepted");
+        let msg = I18n.t("models.orgMembers.membershipNoExpiry")
+        if (expired) {
+            status = I18n.t("models.orgMembers.expired");
+            className = "expired"
+            msg = I18n.t("models.orgMembers.membershipExpiredAt", {date: dateFromEpoch(entity.expiry_date)})
+        } else if (entity.expiry_date) {
+            className = "expires"
+            msg = I18n.t("models.orgMembers.membershipExpiresAt", {date: dateFromEpoch(entity.expiry_date)})
+        }
         const expiryDate = entity.expiry_date ? moment(entity.expiry_date * 1000).toDate() : null;
+        const isOpen = openExpirationFields[this.getIdentifier(entity)]
         return (<div className="date-field-container">
-            <DateField value={expiryDate}
-                       disabled={!adminOfCollaboration}
-                       onChange={e => this.updateExpiryDate(entity, e, true)}
-                       allowNull={true}
-                       showYearDropdown={true}/>
+            {!isOpen && <div className="expiration-toggle" onClick={() => this.toggleExpirationDateField(entity)}>
+                <span className={`status ${className}`}>{status}</span>
+                <span className="msg">{msg}</span>
+            </div>}
+            {isOpen && <DateField value={expiryDate}
+                                  disabled={!adminOfCollaboration}
+                                  onChange={e => this.updateExpiryDate(entity, e, true)}
+                                  allowNull={true}
+                                  isOpen={isOpen}
+                                  showYearDropdown={true}/>}
+            <div className="chevron-container" onClick={() => this.toggleExpirationDateField(entity)}>
+                {isOpen ? <ChevronUp/> : <ChevronDown/>}
+            </div>
+
         </div>)
     }
 
@@ -478,7 +521,8 @@ class CollaborationAdmins extends React.Component {
         const {
             selectedMembers, allSelected, filterOptions, filterValue, hideInvitees,
             confirmationDialogOpen, cancelDialogAction, isWarning, confirmationTxt,
-            confirmationDialogAction, confirmationQuestion, loading, lastAdminWarning, lastAdminWarningUser
+            confirmationDialogAction, confirmationQuestion, loading, lastAdminWarning, lastAdminWarningUser,
+            openExpirationFields
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -505,8 +549,6 @@ class CollaborationAdmins extends React.Component {
                 key: "icon",
                 header: "",
                 mapper: entity => <div className="member-icon">
-
-
                     {entity.invite &&
                     <Tooltip children={<InviteIcon/>} id={"invite-icon"} msg={I18n.t("tooltips.invitations")}/>}
                     {(!entity.invite && entity.role === "admin") &&
@@ -549,7 +591,7 @@ class CollaborationAdmins extends React.Component {
                             {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
                                 I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
                         </span> :
-                            this.renderExpiryDate(entity, isAdminOfCollaboration);
+                            this.renderExpiryDate(entity, openExpirationFields, isAdminOfCollaboration);
                     }
                     return null;
                 }

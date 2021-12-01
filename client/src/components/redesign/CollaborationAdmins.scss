@@ -61,6 +61,37 @@
         margin-left: 5px;
     }
 
+    div.expiration-toggle {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        padding: 5px;
+        border-radius: $br;
+        width: 100%;
+
+        &:hover {
+            background-color: $light-blue;
+        }
+
+        span.status {
+            font-weight: bold;
+
+            &.expires {
+                color: $light-orange;
+            }
+
+            &.expired {
+                color: $red;
+            }
+        }
+
+        span.msg {
+            font-size: 14px;
+
+        }
+
+    }
+
     table.coAdmins, table.members {
 
         thead {
@@ -71,6 +102,7 @@
 
                 &.name {
                     width: 35%;
+
                     &.no-admin-columns {
                         width: 50%;
                     }
@@ -78,6 +110,7 @@
 
                 &.user__schac_home_organisation {
                     width: 15%;
+
                     &.no-admin-columns {
                         width: 25%;
                     }
@@ -117,9 +150,26 @@
                     text-align: left;
 
                     div.date-field-container {
+                        display: flex;
+                        width: 100%;
+
+                        .chevron-container {
+                            display: flex;
+                            margin-left: auto;
+                            margin-right: 15px;
+                        }
+
+                        svg.chevron-up, svg.chevron-down {
+                            height: 28px;
+                            width: auto;
+
+                            fill: $blue;
+                            cursor: pointer;
+                        }
+
 
                         div.date-field {
-                            margin: 0 0 0 auto;
+                            margin: 0;
 
                             label.date-picker-container {
                                 width: 160px;
@@ -155,69 +205,5 @@
     }
 
 }
-
-.collaboration-invitation-details-container {
-    display: flex;
-    margin: 40px auto 25px auto;
-    max-width: $medium;
-    width: 100%;
-
-    @media (max-width: $compact-medium) {
-        flex-direction: column;
-    }
-
-    a.back-to-org-members {
-        display: flex;
-        align-items: flex-start;
-        white-space: nowrap;
-        color: $blue;
-        text-decoration: underline;
-        margin-right: 60px;
-
-        svg {
-            margin-right: 5px;
-            fill: $blue;
-            height: 22px;
-        }
-    }
-
-    h1 {
-        font-size: 26px;
-        line-height: 30px;
-    }
-
-    div.collaboration-invitation-form {
-        width: 60%;
-        @media (max-width: $compact-medium) {
-            width: 100%;
-            padding: 15px;
-        }
-
-        display: flex;
-        flex-direction: column;
-
-        h2 {
-            font-size: 18px;
-        }
-
-        h1 {
-            margin: 1px 0 30px 0;
-        }
-
-        div.checkbox {
-            margin-top: 25px;
-        }
-    }
-
-    .organisation-meta {
-        display: flex;
-
-        div.input-field:last-child {
-            margin-left: auto;
-        }
-    }
-
-}
-
 
 
