@@ -182,13 +182,6 @@ class ServiceConnectionRequests extends React.Component {
                 header: I18n.t("models.serviceConnectionRequests.requester"),
                 mapper: serviceConnectionRequest => this.renderRequester(serviceConnectionRequest, currentUser)
             },
-            {
-                nonSortable: true,
-                key: "open",
-                header: "",
-                mapper: entity => <Button onClick={this.openServiceConnectionRequest(entity)} txt={I18n.t("forms.open")}
-                                          small={true}/>
-            },
 
         ]
         return (
