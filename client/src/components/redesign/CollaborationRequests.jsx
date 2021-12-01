@@ -97,13 +97,6 @@ export default class CollaborationRequests extends React.PureComponent {
                     </div>
                 </div>
             },
-            {
-                nonSortable: true,
-                key: "open",
-                header: "",
-                mapper: cr => <Button onClick={this.openCollaborationRequest(cr)} txt={I18n.t("forms.open")}
-                                      small={true}/>
-            }
         ]
         const filteredCollaborationRequests = filterValue.value === allValue ? organisation.collaboration_requests :
             organisation.collaboration_requests.filter(cr => cr.status === filterValue.value);

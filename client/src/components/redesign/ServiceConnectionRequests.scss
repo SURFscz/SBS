@@ -7,16 +7,12 @@ table.serviceConnectionRequests {
     thead {
         th {
             &.collaboration__name {
-                width: 35%;
+                width: 40%;
                 padding-left: 15px;
             }
 
             &.requester__name {
-                width: 35%;
-            }
-
-            &.open {
-                width: 30%;
+                width: 60%;
             }
 
         }
@@ -28,9 +24,6 @@ table.serviceConnectionRequests {
                 padding-left: 15px;
             }
 
-            &.open {
-                text-align: right;
-            }
         }
     }
 }
