@@ -166,6 +166,7 @@ class ApiKeys extends React.Component {
                           columns={columns}
                           loading={false}
                           showNew={true}
+                          hideTitle={true}
                           newEntityFunc={this.fetchNewApiValue}
                           explain={<ApiKeysExplanation/>}
                           explainTitle={I18n.t("explain.apiKeys")}

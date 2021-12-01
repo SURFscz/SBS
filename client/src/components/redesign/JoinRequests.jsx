@@ -277,13 +277,6 @@ class JoinRequests extends React.Component {
                 header: I18n.t("models.users.institute"),
                 mapper: entity => <InstituteColumn entity={entity} currentUser={currentUser}/>
             },
-            {
-                nonSortable: true,
-                key: "open",
-                header: "",
-                mapper: entity => <Button onClick={this.openJoinRequest(entity)} txt={I18n.t("forms.open")}
-                                          small={true}/>
-            },
         ]
         const filteredJoinRequests = filterValue.value === allValue ? collaboration.join_requests :
             collaboration.join_requests.filter(jr => jr.status === filterValue.value);
@@ -295,6 +288,7 @@ class JoinRequests extends React.Component {
                           defaultSort="name"
                           rowLinkMapper={() => this.openJoinRequest}
                           columns={columns}
+                          hideTitle={true}
                           filters={this.filter(filterOptions, filterValue)}
                           loading={loading}
                           {...this.props}/>

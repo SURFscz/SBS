@@ -146,7 +146,8 @@ class OrganisationServices extends React.Component {
                 header: I18n.t("models.services.mandatory"),
                 mapper: this.getServiceAction
             }]
-        const titleUsed = I18n.t(`models.services.titleUsedOrg`, {count: organisation.services.length});
+        const count =  organisation.services.filter(service => service.allowed && service.notAllowedServicesRestricted).length
+        const titleUsed = I18n.t(`models.services.titleUsedOrg`, {count: count});
         return (
             <div className="organisation-services">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -163,6 +164,7 @@ class OrganisationServices extends React.Component {
                           columns={columns}
                           loading={loading}
                           title={titleUsed}
+                          hideTitle={true}
                           explain={<OrganisationServicesExplanation/>}
                           explainTitle={I18n.t("explain.services")}
                           {...this.props}/>

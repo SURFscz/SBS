@@ -186,6 +186,7 @@ class ServiceOrganisations extends React.Component {
                           modelName="serviceOrganisations"
                           searchAttributes={["name"]}
                           defaultSort="name"
+                          hideTitle={true}
                           columns={columns}
                           filters={service.access_allowed_for_all ?
                               <span

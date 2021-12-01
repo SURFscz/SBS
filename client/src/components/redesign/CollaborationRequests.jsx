@@ -116,6 +116,7 @@ export default class CollaborationRequests extends React.PureComponent {
                       rowLinkMapper={() => this.openCollaborationRequest}
                       columns={columns}
                       showNew={false}
+                      hideTitle={true}
                       filters={this.filter(filterOptions, filterValue)}
                       loading={false}
                       {...this.props}/>

@@ -49,6 +49,7 @@ import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
+import {removeDuplicates} from "../utils/Utils";
 
 class CollaborationDetail extends React.Component {
 
@@ -245,7 +246,10 @@ class CollaborationDetail extends React.Component {
 
     getCollaborationAdminsTab = collaboration => {
         const openInvitations = (collaboration.invitations || []).filter(inv => inv.intended_role === "admin").length;
-        return (<div key="admins" name="admins" label={I18n.t("home.tabs.coAdmins")}
+        const count = collaboration.collaboration_memberships.filter(m => m.role === "admin").length;
+        return (<div key="admins"
+                     name="admins"
+                     label={I18n.t("home.tabs.coAdmins", {count: count})}
                      icon={<CoAdminIcon/>}
                      notifier={openInvitations > 0 ? openInvitations : null}>
             <CollaborationAdmins {...this.props} collaboration={collaboration} isAdminView={true}
@@ -255,8 +259,9 @@ class CollaborationDetail extends React.Component {
 
     getMembersTab = (collaboration, showMemberView, isJoinRequest = false) => {
         const openInvitations = (collaboration.invitations || []).length;
-
-        return (<div key="members" name="members" label={I18n.t("home.tabs.members")}
+        const count = collaboration.collaboration_memberships.length;
+        return (<div key="members" name="members"
+                     label={I18n.t("home.tabs.members", {count: count})}
                      icon={<MemberIcon/>}
                      readOnly={isJoinRequest}
                      notifier={(openInvitations > 0 && !showMemberView) ? openInvitations : null}>
@@ -267,7 +272,8 @@ class CollaborationDetail extends React.Component {
     }
 
     getGroupsTab = (collaboration, showMemberView, isJoinRequest = false) => {
-        return (<div key="groups" name="groups" label={I18n.t("home.tabs.groups")}
+        return (<div key="groups" name="groups"
+                     label={I18n.t("home.tabs.groups", {count: collaboration.groups.length})}
                      readOnly={isJoinRequest}
                      icon={<GroupsIcon/>}>
             {!isJoinRequest && <Groups {...this.props} collaboration={collaboration} showMemberView={showMemberView}
@@ -290,9 +296,11 @@ class CollaborationDetail extends React.Component {
     }
 
     getServicesTab = collaboration => {
+        const usedServices = removeDuplicates(collaboration.services.concat(collaboration.organisation.services), "id");
         const openServiceConnectionRequests = (collaboration.service_connection_requests || [])
             .filter(r => r.is_member_request).length;
-        return (<div key="services" name="services" label={I18n.t("home.tabs.coServices")}
+        return (<div key="services" name="services"
+                     label={I18n.t("home.tabs.coServices", {count: usedServices.length})}
                      icon={<ServicesIcon/>}
                      notifier={openServiceConnectionRequests > 0 ? openServiceConnectionRequests : null}>
             <UsedServices collaboration={collaboration}
@@ -520,10 +528,11 @@ class CollaborationDetail extends React.Component {
         const status = (collaboration.status === "active" && collaboration.expiry_date) ? "activeWithExpiryDate" : collaboration.status;
         return (
             <div className="org-attributes">
-                <span className={`${className} contains-tooltip`}>{I18n.t(`collaboration.status.${status}`, {expiryDate: expiryDate})}</span>
-                    {/*<Tooltip children={<FontAwesomeIcon icon="info-circle"/>} id={`collaboration-${collaboration.id}`}*/}
-                    {/*         msg={I18n.t(`collaboration.status.${status}Tooltip`,*/}
-                    {/*             {expiryDate: expiryDate, lastActivityDate: lastActivityDate})}/>*/}
+                <span
+                    className={`${className} contains-tooltip`}>{I18n.t(`collaboration.status.${status}`, {expiryDate: expiryDate})}</span>
+                {/*<Tooltip children={<FontAwesomeIcon icon="info-circle"/>} id={`collaboration-${collaboration.id}`}*/}
+                {/*         msg={I18n.t(`collaboration.status.${status}Tooltip`,*/}
+                {/*             {expiryDate: expiryDate, lastActivityDate: lastActivityDate})}/>*/}
 
             </div>
         );

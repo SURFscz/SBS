@@ -62,6 +62,15 @@ class TestOrganisationInvitation(AbstractTest):
             mail_msg = outbox[0]
             self.assertListEqual(["roger@example.org"], mail_msg.recipients)
 
+    def test_resend_bulk(self):
+        identifiers = []
+        for invitation in OrganisationInvitation.query.all():
+            identifiers.append({"id": invitation.id})
+        mail = self.app.mail
+        with mail.record_messages() as outbox:
+            self.put("/api/organisation_invitations/resend_bulk", body=identifiers)
+            self.assertEqual(2, len(outbox))
+
     def test_resend_not_found(self):
         self.put("/api/organisation_invitations/resend", body={"id": "nope"}, response_status_code=404)
 

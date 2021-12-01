@@ -124,7 +124,8 @@ class OrganisationDetail extends React.Component {
 
     getOrganisationAdminsTab = (organisation) => {
         const openInvitations = (organisation.organisation_invitations || []).length;
-        return (<div key="admins" name="admins" label={I18n.t("home.tabs.orgAdmins")}
+        return (<div key="admins" name="admins"
+                     label={I18n.t("home.tabs.orgAdmins", {count: organisation.organisation_memberships.length})}
                      icon={<PlatformAdminIcon/>}
                      notifier={openInvitations > 0 ? openInvitations : null}>
             <OrganisationAdmins {...this.props} organisation={organisation}
@@ -133,21 +134,26 @@ class OrganisationDetail extends React.Component {
     }
 
     getServicesTab = organisation => {
-        return (<div key="services" name="services" label={I18n.t("home.tabs.orgServices")} icon={<ServicesIcon/>}>
+        return (<div key="services" name="services"
+                     label={I18n.t("home.tabs.orgServices", {count: organisation.services.length})}
+                     icon={<ServicesIcon/>}>
             <OrganisationServices {...this.props} organisation={organisation}
                                   refresh={callback => this.componentDidMount(callback)}/>
         </div>);
     }
 
     getAPIKeysTab = organisation => {
-        return (<div key="apikeys" name="apikeys" label={I18n.t("home.tabs.apikeys")} icon={<ApiKeysIcon/>}>
+        return (<div key="apikeys" name="apikeys"
+                     label={I18n.t("home.tabs.apikeys", {count: (organisation.api_keys || []).length})}
+                     icon={<ApiKeysIcon/>}>
             <ApiKeys {...this.props} organisation={organisation}
                      refresh={callback => this.componentDidMount(callback)}/>
         </div>);
     }
 
     getCollaborationsTab = organisation => {
-        return (<div key="collaborations" name="collaborations" label={I18n.t("home.tabs.orgCollaborations")}
+        return (<div key="collaborations" name="collaborations"
+                     label={I18n.t("home.tabs.orgCollaborations", {count: organisation.collaborations.length})}
                      icon={<CollaborationsIcon/>}>
             <Collaborations {...this.props} collaborations={organisation.collaborations}
                             organisation={organisation} showExpiryDate={true} showLastActivityDate={true}/>
@@ -157,7 +163,7 @@ class OrganisationDetail extends React.Component {
     getCollaborationRequestsTab = organisation => {
         const crl = (organisation.collaboration_requests || []).filter(cr => cr.status === "open").length;
         return (<div key="collaboration_requests" name="collaboration_requests"
-                     label={I18n.t("home.tabs.collaborationRequests")}
+                     label={I18n.t("home.tabs.collaborationRequests", {count: (organisation.collaboration_requests || []).length})}
                      notifier={crl > 0 ? crl : null}
                      icon={<CollaborationRequestsIcon/>}>
             <CollaborationRequests {...this.props} organisation={organisation}/>
@@ -293,7 +299,7 @@ class OrganisationDetail extends React.Component {
                             <span>{organisation.schac_home_organisations.length > 1 ? I18n.t("organisation.schacHomeOrganisationShortNames") :
                                 I18n.t("organisation.schacHomeOrganisationShortName")}</span>
                             <ul>
-                                {organisation.schac_home_organisations.map(sho => <li>{sho.name}</li>)}
+                                {organisation.schac_home_organisations.map(sho => <li key={sho.name}>{sho.name}</li>)}
                             </ul>
                         </div>}
                     </div>

@@ -54,8 +54,13 @@ class PlatformAdmins extends React.Component {
                 mapper: () => I18n.t("models.users.platformAdmin")
             }]
         return (
-            <Entities entities={admins} modelName="users" searchAttributes={["name", "email"]}
-                      defaultSort="name" columns={columns} loading={loading}
+            <Entities entities={admins}
+                      modelName="users"
+                      searchAttributes={["name", "email"]}
+                      defaultSort="name"
+                      hideTitle={true}
+                      columns={columns}
+                      loading={loading}
                       {...this.props}/>
         )
     }

@@ -26,11 +26,21 @@ from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
-    UserNameHistory, SshKey
+    UserNameHistory, SshKey, Organisation, Collaboration, Service
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 
 user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
+
+
+def _add_counts(user: dict):
+    if user.get("admin", False):
+        platform_admins = User.query.filter(User.uid.in_([u.uid for u in current_app.app_config.admin_users])).count()
+        user["total_platform_admins"] = platform_admins
+        user["total_organisations"] = Organisation.query.count()
+        user["total_collaborations"] = Collaboration.query.count()
+        user["total_services"] = Service.query.count()
+        user["total_users"] = User.query.count()
 
 
 def _user_query():
@@ -54,6 +64,7 @@ def _user_json_response(user, auto_set_second_factor_confirmed):
                 "guest": False,
                 "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
+    _add_counts(json_user)
     return {**json_user, **is_admin}, 200
 
 
@@ -299,7 +310,7 @@ def me():
             user_from_db.suspend_notifications = []
             db.session.merge(user_from_db)
             db.session.commit()
-
+        _add_counts(user)
         return user, 200
     else:
         return {"uid": "anonymous", "guest": True, "admin": False}, 200
@@ -380,7 +391,8 @@ def update_user():
             db.session.delete(ssh_key)
         else:
             existing_ssh_key = next(s for s in ssh_keys_json if int(s.get("id", -1)) == ssh_key.id)
-            ssh_key.ssh_value = "".join(ch for ch in existing_ssh_key["ssh_value"] if unicodedata.category(ch)[0] != "C")
+            ssh_key.ssh_value = "".join(
+                ch for ch in existing_ssh_key["ssh_value"] if unicodedata.category(ch)[0] != "C")
             db.session.merge(ssh_key)
     new_ssh_keys = [ssh_key for ssh_key in ssh_keys_json if "id" not in ssh_key]
     for ssh_key in new_ssh_keys:
