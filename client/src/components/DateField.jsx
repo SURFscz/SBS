@@ -11,6 +11,13 @@ import moment from "moment";
 
 export default class DateField extends React.Component {
 
+    componentDidMount = () => {
+        const {isOpen = false} = this.props;
+        if (isOpen) {
+            this.toggle();
+        }
+    }
+
     toggle = () => this.component.setOpen(true);
 
     validateOnBlur = e => {
@@ -24,11 +31,11 @@ export default class DateField extends React.Component {
                 const m = moment(value, "dd/MM/yyyy");
                 const d = m.toDate();
                 if (!m.isValid() || d > maximalDate || d < minimalDate) {
-                    setTimeout(() => onChange(moment().add(16, "days").toDate()),250);
+                    setTimeout(() => onChange(moment().add(16, "days").toDate()), 250);
                 }
             } else {
                 if (!allowNull) {
-                    setTimeout(() => onChange(moment().add(16, "days").toDate()),250);
+                    setTimeout(() => onChange(moment().add(16, "days").toDate()), 250);
                 }
 
             }
@@ -83,6 +90,7 @@ DateField.propTypes = {
     value: PropTypes.object,
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
+    isOpen: PropTypes.bool,
     maxDate: PropTypes.object,
     allowNull: PropTypes.bool,
     showYearDropdown: PropTypes.bool,
