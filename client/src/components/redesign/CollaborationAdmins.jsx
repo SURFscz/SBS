@@ -487,7 +487,7 @@ class CollaborationAdmins extends React.Component {
         const members = collaboration.collaboration_memberships;
         const invites = collaboration.invitations || [];
         invites.forEach(invite => invite.invite = true);
-
+        const hideAdminColumns = !isAdminOfCollaboration || showMemberView;
         let i = 0;
         let columns = [
             {
@@ -519,17 +519,20 @@ class CollaborationAdmins extends React.Component {
             {
                 nonSortable: true,
                 key: "name",
+                class: hideAdminColumns ? "no-admin-columns" : "",
                 header: I18n.t("models.users.name_email"),
                 mapper: entity => <UserColumn entity={entity} currentUser={currentUser}
                                               hideEmail={showMemberView && !collaboration.disclose_email_information}/>
             },
             {
                 key: "user__schac_home_organisation",
+                class: hideAdminColumns ? "no-admin-columns" : "",
                 header: I18n.t("models.users.institute"),
                 mapper: entity => <InstituteColumn entity={entity} currentUser={currentUser}/>
             },
             {
                 key: "role",
+                class: hideAdminColumns ? "no-admin-columns" : "",
                 header: I18n.t("models.users.role"),
                 mapper: entity => this.renderSelectRole(entity, isAdminOfCollaboration)
             },
@@ -558,8 +561,8 @@ class CollaborationAdmins extends React.Component {
                 mapper: this.getImpersonateMapper
             },
         ];
-        if (!isAdminOfCollaboration || showMemberView) {
-            columns = columns.filter(col => col.key !== "impersonate");
+        if (hideAdminColumns) {
+            columns = columns.filter(col => col.key !== "impersonate" && col.key !== "expiry_date");
         }
         const doHideInvitees = hideInvitees || showMemberView;
         const filteredEntities = this.filterEntities(isAdminView, members, filterValue, collaboration, doHideInvitees,

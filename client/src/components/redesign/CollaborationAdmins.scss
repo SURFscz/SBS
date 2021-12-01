@@ -71,14 +71,20 @@
 
                 &.name {
                     width: 35%;
+                    &.no-admin-columns {
+                        width: 50%;
+                    }
                 }
 
                 &.user__schac_home_organisation {
                     width: 15%;
+                    &.no-admin-columns {
+                        width: 25%;
+                    }
                 }
 
                 &.role {
-                    width: 20%;
+                    width: 25%;
                     padding-left: 5px;
                 }
 
