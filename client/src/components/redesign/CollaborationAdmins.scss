@@ -64,10 +64,16 @@
     div.expiration-toggle {
         cursor: pointer;
         display: flex;
-        flex-direction: column;
+        align-items: center;
         padding: 5px;
         border-radius: $br;
         width: 100%;
+
+        .text-container {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+        }
 
         &:hover {
             background-color: $light-blue;
@@ -117,12 +123,13 @@
                 }
 
                 &.role {
-                    width: 25%;
+                    width: 20%;
                     padding-left: 5px;
                 }
 
                 &.expiry_date {
-                    width: 20%;
+                    width: 25%;
+                    padding-left: 5px;
                 }
 
                 &.impersonate {
@@ -151,20 +158,30 @@
 
                     div.date-field-container {
                         display: flex;
-                        width: 100%;
+                        max-width: 80%;
+                        align-items: center;
 
                         .chevron-container {
                             display: flex;
                             margin-left: auto;
                             margin-right: 15px;
+
+                            &:hover {
+                                background-color: $light-blue;
+                            }
+
                         }
 
                         svg.chevron-up, svg.chevron-down {
-                            height: 28px;
+                            height: 17px;
                             width: auto;
-
                             fill: $blue;
                             cursor: pointer;
+
+                            path {
+                                stroke-width: 2px;
+                                stroke: $blue;
+                            }
                         }
 
 

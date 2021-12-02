@@ -161,12 +161,12 @@ class CollaborationAdmins extends React.Component {
             this.setState({
                 confirmationDialogOpen: true,
                 confirmationQuestion: I18n.t(`collaborationDetail.${label}`, {
-                    name: member.user.name, date:
-                        expiryDate ? moment(expiryDate.expiry_date).format("LL") : ""
+                    name: member.user.name,
+                    date: expiryDate ? moment(expiryDate).format("LL") : ""
                 }),
                 isWarning: false,
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
-                cancelDialogAction:() => {
+                cancelDialogAction: () => {
                     this.closeConfirmationDialog();
                     this.toggleExpirationDateField(member);
                 },
@@ -499,9 +499,15 @@ class CollaborationAdmins extends React.Component {
         const expiryDate = entity.expiry_date ? moment(entity.expiry_date * 1000).toDate() : null;
         const isOpen = openExpirationFields[this.getIdentifier(entity)]
         return (<div className="date-field-container">
-            {!isOpen && <div className="expiration-toggle" onClick={() => this.toggleExpirationDateField(entity)}>
-                <span className={`status ${className}`}>{status}</span>
-                <span className="msg">{msg}</span>
+            {!isOpen &&
+            <div className="expiration-toggle" onClick={() => this.toggleExpirationDateField(entity)}>
+                <div className="text-container">
+                    <span className={`status ${className}`}>{status}</span>
+                    <span className="msg">{msg}</span>
+                </div>
+                <div className="chevron-container" onClick={() => this.toggleExpirationDateField(entity)}>
+                    <ChevronDown/>
+                </div>
             </div>}
             {isOpen && <DateField value={expiryDate}
                                   disabled={!adminOfCollaboration}
@@ -509,9 +515,9 @@ class CollaborationAdmins extends React.Component {
                                   allowNull={true}
                                   isOpen={isOpen}
                                   showYearDropdown={true}/>}
-            <div className="chevron-container" onClick={() => this.toggleExpirationDateField(entity)}>
-                {isOpen ? <ChevronUp/> : <ChevronDown/>}
-            </div>
+            {isOpen && <div className="chevron-container" onClick={() => this.toggleExpirationDateField(entity)}>
+                <ChevronUp/>
+            </div>}
 
         </div>)
     }
@@ -581,13 +587,13 @@ class CollaborationAdmins extends React.Component {
             {
                 nonSortable: true,
                 key: "expiry_date",
-                header: I18n.t("organisationMembership.expiryDate"),
+                header: I18n.t("organisationMembership.member"),
                 mapper: entity => {
                     if (isAdminOfCollaboration || entity.user.id === currentUser.id) {
                         const isExpired = entity.invite && isInvitationExpired(entity);
                         return entity.invite ?
                             <span
-                                className={`person-role invite ${isExpired ? "expired" : ""}`}>
+                                className={`person-role no-margin invite ${isExpired ? "expired" : ""}`}>
                             {isExpired ? I18n.t("models.orgMembers.expiredAt", {date: shortDateFromEpoch(entity.expiry_date)}) :
                                 I18n.t("models.orgMembers.inviteSend", {date: shortDateFromEpoch(entity.created_at)})}
                         </span> :

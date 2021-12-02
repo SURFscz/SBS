@@ -5,7 +5,6 @@ import {stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Logo from "./Logo";
-import Button from "../Button";
 import Select from "react-select";
 
 const allValue = "all";
