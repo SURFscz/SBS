@@ -69,6 +69,5 @@ def _do_expire_memberships(app):
                 "memberships_deleted": memberships_deleted_json}
 
 
-def expire_memberships(app, wait_time=3):
-    return obtain_lock(app, membership_expiration_lock_name, _do_expire_memberships, _result_container,
-                       wait_time=wait_time)
+def expire_memberships(app):
+    return obtain_lock(app, membership_expiration_lock_name, _do_expire_memberships, _result_container)

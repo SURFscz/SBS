@@ -107,5 +107,5 @@ def _do_suspend_users(app):
         return results
 
 
-def suspend_users(app, wait_time=3):
-    return obtain_lock(app, suspend_users_lock_name, _do_suspend_users, _result_container, wait_time=wait_time)
+def suspend_users(app):
+    return obtain_lock(app, suspend_users_lock_name, _do_suspend_users, _result_container)

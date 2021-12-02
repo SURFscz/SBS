@@ -6,11 +6,19 @@ import time
 from flask import jsonify
 from sqlalchemy.orm import contains_eager
 
+from server.cron.shared import obtain_lock
 from server.db.domain import CollaborationRequest, JoinRequest
 from server.mail import mail_outstanding_requests
 
+outstanding_requests_lock_name = "outstanding_requests_lock_name"
 
-def outstanding_requests(app):
+
+def _result_container():
+    return {"collaboration_requests": [],
+            "collaboration_join_requests": []}
+
+
+def _do_outstanding_requests(app):
     with app.app_context():
         cfq = app.app_config.platform_admin_notifications
 
@@ -48,3 +56,7 @@ def outstanding_requests(app):
 
         return {"collaboration_requests": collaboration_requests,
                 "collaboration_join_requests": collaboration_join_requests}
+
+
+def outstanding_requests(app):
+    return obtain_lock(app, outstanding_requests_lock_name, _do_outstanding_requests, _result_container)
