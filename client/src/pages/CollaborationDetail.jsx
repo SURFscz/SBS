@@ -49,7 +49,7 @@ import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
-import {removeDuplicates} from "../utils/Utils";
+import {isEmpty, removeDuplicates} from "../utils/Utils";
 
 class CollaborationDetail extends React.Component {
 
@@ -113,6 +113,7 @@ class CollaborationDetail extends React.Component {
                             const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
                             const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                             const firstTime = getParameterByName("first", window.location.search) === "true";
+                            this.showExpiryDateFlash(user, collaboration);
                             this.setState({
                                 collaboration: collaboration,
                                 adminOfCollaboration: adminOfCollaboration,
@@ -168,6 +169,38 @@ class CollaborationDetail extends React.Component {
             }
         }
     };
+
+    isExpiryDateWarning = expiry_date => {
+        const today = new Date().getTime();
+        const expiryDate = expiry_date * 1000;
+        const days = Math.max(1, Math.round((expiryDate - today) / (1000 * 60 * 60 * 24)));
+        return days < 60;
+    }
+
+    showExpiryDateFlash = (user, collaboration) => {
+        let msg = "";
+        const membership = collaboration.collaboration_memberships.find(m => m.user.id === user.id);
+
+        if (membership && membership.expiry_date) {
+            const formattedMembershipExpiryDate = moment(membership.expiry_date * 1000).format("LL");
+            if (membership.status === "expired") {
+                msg += I18n.t("organisationMembership.status.expiredTooltip", {date: formattedMembershipExpiryDate});
+            } else if (this.isExpiryDateWarning(membership.expiry_date)) {
+                msg += I18n.t("organisationMembership.status.activeWithExpiryDateTooltip", {date: formattedMembershipExpiryDate});
+            }
+        }
+        if (collaboration && collaboration.expiry_date) {
+            const formattedCollaborationExpiryDate = moment(collaboration.expiry_date * 1000).format("LL");
+            if (collaboration.status === "expired") {
+                msg += I18n.t("collaboration.status.expiredTooltip", {expiryDate: formattedCollaborationExpiryDate});
+            } else if (this.isExpiryDateWarning(collaboration.expiry_date)) {
+                msg += I18n.t("collaboration.status.activeWithExpiryDateTooltip", {expiryDate: formattedCollaborationExpiryDate});
+            }
+        }
+        if (!isEmpty(msg)) {
+            setFlash(msg, "warning");
+        }
+    }
 
     componentWillUnmount() {
         AppStore.update(s => {

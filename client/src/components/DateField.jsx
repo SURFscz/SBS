@@ -8,6 +8,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./DateField.scss"
 import moment from "moment";
+import {stopEvent} from "../utils/Utils";
 
 export default class DateField extends React.Component {
 
@@ -21,7 +22,11 @@ export default class DateField extends React.Component {
     toggle = () => this.component.setOpen(true);
 
     validateOnBlur = e => {
-        const {onChange, maxDate = null, minDate = null, allowNull = false} = this.props;
+        const {onChange, maxDate = null, minDate = null, allowNull = false, performValidateOnBlur = true} = this.props;
+        if (!performValidateOnBlur) {
+            stopEvent(e);
+            return;
+        }
 
         if (e && e.target) {
             const minimalDate = minDate || moment().add(1, "day").toDate();
@@ -89,6 +94,7 @@ DateField.propTypes = {
     name: PropTypes.string,
     value: PropTypes.object,
     onChange: PropTypes.func,
+    performValidateOnBlur: PropTypes.bool,
     disabled: PropTypes.bool,
     isOpen: PropTypes.bool,
     maxDate: PropTypes.object,

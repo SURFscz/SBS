@@ -657,9 +657,9 @@ I18n.translations.nl = {
             suspended: "Geschorst",
             expired: "Verlopen",
             activeTooltip: "Deze samenwerking is actief.",
-            suspendedTooltip: "Deze samenwerking is geschorst wegens inactiviteit. De laatste activiteit was op {{lastActivityDate}}.",
-            expiredTooltip: "Deze samenwerking is verlopen op {{expiryDate}}. Heractiveren kan door een nieuwe einddatum in te stellen.",
-            activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}."
+            suspendedTooltip: "Deze samenwerking is geschorst wegens inactiviteit. De laatste activiteit was op {{lastActivityDate}}. ",
+            expiredTooltip: "Deze samenwerking is verlopen op {{expiryDate}}. Heractiveren kan door een nieuwe einddatum in te stellen. ",
+            activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}. "
         },
         flash: {
             created: "Samenwerking {{name}} is met succes aangemaakt.",
@@ -1751,8 +1751,8 @@ I18n.translations.nl = {
             expired: "Verlopen",
             activeWithExpiryDate: "Einddatum: {{date}}",
             activeTooltip: "Je lidmaatschap heeft geen einddatum.",
-            expiredTooltip: "Je lidmaatschap is verlopen op {{date}}. Neem contact op met de beheerder van deze samenwerking om dit te verhelpen.",
-            activeWithExpiryDateTooltip: "je lidmaatschap is actief, maar verloopt op {{date}}."
+            expiredTooltip: "Je lidmaatschap is verlopen op {{date}}. Neem contact op met de beheerder van deze samenwerking om dit te verhelpen. ",
+            activeWithExpiryDateTooltip: "je lidmaatschap is actief, maar verloopt op {{date}}. "
         }
     }
 };

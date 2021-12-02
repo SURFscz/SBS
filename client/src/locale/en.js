@@ -658,8 +658,8 @@ I18n.translations.en = {
             expired: "Expired",
             activeTooltip: "This collaboration is active and ready for business.",
             suspendedTooltip: "This collaboration was suspended due to inactivity. It was last used on {{lastActivityDate}}.",
-            expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date.",
-            activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}."
+            expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date. ",
+            activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}. "
         },
         flash: {
             created: "Collaboration {{name}} was successfully created",
@@ -1751,8 +1751,8 @@ I18n.translations.en = {
             expired: "Expired",
             activeWithExpiryDate: "Expiration date: {{date}}",
             activeTooltip: "Your membership has no expiration date.",
-            expiredTooltip: "Your membership has expired on {{date}}. Please contact the admins of this collaboration for help.",
-            activeWithExpiryDateTooltip: "Your membership is active, however will expire at {{date}}."
+            expiredTooltip: "Your membership has expired on {{date}}. Please contact the admins of this collaboration for help. ",
+            activeWithExpiryDateTooltip: "Your membership is active, however will expire at {{date}}. "
         }
     }
 };
