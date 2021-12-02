@@ -26,7 +26,7 @@ from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
-    UserNameHistory, SshKey, Organisation, Collaboration, Service
+    UserNameHistory, SshKey, Organisation, Collaboration, Service, ServiceMembership
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 
@@ -49,6 +49,8 @@ def _user_query():
                  .subqueryload(OrganisationMembership.organisation)) \
         .options(joinedload(User.collaboration_memberships)
                  .subqueryload(CollaborationMembership.collaboration)) \
+        .options(joinedload(User.service_memberships)
+                 .subqueryload(ServiceMembership.service)) \
         .options(joinedload(User.join_requests)
                  .subqueryload(JoinRequest.collaboration)) \
         .options(joinedload(User.aups)) \

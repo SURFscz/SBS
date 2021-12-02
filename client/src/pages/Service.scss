@@ -20,7 +20,8 @@
             flex-direction: column;
         }
 
-        .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error {
+        .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error,
+        div.email-invitations, div.compliance {
             grid-column-start: first;
         }
 
@@ -32,8 +33,12 @@
             border-bottom: 1px solid $blue;
             padding: 25px 0 5px 0;
 
-            &.last {
+            &.first {
                 margin-bottom: 10px;
+
+                &.last {
+                    margin-top: 10px
+                }
             }
         }
 

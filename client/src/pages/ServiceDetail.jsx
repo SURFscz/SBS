@@ -232,6 +232,13 @@ class ServiceDetail extends React.Component {
                                 <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a> : I18n.t("service.none")}</span>
                         </div>
                         <div className="org-attributes">
+                            <span>{I18n.t("service.privacy_policy")}</span>
+                            {service.privacy_policy && <span>
+                                <a href={service.privacy_policy} target="_blank" rel="noopener noreferrer">
+                                    {service.privacy_policy}</a></span>}
+                            {!service.privacy_policy && <span>{I18n.t("service.none")}</span>}
+                        </div>
+                        <div className="org-attributes">
                             <span>{I18n.t("service.accepted_user_policy")}</span>
                             {service.accepted_user_policy && <span>
                                 <a href={service.accepted_user_policy} target="_blank" rel="noopener noreferrer">

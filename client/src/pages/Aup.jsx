@@ -28,7 +28,6 @@ class Aup extends React.Component {
 
     }
 
-
     agreeWith = () => agreeAup().then(res => {
         this.props.refreshUser(() => {
             const url = new URL(res.location);

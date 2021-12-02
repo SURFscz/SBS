@@ -61,6 +61,7 @@ class TestService(AbstractTest):
         service = self.post("/api/services", body={
             "entity_id": "https://new_service",
             "name": "new_service",
+            "privacy_policy": "https://privacy.com",
             "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "ip_networks": [{"network_value": "2001:db8:f00f:bab::/64"}, {"network_value": "192.0.2.0/24"}]
         })

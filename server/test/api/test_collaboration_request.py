@@ -35,6 +35,7 @@ class TestCollaborationRequest(AbstractTest):
         self.login("urn:roger", schac_home_organisation_uuc)
         data = {
             "name": "New Collaboration",
+            "description": "new_collaboration",
             "short_name": "new_COLLABORATION_short_but_still_to_long_for_not_getting_trimmed",
             "message": "pretty please",
             "organisation_id": organisation.id
@@ -55,6 +56,7 @@ class TestCollaborationRequest(AbstractTest):
                    {"eduperson_entitlement": ["urn:example:sbs:allow-create-co"]})
         data = {
             "name": "New Collaboration",
+            "description": "new_collaboration",
             "short_name": "NEW_COLLABORATION_SHORT",
             "message": "pretty please",
             "organisation_id": organisation.id
@@ -79,6 +81,7 @@ class TestCollaborationRequest(AbstractTest):
             res = self.put(f"/api/collaboration_requests/approve/{collaboration_request.id}",
                            body={
                                "name": collaboration_request.name,
+                               "description": "new_collaboration",
                                "short_name": collaboration_request.short_name,
                                "organisation_id": collaboration_request.organisation_id
                            }, with_basic_auth=False)
@@ -122,6 +125,7 @@ class TestCollaborationRequest(AbstractTest):
         self.put(f"/api/collaboration_requests/approve/{collaboration_request.id}",
                  body={
                      "name": collaboration_request.name,
+                     "description": "new_collaboration",
                      "short_name": collaboration_request.short_name,
                      "organisation_id": collaboration_request.organisation_id
                  }, with_basic_auth=False)

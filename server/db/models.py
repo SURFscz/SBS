@@ -9,13 +9,14 @@ from werkzeug.exceptions import BadRequest
 from server.auth.security import current_user_uid
 from server.db.db import db
 from server.db.domain import User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
-    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation
+    Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation, ServiceMembership
 from server.db.logo_mixin import evict_from_cache
 
 deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
                            "join_requests": JoinRequest, "collaborations": Collaboration,
                            "schac_home_organisations": SchacHomeOrganisation,
                            "organisation_memberships": OrganisationMembership, "invitations": Invitation,
+                           "service_memberships": ServiceMembership,
                            "services": Service, "aups": Aup, "ip_networks": IpNetwork, "groups": Group}
 
 forbidden_fields = ["created_at", "updated_at"]

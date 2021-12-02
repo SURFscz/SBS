@@ -44,6 +44,8 @@ class User(Base, db.Model):
                                                 cascade_backrefs=False, passive_deletes=True)
     collaboration_requests = db.relationship("CollaborationRequest", back_populates="requester",
                                              cascade_backrefs=False, passive_deletes=True)
+    service_memberships = db.relationship("ServiceMembership", back_populates="user",
+                                          cascade_backrefs=False, passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="user", cascade_backrefs=False, passive_deletes=True)
     aups = db.relationship("Aup", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
     confirmed_super_user = db.Column("confirmed_super_user", db.Boolean(), nullable=True, default=False)
@@ -272,6 +274,20 @@ class Organisation(Base, db.Model, LogoMixin):
         return len(list(filter(lambda membership: membership.user_id == user_id, self.organisation_memberships))) > 0
 
 
+class ServiceMembership(Base, db.Model):
+    __tablename__ = "service_memberships"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    role = db.Column("role", db.String(length=255), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), primary_key=True)
+    user = db.relationship("User", back_populates="service_memberships")
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"), primary_key=True)
+    service = db.relationship("Service", back_populates="service_memberships")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+
+
 class Service(Base, db.Model, LogoMixin):
     __tablename__ = "services"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
@@ -284,6 +300,7 @@ class Service(Base, db.Model, LogoMixin):
     identity_type = db.Column("identity_type", db.String(length=255), nullable=True)
     abbreviation = db.Column("abbreviation", db.String(length=255), nullable=False)
     uri = db.Column("uri", db.String(length=255), nullable=True)
+    privacy_policy = db.Column("privacy_policy", db.String(length=255), nullable=False)
     accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
     public_visible = db.Column("public_visible", db.Boolean(), nullable=True, default=True)
@@ -307,8 +324,35 @@ class Service(Base, db.Model, LogoMixin):
                                                   cascade="all, delete-orphan", passive_deletes=True)
     service_groups = db.relationship("ServiceGroup", back_populates="service", cascade="all, delete-orphan",
                                      passive_deletes=True)
+    service_memberships = db.relationship("ServiceMembership", back_populates="service",
+                                          cascade="all, delete-orphan", passive_deletes=True)
+    service_invitations = db.relationship("ServiceInvitation", back_populates="service",
+                                          cascade="all, delete-orphan",
+                                          passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+
+    def is_member(self, user_id):
+        return len(list(filter(lambda membership: membership.user_id == user_id, self.service_memberships))) > 0
+
+
+class ServiceInvitation(Base, db.Model):
+    __tablename__ = "service_invitations"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    hash = db.Column("hash", db.String(length=512), nullable=False)
+    message = db.Column("message", db.Text(), nullable=True)
+    invitee_email = db.Column("invitee_email", db.String(length=255), nullable=False)
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    service = db.relationship("Service", back_populates="service_invitations")
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User")
+    accepted = db.Column("accepted", db.Boolean(), nullable=True)
+    denied = db.Column("denied", db.Boolean(), nullable=True)
+    intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
+    expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
 

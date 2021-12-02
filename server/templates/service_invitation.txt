@@ -1,0 +1,34 @@
+{% extends "mail_layout.txt" %}
+{% block title %}SURF service invite{% endblock %}
+{% block content %}
+
+{{ invitation.user.name }} invited you to join service
+{{ invitation.service.name }}.
+Please read below what steps you must take to accept this invitation.
+
+{% if invitation.message is defined and invitation.message != None and invitation.message|length %}
+
+Personal Message from {{ invitation.user.name }}:
+
+    "{{ invitation.message }}"
+
+{% endif %}
+
+Accept invitation:
+To accept this invitation, please click 'Login to accept this invitation'. After logging in you can review and
+accept the invitation and become a member of the service.
+
+If you do not want to accept this invitation, please click 'Decline this invitation' or simply ignore this email.
+The invitation automatically will be suspended after {{ expiry_period }}.
+
+Login to accept this invitation:
+{{ base_url }}/service-invitations/accept/{{ invitation.hash }}
+
+Decline this invitation:
+{{ base_url }}/service-invitations/deny/{{ invitation.hash }}
+
+
+Need help?{{ invitation.user.name }} invited you to join this service.
+    Please contact {{ invitation.user.email }} if you have any questions about this invitation.
+
+{% endblock %}
