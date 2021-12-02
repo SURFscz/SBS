@@ -6,11 +6,19 @@ import time
 from flask import jsonify
 from sqlalchemy.orm import selectinload
 
+from server.cron.shared import obtain_lock
 from server.db.domain import CollaborationRequest, JoinRequest
 from server.db.models import delete
 
+cleanup_non_open_requests_lock_name = "cleanup_non_open_requests_lock_name"
 
-def cleanup_non_open_requests(app):
+
+def _result_container():
+    return {"collaboration_requests": [],
+            "collaboration_join_requests": []}
+
+
+def _do_cleanup_non_open_requests(app):
     with app.app_context():
         cfq = app.app_config.user_requests_retention
 
@@ -51,3 +59,7 @@ def cleanup_non_open_requests(app):
 
         return {"collaboration_requests": collaboration_requests_json,
                 "collaboration_join_requests": collaboration_join_requests_json}
+
+
+def cleanup_non_open_requests(app):
+    return obtain_lock(app, cleanup_non_open_requests_lock_name, _do_cleanup_non_open_requests, _result_container)

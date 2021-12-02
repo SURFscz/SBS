@@ -69,6 +69,5 @@ def _do_suspend_collaboration(app):
                 "collaborations_deleted": jsonify(collaborations_deleted).json}
 
 
-def suspend_collaborations(app, wait_time=3):
-    return obtain_lock(app, collaboration_inactivity_suspension_lock_name, _do_suspend_collaboration, _result_container,
-                       wait_time=wait_time)
+def suspend_collaborations(app):
+    return obtain_lock(app, collaboration_inactivity_suspension_lock_name, _do_suspend_collaboration, _result_container)

@@ -17,7 +17,7 @@ class TestShared(AbstractTest):
         session = db.create_session(options={})()
         try:
             session.execute(text(f"SELECT GET_LOCK('{lock_name}', 1)"))
-            res = method_to_test(self.app, 1)
+            res = method_to_test(self.app)
             for value in res.values():
                 self.assertEqual(0, len(value))
         finally:
