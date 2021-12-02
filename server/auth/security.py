@@ -196,14 +196,18 @@ def confirm_group_member(group_id):
     return count > 0
 
 
+def is_service_admin(service_id):
+    user_id = current_user_id()
+    query = ServiceMembership.query \
+        .options(load_only("user_id")) \
+        .filter(ServiceMembership.user_id == user_id) \
+        .filter(ServiceMembership.service_id == service_id)
+    return query.count() > 0
+
+
 def confirm_service_admin(service_id):
     def override_func():
-        user_id = current_user_id()
-        query = ServiceMembership.query \
-            .options(load_only("user_id")) \
-            .filter(ServiceMembership.user_id == user_id)\
-            .filter(ServiceMembership.service_id == service_id)
-        return query.count() > 0
+        return is_service_admin(service_id)
 
     confirm_write_access(override_func=override_func)
 

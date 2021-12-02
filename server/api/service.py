@@ -8,7 +8,7 @@ from sqlalchemy.orm import load_only, selectinload
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
-    is_organisation_admin_or_manager, is_application_admin
+    is_organisation_admin_or_manager, is_application_admin, is_service_admin
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, User
@@ -122,7 +122,10 @@ def service_by_entity_id():
 @json_endpoint
 def service_by_id(service_id):
     def _user_service():
-        # Every service may be seen by organisation admin, manager or coll admin
+        # Every service may be seen by organisation admin, service admin, manager or coll admin
+        if is_service_admin(service_id):
+            return True
+
         if is_collaboration_admin() or is_organisation_admin_or_manager():
             return True
 
