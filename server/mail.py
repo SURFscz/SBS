@@ -20,7 +20,8 @@ from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
     ACCEPTED_SERVICE_CONNECTTION_REQUEST_MAIL, DENIED_SERVICE_CONNECTTION_REQUEST_MAIL, SUSPEND_NOTIFICATION_MAIL, \
     RESET_MFA_TOKEN_MAIL, COLLABORATION_EXPIRES_WARNING_MAIL, \
     COLLABORATION_EXPIRED_NOTIFICATION_MAIL, COLLABORATION_SUSPENDED_NOTIFICATION_MAIL, \
-    COLLABORATION_SUSPENSION_WARNING_MAIL, MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL, MEMBERSHIP_EXPIRES_WARNING_MAIL
+    COLLABORATION_SUSPENSION_WARNING_MAIL, MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL, MEMBERSHIP_EXPIRES_WARNING_MAIL, \
+    SERVICE_INVITATION_MAIL
 
 
 def _send_async_email(ctx, msg, mail):
@@ -157,6 +158,20 @@ def mail_collaboration_invitation(context, collaboration, recipients, preview=Fa
         subject=f"Invitation to join collaboration {collaboration.name}",
         recipients=recipients,
         template="collaboration_invitation",
+        context=context,
+        preview=preview
+    )
+
+
+def mail_service_invitation(context, service, recipients, preview=False):
+    if not preview:
+        _store_mail(None, SERVICE_INVITATION_MAIL, recipients)
+    context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
+               "service": service}
+    return _do_send_mail(
+        subject=f"Invitation to become service admin for {service.name}",
+        recipients=recipients,
+        template="service_invitation",
         context=context,
         preview=preview
     )

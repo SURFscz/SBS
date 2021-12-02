@@ -15,7 +15,7 @@ import "./Service.scss";
 import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
-import {isEmpty} from "../utils/Utils";
+import {isEmpty, stopEvent} from "../utils/Utils";
 import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -26,6 +26,7 @@ import RadioButton from "../components/redesign/RadioButton";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import EmailField from "../components/EmailField";
 
 class Service extends React.Component {
 
@@ -45,6 +46,7 @@ class Service extends React.Component {
         identity_type: "",
         uri: "",
         accepted_user_policy: "",
+        privacy_policy: "",
         automatic_connection_allowed: false,
         access_allowed_for_all: false,
         non_member_users_access_allowed: false,
@@ -54,7 +56,10 @@ class Service extends React.Component {
         sirtfi_compliant: false,
         contact_email: "",
         ip_networks: [],
-        required: ["name", "entity_id", "abbreviation", "logo"],
+        administrators: [],
+        email: "",
+        message: "",
+        required: ["name", "entity_id", "abbreviation", "privacy_policy", "logo"],
         alreadyExists: {},
         initial: true,
         isNew: true,
@@ -308,10 +313,35 @@ class Service extends React.Component {
         </div>);
     }
 
+    removeMail = email => e => {
+        stopEvent(e);
+        const {administrators} = this.state;
+        const newAdministrators = administrators.filter(currentMail => currentMail !== email);
+        this.setState({administrators: newAdministrators});
+    };
+
+    addEmail = e => {
+        const email = e.target.value;
+        const {administrators} = this.state;
+        const delimiters = [",", " ", ";", "\n", "\t"];
+        let emails;
+        if (!isEmpty(email) && delimiters.some(delimiter => email.indexOf(delimiter) > -1)) {
+            emails = email.replace(/[;\s]/g, ",").split(",").filter(part => part.trim().length > 0 && validEmailRegExp.test(part));
+        } else if (!isEmpty(email) && validEmailRegExp.test(email.trim())) {
+            emails = [email];
+        }
+        if (isEmpty(emails)) {
+            this.setState({email: ""});
+        } else {
+            const uniqueEmails = [...new Set(administrators.concat(emails))];
+            this.setState({email: "", administrators: uniqueEmails});
+        }
+    };
+
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, invalidInputs, contactEmailRequired,
-                        accepted_user_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                        research_scholarship_compliant, config, ip_networks, logo) => {
+                        accepted_user_policy, privacy_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+                        research_scholarship_compliant, config, ip_networks, administrators, message, email, logo) => {
         const serviceRequestUrlValid = !isEmpty(uri) && automatic_connection_allowed;
         const serviceRequestUrl = serviceRequestUrlValid ? `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(uri)}` :
             I18n.t("service.service_requestError");
@@ -378,6 +408,18 @@ class Service extends React.Component {
                 })}/>}
                 {(!initial && isEmpty(abbreviation)) && <ErrorIndicator msg={I18n.t("service.required", {
                     attribute: I18n.t("service.abbreviation").toLowerCase()
+                })}/>}
+
+                <InputField value={privacy_policy}
+                            name={I18n.t("service.privacy_policy")}
+                            placeholder={I18n.t("service.privacy_policyPlaceholder")}
+                            onChange={e => this.setState({privacy_policy: e.target.value})}
+                            error={alreadyExists.privacy_policy || (!initial && isEmpty(privacy_policy))}
+                            toolTip={I18n.t("service.privacy_policyTooltip")}
+                            externalLink={true}
+                            disabled={!isAdmin}/>
+                {(!initial && isEmpty(privacy_policy)) && <ErrorIndicator msg={I18n.t("service.required", {
+                    attribute: I18n.t("service.privacy_policy").toLowerCase()
                 })}/>}
 
                 {!isNew && <InputField value={serviceRequestUrl}
@@ -455,26 +497,44 @@ class Service extends React.Component {
                             disabled={!isAdmin}/>
 
                 {this.renderIpNetworks(ip_networks, isAdmin)}
+                <div className="compliance">
+                    <h1 className="section-separator first">{I18n.t("service.compliancy")}</h1>
 
-                <h1 className="section-separator last">{I18n.t("service.compliancy")}</h1>
+                    <RadioButton label={I18n.t("service.sirtfiCompliant")}
+                                 name={"sirtfi_compliant"}
+                                 value={sirtfi_compliant}
+                                 tooltip={I18n.t("service.sirtfiCompliantTooltip")}
+                                 onChange={val => this.setState({sirtfi_compliant: val})}/>
 
-                <RadioButton label={I18n.t("service.sirtfiCompliant")}
-                             name={"sirtfi_compliant"}
-                             value={sirtfi_compliant}
-                             tooltip={I18n.t("service.sirtfiCompliantTooltip")}
-                             onChange={val => this.setState({sirtfi_compliant: val})}/>
+                    <RadioButton label={I18n.t("service.codeOfConductCompliant")}
+                                 name={"code_of_conduct_compliant"}
+                                 value={code_of_conduct_compliant}
+                                 tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
+                                 onChange={val => this.setState({code_of_conduct_compliant: val})}/>
 
-                <RadioButton label={I18n.t("service.codeOfConductCompliant")}
-                             name={"code_of_conduct_compliant"}
-                             value={code_of_conduct_compliant}
-                             tooltip={I18n.t("service.codeOfConductCompliantTooltip")}
-                             onChange={val => this.setState({code_of_conduct_compliant: val})}/>
+                    <RadioButton label={I18n.t("service.researchScholarshipCompliant")}
+                                 name={"research_scholarship_compliant"}
+                                 value={research_scholarship_compliant}
+                                 tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
+                                 onChange={val => this.setState({research_scholarship_compliant: val})}/>
+                </div>
+                {isNew &&
+                <div className="email-invitations">
+                    <h1 className="section-separator first last">{I18n.t("service.invitations")}</h1>
 
-                <RadioButton label={I18n.t("service.researchScholarshipCompliant")}
-                             name={"research_scholarship_compliant"}
-                             value={research_scholarship_compliant}
-                             tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
-                             onChange={val => this.setState({research_scholarship_compliant: val})}/>
+                    <EmailField value={email}
+                                onChange={e => this.setState({email: e.target.value})}
+                                addEmail={this.addEmail}
+                                removeMail={this.removeMail}
+                                name={I18n.t("invitation.invitees")}
+                                isAdmin={true}
+                                emails={administrators}/>
+                </div>}
+                {isNew && <InputField value={message} onChange={e => this.setState({message: e.target.value})}
+                                      placeholder={I18n.t("collaboration.messagePlaceholder")}
+                                      name={I18n.t("collaboration.message")}
+                                      toolTip={I18n.t("collaboration.messageTooltip")}
+                                      multiline={true}/>}
 
                 {(isNew && isAdmin) &&
                 <section className="actions">
@@ -508,6 +568,7 @@ class Service extends React.Component {
             description,
             uri,
             accepted_user_policy,
+            privacy_policy,
             contact_email,
             confirmationDialogAction,
             leavePage,
@@ -521,6 +582,7 @@ class Service extends React.Component {
             code_of_conduct_compliant,
             research_scholarship_compliant,
             ip_networks,
+            administrators, message, email,
             logo,
             warning,
             loading
@@ -550,9 +612,9 @@ class Service extends React.Component {
                                         question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
 
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
-                        access_allowed_for_all, non_member_users_access_allowed, contact_email, invalidInputs, contactEmailRequired, accepted_user_policy,
+                        access_allowed_for_all, non_member_users_access_allowed, contact_email, invalidInputs, contactEmailRequired, accepted_user_policy, privacy_policy,
                         isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                        research_scholarship_compliant, config, ip_networks, logo)}
+                        research_scholarship_compliant, config, ip_networks, administrators, message, email, logo)}
                 </div>
             </>);
     };

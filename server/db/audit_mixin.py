@@ -96,6 +96,8 @@ parent_configuration = {
     "join_requests": ("collaboration_id", "collaborations"),
     "invitations": ("collaboration_id", "collaborations"),
     "organisation_invitations": ("organisation_id", "organisations"),
+    "service_invitations": ("service_id", "services"),
+    "service_memberships": ("service_id", "services"),
     "api_keys": ("organisation_id", "organisations"),
     "schac_home_organisations": ("organisation_id", "organisations"),
     "collaboration_requests": ("organisation_id", "organisations"),

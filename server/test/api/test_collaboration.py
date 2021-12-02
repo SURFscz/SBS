@@ -70,6 +70,7 @@ class TestCollaboration(AbstractTest):
             collaboration = self.post("/api/collaborations",
                                       body={
                                           "name": "new_collaboration",
+                                          "description": "new_collaboration",
                                           "organisation_id": organisation_id,
                                           "administrators": ["the@ex.org", "that@ex.org"],
                                           "short_name": "new_short_name",
@@ -93,6 +94,7 @@ class TestCollaboration(AbstractTest):
         collaboration = self.post("/api/collaborations",
                                   body={
                                       "name": "new_collaboration",
+                                      "description": "new_collaboration",
                                       "organisation_id": organisation_id,
                                       "administrators": ["the@ex.org", "that@ex.org"],
                                       "short_name": "new_short_name",
@@ -108,6 +110,7 @@ class TestCollaboration(AbstractTest):
         collaboration = self.post("/api/collaborations",
                                   body={
                                       "name": "new_collaboration",
+                                      "description": "new_collaboration",
                                       "organisation_id": organisation_id,
                                       "administrators": [],
                                       "short_name": "new_short_name",
@@ -130,6 +133,7 @@ class TestCollaboration(AbstractTest):
         self.post("/api/collaborations",
                   body={
                       "name": "new_collaboration",
+                      "description": "new_collaboration",
                       "administrators": ["the@ex.org", "that@ex.org"],
                       "short_name": "new_short_name"
                   }, with_basic_auth=False,
@@ -141,6 +145,7 @@ class TestCollaboration(AbstractTest):
         self.post("/api/collaborations",
                   body={
                       "name": "new_collaboration",
+                      "description": "new_collaboration",
                       "organisation_id": organisation_id
                   },
                   with_basic_auth=False,
@@ -150,6 +155,7 @@ class TestCollaboration(AbstractTest):
         res = self.post("/api/collaborations/v1/restricted",
                         body={
                             "name": "new_collaboration",
+                            "description": "new_collaboration",
                             "administrator": "harry",
                             "short_name": "short_org_name",
                             "connected_services": [service_network_entity_id,
@@ -181,6 +187,7 @@ class TestCollaboration(AbstractTest):
         res = self.post("/api/collaborations/v1/restricted",
                         body={
                             "name": "new_collaboration",
+                            "description": "new_collaboration",
                             "administrator": "mdoe",
                             "short_name": "short_collab_name",
                             "connected_services": [service_cloud_entity_id]
@@ -210,6 +217,7 @@ class TestCollaboration(AbstractTest):
         res = self.post("/api/collaborations/v1/restricted",
                         body={
                             "name": "new_collaboration",
+                            "description": "new_collaboration",
                             "administrator": "nope"
                         },
                         with_basic_auth=False,
@@ -223,6 +231,7 @@ class TestCollaboration(AbstractTest):
         self.post("/api/collaborations/v1/restricted",
                   body={
                       "name": "new_collaboration",
+                      "description": "new_collaboration",
                       "administrator": "harry",
                       "short_name": "short_org_name",
                       "connected_services": []
@@ -497,6 +506,7 @@ class TestCollaboration(AbstractTest):
                                     headers={"Authorization": f"Bearer {uuc_secret}"},
                                     data=json.dumps({
                                         "name": "new_collaboration",
+                                        "description": "new_collaboration",
                                         "administrators": ["the@ex.org", "that@ex.org"],
                                         "short_name": "new_short_name"
                                     }),

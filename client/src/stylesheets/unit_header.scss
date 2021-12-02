@@ -112,7 +112,7 @@ div.org-attributes-container-grid, div.org-attributes-container-flex {
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
-                max-width: 660px;
+                max-width: 480px;
 
                 @media (max-width: $medium) {
                     max-width: 400px;

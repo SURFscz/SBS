@@ -11,6 +11,8 @@ ORGANISATION_INVITATION_MAIL = "organisation_invitation_mail"
 
 COLLABORATION_INVITATION_MAIL = "collaboration_invitation_mail"
 
+SERVICE_INVITATION_MAIL = "service_invitation_mail"
+
 DENIED_JOIN_REQUEST_MAIL = "denied_join_request_mail"
 
 ACCEPTED_JOIN_REQUEST_MAIL = "accepted_join_request_mail"

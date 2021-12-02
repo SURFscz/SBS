@@ -32,7 +32,16 @@ div.collaboration-about-mod {
     }
 
     div.services {
-        width: 50%;
+        width: 65%;
+
+        div.service-links {
+            display: flex;
+            flex-direction: column;
+            min-width: 190px;
+
+            font-size: 15px;
+
+        }
     }
 
     @media (max-width: $tablet-max) {
@@ -53,12 +62,13 @@ div.collaboration-about-mod {
 
     ul.services li {
         display: flex;
-        padding: 6px 10px;
+        padding: 7px 10px;
         border: 1px solid $lighter-grey;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
         align-items: center;
         width: 100%;
+
         &.uri {
             cursor: pointer;
             padding: 4px 10px;
@@ -102,7 +112,7 @@ div.collaboration-about-mod {
         align-items: center;
         width: 100%;
         margin-top: 15px;
-        max-width: 640px;
+        max-width: 680px;
 
         a {
             text-decoration: none;
@@ -135,7 +145,7 @@ div.collaboration-about-mod {
         margin: auto 0px;
 
         svg {
-            width: 320px;
+            width: 280px;
             height: auto;
         }
     }

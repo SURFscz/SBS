@@ -643,7 +643,7 @@ class CollaborationDetail extends React.Component {
                             dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
                             actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}>
             <p>{collaboration.description}</p>
-            <div className="org-attributes-container-flex">
+            <div className="org-attributes-container-grid">
                 <div className="org-attributes">
                     <span className="contains-copy">
                         {collaboration.disable_join_requests && I18n.t("collaboration.noJoinRequests")}

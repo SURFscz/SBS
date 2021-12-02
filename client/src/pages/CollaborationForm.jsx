@@ -50,7 +50,7 @@ class CollaborationForm extends React.Component {
             disclose_email_information: true,
             disclose_member_information: true,
             disable_join_requests: false,
-            required: ["name", "short_name", "organisation", "logo"],
+            required: ["name","description", "short_name", "organisation", "logo"],
             alreadyExists: {},
             organisation: {},
             organisations: [],
@@ -531,8 +531,12 @@ class CollaborationForm extends React.Component {
 
                     <InputField value={description}
                                 onChange={e => this.setState({description: e.target.value})}
+                                error={alreadyExists.description || (!initial && isEmpty(description))}
                                 placeholder={I18n.t("collaboration.descriptionPlaceholder")} multiline={true}
                                 name={I18n.t("collaboration.description")}/>
+                    {(!initial && isEmpty(description)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
+                        attribute: I18n.t("collaboration.description").toLowerCase()
+                    })}/>}
 
                     <InputField value={website_url}
                                 onChange={e => this.setState({website_url: e.target.value})}

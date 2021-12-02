@@ -313,9 +313,13 @@ class CollaborationRequest extends React.Component {
 
                         <InputField value={collaborationRequest.description}
                                     onChange={this.updateState("description")}
+                                    error={alreadyExists.description || (!initial && isEmpty(collaborationRequest.description))}
                                     placeholder={I18n.t("collaboration.descriptionPlaceholder")}
                                     disabled={!isOpen}
                                     name={I18n.t("collaboration.description")}/>
+                        {(!initial && isEmpty(collaborationRequest.description)) && <ErrorIndicator msg={I18n.t("collaboration.required", {
+                            attribute: I18n.t("collaboration.description").toLowerCase()
+                        })}/>}
 
                         <InputField value={collaborationRequest.accepted_user_policy}
                                     onChange={this.updateState("accepted_user_policy")}

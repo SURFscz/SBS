@@ -38,6 +38,7 @@ from server.api.plsc import plsc_api
 from server.api.service import service_api
 from server.api.service_connection_request import service_connection_request_api
 from server.api.service_group import service_group_api
+from server.api.service_invitation import service_invitations_api
 from server.api.system import system_api
 from server.api.user import user_api
 from server.api.user_saml import user_saml_api
@@ -124,6 +125,7 @@ app.register_blueprint(mock_user_api)
 app.register_blueprint(plsc_api)
 app.register_blueprint(image_api)
 app.register_blueprint(service_group_api)
+app.register_blueprint(service_invitations_api)
 
 app.register_error_handler(404, page_not_found)
 
