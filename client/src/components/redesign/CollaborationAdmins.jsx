@@ -179,10 +179,6 @@ class CollaborationAdmins extends React.Component {
             updateCollaborationMembershipExpiryDate(collaboration.id, member.id, expiryDateNbr)
                 .then(() => {
                     this.props.refresh(this.componentDidMount);
-                    setFlash(I18n.t("collaborationDetail.flash.memberExpiryDateUpdated", {
-                        name: member.user.name,
-                        expiryDate: expiryDate ? moment(expiryDate).format("LL") : ""
-                    }));
                 }).catch(() => {
                 this.handle404("member");
             });
@@ -513,6 +509,7 @@ class CollaborationAdmins extends React.Component {
                                   disabled={!adminOfCollaboration}
                                   onChange={e => this.updateExpiryDate(entity, e, true)}
                                   allowNull={true}
+                                  performValidateOnBlur={false}
                                   isOpen={isOpen}
                                   showYearDropdown={true}/>}
             {isOpen && <div className="chevron-container" onClick={() => this.toggleExpirationDateField(entity)}>
