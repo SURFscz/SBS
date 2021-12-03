@@ -1,8 +1,11 @@
 # -*- coding: future_fstrings -*-
-from server.db.domain import Service, Organisation, Collaboration
+import time
+
+from server.db.domain import Service, Organisation, Collaboration, ServiceInvitation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name, \
-    service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name, service_storage_name
+    service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name, service_storage_name, \
+    service_cloud_name
 
 
 class TestService(AbstractTest):
@@ -44,6 +47,11 @@ class TestService(AbstractTest):
         logo_data = self.client.get(service["logo"]).data
         self.assertEqual(logo, logo_data)
 
+    def test_find_by_id_service_admin(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.login("urn:james")
+        self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
+
     def test_find_by_id_api_call(self):
         service = self.find_entity_by_name(Service, uuc_scheduler_name)
         service = self.get(f"api/services/{service.id}")
@@ -58,19 +66,44 @@ class TestService(AbstractTest):
 
     def test_service_new(self):
         self.login()
-        service = self.post("/api/services", body={
-            "entity_id": "https://new_service",
-            "name": "new_service",
-            "privacy_policy": "https://privacy.com",
-            "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "ip_networks": [{"network_value": "2001:db8:f00f:bab::/64"}, {"network_value": "192.0.2.0/24"}]
-        })
 
-        self.assertIsNotNone(service["id"])
-        self.assertEqual("new_service", service["name"])
-        self.assertEqual("qwoookaaaaaaaaaa", service["abbreviation"])
-        self.assertEqual(2, len(service["ip_networks"]))
-        self.assertEqual("2001:db8:f00f:bab::/64", service["ip_networks"][0]["network_value"])
+        mail = self.app.mail
+        with mail.record_messages() as outbox:
+            service = self.post("/api/services", body={
+                "entity_id": "https://new_service",
+                "name": "new_service",
+                "privacy_policy": "https://privacy.com",
+                "administrators": ["the@ex.org"],
+                "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "ip_networks": [{"network_value": "2001:db8:f00f:bab::/64"}, {"network_value": "192.0.2.0/24"}]
+            })
+            self.assertTrue(
+                "You have been invited by urn:john to become admin of service 'new_service'" in outbox[0].html)
+
+            self.assertIsNotNone(service["id"])
+            self.assertEqual("new_service", service["name"])
+            self.assertEqual("qwoookaaaaaaaaaa", service["abbreviation"])
+            self.assertEqual(2, len(service["ip_networks"]))
+            self.assertEqual("2001:db8:f00f:bab::/64", service["ip_networks"][0]["network_value"])
+
+    def test_service_invites(self):
+        pre_count = ServiceInvitation.query.count()
+        self.login("urn:john")
+        service_id = self._find_by_name()["id"]
+        mail = self.app.mail
+        with mail.record_messages() as outbox:
+            self.put("/api/services/invites", body={
+                "service_id": service_id,
+                "administrators": ["new@example.org", "pop@example.org"],
+                "message": "Please join",
+                "expiry_date": int(time.time())
+            })
+            post_count = ServiceInvitation.query.count()
+            self.assertEqual(2, len(outbox))
+            self.assertEqual(pre_count + 2, post_count)
+            invitation = ServiceInvitation.query.filter(ServiceInvitation.invitee_email == "new@example.org").first()
+            self.assertEqual("admin", invitation.intended_role)
+            self.assertIsNotNone(invitation.expiry_date)
 
     def test_service_update(self):
         service = self._find_by_name()

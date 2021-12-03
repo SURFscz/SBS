@@ -1,19 +1,21 @@
 # -*- coding: future_fstrings -*-
 import ipaddress
 import urllib.parse
+from secrets import token_urlsafe
 
-from flask import Blueprint, request as current_request, g as request_context, jsonify
+from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
-    is_organisation_admin_or_manager, is_application_admin, is_service_admin
+    is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin
 from server.db.db import db
-from server.db.defaults import STATUS_ACTIVE, cleanse_short_name
-from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, User
+from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date
+from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
+    User, ServiceInvitation
 from server.db.models import update, save, delete
-from server.mail import mail_platform_admins
+from server.mail import mail_platform_admins, mail_service_invitation
 
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
@@ -218,13 +220,60 @@ def save_service():
     data["status"] = STATUS_ACTIVE
     cleanse_short_name(data, "abbreviation")
 
+    # Before the JSON is cleaned in the save method
+    administrators = data.get("administrators", [])
+    message = data.get("message", None)
+
     res = save(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
-    service.ip_networks
+
+    user = User.query.get(current_user_id())
+    for administrator in administrators:
+        invitation = ServiceInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+                                       service_id=service.id, user=user, intended_role="admin",
+                                       expiry_date=default_expiry_date(),
+                                       created_by=user.uid)
+        invitation = db.session.merge(invitation)
+        mail_service_invitation({
+            "salutation": "Dear",
+            "invitation": invitation,
+            "base_url": current_app.app_config.base_url,
+            "wiki_link": current_app.app_config.wiki_link,
+            "recipient": administrator
+        }, service, [administrator])
 
     mail_platform_admins(service)
-
+    service.ip_networks
     return res
+
+
+@service_api.route("/invites", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def service_invites():
+    data = current_request.get_json()
+    service_id = data["service_id"]
+    confirm_service_admin(service_id)
+
+    administrators = data.get("administrators", [])
+    message = data.get("message", None)
+    intended_role = "admin"
+
+    service = Service.query.get(service_id)
+    user = User.query.get(current_user_id())
+
+    for administrator in administrators:
+        invitation = ServiceInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+                                       service=service, user=user, created_by=user.uid,
+                                       intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data))
+        invitation = db.session.merge(invitation)
+        mail_service_invitation({
+            "salutation": "Dear",
+            "invitation": invitation,
+            "base_url": current_app.app_config.base_url,
+            "wiki_link": current_app.app_config.wiki_link,
+            "recipient": administrator
+        }, service, [administrator])
+    return None, 201
 
 
 def _validate_ip_networks(data):
