@@ -1541,7 +1541,7 @@ I18n.translations.nl = {
         orgManager: "organisatiemanager",
         coAdmin: "beheerder",
         coMember: "lid",
-        serviceUser: "dienstgebruiker",
+        serviceAdmin: "dienstbeheerder",
         user: "gebruiker"
     },
     actionRoles: {

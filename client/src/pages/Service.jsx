@@ -27,6 +27,7 @@ import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import EmailField from "../components/EmailField";
+import {isUserServiceAdmin} from "../utils/UserRole";
 
 class Service extends React.Component {
 
@@ -69,7 +70,8 @@ class Service extends React.Component {
         confirmationDialogAction: () => true,
         cancelDialogAction: () => true,
         warning: false,
-        loading: true
+        loading: true,
+        isServiceAdmin: false
     });
 
     UNSAFE_componentWillReceiveProps = nextProps => {
@@ -83,8 +85,8 @@ class Service extends React.Component {
         const {isNew} = this.props;
         if (params.id || isNew) {
             if (isNew || forceNew) {
-                const isAdmin = this.props.user.admin;
-                if (!isAdmin) {
+                const {user} = this.props;
+                if (!user.admin) {
                     this.props.history.push("/404");
                 } else {
                     this.addIpAddress();
@@ -99,10 +101,12 @@ class Service extends React.Component {
             } else {
                 serviceById(params.id)
                     .then(res => {
+                        const {user} = this.props;
                         this.setState({
                             ...res,
                             service: res,
                             isNew: false,
+                            isServiceAdmin: isUserServiceAdmin(user, res.id),
                             loading: false
                         }, () => {
                             const {ip_networks} = this.state.service;

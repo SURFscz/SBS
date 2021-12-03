@@ -8,7 +8,7 @@ import {ReactComponent as MembersIcon} from "../icons/single-neutral.svg";
 import {ReactComponent as PlatformAdminIcon} from "../icons/users.svg";
 import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {AppStore} from "../stores/AppStore";
-import {rawGlobalUserRole, ROLES} from "../utils/UserRole";
+import {isUserServiceAdmin, rawGlobalUserRole, ROLES} from "../utils/UserRole";
 import Tabs from "../components/Tabs";
 import Organisations from "../components/redesign/Organisations";
 import UnitHeader from "../components/redesign/UnitHeader";
@@ -44,11 +44,12 @@ class Home extends React.Component {
         const role = rawGlobalUserRole(user);
         const nbrOrganisations = user.organisation_memberships.length;
         const nbrCollaborations = user.collaboration_memberships.length;
+        const nbrServices = user.service_memberships.length;
         if (user.needsSuperUserConfirmation) {
             this.props.history.push("/confirmation");
             return;
         }
-        const canStayInHome = !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests);
+        const canStayInHome = !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests) || nbrServices > 0;
         switch (role) {
             case ROLES.PLATFORM_ADMIN:
                 tabs.push(this.getOrganisationsTab(user.total_organisations));
@@ -91,6 +92,14 @@ class Home extends React.Component {
         const tabSuggestion = this.addRequestsTabs(user, tabs, tab);
         if (role === ROLES.USER) {
             tab = tabSuggestion;
+        }
+        if (isUserServiceAdmin(user)) {
+            if (nbrServices === 1) {
+                setTimeout(() => this.props.history.push(`/services/${user.service_memberships[0].service_id}`), 50);
+            } else {
+                tabs.push(this.getServicesTab(nbrServices));
+            }
+
         }
         AppStore.update(s => {
             s.breadcrumb.paths = [

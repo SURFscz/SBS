@@ -1541,7 +1541,7 @@ I18n.translations.en = {
         orgManager: "organisation manager",
         coAdmin: "admin",
         coMember: "member",
-        serviceUser: "service user",
+        serviceAdmin: "service admin",
         user: "user"
     },
     actionRoles: {
