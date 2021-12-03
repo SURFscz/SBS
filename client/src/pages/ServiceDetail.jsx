@@ -9,6 +9,8 @@ import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connecti
 import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
+import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
+
 import Collaborations from "../components/redesign/Collaborations";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
@@ -17,6 +19,7 @@ import {actionMenuUserRole} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
 import ServiceGroups from "../components/redesign/ServiceGroups";
+import ServiceAdmins from "../components/redesign/ServiceAdmins";
 
 class ServiceDetail extends React.Component {
 
@@ -46,9 +49,12 @@ class ServiceDetail extends React.Component {
                         const tabs = [
                             this.getOrganisationsTab(service, organisations),
                             this.getCollaborationsTab(service),
-                            this.getServiceGroupsTab(service),
-                            this.getServiceConnectionRequest(service, serviceConnectionRequests)
+                            this.getAdminsTab(service),
+                            this.getServiceGroupsTab(service)
                         ];
+                        if (serviceConnectionRequests.length > 0) {
+                            tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
+                        }
                         this.afterFetch(params, service, organisations, serviceConnectionRequests, tabs);
                     }).catch(e => this.props.history.push("/404"));
             } else {
@@ -95,8 +101,11 @@ class ServiceDetail extends React.Component {
                 const tabs = [
                     this.getOrganisationsTab(service, organisations),
                     this.getCollaborationsTab(service),
-                    this.getServiceGroupsTab(service),
-                    this.getServiceConnectionRequest(service, serviceConnectionRequests)];
+                    this.getAdminsTab(service),
+                    this.getServiceGroupsTab(service)];
+                if (serviceConnectionRequests.length > 0) {
+                    tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
+                }
                 this.setState({
                     service: service,
                     serviceConnectionRequests: serviceConnectionRequests,
@@ -110,10 +119,21 @@ class ServiceDetail extends React.Component {
 
     getOrganisationsTab = (service, organisations) => {
         return (<div key="organisations" name="organisations"
-                     label={I18n.t("home.tabs.serviceOrganisations", {count:organisations.length})}
+                     label={I18n.t("home.tabs.serviceOrganisations", {count: organisations.length})}
                      icon={<OrganisationsIcon/>}>
             <ServiceOrganisations {...this.props} refresh={this.refresh} service={service}
                                   organisations={organisations}/>
+        </div>)
+    }
+
+    getAdminsTab = service => {
+        const openInvitations = (service.service_invitations || []).length;
+        return (<div key="admins" name="admins"
+                     label={I18n.t("home.tabs.serviceAdmins", {count: service.service_memberships.length})}
+                     icon={<UserAdminIcon/>}
+                     notifier={openInvitations > 0 ? openInvitations : null}>
+            <ServiceAdmins {...this.props} service={service}
+                           refresh={this.refresh}/>
         </div>)
     }
 
@@ -144,7 +164,7 @@ class ServiceDetail extends React.Component {
             </div>);
     }
 
-    getServiceConnectionRequest = (service, serviceConnectionRequests) => {
+    getServiceConnectionRequestTab = (service, serviceConnectionRequests) => {
         const nbr = (serviceConnectionRequests || []).length;
         return (
             <div key="serviceConnectionRequests" name="serviceConnectionRequests"

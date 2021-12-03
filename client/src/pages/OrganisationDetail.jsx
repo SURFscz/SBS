@@ -122,7 +122,7 @@ class OrganisationDetail extends React.Component {
         return tabs.filter(tab => tab !== null);
     }
 
-    getOrganisationAdminsTab = (organisation) => {
+    getOrganisationAdminsTab = organisation => {
         const openInvitations = (organisation.organisation_invitations || []).length;
         return (<div key="admins" name="admins"
                      label={I18n.t("home.tabs.orgAdmins", {count: organisation.organisation_memberships.length})}

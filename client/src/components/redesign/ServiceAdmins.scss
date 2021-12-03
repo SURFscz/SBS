@@ -17,7 +17,7 @@
         margin-bottom: 12px;
     }
 
-    table.orgMembers {
+    table.serviceAdmins {
 
         thead {
             th {
@@ -50,11 +50,6 @@
 
         tbody {
             td {
-                &.check svg.information-circle {
-                    width: 20px;
-                    height: 20px;
-                }
-
                 &.status {
                     text-align: center;
                 }

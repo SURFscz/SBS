@@ -1,26 +1,27 @@
 # -*- coding: future_fstrings -*-
 import ipaddress
+import string
 import urllib.parse
 from secrets import token_urlsafe
-
+import random
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
-
+from passlib.hash import sha512_crypt
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
-    User, ServiceInvitation
+    User, ServiceInvitation, ServiceMembership
 from server.db.models import update, save, delete
 from server.mail import mail_platform_admins, mail_service_invitation
 
 service_api = Blueprint("service_api", __name__, url_prefix="/api/services")
 
 
-def is_org_member():
+def _is_org_member():
     user_id = current_user_id()
     return OrganisationMembership.query \
                .options(load_only("id")) \
@@ -32,6 +33,14 @@ def _services_from_query(count_only, query, service_id):
     if service_id:
         query = query.filter(Service.id == service_id)
     return query.count() if count_only else query.all()
+
+
+def _generate_password():
+    return "".join(random.sample(string.ascii_lowercase + string.digits + "_,./~=+@*-", k=32))
+
+
+def _hash_password(password):
+    sha512_crypt.using(rounds=100_000).hash(password);
 
 
 # Services connected to a collaboration where the user is a member of
@@ -148,11 +157,13 @@ def service_by_id(service_id):
     query = Service.query
 
     api_call = request_context.is_authorized_api_call
-    add_admin_info = not api_call and is_application_admin()
+    add_admin_info = not api_call and (is_application_admin() or is_service_admin(service_id))
     if add_admin_info:
         query = query \
             .options(selectinload(Service.collaborations).selectinload(Collaboration.organisation)) \
+            .options(selectinload(Service.service_memberships).selectinload(ServiceMembership.user)) \
             .options(selectinload(Service.organisations)) \
+            .options(selectinload(Service.service_invitations)) \
             .options(selectinload(Service.allowed_organisations)) \
             .options(selectinload(Service.ip_networks)) \
             .options(selectinload(Service.service_groups))
@@ -184,7 +195,7 @@ def service_by_id(service_id):
 @json_endpoint
 def all_services():
     def override_func():
-        return is_collaboration_admin() or is_org_member()
+        return is_collaboration_admin() or _is_org_member()
 
     confirm_write_access(override_func=override_func)
 
