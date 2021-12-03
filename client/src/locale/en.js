@@ -78,6 +78,7 @@ I18n.translations.en = {
             platformAdmins: "Platform admins ({{count}})",
             orgAdmins: "Organisation admins ({{count}})",
             orgServices: "Services ({{count}})",
+            serviceAdmins: "Admins ({{count}})",
             orgCollaborations: "Collaborations ({{count}})",
             coServices: "Services ({{count}})",
             coAdmins: "Admins ({{count}})",
@@ -481,7 +482,11 @@ I18n.translations.en = {
             on: "On",
             off: "Off"
         },
-
+        serviceAdmins: {
+            searchPlaceHolder: "Search for service admins..",
+            noEntities: "There are no service admins",
+            new: "Invite admin(s)",
+        }
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -1757,6 +1762,18 @@ I18n.translations.en = {
             activeTooltip: "Your membership has no expiration date.",
             expiredTooltip: "Your membership has expired on {{date}}. Please contact the admins of this collaboration for help. ",
             activeWithExpiryDateTooltip: "Your membership is active, however will expire at {{date}}. "
+        }
+    },
+    serviceDetail: {
+        deleteMemberConfirmation: "Are you sure you want to delete these service admins and invitations?",
+        resendInvitations: "Are you sure you want to resend all selected expired invitation?",
+        flash: {
+            entitiesDeleted: "Membership / invitations are successfully deleted",
+            invitesResend: "Invitations for service {{name}} are resend.",
+        },
+        gone: {
+            member: "This membership does no longer exists. After closing this popup the memberships will be refreshed.",
+            invitation: "This invitation has already been accepted / rejected and does no longer exists. After closing this popup the invitations will be refreshed."
         }
     }
 };

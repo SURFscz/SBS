@@ -49,7 +49,6 @@ export function isUserAllowed(minimalRole, user, organisation_id = null, collabo
     if (memberCollaborationMembership) {
         return ROLES_HIERARCHY[ROLES.COLL_MEMBER] <= ROLES_HIERARCHY[minimalRole];
     }
-
     return false;
 }
 
@@ -74,6 +73,10 @@ export function rawGlobalUserRole(user, organisation, collaboration) {
         return ROLES.COLL_MEMBER;
     }
     return ROLES.USER;
+}
+
+export function isUserServiceAdmin(user, service) {
+    return user.service_memberships.some(m => m.service_id === service.id)
 }
 
 export function globalUserRole(user) {

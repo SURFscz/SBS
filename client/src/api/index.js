@@ -711,3 +711,38 @@ export function updateServiceGroup(group) {
 export function deleteServiceGroup(id) {
     return fetchDelete(`/api/servicegroups/${id}`)
 }
+
+//ServiceMemberships
+export function deleteServiceMembership(serviceId, userId, showErrorDialog = true) {
+    return fetchDelete(`/api/service_memberships/${serviceId}/${userId}`, showErrorDialog)
+}
+
+//ServiceInvitations
+export function serviceInvitationByHash(hash) {
+    return fetchJson(`/api/service_invitations/find_by_hash?hash=${hash}`, {}, {}, false);
+}
+
+export function serviceInvitationAccept(serviceInvitation) {
+    return fetchJson("/api/service_invitations/accept", {
+        method: "put",
+        body: JSON.stringify(serviceInvitation)
+    }, {}, false);
+}
+
+export function serviceInvitationDecline(serviceInvitation) {
+    return postPutJson("/api/service_invitations/decline", serviceInvitation, "put");
+}
+
+export function serviceInvitationResend(serviceInvitation, showErrorDialog = true) {
+    return postPutJson("/api/service_invitations/resend", serviceInvitation, "put", showErrorDialog);
+}
+
+export function serviceInvitationBulkResend(serviceInvitations, showErrorDialog = true) {
+    return postPutJson("/api/service_invitations/resend_bulk", serviceInvitations, "put", showErrorDialog);
+}
+
+export function serviceInvitationDelete(serviceInvitationId, showErrorDialog = true) {
+    return fetchDelete(`/api/service_invitations/${serviceInvitationId}`, showErrorDialog);
+}
+
+

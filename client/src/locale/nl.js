@@ -78,6 +78,7 @@ I18n.translations.nl = {
             platformAdmins: "Platformbeheerders ({{count}})",
             orgAdmins: "Organisatiebeheerders ({{count}})",
             orgServices: "Diensten ({{count}})",
+            serviceAdmins: "Beheerders ({{count}})",
             orgCollaborations: "Samenwerkingen ({{count}})",
             coServices: "Diensten ({{count}})",
             coAdmins: "Beheerders ({{count}})",
@@ -481,7 +482,11 @@ I18n.translations.nl = {
             on: "Aan",
             off: "Uit"
         },
-
+        serviceAdmins: {
+            searchPlaceHolder: "Zoek naar dienst beheerders...",
+            noEntities: "Er zijn geen dienst beheerders",
+            new: "Nodig beheerders uit",
+        }
     },
     user: {
         titleUpdate: "Werk de sleutels in je gebruikersprofiel bij",
@@ -1758,7 +1763,20 @@ I18n.translations.nl = {
             expiredTooltip: "Je lidmaatschap is verlopen op {{date}}. Neem contact op met de beheerder van deze samenwerking om dit te verhelpen. ",
             activeWithExpiryDateTooltip: "je lidmaatschap is actief, maar verloopt op {{date}}. "
         }
+    },
+    serviceDetail: {
+        deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde leden en uitnodigingen wilt verwijderen?",
+        resendInvitations: "Weet je zeker dat je alle geselecteerde verlopen uitnodigingen opnieuw wil versturen?",
+        flash: {
+            entitiesDeleted: "Lidmaatschap / uitnodigingen zijn verwijderd",
+            invitesResend: "Uitnodigingen voor organisatie {{name}} zijn opnieuw verzonden.",
+        },
+        gone: {
+            member: "Dit lidmaatschap bestaat niet meer. Na het sluiten van deze pop-up worden de lidmaatschappen vernieuwd.",
+            invitation: "Deze uitnodiging is al geaccepteerd/afgewezen en bestaat niet meer. Na het sluiten van deze pop-up worden de uitnodigingen ververst."
+        }
     }
+
 };
 
 export default I18n.translations.nl;
