@@ -6,6 +6,7 @@ export const ROLES = {
     ORG_MANAGER: "orgManager",
     COLL_ADMIN: "coAdmin",
     COLL_MEMBER: "coMember",
+    SERVICE_ADMIN: "serviceAdmin",
     USER: "user"
 }
 
@@ -52,7 +53,7 @@ export function isUserAllowed(minimalRole, user, organisation_id = null, collabo
     return false;
 }
 
-export function rawGlobalUserRole(user, organisation, collaboration) {
+export function rawGlobalUserRole(user, organisation, collaboration, service) {
     if (user.admin) {
         return ROLES.PLATFORM_ADMIN;
     }
@@ -72,11 +73,15 @@ export function rawGlobalUserRole(user, organisation, collaboration) {
         (!collaboration || user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id))) {
         return ROLES.COLL_MEMBER;
     }
+    if (user.service_memberships && user.service_memberships.length > 0 &&
+        (!service || user.service_memberships.find(m => m.service_id === service.id))) {
+        return ROLES.SERVICE_ADMIN;
+    }
     return ROLES.USER;
 }
 
 export function isUserServiceAdmin(user, service) {
-    return user.service_memberships.some(m => m.service_id === service.id)
+    return user.service_memberships.some(m => !service || m.service_id === service.id)
 }
 
 export function globalUserRole(user) {

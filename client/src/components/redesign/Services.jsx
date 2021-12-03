@@ -6,6 +6,7 @@ import I18n from "i18n-js";
 import Entities from "./Entities";
 import Logo from "./Logo";
 import SpinnerField from "./SpinnerField";
+import {isUserServiceAdmin} from "../../utils/UserRole";
 
 
 class Services extends React.Component {
@@ -19,10 +20,16 @@ class Services extends React.Component {
     }
 
     componentDidMount = () => {
-        allServices().then(services => {
-            services.forEach(s => s.connection_requests_count = s.service_connection_requests.length)
+        const {user} = this.props;
+        if (user.admin) {
+            allServices().then(services => {
+                services.forEach(s => s.connection_requests_count = s.service_connection_requests.length)
+                this.setState({services: services, loading: false})
+            });
+        } else if (isUserServiceAdmin(user)) {
+            const services = user.service_memberships.map(m => m.service).flat();
             this.setState({services: services, loading: false})
-        });
+        }
     }
 
     openService = service => e => {
