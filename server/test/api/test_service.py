@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
 import time
-
+from server.db.db import db
 from server.db.domain import Service, Organisation, Collaboration, ServiceInvitation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name, \
@@ -212,3 +212,13 @@ class TestService(AbstractTest):
         coll = self.find_entity_by_name(Collaboration, uva_research_name)
         post = len(coll.services)
         self.assertEqual(pre - 1, post)
+
+    def test_reset_ldap_password(self):
+        service = self._find_by_name()
+        res = self.get(f"/api/services/reset_ldap_password/{service['id']}")
+        self.assertEquals(32, len(res["ldap_password"]))
+        rs = db.engine.execute(f"SELECT ldap_password FROM services WHERE id = {service['id']}")
+        ldap_password = next(rs, (0,))[0]
+        self.assertTrue(ldap_password.startswith("$6$rounds=100000$"))
+        service = self._find_by_name()
+        self.assertIsNone(service.get("ldap_password"))

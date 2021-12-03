@@ -44,5 +44,6 @@ class LogoMixin(object):
             if not current_app.redis_client.exists(redis_key):
                 current_app.redis_client.set(redis_key, logo)
             return logo_url(object_type, sid)
-
+        if name == "ldap_password":
+            return None
         return object.__getattribute__(self, name)
