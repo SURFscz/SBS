@@ -1,13 +1,15 @@
 # -*- coding: future_fstrings -*-
 import ipaddress
+import random
 import string
 import urllib.parse
 from secrets import token_urlsafe
-import random
+
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
+from passlib.hash import sha512_crypt
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
-from passlib.hash import sha512_crypt
+
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin
@@ -33,14 +35,6 @@ def _services_from_query(count_only, query, service_id):
     if service_id:
         query = query.filter(Service.id == service_id)
     return query.count() if count_only else query.all()
-
-
-def _generate_password():
-    return "".join(random.sample(string.ascii_lowercase + string.digits + "_,./~=+@*-", k=32))
-
-
-def _hash_password(password):
-    sha512_crypt.using(rounds=100_000).hash(password);
 
 
 # Services connected to a collaboration where the user is a member of
@@ -360,3 +354,15 @@ def add_allowed_organisations(service_id):
 def delete_service(service_id):
     confirm_write_access()
     return delete(Service, service_id)
+
+
+@service_api.route("/reset_ldap_password/<service_id>", strict_slashes=False)
+@json_endpoint
+def reset_ldap_password(service_id):
+    confirm_service_admin(service_id)
+    service = Service.query.get(service_id)
+    password = "".join(random.sample(string.ascii_lowercase + string.digits + "_,./~=+@*-", k=32))
+    hashed = sha512_crypt.using(rounds=100_000).hash(password)
+    service.ldap_password = hashed
+    db.session.merge(service)
+    return {"ldap_password": password}, 200
