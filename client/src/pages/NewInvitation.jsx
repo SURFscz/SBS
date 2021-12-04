@@ -57,7 +57,8 @@ class NewInvitation extends React.Component {
             leavePage: true,
             htmlPreview: "",
             activeTab: "invitation_form",
-            loading: true
+            loading: true,
+            isAdminView: false
         };
     }
 
@@ -72,6 +73,7 @@ class NewInvitation extends React.Component {
                         collaboration: collaboration,
                         loading: false,
                         intended_role: isAdminView ? "admin" : "member",
+                        isAdminView: isAdminView,
                         groups: collaboration.groups.map(ag => ({value: ag.id, label: ag.name})),
                     });
                     this.updateAppStore(collaboration, this.props.user);
@@ -119,7 +121,7 @@ class NewInvitation extends React.Component {
         if (this.isValid()) {
             const {
                 administrators, message, collaboration, expiry_date, fileEmails, intended_role,
-                selectedGroup, membership_expiry_date
+                selectedGroup, membership_expiry_date, isAdminView
             } = this.state;
             this.setState({loading: true});
             collaborationInvitations({
@@ -131,7 +133,7 @@ class NewInvitation extends React.Component {
                 groups: selectedGroup.map(ag => ag.value),
                 expiry_date: expiry_date.getTime() / 1000
             }).then(res => {
-                this.props.history.goBack();
+                this.props.history.push(`/collaborations/${collaboration.id}/${isAdminView ? "admins" : "members"}`);
                 setFlash(I18n.t("invitation.flash.created", {name: collaboration.name}))
             });
         } else {
@@ -273,11 +275,11 @@ class NewInvitation extends React.Component {
                          onChange={this.selectedGroupsChanged}/>
 
             <DateField value={membership_expiry_date}
-                               onChange={e => this.setState({membership_expiry_date: e})}
-                               allowNull={true}
-                               showYearDropdown={true}
-                               name={I18n.t("invitation.membershipExpiryDate")}
-                               toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
+                       onChange={e => this.setState({membership_expiry_date: e})}
+                       allowNull={true}
+                       showYearDropdown={true}
+                       name={I18n.t("invitation.membershipExpiryDate")}
+                       toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
 
             <InputField value={message} onChange={e => this.setState({message: e.target.value})}
                         placeholder={I18n.t("invitation.inviteesMessagePlaceholder")}

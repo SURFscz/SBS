@@ -37,7 +37,7 @@ import Groups from "../components/redesign/Groups";
 import AboutCollaboration from "../components/redesign/AboutCollaboration";
 import {actionMenuUserRole, isUserAllowed, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
-import WelcomeDialog from "../components/WelcomeDialog";
+import CollaborationWelcomeDialog from "../components/CollaborationWelcomeDialog";
 import JoinRequests from "../components/redesign/JoinRequests";
 import {setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -699,14 +699,14 @@ class CollaborationDetail extends React.Component {
                 {(!showMemberView || !adminOfCollaboration) &&
                 this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
 
-                <WelcomeDialog name={collaboration.name}
-                               isOpen={firstTime}
-                               role={role}
-                               organisation={null}
-                               collaboration={collaboration}
-                               isAdmin={user.admin}
-                               isInvitation={isInvitation}
-                               close={this.doAcceptInvitation}/>
+                <CollaborationWelcomeDialog name={collaboration.name}
+                                            isOpen={firstTime}
+                                            role={role}
+                                            organisation={null}
+                                            collaboration={collaboration}
+                                            isAdmin={user.admin}
+                                            isInvitation={isInvitation}
+                                            close={this.doAcceptInvitation}/>
 
                 <JoinRequestDialog collaboration={collaboration}
                                    isOpen={joinRequestDialogOpen}

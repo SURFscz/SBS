@@ -5,9 +5,7 @@ import {ReactComponent as InformationIcon} from "../icons/informational.svg";
 import "./WelcomeDialog.scss";
 import Button from "./Button";
 import "react-mde/lib/styles/css/react-mde-all.css";
-import OrganisationEn from "./welcome/OrganisationEn";
 import CollaborationEn from "./welcome/CollaborationEn";
-import OrganisationNl from "./welcome/OrganisationNl";
 import CollaborationNL from "./welcome/CollaborationNl";
 import {ROLES} from "../utils/UserRole";
 import ToggleSwitch from "./redesign/ToggleSwitch";
@@ -15,26 +13,21 @@ import {isEmpty} from "../utils/Utils";
 import {convertToHtml} from "../utils/Markdown";
 import CheckBox from "./CheckBox";
 
-export default function WelcomeDialog({
-                                          name,
-                                          role,
-                                          isAdmin = false,
-                                          isOpen = false,
-                                          close,
-                                          collaboration,
-                                          organisation,
-                                          isInvitation
-                                      }) {
+export default function CollaborationWelcomeDialog({
+                                                       name,
+                                                       role,
+                                                       isAdmin = false,
+                                                       isOpen = false,
+                                                       close,
+                                                       collaboration,
+                                                       isInvitation
+                                                   }) {
 
     const [toggleRole, setToggleRole] = useState(role);
-    const [disabled, setDisabled] = useState(collaboration && collaboration.accepted_user_policy);
+    const [disabled, setDisabled] = useState(collaboration.accepted_user_policy);
 
     const doToggleRole = () => {
-        if (organisation) {
-            setToggleRole(toggleRole === ROLES.ORG_ADMIN ? ROLES.ORG_MANAGER : ROLES.ORG_ADMIN);
-        } else {
-            setToggleRole(toggleRole === ROLES.COLL_ADMIN ? ROLES.COLL_MEMBER : ROLES.COLL_ADMIN);
-        }
+        setToggleRole(toggleRole === ROLES.COLL_ADMIN ? ROLES.COLL_MEMBER : ROLES.COLL_ADMIN);
     }
 
     return (
@@ -48,8 +41,7 @@ export default function WelcomeDialog({
             shouldCloseOnOverlayClick={false}
             ariaHideApp={false}>
             {(isAdmin && !isInvitation) && <div className="toggle-role">
-                <ToggleSwitch value={organisation ? toggleRole === ROLES.ORG_ADMIN : toggleRole === ROLES.COLL_ADMIN}
-                              onChange={doToggleRole}/>
+                <ToggleSwitch value={toggleRole === ROLES.COLL_ADMIN} onChange={doToggleRole}/>
                 <span className="toggle-txt">{I18n.t("welcomeDialog.toggleRole")}</span>
             </div>}
             <h1>{I18n.t("welcomeDialog.title", {name: name})}</h1>
@@ -59,12 +51,9 @@ export default function WelcomeDialog({
                     dangerouslySetInnerHTML={{__html: I18n.t("welcomeDialog.role", {role: I18n.t(`access.${toggleRole}`).toLowerCase()})}}/>
             </section>
             <section className="responsibilities">
-                {(organisation && I18n.locale === "en") && <OrganisationEn role={toggleRole}/>}
-                {(organisation && I18n.locale === "nl") && <OrganisationNl role={toggleRole}/>}
-                {(!organisation && I18n.locale === "en") && <CollaborationEn role={toggleRole}/>}
-                {(!organisation && I18n.locale === "nl") && <CollaborationNL role={toggleRole}/>}
+                {I18n.locale === "en" ? <CollaborationEn role={toggleRole}/> : <CollaborationNL role={toggleRole}/>}
             </section>
-            {(collaboration && !isEmpty(collaboration.accepted_user_policy)) &&
+            {!isEmpty(collaboration.accepted_user_policy) &&
             <section className="accepted-user-policy-container">
                 <h2>{I18n.t("aup.collaboration.title")}</h2>
                 <p>{I18n.t("aup.collaboration.info")}</p>
@@ -81,7 +70,7 @@ export default function WelcomeDialog({
                 </div>
             </section>}
             <Button
-                txt={I18n.t("welcomeDialog.ok", {type: organisation ? I18n.t("welcomeDialog.organisation") : I18n.t("welcomeDialog.collaboration")})}
+                txt={I18n.t("welcomeDialog.ok", {type: I18n.t("welcomeDialog.collaboration")})}
                 disabled={disabled} centralize={true}
                 onClick={close}/>
         </Modal>

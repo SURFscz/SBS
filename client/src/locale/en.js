@@ -46,6 +46,8 @@ I18n.translations.en = {
         impersonate: "Impersonate",
         organisationInvite: "Invite members",
         organisationInvitation: "Invitation",
+        serviceInvite: "Invite members",
+        serviceInvitation: "Invitation",
         invite: "Invite members",
         invitation: "Invitation",
         users: "Users"
@@ -416,6 +418,7 @@ I18n.translations.en = {
                 next: "Next: {{step}}",
                 invite: "Join the collaboration",
                 inviteOrg: "Join the organisation",
+                inviteService: "Manage your service",
                 collaborate: "Collaborate!"
             },
             login: "Please login to identify yourself",
@@ -1551,7 +1554,8 @@ I18n.translations.en = {
         coAdmin: " admin",
         coMember: " member",
         platformAdmin: " platform admin",
-        user: " user"
+        user: " user",
+        serviceAdmin: "service admin"
     },
     welcomeDialog: {
         title: "Welcome to {{name}}",
@@ -1560,6 +1564,7 @@ I18n.translations.en = {
         ok: "All good, show me the {{type}}",
         organisation: "organisation",
         collaboration: "collaboration",
+        service: "service",
         toggleRole: "Toggle role"
     },
     welcome: {
@@ -1774,8 +1779,12 @@ I18n.translations.en = {
         gone: {
             member: "This membership does no longer exists. After closing this popup the memberships will be refreshed.",
             invitation: "This invitation has already been accepted / rejected and does no longer exists. After closing this popup the invitations will be refreshed."
-        }
-    }
+        },
+        admin: "Service admin",
+        intendedRole: "Role in the Service",
+        intendedRoleTooltip: "The only role within a service is admin"
+    },
+
 };
 
 export default I18n.translations.en;

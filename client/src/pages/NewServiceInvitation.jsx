@@ -3,7 +3,7 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import {organisationById, organisationInvitations, organisationInvitationsPreview} from "../api";
+import {serviceById, serviceInvitations} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import Button from "../components/Button";
@@ -11,43 +11,41 @@ import {isEmpty, stopEvent} from "../utils/Utils";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {validEmailRegExp} from "../validations/regExps";
-import "./NewOrganisationInvitation.scss"
+import "./NewServiceInvitation.scss"
 import DateField from "../components/DateField";
 import {getParameterByName} from "../utils/QueryParameters";
 import SelectField from "../components/SelectField";
-import {organisationRoles} from "../forms/constants";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import SpinnerField from "../components/redesign/SpinnerField";
 import EmailField from "../components/EmailField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 
-class NewOrganisationInvitation extends React.Component {
+class NewServiceInvitation extends React.Component {
 
     constructor(props, context) {
         super(props, context);
         const email = getParameterByName("email", window.location.search);
         const administrators = !isEmpty(email) && validEmailRegExp.test(email.trim()) ? [email.trim()] : [];
-        this.intendedRolesOptions = organisationRoles.map(role => ({
-            value: role,
-            label: I18n.t(`organisation.organisationRoles.${role}`)
-        }));
+        this.intendedRolesOptions = [{
+            value: "manager",
+            label: I18n.t("serviceDetail.admin")
+        }];
         this.state = {
-            organisation: undefined,
+            service: undefined,
             administrators: administrators,
             fileName: null,
             email: "",
             fileEmails: [],
             fileTypeError: false,
             fileInputKey: new Date().getMilliseconds(),
-            intended_role: "manager",
             message: "",
             expiry_date: moment().add(16, "days").toDate(),
             initial: true,
             confirmationDialogOpen: false,
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
-                () => this.props.history.push(`/organisations/${this.props.match.params.organisation_id}`)),
+                () => this.props.history.push(`/services/${this.props.match.params.service_id}`)),
             leavePage: true,
             activeTab: "invitation_form",
             htmlPreview: "",
@@ -57,18 +55,18 @@ class NewOrganisationInvitation extends React.Component {
 
     componentDidMount = () => {
         const params = this.props.match.params;
-        if (params.organisation_id) {
-            organisationById(params.organisation_id)
+        if (params.service_id) {
+            serviceById(params.service_id)
                 .then(json => {
-                    this.setState({organisation: json, loading: false});
+                    this.setState({service: json, loading: false});
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
                             {
-                                path: `/organisations/${json.id}`,
-                                value: I18n.t("breadcrumb.organisation", {name: json.name})
+                                path: `/services/${json.id}`,
+                                value: I18n.t("breadcrumb.service", {name: json.name})
                             },
-                            {path: "/", value: I18n.t("breadcrumb.organisationInvite")}
+                            {path: "/", value: I18n.t("breadcrumb.serviceInvite")}
                         ];
                     });
                 });
@@ -88,17 +86,16 @@ class NewOrganisationInvitation extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            const {administrators, message, organisation, expiry_date, fileEmails, intended_role} = this.state;
+            const {administrators, message, service, expiry_date, fileEmails} = this.state;
             this.setState({loading: true});
-            organisationInvitations({
+            serviceInvitations({
                 administrators: administrators.concat(fileEmails),
                 message,
-                intended_role,
                 expiry_date: expiry_date.getTime() / 1000,
-                organisation_id: organisation.id
+                service_id: service.id
             }).then(res => {
-                this.props.history.push(`/organisations/${organisation.id}/admins`);
-                setFlash(I18n.t("organisationInvitation.flash.created", {name: organisation.name}))
+                this.props.history.push(`/services/${service.id}/admins`);
+                setFlash(I18n.t("organisationInvitation.flash.created", {name: service.name}))
             });
         } else {
             window.scrollTo(0, 0);
@@ -139,34 +136,8 @@ class NewOrganisationInvitation extends React.Component {
         }
     };
 
-    tabChanged = activeTab => {
-        this.setState({activeTab: activeTab});
-        if (activeTab === "invitation_preview") {
-            this.setState({loading: true});
-            const {administrators, message, organisation, expiry_date, fileEmails, intended_role} = this.state;
-            organisationInvitationsPreview({
-                administrators: administrators.concat(fileEmails),
-                message,
-                intended_role,
-                expiry_date: expiry_date.getTime() / 1000,
-                organisation_id: organisation.id
-            }).then(res => {
-                const htmlPreview = res.html.replace(/class="button" href/g, "nope");
-                this.setState({htmlPreview: htmlPreview, loading: false});
-            });
-        }
-    };
-
-    preview = disabledSubmit => (
-        <div>
-            <div className={"preview-mail"} dangerouslySetInnerHTML={{__html: this.state.htmlPreview}}/>
-            {this.renderActions(disabledSubmit, false)}
-        </div>
-    );
-
-
-    invitationForm = (organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
-                      disabledSubmit, intended_role) =>
+    invitationForm = (service, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial, administrators, expiry_date,
+                      disabledSubmit) =>
         <div className={"invitation-form"}>
             <EmailField value={email}
                         onChange={e => this.setState({email: e.target.value})}
@@ -179,18 +150,17 @@ class NewOrganisationInvitation extends React.Component {
             {(!initial && isEmpty(administrators) && isEmpty(fileEmails)) && <ErrorIndicator
                 msg={I18n.t("organisationInvitation.requiredAdministrator")}/>}
 
-            <SelectField value={this.intendedRolesOptions.find(option => option.value === intended_role)}
+            <SelectField value={this.intendedRolesOptions[0]}
                          options={this.intendedRolesOptions}
                          small={true}
-                         name={I18n.t("invitation.intendedRoleOrganisation")}
-                         toolTip={I18n.t("invitation.intendedRoleTooltipOrganisation")}
-                         placeholder={I18n.t("collaboration.selectRole")}
-                         onChange={selectedOption => this.setState({intended_role: selectedOption ? selectedOption.value : null})}/>
+                         disabled={true}
+                         toolTip={I18n.t("serviceDetail.intendedRoleTooltip")}
+                         name={I18n.t("serviceDetail.intendedRole")}/>
 
             <InputField value={message} onChange={e => this.setState({message: e.target.value})}
-                        placeholder={I18n.t("organisation.messagePlaceholder")}
-                        name={I18n.t("organisation.message")}
-                        toolTip={I18n.t("organisation.messageTooltip")}
+                        placeholder={I18n.t("invitation.messagePlaceholder")}
+                        name={I18n.t("invitation.message")}
+                        toolTip={I18n.t("invitation.messageTooltip")}
                         large={true}
                         multiline={true}/>
 
@@ -213,7 +183,7 @@ class NewOrganisationInvitation extends React.Component {
 
     render() {
         const {
-            email, initial, administrators, expiry_date, organisation,
+            email, initial, administrators, expiry_date, service,
             confirmationDialogOpen, confirmationDialogAction, cancelDialogAction, leavePage, message, fileName,
             fileTypeError, fileEmails, fileInputKey, intended_role, loading
         } = this.state;
@@ -227,12 +197,12 @@ class NewOrganisationInvitation extends React.Component {
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
                                     leavePage={leavePage}/>
-                <UnitHeader obj={organisation}
-                            name={organisation.name}/>
-                <div className="mod-new-organisation-invitation">
+                <UnitHeader obj={service}
+                            name={service.name}/>
+                <div className="mod-new-service-invitation">
                     <h1>{I18n.t("tabs.invitation_form")}</h1>
-                    <div className="new-organisation-invitation">
-                        {this.invitationForm(organisation, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
+                    <div className="new-service-invitation">
+                        {this.invitationForm(service, message, email, fileInputKey, fileName, fileTypeError, fileEmails, initial,
                             administrators, expiry_date, disabledSubmit, intended_role)}
                     </div>
                 </div>
@@ -241,4 +211,4 @@ class NewOrganisationInvitation extends React.Component {
 
 }
 
-export default NewOrganisationInvitation;
+export default NewServiceInvitation;

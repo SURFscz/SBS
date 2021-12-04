@@ -46,6 +46,8 @@ I18n.translations.nl = {
         impersonate: "Imitatie",
         organisationInvite: "Leden toevoegen",
         organisationInvitation: "Uitnodiging",
+        serviceInvite: "Leden toevoegen",
+        serviceInvitation: "Uitnodiging",
         invite: "Leden toevoegen",
         invitation: "Uitnodiging",
         users: "Gebruikers"
@@ -416,6 +418,7 @@ I18n.translations.nl = {
                 next: "Hierna: {{step}}",
                 invite: "Doe mee met de samenwerking",
                 inviteOrg: "Doe mee met de organisatie",
+                inviteService: "Beheer je dienst",
                 collaborate: "Samenwerken!",
             },
             login: "Log in om je te identificeren",
@@ -1551,7 +1554,8 @@ I18n.translations.nl = {
         coAdmin: " beheerder",
         coMember: " lid",
         platformAdmin: " platformbeheerder",
-        user: " gebruiker"
+        user: " gebruiker",
+        serviceAdmin: "dienstbeheerder"
     },
     welcomeDialog: {
         title: "Welkom op {{name}}",
@@ -1560,6 +1564,7 @@ I18n.translations.nl = {
         ok: "Ok, toon mij de {{type}}",
         organisation: "organisatie",
         collaboration: "samenwerking",
+        service: "dienst",
         toggleRole: "Verander rol"
     },
     welcome: {
@@ -1774,7 +1779,10 @@ I18n.translations.nl = {
         gone: {
             member: "Dit lidmaatschap bestaat niet meer. Na het sluiten van deze pop-up worden de lidmaatschappen vernieuwd.",
             invitation: "Deze uitnodiging is al geaccepteerd/afgewezen en bestaat niet meer. Na het sluiten van deze pop-up worden de uitnodigingen ververst."
-        }
+        },
+        admin: "Dienstbeheerder",
+        intendedRole: "Rol binnen de dienst",
+        intendedRoleTooltip: "De enige rol binnen een dienst is beheerder"
     }
 
 };
