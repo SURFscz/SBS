@@ -46,6 +46,8 @@ import ServiceDenied from "./ServiceDenied";
 import UserDetail from "./UserDetail";
 import Aup from "./Aup";
 import RefreshRoute from "./RefreshRoute";
+import NewServiceInvitation from "./NewServiceInvitation";
+import ServiceAdminInvitation from "./ServiceAdminInvitation";
 
 addIcons();
 
@@ -310,6 +312,11 @@ class App extends React.Component {
                                                                 Component={NewInvitation}
                                                                 {...props}/>}/>
 
+                        <Route exact path="/new-service-invite/:service_id"
+                               render={props => <ProtectedRoute currentUser={currentUser}
+                                                                Component={NewServiceInvitation}
+                                                                {...props}/>}/>
+
                         <Route exact path="/invitations/:action/:hash"
                                render={props => currentUser.guest ?
                                    <UserInvitation user={currentUser}
@@ -333,6 +340,18 @@ class App extends React.Component {
                                        refreshUser={this.refreshUserMemberships}
                                        config={config}
                                        Component={OrganisationDetail} {...props}/>
+                               }/>
+
+                        <Route exact path="/service-invitations/:action/:hash"
+                               render={props => currentUser.guest ?
+                                   <ServiceAdminInvitation user={currentUser}
+                                                           refreshUser={this.refreshUserMemberships}
+                                                           {...props}/>
+                                   : <ProtectedRoute
+                                       currentUser={currentUser}
+                                       refreshUser={this.refreshUserMemberships}
+                                       config={config}
+                                       Component={ServiceDetail} {...props}/>
                                }/>
 
                         <Route exact path="/collaboration-requests/:id"

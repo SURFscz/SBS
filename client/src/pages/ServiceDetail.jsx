@@ -1,5 +1,11 @@
 import React from "react";
-import {allServiceConnectionRequests, searchOrganisations, serviceById} from "../api";
+import {
+    allServiceConnectionRequests,
+    searchOrganisations,
+    serviceById,
+    serviceInvitationAccept,
+    serviceInvitationByHash
+} from "../api";
 import "./ServiceDetail.scss";
 import I18n from "i18n-js";
 import Tabs from "../components/Tabs";
@@ -15,11 +21,13 @@ import Collaborations from "../components/redesign/Collaborations";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
 import {removeDuplicates} from "../utils/Utils";
-import {actionMenuUserRole} from "../utils/UserRole";
+import {actionMenuUserRole, isUserServiceAdmin} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
 import ServiceGroups from "../components/redesign/ServiceGroups";
 import ServiceAdmins from "../components/redesign/ServiceAdmins";
+import {setFlash} from "../utils/Flash";
+import ServiceWelcomeDialog from "../components/ServiceWelcomeDialog";
 
 class ServiceDetail extends React.Component {
 
@@ -27,8 +35,11 @@ class ServiceDetail extends React.Component {
         super(props, context);
         this.state = {
             service: {},
+            invitation: null,
+            isInvitation: false,
             organisations: [],
             serviceConnectionRequests: [],
+            firstTime: false,
             loading: true,
             tab: "organisations",
             tabs: []
@@ -37,7 +48,19 @@ class ServiceDetail extends React.Component {
 
     componentDidMount = () => {
         const params = this.props.match.params;
-        if (params.id) {
+        if (params.hash) {
+            serviceInvitationByHash(params.hash).then(res => {
+                this.setState({
+                    invitation: res,
+                    service: res.service,
+                    loading: false,
+                    firstTime: true,
+                    isInvitation: true,
+                    tabs: [this.getAdminsTab(res.service)]
+                });
+            }).catch(() => this.props.history.push("/404"));
+
+        } else if (params.id) {
             const {user} = this.props;
             if (user.admin) {
                 Promise.all([serviceById(params.id), searchOrganisations("*"),
@@ -68,6 +91,10 @@ class ServiceDetail extends React.Component {
         }
     };
 
+    onBoarding = () => {
+        this.setState({firstTime: true});
+    }
+
     afterFetch = (params, service, organisations, serviceConnectionRequests, tabs) => {
         const tab = params.tab || this.state.tab;
         AppStore.update(s => {
@@ -88,6 +115,31 @@ class ServiceDetail extends React.Component {
             tabs: tabs,
             loading: false
         });
+    }
+
+    doAcceptInvitation = () => {
+        const {invitation, isInvitation} = this.state;
+        if (isInvitation) {
+            serviceInvitationAccept(invitation).then(() => {
+                this.props.refreshUser(() => {
+                    const path = encodeURIComponent(`/services/${invitation.service_id}`);
+                    this.props.history.push(`/refresh-route/${path}`);
+                });
+            }).catch(e => {
+                if (e.response && e.response.json) {
+                    e.response.json().then(res => {
+                        if (res.message && res.message.indexOf("already a member") > -1) {
+                            this.setState({errorOccurred: true, firstTime: false}, () =>
+                                setFlash(I18n.t("organisationInvitation.flash.alreadyMember"), "error"));
+                        }
+                    });
+                } else {
+                    throw e;
+                }
+            });
+        } else {
+            this.setState({firstTime: false});
+        }
     }
 
     refresh = callback => {
@@ -211,7 +263,7 @@ class ServiceDetail extends React.Component {
 
     getActions = (user, service) => {
         const actions = [];
-        if (user.admin) {
+        if (user.admin || isUserServiceAdmin(user, service)) {
             actions.push({
                 svg: PencilIcon,
                 name: I18n.t("home.edit"),
@@ -223,19 +275,24 @@ class ServiceDetail extends React.Component {
 
 
     render() {
-        const {tabs, service, loading, tab} = this.state;
+        const {tabs, service, loading, tab, firstTime} = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
         const {user} = this.props;
         return (
-            <>
+            <div className="mod-service-container">
+                <ServiceWelcomeDialog name={service.name}
+                                      isOpen={firstTime}
+                                      close={this.doAcceptInvitation}/>
+
                 <UnitHeader obj={service}
-                            mayEdit={user.admin}
+                            mayEdit={user.admin || isUserServiceAdmin(user, service)}
                             history={user.admin && this.props.history}
                             auditLogPath={`services/${service.id}`}
                             breadcrumbName={I18n.t("breadcrumb.service", {name: service.name})}
                             name={service.name}
+                            firstTime={user.admin ? this.onBoarding : undefined}
                             dropDownTitle={actionMenuUserRole(user)}
                             actions={this.getActions(user, service)}>
                     <p>{service.description}</p>
@@ -275,7 +332,7 @@ class ServiceDetail extends React.Component {
                         {tabs}
                     </Tabs>
                 </div>
-            </>);
+            </div>);
     };
 }
 

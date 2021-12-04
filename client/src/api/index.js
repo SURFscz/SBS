@@ -712,6 +712,11 @@ export function deleteServiceGroup(id) {
     return fetchDelete(`/api/servicegroups/${id}`)
 }
 
+export function serviceInvitations(body) {
+    return postPutJson("/api/services/invites", body, "put");
+}
+
+
 //ServiceMemberships
 export function deleteServiceMembership(serviceId, userId, showErrorDialog = true) {
     return fetchDelete(`/api/service_memberships/${serviceId}/${userId}`, showErrorDialog)

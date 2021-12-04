@@ -24,7 +24,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import ApiKeys from "../components/redesign/ApiKeys";
 import OrganisationServices from "../components/redesign/OrganisationServices";
 import CollaborationRequests from "../components/redesign/CollaborationRequests";
-import WelcomeDialog from "../components/WelcomeDialog";
+import OrganisationWelcomeDialog from "../components/OrganisationWelcomeDialog";
 import {actionMenuUserRole, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
 import {setFlash} from "../utils/Flash";
@@ -62,9 +62,11 @@ class OrganisationDetail extends React.Component {
                     firstTime: true,
                     confirmationDialogOpen: false,
                     isInvitation: true,
-                    tabs: this.getTabs(res.organisation, config, false)
+                    tabs: this.getTabs(res.organisation, config, true)
                 });
-            }).catch(() => this.props.history.push("/404"));
+            }).catch(() => {
+                this.props.history.push("/404")
+            });
         } else if (params.id) {
             organisationById(params.id)
                 .then(json => {
@@ -81,7 +83,7 @@ class OrganisationDetail extends React.Component {
                         .some(member => member.role === "manager" && member.user_id === user.id);
 
                     const tab = params.tab || this.state.tab;
-                    const tabs = this.getTabs(json, config, adminOfOrganisation);
+                    const tabs = this.getTabs(json, config, false);
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
@@ -101,7 +103,9 @@ class OrganisationDetail extends React.Component {
                     }, callBack);
 
                 })
-                .catch(() => this.props.history.push("/404"));
+                .catch(() => {
+                    this.props.history.push("/404")
+                });
         } else {
             this.props.history.push("/404");
         }
@@ -111,8 +115,10 @@ class OrganisationDetail extends React.Component {
         this.setState({firstTime: true});
     }
 
-    getTabs = (organisation, config) => {
-        const tabs = [
+    getTabs = (organisation, config, isInvite) => {
+        const tabs = isInvite ? [
+            this.getCollaborationsTab(organisation),
+        ]:  [
             this.getCollaborationsTab(organisation),
             this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation),
@@ -153,7 +159,7 @@ class OrganisationDetail extends React.Component {
 
     getCollaborationsTab = organisation => {
         return (<div key="collaborations" name="collaborations"
-                     label={I18n.t("home.tabs.orgCollaborations", {count: organisation.collaborations.length})}
+                     label={I18n.t("home.tabs.orgCollaborations", {count: (organisation.collaborations || []).length})}
                      icon={<CollaborationsIcon/>}>
             <Collaborations {...this.props} collaborations={organisation.collaborations}
                             organisation={organisation} showExpiryDate={true} showLastActivityDate={true}/>
@@ -260,7 +266,6 @@ class OrganisationDetail extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-
         let role;
         if (isInvitation) {
             role = invitation.intended_role === "admin" ? ROLES.ORG_ADMIN : ROLES.ORG_MANAGER;
@@ -270,14 +275,14 @@ class OrganisationDetail extends React.Component {
 
         return (
             <div className="mod-organisation-container">
-                {<WelcomeDialog name={organisation.name}
-                                isOpen={firstTime}
-                                role={role}
-                                organisation={organisation}
-                                collaboration={null}
-                                isAdmin={user.admin}
-                                isInvitation={isInvitation}
-                                close={this.doAcceptInvitation}/>}
+                <OrganisationWelcomeDialog name={organisation.name}
+                                             isOpen={firstTime}
+                                             role={role}
+                                             organisation={organisation}
+                                             collaboration={null}
+                                             isAdmin={user.admin}
+                                             isInvitation={isInvitation}
+                                             close={this.doAcceptInvitation}/>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}
@@ -303,7 +308,7 @@ class OrganisationDetail extends React.Component {
                             </ul>
                         </div>}
                     </div>
-                     {!isEmpty(organisation.schac_home_organisations) && <span className="org-attributes-after">
+                    {!isEmpty(organisation.schac_home_organisations) && <span className="org-attributes-after">
                                 {I18n.t(`organisation.${organisation.collaboration_creation_allowed ? "collaborationCreationIsAllowed" : "collaborationCreationNotAllowed"}`
                                     , {schacHome: I18n.t(`organisation.${organisation.schac_home_organisations.length === 1 ? "singleSchacHome" : "multipleSchacHome"}`)})}
                             </span>}

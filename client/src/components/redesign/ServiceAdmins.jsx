@@ -44,8 +44,8 @@ class ServiceAdmins extends React.Component {
     componentDidMount = () => {
         this.setState({loading: true});
         const {service} = this.props;
-        const admins = service.service_memberships;
-        const invites = service.service_invitations;
+        const admins = service.service_memberships || [];
+        const invites = service.service_invitations || [];
         const entities = admins.concat(invites);
         const selectedMembers = entities.reduce((acc, entity) => {
             acc[this.getIdentifier(entity)] = {selected: false, ref: entity, invite: !isEmpty(entity.intended_role)};
@@ -184,8 +184,8 @@ class ServiceAdmins extends React.Component {
         if (loading) {
             return <SpinnerField/>;
         }
-        const admins = service.service_memberships;
-        const invites = service.service_invitations;
+        const admins = service.service_memberships || [];
+        const invites = service.service_invitations || [];
         invites.forEach(invite => invite.invite = true);
 
         const isAdmin = currentUser.admin || isUserServiceAdmin(currentUser, service);
