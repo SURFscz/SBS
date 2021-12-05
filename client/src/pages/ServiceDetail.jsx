@@ -1,6 +1,7 @@
 import React from "react";
 import {
     allServiceConnectionRequests,
+    resetLdapPassword,
     searchOrganisations,
     serviceById,
     serviceInvitationAccept,
@@ -28,6 +29,8 @@ import ServiceGroups from "../components/redesign/ServiceGroups";
 import ServiceAdmins from "../components/redesign/ServiceAdmins";
 import {setFlash} from "../utils/Flash";
 import ServiceWelcomeDialog from "../components/ServiceWelcomeDialog";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import InputField from "../components/InputField";
 
 class ServiceDetail extends React.Component {
 
@@ -42,7 +45,12 @@ class ServiceDetail extends React.Component {
             firstTime: false,
             loading: true,
             tab: "organisations",
-            tabs: []
+            tabs: [],
+            confirmationDialogOpen: false,
+            cancelDialogAction: this.doCancelDialogAction,
+            confirmationDialogAction: this.doConfirmationDialogAction,
+            confirmationTxt: I18n.t("confirmationDialog.confirm"),
+            ldapPassword: null
         };
     }
 
@@ -83,13 +91,33 @@ class ServiceDetail extends React.Component {
             } else {
                 serviceById(params.id)
                     .then(res => {
-                        this.afterFetch(params, res, [], [], []);
+                        const tabs = isUserServiceAdmin(user) ? [this.getAdminsTab(res)] : [];
+                        this.afterFetch(params, res, [], [], tabs);
                     }).catch(e => this.props.history.push("/404"));
             }
         } else {
             this.props.history.push("/404");
         }
     };
+
+    doConfirmationDialogAction = () => {
+        const {service} = this.state;
+        resetLdapPassword(service).then(res => {
+            this.setState({
+                confirmationTxt: I18n.t("service.ldap.close"),
+                cancelDialogAction: null,
+                confirmationDialogQuestion: I18n.t("service.ldap.info"),
+                ldapPassword: res.ldap_password,
+                confirmationDialogAction: this.doCancelDialogAction
+            });
+        })
+    }
+
+    doCancelDialogAction = () => {
+        this.setState({confirmationDialogOpen: false},
+            () => setTimeout(() => this.setState({ldapPassword: null}), 75)
+        );
+    }
 
     onBoarding = () => {
         this.setState({firstTime: true});
@@ -269,13 +297,39 @@ class ServiceDetail extends React.Component {
                 name: I18n.t("home.edit"),
                 perform: () => this.props.history.push("/edit-service/" + service.id)
             });
+            actions.push({
+                icon: "key",
+                name: I18n.t("service.ldap.title"),
+                perform: () => {
+                    this.setState({
+                        ldapPassword: null,
+                        confirmationDialogOpen: true,
+                        cancelDialogAction: this.doCancelDialogAction,
+                        confirmationDialogAction: this.doConfirmationDialogAction,
+                        confirmationDialogQuestion: I18n.t("service.ldap.confirmation", {name: service.name}),
+                        confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                    });
+                }
+            })
         }
         return actions;
     }
 
+    renderLdapPassword = ldapPassword => {
+        return (
+            <div className="ldap-password">
+                <InputField copyClipBoard={true} disabled={true} value={ldapPassword}/>
+            </div>
+        );
+    }
+
 
     render() {
-        const {tabs, service, loading, tab, firstTime} = this.state;
+        const {
+            tabs, service, loading, tab, firstTime, ldapPassword,
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
+            confirmationDialogQuestion, confirmationTxt
+        } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
@@ -285,6 +339,14 @@ class ServiceDetail extends React.Component {
                 <ServiceWelcomeDialog name={service.name}
                                       isOpen={firstTime}
                                       close={this.doAcceptInvitation}/>
+
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirmationTxt={confirmationTxt}
+                                    confirm={confirmationDialogAction}
+                                    question={confirmationDialogQuestion}>
+                    {ldapPassword && this.renderLdapPassword(ldapPassword)}
+                </ConfirmationDialog>
 
                 <UnitHeader obj={service}
                             mayEdit={user.admin || isUserServiceAdmin(user, service)}

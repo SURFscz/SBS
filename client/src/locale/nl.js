@@ -827,6 +827,14 @@ I18n.translations.nl = {
             created: "Dienst {{name}} is aangemaakt.",
             updated: "Dienst {{name}} is bijgewerkt.",
             deleted: "Dienst {{name}} is verwijderd."
+        },
+        ldap: {
+            title: "Reset LDAP wachtwoord",
+            confirmation: "Weet je zeker dat je het LDAP wachtwoord wilt resetten vor {{name}}?",
+            success: "LDAP wachtwoord is gereset.",
+            info: "Kopieer en bewaar het wachtwoord ergens veilig. Je kan dit wachtwoord hierna niet meer zien.",
+            copy: "Copy",
+            close: "Sluit"
         }
     },
     organisation: {
