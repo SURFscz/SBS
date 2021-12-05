@@ -117,6 +117,4 @@ def delete_service_invitation(id):
         .one()
     confirm_service_admin(service_invitation.service_id)
 
-    confirm_write_access()
-
     return delete(ServiceInvitation, id)

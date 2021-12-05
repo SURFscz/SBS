@@ -827,6 +827,14 @@ I18n.translations.en = {
             created: "Service {{name}} was successfully created",
             updated: "Service {{name}} was successfully updated",
             deleted: "Service {{name}} was successfully deleted"
+        },
+        ldap: {
+            title: "Reset LDAP password",
+            confirmation: "Are you sure you want to reset the LDAP password for {{name}}?",
+            success: "LDAP password has been reset.",
+            info: "Copy and store the password somewhere safe. You can not see this password afterwards.",
+            copy: "Copy",
+            close: "Close"
         }
     },
     organisation: {

@@ -226,6 +226,11 @@ export function deleteService(id) {
     return fetchDelete(`/api/services/${id}`)
 }
 
+export function resetLdapPassword(service) {
+    return fetchJson(`/api/services/reset_ldap_password/${service.id}`);
+}
+
+
 //Collaborations
 export function collaborationByIdentifier(identifier) {
     return fetchJson(`/api/collaborations/find_by_identifier?identifier=${encodeURIComponent(identifier)}`, {}, {}, false);
