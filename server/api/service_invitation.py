@@ -6,7 +6,7 @@ from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Conflict
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import confirm_service_admin, current_user_id, confirm_write_access
+from server.auth.security import confirm_service_admin, current_user_id
 from server.db.defaults import default_expiry_date
 from server.db.domain import ServiceInvitation, Service, ServiceMembership, db
 from server.db.models import delete
