@@ -13,6 +13,7 @@ from server.test.seed import john_name, uuc_scheduler_entity_id, service_network
 class TestUserSaml(AbstractTest):
 
     def test_attributes(self):
+        self.add_service_aup_to_user("urn:john", "https://network")
         res = self.get("/api/users/attributes",
                        query_data={"uid": "urn:john", "service_entity_id": "https://network"})
 
@@ -29,6 +30,7 @@ class TestUserSaml(AbstractTest):
         })
 
     def test_attributes_service_linked_to_organisation(self):
+        self.add_service_aup_to_user("urn:sarah", uuc_scheduler_entity_id)
         res = self.get("/api/users/attributes",
                        query_data={"uid": "urn:sarah", "service_entity_id": uuc_scheduler_entity_id})
         self.assertListEqual(res["cuid"], ["urn:sarah"])
@@ -39,6 +41,7 @@ class TestUserSaml(AbstractTest):
         self.assertDictEqual(res, {})
 
     def test_attributes_service_linked_to_organisation_collaboration_membership(self):
+        self.add_service_aup_to_user("urn:betty", uuc_scheduler_entity_id)
         res = self.get("/api/users/attributes",
                        query_data={"uid": "urn:betty", "service_entity_id": uuc_scheduler_entity_id})
         self.assertListEqual(res["cuid"], ["urn:betty"])
@@ -76,6 +79,7 @@ class TestUserSaml(AbstractTest):
                  query_data={"uid": "urn:john", "service_entity_id": "https://network"})
 
     def test_attributes_user_limit_linked_collaborations(self):
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
         res = self.get("/api/users/attributes",
                        query_data={"uid": "urn:sarah", "service_entity_id": service_mail_entity_id})
         entitlements = res["eduPersonEntitlement"]
@@ -84,6 +88,7 @@ class TestUserSaml(AbstractTest):
                               ], sorted(entitlements))
 
     def test_attributes_user_limit_linked_collaborations_including_group(self):
+        self.add_service_aup_to_user("urn:jane", service_network_entity_id)
         res = self.get("/api/users/attributes",
                        query_data={"uid": "urn:jane", "service_entity_id": service_network_entity_id})
         entitlements = res["eduPersonEntitlement"]
@@ -93,6 +98,7 @@ class TestUserSaml(AbstractTest):
                               ], sorted(entitlements))
 
     def test_proxy_authz(self):
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id})
         attrs = res["attributes"]
@@ -105,6 +111,7 @@ class TestUserSaml(AbstractTest):
         self.assertIsNotNone(attrs["sshkey"][0])
 
     def test_proxy_authz_including_groups(self):
+        self.add_service_aup_to_user("urn:jane", service_network_entity_id)
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id})
         attrs = res["attributes"]
@@ -153,5 +160,18 @@ class TestUserSaml(AbstractTest):
                          "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=6")
 
     def test_non_member_users_access_allowed(self):
+        self.add_service_aup_to_user("urn:jane", "https://wireless")
         res = self.get("/api/users/attributes", query_data={"uid": "urn:jane", "service_entity_id": "https://wireless"})
         self.assertEqual(0, len(res["eduPersonEntitlement"]))
+
+    def test_attributes_no_aup(self):
+        self.get("/api/users/attributes",
+                 query_data={"uid": "urn:john", "service_entity_id": "https://network"},
+                 response_status_code=403)
+
+    def test_proxy_authz_no_aup(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:jane", "service_id": service_network_entity_id})
+        self.assertEqual(res["status"]["result"], "unauthorized")
+        self.assertEqual(res["status"]["redirect_url"],
+                         "http://localhost:3000/service-denied?service_name=Network+Services&error_status=99")

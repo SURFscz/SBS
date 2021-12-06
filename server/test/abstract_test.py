@@ -13,7 +13,7 @@ from flask_testing import TestCase
 
 from server.auth.mfa import ACR_VALUES
 from server.db.db import db
-from server.db.domain import Collaboration, User, Organisation
+from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup
 from server.test.seed import seed
 from server.tools import read_file
 
@@ -136,3 +136,10 @@ class AbstractTest(TestCase):
                    "jti": str(uuid4()), "acr": ACR_VALUES}
         private_key = read_file("test/data/jwt-private-key")
         return jwt.encode({**payload, **additional_payload}, private_key, algorithm="RS256", headers={"kid": "test"})
+
+    @staticmethod
+    def add_service_aup_to_user(user_uid, service_entity_id):
+        user = User.query.filter(User.uid == user_uid).one()
+        service = Service.query.filter(Service.entity_id == service_entity_id).one()
+        db.session.merge(ServiceAup(aup_url=service.accepted_user_policy, user_id=user.id, service_id=service.id))
+        db.session.commit()

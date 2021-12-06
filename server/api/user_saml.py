@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 from flask import Blueprint, current_app, request as current_request
 
 from server.api.base import json_endpoint, query_param, send_error_mail
+from server.api.service_aups import has_agreed_with
 from server.auth.security import confirm_read_access
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE
@@ -20,6 +21,7 @@ SERVICE_UNKNOWN = 3
 SERVICE_NOT_CONNECTED = 4
 COLLABORATION_NOT_ACTIVE = 5
 MEMBERSHIP_NOT_ACTIVE = 6
+AUP_NOT_AGREED = 99
 
 # Independent mapping, so different attribute names can be send back
 custom_saml_mapping = {
@@ -80,6 +82,10 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
                      f" as none of the collaboration memberships are active")
         return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)
 
+    # Leave this as the last check as it is the only exception that can be recovered from
+    if not has_agreed_with(user, service):
+        return not_authorized_func(service.name, AUP_NOT_AGREED)
+
     for coll in connected_collaborations:
         coll.last_activity_date = datetime.now()
         db.session.merge(coll)
@@ -134,6 +140,8 @@ def attributes():
             return {"error": f"user {uid} is suspended"}, 404
         elif status == SERVICE_UNKNOWN or status == SERVICE_NOT_CONNECTED or status == COLLABORATION_NOT_ACTIVE:
             return {}, 200
+        elif status == AUP_NOT_AGREED:
+            return {"error": f"user {uid} has not agreed to the aup of {service_entity_id}"}, 403
         else:
             logger.error(f"Unhandled status {status} in not_authorized_func")
             raise Exception(f"Unhandled status {status} in not_authorized_func")
