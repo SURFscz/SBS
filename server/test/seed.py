@@ -141,6 +141,8 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                 entitlement="urn:mace:surf.nl:sram:allow-create-co")
     paul = User(uid="urn:paul", name="Paul Doe", email="paul@ucc.org", username="paul",
                 schac_home_organisation="example.com")
+    service_admin = User(uid="urn:service_admin", name="Service Admin", email="service_admin@ucc.org",
+                         username="service_admin", schac_home_organisation="service_admin.com")
     # User seed for suspend testing
     retention = app_config.retention
     current_time = datetime.datetime.utcnow()
@@ -168,7 +170,8 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                               suspended=True)
 
     _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, betty, jane,
-             user_inactive, user_one_suspend, user_two_suspend, user_suspended, user_to_be_deleted, paul)
+             user_inactive, user_one_suspend, user_two_suspend, user_suspended, user_to_be_deleted, paul,
+             service_admin)
 
     ssh_key_john = SshKey(user=john, ssh_value="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/nvjea1zJJNCnyUfT6HLcHD"
                                                "hwCMp7uqr4BzxhDAjBnjWcgW4hZJvtLTqCLspS6mogCq2d0/31DU4DnGb2MO28"
@@ -309,15 +312,17 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                                  intended_role="admin",
                                                  user=john)
     service_invitation_wiki_expired = ServiceInvitation(message="Please join",
-                                                             hash=service_invitation_expired_hash,
-                                                             expiry_date=datetime.date.today() - datetime.timedelta(
-                                                                 days=21),
-                                                             intended_role="admin",
-                                                             invitee_email="pass@wiki.org", service=wiki, user=john)
+                                                        hash=service_invitation_expired_hash,
+                                                        expiry_date=datetime.date.today() - datetime.timedelta(
+                                                            days=21),
+                                                        intended_role="admin",
+                                                        invitee_email="pass@wiki.org", service=wiki, user=john)
     _persist(db, service_invitation_cloud, service_invitation_wiki_expired)
 
     service_membership_james = ServiceMembership(role="admin", user=james, service=cloud)
-    _persist(db, service_membership_james)
+    service_membership_service_admin_1 = ServiceMembership(role="admin", user=service_admin, service=storage)
+    service_membership_service_admin_2 = ServiceMembership(role="admin", user=service_admin, service=network)
+    _persist(db, service_membership_james, service_membership_service_admin_1, service_membership_service_admin_2)
 
     service_group_mail = ServiceGroup(name=service_group_mail_name,
                                       short_name="mail",

@@ -9,7 +9,8 @@ export default function ConfirmationDialog({
                                                isOpen = false, cancel, confirm, question = "",
                                                leavePage = false, isError = false, isWarning = false,
                                                disabledConfirm = false, children = null, closeTimeoutMS = 125,
-                                               confirmationTxt = I18n.t("confirmationDialog.confirm")
+                                               confirmationTxt = I18n.t("confirmationDialog.confirm"),
+                                               confirmationHeader = I18n.t("confirmationDialog.title")
                                            }) {
     const className = isError ? " error " : isWarning ? " warning " : "";
     return (
@@ -22,7 +23,7 @@ export default function ConfirmationDialog({
             closeTimeoutMS={closeTimeoutMS}
             ariaHideApp={false}>
             <section className={`dialog-header  ${className}`}>
-                {I18n.t("confirmationDialog.title")}
+                {confirmationHeader}
             </section>
             {leavePage ?
                 <section className={"dialog-content"}>

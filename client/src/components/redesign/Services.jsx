@@ -1,5 +1,5 @@
 import React from "react";
-import {allServices} from "../../api";
+import {allServices, mineServices} from "../../api";
 import "./Services.scss";
 import {stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
@@ -21,15 +21,19 @@ class Services extends React.Component {
 
     componentDidMount = () => {
         const {user} = this.props;
+        let promise;
         if (user.admin) {
-            allServices().then(services => {
-                services.forEach(s => s.connection_requests_count = s.service_connection_requests.length)
-                this.setState({services: services, loading: false})
-            });
+            promise = allServices();
         } else if (isUserServiceAdmin(user)) {
-            const services = user.service_memberships.map(m => m.service).flat();
-            this.setState({services: services, loading: false})
+            promise = mineServices()
+        } else {
+            this.props.history.push("/404");
+            return;
         }
+        promise.then(services => {
+            services.forEach(s => s.connection_requests_count = s.service_connection_requests.length)
+            this.setState({services: services, loading: false})
+        });
     }
 
     openService = service => e => {

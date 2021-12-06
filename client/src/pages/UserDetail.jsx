@@ -74,7 +74,7 @@ class UserDetail extends React.Component {
                     {isEmpty(user.organisation_memberships) && "-"}
                     {!isEmpty(user.organisation_memberships) && <ul>
                         {user.organisation_memberships.map(ms =>
-                            <li>{`${ms.organisation.name} (${I18n.t('profile.' + ms.role)})`}</li>)}
+                            <li key={`organisation_membership_${ms.id}`}>{`${ms.organisation.name} (${I18n.t('profile.' + ms.role)})`}</li>)}
                     </ul>}
                 </div>
                 <div className="input-field">
@@ -98,7 +98,15 @@ class UserDetail extends React.Component {
                     {isEmpty(user.collaboration_requests) && "-"}
                     {!isEmpty(user.collaboration_requests) && <ul>
                         {user.collaboration_requests.map(cr =>
-                            <li>{`${cr.name} (${cr.status})`}</li>)}
+                            <li key={`collaboration_request_${cr.id}`}>{`${cr.name} (${cr.status})`}</li>)}
+                    </ul>}
+                </div>
+                <div className="input-field">
+                    <label>{I18n.t("models.services.title")}</label>
+                    {isEmpty(user.service_memberships) && "-"}
+                    {!isEmpty(user.service_memberships) && <ul>
+                        {user.service_memberships.map(sm =>
+                            <li key={`service_membership_${sm.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</li>)}
                     </ul>}
                 </div>
             </div>
