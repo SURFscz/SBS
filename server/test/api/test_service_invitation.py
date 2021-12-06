@@ -17,6 +17,12 @@ class TestServiceInvitation(AbstractTest):
         self.assertEqual(service_invitation_hash, service_invitation["hash"])
         self.assertTrue(len(service_invitation["service"]["service_memberships"]) > 0)
 
+    def test_find_by_hash_unauthorized(self):
+        service_invitation = self.get("/api/service_invitations/find_by_hash",
+                                      query_data={"hash": service_invitation_hash},
+                                      with_basic_auth=False)
+        self.assertEqual(service_invitation_hash, service_invitation["hash"])
+
     def test_accept(self):
         self.login("urn:paul")
         self.put("/api/service_invitations/accept", body={"hash": service_invitation_hash},
