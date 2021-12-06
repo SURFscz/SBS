@@ -24,7 +24,7 @@ class TestSystem(AbstractTest):
 
     def test_db_stats(self):
         res = self.get("/api/system/db_stats")
-        self.assertDictEqual({"count": 17, "name": "users"}, res[0])
+        self.assertDictEqual({"count": 18, "name": "users"}, res[0])
         self.assertDictEqual({"count": 13, "name": "organisations_services"}, res[2])
 
     def test_db_seed(self):

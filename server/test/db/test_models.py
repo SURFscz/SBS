@@ -33,5 +33,6 @@ class TestModels(AbstractTest):
         self.assertTrue(isinstance(json_dict["updated_at"], datetime.datetime))
 
     def test_update_not_found(self):
+        self.login("urn:john")
         self.put("/api/services", body={"id": -1, "entity_id": "some", "name": "some", "abbreviation": "abbreviation"},
                  response_status_code=404)
