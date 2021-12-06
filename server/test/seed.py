@@ -282,7 +282,9 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                        "(Dutch:SamenwerkingBeheerSysteem)-SBS-DevelopmentofnewopensourceCollaborationManagementSystem",
                    public_visible=True, automatic_connection_allowed=False, logo=read_image("wiki.jpeg"),
                    allowed_organisations=[uuc, uva], contact_email="help@wiki.com", abbreviation="wiki",
-                   accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org")
+                   accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
+                   ldap_password="$6$rounds=100000$bFyBZD0Fim7BCAqt$BSq4u2IqhyT2khkCMILpaEceMnvYIKvxyxttA8."
+                                 "IddqWdPB.AEH2MBb1sggk8pDlrW/Xb00f8xa67cC0nfkuX.")
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",

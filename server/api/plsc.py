@@ -36,9 +36,11 @@ def sync():
     rs = db.engine.execute("SELECT name, organisation_id FROM schac_home_organisations")
     schac_home_organisations = [{"name": row[0], "organisation_id": row[1]} for row in rs]
 
-    rs = db.engine.execute("SELECT id, name, entity_id, contact_email, uuid4 FROM services")
+    rs = db.engine.execute("SELECT id, name, entity_id, contact_email, uuid4, ldap_password, accepted_user_policy "
+                           "FROM services")
     services = [{"id": row[0], "name": row[1], "entity_id": row[2], "contact_email": row[3],
-                 "logo": logo_url("services", row[4])} for row in rs]
+                 "logo": logo_url("services", row[4]), "ldap_password": row[5],
+                 "accepted_user_policy": row[6]} for row in rs]
 
     rs = db.engine.execute("SELECT service_id, organisation_id FROM services_organisations")
     services_organisations = [{"service_id": row[0], "organisation_id": row[1]} for row in rs]
