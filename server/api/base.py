@@ -175,7 +175,9 @@ def config():
             "organisation_categories": cfg.organisation_categories,
             "second_factor_authentication_required": cfg.oidc.second_factor_authentication_required,
             "admin_users_upgrade_url": cfg.feature.admin_users_upgrade_url,
-            "impersonation_allowed": cfg.feature.impersonation_allowed}, 200
+            "impersonation_allowed": cfg.feature.impersonation_allowed,
+            "ldap_url": cfg.ldap.url,
+            "ldap_bind_account": cfg.ldap.bind_account}, 200
 
 
 @base_api.route("/info", strict_slashes=False)

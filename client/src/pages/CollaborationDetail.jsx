@@ -128,7 +128,9 @@ class CollaborationDetail extends React.Component {
                                 this.updateAppStore(collaboration, adminOfCollaboration, orgManager);
                                 this.tabChanged(tab, collaboration.id);
                             });
-                        }).catch(() => this.props.history.push("/404"));
+                        }).catch(() => {
+                            this.props.history.push("/404")
+                    });
                 }).catch(() => this.props.history.push("/404"));
         } else {
             const {collaborationIdentifier, user} = this.props;
@@ -179,7 +181,7 @@ class CollaborationDetail extends React.Component {
 
     showExpiryDateFlash = (user, collaboration) => {
         let msg = "";
-        const membership = collaboration.collaboration_memberships.find(m => m.user.id === user.id);
+        const membership = collaboration.collaboration_memberships.find(m => m.user_id === user.id);
 
         if (membership && membership.expiry_date) {
             const formattedMembershipExpiryDate = moment(membership.expiry_date * 1000).format("LL");

@@ -94,12 +94,12 @@ class Home extends React.Component {
             tab = tabSuggestion;
         }
         if (isUserServiceAdmin(user)) {
-            if (nbrServices === 1) {
+            if (nbrServices === 1 && tabs.length === 0) {
                 setTimeout(() => this.props.history.push(`/services/${user.service_memberships[0].service_id}`), 50);
             } else {
                 tabs.push(this.getServicesTab(nbrServices));
+                tab = tabs[0].key;
             }
-
         }
         AppStore.update(s => {
             s.breadcrumb.paths = [
@@ -196,7 +196,8 @@ class Home extends React.Component {
             return <SpinnerField/>;
         }
         const {user} = this.props;
-        const noMemberships = user.collaboration_memberships.length === 0 && user.organisation_memberships.length === 0;
+        const noMemberships = user.collaboration_memberships.length === 0 && user.organisation_memberships.length === 0
+            && user.service_memberships === 0;
         return (
             <div className="mod-home-container">
                 {(user.admin || noMemberships) && <UnitHeader obj={({name: I18n.t("home.sram"), svg: Logo})}

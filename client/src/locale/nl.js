@@ -805,10 +805,17 @@ I18n.translations.nl = {
         allowedOrganisations: "Toegestane organisaties",
         allowedOrganisationsPlaceholder: "Zoek organisaties",
         allowedOrganisationsTooltip: "Als er een organisatie wordt toegevoegd dan zijn alle andere organisaties automatisch uitgesloten van het gebruik van deze dienst. Als deze dienst door alle samenwerkingen mag worden gebruikt voeg dan geen organisaties toe.",
-        contact_email: "Contact",
-        contact_emailPlaceholder: "Het e-mailadres van de contactpersoon van deze dienst",
+        contact_email: "Administratief contact",
+        contact_emailPlaceholder: "Het administratieve e-mailadres van de contactpersoon van deze dienst",
         contact_emailTooltip: "Dit e-mailadres wordt gebruikt om met de contactpersoon van de dienst te communiceren. Is idealiter een functioneel e-mailadres, zoals dienst_A_support@sp.org.",
-        contactEmailRequired: "Een contact-e-mail is verplicht als automatische connectie niet toegestaan is voor een dienst",
+        contactEmailRequired: "Een administratief contact-e-mail is verplicht als automatische connectie niet toegestaan is voor een dienst",
+        security_email: "Security contact",
+        security_emailPlaceholder: "Het e-mailadres van de security contactpersoon",
+        security_emailTooltip: "Het security e-mailadres wordt gecontacteerd als er security vragen zijn. Is idealiter een functioneel e-mailadres, zoals dienst_A_security@sp.org.",
+        securityEmailRequired: "Security e-mailadres is verplicht",
+        support_email: "Support contact",
+        support_emailPlaceholder: "Het e-mailadres van de support afdeling van deze dienst",
+        support_emailTooltip: "Het support e-mailadres wordt gecontacteerd als er functionale vragen zijn over deze dienst. Is idealiter een functioneel e-mailadres, zoals dienst_A_support@sp.org.",
         invitations: "Nodig service admins uit",
         status: {
             name: "Status",
@@ -830,12 +837,19 @@ I18n.translations.nl = {
         },
         ldap: {
             title: "Reset LDAP wachtwoord",
-            confirmation: "Weet je zeker dat je het LDAP wachtwoord wilt resetten vor {{name}}?",
+            confirmation: "Weet je zeker dat je het LDAP wachtwoord wilt resetten voor {{name}}?",
             success: "LDAP wachtwoord is gereset.",
             info: "Kopieer en bewaar het wachtwoord ergens veilig. Je kan dit wachtwoord hierna niet meer zien.",
             copy: "Copy",
-            close: "Sluit"
-        }
+            close: "Sluit",
+            section: "LDAP configuratie",
+            url: "URL",
+            urlTooltip: "De URL van de LDAP-server",
+            username: "Gebruikersnaam bind account",
+            usernameTooltip: "Dit is het account voor authenticatie in de directoryserver",
+        },
+        contacts: "Contact personen",
+
     },
     organisation: {
         title: "Nieuwe organisatie toevoegen",

@@ -304,6 +304,8 @@ class Service(Base, db.Model, LogoMixin):
     accepted_user_policy = db.Column("accepted_user_policy", db.Text(), nullable=True)
     ldap_password = db.Column("ldap_password", db.String(length=255), nullable=True)
     contact_email = db.Column("contact_email", db.String(length=255), nullable=True)
+    support_email = db.Column("support_email", db.String(length=255), nullable=True)
+    security_email = db.Column("security_email", db.String(length=255), nullable=True)
     public_visible = db.Column("public_visible", db.Boolean(), nullable=True, default=True)
     automatic_connection_allowed = db.Column("automatic_connection_allowed", db.Boolean(), nullable=True, default=True)
     access_allowed_for_all = db.Column("access_allowed_for_all", db.Boolean(), nullable=True, default=False)

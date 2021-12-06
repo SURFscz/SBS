@@ -71,6 +71,34 @@ def services_from_organisation_memberships(user_id, service_id=None, count_only=
     return _services_from_query(count_only, query, service_id)
 
 
+def _do_get_services(restrict_for_current_user=False):
+    def override_func():
+        return is_collaboration_admin() or _is_org_member() or is_service_admin()
+
+    confirm_write_access(override_func=override_func)
+    query = Service.query \
+        .options(selectinload(Service.allowed_organisations)) \
+        .options(selectinload(Service.service_connection_requests))
+
+    if restrict_for_current_user:
+        query = query.join(Service.service_memberships) \
+            .filter(ServiceMembership.user_id == current_user_id())
+
+    services = query.all()
+    sql = text("SELECT service_id, organisation_id FROM services_organisations")
+    result_set = db.engine.execute(sql)
+    service_orgs = [{"service_id": row[0], "organisation_id": row[1]} for row in result_set]
+    sql = text("SELECT service_id, collaboration_id FROM services_collaborations")
+    result_set = db.engine.execute(sql)
+    services_colls = [{"service_id": row[0], "collaboration_id": row[1]} for row in result_set]
+    services_json = jsonify(services).json
+    for index, service in enumerate(services):
+        service_json = services_json[index]
+        service_json["collaborations_count"] = len([s for s in services_colls if s["service_id"] == service.id])
+        service_json["organisations_count"] = len([s for s in service_orgs if s["service_id"] == service.id])
+    return services_json, 200
+
+
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
@@ -188,30 +216,13 @@ def service_by_id(service_id):
 @service_api.route("/all", strict_slashes=False)
 @json_endpoint
 def all_services():
-    def override_func():
-        return is_collaboration_admin() or _is_org_member()
+    return _do_get_services()
 
-    confirm_write_access(override_func=override_func)
 
-    services = Service.query \
-        .options(selectinload(Service.allowed_organisations)) \
-        .options(selectinload(Service.service_connection_requests)) \
-        .all()
-
-    sql = text("SELECT service_id, organisation_id FROM services_organisations")
-    result_set = db.engine.execute(sql)
-    service_orgs = [{"service_id": row[0], "organisation_id": row[1]} for row in result_set]
-
-    sql = text("SELECT service_id, collaboration_id FROM services_collaborations")
-    result_set = db.engine.execute(sql)
-    services_colls = [{"service_id": row[0], "collaboration_id": row[1]} for row in result_set]
-
-    services_json = jsonify(services).json
-    for index, service in enumerate(services):
-        service_json = services_json[index]
-        service_json["collaborations_count"] = len([s for s in services_colls if s["service_id"] == service.id])
-        service_json["organisations_count"] = len([s for s in service_orgs if s["service_id"] == service.id])
-    return services_json, 200
+@service_api.route("/mine", strict_slashes=False)
+@json_endpoint
+def mine_services():
+    return _do_get_services(restrict_for_current_user=True)
 
 
 @service_api.route("/", methods=["POST"], strict_slashes=False)
@@ -291,14 +302,17 @@ def _validate_ip_networks(data):
 @service_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_service():
-    confirm_write_access()
-
     data = current_request.get_json()
+
+    service_id = data["id"]
+    confirm_service_admin(service_id)
 
     _validate_ip_networks(data)
     cleanse_short_name(data, "abbreviation")
-
-    res = update(Service, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
+    if is_service_admin(service_id):
+        for attr in [fb for fb in ["white_listed", "non_member_users_access_allowed"] if fb in data]:
+            del data[attr]
+    res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
     service.ip_networks
 

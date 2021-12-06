@@ -210,6 +210,10 @@ export function allServices() {
     return fetchJson("/api/services/all");
 }
 
+export function mineServices() {
+    return fetchJson("/api/services/mine");
+}
+
 export function createService(service) {
     return postPutJson("/api/services", service, "post");
 }
@@ -696,6 +700,7 @@ export function feedback(message) {
 export function plscSync() {
     return fetchJson("/api/plsc/sync");
 }
+
 //Service groups
 export function serviceGroupNameExists(name, serviceId, existingGroup = null) {
     return fetchJson(`/api/servicegroups/name_exists?name=${encodeURIComponent(name)}&service_id=${serviceId}&existing_service_group=${encodeURIComponent(existingGroup)}`);

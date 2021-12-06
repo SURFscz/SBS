@@ -47,9 +47,10 @@ class ServiceDetail extends React.Component {
             tab: "organisations",
             tabs: [],
             confirmationDialogOpen: false,
-            cancelDialogAction: this.doCancelDialogAction,
-            confirmationDialogAction: this.doConfirmationDialogAction,
-            confirmationTxt: I18n.t("confirmationDialog.confirm"),
+            cancelDialogAction: null,
+            confirmationDialogAction: null,
+            confirmationTxt: null,
+            confirmationHeader: null,
             ldapPassword: null
         };
     }
@@ -105,6 +106,7 @@ class ServiceDetail extends React.Component {
         resetLdapPassword(service).then(res => {
             this.setState({
                 confirmationTxt: I18n.t("service.ldap.close"),
+                confirmationHeader: I18n.t("service.ldap.copy"),
                 cancelDialogAction: null,
                 confirmationDialogQuestion: I18n.t("service.ldap.info"),
                 ldapPassword: res.ldap_password,
@@ -306,6 +308,7 @@ class ServiceDetail extends React.Component {
                         confirmationDialogOpen: true,
                         cancelDialogAction: this.doCancelDialogAction,
                         confirmationDialogAction: this.doConfirmationDialogAction,
+                        confirmationHeader: I18n.t("confirmationDialog.title"),
                         confirmationDialogQuestion: I18n.t("service.ldap.confirmation", {name: service.name}),
                         confirmationTxt: I18n.t("confirmationDialog.confirm"),
                     });
@@ -328,7 +331,7 @@ class ServiceDetail extends React.Component {
         const {
             tabs, service, loading, tab, firstTime, ldapPassword,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
-            confirmationDialogQuestion, confirmationTxt
+            confirmationDialogQuestion, confirmationTxt, confirmationHeader
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -343,6 +346,7 @@ class ServiceDetail extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirmationTxt={confirmationTxt}
+                                    confirmationHeader={confirmationHeader}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}>
                     {ldapPassword && this.renderLdapPassword(ldapPassword)}
@@ -370,6 +374,13 @@ class ServiceDetail extends React.Component {
                             <span>{service.contact_email ?
                                 <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a> : I18n.t("service.none")}</span>
                         </div>
+                        {service.support_email &&
+                        <div className="org-attributes">
+                            <span>{I18n.t("service.support_email")}</span>
+                            <span>
+                                <a href={`mailto:${service.support_email}`}>{service.support_email}</a>
+                            </span>
+                        </div>}
                         <div className="org-attributes">
                             <span>{I18n.t("service.privacy_policy")}</span>
                             {service.privacy_policy && <span>

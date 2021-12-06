@@ -2,7 +2,8 @@ import React from "react";
 import {
     createService,
     deleteService,
-    ipNetworks, serviceAbbreviationExists,
+    ipNetworks,
+    serviceAbbreviationExists,
     serviceById,
     serviceEntityIdExists,
     serviceNameExists,
@@ -56,11 +57,13 @@ class Service extends React.Component {
         code_of_conduct_compliant: false,
         sirtfi_compliant: false,
         contact_email: "",
+        support_email: "",
+        security_email: "",
         ip_networks: [],
         administrators: [],
         email: "",
         message: "",
-        required: ["name", "entity_id", "abbreviation", "privacy_policy", "logo"],
+        required: ["name", "entity_id", "abbreviation", "privacy_policy", "logo", "security_email"],
         alreadyExists: {},
         initial: true,
         isNew: true,
@@ -106,7 +109,7 @@ class Service extends React.Component {
                             ...res,
                             service: res,
                             isNew: false,
-                            isServiceAdmin: isUserServiceAdmin(user, res.id),
+                            isServiceAdmin: isUserServiceAdmin(user, res),
                             loading: false
                         }, () => {
                             const {ip_networks} = this.state.service;
@@ -148,11 +151,11 @@ class Service extends React.Component {
             this.setState({alreadyExists: {...this.state.alreadyExists, abbreviation: json}});
         });
 
-    validateEmail = e => {
+    validateEmail = name => e => {
         const email = e.target.value;
         const {invalidInputs} = this.state;
         const inValid = !isEmpty(email) && !validEmailRegExp.test(email);
-        this.setState({invalidInputs: {...invalidInputs, email: inValid}});
+        this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
     };
 
     validateIpAddress = index => e => {
@@ -274,7 +277,7 @@ class Service extends React.Component {
         this.props.history.push("/services/" + res.id);
     };
 
-    renderIpNetworks = (ip_networks, isAdmin) => {
+    renderIpNetworks = (ip_networks, isAdmin, isServiceAdmin) => {
         return (<div className="ip-networks">
             <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
                 <span className="tool-tip-section">
@@ -286,7 +289,7 @@ class Service extends React.Component {
                                     <p dangerouslySetInnerHTML={{__html: I18n.t("service.networkTooltip")}}/>
                                 </ReactTooltip>
                             </span>
-                {isAdmin &&
+                {(isAdmin || isServiceAdmin) &&
                 <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>}
             </label>
             {ip_networks.map((network, i) =>
@@ -297,13 +300,13 @@ class Service extends React.Component {
                                     onBlur={this.validateIpAddress(i)}
                                     placeholder={I18n.t("service.networkPlaceholder")}
                                     error={network.error || network.syntax}
-                                    disabled={!isAdmin}
+                                    disabled={!isAdmin && !isServiceAdmin}
                                     onEnter={e => {
                                         this.validateIpAddress(i);
                                         e.target.blur()
                                     }}
                         />
-                        {isAdmin && <span className="trash">
+                        {(isAdmin || isServiceAdmin) && <span className="trash">
                             <FontAwesomeIcon onClick={() => this.deleteIpAddress(i)} icon="trash"/>
                         </span>}
                     </div>
@@ -343,9 +346,9 @@ class Service extends React.Component {
     };
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
-                        access_allowed_for_all, non_member_users_access_allowed, contact_email, invalidInputs, contactEmailRequired,
+                        access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
                         accepted_user_policy, privacy_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                        research_scholarship_compliant, config, ip_networks, administrators, message, email, logo) => {
+                        research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin) => {
         const serviceRequestUrlValid = !isEmpty(uri) && automatic_connection_allowed;
         const serviceRequestUrl = serviceRequestUrlValid ? `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(uri)}` :
             I18n.t("service.service_requestError");
@@ -362,7 +365,7 @@ class Service extends React.Component {
                             onBlur={this.validateServiceName}
                             error={alreadyExists.name || (!initial && isEmpty(name))}
                             name={I18n.t("service.name")}
-                            disabled={!isAdmin}/>
+                            disabled={!isAdmin && !isServiceAdmin}/>
                 {alreadyExists.name && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.name").toLowerCase(),
                     value: name
@@ -386,7 +389,7 @@ class Service extends React.Component {
                             toolTip={I18n.t("service.entity_idTooltip")}
                             error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
                             copyClipBoard={true}
-                            disabled={!isAdmin}/>
+                            disabled={!isAdmin && !isServiceAdmin}/>
                 {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.entity_id").toLowerCase(),
                     value: entity_id
@@ -405,7 +408,7 @@ class Service extends React.Component {
                             toolTip={I18n.t("service.abbreviationTooltip")}
                             error={alreadyExists.abbreviation || (!initial && isEmpty(abbreviation))}
                             copyClipBoard={false}
-                            disabled={!isAdmin}/>
+                            disabled={!isAdmin && !isServiceAdmin}/>
                 {alreadyExists.abbreviation && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.abbreviation").toLowerCase(),
                     value: abbreviation
@@ -418,20 +421,20 @@ class Service extends React.Component {
                             name={I18n.t("service.privacy_policy")}
                             placeholder={I18n.t("service.privacy_policyPlaceholder")}
                             onChange={e => this.setState({privacy_policy: e.target.value})}
-                            error={alreadyExists.privacy_policy || (!initial && isEmpty(privacy_policy))}
+                            error={!initial && isEmpty(privacy_policy)}
                             toolTip={I18n.t("service.privacy_policyTooltip")}
                             externalLink={true}
-                            disabled={!isAdmin}/>
+                            disabled={!isAdmin && !isServiceAdmin}/>
                 {(!initial && isEmpty(privacy_policy)) && <ErrorIndicator msg={I18n.t("service.required", {
                     attribute: I18n.t("service.privacy_policy").toLowerCase()
                 })}/>}
 
-                {!isNew && <InputField value={serviceRequestUrl}
-                                       name={I18n.t("service.service_request")}
-                                       toolTip={I18n.t("service.service_requestTooltip")}
-                                       copyClipBoard={true}
-                                       history={this.props.history}
-                                       disabled={true}
+                {(!isNew && isAdmin) && <InputField value={serviceRequestUrl}
+                                                    name={I18n.t("service.service_request")}
+                                                    toolTip={I18n.t("service.service_requestTooltip")}
+                                                    copyClipBoard={true}
+                                                    history={this.props.history}
+                                                    disabled={true}
                 />}
 
                 <InputField value={description}
@@ -439,7 +442,7 @@ class Service extends React.Component {
                             placeholder={I18n.t("service.descriptionPlaceholder")}
                             onChange={e => this.setState({description: e.target.value})}
                             multiline={true}
-                            disabled={!isAdmin}/>
+                            disabled={!isAdmin && !isServiceAdmin}/>
 
                 <InputField value={uri}
                             name={I18n.t("service.uri")}
@@ -447,50 +450,31 @@ class Service extends React.Component {
                             onChange={e => this.setState({uri: e.target.value})}
                             toolTip={I18n.t("service.uriTooltip")}
                             externalLink={true}
-                            disabled={!isAdmin}/>
+                            disabled={!isAdmin && !isServiceAdmin}/>
 
                 <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
                           info={I18n.t("service.automaticConnectionAllowed")}
                           tooltip={I18n.t("service.automaticConnectionAllowedTooltip")}
                           onChange={e => this.setState({automatic_connection_allowed: e.target.checked})}
-                          readOnly={!isAdmin}/>
+                          readOnly={!isAdmin && !isServiceAdmin}/>
 
                 <CheckBox name="access_allowed_for_all" value={access_allowed_for_all}
                           info={I18n.t("service.accessAllowedForAll")}
                           tooltip={I18n.t("service.accessAllowedForAllTooltip")}
                           onChange={e => this.setState({access_allowed_for_all: e.target.checked})}
-                          readOnly={!isAdmin}/>
+                          readOnly={!isAdmin && !isServiceAdmin}/>
 
-                <CheckBox name="non_member_users_access_allowed" value={non_member_users_access_allowed}
-                          info={I18n.t("service.nonMemberUsersAccessAllowed")}
-                          tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
-                          onChange={e => this.setState({non_member_users_access_allowed: e.target.checked})}
-                          readOnly={!isAdmin}/>
+                {isAdmin && <CheckBox name="non_member_users_access_allowed" value={non_member_users_access_allowed}
+                                      info={I18n.t("service.nonMemberUsersAccessAllowed")}
+                                      tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
+                                      onChange={e => this.setState({non_member_users_access_allowed: e.target.checked})}
+                                      readOnly={!isAdmin && !isServiceAdmin}/>}
 
-                <CheckBox name="white_listed" value={white_listed}
-                          info={I18n.t("service.whiteListed")}
-                          tooltip={I18n.t("service.whiteListedTooltip")}
-                          onChange={e => this.setState({white_listed: e.target.checked})}
-                          readOnly={!isAdmin}/>
-
-                <InputField value={contact_email}
-                            name={I18n.t("service.contact_email")}
-                            placeholder={I18n.t("service.contact_emailPlaceholder")}
-                            onChange={e => this.setState({
-                                contact_email: e.target.value,
-                                invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
-                                    ...invalidInputs,
-                                    email: false
-                                }
-                            })}
-                            toolTip={I18n.t("service.contact_emailTooltip")}
-                            error={invalidInputs["email"] || (!initial && contactEmailRequired)}
-                            onBlur={this.validateEmail}
-                            disabled={!isAdmin}/>
-
-                {invalidInputs["email"] && <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
-
-                {(!initial && contactEmailRequired) && <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
+                {isAdmin && <CheckBox name="white_listed" value={white_listed}
+                                      info={I18n.t("service.whiteListed")}
+                                      tooltip={I18n.t("service.whiteListedTooltip")}
+                                      onChange={e => this.setState({white_listed: e.target.checked})}
+                                      readOnly={!isAdmin && !isServiceAdmin}/>}
 
                 <InputField value={accepted_user_policy}
                             name={I18n.t("service.accepted_user_policy")}
@@ -498,9 +482,82 @@ class Service extends React.Component {
                             onChange={e => this.setState({accepted_user_policy: e.target.value})}
                             toolTip={I18n.t("service.accepted_user_policyTooltip")}
                             externalLink={true}
-                            disabled={!isAdmin}/>
+                            disabled={!isAdmin && !isServiceAdmin}/>
 
-                {this.renderIpNetworks(ip_networks, isAdmin)}
+                {this.renderIpNetworks(ip_networks, isAdmin, isServiceAdmin)}
+                <div className="contacts">
+                    <h1 className="section-separator first">{I18n.t("service.contacts")}</h1>
+
+                    <InputField value={contact_email}
+                                name={I18n.t("service.contact_email")}
+                                placeholder={I18n.t("service.contact_emailPlaceholder")}
+                                onChange={e => this.setState({
+                                    contact_email: e.target.value,
+                                    invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
+                                        ...invalidInputs,
+                                        email: false
+                                    }
+                                })}
+                                toolTip={I18n.t("service.contact_emailTooltip")}
+                                error={invalidInputs["email"] || (!initial && contactEmailRequired)}
+                                onBlur={this.validateEmail("email")}
+                                disabled={!isAdmin && !isServiceAdmin}/>
+                    {invalidInputs["email"] && <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
+                    {(!initial && contactEmailRequired) &&
+                    <ErrorIndicator msg={I18n.t("service.contactEmailRequired")}/>}
+
+                    <InputField value={security_email}
+                                name={I18n.t("service.security_email")}
+                                placeholder={I18n.t("service.security_emailPlaceholder")}
+                                onChange={e => this.setState({
+                                    security_email: e.target.value,
+                                    invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
+                                        ...invalidInputs,
+                                        security_email: false
+                                    }
+                                })}
+                                toolTip={I18n.t("service.security_emailTooltip")}
+                                error={(!initial && isEmpty(security_email)) || invalidInputs["security_email"]}
+                                onBlur={this.validateEmail("security_email")}
+                                disabled={!isAdmin && !isServiceAdmin}/>
+
+                    {invalidInputs["security_email"] &&
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
+
+                    {(!initial && isEmpty(security_email)) &&
+                    <ErrorIndicator msg={I18n.t("service.securityEmailRequired")}/>}
+
+                    <InputField value={support_email}
+                                name={I18n.t("service.support_email")}
+                                placeholder={I18n.t("service.support_emailPlaceholder")}
+                                onChange={e => this.setState({
+                                    support_email: e.target.value,
+                                    invalidInputs: !isEmpty(e.target.value) ? invalidInputs : {
+                                        ...invalidInputs,
+                                        support_email: false
+                                    }
+                                })}
+                                toolTip={I18n.t("service.support_emailTooltip")}
+                                error={invalidInputs["support_email"]}
+                                onBlur={this.validateEmail("support_email")}
+                                disabled={!isAdmin && !isServiceAdmin}/>
+                    {invalidInputs["support_email"] &&
+                    <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "email"})}/>}
+
+                </div>
+                <div className="ldap">
+                    <h1 className="section-separator first">{I18n.t("service.ldap.section")}</h1>
+                    <InputField value={config.ldap_url}
+                                name={I18n.t("service.ldap.url")}
+                                toolTip={I18n.t("service.ldap.urlTooltip")}
+                                copyClipBoard={true}
+                                disabled={true}/>
+                    <InputField value={config.ldap_bind_account.replace("entity_id", entity_id)}
+                                name={I18n.t("service.ldap.username")}
+                                toolTip={I18n.t("service.ldap.usernameTooltip")}
+                                copyClipBoard={true}
+                                disabled={true}/>
+                </div>
                 <div className="compliance">
                     <h1 className="section-separator first">{I18n.t("service.compliancy")}</h1>
 
@@ -546,10 +603,10 @@ class Service extends React.Component {
                     <Button disabled={disabledSubmit} txt={I18n.t("service.add")}
                             onClick={this.submit}/>
                 </section>}
-                {(!isNew && isAdmin) &&
+                {(!isNew && (isAdmin || isServiceAdmin)) &&
                 <section className="actions">
-                    <Button warningButton={true} txt={I18n.t("service.delete")}
-                            onClick={this.delete}/>
+                    {!isServiceAdmin && <Button warningButton={true} txt={I18n.t("service.delete")}
+                                                onClick={this.delete}/>}
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")} onClick={this.cancel}/>
                     <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
                             onClick={this.submit}/>
@@ -573,7 +630,7 @@ class Service extends React.Component {
             uri,
             accepted_user_policy,
             privacy_policy,
-            contact_email,
+            contact_email, support_email, security_email,
             confirmationDialogAction,
             leavePage,
             isNew,
@@ -586,7 +643,7 @@ class Service extends React.Component {
             code_of_conduct_compliant,
             research_scholarship_compliant,
             ip_networks,
-            administrators, message, email,
+            administrators, message, email, isServiceAdmin,
             logo,
             warning,
             loading
@@ -616,9 +673,9 @@ class Service extends React.Component {
                                         question={I18n.t("service.deleteConfirmation", {name: service.name})}/>
 
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
-                        access_allowed_for_all, non_member_users_access_allowed, contact_email, invalidInputs, contactEmailRequired, accepted_user_policy, privacy_policy,
+                        access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, privacy_policy,
                         isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
-                        research_scholarship_compliant, config, ip_networks, administrators, message, email, logo)}
+                        research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin)}
                 </div>
             </>);
     };
