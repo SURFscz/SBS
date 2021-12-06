@@ -20,6 +20,13 @@ def add_user_aups(collaboration, user_id):
             db.session.merge(ServiceAup(aup_url=service.accepted_user_policy, user_id=user_id, service_id=service.id))
 
 
+def has_agreed_with(user, service):
+    return ServiceAup.query \
+               .filter(ServiceAup.service_id == service.id) \
+               .filter(ServiceAup.user_id == user.id) \
+               .count() > 0
+
+
 @service_aups_api.route("/delete_by_service", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def delete_all():
