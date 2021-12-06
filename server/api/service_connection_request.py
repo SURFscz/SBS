@@ -56,8 +56,11 @@ def _do_service_connection_request(hash, approved):
 
 def _do_mail_request(collaboration, service, service_connection_request, is_admin, user):
     recipients = []
-    if is_admin and service.contact_email:
-        recipients.append(service.contact_email)
+    if is_admin:
+        if service.contact_email:
+            recipients.append(service.contact_email)
+        else:
+            recipients += [service_membership.user.email for service_membership in service.service_memberships]
     else:
         for membership in collaboration.collaboration_memberships:
             if membership.role == "admin":

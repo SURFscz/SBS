@@ -115,6 +115,19 @@ class TestService(AbstractTest):
         self.assertEqual("changed", service["name"])
         self.assertEqual(1, len(service["ip_networks"]))
 
+    def test_service_update_service_admin(self):
+        service = self._find_by_name(service_storage_name)
+        service["white_listed"] = False
+        service["non_member_users_access_allowed"] = True
+
+        self.login("urn:service_admin")
+        service = self.put("/api/services", body=service, with_basic_auth=False)
+        # assert that forbidden attributes are unchanged
+        service = self.find_entity_by_name(Service, service_storage_name)
+
+        self.assertEqual(True, service.white_listed)
+        self.assertEqual(False, service.non_member_users_access_allowed)
+
     def test_service_delete(self):
         pre_count = Service.query.count()
         mail = self._find_by_name()
