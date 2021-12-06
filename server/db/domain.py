@@ -48,6 +48,8 @@ class User(Base, db.Model):
                                           cascade_backrefs=False, passive_deletes=True)
     join_requests = db.relationship("JoinRequest", back_populates="user", cascade_backrefs=False, passive_deletes=True)
     aups = db.relationship("Aup", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
+    service_aups = db.relationship("ServiceAup", back_populates="user", cascade="all, delete-orphan",
+                                   passive_deletes=True)
     confirmed_super_user = db.Column("confirmed_super_user", db.Boolean(), nullable=True, default=False)
     eduperson_principal_name = db.Column("eduperson_principal_name", db.String(length=255), nullable=True)
     application_uid = db.Column("application_uid", db.String(length=255), nullable=True)
@@ -330,8 +332,9 @@ class Service(Base, db.Model, LogoMixin):
     service_memberships = db.relationship("ServiceMembership", back_populates="service",
                                           cascade="all, delete-orphan", passive_deletes=True)
     service_invitations = db.relationship("ServiceInvitation", back_populates="service",
-                                          cascade="all, delete-orphan",
-                                          passive_deletes=True)
+                                          cascade="all, delete-orphan", passive_deletes=True)
+    service_aups = db.relationship("ServiceAup", back_populates="service", cascade="all, delete-orphan",
+                                   passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -565,3 +568,15 @@ class ServiceGroup(Base, db.Model):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+
+class ServiceAup(Base, db.Model):
+    __tablename__ = "service_aups"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    aup_url = db.Column("aup_url", db.String(length=255), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="service_aups")
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    service = db.relationship("Service", back_populates="service_aups")
+    agreed_at = db.Column("agreed_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                          nullable=False)

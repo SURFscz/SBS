@@ -7,6 +7,7 @@ from werkzeug.exceptions import Conflict, BadRequest
 
 from server.api.base import json_endpoint, STATUS_DENIED, STATUS_APPROVED
 from server.api.collaboration_request import STATUS_OPEN
+from server.api.service_aups import add_user_aups
 from server.auth.security import confirm_collaboration_admin, current_user_id, current_user, \
     current_user_name, current_user_uid
 from server.db.domain import CollaborationMembership, Collaboration, JoinRequest, db
@@ -76,6 +77,9 @@ def new_join_request():
                                collaboration_id=collaboration.id,
                                hash=token_urlsafe())
     join_request = db.session.merge(join_request)
+
+    add_user_aups(collaboration, user_id)
+
     db.session.commit()
 
     mail_collaboration_join_request({

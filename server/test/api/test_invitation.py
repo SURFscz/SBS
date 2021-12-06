@@ -2,7 +2,7 @@
 
 from server.db.db import db
 from server.db.domain import Invitation, CollaborationMembership, User, Collaboration, OrganisationMembership, \
-    Organisation
+    Organisation, ServiceAup
 from server.test.abstract_test import AbstractTest
 from server.test.seed import invitation_hash_no_way, ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
     uva_research_name, uuc_secret, uuc_name
@@ -24,6 +24,8 @@ class TestInvitation(AbstractTest):
             .filter(User.uid == "urn:james") \
             .one()
         self.assertEqual("admin", collaboration_membership.role)
+        user_id = self.find_entity_by_name(User, "urn:james").id
+        self.assertEqual(4, ServiceAup.query.filter(ServiceAup.user_id == user_id).count())
 
     def test_accept_with_authorisation_group_invitations(self):
         self.login("urn:jane")
