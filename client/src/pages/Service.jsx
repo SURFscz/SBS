@@ -74,7 +74,8 @@ class Service extends React.Component {
         cancelDialogAction: () => true,
         warning: false,
         loading: true,
-        isServiceAdmin: false
+        isServiceAdmin: false,
+        hasAdministrators: false
     });
 
     UNSAFE_componentWillReceiveProps = nextProps => {
@@ -109,6 +110,7 @@ class Service extends React.Component {
                             ...res,
                             service: res,
                             isNew: false,
+                            hasAdministrators: res.service_memberships.length > 0,
                             isServiceAdmin: isUserServiceAdmin(user, res),
                             loading: false
                         }, () => {
@@ -226,12 +228,12 @@ class Service extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, invalidInputs, contact_email, automatic_connection_allowed, ip_networks}
+        const {required, alreadyExists, invalidInputs, contact_email,hasAdministrators, ip_networks}
             = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) ||
             required.some(attr => isEmpty(this.state[attr])) ||
             Object.keys(invalidInputs).some(key => invalidInputs[key]);
-        const contactEmailRequired = !automatic_connection_allowed && isEmpty(contact_email);
+        const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
         const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error)
         return !inValid && !contactEmailRequired && !invalidIpNetworks;
     };
@@ -646,7 +648,8 @@ class Service extends React.Component {
             administrators, message, email, isServiceAdmin,
             logo,
             warning,
-            loading
+            loading,
+            hasAdministrators
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -656,7 +659,7 @@ class Service extends React.Component {
         const isAdmin = user.admin;
         const title = isAdmin ? (isNew ? I18n.t("service.titleNew") : I18n.t("service.titleUpdate", {name: service.name}))
             : I18n.t("service.titleReadOnly", {name: service.name});
-        const contactEmailRequired = !automatic_connection_allowed && isEmpty(contact_email);
+        const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
         return (
             <>
                 {isNew && <UnitHeader obj={({name: I18n.t("models.services.new"), svg: ServicesIcon})}/>}

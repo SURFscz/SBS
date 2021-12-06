@@ -371,8 +371,11 @@ class ServiceDetail extends React.Component {
                         </div>
                         <div className="org-attributes">
                             <span>{I18n.t("service.contact_email")}</span>
-                            <span>{service.contact_email ?
-                                <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a> : I18n.t("service.none")}</span>
+                            <span className="multiple-attributes">
+                            {service.contact_email && <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a>}
+                            {service.service_memberships.map(sm => sm.user && <a href={`mailto:${sm.user.email}`}>{sm.user.email}</a>)}
+                            </span>
+
                         </div>
                         {service.support_email &&
                         <div className="org-attributes">

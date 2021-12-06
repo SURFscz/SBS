@@ -808,7 +808,7 @@ I18n.translations.en = {
         contact_email: "Administrative contact",
         contact_emailPlaceholder: "The email address of the administrative contact person of this service",
         contact_emailTooltip: "This administrative email address will be used as primary contact. Ideally this is a functional email address, like service_A_support@sp.org.",
-        contactEmailRequired: "Administrative email is required if automatic connection is not allowed for a service",
+        contactEmailRequired: "Administrative email is required if there are no service administrators",
         security_email: "Security contact",
         security_emailPlaceholder: "The email address of the security contact person of this service",
         security_emailTooltip: "The security email address will be contacted if there are security questions. Ideally this is a functional email address, like service_A_security@sp.org.",

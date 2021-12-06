@@ -808,7 +808,7 @@ I18n.translations.nl = {
         contact_email: "Administratief contact",
         contact_emailPlaceholder: "Het administratieve e-mailadres van de contactpersoon van deze dienst",
         contact_emailTooltip: "Dit e-mailadres wordt gebruikt om met de contactpersoon van de dienst te communiceren. Is idealiter een functioneel e-mailadres, zoals dienst_A_support@sp.org.",
-        contactEmailRequired: "Een administratief contact-e-mail is verplicht als automatische connectie niet toegestaan is voor een dienst",
+        contactEmailRequired: "Een administratief contact-e-mail is verplicht als er geen dienst beheerders zijn",
         security_email: "Security contact",
         security_emailPlaceholder: "Het e-mailadres van de security contactpersoon",
         security_emailTooltip: "Het security e-mailadres wordt gecontacteerd als er security vragen zijn. Is idealiter een functioneel e-mailadres, zoals dienst_A_security@sp.org.",
