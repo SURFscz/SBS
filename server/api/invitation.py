@@ -8,6 +8,7 @@ from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Conflict, Forbidden
 
 from server.api.base import json_endpoint, query_param
+from server.api.service_aups import add_user_aups
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
 from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
@@ -140,6 +141,8 @@ def invitations_accept():
     for group in set(list({ag.id: ag for ag in groups}.values())):
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
+
+    add_user_aups(collaboration, user_id)
 
     res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201

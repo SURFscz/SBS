@@ -9,6 +9,10 @@ section.copy-to-clipboard {
     display: flex;
     background-color: white;
 
+    &.transparent {
+        background-color: transparent;
+    }
+
     &:hover {
         background-color: #ddf2fd;
     }

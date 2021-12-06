@@ -129,7 +129,7 @@ class CollaborationDetail extends React.Component {
                                 this.tabChanged(tab, collaboration.id);
                             });
                         }).catch(() => {
-                            this.props.history.push("/404")
+                        this.props.history.push("/404")
                     });
                 }).catch(() => this.props.history.push("/404"));
         } else {
@@ -167,7 +167,9 @@ class CollaborationDetail extends React.Component {
 
                             })
                         }
-                    }).catch(() => this.props.history.push("/404"));
+                    }).catch(() => {
+                    this.props.history.push("/404")
+                });
             }
         }
     };
@@ -294,7 +296,7 @@ class CollaborationDetail extends React.Component {
 
     getMembersTab = (collaboration, showMemberView, isJoinRequest = false) => {
         const openInvitations = (collaboration.invitations || []).length;
-        const count = collaboration.collaboration_memberships.length;
+        const count = (collaboration.collaboration_memberships || []).length;
         return (<div key="members" name="members"
                      label={I18n.t("home.tabs.members", {count: count})}
                      icon={<MemberIcon/>}
@@ -308,7 +310,7 @@ class CollaborationDetail extends React.Component {
 
     getGroupsTab = (collaboration, showMemberView, isJoinRequest = false) => {
         return (<div key="groups" name="groups"
-                     label={I18n.t("home.tabs.groups", {count: collaboration.groups.length})}
+                     label={I18n.t("home.tabs.groups", {count: (collaboration.groups || []).length})}
                      readOnly={isJoinRequest}
                      icon={<GroupsIcon/>}>
             {!isJoinRequest && <Groups {...this.props} collaboration={collaboration} showMemberView={showMemberView}
@@ -652,8 +654,8 @@ class CollaborationDetail extends React.Component {
                         {!collaboration.disable_join_requests && <span>
                             <a href={joinRequestUrl} target="_blank"
                                rel="noopener noreferrer">{I18n.t("collaboration.joinRequests")}</a>
-                            <ClipBoardCopy
-                                txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}/></span>}
+                            <ClipBoardCopy transparentBackground={true}
+                                           txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}/></span>}
                     </span>
                 </div>
                 <div className="org-attributes">
@@ -662,7 +664,8 @@ class CollaborationDetail extends React.Component {
                             {collaboration.accepted_user_policy && <span>
                             <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
                                target="_blank">{I18n.t("collaboration.aup")}</a>
-                            <ClipBoardCopy txt={collaboration.accepted_user_policy}/></span>}
+                            <ClipBoardCopy txt={collaboration.accepted_user_policy} transparentBackground={true}/>
+                            </span>}
                     </span>
                 </div>
                 {this.getCollaborationStatus(collaboration)}
