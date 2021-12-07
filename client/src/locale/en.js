@@ -1322,6 +1322,14 @@ I18n.translations.en = {
             title: "Additional terms to the Acceptable use policy",
             info: "For this collaboration, there are some additions to the general SRAM AUP. You need to accept these additions to be able to join this collaboration.",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
+        },
+        service: {
+            title: "Service {{name}} policies",
+            info: "Service <strong>{{name}}</strong> has an Acceptable use policy. You need to accept this AUP to be able to proceed to this service.",
+            noPrivacyPolicy: "No privacy policy",
+            agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
+            firstLogin: "Proceed to login and afterwards you'll return here to view the policies of {{name}}",
+            login: "Login"
         }
     },
     collaborationRequest: {

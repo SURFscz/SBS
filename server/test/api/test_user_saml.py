@@ -1,10 +1,11 @@
 # -*- coding: future_fstrings -*-
 import datetime
 import os
+from urllib.parse import urlencode
 
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
-from server.db.domain import Collaboration, User
+from server.db.domain import Collaboration, User, Service
 from server.test.abstract_test import AbstractTest
 from server.test.seed import john_name, uuc_scheduler_entity_id, service_network_entity_id, service_mail_entity_id, \
     ai_computing_name, sarah_name
@@ -170,8 +171,10 @@ class TestUserSaml(AbstractTest):
                  response_status_code=403)
 
     def test_proxy_authz_no_aup(self):
+        network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id})
         self.assertEqual(res["status"]["result"], "unauthorized")
-        self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service-denied?service_name=Network+Services&error_status=99")
+
+        parameters = urlencode({"service_id": network_service.id, "service_name": network_service.name})
+        self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/service-aup?{parameters}")

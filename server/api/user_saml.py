@@ -84,7 +84,7 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
 
     # Leave this as the last check as it is the only exception that can be recovered from
     if not has_agreed_with(user, service):
-        return not_authorized_func(service.name, AUP_NOT_AGREED)
+        return not_authorized_func(service, AUP_NOT_AGREED)
 
     for coll in connected_collaborations:
         coll.last_activity_date = datetime.now()
@@ -173,11 +173,17 @@ def proxy_authz():
 
     def not_authorized_func(service_name, status):
         base_url = current_app.app_config.base_url
-        parameters = urlencode({"service_name": service_name, "error_status": status})
+        if status == AUP_NOT_AGREED:
+            # Internal contract, in case of AUP_NOT_AGREED we get the Service instance returned
+            parameters = urlencode({"service_id": service_name.id, "service_name": service_name.name})
+            redirect_url = f"{base_url}/service-aup?{parameters}"
+        else:
+            parameters = urlencode({"service_name": service_name, "error_status": status})
+            redirect_url = f"{base_url}/service-denied?{parameters}"
         return {
                    "status": {
                        "result": "unauthorized",
-                       "redirect_url": f"{base_url}/service-denied?{parameters}",
+                       "redirect_url": redirect_url,
                        "error_status": status
                    }
                }, 200
