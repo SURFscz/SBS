@@ -22,8 +22,7 @@ class ServiceConnectionRequest extends React.Component {
             confirmationDialogAction: () => this.setState({confirmationDialogOpen: false}),
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false},
                 () => this.props.history.push("/")),
-            leavePage: true,
-            alreadyMember: false
+            leavePage: true
         };
     }
 
@@ -101,8 +100,7 @@ class ServiceConnectionRequest extends React.Component {
             confirmationDialogOpen,
             confirmationDialogAction,
             cancelDialogAction,
-            leavePage,
-            alreadyMember
+            leavePage
         } =
             this.state;
         const serviceConnectionRequestFound = serviceConnectionRequest.id;
@@ -147,8 +145,7 @@ class ServiceConnectionRequest extends React.Component {
                             <Button cancelButton={true} txt={I18n.t("serviceConnectionRequest.decline")}
                                     onClick={this.decline}/>
                             <Button txt={I18n.t("serviceConnectionRequest.accept")}
-                                    onClick={this.accept}
-                                    disabled={alreadyMember}/>
+                                    onClick={this.accept}/>
                         </section>}
 
                     </div>

@@ -1322,7 +1322,16 @@ I18n.translations.nl = {
             title: "Aanvullende voorwaarden voor de Acceptable use policy",
             info: "Voor deze samenwerking zijn er enkele aanvullingen op de algemene SRAM AUP. Je moet deze voorwaarden accepteren om lid te kunnen worden van deze samenwerking.",
             agreeWithTerms: "Ik verklaar hierbij dat ik deze voorwaarden heb gelezen en dat ik ze accepteer",
+        },
+        service: {
+            title: "Dienst {{name}} voorwaarden",
+            info: "Dienst <strong>{{name}}</strong> heeft een Acceptable use policy. Je moet deze voorwaarden accepteren om gebruik te kunnen maken van deze dienst.",
+            noPrivacyPolicy: "Geen privacy policy",
+            agreeWithTerms: "Ik verklaar dat ik deze voorwaarden heb gelezen en accepteer",
+            firstLogin: "Login en daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
+            login: "Login",
         }
+
     },
     collaborationRequest: {
         title: {

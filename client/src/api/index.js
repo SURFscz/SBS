@@ -760,4 +760,17 @@ export function serviceInvitationDelete(serviceInvitationId, showErrorDialog = t
     return fetchDelete(`/api/service_invitations/${serviceInvitationId}`, showErrorDialog);
 }
 
+//ServiceAups
+export function serviceAupCreate(service) {
+    return fetchJson("/api/service_aups", {
+        method: "post",
+        body: JSON.stringify({"service_id": service.id})
+    }, {}, false);
+}
 
+export function serviceAupDelete(service) {
+    return fetchJson("/api/service_aups/delete_by_service", {
+        method: "put",
+        body: JSON.stringify({"service_id": service.id})
+    }, {}, false);
+}

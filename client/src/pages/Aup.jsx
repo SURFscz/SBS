@@ -25,7 +25,6 @@ class Aup extends React.Component {
         } else {
             this.setState({loading: false})
         }
-
     }
 
     agreeWith = () => agreeAup().then(res => {

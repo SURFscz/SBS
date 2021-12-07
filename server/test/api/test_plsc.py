@@ -1,7 +1,8 @@
 # -*- coding: future_fstrings -*-
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, service_wiki_entity_id, uuc_name, ai_computing_name, ai_researchers_group
+from server.test.seed import sarah_name, service_wiki_entity_id, uuc_name, ai_computing_name, ai_researchers_group, \
+    the_boss_name
 
 
 class TestPlsc(AbstractTest):
@@ -23,6 +24,9 @@ class TestPlsc(AbstractTest):
         self.assertEqual("some-lame-key", sarah["ssh_keys"][0])
         # Edge case due to the seed data - just ensure it does not break
         self.assertEqual("None", sarah["last_login_date"])
+
+        boss = next(u for u in users_ if u["name"] == the_boss_name)
+        self.assertEqual(2, len(boss["accepted_aups"]))
 
         to_be_deleted = next(u for u in users_ if u["name"] == "to_be_deleted")
         self.assertIsNotNone(to_be_deleted["last_login_date"])

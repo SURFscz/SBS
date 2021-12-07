@@ -14,7 +14,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership
+    ServiceMembership, ServiceAup
 
 collaboration_request_name = "New Collaboration"
 
@@ -399,6 +399,10 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                                             collaboration=uva_research)
     _persist(db, john_ai_computing, admin_ai_computing, roger_uva_research, peter_uva_research, sarah_uva_research,
              jane_ai_computing, sarah_ai_computing, user_two_suspend_uva_research, betty_uuc_teachers)
+
+    admin_service_aups = [ServiceAup(user=admin, service=service, aup_url=service.accepted_user_policy) for service in
+                          ai_computing.services]
+    _persist(db, *admin_service_aups)
 
     group_researchers = Group(name=ai_researchers_group,
                               short_name=ai_researchers_group_short_name,

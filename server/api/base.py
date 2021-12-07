@@ -20,7 +20,6 @@ from server.mail import mail_error
 
 base_api = Blueprint("base_api", __name__, url_prefix="/")
 
-
 STATUS_OPEN = "open"
 STATUS_DENIED = "denied"
 STATUS_APPROVED = "approved"
@@ -177,7 +176,8 @@ def config():
             "admin_users_upgrade_url": cfg.feature.admin_users_upgrade_url,
             "impersonation_allowed": cfg.feature.impersonation_allowed,
             "ldap_url": cfg.ldap.url,
-            "ldap_bind_account": cfg.ldap.bind_account}, 200
+            "ldap_bind_account": cfg.ldap.bind_account,
+            "continue_eduteams_redirect_uri": cfg.oidc.continue_eduteams_redirect_uri}, 200
 
 
 @base_api.route("/info", strict_slashes=False)

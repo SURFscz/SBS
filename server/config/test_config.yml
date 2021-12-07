@@ -30,6 +30,7 @@ oidc:
   #Note that the paths for these  uri's is hardcoded and only domain and port differ per environment
   redirect_uri: http://localhost:8080/api/users/resume-session
   sfo_eduteams_redirect_uri: http://localhosst:9001/sfo
+  continue_eduteams_redirect_uri: https://proxy.acc.sram.eduteams.org/continue
   private_rsa_signing_key_path: config/test-jwt-private-key
   public_rsa_signing_key_path: config/test-jwt-public-key
   second_factor_authentication_required: True
