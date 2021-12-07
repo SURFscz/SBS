@@ -421,8 +421,12 @@ class App extends React.Component {
                         <Route path="/refresh-route/:path"
                                render={props => <RefreshRoute {...props}/>}/>
 
-                        <Route path="/service-aup" render={props =>
-                            <ServiceAup currentUser={currentUser} config={config} {...props}/>}/>
+                        <Route path="/service-aup"
+                               render={props => <ProtectedRoute
+                                   currentUser={currentUser}
+                                   Component={ServiceAup}
+                                   config={config}
+                                   {...props}/>}/>
 
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>
 

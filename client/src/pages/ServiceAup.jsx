@@ -5,9 +5,7 @@ import "./ServiceAup.scss";
 import Button from "../components/Button";
 import {serviceAupCreate, serviceById} from "../api";
 import CheckBox from "../components/CheckBox";
-import {login} from "../utils/Login";
 import SpinnerField from "../components/redesign/SpinnerField";
-import escape from "lodash.escape";
 import Logo from "../components/redesign/Logo";
 
 
@@ -18,32 +16,19 @@ class ServiceAup extends React.Component {
         this.state = {
             agreed: false,
             service: {},
-            loggedIn: false,
             loading: true
         };
     }
 
     componentDidMount = () => {
-        const {currentUser} = this.props;
         const urlSearchParams = new URLSearchParams(window.location.search);
         const serviceId = urlSearchParams.get("service_id");
-        const serviceName = escape(urlSearchParams.get("service_name"));
-        if (currentUser.guest) {
+        serviceById(serviceId).then(res => {
             this.setState({
                 loading: false,
-                service: {
-                    name: serviceName
-                }
+                service: res
             });
-        } else {
-            serviceById(serviceId).then(res => {
-                this.setState({
-                    loading: false,
-                    service: res,
-                    loggedIn: true
-                });
-            })
-        }
+        })
     }
 
     agreeWith = () => {
@@ -76,19 +61,19 @@ class ServiceAup extends React.Component {
     }
 
     render() {
-        const {agreed, loading, service, loggedIn} = this.state;
-        const {currentUser} = this.props;
+        const {agreed, loading, service} = this.state;
+        const {user} = this.props;
         if (loading) {
             return <SpinnerField/>;
         }
         const serviceName = {name: service.name}
         return (
             <div className="mod-service-aup">
-                <h1>{I18n.t("aup.hi", {name: currentUser.given_name || currentUser.name})}</h1>
+                <h1>{I18n.t("aup.hi", {name: user.given_name || user.name})}</h1>
                 <div className="disclaimer">
                     <p dangerouslySetInnerHTML={{__html: I18n.t("aup.service.info", serviceName)}}/>
                 </div>
-                {loggedIn && <div>
+                <div>
                     <h3 dangerouslySetInnerHTML={{__html: I18n.t("aup.service.title", serviceName)}}/>
                     {this.renderServiceAup(service)}
                     <div className="terms">
@@ -97,11 +82,7 @@ class ServiceAup extends React.Component {
                     </div>
                     <Button className="proceed" onClick={this.agreeWith} centralize={true}
                             txt={I18n.t("aup.onward")} disabled={!agreed}/>
-                </div>}
-                {!loggedIn && <div>
-                    <p className="login">{I18n.t("aup.service.firstLogin", serviceName)}</p>
-                    <Button className="proceed" onClick={login} centralize={true}
-                            txt={I18n.t("aup.service.login")}/></div>}
+                </div>
             </div>
         )
     }

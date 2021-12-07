@@ -34,7 +34,7 @@ user_api = Blueprint("user_api", __name__, url_prefix="/api/users")
 
 
 def _add_counts(user: dict):
-    if user.get("admin", False):
+    if is_admin_user(user):
         platform_admins = User.query.filter(User.uid.in_([u.uid for u in current_app.app_config.admin_users])).count()
         user["total_platform_admins"] = platform_admins
         user["total_organisations"] = Organisation.query.count()
