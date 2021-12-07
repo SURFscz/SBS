@@ -2,7 +2,7 @@ import React from "react";
 import {
     allServiceConnectionRequests,
     resetLdapPassword,
-    searchOrganisations,
+    searchOrganisations, serviceAupDelete,
     serviceById,
     serviceInvitationAccept,
     serviceInvitationByHash
@@ -51,6 +51,7 @@ class ServiceDetail extends React.Component {
             confirmationDialogAction: null,
             confirmationTxt: null,
             confirmationHeader: null,
+            isWarning: false,
             ldapPassword: null
         };
     }
@@ -119,6 +120,16 @@ class ServiceDetail extends React.Component {
         this.setState({confirmationDialogOpen: false},
             () => setTimeout(() => this.setState({ldapPassword: null}), 75)
         );
+    }
+
+    resetAups = () => {
+        this.doCancelDialogAction();
+        const {service} = this.state;
+        this.setState({loading: true});
+        serviceAupDelete(service).then(() => {
+            this.setState({loading: false});
+            setFlash(I18n.t("service.aup.flash", {name: service.name}));
+        })
     }
 
     onBoarding = () => {
@@ -308,12 +319,29 @@ class ServiceDetail extends React.Component {
                         confirmationDialogOpen: true,
                         cancelDialogAction: this.doCancelDialogAction,
                         confirmationDialogAction: this.doConfirmationDialogAction,
+                        isWarning: false,
                         confirmationHeader: I18n.t("confirmationDialog.title"),
                         confirmationDialogQuestion: I18n.t("service.ldap.confirmation", {name: service.name}),
                         confirmationTxt: I18n.t("confirmationDialog.confirm"),
                     });
                 }
-            })
+            });
+            actions.push({
+                icon: "ban",
+                name: I18n.t("service.aup.title"),
+                perform: () => {
+                    this.setState({
+                        ldapPassword: null,
+                        confirmationDialogOpen: true,
+                        cancelDialogAction: this.doCancelDialogAction,
+                        isWarning: true,
+                        confirmationDialogAction: this.resetAups,
+                        confirmationHeader: I18n.t("confirmationDialog.title"),
+                        confirmationDialogQuestion: I18n.t("service.aup.confirmation", {name: service.name}),
+                        confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                    });
+                }
+            });
         }
         return actions;
     }
@@ -331,7 +359,7 @@ class ServiceDetail extends React.Component {
         const {
             tabs, service, loading, tab, firstTime, ldapPassword,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
-            confirmationDialogQuestion, confirmationTxt, confirmationHeader
+            confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -345,6 +373,7 @@ class ServiceDetail extends React.Component {
 
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
+                                    isWarning={isWarning}
                                     confirmationTxt={confirmationTxt}
                                     confirmationHeader={confirmationHeader}
                                     confirm={confirmationDialogAction}
@@ -372,8 +401,10 @@ class ServiceDetail extends React.Component {
                         <div className="org-attributes">
                             <span>{I18n.t("service.contact_email")}</span>
                             <span className="multiple-attributes">
-                            {service.contact_email && <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a>}
-                            {service.service_memberships.map(sm => sm.user && <a href={`mailto:${sm.user.email}`}>{sm.user.email}</a>)}
+                            {service.contact_email &&
+                            <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a>}
+                                {service.service_memberships.map(sm => sm.user &&
+                                    <a href={`mailto:${sm.user.email}`}>{sm.user.email}</a>)}
                             </span>
 
                         </div>

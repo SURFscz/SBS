@@ -848,6 +848,11 @@ I18n.translations.en = {
             username: "Username bind account",
             usernameTooltip: "This is the account used to authenticate in the directory server",
         },
+        aup: {
+            title: "Reset AUP",
+            confirmation: "Are you sure you want all users to accept the new AUP of {{name}} again?",
+            flash: "AUP for service {{name}} has been reset for all users"
+        },
         contacts: "Contacts",
 
     },
