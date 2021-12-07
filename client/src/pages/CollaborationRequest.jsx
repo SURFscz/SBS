@@ -321,12 +321,6 @@ class CollaborationRequest extends React.Component {
                             attribute: I18n.t("collaboration.description").toLowerCase()
                         })}/>}
 
-                        <InputField value={collaborationRequest.accepted_user_policy}
-                                    onChange={this.updateState("accepted_user_policy")}
-                                    placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
-                                    disabled={!isOpen}
-                                    name={I18n.t("collaboration.accepted_user_policy")}/>
-
                         <InputField value={collaborationRequest.organisation.name}
                                     toolTip={I18n.t("collaboration.organisationTooltip")}
                                     disabled={true}

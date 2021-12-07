@@ -1,5 +1,4 @@
 @import "../stylesheets/vars.scss";
-@import "../stylesheets/mde_preview.scss";
 
 .welcome-dialog-overlay {
     position: fixed;
@@ -19,7 +18,6 @@
         @media (max-width: $compact-medium) {
             padding: 20px;
         }
-
 
         background-color: white;
         overflow: auto;
@@ -72,36 +70,13 @@
             margin-top: 25px;
         }
 
-        section.accepted-user-policy-container {
-            h2 {
-                margin: 25px 0 20px 0;
-                font-size: 18px;
-                font-weight: bold;
-            }
 
-            @include mde-preview;
-
-            div.accepted-user-policy {
-                margin-top: 20px;
-                border-radius: $br;
-                border: 1px solid $medium-grey;
-                max-height: 220px;
-                background-color: $lightest-grey;
-                padding: 10px;
-                overflow: scroll;
-
-                div.inner-accepted-user-policy {
-                    min-height: 101%;
-                }
-            }
-
-            div.terms {
-                margin: 25px 0 0 0;
-                background-color: $background;
-                padding: 15px;
-            }
-
+        h2 {
+            font-size: 20px;
+            color: $primary-orange;
+            margin-bottom: 20px;
         }
+
 
     }
 }
@@ -116,7 +91,9 @@
 
 .ReactModalPortal .welcome-dialog-content {
     transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
-    width: 660px;
+    width: 860px;
+    max-height: 80vh;
+
     @media (max-width: $compact-medium) {
         width: 280px;
     }

@@ -45,7 +45,6 @@ class CollaborationForm extends React.Component {
             administrators: [],
             message: "",
             email: "",
-            accepted_user_policy: "",
             expiry_date: null,
             disclose_email_information: true,
             disclose_member_information: true,
@@ -236,7 +235,6 @@ class CollaborationForm extends React.Component {
                 administrators,
                 message,
                 expiry_date,
-                accepted_user_policy,
                 organisation,
                 isCollaborationRequest,
                 disable_join_requests,
@@ -253,7 +251,6 @@ class CollaborationForm extends React.Component {
                 website_url,
                 administrators,
                 message,
-                accepted_user_policy,
                 expiry_date: expiry_date ? expiry_date.getTime() / 1000 : null,
                 organisation_id: organisation.value,
                 disable_join_requests,
@@ -296,7 +293,6 @@ class CollaborationForm extends React.Component {
                 administrators,
                 message,
                 expiry_date,
-                accepted_user_policy,
                 organisation,
                 disable_join_requests,
                 current_user_admin,
@@ -314,7 +310,6 @@ class CollaborationForm extends React.Component {
                 administrators,
                 expiry_date: expiry_date ? expiry_date.getTime() / 1000 : null,
                 message,
-                accepted_user_policy,
                 organisation_id: organisation.value,
                 disable_join_requests,
                 current_user_admin,
@@ -384,7 +379,6 @@ class CollaborationForm extends React.Component {
             website_url,
             administrators,
             message,
-            accepted_user_policy,
             expiry_date,
             organisation,
             organisations,
@@ -543,12 +537,6 @@ class CollaborationForm extends React.Component {
                                 placeholder={I18n.t("collaboration.websiteUrlPlaceholder")}
                                 externalLink={true}
                                 name={I18n.t("collaboration.websiteUrl")}/>
-
-                    <InputField value={accepted_user_policy}
-                                onChange={e => this.setState({accepted_user_policy: e.target.value})}
-                                placeholder={I18n.t("collaboration.acceptedUserPolicyPlaceholder")}
-                                externalLink={true}
-                                name={I18n.t("collaboration.accepted_user_policy")}/>
 
                     {!isCollaborationRequest && <DateField value={expiry_date}
                                                            onChange={e => this.setState({expiry_date: e})}

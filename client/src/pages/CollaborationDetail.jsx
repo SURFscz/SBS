@@ -27,7 +27,6 @@ import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-questi
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import {ReactComponent as AdminIcon} from "../icons/single-neutral-actions-key.svg";
 import {ReactComponent as GlobeIcon} from "../icons/network-information.svg";
-import {ReactComponent as PrivacyIcon} from "../icons/overview.svg";
 import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
 import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
@@ -400,16 +399,11 @@ class CollaborationDetail extends React.Component {
     }
 
 
-    getAdminHeader = (collaboration, collaborationJoinRequest) => {
-        let admins;
-        if (collaborationJoinRequest) {
-            admins = collaboration.admins
-                .map(m => ({name: m}));
-        } else {
-            admins = collaboration.collaboration_memberships
-                .filter(m => m.role === "admin")
-                .map(m => m.user);
-        }
+    getAdminHeader = (collaboration) => {
+        const admins = collaboration.collaboration_memberships
+            .filter(m => m.role === "admin")
+            .map(m => m.user);
+
         if (admins.length === 0) {
             return I18n.t("models.collaboration.noAdminsHeader");
         }
@@ -455,13 +449,13 @@ class CollaborationDetail extends React.Component {
                         <li>
                             <Tooltip children={<MemberIcon/>} id={"members-icon"} msg={I18n.t("tooltips.members")}/>
                             <span>{I18n.t("models.collaboration.memberHeader", {
-                                nbrMember: collaborationJoinRequest ? collaboration.member_count : collaboration.collaboration_memberships.length,
-                                nbrGroups: collaborationJoinRequest ? collaboration.group_count : collaboration.groups.length
+                                nbrMember: collaboration.collaboration_memberships.length,
+                                nbrGroups: collaboration.groups.length
                             })}</span></li>
                         <li>
                             <Tooltip children={<AdminIcon/>} id={"admins-icon"} msg={I18n.t("tooltips.admins")}/>
                             <span
-                                dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration, collaborationJoinRequest)}}/>
+                                dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/>
                         </li>
                         {collaboration.website_url &&
                         <li className="collaboration-url">
@@ -470,14 +464,6 @@ class CollaborationDetail extends React.Component {
                             <span>
                             <a href={collaboration.website_url} rel="noopener noreferrer"
                                target="_blank">{collaboration.website_url}</a>
-                        </span>
-                        </li>}
-                        {collaboration.accepted_user_policy &&
-                        <li className="collaboration-url">
-                            <Tooltip children={<PrivacyIcon/>} id={"globe-icon"} msg={I18n.t("tooltips.aup")}/>
-                            <span>
-                            <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
-                               target="_blank">{collaboration.accepted_user_policy}</a>
                         </span>
                         </li>}
                     </ul>
@@ -658,16 +644,6 @@ class CollaborationDetail extends React.Component {
                                            txt={`${this.props.config.base_url}/registration?collaboration=${collaboration.identifier}`}/></span>}
                     </span>
                 </div>
-                <div className="org-attributes">
-                        <span className="contains-copy">
-                        {!collaboration.accepted_user_policy && I18n.t("collaboration.noAup")}
-                            {collaboration.accepted_user_policy && <span>
-                            <a href={collaboration.accepted_user_policy} rel="noopener noreferrer"
-                               target="_blank">{I18n.t("collaboration.aup")}</a>
-                            <ClipBoardCopy txt={collaboration.accepted_user_policy} transparentBackground={true}/>
-                            </span>}
-                    </span>
-                </div>
                 {this.getCollaborationStatus(collaboration)}
                 <div className="org-attributes">
                     {(collaboration.disclose_email_information || collaboration.disclose_member_information) &&
@@ -707,7 +683,6 @@ class CollaborationDetail extends React.Component {
                 <CollaborationWelcomeDialog name={collaboration.name}
                                             isOpen={firstTime}
                                             role={role}
-                                            organisation={null}
                                             collaboration={collaboration}
                                             isAdmin={user.admin}
                                             isInvitation={isInvitation}

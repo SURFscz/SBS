@@ -7,14 +7,18 @@ import InputField from "./InputField";
 import {isEmpty} from "../utils/Utils";
 import {joinRequestForCollaboration} from "../api";
 import {ReactComponent as InformationIcon} from "../icons/informational.svg";
+import CollaborationAupAcceptance from "./CollaborationAupAcceptance";
 
 export default class JoinRequestDialog extends React.Component {
 
     constructor(props, context) {
         super(props, context);
+        const {collaboration} = this.props;
+        this.services = [...new Map(collaboration.services.concat(collaboration.organisation.services).map((s) => [s["id"], s])).values()];
         this.state = {
             motivation: "",
-            submitted: false
+            submitted: false,
+            disabled: this.services.length > 0
         }
     }
 
@@ -24,12 +28,20 @@ export default class JoinRequestDialog extends React.Component {
             .then(() => this.setState({submitted: true}));
     }
 
-    gotoHome = () =>  {
-        const { refresh} = this.props;
+    gotoHome = () => {
+        const {refresh} = this.props;
         refresh(() => setTimeout(() => this.props.history.push("/home/joinrequests"), 75));
     }
 
-    renderForm = (collaboration, motivation, close) => {
+    joinRequestDisclaimer = () => {
+        return (<div className="join-request-disclaimer">
+            <p>{I18n.t("welcomeDialog.infoJoinRequest")}</p>
+            <p>{I18n.t("welcomeDialog.info2")}</p>
+        </div>);
+    }
+
+    renderForm = (collaboration, motivation, close, disabled) => {
+
         return (
             <div>
                 <section className="explanation">
@@ -41,19 +53,17 @@ export default class JoinRequestDialog extends React.Component {
                             multiline={true}
                             placeholder={I18n.t("registration.motivationPlaceholder")}
                             onChange={e => this.setState({motivation: e.target.value})}/>
-                {collaboration.accepted_user_policy &&
-                <span className="policy" dangerouslySetInnerHTML={{
-                    __html: I18n.t("registration.policyConfirmation",
-                        {
-                            collaboration: collaboration.name,
-                            aup: collaboration.accepted_user_policy
-                        })
-                }}/>}
+                {this.services.length > 0 && <CollaborationAupAcceptance collaboration={collaboration}
+                                                                         services={this.services}
+                                                                         disabled={disabled}
+                                                                         setDisabled={value => this.setState({disabled: value})}
+                                                                         isJoinRequest={true}
+                                                                         children={this.joinRequestDisclaimer()}/>}
                 <section className="actions">
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                             onClick={close}/>
                     <Button txt={I18n.t("forms.request")}
-                            disabled={isEmpty(motivation)}
+                            disabled={isEmpty(motivation) || disabled}
                             onClick={this.submit}/>
                 </section>
             </div>
@@ -82,7 +92,7 @@ export default class JoinRequestDialog extends React.Component {
 
     render() {
         const {collaboration, isOpen = false, close} = this.props;
-        const {motivation, submitted} = this.state;
+        const {motivation, submitted, disabled} = this.state;
         return (
             <Modal
                 isOpen={isOpen}
@@ -95,7 +105,7 @@ export default class JoinRequestDialog extends React.Component {
                 <h1>{I18n.t("registration.title", {name: collaboration.name})}</h1>
                 <div className="join-request-form">
                     {!submitted &&
-                    this.renderForm(collaboration, motivation, close)}
+                    this.renderForm(collaboration, motivation, close, disabled)}
                     {submitted && this.renderFeedback(collaboration)}
                 </div>
 

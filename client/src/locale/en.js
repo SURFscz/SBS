@@ -1332,6 +1332,7 @@ I18n.translations.en = {
             title: "Service {{name}} policies",
             info: "Service <strong>{{name}}</strong> has an Acceptable use policy. You need to accept this AUP to be able to proceed to this service.",
             noPrivacyPolicy: "No privacy policy",
+            noAup: "No AUP",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
             firstLogin: "Proceed to login and afterwards you'll return here to view the policies of {{name}}",
             login: "Login"
@@ -1600,7 +1601,12 @@ I18n.translations.en = {
         organisation: "organisation",
         collaboration: "collaboration",
         service: "service",
-        toggleRole: "Toggle role"
+        toggleRole: "Toggle role",
+        info: "Almost there! Before joining this collaboration, please be aware that the services used within this collaboration have their own Acceptable Use Policy and Privacy Policies.",
+        info2: "Before you can use these services, please review them and indicate below whether you accept them.",
+        infoJoinRequest: "Before requesting membership of this collaboration, please be aware that the services used within this collaboration have their own Acceptable Use Policy and Privacy Policies.",
+        purpose: "Purpose of the collaboration",
+        proceed: "All good, join the collaboration"
     },
     welcome: {
         title: "Hi {{name}},",

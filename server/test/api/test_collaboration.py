@@ -8,10 +8,9 @@ from sqlalchemy import text
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User
-from server.test.abstract_test import AbstractTest, API_AUTH_HEADER, RESTRICTED_CO_API_AUTH_HEADER
+from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
-    ai_computing_short_name, service_network_entity_id, service_wiki_entity_id, service_storage_entity_id, \
-    service_cloud_entity_id, uuc_teachers_name, service_mail_entity_id
+    ai_computing_short_name, uuc_teachers_name
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -150,96 +149,6 @@ class TestCollaboration(AbstractTest):
                   },
                   with_basic_auth=False,
                   response_status_code=403)
-
-    def test_collaboration_restricted_access_api(self):
-        res = self.post("/api/collaborations/v1/restricted",
-                        body={
-                            "name": "new_collaboration",
-                            "description": "new_collaboration",
-                            "administrator": "harry",
-                            "short_name": "short_org_name",
-                            "connected_services": [service_network_entity_id,
-                                                   service_wiki_entity_id,
-                                                   service_mail_entity_id,
-                                                   service_storage_entity_id,
-                                                   service_cloud_entity_id]
-                        },
-                        with_basic_auth=False,
-                        headers=RESTRICTED_CO_API_AUTH_HEADER,
-                        response_status_code=201)
-
-        self.assertEqual("uuc:short_org_name", res["global_urn"])
-        self.assertListEqual(sorted([service_cloud_entity_id, service_mail_entity_id, service_storage_entity_id]),
-                             sorted(list(map(lambda s: s["entity_id"], res["services"]))))
-
-        collaboration = self.find_entity_by_name(Collaboration, res["name"])
-        self.assertEqual(1, len(collaboration.collaboration_memberships))
-        group = collaboration.groups[0]
-        self.assertEqual("mail_mail", group.short_name)
-        self.assertEqual(True, group.auto_provision_members)
-        self.assertEqual(1, len(group.collaboration_memberships))
-
-        admin = collaboration.collaboration_memberships[0]
-        self.assertEqual("admin", admin.role)
-        self.assertEqual("urn:harry", admin.user.uid)
-
-    def test_collaboration_restricted_access_api_with_schac_home(self):
-        res = self.post("/api/collaborations/v1/restricted",
-                        body={
-                            "name": "new_collaboration",
-                            "description": "new_collaboration",
-                            "administrator": "mdoe",
-                            "short_name": "short_collab_name",
-                            "connected_services": [service_cloud_entity_id]
-                        },
-                        with_basic_auth=False,
-                        headers=RESTRICTED_CO_API_AUTH_HEADER,
-                        response_status_code=201)
-
-        self.assertEqual("uva:short_collab_nam", res["global_urn"])
-
-    def test_collaboration_restricted_access_api_forbidden_without_correct_scope(self):
-        self.login("urn:harry")
-        self.post("/api/collaborations/v1/restricted",
-                  body={},
-                  with_basic_auth=False,
-                  headers=API_AUTH_HEADER,
-                  response_status_code=403)
-
-    def test_collaboration_restricted_access_api_forbidden_without_api_user(self):
-        self.login("urn:harry")
-        self.post("/api/collaborations/v1/restricted",
-                  body={},
-                  with_basic_auth=False,
-                  response_status_code=403)
-
-    def test_collaboration_restricted_invalid_admin(self):
-        res = self.post("/api/collaborations/v1/restricted",
-                        body={
-                            "name": "new_collaboration",
-                            "description": "new_collaboration",
-                            "administrator": "nope"
-                        },
-                        with_basic_auth=False,
-                        headers=RESTRICTED_CO_API_AUTH_HEADER,
-                        response_status_code=400)
-        self.assertEqual("Administrator nope is not a valid user", res["message"])
-
-    def test_collaboration_restricted_no_default_schac(self):
-        default_organisation = self.app.app_config.restricted_co.default_organisation
-        self.app.app_config.restricted_co.default_organisation = "bogus"
-        self.post("/api/collaborations/v1/restricted",
-                  body={
-                      "name": "new_collaboration",
-                      "description": "new_collaboration",
-                      "administrator": "harry",
-                      "short_name": "short_org_name",
-                      "connected_services": []
-                  },
-                  with_basic_auth=False,
-                  headers=RESTRICTED_CO_API_AUTH_HEADER,
-                  response_status_code=400)
-        self.app.app_config.restricted_co.default_organisation = default_organisation
 
     def test_collaboration_update(self):
         collaboration_id = self._find_by_identifier()["id"]
