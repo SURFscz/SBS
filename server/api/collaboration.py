@@ -39,26 +39,16 @@ def _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=Fal
 def collaboration_by_identifier():
     identifier = query_param("identifier")
 
-    collaboration = Collaboration. \
-        query \
+    collaboration = Collaboration.query \
         .outerjoin(Collaboration.collaboration_memberships) \
         .outerjoin(CollaborationMembership.user) \
-        .options(selectinload(Collaboration.organisation)) \
+        .options(selectinload(Collaboration.organisation).selectinload(Organisation.services)) \
+        .options(selectinload(Collaboration.services)) \
+        .options(selectinload(Collaboration.groups)) \
         .options(selectinload(Collaboration.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
         .filter(Collaboration.identifier == identifier).one()
-    admins = [m.user.name for m in collaboration.collaboration_memberships if m.role == "admin"]
-    services = [{"id": s.id, "name": s.name, "logo": s.logo} for s in collaboration.services]
-    services += [{"id": s.id, "name": s.name, "logo": s.logo} for s in collaboration.organisation.services]
-    return {"id": collaboration.id, "name": collaboration.name, "admins": admins,
-            "member_count": len(collaboration.collaboration_memberships),
-            "services": services,
-            "organisation": {"name": collaboration.organisation.name},
-            "group_count": len(collaboration.groups), "website_url": collaboration.website_url,
-            "disable_join_requests": collaboration.disable_join_requests, "logo": collaboration.logo,
-            "description": collaboration.description,
-            "disclose_member_information": collaboration.disclose_member_information,
-            "accepted_user_policy": collaboration.accepted_user_policy}, 200
+    return collaboration, 200
 
 
 @collaboration_api.route("/name_exists", strict_slashes=False)
@@ -346,6 +336,8 @@ def save_collaboration():
 @json_endpoint
 def save_collaboration_api():
     data = current_request.get_json()
+    if "accepted_user_policy" in data:
+        del data["accepted_user_policy"]
     if "external_api_organisation" in request_context:
         organisation = request_context.external_api_organisation
         admins = list(filter(lambda mem: mem.role == "admin", organisation.organisation_memberships))
@@ -357,63 +349,6 @@ def save_collaboration_api():
 
     res = do_save_collaboration(data, organisation, user, current_user_admin=False)
     return res
-
-
-@collaboration_api.route("/v1/restricted", methods=["POST"], strict_slashes=False)
-@json_endpoint
-def save_restricted_collaboration():
-    api_user = "api_user" in request_context
-    if not api_user or (api_user and "restricted_co" not in request_context.api_user.scopes):
-        raise Forbidden("Not a valid API user")
-
-    data = current_request.get_json()
-    administrator = data["administrator"]
-    admin = User.query.filter(User.username == administrator).first()
-    if not admin:
-        raise BadRequest(f"Administrator {administrator} is not a valid user")
-
-    restricted_co_config = current_app.app_config.restricted_co
-
-    organisation = None
-    logger = ctx_logger("collaboration_api_restricted")
-
-    if admin.schac_home_organisation:
-        organisation = Organisation.query \
-            .join(Organisation.schac_home_organisations) \
-            .filter(SchacHomeOrganisation.name == admin.schac_home_organisation) \
-            .first()
-    else:
-        logger.info(f"Admin user {admin.username} has no schac_home_organisation, fallback to configured default org")
-
-    if not organisation:
-        organisation = Organisation.query \
-            .join(Organisation.schac_home_organisations) \
-            .filter(SchacHomeOrganisation.name == restricted_co_config.default_organisation) \
-            .first()
-
-    if not organisation:
-        raise BadRequest(f"Default organisation for restricted co "
-                         f"{restricted_co_config.default_organisation} does not exist")
-
-    data["organisation_id"] = organisation.id
-
-    # do_save_collaboration sanitizes the JSON so we need to define upfront
-    connected_services = data.get("connected_services")
-
-    res = do_save_collaboration(data, organisation, admin, current_user_admin=True)
-    collaboration = res[0]
-
-    if connected_services:
-        services = Service.query.filter(Service.entity_id.in_(connected_services)).all()
-        for service in services:
-            if service.white_listed or service.entity_id in restricted_co_config.services_white_list:
-                collaboration.services.append(service)
-                # Create groups from service_groups
-                create_service_groups(service, collaboration)
-
-        db.session.merge(collaboration)
-
-    return collaboration, 201
 
 
 def do_save_collaboration(data, organisation, user, current_user_admin=True):
