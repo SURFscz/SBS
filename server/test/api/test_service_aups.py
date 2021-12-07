@@ -2,7 +2,7 @@
 
 from server.db.domain import User, Collaboration, ServiceAup, Service
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name, invitation_hash_curious, service_network_name, service_mail_name
+from server.test.seed import ai_computing_name, invitation_hash_curious, service_mail_name
 
 
 class TestServiceAup(AbstractTest):
