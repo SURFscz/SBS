@@ -848,6 +848,11 @@ I18n.translations.nl = {
             username: "Gebruikersnaam bind account",
             usernameTooltip: "Dit is het account voor authenticatie in de directoryserver",
         },
+        aup: {
+            title: "Reset AUP",
+            confirmation: "Weet je zeker dat je alle gebruikers opnieuw de nieuwe AUP van {{name}} moeten accepteren?",
+            flash: "AUP voor dienst {{name}} is gereset voor alle gebruikers"
+        },
         contacts: "Contact personen",
 
     },
