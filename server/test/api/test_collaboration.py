@@ -26,11 +26,7 @@ class TestCollaboration(AbstractTest):
         collaboration = self.get("/api/collaborations/find_by_identifier",
                                  query_data={"identifier": collaboration_ai_computing_uuid},
                                  with_basic_auth=False)
-        self.assertSetEqual({"id", "name", "admins", "disable_join_requests", "accepted_user_policy", "organisation",
-                             "logo", "description", "member_count", "group_count", "services", "website_url",
-                             "disclose_member_information"},
-                            set(collaboration.keys()))
-        self.assertEqual(4, len(collaboration["services"]))
+        self.assertEqual(2, len(collaboration["services"]))
 
     def test_search(self):
         self.login("urn:john")

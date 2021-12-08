@@ -404,7 +404,7 @@ class ServiceDetail extends React.Component {
                             {service.contact_email &&
                             <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a>}
                                 {service.service_memberships.map(sm => sm.user &&
-                                    <a href={`mailto:${sm.user.email}`}>{sm.user.email}</a>)}
+                                    <a key={sm.user.id} href={`mailto:${sm.user.email}`}>{sm.user.email}</a>)}
                             </span>
 
                         </div>
