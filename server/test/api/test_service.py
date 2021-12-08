@@ -234,7 +234,7 @@ class TestService(AbstractTest):
     def test_reset_ldap_password(self):
         service = self._find_by_name()
         res = self.get(f"/api/services/reset_ldap_password/{service['id']}")
-        self.assertEquals(32, len(res["ldap_password"]))
+        self.assertEqual(32, len(res["ldap_password"]))
         rs = db.engine.execute(f"SELECT ldap_password FROM services WHERE id = {service['id']}")
         ldap_password = next(rs, (0,))[0]
         self.assertTrue(ldap_password.startswith("$6$rounds=100000$"))

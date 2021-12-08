@@ -176,7 +176,8 @@ def service_by_id(service_id):
 
     confirm_read_access(override_func=_user_service)
 
-    query = Service.query
+    query = Service.query \
+        .options(selectinload(Service.service_memberships).selectinload(ServiceMembership.user))
 
     api_call = request_context.is_authorized_api_call
     add_admin_info = not api_call and (is_application_admin() or is_service_admin(service_id))
