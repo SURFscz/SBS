@@ -234,6 +234,10 @@ export function resetLdapPassword(service) {
     return fetchJson(`/api/services/reset_ldap_password/${service.id}`);
 }
 
+export function resetTokenValue(service) {
+    return fetchJson(`/api/services/reset_token_value/${service.id}`);
+}
+
 
 //Collaborations
 export function collaborationByIdentifier(identifier) {
@@ -774,3 +778,6 @@ export function serviceAupDelete(service) {
         body: JSON.stringify({"service_id": service.id})
     }, {}, false);
 }
+
+//User Tokens
+

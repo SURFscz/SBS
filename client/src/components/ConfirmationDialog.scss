@@ -58,8 +58,10 @@
             a:not(:last-child) {
                 margin-right: 10px;
             }
+
             a:last-child {
                 margin-left: 10px;
+
                 &.orphan {
                     margin-left: auto;
                 }
@@ -79,6 +81,10 @@
 .ReactModalPortal .confirmation-dialog-content {
     transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
     max-width: 400px;
+
+    &.large-width {
+        max-width: 750px;
+    }
 
     &--before-close {
         top: -50%;

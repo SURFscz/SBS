@@ -25,6 +25,15 @@ STATUS_DENIED = "denied"
 STATUS_APPROVED = "approved"
 
 
+def _get_authorization_header(is_external_api_url):
+    authorization_header = current_request.headers.get("Authorization")
+    is_authorized_api_key = authorization_header and authorization_header.lower().startswith("bearer")
+    if not is_authorized_api_key or not is_external_api_url:
+        raise Unauthorized(description="Invalid username or password")
+    hashed_secret = secure_hash(authorization_header[len('bearer '):])
+    return hashed_secret
+
+
 def auth_filter(app_config):
     url = current_request.base_url
     oidc_config = current_app.app_config.oidc
@@ -61,12 +70,7 @@ def auth_filter(app_config):
     is_authorized_api_call = bool(auth and len(get_user(app_config, auth)) > 0)
 
     if not (is_whitelisted_url or is_authorized_api_call):
-        authorization_header = current_request.headers.get("Authorization")
-        is_authorized_api_key = authorization_header and authorization_header.lower().startswith("bearer")
-        if not is_authorized_api_key or not is_external_api_url:
-            raise Unauthorized(description="Invalid username or password")
-
-        hashed_secret = secure_hash(authorization_header[len('bearer '):])
+        hashed_secret = _get_authorization_header(is_external_api_url)
         api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).first()
         if not api_key:
             raise Unauthorized(description="Invalid API key")
@@ -177,7 +181,9 @@ def config():
             "impersonation_allowed": cfg.feature.impersonation_allowed,
             "ldap_url": cfg.ldap.url,
             "ldap_bind_account": cfg.ldap.bind_account,
-            "continue_eduteams_redirect_uri": cfg.oidc.continue_eduteams_redirect_uri}, 200
+            "continue_eduteams_redirect_uri": cfg.oidc.continue_eduteams_redirect_uri,
+            "introspect_endpoint": f"{cfg.base_server_url}/introspect"
+            }, 200
 
 
 @base_api.route("/info", strict_slashes=False)
@@ -188,3 +194,12 @@ def info():
         with open(str(file)) as f:
             return {"git": f.read()}, 200
     return {"git": "nope"}, 200
+
+
+@base_api.route("/introspect", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def introspect():
+    hashed_secret = _get_authorization_header(True)
+    token = current_request.form.get('token')
+    return {}, 200
+

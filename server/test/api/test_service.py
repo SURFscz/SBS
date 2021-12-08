@@ -240,3 +240,13 @@ class TestService(AbstractTest):
         self.assertTrue(ldap_password.startswith("$6$rounds=100000$"))
         service = self._find_by_name()
         self.assertIsNone(service.get("ldap_password"))
+
+    def test_reset_token_value(self):
+        service = self._find_by_name()
+        res = self.get(f"/api/services/reset_token_value/{service['id']}")
+        self.assertIsNotNone(res["token_value"])
+        rs = db.engine.execute(f"SELECT hashed_token FROM services WHERE id = {service['id']}")
+        token_value = next(rs, (0,))[0]
+        self.assertTrue(len(token_value) > len(res["token_value"]))
+        service = self._find_by_name()
+        self.assertIsNone(service.get("hashed_token"))

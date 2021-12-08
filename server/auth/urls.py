@@ -17,7 +17,8 @@ white_listing = [
     "/api/users/resume-session",
     "/config",
     "/health",
-    "/info"
+    "/info",
+    "/introspect"
 ]
 
 mfa_listing = [

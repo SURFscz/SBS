@@ -1,7 +1,7 @@
 import React from "react";
 import {
     allServiceConnectionRequests,
-    resetLdapPassword,
+    resetLdapPassword, resetTokenValue,
     searchOrganisations, serviceAupDelete,
     serviceById,
     serviceInvitationAccept,
@@ -21,7 +21,7 @@ import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
 import Collaborations from "../components/redesign/Collaborations";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {removeDuplicates} from "../utils/Utils";
+import {isEmpty, removeDuplicates} from "../utils/Utils";
 import {actionMenuUserRole, isUserServiceAdmin} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
@@ -52,7 +52,8 @@ class ServiceDetail extends React.Component {
             confirmationTxt: null,
             confirmationHeader: null,
             isWarning: false,
-            ldapPassword: null
+            ldapPassword: null,
+            tokenValue: null,
         };
     }
 
@@ -102,7 +103,21 @@ class ServiceDetail extends React.Component {
         }
     };
 
-    doConfirmationDialogAction = () => {
+    doTokenResetAction = () => {
+        const {service} = this.state;
+        resetTokenValue(service).then(res => {
+            this.setState({
+                confirmationTxt: I18n.t("userTokens.reset.close"),
+                confirmationHeader: I18n.t("userTokens.reset.copy"),
+                cancelDialogAction: null,
+                confirmationDialogQuestion: I18n.t("userTokens.reset.info"),
+                tokenValue: res.token_value,
+                confirmationDialogAction: this.doCancelDialogAction
+            });
+        })
+    }
+
+    doLdapResetAction = () => {
         const {service} = this.state;
         resetLdapPassword(service).then(res => {
             this.setState({
@@ -118,7 +133,7 @@ class ServiceDetail extends React.Component {
 
     doCancelDialogAction = () => {
         this.setState({confirmationDialogOpen: false},
-            () => setTimeout(() => this.setState({ldapPassword: null}), 75)
+            () => setTimeout(() => this.setState({ldapPassword: null, tokenValue: null}), 75)
         );
     }
 
@@ -316,9 +331,10 @@ class ServiceDetail extends React.Component {
                 perform: () => {
                     this.setState({
                         ldapPassword: null,
+                        tokenValue: null,
                         confirmationDialogOpen: true,
                         cancelDialogAction: this.doCancelDialogAction,
-                        confirmationDialogAction: this.doConfirmationDialogAction,
+                        confirmationDialogAction: this.doLdapResetAction,
                         isWarning: false,
                         confirmationHeader: I18n.t("confirmationDialog.title"),
                         confirmationDialogQuestion: I18n.t("service.ldap.confirmation", {name: service.name}),
@@ -332,6 +348,7 @@ class ServiceDetail extends React.Component {
                 perform: () => {
                     this.setState({
                         ldapPassword: null,
+                        tokenValue: null,
                         confirmationDialogOpen: true,
                         cancelDialogAction: this.doCancelDialogAction,
                         isWarning: true,
@@ -342,6 +359,24 @@ class ServiceDetail extends React.Component {
                     });
                 }
             });
+            if (service.token_enabled) {
+                actions.push({
+                    icon: "unlock",
+                    name: I18n.t("userTokens.actionTitle"),
+                    perform: () => {
+                        this.setState({
+                            tokenValue: null,
+                            confirmationDialogOpen: true,
+                            cancelDialogAction: this.doCancelDialogAction,
+                            isWarning: false,
+                            confirmationDialogAction: this.doTokenResetAction,
+                            confirmationHeader: I18n.t("confirmationDialog.title"),
+                            confirmationDialogQuestion: I18n.t("userTokens.reset.confirmation", {name: service.name}),
+                            confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                        });
+                    }
+                });
+            }
         }
         return actions;
     }
@@ -354,10 +389,9 @@ class ServiceDetail extends React.Component {
         );
     }
 
-
     render() {
         const {
-            tabs, service, loading, tab, firstTime, ldapPassword,
+            tabs, service, loading, tab, firstTime, ldapPassword, tokenValue,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
             confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning
         } = this.state;
@@ -374,11 +408,13 @@ class ServiceDetail extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     isWarning={isWarning}
+                                    largeWidth={!isEmpty(tokenValue)}
                                     confirmationTxt={confirmationTxt}
                                     confirmationHeader={confirmationHeader}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}>
                     {ldapPassword && this.renderLdapPassword(ldapPassword)}
+                    {tokenValue && this.renderLdapPassword(tokenValue)}
                 </ConfirmationDialog>
 
                 <UnitHeader obj={service}

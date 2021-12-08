@@ -10,6 +10,7 @@ export default function ConfirmationDialog({
                                                leavePage = false, isError = false, isWarning = false,
                                                disabledConfirm = false, children = null, closeTimeoutMS = 125,
                                                confirmationTxt = I18n.t("confirmationDialog.confirm"),
+                                               largeWidth =false,
                                                confirmationHeader = I18n.t("confirmationDialog.title")
                                            }) {
     const className = isError ? " error " : isWarning ? " warning " : "";
@@ -18,7 +19,7 @@ export default function ConfirmationDialog({
             isOpen={isOpen}
             onRequestClose={cancel}
             contentLabel={I18n.t("confirmationDialog.title")}
-            className="confirmation-dialog-content"
+            className={`confirmation-dialog-content ${largeWidth ? "large-width" : ""}`}
             overlayClassName="confirmation-dialog-overlay"
             closeTimeoutMS={closeTimeoutMS}
             ariaHideApp={false}>

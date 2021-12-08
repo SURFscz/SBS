@@ -56,6 +56,8 @@ class Service extends React.Component {
         research_scholarship_compliant: false,
         code_of_conduct_compliant: false,
         sirtfi_compliant: false,
+        token_enabled: false,
+        token_validity_days: "",
         contact_email: "",
         support_email: "",
         security_email: "",
@@ -228,7 +230,7 @@ class Service extends React.Component {
     };
 
     isValid = () => {
-        const {required, alreadyExists, invalidInputs, contact_email,hasAdministrators, ip_networks}
+        const {required, alreadyExists, invalidInputs, contact_email, hasAdministrators, ip_networks}
             = this.state;
         const inValid = Object.values(alreadyExists).some(val => val) ||
             required.some(attr => isEmpty(this.state[attr])) ||
@@ -349,7 +351,8 @@ class Service extends React.Component {
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
-                        accepted_user_policy, privacy_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+                        accepted_user_policy, privacy_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled,
+                        token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin) => {
         const serviceRequestUrlValid = !isEmpty(uri) && automatic_connection_allowed;
         const serviceRequestUrl = serviceRequestUrlValid ? `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(uri)}` :
@@ -581,6 +584,33 @@ class Service extends React.Component {
                                  tooltip={I18n.t("service.researchScholarshipCompliantTooltip")}
                                  onChange={val => this.setState({research_scholarship_compliant: val})}/>
                 </div>
+                <div className="tokens">
+                    <h1 className="section-separator first">{I18n.t("userTokens.tokens")}</h1>
+
+                    <RadioButton label={I18n.t("userTokens.tokenEnabled")}
+                                 name={"token_enabled"}
+                                 value={token_enabled}
+                                 disabled={!isAdmin}
+                                 tooltip={I18n.t("userTokens.tokenEnabledTooltip")}
+                                 onChange={val => this.setState({
+                                     token_enabled: val,
+                                     token_validity_days: val ? 1 : ""
+                                 })}/>
+
+                    <InputField value={token_validity_days}
+                                name={I18n.t("userTokens.tokenValidityDays")}
+                                maxLength={3}
+                                tooltip={I18n.t("userTokens.tokenValidityDaysTooltip")}
+                                onChange={e => this.setState({token_validity_days: e.target.value.replace(/\D/, '')})}
+                                disabled={!token_enabled}/>
+
+                    <InputField value={config.introspect_endpoint}
+                                name={I18n.t("userTokens.introspectionEndpoint")}
+                                copyClipBoard={true}
+                                disabled={true}/>
+
+
+                </div>
                 {isNew &&
                 <div className="email-invitations">
                     <h1 className="section-separator first last">{I18n.t("service.invitations")}</h1>
@@ -642,6 +672,8 @@ class Service extends React.Component {
             non_member_users_access_allowed,
             white_listed,
             sirtfi_compliant,
+            token_enabled,
+            token_validity_days,
             code_of_conduct_compliant,
             research_scholarship_compliant,
             ip_networks,
@@ -677,7 +709,7 @@ class Service extends React.Component {
 
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, privacy_policy,
-                        isNew, service, disabledSubmit, white_listed, sirtfi_compliant, code_of_conduct_compliant,
+                        isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled, token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin)}
                 </div>
             </>);
