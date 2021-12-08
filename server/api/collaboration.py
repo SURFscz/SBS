@@ -10,7 +10,6 @@ from sqlalchemy.orm import aliased, load_only, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
-from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager
@@ -20,7 +19,6 @@ from server.db.defaults import default_expiry_date, full_text_search_autocomplet
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation
 from server.db.models import update, save, delete
-from server.logger.context_logger import ctx_logger
 from server.mail import mail_collaboration_invitation
 
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
@@ -48,7 +46,10 @@ def collaboration_by_identifier():
         .options(selectinload(Collaboration.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
         .filter(Collaboration.identifier == identifier).one()
-    return collaboration, 200
+
+    collaboration_json = jsonify(collaboration).json
+    service_emails = collaboration.service_emails()
+    return {"collaboration": collaboration_json, "service_emails": service_emails}, 200
 
 
 @collaboration_api.route("/name_exists", strict_slashes=False)

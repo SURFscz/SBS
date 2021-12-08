@@ -28,7 +28,7 @@ div.mod-aup-services {
             width: 100%;
 
             td.name {
-                width: 33%;
+                width: 45%;
 
                 div.name {
                     display: flex;
@@ -38,11 +38,17 @@ div.mod-aup-services {
             }
 
             td.aup {
-                width: 33%;
+                width: 20%;
             }
 
             td.privacy_policy {
-                width: 33%;
+                width: 20%;
+                text-align: right;
+            }
+
+            td.mails {
+                width: 5%;
+                text-align: right;
             }
         }
 

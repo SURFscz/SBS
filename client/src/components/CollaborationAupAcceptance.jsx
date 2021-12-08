@@ -5,15 +5,30 @@ import "./welcome/welcome.scss";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import CheckBox from "./CheckBox";
 import Logo from "./redesign/Logo";
+import {isEmpty} from "../utils/Utils";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export default function CollaborationAupAcceptance({
                                                        services,
                                                        disabled,
-                                                       collaboration,
-                                                       children,
+                                                       serviceEmails,
                                                        setDisabled,
-                                                       isJoinRequest = false
+                                                       children
                                                    }) {
+    const renderContacts = service => {
+        const hasEmails = !isEmpty(serviceEmails) && !isEmpty(serviceEmails[service.id]) ;
+        const mails = encodeURI(serviceEmails[service.id].join(","));
+        return (
+            <td className="mails">
+                {hasEmails &&
+                <span>
+                    <a href={`mailto:${mails}`} rel="noopener noreferrer">
+                        <FontAwesomeIcon icon="envelope"/>
+                    </a>
+                </span>}
+            </td>);
+    }
+
     const renderServiceAup = service => {
         return (
             <div className="service-section" key={service.id}>
@@ -39,6 +54,7 @@ export default function CollaborationAupAcceptance({
                                    target="_blank">{I18n.t("service.privacy_policy")}</a> :
                                 <span className="no-link">{I18n.t("aup.service.noPrivacyPolicy")}</span>
                             }</td>
+                       {renderContacts(service)}
                     </tr>
                     </tbody>
                 </table>

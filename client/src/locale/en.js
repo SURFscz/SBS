@@ -1602,11 +1602,10 @@ I18n.translations.en = {
         collaboration: "collaboration",
         service: "service",
         toggleRole: "Toggle role",
-        info: "Almost there! Before joining this collaboration, please be aware that the services used within this collaboration have their own Acceptable Use Policy and Privacy Policies.",
-        info2: "Before you can use these services, please review them and indicate below whether you accept them.",
-        infoJoinRequest: "Before requesting membership of this collaboration, please be aware that the services used within this collaboration have their own Acceptable Use Policy and Privacy Policies.",
+        info: "Almost there! Before you can join this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service. Indicate below whether you accept them.",
+        infoJoinRequest: " Before you can request to join this collaboration, you must review the acceptable use policy (AUP) and privacy policy of the service. Indicate below whether you accept them.",
         purpose: "Purpose of the collaboration",
-        proceed: "All good, join the collaboration"
+        proceed: "Proceed to {{name}}"
     },
     welcome: {
         title: "Hi {{name}},",
