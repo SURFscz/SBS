@@ -13,6 +13,7 @@ import CollaborationAupAcceptance from "./CollaborationAupAcceptance";
 export default function CollaborationWelcomeDialog({
                                                        name,
                                                        role,
+                                                       serviceEmails,
                                                        isAdmin = false,
                                                        isOpen = false,
                                                        close,
@@ -28,7 +29,6 @@ export default function CollaborationWelcomeDialog({
     const doToggleRole = () => {
         setToggleRole(toggleRole === ROLES.COLL_ADMIN ? ROLES.COLL_MEMBER : ROLES.COLL_ADMIN);
     }
-
 
     return (
         <Modal
@@ -52,20 +52,19 @@ export default function CollaborationWelcomeDialog({
             </section>
             <section className="responsibilities welcome">
                 <p>{I18n.t("welcomeDialog.info")}</p>
-                {hasServices && <p>{I18n.t("welcomeDialog.info2")}</p>}
             </section>
             <h2>{I18n.t("welcomeDialog.purpose")}</h2>
             <section className="responsibilities welcome">
                 <p>{collaboration.description}</p>
             </section>
-            {<CollaborationAupAcceptance collaboration={collaboration}
-                                         services={services}
+            {<CollaborationAupAcceptance services={services}
                                          disabled={disabled}
+                                         serviceEmails={serviceEmails}
                                          setDisabled={setDisabled}
-                                         children={<h2>{I18n.t("models.collaboration.services", {nbr: collaboration.services.length})}</h2>}
+                                         children={<h2>{I18n.t("models.collaboration.services", {nbr: services.length})}</h2>}
             />}
             <Button
-                txt={I18n.t("welcomeDialog.proceed")}
+                txt={I18n.t("welcomeDialog.proceed", {name: collaboration.name})}
                 disabled={disabled} centralize={true}
                 onClick={close}/>
         </Modal>

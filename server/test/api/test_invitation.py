@@ -16,6 +16,14 @@ class TestInvitation(AbstractTest):
         self.assertEqual(invitation_hash_no_way, invitation["hash"])
         self.assertTrue(len(invitation["collaboration"]["collaboration_memberships"]) > 0)
 
+    def test_find_by_hash_expand(self):
+        invitation_result = self.get("/api/invitations/find_by_hash",
+                                     query_data={"hash": invitation_hash_no_way, "expand": True})
+        invitation = invitation_result["invitation"]
+        self.assertEqual(invitation_hash_no_way, invitation["hash"])
+        self.assertTrue(len(invitation["collaboration"]["collaboration_memberships"]) > 0)
+        self.assertEqual(4, len(invitation_result["service_emails"]))
+
     def test_accept(self):
         self.login("urn:james")
         self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False)

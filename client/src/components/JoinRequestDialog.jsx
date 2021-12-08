@@ -36,12 +36,10 @@ export default class JoinRequestDialog extends React.Component {
     joinRequestDisclaimer = () => {
         return (<div className="join-request-disclaimer">
             <p>{I18n.t("welcomeDialog.infoJoinRequest")}</p>
-            <p>{I18n.t("welcomeDialog.info2")}</p>
         </div>);
     }
 
-    renderForm = (collaboration, motivation, close, disabled) => {
-
+    renderForm = (collaboration, motivation, close, disabled, serviceEmails) => {
         return (
             <div>
                 <section className="explanation">
@@ -53,11 +51,10 @@ export default class JoinRequestDialog extends React.Component {
                             multiline={true}
                             placeholder={I18n.t("registration.motivationPlaceholder")}
                             onChange={e => this.setState({motivation: e.target.value})}/>
-                {this.services.length > 0 && <CollaborationAupAcceptance collaboration={collaboration}
-                                                                         services={this.services}
+                {this.services.length > 0 && <CollaborationAupAcceptance services={this.services}
                                                                          disabled={disabled}
+                                                                         serviceEmails={serviceEmails}
                                                                          setDisabled={value => this.setState({disabled: value})}
-                                                                         isJoinRequest={true}
                                                                          children={this.joinRequestDisclaimer()}/>}
                 <section className="actions">
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
@@ -91,7 +88,7 @@ export default class JoinRequestDialog extends React.Component {
     }
 
     render() {
-        const {collaboration, isOpen = false, close} = this.props;
+        const {collaboration, isOpen = false, close, serviceEmails} = this.props;
         const {motivation, submitted, disabled} = this.state;
         return (
             <Modal
@@ -105,7 +102,7 @@ export default class JoinRequestDialog extends React.Component {
                 <h1>{I18n.t("registration.title", {name: collaboration.name})}</h1>
                 <div className="join-request-form">
                     {!submitted &&
-                    this.renderForm(collaboration, motivation, close, disabled)}
+                    this.renderForm(collaboration, motivation, close, disabled, serviceEmails)}
                     {submitted && this.renderFeedback(collaboration)}
                 </div>
 

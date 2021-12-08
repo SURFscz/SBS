@@ -32,7 +32,7 @@
         h1 {
             font-size: 32px;
             line-height: 36px;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         div.toggle-role {
@@ -92,7 +92,7 @@
 .ReactModalPortal .welcome-dialog-content {
     transition: top 250ms ease-in-out, bottom 250ms ease-in-out;
     width: 860px;
-    max-height: 80vh;
+    max-height: 85vh;
 
     @media (max-width: $compact-medium) {
         width: 280px;

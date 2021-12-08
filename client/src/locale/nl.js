@@ -1332,6 +1332,7 @@ I18n.translations.nl = {
             title: "Dienst {{name}} voorwaarden",
             info: "Dienst <strong>{{name}}</strong> heeft een Acceptable use policy. Je moet deze voorwaarden accepteren om gebruik te kunnen maken van deze dienst.",
             noPrivacyPolicy: "Geen privacy policy",
+            noAup: "Geen AUP",
             agreeWithTerms: "Ik verklaar dat ik deze voorwaarden heb gelezen en accepteer",
             firstLogin: "Login en daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
             login: "Login",
@@ -1601,7 +1602,11 @@ I18n.translations.nl = {
         organisation: "organisatie",
         collaboration: "samenwerking",
         service: "dienst",
-        toggleRole: "Verander rol"
+        toggleRole: "Verander rol",
+        info: "Bijna zover! Voordat je je bij deze samenwerking kan aansluiten, moet je de acceptable use policy (AUP) en het privacybeleid van de service lezen. Geef hieronder aan of je deze accepteert.",
+        infoJoinRequest: "Bijna zover! Voordat je je verzoek om bij deze samenwerking aan te sluiten kan doen, moet je de acceptable use policy (AUP) en het privacybeleid van de service lezen. Geef hieronder aan of je deze accepteert.",
+        purpose: "Doel van deze samenwerking",
+        proceed: "Ga door naar {{name}}"
     },
     welcome: {
         title: "Hallo {{name}},",

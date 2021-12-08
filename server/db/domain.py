@@ -213,6 +213,16 @@ class Collaboration(Base, db.Model, LogoMixin):
                 return True
         return False
 
+    def service_emails(self):
+        services = self.services + self.organisation.services
+        res = {}
+        for service in services:
+            if service.contact_email:
+                res[service.id] = [service.contact_email]
+            else:
+                res[service.id] = [membership.user.email for membership in service.service_memberships]
+        return res
+
 
 class OrganisationMembership(Base, db.Model):
     __tablename__ = "organisation_memberships"

@@ -60,6 +60,7 @@ class CollaborationDetail extends React.Component {
         }));
         this.state = {
             invitation: null,
+            serviceEmails: {},
             collaboration: null,
             schacHomeOrganisation: null,
             adminOfCollaboration: false,
@@ -83,10 +84,13 @@ class CollaborationDetail extends React.Component {
     componentDidMount = callback => {
         const params = this.props.match.params;
         if (params.hash) {
-            invitationByHash(params.hash).then(res => {
+            invitationByHash(params.hash, true).then(res => {
+                const invitation = res["invitation"];
+                const serviceEmails = res["service_emails"];
                 this.setState({
-                    invitation: res,
-                    collaboration: res.collaboration,
+                    invitation: invitation,
+                    collaboration: invitation.collaboration,
+                    serviceEmails: serviceEmails,
                     loading: false,
                     firstTime: true,
                     adminOfCollaboration: false,
@@ -94,7 +98,7 @@ class CollaborationDetail extends React.Component {
                     confirmationDialogOpen: false,
                     tab: "about",
                     isInvitation: true,
-                    tabs: [this.getAboutTab(res.collaboration, true, false)]
+                    tabs: [this.getAboutTab(invitation.collaboration, true, false)]
                 });
             }).catch(() => this.props.history.push("/404"));
         } else if (params.id) {
@@ -137,7 +141,10 @@ class CollaborationDetail extends React.Component {
                 this.props.history.push("/404");
             } else {
                 collaborationByIdentifier(collaborationIdentifier)
-                    .then(collaboration => {
+                    .then(res => {
+                        debugger;
+                        const collaboration = res["collaboration"];
+                        const serviceEmails = res["service_emails"];
                         if (collaboration.disable_join_requests) {
                             this.props.history.push("/404");
                         } else {
@@ -147,6 +154,7 @@ class CollaborationDetail extends React.Component {
                             }
                             this.setState({
                                 collaboration: collaboration,
+                                serviceEmails: serviceEmails,
                                 collaborationJoinRequest: true,
                                 alreadyMember: alreadyMember,
                                 adminOfCollaboration: false,
@@ -660,7 +668,7 @@ class CollaborationDetail extends React.Component {
             collaboration, loading, tabs, tab, adminOfCollaboration, showMemberView, firstTime,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion,
             collaborationJoinRequest, joinRequestDialogOpen, alreadyMember, lastAdminWarning,
-            isWarning, isInvitation, invitation
+            isWarning, isInvitation, invitation, serviceEmails
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -683,6 +691,7 @@ class CollaborationDetail extends React.Component {
                 <CollaborationWelcomeDialog name={collaboration.name}
                                             isOpen={firstTime}
                                             role={role}
+                                            serviceEmails={serviceEmails}
                                             collaboration={collaboration}
                                             isAdmin={user.admin}
                                             isInvitation={isInvitation}
@@ -690,6 +699,7 @@ class CollaborationDetail extends React.Component {
 
                 <JoinRequestDialog collaboration={collaboration}
                                    isOpen={joinRequestDialogOpen}
+                                   serviceEmails={serviceEmails}
                                    refresh={callback => refreshUser(callback)}
                                    history={this.props.history}
                                    close={() => this.setState({joinRequestDialogOpen: false})}/>

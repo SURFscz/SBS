@@ -416,8 +416,8 @@ export function organisationInvitationDelete(organisationInvitationId, showError
 }
 
 //Invitations
-export function invitationByHash(hash) {
-    return fetchJson(`/api/invitations/find_by_hash?hash=${hash}`, {}, {}, false);
+export function invitationByHash(hash, expand = false) {
+    return fetchJson(`/api/invitations/find_by_hash?hash=${hash}${expand ? "&expand=True" : ""}`, {}, {}, false);
 }
 
 export function invitationAccept(invitation) {

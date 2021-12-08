@@ -93,7 +93,7 @@ class Home extends React.Component {
         if (role === ROLES.USER) {
             tab = tabSuggestion;
         }
-        if (isUserServiceAdmin(user)) {
+        if (isUserServiceAdmin(user) && !user.admin) {
             if (nbrServices === 1 && tabs.length === 0) {
                 setTimeout(() => this.props.history.push(`/services/${user.service_memberships[0].service_id}`), 50);
             } else {

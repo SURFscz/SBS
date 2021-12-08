@@ -3,7 +3,7 @@ import datetime
 import re
 from secrets import token_urlsafe
 
-from flask import Blueprint, request as current_request, current_app, g as request_context
+from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Conflict, Forbidden
 
@@ -63,7 +63,12 @@ def invitations_by_hash():
                  .selectinload(Organisation.services)) \
         .filter(Invitation.hash == hash_value) \
         .one()
-    return invitation, 200
+    if not query_param("expand", required=False):
+        return invitation, 200
+
+    invitation_json = jsonify(invitation).json
+    service_emails = invitation.collaboration.service_emails()
+    return {"invitation": invitation_json, "service_emails": service_emails}, 200
 
 
 @invitations_api.route("/v1/collaboration_invites", methods=["PUT"], strict_slashes=False)
