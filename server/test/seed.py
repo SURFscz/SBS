@@ -9,6 +9,7 @@ from secrets import token_urlsafe
 from sqlalchemy import text
 
 from server.api.collaboration_request import STATUS_OPEN
+from server.auth.security import secure_hash
 from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
@@ -40,6 +41,8 @@ invitation_hash_uva = token_urlsafe()
 
 service_invitation_hash = token_urlsafe()
 service_invitation_expired_hash = token_urlsafe()
+
+service_cloud_token = secure_hash(token_urlsafe())
 
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
@@ -269,8 +272,8 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                        privacy_policy="https://privacy.org")
     cloud = Service(entity_id=service_cloud_entity_id, name=service_cloud_name, description="SARA Cloud Service",
                     public_visible=True, automatic_connection_allowed=True, logo=read_image("cloud.jpg"),
-                    allowed_organisations=[uuc, uva], abbreviation="cloud",
-                    privacy_policy="https://privacy.org")
+                    allowed_organisations=[uuc, uva], abbreviation="cloud", privacy_policy="https://privacy.org",
+                    token_enabled=True, hashed_token=service_cloud_token, token_validity_days=1)
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
                       public_visible=True, automatic_connection_allowed=True, contact_email=john.email,

@@ -50,6 +50,8 @@ class User(Base, db.Model):
     aups = db.relationship("Aup", back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
     service_aups = db.relationship("ServiceAup", back_populates="user", cascade="all, delete-orphan",
                                    passive_deletes=True)
+    user_tokens = db.relationship("UserToken", back_populates="user", cascade="all, delete-orphan",
+                                  passive_deletes=True)
     confirmed_super_user = db.Column("confirmed_super_user", db.Boolean(), nullable=True, default=False)
     eduperson_principal_name = db.Column("eduperson_principal_name", db.String(length=255), nullable=True)
     application_uid = db.Column("application_uid", db.String(length=255), nullable=True)
@@ -329,6 +331,9 @@ class Service(Base, db.Model, LogoMixin):
                                                default=False)
     code_of_conduct_compliant = db.Column("code_of_conduct_compliant", db.Boolean(), nullable=True, default=False)
     sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
+    token_enabled = db.Column("token_enabled", db.Boolean(), nullable=True, default=False)
+    hashed_token = db.Column("hashed_token", db.String(length=255), nullable=True, default=None)
+    token_validity_days = db.Column("token_validity_days", db.Integer, nullable=True, default=0)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select",
                                      back_populates="services")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
@@ -345,6 +350,8 @@ class Service(Base, db.Model, LogoMixin):
                                           cascade="all, delete-orphan", passive_deletes=True)
     service_aups = db.relationship("ServiceAup", back_populates="service", cascade="all, delete-orphan",
                                    passive_deletes=True)
+    user_tokens = db.relationship("UserToken", back_populates="service", cascade="all, delete-orphan",
+                                  passive_deletes=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=True)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
@@ -590,3 +597,16 @@ class ServiceAup(Base, db.Model):
     service = db.relationship("Service", back_populates="service_aups")
     agreed_at = db.Column("agreed_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                           nullable=False)
+
+
+class UserToken(Base, db.Model):
+    __tablename__ = "user_tokens"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    name = db.Column("name", db.String(length=255), nullable=False)
+    description = db.Column("description", db.Text(), nullable=True)
+    hashed_token = db.Column("hashed_token", db.String(length=255), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="user_tokens")
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    service = db.relationship("Service", back_populates="user_tokens")
+    last_used_date = db.Column("last_used_date", db.DateTime(timezone=True), nullable=True)

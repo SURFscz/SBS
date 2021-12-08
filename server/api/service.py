@@ -12,7 +12,7 @@ from sqlalchemy.orm import load_only, selectinload
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
-    is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin
+    is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin, secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
@@ -311,7 +311,8 @@ def update_service():
     _validate_ip_networks(data)
     cleanse_short_name(data, "abbreviation")
     if is_service_admin(service_id):
-        for attr in [fb for fb in ["white_listed", "non_member_users_access_allowed"] if fb in data]:
+        forbidden = ["white_listed", "non_member_users_access_allowed", "token_enabled", "token"]
+        for attr in [fb for fb in forbidden if fb in data]:
             del data[attr]
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
@@ -381,3 +382,14 @@ def reset_ldap_password(service_id):
     service.ldap_password = hashed
     db.session.merge(service)
     return {"ldap_password": password}, 200
+
+
+@service_api.route("/reset_token_value/<service_id>", strict_slashes=False)
+@json_endpoint
+def reset_token_value(service_id):
+    confirm_service_admin(service_id)
+    service = Service.query.get(service_id)
+    token = token_urlsafe()
+    service.hashed_token = secure_hash(token)
+    db.session.merge(service)
+    return {"token_value": token}, 200
