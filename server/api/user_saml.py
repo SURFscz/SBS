@@ -8,6 +8,7 @@ from flask import Blueprint, current_app, request as current_request
 from server.api.base import json_endpoint, query_param, send_error_mail
 from server.api.service_aups import has_agreed_with
 from server.auth.security import confirm_read_access
+from server.auth.user_claims import user_memberships
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE
 from server.db.domain import User, Service
@@ -96,33 +97,12 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
     user = db.session.merge(user)
     db.session.commit()
 
-    cfg = current_app.app_config
-    namespace = cfg.get("entitlement_group_namespace", "urn:bla")
+    user_memberships(user, connected_collaborations)
+    all_attributes, http_status = authorized_func(user, memberships)
 
-    # gather groups and collaborations
-    #
-    # we're (partially) adhering to AARC's Guidelines on expressing group membership and role information
-    # (see https://aarc-project.eu/guidelines/aarc-g002/)
-    # Which prescribes group/co membership need to be expressed as entitlements of the form
-    # <NAMESPACE>:group:<GROUP>[:<SUBGROUP>*][:role=<ROLE>]#<GROUP-AUTHORITY>
-    # The namespace is defined in the config file (variable entitlement_group_namespace)
-    # COs map to GROUP and Groups map to SUBGROUP
-    # We don't use roles, so we omit those.
-    # Also, we omit the GROUP-AUTHORITY (and are therefore not completely compliant), as it complicates parsing the
-    # entitlement, will confuse Services, and the spec fails to make clear what the usecase is, exactly.
-    memberships = set()
-    for collaboration in connected_collaborations:
-        # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
-        memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}")
-        memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:{collaboration.short_name}")
-        for g in collaboration.groups:
-            if g.is_member(user.id):
-                memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:"
-                                f"{collaboration.short_name}:{g.short_name}")
+    logger.info(f"Returning attributes {all_attributes} for user {uid} and service_entity_id {service_entity_id}")
 
-    attributes, http_status = authorized_func(user, memberships)
-    logger.info(f"Returning attributes {attributes} for user {uid} and service_entity_id {service_entity_id}")
-    return attributes, http_status
+    return all_attributes, http_status
 
 
 # Endpoint for SATOSA/eduteams
@@ -133,7 +113,6 @@ def attributes():
     service_entity_id = query_param("service_entity_id")
 
     def not_authorized_func(_, status):
-        logger = ctx_logger("user_api")
         if status == USER_UNKNOWN:
             return {"error": f"user {uid} is unknown"}, 404
         elif status == USER_IS_SUSPENDED:
@@ -187,18 +166,16 @@ def proxy_authz():
 
     def authorized_func(user, memberships):
         eppn_scope = current_app.app_config.eppn_scope.strip()
-        result = {
-            "status": {
-                "result": "authorized",
-            }
-        }
-        attrs = {
-            "eduPersonEntitlement": list(memberships),
-            "eduPersonPrincipalName": [f"{user.username}@{eppn_scope}"],
-            "uid": [user.username],
-            "sshkey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
-        }
-        result["attributes"] = attrs
-        return result, 200
+        return {
+                   "status": {
+                       "result": "authorized",
+                   },
+                   "attributes": {
+                       "eduPersonEntitlement": list(memberships),
+                       "eduPersonPrincipalName": [f"{user.username}@{eppn_scope}"],
+                       "uid": [user.username],
+                       "sshkey": [ssh_key.ssh_value for ssh_key in user.ssh_keys]
+                   }
+               }, 200
 
     return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)

@@ -2,7 +2,7 @@
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request
-from werkzeug.exceptions import SecurityError, Forbidden
+from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
 from server.api.service import user_service

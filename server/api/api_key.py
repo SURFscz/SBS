@@ -2,10 +2,9 @@
 from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request
-from werkzeug.exceptions import SecurityError
 
 from server.api.base import json_endpoint
-from server.auth.security import secure_hash, confirm_organisation_admin_or_manager, hash_secret_key
+from server.auth.security import confirm_organisation_admin_or_manager, hash_secret_key
 from server.db.domain import ApiKey
 from server.db.models import save, delete
 
