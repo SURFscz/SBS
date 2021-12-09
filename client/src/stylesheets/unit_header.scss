@@ -37,6 +37,11 @@ div.org-attributes-container {
                 color: $red;
             }
 
+            &.multiple-attributes {
+                display: flex;
+                flex-direction: column;
+            }
+
             a {
                 max-width: 240px;
                 text-overflow: ellipsis;
@@ -105,6 +110,12 @@ div.org-attributes-container-grid, div.org-attributes-container-flex {
                 font-weight: bold;
                 color: $red;
             }
+
+            &.multiple-attributes {
+                display: flex;
+                flex-direction: column;
+            }
+
 
             a {
                 display: inline-block;

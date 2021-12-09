@@ -245,6 +245,17 @@ class ServiceDetail extends React.Component {
         </div>)
     }
 
+    getTokenTab = (service, user) => {
+        const openInvitations = (service.service_invitations || []).length;
+        return (<div key="admins" name="admins"
+                     label={I18n.t("home.tabs.serviceAdmins", {count: service.service_memberships.length})}
+                     icon={<UserAdminIcon/>}
+                     notifier={openInvitations > 0 ? openInvitations : null}>
+            <ServiceAdmins {...this.props} service={service}
+                           refresh={this.refresh}/>
+        </div>)
+    }
+
     getServiceGroupsTab = (service) => {
         return (<div key="groups" name="groups"
                      label={I18n.t("home.tabs.groups", {count: service.service_groups.length})}
@@ -343,7 +354,7 @@ class ServiceDetail extends React.Component {
                 }
             });
             actions.push({
-                icon: "ban",
+                icon: "trash-restore",
                 name: I18n.t("service.aup.title"),
                 perform: () => {
                     this.setState({

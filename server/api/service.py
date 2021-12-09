@@ -71,6 +71,27 @@ def services_from_organisation_memberships(user_id, service_id=None, count_only=
     return _services_from_query(count_only, query, service_id)
 
 
+def user_service(service_id):
+    # Every service may be seen by organisation admin, service admin, manager or coll admin
+    if is_service_admin(service_id):
+        return True
+
+    if is_collaboration_admin() or is_organisation_admin_or_manager():
+        return True
+
+    user_id = current_user_id()
+    count = services_from_collaboration_memberships(user_id, service_id, True)
+    if count > 0:
+        return True
+
+    count = services_from_organisation_collaboration_memberships(user_id, service_id, True)
+    if count > 0:
+        return True
+
+    count = services_from_organisation_memberships(user_id, service_id, True)
+    return count > 0
+
+
 def _do_get_services(restrict_for_current_user=False):
     def override_func():
         return is_collaboration_admin() or _is_org_member() or is_service_admin()
@@ -154,27 +175,7 @@ def service_by_entity_id():
 @service_api.route("/<service_id>", strict_slashes=False)
 @json_endpoint
 def service_by_id(service_id):
-    def _user_service():
-        # Every service may be seen by organisation admin, service admin, manager or coll admin
-        if is_service_admin(service_id):
-            return True
-
-        if is_collaboration_admin() or is_organisation_admin_or_manager():
-            return True
-
-        user_id = current_user_id()
-        count = services_from_collaboration_memberships(user_id, service_id, True)
-        if count > 0:
-            return True
-
-        count = services_from_organisation_collaboration_memberships(user_id, service_id, True)
-        if count > 0:
-            return True
-
-        count = services_from_organisation_memberships(user_id, service_id, True)
-        return count > 0
-
-    confirm_read_access(override_func=_user_service)
+    confirm_read_access(service_id, override_func=user_service)
 
     query = Service.query \
         .options(selectinload(Service.service_memberships).selectinload(ServiceMembership.user))
@@ -233,6 +234,7 @@ def save_service():
 
     data = current_request.get_json()
     _validate_ip_networks(data)
+    _token_validity_days(data)
 
     data["status"] = STATUS_ACTIVE
     cleanse_short_name(data, "abbreviation")
@@ -293,6 +295,12 @@ def service_invites():
     return None, 201
 
 
+def _token_validity_days(data):
+    days = data.get("token_validity_days")
+    if isinstance(days, str):
+        data["token_validity_days"] = int(days) if len(days.strip()) > 0 else None
+
+
 def _validate_ip_networks(data):
     ip_networks = data.get("ip_networks", None)
     if ip_networks:
@@ -309,8 +317,10 @@ def update_service():
     confirm_service_admin(service_id)
 
     _validate_ip_networks(data)
+    _token_validity_days(data)
+
     cleanse_short_name(data, "abbreviation")
-    if is_service_admin(service_id):
+    if not is_application_admin() and is_service_admin(service_id):
         forbidden = ["white_listed", "non_member_users_access_allowed", "token_enabled", "token"]
         for attr in [fb for fb in forbidden if fb in data]:
             del data[attr]

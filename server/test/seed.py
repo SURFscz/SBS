@@ -15,7 +15,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership, ServiceAup
+    ServiceMembership, ServiceAup, UserToken
 
 collaboration_request_name = "New Collaboration"
 
@@ -43,6 +43,9 @@ service_invitation_hash = token_urlsafe()
 service_invitation_expired_hash = token_urlsafe()
 
 service_cloud_token = secure_hash(token_urlsafe())
+network_cloud_token = secure_hash(token_urlsafe())
+wiki_cloud_token = secure_hash(token_urlsafe())
+sarah_user_token = secure_hash(token_urlsafe())
 
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
@@ -287,13 +290,15 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                    allowed_organisations=[uuc, uva], contact_email="help@wiki.com", abbreviation="wiki",
                    accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org",
                    ldap_password="$6$rounds=100000$bFyBZD0Fim7BCAqt$BSq4u2IqhyT2khkCMILpaEceMnvYIKvxyxttA8."
-                                 "IddqWdPB.AEH2MBb1sggk8pDlrW/Xb00f8xa67cC0nfkuX.")
+                                 "IddqWdPB.AEH2MBb1sggk8pDlrW/Xb00f8xa67cC0nfkuX.",
+                   token_enabled=True, hashed_token=wiki_cloud_token, token_validity_days=365)
     network = Service(entity_id=service_network_entity_id, name=service_network_name,
                       description="Network enabling service SSH access", address="Some address",
                       uri="https://uri", identity_type="SSH KEY", accepted_user_policy="https://aup",
                       contact_email="help@network.com", logo=read_image("network.jpeg"),
                       public_visible=False, automatic_connection_allowed=True, abbreviation="network",
-                      allowed_organisations=[uuc], privacy_policy="https://privacy.org")
+                      allowed_organisations=[uuc], privacy_policy="https://privacy.org",
+                      token_enabled=True, hashed_token=network_cloud_token, token_validity_days=365)
     service_ssh_uva = Service(entity_id="service_ssh_uva", name=service_ssh_uva_name,
                               description="Uva SSH access",
                               uri="https://uri/ssh", identity_type="SSH KEY", accepted_user_policy="https://ssh",
@@ -482,6 +487,10 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                                                    service=wireless, is_member_request=True)
     _persist(db, service_connection_request_network, service_connection_request_wiki,
              service_connection_request_wireless)
+
+    user_token_sarah = UserToken(name="token", description="some", hashed_token=sarah_user_token, user=sarah,
+                                 service=network)
+    _persist(db, user_token_sarah)
 
     if perf_test:
         users = []

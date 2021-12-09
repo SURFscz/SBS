@@ -72,6 +72,7 @@ class TestService(AbstractTest):
             service = self.post("/api/services", body={
                 "entity_id": "https://new_service",
                 "name": "new_service",
+                "token_validity_days": "",
                 "privacy_policy": "https://privacy.com",
                 "administrators": ["the@ex.org"],
                 "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa",

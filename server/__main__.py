@@ -44,6 +44,7 @@ from server.api.service_membership import service_membership_api
 from server.api.system import system_api
 from server.api.user import user_api
 from server.api.user_saml import user_saml_api
+from server.api.user_token import user_token_api
 from server.cron.schedule import start_scheduling
 from server.db.db import db, db_migrations
 from server.db.redis import init_redis
@@ -130,6 +131,7 @@ app.register_blueprint(service_group_api)
 app.register_blueprint(service_invitations_api)
 app.register_blueprint(service_membership_api)
 app.register_blueprint(service_aups_api)
+app.register_blueprint(user_token_api)
 
 app.register_error_handler(404, page_not_found)
 
