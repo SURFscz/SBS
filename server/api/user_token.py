@@ -1,23 +1,26 @@
 # -*- coding: future_fstrings -*-
 from secrets import token_urlsafe
-
+import datetime
 from flask import Blueprint, request as current_request
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
 from server.api.service import user_service
 from server.auth.security import hash_secret_key, current_user_id
+from server.db.db import db
 from server.db.domain import UserToken, User, Service
-from server.db.models import save, delete, update
+from server.db.models import save, delete
 
 user_token_api = Blueprint("user_token_api", __name__, url_prefix="/api/user_tokens")
 
 
-def _sanitize_and_verify():
+def _sanitize_and_verify(hash_token=True):
     data = current_request.get_json()
     if data["user_id"] != current_user_id():
         raise Forbidden("Can not create user_token for someone else")
-    data = hash_secret_key(data, "hashed_token")
+    if hash_token:
+        data = hash_secret_key(data, "hashed_token")
+
     service_id = data["service_id"]
     service = Service.query.get(service_id)
 
@@ -52,8 +55,20 @@ def save_token():
 @user_token_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_token():
-    data = _sanitize_and_verify()
-    return update(UserToken, custom_json=data)
+    data = _sanitize_and_verify(hash_token=False)
+    user_token = UserToken.query.get(data["id"])
+    user_token.name = data.get("name")
+    user_token.description = data.get("description")
+    return db.session.merge(user_token), 201
+
+
+@user_token_api.route("/renew_lease", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def renew_lease():
+    data = _sanitize_and_verify(hash_token=False)
+    user_token = UserToken.query.get(data["id"])
+    user_token.created_at = datetime.datetime.utcnow()
+    return db.session.merge(user_token), 201
 
 
 @user_token_api.route("/<user_token_id>", methods=["DELETE"], strict_slashes=False)

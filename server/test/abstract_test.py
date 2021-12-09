@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import datetime
 import json
 import os
 from base64 import b64encode
@@ -12,8 +13,9 @@ from flask import current_app
 from flask_testing import TestCase
 
 from server.auth.mfa import ACR_VALUES
+from server.auth.security import secure_hash
 from server.db.db import db
-from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup
+from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken
 from server.test.seed import seed
 from server.tools import read_file
 
@@ -142,4 +144,11 @@ class AbstractTest(TestCase):
         user = User.query.filter(User.uid == user_uid).one()
         service = Service.query.filter(Service.entity_id == service_entity_id).one()
         db.session.merge(ServiceAup(aup_url=service.accepted_user_policy, user_id=user.id, service_id=service.id))
+        db.session.commit()
+
+    @staticmethod
+    def expire_user_token(raw_token):
+        user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(raw_token)).first()
+        user_token.created_at = datetime.datetime.utcnow() - datetime.timedelta(days=500)
+        db.session.merge(user_token)
         db.session.commit()

@@ -1,9 +1,10 @@
 # -*- coding: future_fstrings -*-
+import datetime
 from secrets import token_urlsafe
 
 from server.db.domain import Service, User, UserToken
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, service_wiki_name, service_mail_name, service_cloud_name
+from server.test.seed import sarah_name, service_wiki_name, service_mail_name, service_cloud_name, sarah_user_token
 
 
 class TestUserToken(AbstractTest):
@@ -15,8 +16,10 @@ class TestUserToken(AbstractTest):
 
         user_tokens[0]["name"] = "changed"
         self.put("/api/user_tokens", body=user_tokens[0])
-        user_tokens = self.get("/api/user_tokens")
-        self.assertEqual("changed", user_tokens[0]["name"])
+
+        user_tokens_updated = self.get("/api/user_tokens")
+        self.assertEqual("changed", user_tokens_updated[0]["name"])
+        self.assertEqual(user_tokens[0]["hashed_token"], user_tokens_updated[0]["hashed_token"])
 
     def test_generate(self):
         self.login("urn:sarah")
@@ -67,3 +70,16 @@ class TestUserToken(AbstractTest):
         self.login("urn:james")
         user_token = UserToken.query.first()
         self.delete("/api/user_tokens", user_token.id, response_status_code=403)
+
+    def test_renew_lease(self):
+        self.expire_user_token(sarah_user_token)
+        self.login("urn:sarah")
+        user_tokens = self.get("/api/user_tokens")
+
+        self.put("/api/user_tokens/renew_lease", body=user_tokens[0])
+
+        user_tokens_updated = self.get("/api/user_tokens")
+        created_at = int(user_tokens_updated[0]["created_at"])
+        one_day_ago = int((datetime.datetime.utcnow() - datetime.timedelta(days=1)).timestamp())
+        self.assertTrue(created_at > one_day_ago)
+        self.assertEqual(user_tokens[0]["hashed_token"], user_tokens_updated[0]["hashed_token"])
