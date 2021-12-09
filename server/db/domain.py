@@ -333,7 +333,7 @@ class Service(Base, db.Model, LogoMixin):
     sirtfi_compliant = db.Column("sirtfi_compliant", db.Boolean(), nullable=True, default=False)
     token_enabled = db.Column("token_enabled", db.Boolean(), nullable=True, default=False)
     hashed_token = db.Column("hashed_token", db.String(length=255), nullable=True, default=None)
-    token_validity_days = db.Column("token_validity_days", db.Integer, nullable=True, default=0)
+    token_validity_days = db.Column("token_validity_days", db.Integer(), nullable=True, default=0)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select",
                                      back_populates="services")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")
@@ -610,3 +610,5 @@ class UserToken(Base, db.Model):
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
     service = db.relationship("Service", back_populates="user_tokens")
     last_used_date = db.Column("last_used_date", db.DateTime(timezone=True), nullable=True)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)

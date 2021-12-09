@@ -25,8 +25,8 @@ class TestCollaboration(AbstractTest):
     def test_find_by_identifier(self):
         self.login("urn:james")
         res = self.get("/api/collaborations/find_by_identifier",
-                                 query_data={"identifier": collaboration_ai_computing_uuid},
-                                 with_basic_auth=False)
+                       query_data={"identifier": collaboration_ai_computing_uuid},
+                       with_basic_auth=False)
         collaboration = res["collaboration"]
         self.assertEqual(2, len(collaboration["services"]))
 
@@ -417,13 +417,15 @@ class TestCollaboration(AbstractTest):
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "description": "new_collaboration",
+                                        "accepted_user_policy": "https://aup.org",
                                         "administrators": ["the@ex.org", "that@ex.org"],
                                         "short_name": "new_short_name"
                                     }),
                                     content_type="application/json")
         self.assertEqual(201, response.status_code)
-        collaboration = AbstractTest.find_entity_by_name(Collaboration, "new_collaboration")
+        collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
         self.assertEqual(0, len(collaboration.collaboration_memberships))
+        self.assertIsNone(collaboration.accepted_user_policy)
 
         count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
         self.assertEqual(2, count)

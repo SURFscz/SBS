@@ -142,9 +142,6 @@ def attributes():
             return {}, 200
         elif status == AUP_NOT_AGREED:
             return {"error": f"user {uid} has not agreed to the aup of {service_entity_id}"}, 403
-        else:
-            logger.error(f"Unhandled status {status} in not_authorized_func")
-            raise Exception(f"Unhandled status {status} in not_authorized_func")
 
     def authorized_func(user, memberships):
         # gather regular user attributes

@@ -3,10 +3,12 @@ import hashlib
 
 from flask import session, g as request_context, request as current_request, current_app
 from sqlalchemy.orm import load_only
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, SecurityError
 
 from server.db.domain import CollaborationMembership, OrganisationMembership, Group, Collaboration, User, \
     ServiceMembership
+
+MIN_SECRET_LENGTH = 43
 
 
 def is_admin_user(user):
@@ -215,3 +217,11 @@ def confirm_service_admin(service_id):
 
 def secure_hash(secret):
     return hashlib.sha256(bytes(secret, "utf-8")).hexdigest()
+
+
+def hash_secret_key(data, attr_name="hashed_secret"):
+    secret = data[attr_name]
+    if len(secret) < MIN_SECRET_LENGTH:
+        raise SecurityError(f"minimal length of secret for API key is {MIN_SECRET_LENGTH}")
+    data[attr_name] = secure_hash(secret)
+    return data
