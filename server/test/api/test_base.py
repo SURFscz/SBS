@@ -66,11 +66,7 @@ class TestBase(AbstractTest):
         self.assertEqual(res.json["active"], False)
 
     def test_introspect_expired_user_token(self):
-        user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(sarah_user_token)).first()
-        user_token.created_at = datetime.datetime.utcnow() - datetime.timedelta(days=500)
-        db.session.merge(user_token)
-        db.session.commit()
-
+        self.expire_user_token(sarah_user_token)
         res = self.client.post("/introspect", headers={"Authorization": f"bearer {network_cloud_token}"},
                                data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
         self.assertEqual(200, res.status_code)
