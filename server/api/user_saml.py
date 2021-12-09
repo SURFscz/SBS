@@ -97,8 +97,8 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
     user = db.session.merge(user)
     db.session.commit()
 
-    user_memberships(user, connected_collaborations)
-    all_attributes, http_status = authorized_func(user, memberships)
+    all_memberships = user_memberships(user, connected_collaborations)
+    all_attributes, http_status = authorized_func(user, all_memberships)
 
     logger.info(f"Returning attributes {all_attributes} for user {uid} and service_entity_id {service_entity_id}")
 
