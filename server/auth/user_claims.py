@@ -4,6 +4,8 @@ import re
 import string
 import unicodedata
 
+from flask import current_app
+
 from server.db.domain import User, UserNameHistory
 
 claim_attribute_mapping_value = [
@@ -63,3 +65,30 @@ def add_user_claims(user_info_json, uid, user, replace_none_values=True):
                 user.schac_home_organisation = schac_home
     if not user.username:
         user.username = generate_unique_username(user)
+
+
+def user_memberships(user, connected_collaborations):
+    cfg = current_app.app_config
+    namespace = cfg.get("entitlement_group_namespace", "urn:bla")
+
+    # gather groups and collaborations
+    #
+    # we're (partially) adhering to AARC's Guidelines on expressing group membership and role information
+    # (see https://aarc-project.eu/guidelines/aarc-g002/)
+    # Which prescribes group/co membership need to be expressed as entitlements of the form
+    # <NAMESPACE>:group:<GROUP>[:<SUBGROUP>*][:role=<ROLE>]#<GROUP-AUTHORITY>
+    # The namespace is defined in the config file (variable entitlement_group_namespace)
+    # COs map to GROUP and Groups map to SUBGROUP
+    # We don't use roles, so we omit those.
+    # Also, we omit the GROUP-AUTHORITY (and are therefore not completely compliant), as it complicates parsing the
+    # entitlement, will confuse Services, and the spec fails to make clear what the usecase is, exactly.
+    memberships = set()
+    for collaboration in connected_collaborations:
+        # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
+        memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}")
+        memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:{collaboration.short_name}")
+        for g in collaboration.groups:
+            if g.is_member(user.id):
+                memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:"
+                                f"{collaboration.short_name}:{g.short_name}")
+    return memberships

@@ -36,6 +36,7 @@ oidc:
   second_factor_authentication_required: True
   totp_token_name: "SRAM local"
 
+
   scopes:
     - profile
     - eduperson_scoped_affiliation
