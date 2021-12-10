@@ -326,11 +326,6 @@ class Groups extends React.Component {
                             multiline={true}
                             disabled={!adminOfCollaboration}/>
 
-                {/*<InputField value={collaboration.name}*/}
-                {/*            name={I18n.t("groups.collaboration")}*/}
-                {/*            disabled={true}*/}
-                {/*/>*/}
-
                 <CheckBox name="auto_provision_members" value={auto_provision_members}
                           info={I18n.t("groups.autoProvisionMembers")}
                           tooltip={I18n.t("groups.autoProvisionMembersTooltip")}
@@ -347,7 +342,7 @@ class Groups extends React.Component {
                     <Button warningButton={true} txt={I18n.t("groups.delete")}
                             onClick={this.delete}/>}
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
-                            onClick={() => this.setState({editGroup: false, createNewGroup: false})}/>
+                            onClick={this.cancelSideScreen}/>
                     <Button disabled={disabledSubmit} txt={I18n.t(`forms.save`)}
                             onClick={this.submit}/>
                 </section>
@@ -411,11 +406,7 @@ class Groups extends React.Component {
                 this.refreshAndFlash(createGroup({...this.state, collaboration_id: collaboration.id}),
                     I18n.t("groups.flash.created", {name: name}),
                     res => {
-                        this.setState({
-                            selectedGroupId: res.id,
-                            editGroup: false,
-                            createNewGroup: false
-                        })
+                        this.gotoGroup({id: res.id, name: name})();
                     });
             } else {
                 const {selectedGroupId} = this.state;
@@ -425,14 +416,23 @@ class Groups extends React.Component {
                         collaboration_id: collaboration.id
                     }),
                     I18n.t("groups.flash.updated", {name: name}),
-                    res => this.setState({
-                        editGroup: false,
-                        createNewGroup: false
-                    }));
+                    res => this.gotoGroup({id: selectedGroupId, name: name})());
             }
         } else {
             window.scrollTo(0, 0);
         }
+    }
+
+    newGroup = () => {
+        AppStore.update(s => {
+            const {collaboration} = this.props;
+            const paths = s.breadcrumb.paths;
+            const lastPath = paths[paths.length - 1];
+            lastPath.path = `/collaborations/${collaboration.id}`
+            paths.push({value: I18n.t("breadcrumb.newGroup")});
+            s.breadcrumb.paths = paths;
+        });
+        this.setState(this.newGroupState());
     }
 
     gotoGroup = group => e => {
@@ -512,7 +512,7 @@ class Groups extends React.Component {
                           hideTitle={true}
                           loading={loading}
                           showNew={mayCreateGroups}
-                          newEntityFunc={() => this.setState(this.newGroupState())}
+                          newEntityFunc={this.newGroup}
                           {...this.props}/>
             </div>
         )

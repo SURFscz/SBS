@@ -766,18 +766,35 @@ export function serviceInvitationDelete(serviceInvitationId, showErrorDialog = t
 
 //ServiceAups
 export function serviceAupCreate(service) {
-    return fetchJson("/api/service_aups", {
-        method: "post",
-        body: JSON.stringify({"service_id": service.id})
-    }, {}, false);
+    return postPutJson("/api/service_aups", {"service_id": service.id}, "post");
 }
 
 export function serviceAupDelete(service) {
-    return fetchJson("/api/service_aups/delete_by_service", {
-        method: "put",
-        body: JSON.stringify({"service_id": service.id})
-    }, {}, false);
+    return postPutJson("/api/service_aups/delete_by_service", {"service_id": service.id}, "put", false);
 }
 
 //User Tokens
+export function userTokensOfUser() {
+    return fetchJson("/api/user_tokens");
+}
+
+export function userTokenGenerateValue() {
+    return fetchJson("/api/user_tokens/generate_token");
+}
+
+export function createUserToken(userToken) {
+    return postPutJson("/api/user_tokens", userToken, "post");
+}
+
+export function updateUserToken(userToken) {
+    return postPutJson("/api/user_tokens", userToken, "put");
+}
+
+export function reactivateUserToken(userToken) {
+    return postPutJson("/api/user_tokens/renew_lease", userToken, "put");
+}
+
+export function deleteUserToken(userToken) {
+    return fetchDelete(`/api/user_tokens/${userToken.id}`);
+}
 

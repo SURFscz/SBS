@@ -32,6 +32,7 @@ I18n.translations.nl = {
         services: "Diensten",
         service: "Dienst: <strong>{{name}}</strong>",
         group: "Groep: <strong>{{name}}</strong>",
+        newGroup: "Nieuwe groep",
         profile: "Profiel",
         aup: "AUP",
         history: "Geschiedenis",
@@ -50,7 +51,8 @@ I18n.translations.nl = {
         serviceInvitation: "Uitnodiging",
         invite: "Leden toevoegen",
         invitation: "Uitnodiging",
-        users: "Gebruikers"
+        users: "Gebruikers",
+        userToken: "Token: <strong>{{name}}<strong/>"
     },
     login: {
         title: "Research Access Management",
@@ -88,6 +90,7 @@ I18n.translations.nl = {
             members: "Leden ({{count}})",
             serviceOrganisations: "Organisatietoegang ({{count}})",
             serviceCollaborations: "Samenwerkingen ({{count}})",
+            userTokens: "Tokens ({{count}})",
             collaborationRequests: "Samenwerkingsverzoeken",
             joinRequests: "Lidmaatschapsverzoeken",
             serviceConnectionRequests: "Koppelverzoeken",
@@ -136,7 +139,8 @@ I18n.translations.nl = {
         services: "Diensten",
         serviceRequest: "Dienstverzoek",
         apiKeys: "API keys",
-        serviceGroups: "Service groups"
+        serviceGroups: "Service groups",
+        tokens: "Tokens"
     },
     models: {
         users: {
@@ -489,7 +493,36 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek naar dienst beheerders...",
             noEntities: "Er zijn geen dienst beheerders",
             new: "Nodig beheerders uit",
-        }
+        },
+        userTokens: {
+            backToUserTokens: "Terug naar alle tokens",
+            title: "Tokens",
+            searchPlaceHolder: "Zoek naar tokens...",
+            noEntities: "Geen tokens gevonden",
+            new: "Nieuw token",
+            edit: "Wijzig",
+            name: "Naam",
+            namePlaceholder: "De naam van dit token",
+            description: "Omschrijving",
+            descriptionPlaceholder: "De omschrijving van dit token",
+            deleteConfirmation: "Weet je zeker dat je {{name}} wilt verwijderen?",
+            expiryDate: "Vervaldatum",
+            expiredInfo: "Dit token is verlopen. Je kan dit token hieronder opnieuw activeren",
+            reactivate: "Reactiveren",
+            createdAt: "Aangemaakt",
+            expiryDateTooltip: "Na deze datum kan je dit token niet meer gebruiken",
+            service: "Dienst",
+            serviceTooltip: "De service gekoppeld aan deze token. Je hebt alleen toegang tot de API van deze service met dit token",
+            hashedToken: "Token",
+            hashedTokenTooltip: "Het token om te gebruiken in de Authorization header",
+            tokenDisclaimer: "Kopieer het token en bewaar het ergens veilig. Je kunt dit token maar één keer bekijken. Nadat je op <i>Opslaan</i> hebt gedrukt, kun je het niet meer zien.",
+            required: "Dit {{attribute}} is verplicht voor een token",
+            flash: {
+                created: "Token {{name}} aangemaakt",
+                updated: "Token {{name}} bijgewerkt",
+                reactivated: "Token {{name}} reactivated",
+            }
+        },
     },
     user: {
         titleUpdate: "Werk de sleutels in je gebruikersprofiel bij",
@@ -1826,22 +1859,22 @@ I18n.translations.nl = {
         intendedRoleTooltip: "De enige rol binnen een dienst is beheerder"
     },
     userTokens: {
-        actionTitle: "Reset API token",
+        actionTitle: "API-token resetten",
         tokens: "Tokens",
-        tokenEnabled: "Token-based introspection enabled?",
-        tokenEnabledTooltip: "When checked this service is allowed to call the introspection endpoint to receive user information",
-        tokenValue: "One-way hashed token",
-        tokenValidityDays: "Token validity (days)",
-        tokenValidityDaysTooltip: "The number of days the user tokens are valid validity (days)",
-        introspectionEndpoint: "Introspection endpoint URL",
+        tokenEnabled: "Token-gebaseerde introspectie ingeschakeld?",
+        tokenEnabledTooltip: "Wanneer aangevinkt, mag deze service het introspectie-eindpunt bellen om gebruikersinformatie te ontvangen",
+        tokenValue: "One-way gehashte token",
+        tokenValidityDays: "Token geldigheid (dagen)",
+        tokenValidityDaysTooltip: "Het aantal dagen dat de gebruikerstokens geldig zijn",
+        introspectionEndpoint: "Introspectie endpoint URL",
         introspectionEndpointToken: "Introspection endpoint bearer token",
-        tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once here.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new token.",
+        tokenDisclaimer: "Kopieer het token en bewaar het ergens veilig. Je kunt dit token hier maar één keer bekijken.<br><br>Nadat je op 'Toevoegen' hebt gedrukt, kun je het niet meer zien, behalve door het te verwijderen en opnieuw een nieuw token aan te maken.",
         reset: {
-            confirmation: "Are you sure you want to reset the value of the API token for {{name}}?",
-            success: "token value has been reset.",
-            info: "Copy and store the token somewhere safe. You can not see this token afterwards.",
+            confirmation: "Weet u zeker dat je het token voor {{name}} wilt resetten?",
+            success: "Token is gereset.",
+            info: "Kopieer en bewaar de token op een veilige plaats. Je kunt deze token hierna niet meer zien.",
             copy: "Copy",
-            close: "Close",
+            close: "Sluit",
         }
     }
 
