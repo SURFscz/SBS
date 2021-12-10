@@ -1,4 +1,6 @@
 # -*- coding: future_fstrings -*-
+from flask import current_app
+
 from server.api.base import STATUS_DENIED, STATUS_APPROVED
 from server.cron.schedule import start_scheduling
 from server.db.db import db
@@ -60,6 +62,14 @@ class TestSystem(AbstractTest):
         start_scheduling(self.app)
         jobs = self.get("/api/system/scheduled_jobs")
         self.assertEqual(7, len(jobs))
+
+    def test_scheduled_jobs_async(self):
+        try:
+            current_app.app_config.metadata.parse_at_startup = True
+            start_scheduling(self.app)
+            self.get("/api/system/scheduled_jobs")
+        finally:
+            current_app.app_config.metadata.parse_at_startup = False
 
     def test_clear_audit_logs(self):
         self.login("urn:sarah")
