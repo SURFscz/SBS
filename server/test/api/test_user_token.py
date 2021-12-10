@@ -5,7 +5,7 @@ from secrets import token_urlsafe
 from server.db.domain import Service, User, UserToken
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, service_wiki_name, service_mail_name, service_cloud_name, sarah_user_token, \
-    john_name, uuc_scheduler_name
+    john_name
 
 
 class TestUserToken(AbstractTest):
