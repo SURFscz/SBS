@@ -2,7 +2,7 @@
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, service_wiki_entity_id, uuc_name, ai_computing_name, ai_researchers_group, \
-    the_boss_name
+    the_boss_name, service_storage_name, service_storage_entity_id
 
 
 class TestPlsc(AbstractTest):
@@ -42,6 +42,9 @@ class TestPlsc(AbstractTest):
 
         res_image = self.client.get(wiki["logo"].replace("http://localhost:8080", ""))
         self.assertIsNotNone(res_image.data)
+
+        storage = next(s for s in services_ if s["entity_id"] == service_storage_entity_id)
+        self.assertEqual(storage["contact_email"], "service_admin@ucc.org")
 
         collaborations = flatten([org["collaborations"] for org in res["organisations"] if org["name"] == uuc_name])
         self.assertEqual("active", collaborations[0]["status"])

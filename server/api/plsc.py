@@ -36,11 +36,17 @@ def sync():
     rs = db.engine.execute("SELECT name, organisation_id FROM schac_home_organisations")
     schac_home_organisations = [{"name": row[0], "organisation_id": row[1]} for row in rs]
 
-    rs = db.engine.execute("SELECT id, name, entity_id, contact_email, uuid4, ldap_password, accepted_user_policy "
-                           "FROM services")
+    rs = db.engine.execute("SELECT id, name, entity_id, contact_email, uuid4, ldap_password, accepted_user_policy, "
+                           "support_email, security_email FROM services")
     services = [{"id": row[0], "name": row[1], "entity_id": row[2], "contact_email": row[3],
                  "logo": logo_url("services", row[4]), "ldap_password": row[5],
-                 "accepted_user_policy": row[6]} for row in rs]
+                 "accepted_user_policy": row[6], "support_email": row[7], "security_email": row[6]} for row in rs]
+    for service in services:
+        if not service["contact_email"]:
+            rs = db.engine.execute(f"select u.email from users u where id in "
+                                   f"(select user_id from service_memberships where service_id = {service['id']}) limit 1")
+            for row in rs:
+                service["contact_email"] = row[0]
 
     rs = db.engine.execute("SELECT service_id, organisation_id FROM services_organisations")
     services_organisations = [{"service_id": row[0], "organisation_id": row[1]} for row in rs]
