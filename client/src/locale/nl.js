@@ -1824,6 +1824,25 @@ I18n.translations.nl = {
         admin: "Dienstbeheerder",
         intendedRole: "Rol binnen de dienst",
         intendedRoleTooltip: "De enige rol binnen een dienst is beheerder"
+    },
+    userTokens: {
+        actionTitle: "Reset API token",
+        tokens: "Tokens",
+        tokenEnabled: "Token-based introspection enabled?",
+        tokenEnabledTooltip: "When checked this service is allowed to call the introspection endpoint to receive user information",
+        tokenValue: "One-way hashed token",
+        tokenValidityDays: "Token validity (days)",
+        tokenValidityDaysTooltip: "The number of days the user tokens are valid validity (days)",
+        introspectionEndpoint: "Introspection endpoint URL",
+        introspectionEndpointToken: "Introspection endpoint bearer token",
+        tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once here.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new token.",
+        reset: {
+            confirmation: "Are you sure you want to reset the value of the API token for {{name}}?",
+            success: "token value has been reset.",
+            info: "Copy and store the token somewhere safe. You can not see this token afterwards.",
+            copy: "Copy",
+            close: "Close",
+        }
     }
 
 };
