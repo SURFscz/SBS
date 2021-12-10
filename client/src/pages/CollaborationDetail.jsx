@@ -10,7 +10,8 @@ import {
     invitationAccept,
     invitationByHash,
     organisationByUserSchacHomeOrganisation,
-    unsuspendCollaboration
+    unsuspendCollaboration,
+    userTokensOfUser
 } from "../api";
 import "./CollaborationDetail.scss";
 import I18n from "i18n-js";
@@ -23,6 +24,7 @@ import {ReactComponent as ServicesIcon} from "../icons/services.svg";
 import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
 import {ReactComponent as MemberIcon} from "../icons/groups.svg";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
+import {ReactComponent as UserTokensIcon} from "../icons/connections.svg";
 import {ReactComponent as JoinRequestsIcon} from "../icons/single-neutral-question.svg";
 import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import {ReactComponent as AdminIcon} from "../icons/single-neutral-actions-key.svg";
@@ -49,6 +51,7 @@ import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import {isEmpty, removeDuplicates} from "../utils/Utils";
+import UserTokens from "../components/redesign/UserTokens";
 
 class CollaborationDetail extends React.Component {
 
@@ -63,6 +66,7 @@ class CollaborationDetail extends React.Component {
             serviceEmails: {},
             collaboration: null,
             schacHomeOrganisation: null,
+            userTokens: null,
             adminOfCollaboration: false,
             collaborationJoinRequest: false,
             showMemberView: true,
@@ -106,25 +110,27 @@ class CollaborationDetail extends React.Component {
             collaborationAccessAllowed(collaboration_id)
                 .then(json => {
                     const adminOfCollaboration = json.access === "full";
-                    const promises = adminOfCollaboration ? [collaborationById(collaboration_id)] :
-                        [collaborationLiteById(collaboration_id), organisationByUserSchacHomeOrganisation()];
+                    const promises = adminOfCollaboration ? [collaborationById(collaboration_id), userTokensOfUser()] :
+                        [collaborationLiteById(collaboration_id), organisationByUserSchacHomeOrganisation(), userTokensOfUser()];
                     Promise.all(promises)
                         .then(res => {
                             const {user} = this.props;
                             const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                             const collaboration = res[0];
+                            const userTokens = res[res.length - 1];
                             const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
                             const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                             const firstTime = getParameterByName("first", window.location.search) === "true";
                             this.showExpiryDateFlash(user, collaboration);
                             this.setState({
                                 collaboration: collaboration,
+                                userTokens: userTokens,
                                 adminOfCollaboration: adminOfCollaboration,
                                 schacHomeOrganisation: schacHomeOrganisation,
                                 loading: false,
                                 confirmationDialogOpen: false,
                                 firstTime: firstTime,
-                                tabs: this.getTabs(collaboration, schacHomeOrganisation, adminOfCollaboration, false),
+                                tabs: this.getTabs(collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, false),
                                 tab: tab,
                             }, () => {
                                 callback && callback();
@@ -142,7 +148,6 @@ class CollaborationDetail extends React.Component {
             } else {
                 collaborationByIdentifier(collaborationIdentifier)
                     .then(res => {
-                        debugger;
                         const collaboration = res["collaboration"];
                         const serviceEmails = res["service_emails"];
                         if (collaboration.disable_join_requests) {
@@ -161,7 +166,7 @@ class CollaborationDetail extends React.Component {
                                 schacHomeOrganisation: null,
                                 loading: false,
                                 confirmationDialogOpen: false,
-                                tabs: this.getTabs(collaboration, null, false, false, true),
+                                tabs: this.getTabs(collaboration, null, null, false, false, true),
                                 tab: "about",
                             }, () => {
                                 AppStore.update(s => {
@@ -241,12 +246,12 @@ class CollaborationDetail extends React.Component {
         return (
             <div className={`eye-view ${showMemberView ? "admin" : "member"}`} onClick={() => {
                 health().then(() => {
-                    const {showMemberView, collaboration, schacHomeOrganisation} = this.state;
+                    const {showMemberView, collaboration, schacHomeOrganisation, userTokens} = this.state;
                     const newTab = showMemberView ? "about" : "admins";
                     this.tabChanged(newTab, collaboration.id);
                     this.setState({
                             showMemberView: !showMemberView,
-                            tabs: this.getTabs(collaboration, schacHomeOrganisation, adminOfCollaboration, showMemberView),
+                            tabs: this.getTabs(collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, showMemberView),
                             tab: newTab
                         },
                         () => {
@@ -267,7 +272,7 @@ class CollaborationDetail extends React.Component {
         this.setState({firstTime: true});
     }
 
-    getTabs = (collaboration, schacHomeOrganisation, adminOfCollaboration, showMemberView, isJoinRequest = false) => {
+    getTabs = (collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, showMemberView, isJoinRequest = false) => {
         //Actually this collaboration is not for members to view
         if ((!adminOfCollaboration || showMemberView) && !collaboration.disclose_member_information) {
             return [this.getAboutTab(collaboration, showMemberView, isJoinRequest)];
@@ -284,6 +289,11 @@ class CollaborationDetail extends React.Component {
                 this.getMembersTab(collaboration, showMemberView, isJoinRequest),
                 this.getGroupsTab(collaboration, showMemberView, isJoinRequest),
             ];
+        const services = removeDuplicates(collaboration.services.concat(collaboration.organisation.services).filter(s => s.token_enabled), "id");
+        if (userTokens && !isJoinRequest && services.length > 0) {
+            tabs.push(this.getUserTokensTab(userTokens, collaboration, services))
+        }
+
         return tabs.filter(tab => tab !== null);
     }
 
@@ -325,6 +335,18 @@ class CollaborationDetail extends React.Component {
         </div>)
     }
 
+    getUserTokensTab = (userTokens, collaboration, services) => {
+        return (<div key="tokens" name="tokens"
+                     label={I18n.t("home.tabs.userTokens", {count: (userTokens || []).length})}
+                     icon={<UserTokensIcon/>}>
+            {<UserTokens {...this.props}
+                         collaboration={collaboration}
+                         services={services}
+                         userTokens={userTokens}
+                         refresh={callback => this.componentDidMount(callback)}/>}
+        </div>)
+
+    }
     getJoinRequestsTab = (collaboration) => {
         const openJoinRequests = (collaboration.join_requests || []).filter(jr => jr.status === "open").length;
         if (collaboration.disable_join_requests) {

@@ -32,6 +32,7 @@ I18n.translations.en = {
         services: "Services",
         service: "Service: <strong>{{name}}<strong/>",
         group: "Group: <strong>{{name}}</strong>",
+        newGroup: "New group",
         profile: "Profile",
         aup: "AUP",
         history: "History",
@@ -50,7 +51,8 @@ I18n.translations.en = {
         serviceInvitation: "Invitation",
         invite: "Invite members",
         invitation: "Invitation",
-        users: "Users"
+        users: "Users",
+        userToken: "Token: <strong>{{name}}<strong/>"
     },
     login: {
         title: "Research Access Management",
@@ -88,6 +90,7 @@ I18n.translations.en = {
             users: "Users ({{count}})",
             serviceOrganisations: "Organisations ({{count}})",
             serviceCollaborations: "Collaborations ({{count}})",
+            userTokens: "Tokens ({{count}})",
             collaborationRequests: "Collaboration requests",
             joinRequests: "Join requests",
             serviceConnectionRequests: "Connection requests",
@@ -136,6 +139,7 @@ I18n.translations.en = {
         services: "Services",
         serviceRequest: "Service request",
         apiKeys: "API keys",
+        tokens: "Tokens",
         serviceGroups: "Service groups"
     },
     models: {
@@ -489,7 +493,36 @@ I18n.translations.en = {
             searchPlaceHolder: "Search for service admins..",
             noEntities: "There are no service admins",
             new: "Invite admin(s)",
-        }
+        },
+        userTokens: {
+            backToUserTokens: "Back to all tokens",
+            title: "Tokens",
+            searchPlaceHolder: "Search for token...",
+            noEntities: "No tokens were found",
+            new: "Create new token",
+            edit: "Edit",
+            name: "Name",
+            namePlaceholder: "The name of this token",
+            description: "Description",
+            descriptionPlaceholder: "The description of this token",
+            deleteConfirmation: "Are you sure you want to delete {{name}}?",
+            expiryDate: "Expiry date",
+            expiredInfo: "This token has expired. You can reactivate this token below",
+            reactivate: "Reactivate",
+            createdAt: "Created at",
+            expiryDateTooltip: "After this date you can't use this token anymore",
+            service: "Service",
+            serviceTooltip: "The service linked to this token. You can only access the API of this service with the token",
+            hashedToken: "Token",
+            hashedTokenTooltip: "The token to use in the Authorization header",
+            tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once. After pressing <i>Save</i> you won't be able to see it again.",
+            required: "The {{attribute}} is required for a token",
+            flash: {
+                created: "Created token {{name}}",
+                updated: "Updated token {{name}}",
+                reactivated: "Reactivated token {{name}}",
+            }
+        },
     },
     user: {
         titleUpdate: "Update your user profile keys",
@@ -1831,19 +1864,18 @@ I18n.translations.en = {
         tokenEnabledTooltip: "When checked this service is allowed to call the introspection endpoint to receive user information",
         tokenValue: "One-way hashed token",
         tokenValidityDays: "Token validity (days)",
-        tokenValidityDaysTooltip: "The number of days the user tokens are valid validity (days)",
+        tokenValidityDaysTooltip: "The number of days the user tokens are valid validity",
         introspectionEndpoint: "Introspection endpoint URL",
         introspectionEndpointToken: "Introspection endpoint bearer token",
         tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once here.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new token.",
         reset: {
-            confirmation: "Are you sure you want to reset the value of the API token for {{name}}?",
-            success: "token value has been reset.",
+            confirmation: "Are you sure you want to reset the token for {{name}}?",
+            success: "Token has been reset.",
             info: "Copy and store the token somewhere safe. You can not see this token afterwards.",
             copy: "Copy",
             close: "Close",
         }
     }
-
 };
 
 export default I18n.translations.en;

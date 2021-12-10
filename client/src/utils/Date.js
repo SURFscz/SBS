@@ -22,3 +22,15 @@ export const isInvitationExpired = invitation => {
     return today.isAfter(inp);
 }
 
+export const isUserTokenExpired = (userToken, service) => {
+    const milliSecondsInOneDay = 1000 * 60 * 60 * 24;
+    const today = moment();
+    const expires = moment((userToken.created_at * 1000) + (service.token_validity_days * milliSecondsInOneDay));
+    return today.isAfter(expires);
+}
+
+export const userTokenExpiryDate = (createdAt, service) => {
+    const secondsInOneDay = 60 * 60 * 24;
+    return dateFromEpoch(createdAt + (service.token_validity_days * secondsInOneDay));
+}
+
