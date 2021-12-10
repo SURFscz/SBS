@@ -19,7 +19,7 @@ import SpinnerField from "./SpinnerField";
 import InputField from "../InputField";
 import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
-import {isUserTokenExpired, userTokenExpiryDate} from "../../utils/Date";
+import {dateFromEpoch, isUserTokenExpired, userTokenExpiryDate} from "../../utils/Date";
 import SelectField from "../SelectField";
 
 class UserTokens extends React.Component {
@@ -204,7 +204,7 @@ class UserTokens extends React.Component {
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
                             onClick={() => this.setState({editUserToken: false, createNewUserToken: false})}/>
                     {expired && <Button txt={I18n.t(`models.userTokens.reactivate`)}
-                            onClick={this.reactivate}/>}
+                                        onClick={this.reactivate}/>}
                     <Button disabled={disabledSubmit} txt={I18n.t(`forms.save`)}
                             onClick={this.submit}/>
                 </section>
@@ -330,7 +330,7 @@ class UserTokens extends React.Component {
                 key: "description",
                 header: I18n.t("models.userTokens.description"),
             },
-                        {
+            {
                 key: "service__name",
                 header: I18n.t("models.userTokens.service"),
                 mapper: userToken => this.getService(userToken).label
@@ -346,7 +346,16 @@ class UserTokens extends React.Component {
                     </span>
                 }
             },
-
+            {
+                nonSortable: true,
+                key: "last_used_date",
+                header: I18n.t("models.userTokens.lastUsedDate"),
+                mapper: userToken => {
+                    return <span>
+                        {userToken.last_used_date ? dateFromEpoch(userToken.last_used_date) : "-"}
+                    </span>
+                }
+            },
         ]
         return (
             <div>

@@ -512,6 +512,7 @@ I18n.translations.en = {
             createdAt: "Created at",
             expiryDateTooltip: "After this date you can't use this token anymore",
             service: "Service",
+            lastUsedDate: "Last used",
             serviceTooltip: "The service linked to this token. You can only access the API of this service with the token",
             hashedToken: "Token",
             hashedTokenTooltip: "The token to use in the Authorization header",

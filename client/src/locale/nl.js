@@ -512,6 +512,7 @@ I18n.translations.nl = {
             createdAt: "Aangemaakt",
             expiryDateTooltip: "Na deze datum kan je dit token niet meer gebruiken",
             service: "Dienst",
+            lastUsedDate: "Laatst gebruikt",
             serviceTooltip: "De service gekoppeld aan deze token. Je hebt alleen toegang tot de API van deze service met dit token",
             hashedToken: "Token",
             hashedTokenTooltip: "Het token om te gebruiken in de Authorization header",
