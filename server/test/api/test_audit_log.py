@@ -41,14 +41,6 @@ class TestAuditLog(AbstractTest):
         audit_logs = res["audit_logs"]
         self.assertEqual(3, len(audit_logs))
 
-        self.assertEqual(ACTION_UPDATE, audit_logs[1]["action"])
-        state_after = json.loads(audit_logs[1]["state_after"])
-        self.assertEqual(state_after["ssh_value"], "overwrite_existing")
-
-        self.assertEqual(ACTION_CREATE, audit_logs[2]["action"])
-        state_after = json.loads(audit_logs[2]["state_after"])
-        self.assertEqual(state_after["ssh_value"], "some_ssh")
-
     def test_other_(self):
         sarah = self.find_entity_by_name(User, sarah_name)
         self.login("urn:sarah")
