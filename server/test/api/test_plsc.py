@@ -2,7 +2,7 @@
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, service_wiki_entity_id, uuc_name, ai_computing_name, ai_researchers_group, \
-    the_boss_name, service_storage_name, service_storage_entity_id
+    the_boss_name, service_storage_entity_id
 
 
 class TestPlsc(AbstractTest):
