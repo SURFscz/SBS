@@ -73,7 +73,7 @@ def services_from_organisation_memberships(user_id, service_id=None, count_only=
 
 def user_service(service_id):
     # Every service may be seen by organisation admin, service admin, manager or coll admin
-    if is_service_admin(service_id):
+    if is_service_admin(service_id) or is_application_admin():
         return True
 
     if is_collaboration_admin() or is_organisation_admin_or_manager():
