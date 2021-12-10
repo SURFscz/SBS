@@ -4,7 +4,8 @@ from secrets import token_urlsafe
 
 from server.db.domain import Service, User, UserToken
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_name, service_wiki_name, service_mail_name, service_cloud_name, sarah_user_token
+from server.test.seed import sarah_name, service_wiki_name, service_mail_name, service_cloud_name, sarah_user_token, \
+    john_name, uuc_scheduler_name
 
 
 class TestUserToken(AbstractTest):
@@ -36,6 +37,17 @@ class TestUserToken(AbstractTest):
 
         user_tokens = self.get("/api/user_tokens")
         self.assertEqual(2, len(user_tokens))
+
+    def test_create_user_token_platform_admin(self):
+        john = self.find_entity_by_name(User, john_name)
+        service = self.find_entity_by_name(Service, service_cloud_name)
+
+        self.login("urn:john")
+        user_token = {"name": "token", "hashed_token": token_urlsafe(), "user_id": john.id, "service_id": service.id}
+        self.post("/api/user_tokens", body=user_token)
+
+        user_tokens = self.get("/api/user_tokens")
+        self.assertEqual(1, len(user_tokens))
 
     def test_create_user_token_for_other(self):
         sarah = self.find_entity_by_name(User, sarah_name)
