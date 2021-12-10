@@ -12,15 +12,19 @@ table.user-tokens {
             }
 
             &.description {
-                width: 35%;
-            }
-
-            &.expiry_date {
-                width: 20%;
+                width: 30%;
             }
 
             &.service {
-                width: 25%;
+                width: 20%;
+            }
+
+            &.expiry_date {
+                width: 15%;
+            }
+
+            &.last_used_date{
+                width: 15%;
             }
 
         }

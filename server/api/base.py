@@ -217,6 +217,9 @@ def introspect():
     if user_token.created_at < expiry_date:
         return {"status": "token-expired", "active": False}, 200
 
+    user_token.last_used_date = current_time
+    db.session.merge(user_token)
+
     user = user_token.user
     epoch = int(current_time.timestamp())
     connected_collaborations = []

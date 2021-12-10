@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 
 from server.api.base import white_listing
+from server.auth.security import secure_hash
+from server.db.domain import UserToken
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_user_token, network_cloud_token
 
@@ -48,6 +50,9 @@ class TestBase(AbstractTest):
         self.assertEqual(200, res.status_code)
         self.assertEqual(res.json["active"], True)
         self.assertEqual(res.json["user"]["uid"], "urn:sarah")
+
+        user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(sarah_user_token)).first()
+        self.assertIsNotNone(user_token.last_used_date)
 
     def test_introspect_invalid_bearer_token(self):
         res = self.client.post("/introspect", headers={"Authorization": "bearer nope"},
