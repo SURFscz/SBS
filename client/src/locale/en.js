@@ -1475,7 +1475,9 @@ I18n.translations.en = {
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",
             "ssh_keys": "SSH key",
-            "user_mails": "User emails"
+            "user_mails": "User emails",
+            "service_aups": "Service AUPs",
+            "user_tokens": "User tokens"
         }
     },
     serviceRequest: {

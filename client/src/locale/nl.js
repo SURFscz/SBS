@@ -1476,7 +1476,9 @@ I18n.translations.nl = {
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",
             "ssh_keys": "SSH-sleutel",
-            "user_mails": "Gebruikers-e-mails"
+            "user_mails": "Gebruikers-e-mails",
+            "service_aups": "Service AUPs",
+            "user_tokens": "User tokens"
         }
     },
     serviceRequest: {
