@@ -5,13 +5,13 @@ import "./welcome.scss";
 export default function ServiceNl() {
 
     const responsibilities = [
-        "Beheer andere dienstbeheerders voor deze dienst",
-        "Configureer de dienst AUP en privacy policy"
+        "Dienstbeheerders van deze dienst beheren",
+        "De acceptable use policy en privacy policy van de dienst beheren"
     ]
     return (
         <div className="welcome">
             <div>
-                <p>Als een dienstbeheerder kan je de volgende dingen doen:</p>
+                <p>Als dienstbeheerder kun je het volgende doen:</p>
                 <ul>
                     {responsibilities.map((r, i) => <li key={i}>{r}</li>)}
                 </ul>

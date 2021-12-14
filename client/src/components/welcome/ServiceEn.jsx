@@ -11,7 +11,7 @@ export default function ServiceEn() {
     return (
         <div className="welcome">
             <div>
-                <p>As an service admin, here's what you can do:</p>
+                <p>As a service admin, you can:</p>
                 <ul>
                     {responsibilities.map((r, i) => <li key={i}>{r}</li>)}
                 </ul>
