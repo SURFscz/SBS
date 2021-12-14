@@ -45,9 +45,9 @@ I18n.translations.en = {
         newCollaborationRequest: "New collaboration request",
         editCollaboration: "Edit collaboration",
         impersonate: "Impersonate",
-        organisationInvite: "Invite members",
+        organisationInvite: "Invite admins",
         organisationInvitation: "Invitation",
-        serviceInvite: "Invite members",
+        serviceInvite: "Invite admins",
         serviceInvitation: "Invitation",
         invite: "Invite members",
         invitation: "Invitation",
@@ -510,12 +510,12 @@ I18n.translations.en = {
             expiredInfo: "This token has expired. You can reactivate this token below",
             reactivate: "Reactivate",
             createdAt: "Created at",
-            expiryDateTooltip: "After this date you can't use this token anymore",
+            expiryDateTooltip: "After this date you cannot use this token anymore",
             service: "Service",
             lastUsedDate: "Last used",
             serviceTooltip: "The service linked to this token. You can only access the API of this service with the token",
             hashedToken: "Token",
-            hashedTokenTooltip: "The token to use in the Authorization header",
+            hashedTokenTooltip: "The token to use in the authorization header",
             tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once. After pressing <i>Save</i> you won't be able to see it again.",
             required: "The {{attribute}} is required for a token",
             flash: {
@@ -840,7 +840,7 @@ I18n.translations.en = {
         allowedOrganisationsPlaceholder: "Search and add organisations",
         allowedOrganisationsTooltip: "If any organisation is added then automatically all other organisations are not allowed to use this service. If this service can be used by all collaborations then just don't add organisations.",
         contact_email: "Administrative contact",
-        contact_emailPlaceholder: "The email address of the administrative contact person of this service",
+        contact_emailPlaceholder: "The email address of the administrative contact person for this service",
         contact_emailTooltip: "This administrative email address will be used as primary contact. Ideally this is a functional email address, like service_A_support@sp.org.",
         contactEmailRequired: "Administrative email is required if there are no service administrators",
         security_email: "Security contact",
@@ -884,8 +884,8 @@ I18n.translations.en = {
         },
         aup: {
             title: "Reset AUP",
-            confirmation: "Are you sure you want all users to accept the new AUP of {{name}} again?",
-            flash: "AUP for service {{name}} has been reset for all users"
+            confirmation: "Are you sure you want all users to accept the new AUP of {{name}}?",
+            flash: "Acceptance of the AUP for service {{name}} has been reset for all users"
         },
         contacts: "Contacts",
 
@@ -1364,7 +1364,7 @@ I18n.translations.en = {
         },
         service: {
             title: "Service {{name}} policies",
-            info: "Service <strong>{{name}}</strong> has an Acceptable use policy. You need to accept this AUP to be able to proceed to this service.",
+            info: "Service <strong>{{name}}</strong> has an acceptable use policy. You need to accept this AUP to be able to proceed to this service.",
             noPrivacyPolicy: "No privacy policy",
             noAup: "No AUP",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
@@ -1842,14 +1842,14 @@ I18n.translations.en = {
             activeWithExpiryDate: "Expiration date: {{date}}",
             activeTooltip: "Your membership has no expiration date.",
             expiredTooltip: "Your membership has expired on {{date}}. Please contact the admins of this collaboration for help. ",
-            activeWithExpiryDateTooltip: "Your membership is active, however will expire at {{date}}. "
+            activeWithExpiryDateTooltip: "Your membership is active, however, it will expire at {{date}}. "
         }
     },
     serviceDetail: {
-        deleteMemberConfirmation: "Are you sure you want to delete these service admins and invitations?",
+        deleteMemberConfirmation: "Are you sure you want to delete the selected service admins and invitations?",
         resendInvitations: "Are you sure you want to resend all selected expired invitation?",
         flash: {
-            entitiesDeleted: "Membership / invitations are successfully deleted",
+            entitiesDeleted: "Admins and invitations have been deleted",
             invitesResend: "Invitations for service {{name}} are resend.",
         },
         gone: {
@@ -1857,7 +1857,7 @@ I18n.translations.en = {
             invitation: "This invitation has already been accepted / rejected and does no longer exists. After closing this popup the invitations will be refreshed."
         },
         admin: "Service admin",
-        intendedRole: "Role in the Service",
+        intendedRole: "Role in the service",
         intendedRoleTooltip: "The only role within a service is admin"
     },
     userTokens: {
