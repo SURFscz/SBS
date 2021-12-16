@@ -879,8 +879,8 @@ I18n.translations.en = {
             section: "LDAP settings",
             url: "URL",
             urlTooltip: "The URL of the LDAP server",
-            username: "Username bind account",
-            usernameTooltip: "This is the account used to authenticate in the directory server",
+            username: "Bind dn",
+            usernameTooltip: "This is the bind dn used to authenticate to the LDAP server",
         },
         aup: {
             title: "Reset AUP",

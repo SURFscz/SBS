@@ -877,10 +877,10 @@ I18n.translations.nl = {
             copy: "Kopieer",
             close: "Sluit",
             section: "LDAP-configuratie",
-            url: "URL",
+            url: "LDAP URL",
             urlTooltip: "De URL van de LDAP-server",
-            username: "Gebruikersnaam bind account",
-            usernameTooltip: "Dit is het account voor authenticatie in de directory server",
+            username: "Bind dn",
+            usernameTooltip: "Dit is de dn waarmee bij de LDAP-server moet worden geauthenticeerd",
         },
         aup: {
             title: "Reset AUP",
