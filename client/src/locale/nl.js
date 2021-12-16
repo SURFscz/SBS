@@ -215,8 +215,8 @@ I18n.translations.nl = {
             resendTooltip: "Verstuur alle verlopen geselecteerde opnieuw"
         },
         orgInvitations: {
-            title: "Openstaande organisatie uitnodigingen",
-            noEntities: "Er zijn geen openstaande organisatie uitnodigingen...",
+            title: "Openstaande organisatieuitnodigingen",
+            noEntities: "Er zijn geen openstaande organisatieuitnodigingen...",
             searchPlaceHolder: "Zoek uitnodigingen...",
             backToMembers: "Terug naar openstaande uitnodigingen...",
             orgName: "Organisatie"
@@ -1142,7 +1142,7 @@ I18n.translations.nl = {
         invitees: "Genodigden",
         inviteesPlaceholder: "E-mailadressen genodigden",
         inviteesTooltip: "Deze tekst nemen we op in de e-mail waarmee we deelnemers uitnodigen",
-        intendedRole: "Rol in de samenwerking",
+        intendedRole: "Rol",
         intendedRoleTooltip: "De rechten die alle genodigden krijgen. Beheerders kunnen de gegevens van de samenwerking wijzigen, diensten koppelen en leden uitnodigen.",
         intendedRoleOrganisation: "Rol",
         intendedRoleTooltipOrganisation: "De rechten die alle genodigden krijgen. Organisatiebeheerders kunnen de gegevens van de organisatie wijzigen en beheerders en managers uitnodigen. Managers kunnen alleen samenwerkingen beheren.",
@@ -1866,7 +1866,7 @@ I18n.translations.nl = {
         tokenEnabled: "Token-gebaseerde introspectie ingeschakeld?",
         tokenEnabledTooltip: "Wanneer aangevinkt, mag deze dienst het introspection endpoint aanroepen om gebruikersinformatie te ontvangen",
         tokenValue: "One-way gehashte token",
-        tokenValidityDays: "Token geldigheid (dagen)",
+        tokenValidityDays: "Geldigheidsduur token (dagen)",
         tokenValidityDaysTooltip: "Het aantal dagen dat de gebruikerstokens geldig zijn",
         introspectionEndpoint: "Introspection endpoint URL",
         introspectionEndpointToken: "Introspection endpoint bearer token",

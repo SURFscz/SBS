@@ -1142,7 +1142,7 @@ I18n.translations.en = {
         invitees: "Invitees",
         inviteesPlaceholder: "Invitee email addresses",
         inviteesTooltip: "This personal message is included in the email sent to the persons you invite",
-        intendedRole: "Role in the collaboration",
+        intendedRole: "Role",
         intendedRoleTooltip: "The permissions granted to all invitees. Admins can edit the collaboration, connect services and invite members.",
         intendedRoleOrganisation: "Role",
         intendedRoleTooltipOrganisation: "The permissions granted to all invitees. Organisation admins can edit the organisation and invite admins and managers. Managers can only manage collaborations",
