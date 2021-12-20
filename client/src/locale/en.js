@@ -1871,6 +1871,8 @@ I18n.translations.en = {
         introspectionEndpoint: "Introspection endpoint URL",
         introspectionEndpointToken: "Introspection endpoint bearer token",
         tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once here.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new token.",
+        delete: "Remove token",
+        deleteConfirmation: "Are you sure you want to remove this token?  This action cannot be undone.",
         reset: {
             confirmation: "Are you sure you want to reset the token for {{name}}?",
             success: "Token has been reset.",
