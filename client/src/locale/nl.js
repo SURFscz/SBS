@@ -1873,6 +1873,12 @@ I18n.translations.nl = {
         tokenDisclaimer: "Kopieer de token en sla het veilig op. Je kunt deze token hier maar één keer bekijken.<br><br>Nadat je op 'Toevoegen' hebt gedrukt, kun je het niet meer zien, anders dan door het te verwijderen en opnieuw een nieuw token aan te maken.",
         delete: "Verwijder token",
         deleteConfirmation: "Weet je zeker dat je dit token wilt verwijderen? Je kunt deze actie niet ongedaan maken.",
+        flash: {
+            deleted: "Het token {{name}} is verwijderd",
+            reactivated: "Het token {{name}} is geheractiveerd",
+            created: "Token {{name}} toegevoegd",
+            updated: "Token {{name}} aangepast",
+        },
         reset: {
             confirmation: "Weet je zeker dat je de token voor {{name}} wilt resetten?",
             success: "Token is gereset.",
