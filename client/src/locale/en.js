@@ -1873,6 +1873,13 @@ I18n.translations.en = {
         tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once here.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new token.",
         delete: "Remove token",
         deleteConfirmation: "Are you sure you want to remove this token?  This action cannot be undone.",
+        flash: {
+            deleted: "Token {{name}} has been remopved",
+            reactivated: "Token {{name}} has been reactivated",
+            created: "Token {{name}} was added",
+            updated: "Token {{name}} is updated",
+        },
+
         reset: {
             confirmation: "Are you sure you want to reset the token for {{name}}?",
             success: "Token has been reset.",
