@@ -829,7 +829,7 @@ I18n.translations.en = {
         nonMemberUsersAccessAllowed: "Accessible for all users?",
         nonMemberUsersAccessAllowedTooltip: "Can all members access this service without being a member of a connected Collaboration",
         whiteListed: "SURF service",
-        whiteListedTooltip: "Allow this service to be linked to collaborations of a SURF organisation without an agreement.",
+        whiteListedTooltip: "Allow this service to be linked to collaborations of a SURF organisation.",
         sirtfiCompliant: "Sirtfi compliant?",
         sirtfiCompliantTooltip: "The Security Incident Response Trust Framework for Federated Identity (Sirtfi) aims to enable the coordination of incident response across federated organisations. This assurance framework comprises a list of assertions which an organisation can attest in order to be declared Sirtfi compliant.",
         codeOfConductCompliant: "CoCo compliant?",
@@ -908,8 +908,8 @@ I18n.translations.en = {
         identifierTooltip: "Generated, unique and immutable identifier of a organisation which used as identifier for external systems",
         description: "Description",
         descriptionPlaceholder: "The description of the organisation is visible to anyone",
-        servicesRestricted: "Restrict organisation to SURF services",
-        servicesRestrictedTooltip: "If restricted, collaborations from this organisation can only link SURF services. This prevents external services are linked without an agreement.",
+        servicesRestricted: "SURF organisation",
+        servicesRestrictedTooltip: "Collaborations from SURF organisation can only link SURF services.",
         schacHomeOrganisationShortName: "Organisation domain",
         schacHomeOrganisationShortNames: "Organisation domains",
         schacHomeOrganisation: "Organisation domain names",
@@ -1236,7 +1236,7 @@ I18n.translations.en = {
         notAllowedOrganisation: "This service cannot be enabled for all collaborations, because it does not allow automatic connections. Connections can still be requested by individual collaborations in your organisation.",
         notEnabledOrganisation: "This service cannot be enabled for all collaborations, because the service does not allow access for this organisation.",
         serviceRestrictedOrganisation: "This service cannot be made mandatory for all collaborations, because this organisation can only link SURF services.",
-        serviceRestrictedOrganisationAdded: "This service is mandatory for all collaborations, and cannot be disabled.",
+        serviceRestrictedOrganisationAdded: "This service is mandatory for all collaborations, and cannot be disabled because this is a SURF organisation.",
         flash: {
             added: "Successfully added service {{service}} to organisation {{name}}",
             deleted: "Successfully deleted service {{service}} from organisation {{name}}"
