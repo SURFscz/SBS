@@ -2,7 +2,6 @@
 import base64
 import datetime
 from io import BytesIO
-from secrets import token_urlsafe
 from time import time
 from urllib.parse import quote
 from uuid import uuid4
@@ -16,7 +15,7 @@ from werkzeug.exceptions import Forbidden
 
 from server.api.base import query_param, json_endpoint
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
-from server.auth.security import current_user_id
+from server.auth.security import current_user_id, generate_token
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.domain import User
@@ -84,7 +83,7 @@ def token_reset_request_post():
     admins = eligible_users_to_reset_token(user)
     if len(list(filter(lambda admin: admin["email"] == email, admins))) == 0:
         raise Forbidden()
-    user.mfa_reset_token = token_urlsafe()
+    user.mfa_reset_token = generate_token()
     db.session.merge(user)
     db.session.commit()
     mail_reset_token(email, user, data["message"])

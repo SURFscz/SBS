@@ -1,12 +1,12 @@
 # -*- coding: future_fstrings -*-
-from secrets import token_urlsafe
 import datetime
+
 from flask import Blueprint, request as current_request
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
 from server.api.service import user_service
-from server.auth.security import hash_secret_key, current_user_id
+from server.auth.security import hash_secret_key, current_user_id, generate_token
 from server.db.db import db
 from server.db.domain import UserToken, User, Service
 from server.db.models import save, delete
@@ -41,8 +41,8 @@ def user_tokens():
 
 @user_token_api.route("/generate_token", strict_slashes=False)
 @json_endpoint
-def generate_token():
-    return {"value": token_urlsafe()}, 200
+def generate_random_token():
+    return {"value": generate_token()}, 200
 
 
 @user_token_api.route("/", methods=["POST"], strict_slashes=False)

@@ -3,7 +3,6 @@ import ipaddress
 import random
 import string
 import urllib.parse
-from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
 from passlib.hash import sha512_crypt
@@ -12,7 +11,8 @@ from sqlalchemy.orm import load_only, selectinload
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
-    is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin, secure_hash
+    is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin, secure_hash, \
+    generate_token
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
@@ -246,7 +246,7 @@ def save_service():
 
     user = User.query.get(current_user_id())
     for administrator in administrators:
-        invitation = ServiceInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+        invitation = ServiceInvitation(hash=generate_token(), message=message, invitee_email=administrator,
                                        service_id=service.id, user=user, intended_role="admin",
                                        expiry_date=default_expiry_date(),
                                        created_by=user.uid)
@@ -279,7 +279,7 @@ def service_invites():
     user = User.query.get(current_user_id())
 
     for administrator in administrators:
-        invitation = ServiceInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+        invitation = ServiceInvitation(hash=generate_token(), message=message, invitee_email=administrator,
                                        service=service, user=user, created_by=user.uid,
                                        intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data))
         invitation = db.session.merge(invitation)
@@ -397,7 +397,7 @@ def reset_ldap_password(service_id):
 def reset_token_value(service_id):
     confirm_service_admin(service_id)
     service = Service.query.get(service_id)
-    token = token_urlsafe()
+    token = generate_token()
     service.hashed_token = secure_hash(token)
     db.session.merge(service)
     return {"token_value": token}, 200

@@ -1,10 +1,9 @@
 # -*- coding: future_fstrings -*-
-from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_organisation_admin_or_manager, hash_secret_key
+from server.auth.security import confirm_organisation_admin_or_manager, hash_secret_key, generate_token
 from server.db.domain import ApiKey
 from server.db.models import save, delete
 
@@ -14,7 +13,7 @@ api_key_api = Blueprint("api_key_api", __name__, url_prefix="/api/api_keys")
 @api_key_api.route("/", strict_slashes=False)
 @json_endpoint
 def generate_key():
-    return {"value": token_urlsafe()}, 200
+    return {"value": generate_token()}, 200
 
 
 @api_key_api.route("/", methods=["POST"], strict_slashes=False)

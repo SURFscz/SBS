@@ -1,7 +1,6 @@
 # -*- coding: future_fstrings -*-
 import uuid
 from datetime import datetime, timedelta
-from secrets import token_urlsafe
 
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
 from munch import munchify
@@ -12,7 +11,7 @@ from werkzeug.exceptions import BadRequest, Forbidden
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
-    confirm_allow_impersonation, confirm_organisation_admin_or_manager
+    confirm_allow_impersonation, confirm_organisation_admin_or_manager, generate_token
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name, \
     STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
@@ -258,7 +257,7 @@ def collaboration_invites():
         membership_expiry_date = datetime.fromtimestamp(data.get("membership_expiry_date"))
 
     for administrator in administrators:
-        invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+        invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration=collaboration, user=user, groups=groups,
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 membership_expiry_date=membership_expiry_date, created_by=user.uid)
@@ -303,7 +302,7 @@ def collaboration_invites_preview():
         "collaboration": collaboration,
         "intended_role": intended_role,
         "message": message,
-        "hash": token_urlsafe(),
+        "hash": generate_token(),
         "expiry_date": default_expiry_date(data)
     })
     html = mail_collaboration_invitation({
@@ -364,7 +363,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
     administrators = list(filter(lambda admin: admin != user.email, administrators))
     collaboration = res[0]
     for administrator in administrators:
-        invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+        invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration_id=collaboration.id, user=user, intended_role="admin",
                                 expiry_date=default_expiry_date(),
                                 created_by=user.uid)

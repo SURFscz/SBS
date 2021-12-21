@@ -1,5 +1,4 @@
 # -*- coding: future_fstrings -*-
-from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager
@@ -9,7 +8,7 @@ from server.api.base import json_endpoint, STATUS_DENIED, STATUS_APPROVED
 from server.api.collaboration_request import STATUS_OPEN
 from server.api.service_aups import add_user_aups
 from server.auth.security import confirm_collaboration_admin, current_user_id, current_user, \
-    current_user_name, current_user_uid
+    current_user_name, current_user_uid, generate_token
 from server.db.domain import CollaborationMembership, Collaboration, JoinRequest, db
 from server.db.models import delete
 from server.mail import mail_collaboration_join_request, mail_accepted_declined_join_request
@@ -75,7 +74,7 @@ def new_join_request():
                                user_id=user_id,
                                status=STATUS_OPEN,
                                collaboration_id=collaboration.id,
-                               hash=token_urlsafe())
+                               hash=generate_token())
     join_request = db.session.merge(join_request)
 
     add_user_aups(collaboration, user_id)
