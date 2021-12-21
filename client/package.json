@@ -46,12 +46,12 @@
         "react-scripts": "^4.0.3"
     },
     "scripts": {
-        "start": "HOST=127.0.0.1 react-scripts start",
+        "start": "HOST=localhost react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "analyze": "source-map-explorer build/static/js/main.*"
     },
-    "proxy": "http://127.0.0.1:8080",
+    "proxy": "http://localhost:8080",
     "eslintConfig": {
         "extends": "react-app"
     },

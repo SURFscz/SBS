@@ -15,6 +15,7 @@ from flask_testing import TestCase
 from server.auth.mfa import ACR_VALUES
 from server.auth.security import secure_hash
 from server.db.db import db
+from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken
 from server.test.seed import seed
 from server.tools import read_file
@@ -129,6 +130,15 @@ class AbstractTest(TestCase):
         user = self.find_entity_by_name(User, user_name)
         user.suspended = True
         db.session.merge(user)
+        db.session.commit()
+
+    def expire_all_collaboration_memberships(self, user_name):
+        user = self.find_entity_by_name(User, user_name)
+        past = datetime.datetime.now() - datetime.timedelta(days=5)
+        for cm in user.collaboration_memberships:
+            cm.expiry_date = past
+            cm.status = STATUS_EXPIRED
+            db.session.merge(cm)
         db.session.commit()
 
     def sign_jwt(self, additional_payload={}):

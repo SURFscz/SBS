@@ -3,11 +3,14 @@ import json
 import os
 from pathlib import Path
 
+from sqlalchemy import text
+
 from server.api.base import white_listing
 from server.auth.security import secure_hash
+from server.db.db import db
 from server.db.domain import UserToken
 from server.test.abstract_test import AbstractTest
-from server.test.seed import sarah_user_token, network_cloud_token
+from server.test.seed import sarah_user_token, network_cloud_token, sarah_name
 
 
 class TestBase(AbstractTest):
@@ -18,7 +21,7 @@ class TestBase(AbstractTest):
 
     def test_config(self):
         res = self.client.get("/config").json
-        self.assertEqual("http://127.0.0.1:3000", res["base_url"])
+        self.assertEqual("http://localhost:3000", res["base_url"])
         self.assertEqual(False, res["local"])
         self.assertTrue(len(res["organisation_categories"]) > 0)
 
@@ -53,6 +56,30 @@ class TestBase(AbstractTest):
 
         user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(sarah_user_token)).first()
         self.assertIsNotNone(user_token.last_used_date)
+
+    def test_introspect_not_connected(self):
+        db.session.execute(text("DELETE from services_collaborations"))
+        res = self.client.post("/introspect", headers={"Authorization": f"bearer {network_cloud_token}"},
+                               data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
+        self.assertEqual(200, res.status_code)
+        self.assertEqual(res.json["active"], False)
+        self.assertEqual(res.json["status"], "token-not-connected")
+
+    def test_introspect_user_suspended(self):
+        self.mark_user_suspended(sarah_name)
+        res = self.client.post("/introspect", headers={"Authorization": f"bearer {network_cloud_token}"},
+                               data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
+        self.assertEqual(200, res.status_code)
+        self.assertEqual(res.json["active"], False)
+        self.assertEqual(res.json["status"], "user-suspended")
+
+    def test_introspect_expired_memberships(self):
+        self.expire_all_collaboration_memberships(sarah_name)
+        res = self.client.post("/introspect", headers={"Authorization": f"bearer {network_cloud_token}"},
+                               data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
+        self.assertEqual(200, res.status_code)
+        self.assertEqual(res.json["active"], False)
+        self.assertEqual(res.json["status"], "token-not-connected")
 
     def test_introspect_invalid_bearer_token(self):
         res = self.client.post("/introspect", headers={"Authorization": "bearer nope"},

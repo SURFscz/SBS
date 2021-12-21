@@ -11,9 +11,9 @@ class TestPlsc(AbstractTest):
         res = self.get("/api/plsc/sync")
         self.assertEqual(3, len(res["organisations"]))
         logo = res["organisations"][0]["logo"]
-        self.assertTrue(logo.startswith("http://127.0.0.1:8080/api/images/organisations/"))
+        self.assertTrue(logo.startswith("http://localhost:8080/api/images/organisations/"))
 
-        res_image = self.client.get(logo.replace("http://127.0.0.1:8080", ""))
+        res_image = self.client.get(logo.replace("http://localhost:8080", ""))
         self.assertIsNotNone(res_image.data)
 
         users_ = res["users"]
@@ -36,11 +36,11 @@ class TestPlsc(AbstractTest):
         wiki = next(s for s in services_ if s["entity_id"] == service_wiki_entity_id)
         self.assertEqual(wiki["contact_email"], "help@wiki.com")
         self.assertEqual(wiki["name"], "Wiki")
-        self.assertTrue(wiki["logo"].startswith("http://127.0.0.1:8080/api/images/services/"))
+        self.assertTrue(wiki["logo"].startswith("http://localhost:8080/api/images/services/"))
         self.assertEqual(wiki["accepted_user_policy"], "https://google.nl")
         self.assertTrue(wiki["ldap_password"].startswith("$6$rounds=100000$bFyBZD0Fim7BCAqt$BS"))
 
-        res_image = self.client.get(wiki["logo"].replace("http://127.0.0.1:8080", ""))
+        res_image = self.client.get(wiki["logo"].replace("http://localhost:8080", ""))
         self.assertIsNotNone(res_image.data)
 
         storage = next(s for s in services_ if s["entity_id"] == service_storage_entity_id)
@@ -53,8 +53,8 @@ class TestPlsc(AbstractTest):
         self.assertEqual("https://www.google.nl", collaborations[0]["website_url"])
 
         logo = collaborations[0]["logo"]
-        self.assertTrue(logo.startswith("http://127.0.0.1:8080/api/images/collaborations/"))
-        res_image = self.client.get(logo.replace("http://127.0.0.1:8080", ""))
+        self.assertTrue(logo.startswith("http://localhost:8080/api/images/collaborations/"))
+        res_image = self.client.get(logo.replace("http://localhost:8080", ""))
         self.assertIsNotNone(res_image.data)
 
         groups = flatten([coll["groups"] for coll in collaborations if coll["name"] == ai_computing_name])

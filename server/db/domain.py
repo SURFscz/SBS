@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+import datetime
 from uuid import uuid4
 
 from flask import current_app
@@ -113,6 +114,9 @@ class CollaborationMembership(Base, db.Model):
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+    def is_expired(self):
+        return self.expiry_date and datetime.datetime.utcnow() > self.expiry_date
 
 
 organisations_services_association = db.Table(
