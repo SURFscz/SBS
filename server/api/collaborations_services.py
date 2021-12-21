@@ -6,7 +6,7 @@ from server.api.base import json_endpoint
 from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_write_access
 from server.db.db import db
-from server.db.domain import Service, Collaboration
+from server.db.domain import Service, Collaboration, UserToken
 from server.schemas import json_schema_validator
 
 collaborations_services_api = Blueprint("collaborations_services_api", __name__,
@@ -35,6 +35,10 @@ def connect_service_collaboration(service_id, collaboration_id, force=False):
     create_service_groups(service, collaboration)
 
     return 1
+
+
+def delete_user_tokens_by_services(service_identifiers):
+    UserToken.query.filter(UserToken.service_id.in_(service_identifiers)).delete()
 
 
 @collaborations_services_api.route("/", methods=["PUT"], strict_slashes=False)
@@ -92,6 +96,9 @@ def delete_all_services(collaboration_id):
     if collaboration.organisation.services_restricted:
         confirm_write_access()
 
+    service_identifiers = [service.id for service in collaboration.services]
+    delete_user_tokens_by_services(service_identifiers)
+
     collaboration.services = []
     db.session.merge(collaboration)
     return None, 204
@@ -109,6 +116,6 @@ def delete_collaborations_services(collaboration_id, service_id):
     collaboration.services.remove(Service.query.get(service_id))
     db.session.merge(collaboration)
 
-    res = {'collaboration_id': collaboration_id, 'service_id': service_id}
+    delete_user_tokens_by_services([service_id])
 
-    return res, 204
+    return {'collaboration_id': collaboration_id, 'service_id': service_id}, 204
