@@ -1874,7 +1874,7 @@ I18n.translations.en = {
         delete: "Remove token",
         deleteConfirmation: "Are you sure you want to remove this token?  This action cannot be undone.",
         flash: {
-            deleted: "Token {{name}} has been remopved",
+            deleted: "Token {{name}} has been removed",
             reactivated: "Token {{name}} has been reactivated",
             created: "Token {{name}} was added",
             updated: "Token {{name}} is updated",
