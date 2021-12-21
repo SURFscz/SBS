@@ -15,7 +15,6 @@ import {ReactComponent as ApiKeysIcon} from "../icons/security.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as CollaborationRequestsIcon} from "../icons/faculty.svg";
 import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
-import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import OrganisationAdmins from "../components/redesign/OrganisationAdmins";
 import {AppStore} from "../stores/AppStore";
@@ -118,7 +117,7 @@ class OrganisationDetail extends React.Component {
     getTabs = (organisation, config, isInvite) => {
         const tabs = isInvite ? [
             this.getCollaborationsTab(organisation),
-        ]:  [
+        ] : [
             this.getCollaborationsTab(organisation),
             this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation),
@@ -238,7 +237,7 @@ class OrganisationDetail extends React.Component {
         const actions = [];
         if (adminOfOrganisation) {
             actions.push({
-                svg: PencilIcon,
+                icon: "pencil-alt",
                 name: I18n.t("home.edit"),
                 perform: () => this.props.history.push("/edit-organisation/" + organisation.id)
             });
@@ -276,13 +275,13 @@ class OrganisationDetail extends React.Component {
         return (
             <div className="mod-organisation-container">
                 <OrganisationWelcomeDialog name={organisation.name}
-                                             isOpen={firstTime}
-                                             role={role}
-                                             organisation={organisation}
-                                             collaboration={null}
-                                             isAdmin={user.admin}
-                                             isInvitation={isInvitation}
-                                             close={this.doAcceptInvitation}/>
+                                           isOpen={firstTime}
+                                           role={role}
+                                           organisation={organisation}
+                                           collaboration={null}
+                                           isAdmin={user.admin}
+                                           isInvitation={isInvitation}
+                                           close={this.doAcceptInvitation}/>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     confirm={confirmationDialogAction}

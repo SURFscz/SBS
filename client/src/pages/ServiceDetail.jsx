@@ -15,7 +15,6 @@ import Tabs from "../components/Tabs";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
 import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
-import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
 import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
@@ -340,7 +339,7 @@ class ServiceDetail extends React.Component {
         const actions = [];
         if (user.admin || isUserServiceAdmin(user, service)) {
             actions.push({
-                svg: PencilIcon,
+                icon: "pencil-alt",
                 name: I18n.t("home.edit"),
                 perform: () => this.props.history.push("/edit-service/" + service.id)
             });
