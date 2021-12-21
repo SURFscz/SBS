@@ -113,11 +113,14 @@ class OrganisationServices extends React.Component {
             }
         }
         const disabled = !allowed || !service.allowed || service.notAllowedServicesRestricted;
-        if (disabled) {
-            return <Tooltip children={<FontAwesomeIcon icon="info-circle"/>} id={`not-allowed-${service.id}`} msg={tooltip}/>
-        }
-        return <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={disabled}
-                             value={value} animate={false} tooltip={tooltip}/>
+        return (
+            <div>
+                <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={disabled}
+                              value={value} animate={false} tooltip={tooltip}/>
+                {(disabled && service.notAllowedServicesRestricted) && <Tooltip children={<FontAwesomeIcon icon="info-circle"/>} id={`not-allowed-${service.id}`}
+                                      msg={tooltip}/>}
+            </div>
+        )
     }
 
     render() {
@@ -146,7 +149,7 @@ class OrganisationServices extends React.Component {
                 header: I18n.t("models.services.mandatory"),
                 mapper: this.getServiceAction
             }]
-        const count =  organisation.services.filter(service => service.allowed && service.notAllowedServicesRestricted).length
+        const count = organisation.services.filter(service => service.allowed && service.notAllowedServicesRestricted).length
         const titleUsed = I18n.t(`models.services.titleUsedOrg`, {count: count});
         return (
             <div className="organisation-services">
