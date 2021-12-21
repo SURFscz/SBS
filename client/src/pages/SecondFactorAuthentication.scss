@@ -186,6 +186,11 @@
             padding-left: 14px;
             height: 40px;
             font-size: 22px;
+            border: 1px solid rgb(118, 118, 118);
+            &[disabled] {
+                background-color: rgba(239, 239, 239, 0.3);
+                border: 1px solid rgba(118, 118, 118, 0.3);
+            }
         }
     }
 }
