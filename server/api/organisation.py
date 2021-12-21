@@ -1,6 +1,5 @@
 # -*- coding: future_fstrings -*-
 import uuid
-from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from munch import munchify
@@ -10,7 +9,7 @@ from sqlalchemy.orm import selectinload
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_organisation_admin
+    confirm_organisation_admin, generate_token
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
@@ -211,7 +210,7 @@ def organisation_invites_preview():
         "organisation": organisation,
         "intended_role": intended_role,
         "message": message,
-        "hash": token_urlsafe(),
+        "hash": generate_token(),
         "expiry_date": default_expiry_date(data)
     })
     html = mail_organisation_invitation({
@@ -240,7 +239,7 @@ def organisation_invites():
     user = User.query.get(current_user_id())
 
     for administrator in administrators:
-        invitation = OrganisationInvitation(hash=token_urlsafe(), intended_role=intended_role,
+        invitation = OrganisationInvitation(hash=generate_token(), intended_role=intended_role,
                                             message=message, invitee_email=administrator,
                                             organisation=organisation, user=user,
                                             expiry_date=default_expiry_date(json_dict=data),
@@ -273,7 +272,7 @@ def save_organisation():
     user = User.query.get(current_user_id())
     organisation = res[0]
     for administrator in administrators:
-        invitation = OrganisationInvitation(hash=token_urlsafe(), message=message, invitee_email=administrator,
+        invitation = OrganisationInvitation(hash=generate_token(), message=message, invitee_email=administrator,
                                             organisation_id=organisation.id, user_id=user.id,
                                             intended_role=intended_role,
                                             expiry_date=default_expiry_date(),

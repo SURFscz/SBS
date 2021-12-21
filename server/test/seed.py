@@ -1,15 +1,13 @@
 # -*- coding: future_fstrings -*-
 import base64
 import datetime
-import hashlib
 import os
 import uuid
-from secrets import token_urlsafe
 
 from sqlalchemy import text
 
 from server.api.collaboration_request import STATUS_OPEN
-from server.auth.security import secure_hash
+from server.auth.security import secure_hash, generate_token
 from server.db.audit_mixin import metadata
 from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
@@ -32,20 +30,20 @@ jane_name = "Jane Doe"
 schac_home_organisation = "example.org"
 schac_home_organisation_uuc = "rug.nl"
 
-organisation_invitation_hash = token_urlsafe()
-organisation_invitation_expired_hash = token_urlsafe()
+organisation_invitation_hash = generate_token()
+organisation_invitation_expired_hash = generate_token()
 
-invitation_hash_curious = token_urlsafe()
-invitation_hash_no_way = token_urlsafe()
-invitation_hash_uva = token_urlsafe()
+invitation_hash_curious = generate_token()
+invitation_hash_no_way = generate_token()
+invitation_hash_uva = generate_token()
 
-service_invitation_hash = token_urlsafe()
-service_invitation_expired_hash = token_urlsafe()
+service_invitation_hash = generate_token()
+service_invitation_expired_hash = generate_token()
 
-service_cloud_token = token_urlsafe()
-network_cloud_token = token_urlsafe()
-wiki_cloud_token = token_urlsafe()
-sarah_user_token = token_urlsafe()
+service_cloud_token = generate_token()
+network_cloud_token = generate_token()
+wiki_cloud_token = generate_token()
+sarah_user_token = generate_token()
 
 collaboration_ai_computing_uuid = str(uuid.uuid4())
 ai_computing_name = "AI computing"
@@ -54,8 +52,8 @@ ai_computing_short_name = "ai_computing"
 uuc_teachers_name = "UUC Teachers"
 
 uuc_name = "UUC"
-uuc_secret = token_urlsafe()
-uuc_hashed_secret = hashlib.sha256(bytes(uuc_secret, "utf-8")).hexdigest()
+uuc_secret = generate_token()
+uuc_hashed_secret = secure_hash(uuc_secret)
 
 amsterdam_uva_name = "Amsterdam UVA"
 
@@ -64,7 +62,7 @@ collaboration_uva_researcher_uuid = str(uuid.uuid4())
 uva_research_name = "UVA UCC research"
 
 uu_disabled_join_request_name = "UU"
-join_request_peter_hash = token_urlsafe()
+join_request_peter_hash = generate_token()
 
 service_mail_name = "Mail Services"
 service_mail_entity_id = "https://mail"
@@ -90,9 +88,9 @@ ai_researchers_group = "AI researchers"
 ai_researchers_group_short_name = "ai_res"
 group_science_name = "Science"
 
-network_service_connection_request_hash = token_urlsafe()
-ssh_service_connection_request_hash = token_urlsafe()
-wireless_service_connection_request_hash = token_urlsafe()
+network_service_connection_request_hash = generate_token()
+ssh_service_connection_request_hash = generate_token()
+wireless_service_connection_request_hash = generate_token()
 
 
 def read_image(file_name):
@@ -439,13 +437,13 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     _persist(db, group_researchers, group_developers, group_science)
 
     join_request_john = JoinRequest(message="Please...", reference=join_request_reference, user=john,
-                                    collaboration=ai_computing, hash=token_urlsafe(), status="open")
+                                    collaboration=ai_computing, hash=generate_token(), status="open")
     join_request_peter = JoinRequest(message="Please...", user=peter, collaboration=ai_computing,
                                      hash=join_request_peter_hash, status="open")
-    join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=token_urlsafe(),
+    join_request_mary = JoinRequest(message="Please...", user=mary, collaboration=ai_computing, hash=generate_token(),
                                     status="open")
     join_request_uva_research = JoinRequest(message="Please...", user=james, collaboration=uva_research,
-                                            hash=token_urlsafe(), status="open")
+                                            hash=generate_token(), status="open")
 
     _persist(db, join_request_john, join_request_peter, join_request_mary, join_request_uva_research)
 

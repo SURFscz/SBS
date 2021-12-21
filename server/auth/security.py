@@ -1,5 +1,6 @@
 # -*- coding: future_fstrings -*-
 import hashlib
+from secrets import token_urlsafe
 
 from flask import session, g as request_context, request as current_request, current_app
 from sqlalchemy.orm import load_only
@@ -216,7 +217,11 @@ def confirm_service_admin(service_id):
 
 
 def secure_hash(secret):
-    return hashlib.sha256(bytes(secret, "utf-8")).hexdigest()
+    return f"sha3_512_{hashlib.sha3_512(bytes(secret, 'utf-8')).hexdigest()}"
+
+
+def generate_token():
+    return f"A{token_urlsafe()}"
 
 
 def hash_secret_key(data, attr_name="hashed_secret"):

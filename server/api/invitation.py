@@ -1,7 +1,6 @@
 # -*- coding: future_fstrings -*-
 import datetime
 import re
-from secrets import token_urlsafe
 
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from sqlalchemy.orm import joinedload, selectinload
@@ -9,7 +8,7 @@ from werkzeug.exceptions import Conflict, Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.service_aups import add_user_aups
-from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
+from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call, generate_token
 from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
 from server.db.models import delete
@@ -97,7 +96,7 @@ def collaboration_invites_api():
     invites = list(filter(lambda recipient: bool(email_re.match(recipient)), data["invites"]))
 
     for email in invites:
-        invitation = Invitation(hash=token_urlsafe(), message=message, invitee_email=email,
+        invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
                                 collaboration_id=collaboration.id, user=user, intended_role="member",
                                 expiry_date=default_expiry_date(), created_by="system")
         invitation = db.session.merge(invitation)
