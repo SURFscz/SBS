@@ -4,6 +4,7 @@ import {ReactComponent as ChevronRight} from "../icons/chevron-right.svg";
 import {AppStore} from "../stores/AppStore";
 import {Link} from "react-router-dom";
 import {isEmpty} from "../utils/Utils";
+import {clearFlash} from "../utils/Flash";
 
 export const BreadCrumb = () => {
 
@@ -21,7 +22,7 @@ export const BreadCrumb = () => {
                     <div className="path" key={i}>
                         {i !== 0 && <ChevronRight/>}
                         {((i + 1) !== paths.length && p.path) &&
-                            <Link to={p.path} className={"link"}>{<span dangerouslySetInnerHTML={{__html: p.value}}/>}</Link>}
+                            <Link to={p.path} onClick={() => clearFlash()} className={"link"}>{<span dangerouslySetInnerHTML={{__html: p.value}}/>}</Link>}
                         {((i + 1) !== paths.length && !p.path) &&
                         <span className={"last"} dangerouslySetInnerHTML={{__html: p.value}}/>}
                         {(i + 1) === paths.length &&

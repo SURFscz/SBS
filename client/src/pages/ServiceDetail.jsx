@@ -1,8 +1,10 @@
 import React from "react";
 import {
     allServiceConnectionRequests,
-    resetLdapPassword, resetTokenValue,
-    searchOrganisations, serviceAupDelete,
+    resetLdapPassword,
+    resetTokenValue,
+    searchOrganisations,
+    serviceAupDelete,
     serviceById,
     serviceInvitationAccept,
     serviceInvitationByHash
@@ -153,16 +155,7 @@ class ServiceDetail extends React.Component {
 
     afterFetch = (params, service, organisations, serviceConnectionRequests, tabs) => {
         const tab = params.tab || this.state.tab;
-        AppStore.update(s => {
-            s.breadcrumb.paths = [
-                {path: "/", value: I18n.t("breadcrumb.home")},
-                {
-                    path: `/services/${service.id}`,
-                    value: I18n.t("breadcrumb.service", {name: service.name})
-                },
-            ];
-        });
-        this.tabChanged(tab, service.id);
+        this.tabChanged(tab, service);
         this.setState({
             service: service,
             organisations: organisations,
@@ -172,6 +165,20 @@ class ServiceDetail extends React.Component {
             loading: false
         });
     }
+
+    updateBreadCrumb(service) {
+        const currentService = service || this.state.service;
+        AppStore.update(s => {
+            s.breadcrumb.paths = [
+                {path: "/", value: I18n.t("breadcrumb.home")},
+                {
+                    path: `/services/${currentService.id}`,
+                    value: I18n.t("breadcrumb.service", {name: currentService.name})
+                },
+            ];
+        });
+    }
+
 
     doAcceptInvitation = () => {
         const {invitation, isInvitation} = this.state;
@@ -300,8 +307,9 @@ class ServiceDetail extends React.Component {
 
     }
 
-    tabChanged = (name, id) => {
-        const serviceId = id || this.state.service.id;
+    tabChanged = (name, service) => {
+        const serviceId = service ? service.id : this.state.service.id;
+        this.updateBreadCrumb(service);
         this.setState({tab: name}, () =>
             this.props.history.replace(`/services/${serviceId}/${name}`));
     }
@@ -487,7 +495,8 @@ class ServiceDetail extends React.Component {
                     </Tabs>
                 </div>
             </div>);
-    };
+    }
+    ;
 }
 
 export default ServiceDetail;

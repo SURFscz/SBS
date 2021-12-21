@@ -312,6 +312,7 @@ class ServiceGroups extends React.Component {
                         editGroup: false,
                         createNewGroup: false
                     }));
+                    this.cancelSideScreen();
             }
         } else {
             window.scrollTo(0, 0);
