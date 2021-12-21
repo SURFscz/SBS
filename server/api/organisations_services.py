@@ -3,7 +3,6 @@ from flask import Blueprint, request as current_request
 from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
-from server.api.collaborations_services import delete_user_tokens_by_services
 from server.api.service_group import create_service_groups
 from server.auth.security import confirm_organisation_admin_or_manager, confirm_write_access
 from server.db.db import db
@@ -59,7 +58,5 @@ def delete_organisations_services(organisation_id, service_id):
 
     organisation.services.remove(Service.query.get(service_id))
     db.session.merge(organisation)
-
-    delete_user_tokens_by_services([service_id])
 
     return None, 204

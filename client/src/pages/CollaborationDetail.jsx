@@ -289,6 +289,7 @@ class CollaborationDetail extends React.Component {
                 this.getGroupsTab(collaboration, showMemberView, isJoinRequest),
             ];
         const services = removeDuplicates(collaboration.services.concat(collaboration.organisation.services).filter(s => s.token_enabled), "id");
+        userTokens = userTokens.filter(userToken => services.find(service => service.id === userToken.service_id));
         if (userTokens && !isJoinRequest && services.length > 0) {
             tabs.push(this.getUserTokensTab(userTokens, collaboration, services))
         }
