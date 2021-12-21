@@ -225,7 +225,7 @@ class UserTokens extends React.Component {
 
     delete = () => {
         const selectedUserToken = this.getSelectedUserToken();
-        const action = () => this.refreshAndFlash(deleteUserToken(selectedUserToken.id),
+        const action = () => this.refreshAndFlash(deleteUserToken(selectedUserToken),
             I18n.t("userTokens.flash.deleted", {name: selectedUserToken.name}),
             () => this.setState({
                 confirmationDialogOpen: false, selectedUserToken: null, editUserToken: false,

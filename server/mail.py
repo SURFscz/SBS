@@ -333,7 +333,8 @@ def mail_suspended_account_deletion(user):
             context={"environment": mail_cfg.environment,
                      "date": datetime.datetime.now(),
                      "user": user},
-            preview=False
+            preview=False,
+            working_outside_of_request_context=True
         )
 
 

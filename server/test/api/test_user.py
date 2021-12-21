@@ -205,7 +205,7 @@ class TestUser(AbstractTest):
         self.login("urn:mike")
         res = self.client.get("/api/users/upgrade_super_user")
         self.assertEqual(302, res.status_code)
-        self.assertEqual("http://localhost:3000", res.location)
+        self.assertEqual("http://127.0.0.1:3000", res.location)
 
         mike = User.query.filter(User.uid == "urn:mike").one()
         self.assertEqual(True, mike.confirmed_super_user)
@@ -226,24 +226,24 @@ class TestUser(AbstractTest):
         self.get("/api/users/platform_admins", with_basic_auth=False, response_status_code=403)
 
     def test_authorization(self):
-        res = self.get("/api/users/authorization", query_data={"state": "http://localhost/redirect"},
+        res = self.get("/api/users/authorization", query_data={"state": "http://127.0.0.1/redirect"},
                        with_basic_auth=False)
         self.assertTrue("authorization_endpoint" in res)
 
         res = self.get("/api/users/authorization", with_basic_auth=False)
         query_dict = dict(parse.parse_qs(parse.urlsplit(res["authorization_endpoint"]).query))
-        self.assertListEqual(["http://localhost/redirect"], query_dict["state"])
+        self.assertListEqual(["http://127.0.0.1/redirect"], query_dict["state"])
 
     def test_resume_session_dead_end(self):
         res = self.get("/api/users/resume-session", response_status_code=302)
         query_dict = dict(parse.parse_qs(parse.urlsplit(res.location).query))
-        self.assertListEqual(["http://localhost:3000"], query_dict["state"])
+        self.assertListEqual(["http://127.0.0.1:3000"], query_dict["state"])
 
     @responses.activate
     def test_resume_session_token_error(self):
         responses.add(responses.POST, current_app.app_config.oidc.token_endpoint, status=500)
         res = self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=302)
-        self.assertEqual("http://localhost:3000/error", res.location)
+        self.assertEqual("http://127.0.0.1:3000/error", res.location)
 
     @responses.activate
     def test_resume_session_user_info_error(self):
@@ -251,7 +251,7 @@ class TestUser(AbstractTest):
                       json={"access_token": "some_token"}, status=200)
         responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint, status=500)
         res = self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=302)
-        self.assertEqual("http://localhost:3000/error", res.location)
+        self.assertEqual("http://127.0.0.1:3000/error", res.location)
 
     def test_logout(self):
         self.login("urn:john")
@@ -315,7 +315,7 @@ class TestUser(AbstractTest):
                       read_file("test/data/public.json"), status=200)
         with requests.Session():
             res = self.client.get("/api/users/resume-session?code=123456")
-            self.assertEqual("http://localhost:3000/2fa", res.headers.get("Location"))
+            self.assertEqual("http://127.0.0.1:3000/2fa", res.headers.get("Location"))
             user = self.client.get("/api/users/me", ).json
 
             self.assertFalse(user["second_factor_auth"])

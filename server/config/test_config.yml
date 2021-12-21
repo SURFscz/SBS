@@ -82,8 +82,8 @@ aup:
   url_aup_en: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
   url_aup_nl: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
 
-base_url: http://localhost:3000/
-base_server_url: http://localhost:8080
+base_url: http://127.0.0.1:3000/
+base_server_url: http://127.0.0.1:8080
 wiki_link: https://edu.nl/vw3jx
 
 admin_users:
@@ -99,8 +99,8 @@ organisation_categories:
 
 feature:
   admin_users_upgrade: True
-  admin_users_upgrade_url: http://localhost:8080/api/users/upgrade_super_user
-  admin_users_upgrade_redirect_url: http://localhost:3000
+  admin_users_upgrade_url: http://127.0.0.1:8080/api/users/upgrade_super_user
+  admin_users_upgrade_redirect_url: http://127.0.0.1:3000
   seed_allowed: True
   api_keys_enabled: True
   feedback_enabled: True

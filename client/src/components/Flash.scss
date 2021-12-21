@@ -3,7 +3,7 @@
 div.flash {
     color: white;
 
-    position: absolute;
+    position: sticky;
     width: 100%;
     top: 0;
     z-index: 6;
@@ -14,6 +14,7 @@ div.flash {
     &.hide {
         transition: top 1000ms ease-in-out;
         top: -80px;
+        position: absolute;
     }
 
     &.info {

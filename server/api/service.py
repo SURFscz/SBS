@@ -123,43 +123,43 @@ def _do_get_services(restrict_for_current_user=False):
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
-    confirm_write_access()
-
     name = query_param("name")
     existing_service = query_param("existing_service", required=False, default="")
-    org = Service.query.options(load_only("id")) \
+    service = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.name) == func.lower(name)) \
         .filter(func.lower(Service.name) != func.lower(existing_service)) \
         .first()
-    return org is not None, 200
+    if service:
+        confirm_service_admin(service.id)
+    return service is not None, 200
 
 
 @service_api.route("/entity_id_exists", strict_slashes=False)
 @json_endpoint
 def entity_id_exists():
-    confirm_write_access()
-
     entity_id = query_param("entity_id")
     existing_service = query_param("existing_service", required=False, default="")
-    org = Service.query.options(load_only("id")) \
+    service = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.entity_id) == func.lower(entity_id)) \
         .filter(func.lower(Service.entity_id) != func.lower(existing_service)) \
         .first()
-    return org is not None, 200
+    if service:
+        confirm_service_admin(service.id)
+    return service is not None, 200
 
 
 @service_api.route("/abbreviation_exists", strict_slashes=False)
 @json_endpoint
 def abbreviation_exists():
-    confirm_write_access()
-
     abbreviation = query_param("abbreviation")
     existing_service = query_param("existing_service", required=False, default="")
-    org = Service.query.options(load_only("id")) \
+    service = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.abbreviation) == func.lower(abbreviation)) \
         .filter(func.lower(Service.abbreviation) != func.lower(existing_service)) \
         .first()
-    return org is not None, 200
+    if service:
+        confirm_service_admin(service.id)
+    return service is not None, 200
 
 
 @service_api.route("/find_by_entity_id", strict_slashes=False)
@@ -230,8 +230,6 @@ def mine_services():
 @service_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_service():
-    confirm_write_access()
-
     data = current_request.get_json()
     _validate_ip_networks(data)
     _token_validity_days(data)
