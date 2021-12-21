@@ -1886,8 +1886,7 @@ I18n.translations.en = {
             info: "Copy and store the token somewhere safe. You can not see this token afterwards.",
             copy: "Copy",
             close: "Close",
-        },
-        deleteConfirmation: "Are you sure you want to delete this token?"
+        }
     }
 };
 
