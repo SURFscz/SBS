@@ -127,13 +127,13 @@ class CollaborationDetail extends React.Component {
                                 adminOfCollaboration: adminOfCollaboration,
                                 schacHomeOrganisation: schacHomeOrganisation,
                                 loading: false,
+                                orgManager: orgManager,
                                 confirmationDialogOpen: false,
                                 firstTime: firstTime,
                                 tabs: this.getTabs(collaboration, userTokens, schacHomeOrganisation, adminOfCollaboration, false),
                                 tab: tab,
                             }, () => {
                                 callback && callback();
-                                this.updateAppStore(collaboration, adminOfCollaboration, orgManager);
                                 this.tabChanged(tab, collaboration.id);
                             });
                         }).catch(() => {
@@ -423,6 +423,10 @@ class CollaborationDetail extends React.Component {
 
     tabChanged = (name, id) => {
         const collId = id || this.state.collaboration.id;
+        const {collaboration, adminOfCollaboration, orgManager} = this.state;
+        if (collaboration) {
+            this.updateAppStore(collaboration, adminOfCollaboration, orgManager);
+        }
         this.setState({tab: name}, () =>
             this.props.history.replace(`/collaborations/${collId}/${name}`));
     }
