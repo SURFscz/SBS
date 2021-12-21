@@ -30,7 +30,6 @@ import {ReactComponent as AboutIcon} from "../icons/common-file-text-home.svg";
 import {ReactComponent as AdminIcon} from "../icons/single-neutral-actions-key.svg";
 import {ReactComponent as GlobeIcon} from "../icons/network-information.svg";
 import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
-import {ReactComponent as PencilIcon} from "../icons/pencil-1.svg";
 import CollaborationAdmins from "../components/redesign/CollaborationAdmins";
 import SpinnerField from "../components/redesign/SpinnerField";
 import UsedServices from "../components/redesign/UsedServices";
@@ -529,7 +528,7 @@ class CollaborationDetail extends React.Component {
         const actions = [];
         if (allowedToEdit && showMemberView) {
             actions.push({
-                svg: PencilIcon,
+                icon: "pencil-alt",
                 name: I18n.t("home.edit"),
                 perform: () => this.props.history.push("/edit-collaboration/" + collaboration.id)
             });
