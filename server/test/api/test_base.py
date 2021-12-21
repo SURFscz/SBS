@@ -18,7 +18,7 @@ class TestBase(AbstractTest):
 
     def test_config(self):
         res = self.client.get("/config").json
-        self.assertEqual("http://localhost:3000", res["base_url"])
+        self.assertEqual("http://127.0.0.1:3000", res["base_url"])
         self.assertEqual(False, res["local"])
         self.assertTrue(len(res["organisation_categories"]) > 0)
 

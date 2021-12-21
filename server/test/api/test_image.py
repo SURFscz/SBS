@@ -19,7 +19,7 @@ class TestImage(AbstractTest):
     def test_logo_url(self):
         collaborations = self.get("/api/collaborations/all")
         self.assertEqual(4, len(collaborations))
-        pattern = re.compile(r"^http://localhost:8080/api/images/collaborations/([a-z0-9-]+)$")
+        pattern = re.compile(r"^http://127.0.0.1:8080/api/images/collaborations/([a-z0-9-]+)$")
         for coll in collaborations:
             self.assertTrue(pattern.match(coll["logo"]))
 
@@ -33,6 +33,6 @@ class TestImage(AbstractTest):
         self.login("urn:john")
         collaboration_request = self.get(f"/api/collaboration_requests/{collaboration_request_id}")
         self.assertEqual(collaboration_request["logo"],
-                         f"http://localhost:8080/api/images/collaboration_requests/{collaboration_request['uuid4']}")
+                         f"http://127.0.0.1:8080/api/images/collaboration_requests/{collaboration_request['uuid4']}")
         res = self.client.get(f"/api/images/collaboration_requests/{collaboration_request['uuid4']}")
         self.assertIsNotNone(res.data)

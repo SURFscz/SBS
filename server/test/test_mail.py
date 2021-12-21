@@ -19,14 +19,14 @@ class TestMail(AbstractTest):
             context = {"salutation": "Dear",
                        "collaboration": collaboration,
                        "user": User.query.filter(User.uid == "urn:john").one(),
-                       "base_url": "http://localhost:300",
+                       "base_url": "http://127.0.0.1:300",
                        "join_request": join_request}
             mail_collaboration_join_request(context, collaboration, ["test@example.com"])
             self.assertEqual(1, len(outbox))
             mail_msg = outbox[0]
             self.assertListEqual(["test@example.com"], mail_msg.recipients)
             self.assertEqual("SURF_ResearchAccessManagement <no-reply@surf.nl>", mail_msg.sender)
-            self.assertTrue(f"http://localhost:300/collaborations/{collaboration.id}/joinrequests" in mail_msg.html)
+            self.assertTrue(f"http://127.0.0.1:300/collaborations/{collaboration.id}/joinrequests" in mail_msg.html)
 
         audit_logs = AuditLog.query.all()
         self.assertEqual(len(audit_logs), 1)

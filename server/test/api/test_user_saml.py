@@ -132,7 +132,7 @@ class TestUserSaml(AbstractTest):
                         response_status_code=200)
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service-denied?service_name=Network+Services&error_status=2")
+                         "http://127.0.0.1:3000/service-denied?service_name=Network+Services&error_status=2")
 
     def test_proxy_authz_not_active_collaborations(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
@@ -144,7 +144,7 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id})
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=5")
+                         "http://127.0.0.1:3000/service-denied?service_name=Mail+Services&error_status=5")
 
     def test_proxy_authz_not_active_membership(self):
         sarah = self.find_entity_by_name(User, sarah_name)
@@ -158,7 +158,7 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah", "service_id": service_mail_entity_id})
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=6")
+                         "http://127.0.0.1:3000/service-denied?service_name=Mail+Services&error_status=6")
 
     def test_non_member_users_access_allowed(self):
         self.add_service_aup_to_user("urn:jane", "https://wireless")
@@ -177,4 +177,4 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(res["status"]["result"], "unauthorized")
 
         parameters = urlencode({"service_id": network_service.id, "service_name": network_service.name})
-        self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/service-aup?{parameters}")
+        self.assertEqual(res["status"]["redirect_url"], f"http://127.0.0.1:3000/service-aup?{parameters}")

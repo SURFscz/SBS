@@ -32,7 +32,7 @@ class TestJoinRequest(AbstractTest):
             mail_msg = outbox[0]
 
             self.assertListEqual(["boss@example.org"], mail_msg.recipients)
-            self.assertTrue(f"http://localhost:3000/collaborations/{collaboration_id}/joinrequests" in mail_msg.html)
+            self.assertTrue(f"http://127.0.0.1:3000/collaborations/{collaboration_id}/joinrequests" in mail_msg.html)
 
     def test_new_join_request_already_member(self):
         collaboration_id = Collaboration.query \

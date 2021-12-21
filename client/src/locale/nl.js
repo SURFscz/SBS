@@ -1885,7 +1885,8 @@ I18n.translations.nl = {
             info: "Kopieer en bewaar de token op een veilige plaats. Je kunt deze token hierna niet meer zien.",
             copy: "Copy",
             close: "Sluit",
-        }
+        },
+        deleteConfirmation: "Weet je zeker dat je dit token wilt verwijderen?"
     }
 
 };

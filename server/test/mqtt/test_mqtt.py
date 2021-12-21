@@ -12,7 +12,7 @@ class TestMqtt(AbstractTest):
     #             "default": {
     #                 "max-connections": 1,
     #                 "type": "tcp",
-    #                 "bind": "localhost:1883"
+    #                 "bind": "127.0.0.1:1883"
     #             },
     #         },
     #         "auth": {
@@ -33,7 +33,7 @@ class TestMqtt(AbstractTest):
         #     "enabled": True,
         #     "user": "anonymous",
         #     "password": "secret",
-        #     "host": "localhost",
+        #     "host": "127.0.0.1",
         #     "client_id": "sbs_test"
         # })
         # mqtt_client = MqttClient(config_service_bus)

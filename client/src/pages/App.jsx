@@ -185,9 +185,9 @@ class App extends React.Component {
         }
         return (
             <Router>
+                <Flash/>
                 <div className="app-container">
                     {currentUser && <div>
-                        <Flash/>
                         <Header currentUser={currentUser} config={config}/>
                         {impersonator &&
                         <Impersonating impersonator={impersonator} currentUser={currentUser}/>}
