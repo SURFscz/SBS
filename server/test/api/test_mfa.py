@@ -25,7 +25,7 @@ class TestMfa(AbstractTest):
 
         res = self.post("/api/mfa/verify2fa", {"totp": totp.now()}, with_basic_auth=False)
         self.assertFalse(res["in_proxy_flow"])
-        self.assertEqual("http://127.0.0.1:3000", res["location"])
+        self.assertEqual("http://localhost:3000", res["location"])
 
         # Coverage where there is already a second_factor_auth
         self.post("/api/mfa/verify2fa", {"totp": totp.now()}, with_basic_auth=False)
@@ -51,7 +51,7 @@ class TestMfa(AbstractTest):
         access_token = self.sign_jwt({"sub": "urn:mary", "kid": "test"})
         res = self.get("/api/mfa/sfo", query_data={"access_token": access_token}, response_status_code=302,
                        with_basic_auth=False)
-        self.assertEqual("http://127.0.0.1:3000/2fa", res.headers.get("Location"))
+        self.assertEqual("http://localhost:3000/2fa", res.headers.get("Location"))
 
         res = self.get("/api/mfa/get2fa")
         secret = res["secret"]

@@ -77,8 +77,7 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
                      f" as the service is not connected to any active collaborations")
         return not_authorized_func(service.name, COLLABORATION_NOT_ACTIVE)
 
-    now = datetime.now()
-    if all(m.expiry_date and m.expiry_date < now for m in memberships) and no_free_ride:
+    if all(m.is_expired() for m in memberships) and no_free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
                      f" as none of the collaboration memberships are active")
         return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)

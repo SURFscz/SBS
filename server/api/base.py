@@ -217,17 +217,25 @@ def introspect():
     if user_token.created_at < expiry_date:
         return {"status": "token-expired", "active": False}, 200
 
-    user_token.last_used_date = current_time
-    db.session.merge(user_token)
-
     user = user_token.user
-    epoch = int(current_time.timestamp())
+    if user.suspended:
+        return {"status": "user-suspended", "active": False}, 200
+
     connected_collaborations = []
+    memberships = []
     for cm in user.collaboration_memberships:
         connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
         if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
             connected_collaborations.append(cm.collaboration)
+            memberships.append(cm)
 
+    if not connected_collaborations or all(m.is_expired() for m in memberships):
+        return {"status": "token-not-connected", "active": False}, 200
+
+    user_token.last_used_date = current_time
+    db.session.merge(user_token)
+
+    epoch = int(current_time.timestamp())
     entitlements = user_memberships(user, connected_collaborations)
     result = {
         "active": True,
