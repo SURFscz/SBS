@@ -95,6 +95,7 @@ export function me(config) {
     if (config.local && true) {
         let sub = "urn:service_admin";
         sub = "urn:john";
+        // sub = "urn:sarah"
         //Need to mock a login
         return postPutJson("/api/mock", {sub, "name": "Mock User", "email": "john@example.com"}, "PUT")
             .then(() => fetchJson("/api/users/me", {}, {}, false));
@@ -195,6 +196,10 @@ export function serviceAbbreviationExists(abbreviation, existingService = null) 
 
 export function serviceById(id) {
     return fetchJson(`/api/services/${id}`, {}, {}, false);
+}
+
+export function serviceByUuid4(uuid4) {
+    return fetchJson(`/api/services/find_by_uuid4?uuid4=${encodeURIComponent(uuid4)}`, {}, {}, false);
 }
 
 export function serviceByEntityId(entityid) {

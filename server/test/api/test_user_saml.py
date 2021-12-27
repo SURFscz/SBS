@@ -169,5 +169,5 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id})
         self.assertEqual(res["status"]["result"], "unauthorized")
 
-        parameters = urlencode({"service_id": network_service.id, "service_name": network_service.name})
+        parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name})
         self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/service-aup?{parameters}")

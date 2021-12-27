@@ -1365,13 +1365,19 @@ I18n.translations.nl = {
             agreeWithTerms: "Ik verklaar hierbij dat ik deze voorwaarden heb gelezen en dat ik ze accepteer",
         },
         service: {
-            title: "Voorwaarden van dienst {{name}}",
-            info: "Dienst <strong>{{name}}</strong> heeft een acceptable use policy. Je moet deze accepteren om gebruik te kunnen maken van deze dienst.",
-            noPrivacyPolicy: "Geen privacy policy",
-            noAup: "Geen AUP",
+            title: "Bekijk de informatie om verder te gaan",
+            info: "Je staat op het punt om in te loggen op <strong>{{name}}</strong>. Voordat je verder kunt gaan, moet je het beleid voor acceptabel gebruik (AUP) en het privacybeleid van de service lezen. Bevestig hieronder of je ze accepteert.",
+            noPrivacyPolicy: "Geen aanvullend privacybeleid verstrekt",
+            noAup: "Geen aanvullend AUP verstrekt",
             agreeWithTerms: "Ik verklaar dat ik deze voorwaarden heb gelezen en accepteer",
             firstLogin: "Login. Daarna kom je hier terug om de voorwaarden van {{name}} te bekijken.",
             login: "Login",
+            proceed: "Ga naar {{name}}",
+            multipleCollaborations: "Deze dienst wordt gebruikt binnen meerdere samenwerkingen waarvan je lid bent.",
+            purposeOf: "Doel van <strong>{{name}}</strong>",
+            informationService: "Informatie over de dienst",
+            contact: "Contact",
+            organisationAccess: "Je hebt toegang tot deze service omdat deze door de beheerders van de organisatie beschikbaar is gesteld aan iedereen in je organisatie."
         }
     },
     collaborationRequest: {

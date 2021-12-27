@@ -1365,13 +1365,19 @@ I18n.translations.en = {
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
         },
         service: {
-            title: "Service {{name}} policies",
-            info: "Service <strong>{{name}}</strong> has an acceptable use policy. You need to accept this AUP to be able to proceed to this service.",
-            noPrivacyPolicy: "No privacy policy",
-            noAup: "No AUP",
+            title: "Review the information in order to continue",
+            info: "You are about to login to <strong>{{name}}</strong>. Before you can continue you must review the acceptable use policy (AUP) and privacy policy of the service. Confirm below whether you accept them.",
+            noPrivacyPolicy: "No additional privacy policy provided",
+            noAup: "No additional AUP provided",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
             firstLogin: "Proceed to login and afterwards you'll return here to view the policies of {{name}}",
-            login: "Login"
+            login: "Login",
+            proceed: "Proceed to {{name}}",
+            multipleCollaborations: "This service is used within multiple collaborations you are a member of.",
+            purposeOf: "Purpose of <strong>{{name}}</strong>",
+            informationService: "Information about the service",
+            contact: "Contact",
+            organisationAccess: "You can access this service because it has been made available to everyone in your organisation by the organisation administrators."
         }
     },
     collaborationRequest: {

@@ -8,6 +8,7 @@ from flask import Blueprint, request as current_request, g as request_context, j
 from passlib.hash import sha512_crypt
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
+from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
@@ -170,6 +171,30 @@ def service_by_entity_id():
                .options(selectinload(Service.allowed_organisations)) \
                .filter(Service.entity_id == entity_id) \
                .one(), 200
+
+
+@service_api.route("/find_by_uuid4", strict_slashes=False)
+@json_endpoint
+def service_by_uuid4():
+    uuid4 = urllib.parse.unquote(query_param("uuid4"))
+    user = User.query.get(current_user_id())
+    service = Service.query.options(selectinload(Service.allowed_organisations)).filter(Service.uuid4 == uuid4).one()
+
+    if not is_application_admin() and not user_service(service.id):
+        raise Forbidden()
+
+    service_emails = {}
+    if service.contact_email:
+        service_emails[service.id] = [service.contact_email]
+    else:
+        service_emails[service.id] = [membership.user.email for membership in service.service_memberships]
+
+    collaborations = []
+    for cm in user.collaboration_memberships:
+        if service.id in [s.id for s in cm.collaboration.services]:
+            collaborations.append(cm.collaboration)
+
+    return {"service": service, "collaborations": collaborations, "service_emails": service_emails}, 200
 
 
 @service_api.route("/<service_id>", strict_slashes=False)
