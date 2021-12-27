@@ -150,7 +150,7 @@ def proxy_authz():
         base_url = current_app.app_config.base_url
         if status == AUP_NOT_AGREED:
             # Internal contract, in case of AUP_NOT_AGREED we get the Service instance returned
-            parameters = urlencode({"service_id": service_name.id, "service_name": service_name.name})
+            parameters = urlencode({"service_id": service_name.uuid4, "service_name": service_name.name})
             redirect_url = f"{base_url}/service-aup?{parameters}"
         else:
             parameters = urlencode({"service_name": service_name, "error_status": status})
