@@ -881,6 +881,8 @@ I18n.translations.en = {
             urlTooltip: "The URL of the LDAP server",
             username: "Bind dn",
             usernameTooltip: "This is the bind dn used to authenticate to the LDAP server",
+            basedn: "Base dn",
+            basednTooltip: "This is the base dn of the LDAP server",
         },
         aup: {
             title: "Reset AUP",

@@ -7,7 +7,7 @@ from werkzeug.exceptions import BadRequest
 from server.api.base import json_endpoint
 from server.api.collaborations_services import connect_service_collaboration
 from server.auth.security import confirm_collaboration_admin, current_user_id, current_user_uid, current_user_name, \
-    confirm_write_access, confirm_collaboration_member, generate_token
+    confirm_write_access, confirm_collaboration_member, generate_token, is_service_admin
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
 from server.db.models import delete
 from server.mail import mail_service_connection_request, mail_accepted_declined_service_connection_request
@@ -162,7 +162,7 @@ def resend_service_connection_request(service_connection_request_id):
 @service_connection_request_api.route("/all/<service_id>", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def all_service_request_connections_by_service(service_id):
-    confirm_write_access()
+    confirm_write_access(service_id, override_func=is_service_admin)
     return ServiceConnectionRequest.query \
                .join(ServiceConnectionRequest.collaboration) \
                .join(ServiceConnectionRequest.requester) \

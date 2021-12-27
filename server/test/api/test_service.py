@@ -5,7 +5,7 @@ from server.db.domain import Service, Organisation, Collaboration, ServiceInvita
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name, \
     service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name, service_storage_name, \
-    service_cloud_name
+    service_cloud_name, service_storage_entity_id
 
 
 class TestService(AbstractTest):
@@ -120,6 +120,7 @@ class TestService(AbstractTest):
         service = self._find_by_name(service_storage_name)
         service["white_listed"] = False
         service["non_member_users_access_allowed"] = True
+        service["entity_id"] = "https://changed"
 
         self.login("urn:service_admin")
         service = self.put("/api/services", body=service, with_basic_auth=False)
@@ -128,6 +129,7 @@ class TestService(AbstractTest):
 
         self.assertEqual(True, service.white_listed)
         self.assertEqual(False, service.non_member_users_access_allowed)
+        self.assertEqual(service_storage_entity_id, service.entity_id)
 
     def test_service_delete(self):
         pre_count = Service.query.count()

@@ -72,7 +72,7 @@ export default class Collaborations extends React.PureComponent {
         const {collaborations} = standalone ? this.state : this.props;
         const {
             modelName = "collaborations", organisation, mayCreate = true, showOrigin = false,
-            showExpiryDate = false, showLastActivityDate = false
+            showExpiryDate = false, showLastActivityDate = false, userServiceAdmin = false
         } = this.props;
 
         if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
@@ -92,8 +92,8 @@ export default class Collaborations extends React.PureComponent {
             {
                 key: "name",
                 header: I18n.t("models.collaborations.name"),
-                mapper: collaboration => <a href="/"
-                                            onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
+                mapper: collaboration => userServiceAdmin ? <span>{collaboration.name}</span> : <a href="/"
+                                                                                                   onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
             },
             {
                 key: "organisation__name",
@@ -110,6 +110,14 @@ export default class Collaborations extends React.PureComponent {
                         <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
                 }
             }];
+        if (modelName === "serviceCollaborations") {
+            columns.push({
+                key: "short_name",
+                header: I18n.t("organisation.shortName"),
+                mapper: collaboration =>
+                    <span>{`${collaboration.organisation.short_name}:${collaboration.short_name}`}</span>,
+            });
+        }
         if (showExpiryDate) {
             columns.push({
                 key: "expiry_date",
@@ -174,7 +182,7 @@ export default class Collaborations extends React.PureComponent {
                       searchAttributes={["name"]}
                       defaultSort="name"
                       hideTitle={true}
-                      rowLinkMapper={() => this.openCollaboration}
+                      rowLinkMapper={userServiceAdmin ? null : () => this.openCollaboration}
                       columns={allColumns}
                       showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
                       newEntityPath={`/new-collaboration${organisationQueryParam}`}
