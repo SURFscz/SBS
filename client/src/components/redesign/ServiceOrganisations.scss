@@ -13,12 +13,16 @@
                 }
 
                 &.name {
-                    width: 40%;
+                    width: 35%;
                     padding-left: 15px;
                 }
 
+                &.short_name {
+                    width: 10%;
+                }
+
                 &.role {
-                    width: 25%;
+                    width: 20%;
                     padding-left: 15px;
                 }
 

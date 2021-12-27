@@ -74,7 +74,8 @@ class ServiceDetail extends React.Component {
 
         } else if (params.id) {
             const {user} = this.props;
-            if (user.admin) {
+            const userServiceAdmin = isUserServiceAdmin(user);
+            if (user.admin || userServiceAdmin) {
                 Promise.all([serviceById(params.id), searchOrganisations("*"),
                     allServiceConnectionRequests(params.id)])
                     .then(res => {
@@ -82,11 +83,13 @@ class ServiceDetail extends React.Component {
                         const organisations = res[1];
                         const serviceConnectionRequests = res[2];
                         const tabs = [
-                            this.getOrganisationsTab(service, organisations),
-                            this.getCollaborationsTab(service),
+                            this.getOrganisationsTab(service, organisations, userServiceAdmin),
+                            this.getCollaborationsTab(service, userServiceAdmin),
                             this.getAdminsTab(service),
-                            this.getServiceGroupsTab(service)
                         ];
+                        if (user.admin) {
+                            tabs.push(this.getServiceGroupsTab(service))
+                        }
                         if (serviceConnectionRequests.length > 0) {
                             tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
                         }
@@ -95,7 +98,7 @@ class ServiceDetail extends React.Component {
             } else {
                 serviceById(params.id)
                     .then(res => {
-                        const tabs = isUserServiceAdmin(user) ? [this.getAdminsTab(res)] : [];
+                        const tabs = [];
                         this.afterFetch(params, res, [], [], tabs);
                     }).catch(e => this.props.history.push("/404"));
             }
@@ -178,7 +181,6 @@ class ServiceDetail extends React.Component {
         });
     }
 
-
     doAcceptInvitation = () => {
         const {invitation, isInvitation} = this.state;
         if (isInvitation) {
@@ -208,15 +210,20 @@ class ServiceDetail extends React.Component {
         const params = this.props.match.params;
         const {organisations} = this.state;
         this.setState({loading: true});
+        const {user} = this.props;
+        const userServiceAdmin = isUserServiceAdmin(user);
         Promise.all([serviceById(params.id), allServiceConnectionRequests(params.id)])
             .then(res => {
                 const service = res[0];
                 const serviceConnectionRequests = res[1];
                 const tabs = [
-                    this.getOrganisationsTab(service, organisations),
-                    this.getCollaborationsTab(service),
-                    this.getAdminsTab(service),
-                    this.getServiceGroupsTab(service)];
+                    this.getOrganisationsTab(service, organisations, userServiceAdmin),
+                    this.getCollaborationsTab(service, userServiceAdmin),
+                    this.getAdminsTab(service)
+                ];
+                if (user.admin) {
+                    tabs.push(this.getServiceGroupsTab(service))
+                }
                 if (serviceConnectionRequests.length > 0) {
                     tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
                 }
@@ -231,12 +238,12 @@ class ServiceDetail extends React.Component {
         });
     };
 
-    getOrganisationsTab = (service, organisations) => {
+    getOrganisationsTab = (service, organisations, userServiceAdmin) => {
         return (<div key="organisations" name="organisations"
                      label={I18n.t("home.tabs.serviceOrganisations", {count: organisations.length})}
                      icon={<OrganisationsIcon/>}>
             <ServiceOrganisations {...this.props} refresh={this.refresh} service={service}
-                                  organisations={organisations}/>
+                                  organisations={organisations} userServiceAdmin={userServiceAdmin}/>
         </div>)
     }
 
@@ -271,7 +278,7 @@ class ServiceDetail extends React.Component {
         </div>)
     }
 
-    getCollaborationsTab = service => {
+    getCollaborationsTab = (service, userServiceAdmin) => {
         const collaborations = service.collaborations;
         collaborations.forEach(coll => coll.fromCollaboration = true);
         const collFromOrganisations = service.service_organisation_collaborations;
@@ -284,6 +291,7 @@ class ServiceDetail extends React.Component {
                 <Collaborations mayCreate={false}
                                 showOrigin={true}
                                 collaborations={colls}
+                                userServiceAdmin={userServiceAdmin}
                                 modelName={"serviceCollaborations"}
                                 {...this.props} />
             </div>);

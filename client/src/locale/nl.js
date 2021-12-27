@@ -881,6 +881,8 @@ I18n.translations.nl = {
             urlTooltip: "De URL van de LDAP-server",
             username: "Bind dn",
             usernameTooltip: "Dit is de dn waarmee bij de LDAP-server moet worden geauthenticeerd",
+            basedn: "Base dn",
+            basednTooltip: "Dit is de base dn van de LDAP-server",
         },
         aup: {
             title: "Reset AUP",

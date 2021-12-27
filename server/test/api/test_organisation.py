@@ -17,6 +17,11 @@ class TestOrganisation(AbstractTest):
         res = self.get("/api/organisations/search", query_data={"q": "*"})
         self.assertTrue(len(res) > 0)
 
+    def test_search_allowed_by_service_admin(self):
+        self.login("urn:service_admin")
+        res = self.get("/api/organisations/search", query_data={"q": "*"}, with_basic_auth=False)
+        self.assertTrue(len(res) > 0)
+
     def test_search_not_allowed(self):
         self.get("/api/organisations/search", query_data={"q": "urba"}, with_basic_auth=False, response_status_code=401)
 

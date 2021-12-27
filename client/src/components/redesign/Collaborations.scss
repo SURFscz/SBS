@@ -110,3 +110,48 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
         }
     }
 }
+
+table.serviceCollaborations {
+
+    thead {
+        th {
+            @media (max-width: $compact-medium) {
+                &.role {
+                    display: none;
+                }
+            }
+
+            &.name {
+                width: 20%;
+                padding-left: 15px;
+            }
+
+            &.short_name {
+                width: 20%;
+            }
+
+            &.organisation__name {
+                width: 15%;
+            }
+
+            &.role {
+                width: 15%;
+                text-align: center;
+            }
+
+            &.fromCollaboration {
+                width: 10%;
+            }
+
+            &.collaboration_memberships_count {
+                width: 10%;
+                text-align: center;
+            }
+
+            &.invitations_count {
+                width: 10%;
+                text-align: center;
+            }
+        }
+    }
+}

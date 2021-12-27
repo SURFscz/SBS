@@ -318,10 +318,11 @@ def update_service():
     _token_validity_days(data)
 
     cleanse_short_name(data, "abbreviation")
+    service = Service.query.get(service_id)
     if not is_application_admin() and is_service_admin(service_id):
-        forbidden = ["white_listed", "non_member_users_access_allowed", "token_enabled", "token"]
+        forbidden = ["white_listed", "non_member_users_access_allowed", "token_enabled", "token", "entity_id"]
         for attr in [fb for fb in forbidden if fb in data]:
-            del data[attr]
+            data[attr] = getattr(service, attr)
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
     service.ip_networks

@@ -357,6 +357,7 @@ class Service extends React.Component {
         const serviceRequestUrlValid = !isEmpty(uri) && automatic_connection_allowed;
         const serviceRequestUrl = serviceRequestUrlValid ? `${config.base_url}/service-request?entityID=${encodeURIComponent(entity_id)}&redirectUri=${encodeURIComponent(uri)}` :
             I18n.t("service.service_requestError");
+        const ldapBindAccount = config.ldap_bind_account;
         return (
             <div className="service">
 
@@ -394,7 +395,7 @@ class Service extends React.Component {
                             toolTip={I18n.t("service.entity_idTooltip")}
                             error={alreadyExists.entity_id || (!initial && isEmpty(entity_id))}
                             copyClipBoard={true}
-                            disabled={!isAdmin && !isServiceAdmin}/>
+                            disabled={!isAdmin}/>
                 {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                     attribute: I18n.t("service.entity_id").toLowerCase(),
                     value: entity_id
@@ -557,11 +558,17 @@ class Service extends React.Component {
                                 toolTip={I18n.t("service.ldap.urlTooltip")}
                                 copyClipBoard={true}
                                 disabled={true}/>
-                    <InputField value={config.ldap_bind_account.replace("entity_id", entity_id)}
+                    <InputField value={ldapBindAccount.replace("entity_id", entity_id)}
                                 name={I18n.t("service.ldap.username")}
                                 toolTip={I18n.t("service.ldap.usernameTooltip")}
                                 copyClipBoard={true}
                                 disabled={true}/>
+                    <InputField
+                        value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", entity_id)}
+                        name={I18n.t("service.ldap.basedn")}
+                        toolTip={I18n.t("service.ldap.basednTooltip")}
+                        copyClipBoard={true}
+                        disabled={true}/>
                 </div>
                 <div className="compliance">
                     <h1 className="section-separator first">{I18n.t("service.compliancy")}</h1>

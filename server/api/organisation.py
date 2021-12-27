@@ -9,7 +9,7 @@ from sqlalchemy.orm import selectinload
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_organisation_admin, generate_token
+    confirm_organisation_admin, generate_token, is_service_admin
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
@@ -73,12 +73,12 @@ def organisation_all():
 @organisation_api.route("/search", strict_slashes=False)
 @json_endpoint
 def organisation_search():
-    confirm_write_access()
+    confirm_write_access(override_func=is_service_admin)
 
     res = []
     q = query_param("q")
     if q and len(q):
-        base_query = "SELECT id, name, description, category, logo FROM organisations "
+        base_query = "SELECT id, name, description, category, logo, short_name FROM organisations "
         not_wild_card = "*" not in q
         if not_wild_card:
             q = replace_full_text_search_boolean_mode_chars(q)
@@ -89,8 +89,8 @@ def organisation_search():
             sql = sql.bindparams(bindparam("q", type_=String))
         result_set = db.engine.execute(sql, {"q": f"{q}*"}) if not_wild_card else db.engine.execute(sql)
 
-        res = [{"id": row[0], "name": row[1], "description": row[2], "category": row[3], "logo": row[4]} for row in
-               result_set]
+        res = [{"id": row[0], "name": row[1], "description": row[2], "category": row[3], "logo": row[4],
+                "short_name": row[5]} for row in result_set]
     return res, 200
 
 
