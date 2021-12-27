@@ -257,7 +257,7 @@ class TestService(AbstractTest):
     def test_service_by_uuid4(self):
         cloud = self.find_entity_by_name(Service, service_cloud_name)
         self.login("urn:peter")
-        res = self.get("/api/services/find_by_uuid4",query_data={"uuid4": cloud.uuid4}, with_basic_auth=False)
+        res = self.get("/api/services/find_by_uuid4", query_data={"uuid4": cloud.uuid4}, with_basic_auth=False)
 
         self.assertEqual(1, len(res["collaborations"]))
         self.assertEqual(cloud.name, res["service"]["name"])
