@@ -51,7 +51,7 @@ class OrganisationDetail extends React.Component {
         const params = this.props.match.params;
         if (params.hash) {
             organisationInvitationByHash(params.hash).then(res => {
-                const {config} = this.props;
+                const {config, user} = this.props;
                 this.setState({
                     invitation: res,
                     organisation: res.organisation,
@@ -61,7 +61,7 @@ class OrganisationDetail extends React.Component {
                     firstTime: true,
                     confirmationDialogOpen: false,
                     isInvitation: true,
-                    tabs: this.getTabs(res.organisation, config, true)
+                    tabs: this.getTabs(res.organisation, config, true, user)
                 });
             }).catch(() => {
                 this.props.history.push("/404")
@@ -82,7 +82,7 @@ class OrganisationDetail extends React.Component {
                         .some(member => member.role === "manager" && member.user_id === user.id);
 
                     const tab = params.tab || this.state.tab;
-                    const tabs = this.getTabs(json, config, false);
+                    const tabs = this.getTabs(json, config, false, user);
                     AppStore.update(s => {
                         s.breadcrumb.paths = [
                             {path: "/", value: I18n.t("breadcrumb.home")},
@@ -114,7 +114,7 @@ class OrganisationDetail extends React.Component {
         this.setState({firstTime: true});
     }
 
-    getTabs = (organisation, config, isInvite) => {
+    getTabs = (organisation, config, isInvite, user) => {
         const tabs = isInvite ? [
             this.getCollaborationsTab(organisation),
         ] : [
@@ -122,7 +122,7 @@ class OrganisationDetail extends React.Component {
             this.getCollaborationRequestsTab(organisation),
             this.getOrganisationAdminsTab(organisation),
             this.getServicesTab(organisation),
-            config.api_keys_enabled ? this.getAPIKeysTab(organisation) : null
+            config.api_keys_enabled ? this.getAPIKeysTab(organisation, user) : null
         ];
         return tabs.filter(tab => tab !== null);
     }
@@ -147,11 +147,11 @@ class OrganisationDetail extends React.Component {
         </div>);
     }
 
-    getAPIKeysTab = organisation => {
+    getAPIKeysTab = (organisation, user) => {
         return (<div key="apikeys" name="apikeys"
                      label={I18n.t("home.tabs.apikeys", {count: (organisation.api_keys || []).length})}
                      icon={<ApiKeysIcon/>}>
-            <ApiKeys {...this.props} organisation={organisation}
+            <ApiKeys {...this.props} organisation={organisation} user={user}
                      refresh={callback => this.componentDidMount(callback)}/>
         </div>);
     }

@@ -14,6 +14,7 @@ import I18n from "i18n-js";
 import Tabs from "../components/Tabs";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
+import {ReactComponent as RefreshIcon} from "../icons/common-file-text-refresh.svg";
 import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
@@ -369,7 +370,7 @@ class ServiceDetail extends React.Component {
                 }
             });
             actions.push({
-                icon: "sync",
+                svg: RefreshIcon,
                 name: I18n.t("service.aup.title"),
                 perform: () => {
                     this.setState({

@@ -13,6 +13,7 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import ApiKeysExplanation from "../explanations/ApiKeys";
 import {stopEvent} from "../../utils/Utils";
 import SpinnerField from "./SpinnerField";
+import {isUserAllowed, ROLES} from "../../utils/UserRole";
 
 class ApiKeys extends React.Component {
 
@@ -130,7 +131,7 @@ class ApiKeys extends React.Component {
         if (loading) {
             return <SpinnerField/>
         }
-        const {organisation} = this.props;
+        const {organisation, user} = this.props;
         if (createNewApiKey) {
             return this.renderNewApiKeyForm();
         }
@@ -165,7 +166,7 @@ class ApiKeys extends React.Component {
                           defaultSort="description"
                           columns={columns}
                           loading={false}
-                          showNew={true}
+                          showNew={isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id)}
                           hideTitle={true}
                           newEntityFunc={this.fetchNewApiValue}
                           explain={<ApiKeysExplanation/>}
