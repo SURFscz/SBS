@@ -45,7 +45,7 @@ def auto_provision_all_members_and_invites(group: Group):
     }, True)
 
     ag_invitation_identifiers = [i.id for i in group.invitations]
-    c_invitation_identifiers = [i.id for i in group.collaboration.invitations]
+    c_invitation_identifiers = [i.id for i in group.collaboration.invitations if i.status == "open"]
     missing_invitations = list(filter(lambda i: i not in ag_invitation_identifiers, c_invitation_identifiers))
     do_add_group_invitations({
         "group_id": group.id,

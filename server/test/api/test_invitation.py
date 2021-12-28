@@ -5,7 +5,7 @@ from server.db.domain import Invitation, CollaborationMembership, User, Collabor
     Organisation, ServiceAup
 from server.test.abstract_test import AbstractTest
 from server.test.seed import invitation_hash_no_way, ai_computing_name, invitation_hash_curious, invitation_hash_uva, \
-    uva_research_name, uuc_secret, uuc_name
+    uva_research_name, uuc_secret, uuc_name, ai_computing_short_name
 
 
 class TestInvitation(AbstractTest):
@@ -90,39 +90,34 @@ class TestInvitation(AbstractTest):
 
     def test_resend_bulk(self):
         invitation_identifiers = []
-        for invitation in Invitation.query.all():
+        for invitation in Invitation.query.filter(Invitation.status == "open").all():
             invitation_identifiers.append({"id": invitation.id})
         mail = self.app.mail
         with mail.record_messages() as outbox:
             self.put("/api/invitations/resend_bulk", body=invitation_identifiers)
-            self.assertEqual(3, len(outbox))
+            self.assertEqual(2, len(outbox))
 
     def test_resend_not_found(self):
         self.put("/api/invitations/resend", body={"id": "nope"}, response_status_code=404)
 
-    @staticmethod
-    def _delete_coll_memberships(collaboration_name):
-        memberships = CollaborationMembership.query \
-            .join(Collaboration) \
-            .filter(Collaboration.name == collaboration_name) \
-            .all()
-        for membership in memberships:
-            db.session.delete(membership)
+    def _delete_coll_memberships(self, collaboration_name):
+        collaboration = self.find_entity_by_name(Collaboration, collaboration_name)
+        collaboration.collaboration_memberships.clear()
+        db.session.merge(collaboration)
         db.session.commit()
 
     def _do_test_collaboration_invites_api(self):
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
         mail = self.app.mail
         with mail.record_messages() as outbox:
             res = self.put("/api/invitations/v1/collaboration_invites",
                            body={
-                               "collaboration_id": collaboration_id,
+                               "short_name": ai_computing_short_name,
                                "invites": ["q@demo.com", "x@demo.com", "invalid_email"]
                            },
                            headers={"Authorization": f"Bearer {uuc_secret}"},
                            with_basic_auth=False)
             self.assertEqual(2, len(outbox))
-            self.assertListEqual(["q@demo.com", "x@demo.com"], res)
+            self.assertListEqual(["q@demo.com", "x@demo.com"], [inv["email"] for inv in res])
 
     def test_collaboration_invites_api(self):
         self._do_test_collaboration_invites_api()
@@ -134,23 +129,20 @@ class TestInvitation(AbstractTest):
 
     def test_collaboration_invites_api_super_user(self):
         self._delete_coll_memberships(ai_computing_name)
-        memberships = OrganisationMembership.query \
-            .join(Organisation) \
-            .filter(Organisation.name == uuc_name) \
-            .all()
-        for membership in memberships:
-            db.session.delete(membership)
+        organisation = self.find_entity_by_name(Organisation, uuc_name)
+        organisation.organisation_memberships.clear()
+        db.session.merge(organisation)
         db.session.commit()
 
         self._do_test_collaboration_invites_api()
 
-    def test_collaboration_invote_wrong_collaboration(self):
+    def test_collaboration_invite_wrong_collaboration(self):
         res = self.put("/api/invitations/v1/collaboration_invites",
                        body={
-                           "collaboration_id": 999,
+                           "short_name": "nope",
                            "invites": ["q@demo.com", "x@demo.com", "invalid_email"]
                        },
                        headers={"Authorization": f"Bearer {uuc_secret}"},
                        response_status_code=403,
                        with_basic_auth=False)
-        self.assertEqual("API error: collaboration 999 is not part of organisation UUC", res["message"])
+        self.assertEqual("Collaboration nope is not part of organisation UUC", res["message"])

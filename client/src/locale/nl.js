@@ -1376,6 +1376,7 @@ I18n.translations.nl = {
             multipleCollaborations: "Deze dienst wordt gebruikt binnen meerdere samenwerkingen waarvan je lid bent.",
             purposeOf: "Doel van <strong>{{name}}</strong>",
             informationService: "Informatie over de dienst",
+            informationServiceMultiple: "Informatie over de diensten",
             contact: "Contact",
             organisationAccess: "Je hebt toegang tot deze service omdat deze door de beheerders van de organisatie beschikbaar is gesteld aan iedereen in je organisatie.",
             missing: {

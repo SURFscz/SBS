@@ -1376,6 +1376,7 @@ I18n.translations.en = {
             multipleCollaborations: "This service is used within multiple collaborations you are a member of.",
             purposeOf: "Purpose of <strong>{{name}}</strong>",
             informationService: "Information about the service",
+            informationServiceMultiple: "Information about the services",
             contact: "Contact",
             organisationAccess: "You can access this service because it has been made available to everyone in your organisation by the organisation administrators.",
             missing: {

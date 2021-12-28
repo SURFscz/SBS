@@ -53,6 +53,7 @@ class TestUser(AbstractTest):
         self.assertEqual(1, len(res["join_requests"]))
         self.assertEqual(2, len(res["services_without_aup"]))
         self.assertEqual(2, len(res["service_emails"]))
+        self.assertEqual(1, len(res["service_collaborations"]))
 
     def test_me_after_delete(self):
         self.login("urn:jane")

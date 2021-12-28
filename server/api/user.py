@@ -60,6 +60,15 @@ def _add_service_aups(user: dict, user_from_db: User):
 
     user["services_without_aup"] = jsonify(unique_missing_services).json
     user["service_emails"] = jsonify(service_emails).json
+    if unique_missing_services:
+        collaborations = []
+        for cm in user_from_db.collaboration_memberships:
+            for service in unique_missing_services:
+                collaboration = cm.collaboration
+                if service.id in [s.id for s in collaboration.services]:
+                    collaborations.append(
+                        {"id": collaboration.id, "name": collaboration.name, "description": collaboration.description})
+        user["service_collaborations"] = jsonify(list({c["id"]: c for c in collaborations}.values())).json
 
 
 def _user_query():
