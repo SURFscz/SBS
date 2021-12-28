@@ -17,23 +17,34 @@ def add_user_aups(collaboration, user_id):
             db.session.merge(ServiceAup(aup_url=service.accepted_user_policy, user_id=user_id, service_id=service.id))
 
 
-def has_agreed_with(user, service):
-    return not service.accepted_user_policy or ServiceAup.query \
-        .filter(ServiceAup.service_id == service.id) \
-        .filter(ServiceAup.user_id == user.id) \
-        .count() > 0
+def has_agreed_with(user: User, service: Service):
+    return bool(not service.accepted_user_policy or [aup for aup in user.service_aups if aup.service_id == service.id])
+
+
+def do_create_service_aup(service_id):
+    service = Service.query.get(int(service_id))
+    user_id = current_user_id()
+    user = User.query.get(user_id)
+    if not has_agreed_with(user, service):
+        db.session.merge(ServiceAup(aup_url=service.accepted_user_policy, user_id=user_id, service_id=service_id))
 
 
 @service_aups_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def create_service_aup():
     data = current_request.get_json()
-    service_id = int(data["service_id"])
-    service = Service.query.get(service_id)
-    user_id = current_user_id()
-    user = User.query.get(user_id)
-    if not has_agreed_with(user, service):
-        db.session.merge(ServiceAup(aup_url=service.accepted_user_policy, user_id=user_id, service_id=service_id))
+    service_id = data["service_id"]
+    do_create_service_aup(service_id)
+    return {}, 201
+
+
+@service_aups_api.route("/bulk", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def create_bulk_service_aup():
+    data = current_request.get_json()
+    service_identifiers = data["service_identifiers"]
+    for service_id in service_identifiers:
+        do_create_service_aup(service_id)
     return {}, 201
 
 

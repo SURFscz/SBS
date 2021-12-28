@@ -46,11 +46,13 @@ class TestUser(AbstractTest):
         res = self.client.get("/api/users/me")
         self.assertEqual(True, res.json["successfully_activated"])
 
-    def test_me_user_with_collaboration_requests(self):
+    def test_me_user_with_additional_data(self):
         self.login("urn:peter")
         res = self.get("/api/users/me")
         self.assertEqual(2, len(res["collaboration_requests"]))
         self.assertEqual(1, len(res["join_requests"]))
+        self.assertEqual(2, len(res["services_without_aup"]))
+        self.assertEqual(2, len(res["service_emails"]))
 
     def test_me_after_delete(self):
         self.login("urn:jane")

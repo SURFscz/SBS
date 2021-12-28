@@ -54,3 +54,12 @@ class TestServiceAup(AbstractTest):
         self.post("/api/service_aups", body={"service_id": service_aups[0].service.id})
         service_aups = self._service_aups_by_user("urn:admin")
         self.assertEqual(2, len(service_aups))
+
+    def test_create_service_aup_bulk(self):
+        self.login("urn:peter")
+        res = self.get("/api/users/me")
+        self.assertEqual(2, len(res["services_without_aup"]))
+        service_identifiers = [s["id"] for s in res["services_without_aup"]]
+        self.post("/api/service_aups/bulk", body={"service_identifiers": service_identifiers})
+        res = self.get("/api/users/me")
+        self.assertEqual(0, len(res["services_without_aup"]))

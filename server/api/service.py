@@ -178,7 +178,7 @@ def service_by_entity_id():
 def service_by_uuid4():
     uuid4 = urllib.parse.unquote(query_param("uuid4"))
     user = User.query.get(current_user_id())
-    service = Service.query.options(selectinload(Service.allowed_organisations)).filter(Service.uuid4 == uuid4).one()
+    service = Service.query.filter(Service.uuid4 == uuid4).one()
 
     if not is_application_admin() and not user_service(service.id):
         raise Forbidden()
