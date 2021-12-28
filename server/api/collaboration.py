@@ -227,7 +227,11 @@ def collaboration_by_id(collaboration_id):
                  .selectinload(ServiceConnectionRequest.requester)) \
         .filter(Collaboration.id == collaboration_id).one()
 
-    return collaboration, 200
+    collaboration_json = jsonify(collaboration).json
+    collaboration_json["invitations"] = [invitation for invitation in collaboration_json["invitations"] if
+                                         invitation["status"] == "open"]
+
+    return collaboration_json, 200
 
 
 @collaboration_api.route("/invites", methods=["PUT"], strict_slashes=False)
@@ -258,7 +262,7 @@ def collaboration_invites():
 
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
-                                collaboration=collaboration, user=user, groups=groups,
+                                collaboration=collaboration, user=user, groups=groups, status="open",
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 membership_expiry_date=membership_expiry_date, created_by=user.uid)
         invitation = db.session.merge(invitation)
@@ -374,8 +378,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration_id=collaboration.id, user=user, intended_role="admin",
-                                expiry_date=default_expiry_date(),
-                                created_by=user.uid)
+                                expiry_date=default_expiry_date(), status="open", created_by=user.uid)
         invitation = db.session.merge(invitation)
         mail_collaboration_invitation({
             "salutation": "Dear",

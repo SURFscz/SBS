@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 import datetime
 import re
+import uuid
 
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from sqlalchemy.orm import joinedload, selectinload
@@ -103,8 +104,15 @@ def collaboration_invites_api():
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
                                 collaboration_id=collaboration.id, user=user, intended_role=intended_role,
                                 expiry_date=expiry_date, membership_expiry_date=membership_expiry_date,
-                                created_by="system")
+                                created_by="system", external_identifier=str(uuid.uuid4()), status="open")
         invitation = db.session.merge(invitation)
+        invites_results.append({
+            "email": email,
+            "invitation_expiry_date": expiry_date,
+            "status": "open",
+            "invitation_id": invitation.external_identifier
+
+        })
         mail_collaboration_invitation({
             "salutation": "Dear",
             "invitation": invitation,
@@ -122,9 +130,16 @@ def invitations_accept():
     invitation = _invitation_query() \
         .filter(Invitation.hash == current_request.get_json()["hash"]) \
         .one()
+    if invitation.status != "open":
+        raise Conflict(f"The invitation has status {invitation.status}")
 
     if invitation.expiry_date and invitation.expiry_date < datetime.datetime.now():
-        delete(Invitation, invitation.id)
+        if invitation.external_identifier:
+            invitation.status = "expired"
+            db.session.merge(invitation)
+            db.session.commit()
+        else:
+            delete(Invitation, invitation.id)
         raise Conflict(f"The invitation has expired at {invitation.expiry_date}")
 
     collaboration = invitation.collaboration
@@ -142,7 +157,12 @@ def invitations_accept():
                                                        updated_by=invitation.user.uid)
     collaboration_membership = db.session.merge(collaboration_membership)
     # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
-    delete(Invitation, invitation.id)
+    if invitation.external_identifier:
+        invitation.status = "accepted"
+        db.session.merge(invitation)
+        db.session.commit()
+    else:
+        delete(Invitation, invitation.id)
 
     # ensure all authorisation group membership are added
     groups = invitation.groups + list(filter(lambda ag: ag.auto_provision_members, collaboration.groups))

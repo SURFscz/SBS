@@ -10,5 +10,5 @@ class DynamicExtendedJSONEncoder(JSONEncoder):
         if hasattr(o, "__json__"):
             return o.__json__()
         if isinstance(o, date):
-            return time.mktime(o.timetuple())
+            return int(time.mktime(o.timetuple()))
         return super(DynamicExtendedJSONEncoder, self).default(o)
