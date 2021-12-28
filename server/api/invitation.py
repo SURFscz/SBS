@@ -155,6 +155,9 @@ def invitations_accept():
                                                        expiry_date=invitation.membership_expiry_date,
                                                        created_by=invitation.user.uid,
                                                        updated_by=invitation.user.uid)
+    if invitation.external_identifier:
+        collaboration_membership.invitation_id = invitation.id
+
     collaboration_membership = db.session.merge(collaboration_membership)
     # We need the persistent identifier of the collaboration_membership which will be generated after the delete-commit
     if invitation.external_identifier:
@@ -210,3 +213,29 @@ def delete_invitation(invitation_id):
     invitation = Invitation.query.filter(Invitation.id == invitation_id).one()
     confirm_collaboration_admin(invitation.collaboration_id)
     return delete(Invitation, invitation_id)
+
+
+@invitations_api.route("/v1/<external_identifier>", strict_slashes=False)
+@json_endpoint
+def external_invitation(external_identifier):
+    confirm_external_api_call()
+    invitation = Invitation.query.filter(Invitation.external_identifier == external_identifier).one()
+    res = {
+        "status": "accepted",
+        "invitation": {
+            "identifier": invitation.external_identifier,
+            "email": invitation.invitee_email
+        }
+    }
+    if invitation.status == "accepted":
+        cm = CollaborationMembership.query.filter(CollaborationMembership.invitation_id == invitation.id).one()
+        res["user"] = {
+            "name": cm.user.name,
+            "mail": cm.user.email,
+            "username": cm.user.username,
+            "platform_id": cm.user.uid,
+            "status": "suspended" if cm.user.suspended else "active"
+        }
+    else:
+        res["invitation"]["expiry_date"] = invitation.expiry_date
+    return res, 200

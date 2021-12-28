@@ -178,3 +178,16 @@ class TestInvitation(AbstractTest):
                        response_status_code=403,
                        with_basic_auth=False)
         self.assertEqual("Collaboration nope is not part of organisation UUC", res["message"])
+
+    def test_collaboration_external_identifier(self):
+        invitation = Invitation.query.filter(Invitation.hash == invitation_hash_curious).first()
+        invitation.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=500)
+        invitation.external_identifier = str(uuid.uuid4())
+        db.session.merge(invitation)
+        db.session.commit()
+
+        self.login("urn:james")
+        self.put("/api/invitations/accept", headers={"Authorization": f"Bearer {uuc_secret}"}, with_basic_auth=False)
+        invitation = Invitation.query.filter(Invitation.hash == invitation_hash_curious).first()
+        self.assertEqual("expired", invitation.status)
+
