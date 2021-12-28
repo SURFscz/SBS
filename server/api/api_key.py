@@ -3,7 +3,8 @@
 from flask import Blueprint, request as current_request
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_organisation_admin_or_manager, hash_secret_key, generate_token
+from server.auth.security import hash_secret_key, generate_token, \
+    confirm_organisation_admin
 from server.db.domain import ApiKey
 from server.db.models import save, delete
 
@@ -20,7 +21,7 @@ def generate_key():
 @json_endpoint
 def save_api_key():
     data = current_request.get_json()
-    confirm_organisation_admin_or_manager(data["organisation_id"])
+    confirm_organisation_admin(data["organisation_id"])
     data = hash_secret_key(data)
     return save(ApiKey, custom_json=data)
 
@@ -29,5 +30,5 @@ def save_api_key():
 @json_endpoint
 def delete_api_key(api_key_id):
     organisation_id = ApiKey.query.get(api_key_id).organisation_id
-    confirm_organisation_admin_or_manager(organisation_id)
+    confirm_organisation_admin(organisation_id)
     return delete(ApiKey, api_key_id)

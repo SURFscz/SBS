@@ -149,8 +149,10 @@ class ApiKeys extends React.Component {
                 nonSortable: true,
                 key: "trash",
                 header: "",
-                mapper: apiKey => <span onClick={() => this.removeApiKey(apiKey)}>
-                    <FontAwesomeIcon icon="trash"/></span>
+                mapper: apiKey => isUserAllowed(ROLES.ORG_ADMIN, user, organisation.id) ?
+                    <span onClick={() => this.removeApiKey(apiKey)}>
+                    <FontAwesomeIcon icon="trash"/>
+                </span> : null
             },
         ]
         return (
