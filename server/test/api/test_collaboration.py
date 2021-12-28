@@ -10,7 +10,7 @@ from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
-    ai_computing_short_name, uuc_teachers_name
+    ai_computing_short_name, uuc_teachers_name, read_image
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -419,24 +419,53 @@ class TestCollaboration(AbstractTest):
                                         "description": "new_collaboration",
                                         "accepted_user_policy": "https://aup.org",
                                         "administrators": ["the@ex.org", "that@ex.org"],
-                                        "short_name": "new_short_name"
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True,
+                                        "logo": read_image("uuc.jpeg")
                                     }),
                                     content_type="application/json")
         self.assertEqual(201, response.status_code)
+
         collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
         self.assertEqual(0, len(collaboration.collaboration_memberships))
         self.assertIsNone(collaboration.accepted_user_policy)
+        self.assertIsNotNone(collaboration.logo)
 
         count = Invitation.query.filter(Invitation.collaboration_id == collaboration.id).count()
         self.assertEqual(2, count)
+
+    def test_api_call_without_logo(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                        "name": "new_collaboration",
+                                        "description": "new_collaboration",
+                                        "administrators": ["the@ex.org", "that@ex.org"],
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(201, response.status_code)
+
+        collaboration = self.find_entity_by_name(Collaboration, "new_collaboration")
+        self.assertIsNotNone(collaboration.logo)
 
     def test_api_call_existing_name(self):
         response = self.client.post("/api/collaborations/v1",
                                     headers={"Authorization": f"Bearer {uuc_secret}"},
                                     data=json.dumps({
                                         "name": ai_computing_name,
-                                        "administrators": ["the@ex.org"],
-                                        "short_name": "new_short_name"
+                                        "description": "new_collaboration",
+                                        "accepted_user_policy": "https://aup.org",
+                                        "administrators": ["the@ex.org", "that@ex.org"],
+                                        "short_name": "new_short_name",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True
                                     }),
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
@@ -450,7 +479,13 @@ class TestCollaboration(AbstractTest):
                                     data=json.dumps({
                                         "name": "new_collaboration",
                                         "administrators": ["the@ex.org"],
-                                        "short_name": f"1{ai_computing_short_name}"
+                                        "short_name": f"1{ai_computing_short_name}",
+                                        "description": "new_collaboration",
+                                        "accepted_user_policy": "https://aup.org",
+                                        "disable_join_requests": True,
+                                        "disclose_member_information": True,
+                                        "disclose_email_information": True
+
                                     }),
                                     content_type="application/json")
         self.assertEqual(400, response.status_code)
@@ -470,6 +505,18 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(403, response.status_code)
         data = response.json
         self.assertEqual(data["message"], "Not associated with an API key")
+
+    def test_api_call_missing_required_attributes(self):
+        response = self.client.post("/api/collaborations/v1",
+                                    headers={"Authorization": f"Bearer {uuc_secret}"},
+                                    data=json.dumps({
+                                    }),
+                                    content_type="application/json")
+        self.assertEqual(400, response.status_code)
+        data = response.json
+        self.assertEqual(data["message"], "Missing required attributes: ['name', 'description', 'short_name', "
+                                          "'disable_join_requests', 'disclose_member_information', "
+                                          "'disclose_email_information']")
 
     def test_collaborations_may_request_collaboration_true(self):
         self.login("urn:mary")
