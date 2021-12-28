@@ -43,6 +43,25 @@ def _add_counts(user: dict):
         user["total_users"] = User.query.count()
 
 
+def _add_service_aups(user: dict, user_from_db: User):
+    # Find all services available for this user and then see if there are missing ServiceAup's
+    services = []
+    for cm in user_from_db.collaboration_memberships:
+        services += [s for s in cm.collaboration.services] + [s for s in cm.collaboration.organisation.services]
+
+    service_identifiers = [aup.service_id for aup in user_from_db.service_aups]
+
+    missing_services = [s for s in services if s.id not in service_identifiers and s.accepted_user_policy]
+    unique_missing_services = list({s.id: s for s in missing_services}.values())
+
+    service_emails = {}
+    for s in unique_missing_services:
+        service_emails[s.id] = [s.contact_email] if s.contact_email else [m.user.email for m in s.service_memberships]
+
+    user["services_without_aup"] = jsonify(unique_missing_services).json
+    user["service_emails"] = jsonify(service_emails).json
+
+
 def _user_query():
     return User.query \
         .options(joinedload(User.organisation_memberships)
@@ -313,6 +332,7 @@ def me():
             db.session.merge(user_from_db)
             db.session.commit()
         _add_counts(user)
+        _add_service_aups(user, user_from_db)
         return user, 200
     else:
         return {"uid": "anonymous", "guest": True, "admin": False}, 200

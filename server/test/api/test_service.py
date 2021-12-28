@@ -5,7 +5,7 @@ from server.db.domain import Service, Organisation, Collaboration, ServiceInvita
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name, \
     service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name, service_storage_name, \
-    service_cloud_name, service_storage_entity_id
+    service_cloud_name, service_storage_entity_id, service_ssh_uva_name
 
 
 class TestService(AbstractTest):
@@ -262,3 +262,16 @@ class TestService(AbstractTest):
         self.assertEqual(1, len(res["collaborations"]))
         self.assertEqual(cloud.name, res["service"]["name"])
         self.assertEqual("james@example.org", res["service_emails"][str(cloud.id)][0])
+
+    def test_service_by_uuid4_contact_email(self):
+        wiki = self.find_entity_by_name(Service, service_wiki_name)
+        self.login("urn:peter")
+        res = self.get("/api/services/find_by_uuid4", query_data={"uuid4": wiki.uuid4}, with_basic_auth=False)
+
+        self.assertEqual("help@wiki.com", res["service_emails"][str(wiki.id)][0])
+
+    def test_service_by_uuid4_forbidden(self):
+        cloud = self.find_entity_by_name(Service, service_ssh_uva_name)
+        self.login("urn:peter")
+        self.get("/api/services/find_by_uuid4", query_data={"uuid4": cloud.uuid4}, with_basic_auth=False,
+                 response_status_code=403)
