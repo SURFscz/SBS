@@ -516,7 +516,7 @@ class TestCollaboration(AbstractTest):
         data = response.json
         self.assertEqual(data["message"], "Missing required attributes: ['name', 'description', 'short_name', "
                                           "'disable_join_requests', 'disclose_member_information', "
-                                          "'disclose_email_information']")
+                                          "'disclose_email_information', 'administrators']")
 
     def test_collaborations_may_request_collaboration_true(self):
         self.login("urn:mary")

@@ -337,7 +337,7 @@ def save_collaboration():
 def save_collaboration_api():
     data = current_request.get_json()
     required = ["name", "description", "short_name", "disable_join_requests", "disclose_member_information",
-                "disclose_email_information"]
+                "disclose_email_information", "administrators"]
     if "accepted_user_policy" in data:
         del data["accepted_user_policy"]
     if "external_api_organisation" in request_context:
