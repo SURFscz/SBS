@@ -77,14 +77,15 @@ def collaboration_invites_api():
     organisation = request_context.external_api_organisation
 
     data = current_request.get_json()
-    collaboration_id = int(data["collaboration_id"])
+    coll_short_name = data["short_name"]
 
-    if not any(coll.id == collaboration_id for coll in organisation.collaborations):
-        raise Forbidden(f"API error: collaboration {collaboration_id} is not part of organisation {organisation.name}")
+    collaborations = list(filter(lambda coll: coll.short_name == coll_short_name, organisation.collaborations))
+    if not collaborations:
+        raise Forbidden(f"Collaboration {coll_short_name} is not part of organisation {organisation.name}")
 
-    collaboration = Collaboration.query.get(collaboration_id)
-
+    collaboration = collaborations[0]
     collaboration_admins = list(filter(lambda cm: cm.role == "admin", collaboration.collaboration_memberships))
+
     if len(collaboration_admins) > 0:
         user = collaboration_admins[0].user
     elif len(organisation.organisation_memberships) > 0:
@@ -93,12 +94,16 @@ def collaboration_invites_api():
         user = User.query.filter(User.uid == current_app.app_config.admin_users[0].uid).one()
 
     message = data.get("message")
+    intended_role = data.get("intended_role", "member")
+    expiry_date = data.get("invitation_expiry_date", default_expiry_date())
+    membership_expiry_date = data.get("membership_expiry_date", None)
     invites = list(filter(lambda recipient: bool(email_re.match(recipient)), data["invites"]))
-
+    invites_results = []
     for email in invites:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=email,
-                                collaboration_id=collaboration.id, user=user, intended_role="member",
-                                expiry_date=default_expiry_date(), created_by="system")
+                                collaboration_id=collaboration.id, user=user, intended_role=intended_role,
+                                expiry_date=expiry_date, membership_expiry_date=membership_expiry_date,
+                                created_by="system")
         invitation = db.session.merge(invitation)
         mail_collaboration_invitation({
             "salutation": "Dear",
@@ -108,7 +113,7 @@ def collaboration_invites_api():
             "recipient": email
         }, collaboration, [email])
 
-    return invites, 201
+    return invites_results, 201
 
 
 @invitations_api.route("/accept", methods=["PUT"], strict_slashes=False)

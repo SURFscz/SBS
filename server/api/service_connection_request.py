@@ -6,8 +6,8 @@ from werkzeug.exceptions import BadRequest
 
 from server.api.base import json_endpoint
 from server.api.collaborations_services import connect_service_collaboration
-from server.auth.security import confirm_collaboration_admin, current_user_id, current_user_uid, current_user_name, \
-    confirm_write_access, confirm_collaboration_member, generate_token, is_service_admin
+from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
+    confirm_collaboration_member, generate_token, is_service_admin
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
 from server.db.models import delete
 from server.mail import mail_service_connection_request, mail_accepted_declined_service_connection_request
@@ -67,7 +67,7 @@ def _do_mail_request(collaboration, service, service_connection_request, is_admi
     if len(recipients) > 0:
         context = {"salutation": f"Dear {service.contact_email}",
                    "base_url": current_app.app_config.base_url,
-                   "requester": current_user_name(),
+                   "requester": user.name,
                    "service_connection_request": service_connection_request,
                    "service": service,
                    "collaboration": collaboration,
@@ -107,25 +107,29 @@ def request_service_connection():
     user = User.query.get(current_user_id())
     is_admin = collaboration.is_admin(user.id)
 
+    request_new_service_connection(collaboration, data.get("message"), is_admin, service, user)
+
+    return {}, 201
+
+
+def request_new_service_connection(collaboration, message, is_admin, service, user):
     existing_request = ServiceConnectionRequest.query \
         .filter(ServiceConnectionRequest.collaboration_id == collaboration.id) \
         .filter(ServiceConnectionRequest.service_id == service.id) \
         .all()
     if existing_request:
         raise BadRequest(f"outstanding_service_connection_request: {service.name} and {collaboration.name}")
-
-    user_uid = current_user_uid()
-    service_connection_request = ServiceConnectionRequest(message=data.get("message"), hash=generate_token(),
-                                                          requester_id=current_user_id(), service_id=service.id,
+    service_connection_request = ServiceConnectionRequest(message=message,
+                                                          hash=generate_token(),
+                                                          requester_id=user.id,
+                                                          service_id=service.id,
                                                           collaboration_id=collaboration.id,
                                                           is_member_request=not is_admin,
-                                                          created_by=user_uid, updated_by=user_uid)
+                                                          created_by=user.uid,
+                                                          updated_by=user.uid)
     db.session.merge(service_connection_request)
     db.session.commit()
-
     _do_mail_request(collaboration, service, service_connection_request, is_admin, user)
-
-    return {}, 201
 
 
 @service_connection_request_api.route("/find_by_hash/<hash>", strict_slashes=False)
