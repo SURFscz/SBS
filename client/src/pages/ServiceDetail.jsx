@@ -369,7 +369,7 @@ class ServiceDetail extends React.Component {
                 }
             });
             actions.push({
-                icon: "trash-restore",
+                icon: "sync",
                 name: I18n.t("service.aup.title"),
                 perform: () => {
                     this.setState({

@@ -1,6 +1,7 @@
 import React from "react";
 import {Redirect, Route} from "react-router-dom";
 import {login} from "../utils/Login";
+import {isEmpty} from "../utils/Utils";
 
 export function ProtectedRoute({currentUser, Component, redirectToLogin = true, ...res}) {
     if (!currentUser.guest) {
@@ -9,6 +10,9 @@ export function ProtectedRoute({currentUser, Component, redirectToLogin = true, 
         }
         if (!currentUser.second_factor_confirmed) {
             return <Redirect to="/2fa"/>;
+        }
+        if (!isEmpty(currentUser.services_without_aup)) {
+            return <Redirect to="/missing-service-aup"/>;
         }
         return <Route render={props => <Component user={currentUser} {...res} {...props}/>}/>;
     } else if (redirectToLogin) {

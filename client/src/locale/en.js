@@ -1377,7 +1377,11 @@ I18n.translations.en = {
             purposeOf: "Purpose of <strong>{{name}}</strong>",
             informationService: "Information about the service",
             contact: "Contact",
-            organisationAccess: "You can access this service because it has been made available to everyone in your organisation by the organisation administrators."
+            organisationAccess: "You can access this service because it has been made available to everyone in your organisation by the organisation administrators.",
+            missing: {
+                info: "This screen is shown again because the AUP below has changed. Please read it again and indicate below whether you accept.",
+                infoMultiple: "This screen is shown again because the AUPs below have changed. Please read them again and indicate below whether you accept."
+            }
         }
     },
     collaborationRequest: {

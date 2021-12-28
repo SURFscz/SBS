@@ -49,6 +49,7 @@ import RefreshRoute from "./RefreshRoute";
 import NewServiceInvitation from "./NewServiceInvitation";
 import ServiceAdminInvitation from "./ServiceAdminInvitation";
 import ServiceAup from "./ServiceAup";
+import MissingServiceAup from "./MissingServiceAup";
 
 addIcons();
 
@@ -402,7 +403,8 @@ class App extends React.Component {
                                    currentUser={currentUser}
                                    Component={Profile}
                                    config={config}
-                                   refreshUser={this.refreshUserMemberships} {...props}/>}/>
+                                   refreshUser={this.refreshUserMemberships}
+                                   {...props}/>}/>
 
                         {currentUser.admin && <Route exact path="/users/:id/:tab?"
                                                      render={props => <ProtectedRoute config={config}
@@ -426,6 +428,12 @@ class App extends React.Component {
                                    currentUser={currentUser}
                                    Component={ServiceAup}
                                    config={config}
+                                   {...props}/>}/>
+
+                        <Route path="/missing-service-aup"
+                               render={props => <MissingServiceAup
+                                   user={currentUser}
+                                   reloadMe={this.impersonate}
                                    {...props}/>}/>
 
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>
