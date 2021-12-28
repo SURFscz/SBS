@@ -60,6 +60,9 @@ class TestServiceAup(AbstractTest):
         res = self.get("/api/users/me")
         self.assertEqual(2, len(res["services_without_aup"]))
         service_identifiers = [s["id"] for s in res["services_without_aup"]]
-        self.post("/api/service_aups/bulk", body={"service_identifiers": service_identifiers})
+
+        res = self.post("/api/service_aups/bulk", body={"service_identifiers": service_identifiers})
+        self.assertEqual("http://localhost:3000", res["location"])
+
         res = self.get("/api/users/me")
         self.assertEqual(0, len(res["services_without_aup"]))

@@ -219,7 +219,7 @@ def resume_session():
     oidc_config = current_app.app_config.oidc
     code = query_param("code", required=False, default=None)
     if not code:
-        # This implies that we are the not actually in a redirect callback, but at the redirect from eduTeams
+        # This means that we are not in the redirect callback, but at the redirect from eduTeams
         logger.debug("Redirect to login in resume-session to start OIDC flow")
         authorization_endpoint = _get_authorization_url()
         return redirect(authorization_endpoint)
