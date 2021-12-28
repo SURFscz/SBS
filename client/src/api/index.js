@@ -769,6 +769,11 @@ export function serviceAupCreate(service) {
     return postPutJson("/api/service_aups", {"service_id": service.id}, "post");
 }
 
+export function serviceAupBulkCreate(services) {
+    const serviceIdentifiers = services.map(service => service.id);
+    return postPutJson("/api/service_aups/bulk", {"service_identifiers": serviceIdentifiers}, "post");
+}
+
 export function serviceAupDelete(service) {
     return postPutJson("/api/service_aups/delete_by_service", {"service_id": service.id}, "put", false);
 }

@@ -1377,7 +1377,11 @@ I18n.translations.nl = {
             purposeOf: "Doel van <strong>{{name}}</strong>",
             informationService: "Informatie over de dienst",
             contact: "Contact",
-            organisationAccess: "Je hebt toegang tot deze service omdat deze door de beheerders van de organisatie beschikbaar is gesteld aan iedereen in je organisatie."
+            organisationAccess: "Je hebt toegang tot deze service omdat deze door de beheerders van de organisatie beschikbaar is gesteld aan iedereen in je organisatie.",
+            missing: {
+                info: "Je krijgt dit scherm opnieuw te zien omdat de onderstaande AUP is gewijzigd. Lees de AUP opnieuw en geef aan of je akkoord bent.",
+                infoMultiple: "Je krijgt dit scherm opnieuw te zien omdat de onderstaande AUPs zijn gewijzigd. Lees de AUPs opnieuw en geef aan of je akkoord bent."
+            }
         }
     },
     collaborationRequest: {
