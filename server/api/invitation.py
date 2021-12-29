@@ -221,7 +221,7 @@ def external_invitation(external_identifier):
     confirm_external_api_call()
     invitation = Invitation.query.filter(Invitation.external_identifier == external_identifier).one()
     res = {
-        "status": "accepted",
+        "status": invitation.status,
         "invitation": {
             "identifier": invitation.external_identifier,
             "email": invitation.invitee_email
