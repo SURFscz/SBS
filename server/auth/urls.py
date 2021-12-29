@@ -29,7 +29,8 @@ mfa_listing = [
 ]
 
 external_api_listing = [
-    "/api/invitations/v1",
     "/api/collaborations/v1",
-    "/api/collaborations_services/v1/connect_collaboration_service"
+    "/api/collaborations_services/v1",
+    "/api/invitations/v1",
+    "/api/organisations/v1"
 ]

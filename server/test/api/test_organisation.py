@@ -1,10 +1,11 @@
 # -*- coding: future_fstrings -*-
+import json
 
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import uuc_name, amsterdam_uva_name, schac_home_organisation_uuc, schac_home_organisation, \
-    read_image
+    read_image, uuc_secret
 
 
 class TestOrganisation(AbstractTest):
@@ -334,3 +335,9 @@ class TestOrganisation(AbstractTest):
 
         organisation = self.get(f"/api/organisations/{organisation['id']}")
         self.assertEqual([], organisation["api_keys"])
+
+    def test_find_api(self):
+        res = self.get(f"/api/organisations/v1",
+                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       with_basic_auth=False)
+        self.assertEqual(2, len(res["collaborations"]))
