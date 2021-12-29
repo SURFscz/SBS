@@ -51,7 +51,7 @@ class OrganisationServices extends React.Component {
     };
 
     getServiceLink = entity => {
-        return <a href="/" onClick={this.openService(entity)}>{entity.name}</a>
+        return <a href={`/services/${entity.id}`} onClick={this.openService(entity)}>{entity.name}</a>
     }
 
     refreshAndFlash = (promise, flashMsg, callback) => {

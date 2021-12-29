@@ -25,7 +25,7 @@ class OrganisationsWithoutAdmin extends React.Component {
             {
                 key: "name",
                 header: I18n.t("models.organisations.name"),
-                mapper: org => <a href="/" onClick={this.openOrganisation(org)}>{org.name}</a>,
+                mapper: org => <a href={`/organisations/${org.id}`} onClick={this.openOrganisation(org)}>{org.name}</a>,
             },
             {
                 key: "category",
