@@ -1490,7 +1490,8 @@ I18n.translations.en = {
             "ssh_keys": "SSH key",
             "user_mails": "User emails",
             "service_aups": "Service AUPs",
-            "user_tokens": "User tokens"
+            "user_tokens": "User tokens",
+            "service_invitations": "Service invitations"
         }
     },
     serviceRequest: {
