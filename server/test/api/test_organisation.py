@@ -1,5 +1,4 @@
 # -*- coding: future_fstrings -*-
-import json
 
 from server.db.db import db
 from server.db.domain import Organisation, OrganisationInvitation, User
@@ -337,7 +336,7 @@ class TestOrganisation(AbstractTest):
         self.assertEqual([], organisation["api_keys"])
 
     def test_find_api(self):
-        res = self.get(f"/api/organisations/v1",
+        res = self.get("/api/organisations/v1",
                        headers={"Authorization": f"Bearer {uuc_secret}"},
                        with_basic_auth=False)
         self.assertEqual(2, len(res["collaborations"]))
