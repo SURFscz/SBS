@@ -9,6 +9,7 @@ import "./PlatformAdmins.scss";
 import UserColumn from "./UserColumn";
 import Tooltip from "./Tooltip";
 import InstituteColumn from "./InstitueColumn";
+import {stopEvent} from "../../utils/Utils";
 
 
 class PlatformAdmins extends React.Component {
@@ -25,6 +26,11 @@ class PlatformAdmins extends React.Component {
         this.setState({admins: res.platform_admins, loading: false});
     });
 
+    openPlatformAdmin = user => e => {
+        stopEvent(e);
+        this.props.history.push(`/users/${user.id}`);
+    };
+
     render() {
         const {user: currentUser} = this.props;
         const {admins, loading} = this.state;
@@ -35,18 +41,19 @@ class PlatformAdmins extends React.Component {
                 key: "icon",
                 header: "",
                 mapper: () => <div className="member-icon">
-                                <Tooltip children={<PlatformAdminIcon/>} id={"platform-admin-icon"} msg={I18n.t("tooltips.platformAdmin")}/>
-                              </div>
+                    <Tooltip children={<PlatformAdminIcon/>} id={"platform-admin-icon"}
+                             msg={I18n.t("tooltips.platformAdmin")}/>
+                </div>
             },
             {
                 key: "name",
                 header: I18n.t("models.users.name_email"),
-                mapper: user => <UserColumn entity={{user:user}} currentUser={currentUser}/>
+                mapper: user => <UserColumn entity={{user: user}} currentUser={currentUser}/>
             },
             {
                 key: "schac_home_organisation",
                 header: I18n.t("models.users.institute"),
-                mapper: user => <InstituteColumn entity={{user:user}} currentUser={currentUser}/>
+                mapper: user => <InstituteColumn entity={{user: user}} currentUser={currentUser}/>
             },
             {
                 key: "role",
@@ -59,6 +66,7 @@ class PlatformAdmins extends React.Component {
                       searchAttributes={["name", "email"]}
                       defaultSort="name"
                       hideTitle={true}
+                      rowLinkMapper={() => this.openPlatformAdmin}
                       columns={columns}
                       loading={loading}
                       {...this.props}/>
