@@ -1491,7 +1491,8 @@ I18n.translations.en = {
             "user_mails": "User emails",
             "service_aups": "Service AUPs",
             "user_tokens": "User tokens",
-            "service_invitations": "Service invitations"
+            "service_invitations": "Service invitation",
+            "service_memberships": "Service membership"
         }
     },
     serviceRequest: {
