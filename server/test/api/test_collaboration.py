@@ -10,7 +10,7 @@ from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
-    ai_computing_short_name, uuc_teachers_name, read_image
+    ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -505,7 +505,7 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(403, response.status_code)
         data = response.json
-        self.assertEqual(data["message"], "Not associated with an API key")
+        self.assertEqual("Not a valid external API call", data["message"])
 
     def test_api_call_missing_required_attributes(self):
         response = self.client.post("/api/collaborations/v1",
@@ -594,3 +594,14 @@ class TestCollaboration(AbstractTest):
         coll = self.find_entity_by_name(Collaboration, ai_computing_name)
         self.assertEqual(STATUS_ACTIVE, coll.status)
         self.assertTrue(coll.last_activity_date > datetime.datetime.now() - datetime.timedelta(hours=1))
+
+    def test_find_by_identifier_api(self):
+        res = self.get(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}",
+                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       with_basic_auth=False)
+        self.assertIsNotNone(res["groups"][0]["collaboration_memberships"][0]["user"]["email"])
+
+    def test_find_by_identifier_api_not_allowed(self):
+        self.get(f"/api/collaborations/v1/{collaboration_uva_researcher_uuid}",
+                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                 with_basic_auth=False, response_status_code=403)

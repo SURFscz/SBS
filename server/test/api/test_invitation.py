@@ -191,3 +191,26 @@ class TestInvitation(AbstractTest):
                  response_status_code=409)
         invitation = Invitation.query.filter(Invitation.hash == invitation_hash_curious).first()
         self.assertEqual("expired", invitation.status)
+
+    def test_external_invitation(self):
+        res = self.put("/api/invitations/v1/collaboration_invites",
+                       body={
+                           "short_name": ai_computing_short_name,
+                           "invites": ["joe@test.com"]
+                       },
+                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       with_basic_auth=False)
+        invitation_id = res[0]["invitation_id"]
+        res = self.get(f"/api/invitations/v1/{invitation_id}", headers={"Authorization": f"Bearer {uuc_secret}"},
+                       with_basic_auth=False)
+        self.assertEqual("open", res["status"])
+        self.assertEqual("joe@test.com", res["invitation"]["email"])
+
+        invitation = Invitation.query.filter(Invitation.external_identifier == invitation_id).first()
+
+        self.login("urn:james")
+        self.put("/api/invitations/accept", body={"hash": invitation.hash}, with_basic_auth=False)
+
+        res = self.get(f"/api/invitations/v1/{invitation_id}", headers={"Authorization": f"Bearer {uuc_secret}"},
+                       with_basic_auth=False)
+        self.assertEqual("accepted", res["status"])
