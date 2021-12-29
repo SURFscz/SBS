@@ -1,0 +1,9 @@
+---
+name: Forbidden
+content:
+  application/json:
+    schema:
+      import: './swagger/schemas/Error.yaml'
+    example:
+      code: 403
+      message: "Forbidden"
