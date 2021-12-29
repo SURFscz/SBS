@@ -187,6 +187,7 @@ class TestInvitation(AbstractTest):
         db.session.commit()
 
         self.login("urn:james")
-        self.put("/api/invitations/accept", headers={"Authorization": f"Bearer {uuc_secret}"}, with_basic_auth=False)
+        self.put("/api/invitations/accept", body={"hash": invitation_hash_curious}, with_basic_auth=False,
+                 response_status_code=409)
         invitation = Invitation.query.filter(Invitation.hash == invitation_hash_curious).first()
         self.assertEqual("expired", invitation.status)
