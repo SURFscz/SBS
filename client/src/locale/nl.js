@@ -1491,7 +1491,8 @@ I18n.translations.nl = {
             "user_mails": "Gebruikers-e-mails",
             "service_aups": "Dienst-AUP's",
             "user_tokens": "Gebruikerstokens",
-            "service_invitations": "Dienst uitnodigingen"
+            "service_invitations": "Dienstuitnodiging",
+            "service_memberships": "Dienstlidmaatschap"
         }
     },
     serviceRequest: {
