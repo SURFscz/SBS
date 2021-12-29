@@ -190,4 +190,3 @@ class TestInvitation(AbstractTest):
         self.put("/api/invitations/accept", headers={"Authorization": f"Bearer {uuc_secret}"}, with_basic_auth=False)
         invitation = Invitation.query.filter(Invitation.hash == invitation_hash_curious).first()
         self.assertEqual("expired", invitation.status)
-
