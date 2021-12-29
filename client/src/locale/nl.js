@@ -1490,7 +1490,8 @@ I18n.translations.nl = {
             "ssh_keys": "SSH-sleutel",
             "user_mails": "Gebruikers-e-mails",
             "service_aups": "Dienst-AUP's",
-            "user_tokens": "Gebruikerstokens"
+            "user_tokens": "Gebruikerstokens",
+            "service_invitations": "Dienst uitnodigingen"
         }
     },
     serviceRequest: {
