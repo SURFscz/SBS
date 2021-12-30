@@ -8,6 +8,17 @@ SWAGGER_TEMPLATE = {
     }
 }
 
+SWAGGER_CONFIG = {
+    "specs": [
+        {
+            "endpoint": 'apispec',
+            "route": '/swagger_api/apispec.json',
+            "rule_filter": lambda rule: True,  # all in
+            "model_filter": lambda tag: True,  # all in
+        }
+    ],
+}
+
 swagger_specs = Blueprint("swagger_specs", __name__, url_prefix="/swagger")
 
 

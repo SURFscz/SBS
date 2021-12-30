@@ -95,6 +95,7 @@ def _user_json_response(user, auto_set_second_factor_confirmed):
                 "confirmed_admin": user.confirmed_super_user}
     json_user = jsonify(user).json
     _add_counts(json_user)
+    _add_service_aups(json_user, user)
     return {**json_user, **is_admin}, 200
 
 
