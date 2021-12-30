@@ -50,7 +50,7 @@ from server.cron.schedule import start_scheduling
 from server.db.db import db, db_migrations
 from server.db.redis import init_redis
 from server.mqtt.mqtt import MqttClient
-from server.swagger.conf import SWAGGER_TEMPLATE, swagger_specs
+from server.swagger.conf import SWAGGER_TEMPLATE, swagger_specs, SWAGGER_CONFIG
 from server.templates import invitation_role
 from server.tools import read_file
 
@@ -168,7 +168,7 @@ app.app_config["profile"] = profile
 
 app.mqtt = MqttClient(app.app_config.service_bus)
 
-Swagger(app, template=SWAGGER_TEMPLATE)
+Swagger(app, template=SWAGGER_TEMPLATE, config=SWAGGER_CONFIG, merge=True)
 
 Migrate(app, db)
 result = None
