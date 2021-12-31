@@ -164,7 +164,11 @@ class App extends React.Component {
             other(selectedUser.uid).then(user => {
                 const {currentUser, impersonator} = this.state;
                 const newUser = this.markUserAdmin(user);
-                this.setState({currentUser: newUser, impersonator: impersonator || currentUser}, callback);
+                this.setState({
+                    currentUser: newUser,
+                    impersonator: impersonator || currentUser,
+                    loading: false
+                }, callback);
             });
         }
     };
