@@ -24,6 +24,7 @@ class MissingServiceAup extends React.Component {
         serviceAupBulkCreate(user.services_without_aup).then(res => {
             const url = new URL(res.location);
             reloadMe({
+                user: user,
                 callback: () => {
                     this.props.history.push(url.pathname + url.search);
                 }

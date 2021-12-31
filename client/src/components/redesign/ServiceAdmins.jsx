@@ -8,7 +8,6 @@ import CheckBox from "../CheckBox";
 import {deleteServiceMembership, serviceInvitationBulkResend, serviceInvitationDelete} from "../../api";
 import {setFlash} from "../../utils/Flash";
 import "./ServiceAdmins.scss";
-import {emitter} from "../../utils/Events";
 import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -20,6 +19,7 @@ import Tooltip from "./Tooltip";
 import ReactTooltip from "react-tooltip";
 import InstituteColumn from "./InstitueColumn";
 import {isEmpty} from "../../utils/Utils";
+import {emitImpersonation} from "../../utils/Impersonation";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
@@ -254,8 +254,7 @@ class ServiceAdmins extends React.Component {
                         return null;
                     }
                     return (<div className="impersonate" onClick={() =>
-                        emitter.emit("impersonation",
-                            {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
+                        emitImpersonation(entity.user, this.props.history)}>
                         <HandIcon/>
                     </div>);
                 }

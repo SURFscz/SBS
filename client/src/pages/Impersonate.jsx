@@ -7,7 +7,6 @@ import debounce from "lodash.debounce";
 import SelectField from "../components/SelectField";
 import Autocomplete from "../components/Autocomplete";
 import Button from "../components/Button";
-import {emitter} from "../utils/Events";
 import InputField from "../components/InputField";
 import CheckBox from "../components/CheckBox";
 import Explain from "../components/Explain";
@@ -18,6 +17,7 @@ import {AppStore} from "../stores/AppStore";
 import {ReactComponent as HandIcon} from "../icons/toys-hand-ghost-orange.svg";
 import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import {emitImpersonation} from "../utils/Impersonation";
 
 class Impersonate extends React.Component {
 
@@ -77,13 +77,7 @@ class Impersonate extends React.Component {
                 s.breadcrumb.paths = [];
                 s.sideComponent = null;
             });
-            emitter.emit("impersonation", {
-                user: selectedUser, callback: () => {
-                    // setTimeout(() => {
-                        this.props.history.push("/aup");
-                    // }, 500)
-                }
-            });
+            emitImpersonation(selectedUser, this.props.history, "/aup");
             this.setState({
                 selectedUser: null, query: "", initial: true, collaboration: null,
                 organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false,
@@ -93,7 +87,7 @@ class Impersonate extends React.Component {
     };
 
     clearImpersonation = () => {
-        emitter.emit("impersonation", {user: null, callback: this.props.push("/home")});
+        emitImpersonation(null, this.props.history);
         this.setState({
             selectedUser: null, query: "", initial: true, collaboration: null,
             organisation: null, limitToCollaborationAdmins: false, limitToOrganisationAdmins: false
