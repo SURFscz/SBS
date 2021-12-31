@@ -16,18 +16,21 @@ parameters:
     description: The collaboration attributes
     required: true
     schema:
-      import: './swagger/schemas/Collaboration.yaml'
+      $ref: '/swagger/schemas/Collaboration.yaml'
 
 responses:
   201:
-    description: created collaboration
-    content:
-      application/json:
-        schema:
-          import: './swagger/schemas/Collaboration.yaml'
+    description: Created collaboration
+    schema:
+#      type: array
+#      items:
+      $ref: '/swagger/schemas/Collaboration.yaml'
   401:
-    import: './swagger/components/responses/Unauthorized.yaml'
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
   403:
-    $ref: '/swagger/components/responses/Forbidden.yaml'
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
   404:
-    import: './swagger/components/responses/NotFound.yaml'
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'

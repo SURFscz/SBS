@@ -1,9 +1,8 @@
 ---
-description: Unauthorized
-content:
-  application/json:
-    schema:
-      import: './swagger/schemas/Error.yaml'
-    example:
-      code: 401
-      message: "Unauthorized"
+type: object
+properties:
+  message:
+    type: string
+    example: "Unauthorized"
+required:
+  - message

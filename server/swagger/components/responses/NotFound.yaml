@@ -1,9 +1,8 @@
 ---
-name: The specified resource was not found
-content:
-  application/json:
-    schema:
-      import: './swagger/schemas/Error.yaml'
-    example:
-      code: 404
-      message: "Not found"
+type: object
+properties:
+  message:
+    type: string
+    example: "Not found"
+required:
+  - message
