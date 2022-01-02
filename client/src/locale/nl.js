@@ -1355,6 +1355,7 @@ I18n.translations.nl = {
         name: "Naam.",
         email: "Email-adres",
         title: "Acceptable use policy",
+        multiple: "Dienst acceptable use policies",
         disclaimer: "Door in te loggen op SRAM, wordt je een gebruiker en ga je akkoord met de <a href=\"{{url}}\" target=\"_blank\">voorwaarden van onze AUP.</a>",
         agreeWithTerms: "Hierbij verklaar ik dat ik de AUP heb gelezen en deze accepteer",
         onward: "Ziet er goed uit, verder",

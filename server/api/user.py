@@ -26,7 +26,7 @@ from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import User, OrganisationMembership, CollaborationMembership, JoinRequest, CollaborationRequest, \
-    UserNameHistory, SshKey, Organisation, Collaboration, Service, ServiceMembership
+    UserNameHistory, SshKey, Organisation, Collaboration, Service, ServiceMembership, ServiceAup
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error, mail_account_deletion
 
@@ -452,7 +452,10 @@ def other():
 @json_endpoint
 def find_by_id():
     confirm_write_access()
-    return _user_query().filter(User.id == query_param("id")).one(), 200
+    return _user_query() \
+               .options(joinedload(User.service_aups)
+                        .subqueryload(ServiceAup.service)) \
+               .filter(User.id == query_param("id")).one(), 200
 
 
 @user_api.route("/attribute_aggregation", strict_slashes=False)

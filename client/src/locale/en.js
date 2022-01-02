@@ -1355,6 +1355,7 @@ I18n.translations.en = {
         name: "Display name.",
         email: "Email address",
         title: "Acceptable use policy",
+        multiple: "Service acceptable use policies",
         disclaimer: "By logging on to SRAM, you become a user and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of our AUP.</a>",
         agreeWithTerms: "I hereby certify that I have read the AUP and that I accept them",
         onward: "Looks good, onwards",
