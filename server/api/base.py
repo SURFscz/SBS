@@ -56,10 +56,8 @@ def auth_filter(app_config):
         if not oidc_config.second_factor_authentication_required or session["user"].get("second_factor_confirmed"):
             request_context.is_authorized_api_call = False
             return
-        else:
-            for u in mfa_listing:
-                if u in url:
-                    return
+        elif [u for u in mfa_listing if u in url]:
+            return
 
     is_external_api_url = False
     for u in external_api_listing:
