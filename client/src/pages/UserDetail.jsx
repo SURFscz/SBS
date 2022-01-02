@@ -59,8 +59,11 @@ class UserDetail extends React.Component {
         return (<div key="details" name="details" label={I18n.t("home.details")}
                      icon={<FontAwesomeIcon icon="id-badge"/>}>
             <div className={"user-profile"}>
-                {attributes.map(attr => <InputField noInput={true} disabled={true} value={user[attr] || "-"}
-                                                    name={I18n.t(`models.allUsers.${attr}`)}/>)}
+                {attributes.map((attr, index) =>
+                    <div key={index}>
+                    <InputField noInput={true} disabled={true} value={user[attr] || "-"}
+                                name={I18n.t(`models.allUsers.${attr}`)}/>
+                        </div>)}
                 <InputField noInput={true} disabled={true} value={moment(user.last_login_date * 1000).format("LLL")}
                             name={I18n.t("models.allUsers.last_login_date")}/>
                 <div className="ssh-keys">
@@ -89,8 +92,8 @@ class UserDetail extends React.Component {
                     <label>{I18n.t("collaborations.requests")}</label>
                     {isEmpty(user.join_requests) && "-"}
                     {!isEmpty(user.join_requests) && <ul>
-                        {user.join_requests.map(jr =>
-                            <li>{`${jr.collaboration.name} (${moment(jr.created_at * 1000).format("LLL")})`}</li>)}
+                        {user.join_requests.map((jr, index) =>
+                            <li key={index}>{`${jr.collaboration.name} (${moment(jr.created_at * 1000).format("LLL")})`}</li>)}
                     </ul>}
                 </div>
                 <div className="input-field">
@@ -107,6 +110,14 @@ class UserDetail extends React.Component {
                     {!isEmpty(user.service_memberships) && <ul>
                         {user.service_memberships.map(sm =>
                             <li key={`service_membership_${sm.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</li>)}
+                    </ul>}
+                </div>
+                <div className="input-field">
+                    <label>{I18n.t("aup.multiple")}</label>
+                    {isEmpty(user.service_aups) && "-"}
+                    {!isEmpty(user.service_aups) && <ul>
+                        {user.service_aups.map(sm =>
+                            <li key={`service_aup_${sm.id}`}>{sm.service.name}</li>)}
                     </ul>}
                 </div>
             </div>

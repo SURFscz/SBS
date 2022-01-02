@@ -44,7 +44,7 @@ class MissingServiceAup extends React.Component {
             <div className="mod-missing-service-aup">
                 <h1>{I18n.t("aup.service.title")}</h1>
                 <p className="info">{I18n.t(`aup.service.missing.${info}`)}</p>
-                {user.service_collaborations.map(collaboration => <div className="collaboration-detail">
+                {user.service_collaborations.map((collaboration, index) => <div className="collaboration-detail" key={index}>
                     <h2 dangerouslySetInnerHTML={{__html: I18n.t("aup.service.purposeOf", {name: collaboration.name})}}/>
                     <p>{collaboration.description}</p>
                 </div>)}
