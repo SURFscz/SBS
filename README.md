@@ -104,4 +104,4 @@ See the https://github.com/SURFscz/SCZ-deploy project
 
 ### [Upgrade](#upgrade)
 
-See https://github.com/simion/pip-upgrader
+See https://github.com/simion/pip-upgrader for upgrading automatically
