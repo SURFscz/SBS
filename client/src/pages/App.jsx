@@ -437,7 +437,7 @@ class App extends React.Component {
                         <Route path="/missing-service-aup"
                                render={props => <MissingServiceAup
                                    user={currentUser}
-                                   reloadMe={this.impersonate}
+                                   reloadMe={this.refreshUserMemberships}
                                    {...props}/>}/>
 
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>

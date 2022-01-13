@@ -23,12 +23,7 @@ class MissingServiceAup extends React.Component {
         const {user, reloadMe} = this.props;
         serviceAupBulkCreate(user.services_without_aup).then(res => {
             const url = new URL(res.location);
-            reloadMe({
-                user: user,
-                callback: () => {
-                    this.props.history.push(url.pathname + url.search);
-                }
-            })
+            reloadMe(() => this.props.history.push(url.pathname + url.search));
         });
     }
 
@@ -44,7 +39,8 @@ class MissingServiceAup extends React.Component {
             <div className="mod-missing-service-aup">
                 <h1>{I18n.t("aup.service.title")}</h1>
                 <p className="info">{I18n.t(`aup.service.missing.${info}`)}</p>
-                {user.service_collaborations.map((collaboration, index) => <div className="collaboration-detail" key={index}>
+                {user.service_collaborations.map((collaboration, index) => <div className="collaboration-detail"
+                                                                                key={index}>
                     <h2 dangerouslySetInnerHTML={{__html: I18n.t("aup.service.purposeOf", {name: collaboration.name})}}/>
                     <p>{collaboration.description}</p>
                 </div>)}
