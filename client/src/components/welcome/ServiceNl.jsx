@@ -5,8 +5,11 @@ import "./welcome.scss";
 export default function ServiceNl() {
 
     const responsibilities = [
-        "Dienstbeheerders van deze dienst beheren",
-        "De acceptable use policy en privacy policy van de dienst beheren"
+        "De configuratie van de dienst bekijken en beheren",
+        "De acceptable use policy en privacy policy van de dienst beheren",
+        "Zien welke organisaties en samenwerkingen deze dienst kunnen gebruiken",
+        "De LDAP-informatie bekijken en het bind password instellen",
+        "Dienstbeheerders van deze dienst beheren"
     ]
     return (
         <div className="welcome">

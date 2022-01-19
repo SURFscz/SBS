@@ -203,7 +203,7 @@ I18n.translations.nl = {
             suspended: "Geschorst",
             new: "Nodig leden uit",
             remove: "Verwijder",
-            resend: "Opnieuw uitnodigingen",
+            resend: "Opnieuw uitnodigen",
             mail: "E-mail",
             backToMembers: "Terug...",
             invitation: "Uitnodiging verstuurd door {{inviter}} naar {{email}} op {{date}}",
@@ -662,7 +662,7 @@ I18n.translations.nl = {
         discloseMemberInformationTooltip: "Indien aangevinkt wordt informatie van leden aan andere leden getoond",
         discloseEmailInformation: "E-mailadressen tonen",
         discloseEmailInformationTooltip: "Indien aangevinkt zijn e-mail-adressen van leden voor andere leden zichtbaar",
-        description: "Beschrijving",
+        description: "Omschrijving",
         descriptionPlaceholder: "Beschrijf duidelijk wat het doel van de samenwerking is, waaruit blijkt dat de verwerking van persoonsgegevens gerechtvaardigd is",
         websiteUrl: "Website URL",
         websiteUrlPlaceholder: "De URL van de website is zichtbaar voor leden",
@@ -771,7 +771,7 @@ I18n.translations.nl = {
     },
     service: {
         about: "Over de dienst",
-        logo: "Dienst logo",
+        logo: "Dienstlogo",
         accessAllowed: "Toegang toegestaan",
         compliancy: "Dienst compliancy",
         compliancyShort: "Compliancy",
@@ -793,9 +793,9 @@ I18n.translations.nl = {
         abbreviationTooltip: "De unieke afkorting van een dienst wordt gebruikt als prefix voor groepen van deze dienst",
         service_request: "Dienst request URL",
         service_requestTooltip: "De URL van een dienst om een koppeling aan te vragen tussen een samenwerking en deze dienst als de gebruiker geen toegang heeft tot deze dienst",
-        service_requestError: "Vereist een valide URL en automatische connectie moet toegestaan zijn",
-        description: "Beschrijving",
-        descriptionPlaceholder: "De beschrijving van de dienst",
+        service_requestError: "Vereist een valide URL en automatisch koppelen moet toegestaan zijn",
+        description: "Omschrijving",
+        descriptionPlaceholder: "De omschrijving van de dienst",
         address: "Adres",
         addressPlaceholder: "Het adres van de dienst",
         identity_type: "Identiteitsoort",
@@ -821,7 +821,7 @@ I18n.translations.nl = {
         networkError: "Die {{prefix}} subnetomvang is niet toegestaan. Maximaal toegestane prefix voor IPv{{version}} is {{max}}",
         networkSyntaxError: "Dit is geen geldig IPv4- of IPv6-adres",
         networkInfo: "Laagste IP: {lower}, hoogste IP: {higher}, # adressen: {num_addresses}, versie: IPv{version}",
-        automaticConnectionAllowed: "Automatische connectie toestaan?",
+        automaticConnectionAllowed: "Automatisch koppelen toestaan?",
         automaticConnectionAllowedTooltip: "Kunnen samenwerkingen deze dienst koppelen zonder expliciete toestemming van de diensteigenaar?",
         accessAllowedForAll: "Beschikbaar voor alle organisaties?",
         accessAllowedForAllTooltip: "Is deze dienst voor alle huidige en toekomstige organisaties standaard beschikbaar?",
@@ -845,7 +845,7 @@ I18n.translations.nl = {
         contactEmailRequired: "Een administratief contact-e-mail is verplicht als er geen dienstbeheerders zijn",
         security_email: "Security contact",
         security_emailPlaceholder: "Het e-mailadres van de security-contactpersoon",
-        security_emailTooltip: "Het security e-mailadres wordt gecontacteerd als er security-vragen zijn. Is idealiter een functioneel e-mailadres, zoals dienst_A_security@sp.org.",
+        security_emailTooltip: "Het security e-mailadres wordt gecontacteerd als er security-vragen zijn. Idealiter is dit een functioneel e-mailadres, zoals dienst_A_security@sp.org.",
         securityEmailRequired: "Security e-mailadres is verplicht",
         support_email: "Helpdesk",
         support_emailPlaceholder: "Het e-mailadres van de helpdesk voor deze dienst",
@@ -894,7 +894,7 @@ I18n.translations.nl = {
     },
     organisation: {
         title: "Nieuwe organisatie toevoegen",
-        subTitle: "Wijzig de beschrijving van de organisatie.",
+        subTitle: "Wijzig de omschrijving van de organisatie.",
         actions: "",
         about: "Over onze organisatie",
         name: "Naam",
@@ -908,8 +908,8 @@ I18n.translations.nl = {
         shortNameTooltip: "Ken korte namen toe aan organisaties zodat deze korte namen kunnen worden gebruikt in LDAP diensten (zoals Linux directory-namen).",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare identifier van een organisatie die wordt gebruikt als identifier voor externe systemen",
-        description: "Beschrijving",
-        descriptionPlaceholder: "De beschrijving van de organisatie is zichtbaar voor iedereen",
+        description: "Omschrijving",
+        descriptionPlaceholder: "De omschrijving van de organisatie is zichtbaar voor iedereen",
         servicesRestricted: "SURF-organisatie",
         servicesRestrictedTooltip: "Samenwerkingen van een SURF-organisatie kunnen alleen SURF-diensten koppelen.",
         schacHomeOrganisationShortName: "Organisatiedomein",
@@ -971,7 +971,7 @@ I18n.translations.nl = {
     organisationDetail: {
         backToOrganisations: "Terug naar mijn organisaties",
         backToOrganisationDetail: "Terug naar mijn organisatie {{name}}",
-        title: "Beschrijving organisatie {{name}}",
+        title: "Omschrijving organisatie {{name}}",
         back: "Terug naar mijn organisaties",
         members: "Leden van {{name}}",
         noMembers: "Deze organisatie heeft geen leden.",
@@ -1086,7 +1086,7 @@ I18n.translations.nl = {
         backToOrganisationDetail: "Terug naar mijn organisatie {{name}}",
         createTitle: "Uitnodigingen versturen om lid te worden van organisatie {{organisation}}",
         organisationName: "Naam",
-        organisationDescription: "Beschrijving",
+        organisationDescription: "Omschrijving",
         organisationAdministrators: "Beheerders",
         requiredAdministrator: "Er is minimaal één e-mailadres van een beheerder nodig voor een uitnodiging.",
         role: "Rol",
@@ -1139,7 +1139,7 @@ I18n.translations.nl = {
         title: "Uitnodiging om lid te worden van samenwerking {{collaboration}}",
         createTitle: "Verstuur uitnodigingen om lid te worden van samenwerking {{collaboration}}",
         collaborationName: "Naam",
-        collaborationDescription: "Beschrijving",
+        collaborationDescription: "Omschrijving",
         collaborationAdministrators: "Beheerders",
         invitees: "Genodigden",
         inviteesPlaceholder: "E-mailadressen genodigden",
@@ -1210,7 +1210,7 @@ I18n.translations.nl = {
             name: "Naam",
             abbreviation: "Afkorting",
             entity_id: "Entity ID",
-            description: "Beschrijving"
+            description: "Omschrijving"
         },
         serviceConnectionRequest: {
             actions: "",
@@ -1283,8 +1283,8 @@ I18n.translations.nl = {
         required: "{{attribute}} is een verplicht veld voor een groep",
         uri: "URI",
         uriPlaceholder: "URI van de groep",
-        description: "Beschrijving",
-        descriptionPlaceholder: "Beschrijving van de groep",
+        description: "Omschrijving",
+        descriptionPlaceholder: "Omschrijving van de groep",
         status: "Status",
         statusPlaceholder: "De status van de groep",
         actions: "",
@@ -1332,7 +1332,7 @@ I18n.translations.nl = {
             actions: "",
             name: "Naam",
             entity_id: "Entity ID",
-            description: "Beschrijving"
+            description: "Omschrijving"
         },
         member: {
             user__name: "Naam",
@@ -1379,8 +1379,8 @@ I18n.translations.nl = {
             contact: "Contact",
             organisationAccess: "Je hebt toegang tot deze service omdat deze door de beheerders van de organisatie beschikbaar is gesteld aan iedereen in je organisatie.",
             missing: {
-                info: "Je krijgt dit scherm opnieuw te zien omdat de onderstaande AUP is gewijzigd. Lees de AUP opnieuw en geef aan of je akkoord bent.",
-                infoMultiple: "Je krijgt dit scherm opnieuw te zien omdat de onderstaande AUPs zijn gewijzigd. Lees de AUPs opnieuw en geef aan of je akkoord bent."
+                info: "De acceptable use policy (AUP) van deze dienst is gewijzigd. Lees de AUP en geef aan of je akkoord gaat.",
+                infoMultiple: "De acceptable use policies (AUPs) van deze diensten zijn gewijzigd. Lees de AUPs en geef aan of je akkoord gaat."
             }
         }
     },
@@ -1431,7 +1431,7 @@ I18n.translations.nl = {
     },
     autocomplete: {
         name: "Name",
-        description: "Beschrijving",
+        description: "Omschrijving",
         email: "E-mail",
         admin: "Super user",
         organisations: "Organisaties",
