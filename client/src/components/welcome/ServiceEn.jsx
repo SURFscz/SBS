@@ -5,8 +5,11 @@ import "./welcome.scss";
 export default function ServiceEn() {
 
     const responsibilities = [
-        "Manage other service admins for this service",
-        "Configure the service AUP and Privacy Policy"
+        "View and edit its properties",
+        "Configure the service AUP and Privacy Policy",
+        "View which organisations and collaborations can use this service",
+        "View LDAP information and set the bind password",
+        "Manage other service admins for this service"
     ]
     return (
         <div className="welcome">

@@ -810,8 +810,8 @@ I18n.translations.en = {
         accepted_user_policy: "Acceptable use policy",
         accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the service",
         accepted_user_policyTooltip: "An acceptable use policy (AUP) is a document stipulating constraints and practices that a user must agree to for access to a corporate network or the Internet.",
-        network: "ACL IP-ranges",
-        networkTooltip: "Configure the ACL IP-ranges for this service. You can add IPv4 and IPv6 network ranges. " +
+        network: "ACL IP ranges",
+        networkTooltip: "Configure the ACL IP ranges for this service. You can add IPv4 and IPv6 network ranges. " +
             "For example: <ul>" +
             "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
             "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
@@ -823,8 +823,8 @@ I18n.translations.en = {
         networkInfo: "Lower bound IP: {{lower}}, higher bound IP: {{higher}}, # addresses: {{num_addresses}}, version: IPv{{version}}",
         automaticConnectionAllowed: "Automatic connection allowed?",
         automaticConnectionAllowedTooltip: "Can collaborations use this service without explicit permission of the service contact person?",
-        accessAllowedForAll: "Enabled for all organisations?",
-        accessAllowedForAllTooltip: "Is this service for all current and future organisations by default enabled?",
+        accessAllowedForAll: "Available for all organisations?",
+        accessAllowedForAllTooltip: "Is this service available for all current and future organisations?",
         accessAllowedForAllInfo: "All organisations are enabled by default for this service",
         nonMemberUsersAccessAllowed: "Accessible for all users?",
         nonMemberUsersAccessAllowedTooltip: "Can all members access this service without being a member of a connected Collaboration",
@@ -877,7 +877,7 @@ I18n.translations.en = {
             copy: "Copy",
             close: "Close",
             section: "LDAP settings",
-            url: "URL",
+            url: "LDAP URL",
             urlTooltip: "The URL of the LDAP server",
             username: "Bind dn",
             usernameTooltip: "This is the bind dn used to authenticate to the LDAP server",
@@ -1379,8 +1379,8 @@ I18n.translations.en = {
             contact: "Contact",
             organisationAccess: "You can access this service because it has been made available to everyone in your organisation by the organisation administrators.",
             missing: {
-                info: "This screen is shown again because the AUP below has changed. Please read it again and indicate below whether you accept.",
-                infoMultiple: "This screen is shown again because the AUPs below have changed. Please read them again and indicate below whether you accept."
+                info: "The service acceptable use policy (AUP) has changed. Please read it and indicate below whether you accept.",
+                infoMultiple: "These service acceptable use policies (AUPs) have changed. Please read them and indicate below whether you accept."
             }
         }
     },
