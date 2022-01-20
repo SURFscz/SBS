@@ -176,7 +176,16 @@ with app.app_context():
             logger.info("Waiting for the database...")
             time.sleep(1)
 
-db_migrations(config.database.uri)
+with app.app_context():
+    session = db.create_session(options={})()
+    lock_name = "db_migration"
+    try:
+        result = session.execute(text(f"SELECT GET_LOCK('{lock_name}', 0)"))
+        lock_obtained = next(result, (0,))[0]
+        if lock_obtained:
+            db_migrations(config.database.uri)
+    finally:
+        session.execute(text(f"SELECT RELEASE_LOCK('{lock_name}')"))
 
 from server.auth.user_claims import generate_unique_username  # noqa: E402
 from server.db.domain import User  # noqa: E402
