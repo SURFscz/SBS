@@ -17,3 +17,7 @@ properties:
     type: string
     format: uri
     example: "https://service.universiteitvanharderwijk.nl/login"
+  collaboration_memberships:
+    type: array
+    items:
+      $ref: '/swagger/schemas/CollaborationMembership.yaml'
