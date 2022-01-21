@@ -1,4 +1,4 @@
-summary: "Get a collaboration."
+summary: "Get collaboration details."
 description: "Retrieves a single collection."
 
 consumes:
@@ -22,14 +22,15 @@ parameters:
 
 responses:
   200:
-    description: a single collaboration
-    content:
-      application/json:
-        schema:
-          import: './swagger/schemas/Collaboration.yaml'
-  '401':
-    import: './swagger/components/responses/Unauthorized.yaml'
-  '403':
-    import: './swagger/components/responses/Forbidden.yaml'
-  '404':
-    import: './swagger/components/responses/NotFound.yaml'
+    description: Collaboration details
+    schema:
+      $ref: '/swagger/schemas/Collaboration.yaml'
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'
