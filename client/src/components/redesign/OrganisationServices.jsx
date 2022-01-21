@@ -40,6 +40,7 @@ class OrganisationServices extends React.Component {
                 service.allowed = (allowed && service.automatic_connection_allowed) || service.access_allowed_for_all;
                 service.notAllowed = !service.allowed;
                 service.notAllowedServicesRestricted = !user.admin && organisation.services_restricted;
+                service.enabledByOrganisation = organisation.services.some(s => s.id === service.id);
             });
             this.setState({services: services, loading: false});
         });
@@ -96,12 +97,10 @@ class OrganisationServices extends React.Component {
     getServiceAction = service => {
         const {organisation, user} = this.props;
         const allowed = isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id, null);
-        const inUse = organisation.services.some(s => s.id === service.id);
-        const value = inUse && service.allowed;
         let tooltip;
-        if (!service.allowed || service.notAllowedServicesRestricted) {
+        if ((!service.allowed || service.notAllowedServicesRestricted) && !service.enabledByOrganisation) {
             if (service.notAllowedServicesRestricted) {
-                if (value) {
+                if (service.allowed) {
                     tooltip = I18n.t("organisationServices.serviceRestrictedOrganisationAdded");
                 } else {
                     tooltip = I18n.t("organisationServices.serviceRestrictedOrganisation");
@@ -112,11 +111,11 @@ class OrganisationServices extends React.Component {
                 tooltip = I18n.t("organisationServices.notEnabledOrganisation")
             }
         }
-        const disabled = !allowed || !service.allowed || service.notAllowedServicesRestricted;
+        const disabled = (!allowed || !service.allowed || service.notAllowedServicesRestricted) && !service.enabledByOrganisation;
         return (
             <div>
                 <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={disabled}
-                              value={value} animate={false} tooltip={tooltip}/>
+                              value={service.enabledByOrganisation} animate={false} tooltip={tooltip}/>
                 {(disabled && service.notAllowedServicesRestricted) && <Tooltip children={<FontAwesomeIcon icon="info-circle"/>} id={`not-allowed-${service.id}`}
                                       msg={tooltip}/>}
             </div>
