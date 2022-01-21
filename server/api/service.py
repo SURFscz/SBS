@@ -1,5 +1,4 @@
 # -*- coding: future_fstrings -*-
-import ipaddress
 import random
 import string
 import urllib.parse
