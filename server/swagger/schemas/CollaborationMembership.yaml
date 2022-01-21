@@ -1,0 +1,20 @@
+---
+type: object
+properties:
+  id:
+    type: number
+    readOnly: true
+    example: 999
+  role:
+    type: string
+    example: "admin"
+  status:
+    type: string
+    example: "active"
+  expiry_date:
+    type: number
+    example: 1642781077
+  user:
+    $ref: '/swagger/schemas/User.yaml'
+#  invitation:
+#    $ref: '/swagger/schemas/Invitation.yaml'

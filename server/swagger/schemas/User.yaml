@@ -1,0 +1,10 @@
+---
+type: object
+properties:
+  id:
+    type: number
+    readOnly: true
+    example: 999
+  name:
+    type: string
+    example: "John Doe"
