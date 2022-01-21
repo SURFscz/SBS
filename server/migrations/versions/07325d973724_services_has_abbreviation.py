@@ -19,11 +19,11 @@ depends_on = None
 
 
 def cleanse_short_name(data):
-    short_name = data["short_name"]
+    short_name = data["abbreviation"]
     while short_name[0].isnumeric():
         short_name = short_name[1:]
 
-    data["short_name"] = re.sub(r"[^a-zA-Z_0-9]+", "", short_name).lower()[:16]
+    data["abbreviation"] = re.sub(r"[^a-zA-Z_0-9]+", "", short_name).lower()[:16]
 
 
 def upgrade():
@@ -35,7 +35,7 @@ def upgrade():
         id = row["id"]
         name = row["name"]
         data = {"abbreviation": name}
-        cleanse_short_name(data, "abbreviation")
+        cleanse_short_name(data)
         abbreviation = data["abbreviation"]
         conn.execute(f"UPDATE `services` SET abbreviation = '{abbreviation}' WHERE id = {id}")
 
