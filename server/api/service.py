@@ -114,10 +114,21 @@ def _do_get_services(restrict_for_current_user=False):
     result_set = db.engine.execute(sql)
     services_colls = [{"service_id": row[0], "collaboration_id": row[1]} for row in result_set]
     services_json = jsonify(services).json
-    for index, service in enumerate(services):
-        service_json = services_json[index]
-        service_json["collaborations_count"] = len([s for s in services_colls if s["service_id"] == service.id])
-        service_json["organisations_count"] = len([s for s in service_orgs if s["service_id"] == service.id])
+    for service_json in services_json:
+        service_json["collaborations_count"] = len([s for s in services_colls if s["service_id"] == service_json["id"]])
+        service_json["organisations_count"] = 0
+        for s in service_orgs:
+            if s["service_id"] == service_json["id"]:
+                service_json["organisations_count"] += 1
+                count_query = f"SELECT id FROM collaborations WHERE organisation_id = {s['organisation_id']}"
+                result_set = db.engine.execute(text(count_query))
+                for row in result_set:
+                    # Prevent double counts for directly linked collaborations
+                    col_directly_linked = [c for c in services_colls
+                                           if
+                                           c["collaboration_id"] == row["id"] and c["service_id"] == service_json["id"]]
+                    if not col_directly_linked:
+                        service_json["collaborations_count"] += 1
     return services_json, 200
 
 
