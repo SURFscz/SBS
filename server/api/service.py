@@ -93,7 +93,7 @@ def user_service(service_id):
     return count > 0
 
 
-def _do_get_services(restrict_for_current_user=False):
+def _do_get_services(restrict_for_current_user=False, include_counts=False):
     def override_func():
         return is_collaboration_admin() or _is_org_member() or is_service_admin()
 
@@ -107,6 +107,9 @@ def _do_get_services(restrict_for_current_user=False):
             .filter(ServiceMembership.user_id == current_user_id())
 
     services = query.all()
+    if not include_counts:
+        return services, 200
+
     sql = text("SELECT service_id, organisation_id FROM services_organisations")
     result_set = db.engine.execute(sql)
     service_orgs = [{"service_id": row[0], "organisation_id": row[1]} for row in result_set]
@@ -254,13 +257,14 @@ def service_by_id(service_id):
 @service_api.route("/all", strict_slashes=False)
 @json_endpoint
 def all_services():
-    return _do_get_services()
+    include_counts = query_param("include_counts", required=False)
+    return _do_get_services(include_counts=include_counts)
 
 
 @service_api.route("/mine", strict_slashes=False)
 @json_endpoint
 def mine_services():
-    return _do_get_services(restrict_for_current_user=True)
+    return _do_get_services(restrict_for_current_user=True, include_counts=True)
 
 
 @service_api.route("/", methods=["POST"], strict_slashes=False)

@@ -192,6 +192,14 @@ class TestService(AbstractTest):
         self.login("urn:sarah")
         services = self.get("/api/services/all", with_basic_auth=False)
         self.assertTrue(len(services) > 0)
+        service_mail = self.find_by_name(services, service_mail_name)
+        self.assertFalse("collaborations_count" in service_mail)
+        self.assertFalse("organisations_count" in service_mail)
+
+    def test_services_all_include_counts(self):
+        self.login("urn:sarah")
+        services = self.get("/api/services/all", query_data={"include_counts": True}, with_basic_auth=False)
+        self.assertTrue(len(services) > 0)
 
         service_mail = self.find_by_name(services, service_mail_name)
         self.assertEqual(1, service_mail["collaborations_count"])

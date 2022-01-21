@@ -23,7 +23,7 @@ class Services extends React.Component {
         const {user} = this.props;
         let promise;
         if (user.admin) {
-            promise = allServices();
+            promise = allServices(true);
         } else if (isUserServiceAdmin(user)) {
             promise = mineServices()
         } else {
