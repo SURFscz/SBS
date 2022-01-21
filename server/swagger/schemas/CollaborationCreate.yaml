@@ -1,0 +1,35 @@
+---
+type: object
+properties:
+  name:
+    type: string
+    example: "Researcher"
+  short_name:
+    type: string
+    example: "researcher"
+  description:
+    type: string
+    example: "Researcher"
+  entityId:
+    type: string
+    format: uri
+    example: "https://service.universiteitvanharderwijk.nl/ssp/metadata.xml"
+  landingpage:
+    type: string
+    format: uri
+    example: "https://service.universiteitvanharderwijk.nl/login"
+  disable_join_requests:
+    type: boolean
+    example: true
+  disclose_member_information:
+    type: boolean
+    example: true
+  disclose_email_information:
+    type: boolean
+    example: true
+required:
+  - name
+  - disable_join_requests
+  - disclose_member_information
+  - disclose_email_information
+  - short_name

@@ -16,15 +16,13 @@ parameters:
     description: The collaboration attributes
     required: true
     schema:
-      $ref: '/swagger/schemas/Collaboration.yaml'
+      $ref: '/swagger/schemas/CollaborationCreate.yaml'
 
 responses:
   201:
     description: Created collaboration
     schema:
-#      type: array
-#      items:
-      $ref: '/swagger/schemas/Collaboration.yaml'
+      $ref: '/swagger/schemas/CollaborationCreate.yaml'
   401:
     schema:
       $ref: '/swagger/components/responses/Unauthorized.yaml'
