@@ -117,6 +117,8 @@ def sync():
                     "username": row[8], "last_login_date": str(row[9])}
         rs_ssh_keys = db.engine.execute(f"SELECT ssh_value FROM ssh_keys WHERE user_id = {row[0]}")
         user_row["ssh_keys"] = [r[0] for r in rs_ssh_keys]
+        user_ip_networks = db.engine.execute(f"SELECT network_value FROM user_ip_networks WHERE user_id = {row[0]}")
+        user_row["user_ip_networks"] = [r[0] for r in user_ip_networks]
         service_aups = db.engine.execute(f"SELECT aup_url, service_id, agreed_at FROM service_aups "
                                          f"WHERE user_id = {row[0]}")
         user_row["accepted_aups"] = [{"url": r[0], "service_id": r[1], "agreed_at": str(r[2])} for r in service_aups]
