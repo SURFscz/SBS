@@ -168,6 +168,10 @@ app.app_config["profile"] = profile
 
 app.mqtt = MqttClient(app.app_config.service_bus)
 
+app.config['SWAGGER'] = {
+    'title': 'SRAM API',
+    'uiversion': 3
+}
 Swagger(app, template=SWAGGER_TEMPLATE, config=SWAGGER_CONFIG, merge=True)
 
 Migrate(app, db)

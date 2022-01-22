@@ -35,7 +35,8 @@ class User(Base, db.Model):
     second_factor_auth = db.Column("second_factor_auth", db.String(length=255), nullable=True)
     ssh_keys = db.relationship("SshKey", back_populates="user", cascade="all, delete-orphan", passive_deletes=True,
                                lazy="selectin")
-    ip_networks = db.relationship("UserIpNetwork", cascade="all, delete-orphan", passive_deletes=True, lazy="selectin")
+    user_ip_networks = db.relationship("UserIpNetwork", cascade="all, delete-orphan", passive_deletes=True,
+                                       lazy="selectin")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
@@ -620,6 +621,7 @@ class UserIpNetwork(Base, db.Model):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     network_value = db.Column("network_value", db.Text(), nullable=False)
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="user_ip_networks")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)

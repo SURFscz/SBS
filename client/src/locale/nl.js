@@ -600,6 +600,13 @@ I18n.translations.nl = {
         organisations: "Organisaties",
         sbs: "Applicatie",
         collaborations: "Samenwerkingen",
+        network: "IP-ranges",
+        networkTooltip: "Configureer je IP-bereiken voor deze dienst. Je kunt IPv4 en IPv6 network ranges toevoegen. " +
+            "Bijvoorbeeld: <ul>" +
+            "<li>Enkelvoudig IPv4-adres 198.51.100.12 waar een /32 is aangenomen</li>" +
+            "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" +
+            "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" +
+            "</ul> ",
     },
     collaborations: {
         dashboard: "Dashboard voor je samenwerkingen",

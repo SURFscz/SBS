@@ -12,8 +12,8 @@ max_allowed_ipv4_sub_mask = 24
 max_allowed_ipv6_prefix = 64
 
 
-def validate_ip_networks(data):
-    ip_networks = data.get("ip_networks", None)
+def validate_ip_networks(data, networks_name="ip_networks"):
+    ip_networks = data.get(networks_name, None)
     if ip_networks:
         for ip_network in ip_networks:
             ipaddress.ip_network(ip_network["network_value"], False)

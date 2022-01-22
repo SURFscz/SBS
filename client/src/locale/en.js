@@ -599,7 +599,14 @@ I18n.translations.en = {
         organisation: "Organisation",
         organisations: "Organisations",
         sbs: "Application",
-        collaborations: "Collaborations"
+        collaborations: "Collaborations",
+        network: "IP ranges",
+        networkTooltip: "Configure your IP ranges for this service. You can add IPv4 and IPv6 network ranges. " +
+            "For example: <ul>" +
+            "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
+            "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
+            "<li>IPv6 range 2001:db8:f00f:bab::/64. Maximal allowed subnet size for IPv6 is a /64</li>" +
+            "</ul> ",
     },
     collaborations: {
         dashboard: "Dashboard for your collaborations",
