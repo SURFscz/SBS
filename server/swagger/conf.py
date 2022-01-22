@@ -1,6 +1,11 @@
 from flask import Blueprint, send_from_directory, current_app
 
 SWAGGER_TEMPLATE = {
+    "info": {
+        "title": "SRAM API",
+        "description": "Documentation for SRAM external API",
+        "version": "1.0",
+    },
     "securityDefinitions": {
         "APIKeyHeader": {
             "type": "apiKey", "name": "Authorization", "in": "header"

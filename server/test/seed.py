@@ -13,7 +13,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership, ServiceAup, UserToken
+    ServiceMembership, ServiceAup, UserToken, UserIpNetwork
 
 collaboration_request_name = "New Collaboration"
 
@@ -193,6 +193,10 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                                  "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     ssh_key_sarah = SshKey(user=sarah, ssh_value="some-lame-key")
     _persist(db, ssh_key_john, ssh_key_james, ssh_key_sarah)
+
+    sarah_user_ip_network = UserIpNetwork(network_value="255.0.0.1/32", user=sarah)
+    sarah_other_user_ip_network = UserIpNetwork(network_value="255.0.0.9/24", user=sarah)
+    _persist(db, sarah_user_ip_network, sarah_other_user_ip_network)
 
     resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
     user_one_suspend_notification1 = SuspendNotification(user=user_one_suspend, sent_at=resend_suspension_date,

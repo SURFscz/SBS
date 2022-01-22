@@ -1,5 +1,5 @@
 import React from "react";
-import {auditLogsUser, findUserById} from "../api";
+import {auditLogsUser, findUserById, ipNetworks} from "../api";
 import I18n from "i18n-js";
 import "./UserDetail.scss";
 
@@ -29,7 +29,8 @@ class UserDetail extends React.Component {
             tab: "details",
             tabs: [],
             query: "",
-            showSshKeys: false
+            showSshKeys: false,
+            user_ip_networks: []
         }
     }
 
@@ -51,6 +52,12 @@ class UserDetail extends React.Component {
                     loading: false, user: user, auditLogs: auditLogs, filteredAuditLogs: auditLogs,
                     tab: tab
                 });
+                if (!isEmpty(res[0].user_ip_networks)) {
+                    Promise.all(res[0].user_ip_networks.map(n => ipNetworks(n.network_value, n.id)))
+                        .then(res => {
+                            this.setState({"user_ip_networks": res});
+                        });
+                }
             })
     };
 
@@ -61,9 +68,9 @@ class UserDetail extends React.Component {
             <div className={"user-profile"}>
                 {attributes.map((attr, index) =>
                     <div key={index}>
-                    <InputField noInput={true} disabled={true} value={user[attr] || "-"}
-                                name={I18n.t(`models.allUsers.${attr}`)}/>
-                        </div>)}
+                        <InputField noInput={true} disabled={true} value={user[attr] || "-"}
+                                    name={I18n.t(`models.allUsers.${attr}`)}/>
+                    </div>)}
                 <InputField noInput={true} disabled={true} value={moment(user.last_login_date * 1000).format("LLL")}
                             name={I18n.t("models.allUsers.last_login_date")}/>
                 <div className="ssh-keys">
@@ -110,6 +117,14 @@ class UserDetail extends React.Component {
                     {!isEmpty(user.service_memberships) && <ul>
                         {user.service_memberships.map(sm =>
                             <li key={`service_membership_${sm.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</li>)}
+                    </ul>}
+                </div>
+                <div className="input-field">
+                    <label>{I18n.t("profile.network")}</label>
+                    {isEmpty(user.user_ip_networks) && "-"}
+                    {!isEmpty(user.user_ip_networks) && <ul>
+                        {user.user_ip_networks.map(n =>
+                            <li key={`user_ip_networks_${n.id}`}>{n.network_value}</li>)}
                     </ul>}
                 </div>
                 <div className="input-field">

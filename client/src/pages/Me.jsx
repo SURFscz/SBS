@@ -1,5 +1,5 @@
 import React from "react";
-import {deleteUser, updateUser} from "../api";
+import {deleteUser, ipNetworks, updateUser,} from "../api";
 import I18n from "i18n-js";
 import InputField from "../components/InputField";
 import "./Me.scss";
@@ -28,14 +28,16 @@ class Me extends React.Component {
             nameConfirmation: "",
             isWarning: false,
             ssh_keys: [],
+            user_ip_networks: [],
             invalidInputs: {},
             initial: true,
             id: user.id,
+            loading: true
         };
     }
 
     componentDidMount() {
-        const {ssh_keys} = this.props.user;
+        const {ssh_keys, user_ip_networks} = this.props.user;
         ssh_keys.forEach((sshKey, i) => {
             sshKey.fileInputKey = new Date().getMilliseconds() + i + 1
         });
@@ -46,6 +48,15 @@ class Me extends React.Component {
             });
         }
         this.setState({ssh_keys: ssh_keys});
+        if (isEmpty(user_ip_networks)) {
+            this.addIpAddress();
+            this.setState({loading: false})
+        } else {
+            Promise.all(user_ip_networks.map(n => ipNetworks(n.network_value, n.id)))
+                .then(res => {
+                    this.setState({"user_ip_networks": res, loading: false});
+                });
+        }
     }
 
     gotoHome = e => {
@@ -73,11 +84,47 @@ class Me extends React.Component {
         }
     };
 
+    validateIpAddress = index => e => {
+        const currentIpNetwork = this.state.user_ip_networks[index];
+        const address = e.target.value;
+        if (!isEmpty(address)) {
+            ipNetworks(address, currentIpNetwork.id)
+                .then(res => {
+                    const {user_ip_networks} = this.state;
+                    user_ip_networks.splice(index, 1, res);
+                    const updatedIpNetworks = [...user_ip_networks];
+                    this.setState({user_ip_networks: updatedIpNetworks});
+                });
+        }
+    }
+
+    saveIpAddress = index => e => {
+        const {user_ip_networks} = this.state;
+        const network = user_ip_networks[index];
+        network.network_value = e.target.value;
+        user_ip_networks.splice(index, 1, network)
+        const updatedIpNetworks = [...user_ip_networks];
+        this.setState({user_ip_networks: updatedIpNetworks});
+    }
+
+    addIpAddress = () => {
+        const {user_ip_networks} = this.state;
+        user_ip_networks.push({network_value: ""});
+        this.setState({user_ip_networks: [...user_ip_networks]});
+    }
+
+    deleteIpAddress = index => {
+        const {user_ip_networks} = this.state;
+        user_ip_networks.splice(index, 1);
+        this.setState({user_ip_networks: [...user_ip_networks]});
+    }
+
     isValid = () => {
-        const {invalidInputs, ssh_keys} = this.state;
+        const {invalidInputs, ssh_keys, user_ip_networks} = this.state;
         const inValid = Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const isValidSsh = ssh_keys.every(ssh_key => validateSSHKey(ssh_key.ssh_value));
-        return !inValid && isValidSsh;
+        const invalidIpNetworks = user_ip_networks.some(ipNetwork => ipNetwork.error);
+        return !inValid && isValidSsh && !invalidIpNetworks;
     };
 
     configureMfa = () => {
@@ -87,10 +134,25 @@ class Me extends React.Component {
 
     doSubmit = () => {
         if (this.isValid()) {
-            updateUser(this.state).then(() => {
-                this.props.refreshUser();
-                this.gotoHome();
-                setFlash(I18n.t("user.flash.updated"));
+            this.setState({loading: true});
+            const {user_ip_networks} = this.state;
+            const strippedIpNetworks = user_ip_networks
+                .filter(network => network.network_value && network.network_value.trim())
+                .map(network => ({network_value: network.network_value, id: network.id}));
+            // Prevent deletion / re-creation of existing IP Network
+            strippedIpNetworks.forEach(network => {
+                if (isEmpty(network.id)) {
+                    delete network.id;
+                } else {
+                    network.id = parseInt(network.id, 10)
+                }
+            });
+            this.setState({user_ip_networks: strippedIpNetworks}, () => {
+                updateUser(this.state).then(() => {
+                    this.props.refreshUser();
+                    this.gotoHome();
+                    setFlash(I18n.t("user.flash.updated"));
+                });
             });
         }
     };
@@ -154,7 +216,48 @@ class Me extends React.Component {
         sshKey.startsWith("-----BEGIN PUBLIC KEY-----") ||
         sshKey.startsWith("-----BEGIN RSA PUBLIC KEY-----"));
 
-    renderForm = (user, ssh_keys, disabledSubmit, config) => {
+    renderIpNetworks = user_ip_networks => {
+        return (<div className="ip-networks">
+            <label className="title" htmlFor={I18n.t("profile.network")}>{I18n.t("profile.network")}
+                <span className="tool-tip-section">
+                                <span data-tip data-for={I18n.t("profile.network")}>
+                                    <FontAwesomeIcon icon="info-circle"/>
+                                </span>
+                                <ReactTooltip id={I18n.t("profile.network")} type="light" effect="solid"
+                                              data-html={true}>
+                                    <p dangerouslySetInnerHTML={{__html: I18n.t("profile.networkTooltip")}}/>
+                                </ReactTooltip>
+                            </span>
+                <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>
+            </label>
+            {user_ip_networks.map((network, i) =>
+                <div className="network-container" key={i}>
+                    <div className="network">
+                        <InputField value={network.network_value}
+                                    onChange={this.saveIpAddress(i)}
+                                    onBlur={this.validateIpAddress(i)}
+                                    placeholder={I18n.t("service.networkPlaceholder")}
+                                    error={network.error || network.syntax}
+                                    onEnter={e => {
+                                        this.validateIpAddress(i);
+                                        e.target.blur()
+                                    }}
+                        />
+                        <span className="trash" onClick={() => this.deleteIpAddress(i)}>
+                            <FontAwesomeIcon icon="trash"/>
+                        </span>
+                    </div>
+                    {(network.error && !network.syntax) &&
+                    <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
+                    {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
+                    {network.higher && <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
+
+                </div>
+            )}
+        </div>);
+    }
+
+    renderForm = (user, ssh_keys, user_ip_networks, disabledSubmit, config) => {
         // const attributes = ["name", "email", "created_at", "username", , "uid", "eduperson_principal_name",
         //     "affiliation", "scoped_affiliation", "entitlement", "schac_home_organisation", "edu_members"];
         const createdAt = user.created_at;
@@ -176,7 +279,7 @@ class Me extends React.Component {
                     }
                     <div className={"attributes"} key={"schac_home_organisation"}>
                         <span className="attribute-key">{I18n.t("profile.schac_home_organisation")}</span>
-                        <InstituteColumn entity={{user:user}} currentUser={user} greyed={false}/>
+                        <InstituteColumn entity={{user: user}} currentUser={user} greyed={false}/>
                     </div>
 
                     {config.second_factor_authentication_required && <div className="second-factor">
@@ -189,6 +292,8 @@ class Me extends React.Component {
                                     onClick={this.configureMfa}/>
                         </div>}
                     </div>}
+                    {this.renderIpNetworks(user_ip_networks)}
+
                     <div className="ssh-keys-container">
                         <label className="title" htmlFor={I18n.t("user.ssh_key")}>{I18n.t("user.ssh_key")}
                             <span className="tool-tip-section">
@@ -240,7 +345,7 @@ class Me extends React.Component {
     render() {
         const {
             confirmationDialogAction, confirmationDialogOpen, cancelDialogAction, confirmationQuestion,
-            initial, ssh_keys, nameConfirmation
+            initial, ssh_keys, user_ip_networks, nameConfirmation
         } = this.state;
         const {user, config} = this.props;
         const disabledSubmit = !initial && !this.isValid();
@@ -264,7 +369,7 @@ class Me extends React.Component {
                     </div>
                 </ConfirmationDialog>
 
-                {this.renderForm(user, ssh_keys, disabledSubmit, config)}
+                {this.renderForm(user, ssh_keys, user_ip_networks, disabledSubmit, config)}
             </div>
         );
     };
