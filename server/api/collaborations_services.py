@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+from flasgger import swag_from
 from flask import Blueprint, request as current_request, g as request_context
 from werkzeug.exceptions import BadRequest, Forbidden
 
@@ -55,6 +56,7 @@ def add_collaborations_services():
 
 
 @collaborations_services_api.route("/v1/connect_collaboration_service", methods=["PUT"], strict_slashes=False)
+@swag_from("../swagger/paths/connect_collaboration_service.yml")
 @json_endpoint
 def connect_collaboration_service_api():
     confirm_external_api_call()
