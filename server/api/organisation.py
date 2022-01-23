@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 import uuid
 
+from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, func, bindparam, String
@@ -109,6 +110,7 @@ def my_organisations_lite():
 
 
 @organisation_api.route("/v1", strict_slashes=False)
+@swag_from("../swagger/paths/get_collaborations_by_organisation.yml")
 @json_endpoint
 def api_organisation_details():
     confirm_external_api_call()

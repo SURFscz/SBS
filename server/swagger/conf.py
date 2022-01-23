@@ -1,4 +1,5 @@
 from flask import Blueprint, send_from_directory, current_app
+from flasgger import Swagger
 
 SWAGGER_TEMPLATE = {
     "info": {
@@ -23,6 +24,11 @@ SWAGGER_CONFIG = {
         }
     ],
 }
+
+
+def init_swagger(app):
+    Swagger(app, template=SWAGGER_TEMPLATE, config=SWAGGER_CONFIG, merge=True)
+
 
 swagger_specs = Blueprint("swagger_specs", __name__, url_prefix="/swagger")
 
