@@ -1,0 +1,38 @@
+---
+type: object
+properties:
+  status:
+    type: string
+    example: "open"
+  invitation:
+    type: object
+    properties:
+      identifier:
+        type: string
+        format: uuid
+        example: "301ee8e6-b5d1-40b5-a27e-47611f803371"
+      email:
+        type: string
+        example: "jdoe@example.com"
+      expiry_date:
+        type: number
+        description: "The expiry date of the collaboration in epoch seconds"
+        example: 1644015600
+  user:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "John Doe"
+      mail:
+        type: string
+        example: "jdoe@example.org"
+      username:
+        type: string
+        example: "jdoe2"
+      platform_id:
+        type: string
+        example: "9bf251bf6cfa9eb8c75f15a90075fa7074eb3d48@acc.sram.eduteams.org"
+      status:
+        type: string
+        example: "active"

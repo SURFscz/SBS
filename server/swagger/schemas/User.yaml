@@ -8,3 +8,76 @@ properties:
   name:
     type: string
     example: "John Doe"
+  uid:
+    type: string
+    example: "urn:john"
+  username:
+    type: string
+    example: "jdoe2"
+  address:
+    type: string
+    example: "Postal 1234AA"
+  affiliation:
+    type: string
+    example: "student"
+  eduperson_principal_name:
+    type: string
+    example: "jdoe@uva.nl"
+  email:
+    type: string
+    example: "jdoe@uva.nl"
+  entitlement:
+    type: string
+    example: "student"
+  given_name:
+    type: string
+    example: "John"
+  family_name:
+    type: string
+    example: "Doe"
+  nick_name:
+    type: string
+    example: "John Doe"
+  schac_home_organisation:
+    type: string
+    example: "uva.nl"
+  scoped_affiliation:
+    type: string
+    example: "student@uva.nl"
+  confirmed_super_user:
+    type: boolean
+    example: false
+  last_accessed_date:
+    type: number
+    description: "The last accessed date at in epoch seconds"
+    example: 1644015600
+  last_login_date:
+    type: number
+    description: "The last login date at in epoch seconds"
+    example: 1644015600
+  second_factor_auth:
+    type: boolean
+    example: false
+  suspended:
+    type: boolean
+    example: false
+  created_at:
+    type: number
+    description: "The date of the created at in epoch seconds"
+    example: 1644015600
+  created_by:
+    type: string
+    description: "UID of the user who created this"
+    example: "urn:admin"
+  updated_by:
+    type: string
+    description: "UID of the user who updated this"
+    example: "urn:admin"
+  ssh_keys:
+    type: array
+    items:
+      $ref: '/swagger/schemas/SSHKey.yaml'
+  user_ip_networks:
+    type: array
+    items:
+      $ref: '/swagger/schemas/UserIPNetwork.yaml'
