@@ -56,7 +56,7 @@ properties:
   expiry_date:
     type: number
     description: "The expiry date of the collaboration in epoch seconds"
-    example: "1644015600"
+    example: 1644015600
   logo:
     type: string
     format: uri
@@ -65,19 +65,27 @@ properties:
   created_at:
     type: number
     description: "The date of the created at in epoch seconds"
-    example: "1644015600"
+    example: 1644015600
+  created_by:
+    type: string
+    description: "UID of the user who created this"
+    example: "urn:admin"
+  updated_by:
+    type: string
+    description: "UID of the user who updated this"
+    example: "urn:admin"
   collaboration_memberships_count:
     type: number
     description: "The number of memberships e.g. 0"
-    example: "0"
+    example: 0
   invitations_count:
     type: number
     description: "The number of invitations e.g. 1 or more"
-    example: "1"
+    example: 3
   last_activity_date:
     type: number
     description: "The date of the last activity at in epoch seconds"
-    example: "1642947278"
+    example: 1642947278
   collaboration_memberships:
     type: array
     items:
@@ -90,15 +98,3 @@ properties:
     type: array
     items:
       $ref: '/swagger/schemas/Group.yaml'
-  join_requests:
-    type: array
-    items:
-      $ref: '/swagger/schemas/JoinRequest.yaml'
-  invitations:
-    type: array
-    items:
-      $ref: '/swagger/schemas/Invitation.yaml'
-  service_connection_requests:
-    type: array
-    items:
-      $ref: '/swagger/schemas/ServiceConnectionRequest.yaml'

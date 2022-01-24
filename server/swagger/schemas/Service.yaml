@@ -5,58 +5,82 @@ properties:
     type: number
     readOnly: true
     example: 999
-  identifier:
-    type: string
-    format: uuid
-    readOnly: true
-    description: "Unique generated identifier of the collaboration"
-    example: "12035254-E1F1-4190-9E60-EDAEE8DEE72A"
   name:
     type: string
-    example: "Researcher"
-  short_name:
+    example: "Mail"
+  abbreviation:
     type: string
-    example: "researcher"
+    example: "mail"
   description:
     type: string
-    example: "Researcher collaboration UVA"
-  global_urn:
+    example: "Mail service"
+  entity_id:
     type: string
-    description: "The unique collaboration urn within the organisation"
-    example: "uva:researchers"
-  status:
+    format: url
+    example: "https://mail.com"
+  contact_email:
     type: string
-    description: "The status of the new collaboration"
-    example: "active"
-  organisation_id:
-    type: number
-    example: 666
+    example: "jdoe@service.com"
+  security_email:
+    type: string
+    example: "jdoe@service.com"
+  support_email:
+    type: string
+    example: "jdoe@service.com"
   uuid4:
     type: string
     format: uuid
     readOnly: true
     description: "Unique generated uuid for the cached image"
     example: "12035254-E1F1-4190-9E60-EDAEE8DEE72A"
-  website_url:
+  access_allowed_for_all:
+    type: boolean
+    description: "If true all collaborations can use this service"
+    example: true
+  automatic_connection_allowed:
+    type: boolean
+    description: "If true all collaborations can connect to this service"
+    example: true
+  code_of_conduct_compliant:
+    type: boolean
+    description: "Compliant with the code of conduct"
+    example: true
+  non_member_users_access_allowed:
+    type: boolean
+    description: "If true then non collaboration members can access this service"
+    example: true
+  public_visible:
+    type: boolean
+    description: "If true then this service is public visible"
+    example: true
+  research_scholarship_compliant:
+    type: boolean
+    description: "Compliant with the research scholarship"
+    example: true
+  sirtfi_compliant:
+    type: boolean
+    description: "Compliant with the sirtfi"
+    example: true
+  token_enabled:
+    type: boolean
+    description: "Can tokens be created for users"
+    example: true
+  white_listed:
+    type: boolean
+    description: "Is this service whitelisted"
+    example: true
+  token_validity_days:
+    type: number
+    description: "Tokens validity days"
+    example: 30
+  accepted_user_policy:
     type: string
     format: uri
-    example: "https://service.universiteitvanharderwijk.nl/login"
-  disable_join_requests:
-    type: boolean
-    description: "If true users can not request to become a member of this collaboration"
-    example: true
-  disclose_member_information:
-    type: boolean
-    description: "If false the names of the members are not disclosed to other members"
-    example: true
-  disclose_email_information:
-    type: boolean
-    description: "If false the emails of the members are not disclosed to other members"
-    example: true
-  expiry_date:
-    type: number
-    description: "The expiry date of the collaboration in epoch seconds"
-    example: "1644015600"
+    example: "https://service.universiteitvanharderwijk.nl/aup"
+  privacy_policy:
+    type: string
+    format: uri
+    example: "https://service.universiteitvanharderwijk.nl/privacy"
   logo:
     type: string
     format: uri
@@ -65,40 +89,12 @@ properties:
   created_at:
     type: number
     description: "The date of the created at in epoch seconds"
-    example: "1644015600"
-  collaboration_memberships_count:
-    type: number
-    description: "The number of memberships e.g. 0"
-    example: "0"
-  invitations_count:
-    type: number
-    description: "The number of invitations e.g. 1 or more"
-    example: "1"
-  last_activity_date:
-    type: number
-    description: "The date of the last activity at in epoch seconds"
-    example: "1642947278"
-  collaboration_memberships:
-    type: array
-    items:
-      $ref: '/swagger/schemas/CollaborationMembership.yaml'
-  services:
-    type: array
-    items:
-      $ref: '/swagger/schemas/Service.yaml'
-  groups:
-    type: array
-    items:
-      $ref: '/swagger/schemas/Group.yaml'
-  join_requests:
-    type: array
-    items:
-      $ref: '/swagger/schemas/JoinRequest.yaml'
-  invitations:
-    type: array
-    items:
-      $ref: '/swagger/schemas/Invitation.yaml'
-  service_connection_requests:
-    type: array
-    items:
-      $ref: '/swagger/schemas/ServiceConnectionRequest.yaml'
+    example: 1644015600
+  created_by:
+    type: string
+    description: "UID of the user who created this"
+    example: "urn:admin"
+  updated_by:
+    type: string
+    description: "UID of the user who updated this"
+    example: "urn:admin"
