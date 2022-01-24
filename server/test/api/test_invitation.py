@@ -1,5 +1,6 @@
 # -*- coding: future_fstrings -*-
 import datetime
+import time
 import uuid
 
 from server.db.db import db
@@ -196,6 +197,7 @@ class TestInvitation(AbstractTest):
         res = self.put("/api/invitations/v1/collaboration_invites",
                        body={
                            "short_name": ai_computing_short_name,
+                           "invitation_expiry_date": (int(time.time()) * 1000) + 60 * 60 * 25 * 15,
                            "invites": ["joe@test.com"]
                        },
                        headers={"Authorization": f"Bearer {uuc_secret}"},

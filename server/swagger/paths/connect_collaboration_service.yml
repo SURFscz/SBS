@@ -1,5 +1,5 @@
-summary: "Post a new collaboration."
-description: "Save a new collaboration."
+summary: "Connect service to collaboration."
+description: "Connect a service to an existing collaboration."
 
 consumes:
   - "application/json"
@@ -11,18 +11,18 @@ security:
   - APIKeyHeader: [ 'Authorization' ]
 
 parameters:
-  - name: collaboration
+  - name: service
     in: body
-    description: The collaboration attributes
+    description: The service and collaboration identifiers
     required: true
     schema:
-      $ref: '/swagger/schemas/CollaborationCreate.yaml'
+      $ref: '/swagger/schemas/CollaborationConnectServiceRequest.yaml'
 
 responses:
   201:
-    description: Created collaboration
+    description: Conection status
     schema:
-      $ref: '/swagger/schemas/CollaborationCreateResponse.yaml'
+      $ref: '/swagger/schemas/CollaborationConnectServiceResponse.yaml'
   401:
     schema:
       $ref: '/swagger/components/responses/Unauthorized.yaml'

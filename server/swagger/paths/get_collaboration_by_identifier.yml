@@ -24,7 +24,7 @@ responses:
   200:
     description: Collaboration details
     schema:
-      $ref: '/swagger/schemas/Collaboration.yaml'
+      $ref: '/swagger/schemas/CollaborationDetail.yaml'
   401:
     schema:
       $ref: '/swagger/components/responses/Unauthorized.yaml'
