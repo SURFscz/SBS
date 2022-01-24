@@ -1,5 +1,5 @@
-summary: "Post a new collaboration."
-description: "Save a new collaboration."
+summary: "Get collaborations by organisation."
+description: "Retrieves all collaborations for an organisation."
 
 consumes:
   - "application/json"
@@ -10,19 +10,13 @@ produces:
 security:
   - APIKeyHeader: [ 'Authorization' ]
 
-parameters:
-  - name: collaboration
-    in: body
-    description: The collaboration attributes
-    required: true
-    schema:
-      $ref: '/swagger/schemas/CollaborationCreate.yaml'
-
 responses:
-  201:
-    description: Created collaboration
+  200:
+    description: Organisation
     schema:
-      $ref: '/swagger/schemas/CollaborationCreateResponse.yaml'
+      type: array
+      items:
+        $ref: '/swagger/schemas/OrganisationDetail.yaml'
   401:
     schema:
       $ref: '/swagger/components/responses/Unauthorized.yaml'

@@ -1,0 +1,13 @@
+---
+type: object
+properties:
+  short_name:
+    type: string
+    example: "researcher"
+  service_entity_id:
+    type: string
+    format: uri
+    example: "https://service.cloud.nl"
+required:
+  - short_name
+  - service_entity_id

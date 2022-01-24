@@ -3,6 +3,7 @@ import datetime
 import re
 import uuid
 
+from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Conflict, Forbidden
@@ -48,6 +49,11 @@ def do_resend(invitation_id):
     }, invitation.collaboration, [invitation.invitee_email])
 
 
+def parse_date(val, default_date=None):
+    return datetime.datetime.fromtimestamp(val / 1e3) if val and (
+            isinstance(val, float) or isinstance(val, int)) else default_date
+
+
 @invitations_api.route("/find_by_hash", strict_slashes=False)
 @json_endpoint
 def invitations_by_hash():
@@ -72,6 +78,7 @@ def invitations_by_hash():
 
 
 @invitations_api.route("/v1/collaboration_invites", methods=["PUT"], strict_slashes=False)
+@swag_from("../swagger/paths/put_new_invitations.yml")
 @json_endpoint
 def collaboration_invites_api():
     confirm_external_api_call()
@@ -96,8 +103,8 @@ def collaboration_invites_api():
 
     message = data.get("message")
     intended_role = data.get("intended_role", "member")
-    expiry_date = data.get("invitation_expiry_date", default_expiry_date())
-    membership_expiry_date = data.get("membership_expiry_date", None)
+    expiry_date = parse_date(data.get("invitation_expiry_date"), default_expiry_date())
+    membership_expiry_date = parse_date(data.get("membership_expiry_date"))
     invites = list(filter(lambda recipient: bool(email_re.match(recipient)), data["invites"]))
     invites_results = []
     for email in invites:
@@ -216,6 +223,7 @@ def delete_invitation(invitation_id):
 
 
 @invitations_api.route("/v1/<external_identifier>", strict_slashes=False)
+@swag_from("../swagger/paths/get_invitation_by_identifier.yml")
 @json_endpoint
 def external_invitation(external_identifier):
     confirm_external_api_call()
