@@ -115,8 +115,8 @@ def my_organisations_lite():
 def api_organisation_details():
     confirm_external_api_call()
     organisation = request_context.external_api_organisation
-    organisation.collaborations
-
+    for collaboration in organisation.collaborations:
+        collaboration.groups
     return organisation, 200
 
 
