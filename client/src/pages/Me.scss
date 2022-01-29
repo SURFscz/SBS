@@ -89,6 +89,11 @@ div.user-profile-tab-container {
             font-weight: bold;
         }
 
+        .network-explanation {
+            max-width: 580px;
+            display: inline-block;
+        }
+
         .ssh-keys-container {
             label.title {
                 display: flex;

@@ -230,6 +230,7 @@ class Me extends React.Component {
                             </span>
                 <span className="add-network" onClick={() => this.addIpAddress()}><FontAwesomeIcon icon="plus"/></span>
             </label>
+            <span className="network-explanation">{I18n.t("profile.networkExplanation")}</span>
             {user_ip_networks.map((network, i) =>
                 <div className="network-container" key={i}>
                     <div className="network">
