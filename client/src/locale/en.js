@@ -607,6 +607,7 @@ I18n.translations.en = {
             "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
             "<li>IPv6 range 2001:db8:f00f:bab::/64. Maximal allowed subnet size for IPv6 is a /64</li>" +
             "</ul> ",
+        networkExplanation: "Inform the service providers from which IP addresses you will be accessing their services. The service providers may allow access to your IP addresses if they support this."
     },
     collaborations: {
         dashboard: "Dashboard for your collaborations",

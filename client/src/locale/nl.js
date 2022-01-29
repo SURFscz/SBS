@@ -607,6 +607,7 @@ I18n.translations.nl = {
             "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" +
             "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" +
             "</ul> ",
+        networkExplanation: "Informeer de serviceproviders vanaf welke IP-adressen je hun services gebruikt. De serviceproviders kunnen je IP-adressen toegang geven als ze dit ondersteunen."
     },
     collaborations: {
         dashboard: "Dashboard voor je samenwerkingen",
