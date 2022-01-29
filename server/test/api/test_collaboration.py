@@ -317,13 +317,16 @@ class TestCollaboration(AbstractTest):
     def test_collaboration_invites(self):
         pre_count = Invitation.query.count()
         self.login("urn:john")
-        collaboration_id = self._find_by_identifier()["id"]
+        collaboration = self._find_by_identifier()
+        collaboration_id = collaboration["id"]
+        groups = [group["id"] for group in collaboration["groups"]]
         mail = self.app.mail
         with mail.record_messages() as outbox:
             self.put("/api/collaborations/invites", body={
                 "collaboration_id": collaboration_id,
                 "administrators": ["new@example.org", "pop@example.org"],
                 "message": "Please join",
+                "groups": groups,
                 "membership_expiry_date": int(time.time()),
                 "intended_role": "admin"
             })
@@ -332,6 +335,7 @@ class TestCollaboration(AbstractTest):
             self.assertEqual(pre_count + 2, post_count)
             invitation = Invitation.query.filter(Invitation.invitee_email == "new@example.org").first()
             self.assertEqual("admin", invitation.intended_role)
+            self.assertEqual(2, len(invitation.groups))
             self.assertIsNotNone(invitation.membership_expiry_date)
 
     def test_collaboration_invites_no_intended_role(self):
