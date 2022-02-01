@@ -1119,8 +1119,8 @@ I18n.translations.en = {
         flash: {
             inviteDeclined: "Invitation for organisation {{name}} was declined.",
             inviteDeleted: "Invitation for organisation {{name}} was deleted.",
-            inviteResend: "Invitation for organisation {{name}} was resend.",
-            invitesResend: "Invitations for organisation {{name}} are resend.",
+            inviteResend: "Invitation for organisation {{name}} was resent.",
+            invitesResend: "Invitations for organisation {{name}} were resent.",
             inviteAccepted: "Invitation for organisation {{name}} was accepted.",
             created: "Invitions for organisation {{name}} are created.",
             alreadyMember: "The invitation could not be accepted because you are already a member of this organisation.",
@@ -1190,7 +1190,7 @@ I18n.translations.en = {
             inviteDeclined: "Invitation for collaboration {{name}} was declined.",
             inviteAccepted: "Invitation for collaboration {{name}} was accepted.",
             inviteDeleted: "Invitation for organisation {{name}} was deleted.",
-            inviteResend: "Invitation for organisation {{name}} was resend.",
+            inviteResend: "Invitation for organisation {{name}} was resent.",
             created: "Invitations for collaboration {{name}} were successfully created.",
             alreadyMember: "The invitation could not be accepted because you are already a member of this collaboration.",
         },
@@ -1210,7 +1210,7 @@ I18n.translations.en = {
         flash: {
             added: "Successfully added service {{service}} to collaboration {{name}}.",
             deleted: "Successfully deleted service {{service}} from collaboration {{name}}.",
-            send: "Successfully send service connection request for {{service}}.",
+            send: "Successfully sent service connection request for {{service}}.",
         },
         service: {
             open: "",
@@ -1231,7 +1231,7 @@ I18n.translations.en = {
         actionsTooltip: "Delete the service Connection request. The request can henceforth not be approved or denied anymore.",
         serviceConnectionRequests: "Service Connection Requests",
         serviceConnectionRequestDeleted: "Successfully deleted request to connect service {{service}} to collaboration {{collaboration}}.",
-        serviceConnectionRequestResend: "Successfully resend request to connect service {{service}} to collaboration {{collaboration}}.",
+        serviceConnectionRequestResend: "Successfully resent request to connect service {{service}} to collaboration {{collaboration}}.",
         serviceRestrictedInfo: "This collaboration is service restricted. Only the platform admin can configure services to be used by this collaboration.",
         serviceDeleteConfirmation: "Are you sure you want to remove this service from collaboration {{collaboration}}?",
         serviceConnectionRequestDeleteConfirmation: "Are you sure you want to delete this service Connection request?",
@@ -1698,7 +1698,7 @@ I18n.translations.en = {
         help: "Need help?",
         helpInfo: "For questions or issues, please reach out to us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>",
         send: "Send feedback",
-        flash: "Your feedback has successfully been send. Thanks!"
+        flash: "Your feedback has successfully been sent. Thanks!"
     },
     landing: {
         header: {
@@ -1828,7 +1828,7 @@ I18n.translations.en = {
             respondent: "The email will be send to:",
             message: "Message for the admin",
             sendMail: "Send email",
-            flash: "Your request to reset your authentication has been send"
+            flash: "Your request to reset your authentication has been sent"
         },
         reset: {
             title: "Reset your authentication code",
@@ -1875,7 +1875,7 @@ I18n.translations.en = {
         resendInvitations: "Are you sure you want to resend all selected expired invitation?",
         flash: {
             entitiesDeleted: "Admins and invitations have been deleted",
-            invitesResend: "Invitations for service {{name}} are resend.",
+            invitesResend: "Invitations for service {{name}} were resent.",
         },
         gone: {
             member: "This membership does no longer exists. After closing this popup the memberships will be refreshed.",
