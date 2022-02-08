@@ -11,7 +11,8 @@ export function ProtectedRoute({currentUser, Component, redirectToLogin = true, 
         if (!currentUser.second_factor_confirmed) {
             return <Redirect to="/2fa"/>;
         }
-        if (!isEmpty(currentUser.services_without_aup) && window.location.href.indexOf("service-aup?service_id") === -1) {
+        //Ensure that we are not heading to service-aup which is initiated by eduTeams
+        if (!isEmpty(currentUser.services_without_aup) && window.location.href.indexOf("service-aup") === -1) {
             return <Redirect to="/missing-service-aup"/>;
         }
         return <Route render={props => <Component user={currentUser} {...res} {...props}/>}/>;
