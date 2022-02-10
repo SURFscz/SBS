@@ -155,18 +155,12 @@ jobs:
           CI: true
           VNM_DIR: ~/.nvm
 
-      - name: Get tag
-        shell: bash
-        run: |
-          echo ::set-output name=file::sbs-${GITHUB_REF_TYPE}=${GITHUB_REF_NAME//\//+}.tar.xz
-        id: tag
-
       #- name: Setup tmate session
       #  uses: mxschmitt/action-tmate@v3
 
       - name: Create build file
         run: |
-          tar -cJ --transform 's,^\./,sbs/,' -f ${{ steps.tag.outputs.file }} --force-local $(git ls-files) client/build
+          tar -cJ --transform 's,^\./,sbs/,' -f sbs.tar.xz --force-local $(git ls-files) client/build
 
       - uses: jfrog/setup-jfrog-cli@v2
         env:
@@ -181,21 +175,20 @@ jobs:
           # first upload under commit name
           jfrog rt upload --detailed-summary --flat \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
-            "${{ steps.tag.outputs.file }}" SRAM-Production-Public/SBS-builds/commit/sbs-commit-${GITHUB_SHA}.tar.xz
+            sbs.tar.xz SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
           # then under the branch/tag name
           jfrog rt upload --detailed-summary --flat \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
-            "${{ steps.tag.outputs.file }}" SRAM-Production-Public/SBS-builds/named/
+            sbs.tar.xz SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz
 
       - name: Create Artifact
         uses: actions/upload-artifact@v2
         with:
           name: "sbs-build"
-          path: "${{ steps.tag.outputs.file }}"
+          path: "sbs.tar.xz"
 
       - name: Create Release
         if: "github.ref_type=='tag'"
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            ${{ steps.tag.outputs.file }}
+          files: "sbs.tar.xz"
