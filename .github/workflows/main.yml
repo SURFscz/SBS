@@ -168,10 +168,11 @@ jobs:
 
       - name: Check Artie
         run: |
-          jfrog rt ping
 
       - name: Upload artifact to Artie
         run: |
+          # make sure everything works
+          jfrog rt ping
           # first upload under commit name
           jfrog rt upload --detailed-summary --flat \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
