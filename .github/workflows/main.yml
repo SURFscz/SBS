@@ -178,10 +178,9 @@ jobs:
           jfrog rt ping
 
       - name: Upload artifact to Artie
-        run: >
-          jfrog rt upload --detailed-summary --flat
-            --build-name "sbs-ci"
-            --build-number "commit-${GITHUB_SHA}"
+        run: |
+          jfrog rt upload --detailed-summary --flat \
+            --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
             "${{ steps.tag.outputs.file }}" SRAM-Production-Public/SBS-builds/
 
       - name: Create Artifact
