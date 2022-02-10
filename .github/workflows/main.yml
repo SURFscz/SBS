@@ -168,16 +168,19 @@ jobs:
 
       - name: Check Artie
         run: |
-
-      - name: Upload artifact to Artie
-        run: |
           # make sure everything works
           jfrog rt ping
-          # first upload under commit name
+
+
+      - name: Upload commit artifact to Artie
+        run: |
           jfrog rt upload --detailed-summary --flat \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
             sbs.tar.xz SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
-          # then under the branch/tag name
+
+      - name: Upload branch/tag to Artie
+        if: "github.event_name=='push'"
+        run: |
           jfrog rt upload --detailed-summary --flat \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
             sbs.tar.xz SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz
