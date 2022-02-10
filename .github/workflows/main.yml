@@ -169,6 +169,18 @@ jobs:
         run: |
           tar -cJ --transform 's,^\./,sbs/,' -f ${{ steps.tag.outputs.file }} --force-local $(git ls-files) client/build
 
+      - uses: jfrog/setup-jfrog-cli@v2
+        env:
+          JF_ARTIFACTORY_1: ${{ secrets.ARTIE_TOKEN }}
+
+      - name: Check Artie
+        run: |
+          jfrog rt ping
+
+      - name: Upload artifact to Artie
+        run: |
+          jfrog rt upload --detailed-summary --build-name sbs-ci --build-number commit-${GITHUB_SHA} "${{ steps.tag.outputs.file }}"
+
       - name: Create Artifact
         uses: actions/upload-artifact@v2
         with:
