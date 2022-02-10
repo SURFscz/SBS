@@ -158,8 +158,7 @@ jobs:
       - name: Get tag
         shell: bash
         run: |
-          BASENAME=sbs
-          echo ::set-output name=file::${BASENAME}-${GITHUB_REF_TYPE}=${GITHUB_REF_NAME//\//+}.tar.xz
+          echo ::set-output name=file::sbs-${GITHUB_REF_TYPE}=${GITHUB_REF_NAME//\//+}.tar.xz
         id: tag
 
       #- name: Setup tmate session
@@ -179,9 +178,14 @@ jobs:
 
       - name: Upload artifact to Artie
         run: |
+          # first upload under commit name
           jfrog rt upload --detailed-summary --flat \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
-            "${{ steps.tag.outputs.file }}" SRAM-Production-Public/SBS-builds/
+            "${{ steps.tag.outputs.file }}" SRAM-Production-Public/SBS-builds/commit/sbs-commit-${GITHUB_SHA}.tar.xz
+          # then under the branch/tag name
+          jfrog rt upload --detailed-summary --flat \
+            --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
+            "${{ steps.tag.outputs.file }}" SRAM-Production-Public/SBS-builds/named/
 
       - name: Create Artifact
         uses: actions/upload-artifact@v2
