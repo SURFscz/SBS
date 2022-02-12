@@ -80,7 +80,7 @@ class ServiceOrganisations extends React.Component {
         }
         return <ToggleSwitch value={access_allowed_for_all ? true : value || false}
                              animate={false}
-                             disabled={userServiceAdmin}
+                             disabled={!userServiceAdmin}
                              onChange={this.toggleChanged(organisation)}/>;
     }
 
