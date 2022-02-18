@@ -196,7 +196,6 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: "sbs-build"
-          path: "sbs.tar.xz"
 
       - name: Info
         run: |
@@ -208,15 +207,15 @@ jobs:
 
       - name: Upload commit artifact to Artie
         run: |
-          jfrog rt upload --detailed-summary --flat \
+          jfrog rt upload --detailed-summary --flat --fail-no-op \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
-            ${{steps.fetch_artifact.outputs.download-path}} \
+            ${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz \
             SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
 
       - name: Upload branch/tag to Artie
         if: "github.event_name=='push'"
         run: |
-          jfrog rt upload --detailed-summary --flat \
+          jfrog rt upload --detailed-summary --flat --fail-no-op \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
-            ${{steps.fetch_artifact.outputs.download-path}} \
+            ${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz \
             SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz
