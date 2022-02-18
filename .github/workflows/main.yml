@@ -162,15 +162,44 @@ jobs:
         run: |
           tar -cJ --transform 's,^\./,sbs/,' -f sbs.tar.xz --force-local $(git ls-files) client/build
 
+      - name: Create Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: "sbs-build"
+          path: "sbs.tar.xz"
+
+      - name: Create Release
+        if: "github.ref_type=='tag'"
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "sbs.tar.xz"
+
+  Client_upload:
+    name: Client upload
+    env:
+      ARTIE_TOKEN: "${{ secrets.ARTIE_TOKEN }}"
+    if: "env.ARTIE_TOKEN != null"
+    needs:
+      - "Client_build"
+      - "Server_tests"
+
+    runs-on: ubuntu-latest
+
+    steps:
       - uses: jfrog/setup-jfrog-cli@v2
-        #env:
-        #    JF_ARTIFACTORY_1: ${{ secrets.ARTIE_TOKEN }}
+        env:
+          JF_ARTIFACTORY_1: "${{ secrets.ARTIE_TOKEN }}"
 
       - name: Check Artie
         run: |
           # make sure everything works
           jfrog rt ping
 
+      - name: Fetch build
+        uses: actions/download-artifact@master
+        with:
+          name: "sbs-build"
+          path: "sbs.tar.xz"
 
       - name: Upload commit artifact to Artie
         run: |
@@ -184,15 +213,3 @@ jobs:
           jfrog rt upload --detailed-summary --flat \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
             sbs.tar.xz SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz
-
-      - name: Create Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: "sbs-build"
-          path: "sbs.tar.xz"
-
-      - name: Create Release
-        if: "github.ref_type=='tag'"
-        uses: softprops/action-gh-release@v1
-        with:
-          files: "sbs.tar.xz"
