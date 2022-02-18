@@ -163,8 +163,8 @@ jobs:
           tar -cJ --transform 's,^\./,sbs/,' -f sbs.tar.xz --force-local $(git ls-files) client/build
 
       - uses: jfrog/setup-jfrog-cli@v2
-        env:
-          JF_ARTIFACTORY_1: ${{ secrets.ARTIE_TOKEN }}
+        #env:
+        #    JF_ARTIFACTORY_1: ${{ secrets.ARTIE_TOKEN }}
 
       - name: Check Artie
         run: |
