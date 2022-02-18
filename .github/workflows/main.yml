@@ -198,6 +198,14 @@ jobs:
           name: "sbs-build"
           path: "sbs.tar.xz"
 
+      - name: Info
+        run: |
+          ls -la ${{steps.fetch_artifact.outputs.download-path}}
+          sha1sum ${{steps.fetch_artifact.outputs.download-path}} || true
+          sha256sum ${{steps.fetch_artifact.outputs.download-path}} || true
+          echo Will upload to SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
+          echo Will upload to SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz
+
       - name: Upload commit artifact to Artie
         run: |
           jfrog rt upload --detailed-summary --flat \
