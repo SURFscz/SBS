@@ -65,16 +65,6 @@ jobs:
             GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
           "
 
-          ${{steps.fetch_artifact.outputs.download-path}} \
-
-      # pip cache
-      - uses: actions/cache@v2
-        with:
-          path: "~/.cache/pip"
-          key: "${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}"
-          restore-keys: "${{ runner.os }}-pip-"
-
-
       # Run Checkout code
       - name: Checkout
         uses: actions/checkout@v2
@@ -83,13 +73,14 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
 
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install pip setuptools wheel
           pip install -r ./server/requirements/test.txt
           pip install codecov flake8
 
