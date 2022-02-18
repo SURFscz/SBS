@@ -178,7 +178,7 @@ jobs:
     name: Client upload
     env:
       ARTIE_TOKEN: "${{ secrets.ARTIE_TOKEN }}"
-    if: "env.ARTIE_TOKEN != null"
+    if: "${{ github.repository_owner == 'SURFscz'}}"
     needs:
       - "Client_build"
       - "Server_tests"
