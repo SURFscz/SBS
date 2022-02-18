@@ -203,9 +203,7 @@ jobs:
           path: "sbs.tar.xz"
 
       - name: list
-        run:
-          - "echo download-path='${{steps.fetch_artifact.outputs.download-path}}'"
-          - "ls -laR"
+        run: "echo download-path='${{steps.fetch_artifact.outputs.download-path}}' && ls -laR"
 
       - name: Upload commit artifact to Artie
         run: |
