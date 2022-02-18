@@ -1839,14 +1839,14 @@ I18n.translations.en = {
         }
     },
     sfo: {
-        title: "Whoops, no access to <i>{{name}}</i>",
+        title: "You do not have access to <i>{{name}}</i>",
         info: "Bad luck...",
-        info1: "You've not successfully logged into SURF Research Access Management, and therefore you don't have access to <i>{{name}}</i>.",
-        info2: "You've not successfully logged into SURF Research Access Management as your account is suspended, and therefore you don't have access to <i>{{name}}</i>. None of the collaborations you are currently a member of, have enabled access to <i>{{name}}</i>. Contact your admin(s) to enable access to this service.",
-        info3: "You've successfully logged into SURF Research Access Management (SRAM), but the service <i>{{name}}</i> is unknown in SRAM.",
-        info4: "You've successfully logged into SURF Research Access Management, but unfortunately you don't have access to <i>{{name}}</i>. None of the collaborations you are currently a member of, have enabled access to <i>{{name}}</i>. Contact your admin(s) to enable access to this service.",
-        info5: "You've successfully logged into SURF Research Access Management, but unfortunately you don't have access to <i>{{name}}</i>. The collaboration which is connected to service <i>{{name}}</i> is not active. Contact your admin(s) to enable access to this service.",
-        info6: "You've successfully logged into SURF Research Access Management, but unfortunately you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired. Contact your admin(s) to enable access to this service."
+        info1: "You are not logged into SURF Research Access Management, and therefore you don't have access to <i>{{name}}</i>.",
+        info2: "<p>You are not logged into SURF Research Access Management as your account is suspended, and therefore you don't have access to <i>{{name}}</i>.<p>Contact your admin(s) to enable access to this service.</p>",
+        info3: "You are logged into SURF Research Access Management, but the service <i>{{name}}</i> is unknown.",
+        info4: "<p>You are logged into SURF Research Access Management, but none of the collaborations you are member of grant you access to <i>{{name}}</i>.</p><p>Contact your admin(s) to enable access to this service.</p>",
+        info5: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. The collaboration which is connected to service <i>{{name}}</i> is not active.</p><p>Contact your admin(s) to enable access to this service.</p>",
+        info6: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired.</p><p>Contact your admin(s) to enable access to this service.</p>"
     },
     unsuspend: {
         confirmation: "Are you sure you want to revert suspension this collaboration?",
