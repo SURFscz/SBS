@@ -1839,14 +1839,14 @@ I18n.translations.nl = {
         }
     },
     sfo: {
-        title: "Je hebt helaas geen toegang tot <i>{{name}}</i>",
-        info: "Bad luck...",
-        info1: "Je bent niet succesvol ingelogd bij SURF Research Access Management en je hebt dus geen toegang tot <i>{{name}}</i>.",
-        info2: "Je bent niet succesvol ingelogd bij SURF Research Access Management omdat je account is geschorst, en daarom heb je geen toegang tot <i>{{name}}</i>. Geen van de samenwerkingsverbanden waar je momenteel een lid van, hebben toegang tot <i>{{name}}</i> ingeschakeld. Neem contact op met de samenwerkingsbeheerder(s) om toegang tot deze dienst in te schakelen.",
-        info3: "Je bent succesvol ingelogd bij SURF Research Access Management (SRAM), maar de dienst <i>{{name}}</i> is onbekend binnen SRAM.",
-        info4: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. De samenwerking(en) waar je momenteel lid van bent, hebben <i>{{name}}</i> niet beschikbaar gemaakt. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen.",
-        info5: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. De samenwerking(en) waar je momenteel lid van bent zijn niet meer actief. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen.",
-        info6: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen.",
+        title: "Je hebt geen toegang tot <i>{{name}}</i>",
+        info: "Pech gehad...",
+        info1: "Je bent niet ingelogd bij SURF Research Access Management, daarom heb je geen toegang tot <i>{{name}}</i>.",
+        info2: "<p>Je bent niet ingelogd bij SURF Research Access Management omdat je account is geschorst. Daarom heb je geen toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
+        info3: "Je bent ingelogd bij SURF Research Access Management, maar de dienst <i>{{name}}</i> is onbekend.",
+        info4: "<p>Je bent ingelogd via SURF Research Access Management, maar de samenwerking(en) waar je lid van bent, geven geen toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
+        info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
+        info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
     },
     unsuspend: {
         confirmation: "Weet je zeker dat je de schorsing van deze samenwerking ongedaan wilt maken?",
