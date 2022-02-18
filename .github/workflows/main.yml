@@ -189,7 +189,6 @@ jobs:
 
       - name: Check Artie
         run: |
-          # make sure everything works
           jfrog rt ping
 
       - name: Fetch build
