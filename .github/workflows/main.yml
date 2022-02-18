@@ -65,6 +65,16 @@ jobs:
             GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
           "
 
+          ${{steps.fetch_artifact.outputs.download-path}} \
+
+      # pip cache
+      - uses: actions/cache@v2
+        with:
+          path: "~/.cache/pip"
+          key: "${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}"
+          restore-keys: "${{ runner.os }}-pip-"
+
+
       # Run Checkout code
       - name: Checkout
         uses: actions/checkout@v2
@@ -202,14 +212,11 @@ jobs:
           name: "sbs-build"
           path: "sbs.tar.xz"
 
-      - name: list
-        run: "echo download-path='${{steps.fetch_artifact.outputs.download-path}}' && ls -laR"
-
       - name: Upload commit artifact to Artie
         run: |
           jfrog rt upload --detailed-summary --flat \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
-            ${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz \
+            ${{steps.fetch_artifact.outputs.download-path}} \
             SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
 
       - name: Upload branch/tag to Artie
@@ -217,4 +224,5 @@ jobs:
         run: |
           jfrog rt upload --detailed-summary --flat \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
-            sbs.tar.xz SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz
+            ${{steps.fetch_artifact.outputs.download-path}} \
+            SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz
