@@ -91,13 +91,13 @@ jobs:
         run: |
           flake8 ./server/
 
-      - name: Run tests
-        run: |
-          pytest --cov=server server/test
+      #- name: Run tests
+      #  run: |
+      #    pytest --cov=server server/test
 
-      - name: The job has succeeded
-        run: codecov --token=${{ secrets.CODECOV_TOKEN }}
-        if: ${{ success() }}
+      #- name: The job has succeeded
+      #  run: codecov --token=${{ secrets.CODECOV_TOKEN }}
+      #  if: ${{ success() }}
 
   Client_build:
     name: Client build
@@ -196,16 +196,23 @@ jobs:
           jfrog rt ping
 
       - name: Fetch build
+        id: fetch_artifact
         uses: actions/download-artifact@master
         with:
           name: "sbs-build"
           path: "sbs.tar.xz"
 
+      - name: list
+        run:
+          - "echo download-path='${{steps.fetch_artifact.outputs.download-path}}'"
+          - "ls -laR"
+
       - name: Upload commit artifact to Artie
         run: |
           jfrog rt upload --detailed-summary --flat \
             --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
-            sbs.tar.xz SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
+            ${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz \
+            SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
 
       - name: Upload branch/tag to Artie
         if: "github.event_name=='push'"
