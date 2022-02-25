@@ -22,7 +22,18 @@ class ServiceAup extends React.Component {
     }
 
     componentDidMount = () => {
+        const {config} = this.props;
         const urlSearchParams = new URLSearchParams(window.location.search);
+
+        // get continue url as specified here https://docs.google.com/document/d/1VFn4Fy0AqxZKx8drDgI0qlDN9qfC0G2NDAiIUQmIB5s/edit?usp=sharing
+        // and check that it contains a trusted url
+        const continueUrl = urlSearchParams.get("continue_url");
+        const continueUrl_trusted = config.continue_eduteams_redirect_uri;
+        if (!continueUrl.startsWith(continueUrl_trusted)) {
+            throw new Error(`Invalid continue url: '${continueUrl}'`)
+        }
+        this.setState({continueUrl: continueUrl})
+
         const serviceId = urlSearchParams.get("service_id");
         serviceByUuid4(serviceId).then(res => {
             this.setState({
@@ -35,10 +46,9 @@ class ServiceAup extends React.Component {
     }
 
     agreeWith = () => {
-        const {service} = this.state;
-        const {config} = this.props;
+        const {service, continueUrl} = this.state;
         serviceAupCreate(service).then(() => {
-            window.location.href = config.continue_eduteams_redirect_uri;
+            window.location.href = continueUrl
         });
     }
 
