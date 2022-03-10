@@ -167,7 +167,7 @@ class TestUserSaml(AbstractTest):
         network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id})
-        self.assertEqual(res["status"]["result"], "unauthorized")
+        self.assertEqual(res["status"]["result"], "interrupt")
 
         parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name})
         self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/service-aup?{parameters}")

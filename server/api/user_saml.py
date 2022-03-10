@@ -152,12 +152,14 @@ def proxy_authz():
             # Internal contract, in case of AUP_NOT_AGREED we get the Service instance returned
             parameters = urlencode({"service_id": service_name.uuid4, "service_name": service_name.name})
             redirect_url = f"{base_url}/service-aup?{parameters}"
+            result = "interrupt"
         else:
             parameters = urlencode({"service_name": service_name, "error_status": status})
             redirect_url = f"{base_url}/service-denied?{parameters}"
+            result = "unauthorized"
         return {
                    "status": {
-                       "result": "unauthorized",
+                       "result": result,
                        "redirect_url": redirect_url,
                        "error_status": status
                    }
