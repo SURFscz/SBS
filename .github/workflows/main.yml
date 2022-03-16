@@ -153,19 +153,24 @@ jobs:
 
       #- name: Setup tmate session
       #  uses: mxschmitt/action-tmate@v3
-      - name: save version info
+      - name: Save version info
         run: |
           git log -1 > ./server/api/git.info
 
-      - name: copy AUP files
+      - name: Copy AUP files
         run: |
           cp server/static/*.{html,pdf} client/build/static/
 
       - name: Create build file
-        run: >
-          tar -cJ
-            --transform 's,^,sbs/,' --owner=0 --group=0
-            -f sbs.tar.xz --force-local $(git ls-files) client/build
+        run: |
+          tar -cJ -f sbs.tar.xz \
+            --transform 's,^,sbs/,' --sort=name \
+            --owner=0 --group=0 --mode=u=rwX,go=rX \
+            $(git ls-files) client/build
+
+      - name: Show what we are shipping
+        run: |
+          tar xJf sbs.tar.xz
 
       - name: Create Artifact
         uses: actions/upload-artifact@v2
@@ -180,7 +185,7 @@ jobs:
           files: "sbs.tar.xz"
 
 
-  Client_upload:
+  Artifact_upload:
     name: Client upload
     env:
       ARTIE_TOKEN: "${{ secrets.ARTIE_TOKEN }}"
