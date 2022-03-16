@@ -189,7 +189,7 @@ jobs:
     name: Client upload
     env:
       ARTIE_TOKEN: "${{ secrets.ARTIE_TOKEN }}"
-    if: "${{ github.repository_owner == 'SURFscz'}}"
+    if: "github.actor != 'dependabot[bot]'"   # ignore PRs etc from dependabot
     needs:
       - "Client_build"
       - "Server_tests"
