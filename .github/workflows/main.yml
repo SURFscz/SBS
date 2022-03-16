@@ -157,6 +157,10 @@ jobs:
         run: |
           git log -1 > ./server/api/git.info
 
+      - name: copy AUP files
+        run: |
+          cp server/static/*.{html,pdf} client/build/static/
+
       - name: Create build file
         run: |
           tar -cJ --transform 's,^\./,sbs/,' -f sbs.tar.xz --force-local $(git ls-files) client/build
