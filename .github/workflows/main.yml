@@ -170,7 +170,7 @@ jobs:
 
       - name: Show what we are shipping
         run: |
-          tar xJf sbs.tar.xz
+          tar tvJf sbs.tar.xz
 
       - name: Create Artifact
         uses: actions/upload-artifact@v2
