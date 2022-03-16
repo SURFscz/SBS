@@ -164,10 +164,8 @@ jobs:
       - name: Create build file
         run: >
           tar -cJ
-          --transform 's,^,sbs/,'
-          --owner=0 --group=0 --no-same-owner --no-same-permissions
-          -f sbs.tar.xz --force-local
-          $(git ls-files) client/build
+            --transform 's,^,sbs/,' --owner=0 --group=0
+            -f sbs.tar.xz --force-local $(git ls-files) client/build
 
       - name: Create Artifact
         uses: actions/upload-artifact@v2
