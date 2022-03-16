@@ -163,7 +163,7 @@ jobs:
 
       - name: Create build file
         run: |
-          tar -cJ --transform 's,^\./,sbs/,' -f sbs.tar.xz --force-local $(git ls-files) client/build
+          tar -cJ --transform 's,^,sbs/,' -f sbs.tar.xz --force-local $(git ls-files) client/build
 
       - name: Create Artifact
         uses: actions/upload-artifact@v2
