@@ -153,6 +153,9 @@ jobs:
 
       #- name: Setup tmate session
       #  uses: mxschmitt/action-tmate@v3
+      - name: save version info
+        run: |
+          git log -1 > ./server/api/git.info
 
       - name: Create build file
         run: |
