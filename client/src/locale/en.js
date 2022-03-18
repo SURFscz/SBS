@@ -58,7 +58,7 @@ I18n.translations.en = {
         title: "Research Access Management",
         subTitle: "Please login...",
         suspended: "Your user account has been suspended. Contact your admin to resolve this",
-        successfullyActivated: "You have successfully re-activated your account",
+        successfullyActivated: "You have re-activated your account",
         closeBrowser: "To finish your logout you'll have to close your browser.",
         closeBrowserAfterDelete: "To finish the deletion of your account you'll have to close your browser."
     },
@@ -558,8 +558,8 @@ I18n.translations.en = {
         startImpersonation: "Impersonate",
         clearImpersonation: "Stop impersonating",
         flash: {
-            startedImpersonation: "Successfully started to impersonate {{name}}.",
-            clearedImpersonation: "Successfully cleared your impersonation. You are you again."
+            startedImpersonation: "You now impersonate {{name}}.",
+            clearedImpersonation: "Cleared your impersonation. You are you again."
         },
         exit: "Stop impersonating",
         impersonator: "You are impersonating <strong>{{name}}</strong> | <strong>{{role}}</strong>",
@@ -712,8 +712,8 @@ I18n.translations.en = {
             activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}. "
         },
         flash: {
-            created: "Collaboration {{name}} was successfully created",
-            requested: "Collaboration {{name}} was successfully requested"
+            created: "Collaboration {{name}} was created",
+            requested: "Collaboration {{name}} was requested"
         }
     },
     collaborationDetail: {
@@ -736,12 +736,12 @@ I18n.translations.en = {
         expiryDateChange: "Are you sure you want to change the expiry date for {{name}} to {{date}}",
         expiryDateReset: "Are you sure you want to remove the expiry date for {{name}}",
         flash: {
-            updated: "Collaboration {{name}} was successfully updated",
-            deleted: "Collaboration {{name}} was successfully deleted",
-            memberDeleted: "Membership of {{name}} was successfully deleted",
-            entitiesDeleted: "Membership / invitations are successfully deleted",
-            memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}",
-            meAdded: "Successfully added you as member of {{name}}",
+            updated: "Collaboration {{name}} was updated",
+            deleted: "Collaboration {{name}} was deleted",
+            memberDeleted: "Membership of {{name}} was deleted",
+            entitiesDeleted: "Membership / invitations are deleted",
+            memberUpdated: "The role of membership of {{name}} was updated to {{role}}",
+            meAdded: "Added you as member of {{name}}",
             memberActivated: "Member {{name}} has been sent an email with an activation link",
             memberExpiryDateUpdated: "Membership of {{name}} has an updated expiration date {{expiryDate}}"
         },
@@ -873,9 +873,9 @@ I18n.translations.en = {
         delete: "Delete",
         cancel: "Cancel",
         flash: {
-            created: "Service {{name}} was successfully created",
-            updated: "Service {{name}} was successfully updated",
-            deleted: "Service {{name}} was successfully deleted"
+            created: "Service {{name}} was created",
+            updated: "Service {{name}} was updated",
+            deleted: "Service {{name}} was deleted"
         },
         ldap: {
             title: "Reset LDAP password",
@@ -963,7 +963,7 @@ I18n.translations.en = {
         anotherAdmin: "It is highly recommended to invite admins.",
         deleteConfirmation: "Are you sure you want to delete this organisation?",
         flash: {
-            created: "Organisation {{name}} was successfully created"
+            created: "Organisation {{name}} was created"
         },
         onBoarding: {
             label: "On-boarding instructions",
@@ -1050,14 +1050,14 @@ I18n.translations.en = {
         deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}?",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send them an email with an activation link.",
         flash: {
-            updated: "Organisation {{name}} was successfully updated.",
-            deleted: "Organisation {{name}} was successfully deleted.",
-            entitiesDeleted: "Membership / invitations are successfully deleted.",
-            memberDeleted: "Membership of {{name}} was successfully deleted.",
-            apiKeyDeleted: "API key was successfully deleted.",
-            collaborationDeleted: "collaboration {{name}} was successfully deleted.",
+            updated: "Organisation {{name}} was updated.",
+            deleted: "Organisation {{name}} was deleted.",
+            entitiesDeleted: "Membership / invitations are deleted.",
+            memberDeleted: "Membership of {{name}} was deleted.",
+            apiKeyDeleted: "API key was deleted.",
+            collaborationDeleted: "collaboration {{name}} was deleted.",
             memberActivated: "Member {{name}} has been sent an email with an activation link.",
-            memberUpdated: "The role of membership of {{name}} was successfully updated to {{role}}.",
+            memberUpdated: "The role of membership of {{name}} was updated to {{role}}.",
         },
         preview: "Preview",
         details: "Details",
@@ -1191,7 +1191,7 @@ I18n.translations.en = {
             inviteAccepted: "Invitation for collaboration {{name}} was accepted.",
             inviteDeleted: "Invitation for organisation {{name}} was deleted.",
             inviteResend: "Invitation for organisation {{name}} was resent.",
-            created: "Invitations for collaboration {{name}} were successfully created.",
+            created: "Invitations for collaboration {{name}} were created.",
             alreadyMember: "The invitation could not be accepted because you are already a member of this collaboration.",
         },
     },
@@ -1208,9 +1208,9 @@ I18n.translations.en = {
         motivationPlaceholder: "Your motivation to request a service connection",
         send: "Send",
         flash: {
-            added: "Successfully added service {{service}} to collaboration {{name}}.",
-            deleted: "Successfully deleted service {{service}} from collaboration {{name}}.",
-            send: "Successfully sent service connection request for {{service}}.",
+            added: "Added service {{service}} to collaboration {{name}}.",
+            deleted: "Deleted service {{service}} from collaboration {{name}}.",
+            send: "Sent service connection request for {{service}}.",
         },
         service: {
             open: "",
@@ -1230,8 +1230,8 @@ I18n.translations.en = {
         },
         actionsTooltip: "Delete the service Connection request. The request can henceforth not be approved or denied anymore.",
         serviceConnectionRequests: "Service Connection Requests",
-        serviceConnectionRequestDeleted: "Successfully deleted request to connect service {{service}} to collaboration {{collaboration}}.",
-        serviceConnectionRequestResend: "Successfully resent request to connect service {{service}} to collaboration {{collaboration}}.",
+        serviceConnectionRequestDeleted: "Deleted request to connect service {{service}} to collaboration {{collaboration}}.",
+        serviceConnectionRequestResend: "Resent request to connect service {{service}} to collaboration {{collaboration}}.",
         serviceRestrictedInfo: "This collaboration is service restricted. Only the platform admin can configure services to be used by this collaboration.",
         serviceDeleteConfirmation: "Are you sure you want to remove this service from collaboration {{collaboration}}?",
         serviceConnectionRequestDeleteConfirmation: "Are you sure you want to delete this service Connection request?",
@@ -1248,8 +1248,8 @@ I18n.translations.en = {
         serviceRestrictedOrganisation: "This service cannot be made mandatory for all collaborations, because this organisation can only link SURF services.",
         serviceRestrictedOrganisationAdded: "This service is mandatory for all collaborations, and cannot be disabled because this is a SURF organisation.",
         flash: {
-            added: "Successfully added service {{service}} to organisation {{name}}",
-            deleted: "Successfully deleted service {{service}} from organisation {{name}}"
+            added: "Added service {{service}} to organisation {{name}}",
+            deleted: "Deleted service {{service}} from organisation {{name}}"
         },
         service: {
             open: "",
@@ -1313,17 +1313,17 @@ I18n.translations.en = {
         delete: "Delete",
         cancel: "Cancel",
         flash: {
-            created: "Group {{name}} was successfully created",
-            updated: "Group {{name}} was successfully updated",
-            deleted: "Successfully deleted group {{name}}",
-            addedService: "Successfully added service {{service}} to group {{name}}",
-            deletedService: "Successfully deleted service {{service}} from group {{name}}",
-            addedServices: "Successfully added all services to group {{name}}",
-            addedMember: "Successfully added user {{member}} as a member of group {{name}}",
-            addedMembers: "Successfully added all users and invitations as (future ) members of group {{name}}",
-            deletedMember: "Successfully deleted user {{member}} from group {{name}}",
-            addedInvitation: "Successfully added user {{member}} as a member of group {{name}}",
-            deletedInvitation: "Successfully deleted invitee {{invitation}} from group {{name}}",
+            created: "Group {{name}} was created",
+            updated: "Group {{name}} was updated",
+            deleted: "Deleted group {{name}}",
+            addedService: "Added service {{service}} to group {{name}}",
+            deletedService: "Deleted service {{service}} from group {{name}}",
+            addedServices: "Added all services to group {{name}}",
+            addedMember: "Added user {{member}} as a member of group {{name}}",
+            addedMembers: "Added all users and invitations as (future ) members of group {{name}}",
+            deletedMember: "Deleted user {{member}} from group {{name}}",
+            addedInvitation: "Added user {{member}} as a member of group {{name}}",
+            deletedInvitation: "Deleted invitee {{invitation}} from group {{name}}",
         },
         addAllMembers: "Add all collaboration members and outstanding invitees to this group",
         addAllServices: "Add all collaboration services to this group",
@@ -1629,7 +1629,7 @@ I18n.translations.en = {
         runCleanSlate: "Are you absolutely sure you want to delete all data?",
         clear: "Clear",
         reload: "Reload",
-        seedResult: "Test data is successfully inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache."
+        seedResult: "Test data is inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache."
     },
     access: {
         full: "Full",
@@ -1698,7 +1698,7 @@ I18n.translations.en = {
         help: "Need help?",
         helpInfo: "For questions or issues, please reach out to us at <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>",
         send: "Send feedback",
-        flash: "Your feedback has successfully been sent. Thanks!"
+        flash: "Your feedback has been sent. Thanks!"
     },
     landing: {
         header: {
@@ -1769,7 +1769,7 @@ I18n.translations.en = {
         register: {
             title: "Two factor authentication required",
             titleUpdate: "Add two factor authentication device",
-            info1: "You have successfully signed in with a username and password at {{name}}. SURF Research Access Management requires two-factor authentication. This means an extra check to verify it's you.",
+            info1: "You have signed in with a username and password at {{name}}. SURF Research Access Management requires two-factor authentication. This means an extra check to verify it's you.",
             info2: "To setup two factor authentication, take the following steps:",
             step: "Stap {{nbr}}",
             getApp: "1. Add SRAM to your authenticator app",

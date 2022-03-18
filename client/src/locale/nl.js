@@ -712,8 +712,8 @@ I18n.translations.nl = {
             activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}. "
         },
         flash: {
-            created: "Samenwerking {{name}} is met succes aangemaakt.",
-            requested: "Samenwerking {{name}} is met succes aangevraagd."
+            created: "Samenwerking {{name}} is aangemaakt.",
+            requested: "Samenwerking {{name}} is aangevraagd."
         }
     },
     collaborationDetail: {
@@ -1322,8 +1322,8 @@ I18n.translations.nl = {
             addedMember: "Gebruiker {{member}} lid gemaakt van groep {{name}}.",
             addedMembers: "Alle gebruikers lid gemaakt van groep {{name}}.",
             deletedMember: "Gebruiker {{member}} als lid verwijderd uit groep {{name}}.",
-            addedInvitation: "Gebruiker {{member}} succesvol toegevoegd als lid van groep {{name}}.",
-            deletedInvitation: "Genodigde {{invitation}} succesvol verwijderd van de groep {{name}}.",
+            addedInvitation: "Gebruiker {{member}} is toegevoegd als lid van groep {{name}}.",
+            deletedInvitation: "Genodigde {{invitation}} is verwijderd van de groep {{name}}.",
         },
         addAllMembers: "Voeg alle samenwerkingsgebruikers en open staande genodigden toe aan deze groep",
         addAllServices: "Voeg alle samenwerkingsdiensten toe aan deze groep",
@@ -1698,7 +1698,7 @@ I18n.translations.nl = {
         help: "Hulp nodig?",
         helpInfo: "Neem voor vragen of problemen contact met ons op via <a href='mailto:sram-support@surf.nl'> sram-support@surf.nl </a>",
         send: "Verstuur feedback",
-        flash: "Je feedback is succesvol verzonden. Bedankt!"
+        flash: "Je feedback is verzonden. Bedankt!"
     },
     landing: {
         header: {
@@ -1769,7 +1769,7 @@ I18n.translations.nl = {
         register: {
             title: "Tweefactorauthenticatie is vereist",
             titleUpdate: "Voeg een tweefactorauthenticatie-apparaat toe",
-            info1: "Je bent succesvol ingelogd met een gebruikersnaam en wachtwoord bij {{name}}. SURF Research Access Management vereist tweefactorauthenticatie. Dat betekent een extra controle dat jij het bent.",
+            info1: "Je bent ingelogd met een gebruikersnaam en wachtwoord bij {{name}}. SURF Research Access Management vereist tweefactorauthenticatie. Dat betekent een extra controle dat jij het bent.",
             info2: "Voer de volgende stappen uit om tweefactorauthenticatie in te stellen:",
             step: "Stap {{nbr}}",
             getApp: "1. Voeg SRAM toe aan je authenticator-app",
