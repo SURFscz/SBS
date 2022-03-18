@@ -232,7 +232,7 @@ I18n.translations.en = {
             searchPlaceHolder: "Search organisations...",
             new: "New organisation",
             name: "Name",
-            memberCount: "Members",
+            memberCount: "Admins",
             collaborationCount: "Collaborations",
             schacHomeOrganisations: "Org domain(s)",
             category: "Category",
