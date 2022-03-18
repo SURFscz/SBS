@@ -1,0 +1,52 @@
+summary: "Put new invitations."
+description: "Bulk invites for a collaboration."
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+
+parameters:
+  - name: invitation bulk
+    in: body
+    description: The invitations details
+    required: true
+    schema:
+      $ref: '/swagger/schemas/InvitationBulk.yaml'
+
+responses:
+  201:
+    description: Send invitations
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+            email:
+              type: string
+              example: "jdoe@example.com"
+            invitation_expiry_date:
+              type: number
+              description: "The expiry date of the invitation in epoch seconds"
+              example: 1644015600
+            status:
+              type: string
+              example: "open"
+            invitation_id:
+              type: string
+              format: uuid
+              description: "The unique external identifier of the invitation"
+              example: "E40BBF21-1606-4477-8167-674DCB8B62D6"
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'

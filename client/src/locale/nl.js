@@ -600,6 +600,14 @@ I18n.translations.nl = {
         organisations: "Organisaties",
         sbs: "Applicatie",
         collaborations: "Samenwerkingen",
+        network: "IP-ranges",
+        networkTooltip: "Configureer je IP-bereiken voor deze dienst. Je kunt IPv4 en IPv6 network ranges toevoegen. " +
+            "Bijvoorbeeld: <ul>" +
+            "<li>Enkelvoudig IPv4-adres 198.51.100.12 waar een /32 is aangenomen</li>" +
+            "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" +
+            "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" +
+            "</ul> ",
+        networkExplanation: "Informeer de serviceproviders vanaf welke IP-adressen je hun services gebruikt. De serviceproviders kunnen je IP-adressen toegang geven als ze dit ondersteunen."
     },
     collaborations: {
         dashboard: "Dashboard voor je samenwerkingen",
@@ -704,8 +712,8 @@ I18n.translations.nl = {
             activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}. "
         },
         flash: {
-            created: "Samenwerking {{name}} is met succes aangemaakt.",
-            requested: "Samenwerking {{name}} is met succes aangevraagd."
+            created: "Samenwerking {{name}} is aangemaakt.",
+            requested: "Samenwerking {{name}} is aangevraagd."
         }
     },
     collaborationDetail: {
@@ -1314,8 +1322,8 @@ I18n.translations.nl = {
             addedMember: "Gebruiker {{member}} lid gemaakt van groep {{name}}.",
             addedMembers: "Alle gebruikers lid gemaakt van groep {{name}}.",
             deletedMember: "Gebruiker {{member}} als lid verwijderd uit groep {{name}}.",
-            addedInvitation: "Gebruiker {{member}} succesvol toegevoegd als lid van groep {{name}}.",
-            deletedInvitation: "Genodigde {{invitation}} succesvol verwijderd van de groep {{name}}.",
+            addedInvitation: "Gebruiker {{member}} is toegevoegd als lid van groep {{name}}.",
+            deletedInvitation: "Genodigde {{invitation}} is verwijderd van de groep {{name}}.",
         },
         addAllMembers: "Voeg alle samenwerkingsgebruikers en open staande genodigden toe aan deze groep",
         addAllServices: "Voeg alle samenwerkingsdiensten toe aan deze groep",
@@ -1355,6 +1363,7 @@ I18n.translations.nl = {
         name: "Naam.",
         email: "Email-adres",
         title: "Acceptable use policy",
+        multiple: "Dienst acceptable use policies",
         disclaimer: "Door in te loggen op SRAM, wordt je een gebruiker en ga je akkoord met de <a href=\"{{url}}\" target=\"_blank\">voorwaarden van onze AUP.</a>",
         agreeWithTerms: "Hierbij verklaar ik dat ik de AUP heb gelezen en deze accepteer",
         onward: "Ziet er goed uit, verder",
@@ -1376,6 +1385,7 @@ I18n.translations.nl = {
             multipleCollaborations: "Deze dienst wordt gebruikt binnen meerdere samenwerkingen waarvan je lid bent.",
             purposeOf: "Doel van <strong>{{name}}</strong>",
             informationService: "Informatie over de dienst",
+            informationServiceMultiple: "Informatie over de diensten",
             contact: "Contact",
             organisationAccess: "Je hebt toegang tot deze service omdat deze door de beheerders van de organisatie beschikbaar is gesteld aan iedereen in je organisatie.",
             missing: {
@@ -1483,13 +1493,16 @@ I18n.translations.nl = {
             "services_collaborations": "Dienst",
             "users": "Gebruiker",
             "ip_networks": "IP-netwerk",
+            "user_ip_networks": "Gebruiker IP adressen",
             "suspend_notifications": "Loginnotificatie",
             "schac_home_organisations": "Schac home organisations",
             "user_names_history": "Username history",
             "ssh_keys": "SSH-sleutel",
             "user_mails": "Gebruikers-e-mails",
             "service_aups": "Dienst-AUP's",
-            "user_tokens": "Gebruikerstokens"
+            "user_tokens": "Gebruikerstokens",
+            "service_invitations": "Dienstuitnodiging",
+            "service_memberships": "Dienstlidmaatschap"
         }
     },
     serviceRequest: {
@@ -1685,7 +1698,7 @@ I18n.translations.nl = {
         help: "Hulp nodig?",
         helpInfo: "Neem voor vragen of problemen contact met ons op via <a href='mailto:sram-support@surf.nl'> sram-support@surf.nl </a>",
         send: "Verstuur feedback",
-        flash: "Je feedback is succesvol verzonden. Bedankt!"
+        flash: "Je feedback is verzonden. Bedankt!"
     },
     landing: {
         header: {
@@ -1756,7 +1769,7 @@ I18n.translations.nl = {
         register: {
             title: "Tweefactorauthenticatie is vereist",
             titleUpdate: "Voeg een tweefactorauthenticatie-apparaat toe",
-            info1: "Je bent succesvol ingelogd met een gebruikersnaam en wachtwoord bij {{name}}. SURF Research Access Management vereist tweefactorauthenticatie. Dat betekent een extra controle dat jij het bent.",
+            info1: "Je bent ingelogd met een gebruikersnaam en wachtwoord bij {{name}}. SURF Research Access Management vereist tweefactorauthenticatie. Dat betekent een extra controle dat jij het bent.",
             info2: "Voer de volgende stappen uit om tweefactorauthenticatie in te stellen:",
             step: "Stap {{nbr}}",
             getApp: "1. Voeg SRAM toe aan je authenticator-app",
@@ -1826,14 +1839,14 @@ I18n.translations.nl = {
         }
     },
     sfo: {
-        title: "Je hebt helaas geen toegang tot <i>{{name}}</i>",
-        info: "Bad luck...",
-        info1: "Je bent niet succesvol ingelogd bij SURF Research Access Management en je hebt dus geen toegang tot <i>{{name}}</i>.",
-        info2: "Je bent niet succesvol ingelogd bij SURF Research Access Management omdat je account is geschorst, en daarom heb je geen toegang tot <i>{{name}}</i>. Geen van de samenwerkingsverbanden waar je momenteel een lid van, hebben toegang tot <i>{{name}}</i> ingeschakeld. Neem contact op met de samenwerkingsbeheerder(s) om toegang tot deze dienst in te schakelen.",
-        info3: "Je bent succesvol ingelogd bij SURF Research Access Management (SRAM), maar de dienst <i>{{name}}</i> is onbekend binnen SRAM.",
-        info4: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. De samenwerking(en) waar je momenteel lid van bent, hebben <i>{{name}}</i> niet beschikbaar gemaakt. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen.",
-        info5: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. De samenwerking(en) waar je momenteel lid van bent zijn niet meer actief. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen.",
-        info6: "Je bent succesvol ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen. Neem contact op met de beheerder(s) van jouw samenwerking(en) om toegang tot deze dienst te regelen.",
+        title: "Je hebt geen toegang tot <i>{{name}}</i>",
+        info: "Pech gehad...",
+        info1: "Je bent niet ingelogd bij SURF Research Access Management, daarom heb je geen toegang tot <i>{{name}}</i>.",
+        info2: "<p>Je bent niet ingelogd bij SURF Research Access Management omdat je account is geschorst. Daarom heb je geen toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
+        info3: "Je bent ingelogd bij SURF Research Access Management, maar de dienst <i>{{name}}</i> is onbekend.",
+        info4: "<p>Je bent ingelogd via SURF Research Access Management, maar de samenwerking(en) waar je lid van bent, geven geen toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
+        info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
+        info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
     },
     unsuspend: {
         confirmation: "Weet je zeker dat je de schorsing van deze samenwerking ongedaan wilt maken?",

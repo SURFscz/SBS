@@ -92,8 +92,8 @@ export default class Collaborations extends React.PureComponent {
             {
                 key: "name",
                 header: I18n.t("models.collaborations.name"),
-                mapper: collaboration => userServiceAdmin ? <span>{collaboration.name}</span> : <a href="/"
-                                                                                                   onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
+                mapper: collaboration => userServiceAdmin ? <span>{collaboration.name}</span> :
+                    <a href={`/collaborations/${collaboration.id}`} onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
             },
             {
                 key: "organisation__name",

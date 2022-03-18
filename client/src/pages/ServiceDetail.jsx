@@ -75,8 +75,8 @@ class ServiceDetail extends React.Component {
 
         } else if (params.id) {
             const {user} = this.props;
-            const userServiceAdmin = isUserServiceAdmin(user);
-            if (user.admin || userServiceAdmin) {
+            const userServiceAdmin = isUserServiceAdmin(user, {id: params.id}) || user.admin;
+            if (userServiceAdmin) {
                 Promise.all([serviceById(params.id), searchOrganisations("*"),
                     allServiceConnectionRequests(params.id)])
                     .then(res => {
@@ -466,8 +466,10 @@ class ServiceDetail extends React.Component {
                             <span className="multiple-attributes">
                             {service.contact_email &&
                             <a href={`mailto:${service.contact_email}`}>{service.contact_email}</a>}
-                                {service.service_memberships.map(sm => sm.user &&
-                                    <a key={sm.user.id} href={`mailto:${sm.user.email}`}>{sm.user.email}</a>)}
+                                {service.service_memberships
+                                    .filter(sm => sm.user && sm.user.email !== service.contact_email)
+                                    .map(sm => sm.user &&
+                                        <a key={sm.user.id} href={`mailto:${sm.user.email}`}>{sm.user.email}</a>)}
                             </span>
 
                         </div>

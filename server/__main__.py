@@ -50,6 +50,7 @@ from server.cron.schedule import start_scheduling
 from server.db.db import db, db_migrations
 from server.db.redis import init_redis
 from server.mqtt.mqtt import MqttClient
+from server.swagger.conf import init_swagger, swagger_specs
 from server.templates import invitation_role
 from server.tools import read_file
 
@@ -134,6 +135,7 @@ app.register_blueprint(service_membership_api)
 app.register_blueprint(service_aups_api)
 app.register_blueprint(user_token_api)
 app.register_blueprint(token_api)
+app.register_blueprint(swagger_specs)
 
 app.register_error_handler(404, page_not_found)
 
@@ -165,6 +167,8 @@ app.app_config = config
 app.app_config["profile"] = profile
 
 app.mqtt = MqttClient(app.app_config.service_bus)
+
+init_swagger(app)
 
 Migrate(app, db)
 result = None

@@ -1,0 +1,28 @@
+summary: "Get collaborations by organisation."
+description: "Retrieves all collaborations for an organisation."
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+
+responses:
+  200:
+    description: Organisation
+    schema:
+      type: array
+      items:
+        $ref: '/swagger/schemas/OrganisationDetail.yaml'
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'

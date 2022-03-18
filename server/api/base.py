@@ -25,10 +25,10 @@ STATUS_DENIED = "denied"
 STATUS_APPROVED = "approved"
 
 
-def _get_authorization_header(is_external_api_url):
+def _get_authorization_header(is_external_api_url, ignore_missing_auth_header=False):
     authorization_header = current_request.headers.get("Authorization")
     is_authorized_api_key = authorization_header and authorization_header.lower().startswith("bearer")
-    if not is_authorized_api_key or not is_external_api_url:
+    if not ignore_missing_auth_header and (not is_authorized_api_key or not is_external_api_url):
         raise Unauthorized(description="Invalid username or password")
     hashed_secret = secure_hash(authorization_header[len('bearer '):])
     return hashed_secret
@@ -46,6 +46,11 @@ def auth_filter(app_config):
 
     if "user" in session and "admin" in session["user"] and session["user"]["admin"]:
         request_context.is_authorized_api_call = False
+        # Mixed situation where user session cookie and swagger API call
+        if current_app.app_config.feature.sbs_swagger_enabled and current_request.headers.get("Authorization"):
+            hashed_secret = _get_authorization_header(True, ignore_missing_auth_header=True)
+            api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).first()
+            request_context.external_api_organisation = api_key.organisation if api_key else None
         return
 
     if "user" in session and not session["user"].get("guest"):
@@ -56,10 +61,8 @@ def auth_filter(app_config):
         if not oidc_config.second_factor_authentication_required or session["user"].get("second_factor_confirmed"):
             request_context.is_authorized_api_call = False
             return
-        else:
-            for u in mfa_listing:
-                if u in url:
-                    return
+        elif [u for u in mfa_listing if u in url]:
+            return
 
     is_external_api_url = False
     for u in external_api_listing:

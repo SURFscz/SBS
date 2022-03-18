@@ -78,7 +78,8 @@ export default class CollaborationRequests extends React.PureComponent {
             {
                 key: "name",
                 header: I18n.t("models.collaborations.name"),
-                mapper: cr => <a href="/" onClick={this.openCollaborationRequest(cr)}>{cr.name}</a>
+                mapper: cr => <a href={`/collaboration-requests/${cr.id}`}
+                                 onClick={this.openCollaborationRequest(cr)}>{cr.name}</a>
             },
             {
                 key: "status",

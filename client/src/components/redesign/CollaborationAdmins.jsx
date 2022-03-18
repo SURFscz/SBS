@@ -16,7 +16,6 @@ import {
 import {setFlash} from "../../utils/Flash";
 import "./CollaborationAdmins.scss";
 import Select from "react-select";
-import {emitter} from "../../utils/Events";
 import {dateFromEpoch, isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import {isEmpty, stopEvent} from "../../utils/Utils";
 import Button from "../Button";
@@ -33,6 +32,7 @@ import DateField from "../DateField";
 import InstituteColumn from "./InstitueColumn";
 import {ReactComponent as ChevronUp} from "../../icons/chevron-up.svg";
 import {ReactComponent as ChevronDown} from "../../icons/chevron-down.svg";
+import {emitImpersonation} from "../../utils/Impersonation";
 
 const memberFilterValue = "members";
 
@@ -395,9 +395,8 @@ class CollaborationAdmins extends React.Component {
         }
         const showImpersonation = currentUser.admin && entity.user.id !== currentUser.id && !showMemberView && impersonation_allowed;
         return (<div className="impersonation">
-            {showImpersonation && <HandIcon className="impersonate" onClick={() =>
-                emitter.emit("impersonation",
-                    {"user": entity.user, "callback": () => this.props.history.push("/home")})}/>}
+            {showImpersonation && <HandIcon className="impersonate"
+                                            onClick={() => emitImpersonation(entity.user, this.props.history)}/>}
         </div>);
     }
 

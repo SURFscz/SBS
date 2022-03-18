@@ -35,6 +35,8 @@ class User(Base, db.Model):
     second_factor_auth = db.Column("second_factor_auth", db.String(length=255), nullable=True)
     ssh_keys = db.relationship("SshKey", back_populates="user", cascade="all, delete-orphan", passive_deletes=True,
                                lazy="selectin")
+    user_ip_networks = db.relationship("UserIpNetwork", cascade="all, delete-orphan", passive_deletes=True,
+                                       lazy="selectin")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
@@ -134,15 +136,15 @@ class Invitation(Base, db.Model):
     hash = db.Column("hash", db.String(length=512), nullable=False)
     message = db.Column("message", db.Text(), nullable=True)
     invitee_email = db.Column("invitee_email", db.String(length=255), nullable=False)
+    status = db.Column("status", db.String(length=255), nullable=False)
     collaboration_id = db.Column(db.Integer(), db.ForeignKey("collaborations.id"))
     collaboration = db.relationship("Collaboration", back_populates="invitations")
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User")
     groups = db.relationship("Group", secondary=groups_invitations_association, lazy="select",
                              back_populates="invitations")
-    accepted = db.Column("accepted", db.Boolean(), nullable=True)
-    denied = db.Column("denied", db.Boolean(), nullable=True)
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
+    external_identifier = db.Column("external_identifier", db.String(length=255), nullable=True)
     expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
     membership_expiry_date = db.Column("membership_expiry_date", db.DateTime(timezone=True), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
@@ -375,8 +377,6 @@ class ServiceInvitation(Base, db.Model):
     service = db.relationship("Service", back_populates="service_invitations")
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User")
-    accepted = db.Column("accepted", db.Boolean(), nullable=True)
-    denied = db.Column("denied", db.Boolean(), nullable=True)
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
     expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
@@ -436,8 +436,6 @@ class OrganisationInvitation(Base, db.Model):
     organisation = db.relationship("Organisation", back_populates="organisation_invitations")
     user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
     user = db.relationship("User")
-    accepted = db.Column("accepted", db.Boolean(), nullable=True)
-    denied = db.Column("denied", db.Boolean(), nullable=True)
     intended_role = db.Column("intended_role", db.String(length=255), nullable=True)
     expiry_date = db.Column("expiry_date", db.DateTime(timezone=True), nullable=True)
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
@@ -616,3 +614,15 @@ class UserToken(Base, db.Model):
     last_used_date = db.Column("last_used_date", db.DateTime(timezone=True), nullable=True)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+
+class UserIpNetwork(Base, db.Model):
+    __tablename__ = "user_ip_networks"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    network_value = db.Column("network_value", db.Text(), nullable=False)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User", back_populates="user_ip_networks")
+    created_by = db.Column("created_by", db.String(length=512), nullable=False)
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+    updated_by = db.Column("updated_by", db.String(length=512), nullable=False)

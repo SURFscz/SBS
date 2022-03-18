@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 import uuid
 
+from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, func, bindparam, String
@@ -9,7 +10,7 @@ from sqlalchemy.orm import selectinload
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_organisation_admin, generate_token, is_service_admin
+    confirm_organisation_admin, generate_token, is_service_admin, confirm_external_api_call
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
@@ -106,6 +107,17 @@ def my_organisations_lite():
             .filter(OrganisationMembership.role.in_(["admin", "manager"]))
     organisations = query.all()
     return organisations, 200
+
+
+@organisation_api.route("/v1", strict_slashes=False)
+@swag_from("../swagger/paths/get_collaborations_by_organisation.yml")
+@json_endpoint
+def api_organisation_details():
+    confirm_external_api_call()
+    organisation = request_context.external_api_organisation
+    for collaboration in organisation.collaborations:
+        collaboration.groups
+    return organisation, 200
 
 
 @organisation_api.route("/<organisation_id>", strict_slashes=False)

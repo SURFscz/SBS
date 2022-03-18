@@ -164,7 +164,11 @@ class App extends React.Component {
             other(selectedUser.uid).then(user => {
                 const {currentUser, impersonator} = this.state;
                 const newUser = this.markUserAdmin(user);
-                this.setState({currentUser: newUser, impersonator: impersonator || currentUser}, callback);
+                this.setState({
+                    currentUser: newUser,
+                    impersonator: impersonator || currentUser,
+                    loading: false
+                }, callback);
             });
         }
     };
@@ -433,7 +437,7 @@ class App extends React.Component {
                         <Route path="/missing-service-aup"
                                render={props => <MissingServiceAup
                                    user={currentUser}
-                                   reloadMe={this.impersonate}
+                                   reloadMe={this.refreshUserMemberships}
                                    {...props}/>}/>
 
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>

@@ -192,6 +192,14 @@ class TestService(AbstractTest):
         self.login("urn:sarah")
         services = self.get("/api/services/all", with_basic_auth=False)
         self.assertTrue(len(services) > 0)
+        service_mail = self.find_by_name(services, service_mail_name)
+        self.assertFalse("collaborations_count" in service_mail)
+        self.assertFalse("organisations_count" in service_mail)
+
+    def test_services_all_include_counts(self):
+        self.login("urn:sarah")
+        services = self.get("/api/services/all", query_data={"include_counts": True}, with_basic_auth=False)
+        self.assertTrue(len(services) > 0)
 
         service_mail = self.find_by_name(services, service_mail_name)
         self.assertEqual(1, service_mail["collaborations_count"])
@@ -201,10 +209,22 @@ class TestService(AbstractTest):
         self.assertEqual(1, service_uuc["organisations_count"])
         self.assertEqual(1, len(service_uuc["allowed_organisations"]))
 
+        service_wiki = self.find_by_name(services, service_wiki_name)
+        self.assertEqual(1, service_wiki["organisations_count"])
+        self.assertEqual(3, service_wiki["collaborations_count"])
+
     def test_services_mine(self):
         self.login("urn:service_admin")
         services = self.get("/api/services/mine", with_basic_auth=False)
         self.assertEqual(2, len(services))
+
+        service_storage = self.find_by_name(services, service_storage_name)
+        self.assertEqual(0, service_storage["organisations_count"])
+        self.assertEqual(1, service_storage["collaborations_count"])
+
+        service_network = self.find_by_name(services, service_network_name)
+        self.assertEqual(0, service_network["organisations_count"])
+        self.assertEqual(1, service_network["collaborations_count"])
 
     def test_services_all_org_member(self):
         self.login("urn:harry")

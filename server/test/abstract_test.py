@@ -16,7 +16,7 @@ from server.auth.mfa import ACR_VALUES
 from server.auth.security import secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
-from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken
+from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation
 from server.test.seed import seed
 from server.tools import read_file
 
@@ -161,4 +161,11 @@ class AbstractTest(TestCase):
         user_token = UserToken.query.filter(UserToken.hashed_token == secure_hash(raw_token)).first()
         user_token.created_at = datetime.datetime.utcnow() - datetime.timedelta(days=500)
         db.session.merge(user_token)
+        db.session.commit()
+
+    @staticmethod
+    def expire_invitation(hash):
+        invitation = Invitation.query.filter(Invitation.hash == hash).first()
+        invitation.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=500)
+        db.session.merge(invitation)
         db.session.commit()

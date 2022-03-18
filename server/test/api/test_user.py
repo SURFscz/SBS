@@ -53,6 +53,7 @@ class TestUser(AbstractTest):
         self.assertEqual(1, len(res["join_requests"]))
         self.assertEqual(2, len(res["services_without_aup"]))
         self.assertEqual(2, len(res["service_emails"]))
+        self.assertEqual(1, len(res["service_collaborations"]))
 
     def test_me_after_delete(self):
         self.login("urn:jane")
@@ -362,3 +363,17 @@ class TestUser(AbstractTest):
 
         james = User.query.filter(User.uid == "urn:james").one()
         self.assertEqual("AA😡C", james.ssh_keys[0].ssh_value)
+
+    def test_update_with_user_ip_networks(self):
+        self.login("urn:sarah")
+        sarah = User.query.filter(User.uid == "urn:sarah").one()
+        self.assertEqual(2, len(sarah.user_ip_networks))
+
+        body = {"user_ip_networks": [
+            {"network_value": "125.0.0.1/32"},
+            {"network_value": "123.1.1.1/24", "id": sarah.user_ip_networks[1].id}
+        ]}
+        self.put("/api/users", body, with_basic_auth=False)
+
+        sarah = User.query.filter(User.uid == "urn:sarah").one()
+        self.assertEqual(2, len(sarah.user_ip_networks))

@@ -80,7 +80,7 @@ class UsedServices extends React.Component {
 
     getServiceLink = entity => {
         const ref = entity.connectionRequest ? entity.service : entity;
-        return <a href="/" onClick={this.openService(ref)}>{ref.name}</a>
+        return <a href={`/services/${ref.id}`} onClick={this.openService(ref)}>{ref.name}</a>
     }
 
     getServiceStatus = service => {

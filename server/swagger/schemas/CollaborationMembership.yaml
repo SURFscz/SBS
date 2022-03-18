@@ -1,0 +1,34 @@
+---
+type: object
+properties:
+  id:
+    type: number
+    readOnly: true
+    example: 999
+  collaboration_id:
+    type: number
+    readOnly: true
+    example: 999
+  role:
+    type: string
+    example: "admin"
+  status:
+    type: string
+    example: "active"
+  expiry_date:
+    type: number
+    example: 1642781077
+  created_at:
+    type: number
+    description: "The date of the created at in epoch seconds"
+    example: 1644015600
+  created_by:
+    type: string
+    description: "UID of the user who created this"
+    example: "urn:admin"
+  updated_by:
+    type: string
+    description: "UID of the user who updated this"
+    example: "urn:admin"
+  user:
+    $ref: '/swagger/schemas/User.yaml'

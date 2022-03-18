@@ -1,5 +1,4 @@
 # -*- coding: future_fstrings -*-
-import ipaddress
 import random
 import string
 import urllib.parse
@@ -11,6 +10,7 @@ from sqlalchemy.orm import load_only, selectinload
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint, query_param
+from server.api.ipaddress import validate_ip_networks
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin, secure_hash, \
     generate_token
@@ -93,7 +93,7 @@ def user_service(service_id):
     return count > 0
 
 
-def _do_get_services(restrict_for_current_user=False):
+def _do_get_services(restrict_for_current_user=False, include_counts=False):
     def override_func():
         return is_collaboration_admin() or _is_org_member() or is_service_admin()
 
@@ -107,17 +107,29 @@ def _do_get_services(restrict_for_current_user=False):
             .filter(ServiceMembership.user_id == current_user_id())
 
     services = query.all()
-    sql = text("SELECT service_id, organisation_id FROM services_organisations")
-    result_set = db.engine.execute(sql)
-    service_orgs = [{"service_id": row[0], "organisation_id": row[1]} for row in result_set]
-    sql = text("SELECT service_id, collaboration_id FROM services_collaborations")
-    result_set = db.engine.execute(sql)
-    services_colls = [{"service_id": row[0], "collaboration_id": row[1]} for row in result_set]
+    if not include_counts:
+        return services, 200
+
+    query = """
+        select s.id as id,
+            (select count(so.id) from services_organisations so where so.service_id = s.id) as so_count ,
+            ((select count(sc.id) from services_collaborations sc where sc.service_id = s.id) +
+            (select count(c.id) from collaborations c where c.organisation_id in (
+                    select so.organisation_id from services_organisations so where so.service_id = s.id
+                ) and c.id not in (
+                    select sc.collaboration_id from services_collaborations sc where sc.service_id = s.id
+            ))) as c_count from services s
+    """
+    if restrict_for_current_user:
+        query += f" where s.id in ({','.join([str(s.id) for s in services])})"
+
+    result_set = db.engine.execute(text(query))
     services_json = jsonify(services).json
-    for index, service in enumerate(services):
-        service_json = services_json[index]
-        service_json["collaborations_count"] = len([s for s in services_colls if s["service_id"] == service.id])
-        service_json["organisations_count"] = len([s for s in service_orgs if s["service_id"] == service.id])
+    services_json_dict = {s["id"]: s for s in services_json}
+    for row in result_set:
+        service_json = services_json_dict.get(row[0])
+        service_json["organisations_count"] = row[1]
+        service_json["collaborations_count"] = row[2]
     return services_json, 200
 
 
@@ -243,20 +255,21 @@ def service_by_id(service_id):
 @service_api.route("/all", strict_slashes=False)
 @json_endpoint
 def all_services():
-    return _do_get_services()
+    include_counts = query_param("include_counts", required=False)
+    return _do_get_services(include_counts=include_counts)
 
 
 @service_api.route("/mine", strict_slashes=False)
 @json_endpoint
 def mine_services():
-    return _do_get_services(restrict_for_current_user=True)
+    return _do_get_services(restrict_for_current_user=True, include_counts=True)
 
 
 @service_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_service():
     data = current_request.get_json()
-    _validate_ip_networks(data)
+    validate_ip_networks(data)
     _token_validity_days(data)
 
     data["status"] = STATUS_ACTIVE
@@ -324,13 +337,6 @@ def _token_validity_days(data):
         data["token_validity_days"] = int(days) if len(days.strip()) > 0 else None
 
 
-def _validate_ip_networks(data):
-    ip_networks = data.get("ip_networks", None)
-    if ip_networks:
-        for ip_network in ip_networks:
-            ipaddress.ip_network(ip_network["network_value"], False)
-
-
 @service_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_service():
@@ -339,7 +345,7 @@ def update_service():
     service_id = data["id"]
     confirm_service_admin(service_id)
 
-    _validate_ip_networks(data)
+    validate_ip_networks(data)
     _token_validity_days(data)
 
     cleanse_short_name(data, "abbreviation")
