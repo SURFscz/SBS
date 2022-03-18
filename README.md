@@ -101,3 +101,7 @@ environment: OPEN_MAIL_IN_BROWSER=1;PROFILE=local;CONFIG=config/test_config.yml;
 ### [Deployment](#deployment)
 
 See the https://github.com/SURFscz/SCZ-deploy project
+
+### [Upgrade](#upgrade)
+
+See https://github.com/simion/pip-upgrader for upgrading automatically

@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+from flasgger import swag_from
 from flask import Blueprint, request as current_request, g as request_context
 from werkzeug.exceptions import BadRequest, Forbidden
 
@@ -55,32 +56,46 @@ def add_collaborations_services():
 
 
 @collaborations_services_api.route("/v1/connect_collaboration_service", methods=["PUT"], strict_slashes=False)
+@swag_from("../swagger/paths/connect_collaboration_service.yml")
 @json_endpoint
 def connect_collaboration_service_api():
     confirm_external_api_call()
     organisation = request_context.external_api_organisation
 
     data = current_request.get_json()
-    collaboration_id = int(data["collaboration_id"])
+    coll_short_name = data["short_name"]
 
-    if not any(coll.id == collaboration_id for coll in organisation.collaborations):
-        raise Forbidden(f"Collaboration {collaboration_id} is not part of organisation {organisation.name}")
+    collaborations = list(filter(lambda coll: coll.short_name == coll_short_name, organisation.collaborations))
+    if not collaborations:
+        raise Forbidden(f"Collaboration {coll_short_name} is not part of organisation {organisation.name}")
 
+    collaboration = collaborations[0]
     service_entity_id = data["service_entity_id"]
     service = Service.query.filter(Service.entity_id == service_entity_id).one()
 
-    count = connect_service_collaboration(service.id, collaboration_id)
-    collaboration = list(filter(lambda coll: coll.id == collaboration_id, organisation.collaborations))[0]
-    return ({
-                "collaboration_id": collaboration.id,
-                "collaboration_name": collaboration.name,
-                "collaboration_urn": collaboration.global_urn,
-                "organisation_name": organisation.name,
-                "service_id": service.id,
-                "service_name": service.name,
-                "service_entity_id": service.entity_id,
-                "status": "connected"
-            }, 201) if count > 0 else (None, 404)
+    if service.automatic_connection_allowed:
+        connect_service_collaboration(service.id, collaboration.id)
+        status = "connected"
+    else:
+        # Avoid cyclic imports
+        from server.api.service_connection_request import request_new_service_connection
+
+        admins = [cm.user for cm in collaboration.collaboration_memberships if cm.role == "admin"]
+        if not admins:
+            raise BadRequest(f"Collaboration {collaboration.short_name} has no administrator")
+        request_new_service_connection(collaboration, None, True, service, admins[0])
+        status = "pending"
+
+    return {
+               "status": status,
+               "collaboration": {
+                   "organisation_short_name": organisation.short_name,
+                   "short_name": coll_short_name
+               },
+               "service": {
+                   "entity_id": service.entity_id
+               }
+           }, 201
 
 
 @collaborations_services_api.route("/delete_all_services/<collaboration_id>", methods=["DELETE"], strict_slashes=False)

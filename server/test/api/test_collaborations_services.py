@@ -137,7 +137,7 @@ class TestCollaborationsServices(AbstractTest):
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
                               headers={"Authorization": f"Bearer {uuc_secret}"},
                               data=json.dumps({
-                                  "collaboration_id": collaboration_id,
+                                  "short_name": collaboration["short_name"],
                                   "service_entity_id": service_cloud.entity_id
                               }), content_type="application/json")
         self.assertEqual("connected", res.json["status"])
@@ -147,26 +147,28 @@ class TestCollaborationsServices(AbstractTest):
 
     def test_connect_collaboration_service_forbidden(self):
         self.login("urn:admin")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self.mark_collaboration_service_restricted(collaboration_id)
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        short_name = collaboration.short_name
+
+        self.mark_collaboration_service_restricted(collaboration.id)
 
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
         self.put("/api/collaborations_services/v1/connect_collaboration_service",
                  with_basic_auth=False,
                  body=json.dumps({
-                     "collaboration_id": collaboration_id,
+                     "short_name": short_name,
                      "service_entity_id": service_cloud.entity_id
                  }),
                  response_status_code=403)
 
     def test_connect_collaboration_service_collaboration_not_in_organisation(self):
-        collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
         service_cloud = self.find_entity_by_name(Service, service_cloud_name)
 
         res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
                               headers={"Authorization": f"Bearer {uuc_secret}"},
                               data=json.dumps({
-                                  "collaboration_id": collaboration_id,
+                                  "short_name": collaboration.short_name,
                                   "service_entity_id": service_cloud.entity_id
                               }), content_type="application/json")
         self.assertEqual(res.status_code, 403)
@@ -176,3 +178,43 @@ class TestCollaborationsServices(AbstractTest):
     def test_connect_collaboration_service_collaboration_no_external_api_call(self):
         res = self.put("/api/collaborations_services/v1/connect_collaboration_service", response_status_code=403)
         self.assertEqual("Not a valid external API call", res["message"])
+
+    def test_connect_collaboration_service_no_automatic_connection(self):
+        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
+        service_entity_id = service_cloud.entity_id
+
+        service_cloud.automatic_connection_allowed = False
+        db.session.merge(service_cloud)
+        db.session.commit()
+
+        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+        collaboration = self.get(f"/api/collaborations/{collaboration_id}")
+
+        res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
+                              headers={"Authorization": f"Bearer {uuc_secret}"},
+                              data=json.dumps({
+                                  "short_name": collaboration["short_name"],
+                                  "service_entity_id": service_entity_id
+                              }), content_type="application/json")
+        self.assertEqual("pending", res.json["status"])
+
+    def test_connect_collaboration_service_no_automatic_connection_no_admins(self):
+        service_cloud = self.find_entity_by_name(Service, service_cloud_name)
+        service_entity_id = service_cloud.entity_id
+
+        service_cloud.automatic_connection_allowed = False
+        db.session.merge(service_cloud)
+
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        short_name = collaboration.short_name
+        collaboration.collaboration_memberships.clear()
+        db.session.merge(collaboration)
+        db.session.commit()
+
+        res = self.client.put("/api/collaborations_services/v1/connect_collaboration_service",
+                              headers={"Authorization": f"Bearer {uuc_secret}"},
+                              data=json.dumps({
+                                  "short_name": short_name,
+                                  "service_entity_id": service_entity_id
+                              }), content_type="application/json")
+        self.assertEqual(f"Collaboration {short_name} has no administrator", res.json["message"])

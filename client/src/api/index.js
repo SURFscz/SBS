@@ -206,8 +206,9 @@ export function serviceByEntityId(entityid) {
     return fetchJson(`/api/services/find_by_entity_id?entity_id=${encodeURIComponent(entityid)}`, {}, {}, false);
 }
 
-export function allServices() {
-    return fetchJson("/api/services/all");
+export function allServices(includeCounts) {
+    const query = includeCounts ? "?include_counts=true" : "";
+    return fetchJson(`/api/services/all${query}`);
 }
 
 export function mineServices() {

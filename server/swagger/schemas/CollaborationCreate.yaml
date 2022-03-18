@@ -1,0 +1,54 @@
+---
+type: object
+properties:
+  name:
+    type: string
+    example: "Researcher"
+  short_name:
+    type: string
+    example: "researcher"
+  description:
+    type: string
+    example: "Researcher collaboration UVA"
+  website_url:
+    type: string
+    format: uri
+    example: "https://service.universiteitvanharderwijk.nl/login"
+  disable_join_requests:
+    type: boolean
+    description: "If true users can not request to become a member of this collaboration"
+    example: true
+  disclose_member_information:
+    type: boolean
+    description: "If false the names of the members are not disclosed to other members"
+    example: true
+  disclose_email_information:
+    type: boolean
+    description: "If false the emails of the members are not disclosed to other members"
+    example: true
+  expiry_date:
+    type: number
+    description: "The expiry date of the collaboration in epoch seconds"
+    example: 1644015600
+  logo:
+    type: string
+    descriotion: "Base64 encoded binary image"
+    example: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAk...."
+  message:
+    type: string
+    description: "Message included in the invitation email"
+    example: "Please join..."
+  administrators:
+    type: array
+    description: "Email addresses of the administrators who receive an invitation email"
+    items:
+      type: string
+      example: "jdoe@example.com"
+required:
+  - name
+  - short_name
+  - description
+  - disable_join_requests
+  - disclose_member_information
+  - disclose_email_information
+  - administrators

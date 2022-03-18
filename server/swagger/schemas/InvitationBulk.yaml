@@ -1,0 +1,29 @@
+---
+type: object
+properties:
+  short_name:
+    type: string
+    description: "The short name of the collaboration"
+    example: "research"
+  message:
+    type: string
+    description: "The message included in the invitations"
+    example: "Please join..."
+  intended_role:
+    type: string
+    description: "The intended role of the inviter in the collaboration"
+    example: "member"
+  invitation_expiry_date:
+    type: number
+    description: "The expiry date of the invitation in epoch milliseconds"
+    example: 1743014227174
+  membership_expiry_date:
+    type: number
+    description: "The expiry date of the membership once the invitation is accepted in epoch milliseconds"
+    example: 1743014227174
+  invites:
+    type: array
+    descriptiom: "All the email addresses of the invitees"
+    items:
+      type: string
+      example: "jdoe@example.com"

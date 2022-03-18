@@ -23,12 +23,7 @@ class MissingServiceAup extends React.Component {
         const {user, reloadMe} = this.props;
         serviceAupBulkCreate(user.services_without_aup).then(res => {
             const url = new URL(res.location);
-            reloadMe({
-                callback: () => {
-                    this.props.history.push(url.pathname + url.search);
-                }
-            })
-
+            reloadMe(() => this.props.history.push(url.pathname + url.search));
         });
     }
 
@@ -39,10 +34,17 @@ class MissingServiceAup extends React.Component {
             return <SpinnerField/>;
         }
         const info = user.services_without_aup.length > 1 ? "infoMultiple" : "info";
+        const services = user.services_without_aup.length > 1 ? "informationServiceMultiple" : "informationService";
         return (
             <div className="mod-missing-service-aup">
                 <h1>{I18n.t("aup.service.title")}</h1>
                 <p className="info">{I18n.t(`aup.service.missing.${info}`)}</p>
+                {user.service_collaborations.map((collaboration, index) => <div className="collaboration-detail"
+                                                                                key={index}>
+                    <h2 dangerouslySetInnerHTML={{__html: I18n.t("aup.service.purposeOf", {name: collaboration.name})}}/>
+                    <p>{collaboration.description}</p>
+                </div>)}
+                <h2>{I18n.t(`aup.service.${services}`)}</h2>
                 <CollaborationAupAcceptance services={user.services_without_aup}
                                             disabled={!agreed}
                                             serviceEmails={user.service_emails}

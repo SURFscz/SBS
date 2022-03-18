@@ -25,7 +25,7 @@ class Organisations extends React.Component {
                 json.forEach(org => {
                     const membership = (user.organisation_memberships || []).find(m => m.user_id === user.id);
                     org.role = membership ? membership.role : "";
-                    org.schacHomes = isEmpty(org.schac_home_organisations) ? "-" :  org.schac_home_organisations.map(sho => sho.name).join(", ");
+                    org.schacHomes = isEmpty(org.schac_home_organisations) ? "-" : org.schac_home_organisations.map(sho => sho.name).join(", ");
                 });
                 this.setState({organisations: json, loading: false})
             });
@@ -50,7 +50,8 @@ class Organisations extends React.Component {
             {
                 key: "name",
                 header: I18n.t("models.organisations.name"),
-                mapper: org => <a href="/" onClick={this.openOrganisation(org)}>{org.name}</a>,
+                mapper: org => <a href={`/organisations/${org.id}`}
+                                  onClick={this.openOrganisation(org)}>{org.name}</a>,
             },
             {
                 key: "category",
@@ -83,7 +84,7 @@ class Organisations extends React.Component {
         return (
             <Entities entities={organisations}
                       modelName="organisations"
-                      searchAttributes={["name","schacHomes"]}
+                      searchAttributes={["name", "schacHomes"]}
                       defaultSort="name"
                       columns={columns}
                       hideTitle={true}

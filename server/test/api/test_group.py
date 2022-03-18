@@ -56,7 +56,7 @@ class TestGroup(AbstractTest):
         self._do_test_save_group(False, 0, 0)
 
     def test_save_group_auto_provision_members(self):
-        self._do_test_save_group(True, 2, 4)
+        self._do_test_save_group(True, 1, 4)
 
     def _do_test_save_group(self, auto_provision_members, invitations_count, members_count):
         self.login("urn:john")
@@ -79,9 +79,9 @@ class TestGroup(AbstractTest):
         self._do_test_update_group(False, 0, 2)
 
     def test_update_group_auto_provision_members(self):
-        self._do_test_update_group(True, 2, 4)
+        self._do_test_update_group(True, 1, 4)
         # Idempotency
-        self._do_test_update_group(True, 2, 4)
+        self._do_test_update_group(True, 1, 4)
 
     def _do_test_update_group(self, auto_provision_members, invitations_count, members_count):
         self.login("urn:john")

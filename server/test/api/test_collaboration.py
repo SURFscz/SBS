@@ -10,7 +10,7 @@ from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
-    ai_computing_short_name, uuc_teachers_name, read_image
+    ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -219,6 +219,7 @@ class TestCollaboration(AbstractTest):
         self.assertEqual(collaboration_id, collaboration["id"])
         self.assertEqual("UUC", collaboration["organisation"]["name"])
         self.assertTrue(len(collaboration["collaboration_memberships"]) >= 4)
+        self.assertEqual(1, len(collaboration["invitations"]))
 
     def test_collaboration_by_id_service_connection_requests(self):
         collaboration_id = self.find_entity_by_name(Collaboration, uva_research_name).id
@@ -316,13 +317,16 @@ class TestCollaboration(AbstractTest):
     def test_collaboration_invites(self):
         pre_count = Invitation.query.count()
         self.login("urn:john")
-        collaboration_id = self._find_by_identifier()["id"]
+        collaboration = self._find_by_identifier()
+        collaboration_id = collaboration["id"]
+        groups = [group["id"] for group in collaboration["groups"]]
         mail = self.app.mail
         with mail.record_messages() as outbox:
             self.put("/api/collaborations/invites", body={
                 "collaboration_id": collaboration_id,
                 "administrators": ["new@example.org", "pop@example.org"],
                 "message": "Please join",
+                "groups": groups,
                 "membership_expiry_date": int(time.time()),
                 "intended_role": "admin"
             })
@@ -331,6 +335,7 @@ class TestCollaboration(AbstractTest):
             self.assertEqual(pre_count + 2, post_count)
             invitation = Invitation.query.filter(Invitation.invitee_email == "new@example.org").first()
             self.assertEqual("admin", invitation.intended_role)
+            self.assertEqual(2, len(invitation.groups))
             self.assertIsNotNone(invitation.membership_expiry_date)
 
     def test_collaboration_invites_no_intended_role(self):
@@ -504,7 +509,7 @@ class TestCollaboration(AbstractTest):
                                     content_type="application/json")
         self.assertEqual(403, response.status_code)
         data = response.json
-        self.assertEqual(data["message"], "Not associated with an API key")
+        self.assertEqual("Not a valid external API call", data["message"])
 
     def test_api_call_missing_required_attributes(self):
         response = self.client.post("/api/collaborations/v1",
@@ -516,7 +521,7 @@ class TestCollaboration(AbstractTest):
         data = response.json
         self.assertEqual(data["message"], "Missing required attributes: ['name', 'description', 'short_name', "
                                           "'disable_join_requests', 'disclose_member_information', "
-                                          "'disclose_email_information']")
+                                          "'disclose_email_information', 'administrators']")
 
     def test_collaborations_may_request_collaboration_true(self):
         self.login("urn:mary")
@@ -593,3 +598,14 @@ class TestCollaboration(AbstractTest):
         coll = self.find_entity_by_name(Collaboration, ai_computing_name)
         self.assertEqual(STATUS_ACTIVE, coll.status)
         self.assertTrue(coll.last_activity_date > datetime.datetime.now() - datetime.timedelta(hours=1))
+
+    def test_find_by_identifier_api(self):
+        res = self.get(f"/api/collaborations/v1/{collaboration_ai_computing_uuid}",
+                       headers={"Authorization": f"Bearer {uuc_secret}"},
+                       with_basic_auth=False)
+        self.assertIsNotNone(res["groups"][0]["collaboration_memberships"][0]["user"]["email"])
+
+    def test_find_by_identifier_api_not_allowed(self):
+        self.get(f"/api/collaborations/v1/{collaboration_uva_researcher_uuid}",
+                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                 with_basic_auth=False, response_status_code=403)

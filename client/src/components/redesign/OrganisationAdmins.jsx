@@ -14,7 +14,6 @@ import {
 import {setFlash} from "../../utils/Flash";
 import "./OrganisationAdmins.scss";
 import Select from "react-select";
-import {emitter} from "../../utils/Events";
 import {isInvitationExpired, shortDateFromEpoch} from "../../utils/Date";
 import Button from "../Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -28,6 +27,7 @@ import ReactTooltip from "react-tooltip";
 import InstituteColumn from "./InstitueColumn";
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 import {isEmpty} from "../../utils/Utils";
+import {emitImpersonation} from "../../utils/Impersonation";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
@@ -328,8 +328,7 @@ class OrganisationAdmins extends React.Component {
                         return null;
                     }
                     return (<div className="impersonate" onClick={() =>
-                        emitter.emit("impersonation",
-                            {"user": entity.user, "callback": () => this.props.history.push("/home")})}>
+                        emitImpersonation(entity.user, this.props.history)}>
                         <HandIcon/>
                     </div>);
                 }

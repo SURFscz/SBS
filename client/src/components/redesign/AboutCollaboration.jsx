@@ -80,7 +80,7 @@ class AboutCollaboration extends React.Component {
                                     </li>
                                     <div className="service-links">
                                         {!isJoinRequest &&
-                                        <a href={`/${service.name}`}
+                                        <a href={`/services/${service.id}`}
                                            onClick={this.openService(service)}>{I18n.t("models.collaboration.instructions")}</a>}
                                         {service.accepted_user_policy &&
                                         <a href={service.accepted_user_policy} rel="noopener noreferrer"

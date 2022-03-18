@@ -1,0 +1,25 @@
+---
+type: object
+properties:
+  id:
+    type: number
+    readOnly: true
+    example: 999
+  name:
+    type: string
+    example: "uva.nl"
+  organisation_id:
+    type: number
+    example: 999
+  created_at:
+    type: number
+    description: "The date of the created at in epoch seconds"
+    example: 1644015600
+  created_by:
+    type: string
+    description: "UID of the user who created this"
+    example: "urn:admin"
+  updated_by:
+    type: string
+    description: "UID of the user who updated this"
+    example: "urn:admin"

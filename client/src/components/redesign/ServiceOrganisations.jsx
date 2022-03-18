@@ -80,7 +80,7 @@ class ServiceOrganisations extends React.Component {
         }
         return <ToggleSwitch value={access_allowed_for_all ? true : value || false}
                              animate={false}
-                             disabled={userServiceAdmin}
+                             disabled={!userServiceAdmin}
                              onChange={this.toggleChanged(organisation)}/>;
     }
 
@@ -152,7 +152,8 @@ class ServiceOrganisations extends React.Component {
             {
                 key: "name",
                 header: I18n.t("models.organisations.name"),
-                mapper: org => userServiceAdmin ? <span>{org.name}</span> : <a href="/" onClick={this.openOrganisation(org)}>{org.name}</a>,
+                mapper: org => userServiceAdmin ? <span>{org.name}</span> :
+                    <a href={`/organisations/${org.id}`} onClick={this.openOrganisation(org)}>{org.name}</a>,
             },
             {
                 key: "short_name",

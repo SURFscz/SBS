@@ -1,0 +1,34 @@
+summary: "Post a new collaboration."
+description: "Save a new collaboration."
+
+consumes:
+  - "application/json"
+
+produces:
+  - "application/json"
+
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+
+parameters:
+  - name: collaboration
+    in: body
+    description: The collaboration attributes
+    required: true
+    schema:
+      $ref: '/swagger/schemas/CollaborationCreate.yaml'
+
+responses:
+  201:
+    description: Created collaboration
+    schema:
+      $ref: '/swagger/schemas/CollaborationCreateResponse.yaml'
+  401:
+    schema:
+      $ref: '/swagger/components/responses/Unauthorized.yaml'
+  403:
+    schema:
+      $ref: '/swagger/components/responses/Forbidden.yaml'
+  404:
+    schema:
+      $ref: '/swagger/components/responses/NotFound.yaml'

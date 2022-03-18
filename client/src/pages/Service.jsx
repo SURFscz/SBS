@@ -236,7 +236,7 @@ class Service extends React.Component {
             required.some(attr => isEmpty(this.state[attr])) ||
             Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
-        const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error)
+        const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error);
         return !inValid && !contactEmailRequired && !invalidIpNetworks;
     };
 

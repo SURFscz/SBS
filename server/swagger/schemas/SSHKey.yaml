@@ -1,0 +1,18 @@
+---
+type: object
+properties:
+  id:
+    type: number
+    readOnly: true
+    example: 999
+  ssh_name:
+    type: string
+    description: "Public SSH key"
+    example: "ssh-rsa AAAAB3NzaC1yc2EAA"
+  user_id:
+    type: number
+    example: 999
+  created_at:
+    type: number
+    description: "The date of the created at in epoch seconds"
+    example: 1644015600

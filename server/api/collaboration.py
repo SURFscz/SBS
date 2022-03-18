@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 import uuid
 from datetime import datetime, timedelta
-
+from flasgger import swag_from
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
 from munch import munchify
 from sqlalchemy import text, or_, func, bindparam, String
@@ -11,7 +11,7 @@ from werkzeug.exceptions import BadRequest, Forbidden
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
-    confirm_allow_impersonation, confirm_organisation_admin_or_manager, generate_token
+    confirm_allow_impersonation, confirm_organisation_admin_or_manager, generate_token, confirm_external_api_call
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name, \
     STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
@@ -49,6 +49,27 @@ def collaboration_by_identifier():
     collaboration_json = jsonify(collaboration).json
     service_emails = collaboration.service_emails()
     return {"collaboration": collaboration_json, "service_emails": service_emails}, 200
+
+
+@collaboration_api.route("/v1/<identifier>", strict_slashes=False)
+@swag_from("../swagger/paths/get_collaboration_by_identifier.yml")
+@json_endpoint
+def api_collaboration_by_identifier(identifier):
+    confirm_external_api_call()
+    collaboration = Collaboration.query \
+        .outerjoin(Collaboration.collaboration_memberships) \
+        .outerjoin(CollaborationMembership.user) \
+        .options(selectinload(Collaboration.services)) \
+        .options(selectinload(Collaboration.groups).selectinload(Group.collaboration_memberships)) \
+        .options(selectinload(Collaboration.collaboration_memberships)
+                 .selectinload(CollaborationMembership.user)) \
+        .filter(Collaboration.identifier == identifier).one()
+
+    organisation = request_context.external_api_organisation
+    if organisation.id != collaboration.organisation_id:
+        raise Forbidden()
+
+    return collaboration, 200
 
 
 @collaboration_api.route("/name_exists", strict_slashes=False)
@@ -227,7 +248,11 @@ def collaboration_by_id(collaboration_id):
                  .selectinload(ServiceConnectionRequest.requester)) \
         .filter(Collaboration.id == collaboration_id).one()
 
-    return collaboration, 200
+    collaboration_json = jsonify(collaboration).json
+    collaboration_json["invitations"] = [invitation for invitation in collaboration_json["invitations"] if
+                                         invitation["status"] == "open"]
+
+    return collaboration_json, 200
 
 
 @collaboration_api.route("/invites", methods=["PUT"], strict_slashes=False)
@@ -255,13 +280,14 @@ def collaboration_invites():
     membership_expiry_date = data.get("membership_expiry_date")
     if membership_expiry_date:
         membership_expiry_date = datetime.fromtimestamp(data.get("membership_expiry_date"))
-
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
-                                collaboration=collaboration, user=user, groups=groups,
+                                collaboration=collaboration, user=user, status="open",
                                 intended_role=intended_role, expiry_date=default_expiry_date(json_dict=data),
                                 membership_expiry_date=membership_expiry_date, created_by=user.uid)
         invitation = db.session.merge(invitation)
+        invitation.groups.extend(groups)
+        db.session.commit()
         mail_collaboration_invitation({
             "salutation": "Dear",
             "invitation": invitation,
@@ -333,21 +359,21 @@ def save_collaboration():
 
 
 @collaboration_api.route("/v1", methods=["POST"], strict_slashes=False)
+@swag_from("../swagger/paths/post_new_collaboration.yml")
 @json_endpoint
 def save_collaboration_api():
     data = current_request.get_json()
+    confirm_external_api_call()
     required = ["name", "description", "short_name", "disable_join_requests", "disclose_member_information",
-                "disclose_email_information"]
+                "disclose_email_information", "administrators"]
     if "accepted_user_policy" in data:
         del data["accepted_user_policy"]
-    if "external_api_organisation" in request_context:
-        organisation = request_context.external_api_organisation
-        admins = list(filter(lambda mem: mem.role == "admin", organisation.organisation_memberships))
-        user = admins[0].user if len(admins) > 0 else User.query.filter(
-            User.uid == current_app.app_config.admin_users[0].uid).one()
-        data["organisation_id"] = organisation.id
-    else:
-        raise Forbidden("Not associated with an API key")
+
+    organisation = request_context.external_api_organisation
+    admins = list(filter(lambda mem: mem.role == "admin", organisation.organisation_memberships))
+    user = admins[0].user if len(admins) > 0 else User.query.filter(
+        User.uid == current_app.app_config.admin_users[0].uid).one()
+    data["organisation_id"] = organisation.id
 
     if "logo" not in data:
         data["logo"] = next(db.engine.execute(text(f"SELECT logo FROM organisations where id = {organisation.id}")))[0]
@@ -374,8 +400,7 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration_id=collaboration.id, user=user, intended_role="admin",
-                                expiry_date=default_expiry_date(),
-                                created_by=user.uid)
+                                expiry_date=default_expiry_date(), status="open", created_by=user.uid)
         invitation = db.session.merge(invitation)
         mail_collaboration_invitation({
             "salutation": "Dear",

@@ -13,7 +13,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership, ServiceAup, UserToken
+    ServiceMembership, ServiceAup, UserToken, UserIpNetwork
 
 collaboration_request_name = "New Collaboration"
 
@@ -193,6 +193,10 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                                  "jxEpu8soL okke@Mikes-MBP-2.fritz.box")
     ssh_key_sarah = SshKey(user=sarah, ssh_value="some-lame-key")
     _persist(db, ssh_key_john, ssh_key_james, ssh_key_sarah)
+
+    sarah_user_ip_network = UserIpNetwork(network_value="255.0.0.1/32", user=sarah)
+    sarah_other_user_ip_network = UserIpNetwork(network_value="255.0.0.9/24", user=sarah)
+    _persist(db, sarah_user_ip_network, sarah_other_user_ip_network)
 
     resend_suspension_date = current_time - datetime.timedelta(retention.reminder_resent_period_days + 1)
     user_one_suspend_notification1 = SuspendNotification(user=user_one_suspend, sent_at=resend_suspension_date,
@@ -449,16 +453,19 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     invitation = Invitation(hash=invitation_hash_curious, invitee_email="curious@ex.org", collaboration=ai_computing,
                             expiry_date=default_expiry_date(), user=admin, message="Please join...",
-                            intended_role="admin")
+                            intended_role="admin", status="open")
+    invitation_accepted = Invitation(hash=generate_token(), invitee_email="some@ex.org", collaboration=ai_computing,
+                                     expiry_date=default_expiry_date(), user=admin, message="Please join...",
+                                     status="accepted", intended_role="admin")
     invitation_uva = Invitation(hash=invitation_hash_uva, invitee_email="uva@ex.org", collaboration=uva_research,
                                 expiry_date=default_expiry_date(), user=admin, message="Please join...",
-                                intended_role="member", groups=[group_science])
+                                intended_role="member", groups=[group_science], status="open")
     invitation_noway = Invitation(hash=invitation_hash_no_way, invitee_email="noway@ex.org", collaboration=ai_computing,
                                   expiry_date=datetime.date.today() - datetime.timedelta(days=21), user=admin,
-                                  intended_role="member",
+                                  intended_role="member", status="expired",
                                   message="Let me please join as I really, really, really \n really, "
                                           "really, really \n want to...")
-    _persist(db, invitation, invitation_uva, invitation_noway)
+    _persist(db, invitation, invitation_accepted, invitation_uva, invitation_noway)
 
     collaboration_request_1 = CollaborationRequest(name=collaboration_request_name, short_name="new_collaboration",
                                                    website_url="https://google.com", logo=read_image("request.jpg"),

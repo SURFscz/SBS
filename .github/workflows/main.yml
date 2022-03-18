@@ -1,9 +1,7 @@
 ---
-# This is a basic workflow to help you get started with Actions
 
 name: CI
 
-# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events
   push:
@@ -16,14 +14,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "Server flake8"
   Server_tests:
     name: Server tests
     if: always()
 
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
     # Test different python versions
@@ -53,9 +48,8 @@ jobs:
         ports:
           # Maps port 6379 on service container to the host
           - 6379:6379
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
 
+    steps:
       - name: Setup mysql server
         run: >
           mysql -uroot -proot -h127.0.0.1 -e "
@@ -67,25 +61,27 @@ jobs:
 
       # Run Checkout code
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: 'server/requirements/*.txt'
 
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install pip setuptools wheel
           pip install -r ./server/requirements/test.txt
           pip install codecov flake8
 
       # Setup tmate session
       #- name: Setup tmate session
-        #uses: mxschmitt/action-tmate@v3
+      #  uses: mxschmitt/action-tmate@v3
 
       - name: Run flake8
         run: |
@@ -99,11 +95,11 @@ jobs:
         run: codecov --token=${{ secrets.CODECOV_TOKEN }}
         if: ${{ success() }}
 
+
   Client_build:
     name: Client build
     if: always()
 
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
     steps:
@@ -112,7 +108,7 @@ jobs:
           sudo apt -y install curl
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -127,7 +123,7 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Use Node.js 12
-        uses: actions/setup-node@v2.5.0
+        uses: actions/setup-node@v3
         with:
           node-version: 12
 
@@ -155,29 +151,85 @@ jobs:
           CI: true
           VNM_DIR: ~/.nvm
 
-      - name: Get tag
-        shell: bash
-        run: |
-          BASENAME=sbs
-          echo ::set-output name=file::${BASENAME}-${GITHUB_REF_TYPE}=${GITHUB_REF_NAME//\//+}.tar.xz
-        id: tag
-
       #- name: Setup tmate session
       #  uses: mxschmitt/action-tmate@v3
+      - name: Save version info
+        run: |
+          git log -1 > ./server/api/git.info
+
+      - name: Copy AUP files
+        run: |
+          cp server/static/*.{html,pdf} client/build/static/
 
       - name: Create build file
         run: |
-          tar -cJ --transform 's,^\./,sbs/,' -f ${{ steps.tag.outputs.file }} --force-local $(git ls-files) client/build
+          tar -cJ -f sbs.tar.xz \
+            --transform 's,^,sbs/,' --sort=name \
+            --owner=0 --group=0 --mode=u=rwX,go=rX \
+            $(git ls-files) client/build
+
+      - name: Show what we are shipping
+        run: |
+          tar tvJf sbs.tar.xz
 
       - name: Create Artifact
         uses: actions/upload-artifact@v2
         with:
           name: "sbs-build"
-          path: "${{ steps.tag.outputs.file }}"
+          path: "sbs.tar.xz"
 
       - name: Create Release
         if: "github.ref_type=='tag'"
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            ${{ steps.tag.outputs.file }}
+          files: "sbs.tar.xz"
+
+
+  Artifact_upload:
+    name: Client upload
+    env:
+      ARTIE_TOKEN: "${{ secrets.ARTIE_TOKEN }}"
+    if: "github.actor != 'dependabot[bot]'"   # ignore PRs etc from dependabot
+    needs:
+      - "Client_build"
+      - "Server_tests"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: jfrog/setup-jfrog-cli@v2
+        env:
+          JF_ARTIFACTORY_1: "${{ secrets.ARTIE_TOKEN }}"
+
+      - name: Check Artie
+        run: |
+          jfrog rt ping
+
+      - name: Fetch build
+        id: fetch_artifact
+        uses: actions/download-artifact@master
+        with:
+          name: "sbs-build"
+
+      - name: Info
+        run: |
+          ls -la ${{steps.fetch_artifact.outputs.download-path}}
+          sha1sum ${{steps.fetch_artifact.outputs.download-path}} || true
+          sha256sum ${{steps.fetch_artifact.outputs.download-path}} || true
+          echo Will upload to SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
+          echo Will upload to SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz
+
+      - name: Upload commit artifact to Artie
+        run: |
+          jfrog rt upload --detailed-summary --flat --fail-no-op \
+            --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
+            ${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz \
+            SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
+
+      - name: Upload branch/tag to Artie
+        if: "github.event_name=='push'"
+        run: |
+          jfrog rt upload --detailed-summary --flat --fail-no-op \
+            --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
+            ${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz \
+            SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz

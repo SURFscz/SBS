@@ -33,13 +33,16 @@ class TestAuditLog(AbstractTest):
         self.login("urn:sarah")
 
         body = {
-            "ssh_keys": [{"ssh_value": "some_ssh"}, {"ssh_value": "overwrite_existing", "id": sarah.ssh_keys[0].id}]}
+            "ssh_keys": [{"ssh_value": "some_ssh"}, {"ssh_value": "overwrite_existing", "id": sarah.ssh_keys[0].id}],
+            "user_ip_networks": [
+                {"network_value": sarah.user_ip_networks[0].network_value, "id": sarah.user_ip_networks[0].id}]
+        }
 
         self.put("/api/users", body, with_basic_auth=False)
         res = self.get("/api/audit_logs/me")
 
         audit_logs = res["audit_logs"]
-        self.assertEqual(3, len(audit_logs))
+        self.assertEqual(4, len(audit_logs))
 
     def test_other_(self):
         sarah = self.find_entity_by_name(User, sarah_name)
