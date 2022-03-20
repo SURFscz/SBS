@@ -232,7 +232,7 @@ I18n.translations.nl = {
             searchPlaceHolder: "Zoek organisaties...",
             new: "Nieuwe organisatie",
             name: "Naam",
-            memberCount: "Leden",
+            memberCount: "Beheerders",
             collaborationCount: "Samenwerkingen",
             schacHomeOrganisations: "Organisatiedomein(en)",
             category: "Categorie",
