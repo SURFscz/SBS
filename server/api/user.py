@@ -287,7 +287,9 @@ def resume_session():
 
     no_mfa_required = not oidc_config.second_factor_authentication_required
     idp_mfa = id_token.get("acr") == ACR_VALUES
-    second_factor_confirmed = no_mfa_required or idp_mfa
+    allowed_idps = current_app.app_config.mfa_idp_allowed
+    idp_allowed = user.schac_home_organisation and user.schac_home_organisation.lower() in allowed_idps
+    second_factor_confirmed = no_mfa_required or idp_mfa or idp_allowed
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
 

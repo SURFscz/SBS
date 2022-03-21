@@ -326,6 +326,23 @@ class TestUser(AbstractTest):
             self.assertFalse("organisation_memberships" in user)
             self.assertTrue(user["admin"])
 
+    @responses.activate
+    def test_resume_session_with_allowed_idp(self):
+        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
+                      json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
+                      status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
+                      json={"sub": "urn:john", "voperson_external_id": "test@idp.test"}, status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
+                      read_file("test/data/public.json"), status=200)
+        with requests.Session():
+            res = self.client.get("/api/users/resume-session?code=123456")
+            self.assertEqual("http://localhost:3000", res.headers.get("Location"))
+            user = self.client.get("/api/users/me", ).json
+
+            self.assertTrue(user["second_factor_confirmed"])
+            self.assertTrue("organisation_memberships" in user)
+
     def test_query(self):
         res = self.get("/api/users/query", query_data={"q": "AMES"})
         self.assertEqual(1, len(res))
