@@ -3,7 +3,6 @@ import json
 import os
 from pathlib import Path
 
-from server.api.base import white_listing
 from server.test.abstract_test import AbstractTest
 
 
