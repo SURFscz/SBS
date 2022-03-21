@@ -189,4 +189,3 @@ class AbstractTest(TestCase):
         db.session.merge(user)
         db.session.commit()
         return user
-
