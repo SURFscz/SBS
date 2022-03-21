@@ -52,7 +52,7 @@ def decode_jwt_token(token):
     if kid not in public_keys:
         _refresh_public_keys()
     key = public_keys[kid]
-    return jwt.decode(token, key=key, algorithms=["RS256"], audience=current_app.app_config.oidc.client_id)
+    return jwt.decode(token, key=key, algorithms=["RS256", "ES256"], audience=current_app.app_config.oidc.client_id)
 
 
 def eligible_users_to_reset_token(user):

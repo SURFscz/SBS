@@ -177,3 +177,8 @@ membership_expiration:
 ldap:
   url: "ldap://ldap.example.com/dc=example,dc=com"
   bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"
+
+# Lower case schachome organisations allowed skipping MFA
+mfa_idp_allowed:
+  - "idp.test"
+  - "example.com"
