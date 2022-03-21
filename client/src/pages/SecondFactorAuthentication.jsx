@@ -1,7 +1,15 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
 import "./SecondFactorAuthentication.scss";
-import {get2fa, reset2fa, tokenResetRequest, tokenResetRespondents, update2fa, verify2fa} from "../api";
+import {
+    get2fa,
+    reset2fa,
+    tokenResetRequest,
+    tokenResetRespondents,
+    update2fa,
+    verify2fa,
+    verify2faProxyAuthz
+} from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
 import I18n from "i18n-js";
 import Button from "../components/Button";
@@ -30,16 +38,26 @@ class SecondFactorAuthentication extends React.Component {
             respondents: [],
             message: "",
             resetCode: "",
-            resetCodeError: null
+            resetCodeError: null,
+            continueUrl: null,
+            secondFaUuid: null
         };
         this.totpRefs = Array(6).fill("");
         this.totpNewRefs = Array(6).fill("");
     }
 
     componentDidMount() {
-        const {user, update} = this.props;
+        const {user, update, match} = this.props;
         if (user.guest) {
-            setTimeout(login, 5);
+            const second_fa_uuid = match.params.second_fa_uuid;
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            const continueUrl = urlSearchParams.get("continue_url");
+            if (second_fa_uuid && continueUrl) {
+                this.setState({loading: false, secondFaUuid: second_fa_uuid, continueUrl: continueUrl});
+                this.focusCode();
+            } else {
+                setTimeout(login, 5);
+            }
         } else if (user.second_factor_confirmed && !update) {
             this.props.history.push("/home")
         } else if (!user.second_factor_auth || update) {
@@ -157,7 +175,7 @@ class SecondFactorAuthentication extends React.Component {
 
     verify = () => {
         this.setState({busy: true});
-        const {totp, newTotp} = this.state;
+        const {totp, newTotp, secondFaUuid, continueUrl} = this.state;
         const {update} = this.props;
         if (update) {
             update2fa(newTotp.join(""), totp.join("")).then(() => {
@@ -183,6 +201,13 @@ class SecondFactorAuthentication extends React.Component {
                         this.setState(newState, () => focusField.focus());
                     })
                 }
+            });
+        } else if (secondFaUuid && continueUrl) {
+            verify2faProxyAuthz(totp.join(""), secondFaUuid, continueUrl).then(r => {
+                window.location.href = r.location;
+            }).catch(() => {
+                this.setState({busy: false, error: true, totp: Array(6).fill("")},
+                    () => this.totpRefs[0].focus());
             });
         } else {
             verify2fa(totp.join("")).then(r => {
@@ -374,7 +399,8 @@ class SecondFactorAuthentication extends React.Component {
 
                 <div className="step">
                     <div className="step-actions">
-                        {update ? <h1>{I18n.t("mfa.register.verificationCodeUpdate")}</h1> : <h1>{I18n.t("mfa.register.verificationCode")}</h1>}
+                        {update ? <h1>{I18n.t("mfa.register.verificationCodeUpdate")}</h1> :
+                            <h1>{I18n.t("mfa.register.verificationCode")}</h1>}
                         <p>{I18n.t("mfa.register.verificationCodeInfo")}</p>
                         {!update && <>
                             {this.totpValueContainer(totp, "totp", this.totpRefs, true)}

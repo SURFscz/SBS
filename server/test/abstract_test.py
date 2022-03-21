@@ -2,11 +2,13 @@
 import datetime
 import json
 import os
+import uuid
 from base64 import b64encode
 from time import time
 from uuid import uuid4
 
 import jwt
+import pyotp
 import requests
 import responses
 from flask import current_app
@@ -169,3 +171,22 @@ class AbstractTest(TestCase):
         invitation.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=500)
         db.session.merge(invitation)
         db.session.commit()
+
+    @staticmethod
+    def login_user_2fa(user_uid):
+        user = User.query.filter(User.uid == user_uid).one()
+        user.last_login_date = datetime.datetime.now()
+        db.session.merge(user)
+        db.session.commit()
+
+    @staticmethod
+    def add_totp_to_user(user_uid):
+        user = User.query.filter(User.uid == user_uid).one()
+        secret = pyotp.random_base32()
+        second_fa_uuid = str(uuid.uuid4())
+        user.second_factor_auth = secret
+        user.second_fa_uuid = second_fa_uuid
+        db.session.merge(user)
+        db.session.commit()
+        return user
+

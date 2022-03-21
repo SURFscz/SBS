@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
-
-from datetime import datetime
+import uuid
+from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request
@@ -23,6 +23,7 @@ SERVICE_NOT_CONNECTED = 4
 COLLABORATION_NOT_ACTIVE = 5
 MEMBERSHIP_NOT_ACTIVE = 6
 AUP_NOT_AGREED = 99
+SECOND_FA_REQUIRED = 100
 
 # Independent mapping, so different attribute names can be send back
 custom_saml_mapping = {
@@ -37,7 +38,7 @@ custom_saml_mapping = {
 }
 
 
-def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func):
+def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func, require_2fa=False, issuer_id=None):
     confirm_read_access()
     logger = ctx_logger("user_api")
 
@@ -82,16 +83,24 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
                      f" as none of the collaboration memberships are active")
         return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)
 
-    # Leave this as the last check as it is the only exception that can be recovered from
+    # Leave the 2FAand AUP checks as the last checks as these are the only exceptions that can be recovered from
+    if require_2fa:
+        idp_allowed = issuer_id.lower() in current_app.app_config.mfa_idp_allowed
+        last_login_date = user.last_login_date
+        ten_minutes_ago = datetime.now() - timedelta(hours=0, minutes=10)
+        if not idp_allowed and (not last_login_date or last_login_date < ten_minutes_ago):
+            return not_authorized_func(user, SECOND_FA_REQUIRED)
+
     if not has_agreed_with(user, service):
         return not_authorized_func(service, AUP_NOT_AGREED)
 
+    now = datetime.now()
     for coll in connected_collaborations:
-        coll.last_activity_date = datetime.now()
+        coll.last_activity_date = now
         db.session.merge(coll)
 
-    user.last_accessed_date = datetime.now()
-    user.last_login_date = datetime.now()
+    user.last_accessed_date = now
+    user.last_login_date = now
     user.suspend_notifications = []
     user = db.session.merge(user)
     db.session.commit()
@@ -145,10 +154,19 @@ def proxy_authz():
     json_dict = current_request.get_json()
     uid = json_dict["user_id"]
     service_entity_id = json_dict["service_id"]
+    issuer_id = json_dict["issuer_id"]
 
     def not_authorized_func(service_name, status):
         base_url = current_app.app_config.base_url
-        if status == AUP_NOT_AGREED:
+        if status == SECOND_FA_REQUIRED:
+            # Internal contract, in case of SECOND_FA_REQUIRED we get the User instance returned
+            user = service_name
+            user.second_fa_uuid = str(uuid.uuid4())
+            db.session.merge(user)
+            db.session.commit()
+            redirect_url = f"{base_url}/2fa/{user.second_fa_uuid}"
+            result = "interrupt"
+        elif status == AUP_NOT_AGREED:
             # Internal contract, in case of AUP_NOT_AGREED we get the Service instance returned
             parameters = urlencode({"service_id": service_name.uuid4, "service_name": service_name.name})
             redirect_url = f"{base_url}/service-aup?{parameters}"
@@ -179,4 +197,6 @@ def proxy_authz():
                    }
                }, 200
 
-    return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
+    return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
+                          require_2fa=True,
+                          issuer_id=issuer_id)

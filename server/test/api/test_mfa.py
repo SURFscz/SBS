@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 import pyotp
 import responses
+from flask import current_app
 
 from server.db.db import db
 from server.db.domain import User
@@ -146,3 +147,31 @@ class TestMfa(AbstractTest):
                 "new_totp_value": "123456"}
         res = self.post("/api/mfa/update2fa", body=body, response_status_code=400)
         self.assertEqual(res["new_totp"], True)
+
+    def test_verify2fa_proxy_authz(self):
+        sarah = self.add_totp_to_user("urn:sarah")
+
+        continue_url = current_app.app_config.oidc.continue_eduteams_redirect_uri
+        totp = pyotp.TOTP(sarah.second_factor_auth)
+        body = {"totp": totp.now(), "second_fa_uuid": sarah.second_fa_uuid, "continue_url": continue_url}
+
+        res = self.post("/api/mfa/verify2fa_proxy_authz", body, with_basic_auth=False)
+        self.assertEqual(continue_url, res["location"])
+
+    def test_verify2fa_wrong_totp(self):
+        sarah = self.add_totp_to_user("urn:sarah")
+        body = {"totp": "123456", "second_fa_uuid": sarah.second_fa_uuid, }
+        res = self.post("/api/mfa/verify2fa_proxy_authz", body, response_status_code=400, with_basic_auth=False)
+
+        self.assertEqual(False, res["new_totp"])
+
+    def test_verify2fa_not_allowed_continue_url(self):
+        sarah = self.add_totp_to_user("urn:sarah")
+
+        totp = pyotp.TOTP(sarah.second_factor_auth)
+        body = {"totp": totp.now(), "second_fa_uuid": sarah.second_fa_uuid, "continue_url": "https://middleman.org"}
+        self.post("/api/mfa/verify2fa_proxy_authz", body, response_status_code=403, with_basic_auth=False)
+
+    def test_verify2fa_user_not_found(self):
+        body = {"totp": "N/A", "second_fa_uuid": "nope", "continue_url": "N/A"}
+        self.post("/api/mfa/verify2fa_proxy_authz", body, response_status_code=404, with_basic_auth=False)
