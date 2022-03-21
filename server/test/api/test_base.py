@@ -37,6 +37,3 @@ class TestBase(AbstractTest):
 
     def test_401(self):
         self.get("/api/users/search", with_basic_auth=False, response_status_code=401)
-
-    def test_white_listing(self):
-        self.assertEqual(19, len(white_listing))
