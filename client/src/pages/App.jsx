@@ -230,7 +230,7 @@ class App extends React.Component {
                                    }
                                    return <Redirect to={decodeURIComponent(state)}/>
                                }}/>
-                        <Route path="/2fa"
+                        <Route path="/2fa/:second_fa_uuid?"
                                render={props => <SecondFactorAuthentication user={currentUser}
                                                                             refreshUser={this.refreshUserMemberships}
                                                                             {...props}/>}/>

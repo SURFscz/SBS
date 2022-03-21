@@ -67,6 +67,22 @@ def _construct_jwt(user, nonce, oidc_config):
                       headers={"kid": public_signing_key["kid"]})
 
 
+def _do_verify_2fa(user: User, secret):
+    data = current_request.get_json()
+    totp_value = data["totp"]
+    totp = pyotp.TOTP(secret)
+    if totp.verify(totp_value, valid_window=1):
+        if not user.second_factor_auth:
+            user.second_factor_auth = secret
+        user.last_login_date = datetime.datetime.now()
+        user = db.session.merge(user)
+        db.session.commit()
+        store_user_in_session(user, True, user.has_agreed_with_aup())
+        return True
+    else:
+        return False
+
+
 @mfa_api.route("/token_reset_request", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def token_reset_request():
@@ -111,16 +127,8 @@ def get2fa():
 def verify2fa():
     user = User.query.filter(User.id == current_user_id()).one()
     secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
-    data = current_request.get_json()
-    totp_value = data["totp"]
-    totp = pyotp.TOTP(secret)
-    if totp.verify(totp_value, valid_window=1):
-        if not user.second_factor_auth:
-            user.second_factor_auth = secret
-        user.last_login_date = datetime.datetime.now()
-        user = db.session.merge(user)
-        db.session.commit()
-        store_user_in_session(user, True, user.has_agreed_with_aup())
+    valid_totp = _do_verify_2fa(user, secret)
+    if valid_totp:
         location = session.get("original_destination", current_app.app_config.base_url)
         in_proxy_flow = session.get("in_proxy_flow", False)
         if in_proxy_flow:
@@ -128,6 +136,22 @@ def verify2fa():
             id_token = _construct_jwt(user, str(uuid4()), oidc_config)
             location = f"{oidc_config.sfo_eduteams_redirect_uri}?id_token={id_token}"
         return {"location": location, "in_proxy_flow": in_proxy_flow}, 201
+    else:
+        return {"new_totp": False}, 400
+
+
+@mfa_api.route("/verify2fa_proxy_authz", methods=["POST"], strict_slashes=False)
+@json_endpoint
+def verify2fa_proxy_authz():
+    data = current_request.get_json()
+    second_fa_uuid = data["second_fa_uuid"]
+    user = User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
+    valid_totp = _do_verify_2fa(user, user.second_factor_auth)
+    if valid_totp:
+        continue_url = data["continue_url"]
+        if not continue_url.lower().startswith(current_app.app_config.oidc.continue_eduteams_redirect_uri):
+            raise Forbidden(f"Invalid continue_url: {continue_url}")
+        return {"location": continue_url}, 201
     else:
         return {"new_totp": False}, 400
 
