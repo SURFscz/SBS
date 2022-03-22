@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timedelta
 
 import jwt
 import requests
@@ -89,3 +90,13 @@ def eligible_users_to_reset_token(user):
         user_information.append({"name": "SRAM support", "email": current_app.app_config.mail.info_email})
 
     return user_information
+
+
+def mfa_idp_allowed(user, schac_home=None, entity_id=None):
+    idp_allowed = current_app.app_config.mfa_idp_allowed
+    entity_id_allowed = entity_id and [idp for idp in idp_allowed if idp.entity_id == entity_id.lower()]
+    schac_home_allowed = schac_home and [idp for idp in idp_allowed if idp.schac_home == schac_home.lower()]
+    last_login_date = user.last_login_date
+    minutes_ago = datetime.now() - timedelta(hours=0, minutes=int(current_app.app_config.mfa_sso_time_in_minutes))
+    valid_mfa_sso = last_login_date and last_login_date > minutes_ago
+    return entity_id_allowed or schac_home_allowed or valid_mfa_sso

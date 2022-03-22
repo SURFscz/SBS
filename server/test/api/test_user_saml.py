@@ -192,6 +192,6 @@ class TestUserSaml(AbstractTest):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "idp.test"})
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "https://idp.test"})
         attrs = res["attributes"]
         self.assertListEqual(["sarah"], attrs["uid"])

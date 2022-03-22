@@ -1,12 +1,13 @@
 # -*- coding: future_fstrings -*-
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime
 from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request
 
 from server.api.base import json_endpoint, query_param, send_error_mail
 from server.api.service_aups import has_agreed_with
+from server.auth.mfa import mfa_idp_allowed
 from server.auth.security import confirm_read_access
 from server.auth.user_claims import user_memberships
 from server.db.db import db
@@ -85,10 +86,8 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
 
     # Leave the 2FAand AUP checks as the last checks as these are the only exceptions that can be recovered from
     if require_2fa:
-        idp_allowed = issuer_id.lower() in current_app.app_config.mfa_idp_allowed
-        last_login_date = user.last_login_date
-        ten_minutes_ago = datetime.now() - timedelta(hours=0, minutes=10)
-        if not idp_allowed and (not last_login_date or last_login_date < ten_minutes_ago):
+        idp_allowed = mfa_idp_allowed(user, user.schac_home_organisation, issuer_id)
+        if not idp_allowed:
             return not_authorized_func(user, SECOND_FA_REQUIRED)
 
     if not has_agreed_with(user, service):
