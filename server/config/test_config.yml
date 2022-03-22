@@ -178,7 +178,12 @@ ldap:
   url: "ldap://ldap.example.com/dc=example,dc=com"
   bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"
 
-# Lower case schachome organisations allowed skipping MFA
+# Lower case schachome organisations / entity ID's allowed skipping MFA
 mfa_idp_allowed:
-  - "idp.test"
-  - "example.com"
+  - schac_home: "idp.test"
+    entity_id: "https://idp.test"
+  - schac_home: "example.com"
+    entity_id: "https://example.com"
+
+# A MFA login in a different flow is valid for X minutes
+mfa_sso_time_in_minutes: 10

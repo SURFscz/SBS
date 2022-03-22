@@ -19,7 +19,7 @@ from werkzeug.exceptions import Forbidden
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.api.ipaddress import validate_ip_networks
-from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session
+from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, mfa_idp_allowed
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access
 from server.auth.user_claims import add_user_claims
@@ -227,7 +227,8 @@ def authorization():
 def resume_session():
     logger = ctx_logger("oidc")
 
-    oidc_config = current_app.app_config.oidc
+    cfg = current_app.app_config
+    oidc_config = cfg.oidc
     code = query_param("code", required=False, default=None)
     if not code:
         # This means that we are not in the redirect callback, but at the redirect from eduTeams
@@ -287,8 +288,9 @@ def resume_session():
 
     no_mfa_required = not oidc_config.second_factor_authentication_required
     idp_mfa = id_token.get("acr") == ACR_VALUES
-    allowed_idps = current_app.app_config.mfa_idp_allowed
-    idp_allowed = user.schac_home_organisation and user.schac_home_organisation.lower() in allowed_idps
+
+    idp_allowed = mfa_idp_allowed(user, user.schac_home_organisation, None)
+
     second_factor_confirmed = no_mfa_required or idp_mfa or idp_allowed
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
@@ -300,11 +302,11 @@ def resume_session():
     store_user_in_session(user, second_factor_confirmed, user_accepted_aup)
 
     if not user_accepted_aup:
-        location = f"{current_app.app_config.base_url}/aup"
+        location = f"{cfg.base_url}/aup"
     elif not second_factor_confirmed:
-        location = f"{current_app.app_config.base_url}/2fa"
+        location = f"{cfg.base_url}/2fa"
     else:
-        location = session.get("original_destination", current_app.app_config.base_url)
+        location = session.get("original_destination", cfg.base_url)
 
     return redirect(location)
 
