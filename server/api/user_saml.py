@@ -84,6 +84,8 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
 
     # Leave this as the last check as it is the only exception that can be recovered from
     if not has_agreed_with(user, service):
+        logger.error(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id}"
+                     f" as user has not accepted AUP")
         return not_authorized_func(service, AUP_NOT_AGREED)
 
     for coll in connected_collaborations:
