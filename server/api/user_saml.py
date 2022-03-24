@@ -88,9 +88,11 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
     if require_2fa:
         idp_allowed = mfa_idp_allowed(user, user.schac_home_organisation, issuer_id)
         if not idp_allowed:
+            logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa")
             return not_authorized_func(user, SECOND_FA_REQUIRED)
 
     if not has_agreed_with(user, service):
+        logger.debug(f"Returning interrupt for user {uid} and service_entity_id {service_entity_id} to accept AUP")
         return not_authorized_func(service, AUP_NOT_AGREED)
 
     now = datetime.now()

@@ -8,6 +8,7 @@ from jwt import algorithms
 
 from server.auth.security import is_admin_user
 from server.db.domain import Organisation, SchacHomeOrganisation
+from server.logger.context_logger import ctx_logger
 
 ACR_VALUES = "https://refeds.org/profile/mfa"
 
@@ -93,10 +94,19 @@ def eligible_users_to_reset_token(user):
 
 
 def mfa_idp_allowed(user, schac_home=None, entity_id=None):
+    logger = ctx_logger("user_api")
+
     idp_allowed = current_app.app_config.mfa_idp_allowed
     entity_id_allowed = entity_id and [idp for idp in idp_allowed if idp.entity_id == entity_id.lower()]
     schac_home_allowed = schac_home and [idp for idp in idp_allowed if idp.schac_home == schac_home.lower()]
     last_login_date = user.last_login_date
     minutes_ago = datetime.now() - timedelta(hours=0, minutes=int(current_app.app_config.mfa_sso_time_in_minutes))
     valid_mfa_sso = last_login_date and last_login_date > minutes_ago
-    return entity_id_allowed or schac_home_allowed or valid_mfa_sso
+
+    result = entity_id_allowed or schac_home_allowed or valid_mfa_sso
+
+    logger.debug(f"mfa_idp_allowed: {result} (entity_id_allowed={entity_id_allowed}, "
+                 f"schac_home_allowed={schac_home_allowed}, valid_mfa_sso={valid_mfa_sso}, "
+                 f"entity_id={entity_id}, schac_home={schac_home}, last_login={minutes_ago} minutes ago")
+
+    return result
