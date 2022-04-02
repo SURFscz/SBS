@@ -4,7 +4,7 @@ import string
 import urllib.parse
 
 from flask import Blueprint, request as current_request, g as request_context, jsonify, current_app
-from passlib.hash import sha512_crypt
+from passlib.hash import ldap_salted_sha512
 from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
 from werkzeug.exceptions import Forbidden
@@ -418,7 +418,7 @@ def reset_ldap_password(service_id):
     confirm_service_admin(service_id)
     service = Service.query.get(service_id)
     password = "".join(random.sample(string.ascii_lowercase + string.digits + "_,./~=+@*-", k=32))
-    hashed = sha512_crypt.using(rounds=100_000).hash(password)
+    hashed = ldap_salted_sha512.using().hash(password)
     service.ldap_password = hashed
     db.session.merge(service)
     return {"ldap_password": password}, 200
