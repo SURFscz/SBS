@@ -53,28 +53,29 @@ export function isUserAllowed(minimalRole, user, organisation_id = null, collabo
     return false;
 }
 
-export function rawGlobalUserRole(user, organisation, collaboration, service) {
+export function rawGlobalUserRole(user, organisation, collaboration, service, membershipRequired = false) {
     if (user.admin) {
         return ROLES.PLATFORM_ADMIN;
     }
+
     if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "admin" &&
-        (!organisation || m.organisation_id === organisation.id))) {
+        ((!organisation && !membershipRequired) || (organisation && m.organisation_id === organisation.id)))) {
         return ROLES.ORG_ADMIN;
     }
     if (user.organisation_memberships && user.organisation_memberships.find(m => m.role === "manager" &&
-        (!organisation || m.organisation_id === organisation.id))) {
+        ((!organisation && !membershipRequired)|| (organisation && m.organisation_id === organisation.id)))) {
         return ROLES.ORG_MANAGER;
     }
     if (user.collaboration_memberships && user.collaboration_memberships.find(m => m.role === "admin" &&
-        (!collaboration || m.collaboration_id === collaboration.id))) {
+        ((!collaboration && !membershipRequired) || (collaboration && m.collaboration_id === collaboration.id)))) {
         return ROLES.COLL_ADMIN;
     }
     if (user.collaboration_memberships && user.collaboration_memberships.length > 0 &&
-        (!collaboration || user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id))) {
+        ((!collaboration && !membershipRequired) || (collaboration && user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id)))) {
         return ROLES.COLL_MEMBER;
     }
     if (user.service_memberships && user.service_memberships.length > 0 &&
-        (!service || user.service_memberships.find(m => m.service_id === service.id))) {
+        ((!service && !membershipRequired) || (service && user.service_memberships.find(m => m.service_id === service.id)))) {
         return ROLES.SERVICE_ADMIN;
     }
     return ROLES.USER;
@@ -88,7 +89,7 @@ export function globalUserRole(user) {
     return I18n.t(`access.${rawGlobalUserRole(user)}`);
 }
 
-export function actionMenuUserRole(user, organisation, collaboration) {
-    const userRole = rawGlobalUserRole(user, organisation, collaboration);
+export function actionMenuUserRole(user, organisation, collaboration, service, membershipRequired) {
+    const userRole = rawGlobalUserRole(user, organisation, collaboration, service, membershipRequired);
     return I18n.t("actionRoles.title", {role: I18n.t(`actionRoles.${userRole}`)});
 }

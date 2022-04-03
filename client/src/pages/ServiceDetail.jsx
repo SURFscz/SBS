@@ -75,7 +75,7 @@ class ServiceDetail extends React.Component {
 
         } else if (params.id) {
             const {user} = this.props;
-            const userServiceAdmin = isUserServiceAdmin(user, {id: params.id}) || user.admin;
+            const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
             if (userServiceAdmin) {
                 Promise.all([serviceById(params.id), searchOrganisations("*"),
                     allServiceConnectionRequests(params.id)])
@@ -84,8 +84,8 @@ class ServiceDetail extends React.Component {
                         const organisations = res[1];
                         const serviceConnectionRequests = res[2];
                         const tabs = [
-                            this.getOrganisationsTab(service, organisations, userServiceAdmin),
-                            this.getCollaborationsTab(service, userServiceAdmin),
+                            this.getOrganisationsTab(service, organisations, user.admin),
+                            this.getCollaborationsTab(service, user.admin),
                             this.getAdminsTab(service),
                         ];
                         if (user.admin) {
@@ -212,14 +212,13 @@ class ServiceDetail extends React.Component {
         const {organisations} = this.state;
         this.setState({loading: true});
         const {user} = this.props;
-        const userServiceAdmin = isUserServiceAdmin(user);
         Promise.all([serviceById(params.id), allServiceConnectionRequests(params.id)])
             .then(res => {
                 const service = res[0];
                 const serviceConnectionRequests = res[1];
                 const tabs = [
-                    this.getOrganisationsTab(service, organisations, userServiceAdmin),
-                    this.getCollaborationsTab(service, userServiceAdmin),
+                    this.getOrganisationsTab(service, organisations, user.admin),
+                    this.getCollaborationsTab(service, user.admin),
                     this.getAdminsTab(service)
                 ];
                 if (user.admin) {
@@ -239,12 +238,15 @@ class ServiceDetail extends React.Component {
         });
     };
 
-    getOrganisationsTab = (service, organisations, userServiceAdmin) => {
+    getOrganisationsTab = (service, organisations, userAdmin) => {
         return (<div key="organisations" name="organisations"
                      label={I18n.t("home.tabs.serviceOrganisations", {count: organisations.length})}
                      icon={<OrganisationsIcon/>}>
-            <ServiceOrganisations {...this.props} refresh={this.refresh} service={service}
-                                  organisations={organisations} userServiceAdmin={userServiceAdmin}/>
+            <ServiceOrganisations {...this.props}
+                                  refresh={this.refresh}
+                                  service={service}
+                                  organisations={organisations}
+                                  userAdmin={userAdmin}/>
         </div>)
     }
 
@@ -279,7 +281,7 @@ class ServiceDetail extends React.Component {
         </div>)
     }
 
-    getCollaborationsTab = (service, userServiceAdmin) => {
+    getCollaborationsTab = (service, userAdmin) => {
         const collaborations = service.collaborations;
         collaborations.forEach(coll => coll.fromCollaboration = true);
         const collFromOrganisations = service.service_organisation_collaborations;
@@ -292,7 +294,7 @@ class ServiceDetail extends React.Component {
                 <Collaborations mayCreate={false}
                                 showOrigin={true}
                                 collaborations={colls}
-                                userServiceAdmin={userServiceAdmin}
+                                userServiceAdmin={!userAdmin}
                                 modelName={"serviceCollaborations"}
                                 {...this.props} />
             </div>);
@@ -451,7 +453,7 @@ class ServiceDetail extends React.Component {
                             breadcrumbName={I18n.t("breadcrumb.service", {name: service.name})}
                             name={service.name}
                             firstTime={user.admin ? this.onBoarding : undefined}
-                            dropDownTitle={actionMenuUserRole(user)}
+                            dropDownTitle={actionMenuUserRole(user, null, null, service, true)}
                             actions={this.getActions(user, service)}>
                     <p>{service.description}</p>
                     <div className="org-attributes-container-grid">

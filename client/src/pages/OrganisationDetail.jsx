@@ -160,8 +160,11 @@ class OrganisationDetail extends React.Component {
         return (<div key="collaborations" name="collaborations"
                      label={I18n.t("home.tabs.orgCollaborations", {count: (organisation.collaborations || []).length})}
                      icon={<CollaborationsIcon/>}>
-            <Collaborations {...this.props} collaborations={organisation.collaborations}
-                            organisation={organisation} showExpiryDate={true} showLastActivityDate={true}/>
+            <Collaborations {...this.props}
+                            collaborations={organisation.collaborations}
+                            organisation={organisation}
+                            showExpiryDate={true}
+                            showLastActivityDate={true}/>
         </div>)
     }
 
@@ -294,7 +297,7 @@ class OrganisationDetail extends React.Component {
                             breadcrumbName={I18n.t("breadcrumb.organisation", {name: organisation.name})}
                             firstTime={user.admin ? this.onBoarding : undefined}
                             name={organisation.name}
-                            dropDownTitle={actionMenuUserRole(user, organisation, null)}
+                            dropDownTitle={actionMenuUserRole(user, organisation, null, null, true)}
                             actions={this.getActions(user, organisation, adminOfOrganisation)}>
 
                     <p>{organisation.description}</p>
