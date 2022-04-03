@@ -27,3 +27,4 @@ PyJWT==2.3.0
 Authlib==0.15.5
 passlib==1.7.4
 flasgger==0.9.5
+werkzeug==2.0.3
