@@ -94,7 +94,7 @@ export function authorizationUrl(state) {
 export function me(config) {
     if (config.local && true) {
         let sub = "urn:service_admin";
-        sub = "urn:john";
+        // sub = "urn:john";
         // sub = "urn:sarah"
         //Need to mock a login
         return postPutJson("/api/mock", {sub, "name": "Mock User", "email": "john@example.com"}, "PUT")

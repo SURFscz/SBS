@@ -70,7 +70,7 @@ class ServiceOrganisations extends React.Component {
         this.submit(organisationsSelected, value ? [] : [organisation.id]);
     }
 
-    toggle = (organisation, organisationsSelected, service, userServiceAdmin) => {
+    toggle = (organisation, organisationsSelected, service, userAdmin) => {
         const value = organisationsSelected[organisation.id];
         const access_allowed_for_all = service.access_allowed_for_all;
         if (access_allowed_for_all) {
@@ -80,7 +80,7 @@ class ServiceOrganisations extends React.Component {
         }
         return <ToggleSwitch value={access_allowed_for_all ? true : value || false}
                              animate={false}
-                             disabled={!userServiceAdmin}
+                             disabled={!userAdmin}
                              onChange={this.toggleChanged(organisation)}/>;
     }
 
@@ -140,7 +140,7 @@ class ServiceOrganisations extends React.Component {
             organisationsSelected, organisationsDeselected, confirmationDialogOpen, cancelDialogAction,
             confirmationDialogAction,
         } = this.state;
-        const {organisations, service, user, userServiceAdmin} = this.props;
+        const {organisations, service, user, userAdmin} = this.props;
         organisations.forEach(org => org.toggle = organisationsSelected[org.id]);
         const columns = [
             {
@@ -152,8 +152,8 @@ class ServiceOrganisations extends React.Component {
             {
                 key: "name",
                 header: I18n.t("models.organisations.name"),
-                mapper: org => userServiceAdmin ? <span>{org.name}</span> :
-                    <a href={`/organisations/${org.id}`} onClick={this.openOrganisation(org)}>{org.name}</a>,
+                mapper: org => userAdmin ?  <a href={`/organisations/${org.id}`} onClick={this.openOrganisation(org)}>{org.name}</a> :
+                        <span>{org.name}</span> ,
             },
             {
                 key: "short_name",
@@ -177,7 +177,7 @@ class ServiceOrganisations extends React.Component {
             {
                 key: "toggle",
                 header: I18n.t("service.accessAllowed"),
-                mapper: org => this.toggle(org, organisationsSelected, service, userServiceAdmin)
+                mapper: org => this.toggle(org, organisationsSelected, service, userAdmin)
             }]
         return (<div>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -198,7 +198,7 @@ class ServiceOrganisations extends React.Component {
                           filters={service.access_allowed_for_all ?
                               <span
                                   className="access-allowed-for-all">{I18n.t("service.accessAllowedForAllInfo")}</span> : null}
-                          showNew={!userServiceAdmin && !service.access_allowed_for_all && organisations.length > 0}
+                          showNew={userAdmin && !service.access_allowed_for_all && organisations.length > 0}
                           newEntityFunc={service.access_allowed_for_all ? () => true : this.onToggleAll}
                           loading={false}
                           {...this.props}>

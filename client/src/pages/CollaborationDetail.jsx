@@ -473,7 +473,7 @@ class CollaborationDetail extends React.Component {
     getUnitHeaderForMemberNew = (user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember) => {
         const customAction = collaborationJoinRequest ? this.collaborationJoinRequestAction(collaboration, alreadyMember) : null;
         return <UnitHeader obj={collaboration}
-                           dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
+                           dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration, null, true)}
                            actions={collaborationJoinRequest ? [] : this.getActions(user, collaboration, allowedToEdit, showMemberView)}
                            name={collaboration.name}
                            customAction={customAction}>
@@ -664,7 +664,7 @@ class CollaborationDetail extends React.Component {
                             auditLogPath={`collaborations/${collaboration.id}`}
                             breadcrumbName={I18n.t("breadcrumb.collaboration", {name: collaboration.name})}
                             name={collaboration.name}
-                            dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration)}
+                            dropDownTitle={actionMenuUserRole(user, collaboration.organisation, collaboration, null, true)}
                             actions={this.getActions(user, collaboration, allowedToEdit, showMemberView)}>
             <p>{collaboration.description}</p>
             <div className="org-attributes-container-grid">
