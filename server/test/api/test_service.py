@@ -260,7 +260,7 @@ class TestService(AbstractTest):
         self.assertEqual(32, len(res["ldap_password"]))
         rs = db.engine.execute(f"SELECT ldap_password FROM services WHERE id = {service['id']}")
         ldap_password = next(rs, (0,))[0]
-        self.assertTrue(ldap_password.startswith("{SSHA512}"))
+        self.assertTrue(ldap_password.startswith("$6$rounds=100000$"))
         service = self._find_by_name()
         self.assertIsNone(service.get("ldap_password"))
 
