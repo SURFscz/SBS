@@ -188,8 +188,6 @@ jobs:
 
   Artifact_upload:
     name: Client upload
-    env:
-      ARTIE_TOKEN: "${{ secrets.ARTIE_TOKEN }}"
     if: "github.actor != 'dependabot[bot]'"   # ignore PRs etc from dependabot
     needs:
       - "Client_build"
@@ -200,7 +198,7 @@ jobs:
     steps:
       - uses: jfrog/setup-jfrog-cli@v2
         env:
-          JF_ARTIFACTORY_1: "${{ secrets.ARTIE_TOKEN }}"
+          JF_ENV_1: "${{ secrets.ARTIE_TOKEN }}"
 
       - name: Check Artie
         run: |
