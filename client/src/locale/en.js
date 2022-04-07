@@ -1761,6 +1761,7 @@ I18n.translations.en = {
         oneAdminWarning: "An organisation requires at least one admin.",
     },
     notFound: {
+        invitationNotFound: "This invitiation does not exist (anymore). The invititation has probably already been used. Ask the person who invited you to send you a new one.",
         msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that " +
             "You could try visiting the <a href='{{base_url}}'>homepage</a>. If that does not offer you an option you were looking for, " +
             "contact the person that invited you, or follow the SRAM Help link which includes how to contact the SURF Research Access Management team."
