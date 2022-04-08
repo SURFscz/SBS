@@ -1,6 +1,8 @@
 # -*- coding: future_fstrings -*-
+from sqlalchemy.exc import IntegrityError
 
-from server.db.domain import Collaboration, Invitation, OrganisationInvitation
+from server.db.db import db
+from server.db.domain import Collaboration, CollaborationMembership, Invitation, OrganisationInvitation
 from server.test.abstract_test import AbstractTest
 from server.test.seed import ai_computing_name
 
@@ -28,3 +30,18 @@ class TestModels(AbstractTest):
             OrganisationInvitation.validate_role("nope")
 
         self.assertRaises(ValueError, invalid_role)
+
+    def test_prevent_duplicate_CO_membership(self):
+        def duplicate_member_raises_error():
+            existing_membership = CollaborationMembership.query.first()
+            duplicate = CollaborationMembership(
+                user_id=existing_membership.user_id,
+                collaboration_id=existing_membership.collaboration_id,
+                role="admin",
+                created_by=existing_membership.created_by,
+                updated_by=existing_membership.updated_by,
+            )
+            db.session.merge(duplicate)
+            db.session.commit()
+
+        self.assertRaises(IntegrityError, duplicate_member_raises_error)
