@@ -122,3 +122,4 @@ git.info
 acc_config.yml
 scraps
 venvbackup/
+.vscode
