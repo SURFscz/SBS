@@ -99,6 +99,9 @@ groups_invitations_association = db.Table(
 
 class CollaborationMembership(Base, db.Model):
     __tablename__ = "collaboration_memberships"
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'collaboration_id', name='unique_members'),
+    )
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     role = db.Column("role", db.String(length=255), nullable=False)
     status = db.Column("status", db.String(length=255), nullable=False, default=STATUS_ACTIVE)
