@@ -114,4 +114,5 @@ class TestSystem(AbstractTest):
     def test_validations(self):
         res = self.get("/api/system/validations", response_status_code=200)
         self.assertEqual(2, len(res["organisation_invitations"]))
+        self.assertEqual(5, len(res['services']))
         self.assertEqual(1, len(res["organisations"]))

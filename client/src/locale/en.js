@@ -226,6 +226,11 @@ I18n.translations.en = {
             noEntities: "There are no organisations without admins...",
             searchPlaceHolder: "Search organisations...",
         },
+        servicesWithoutAdmin: {
+            title: "Services without administrators",
+            noEntities: "There are no services without admins...",
+            searchPlaceHolder: "Search services...",
+        },
         organisations: {
             title: "Organisations",
             noEntities: "There are no organisations yet...",
