@@ -1,0 +1,31 @@
+table.servicesWithoutAdmin {
+
+    thead {
+        th {
+            &.name {
+                width: 40%;
+                padding-left: 15px;
+            }
+
+            &.contactEmail {
+                width: 25%;
+            }
+        }
+    }
+
+    tbody {
+        td {
+            &.name {
+                padding-left: 15px;
+            }
+
+            &.service_memberships_count {
+                text-align: center;
+            }
+
+            &.collaborations_count {
+                text-align: center;
+            }
+        }
+    }
+}
