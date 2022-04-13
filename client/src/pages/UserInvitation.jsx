@@ -7,6 +7,7 @@ import moment from "moment";
 import {login} from "../utils/Login";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import SpinnerField from "../components/redesign/SpinnerField";
+import { ErrorOirigins as ErrorOrigins } from "../utils/Utils";
 
 class UserInvitation extends React.Component {
 
@@ -34,7 +35,7 @@ class UserInvitation extends React.Component {
                 const isExpired = today.isAfter(moment(res.expiry_date * 1000));
                 this.setState({invite: res, isExpired: isExpired, loading: false});
             }).catch(e => {
-                this.props.history.push("/404");
+                this.props.history.push("/404", {errorOrigin: ErrorOrigins.invitationNotFound});
             });
         } else {
             this.props.history.push("/404");
