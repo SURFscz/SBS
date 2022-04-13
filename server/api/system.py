@@ -9,7 +9,7 @@ from server.api.base import json_endpoint
 from server.auth.security import confirm_write_access, current_user_id
 from server.db.audit_mixin import metadata
 from server.db.db import db
-from server.db.domain import User, Organisation, OrganisationMembership, OrganisationInvitation
+from server.db.domain import Service, ServiceMembership, User, Organisation, OrganisationMembership, OrganisationInvitation
 from server.mail import mail_feedback
 from server.test.seed import seed
 
@@ -162,14 +162,26 @@ def feedback():
 @json_endpoint
 def validations():
     confirm_write_access()
-    subquery = ~OrganisationMembership.query \
+
+    organizations_subquery = ~OrganisationMembership.query \
         .filter(OrganisationMembership.role == "admin") \
         .filter(OrganisationMembership.organisation_id == Organisation.id) \
         .exists()
-    organisations = Organisation.query.filter(subquery).all()
+    organisations_without_admins = Organisation.query.filter(organizations_subquery).all()
+
+    services_subquery = ~ServiceMembership.query \
+        .filter(ServiceMembership.role == "admin") \
+        .filter(ServiceMembership.service_id == Service.id) \
+        .exists()
+    services_without_admins = Service.query.filter(services_subquery).all()
+
     organisation_invitations = OrganisationInvitation.query \
         .options(joinedload(OrganisationInvitation.organisation)) \
         .options(joinedload(OrganisationInvitation.user)) \
         .all()
 
-    return {"organisations": organisations, "organisation_invitations": organisation_invitations}, 200
+    return {
+            "organisations": organisations_without_admins,
+            "organisation_invitations": organisation_invitations,
+            "services": services_without_admins
+           }, 200
