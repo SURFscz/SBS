@@ -174,7 +174,7 @@ jobs:
           tar tvJf /tmp/sbs.tar.xz
 
       - name: Create Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "sbs-build"
           path: "/tmp/sbs.tar.xz"
