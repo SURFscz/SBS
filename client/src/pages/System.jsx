@@ -37,6 +37,7 @@ import SelectField from "../components/SelectField";
 import moment from "moment";
 import OrganisationInvitations from "../components/redesign/OrganisationInvitations";
 import OrganisationsWithoutAdmin from "../components/redesign/OrganisationsWithoutAdmin";
+import ServicesWithoutAdmin from "../components/redesign/ServicesWithoutAdmin";
 
 const options = [25, 50, 100, 150, 200, 250, "All"].map(nbr => ({value: nbr, label: nbr}));
 
@@ -65,11 +66,12 @@ class System extends React.Component {
             busy: false,
             auditLogs: {audit_logs: []},
             filteredAuditLogs: {audit_logs: []},
-            validationData: {"organisations": [], "organisation_invitations": []},
+            validationData: {"organisations": [], "organisation_invitations": [], "services": []},
             limit: options[1],
             query: "",
             selectedTables: [],
             showOrganisationsWithoutAdmin: true,
+            showServicesWithoutAdmin: true,
             plscData: {}
         }
     }
@@ -245,21 +247,29 @@ class System extends React.Component {
     }
 
     toggleShowOrganisationsWithoutAdmin = show => this.setState({showOrganisationsWithoutAdmin: show});
+    
+    toggleShowServicesWithoutAdmin = show => this.setState({showServicesWithoutAdmin: show});
 
-    getValidationTab = (validationData, showOrganisationsWithoutAdmin) => {
+    getValidationTab = (validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin) => {
         const organisation_invitations = validationData.organisation_invitations;
         const organisations = validationData.organisations;
+        const services = validationData.services;
         return (<div key="validations" name="validations" label={I18n.t("home.tabs.validation")}
                      icon={<FontAwesomeIcon icon="calendar-check"/>}>
             <div className="mod-system">
                 <section className="info-block-container">
                     <OrganisationInvitations organisation_invitations={organisation_invitations}
                                              toggleShowOrganisationsWithoutAdmin={this.toggleShowOrganisationsWithoutAdmin}
+                                             toggleShowServicesWithoutAdmin={this.toggleShowServicesWithoutAdmin}
                                              refresh={callback => this.componentDidMount(callback)}/>
                 </section>
                 {showOrganisationsWithoutAdmin &&
                 <section className="info-block-container">
                     <OrganisationsWithoutAdmin organisations={organisations} {...this.props}/>
+                </section>}
+                {showServicesWithoutAdmin &&
+                <section className="info-block-container">
+                    <ServicesWithoutAdmin services={services} {...this.props}/>
                 </section>}
             </div>
         </div>)
@@ -733,6 +743,7 @@ class System extends React.Component {
                 this.setState({
                     validationData: res,
                     showOrganisationsWithoutAdmin: true,
+                    showServicesWithoutAdmin: true,
                     busy: false
                 })
             });
@@ -752,7 +763,7 @@ class System extends React.Component {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
-            validationData, showOrganisationsWithoutAdmin, plscData
+            validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData
         } = this.state;
         const {config} = this.props;
 
@@ -760,7 +771,7 @@ class System extends React.Component {
             return <SpinnerField/>
         }
         const tabs = [
-            this.getValidationTab(validationData, showOrganisationsWithoutAdmin),
+            this.getValidationTab(validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin),
             this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations, expiredMemberships,
                 cronJobs),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
