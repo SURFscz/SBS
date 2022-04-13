@@ -226,6 +226,11 @@ I18n.translations.nl = {
             noEntities: "Er zijn geen organisaties zonder beheerders...",
             searchPlaceHolder: "Zoek organisaties...",
         },
+        servicesWithoutAdmin: {
+            title: "Diensten zonder beheerders",
+            noEntities: "Er zijn geen diensten zonder beheerders...",
+            searchPlaceHolder: "Zoek diensten...",
+        },
         organisations: {
             title: "Organisaties",
             noEntities: "Er zijn nog geen organisaties...",

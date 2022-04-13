@@ -163,32 +163,31 @@ jobs:
 
       - name: Create build file
         run: |
-          tar -cJ -f sbs.tar.xz \
+          tar -cJ -f /tmp/sbs.tar.xz \
             --transform 's,^\./,sbs/,' --sort=name \
             --owner=0 --group=0 --mode=u=rwX,go=rX \
-            --exclude=./client/node_modules --exclude=./.git .
+            --exclude=./client/node_modules --exclude=./.git \
+            .
 
       - name: Show what we are shipping
         run: |
-          tar tvJf sbs.tar.xz
+          tar tvJf /tmp/sbs.tar.xz
 
       - name: Create Artifact
         uses: actions/upload-artifact@v2
         with:
           name: "sbs-build"
-          path: "sbs.tar.xz"
+          path: "/tmp/sbs.tar.xz"
 
       - name: Create Release
         if: "github.ref_type=='tag'"
         uses: softprops/action-gh-release@v1
         with:
-          files: "sbs.tar.xz"
+          files: "/tmp/sbs.tar.xz"
 
 
   Artifact_upload:
     name: Client upload
-    env:
-      ARTIE_TOKEN: "${{ secrets.ARTIE_TOKEN }}"
     if: "github.actor != 'dependabot[bot]'"   # ignore PRs etc from dependabot
     needs:
       - "Client_build"
@@ -199,7 +198,7 @@ jobs:
     steps:
       - uses: jfrog/setup-jfrog-cli@v2
         env:
-          JF_ARTIFACTORY_1: "${{ secrets.ARTIE_TOKEN }}"
+          JF_ENV_1: "${{ secrets.ARTIE_TOKEN }}"
 
       - name: Check Artie
         run: |

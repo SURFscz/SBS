@@ -34,10 +34,11 @@ class OrganisationInvitations extends React.Component {
 
     gotoInvitation = invitation => e => {
         stopEvent(e);
-        const {organisation_invitations, toggleShowOrganisationsWithoutAdmin} = this.props;
+        const {organisation_invitations, toggleShowOrganisationsWithoutAdmin, toggleShowServicesWithoutAdmin} = this.props;
         const selectedInvitation = organisation_invitations.find(i => i.id === invitation.id);
         this.setState({selectedInvitationId: selectedInvitation.id, message: selectedInvitation.message});
         toggleShowOrganisationsWithoutAdmin(false);
+        toggleShowServicesWithoutAdmin(false);
     };
 
     getSelectedInvitation = () => {
@@ -48,9 +49,10 @@ class OrganisationInvitations extends React.Component {
 
     cancelSideScreen = e => {
         stopEvent(e);
-        const {toggleShowOrganisationsWithoutAdmin} = this.props;
+        const {toggleShowOrganisationsWithoutAdmin, toggleShowServicesWithoutAdmin} = this.props;
         this.setState({selectedInvitationId: null, message: "", confirmationDialogOpen: false, loading: false});
         toggleShowOrganisationsWithoutAdmin(true);
+        toggleShowServicesWithoutAdmin(true);
     }
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
