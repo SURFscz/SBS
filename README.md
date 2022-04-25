@@ -11,6 +11,7 @@ Research Access Management Platform
 - Redis v6.x
 - Yarn 1.x
 - node
+- libxmlsec1
 
 ### [Getting started](#getting-started)
 
