@@ -29,6 +29,7 @@ class User(Base, db.Model):
     scoped_affiliation = db.Column("scoped_affiliation", db.Text(), nullable=True)
     entitlement = db.Column("entitlement", db.Text(), nullable=True)
     schac_home_organisation = db.Column("schac_home_organisation", db.String(length=255), nullable=True)
+    home_organisation_uid = db.Column("home_organisation_uid", db.String(length=512), nullable=True)
     family_name = db.Column("family_name", db.String(length=255), nullable=True)
     given_name = db.Column("given_name", db.String(length=255), nullable=True)
     email = db.Column("email", db.String(length=255), nullable=True)

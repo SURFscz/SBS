@@ -1,9 +1,11 @@
 # -*- coding: future_fstrings -*-
+import os
 import uuid
 from datetime import datetime
 from urllib.parse import urlencode
 
-from flask import Blueprint, current_app, request as current_request
+from flask import Blueprint, current_app, request as current_request, redirect, session
+from onelogin.saml2.auth import OneLogin_Saml2_Auth
 
 from server.api.base import json_endpoint, query_param, send_error_mail
 from server.api.service_aups import has_agreed_with
@@ -84,7 +86,7 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
                      f" as none of the collaboration memberships are active")
         return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)
 
-    # Leave the 2FAand AUP checks as the last checks as these are the only exceptions that can be recovered from
+    # Leave the 2FA and AUP checks as the last checks as these are the only exceptions that can be recovered from
     if require_2fa:
         idp_allowed = mfa_idp_allowed(user, user.schac_home_organisation, issuer_id)
         if not idp_allowed:
@@ -139,7 +141,7 @@ def attributes():
             if val:
                 result[v] = val.split(",") if k in custom_saml_mapping["multi_value_attributes"] else [val]
         result["sshKey"] = [ssh_key.ssh_value for ssh_key in user.ssh_keys]
-        membership_attribute = custom_saml_mapping['custom_attribute_saml_mapping']['memberships']
+        membership_attribute = custom_saml_mapping["custom_attribute_saml_mapping"]["memberships"]
         result[membership_attribute] = memberships
 
         result = {k: list(set(v)) for k, v in result.items()}
@@ -156,6 +158,8 @@ def proxy_authz():
     uid = json_dict["user_id"]
     service_entity_id = json_dict["service_id"]
     issuer_id = json_dict["issuer_id"]
+    home_organisation_uid = json_dict["uid"]
+    schac_home_organisation = json_dict["homeorganization"]
 
     def not_authorized_func(service_name, status):
         base_url = current_app.app_config.base_url
@@ -186,6 +190,9 @@ def proxy_authz():
 
     def authorized_func(user, memberships):
         eppn_scope = current_app.app_config.eppn_scope.strip()
+        user.home_organisation_uid = home_organisation_uid
+        user.schac_home_organisation = schac_home_organisation
+        db.session.merge(user)
         return {
                    "status": {
                        "result": "authorized",
@@ -198,6 +205,39 @@ def proxy_authz():
                    }
                }, 200
 
-    return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
-                          require_2fa=True,
+    return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func, require_2fa=True,
                           issuer_id=issuer_id)
+
+
+def _get_saml_auth():
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "config", "saml")
+    req = {
+        "https": "on" if current_request.scheme == "https" else "off",
+        "http_host": current_request.host,
+        "script_name": current_request.path,
+        "get_data": current_request.args.copy(),
+        "post_data": current_request.form.copy()
+    }
+    auth = OneLogin_Saml2_Auth(req, custom_base_path=path)
+    return auth
+
+
+def redirect_to_surf_secure_id():
+    auth = _get_saml_auth()
+
+    sso_built_url = auth.login(return_to="http://localhost:8080/api/users/acs",
+                               name_id_value_req="urn:collab:person:example.com:oharsta")
+    session["AuthNRequestID"] = auth.get_last_request_id()
+    return redirect(sso_built_url)
+
+
+@user_saml_api.route("/acs", methods=["POST"], strict_slashes=False)
+def acs():
+    request_id = session.get("AuthNRequestID", None)
+    auth = _get_saml_auth()
+    auth.process_response(request_id=request_id)
+    errors = auth.get_errors()
+    not_auth_warn = not auth.is_authenticated()
+    authn_contexts = auth.get_last_authn_contexts()
+    name_id = auth.get_nameid()
+    # TODO process errors and get the

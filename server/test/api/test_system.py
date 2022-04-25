@@ -116,3 +116,12 @@ class TestSystem(AbstractTest):
         self.assertEqual(2, len(res["organisation_invitations"]))
         self.assertEqual(5, len(res['services']))
         self.assertEqual(1, len(res["organisations"]))
+
+    def test_composition(self):
+        composition = self.get("/api/system/composition")
+        self.assertTrue(composition["test"])
+
+    def test_composition_forbidden(self):
+        self.app.app_config.feature.seed_allowed = 0
+        self.get("/api/system/composition", response_status_code=400)
+        self.app.app_config.feature.seed_allowed = 1

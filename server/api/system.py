@@ -9,7 +9,8 @@ from server.api.base import json_endpoint
 from server.auth.security import confirm_write_access, current_user_id
 from server.db.audit_mixin import metadata
 from server.db.db import db
-from server.db.domain import Service, ServiceMembership, User, Organisation, OrganisationMembership, OrganisationInvitation
+from server.db.domain import Service, ServiceMembership, User, Organisation, OrganisationMembership, \
+    OrganisationInvitation
 from server.mail import mail_feedback
 from server.test.seed import seed
 
@@ -131,6 +132,17 @@ def clean_slate():
     return {}, 201
 
 
+@system_api.route("/composition", strict_slashes=False, methods=["GET"])
+@json_endpoint
+def composition():
+    confirm_write_access()
+
+    if not current_app.app_config.feature.seed_allowed:
+        raise BadRequest("composition not allowed in this environment")
+
+    return current_app.app_config, 200
+
+
 @system_api.route("/clear-audit-logs", strict_slashes=False, methods=["DELETE"])
 @json_endpoint
 def clear_audit_logs():
@@ -181,7 +193,7 @@ def validations():
         .all()
 
     return {
-            "organisations": organisations_without_admins,
-            "organisation_invitations": organisation_invitations,
-            "services": services_without_admins
+               "organisations": organisations_without_admins,
+               "organisation_invitations": organisation_invitations,
+               "services": services_without_admins
            }, 200
