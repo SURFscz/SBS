@@ -11,8 +11,9 @@ from server.cron.scim_sweep_services import scim_sweep_services
 from server.db.audit_mixin import metadata
 from server.db.db import db
 from server.db.defaults import SERVICE_TOKEN_PAM
+from server.db.domain import Collaboration, CollaborationMembership, Group, ServiceToken
 from server.db.domain import Service, ServiceMembership, User, Organisation, OrganisationMembership, \
-    OrganisationInvitation, Collaboration, CollaborationMembership, Group, ServiceToken
+    OrganisationInvitation
 from server.mail import mail_feedback
 from server.test.seed import seed
 
@@ -215,6 +216,8 @@ def composition():
     confirm_write_access()
 
     check_seed_allowed("composition")
+    if not current_app.app_config.feature.seed_allowed:
+        raise BadRequest("composition not allowed in this environment")
 
     return current_app.app_config, 200
 
@@ -280,7 +283,6 @@ def validations():
         .options(joinedload(OrganisationInvitation.organisation, innerjoin=True)) \
         .options(joinedload(OrganisationInvitation.user, innerjoin=True)) \
         .all()
-
     return {
         "organisations": organisations_without_admins,
         "organisation_invitations": organisation_invitations,

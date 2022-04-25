@@ -17,6 +17,9 @@ from werkzeug.exceptions import Forbidden, Unauthorized
 from server.api.base import json_endpoint, query_param, organisation_by_user_schac_home
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.auth.mfa import ACR_VALUES, store_user_in_session, decode_jwt_token, user_requires_sram_mfa
+from server.api.ipaddress import validate_ip_networks
+from server.api.user_saml import redirect_to_surf_secure_id
+from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, mfa_idp_allowed
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access, \
     confirm_organisation_admin_or_manager, is_application_admin, CSRF_TOKEN
@@ -371,6 +374,10 @@ def resume_session():
 
     return redirect_to_client(cfg, not mfa_is_required, user)
 
+
+    second_factor_confirmed = no_mfa_required or idp_mfa or idp_allowed
+    if second_factor_confirmed:
+        user.last_login_date = datetime.datetime.now()
 
 def redirect_to_client(cfg, second_factor_confirmed, user):
     logger = ctx_logger("redirect")

@@ -8,6 +8,7 @@ from server.auth.security import current_user_uid
 from server.db.db import db
 from server.db.domain import User, CollaborationMembership, OrganisationMembership, JoinRequest, Collaboration, \
     Invitation, Service, Aup, IpNetwork, Group, SchacHomeOrganisation, ServiceMembership, UserLogin, Unit
+from server.db.image import validate_base64_image
 from server.db.logo_mixin import evict_from_cache
 
 deserialization_mapping = {"users": User, "collaboration_memberships": CollaborationMembership,
@@ -37,6 +38,10 @@ def validate(cls, json_dict, is_new_instance=True):
     missing_attributes = [k for k in required_attributes if k not in json_dict]
     if missing_attributes:
         raise BadRequest(f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}")
+    if json_dict.get("logo"):
+        valid, message = validate_base64_image(json_dict.get("logo"))
+        if not valid:
+            raise BadRequest(f"Invalid image:{message}")
 
 
 def _merge(cls, d):
@@ -141,14 +146,14 @@ def transform_json(cls, json_dict, allow_child_cascades=True, allowed_child_coll
     def _contains_list(coll):
         return len(list(filter(lambda item: isinstance(item, list), coll))) > 0
 
-    def _do_transform(items):
-        return dict(map(_parse, items))
-
     def _parse(item):
         if isinstance(item[1], list):
             cls_child = deserialization_mapping[item[0]]
             return item[0], list(map(lambda i: cls_child(**_do_transform(i.items())), item[1]))
         return item
+
+    def _do_transform(items):
+        return dict(map(_parse, items))
 
     cleanse_json(json_dict, cls=cls, allow_child_cascades=allow_child_cascades,
                  allowed_child_collections=allowed_child_collections)
