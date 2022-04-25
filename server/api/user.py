@@ -19,6 +19,7 @@ from werkzeug.exceptions import Forbidden
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.api.ipaddress import validate_ip_networks
+from server.api.user_saml import redirect_to_surf_secure_id
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, mfa_idp_allowed
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access
@@ -290,6 +291,10 @@ def resume_session():
     idp_mfa = id_token.get("acr") == ACR_VALUES
 
     idp_allowed = mfa_idp_allowed(user, user.schac_home_organisation, None)
+
+    # TODO when do we do this
+    if 1 == 1:
+        return redirect_to_surf_secure_id()
 
     second_factor_confirmed = no_mfa_required or idp_mfa or idp_allowed
     if second_factor_confirmed:

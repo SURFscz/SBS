@@ -1,0 +1,30 @@
+{
+    "strict": true,
+    "debug": true,
+    "sp": {
+        "entityId": "http://localhost:8080/api/users/acs",
+        "assertionConsumerService": {
+            "url": "http://localhost:8080/api/users/acs",
+            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+        },
+        "singleLogoutService": {
+            "url": "http://localhost:8080/api/users/sls",
+            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        },
+        "NameIDFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+        "x509cert": "",
+        "privateKey": ""
+    },
+    "idp": {
+        "entityId": "https://sa-gw.test2.surfconext.nl/authentication/metadata",
+        "singleSignOnService": {
+            "url": "https://sa-gw.test2.surfconext.nl/second-factor-only/single-sign-on",
+            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        },
+        "singleLogoutService": {
+            "url": "https://sa-gw.test2.surfconext.nl/second-factor-only/single-logout",
+            "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+        },
+        "x509cert": "MIICsjCCAZoCCQDWcSfwdCCZPzANBgkqhkiG9w0BAQsFADAbMRkwFwYDVQQDDBBnYXRld2F5X3NhbWxfaWRwMB4XDTE1MDYxMzE2MjUyOFoXDTIwMDYxMTE2MjUyOFowGzEZMBcGA1UEAwwQZ2F0ZXdheV9zYW1sX2lkcDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJeWtHxcj4Qpf2VMn8lWvU2TRkoyrti15lS45pxBseqZh/OUmEcG+IMC1LJDFZr9KXpSBIlnFUfyBt5DgwVb65ke5BVXKKROOS8VVG517itf49kTMI3+KnX+tHvxdsi4cAM4Oo2iZ16OcJCrPduahxlferEz4nZmaS41bsfY4UzmuKJF8/xJZq27rq1B0ttZw9e/gocqJVGagbgQb3YGsCEIgy96csi1WCQOD7dQOk6GevHB9EdlLVAbYNFZLU6yBT2Frne6coScrRWnj3S9qscU45cIOOh+a3LoA8+WTEqqplFWavHbTiV3vC05PyDOk0DUhNvmAdn2Vi8Oxn3yUB0CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEABJzYbNP7+X559QnI7WjXfLSC7TzdnRtI7M3CWBor06ZRuhmzLuuGAL/ZRQZb8v3rfNEzmufOZcjES/3cA8GKJubw0OLZbll1ebdDEUm9PL0fATCd3188fsIy14SJzfBAqlc5rOgZbl5OybpB5z07gSTe9H5ZAc2DJ4rnWipxyr8kBTU0k6eZBOL8V0eLT3Lzi3dYLxoa+31yWr62KUZyMhkeIOiNPhUNq4iZyZN33Fvvk512yy/8cw9EotbNFHyGti5fvQ+PDmY2dmE1A0beY9MIK9opXSMvQ+qUVlYMsMcQ13+MozEty18cK4qURAthu6s2JcBdG29l1FwfBeNtmQ=="
+    }
+}

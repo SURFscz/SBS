@@ -103,7 +103,8 @@ I18n.translations.en = {
             database: "Database",
             activity: "Activity",
             validation: "Actions",
-            plsc: "LDAP sync"
+            plsc: "LDAP sync",
+            composition: "Config"
         }
     },
     forms: {

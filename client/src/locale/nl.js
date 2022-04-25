@@ -103,8 +103,8 @@ I18n.translations.nl = {
             database: "Database",
             activity: "Activiteit",
             validation: "Acties",
-            plsc: "LDAP sync"
-        }
+            plsc: "LDAP sync",
+            composition: "Config"        }
     },
     forms: {
         submit: "Toevoegen",
