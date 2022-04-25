@@ -58,9 +58,9 @@ jobs:
             CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
             GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
           "
-      - name: Install xmllint
-        run: sudo apt-get install -y xmlsec1
-
+      - name: Install SAML2 dependencies
+        run: |
+          sudo apt-get install -y libxml2-dev libxmlsec1-dev
       # Run Checkout code
       - name: Checkout
         uses: actions/checkout@v3
