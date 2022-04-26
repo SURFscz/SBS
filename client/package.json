@@ -20,7 +20,6 @@
         "lodash.escape": "^4.0.1",
         "moment": "^2.29.2",
         "moment-timezone": "^0.5.31",
-        "node-sass": "^6.0.1",
         "prop-types": "^15.6.2",
         "pullstate": "^1.23.0",
         "react": "^16.13.1",
@@ -42,7 +41,8 @@
     },
     "devDependencies": {
         "dot-prop": "^6.0.1",
-        "react-scripts": "^4.0.3"
+        "react-scripts": "^4.0.3",
+        "sass": "^1.51.0"
     },
     "scripts": {
         "start": "HOST=localhost react-scripts start",
