@@ -1,16 +1,13 @@
 # -*- coding: future_fstrings -*-
-import os
 import uuid
 from datetime import datetime
 from urllib.parse import urlencode
 
-from flask import Blueprint, current_app, request as current_request, redirect, session
-from onelogin.saml2.auth import OneLogin_Saml2_Auth
-from onelogin.saml2.utils import OneLogin_Saml2_Utils
+from flask import Blueprint, current_app, request as current_request
 
 from server.api.base import json_endpoint, query_param, send_error_mail
 from server.api.service_aups import has_agreed_with
-from server.auth.mfa import mfa_idp_allowed
+from server.auth.mfa import mfa_idp_allowed, surf_secure_id_required
 from server.auth.security import confirm_read_access
 from server.auth.user_claims import user_memberships
 from server.db.db import db
@@ -42,7 +39,8 @@ custom_saml_mapping = {
 }
 
 
-def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func, require_2fa=False, issuer_id=None):
+def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
+                   schac_home_organisation=None, require_2fa=False, issuer_id=None):
     confirm_read_access()
     logger = ctx_logger("user_api")
 
@@ -87,9 +85,12 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
                      f" as none of the collaboration memberships are active")
         return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)
 
+    # First check if the user needs to stepped up by SURF Secure ID
+    ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
+
     # Leave the 2FA and AUP checks as the last checks as these are the only exceptions that can be recovered from
-    if require_2fa:
-        idp_allowed = mfa_idp_allowed(user, user.schac_home_organisation, issuer_id)
+    if require_2fa and not ssid_required:
+        idp_allowed = mfa_idp_allowed(user, schac_home_organisation, issuer_id)
         if not idp_allowed:
             logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa")
             return not_authorized_func(user, SECOND_FA_REQUIRED)
@@ -103,9 +104,13 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
         coll.last_activity_date = now
         db.session.merge(coll)
 
-    user.last_accessed_date = now
-    user.last_login_date = now
-    user.suspend_notifications = []
+    if ssid_required:
+        user.ssid_required = True
+    else:
+        user.last_accessed_date = now
+        user.last_login_date = now
+        user.suspend_notifications = []
+
     user = db.session.merge(user)
     db.session.commit()
 
@@ -206,40 +211,5 @@ def proxy_authz():
                    }
                }, 200
 
-    return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func, require_2fa=True,
-                          issuer_id=issuer_id)
-
-
-def _get_saml_auth():
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "config", "saml")
-    req = {
-        "https": "on" if current_request.scheme == "https" else "off",
-        "http_host": current_request.host,
-        "script_name": current_request.path,
-        "get_data": current_request.args.copy(),
-        "post_data": current_request.form.copy()
-    }
-    auth = OneLogin_Saml2_Auth(req, custom_base_path=path)
-    return auth
-
-
-def redirect_to_surf_secure_id():
-    auth = _get_saml_auth()
-
-    sso_built_url = auth.login(return_to="http://localhost:8080/api/users/acs",
-                               name_id_value_req="urn:collab:person:example.com:oharsta")
-    session["AuthNRequestID"] = auth.get_last_request_id()
-    return redirect(sso_built_url)
-
-
-@user_saml_api.route("/acs", methods=["POST"], strict_slashes=False)
-def acs():
-    request_id = session.get("AuthNRequestID", None)
-    auth = _get_saml_auth()
-    auth.process_response(request_id=request_id)
-    errors = auth.get_errors()
-    not_auth_warn = not auth.is_authenticated()
-    authn_contexts = auth.get_last_authn_contexts()
-    name_id = auth.get_nameid()
-    status = OneLogin_Saml2_Utils.get_status(auth._last_response)
-    return redirect(location=current_app.app_config.base_url)
+    return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
+                          schac_home_organisation=schac_home_organisation, require_2fa=True, issuer_id=issuer_id)

@@ -13,6 +13,7 @@ white_listing = [
     "/api/service_connection_requests/deny",
     "/api/service_connection_requests/find_by_hash",
     "/api/service_invitations/find_by_hash",
+    "/api/users/acs",
     "/api/users/authorization",
     "/api/users/me",
     "/api/users/resume-session",
