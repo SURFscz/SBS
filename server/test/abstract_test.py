@@ -13,13 +13,14 @@ import requests
 import responses
 from flask import current_app
 from flask_testing import TestCase
+from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
 from server.auth.mfa import ACR_VALUES
 from server.auth.security import secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation
-from server.test.seed import seed
+from server.test.seed import seed, sarah_name
 from server.tools import read_file
 
 # See api_users in config/test_config.yml
@@ -189,3 +190,17 @@ class AbstractTest(TestCase):
         db.session.merge(user)
         db.session.commit()
         return user
+
+    @staticmethod
+    def get_authn_response(file):
+        xml_response = read_file(f"test/saml2/{file}")
+        key = read_file("config/saml_test/certs/sp.key")
+        cert = read_file("config/saml_test/certs/sp.crt")
+        xml_authn_signed = OneLogin_Saml2_Utils.add_sign(xml_response, key, cert)
+        return b64encode(xml_authn_signed)
+
+    def mark_user_ssid_required(self, name=sarah_name):
+        sarah = self.find_entity_by_name(User, name)
+        sarah.ssid_required = True
+        db.session.merge(sarah)
+        db.session.commit()

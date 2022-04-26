@@ -102,7 +102,8 @@ class TestUserSaml(AbstractTest):
         self.login_user_2fa("urn:sarah")
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com"})
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
+                              "uid": "sarah", "homeorganization": "example.com"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual(["urn:example:sbs:group:uuc",
@@ -112,13 +113,23 @@ class TestUserSaml(AbstractTest):
         self.assertListEqual(["sarah"], attrs["uid"])
         self.assertIsNotNone(attrs["sshkey"][0])
 
+    def test_proxy_authz_ssid_required(self):
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+
+        self.post("/api/users/proxy_authz", response_status_code=200,
+                  body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
+                        "uid": "sarah", "homeorganization": "ssid.org"})
+
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.assertTrue(sarah.ssid_required)
+
     def test_proxy_authz_including_groups(self):
         self.add_service_aup_to_user("urn:jane", service_network_entity_id)
         self.login_user_2fa("urn:jane")
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
-                              "issuer_id": "issuer.com"})
+                              "issuer_id": "issuer.com", "uid": "sarah", "homeorganization": "example.com"})
         attrs = res["attributes"]
         entitlements = attrs["eduPersonEntitlement"]
         self.assertListEqual(["urn:example:sbs:group:uuc",
@@ -133,7 +144,8 @@ class TestUserSaml(AbstractTest):
         self.mark_user_suspended(john_name)
 
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:john", "service_id": "https://network",
-                                                        "issuer_id": "issuer.com"},
+                                                        "issuer_id": "issuer.com", "uid": "sarah",
+                                                        "homeorganization": "example.com"},
                         response_status_code=200)
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
@@ -146,7 +158,8 @@ class TestUserSaml(AbstractTest):
         db.session.commit()
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com"})
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
+                              "uid": "sarah", "homeorganization": "example.com"})
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
                          "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=5")
@@ -154,7 +167,8 @@ class TestUserSaml(AbstractTest):
     def test_proxy_authz_not_active_membership(self):
         self.expire_all_collaboration_memberships(sarah_name)
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com"})
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
+                              "uid": "sarah", "homeorganization": "example.com"})
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
                          "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=6")
@@ -175,7 +189,7 @@ class TestUserSaml(AbstractTest):
         network_service = Service.query.filter(Service.entity_id == service_network_entity_id).one()
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:jane", "service_id": service_network_entity_id,
-                              "issuer_id": "issuer.com"})
+                              "issuer_id": "issuer.com", "uid": "sarah", "homeorganization": "example.com"})
         self.assertEqual(res["status"]["result"], "interrupt")
 
         parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name})
@@ -183,7 +197,8 @@ class TestUserSaml(AbstractTest):
 
     def test_proxy_authz_no_2fa(self):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "nope"})
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "nope",
+                              "uid": "sarah", "homeorganization": "example.com"})
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertEqual(res["status"]["result"], "interrupt")
         self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/2fa/{sarah.second_fa_uuid}")
@@ -192,6 +207,7 @@ class TestUserSaml(AbstractTest):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "https://idp.test"})
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id,
+                              "issuer_id": "https://idp.test", "uid": "sarah", "homeorganization": "example.com"})
         attrs = res["attributes"]
         self.assertListEqual(["sarah"], attrs["uid"])

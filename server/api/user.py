@@ -12,6 +12,8 @@ import uuid
 import requests
 from flask import Blueprint, current_app, redirect
 from flask import request as current_request, session, jsonify
+from onelogin.saml2.constants import OneLogin_Saml2_Constants
+from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import joinedload, selectinload
 from werkzeug.exceptions import Forbidden
@@ -19,10 +21,11 @@ from werkzeug.exceptions import Forbidden
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.api.ipaddress import validate_ip_networks
-from server.api.user_saml import redirect_to_surf_secure_id
+
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, mfa_idp_allowed
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access
+from server.auth.ssid import AUTHN_REQUEST_ID, saml_auth, redirect_to_surf_secure_id, USER_UID
 from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
 from server.db.db import db
@@ -284,6 +287,11 @@ def resume_session():
         logger.info(f"Updating user {user.uid} with new claims / updated at")
         add_user_claims(user_info_json, uid, user)
 
+    if user.ssid_required:
+        user = db.session.merge(user)
+        db.session.commit()
+        return redirect_to_surf_secure_id(user)
+
     encoded_id_token = token_json["id_token"]
     id_token = decode_jwt_token(encoded_id_token)
 
@@ -292,28 +300,48 @@ def resume_session():
 
     idp_allowed = mfa_idp_allowed(user, user.schac_home_organisation, None)
 
-    # TODO when do we do this
-    if 1 == 1:
-        return redirect_to_surf_secure_id()
-
     second_factor_confirmed = no_mfa_required or idp_mfa or idp_allowed
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
 
+    return _redirect_to_client(cfg, second_factor_confirmed, user)
+
+
+def _redirect_to_client(cfg, second_factor_confirmed, user):
     user = db.session.merge(user)
     db.session.commit()
-
     user_accepted_aup = user.has_agreed_with_aup()
     store_user_in_session(user, second_factor_confirmed, user_accepted_aup)
-
     if not user_accepted_aup:
         location = f"{cfg.base_url}/aup"
     elif not second_factor_confirmed:
         location = f"{cfg.base_url}/2fa"
     else:
         location = session.get("original_destination", cfg.base_url)
-
     return redirect(location)
+
+
+@user_api.route("/acs", methods=["POST"], strict_slashes=False)
+def acs():
+    request_id = session.get(AUTHN_REQUEST_ID, None)
+    auth = saml_auth()
+    auth.process_response(request_id=request_id)
+
+    cfg = current_app.app_config
+
+    user_uid = session.get(USER_UID, None)
+    user = User.query.filter(User.uid == user_uid).first()
+    if not user:
+        return redirect(location=f"{cfg.base_url}/error")
+
+    user.ssid_required = False
+
+    # There is no other way to get the status back
+    status = OneLogin_Saml2_Utils.get_status(auth._last_response)
+    second_factor_confirmed = OneLogin_Saml2_Constants.STATUS_SUCCESS == status["code"]
+    if second_factor_confirmed:
+        user.last_login_date = datetime.datetime.now()
+    return _redirect_to_client(cfg, second_factor_confirmed, user)
 
 
 def _redirect_with_error(logger, error_msg):

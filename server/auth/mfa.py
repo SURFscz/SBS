@@ -93,20 +93,33 @@ def eligible_users_to_reset_token(user):
     return user_information
 
 
-def mfa_idp_allowed(user, schac_home=None, entity_id=None):
-    logger = ctx_logger("user_api")
-
-    idp_allowed = current_app.app_config.mfa_idp_allowed
-    entity_id_allowed = entity_id and [idp for idp in idp_allowed if idp.entity_id == entity_id.lower()]
-    schac_home_allowed = schac_home and [idp for idp in idp_allowed if idp.schac_home == schac_home.lower()]
+def _idp_configured_or_valid_mfa(user, identity_providers, valid_sso_negates, action, schac_home=None, entity_id=None):
+    entity_id_allowed = entity_id and [idp for idp in identity_providers if idp.entity_id == entity_id.lower()]
+    schac_home_allowed = schac_home and [idp for idp in identity_providers if idp.schac_home == schac_home.lower()]
     last_login_date = user.last_login_date
     minutes_ago = datetime.now() - timedelta(hours=0, minutes=int(current_app.app_config.mfa_sso_time_in_minutes))
     valid_mfa_sso = last_login_date and last_login_date > minutes_ago
 
-    result = entity_id_allowed or schac_home_allowed or valid_mfa_sso
+    if valid_sso_negates:
+        result = (entity_id_allowed or schac_home_allowed) and not valid_mfa_sso
+    else:
+        result = entity_id_allowed or schac_home_allowed or valid_mfa_sso
 
-    logger.debug(f"mfa_idp_allowed: {result} (entity_id_allowed={entity_id_allowed}, "
-                 f"schac_home_allowed={schac_home_allowed}, valid_mfa_sso={valid_mfa_sso}, "
-                 f"entity_id={entity_id}, schac_home={schac_home}, last_login={minutes_ago} minutes ago")
+    logger = ctx_logger("user_api")
+    logger.debug(f"{action}: {result} (entity_id_allowed={entity_id_allowed}, schac_home_allowed={schac_home_allowed}, "
+                 f"valid_mfa_sso={valid_mfa_sso}, entity_id={entity_id}, schac_home={schac_home}, "
+                 f"last_login={minutes_ago} minutes ago")
 
-    return result
+    return bool(result)
+
+
+def mfa_idp_allowed(user, schac_home=None, entity_id=None):
+    allowed_identity_providers = current_app.app_config.mfa_idp_allowed
+    return _idp_configured_or_valid_mfa(user, allowed_identity_providers, False, "mfa_idp_allowed", schac_home,
+                                        entity_id)
+
+
+def surf_secure_id_required(user, schac_home=None, entity_id=None):
+    ssid_identity_providers = current_app.app_config.ssid_identity_providers
+    return _idp_configured_or_valid_mfa(user, ssid_identity_providers, True, "surf_secure_id_required", schac_home,
+                                        entity_id)

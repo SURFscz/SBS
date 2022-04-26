@@ -182,8 +182,6 @@ ldap:
 mfa_idp_allowed:
   - schac_home: "idp.test"
     entity_id: "https://idp.test"
-  - schac_home: "example.com"
-    entity_id: "https://example.com"
 
 # A MFA login in a different flow is valid for X minutes
 mfa_sso_time_in_minutes: 10
@@ -191,5 +189,5 @@ mfa_sso_time_in_minutes: 10
 # Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
 # If this feature is no longer needed, just replace the value with an empty list []
 ssid_identity_providers:
-  - schac_home: "ssid.test"
-    entity_id: "https://ssid.test"
+  - schac_home: "ssid.org"
+    entity_id: "https://ssid.org"
