@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request, redirect, session
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
+from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
 from server.api.base import json_endpoint, query_param, send_error_mail
 from server.api.service_aups import has_agreed_with
@@ -240,4 +241,5 @@ def acs():
     not_auth_warn = not auth.is_authenticated()
     authn_contexts = auth.get_last_authn_contexts()
     name_id = auth.get_nameid()
-    # TODO process errors and get the
+    status = OneLogin_Saml2_Utils.get_status(auth._last_response)
+    return redirect(location=current_app.app_config.base_url)
