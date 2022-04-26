@@ -191,3 +191,5 @@ mfa_sso_time_in_minutes: 10
 ssid_identity_providers:
   - schac_home: "ssid.org"
     entity_id: "https://ssid.org"
+
+ssid_config_folder: saml_test
