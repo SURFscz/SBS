@@ -7,10 +7,11 @@ from sqlalchemy import text
 
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
-from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User
+from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Group, ServiceGroup
+from server.db.models import flatten
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
-    ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid
+    ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid, service_group_wiki_name
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -89,13 +90,18 @@ class TestCollaboration(AbstractTest):
             self.assertEqual(0, count)
 
     def test_collaboration_new_with_current_user_admin(self):
-        organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
+        wiki_service_group = self.find_entity_by_name(ServiceGroup, service_group_wiki_name)
+        wiki_service_group.auto_provision_members = True
+        db.session.merge(wiki_service_group)
+        db.session.commit()
+
+        organisation = Organisation.query.filter(Organisation.name == uuc_name).one()
         self.login("urn:john")
         collaboration = self.post("/api/collaborations",
                                   body={
                                       "name": "new_collaboration",
                                       "description": "new_collaboration",
-                                      "organisation_id": organisation_id,
+                                      "organisation_id": organisation.id,
                                       "administrators": ["the@ex.org", "that@ex.org"],
                                       "short_name": "new_short_name",
                                       "current_user_admin": True
@@ -103,6 +109,18 @@ class TestCollaboration(AbstractTest):
 
         count = self._collaboration_membership_count(collaboration)
         self.assertEqual(1, count)
+
+        service_groups = flatten([service.service_groups for service in organisation.services])
+        collaboration_groups = self.find_entity_by_name(Collaboration, collaboration["name"]).groups
+
+        self.assertEqual(1, len(service_groups))
+        self.assertEqual(1, len(collaboration_groups))
+        co_group_name = collaboration_groups[0].name
+        self.assertEqual(service_groups[0].name, co_group_name)
+
+        wiki_group = self.find_entity_by_name(Group, co_group_name)
+        self.assertEqual(1, len(wiki_group.collaboration_memberships))
+        self.assertEqual("urn:john", wiki_group.collaboration_memberships[0].user.uid)
 
     def test_collaboration_without_default_current_user_admin(self):
         organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
