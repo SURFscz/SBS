@@ -3,6 +3,9 @@ database:
 
 secret_key: secret
 
+# Lifetime of session in minutes (one day is 60 * 24)
+permanent_session_lifetime: 1440
+
 redis:
   host: localhost
   port: 6379
