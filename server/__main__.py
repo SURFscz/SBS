@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import time
+from datetime import timedelta
 from logging.handlers import TimedRotatingFileHandler
 
 import yaml
@@ -149,6 +150,9 @@ app.config["MAIL_PORT"] = int(config.mail.port)
 app.config["OPEN_MAIL_IN_BROWSER"] = os.environ.get("OPEN_MAIL_IN_BROWSER", 0)
 app.config["LOCAL"] = is_local
 app.config["SESSION_COOKIE_SECURE"] = not is_test and not is_local
+app.config["SESSION_REFRESH_EACH_REQUEST"] = False
+
+app.permanent_session_lifetime = timedelta(minutes=config.permanent_session_lifetime)
 
 app.jinja_env.globals.update({
     "invitation_role": invitation_role,

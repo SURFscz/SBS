@@ -131,8 +131,10 @@ def json_endpoint(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         try:
-            session.modified = True
             auth_filter(current_app.app_config)
+            session.permanent = True
+            session.modified = False
+            # This will mark the session modified again if something is stored like TOTP secret
             body, status = f(*args, **kwargs)
             response = jsonify(body)
             _audit_trail()
