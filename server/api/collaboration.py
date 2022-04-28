@@ -9,6 +9,7 @@ from sqlalchemy.orm import aliased, load_only, selectinload
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
+from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
     confirm_allow_impersonation, confirm_organisation_admin_or_manager, generate_token, confirm_external_api_call
@@ -415,6 +416,11 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
                                                                  collaboration_id=collaboration.id,
                                                                  created_by=user.uid, updated_by=user.uid)
         db.session.merge(admin_collaboration_membership)
+
+    services = organisation.services
+    for service in services:
+        create_service_groups(service, res[0])
+
     return res
 
 
