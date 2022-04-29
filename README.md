@@ -106,3 +106,11 @@ See the https://github.com/SURFscz/SCZ-deploy project
 ### [Upgrade](#upgrade)
 
 See https://github.com/simion/pip-upgrader for upgrading automatically
+
+### [Swagger](#swagger)
+
+See http://localhost:8080/apidocs/ and https://test.sram.surf.nl/apidocs/
+
+### [SURFSecureID](#surfsecureid)
+
+See the /config/saml_test configuration and the https://github.com/SURFscz/SCZ-deploy project
