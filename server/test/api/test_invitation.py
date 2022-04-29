@@ -197,6 +197,7 @@ class TestInvitation(AbstractTest):
         res = self.put("/api/invitations/v1/collaboration_invites",
                        body={
                            "short_name": ai_computing_short_name,
+                           "intended_role": "bogus",
                            "invitation_expiry_date": (int(time.time()) * 1000) + 60 * 60 * 25 * 15,
                            "invites": ["joe@test.com"]
                        },
@@ -209,6 +210,7 @@ class TestInvitation(AbstractTest):
         self.assertEqual("joe@test.com", res["invitation"]["email"])
 
         invitation = Invitation.query.filter(Invitation.external_identifier == invitation_id).first()
+        self.assertEqual("member", invitation.intended_role)
 
         self.login("urn:james")
         self.put("/api/invitations/accept", body={"hash": invitation.hash}, with_basic_auth=False)

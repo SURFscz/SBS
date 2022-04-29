@@ -354,9 +354,7 @@ def _redirect_with_error(logger, error_msg):
 def me():
     if "user" in session and not session["user"]["guest"]:
         user_from_session = session["user"]
-        user_from_db = _user_query() \
-            .filter(User.id == user_from_session["id"]) \
-            .first()
+        user_from_db = _user_query().filter(User.id == user_from_session["id"]).first()
 
         if user_from_db is None:
             return {"uid": "anonymous", "guest": True, "admin": False}, 200

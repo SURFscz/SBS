@@ -103,6 +103,8 @@ def collaboration_invites_api():
 
     message = data.get("message")
     intended_role = data.get("intended_role", "member")
+    intended_role = "member" if intended_role not in ["admin", "member"] else intended_role
+
     expiry_date = parse_date(data.get("invitation_expiry_date"), default_expiry_date())
     membership_expiry_date = parse_date(data.get("membership_expiry_date"))
     invites = list(filter(lambda recipient: bool(email_re.match(recipient)), data["invites"]))

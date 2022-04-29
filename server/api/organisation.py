@@ -278,6 +278,8 @@ def save_organisation():
 
     administrators = data.get("administrators", [])
     intended_role = data.get("intended_role", "admin")
+    intended_role = "admin" if intended_role not in ["admin", "manager"] else intended_role
+
     message = data.get("message", None)
 
     res = save(Organisation, custom_json=data)
