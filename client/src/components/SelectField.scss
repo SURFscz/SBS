@@ -38,6 +38,11 @@
         font-size: 16px;
         height: 48px;
 
+        &.creatable {
+            height: auto;
+            min-height: 48px;
+        }
+
         .select-inner__control {
             height: 100%;
             padding-left: 8px;

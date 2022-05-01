@@ -3,11 +3,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import "./SelectField.scss";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 export default function SelectField({
                                         onChange, name, value, options, placeholder = "", disabled = false,
                                         toolTip = null, searchable = false, small = false,
-                                        clearable = false, isMulti = false
+                                        clearable = false, isMulti = false, creatable = false
                                     }) {
     return (
         <div className="select-field">
@@ -19,7 +20,20 @@ export default function SelectField({
                 </ReactTooltip>
             </span>}
             </label>
-            <Select
+            {creatable &&
+            <CreatableSelect
+                className={`input-select-inner creatable`}
+                classNamePrefix={"select-inner"}
+                value={value}
+                isMulti={true}
+                placeholder={placeholder}
+                isSearchable={true}
+                isClearable={clearable}
+                isDisabled={disabled}
+                onChange={onChange}
+                options={options}
+            />}
+            {!creatable && <Select
                 className={`input-select-inner ${small ? " small" : ""}`}
                 classNamePrefix={"select-inner"}
                 value={value}
@@ -30,7 +44,7 @@ export default function SelectField({
                 options={options}
                 isSearchable={searchable}
                 isClearable={clearable}
-            />
+            />}
         </div>
     );
 }

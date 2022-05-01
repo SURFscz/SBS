@@ -13,7 +13,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership, ServiceAup, UserToken, UserIpNetwork
+    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag
 
 collaboration_request_name = "New Collaboration"
 
@@ -350,6 +350,11 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     uuc.services.append(uuc_scheduler)
     uuc.services.append(wiki)
 
+    tag_uuc = Tag(tag_value="tag_uuc")
+    tag_uva = Tag(tag_value="tag_uva")
+    tag_orphan = Tag(tag_value="tag_orphan")
+    _persist(db, tag_uuc, tag_uva, tag_orphan)
+
     ai_computing = Collaboration(name=ai_computing_name,
                                  identifier=collaboration_ai_computing_uuid,
                                  global_urn=f"ucc:{ai_computing_short_name}",
@@ -357,6 +362,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  logo=read_image("computing.jpeg"),
                                  organisation=uuc, services=[mail, network],
                                  join_requests=[], invitations=[],
+                                 tags=[tag_uuc],
                                  short_name=ai_computing_short_name,
                                  website_url="https://www.google.nl",
                                  accepted_user_policy="https://www.google.nl",
@@ -366,6 +372,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  short_name="research",
                                  global_urn="uva:research",
                                  identifier=collaboration_uva_researcher_uuid,
+                                 tags=[tag_uva],
                                  website_url="https://www.google.nl",
                                  description="University of Amsterdam Research - Urban Crowd Control",
                                  logo=read_image("research.jpeg"),

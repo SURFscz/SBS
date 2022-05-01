@@ -691,6 +691,9 @@ I18n.translations.en = {
         organisation_name: "Organisation",
         organisationPlaceholder: "Select the organisation for this collaboration...",
         organisationTooltip: "Every collaboration belongs to precisely one and only one organisation",
+        tags: "Tags",
+        tagsPlaceholder: "Search or create tags",
+        tagsTooltip: "A collaboration can be tagged with tags",
         accepted_user_policy: "Acceptable Use Policy",
         acceptedUserPolicyPlaceholder: "The URL of the collaboration specific Acceptable Use Policy",
         role: "Role",
@@ -1508,7 +1511,8 @@ I18n.translations.en = {
             "service_aups": "Service AUPs",
             "user_tokens": "User tokens",
             "service_invitations": "Service invitation",
-            "service_memberships": "Service membership"
+            "service_memberships": "Service membership",
+            "tags": "Tag"
         }
     },
     serviceRequest: {

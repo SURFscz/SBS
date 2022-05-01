@@ -1,5 +1,6 @@
 import React from "react";
 import "./CollaborationForm.scss";
+
 import {
     collaborationById,
     collaborationNameExists,
@@ -8,7 +9,7 @@ import {
     deleteCollaboration,
     myOrganisationsLite,
     organisationByUserSchacHomeOrganisation,
-    requestCollaboration,
+    requestCollaboration, tagsByOrganisation,
     updateCollaboration
 } from "../api";
 import I18n from "i18n-js";
@@ -49,10 +50,12 @@ class CollaborationForm extends React.Component {
             disclose_email_information: true,
             disclose_member_information: true,
             disable_join_requests: false,
-            required: ["name","description", "short_name", "organisation", "logo"],
+            required: ["name", "description", "short_name", "organisation", "logo"],
             alreadyExists: {},
             organisation: {},
             organisations: [],
+            tags: [],
+            tagsSelected: [],
             isNew: true,
             collaboration: null,
             confirmationQuestion: "",
@@ -83,15 +86,18 @@ class CollaborationForm extends React.Component {
                 };
                 this.updateBreadCrumb(orgOption, collaboration, false, false);
                 const expiryDate = collaboration.expiry_date ? moment(collaboration.expiry_date * 1000).toDate() : null;
+                const tagOptions = collaboration.tags.map(tag => ({label: tag.tag_value, value: tag.id}));
                 this.setState({
                     ...collaboration,
                     collaboration: collaboration,
                     organisation: orgOption,
                     organisations: [orgOption],
+                    tags: tagOptions,
+                    tagsSelected: tagOptions,
                     isNew: false,
                     loading: false,
                     expiry_date: expiryDate
-                });
+                }, () => this.updateTags(organisation.id));
             });
         } else {
             myOrganisationsLite().then(json => {
@@ -101,6 +107,7 @@ class CollaborationForm extends React.Component {
                             this.updateBreadCrumb(null, null, false, false);
                             this.setState({noOrganisations: true, loading: false});
                         } else {
+                            this.updateTags(json.id);
                             const organisations = this.mapOrganisationsToOptions([json]);
                             const organisationId = getParameterByName("organisationId", window.location.search);
                             const organisation = organisations.find(org => org.value === parseInt(organisationId, 10));
@@ -126,11 +133,22 @@ class CollaborationForm extends React.Component {
                         organisations: organisations,
                         organisation: organisation,
                         loading: false
-                    });
+                    }, () => this.updateTags(organisation.value));
                 }
             });
         }
     };
+
+    updateTags = organisationId => {
+        const {user} = this.props;
+        const accessAllowedToOrg = isUserAllowed(ROLES.ORG_MANAGER, user, organisationId);
+        if (accessAllowedToOrg) {
+            tagsByOrganisation(organisationId).then(existingTags => {
+                const tagOptions = existingTags.map(tag => ({label: tag.tag_value, value: tag.id}));
+                this.setState({tags: tagOptions});
+            });
+        }
+    }
 
     updateBreadCrumb = (organisation, collaboration, autoCreateCollaborationRequest, isCollaborationRequest) => {
         const paths = [{path: "/", value: I18n.t("breadcrumb.home")}];
@@ -235,6 +253,7 @@ class CollaborationForm extends React.Component {
                 administrators,
                 message,
                 expiry_date,
+                tagsSelected,
                 organisation,
                 isCollaborationRequest,
                 disable_join_requests,
@@ -243,7 +262,7 @@ class CollaborationForm extends React.Component {
                 disclose_email_information
             } = this.state;
             const promise = isCollaborationRequest ? requestCollaboration : createCollaboration;
-            promise({
+            const body = {
                 name,
                 short_name,
                 description,
@@ -257,7 +276,11 @@ class CollaborationForm extends React.Component {
                 current_user_admin,
                 disclose_member_information,
                 disclose_email_information
-            }).then(res => {
+            };
+            if (!isCollaborationRequest) {
+                body.tags = tagsSelected;
+            }
+            promise(body).then(res => {
                 this.props.refreshUser(() => {
                     const isCollCreated = res.identifier;
                     const path = isCollaborationRequest ? "/home" : `/collaborations/${res.id}`;
@@ -292,6 +315,7 @@ class CollaborationForm extends React.Component {
                 collaboration,
                 administrators,
                 message,
+                tagsSelected,
                 expiry_date,
                 organisation,
                 disable_join_requests,
@@ -305,6 +329,7 @@ class CollaborationForm extends React.Component {
                 short_name,
                 description,
                 website_url,
+                tags: tagsSelected,
                 logo,
                 identifier: collaboration.identifier,
                 administrators,
@@ -323,6 +348,16 @@ class CollaborationForm extends React.Component {
             window.scrollTo(0, 0);
         }
     };
+
+    tagsSelectedChanged = selectedOptions => {
+        if (selectedOptions === null) {
+            this.setState({tagsSelected: []});
+        } else {
+            const newTagsSelected = Array.isArray(selectedOptions) ? [...selectedOptions] : [selectedOptions];
+            this.setState({tagsSelected: newTagsSelected});
+        }
+    }
+
 
     removeMail = email => e => {
         stopEvent(e);
@@ -402,7 +437,9 @@ class CollaborationForm extends React.Component {
             collaboration,
             loading,
             autoCreateCollaborationRequest,
-            useOrganisationLogo
+            useOrganisationLogo,
+            tags,
+            tagsSelected
         } = this.state;
         if (loading) {
             return <SpinnerField/>
@@ -416,6 +453,7 @@ class CollaborationForm extends React.Component {
             I18n.t("models.collaborations.newCollaborationRequest")
         const joinRequestUrl = (isNew || disable_join_requests) ? I18n.t("collaboration.joinRequestUrlDisabled") :
             `${config.base_url}/registration?collaboration=${collaboration.identifier}`;
+        const accessAllowedToOrg = organisation && isUserAllowed(ROLES.ORG_MANAGER, user, organisation.id);
         return (
             <div className="mod-new-collaboration-container">
                 {isNew &&
@@ -504,10 +542,10 @@ class CollaborationForm extends React.Component {
                         attribute: I18n.t("collaboration.shortName").toLowerCase()
                     })}/>}
                     <InputField value={`${organisation.short_name}:${short_name}`}
-                                               name={I18n.t("collaboration.globalUrn")}
-                                               copyClipBoard={true}
-                                               toolTip={I18n.t("collaboration.globalUrnTooltip")}
-                                               disabled={true}/>
+                                name={I18n.t("collaboration.globalUrn")}
+                                copyClipBoard={true}
+                                toolTip={I18n.t("collaboration.globalUrnTooltip")}
+                                disabled={true}/>
 
                     {(!isCollaborationRequest && !isNew) &&
                     <InputField value={joinRequestUrl}
@@ -538,6 +576,7 @@ class CollaborationForm extends React.Component {
                                 externalLink={true}
                                 name={I18n.t("collaboration.websiteUrl")}/>
 
+
                     {!isCollaborationRequest && <DateField value={expiry_date}
                                                            onChange={e => this.setState({expiry_date: e})}
                                                            allowNull={true}
@@ -562,6 +601,16 @@ class CollaborationForm extends React.Component {
                                                           info={I18n.t("collaboration.discloseEmailInformation")}
                                                           tooltip={I18n.t("collaboration.discloseEmailInformationTooltip")}
                                                           onChange={() => this.setState({disclose_email_information: !disclose_email_information})}/>}
+                    {!isCollaborationRequest && <SelectField value={tagsSelected}
+                                                             disabled={!accessAllowedToOrg}
+                                                             options={tags
+                                                                 .filter(tag => !tagsSelected.find(selectedTag => selectedTag.value === tag.value))}
+                                                             creatable={true}
+                                                             isMulti={true}
+                                                             name={I18n.t("collaboration.tags")}
+                                                             placeholder={I18n.t("collaboration.tagsPlaceholder")}
+                                                             toolTip={I18n.t("collaboration.tagsTooltip")}
+                                                             onChange={this.tagsSelectedChanged}/>}
                     <SelectField value={organisation}
                                  options={organisations}
                                  name={I18n.t("collaboration.organisation_name")}
@@ -572,6 +621,7 @@ class CollaborationForm extends React.Component {
                                          this.validateCollaborationName({target: {value: this.state.name}});
                                          this.validateCollaborationShortName({target: {value: this.state.short_name}});
                                          this.updateBreadCrumb(selectedOption, null, false, false);
+                                         this.updateTags(selectedOption.value);
                                          if (useOrganisationLogo) {
                                              this.setState({logo: selectedOption.logo});
                                          }

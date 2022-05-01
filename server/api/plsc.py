@@ -79,6 +79,10 @@ def sync():
          "collaboration_id": row[5], "description": row[6]}
         for row in rs]
 
+    rs = db.engine.execute("SELECT ct.collaboration_id, t.tag_value FROM collaboration_tags ct "
+                           "INNER JOIN tags t ON t.id = ct.tag_id")
+    tags = [{"collaboration_id": row[0], "tag_value": row[1]} for row in rs]
+
     for coll in collaborations:
         collaboration_id = coll["id"]
         coll["groups"] = _find_by_id(groups, "collaboration_id", collaboration_id)
@@ -92,6 +96,7 @@ def sync():
         coll["services"] = _identifiers_only(
             _find_by_identifiers(services, "id", [si["service_id"] for si in service_identifiers]))
         coll["collaboration_memberships"] = _find_by_id(collaboration_memberships, "collaboration_id", collaboration_id)
+        coll["tags"] = [tag["tag_value"] for tag in tags if tag["collaboration_id"] == collaboration_id]
 
     rs = db.engine.execute("SELECT id, name, identifier, short_name, uuid4 FROM organisations")
     for row in rs:

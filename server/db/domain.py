@@ -98,6 +98,14 @@ groups_invitations_association = db.Table(
     db.Column("invitation_id", db.Integer(), db.ForeignKey("invitations.id", ondelete="CASCADE"), primary_key=True),
 )
 
+collaboration_tags_association = db.Table(
+    "collaboration_tags",
+    metadata,
+    db.Column("collaboration_id", db.Integer(), db.ForeignKey("collaborations.id", ondelete="CASCADE"),
+              primary_key=True),
+    db.Column("tag_id", db.Integer(), db.ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True),
+)
+
 
 class CollaborationMembership(Base, db.Model):
     __tablename__ = "collaboration_memberships"
@@ -172,6 +180,14 @@ services_collaborations_association = db.Table(
 )
 
 
+class Tag(Base, db.Model):
+    __tablename__ = "tags"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    tag_value = db.Column("tag_value", db.Text(), nullable=False)
+    collaborations = db.relationship("Collaboration", secondary=collaboration_tags_association, lazy="select",
+                                     back_populates="tags")
+
+
 class Collaboration(Base, db.Model, LogoMixin):
     __tablename__ = "collaborations"
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
@@ -195,6 +211,8 @@ class Collaboration(Base, db.Model, LogoMixin):
                            nullable=False)
     services = db.relationship("Service", secondary=services_collaborations_association, lazy="select",
                                back_populates="collaborations")
+    tags = db.relationship("Tag", secondary=collaboration_tags_association, lazy="select",
+                           back_populates="collaborations")
     collaboration_memberships = db.relationship("CollaborationMembership", back_populates="collaboration",
                                                 cascade="all, delete-orphan", passive_deletes=True)
     groups = db.relationship("Group", back_populates="collaboration",
