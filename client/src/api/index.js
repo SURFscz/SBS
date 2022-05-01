@@ -92,7 +92,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && false) {
+    if (config.local && true) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         // sub = "urn:sarah"
@@ -811,5 +811,10 @@ export function reactivateUserToken(userToken) {
 
 export function deleteUserToken(userToken) {
     return fetchDelete(`/api/user_tokens/${userToken.id}`);
+}
+
+//tags
+export function tagsByOrganisation(organisationId) {
+    return fetchJson(`/api/tags?organisation_id=${organisationId}`);
 }
 

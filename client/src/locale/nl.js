@@ -690,6 +690,9 @@ I18n.translations.nl = {
         organisation_name: "Organisatie",
         organisationPlaceholder: "Kies de organisatie voor deze samenwerking",
         organisationTooltip: "Iedere samenwerking hoort bij precies één organisatie",
+        tags: "Tags",
+        tagsPlaceholder: "Zoek of maak tags aan",
+        tagsTooltip: "Een samenwerking kan meerdere tags hebben",
         accepted_user_policy: "Acceptable Use Policy",
         acceptedUserPolicyPlaceholder: "De URL van de samenwerkingsspecifieke Acceptable Use Policy",
         role: "Rol",
@@ -1507,7 +1510,8 @@ I18n.translations.nl = {
             "service_aups": "Dienst-AUP's",
             "user_tokens": "Gebruikerstokens",
             "service_invitations": "Dienstuitnodiging",
-            "service_memberships": "Dienstlidmaatschap"
+            "service_memberships": "Dienstlidmaatschap",
+            "tags": "Tag"
         }
     },
     serviceRequest: {

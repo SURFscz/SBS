@@ -7,7 +7,8 @@ from sqlalchemy import text
 
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
-from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Group, ServiceGroup
+from server.db.domain import Collaboration, Organisation, Invitation, CollaborationMembership, User, Group, \
+    ServiceGroup, Tag
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
@@ -138,6 +139,27 @@ class TestCollaboration(AbstractTest):
         count = self._collaboration_membership_count(collaboration)
         self.assertEqual(0, count)
 
+    def test_collaboration_with_tags(self):
+        organisation_id = Organisation.query.filter(Organisation.name == uuc_name).one().id
+        tags = [
+            {'label': 'tag_uuc', 'value': Tag.query.filter(Tag.tag_value == "tag_uuc").one().id},
+            {'label': 'new_tag_created', 'value': 'new_tag_created', '__isNew__': True}
+        ]
+        self.login("urn:john")
+        collaboration = self.post("/api/collaborations",
+                                  body={
+                                      "name": "new_collaboration",
+                                      "description": "new_collaboration",
+                                      "organisation_id": organisation_id,
+                                      "administrators": [],
+                                      "tags": tags,
+                                      "short_name": "new_short_name",
+                                      "current_user_admin": False
+                                  }, with_basic_auth=False)
+
+        collaboration = Collaboration.query.get(collaboration["id"])
+        self.assertEqual(2, len(collaboration.tags))
+
     @staticmethod
     def _collaboration_membership_count(collaboration):
         return CollaborationMembership.query \
@@ -174,8 +196,25 @@ class TestCollaboration(AbstractTest):
         self.login()
         collaboration = self.get(f"/api/collaborations/{collaboration_id}", with_basic_auth=False)
         collaboration["name"] = "changed"
+        collaboration["tags"] = [
+            {'label': 'tag_orphan', 'value': Tag.query.filter(Tag.tag_value == "tag_orphan").one().id},
+            {'label': 'new_tag_created', 'value': 'new_tag_created', '__isNew__': True}
+        ]
         collaboration = self.put("/api/collaborations", body=collaboration)
         self.assertEqual("changed", collaboration["name"])
+
+        collaboration = Collaboration.query.get(collaboration["id"])
+        self.assertEqual(2, len(collaboration.tags))
+
+    def test_collaboration_update_orphan_tag(self):
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        self.login("urn:john")
+        collaboration = self.get(f"/api/collaborations/{collaboration.id}", with_basic_auth=False)
+        collaboration["tags"] = []
+        self.put("/api/collaborations", body=collaboration)
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        self.assertEqual(0, len(collaboration.tags))
+        self.assertIsNone(Tag.query.filter(Tag.tag_value == "tag_uuc").first())
 
     def test_collaboration_update_with_logo(self):
         collaboration_id = self._find_by_identifier()["id"]
@@ -197,8 +236,9 @@ class TestCollaboration(AbstractTest):
         collaboration["short_name"] = "changed"
         self.put("/api/collaborations", body=collaboration)
 
-        groups = self.find_entity_by_name(Collaboration, ai_computing_name).groups
-        for group in groups:
+        collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
+        self.assertEqual(1, len(collaboration.tags))
+        for group in collaboration.groups:
             self.assertTrue("changed" in group.global_urn)
 
     def test_collaboration_delete(self):

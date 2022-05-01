@@ -43,6 +43,7 @@ from server.api.service_group import service_group_api
 from server.api.service_invitation import service_invitations_api
 from server.api.service_membership import service_membership_api
 from server.api.system import system_api
+from server.api.tag import tag_api
 from server.api.token import token_api
 from server.api.user import user_api
 from server.api.user_saml import user_saml_api
@@ -136,6 +137,7 @@ app.register_blueprint(service_membership_api)
 app.register_blueprint(service_aups_api)
 app.register_blueprint(user_token_api)
 app.register_blueprint(token_api)
+app.register_blueprint(tag_api)
 app.register_blueprint(swagger_specs)
 
 app.register_error_handler(404, page_not_found)

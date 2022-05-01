@@ -50,12 +50,14 @@ class TestPlsc(AbstractTest):
         self.assertEqual(storage["contact_email"], "service_admin@ucc.org")
 
         collaborations = flatten([org["collaborations"] for org in res["organisations"] if org["name"] == uuc_name])
-        self.assertEqual("active", collaborations[0]["status"])
-        self.assertEqual("active", collaborations[0]["collaboration_memberships"][0]["status"])
+        ai_computing = [coll for coll in collaborations if coll["name"] == ai_computing_name][0]
+        self.assertEqual("active", ai_computing["status"])
+        self.assertEqual("active", ai_computing["collaboration_memberships"][0]["status"])
 
-        self.assertEqual("https://www.google.nl", collaborations[0]["website_url"])
+        self.assertEqual("https://www.google.nl", ai_computing["website_url"])
+        self.assertListEqual(["tag_uuc"], ai_computing["tags"])
 
-        logo = collaborations[0]["logo"]
+        logo = ai_computing["logo"]
         self.assertTrue(logo.startswith("http://localhost:8080/api/images/collaborations/"))
         res_image = self.client.get(logo.replace("http://localhost:8080", ""))
         self.assertIsNotNone(res_image.data)

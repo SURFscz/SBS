@@ -1,6 +1,7 @@
 # -*- coding: future_fstrings -*-
 import uuid
 from datetime import datetime, timedelta
+
 from flasgger import swag_from
 from flask import Blueprint, jsonify, request as current_request, current_app, g as request_context
 from munch import munchify
@@ -12,12 +13,13 @@ from server.api.base import json_endpoint, query_param, replace_full_text_search
 from server.api.service_group import create_service_groups
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_collaboration_member, \
     confirm_authorized_api_call, \
-    confirm_allow_impersonation, confirm_organisation_admin_or_manager, generate_token, confirm_external_api_call
+    confirm_allow_impersonation, confirm_organisation_admin_or_manager, generate_token, confirm_external_api_call, \
+    is_organisation_admin_or_manager, is_application_admin
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name, \
     STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
-    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation
+    Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag
 from server.db.models import update, save, delete
 from server.mail import mail_collaboration_invitation
 
@@ -30,6 +32,29 @@ def _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=Fal
             del cm["user"]["email"]
         if not collaboration.disclose_member_information and not cm["role"] == "admin" and allow_admins:
             del cm["user"]
+
+
+def _reconcile_tags(collaboration: Collaboration, tags):
+    # [{'label': 'tag_uuc', 'value': 947}, {'label': 'new_tag_created', 'value': 'new_tag_created', '__isNew__': True}]
+    if is_application_admin() or is_organisation_admin_or_manager(collaboration.organisation_id):
+        # find delta, e.g. which tags to remove and which tags to add
+        new_tags = [tag["value"] for tag in tags if "__isNew__" in tag and "value" in tag]
+
+        tag_identifiers = [tag["value"] for tag in tags if "__isNew__" not in tag and "value" in tag]
+        tag_identifiers += [tag["id"] for tag in tags if "__isNew__" not in tag and "id" in tag]
+        current_tag_ids = [tag.id for tag in collaboration.tags]
+        removed_tags = [tag_id for tag_id in current_tag_ids if tag_id not in tag_identifiers]
+        added_existing_tags = [tag_id for tag_id in tag_identifiers if tag_id not in current_tag_ids]
+
+        for tag_id in removed_tags:
+            tag = Tag.query.get(tag_id)
+            collaboration.tags.remove(tag)
+            if not tag.collaborations:
+                db.session.delete(tag)
+        for tag_id in added_existing_tags:
+            collaboration.tags.append(Tag.query.get(tag_id))
+        for tag_value in new_tags:
+            collaboration.tags.append(Tag(tag_value=tag_value))
 
 
 @collaboration_api.route("/find_by_identifier", strict_slashes=False)
@@ -243,6 +268,7 @@ def collaboration_by_id(collaboration_id):
         .options(selectinload(Collaboration.invitations).selectinload(Invitation.user)) \
         .options(selectinload(Collaboration.join_requests).selectinload(JoinRequest.user)) \
         .options(selectinload(Collaboration.services)) \
+        .options(selectinload(Collaboration.tags)) \
         .options(selectinload(Collaboration.service_connection_requests)
                  .selectinload(ServiceConnectionRequest.service)) \
         .options(selectinload(Collaboration.service_connection_requests)
@@ -355,8 +381,7 @@ def save_collaboration():
     current_user_admin = data.get("current_user_admin", False)
     if "current_user_admin" in data:
         del data["current_user_admin"]
-    res = do_save_collaboration(data, organisation, user, current_user_admin)
-    return res
+    return do_save_collaboration(data, organisation, user, current_user_admin)
 
 
 @collaboration_api.route("/v1", methods=["POST"], strict_slashes=False)
@@ -392,12 +417,16 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
 
     administrators = data.get("administrators", [])
     message = data.get("message", None)
+    tags = data.get("tags", None)
 
     data["identifier"] = str(uuid.uuid4())
     res = save(Collaboration, custom_json=data, allow_child_cascades=False)
+    collaboration = res[0]
+
+    if tags:
+        _reconcile_tags(collaboration, tags)
 
     administrators = list(filter(lambda admin: admin != user.email, administrators))
-    collaboration = res[0]
     for administrator in administrators:
         invitation = Invitation(hash=generate_token(), message=message, invitee_email=administrator,
                                 collaboration_id=collaboration.id, user=user, intended_role="admin",
@@ -476,6 +505,9 @@ def update_collaboration():
         for group in collaboration.groups:
             group.global_urn = f"{organisation.short_name}:{data['short_name']}:{group.short_name}"
             db.session.merge(group)
+
+    if "tags" in data:
+        _reconcile_tags(collaboration, data["tags"])
 
     # For updating references like services, groups, memberships there are more fine-grained API methods
     return update(Collaboration, custom_json=data, allow_child_cascades=False)

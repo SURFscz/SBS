@@ -136,7 +136,7 @@ def _has_organisation_role(organisation_id, roles):
         .filter(OrganisationMembership.user_id == user_id) \
         .filter(OrganisationMembership.role.in_(roles))
     if organisation_id:
-        query = query.filter(OrganisationMembership.organisation_id == organisation_id)
+        query = query.filter(OrganisationMembership.organisation_id == int(organisation_id))
     return query.count() > 0
 
 

@@ -85,10 +85,12 @@ def user_memberships(user, connected_collaborations):
     memberships = set()
     for collaboration in connected_collaborations:
         # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
-        memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}")
-        memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:{collaboration.short_name}")
+        org_short_name = collaboration.organisation.short_name
+        coll_short_name = collaboration.short_name
+
+        memberships.add(f"{namespace}:group:{org_short_name}")
+        memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}")
         for g in collaboration.groups:
             if g.is_member(user.id):
-                memberships.add(f"{namespace}:group:{collaboration.organisation.short_name}:"
-                                f"{collaboration.short_name}:{g.short_name}")
+                memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}:{g.short_name}")
     return memberships
