@@ -692,7 +692,7 @@ I18n.translations.nl = {
         organisationTooltip: "Iedere samenwerking hoort bij precies één organisatie",
         tags: "Tags",
         tagsPlaceholder: "Zoek of maak tags aan",
-        tagsTooltip: "Een samenwerking kan meerdere tags hebben",
+        tagsTooltip: "Een samenwerking kan meerdere tags hebben. Niet alle takens zij toegestaan in tags, omdat ze kunnen worden gebruikt als Linux-groepsnamen.",
         accepted_user_policy: "Acceptable Use Policy",
         acceptedUserPolicyPlaceholder: "De URL van de samenwerkingsspecifieke Acceptable Use Policy",
         role: "Rol",
