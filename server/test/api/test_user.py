@@ -8,7 +8,6 @@ import responses
 from flask import current_app
 
 from server.db.db import db
-from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, Collaboration, User, Aup
 from server.test.abstract_test import AbstractTest
 from server.test.seed import uuc_name, ai_computing_name, roger_name, john_name, james_name, uva_research_name, \
