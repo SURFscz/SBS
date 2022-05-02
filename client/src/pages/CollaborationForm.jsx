@@ -349,6 +349,10 @@ class CollaborationForm extends React.Component {
         }
     };
 
+    tagValueChanged = value => {
+        return sanitizeShortName(value);
+    }
+
     tagsSelectedChanged = selectedOptions => {
         if (selectedOptions === null) {
             this.setState({tagsSelected: []});
@@ -606,6 +610,7 @@ class CollaborationForm extends React.Component {
                                                              options={tags
                                                                  .filter(tag => !tagsSelected.find(selectedTag => selectedTag.value === tag.value))}
                                                              creatable={true}
+                                                             onInputChange={this.tagValueChanged}
                                                              isMulti={true}
                                                              name={I18n.t("collaboration.tags")}
                                                              placeholder={I18n.t("collaboration.tagsPlaceholder")}
