@@ -17,7 +17,7 @@ export default function UserTokens() {
         <section key={5} className="details">
             Please contact <a href="mailto:sram-support@surf.nl"> sram-support@surf.nl</a> if you have any questions
             with
-            regards to <span className="strong">User token</span>.
+            regards to <span className="strong">User tokens</span>.
         </section>]
 
 }
