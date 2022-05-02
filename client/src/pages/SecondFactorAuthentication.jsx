@@ -48,7 +48,7 @@ class SecondFactorAuthentication extends React.Component {
 
     componentDidMount() {
         const {user, update, match} = this.props;
-        if (user.guest || true) {
+        if (user.guest) {
             const second_fa_uuid = match.params.second_fa_uuid;
             const urlSearchParams = new URLSearchParams(window.location.search);
             const continueUrl = urlSearchParams.get("continue_url");
