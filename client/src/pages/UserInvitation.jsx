@@ -7,7 +7,7 @@ import moment from "moment";
 import {login} from "../utils/Login";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import SpinnerField from "../components/redesign/SpinnerField";
-import { ErrorOirigins as ErrorOrigins } from "../utils/Utils";
+import { ErrorOrigins } from "../utils/Utils";
 
 class UserInvitation extends React.Component {
 

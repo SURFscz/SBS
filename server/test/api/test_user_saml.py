@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 from urllib.parse import urlencode
 
-from server.api.user_saml import SERVICE_UNKNOWN, USER_UNKNOWN, SERVICE_NOT_CONNECTED
+from server.api.user_saml import SERVICE_UNKNOWN, USER_UNKNOWN, SERVICE_NOT_CONNECTED, SECOND_FA_REQUIRED
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, Service, User
@@ -140,3 +140,60 @@ class TestUserSaml(AbstractTest):
                         response_status_code=200)
         self.assertEqual("unauthorized", res["status"]["result"])
         self.assertEqual(SERVICE_NOT_CONNECTED, res["status"]["error_status"])
+
+    def test_proxy_authz_sram_login(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": "sbs",
+                              "issuer_id": self.app.app_config.oidc.sram_issuer_id,
+                              "uid": "sarah",
+                              "homeorganization": "example.com"})
+        sarah = self.find_entity_by_name(User, sarah_name)
+
+        status_ = res["status"]
+        self.assertEqual(status_["result"], "interrupt")
+        self.assertEqual(status_["error_status"], SECOND_FA_REQUIRED)
+        self.assertEqual(status_["redirect_url"], f"http://localhost:3000/2fa/{sarah.second_fa_uuid}")
+
+    def test_proxy_authz_sram_login_new_user(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:new_user",
+                              "service_id": "sbs",
+                              "issuer_id": self.app.app_config.oidc.sram_issuer_id,
+                              "uid": "sarah",
+                              "homeorganization": "example.com"})
+        self.assertEqual(res["status"]["result"], "interrupt")
+
+        new_user = User.query.filter(User.uid == "urn:new_user").one()
+        self.assertEqual("example.com", new_user.schac_home_organisation)
+        self.assertEqual("sarah", new_user.home_organisation_uid)
+
+    def test_proxy_authz_sram_login_ssid_required(self):
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": "sbs",
+                              "issuer_id": self.app.app_config.oidc.sram_issuer_id,
+                              "uid": "sarah",
+                              "homeorganization": "ssid.org"})
+        status_ = res["status"]
+        self.assertEqual(status_["result"], "authorized")
+
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.assertTrue(sarah.ssid_required)
+
+    def test_proxy_authz_sram_login_no_2fa_required(self):
+        self.login_user_2fa("urn:sarah")
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": "sbs",
+                              "issuer_id": self.app.app_config.oidc.sram_issuer_id,
+                              "uid": "sarah",
+                              "homeorganization": "example.com"})
+        status_ = res["status"]
+        self.assertEqual(status_["result"], "authorized")
+
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.assertFalse(sarah.ssid_required)

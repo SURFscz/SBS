@@ -102,8 +102,9 @@ export function emailMembersLink(members) {
 export const removeDuplicates = (arr, attr) => arr
     .filter((obj, pos, arr) => arr.map(mapObj => mapObj[attr]).indexOf(obj[attr]) === pos);
 
-export const ErrorOirigins = {
-    invitationNotFound: "invitationNotFound"
+export const ErrorOrigins = {
+    invitationNotFound: "invitationNotFound",
+    invalidSecondFactorUUID: "invalidSecondFactorUUID"
 }
 
 

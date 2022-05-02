@@ -2,7 +2,7 @@ import React from "react";
 import {withRouter} from "react-router-dom";
 import "./SecondFactorAuthentication.scss";
 import {
-    get2fa,
+    get2fa, get2faProxyAuthz,
     reset2fa,
     tokenResetRequest,
     tokenResetRespondents,
@@ -16,7 +16,7 @@ import Button from "../components/Button";
 import InputField from "../components/InputField";
 import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
-import {isEmpty, stopEvent} from "../utils/Utils";
+import {ErrorOrigins, isEmpty, stopEvent} from "../utils/Utils";
 import {ReactComponent as InformationIcon} from "../icons/informational.svg";
 import {login} from "../utils/Login";
 
@@ -48,13 +48,23 @@ class SecondFactorAuthentication extends React.Component {
 
     componentDidMount() {
         const {user, update, match} = this.props;
-        if (user.guest) {
+        if (user.guest || true) {
             const second_fa_uuid = match.params.second_fa_uuid;
             const urlSearchParams = new URLSearchParams(window.location.search);
             const continueUrl = urlSearchParams.get("continue_url");
             if (second_fa_uuid && continueUrl) {
-                this.setState({loading: false, secondFaUuid: second_fa_uuid, continueUrl: continueUrl});
-                this.focusCode();
+                //We need to know if this is a new user. We use the second_fa_uuid for this
+                get2faProxyAuthz(second_fa_uuid)
+                    .then(res => {
+                        this.setState({
+                            loading: false,
+                            secondFaUuid: second_fa_uuid,
+                            qrCode: res.qr_code_base64,
+                            idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
+                            continueUrl: continueUrl
+                        });
+                        this.focusCode();
+                    }).catch(() => this.props.history.push("/404", {errorOrigin: ErrorOrigins.invalidSecondFactorUUID}))
             } else {
                 setTimeout(login, 5);
             }

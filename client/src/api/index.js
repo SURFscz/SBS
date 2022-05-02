@@ -92,7 +92,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && true) {
+    if (config.local && false) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         // sub = "urn:sarah"
@@ -159,6 +159,10 @@ export function queryForUsers(q) {
 //MFA
 export function get2fa() {
     return fetchJson("/api/mfa/get2fa");
+}
+
+export function get2faProxyAuthz(second_fa_uuid) {
+    return fetchJson(`/api/mfa/get2fa_proxy_authz?second_fa_uuid=${second_fa_uuid}`);
 }
 
 export function verify2fa(totp) {
