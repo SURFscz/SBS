@@ -1,101 +1,16 @@
 # -*- coding: future_fstrings -*-
-import os
 from urllib.parse import urlencode
 
+from server.api.user_saml import SERVICE_UNKNOWN, USER_UNKNOWN, SERVICE_NOT_CONNECTED
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
 from server.db.domain import Collaboration, Service, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import john_name, uuc_scheduler_entity_id, service_network_entity_id, service_mail_entity_id, \
+from server.test.seed import john_name, service_network_entity_id, service_mail_entity_id, \
     ai_computing_name, sarah_name
 
 
 class TestUserSaml(AbstractTest):
-
-    def test_attributes(self):
-        self.add_service_aup_to_user("urn:john", "https://network")
-        res = self.get("/api/users/attributes",
-                       query_data={"uid": "urn:john", "service_entity_id": "https://network"})
-
-        self.assertSetEqual(set(res.keys()), {"cuid", "uid", "sshKey", "eduPersonEntitlement"})
-
-        self.assertListEqual(res["cuid"], ["urn:john"])
-        self.assertListEqual(res["uid"], ["john"])
-        self.assertEqual(1, len(res["sshKey"]))
-        self.assertSetEqual(set(res["eduPersonEntitlement"]), {
-            "urn:example:sbs:group:uuc",
-            "urn:example:sbs:group:uuc:ai_computing",
-            "urn:example:sbs:group:uuc:ai_computing:ai_dev",
-            "urn:example:sbs:group:uuc:ai_computing:ai_res"
-        })
-
-    def test_attributes_service_linked_to_organisation(self):
-        self.add_service_aup_to_user("urn:sarah", uuc_scheduler_entity_id)
-        res = self.get("/api/users/attributes",
-                       query_data={"uid": "urn:sarah", "service_entity_id": uuc_scheduler_entity_id})
-        self.assertListEqual(res["cuid"], ["urn:sarah"])
-
-    def test_attributes_service_linked_to_organisation_membership_not_supported(self):
-        res = self.get("/api/users/attributes",
-                       query_data={"uid": "urn:mary", "service_entity_id": uuc_scheduler_entity_id})
-        self.assertDictEqual(res, {})
-
-    def test_attributes_service_linked_to_organisation_collaboration_membership(self):
-        self.add_service_aup_to_user("urn:betty", uuc_scheduler_entity_id)
-        res = self.get("/api/users/attributes",
-                       query_data={"uid": "urn:betty", "service_entity_id": uuc_scheduler_entity_id})
-        self.assertListEqual(res["cuid"], ["urn:betty"])
-
-    def test_attributes_service_not_connected(self):
-        res = self.get("/api/users/attributes",
-                       query_data={"uid": "urn:betty", "service_entity_id": service_network_entity_id})
-        self.assertDictEqual({}, res)
-
-    def test_attributes_no_service(self):
-        try:
-            del os.environ["TESTING"]
-            self.app.app_config.mail.send_exceptions = True
-            mail = self.app.mail
-            with mail.record_messages() as outbox:
-                res = self.get("/api/users/attributes",
-                               query_data={"uid": "urn:john", "service_entity_id": "https://nope"})
-                self.assertDictEqual({}, res)
-                html = outbox[0].html
-                self.assertTrue("Returning unauthorized for user urn:john and service_"
-                                "entity_id https://nope as the service is unknown" in html)
-                self.assertTrue("An error occurred in local" in html)
-        finally:
-            os.environ["TESTING"] = "1"
-            self.app.app_config.mail.send_exceptions = False
-
-    def test_attributes_no_user(self):
-        self.get("/api/users/attributes", response_status_code=404,
-                 query_data={"uid": "nope", "service_entity_id": "https://network"})
-
-    def test_attributes_user_suspended(self):
-        self.mark_user_suspended(john_name)
-
-        self.get("/api/users/attributes", response_status_code=404,
-                 query_data={"uid": "urn:john", "service_entity_id": "https://network"})
-
-    def test_attributes_user_limit_linked_collaborations(self):
-        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
-        res = self.get("/api/users/attributes",
-                       query_data={"uid": "urn:sarah", "service_entity_id": service_mail_entity_id})
-        entitlements = res["eduPersonEntitlement"]
-        self.assertListEqual(["urn:example:sbs:group:uuc",
-                              "urn:example:sbs:group:uuc:ai_computing"
-                              ], sorted(entitlements))
-
-    def test_attributes_user_limit_linked_collaborations_including_group(self):
-        self.add_service_aup_to_user("urn:jane", service_network_entity_id)
-        res = self.get("/api/users/attributes",
-                       query_data={"uid": "urn:jane", "service_entity_id": service_network_entity_id})
-        entitlements = res["eduPersonEntitlement"]
-        self.assertListEqual(["urn:example:sbs:group:uuc",
-                              "urn:example:sbs:group:uuc:ai_computing",
-                              "urn:example:sbs:group:uuc:ai_computing:ai_res"
-                              ], sorted(entitlements))
 
     def test_proxy_authz(self):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
@@ -173,16 +88,6 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(res["status"]["redirect_url"],
                          "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=6")
 
-    def test_non_member_users_access_allowed(self):
-        self.add_service_aup_to_user("urn:jane", "https://wireless")
-        res = self.get("/api/users/attributes", query_data={"uid": "urn:jane", "service_entity_id": "https://wireless"})
-        self.assertEqual(0, len(res["eduPersonEntitlement"]))
-
-    def test_attributes_no_aup(self):
-        self.get("/api/users/attributes",
-                 query_data={"uid": "urn:john", "service_entity_id": "https://network"},
-                 response_status_code=403)
-
     def test_proxy_authz_no_aup(self):
         self.login_user_2fa("urn:jane")
 
@@ -211,3 +116,27 @@ class TestUserSaml(AbstractTest):
                               "issuer_id": "https://idp.test", "uid": "sarah", "homeorganization": "example.com"})
         attrs = res["attributes"]
         self.assertListEqual(["sarah"], attrs["uid"])
+
+    def test_proxy_authz_no_user(self):
+        res = self.post("/api/users/proxy_authz", body={"user_id": "urn:nope", "service_id": service_mail_entity_id,
+                                                        "issuer_id": "https://idp.test", "uid": "sarah",
+                                                        "homeorganization": "example.com"},
+                        response_status_code=200)
+        self.assertEqual("unauthorized", res["status"]["result"])
+        self.assertEqual(USER_UNKNOWN, res["status"]["error_status"])
+
+    def test_proxy_authz_no_service(self):
+        res = self.post("/api/users/proxy_authz", body={"user_id": "urn:john", "service_id": "https://nope",
+                                                        "issuer_id": "https://idp.test", "uid": "sarah",
+                                                        "homeorganization": "example.com"},
+                        response_status_code=200)
+        self.assertEqual("unauthorized", res["status"]["result"])
+        self.assertEqual(SERVICE_UNKNOWN, res["status"]["error_status"])
+
+    def test_proxy_authz_service_not_connected(self):
+        res = self.post("/api/users/proxy_authz", body={"user_id": "urn:betty", "service_id": service_network_entity_id,
+                                                        "issuer_id": "https://idp.test", "uid": "sarah",
+                                                        "homeorganization": "example.com"},
+                        response_status_code=200)
+        self.assertEqual("unauthorized", res["status"]["result"])
+        self.assertEqual(SERVICE_NOT_CONNECTED, res["status"]["error_status"])
