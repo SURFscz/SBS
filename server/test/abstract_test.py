@@ -177,8 +177,7 @@ class AbstractTest(TestCase):
     def login_user_2fa(user_uid):
         user = User.query.filter(User.uid == user_uid).one()
         user.last_login_date = datetime.datetime.now()
-        db.session.merge(user)
-        db.session.commit()
+        return AbstractTest._merge_user(user)
 
     @staticmethod
     def add_totp_to_user(user_uid):
@@ -187,6 +186,17 @@ class AbstractTest(TestCase):
         second_fa_uuid = str(uuid.uuid4())
         user.second_factor_auth = secret
         user.second_fa_uuid = second_fa_uuid
+        return AbstractTest._merge_user(user)
+
+    @staticmethod
+    def add_second_fa_uuid_to_user(user_uid):
+        user = User.query.filter(User.uid == user_uid).one()
+        second_fa_uuid = str(uuid.uuid4())
+        user.second_fa_uuid = second_fa_uuid
+        return AbstractTest._merge_user(user)
+
+    @staticmethod
+    def _merge_user(user):
         db.session.merge(user)
         db.session.commit()
         return user
@@ -200,7 +210,6 @@ class AbstractTest(TestCase):
         return b64encode(xml_authn_signed)
 
     def mark_user_ssid_required(self, name=sarah_name):
-        sarah = self.find_entity_by_name(User, name)
-        sarah.ssid_required = True
-        db.session.merge(sarah)
-        db.session.commit()
+        user = self.find_entity_by_name(User, name)
+        user.ssid_required = True
+        return AbstractTest._merge_user(user)

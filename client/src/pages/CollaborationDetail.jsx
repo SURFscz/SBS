@@ -49,7 +49,7 @@ import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
-import {ErrorOirigins, isEmpty, removeDuplicates} from "../utils/Utils";
+import {ErrorOrigins, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
 
 class CollaborationDetail extends React.Component {
@@ -103,7 +103,7 @@ class CollaborationDetail extends React.Component {
                     isInvitation: true,
                     tabs: [this.getAboutTab(invitation.collaboration, true, false)]
                 });
-            }).catch(() => this.props.history.push("/404", {errorOrigin: ErrorOirigins.invitationNotFound}));
+            }).catch(() => this.props.history.push("/404", {errorOrigin: ErrorOrigins.invitationNotFound}));
         } else if (params.id) {
             const collaboration_id = parseInt(params.id, 10);
             collaborationAccessAllowed(collaboration_id)

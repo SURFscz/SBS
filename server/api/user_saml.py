@@ -39,6 +39,36 @@ custom_saml_mapping = {
 }
 
 
+# See https://github.com/SURFscz/SBS/issues/152
+def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, issuer_id):
+    logger = ctx_logger("user_api")
+
+    user = User.query.filter(User.uid == uid).first()
+    if not user:
+        logger.debug("Creating new user in sram_login")
+        user = User(uid=uid, created_by="system", updated_by="system")
+
+    user.home_organisation_uid = home_organisation_uid
+    user.schac_home_organisation = schac_home_organisation
+    user.ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
+    if not user.ssid_required:
+        idp_allowed = mfa_idp_allowed(user, schac_home_organisation, issuer_id)
+        if not idp_allowed:
+            logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa after sram_login")
+            user.second_fa_uuid = str(uuid.uuid4())
+            db.session.merge(user)
+            base_url = current_app.app_config.base_url
+            return {
+                       "status": {
+                           "result": "interrupt",
+                           "redirect_url": f"{base_url}/2fa/{user.second_fa_uuid}",
+                           "error_status": SECOND_FA_REQUIRED
+                       }
+                   }, 200
+    db.session.merge(user)
+    return {"status": {"result": "authorized"}}, 200
+
+
 def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
                    schac_home_organisation=None, require_2fa=False, issuer_id=None):
     confirm_read_access()
@@ -132,6 +162,12 @@ def proxy_authz():
     issuer_id = json_dict["issuer_id"]
     home_organisation_uid = json_dict["uid"]
     schac_home_organisation = json_dict["homeorganization"]
+
+    logger = ctx_logger("user_api")
+    logger.debug(f"proxy_authz called with {str(json_dict)}")
+
+    if issuer_id.lower() == current_app.app_config.oidc.sram_issuer_id.lower():
+        return _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, issuer_id)
 
     def not_authorized_func(service_name, status):
         base_url = current_app.app_config.base_url

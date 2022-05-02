@@ -67,6 +67,19 @@ def _construct_jwt(user, nonce, oidc_config):
                       headers={"kid": public_signing_key["kid"]})
 
 
+def _do_get2fa(schac_home_organisation, user_identifier):
+    secret = pyotp.random_base32()
+    session["second_factor_auth"] = secret
+    name = current_app.app_config.oidc.totp_token_name
+    secret_url = pyotp.totp.TOTP(secret).provisioning_uri(user_identifier, name)
+    img = qrcode.make(secret_url)
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    idp_name = idp_display_name(schac_home_organisation, "en")
+    return {"qr_code_base64": img_str, "secret": secret, "idp_name": idp_name}, 200
+
+
 def _do_verify_2fa(user: User, secret):
     data = current_request.get_json()
     totp_value = data["totp"]
@@ -110,16 +123,17 @@ def token_reset_request_post():
 @json_endpoint
 def get2fa():
     user = User.query.filter(User.id == current_user_id()).one()
-    secret = pyotp.random_base32()
-    session["second_factor_auth"] = secret
-    name = current_app.app_config.oidc.totp_token_name
-    secret_url = pyotp.totp.TOTP(secret).provisioning_uri(user.email, name)
-    img = qrcode.make(secret_url)
-    buffered = BytesIO()
-    img.save(buffered, format="PNG")
-    img_str = base64.b64encode(buffered.getvalue()).decode()
-    idp_name = idp_display_name(user.schac_home_organisation, "en")
-    return {"qr_code_base64": img_str, "secret": secret, "idp_name": idp_name}, 200
+    return _do_get2fa(user.schac_home_organisation, user.email)
+
+
+@mfa_api.route("/get2fa_proxy_authz", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def get2fa_proxy_authz():
+    second_fa_uuid = query_param("second_fa_uuid")
+    user = User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
+    if user.second_factor_auth:
+        return {}, 200
+    return _do_get2fa(user.schac_home_organisation, user.uid)
 
 
 @mfa_api.route("/verify2fa", methods=["POST"], strict_slashes=False)
@@ -146,7 +160,8 @@ def verify2fa_proxy_authz():
     data = current_request.get_json()
     second_fa_uuid = data["second_fa_uuid"]
     user = User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
-    valid_totp = _do_verify_2fa(user, user.second_factor_auth)
+    secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
+    valid_totp = _do_verify_2fa(user, secret)
     if valid_totp:
         continue_url = data["continue_url"]
         if not continue_url.lower().startswith(current_app.app_config.oidc.continue_eduteams_redirect_uri):

@@ -2,6 +2,7 @@
 white_listing = [
     "/api/images/",
     "/api/invitations/find_by_hash",
+    "/api/mfa/get2fa_proxy_authz",
     "/api/mfa/jwks",
     "/api/mfa/sfo",
     "/api/mfa/verify2fa_proxy_authz",

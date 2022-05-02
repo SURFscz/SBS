@@ -175,3 +175,15 @@ class TestMfa(AbstractTest):
     def test_verify2fa_user_not_found(self):
         body = {"totp": "N/A", "second_fa_uuid": "nope", "continue_url": "N/A"}
         self.post("/api/mfa/verify2fa_proxy_authz", body, response_status_code=404, with_basic_auth=False)
+
+    def test_get2fa_proxy_authz_new_user(self):
+        sarah = self.add_second_fa_uuid_to_user("urn:sarah")
+        res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": sarah.second_fa_uuid},
+                       with_basic_auth=False)
+        self.assertIsNotNone(res["qr_code_base64"])
+
+    def test_get2fa_proxy_authz(self):
+        sarah = self.add_totp_to_user("urn:sarah")
+        res = self.get("/api/mfa/get2fa_proxy_authz", query_data={"second_fa_uuid": sarah.second_fa_uuid},
+                       with_basic_auth=False)
+        self.assertFalse("qr_code_base64" in res)
