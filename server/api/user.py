@@ -205,7 +205,7 @@ def user_query():
     wildcard = f"%{query_param('q')}%"
     conditions = [User.name.ilike(wildcard), User.username.ilike(wildcard), User.uid.ilike(wildcard),
                   User.email.ilike(wildcard)]
-    return User.query.filter(or_(*conditions)).limit(full_text_search_autocomplete_limit).all(), 200
+    return User.query.filter(or_(*conditions)).all(), 200
 
 
 @user_api.route("/platform_admins", strict_slashes=False)

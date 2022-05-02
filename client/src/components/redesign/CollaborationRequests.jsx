@@ -46,6 +46,9 @@ export default class CollaborationRequests extends React.PureComponent {
 
 
     openCollaborationRequest = collaborationRequest => e => {
+        if (e.metaKey || e.ctrlKey) {
+            return;
+        }
         stopEvent(e);
         this.props.history.push(`/collaboration-requests/${collaborationRequest.id}`);
     };
