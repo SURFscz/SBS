@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request
 
-from server.api.base import json_endpoint, query_param, send_error_mail
+from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
 from server.auth.mfa import mfa_idp_allowed, surf_secure_id_required
 from server.auth.security import confirm_read_access
@@ -120,40 +120,6 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
     logger.info(f"Returning attributes {all_attributes} for user {uid} and service_entity_id {service_entity_id}")
 
     return all_attributes, http_status
-
-
-# Endpoint for SATOSA/eduteams
-@user_saml_api.route("/attributes", strict_slashes=False)
-@json_endpoint
-def attributes():
-    uid = query_param("uid")
-    service_entity_id = query_param("service_entity_id")
-
-    def not_authorized_func(_, status):
-        if status == USER_UNKNOWN:
-            return {"error": f"user {uid} is unknown"}, 404
-        elif status == USER_IS_SUSPENDED:
-            return {"error": f"user {uid} is suspended"}, 404
-        elif status == SERVICE_UNKNOWN or status == SERVICE_NOT_CONNECTED or status == COLLABORATION_NOT_ACTIVE:
-            return {}, 200
-        elif status == AUP_NOT_AGREED:
-            return {"error": f"user {uid} has not agreed to the aup of {service_entity_id}"}, 403
-
-    def authorized_func(user, memberships):
-        # gather regular user attributes
-        result = {}
-        for k, v in custom_saml_mapping["attribute_saml_mapping"].items():
-            val = getattr(user, k)
-            if val:
-                result[v] = val.split(",") if k in custom_saml_mapping["multi_value_attributes"] else [val]
-        result["sshKey"] = [ssh_key.ssh_value for ssh_key in user.ssh_keys]
-        membership_attribute = custom_saml_mapping["custom_attribute_saml_mapping"]["memberships"]
-        result[membership_attribute] = memberships
-
-        result = {k: list(set(v)) for k, v in result.items()}
-        return result, 200
-
-    return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func)
 
 
 # Endpoint for EDUteams
