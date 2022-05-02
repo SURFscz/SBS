@@ -355,9 +355,8 @@ class TestUser(AbstractTest):
         res = self.get("/api/users/query", query_data={"q": "@EX"})
         self.assertEqual(13, len(res))
 
-        # Ensure max limit of 16 - full_text_search_autocomplete_limit
         res = self.get("/api/users/query", query_data={"q": "@"})
-        self.assertEqual(full_text_search_autocomplete_limit, len(res))
+        self.assertEqual(18, len(res))
 
     def test_aup_agreed(self):
         sarah = self.find_entity_by_name(User, sarah_name)

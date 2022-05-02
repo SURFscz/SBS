@@ -32,6 +32,9 @@ class Organisations extends React.Component {
     }
 
     openOrganisation = organisation => e => {
+        if (e.metaKey || e.ctrlKey) {
+            return;
+        }
         stopEvent(e);
         this.props.history.push(`/organisations/${organisation.id}`);
     };

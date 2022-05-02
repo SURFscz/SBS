@@ -27,6 +27,10 @@ class PlatformAdmins extends React.Component {
     });
 
     openPlatformAdmin = user => e => {
+        if (e.metaKey || e.ctrlKey) {
+            window.open(`/users/${user.id}`, '_blank');
+            return;
+        }
         stopEvent(e);
         this.props.history.push(`/users/${user.id}`);
     };

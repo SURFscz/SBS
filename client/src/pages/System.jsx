@@ -241,7 +241,7 @@ class System extends React.Component {
                      icon={<FontAwesomeIcon icon="table"/>}>
             <div className="mod-system">
                 <section className="info-block-container">
-                    <ReactJson src={plscData} />
+                    <ReactJson src={plscData} collapsed={1}/>
                 </section>
             </div>
         </div>)
@@ -253,7 +253,7 @@ class System extends React.Component {
                      icon={<FontAwesomeIcon icon="book-open"/>}>
             <div className="mod-system">
                 <section className="info-block-container">
-                    <ReactJson src={compositionData} />
+                    <ReactJson src={compositionData} collapsed={1}/>
                 </section>
             </div>
         </div>)

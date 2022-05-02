@@ -60,6 +60,9 @@ export default class Collaborations extends React.PureComponent {
     }
 
     openCollaboration = collaboration => e => {
+        if (e.metaKey || e.ctrlKey) {
+            return;
+        }
         stopEvent(e);
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };

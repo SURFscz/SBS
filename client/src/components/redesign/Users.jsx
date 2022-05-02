@@ -27,6 +27,10 @@ class Users extends React.Component {
     }
 
     openUser = user => e => {
+        if (e.metaKey || e.ctrlKey) {
+            window.open(`/users/${user.id}`, '_blank');
+            return;
+        }
         stopEvent(e);
         this.props.history.push(`/users/${user.id}`);
     };
@@ -46,7 +50,7 @@ class Users extends React.Component {
             this.setState({
                 users: results,
                 searching: false,
-                moreToShow: results.length > 15,
+                moreToShow: false,
                 noResults: results.length === 0
             })
         })

@@ -146,6 +146,9 @@ class JoinRequests extends React.Component {
     }
 
     openJoinRequest = joinRequest => e => {
+        if (e.metaKey || e.ctrlKey) {
+            return;
+        }
         stopEvent(e);
         this.setState({selectedJoinRequestId: joinRequest.id});
     };

@@ -9,6 +9,9 @@ import Logo from "./Logo";
 class ServicesWithoutAdmin extends React.Component {
 
     openService = service => e => {
+        if (e.metaKey || e.ctrlKey) {
+            return;
+        }
         stopEvent(e);
         this.props.history.push(`/services/${service.id}`);
     };
