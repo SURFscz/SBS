@@ -166,7 +166,7 @@ def proxy_authz():
     logger = ctx_logger("user_api")
     logger.debug(f"proxy_authz called with {str(json_dict)}")
 
-    if issuer_id.lower() == current_app.app_config.oidc.sram_issuer_id.lower():
+    if service_entity_id.lower() == current_app.app_config.oidc.sram_service_entity_id.lower():
         return _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, issuer_id)
 
     def not_authorized_func(service_name, status):

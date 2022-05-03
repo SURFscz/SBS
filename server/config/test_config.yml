@@ -39,7 +39,7 @@ oidc:
   second_factor_authentication_required: True
   totp_token_name: "SRAM local"
   # The client_id of SBS. Most likely to equal the oidc.client_id
-  sram_issuer_id: sram
+  sram_service_entity_id: sram
 
 
   scopes:

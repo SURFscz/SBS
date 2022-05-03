@@ -144,8 +144,8 @@ class TestUserSaml(AbstractTest):
     def test_proxy_authz_sram_login(self):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
-                              "service_id": "sbs",
-                              "issuer_id": self.app.app_config.oidc.sram_issuer_id,
+                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
+                              "issuer_id": "idp",
                               "uid": "sarah",
                               "homeorganization": "example.com"})
         sarah = self.find_entity_by_name(User, sarah_name)
@@ -158,8 +158,8 @@ class TestUserSaml(AbstractTest):
     def test_proxy_authz_sram_login_new_user(self):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:new_user",
-                              "service_id": "sbs",
-                              "issuer_id": self.app.app_config.oidc.sram_issuer_id,
+                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
+                              "issuer_id": "idp",
                               "uid": "sarah",
                               "homeorganization": "example.com"})
         self.assertEqual(res["status"]["result"], "interrupt")
@@ -173,8 +173,8 @@ class TestUserSaml(AbstractTest):
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
-                              "service_id": "sbs",
-                              "issuer_id": self.app.app_config.oidc.sram_issuer_id,
+                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
+                              "issuer_id": "idp",
                               "uid": "sarah",
                               "homeorganization": "ssid.org"})
         status_ = res["status"]
@@ -188,8 +188,8 @@ class TestUserSaml(AbstractTest):
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
-                              "service_id": "sbs",
-                              "issuer_id": self.app.app_config.oidc.sram_issuer_id,
+                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
+                              "issuer_id": "idp",
                               "uid": "sarah",
                               "homeorganization": "example.com"})
         status_ = res["status"]
