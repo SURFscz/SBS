@@ -1,5 +1,8 @@
 # -*- coding: future_fstrings -*-
 import time
+
+from sqlalchemy import text
+
 from server.db.db import db
 from server.db.domain import Service, Organisation, Collaboration, ServiceInvitation
 from server.test.abstract_test import AbstractTest
@@ -116,6 +119,16 @@ class TestService(AbstractTest):
         self.assertEqual("changed", service["name"])
         self.assertEqual(1, len(service["ip_networks"]))
 
+    def test_service_update_do_not_clear_hashed_token_and_ldap_password(self):
+        service = self._find_by_name(service_wiki_name)
+
+        self.login("urn:john")
+        service = self.put("/api/services", body=service, with_basic_auth=False)
+        rows = db.session.execute(text(f"SELECT hashed_token, ldap_password FROM services where id = {service['id']}"))
+        row = next(rows)
+        self.assertIsNotNone(row[0])
+        self.assertIsNotNone(row[1])
+
     def test_service_update_service_admin(self):
         service = self._find_by_name(service_storage_name)
         service["white_listed"] = False
@@ -123,7 +136,7 @@ class TestService(AbstractTest):
         service["entity_id"] = "https://changed"
 
         self.login("urn:service_admin")
-        service = self.put("/api/services", body=service, with_basic_auth=False)
+        self.put("/api/services", body=service, with_basic_auth=False)
         # assert that forbidden attributes are unchanged
         service = self.find_entity_by_name(Service, service_storage_name)
 
