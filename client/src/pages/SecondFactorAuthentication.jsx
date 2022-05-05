@@ -64,7 +64,7 @@ class SecondFactorAuthentication extends React.Component {
                             continueUrl: continueUrl
                         });
                         this.focusCode();
-                    }).catch(() => this.props.history.push("/404", {errorOrigin: ErrorOrigins.invalidSecondFactorUUID}))
+                    }).catch(() => this.props.history.push(`/404?eo=${ErrorOrigins.invalidSecondFactorUUID}`))
             } else {
                 setTimeout(login, 5);
             }

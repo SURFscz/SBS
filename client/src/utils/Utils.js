@@ -104,7 +104,8 @@ export const removeDuplicates = (arr, attr) => arr
 
 export const ErrorOrigins = {
     invitationNotFound: "invitationNotFound",
-    invalidSecondFactorUUID: "invalidSecondFactorUUID"
+    invalidSecondFactorUUID: "invalidSecondFactorUUID",
+    invalidPamWebSSO: "invalidPamWebSSO"
 }
 
 

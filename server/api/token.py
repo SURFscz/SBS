@@ -2,13 +2,13 @@
 import datetime
 
 from flask import Blueprint, request as current_request, current_app
-from werkzeug.exceptions import Unauthorized
 
-from server.api.base import json_endpoint, _get_authorization_header
+from server.api.base import json_endpoint
 from server.auth.security import secure_hash
+from server.auth.tokens import validate_service_token
 from server.auth.user_claims import user_memberships
 from server.db.db import db
-from server.db.domain import UserToken, Service
+from server.db.domain import UserToken
 
 token_api = Blueprint("token_api", __name__, url_prefix="/api/tokens")
 
@@ -16,11 +16,7 @@ token_api = Blueprint("token_api", __name__, url_prefix="/api/tokens")
 @token_api.route("/introspect", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def introspect():
-    hashed_bearer_token = _get_authorization_header(True)
-    service = Service.query.filter(Service.hashed_token == hashed_bearer_token).first()
-    if not service or not service.token_enabled:
-        raise Unauthorized()
-
+    service = validate_service_token("token_enabled")
     token = current_request.form.get("token")
     hashed_token = secure_hash(token)
     user_token = UserToken.query.filter(UserToken.hashed_token == hashed_token).first()

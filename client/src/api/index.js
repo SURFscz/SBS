@@ -822,3 +822,8 @@ export function tagsByOrganisation(organisationId) {
     return fetchJson(`/api/tags?organisation_id=${organisationId}`);
 }
 
+//pam-websso
+export function pamWebSSOSession(sessionId) {
+    return fetchJson(`/pam-websso/${sessionId}`,{},{}, false)
+}
+
