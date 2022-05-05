@@ -1,12 +1,12 @@
 # -*- coding: future_fstrings -*-
 import datetime
 from uuid import uuid4
-
+from flask_jsontools.formatting import JsonSerializableBase
 from flask import current_app
 from sqlalchemy import select, func
 from sqlalchemy.orm import column_property
 
-from server.db.audit_mixin import Base, metadata
+from server.db.audit_mixin import Base, metadata, BaseNoAudit
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE
 from server.db.logo_mixin import LogoMixin
@@ -651,3 +651,14 @@ class UserIpNetwork(Base, db.Model):
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
+
+
+class PamSSOSession(BaseNoAudit, db.Model):
+    __tablename__ = "pam_sso_sessions"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    session_id = db.Column("session_id", db.String(length=255), nullable=True)
+    attribute = db.Column("attribute", db.String(length=255), nullable=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)

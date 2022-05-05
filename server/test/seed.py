@@ -13,7 +13,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag
+    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession
 
 collaboration_request_name = "New Collaboration"
 
@@ -92,6 +92,8 @@ group_science_name = "Science"
 network_service_connection_request_hash = generate_token()
 ssh_service_connection_request_hash = generate_token()
 wireless_service_connection_request_hash = generate_token()
+
+pam_session_id = str(uuid.uuid4())
 
 
 def read_image(file_name):
@@ -505,6 +507,14 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  user=sarah, service=network)
     _persist(db, user_token_sarah)
 
+    db.session.commit()
+
+    pam_sso_session = PamSSOSession(session_id=pam_session_id, attribute="email", user_id=james.id,
+                                    service_id=storage.id)
+    _persist(db, pam_sso_session)
+
+    db.session.commit()
+
     if perf_test:
         users = []
         for i in range(1, 84):
@@ -537,4 +547,4 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             _persist(db, CollaborationMembership(role="member", user=users[2 * i + 2], collaboration=co))
             _persist(db, CollaborationMembership(role="member", user=users[2 * i + 3], collaboration=co))
 
-    db.session.commit()
+        db.session.commit()

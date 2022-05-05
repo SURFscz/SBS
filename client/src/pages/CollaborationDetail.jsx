@@ -103,7 +103,7 @@ class CollaborationDetail extends React.Component {
                     isInvitation: true,
                     tabs: [this.getAboutTab(invitation.collaboration, true, false)]
                 });
-            }).catch(() => this.props.history.push("/404", {errorOrigin: ErrorOrigins.invitationNotFound}));
+            }).catch(() => this.props.history.push(`/404?eo=${ErrorOrigins.invitationNotFound}`));
         } else if (params.id) {
             const collaboration_id = parseInt(params.id, 10);
             collaborationAccessAllowed(collaboration_id)
@@ -179,7 +179,7 @@ class CollaborationDetail extends React.Component {
                             })
                         }
                     }).catch(() => {
-                        this.props.history.push("/404")
+                    this.props.history.push("/404")
                 });
             }
         }
