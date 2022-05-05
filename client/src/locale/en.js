@@ -524,6 +524,7 @@ I18n.translations.en = {
             hashedTokenTooltip: "The token to use in the authorization header",
             tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once. After pressing <i>Save</i> you won't be able to see it again.",
             required: "The {{attribute}} is required for a token",
+
             flash: {
                 created: "Created token {{name}}",
                 updated: "Updated token {{name}}",
@@ -1902,6 +1903,8 @@ I18n.translations.en = {
         tokens: "Tokens",
         tokenEnabled: "Token-based introspection enabled?",
         tokenEnabledTooltip: "When checked this service is allowed to call the introspection endpoint to receive user information",
+        pamWebSSOEnabled: "Pam-WebSSO enabled?",
+        pamWebSSOEnabledTooltip: "When checked this service is allowed to call the Pam-WebSSO endpoints to login an user on a terminal-based app (e.g. ssh)",
         tokenValue: "One-way hashed token",
         tokenValidityDays: "Token validity (days)",
         tokenValidityDaysTooltip: "The number of days the user tokens are valid validity",
