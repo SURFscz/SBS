@@ -104,7 +104,8 @@ I18n.translations.nl = {
             activity: "Activiteit",
             validation: "Acties",
             plsc: "LDAP sync",
-            composition: "Config"        }
+            composition: "Config"
+        }
     },
     forms: {
         submit: "Toevoegen",
@@ -691,8 +692,8 @@ I18n.translations.nl = {
         organisationPlaceholder: "Kies de organisatie voor deze samenwerking",
         organisationTooltip: "Iedere samenwerking hoort bij precies één organisatie",
         tags: "Tags",
-        tagsPlaceholder: "Zoek of maak tags aan",
-        tagsTooltip: "Een samenwerking kan meerdere tags hebben. Niet alle takens zij toegestaan in tags, omdat ze kunnen worden gebruikt als Linux-groepsnamen.",
+        tagsPlaceholder: "Zoek of maak tags",
+        tagsTooltip: "Een samenwerking kan meerdere tags hebben. Niet alle tekens zijn toegestaan, omdat tags kunnen worden gebruikt als Linux-groepsnamen.",
         accepted_user_policy: "Acceptable Use Policy",
         acceptedUserPolicyPlaceholder: "De URL van de samenwerkingsspecifieke Acceptable Use Policy",
         role: "Rol",
