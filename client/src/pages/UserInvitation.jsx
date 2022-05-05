@@ -35,7 +35,7 @@ class UserInvitation extends React.Component {
                 const isExpired = today.isAfter(moment(res.expiry_date * 1000));
                 this.setState({invite: res, isExpired: isExpired, loading: false});
             }).catch(e => {
-                this.props.history.push("/404", {errorOrigin: ErrorOrigins.invitationNotFound});
+                this.props.history.push(`/404?eo=${ErrorOrigins.invitationNotFound}`);
             });
         } else {
             this.props.history.push("/404");

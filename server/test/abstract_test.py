@@ -19,7 +19,8 @@ from server.auth.mfa import ACR_VALUES
 from server.auth.security import secure_hash
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
-from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation
+from server.db.domain import Collaboration, User, Organisation, Service, ServiceAup, UserToken, Invitation, \
+    PamSSOSession
 from server.test.seed import seed, sarah_name
 from server.tools import read_file
 
@@ -213,3 +214,10 @@ class AbstractTest(TestCase):
         user = self.find_entity_by_name(User, name)
         user.ssid_required = True
         return AbstractTest._merge_user(user)
+
+    @staticmethod
+    def expire_pam_session(session_id):
+        pam_websso = PamSSOSession.query.filter(PamSSOSession.session_id == session_id).first()
+        pam_websso.created_at = datetime.datetime.utcnow() - datetime.timedelta(days=500)
+        db.session.merge(pam_websso)
+        db.session.commit()

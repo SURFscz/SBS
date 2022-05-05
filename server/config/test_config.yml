@@ -87,7 +87,7 @@ aup:
   url_aup_en: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
   url_aup_nl: https://wiki.surfnet.nl/display/SRAM/Acceptable+Use+Policy
 
-base_url: http://localhost:3000/
+base_url: http://localhost:3000
 base_server_url: http://localhost:8080
 wiki_link: https://edu.nl/vw3jx
 
@@ -198,3 +198,6 @@ ssid_identity_providers:
     entity_id: "https://ssid.org"
 
 ssid_config_folder: saml_test
+
+pam_web_sso:
+  session_timeout_seconds: 300
