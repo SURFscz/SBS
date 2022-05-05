@@ -133,6 +133,12 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
     return services_json, 200
 
 
+def _generate_ldap_password_with_hash():
+    password = "".join(random.sample(string.ascii_lowercase + string.digits + "_,./~=+@*-", k=32))
+    hashed = sha512_crypt.using(rounds=100_000).hash(password)
+    return hashed, password
+
+
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
@@ -274,6 +280,8 @@ def save_service():
 
     data["status"] = STATUS_ACTIVE
     cleanse_short_name(data, "abbreviation")
+    hashed, _ = _generate_ldap_password_with_hash()
+    data["ldap_password"] = hashed
 
     # Before the JSON is cleaned in the save method
     administrators = data.get("administrators", [])
@@ -347,13 +355,25 @@ def update_service():
 
     validate_ip_networks(data)
     _token_validity_days(data)
-
     cleanse_short_name(data, "abbreviation")
-    service = Service.query.get(service_id)
-    if not is_application_admin() and is_service_admin(service_id):
+    service = Service.query.filter(Service.id == service_id).one()
+
+    if not is_application_admin():
         forbidden = ["white_listed", "non_member_users_access_allowed", "token_enabled", "token", "entity_id"]
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
+
+    if "ldap_password" in data:
+        del data["ldap_password"]
+
+    if is_application_admin():
+        if data["token_enabled"] and service.token_enabled:
+            del data["hashed_token"]
+        if not data["token_enabled"]:
+            data["hashed_token"] = None
+    else:
+        del data["hashed_token"]
+
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
     service.ip_networks
@@ -417,8 +437,7 @@ def delete_service(service_id):
 def reset_ldap_password(service_id):
     confirm_service_admin(service_id)
     service = Service.query.get(service_id)
-    password = "".join(random.sample(string.ascii_lowercase + string.digits + "_,./~=+@*-", k=32))
-    hashed = sha512_crypt.using(rounds=100_000).hash(password)
+    hashed, password = _generate_ldap_password_with_hash()
     service.ldap_password = hashed
     db.session.merge(service)
     return {"ldap_password": password}, 200
