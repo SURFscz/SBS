@@ -50,6 +50,7 @@ import NewServiceInvitation from "./NewServiceInvitation";
 import ServiceAdminInvitation from "./ServiceAdminInvitation";
 import ServiceAup from "./ServiceAup";
 import MissingServiceAup from "./MissingServiceAup";
+import PamWebSSO from "./PamWebSSO";
 
 addIcons();
 
@@ -439,6 +440,9 @@ class App extends React.Component {
                                    user={currentUser}
                                    reloadMe={this.refreshUserMemberships}
                                    {...props}/>}/>
+
+                        <Route path="/pam-websso/login/:session_id"
+                               render={props => <PamWebSSO user={currentUser} {...props}/>}/>
 
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>
 

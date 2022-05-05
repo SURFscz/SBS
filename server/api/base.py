@@ -11,7 +11,8 @@ from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
-from server.auth.security import secure_hash, current_user
+from server.auth.security import current_user
+from server.auth.tokens import get_authorization_header
 from server.auth.urls import white_listing, mfa_listing, external_api_listing
 from server.db.db import db
 from server.db.domain import ApiKey
@@ -23,15 +24,6 @@ base_api = Blueprint("base_api", __name__, url_prefix="/")
 STATUS_OPEN = "open"
 STATUS_DENIED = "denied"
 STATUS_APPROVED = "approved"
-
-
-def _get_authorization_header(is_external_api_url, ignore_missing_auth_header=False):
-    authorization_header = current_request.headers.get("Authorization")
-    is_authorized_api_key = authorization_header and authorization_header.lower().startswith("bearer")
-    if not ignore_missing_auth_header and (not is_authorized_api_key or not is_external_api_url):
-        raise Unauthorized(description="Invalid username or password")
-    hashed_secret = secure_hash(authorization_header[len('bearer '):])
-    return hashed_secret
 
 
 def auth_filter(app_config):
@@ -48,7 +40,7 @@ def auth_filter(app_config):
         request_context.is_authorized_api_call = False
         # Mixed situation where user session cookie and swagger API call
         if current_app.app_config.feature.sbs_swagger_enabled and current_request.headers.get("Authorization"):
-            hashed_secret = _get_authorization_header(True, ignore_missing_auth_header=True)
+            hashed_secret = get_authorization_header(True, ignore_missing_auth_header=True)
             api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).first()
             request_context.external_api_organisation = api_key.organisation if api_key else None
         return
@@ -73,7 +65,7 @@ def auth_filter(app_config):
     is_authorized_api_call = bool(auth and len(get_user(app_config, auth)) > 0)
 
     if not (is_whitelisted_url or is_authorized_api_call):
-        hashed_secret = _get_authorization_header(is_external_api_url)
+        hashed_secret = get_authorization_header(is_external_api_url)
         api_key = ApiKey.query.filter(ApiKey.hashed_secret == hashed_secret).first()
         if not api_key:
             raise Unauthorized(description="Invalid API key")

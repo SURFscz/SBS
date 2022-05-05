@@ -35,6 +35,7 @@ from server.api.organisation import organisation_api
 from server.api.organisation_invitation import organisation_invitations_api
 from server.api.organisation_membership import organisation_membership_api
 from server.api.organisations_services import organisations_services_api
+from server.api.pam_websso import pam_websso_api
 from server.api.plsc import plsc_api
 from server.api.service import service_api
 from server.api.service_aups import service_aups_api
@@ -105,40 +106,17 @@ current_path = os.path.dirname(os.path.realpath(__file__)).replace("server", "in
 app = Flask(__name__, instance_path=current_path) if is_local else Flask(__name__)
 app.secret_key = config.secret_key
 
-app.register_blueprint(base_api)
-app.register_blueprint(service_api)
-app.register_blueprint(user_api)
-app.register_blueprint(user_saml_api)
-app.register_blueprint(mfa_api)
-app.register_blueprint(collaboration_api)
-app.register_blueprint(organisation_api)
-app.register_blueprint(join_request_api)
-app.register_blueprint(organisation_invitations_api)
-app.register_blueprint(invitations_api)
-app.register_blueprint(organisation_membership_api)
-app.register_blueprint(collaboration_membership_api)
-app.register_blueprint(collaborations_services_api)
-app.register_blueprint(group_api)
-app.register_blueprint(group_members_api)
-app.register_blueprint(api_key_api)
-app.register_blueprint(aup_api)
-app.register_blueprint(collaboration_request_api)
-app.register_blueprint(service_connection_request_api)
-app.register_blueprint(audit_log_api)
-app.register_blueprint(ipaddress_api)
-app.register_blueprint(system_api)
-app.register_blueprint(organisations_services_api)
-app.register_blueprint(mock_user_api)
-app.register_blueprint(plsc_api)
-app.register_blueprint(image_api)
-app.register_blueprint(service_group_api)
-app.register_blueprint(service_invitations_api)
-app.register_blueprint(service_membership_api)
-app.register_blueprint(service_aups_api)
-app.register_blueprint(user_token_api)
-app.register_blueprint(token_api)
-app.register_blueprint(tag_api)
-app.register_blueprint(swagger_specs)
+blueprints = [
+    base_api, service_api, user_api, user_saml_api, mfa_api, collaboration_api, organisation_api, join_request_api,
+    organisation_invitations_api, invitations_api, organisation_membership_api, collaboration_membership_api,
+    collaborations_services_api, group_api, group_members_api, api_key_api, aup_api, collaboration_request_api,
+    service_connection_request_api, audit_log_api, ipaddress_api, system_api, organisations_services_api, mock_user_api,
+    plsc_api, image_api, service_group_api, service_invitations_api, service_membership_api, service_aups_api,
+    user_token_api, token_api, tag_api, swagger_specs, pam_websso_api
+]
+
+for api_blueprint in blueprints:
+    app.register_blueprint(api_blueprint)
 
 app.register_error_handler(404, page_not_found)
 

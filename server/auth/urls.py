@@ -8,6 +8,7 @@ white_listing = [
     "/api/mfa/verify2fa_proxy_authz",
     "/api/mock",
     "/api/organisation_invitations/find_by_hash",
+    "/api/tokens/introspect",
     "/api/users/error",
     "/api/aup/info",
     "/api/service_connection_requests/approve",
@@ -21,7 +22,7 @@ white_listing = [
     "/config",
     "/health",
     "/info",
-    "/introspect"
+    "/pam-websso"
 ]
 
 mfa_listing = [
