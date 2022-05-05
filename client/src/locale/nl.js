@@ -1901,6 +1901,8 @@ I18n.translations.nl = {
         tokens: "Tokens",
         tokenEnabled: "Token-gebaseerde introspectie ingeschakeld?",
         tokenEnabledTooltip: "Wanneer aangevinkt, mag deze dienst het introspection endpoint aanroepen om gebruikersinformatie te ontvangen",
+        pamWebSSOEnabled: "Pam-WebSSO ingeschakeld?",
+        pamWebSSOEnabledTooltip: "Wanneer aangevinkt, mag deze service de Pam-WebSSO-eindpunten aanroepen om een gebruiker in te loggen op een op een terminal gebaseerde app (bijv. ssh)",
         tokenValue: "One-way gehashte token",
         tokenValidityDays: "Geldigheidsduur token (dagen)",
         tokenValidityDaysTooltip: "Het aantal dagen dat de gebruikerstokens geldig zijn",

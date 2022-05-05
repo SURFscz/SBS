@@ -359,7 +359,8 @@ def update_service():
     service = Service.query.filter(Service.id == service_id).one()
 
     if not is_application_admin():
-        forbidden = ["white_listed", "non_member_users_access_allowed", "token_enabled", "token", "entity_id"]
+        forbidden = ["white_listed", "non_member_users_access_allowed", "token_enabled", "entity_id",
+                     "pam_web_sso_enabled"]
         for attr in [fb for fb in forbidden if fb in data]:
             data[attr] = getattr(service, attr)
 
@@ -367,9 +368,9 @@ def update_service():
         del data["ldap_password"]
 
     if is_application_admin():
-        if data["token_enabled"] and service.token_enabled:
+        if (data["token_enabled"] and service.token_enabled) or (data["pam_web_sso_enabled"] and service.pam_web_sso_enabled):
             del data["hashed_token"]
-        if not data["token_enabled"]:
+        if not data["token_enabled"] and not data["pam_web_sso_enabled"]:
             data["hashed_token"] = None
     else:
         del data["hashed_token"]

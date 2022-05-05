@@ -58,6 +58,7 @@ class Service extends React.Component {
         sirtfi_compliant: false,
         token_enabled: false,
         token_validity_days: "",
+        pam_web_sso_enabled: false,
         contact_email: "",
         support_email: "",
         security_email: "",
@@ -351,7 +352,7 @@ class Service extends React.Component {
 
     serviceDetailTab = (title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired,
-                        accepted_user_policy, privacy_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled,
+                        accepted_user_policy, privacy_policy, isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled, pam_web_sso_enabled,
                         token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin) => {
         const serviceRequestUrlValid = !isEmpty(uri) && automatic_connection_allowed;
@@ -611,11 +612,17 @@ class Service extends React.Component {
                                 onChange={e => this.setState({token_validity_days: e.target.value.replace(/\D/, '')})}
                                 disabled={!token_enabled}/>
 
+                    <RadioButton label={I18n.t("userTokens.pamWebSSOEnabled")}
+                                 name={"pam_web_sso_enabled"}
+                                 value={pam_web_sso_enabled}
+                                 disabled={!isAdmin}
+                                 tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
+                                 onChange={val => this.setState({pam_web_sso_enabled: val})}/>
+
                     <InputField value={config.introspect_endpoint}
                                 name={I18n.t("userTokens.introspectionEndpoint")}
                                 copyClipBoard={true}
                                 disabled={true}/>
-
 
                 </div>
                 {isNew &&
@@ -680,6 +687,7 @@ class Service extends React.Component {
             white_listed,
             sirtfi_compliant,
             token_enabled,
+            pam_web_sso_enabled,
             token_validity_days,
             code_of_conduct_compliant,
             research_scholarship_compliant,
@@ -716,7 +724,7 @@ class Service extends React.Component {
 
                     {this.serviceDetailTab(title, name, isAdmin, alreadyExists, initial, entity_id, abbreviation, description, uri, automatic_connection_allowed,
                         access_allowed_for_all, non_member_users_access_allowed, contact_email, support_email, security_email, invalidInputs, contactEmailRequired, accepted_user_policy, privacy_policy,
-                        isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled, token_validity_days, code_of_conduct_compliant,
+                        isNew, service, disabledSubmit, white_listed, sirtfi_compliant, token_enabled, pam_web_sso_enabled, token_validity_days, code_of_conduct_compliant,
                         research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin)}
                 </div>
             </>);

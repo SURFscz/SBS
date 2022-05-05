@@ -388,7 +388,7 @@ class ServiceDetail extends React.Component {
                     });
                 }
             });
-            if (service.token_enabled) {
+            if (service.token_enabled || service.pam_web_sso_enabled) {
                 actions.push({
                     icon: "unlock",
                     name: I18n.t("userTokens.actionTitle"),

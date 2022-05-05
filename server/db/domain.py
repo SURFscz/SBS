@@ -364,6 +364,7 @@ class Service(Base, db.Model, LogoMixin):
     token_enabled = db.Column("token_enabled", db.Boolean(), nullable=True, default=False)
     hashed_token = db.Column("hashed_token", db.String(length=255), nullable=True, default=None)
     token_validity_days = db.Column("token_validity_days", db.Integer(), nullable=True, default=0)
+    pam_web_sso_enabled = db.Column("pam_web_sso_enabled", db.Boolean(), nullable=True, default=False)
     collaborations = db.relationship("Collaboration", secondary=services_collaborations_association, lazy="select",
                                      back_populates="services")
     allowed_organisations = db.relationship("Organisation", secondary=organisations_services_association, lazy="select")

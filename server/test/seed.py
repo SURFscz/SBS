@@ -42,6 +42,7 @@ service_invitation_expired_hash = generate_token()
 
 service_cloud_token = generate_token()
 network_cloud_token = generate_token()
+service_storage_token = generate_token()
 wiki_cloud_token = generate_token()
 sarah_user_token = generate_token()
 
@@ -282,6 +283,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
                       public_visible=True, automatic_connection_allowed=True, white_listed=True,
+                      pam_web_sso_enabled=True, hashed_token=secure_hash(service_storage_token),
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org")
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
                    uri="https://wiki.surfnet.nl/display/SCZ/Collaboration+Management+System+%28Dutch%3A+"
