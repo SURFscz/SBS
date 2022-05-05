@@ -694,7 +694,7 @@ I18n.translations.en = {
         organisationTooltip: "Every collaboration belongs to precisely one and only one organisation",
         tags: "Tags",
         tagsPlaceholder: "Search or create tags",
-        tagsTooltip: "A collaboration can have tags. Note that tags do not allow all characters as they can be used as Linux group names.",
+        tagsTooltip: "A collaboration can have multiple tags. Note that tags do not allow all characters as they can be used as Linux group names.",
         accepted_user_policy: "Acceptable Use Policy",
         acceptedUserPolicyPlaceholder: "The URL of the collaboration specific Acceptable Use Policy",
         role: "Role",
