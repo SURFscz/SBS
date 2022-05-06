@@ -201,3 +201,5 @@ ssid_config_folder: saml_test
 
 pam_web_sso:
   session_timeout_seconds: 300
+
+rate_limit_totp_guesses_per_30_seconds: 10
