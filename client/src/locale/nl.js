@@ -1931,6 +1931,13 @@ I18n.translations.nl = {
         title: "Login op {{service}}",
         info: "Login om de PIN te krijgen voor de command line interface",
         proceed: "Login",
+        enterPin: "Pin invoeren",
+        loggedIn: "Je bent succesvol ingelogd.",
+        enterPinInfo: "Voer de pin in op de command line interface van {{service}}.",
+        afterPin: "Na het invoeren van de pin, kan dit scherm worden gesloten.",
+        denied: "Toestemming geweigerd",
+        deniedInfo: "Helaas heb je geen toegang tot de volgende service.",
+        contact: "Neem contact op met <a href='mailto:{{support}}'>{{support}}</a> om toegang tot deze service te regelen."
     }
 
 };
