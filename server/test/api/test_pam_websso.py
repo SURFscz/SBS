@@ -23,3 +23,14 @@ class TestPamWebSSO(AbstractTest):
                         headers={"Authorization": f"bearer {service_storage_token}"})
 
         self.assertEqual(res["result"], "OK")
+        self.assertEqual(res["cached"], False)
+
+    def test_start_cached_login(self):
+        self.login_user_2fa("urn:roger")
+        res = self.post("/pam-websso/start",
+                        body={"user_id": "roger@example.org",
+                              "attribute": "email",
+                              "cache_duration": 5 * 60},
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+
+        self.assertEqual(res["cached"], True)
