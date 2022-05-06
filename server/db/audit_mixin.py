@@ -215,4 +215,3 @@ class AuditMixin(JsonSerializableBase):
 
 metadata = MetaData()
 Base = declarative_base(cls=(AuditMixin,), metadata=metadata)
-BaseNoAudit = declarative_base(cls=(JsonSerializableBase,), metadata=metadata)

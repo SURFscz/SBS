@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 
 from server.test.abstract_test import AbstractTest
-from server.test.seed import pam_session_id, service_storage_name
+from server.test.seed import pam_session_id, service_storage_name, service_storage_token
 
 
 class TestPamWebSSO(AbstractTest):
@@ -15,10 +15,11 @@ class TestPamWebSSO(AbstractTest):
         self.expire_pam_session(pam_session_id)
         self.get(f"/pam-websso/{pam_session_id}", with_basic_auth=False, response_status_code=400)
 
-    # def test_introspect_not_connected(self):
-    #     db.session.execute(text("DELETE from services_collaborations"))
-    #     res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {network_cloud_token}"},
-    #                            data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
-    #     self.assertEqual(200, res.status_code)
-    #     self.assertEqual(res.json["active"], False)
-    #     self.assertEqual(res.json["status"], "token-not-connected")
+    def test_start(self):
+        res = self.post("/pam-websso/start",
+                        body={"user_id": "roger@example.org",
+                              "attribute": "email",
+                              "cache_duration": 5 * 60},
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+
+        self.assertEqual(res["result"], "OK")

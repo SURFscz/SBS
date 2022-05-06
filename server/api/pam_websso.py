@@ -1,5 +1,4 @@
 # -*- coding: future_fstrings -*-
-import datetime
 import uuid
 from datetime import datetime, timedelta
 
@@ -34,8 +33,8 @@ def introspect():
     user_id = data["user_id"]
     attribute = data["attribute"]
     cache_duration = int(data.get("cache_duration", 60 * 10))
-
-    user = User.query.filter_by(attribute=user_id).one()
+    filters = {attribute: user_id}
+    user = User.query.filter_by(**filters).one()
 
     last_login_date = user.last_login_date
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
@@ -49,4 +48,4 @@ def introspect():
     return {"result": "OK",
             "session_id": pam_sso_session.session_id,
             "challenge": f"{current_app.app_config.base_url}/pam-websso/login/{pam_sso_session.session_id}",
-            "cached": False}, 200
+            "cached": False}, 201
