@@ -19,7 +19,9 @@ pam_websso_api = Blueprint("pam_websso_api", __name__, url_prefix="/pam-websso")
 
 
 def _get_pam_sso_session(session_id):
-    pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == session_id).one()
+    pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == session_id).first()
+    if not pam_sso_session:
+        raise BadRequest("session_id invalid")
     timeout = current_app.app_config.pam_web_sso.session_timeout_seconds
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=timeout)
     if pam_sso_session.created_at < seconds_ago:
@@ -33,13 +35,6 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin=
 
     if "user" not in session or user.id != current_user_id():
         return {"result": "FAIL", "debug_msg": f"User {user.uid} is not authenticated"}
-
-    last_login_date = user.last_login_date
-    timeout = current_app.app_config.pam_web_sso.session_timeout_seconds
-    seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=timeout)
-
-    if not last_login_date or last_login_date < seconds_ago:
-        return {"result": "TIMEOUT", "debug_msg": f"User {user.uid} pam session has expired {last_login_date}"}
 
     if not user_service(service.id, False):
         return {"result": "FAIL", "debug_msg": f"User {user.uid} has no access to service {service.name}"}
@@ -81,8 +76,13 @@ def start():
     last_login_date = user.last_login_date
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
     if last_login_date and last_login_date > seconds_ago:
-        logger.debug(f"PamWebSSO user {user.uid} SSO results")
-        return {"result": "OK", "cached": True}, 201
+        session["user"] = {"id": user.id, "admin": False}
+        if user_service(service.id, False):
+            logger.debug(f"PamWebSSO user {user.uid} SSO results")
+
+            session.clear()
+            session.modified = False
+            return {"result": "OK", "cached": True}, 201
 
     pam_sso_session = PamSSOSession(session_id=str(uuid.uuid4()), attribute=attribute, user_id=user.id,
                                     service_id=service.id, pin="".join(random.sample(string.digits, k=4)))
@@ -103,8 +103,11 @@ def check_pin():
     data = current_request.get_json()
     session_id = data["session_id"]
     pin = data["pin"]
+    try:
+        pam_sso_session = _get_pam_sso_session(session_id)
+    except BadRequest:
+        return {"result": "TIMEOUT", "debug_msg": f"Pam session {session_id} has expired"}, 201
 
-    pam_sso_session = _get_pam_sso_session(session_id)
     user = pam_sso_session.user
 
     validation = _validate_pam_sso_session(pam_sso_session, pin)

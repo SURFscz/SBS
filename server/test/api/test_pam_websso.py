@@ -1,7 +1,8 @@
 # -*- coding: future_fstrings -*-
 from datetime import datetime, timedelta
 
-from server.db.domain import User
+from server.db.db import db
+from server.db.domain import PamSSOSession
 from server.test.abstract_test import AbstractTest
 from server.test.seed import pam_session_id, service_storage_name, service_storage_token, invalid_service_pam_session_id
 
@@ -12,6 +13,9 @@ class TestPamWebSSO(AbstractTest):
         res = self.get(f"/pam-websso/{pam_session_id}", with_basic_auth=False)
         self.assertEqual(res["service"]["name"], service_storage_name)
         self.assertFalse("validation" in res)
+
+    def test_get_400(self):
+        self.get("/pam-websso/nope", with_basic_auth=False, response_status_code=400)
 
     def test_get_with_pin(self):
         self.login("urn:peter")
@@ -29,6 +33,7 @@ class TestPamWebSSO(AbstractTest):
                         body={"user_id": "roger@example.org",
                               "attribute": "email",
                               "cache_duration": 5 * 60},
+                        with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
 
         self.assertEqual(res["result"], "OK")
@@ -40,6 +45,7 @@ class TestPamWebSSO(AbstractTest):
                         "attribute": "email",
                         "cache_duration": 5 * 60},
                   headers={"Authorization": f"bearer {service_storage_token}"},
+                  with_basic_auth=False,
                   response_status_code=404)
 
     def test_start_cached_login(self):
@@ -48,6 +54,7 @@ class TestPamWebSSO(AbstractTest):
                         body={"user_id": "roger@example.org",
                               "attribute": "email",
                               "cache_duration": 5 * 60},
+                        with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
 
         self.assertEqual(res["cached"], True)
@@ -57,6 +64,7 @@ class TestPamWebSSO(AbstractTest):
         res = self.post("/pam-websso/check-pin",
                         body={"session_id": pam_session_id,
                               "pin": "1234"},
+                        with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("SUCCESS", res["result"])
 
@@ -65,6 +73,7 @@ class TestPamWebSSO(AbstractTest):
         res = self.post("/pam-websso/check-pin",
                         body={"session_id": pam_session_id,
                               "pin": "nope"},
+                        with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("FAIL", res["result"])
 
@@ -72,6 +81,7 @@ class TestPamWebSSO(AbstractTest):
         res = self.post("/pam-websso/check-pin",
                         body={"session_id": pam_session_id,
                               "pin": "1234"},
+                        with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("FAIL", res["result"])
 
@@ -80,18 +90,21 @@ class TestPamWebSSO(AbstractTest):
         res = self.post("/pam-websso/check-pin",
                         body={"session_id": pam_session_id,
                               "pin": "1234"},
+                        with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("FAIL", res["result"])
 
     def test_check_pin_time_out(self):
         self.login("urn:peter")
-        peter = User.query.filter(User.uid == "urn:peter").one()
-        peter.last_login_date = datetime.utcnow() - timedelta(days=500)
-        AbstractTest._merge_user(peter)
+        pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == pam_session_id).one()
+        pam_sso_session.created_at = datetime.utcnow() - timedelta(days=500)
+        db.session.merge(pam_sso_session)
+        db.session.commit()
 
         res = self.post("/pam-websso/check-pin",
                         body={"session_id": pam_session_id,
                               "pin": "1234"},
+                        with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("TIMEOUT", res["result"])
 
@@ -100,5 +113,6 @@ class TestPamWebSSO(AbstractTest):
         res = self.post("/pam-websso/check-pin",
                         body={"session_id": invalid_service_pam_session_id,
                               "pin": "1234"},
+                        with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("FAIL", res["result"])
