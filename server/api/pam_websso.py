@@ -39,7 +39,7 @@ def introspect():
     last_login_date = user.last_login_date
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
     if last_login_date and last_login_date > seconds_ago:
-        return {"result": "OK", "cached": True}, 200
+        return {"result": "OK", "cached": True}, 201
 
     pam_sso_session = PamSSOSession(session_id=str(uuid.uuid4()), attribute=attribute, user_id=user.id,
                                     service_id=service.id)
