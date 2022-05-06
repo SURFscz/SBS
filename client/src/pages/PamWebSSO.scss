@@ -58,6 +58,31 @@
             font-weight: bold
         }
 
+        div.pin-value {
+            margin: 35px 0;
+            display: flex;
+
+            div.pin-value-inner {
+                display: flex;
+                margin: 0 auto;
+                span.value {
+                    font-size: 36px;
+                    font-weight: bold;
+                    margin-right: 18px;
+                }
+                section.copy-to-clipboard {
+                    border: none;
+                    font-size: 12px;
+                    &:hover {
+                        background-color: transparent;
+                    }
+                    svg {
+                        width: 18px;
+                    }
+                }
+            }
+        }
+
         div.actions {
             margin: 25px 0;
         }

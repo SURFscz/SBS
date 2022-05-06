@@ -1,10 +1,12 @@
 # -*- coding: future_fstrings -*-
 import time
 
+from flask import session
 from sqlalchemy import text
 
+from server.api.service import user_service
 from server.db.db import db
-from server.db.domain import Service, Organisation, Collaboration, ServiceInvitation
+from server.db.domain import Service, Organisation, Collaboration, ServiceInvitation, User
 from server.test.abstract_test import AbstractTest
 from server.test.seed import service_mail_name, service_network_entity_id, amsterdam_uva_name, uuc_name, \
     service_network_name, uuc_scheduler_name, service_wiki_name, uva_research_name, service_storage_name, \
@@ -36,6 +38,13 @@ class TestService(AbstractTest):
         service = self.find_entity_by_name(Service, uuc_scheduler_name)
         self.login("urn:betty")
         self.get(f"api/services/{service.id}", response_status_code=200, with_basic_auth=False)
+
+    def test_find_by_id_access_allowed_through_organisation_memberships(self):
+        service = self.find_entity_by_name(Service, uuc_scheduler_name)
+        harry = self.find_entity_by_name(User, "Harry Doe")
+        with self.app.app_context():
+            session["user"] = {"id": harry.id, "uid": harry.uid, "admin": False}
+            self.assertTrue(user_service(service.id, False))
 
     def test_find_by_id_admin(self):
         service = self.find_entity_by_name(Service, uuc_scheduler_name)

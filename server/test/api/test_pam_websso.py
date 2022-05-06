@@ -1,15 +1,24 @@
 # -*- coding: future_fstrings -*-
+from datetime import datetime, timedelta
 
+from server.db.domain import User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import pam_session_id, service_storage_name, service_storage_token
+from server.test.seed import pam_session_id, service_storage_name, service_storage_token, invalid_service_pam_session_id
 
 
 class TestPamWebSSO(AbstractTest):
 
     def test_get(self):
         res = self.get(f"/pam-websso/{pam_session_id}", with_basic_auth=False)
-        self.assertEqual(res["pam_sso_session"]["attribute"], "email")
         self.assertEqual(res["service"]["name"], service_storage_name)
+        self.assertFalse("validation" in res)
+
+    def test_get_with_pin(self):
+        self.login("urn:peter")
+        res = self.get(f"/pam-websso/{pam_session_id}", with_basic_auth=False)
+        self.assertEqual(service_storage_name, res["service"]["name"])
+        self.assertEqual("1234", res["pin"])
+        self.assertEqual("SUCCESS", res["validation"]["result"])
 
     def test_get_expired(self):
         self.expire_pam_session(pam_session_id)
@@ -25,6 +34,14 @@ class TestPamWebSSO(AbstractTest):
         self.assertEqual(res["result"], "OK")
         self.assertEqual(res["cached"], False)
 
+    def test_start_404(self):
+        self.post("/pam-websso/start",
+                  body={"user_id": "nope",
+                        "attribute": "email",
+                        "cache_duration": 5 * 60},
+                  headers={"Authorization": f"bearer {service_storage_token}"},
+                  response_status_code=404)
+
     def test_start_cached_login(self):
         self.login_user_2fa("urn:roger")
         res = self.post("/pam-websso/start",
@@ -34,3 +51,54 @@ class TestPamWebSSO(AbstractTest):
                         headers={"Authorization": f"bearer {service_storage_token}"})
 
         self.assertEqual(res["cached"], True)
+
+    def test_check_pin_success(self):
+        self.login("urn:peter")
+        res = self.post("/pam-websso/check-pin",
+                        body={"session_id": pam_session_id,
+                              "pin": "1234"},
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+        self.assertEqual("SUCCESS", res["result"])
+
+    def test_check_pin_wrong_pin(self):
+        self.login("urn:peter")
+        res = self.post("/pam-websso/check-pin",
+                        body={"session_id": pam_session_id,
+                              "pin": "nope"},
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+        self.assertEqual("FAIL", res["result"])
+
+    def test_check_pin_not_authenticated(self):
+        res = self.post("/pam-websso/check-pin",
+                        body={"session_id": pam_session_id,
+                              "pin": "1234"},
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+        self.assertEqual("FAIL", res["result"])
+
+    def test_check_pin_different_user(self):
+        self.login("urn:sarah")
+        res = self.post("/pam-websso/check-pin",
+                        body={"session_id": pam_session_id,
+                              "pin": "1234"},
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+        self.assertEqual("FAIL", res["result"])
+
+    def test_check_pin_time_out(self):
+        self.login("urn:peter")
+        peter = User.query.filter(User.uid == "urn:peter").one()
+        peter.last_login_date = datetime.utcnow() - timedelta(days=500)
+        AbstractTest._merge_user(peter)
+
+        res = self.post("/pam-websso/check-pin",
+                        body={"session_id": pam_session_id,
+                              "pin": "1234"},
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+        self.assertEqual("TIMEOUT", res["result"])
+
+    def test_check_pin_no_service_access(self):
+        self.login("urn:james")
+        res = self.post("/pam-websso/check-pin",
+                        body={"session_id": invalid_service_pam_session_id,
+                              "pin": "1234"},
+                        headers={"Authorization": f"bearer {service_storage_token}"})
+        self.assertEqual("FAIL", res["result"])

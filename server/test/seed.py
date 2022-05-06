@@ -94,6 +94,7 @@ ssh_service_connection_request_hash = generate_token()
 wireless_service_connection_request_hash = generate_token()
 
 pam_session_id = str(uuid.uuid4())
+invalid_service_pam_session_id = str(uuid.uuid4())
 
 
 def read_image(file_name):
@@ -508,8 +509,11 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  user=sarah, service=network)
     _persist(db, user_token_sarah)
 
-    pam_sso_session = PamSSOSession(session_id=pam_session_id, attribute="email", user=james, service=storage)
-    _persist(db, pam_sso_session)
+    pam_sso_session_peter = PamSSOSession(session_id=pam_session_id, attribute="email", user=peter, service=storage,
+                                          pin="1234")
+    pam_sso_session_james = PamSSOSession(session_id=invalid_service_pam_session_id, attribute="email", user=james,
+                                          service=storage, pin="1234")
+    _persist(db, pam_sso_session_peter, pam_sso_session_james)
 
     if perf_test:
         users = []

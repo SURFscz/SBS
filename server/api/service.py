@@ -72,12 +72,12 @@ def services_from_organisation_memberships(user_id, service_id=None, count_only=
     return _services_from_query(count_only, query, service_id)
 
 
-def user_service(service_id):
+def user_service(service_id, view_only=True):
     # Every service may be seen by organisation admin, service admin, manager or coll admin
     if is_service_admin(service_id) or is_application_admin():
         return True
 
-    if is_collaboration_admin() or is_organisation_admin_or_manager():
+    if view_only and (is_collaboration_admin() or is_organisation_admin_or_manager()):
         return True
 
     user_id = current_user_id()
@@ -90,7 +90,11 @@ def user_service(service_id):
         return True
 
     count = services_from_organisation_memberships(user_id, service_id, True)
-    return count > 0
+    if count > 0:
+        return True
+
+    service = Service.query.filter(Service.id == service_id).one()
+    return service.non_member_users_access_allowed
 
 
 def _do_get_services(restrict_for_current_user=False, include_counts=False):
@@ -368,7 +372,9 @@ def update_service():
         del data["ldap_password"]
 
     if is_application_admin():
-        if (data["token_enabled"] and service.token_enabled) or (data["pam_web_sso_enabled"] and service.pam_web_sso_enabled):
+        token_enabled = data["token_enabled"] and service.token_enabled
+        pam_web_sso_enabled = data["pam_web_sso_enabled"] and service.pam_web_sso_enabled
+        if token_enabled or pam_web_sso_enabled:
             del data["hashed_token"]
         if not data["token_enabled"] and not data["pam_web_sso_enabled"]:
             data["hashed_token"] = None

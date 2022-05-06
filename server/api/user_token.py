@@ -24,8 +24,8 @@ def _sanitize_and_verify(hash_token=True):
     service_id = data["service_id"]
     service = Service.query.get(service_id)
 
-    if not user_service(service_id):
-        raise Forbidden(f"User has no access to  {service.name}")
+    if not user_service(service_id, False):
+        raise Forbidden(f"User has no access to {service.name}")
     if not service.token_enabled:
         raise Forbidden(f"Can not create user_token for service {service.name}")
 

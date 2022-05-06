@@ -1933,6 +1933,13 @@ I18n.translations.en = {
         title: "Log in to {{service}}",
         info: "Login to get the PIN required for the command line interface",
         proceed: "Login",
+        enterPin: "Enter PIN",
+        loggedIn: "You have successfully logged in.",
+        enterPinInfo: "Please enter the PIN to the command line interface of {{service}}.",
+        afterPin: "Ater entering the PIN, it is safe to close this screen.",
+        denied: "Permission denied",
+        deniedInfo: "Unfortunately, you don't have access to the following service.",
+        contact: "Please contact <a href='mailto:{{support}}'>{{support}}</a> to arrange access to this service."
     }
 };
 
