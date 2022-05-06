@@ -1139,17 +1139,17 @@ I18n.translations.en = {
     },
     apiKeys: {
         title: "Create API key for {{organisation}}",
-        info: "With API keys the Application Programmer Interface (API) of Research Access Management can be used. For more details see <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://github.com/SURFscz/SBS/wiki/External-API\"'>GitHub</a>.",
+        info: "An API key is required to use the <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{base_url}}/apidocs/\"'>Application Programmer Interface (API)</a>.",
         backToOrganisationDetail: "Back to my organisation {{name}}",
-        secretDisclaimer: "Copy the secret and store it somewhere safe. You can view this code only once here.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new key.",
-        secret: "Secret",
-        secretValue: "One-way hashed Secret",
-        secretTooltip: "The secret to use in the Authorization header",
+        secretDisclaimer: "You can view this API key only once. Copy it and store it somewhere safe.<br><br>If the API key is lost, delete it and create a new API key.",
+        secret: "API key",
+        secretValue: "One-way hashed secret",
+        secretTooltip: "The secret to use in the authorization header",
         description: "Description",
         descriptionPlaceHolder: "Description for this API key",
         descriptionTooltip: "An optional description explaining the use of this API key",
         flash: {
-            created: "API key for organisation {{name}} is created.",
+            created: "API key for organisation {{name}} created.",
         },
         submit: "Submit"
     },

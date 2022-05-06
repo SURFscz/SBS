@@ -96,7 +96,7 @@ I18n.translations.nl = {
             serviceConnectionRequests: "Koppelverzoeken",
             me: "Profiel",
             about: "Over",
-            apikeys: "API Keys ({{count}})",
+            apikeys: "API-sleutels ({{count}})",
             welcome: "Welkom",
             cron: "Cron",
             seed: "Seed",
@@ -139,7 +139,7 @@ I18n.translations.nl = {
         impersonate: "Imitatie",
         services: "Diensten",
         serviceRequest: "Dienstverzoek",
-        apiKeys: "API keys",
+        apiKeys: "API-sleutels",
         serviceGroups: "Dienstgroepen",
         tokens: "Tokens"
     },
@@ -391,11 +391,11 @@ I18n.translations.nl = {
             leave: "Lidmaatschap opzeggen"
         },
         apiKeys: {
-            title: "API Keys",
-            new: "Nieuwe API Key",
-            searchPlaceHolder: "Zoek API keys...",
-            noEntities: "Geen API keys",
-            backToApiKeys: "Terug naar alle API keys"
+            title: "API-sleutels",
+            new: "Nieuwe API-sleutel",
+            searchPlaceHolder: "Zoek API-sleutels...",
+            noEntities: "Geen API-sleutels",
+            backToApiKeys: "Terug naar alle API-sleutels"
         },
         collaboration_requests: {
             title: "Aanvragen voor samenwerkingen",
@@ -1138,17 +1138,17 @@ I18n.translations.nl = {
     },
     apiKeys: {
         title: "Nieuwe API-sleutel voor {{organisation}}",
-        info: "Met API-sleutels kan de Application Programmer Interface (API) van Research Access Management worden gebruikt. Zie <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://github.com/SURFscz/SBS/wiki/External-API\"'>GitHub</a> voor details.",
+        info: "Met een API-sleutel kan de <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"{{base_url}}/apidocs/\"'>Application Programmer Interface (API)</a> worden gebruikt.",
         backToOrganisationDetail: "Terug naar mijn organisatie {{name}}",
-        secretDisclaimer: "Sla de sleutel op en bewaar deze veilig. Je kan deze sleutel hier maar één keer zien. Nadat de API-sleutel is opgeslagen kan je deze niet meer opnieuw zien. Bij verlies zal je de sleutel moeten verwijderen en een nieuwe aanmaken.",
+        secretDisclaimer: "De sleutel wordt slechts eenmaal getoond. Sla de sleutel op en bewaar deze veilig.<br><br>Bij verlies zal je de sleutel moeten verwijderen en een nieuwe moeten aanmaken.",
         secret: "Sleutel",
         secretValue: "One-way hashed secret",
-        secretTooltip: "De sleutel voor in de <code>Authorization Header</code>",
+        secretTooltip: "De sleutel voor in de authorization header",
         description: "Omschrijving",
         descriptionPlaceHolder: "Omschrijving voor deze API-sleutel",
-        descriptionTooltip: "Een optionele omschrijving betreffende het gebruik van deze API-sleutel",
+        descriptionTooltip: "Een optionele omschrijving van het doel van deze API-sleutel",
         flash: {
-            created: "API-sleutel voor organisatie {{name}} is aangemaakt.",
+            created: "API-sleutel voor organisatie {{name}} aangemaakt.",
         },
         submit: "Opslaan"
     },
@@ -1482,7 +1482,7 @@ I18n.translations.nl = {
             submit: "Haal op"
         },
         tables: {
-            "api_keys": "API key",
+            "api_keys": "API-sleutel",
             "aups": "Acceptable User Policy",
             "collaboration_memberships": "Lidmaatschap",
             "collaboration_memberships_groups": "Groepslidmaatschap",
