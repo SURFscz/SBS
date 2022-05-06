@@ -66,7 +66,7 @@ class SecondFactorAuthentication extends React.Component {
                         this.focusCode();
                     }).catch(() => this.props.history.push(`/404?eo=${ErrorOrigins.invalidSecondFactorUUID}`))
             } else {
-                setTimeout(login, 5);
+                this.props.history.push("/landing");
             }
         } else if (user.second_factor_confirmed && !update) {
             this.props.history.push("/home")
@@ -229,7 +229,13 @@ class SecondFactorAuthentication extends React.Component {
                         this.props.history.push(url.pathname + url.search);
                     });
                 }
-            }).catch(() => {
+            }).catch(e => {
+                if (e.response && e.response.json) {
+                    debugger;
+                    e.response.json().then(val => {
+                        debugger;
+                    });
+                }
                 this.setState({busy: false, error: true, totp: Array(6).fill("")},
                     () => this.totpRefs[0].focus());
             });

@@ -43,6 +43,27 @@ class TestMfa(AbstractTest):
         self.login("urn:mary")
         self.post("/api/mfa/verify2fa", {"totp": "123456"}, with_basic_auth=False, response_status_code=400)
 
+    def test_2fa_invalid_totp_rate_limit(self):
+        mary = User.query.filter(User.uid == "urn:mary").first()
+        mary.second_factor_auth = pyotp.random_base32()
+        db.session.merge(mary)
+        db.session.commit()
+
+        self.login("urn:mary")
+        config = self.app.app_config
+        config.rate_limit_totp_guesses_per_30_seconds = 1
+
+        self.post("/api/mfa/verify2fa", {"totp": "123456"}, with_basic_auth=False, response_status_code=400)
+        self.post("/api/mfa/verify2fa", {"totp": "123456"}, with_basic_auth=False, response_status_code=403)
+
+        res = self.get("/api/users/me", with_basic_auth=False)
+        self.assertTrue(res["guest"])
+
+        mary = User.query.filter(User.uid == "urn:mary").first()
+        self.assertTrue(mary.suspended)
+
+        config.rate_limit_totp_guesses_per_30_seconds = 10
+
     def test_get_jwks(self):
         jwks = self.get("/api/mfa/jwks", with_basic_auth=False)
         self.assertEqual(1, len(jwks["keys"]))
