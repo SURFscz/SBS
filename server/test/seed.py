@@ -285,6 +285,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     storage = Service(entity_id=service_storage_entity_id, name=service_storage_name, allowed_organisations=[uuc, uva],
                       description="SURF Storage Service", logo=read_image("storage.jpeg"), abbreviation="storage",
                       public_visible=True, automatic_connection_allowed=True, white_listed=True,
+                      uri="https://storage.net", support_email="support@storage.net",
                       pam_web_sso_enabled=True, hashed_token=secure_hash(service_storage_token),
                       accepted_user_policy="https://google.nl", privacy_policy="https://privacy.org")
     wiki = Service(entity_id=service_wiki_entity_id, name=service_wiki_name, description="No more wiki's please",
@@ -507,13 +508,8 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                  user=sarah, service=network)
     _persist(db, user_token_sarah)
 
-    db.session.commit()
-
-    pam_sso_session = PamSSOSession(session_id=pam_session_id, attribute="email", user_id=james.id,
-                                    service_id=storage.id)
+    pam_sso_session = PamSSOSession(session_id=pam_session_id, attribute="email", user=james, service=storage)
     _persist(db, pam_sso_session)
-
-    db.session.commit()
 
     if perf_test:
         users = []
@@ -547,4 +543,4 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             _persist(db, CollaborationMembership(role="member", user=users[2 * i + 2], collaboration=co))
             _persist(db, CollaborationMembership(role="member", user=users[2 * i + 3], collaboration=co))
 
-        db.session.commit()
+    db.session.commit()

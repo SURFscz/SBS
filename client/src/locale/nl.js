@@ -1926,6 +1926,11 @@ I18n.translations.nl = {
             copy: "Copy",
             close: "Sluit",
         }
+    },
+    pamWebSSO: {
+        title: "Login op {{service}}",
+        info: "Login om de PIN te krijgen voor de command line interface",
+        proceed: "Login",
     }
 
 };

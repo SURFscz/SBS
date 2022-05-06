@@ -22,12 +22,15 @@ class PamWebSSO extends React.Component {
 
     componentDidMount = () => {
         const {session_id} = this.props.match.params;
+        const {user} = this.props;
         pamWebSSOSession(session_id)
-            .then(res => this.setState({
-                pamSession: res.pam_sso_session,
-                service: res.service,
-                loading: false
-            }))
+            .then(res => {
+                this.setState({
+                    pamSession: res.pam_sso_session,
+                    service: res.service,
+                    loading: false
+                })
+            })
             .catch(() => this.props.history.push(`/404?eo=${ErrorOrigins.invalidPamWebSSO}`));
     };
 
