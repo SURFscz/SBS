@@ -7,6 +7,7 @@ import {ReactComponent as IllustrationCO} from "../icons/illustration-CO.svg";
 import Button from "../components/Button";
 import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import {setFlash} from "../utils/Flash";
 
 class Login extends React.Component {
 
@@ -27,7 +28,10 @@ class Login extends React.Component {
                 confirmationDialogOpen: true,
                 confirmationQuestion: logout ? I18n.t("login.closeBrowser") : I18n.t("login.closeBrowserAfterDelete")
             });
-
+        }
+        const {rateLimited} = this.props;
+        if (rateLimited) {
+            setFlash(I18n.t("login.rateLimited"), "error");
         }
     });
 

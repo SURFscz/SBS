@@ -11,7 +11,7 @@ import pyotp
 import qrcode
 from authlib.jose import jwk
 from flask import Blueprint, current_app, redirect, session, request as current_request
-from werkzeug.exceptions import Forbidden, BadRequest
+from werkzeug.exceptions import Forbidden, TooManyRequests
 
 from server.api.base import query_param, json_endpoint
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
@@ -147,7 +147,7 @@ def verify2fa():
         db.session.commit()
         session.clear()
 
-        raise Forbidden(f"Suspended user {user.name} for rate limiting TOTP")
+        raise TooManyRequests(f"Suspended user {user.name} for rate limiting TOTP")
 
     secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
     valid_totp = _do_verify_2fa(user, secret)

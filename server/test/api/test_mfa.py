@@ -54,7 +54,7 @@ class TestMfa(AbstractTest):
         config.rate_limit_totp_guesses_per_30_seconds = 1
 
         self.post("/api/mfa/verify2fa", {"totp": "123456"}, with_basic_auth=False, response_status_code=400)
-        self.post("/api/mfa/verify2fa", {"totp": "123456"}, with_basic_auth=False, response_status_code=403)
+        self.post("/api/mfa/verify2fa", {"totp": "123456"}, with_basic_auth=False, response_status_code=429)
 
         res = self.get("/api/users/me", with_basic_auth=False)
         self.assertTrue(res["guest"])

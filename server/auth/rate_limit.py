@@ -14,11 +14,13 @@ def rate_limit_reached(user: User):
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=30)
     count = rate_limit_info["count"]
     rate_limit = current_app.app_config.rate_limit_totp_guesses_per_30_seconds
-    # Need to reset the first_guess if it is more then 30 seconds ago, otherwise the user can circumvent this
-    # TODO
-    max_reached = count >= rate_limit and first_guess <= seconds_ago
+    max_reached = count >= rate_limit and first_guess >= seconds_ago
     if not max_reached:
-        redis.set(key, json.dumps({"date": first_guess.isoformat(), "count": count + 1}))
+        # Need to reset the first_guess if it is more then 30 seconds ago, otherwise the user can still brute force
+        in_30_seconds_window = first_guess > seconds_ago
+        new_date = first_guess.isoformat() if in_30_seconds_window else datetime.now().isoformat()
+        new_count = count + 1 if in_30_seconds_window else 0
+        redis.set(key, json.dumps({"date": new_date, "count": new_count}))
     return max_reached
 
 

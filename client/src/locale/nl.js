@@ -58,6 +58,7 @@ I18n.translations.nl = {
         title: "Research Access Management",
         subTitle: "Login...",
         suspended: "Je account is geschorst. Neem contact op met de beheerder van je samenwerking om dit op te lossen",
+        rateLimited: "Je hebt de TOTP-verificatie rate-limited en daarom bent je uitgelogd en is je gebruikersaccount geschorst. Neem contact op met uw beheerder om dit op te lossen",
         successfullyActivated: "Gelukt: je account is geheractiveerd",
         closeBrowser: "Om volledig uit te loggen, moet je je browser sluiten",
         closeBrowserAfterDelete: "Om het verwijderen van je account te voltooien, moet je je browser sluiten."

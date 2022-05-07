@@ -2,7 +2,8 @@ import React from "react";
 import {withRouter} from "react-router-dom";
 import "./SecondFactorAuthentication.scss";
 import {
-    get2fa, get2faProxyAuthz,
+    get2fa,
+    get2faProxyAuthz,
     reset2fa,
     tokenResetRequest,
     tokenResetRespondents,
@@ -18,7 +19,6 @@ import {setFlash} from "../utils/Flash";
 import CheckBox from "../components/CheckBox";
 import {ErrorOrigins, isEmpty, stopEvent} from "../utils/Utils";
 import {ReactComponent as InformationIcon} from "../icons/informational.svg";
-import {login} from "../utils/Login";
 
 class SecondFactorAuthentication extends React.Component {
 
@@ -230,14 +230,12 @@ class SecondFactorAuthentication extends React.Component {
                     });
                 }
             }).catch(e => {
-                if (e.response && e.response.json) {
-                    debugger;
-                    e.response.json().then(val => {
-                        debugger;
-                    });
+                if (e.response && e.response.status === 429) {
+                    this.props.history.push("/landing?rate-limited=true");
+                } else {
+                    this.setState({busy: false, error: true, totp: Array(6).fill("")},
+                        () => this.totpRefs[0].focus());
                 }
-                this.setState({busy: false, error: true, totp: Array(6).fill("")},
-                    () => this.totpRefs[0].focus());
             });
         }
     }
