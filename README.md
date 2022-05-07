@@ -106,6 +106,12 @@ See the https://github.com/SURFscz/SCZ-deploy project
 ### [Upgrade](#upgrade)
 
 See https://github.com/simion/pip-upgrader for upgrading automatically
+```
+source .venv/bin/activate
+pip install pip-upgrader
+cd server
+pip-upgrade requirements/test.txt --dry-run
+```
 
 ### [Swagger](#swagger)
 

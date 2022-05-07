@@ -39,6 +39,9 @@ class TestPamWebSSO(AbstractTest):
         self.assertEqual(res["result"], "OK")
         self.assertEqual(res["cached"], False)
 
+        res = self.get(f"/pam-websso/{res['session_id']}", with_basic_auth=False)
+        self.assertEqual(res["service"]["name"], service_storage_name)
+
     def test_start_404(self):
         self.post("/pam-websso/start",
                   body={"user_id": "nope",
