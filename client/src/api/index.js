@@ -15,13 +15,11 @@ function validateResponse(showErrorDialog) {
         if (!res.ok) {
             if (res.type === "opaqueredirect") {
                 setTimeout(() => window.location.reload(true), 100);
-                debugger;
                 return res;
             }
             const error = new Error(res.statusText);
             error.response = res;
             if (showErrorDialog && res.status === 401) {
-                debugger;
                 window.location.reload(true);
             }
             if (showErrorDialog) {
@@ -34,7 +32,6 @@ function validateResponse(showErrorDialog) {
         const sessionAlive = res.headers.get("x-session-alive");
 
         if (sessionAlive !== "true") {
-            debugger;
             window.location.reload(true);
         }
         return res;
