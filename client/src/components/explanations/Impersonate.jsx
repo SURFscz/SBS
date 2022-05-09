@@ -1,19 +1,20 @@
 import React from "react";
+import I18n from "i18n-js";
 
 export default function ImpersonateExplanation() {
-    return [
-        <section key={1} className="explanation">
-            As a <span className="strong">super user</span> you can impersonate a different user. You will see the
-            application exactly as that user- with the only exception of the
-            <span className="emphasize"> Impersonate</span> menu item.
-        </section>,
-        < section key={2} className="example">
-            For example impersonating a regular member of a collaboration will limit the view to the
-            <span className="emphasize"> memberships</span> of that user.
-        </section>,
-        <section key={3} className="details">
-            The impersonation is done by sending custom headers to the server which will only be interpreted if you
-            are a <span className="strong">super user</span>.
-        </section>]
+    if (I18n.locale === "en") {
+        return [
+            <section key={1} className="explanation">
+                As a platform admin you can impersonate other users. Impersonating makes it so that you see the application exactly as that user, except for the impersonate menu item.
+                For example, impersonating a regular member of a collaboration will limit the view to the memberships of that user.
+            </section>
+        ];
+    }
+        return [
+            <section key={1} className="explanation">
+                Als platformbeheerder kun je andere gebruikers immiteren, zodat je de applicatie precies ziet zoals de gebruiker, uitgezonderd het element 'immiteer' in het menu.
+                Het immiteren van een lid van een samenwerking, bijvoorbeeld, zal het zicht beperken tot het lidmaatschap van die samenwerking.
+            </section>
+        ]
 
 }
