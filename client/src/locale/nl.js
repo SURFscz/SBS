@@ -806,9 +806,9 @@ I18n.translations.nl = {
         entity_id: "Entity ID",
         entity_idPlaceHolder: "De unieke entity ID van de dienst",
         entity_idTooltip: "De unieke entity ID van de dienst koppelt de dienst in SRAM aan de daadwerkelijke externe dienstaanbieder",
-        abbreviation: "Afkorting",
-        abbreviationPlaceHolder: "De unieke afkorting van deze dienst",
-        abbreviationTooltip: "De unieke afkorting van een dienst wordt gebruikt als prefix voor groepen van deze dienst",
+        abbreviation: "Korte naam",
+        abbreviationPlaceHolder: "De korte naam van deze dienst",
+        abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen van deze dienst",
         service_request: "Dienst request URL",
         service_requestTooltip: "De URL van een dienst om een koppeling aan te vragen tussen een samenwerking en deze dienst als de gebruiker geen toegang heeft tot deze dienst",
         service_requestError: "Vereist een valide URL en automatisch koppelen moet toegestaan zijn",
@@ -1040,7 +1040,7 @@ I18n.translations.nl = {
         service: {
             name: "Naam",
             entity_id: "Entity ID",
-            abbreviation: "Afkorting",
+            abbreviation: "Korte naam",
             description: "Omschrijving",
             actions: "",
         },
@@ -1226,8 +1226,8 @@ I18n.translations.nl = {
             open: "",
             actions: "",
             name: "Naam",
-            abbreviation: "Afkorting",
             entity_id: "Entity ID",
+            abbreviation: "Korte naam",
             description: "Omschrijving"
         },
         serviceConnectionRequest: {

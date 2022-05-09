@@ -807,9 +807,9 @@ I18n.translations.en = {
         entity_id: "Entity ID",
         entity_idPlaceHolder: "The unique entity ID of the service",
         entity_idTooltip: "The unique entity ID of the service links the service in SRAM to the actual external service Provider",
-        abbreviation: "Abbreviation",
-        abbreviationPlaceHolder: "The unique abbreviation of this service",
-        abbreviationTooltip: "The unique abbreviation of the service is used as a prefix for any groups you create",
+        abbreviation: "Short name",
+        abbreviationPlaceHolder: "The short name of this service",
+        abbreviationTooltip: "The short name of the service is used as a prefix for any groups you create",
         service_request: "Service Request URL",
         service_requestTooltip: "The URL for a service to request a connection between a collaboration and this service if the User does not have access to this service",
         service_requestError: "Requires a valid URI and Automatic connection allowed set to True",
@@ -1041,7 +1041,7 @@ I18n.translations.en = {
         service: {
             name: "Name",
             entity_id: "Entity ID",
-            abbreviation: "Abbreviation",
+            abbreviation: "Short name",
             description: "Description",
             actions: "",
         },
@@ -1228,7 +1228,7 @@ I18n.translations.en = {
             actions: "",
             name: "Name",
             entity_id: "Entity ID",
-            abbreviation: "Abbreviation",
+            abbreviation: "Short name",
             description: "Description"
         },
         serviceConnectionRequest: {
