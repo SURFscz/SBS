@@ -1904,8 +1904,8 @@ I18n.translations.nl = {
         tokens: "Tokens",
         tokenEnabled: "Token-gebaseerde introspectie ingeschakeld?",
         tokenEnabledTooltip: "Wanneer aangevinkt, mag deze dienst het introspection endpoint aanroepen om gebruikersinformatie te ontvangen",
-        pamWebSSOEnabled: "Pam-WebSSO ingeschakeld?",
-        pamWebSSOEnabledTooltip: "Wanneer aangevinkt, mag deze service de Pam-WebSSO-eindpunten aanroepen om een gebruiker in te loggen op een op een terminal gebaseerde app (bijv. ssh)",
+        pamWebSSOEnabled: "PAM weblogin ingeschakeld?",
+        pamWebSSOEnabledTooltip: "Wanneer aangevinkt, mag deze service de PAM-weblogin-eindpunten aanroepen om een gebruiker in te loggen op een op een terminal gebaseerde app (bijv. SSH)",
         tokenValue: "One-way gehashte token",
         tokenValidityDays: "Geldigheidsduur token (dagen)",
         tokenValidityDaysTooltip: "Het aantal dagen dat de gebruikerstokens geldig zijn",
@@ -1929,16 +1929,16 @@ I18n.translations.nl = {
         }
     },
     pamWebSSO: {
-        title: "Login op {{service}}",
-        info: "Login om de PIN te krijgen voor de command line interface",
+        title: "Log in op {{service}}",
+        info: "Log in voor de op de op de command line interface gevraagde pin.",
         proceed: "Login",
         enterPin: "Pin invoeren",
         loggedIn: "Je bent succesvol ingelogd.",
         enterPinInfo: "Voer de pin in op de command line interface van {{service}}.",
-        afterPin: "Na het invoeren van de pin, kan dit scherm worden gesloten.",
-        denied: "Toestemming geweigerd",
-        deniedInfo: "Helaas heb je geen toegang tot de volgende service.",
-        contact: "Neem contact op met <a href='mailto:{{support}}'>{{support}}</a> om toegang tot deze service te regelen."
+        afterPin: "Na het invoeren van de pin kan dit scherm worden gesloten.",
+        denied: "Toegang geweigerd",
+        deniedInfo: "Helaas heb je geen toegang tot de deze dienst.",
+        contact: "Neem contact op met <a href='mailto:{{support}}'>{{support}}</a> voor toegang tot deze dienst."
     }
 
 };
