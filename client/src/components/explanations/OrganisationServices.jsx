@@ -1,23 +1,20 @@
 import React from "react";
+import I18n from "i18n-js";
 
 export default function OrganisationServicesExplanation() {
-    return [
-        <section key={1} className="explanation">
-            You can add <span className="strong">Services</span> to your <span
-            className="strong">Organisation </span> and these <span className="strong">Services </span>
-            can be used by all the members of all <span
-            className="strong">Collaborations </span> in this <span
-            className="strong">Organisation </span>.
-        </section>,
-        <section key={2} className="details">
-            If the <span className="strong">Service</span> is configured to have limited access to specific <span
-            className="strong">Organisations </span> or can not be connected automatically then
-            you can not add the service to your <span className="strong">Organisation</span>.
-        </section>,
-        <section key={5} className="details">
-            Please contact
-            <a href="mailto:sram-support@surf.nl"> sram-support@surf.nl</a> if you think if a <span
-            className="strong">Service</span> is not configured correct.
-        </section>]
+    if (I18n.locale === "en") {
+        return [
+            <section key={1} className="explanation">
+                Services mandatory for all collaboration are automatically connected to all collaborations in your organisation and can thus be used by all the members of all collaborations in your organisation.
+                If the service is configured to require permission from its service administrator, it cannot be made mandatory for your organisation.
+            </section>
+        ];
+    }
+        return [
+            <section key={1} className="explanation">
+                Als een dienst verplicht is voor een organisatie, wordt deze automatisch gekoppeld aan alle samenwerkingen van die organisatie, en kan dan gebruikt worden door alle leden van de samenwerkingen van de organisatie.
+                Indien een dienstbeheerder toestemming moet geven voor het koppelen van de dienst aan een samenwerking, is het niet mogelijk de dienst verplicht te maken voor een organisatie.
+            </section>
+        ]
 
 }
