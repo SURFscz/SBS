@@ -693,9 +693,9 @@ I18n.translations.en = {
         organisation_name: "Organisation",
         organisationPlaceholder: "Select the organisation for this collaboration...",
         organisationTooltip: "Every collaboration belongs to precisely one and only one organisation",
-        tags: "Tags",
-        tagsPlaceholder: "Search or create tags",
-        tagsTooltip: "A collaboration can have multiple tags. Note that tags do not allow all characters as they can be used as Linux group names.",
+        tags: "Labels",
+        tagsPlaceholder: "Search or create labels",
+        tagsTooltip: "A collaboration can have multiple labels. Note that labels do not allow all characters as they can be used as Linux group names.",
         accepted_user_policy: "Acceptable Use Policy",
         acceptedUserPolicyPlaceholder: "The URL of the collaboration specific Acceptable Use Policy",
         role: "Role",
@@ -1514,7 +1514,7 @@ I18n.translations.en = {
             "user_tokens": "User tokens",
             "service_invitations": "Service invitation",
             "service_memberships": "Service membership",
-            "tags": "Tag"
+            "tags": "label"
         }
     },
     serviceRequest: {
