@@ -692,9 +692,9 @@ I18n.translations.nl = {
         organisation_name: "Organisatie",
         organisationPlaceholder: "Kies de organisatie voor deze samenwerking",
         organisationTooltip: "Iedere samenwerking hoort bij precies één organisatie",
-        tags: "Tags",
-        tagsPlaceholder: "Zoek of maak tags",
-        tagsTooltip: "Een samenwerking kan meerdere tags hebben. Niet alle tekens zijn toegestaan, omdat tags kunnen worden gebruikt als Linux-groepsnamen.",
+        tags: "Labels",
+        tagsPlaceholder: "Zoek of maak labels",
+        tagsTooltip: "Een samenwerking kan meerdere labels hebben. Niet alle tekens zijn toegestaan, omdat labels kunnen worden gebruikt als Linux-groepsnamen.",
         accepted_user_policy: "Acceptable Use Policy",
         acceptedUserPolicyPlaceholder: "De URL van de samenwerkingsspecifieke Acceptable Use Policy",
         role: "Rol",
@@ -1513,7 +1513,7 @@ I18n.translations.nl = {
             "user_tokens": "Gebruikerstokens",
             "service_invitations": "Dienstuitnodiging",
             "service_memberships": "Dienstlidmaatschap",
-            "tags": "Tag"
+            "tags": "Label"
         }
     },
     serviceRequest: {
