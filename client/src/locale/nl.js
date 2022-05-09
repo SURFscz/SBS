@@ -87,8 +87,8 @@ I18n.translations.nl = {
             orgCollaborations: "Samenwerkingen ({{count}})",
             coServices: "Diensten ({{count}})",
             coAdmins: "Beheerders ({{count}})",
-            users: "Gebruikers ({{count}})",
             members: "Leden ({{count}})",
+            users: "Gebruikers ({{count}})",
             serviceOrganisations: "Organisatietoegang ({{count}})",
             serviceCollaborations: "Samenwerkingen ({{count}})",
             userTokens: "Tokens ({{count}})",
@@ -1801,8 +1801,8 @@ I18n.translations.nl = {
             next: "Volgende"
         },
         update: {
-            "info1": "Volg de onderstaande stappen om je tweefactorauthenticatie bij te werken.",
-            "info2": "Je moet toegang hebben tot de authenticator-app die je momenteel gebruikt om in te loggen bij SURF Research Access Management, evenals tot de nieuwe authenticator-app die je wilt gebruiken voor toekomstige logins.",
+            info1: "Volg de onderstaande stappen om je tweefactorauthenticatie bij te werken.",
+            info2: "Je moet toegang hebben tot de authenticator-app die je momenteel gebruikt om in te loggen bij SURF Research Access Management, evenals tot de nieuwe authenticator-app die je wilt gebruiken voor toekomstige logins.",
             currentCode: "Voer de huidige authenticatiecode in",
             currentCodeInfo: "Voer de 6-cijferige authenticatiecode van je huidige authenticator-app in.",
             scanInfo: "Open je nieuwe authenticator-app en:",
@@ -1870,9 +1870,9 @@ I18n.translations.nl = {
         membership: "Lidmaatschap van {{name}} heeft geen einddatum.",
         membershipWithExpiry: "Lidmaatschap van {{name}} verloopt op {{date}}.",
         expiredMembership: "Dit lidmaatschap is verlopen op {{date}}. Pas de einddatum van het lidmaatschap aan om {{name}} weer lid te maken.",
+        member: "Lidmaatschap",
         expiryDate: "Einddatum",
         expiryDateTooltip: "De einddatum van dit lidmaatschap. Hierna verloopt het lidmaatschap en kan de gebruiker geen gebruikmaken van de diensten van deze samenwerking.",
-        member: "Lidmaatschap",
         update: "Opslaan",
         status: {
             name: "Lidmaatschap",
