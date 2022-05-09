@@ -66,8 +66,8 @@ I18n.translations.en = {
     home: {
         sram: "SURF Research Access Management",
         edit: "Edit",
-        unsuspend: "Revert suspension",
         history: "History",
+        unsuspend: "Revert suspension",
         details: "Details",
         backToHome: "Back to home",
         firstTime: "Onboarding",
@@ -525,7 +525,6 @@ I18n.translations.en = {
             hashedTokenTooltip: "The token to use in the authorization header",
             tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once. After pressing <i>Save</i> you won't be able to see it again.",
             required: "The {{attribute}} is required for a token",
-
             flash: {
                 created: "Created token {{name}}",
                 updated: "Updated token {{name}}",
@@ -1757,7 +1756,7 @@ I18n.translations.en = {
         help: {
             title: "Help & Support",
             subTitle: "Feel free to reach out to <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
-        },
+        }
     },
     tooltips: {
         members: "Composition of this collaboration",
@@ -1921,7 +1920,6 @@ I18n.translations.en = {
             created: "Token {{name}} was added",
             updated: "Token {{name}} is updated",
         },
-
         reset: {
             confirmation: "Are you sure you want to reset the token for {{name}}?",
             success: "Token has been reset.",
@@ -1942,6 +1940,7 @@ I18n.translations.en = {
         deniedInfo: "Unfortunately, you don't have access to this service.",
         contact: "Please contact <a href='mailto:{{support}}'>{{support}}</a> to arrange access to this service."
     }
+
 };
 
 export default I18n.translations.en;
