@@ -30,14 +30,14 @@ def _get_pam_sso_session(session_id):
     return pam_sso_session
 
 
-def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin=True):
+def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin, validate_user):
     user = pam_sso_session.user
     service = pam_sso_session.service
 
-    if "user" not in session or user.id != current_user_id():
+    if validate_user and ("user" not in session or user.id != current_user_id()):
         return {"result": "FAIL", "debug_msg": f"User {user.uid} is not authenticated"}
 
-    if not user_service(service.id, False):
+    if validate_user and not user_service(service.id, False):
         return {"result": "FAIL", "debug_msg": f"User {user.uid} has no access to service {service.name}"}
 
     if validate_pin and pam_sso_session.pin != pin:
@@ -53,7 +53,7 @@ def find_by_session_id(session_id):
     pam_sso_session = _get_pam_sso_session(session_id)
     res = {"service": pam_sso_session.service}
     if "user" in session and not session["user"]["guest"]:
-        res["validation"] = _validate_pam_sso_session(pam_sso_session, None, False)
+        res["validation"] = _validate_pam_sso_session(pam_sso_session, None, False, True)
         res["pin"] = pam_sso_session.pin
     return res, 200
 
@@ -113,7 +113,7 @@ def check_pin():
         return {"result": "TIMEOUT", "debug_msg": f"Pam session {session_id} has expired"}, 201
 
     user = pam_sso_session.user
-    validation = _validate_pam_sso_session(pam_sso_session, pin)
+    validation = _validate_pam_sso_session(pam_sso_session, pin, True, False)
     if validation["result"] == "SUCCESS":
         db.session.delete(pam_sso_session)
 
