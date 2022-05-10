@@ -262,7 +262,7 @@ class App extends React.Component {
                                    }
                                    return <ProtectedRoute
                                        currentUser={currentUser}
-                                       Component={Home} {...props}/>
+                                       Component={Home} config={config} {...props}/>
                                }}/>
 
                         <Route exact path="/welcome"
