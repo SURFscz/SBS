@@ -14,7 +14,7 @@ export default function ApiKeysExplanation() {
                 <code>curl -H "Authorization: bearer $api_key_value" "https://sram.surf.nl/api/collaborations/v1"</code>
             </section>,
             <section key={4} className="details">
-                Refer to the <a href="https://edu.nl/rxeb6">documentation</a> for details.
+                Refer to the <a target="_blank" rel="noreferrer" href="https://edu.nl/rxeb6">documentation</a> for details.
             </section>
         ];
     }
@@ -29,7 +29,7 @@ export default function ApiKeysExplanation() {
                 <code>curl -H "Authorization: bearer $api_key_value" "https://sram.surf.nl/api/collaborations/v1"</code>
             </section>,
             <section key={4} className="details">
-                Zie de <a href="https://edu.nl/rxeb6">documentation</a> voor details.
+                Zie de <a target="_blank" rel="noreferrer" href="https://edu.nl/rxeb6">documentation</a> voor details.
             </section>
         ]
 
