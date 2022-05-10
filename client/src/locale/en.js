@@ -1513,7 +1513,7 @@ I18n.translations.en = {
             "user_tokens": "User tokens",
             "service_invitations": "Service invitation",
             "service_memberships": "Service membership",
-            "tags": "label"
+            "tags": "Label"
         }
     },
     serviceRequest: {
