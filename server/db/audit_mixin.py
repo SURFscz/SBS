@@ -147,9 +147,10 @@ class AuditMixin(JsonSerializableBase):
 
     @classmethod
     def __declare_last__(cls):
-        event.listen(cls, "after_insert", cls.audit_insert)
-        event.listen(cls, "after_delete", cls.audit_delete)
-        event.listen(cls, "after_update", cls.audit_update)
+        if not hasattr(cls, "audit_log_exclude"):
+            event.listen(cls, "after_insert", cls.audit_insert)
+            event.listen(cls, "after_delete", cls.audit_delete)
+            event.listen(cls, "after_update", cls.audit_update)
 
         table_name = cls.__dict__["__tablename__"]
         if table_name in relationship_configuration:

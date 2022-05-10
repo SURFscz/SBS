@@ -11,10 +11,11 @@ import pyotp
 import qrcode
 from authlib.jose import jwk
 from flask import Blueprint, current_app, redirect, session, request as current_request
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, TooManyRequests
 
 from server.api.base import query_param, json_endpoint
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
+from server.auth.rate_limit import rate_limit_reached, clear_rate_limit
 from server.auth.security import current_user_id, generate_token
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
@@ -140,11 +141,20 @@ def get2fa_proxy_authz():
 @json_endpoint
 def verify2fa():
     user = User.query.filter(User.id == current_user_id()).one()
+    if rate_limit_reached(user):
+        user.suspended = True
+        db.session.merge(user)
+        db.session.commit()
+        session.clear()
+
+        raise TooManyRequests(f"Suspended user {user.name} for rate limiting TOTP")
+
     secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
     valid_totp = _do_verify_2fa(user, secret)
     if valid_totp:
         location = session.get("original_destination", current_app.app_config.base_url)
         in_proxy_flow = session.get("in_proxy_flow", False)
+        clear_rate_limit(user)
         if in_proxy_flow:
             oidc_config = current_app.app_config.oidc
             id_token = _construct_jwt(user, str(uuid4()), oidc_config)

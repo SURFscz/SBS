@@ -64,7 +64,7 @@ yarn analyze
 
 ### [API](#api)
 
-See the [Wiki](https://github.com/SURFscz/SBS/wiki) for the API documentation and data model.
+See the [Swagger](https://test.sram.surf.nl/apidocs/) for the API documentation and data model.
 
 To see all routes:
 ```
@@ -106,6 +106,12 @@ See the https://github.com/SURFscz/SCZ-deploy project
 ### [Upgrade](#upgrade)
 
 See https://github.com/simion/pip-upgrader for upgrading automatically
+```
+source .venv/bin/activate
+pip install pip-upgrader
+cd server
+pip-upgrade requirements/test.txt --dry-run
+```
 
 ### [Swagger](#swagger)
 
@@ -114,3 +120,12 @@ See http://localhost:8080/apidocs/ and https://test.sram.surf.nl/apidocs/
 ### [SURFSecureID](#surfsecureid)
 
 See the /config/saml_test configuration and the https://github.com/SURFscz/SCZ-deploy project
+
+### [flash](#flash)
+
+To open a flash terminal session:
+```
+source .venv/bin/activate
+cd server
+CONFIG='config/test_config.yml' FLASK_APP='__main__.py' flask shell
+```

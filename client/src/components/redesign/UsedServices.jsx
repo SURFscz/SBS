@@ -20,7 +20,6 @@ import {setFlash} from "../../utils/Flash";
 import InputField from "../InputField";
 import SpinnerField from "./SpinnerField";
 import ConfirmationDialog from "../ConfirmationDialog";
-import ServicesExplanation from "../explanations/Services";
 import Logo from "./Logo";
 import CheckBox from "../CheckBox";
 import MissingServices from "../MissingServices";
@@ -66,7 +65,7 @@ class UsedServices extends React.Component {
             const filteredServices = services
                 .filter(service => {
                     return (service.allowed_organisations.some(org => org.id === collaboration.organisation_id)
-                        || service.access_allowed_for_all) && servicesInUse.indexOf(service.id) === -1
+                            || service.access_allowed_for_all) && servicesInUse.indexOf(service.id) === -1
                         && (user.admin || !collaboration.organisation.services_restricted);
                 });
             this.setState({services: filteredServices, loading: false});
@@ -276,11 +275,11 @@ class UsedServices extends React.Component {
         if (service.usedService && service.connectionRequest) {
             return <div className="actions">
                 <Button className={"white"}
-                           onClick={() => this.resendServiceConnectionRequest(service, collaboration)}
-                           txt={I18n.t("models.services.resendConnectionRequest")}/>
+                        onClick={() => this.resendServiceConnectionRequest(service, collaboration)}
+                        txt={I18n.t("models.services.resendConnectionRequest")}/>
                 <Button className={"white"}
-                           onClick={() => this.removeServiceConnectionRequest(service, collaboration)}
-                           txt={I18n.t("models.services.deleteConnectionRequest")}/>
+                        onClick={() => this.removeServiceConnectionRequest(service, collaboration)}
+                        txt={I18n.t("models.services.deleteConnectionRequest")}/>
             </div>
         }
         if (service.usedService && !service.connectionRequest) {
@@ -430,8 +429,6 @@ class UsedServices extends React.Component {
                           columns={columns}
                           loading={loading}
                           title={titleUsed}
-                          explain={<ServicesExplanation/>}
-                          explainTitle={I18n.t("explain.services")}
                           {...this.props}/>
                 {!isEmpty(requestedServices) && <Entities entities={requestedServices}
                                                           modelName="servicesRequested"

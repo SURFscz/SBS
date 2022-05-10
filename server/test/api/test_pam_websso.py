@@ -14,8 +14,8 @@ class TestPamWebSSO(AbstractTest):
         self.assertEqual(res["service"]["name"], service_storage_name)
         self.assertFalse("validation" in res)
 
-    def test_get_400(self):
-        self.get("/pam-websso/nope", with_basic_auth=False, response_status_code=400)
+    def test_get_404(self):
+        self.get("/pam-websso/nope", with_basic_auth=False, response_status_code=404)
 
     def test_get_with_pin(self):
         self.login("urn:peter")
@@ -26,7 +26,7 @@ class TestPamWebSSO(AbstractTest):
 
     def test_get_expired(self):
         self.expire_pam_session(pam_session_id)
-        self.get(f"/pam-websso/{pam_session_id}", with_basic_auth=False, response_status_code=400)
+        self.get(f"/pam-websso/{pam_session_id}", with_basic_auth=False, response_status_code=404)
 
     def test_start(self):
         res = self.post("/pam-websso/start",
@@ -38,6 +38,9 @@ class TestPamWebSSO(AbstractTest):
 
         self.assertEqual(res["result"], "OK")
         self.assertEqual(res["cached"], False)
+
+        res = self.get(f"/pam-websso/{res['session_id']}", with_basic_auth=False)
+        self.assertEqual(res["service"]["name"], service_storage_name)
 
     def test_start_404(self):
         self.post("/pam-websso/start",
@@ -67,6 +70,8 @@ class TestPamWebSSO(AbstractTest):
                         with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("SUCCESS", res["result"])
+        # The session must be removed
+        self.get(f"/pam-websso/{pam_session_id}", with_basic_auth=False, response_status_code=404)
 
     def test_check_pin_wrong_pin(self):
         self.login("urn:peter")
