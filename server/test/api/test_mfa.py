@@ -3,7 +3,6 @@ import pyotp
 import responses
 from flask import current_app
 
-from server.db.db import db
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
 from server.tools import read_file
@@ -35,19 +34,19 @@ class TestMfa(AbstractTest):
         self.assertEqual(secret, mary.second_factor_auth)
 
     def test_2fa_invalid_totp(self):
-        mary = User.query.filter(User.uid == "urn:mary").first()
-        mary.second_factor_auth = pyotp.random_base32()
-        db.session.merge(mary)
-        db.session.commit()
+        AbstractTest.set_second_factor_auth("urn:mary")
 
         self.login("urn:mary")
         self.post("/api/mfa/verify2fa", {"totp": "123456"}, with_basic_auth=False, response_status_code=400)
 
+    def test_totp_backdoor(self):
+        AbstractTest.set_second_factor_auth("urn:john")
+        self.login("urn:john")
+        res = self.post("/api/mfa/verify2fa", {"totp": "000000"}, with_basic_auth=False)
+        self.assertEqual(self.app.app_config.base_url, res["location"])
+
     def test_2fa_invalid_totp_rate_limit(self):
-        mary = User.query.filter(User.uid == "urn:mary").first()
-        mary.second_factor_auth = pyotp.random_base32()
-        db.session.merge(mary)
-        db.session.commit()
+        AbstractTest.set_second_factor_auth("urn:mary")
 
         self.login("urn:mary")
         config = self.app.app_config
@@ -143,12 +142,9 @@ class TestMfa(AbstractTest):
         self.login("urn:mary")
         secret = self.get("/api/mfa/get2fa")["secret"]
 
-        mary = User.query.filter(User.uid == "urn:mary").one()
-        mary.second_factor_auth = pyotp.random_base32()
-        db.session.merge(mary)
-        db.session.commit()
+        second_factor_auth = AbstractTest.set_second_factor_auth("urn:mary")
 
-        body = {"current_totp": pyotp.TOTP(mary.second_factor_auth).now(),
+        body = {"current_totp": pyotp.TOTP(second_factor_auth).now(),
                 "new_totp_value": pyotp.TOTP(secret).now()}
         self.post("/api/mfa/update2fa", body=body)
 
@@ -159,12 +155,9 @@ class TestMfa(AbstractTest):
         self.login("urn:mary")
         self.get("/api/mfa/get2fa")["secret"]
 
-        mary = User.query.filter(User.uid == "urn:mary").one()
-        mary.second_factor_auth = pyotp.random_base32()
-        db.session.merge(mary)
-        db.session.commit()
+        second_factor_auth = AbstractTest.set_second_factor_auth("urn:mary")
 
-        body = {"current_totp": pyotp.TOTP(mary.second_factor_auth).now(),
+        body = {"current_totp": pyotp.TOTP(second_factor_auth).now(),
                 "new_totp_value": "123456"}
         res = self.post("/api/mfa/update2fa", body=body, response_status_code=400)
         self.assertEqual(res["new_totp"], True)
