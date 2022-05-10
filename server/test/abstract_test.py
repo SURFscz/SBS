@@ -221,3 +221,11 @@ class AbstractTest(TestCase):
         pam_websso.created_at = datetime.datetime.utcnow() - datetime.timedelta(days=500)
         db.session.merge(pam_websso)
         db.session.commit()
+
+    @staticmethod
+    def set_second_factor_auth(urn="urn:mary"):
+        user = User.query.filter(User.uid == urn).first()
+        user.second_factor_auth = pyotp.random_base32()
+        db.session.merge(user)
+        db.session.commit()
+        return user.second_factor_auth

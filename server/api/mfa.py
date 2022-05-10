@@ -16,7 +16,7 @@ from werkzeug.exceptions import Forbidden, TooManyRequests
 from server.api.base import query_param, json_endpoint
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
 from server.auth.rate_limit import rate_limit_reached, clear_rate_limit
-from server.auth.security import current_user_id, generate_token
+from server.auth.security import current_user_id, generate_token, is_application_admin
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.domain import User
@@ -97,6 +97,14 @@ def _do_verify_2fa(user: User, secret):
         return False
 
 
+def _totp_backdoor():
+    enabled = is_application_admin() and current_app.app_config.feature.admin_platform_backdoor_totp
+    if enabled:
+        data = current_request.get_json()
+        return data["totp"] == "000000"
+    return False
+
+
 @mfa_api.route("/token_reset_request", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def token_reset_request():
@@ -151,7 +159,8 @@ def verify2fa():
 
     secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
     valid_totp = _do_verify_2fa(user, secret)
-    if valid_totp:
+
+    if valid_totp or _totp_backdoor():
         location = session.get("original_destination", current_app.app_config.base_url)
         in_proxy_flow = session.get("in_proxy_flow", False)
         clear_rate_limit(user)
