@@ -21,12 +21,12 @@ pam_websso_api = Blueprint("pam_websso_api", __name__, url_prefix="/pam-websso")
 def _get_pam_sso_session(session_id):
     pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == session_id).first()
     if not pam_sso_session:
-        raise NotFound("session_id invalid")
+        raise NotFound(f"No PamSSOSession with session_id {session_id} found")
     timeout = current_app.app_config.pam_web_sso.session_timeout_seconds
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=timeout)
     if pam_sso_session.created_at < seconds_ago:
         db.session.delete(pam_sso_session)
-        raise NotFound("session has expired")
+        raise NotFound(f"PamSSOSession with session_id {session_id} is expired")
     return pam_sso_session
 
 
@@ -72,7 +72,9 @@ def start():
 
     logger.debug(f"Start PamWebSSO for service {service.name} with data {str(data)}")
 
-    user = User.query.filter_by(**filters).one()
+    user = User.query.filter_by(**filters).first()
+    if not user:
+        raise NotFound(f"User {filters} not found")
 
     last_login_date = user.last_login_date
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
@@ -90,6 +92,7 @@ def start():
     db.session.add(pam_sso_session)
 
     logger.debug(f"PamWebSSO user {user.uid} new session")
+
     return {"result": "OK",
             "session_id": pam_sso_session.session_id,
             "challenge": f"{current_app.app_config.base_url}/gui-pam-websso/login/{pam_sso_session.session_id}",
@@ -110,9 +113,7 @@ def check_pin():
         return {"result": "TIMEOUT", "debug_msg": f"Pam session {session_id} has expired"}, 201
 
     user = pam_sso_session.user
-
     validation = _validate_pam_sso_session(pam_sso_session, pin)
-
     if validation["result"] == "SUCCESS":
         db.session.delete(pam_sso_session)
 

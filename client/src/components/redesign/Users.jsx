@@ -12,6 +12,8 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import debounce from "lodash.debounce";
 import SpinnerField from "./SpinnerField";
 import InstituteColumn from "./InstitueColumn";
+import {ReactComponent as HandIcon} from "../../icons/toys-hand-ghost.svg";
+import {emitImpersonation} from "../../utils/Impersonation";
 
 
 class Users extends React.Component {
@@ -93,8 +95,19 @@ class Users extends React.Component {
             {
                 key: "uid",
                 header: I18n.t("models.allUsers.uid")
-            }]
-        let count = users.length;
+            }];
+        const showImpersonation = currentUser.admin && this.props.config.impersonation_allowed;
+        if (showImpersonation) {
+            columns.push({
+                nonSortable: true,
+                key: "icon",
+                hasLink: true,
+                header: "",
+                mapper: user => currentUser.id !== user.id ? <HandIcon className="impersonate"
+                                          onClick={() => emitImpersonation(user, this.props.history)}/> : null
+            })
+        }
+        const count = users.length;
         return (<div className="mod-users">
             {searching && <SpinnerField/>}
             <Entities entities={users}
