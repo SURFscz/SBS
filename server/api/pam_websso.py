@@ -61,9 +61,10 @@ def find_by_session_id(session_id):
 @pam_websso_api.route("/start", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def start():
+    service = validate_service_token("pam_web_sso_enabled")
+
     logger = ctx_logger("pam_websso")
 
-    service = validate_service_token("pam_web_sso_enabled")
     data = current_request.get_json()
     user_id = data["user_id"]
     attribute = data["attribute"]
@@ -102,8 +103,10 @@ def start():
 @pam_websso_api.route("/check-pin", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def check_pin():
-    logger = ctx_logger("pam_websso")
     service = validate_service_token("pam_web_sso_enabled")
+
+    logger = ctx_logger("pam_websso")
+
     data = current_request.get_json()
     session_id = data["session_id"]
     pin = data["pin"]
