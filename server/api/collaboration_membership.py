@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 from datetime import datetime
 
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, jsonify
 
 from server.api.base import json_endpoint
 from server.auth.security import confirm_collaboration_admin, current_user_uid, \
@@ -94,6 +94,11 @@ def create_collaboration_membership_role():
                                                        role="admin",
                                                        created_by=current_user_uid(),
                                                        updated_by=current_user_uid())
-
     collaboration_membership = db.session.merge(collaboration_membership)
-    return collaboration_membership, 201
+    collaboration_membership_json = jsonify(collaboration_membership).json
+
+    for group in [group for group in collaboration.groups if group.auto_provision_members]:
+        group.collaboration_memberships.append(collaboration_membership)
+        db.session.merge(group)
+
+    return collaboration_membership_json, 201

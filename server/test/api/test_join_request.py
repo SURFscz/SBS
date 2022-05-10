@@ -7,7 +7,7 @@ from server.api.base import STATUS_APPROVED, STATUS_DENIED
 from server.db.db import db
 from server.db.domain import JoinRequest, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_ai_computing_uuid, uu_disabled_join_request_name
+from server.test.seed import collaboration_ai_computing_uuid, uu_disabled_join_request_name, uva_research_name
 
 
 class TestJoinRequest(AbstractTest):
@@ -137,3 +137,11 @@ class TestJoinRequest(AbstractTest):
         self.delete("/api/join_requests", primary_key=join_request_id, with_basic_auth=False,
                     response_status_code=400)
         self.assertEqual(pre_count, JoinRequest.query.count())
+
+    def test_join_request_auto_provisioning_groups(self):
+        join_request_hash = self._join_request_by_user("urn:james").hash
+        self.login("urn:john")
+        self.put("/api/join_requests/accept", body={"hash": join_request_hash})
+        coll = self.find_entity_by_name(Collaboration, uva_research_name)
+        is_james_member = [m.user for m in coll.groups[0].collaboration_memberships if m.user.uid == "urn:james"]
+        self.assertTrue(is_james_member)

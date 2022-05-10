@@ -122,11 +122,15 @@ def approve_join_request():
                                                        updated_by=current_user_uid())
 
     join_request.status = STATUS_APPROVED
-    db.session.merge(collaboration_membership)
+    collaboration_membership = db.session.merge(collaboration_membership)
     db.session.merge(join_request)
+    db.session.commit()
 
-    res = {'collaboration_id': collaboration.id, 'user_id': user_id}
-    return res, 201
+    for group in [group for group in collaboration.groups if group.auto_provision_members]:
+        group.collaboration_memberships.append(collaboration_membership)
+        db.session.merge(group)
+
+    return {'collaboration_id': collaboration.id, 'user_id': user_id}, 201
 
 
 @join_request_api.route("/decline", methods=["PUT"], strict_slashes=False)

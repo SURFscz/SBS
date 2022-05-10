@@ -3,7 +3,7 @@ import time
 
 from server.db.domain import CollaborationMembership, User, Collaboration
 from server.test.abstract_test import AbstractTest
-from server.test.seed import ai_computing_name, sarah_name
+from server.test.seed import ai_computing_name, sarah_name, uva_research_name
 
 
 class TestCollaborationMembership(AbstractTest):
@@ -67,6 +67,19 @@ class TestCollaborationMembership(AbstractTest):
             .filter(CollaborationMembership.collaboration_id == collaboration.id) \
             .one()
         self.assertEqual("admin", collaboration_membership.role)
+
+    def test_create_collaboration_membership_auto_provisioning_group(self):
+        self.login("urn:paul")
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        is_paul_member = [m.user for m in collaboration.groups[0].collaboration_memberships if m.user.uid == "urn:paul"]
+        self.assertFalse(is_paul_member)
+
+        self.post("/api/collaboration_memberships",
+                  body={"collaborationId": collaboration.id},
+                  with_basic_auth=False)
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        is_paul_member = [m.user for m in collaboration.groups[0].collaboration_memberships if m.user.uid == "urn:paul"]
+        self.assertTrue(is_paul_member)
 
     def test_update_expiry_date(self):
         self.login("urn:admin")
