@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from server.db.db import db
 from server.db.domain import PamSSOSession
 from server.test.abstract_test import AbstractTest
-from server.test.seed import pam_session_id, service_storage_name, service_storage_token
+from server.test.seed import pam_session_id, service_storage_name, service_storage_token, invalid_service_pam_session_id
 
 
 class TestPamWebSSO(AbstractTest):
@@ -23,6 +23,16 @@ class TestPamWebSSO(AbstractTest):
         self.assertEqual(service_storage_name, res["service"]["name"])
         self.assertEqual("1234", res["pin"])
         self.assertEqual("SUCCESS", res["validation"]["result"])
+
+    def test_get_session_different_user(self):
+        self.login("urn:sarah")
+        res = self.get(f"/pam-websso/{pam_session_id}", with_basic_auth=False)
+        self.assertEqual("FAIL", res["validation"]["result"])
+
+    def test_check_pin_no_service_access(self):
+        self.login("urn:james")
+        res = self.get(f"/pam-websso/{invalid_service_pam_session_id}", with_basic_auth=False)
+        self.assertEqual("FAIL", res["validation"]["result"])
 
     def test_get_expired(self):
         self.expire_pam_session(pam_session_id)
@@ -83,23 +93,6 @@ class TestPamWebSSO(AbstractTest):
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("FAIL", res["result"])
 
-    # def test_check_pin_not_authenticated(self):
-    #     res = self.post("/pam-websso/check-pin",
-    #                     body={"session_id": pam_session_id,
-    #                           "pin": "1234"},
-    #                     with_basic_auth=False,
-    #                     headers={"Authorization": f"bearer {service_storage_token}"})
-    #     self.assertEqual("FAIL", res["result"])
-
-    # def test_check_pin_different_user(self):
-    #     self.login("urn:sarah")
-    #     res = self.post("/pam-websso/check-pin",
-    #                     body={"session_id": pam_session_id,
-    #                           "pin": "1234"},
-    #                     with_basic_auth=False,
-    #                     headers={"Authorization": f"bearer {service_storage_token}"})
-    #     self.assertEqual("FAIL", res["result"])
-    #
     def test_check_pin_time_out(self):
         self.login("urn:peter")
         pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == pam_session_id).one()
@@ -113,12 +106,3 @@ class TestPamWebSSO(AbstractTest):
                         with_basic_auth=False,
                         headers={"Authorization": f"bearer {service_storage_token}"})
         self.assertEqual("TIMEOUT", res["result"])
-
-    # def test_check_pin_no_service_access(self):
-    #     self.login("urn:james")
-    #     res = self.post("/pam-websso/check-pin",
-    #                     body={"session_id": invalid_service_pam_session_id,
-    #                           "pin": "1234"},
-    #                     with_basic_auth=False,
-    #                     headers={"Authorization": f"bearer {service_storage_token}"})
-    #     self.assertEqual("FAIL", res["result"])
