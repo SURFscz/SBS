@@ -5,7 +5,7 @@ import {Player} from '@lottiefiles/react-lottie-player';
 import notFound from "../lotties/not_found.json"
 import I18n from "i18n-js";
 
-export default function NotFound({config,location}) {
+export default function NotFound({config}) {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const errorMessage = urlSearchParams.get("eo") || "msg";
     return (

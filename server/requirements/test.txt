@@ -5,5 +5,5 @@ flask-testing==0.8.1
 flask-webtest==0.0.9
 hbmqtt2==0.9.7
 pytest-cov==3.0.0
-pytest==6.2.5
-responses==0.16.0
+pytest==7.1.2
+responses==0.20.0

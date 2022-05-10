@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from flask import Blueprint, request as current_request, current_app, session
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import NotFound
 
 from server.api.base import json_endpoint
 from server.api.service import user_service
@@ -21,11 +21,12 @@ pam_websso_api = Blueprint("pam_websso_api", __name__, url_prefix="/pam-websso")
 def _get_pam_sso_session(session_id):
     pam_sso_session = PamSSOSession.query.filter(PamSSOSession.session_id == session_id).first()
     if not pam_sso_session:
-        raise BadRequest("session_id invalid")
+        raise NotFound("session_id invalid")
     timeout = current_app.app_config.pam_web_sso.session_timeout_seconds
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=timeout)
     if pam_sso_session.created_at < seconds_ago:
-        raise BadRequest("session has expired")
+        db.session.delete(pam_sso_session)
+        raise NotFound("session has expired")
     return pam_sso_session
 
 
@@ -105,12 +106,15 @@ def check_pin():
     pin = data["pin"]
     try:
         pam_sso_session = _get_pam_sso_session(session_id)
-    except BadRequest:
+    except NotFound:
         return {"result": "TIMEOUT", "debug_msg": f"Pam session {session_id} has expired"}, 201
 
     user = pam_sso_session.user
 
     validation = _validate_pam_sso_session(pam_sso_session, pin)
+
+    if validation["result"] == "SUCCESS":
+        db.session.delete(pam_sso_session)
 
     logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {str(validation)}")
 

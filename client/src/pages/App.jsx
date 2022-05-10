@@ -210,8 +210,9 @@ class App extends React.Component {
 
                         <Route exact path="/landing"
                                render={props => {
-                                   if (currentUser.guest) {
-                                       return <Login user={currentUser} {...props}/>;
+                                   const rateLimited = getParameterByName("rate-limited", window.location.search)
+                                   if (currentUser.guest || rateLimited) {
+                                       return <Login user={currentUser} {...props} rateLimited={rateLimited}/>;
                                    }
                                    const state = getParameterByName("state", window.location.search);
                                    if (isEmpty(state)) {

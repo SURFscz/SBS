@@ -186,6 +186,7 @@ class Tag(Base, db.Model):
     tag_value = db.Column("tag_value", db.Text(), nullable=False)
     collaborations = db.relationship("Collaboration", secondary=collaboration_tags_association, lazy="select",
                                      back_populates="tags")
+    audit_log_exclude = True
 
 
 class Collaboration(Base, db.Model, LogoMixin):
@@ -665,3 +666,5 @@ class PamSSOSession(Base, db.Model):
     service = db.relationship("Service")
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
+
+    audit_log_exclude = True

@@ -563,7 +563,6 @@ def upgrade_super_user():
 
 @user_api.route("/logout", strict_slashes=False)
 def logout():
-    session["user"] = None
     session.clear()
     return {}, 200
 
