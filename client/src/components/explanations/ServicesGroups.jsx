@@ -9,7 +9,7 @@ export default function ServiceGroupsExplanation() {
                 For example, if a service requires users to be in the group 'Create files' to be authorized to create new files in the service, a service admin can provision collaborations that allow access to that service with a group with that name. The collaboration admin can then provision the group with members.
             </section>,
             <section key={2} className="details">
-                Refer to the <a href="https://edu.nl/e9x8x">documentation</a> for details.
+                Refer to the <a target="_blank" rel="noreferrer" href="https://edu.nl/e9x8x">documentation</a> for details.
             </section>
         ];
     }
@@ -19,7 +19,7 @@ export default function ServiceGroupsExplanation() {
                 Bijvoorbeeld, een dienst vereist dat gebruikers lid zijn van de groep 'bestanden maken' om geautoriseerd te zijn bestanden te maken in die dienst. De dienstbeheerder kan samenwerkingen die toegang tot de dienst toestaan voorzien van die groep. De samenwerkingsbeheerder kan de groepen dan vullen met leden.
             </section>,
             <section key={2} className="details">
-                Zie de <a href="https://edu.nl/e9x8x">documentatie</a> voor details.
+                Zie de <a target="_blank" rel="noreferrer" href="https://edu.nl/e9x8x">documentatie</a> voor details.
             </section>
         ]
 
