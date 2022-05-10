@@ -5,6 +5,11 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export default class Explain extends React.Component {
 
+    innerClose = () => {
+        const {close} = this.props;
+        setTimeout(close, 200);
+    }
+
     render() {
         const {close, isVisible, subject, children} = this.props;
         if (isVisible) {
@@ -13,8 +18,8 @@ export default class Explain extends React.Component {
         return (
             <div className={`mod-explain ${isVisible ? "" : "hide"}`}
                  tabIndex="1"
-                 onBlur={close}
-                 onKeyDown={e => e.keyCode === 27 && close()}
+                 onBlur={this.innerClose}
+                 onKeyDown={e => e.keyCode === 27 && this.innerClose()}
                  ref={ref => this.main = ref}>
                 <section className="container">
                     <section className="header">
