@@ -20,7 +20,7 @@ export default function ApiKeysExplanation() {
     }
         return [
             <section key={1} className="explanation">
-                An API-sleutel is benodigd om de API van SURF research access management te gebruiken in een eigen script.
+                Een API-sleutel is benodigd om de API van SURF research access management te gebruiken in een eigen script.
             </section>,
             <section key={2} className="details">
                 De waarde van de API-sleutel moet als authorization header van de HTTP-aanroep van de API gebruikt worden:
