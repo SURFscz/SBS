@@ -442,7 +442,7 @@ class App extends React.Component {
                                    reloadMe={this.refreshUserMemberships}
                                    {...props}/>}/>
 
-                        <Route path="/pam-websso/login/:session_id"
+                        <Route path="/gui-pam-websso/login/:session_id"
                                render={props => <PamWebSSO user={currentUser} {...props}/>}/>
 
                         <Route path="/service-denied" render={props => <ServiceDenied {...props}/>}/>
