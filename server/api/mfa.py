@@ -16,7 +16,7 @@ from werkzeug.exceptions import Forbidden, TooManyRequests
 from server.api.base import query_param, json_endpoint
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
 from server.auth.rate_limit import rate_limit_reached, clear_rate_limit
-from server.auth.security import current_user_id, generate_token, is_application_admin
+from server.auth.security import current_user_id, generate_token, is_admin_user
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.domain import User
@@ -81,11 +81,19 @@ def _do_get2fa(schac_home_organisation, user_identifier):
     return {"qr_code_base64": img_str, "secret": secret, "idp_name": idp_name}, 200
 
 
+def _totp_backdoor(user):
+    enabled = is_admin_user(user) and current_app.app_config.feature.admin_platform_backdoor_totp
+    if enabled:
+        data = current_request.get_json()
+        return data["totp"] == "000000"
+    return False
+
+
 def _do_verify_2fa(user: User, secret):
     data = current_request.get_json()
     totp_value = data["totp"]
     totp = pyotp.TOTP(secret)
-    if totp.verify(totp_value, valid_window=1):
+    if totp.verify(totp_value, valid_window=1) or _totp_backdoor(user):
         if not user.second_factor_auth:
             user.second_factor_auth = secret
         user.last_login_date = datetime.datetime.now()
@@ -95,14 +103,6 @@ def _do_verify_2fa(user: User, secret):
         return True
     else:
         return False
-
-
-def _totp_backdoor():
-    enabled = is_application_admin() and current_app.app_config.feature.admin_platform_backdoor_totp
-    if enabled:
-        data = current_request.get_json()
-        return data["totp"] == "000000"
-    return False
 
 
 @mfa_api.route("/token_reset_request", methods=["GET"], strict_slashes=False)
@@ -160,7 +160,7 @@ def verify2fa():
     secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
     valid_totp = _do_verify_2fa(user, secret)
 
-    if valid_totp or _totp_backdoor():
+    if valid_totp:
         location = session.get("original_destination", current_app.app_config.base_url)
         in_proxy_flow = session.get("in_proxy_flow", False)
         clear_rate_limit(user)
