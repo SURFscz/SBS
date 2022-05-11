@@ -104,7 +104,8 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
     confirm_write_access(override_func=override_func)
     query = Service.query \
         .options(selectinload(Service.allowed_organisations)) \
-        .options(selectinload(Service.service_connection_requests))
+        .options(selectinload(Service.service_connection_requests)) \
+        .options(selectinload(Service.ip_networks))
 
     if restrict_for_current_user:
         query = query.join(Service.service_memberships) \
