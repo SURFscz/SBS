@@ -7,7 +7,7 @@ from server.test.seed import sarah_name, service_wiki_entity_id, uuc_name, ai_co
 
 class TestPlsc(AbstractTest):
 
-    def test_fetch(self):
+    def test_sync_fetch(self):
         res = self.get("/api/plsc/sync")
         self.assertEqual(3, len(res["organisations"]))
         logo = res["organisations"][0]["logo"]
@@ -68,3 +68,11 @@ class TestPlsc(AbstractTest):
 
         group_membership = ai_researchers["collaboration_memberships"][0]
         self.assertIsNotNone(group_membership["user_id"])
+
+    def test_ipranges_fetch(self):
+        res = self.get("/api/plsc/ip_ranges")
+        self.assertTrue("service_ipranges" in res)
+        self.assertEqual(3, len(res["service_ipranges"]))
+        self.assertTrue("192.0.2.0/24" in res["service_ipranges"])
+        self.assertTrue("2001:db8:0:0::/64" in res["service_ipranges"])
+        self.assertTrue("2001:db8:1:0::/64" in res["service_ipranges"])

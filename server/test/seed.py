@@ -13,7 +13,7 @@ from server.db.defaults import default_expiry_date
 from server.db.domain import User, Organisation, OrganisationMembership, Service, Collaboration, \
     CollaborationMembership, JoinRequest, Invitation, Group, OrganisationInvitation, ApiKey, CollaborationRequest, \
     ServiceConnectionRequest, SuspendNotification, Aup, SchacHomeOrganisation, SshKey, ServiceGroup, ServiceInvitation, \
-    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession
+    ServiceMembership, ServiceAup, UserToken, UserIpNetwork, Tag, PamSSOSession, IpNetwork
 
 collaboration_request_name = "New Collaboration"
 
@@ -352,6 +352,12 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                       description="Wiki group",
                                       service=wiki)
     _persist(db, service_group_mail, service_group_wiki)
+
+    service_iprange_cloud_v4 = IpNetwork(network_value="192.0.2.0/24", service=cloud)
+    service_iprange_cloud_v6 = IpNetwork(network_value="2001:db8:0:0::/64", service=cloud)
+    service_iprange_wiki_v4 = IpNetwork(network_value="192.0.2.0/24", service=wiki)
+    service_iprange_wiki_v6 = IpNetwork(network_value="2001:db8:1:0::/64", service=wiki)
+    _persist(db, service_iprange_cloud_v4, service_iprange_cloud_v6, service_iprange_wiki_v4, service_iprange_wiki_v6)
 
     uuc.services.append(uuc_scheduler)
     uuc.services.append(wiki)

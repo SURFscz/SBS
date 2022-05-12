@@ -553,6 +553,7 @@ class IpNetwork(Base, db.Model):
     id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
     network_value = db.Column("network_value", db.Text(), nullable=False)
     service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    service = db.relationship("Service", back_populates="ip_networks")
     created_by = db.Column("created_by", db.String(length=512), nullable=False)
     created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
                            nullable=False)
