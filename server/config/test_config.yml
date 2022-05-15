@@ -14,13 +14,16 @@ redis:
 api_users:
   - name: "sysadmin"
     password: "secret"
-    scopes: [ read, write, system ]
+    scopes: [ "read", "write", "system", "ipaddress" ]
   - name: "sysread"
     password: "secret"
     scopes: [ read ]
   - name: "research_cloud"
     password: "secret"
     scopes: [ "restricted_co" ]
+  - name: "ipaddress"
+    password: "secret"
+    scopes: [ "ipaddress" ]
 
 oidc:
   client_id: sram

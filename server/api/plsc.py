@@ -3,7 +3,7 @@
 from flask import Blueprint
 
 from server.api.base import json_endpoint
-from server.auth.security import confirm_read_access
+from server.auth.security import confirm_read_access, confirm_ipaddress_access
 from server.db.db import db
 from server.db.domain import IpNetwork
 from server.db.logo_mixin import logo_url
@@ -136,7 +136,7 @@ def sync():
 @plsc_api.route("/ip_ranges", strict_slashes=False)
 @json_endpoint
 def ip_ranges():
-    confirm_read_access()
+    confirm_ipaddress_access()
     data = IpNetwork.query.all()
     ip_networks = set(r.network_value for r in data)
     return {"service_ipranges": list(ip_networks)}, 200

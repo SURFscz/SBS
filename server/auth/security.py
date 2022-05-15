@@ -87,18 +87,25 @@ def confirm_authorized_api_call():
         raise Forbidden()
 
 
-def confirm_read_access(*args, override_func=None):
+def confirm_scope_access(*args, override_func=None, scope):
     if request_context.is_authorized_api_call:
-        return "read" in request_context.api_user.scopes
-    if not is_application_admin() and (not override_func or not override_func(*args)):
+        if scope is None or scope not in request_context.api_user.scopes:
+            raise Forbidden()
+    elif not is_application_admin() and (not override_func or not override_func(*args)):
         raise Forbidden()
+    return True
+
+
+def confirm_read_access(*args, override_func=None):
+    return confirm_scope_access(*args, override_func=override_func, scope="read")
 
 
 def confirm_write_access(*args, override_func=None):
-    if request_context.is_authorized_api_call:
-        return "system" in request_context.api_user.scopes
-    if not is_application_admin() and (not override_func or not override_func(*args)):
-        raise Forbidden()
+    return confirm_scope_access(*args, override_func=override_func, scope="write")
+
+
+def confirm_ipaddress_access(*args, override_func=None):
+    return confirm_scope_access(*args, override_func=override_func, scope="ipaddress")
 
 
 def is_current_user_collaboration_admin(collaboration_id):
