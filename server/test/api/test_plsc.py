@@ -84,9 +84,9 @@ class TestPlsc(AbstractTest):
         self.assertTrue("2001:db8:1:0::/64" in res["service_ipranges"])
 
     def test_ipranges_api_auth(self):
-        res = self.get(f"/api/plsc/ip_ranges", headers=AUTH_HEADER_READ, with_basic_auth=False,
+        res = self.get("/api/plsc/ip_ranges", headers=AUTH_HEADER_READ, with_basic_auth=False,
                        response_status_code=403)
         self.assertTrue(res['error'] is True)
 
-        res = self.get(f"/api/plsc/ip_ranges", headers=AUTH_HEADER_IPADDRESS, with_basic_auth=False)
+        res = self.get("/api/plsc/ip_ranges", headers=AUTH_HEADER_IPADDRESS, with_basic_auth=False)
         self.assertEqual(3, len(res["service_ipranges"]))
