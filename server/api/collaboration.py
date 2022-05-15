@@ -257,7 +257,7 @@ def collaboration_access_allowed(collaboration_id):
 @collaboration_api.route("/<collaboration_id>", strict_slashes=False)
 @json_endpoint
 def collaboration_by_id(collaboration_id):
-    confirm_collaboration_admin(collaboration_id)
+    confirm_collaboration_admin(collaboration_id, read_only=True)
 
     collaboration = Collaboration.query \
         .options(selectinload(Collaboration.organisation).selectinload(Organisation.services)) \

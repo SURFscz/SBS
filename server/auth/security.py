@@ -161,7 +161,7 @@ def confirm_organisation_admin_or_manager(organisation_id):
     confirm_write_access(override_func=override_func)
 
 
-def confirm_collaboration_admin(collaboration_id, org_manager_allowed=True):
+def confirm_collaboration_admin(collaboration_id, org_manager_allowed=True, read_only=False):
     def override_func():
         user_id = current_user_id()
         coll_admin = is_collaboration_admin(user_id, collaboration_id)
@@ -174,7 +174,10 @@ def confirm_collaboration_admin(collaboration_id, org_manager_allowed=True):
             return allowed
         return True
 
-    confirm_write_access(override_func=override_func)
+    if read_only:
+        confirm_read_access(override_func=override_func)
+    else:
+        confirm_write_access(override_func=override_func)
 
 
 def confirm_collaboration_member(collaboration_id):
