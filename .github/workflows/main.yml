@@ -185,7 +185,10 @@ jobs:
 
   Artifact_upload:
     name: Create release
-    if: "github.actor != 'dependabot[bot]'"   # ignore PRs etc from dependabot
+    if: >
+      github.actor!='dependabot[bot]' &&
+      github.event_name!='pull_request' &&
+      ( github.ref_type=='tag' || github.ref_name=='main' )
     needs:
       - "Client_build"
       - "Server_tests"
@@ -212,6 +215,7 @@ jobs:
           files: "${{steps.fetch_artifact.outputs.download-path}}"
 
       - name: Advance latest tag
+        if: "github.ref_name=='main'"
         uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
