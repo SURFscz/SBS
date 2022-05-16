@@ -184,7 +184,7 @@ jobs:
 
 
   Artifact_upload:
-    name: Client upload
+    name: Create release
     if: "github.actor != 'dependabot[bot]'"   # ignore PRs etc from dependabot
     needs:
       - "Client_build"
@@ -210,6 +210,12 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: "${{steps.fetch_artifact.outputs.download-path}}"
+
+      - name: Bump latest tag
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          custom_tag: "latest"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release for main/latest
         if: "github.ref_name=='main'"
