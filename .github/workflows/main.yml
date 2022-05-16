@@ -211,12 +211,26 @@ jobs:
         with:
           files: "${{steps.fetch_artifact.outputs.download-path}}"
 
-      - name: Bump latest tag
-        uses: mathieudutour/github-tag-action@v6.0
+      - name: Advance latest tag
+        uses: actions/github-script@v3
         with:
-          custom_tag: "latest"
-          tag_prefix: ""
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            try {
+              await github.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: "tags/latest"
+              })
+            } catch (e) {
+              console.log("The latest tag doesn't exist yet: " + e)
+            }
+            await github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/latest",
+              sha: context.sha
+            })
 
       - name: Create Release for main/latest
         if: "github.ref_name=='main'"
