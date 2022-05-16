@@ -202,8 +202,8 @@ jobs:
       - name: Info
         run: |
           ls -la ${{steps.fetch_artifact.outputs.download-path}}
-          sha1sum ${{steps.fetch_artifact.outputs.download-path}} || true
-          sha256sum ${{steps.fetch_artifact.outputs.download-path}} || true
+          sha1sum ${{steps.fetch_artifact.outputs.download-path}}/* || true
+          sha256sum ${{steps.fetch_artifact.outputs.download-path}}/* || true
 
       - name: Create Release
         if: "github.ref_type=='tag'"
@@ -239,4 +239,4 @@ jobs:
           name: "latest"
           tag_name: "latest"
           prerelease: true
-          files: "${{steps.fetch_artifact.outputs.download-path}}"
+          files: "${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz"
