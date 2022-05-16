@@ -182,12 +182,6 @@ jobs:
           name: "sbs-build"
           path: "/tmp/sbs.tar.xz"
 
-      - name: Create Release
-        if: "github.ref_type=='tag'"
-        uses: softprops/action-gh-release@v1
-        with:
-          files: "/tmp/sbs.tar.xz"
-
 
   Artifact_upload:
     name: Client upload
@@ -199,14 +193,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: jfrog/setup-jfrog-cli@v2
-        env:
-          JF_ENV_1: "${{ secrets.ARTIE_TOKEN }}"
-
-      - name: Check Artie
-        run: |
-          jfrog rt ping
-
       - name: Fetch build
         id: fetch_artifact
         uses: actions/download-artifact@master
@@ -218,20 +204,17 @@ jobs:
           ls -la ${{steps.fetch_artifact.outputs.download-path}}
           sha1sum ${{steps.fetch_artifact.outputs.download-path}} || true
           sha256sum ${{steps.fetch_artifact.outputs.download-path}} || true
-          echo Will upload to SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
-          echo Will upload to SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz
 
-      - name: Upload commit artifact to Artie
-        run: |
-          jfrog rt upload --detailed-summary --flat --fail-no-op \
-            --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
-            ${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz \
-            SRAM-Production-Public/SBS-builds/commit/sbs-${GITHUB_SHA}.tar.xz
+      - name: Create Release
+        if: "github.ref_type=='tag'"
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "${{steps.fetch_artifact.outputs.download-path}}"
 
-      - name: Upload branch/tag to Artie
-        if: "github.event_name=='push'"
-        run: |
-          jfrog rt upload --detailed-summary --flat --fail-no-op \
-            --build-name "sbs-ci" --build-number "commit-${GITHUB_SHA}" \
-            ${{steps.fetch_artifact.outputs.download-path}}/sbs.tar.xz \
-            SRAM-Production-Public/SBS-builds/${GITHUB_REF_TYPE}/sbs-${GITHUB_REF_NAME//\//+}.tar.xz
+      - name: Create Release for main/latest
+        if: "github.ref_name=='main'"
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "latest"
+          prerelease: true
+          files: "${{steps.fetch_artifact.outputs.download-path}}"
