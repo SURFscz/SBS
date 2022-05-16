@@ -75,18 +75,22 @@ def start():
 
     user = User.query.filter_by(**filters).first()
     if not user:
+        logger.debug(f"PamWebSSO access to service {service.name} denied (user not found): {str(data)}")
         raise NotFound(f"User {filters} not found")
+
+    session["user"] = {"id": user.id, "admin": False}
+    if not user_service(service.id, False):
+        logger.debug(f"PamWebSSO access to service {service.name} denied (no CO access): {str(data)}")
+        raise NotFound(f"User {filters} access denied")
+    session.clear()
+    session.modified = False
 
     last_login_date = user.last_login_date
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
     if last_login_date and last_login_date > seconds_ago:
-        session["user"] = {"id": user.id, "admin": False}
-        if user_service(service.id, False):
-            logger.debug(f"PamWebSSO user {user.uid} SSO results")
+        logger.debug(f"PamWebSSO user {user.uid} SSO results")
 
-            session.clear()
-            session.modified = False
-            return {"result": "OK", "cached": True}, 201
+        return {"result": "OK", "cached": True}, 201
 
     pam_sso_session = PamSSOSession(session_id=str(uuid.uuid4()), attribute=attribute, user_id=user.id,
                                     service_id=service.id, pin="".join(random.sample(string.digits, k=4)))
