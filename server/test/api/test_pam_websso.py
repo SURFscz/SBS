@@ -62,6 +62,15 @@ class TestPamWebSSO(AbstractTest):
                   with_basic_auth=False,
                   response_status_code=404)
 
+    def test_start_denied(self):
+        self.post("/pam-websso/start",
+                  body={"user_id": "john@example.org",
+                        "attribute": "email",
+                        "cache_duration": 5 * 60},
+                  headers={"Authorization": f"bearer {service_storage_token}"},
+                  with_basic_auth=False,
+                  response_status_code=404)
+
     def test_start_cached_login(self):
         self.login_user_2fa("urn:roger")
         res = self.post("/pam-websso/start",
