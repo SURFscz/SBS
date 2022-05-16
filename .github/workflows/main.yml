@@ -188,7 +188,7 @@ jobs:
     if: "github.actor != 'dependabot[bot]'"   # ignore PRs etc from dependabot
     needs:
       - "Client_build"
-    #  - "Server_tests"
+      - "Server_tests"
 
     runs-on: ubuntu-latest
 
