@@ -214,6 +214,10 @@ jobs:
         with:
           files: "${{steps.fetch_artifact.outputs.download-path}}"
 
+      - name: Checkout
+        if: "github.ref_name=='main'"
+        uses: actions/checkout@v3
+
       - name: Advance latest tag
         if: "github.ref_name=='main'"
         uses: EndBug/latest-tag@latest
