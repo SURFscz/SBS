@@ -214,32 +214,12 @@ jobs:
         with:
           files: "${{steps.fetch_artifact.outputs.download-path}}"
 
-      - name: View context attributes
-        uses: actions/github-script@v6
-        with:
-          script: console.log(context.rep)
-
       - name: Advance latest tag
         if: "github.ref_name=='main'"
-        uses: actions/github-script@v6
+        uses: EndBug/latest-tag@latest
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            try {
-              await github.rest.git.deleteRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: "refs/tags/latest"
-              })
-            } catch (e) {
-              console.log("The latest tag doesn't exist yet: " + e)
-            }
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/latest",
-              sha: context.sha
-            })
+          tag-name: "latest"
+          description: "Latest commit in the main branch"
 
       - name: Create Release for main/latest
         if: "github.ref_name=='main'"
