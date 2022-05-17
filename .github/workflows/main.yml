@@ -214,6 +214,11 @@ jobs:
         with:
           files: "${{steps.fetch_artifact.outputs.download-path}}"
 
+      - name: View context attributes
+        uses: actions/github-script@v6
+        with:
+          script: console.log(context)
+
       - name: Advance latest tag
         if: "github.ref_name=='main'"
         uses: actions/github-script@v6
