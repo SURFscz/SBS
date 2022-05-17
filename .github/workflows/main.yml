@@ -220,10 +220,18 @@ jobs:
 
       - name: Advance latest tag
         if: "github.ref_name=='main'"
-        uses: EndBug/latest-tag@latest
+        uses: EndBug/latest-tag@v1
         with:
           tag-name: "latest"
           description: "Latest commit in the main branch"
+
+      - name: remove all previous "latest" releases
+        uses: dev-drprasad/delete-older-releases@v0.2.0
+        with:
+          keep_latest: 0
+          delete_tag_pattern: "latest"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release for main/latest
         if: "github.ref_name=='main'"
