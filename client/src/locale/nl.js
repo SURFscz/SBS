@@ -72,7 +72,7 @@ I18n.translations.nl = {
         backToHome: "Terug naar home",
         firstTime: "Onboarding",
         collaborationRequest: "Vraag een nieuwe samenwerking aan",
-        noOrganisations: "Om een nieuwe samenwerking te kunnen aanvragen, moet de instelling '{{schac_home}}' waarmee je bent ingelogd SRAM als dienst afnemen. Dat lijkt nog niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie.",
+        noOrganisations: "Om een nieuwe samenwerking te kunnen aanvragen, moet de instelling '{{schac_home}}' waarmee je bent ingelogd dat mogen. Dat lijkt nog niet het geval. Neem contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> voor meer informatie.",
         noShacHome: "Om een nieuwe samenwerking aan te vragen of aan te maken, dient je instelling het attribuut schac_home vrij te geven. Dit lijkt niet het geval te zijn. Neem voor meer informatie contact op via <a href='mailto:sram-support@surf.nl'> sram-support@surf.nl </a>",
         noOrganisationsPlatformAdmin: "Om een nieuwe samenwerking te maken dien je eerst een nieuwe organisatie aan te maken.",
         tabs: {
@@ -561,7 +561,7 @@ I18n.translations.nl = {
         userRequired: "Kies een gebruiker om te imiteren.",
         currentImpersonation: "Je imiteert",
         noImpersonation: "Je bent wie je bent - je imiteert niemand.",
-        currentImpersonationValue: "Je ziet SRAM nu als {{currentUser}}, maar je bent natuurlijk {{impersonator}}.",
+        currentImpersonationValue: "Je ziet SURF Research Access Management nu als {{currentUser}}, maar je bent natuurlijk {{impersonator}}.",
         startImpersonation: "Imiteer",
         clearImpersonation: "Stop met imiteren",
         flash: {
@@ -805,7 +805,7 @@ I18n.translations.nl = {
         namePlaceHolder: "De unieke naam van de dienst",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "De unieke entity ID van de dienst",
-        entity_idTooltip: "De unieke entity ID van de dienst koppelt de dienst in SRAM aan de daadwerkelijke externe dienstaanbieder",
+        entity_idTooltip: "De unieke entity ID van de dienst koppelt de dienst in SURF Research Access Management aan de daadwerkelijke externe dienstaanbieder",
         abbreviation: "Korte naam",
         abbreviationPlaceHolder: "De korte naam van deze dienst",
         abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen van deze dienst",
@@ -978,8 +978,8 @@ I18n.translations.nl = {
         onBoarding: {
             label: "On-boarding message",
             invalid: "Je moet de de on-boarding aanpassen",
-            tooltip: "Wanneer een gebruiker zich bij SRAM aanmeldt met een instellingsaccount maar zonder enige rol of uitnodiging, zullen we de gebruiker laten zien wat deze kan doen. De tekst die je hier invult zal ook getoond worden. Probeer te formuleren wat de gebruiker kan doen.",
-            template: "Als je niet weet wat je nu moet doen, kijk dan op ***URL naar een webpagina op het intranet van de instelling?*** Je kunt ook contact opnemen met ***de naam en het e-mailadres van de SRAM-contactpersoon binnen je instelling opgeven, of kan de gebruiker contact opnemen met research support, of een helpdesk binnen de instelling?***",
+            tooltip: "Wanneer een gebruiker zich bij SURF Research Access Management aanmeldt met een instellingsaccount maar zonder enige rol of uitnodiging, zullen we de gebruiker laten zien wat deze kan doen. De tekst die je hier invult zal ook getoond worden. Probeer te formuleren wat de gebruiker kan doen.",
+            template: "Als je niet weet wat je nu moet doen, kijk dan op ***URL naar een webpagina op het intranet van de instelling?*** Je kunt ook contact opnemen met ***de naam en het e-mailadres van de contactpersoon voor SURF Research Access Management binnen je instelling opgeven, of kan de gebruiker contact opnemen met research support, of een helpdesk binnen de instelling?***",
             tabs: {
                 write: "Markdown",
                 preview: "Voorbeeld"
@@ -1134,7 +1134,7 @@ I18n.translations.nl = {
             inviteAccepted: "Uitnodiging voor organisatie {{name}} is geaccepteerd.",
             created: "Uitnodiging(en) voor organisatie {{name}} aangemaakt.",
             alreadyMember: "De uitnodiging kon niet worden geaccepteerd omdat je al lid bent van deze organisatie.",
-            notFound: "Deze uitnodiging is reeds geaccepteerd of afgewezen. Als je denkt dat er een probleem is, neem dan contact op met je beheerder (of met SRAM-ondersteuning op sram-support@surf.nl)."
+            notFound: "Deze uitnodiging is reeds geaccepteerd of afgewezen. Als je denkt dat er een probleem is, neem dan contact op met je beheerder (of met ondersteuning op sram-support@surf.nl)."
         },
     },
     apiKeys: {
@@ -1369,18 +1369,18 @@ I18n.translations.nl = {
     },
     aup: {
         hi: "Hi {{name}},",
-        info: "Je SRAM profiel is bijna aangemaakt.",
+        info: "Je profiel is bijna aangemaakt.",
         name: "Naam.",
         email: "Email-adres",
         title: "Acceptable use policy",
         multiple: "Dienst acceptable use policies",
-        disclaimer: "Door in te loggen op SRAM, wordt je een gebruiker en ga je akkoord met de <a href=\"{{url}}\" target=\"_blank\">voorwaarden van onze AUP.</a>",
+        disclaimer: "Door in te loggen maak je een profiel en ga je akkoord met de <a href=\"{{url}}\" target=\"_blank\">voorwaarden van onze AUP.</a>",
         agreeWithTerms: "Hierbij verklaar ik dat ik de AUP heb gelezen en deze accepteer",
         onward: "Ziet er goed uit, verder",
         agreedFlash: "Je akkoord met {{name}} is opgeslagen.",
         collaboration: {
             title: "Aanvullende voorwaarden voor de Acceptable use policy",
-            info: "Voor deze samenwerking zijn er enkele aanvullingen op de algemene SRAM AUP. Je moet deze voorwaarden accepteren om lid te kunnen worden van deze samenwerking.",
+            info: "Voor deze samenwerking zijn er enkele aanvullingen op de algemene SURF Research Access Management AUP. Je moet deze voorwaarden accepteren om lid te kunnen worden van deze samenwerking.",
             agreeWithTerms: "Ik verklaar hierbij dat ik deze voorwaarden heb gelezen en dat ik ze accepteer",
         },
         service: {
@@ -1591,7 +1591,7 @@ I18n.translations.nl = {
     footer: {
         tips: "Tips of help nodig?",
         help: "Help & FAQ",
-        product: "SRAM is een dienst van",
+        product: "Een dienst van",
         productLink: "https://edu.nl/vw3jx",
         surf: "SURF",
         surfLink: "https://surf.nl",
@@ -1681,11 +1681,11 @@ I18n.translations.nl = {
     },
     welcome: {
         title: "Hallo {{name}},",
-        subTitle: "Welkom op SURF Research Access Management (SRAM). SRAM wordt gebruikt om toegang te beheren voor je onderzoekssamenwerking.",
+        subTitle: "Welkom op SURF Research Access Management (SRAM). SURF Research Access Management wordt gebruikt om toegang te beheren voor je onderzoekssamenwerking.",
         unknown: "een onbekende instelling",
         mysterious: "onbekende gast",
         institution: "Je bent ingelogd met <strong>{{name}}</strong>.",
-        institutionNotConnected: "De instelling waarmee je bent ingelogd neemt SRAM (nog) niet als dienst af.",
+        institutionNotConnected: "De instelling waarmee je bent ingelogd kan geen samenwerkingen creëren en beheren.",
         noMember: "Je bent nog geen lid van een samenwerking. Om lid te worden, moet je eerst worden uitgenodigd.",
         whatYouCanDo: "Hier is wat je kan doen:",
         instructions: "Instructies van <strong>{{name}}</strong>",
@@ -1695,7 +1695,7 @@ I18n.translations.nl = {
         startCreateCollRequest: "Als je je eigen samenwerking wilt starten, kan je deze rechtstreeks aanvragen en zullen de beheerders deze controleren.",
         createCollTxt: "Creëer een samenwerking",
         createCollRequestTxt: "Start een samenwerking",
-        contact: "Contact met de SRAM helpdesk",
+        contact: "Contact met de SURF Research Access Management helpdesk",
         contactInfo: "Neem contact op met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> als je vragen hebt."
     },
     feedback: {
@@ -1751,7 +1751,7 @@ I18n.translations.nl = {
         },
         serviceProvider: {
             title: "Ben je een dienstaanbieder?",
-            subTitle: "Wil je met jullie dienst duizenden onderzoekers bereiken? Koppel met SRAM. Lees meer over wat we voor je kunnen doen op <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
+            subTitle: "Wil je met jullie dienst duizenden onderzoekers bereiken? Koppel met SURF Research Access Management. Lees meer over wat we voor je kunnen doen op <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
         },
         help: {
             title: "Help & ondersteuning",
@@ -1777,7 +1777,7 @@ I18n.translations.nl = {
         invalidPamWebSSO: "Je sessie is verlopen. Ga terug naar de service waar je probeert in te loggen en probeer het opnieuw.",
         msg: "Mmmm, het lijkt erop dat je op de een of andere manier een link hebt gekregen waar we je niet mee kunnen helpen. Sorry daarvoor." +
             "Je zou kunnen proberen de <a href='{{base_url}}'> startpagina </a> te bezoeken. Als je daar niet iets vindt waar je mee geholpen bent, " +
-            "neem dan contact op met de persoon die je heeft uitgenodigd, of volg de SRAM help-link waar ook staat hoe je contact kunt opnemen met het SRAM-team."
+            "neem dan contact op met de persoon die je heeft uitgenodigd, of volg de help-link waar ook staat hoe je contact kunt opnemen met het team van SURF Research Access Management."
     },
     mfa: {
         register: {
@@ -1786,9 +1786,9 @@ I18n.translations.nl = {
             info1: "Je bent ingelogd met een gebruikersnaam en wachtwoord bij {{name}}. SURF Research Access Management vereist tweefactorauthenticatie. Dat betekent een extra controle dat jij het bent.",
             info2: "Voer de volgende stappen uit om tweefactorauthenticatie in te stellen:",
             step: "Stap {{nbr}}",
-            getApp: "1. Voeg SRAM toe aan je authenticator-app",
+            getApp: "1. Voeg SURF Research Access Management toe aan je authenticator-app",
             unknownIdp: "een onbekende organisatie",
-            getAppUpdate: "2. Voeg SRAM toe aan je authenticator-app",
+            getAppUpdate: "2. Voeg SURF Research Access Management toe aan je authenticator-app",
             new: "nieuw",
             getAppInfo: "Open of installeer de Google (<a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=nl&gl=NL\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/nl/app/google-authenticator/id388497605\" target=\"_blank\">iOS</a>) of Microsoft (<a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=nl&gl=NL\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/microsoft-authenticator/id983156458\" target=\"_blank\">iOS</a>) authenticator-app op je {{new}}mobiele apparaat",
             addSRAM: "Klik op het plusje (+) in de app",
@@ -1812,7 +1812,7 @@ I18n.translations.nl = {
         },
         verify: {
             title: "Vul je authenticatiecode in",
-            info1: "Gebruik je tweefactor-authenticator op je app om de authenticatiecode voor <strong>SRAM</strong> te bekijken en je identiteit te verifiëren.",
+            info1: "Gebruik je tweefactor-authenticator op je app om de authenticatiecode voor <strong>SURF Research Access Management</strong> te bekijken en je identiteit te verifiëren.",
             explanation: "Two-factor authenticatie",
             signIn: "Verifiëren",
             problems: "Problemen met je authenticator-app?",
@@ -1823,7 +1823,7 @@ I18n.translations.nl = {
         profile: {
             name: "Tweefactorauthenticatie",
             no2FA: "Tweefactorauthenticatie is niet geconfigureerd.",
-            tooltip: "Tweefactorauthenticatie (2FA) voegt een extra beveiligingslaag aan je SRAM-account toe. Het vereist een extra login —meer dan alleen je gebruikersnaam en wachtwoord— om toegang te krijgen tot je account , en om die tweede referentie te krijgen, moet je toegang hebben tot je mobiele authenticator-app.",
+            tooltip: "Tweefactorauthenticatie (2FA) voegt een extra beveiligingslaag aan je SURF Research Access Management profiel toe. Het vereist een extra login —meer dan alleen je gebruikersnaam en wachtwoord— om toegang te krijgen tot je profiel, en om die tweede referentie te krijgen, moet je toegang hebben tot je mobiele authenticator-app.",
             handledByIdp: "Tweefactorauthenticatie wordt afgedwongen door {{name}}.",
             institution: "je instelling",
             handledBySRAM: "Tweefactorauthenticatie met authenticator-app voor mobiele telefoon is geconfigureerd.",
