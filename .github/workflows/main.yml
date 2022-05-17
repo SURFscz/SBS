@@ -217,7 +217,7 @@ jobs:
       - name: View context attributes
         uses: actions/github-script@v6
         with:
-          script: console.log(context)
+          script: console.log(context.rep)
 
       - name: Advance latest tag
         if: "github.ref_name=='main'"
@@ -226,15 +226,15 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             try {
-              await github.git.deleteRef({
+              await github.rest.git.deleteRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: "tags/latest"
+                ref: "refs/tags/latest"
               })
             } catch (e) {
               console.log("The latest tag doesn't exist yet: " + e)
             }
-            await github.git.createRef({
+            await github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: "refs/tags/latest",
