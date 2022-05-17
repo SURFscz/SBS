@@ -72,7 +72,7 @@ I18n.translations.en = {
         backToHome: "Back to home",
         firstTime: "Onboarding",
         collaborationRequest: "Request for new collaboration",
-        noOrganisations: "To request a new collaboration it is required that institution '{{schac_home}}' where you logged in, has ordered SRAM. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
+        noOrganisations: "To request a new collaboration it is required that institution '{{schac_home}}' where you logged in, can create and manage collaborations. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
         noShacHome: "To request / create a new collaboration it is required that your institution releases the schac_home attribute. This does not seem to be the case. Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> for more information",
         noOrganisationsPlatformAdmin: "To create a new collaboration it is required you first create a new organisation.",
         tabs: {
@@ -805,7 +805,7 @@ I18n.translations.en = {
         namePlaceHolder: "The unique name of the service",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "The unique entity ID of the service",
-        entity_idTooltip: "The unique entity ID of the service links the service in SRAM to the actual external service Provider",
+        entity_idTooltip: "The unique entity ID of the service links the service in SURF Research Access Management to the actual external service Provider",
         abbreviation: "Short name",
         abbreviationPlaceHolder: "The short name of this service",
         abbreviationTooltip: "The short name of the service is used as a prefix for any groups you create",
@@ -978,8 +978,8 @@ I18n.translations.en = {
         onBoarding: {
             label: "On-boarding instructions",
             invalid: "You must change the on-boarding instructions",
-            tooltip: "When a user signs into SRAM using their institutional account, but without any role or invite, we'll show them what they can do. The text you fill out here, will also be shown. Try to formulate something the user can do.",
-            template: "If you don't know what to do next, please check out ***URL to a webpage on the intranet of the institution?*** You can also contact ***maybe supply the name and email address of the SRAM contact within your institution, or can the user contact research support, or a helpdesk at the institution?***",
+            tooltip: "When a user signs into SURF Research Access Management using their institutional account, but without any role or invite, we'll show them what they can do. The text you fill out here, will also be shown. Try to formulate something the user can do.",
+            template: "If you don't know what to do next, please check out ***URL to a webpage on the intranet of the institution?*** You can also contact ***maybe supply the name and email address of the contact for SURF Research Access Management within your institution, or can the user contact research support, or a helpdesk at the institution?***",
             tabs: {
                 write: "Markdown",
                 preview: "Preview"
@@ -1134,7 +1134,7 @@ I18n.translations.en = {
             inviteAccepted: "Invitation for organisation {{name}} was accepted.",
             created: "Invitions for organisation {{name}} are created.",
             alreadyMember: "The invitation could not be accepted because you are already a member of this organisation.",
-            notFound: "Invitation has already been accepted / declined. If you think there is a problem check with your admin (or with SRAM support at sram-support@surf.nl)."
+            notFound: "Invitation has already been accepted / declined. If you think there is a problem check with your admin (or with support at sram-support@surf.nl)."
         },
     },
     apiKeys: {
@@ -1369,18 +1369,18 @@ I18n.translations.en = {
     },
     aup: {
         hi: "Hi {{name}},",
-        info: "We are ready to create your SRAM profile.",
+        info: "We are ready to create your profile.",
         name: "Display name.",
         email: "Email address",
         title: "Acceptable use policy",
         multiple: "Service acceptable use policies",
-        disclaimer: "By logging on to SRAM, you become a user and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of our AUP.</a>",
+        disclaimer: "By logging on to SURF Research Access Management, you create a profile and agree to the <a href=\"{{url}}\" target=\"_blank\">term and conditions of our AUP.</a>",
         agreeWithTerms: "I hereby certify that I have read the AUP and that I accept them",
         onward: "Looks good, onwards",
         agreedFlash: "Your agreement with {{name}} has been saved.",
         collaboration: {
             title: "Additional terms to the Acceptable use policy",
-            info: "For this collaboration, there are some additions to the general SRAM AUP. You need to accept these additions to be able to join this collaboration.",
+            info: "For this collaboration, there are some additions to the general SURF Research Access Management AUP. You need to accept these additions to be able to join this collaboration.",
             agreeWithTerms: "I hereby certify that I have read these terms and that I accept them",
         },
         service: {
@@ -1591,7 +1591,7 @@ I18n.translations.en = {
     footer: {
         tips: "Need tips or info?",
         help: "Help & FAQ",
-        product: "SRAM is a service by",
+        product: "Proudly powered by",
         productLink: "https://edu.nl/vw3jx",
         surf: "SURF",
         surfLink: "https://surf.nl",
@@ -1681,11 +1681,11 @@ I18n.translations.en = {
     },
     welcome: {
         title: "Hi {{name}},",
-        subTitle: "Welcome to SURF Research Access Management (SRAM). SRAM manages access for your research collaboration.",
+        subTitle: "Welcome to SURF Research Access Management (SRAM). SURF Research Access Management manages access for your research collaboration.",
         unknown: "an unknown institution",
         mysterious: "mysterious guest",
         institution: "You have logged on via <strong>{{name}}</strong>.",
-        institutionNotConnected: "The organization you have logged in with, has not (yet) ordered SRAM as a service.",
+        institutionNotConnected: "The organization you have logged in with, cannot create or manage collaborations.",
         noMember: "You are not a member of a collaboration. To become a member you'll have to be invited.",
         whatYouCanDo: "Here's what you can do:",
         instructions: "Instruction from <strong>{{name}}</strong>",
@@ -1695,7 +1695,7 @@ I18n.translations.en = {
         startCreateCollRequest: "If you want to start your own collaboration, you can request it directly and the admins will check it.",
         createCollTxt: "Create a collaboration",
         createCollRequestTxt: "Start a new collaboration",
-        contact: "Contact SRAM helpdesk",
+        contact: "Contact SURF Research Access Management helpdesk",
         contactInfo: "Please contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a> if you need help."
     },
     feedback: {
@@ -1751,7 +1751,7 @@ I18n.translations.en = {
         },
         serviceProvider: {
             title: "Are you a service provider?",
-            subTitle: "Do you want to reach thousands of researchers with your software. Join SRAM now. Learn more about what we can do for you on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
+            subTitle: "Do you want to reach thousands of researchers with your software. Join SURF Research Access Management now. Learn more about what we can do for you on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
         },
         help: {
             title: "Help & Support",
@@ -1762,7 +1762,7 @@ I18n.translations.en = {
         members: "Composition of this collaboration",
         admins: "Admin(s) of this collaboration",
         collaborationUrl: "More information about this collaboration",
-        aup: "Acceptable use policy for this collaboration. This is an addition to the SRAM AUP, which applies to all collaborations.",
+        aup: "Acceptable use policy for this collaboration. This is an addition to the SURF Research Access Management AUP, which applies to all collaborations.",
         user: "User",
         admin: "Admin",
         invitations: "Invitee",
@@ -1777,7 +1777,7 @@ I18n.translations.en = {
         invalidPamWebSSO: "Your session has expired. Please go back to the service you were trying to login to and try again.",
         msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that " +
             "You could try visiting the <a href='{{base_url}}'>homepage</a>. If that does not offer you an option you were looking for, " +
-            "contact the person that invited you, or follow the SRAM Help link which includes how to contact the SURF Research Access Management team."
+            "contact the person that invited you, or follow the help link which includes how to contact the SURF Research Access Management team."
     },
     mfa: {
         register: {
@@ -1786,9 +1786,9 @@ I18n.translations.en = {
             info1: "You have signed in with a username and password at {{name}}. SURF Research Access Management requires two-factor authentication. This means an extra check to verify it's you.",
             info2: "To setup two factor authentication, take the following steps:",
             step: "Stap {{nbr}}",
-            getApp: "1. Add SRAM to your authenticator app",
+            getApp: "1. Add SURF Research Access Maagement to your authenticator app",
             unknownIdp: "an unknown organisation",
-            getAppUpdate: "2. Add SRAM to your authenticator app",
+            getAppUpdate: "2. Add SURF Research Access Management to your authenticator app",
             new: "new ",
             getAppInfo: "Open or install the Google (<a href=\"https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/google-authenticator/id388497605\" target=\"_blank\">iOS</a>) of Microsoft (<a href=\"https://play.google.com/store/apps/details?id=com.azure.authenticator&hl=en&gl=US\" target=\"_blank\">Android</a> of <a href=\"https://apps.apple.com/us/app/microsoft-authenticator/id983156458\" target=\"_blank\">iOS</a>) Authenticator app on your {{new}}mobile device",
             addSRAM: "Tap the '+' icon in the app",
@@ -1812,7 +1812,7 @@ I18n.translations.en = {
         },
         verify: {
             title: "Enter your authentication code",
-            info1: "Use your two-factor authenticator app on your device to view your authentication code for <strong>SRAM</strong> and verify your identity.",
+            info1: "Use your two-factor authenticator app on your device to view your authentication code for <strong>SURF Research Access Management</strong> and verify your identity.",
             explanation: "Two-factor authentication",
             signIn: "Verify",
             problems: "Problems with your authenticator app?",
@@ -1823,7 +1823,7 @@ I18n.translations.en = {
         profile: {
             name: "Two-factor authentication",
             no2FA: "Two-factor authentication is not configured.",
-            tooltip: "Two-Factor Authentication (2FA) adds an additional layer of security to your SRAM account It requires an additional login credential – beyond just your username and password – to gain account access, and getting that second credential requires access to your mobile authenticator app.",
+            tooltip: "Two-Factor Authentication (2FA) adds an additional layer of security to your profile. It requires an additional login credential –beyond just your username and password– to gain account access, and getting that second credential requires access to your mobile authenticator app.",
             handledByIdp: "Two-factor authentication is handled by {{name}}.",
             institution: "your institution",
             handledBySRAM: "Two-factor authentication with authenticator app for mobile phone is configured.",
