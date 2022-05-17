@@ -196,11 +196,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        if: "github.ref_name=='main'"
+        uses: actions/checkout@v3
+
       - name: Fetch build
         id: fetch_artifact
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v3
         with:
           name: "sbs-build"
+          path: "$env:HOME/artifacts/"
 
       - name: Info
         run: |
@@ -213,10 +218,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: "${{steps.fetch_artifact.outputs.download-path}}"
-
-      - name: Checkout
-        if: "github.ref_name=='main'"
-        uses: actions/checkout@v3
 
       - name: Advance latest tag
         if: "github.ref_name=='main'"
