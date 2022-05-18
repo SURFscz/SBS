@@ -293,7 +293,9 @@ class Me extends React.Component {
                                     onClick={this.configureMfa}/>
                         </div>}
                     </div>}
+                    {/* disabled for now; see https://github.com/SURFscz/SBS/issues/185 and https://github.com/SURFscz/SBS/issues/188
                     {this.renderIpNetworks(user_ip_networks)}
+                    */}
 
                     <div className="ssh-keys-container">
                         <label className="title" htmlFor={I18n.t("user.ssh_key")}>{I18n.t("user.ssh_key")}
