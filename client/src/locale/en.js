@@ -57,7 +57,7 @@ I18n.translations.en = {
     login: {
         title: "Research Access Management",
         subTitle: "Please login...",
-        suspended: "Your user account has been suspended. Contact your admin to resolve this",
+        suspended: "Your user account has been suspended. Please contact sram-support@surf.nl to resolve this",
         rateLimited: "You have rate limited the TOTP verification and therefore you are logged out and your user account has been suspended. Contact your admin to resolve this",
         successfullyActivated: "You have re-activated your account",
         closeBrowser: "To finish your logout you'll have to close your browser.",
