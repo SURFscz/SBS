@@ -15,7 +15,7 @@ from server.db.db import db
 from server.db.domain import User, PamSSOSession
 from server.logger.context_logger import ctx_logger
 
-pam_websso_api = Blueprint("pam_websso_api", __name__, url_prefix="/pam-websso")
+pam_websso_api = Blueprint("pam_websso_api", __name__, url_prefix="/pam-weblogin")
 
 
 def _get_pam_sso_session(session_id):
