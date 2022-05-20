@@ -22,7 +22,7 @@ white_listing = [
     "/config",
     "/health",
     "/info",
-    "/pam-websso"
+    "/pam-weblogin"
 ]
 
 mfa_listing = [
