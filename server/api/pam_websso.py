@@ -15,7 +15,7 @@ from server.db.db import db
 from server.db.domain import User, PamSSOSession
 from server.logger.context_logger import ctx_logger
 
-pam_websso_api = Blueprint("pam_websso_api", __name__, url_prefix="/pam-websso")
+pam_websso_api = Blueprint("pam_websso_api", __name__, url_prefix="/pam-weblogin")
 
 
 def _get_pam_sso_session(session_id):
@@ -100,7 +100,7 @@ def start():
 
     return {"result": "OK",
             "session_id": pam_sso_session.session_id,
-            "challenge": f"{current_app.app_config.base_url}/gui-pam-websso/login/{pam_sso_session.session_id}",
+            "challenge": f"{current_app.app_config.base_url}/weblogin/{pam_sso_session.session_id}",
             "cached": False}, 201
 
 
