@@ -48,7 +48,7 @@ class TestPamWebSSO(AbstractTest):
 
         self.assertEqual(res["result"], "OK")
         self.assertEqual(res["cached"], False)
-        self.assertEqual(res["challenge"], f"{self.app.app_config.base_url}/gui-pam-websso/login/{res['session_id']}")
+        self.assertEqual(res["challenge"], f"{self.app.app_config.base_url}/weblogin/{res['session_id']}")
 
         res = self.get(f"/pam-websso/{res['session_id']}", with_basic_auth=False)
         self.assertEqual(res["service"]["name"], service_storage_name)
