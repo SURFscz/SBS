@@ -1643,11 +1643,12 @@ I18n.translations.nl = {
         reload: "Reload",
         seedResult: "Testgegevens toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren.",
         suspendedUsers: {
-            title: "The following user have been suspended.",
+            title: "De onderstaande gebruikers zijn geschorst.",
+            titleZeroState: "Er zijn geen geschorste gebruikers",
             email: "Email",
-            name: "Name",
-            lastLogin: "Last login",
-            activate: "Activate"
+            name: "Naam",
+            lastLogin: "Laatste login",
+            activate: "Activeer"
         },
     },
     access: {
