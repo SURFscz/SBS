@@ -17,7 +17,7 @@ import {
     scheduledJobs,
     suspendCollaborations,
     suspendUsers,
-    plscSync
+    plscSync, getSuspendedUsers, activateUserForCollaboration
 } from "../api";
 import ReactJson from "react-json-view";
 import Button from "../components/Button";
@@ -39,6 +39,7 @@ import moment from "moment";
 import OrganisationInvitations from "../components/redesign/OrganisationInvitations";
 import OrganisationsWithoutAdmin from "../components/redesign/OrganisationsWithoutAdmin";
 import ServicesWithoutAdmin from "../components/redesign/ServicesWithoutAdmin";
+import {dateFromEpoch} from "../utils/Date";
 
 const options = [25, 50, 100, 150, 200, 250, "All"].map(nbr => ({value: nbr, label: nbr}));
 
@@ -74,7 +75,8 @@ class System extends React.Component {
             showOrganisationsWithoutAdmin: true,
             showServicesWithoutAdmin: true,
             plscData: {},
-            compositionData: {}
+            compositionData: {},
+            currentlySuspendedUsers: []
         }
     }
 
@@ -302,6 +304,46 @@ class System extends React.Component {
                             icon={<FontAwesomeIcon icon="trash"/>}
                             onClick={() => this.doCleanSlate(true)}/>
                 </div>}
+            </div>
+        </div>)
+    }
+
+    activateUser = user => {
+        this.setState({busy: true});
+        activateUserForCollaboration(null, user.id).then(() => {
+            getSuspendedUsers().then(res => this.setState({currentlySuspendedUsers: res, busy: false}))
+        })
+    }
+
+    getSuspendedUsersTab = currentlySuspendedUsers => {
+        return (<div key="suspended-users" name="suspended-users"
+                     label={I18n.t("home.tabs.suspendedUsers")}
+                     icon={<FontAwesomeIcon icon="user-lock"/>}>
+            <div className="mod-system">
+                <section className={"info-block-container"}>
+                    <p>{I18n.t("system.suspendedUsers.title")}</p>
+                    <table className={"suspended-users"}>
+                        <thead>
+                        <tr>
+                            <th>{I18n.t("system.suspendedUsers.name")}</th>
+                            <th>{I18n.t("system.suspendedUsers.email")}</th>
+                            <th>{I18n.t("system.suspendedUsers.lastLogin")}</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {currentlySuspendedUsers.map(user => <tr key={user.id}>
+                            <td>{user.name}</td>
+                            <td>{user.email}</td>
+                            <td>{user.last_login_date ? dateFromEpoch(user.last_login_date) : "-"}</td>
+                            <td>
+                                {<Button txt={I18n.t("system.suspendedUsers.activate")}
+                                         onClick={() => this.activateUser(user)}/>}
+                            </td>
+                        </tr>)}
+                        </tbody>
+                    </table>
+                </section>
             </div>
         </div>)
     }
@@ -765,6 +807,8 @@ class System extends React.Component {
             plscSync().then(res => this.setState({plscData: res, busy: false}));
         } else if (name === "composition") {
             composition().then(res => this.setState({compositionData: res, busy: false}));
+        } else if (name === "suspended-users") {
+            getSuspendedUsers().then(res => this.setState({currentlySuspendedUsers: res, busy: false}));
         } else {
             this.setState({busy: false});
         }
@@ -779,7 +823,8 @@ class System extends React.Component {
             seedResult, confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, outstandingRequests,
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
-            validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData, compositionData
+            validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData, compositionData,
+            currentlySuspendedUsers
         } = this.state;
         const {config} = this.props;
 
@@ -794,7 +839,8 @@ class System extends React.Component {
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables),
             this.getPlscTab(plscData),
-            this.getCompositionTab(compositionData)
+            this.getCompositionTab(compositionData),
+            this.getSuspendedUsersTab(currentlySuspendedUsers)
         ]
         return (
             <div className="mod-system-container">
