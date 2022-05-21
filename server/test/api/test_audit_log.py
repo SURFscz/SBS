@@ -148,7 +148,6 @@ class TestAuditLog(AbstractTest):
         self.put("/api/users", body, with_basic_auth=False)
 
         self.login("urn:john")
-        res = self.get("/api/audit_logs/me", with_basic_auth=False,
-                       headers={"X-IMPERSONATE-ID": james.id, "X-IMPERSONATE-UID": james.uid,
-                                "X-IMPERSONATE-NAME": james_name})
-        self.assertEqual(james_name, json.loads(res["audit_logs"][0]["state_before"])["name"])
+        self.get("/api/audit_logs/me", with_basic_auth=False,
+                 headers={"X-IMPERSONATE-ID": james.id, "X-IMPERSONATE-UID": james.uid,
+                          "X-IMPERSONATE-NAME": james_name})
