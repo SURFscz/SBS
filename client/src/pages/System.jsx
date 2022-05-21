@@ -316,13 +316,14 @@ class System extends React.Component {
     }
 
     getSuspendedUsersTab = currentlySuspendedUsers => {
+        const zeroState = currentlySuspendedUsers.length === 0;
         return (<div key="suspended-users" name="suspended-users"
                      label={I18n.t("home.tabs.suspendedUsers")}
                      icon={<FontAwesomeIcon icon="user-lock"/>}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
-                    <p>{I18n.t("system.suspendedUsers.title")}</p>
-                    <table className={"suspended-users"}>
+                    <p>{I18n.t(`system.suspendedUsers.${zeroState ? "titleZeroState": "title"}`)}</p>
+                    {!zeroState && <table className={"suspended-users"}>
                         <thead>
                         <tr>
                             <th>{I18n.t("system.suspendedUsers.name")}</th>
@@ -342,7 +343,7 @@ class System extends React.Component {
                             </td>
                         </tr>)}
                         </tbody>
-                    </table>
+                    </table>}
                 </section>
             </div>
         </div>)
