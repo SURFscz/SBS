@@ -105,7 +105,8 @@ I18n.translations.nl = {
             activity: "Activiteit",
             validation: "Acties",
             plsc: "LDAP sync",
-            composition: "Config"
+            composition: "Config",
+            suspendedUsers: "Suspensions"
         }
     },
     forms: {
@@ -1640,7 +1641,14 @@ I18n.translations.nl = {
         runCleanSlate: "Weet je zeker dat je alle gegevens wilt verwijderen?",
         clear: "Clear",
         reload: "Reload",
-        seedResult: "Testgegevens toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren."
+        seedResult: "Testgegevens toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren.",
+        suspendedUsers: {
+            title: "The following user have been suspended.",
+            email: "Email",
+            name: "Name",
+            lastLogin: "Last login",
+            activate: "Activate"
+        },
     },
     access: {
         full: "Volledige",

@@ -105,7 +105,8 @@ I18n.translations.en = {
             activity: "Activity",
             validation: "Actions",
             plsc: "LDAP sync",
-            composition: "Config"
+            composition: "Config",
+            suspendedUsers: "Suspensions"
         }
     },
     forms: {
@@ -1640,7 +1641,14 @@ I18n.translations.en = {
         runCleanSlate: "Are you absolutely sure you want to delete all data?",
         clear: "Clear",
         reload: "Reload",
-        seedResult: "Test data is inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache."
+        seedResult: "Test data is inserted in {{ms}} ms. Perform a hard-reload of the page to invalidate the cache.",
+        suspendedUsers: {
+            title: "The following user have been suspended.",
+            email: "Email",
+            name: "Name",
+            lastLogin: "Last login",
+            activate: "Activate"
+        },
     },
     access: {
         full: "Full",

@@ -204,4 +204,38 @@
 
     }
 
+    table.suspended-users {
+        margin-top: 25px;
+
+        thead {
+            tr {
+                border-bottom: 3px solid $lighter-grey;
+            }
+
+            th {
+                padding: 10px 0;
+                color: $primary-orange;
+
+            }
+        }
+
+        tbody {
+            tr {
+                color: black;
+                border-bottom: 1px solid $lighter-grey;
+
+                &:nth-child(odd) {
+                    background-color: $lightest-grey;
+                }
+
+                td {
+                    padding: 10px 0;
+
+                    &:last-child {
+                        text-align: right;
+                    }
+                }
+            }
+        }
+    }
 }
