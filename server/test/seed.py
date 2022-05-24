@@ -321,7 +321,18 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                             public_visible=True, automatic_connection_allowed=False, allowed_organisations=[uuc],
                             privacy_policy="https://privacy.org")
 
-    _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler)
+    demo_sp = Service(entity_id="https://demo-sp.sram.surf.nl/saml/module.php/saml/sp/metadata.php/test",
+                      name="SRAM Demo SP", abbreviation="sram_demosp", description="Generic SRAM demo sp",
+                      logo=read_image("test.png"), uri=("https://demo-sp.sram.surf.nl/"),
+                      privacy_policy="https://wiki.surfnet.nl/display/SRAM/Privacy+Policy",
+                      contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
+                      public_visible=True, automatic_connection_allowed=True, white_listed=True,
+                      access_allowed_for_all = True,
+                      sirtfi_compliant=True,
+                      research_scholarship_compliant=True, code_of_conduct_compliant=True,
+                      )
+
+    _persist(db, mail, wireless, cloud, storage, wiki, network, service_ssh_uva, uuc_scheduler, demo_sp)
 
     service_invitation_cloud = ServiceInvitation(message="Please join", hash=service_invitation_hash,
                                                  expiry_date=datetime.date.today() + datetime.timedelta(days=14),
