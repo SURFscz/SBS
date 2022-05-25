@@ -23,7 +23,7 @@ redis==4.3.0
 pyotp==2.6.0
 qrcode==7.3.1
 Pillow==9.1.0
-PyJWT==2.3.0
+PyJWT==2.4.0
 Authlib==1.0.1
 passlib==1.7.4
 flasgger==0.9.5
