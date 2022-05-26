@@ -68,7 +68,7 @@ def introspect():
             "voperson_external_affiliation": user.scoped_affiliation,
             "uid": user.uid,
             "username": user.username,
-            "eduperson_entitlement ": list(entitlements)
+            "eduperson_entitlement": list(entitlements)
         }
     }
     return result, 200
