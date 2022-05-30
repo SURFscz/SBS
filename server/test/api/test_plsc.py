@@ -41,7 +41,7 @@ class TestPlsc(AbstractTest):
         self.assertIsNotNone(to_be_deleted["last_login_date"])
 
         services_ = res["services"]
-        self.assertEqual(8, len(services_))
+        self.assertEqual(9, len(services_))
         wiki = next(s for s in services_ if s["entity_id"] == service_wiki_entity_id)
         self.assertEqual(wiki["contact_email"], "help@wiki.com")
         self.assertEqual(wiki["name"], "Wiki")
