@@ -327,7 +327,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                       privacy_policy="https://wiki.surfnet.nl/display/SRAM/Privacy+Policy",
                       contact_email="sram-beheer@surf.nl", security_email="sram-beheer@surf.nl",
                       public_visible=True, automatic_connection_allowed=True, white_listed=True,
-                      access_allowed_for_all = True,
+                      access_allowed_for_all=True,
                       sirtfi_compliant=True,
                       research_scholarship_compliant=True, code_of_conduct_compliant=True,
                       )
