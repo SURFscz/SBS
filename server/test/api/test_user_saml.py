@@ -38,6 +38,8 @@ class TestUserSaml(AbstractTest):
 
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertTrue(sarah.ssid_required)
+        self.assertEqual("ssid.org", sarah.schac_home_organisation)
+        self.assertEqual("sarah", sarah.home_organisation_uid)
 
     def test_proxy_authz_including_groups(self):
         self.add_service_aup_to_user("urn:jane", service_network_entity_id)
