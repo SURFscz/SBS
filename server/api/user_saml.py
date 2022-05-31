@@ -119,10 +119,16 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
     ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
 
     # Leave the 2FA and AUP checks as the last checks as these are the only exceptions that can be recovered from
-    if require_2fa and not ssid_required:
+    if require_2fa:
+        if ssid_required:
+            user.ssid_required = True
+            user = db.session.merge(user)
+            db.session.commit()
+
         idp_allowed = mfa_idp_allowed(user, schac_home_organisation, issuer_id)
-        if not idp_allowed:
-            logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa")
+        if not idp_allowed or ssid_required:
+            logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa "
+                         f"(ssid={ssid_required})")
             return not_authorized_func(user, SECOND_FA_REQUIRED)
 
     if not has_agreed_with(user, service):
@@ -134,12 +140,9 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
         coll.last_activity_date = now
         db.session.merge(coll)
 
-    if ssid_required:
-        user.ssid_required = True
-    else:
-        user.last_accessed_date = now
-        user.last_login_date = now
-        user.suspend_notifications = []
+    user.last_accessed_date = now
+    user.last_login_date = now
+    user.suspend_notifications = []
 
     user = db.session.merge(user)
     db.session.commit()

@@ -31,9 +31,10 @@ class TestUserSaml(AbstractTest):
     def test_proxy_authz_ssid_required(self):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
 
-        self.post("/api/users/proxy_authz", response_status_code=200,
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
                   body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
                         "uid": "sarah", "homeorganization": "ssid.org"})
+        self.assertEqual(res["status"]["result"], "interrupt")
 
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertTrue(sarah.ssid_required)
