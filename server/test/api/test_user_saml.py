@@ -32,8 +32,8 @@ class TestUserSaml(AbstractTest):
         self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
-                  body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                        "uid": "sarah", "homeorganization": "ssid.org"})
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
+                              "uid": "sarah", "homeorganization": "ssid.org"})
         self.assertEqual(res["status"]["result"], "interrupt")
 
         sarah = self.find_entity_by_name(User, sarah_name)
