@@ -70,7 +70,7 @@ def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, iss
 
 
 def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
-                   schac_home_organisation=None, require_2fa=False, issuer_id=None):
+                   home_organisation_uid=None, schac_home_organisation=None, require_2fa=False, issuer_id=None):
     confirm_read_access()
     logger = ctx_logger("user_api")
 
@@ -122,6 +122,8 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
     if require_2fa:
         if ssid_required:
             user.ssid_required = True
+            user.home_organisation_uid = home_organisation_uid
+            user.schac_home_organisation = schac_home_organisation
             user = db.session.merge(user)
             db.session.commit()
 
@@ -217,4 +219,5 @@ def proxy_authz():
                }, 200
 
     return _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
-                          schac_home_organisation=schac_home_organisation, require_2fa=True, issuer_id=issuer_id)
+                          schac_home_organisation=schac_home_organisation, home_organisation_uid=home_organisation_uid,
+                          require_2fa=True, issuer_id=issuer_id)
