@@ -7,7 +7,7 @@ from flask import Blueprint, current_app, request as current_request
 
 from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
-from server.auth.mfa import mfa_idp_allowed, surf_secure_id_required
+from server.auth.mfa import mfa_idp_allowed, surf_secure_id_required, has_valid_mfa
 from server.auth.security import confirm_read_access
 from server.auth.user_claims import user_memberships
 from server.db.db import db
@@ -40,7 +40,7 @@ custom_saml_mapping = {
 
 
 # See https://github.com/SURFscz/SBS/issues/152
-def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, issuer_id):
+def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, issuer_id, require_2fa=True):
     logger = ctx_logger("user_api")
 
     user = User.query.filter(User.uid == uid).first()
@@ -50,22 +50,45 @@ def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, iss
 
     user.home_organisation_uid = home_organisation_uid
     user.schac_home_organisation = schac_home_organisation
-    user.ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
-    if not user.ssid_required:
+
+    # TODO: lots of duplicated code below
+    if require_2fa:
         idp_allowed = mfa_idp_allowed(user, schac_home_organisation, issuer_id)
-        if not idp_allowed:
-            logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa after sram_login")
-            user.second_fa_uuid = str(uuid.uuid4())
-            db.session.merge(user)
+        ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
+
+        # this is a configuration conflict and should never happen!
+        if idp_allowed and ssid_required:
+            raise Exception(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
+
+        # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
+        # also skip if user has already recently performed MFA
+        if not idp_allowed and not has_valid_mfa(user):
             base_url = current_app.app_config.base_url
+            if ssid_required:
+                user.ssid_required = True
+                user.home_organisation_uid = home_organisation_uid
+                user.schac_home_organisation = schac_home_organisation
+                redirect_base_url = f"{base_url}/api/mfa/ssid_start"
+            else:
+                redirect_base_url = f"{base_url}/2fa"
+
+            user.second_fa_uuid = str(uuid.uuid4())
+            user = db.session.merge(user)
+            db.session.commit()
+
+            logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa "
+                         f"(ssid={ssid_required})")
+
             return {
                        "status": {
                            "result": "interrupt",
-                           "redirect_url": f"{base_url}/2fa/{user.second_fa_uuid}",
+                           "redirect_url": f"{redirect_base_url}/{user.second_fa_uuid}",
                            "error_status": SECOND_FA_REQUIRED
                        }
                    }, 200
+
     db.session.merge(user)
+    db.session.commit()
     return {"status": {"result": "authorized"}}, 200
 
 
@@ -115,20 +138,30 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
                      f" as none of the collaboration memberships are active")
         return not_authorized_func(service.name, MEMBERSHIP_NOT_ACTIVE)
 
-    # First check if the user needs to stepped up by SURF Secure ID
-    ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
+    # logic should be: first check what type of 2FA the user should use (IdP, SSID, MFA)
+    # if idp:  then always continue (everything is assumed to be handled by IdP)
+    # if ssid or mfa: check if user has recently done check; if so, than continue
+    #                 otherwise, send interrupt
 
     # Leave the 2FA and AUP checks as the last checks as these are the only exceptions that can be recovered from
     if require_2fa:
-        if ssid_required:
-            user.ssid_required = True
-            user.home_organisation_uid = home_organisation_uid
-            user.schac_home_organisation = schac_home_organisation
-            user = db.session.merge(user)
-            db.session.commit()
-
         idp_allowed = mfa_idp_allowed(user, schac_home_organisation, issuer_id)
-        if not idp_allowed or ssid_required:
+        ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
+
+        # this is a configuration conflict and should never happen!
+        if idp_allowed and ssid_required:
+            raise Exception(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
+
+        # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
+        # also skip if user has already recently performed MFA
+        if not idp_allowed and not has_valid_mfa(user):
+            if ssid_required:
+                user.ssid_required = True
+                user.home_organisation_uid = home_organisation_uid
+                user.schac_home_organisation = schac_home_organisation
+                user = db.session.merge(user)
+                db.session.commit()
+
             logger.debug(f"Returning interrupt for user {uid} from issuer {issuer_id} to perform 2fa "
                          f"(ssid={ssid_required})")
             return not_authorized_func(user, SECOND_FA_REQUIRED)
@@ -182,7 +215,10 @@ def proxy_authz():
             user.second_fa_uuid = str(uuid.uuid4())
             db.session.merge(user)
             db.session.commit()
-            redirect_url = f"{base_url}/2fa/{user.second_fa_uuid}"
+            if user.ssid_required:
+                redirect_url = f"{base_url}/api/mfa/ssid_start/{user.second_fa_uuid}"
+            else:
+                redirect_url = f"{base_url}/2fa/{user.second_fa_uuid}"
             result = "interrupt"
         elif status == AUP_NOT_AGREED:
             # Internal contract, in case of AUP_NOT_AGREED we get the Service instance returned
