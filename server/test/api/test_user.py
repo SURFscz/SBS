@@ -331,7 +331,8 @@ class TestUser(AbstractTest):
                       json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
                       status=200)
         responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
-                      json={"sub": "urn:john", "voperson_external_id": "test@idp.test"}, status=200)
+                      json={"sub": "urn:john", "voperson_external_id": "test@idp.test"},
+                      status=200)
         responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
                       read_file("test/data/public.json"), status=200)
         with requests.Session():
@@ -341,6 +342,23 @@ class TestUser(AbstractTest):
 
             self.assertTrue(user["second_factor_confirmed"])
             self.assertTrue("organisation_memberships" in user)
+
+    @responses.activate
+    def test_resume_session_with_ssid_idp(self):
+        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
+                      json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
+                      status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
+                      json={"sub": "urn:john", "voperson_external_id": "test@ssid.org", "uid": "johnnie"},
+                      status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
+                      read_file("test/data/public.json"), status=200)
+        with requests.Session():
+            res = self.client.get("/api/users/resume-session?code=123456")
+            self.assertTrue(res.location.startswith(
+                "https://sa-gw.test.surfconext.nl/second-factor-only/single-sign-on?"))
+            john = self.find_entity_by_name(User, "urn:john")
+            self.assertTrue(john.ssid_required)
 
     def test_query(self):
         res = self.get("/api/users/query", query_data={"q": "AMES"})
