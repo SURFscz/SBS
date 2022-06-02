@@ -191,6 +191,8 @@ ldap:
 mfa_idp_allowed:
   - schac_home: "idp.test"
     entity_id: "https://idp.test"
+  - schac_home: "erroridp.example.edu"
+    entity_id: "https://erroridp.example.edu"
 
 # A MFA login in a different flow is valid for X minutes
 mfa_sso_time_in_minutes: 10
@@ -200,6 +202,8 @@ mfa_sso_time_in_minutes: 10
 ssid_identity_providers:
   - schac_home: "ssid.org"
     entity_id: "https://ssid.org"
+  - schac_home: "erroridp.example.edu"
+    entity_id: "https://erroridp.example.edu"
 
 ssid_config_folder: saml_test
 

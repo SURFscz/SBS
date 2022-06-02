@@ -269,3 +269,19 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(res["status"]["result"], "authorized")
         attrs = res["attributes"]
         self.assertListEqual(["sarah"], attrs["uid"])
+
+    def test_proxy_authz_mfa_faulty_config(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=500,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "https://erroridp.example.edu",
+                              "uid": "sarah",
+                              "homeorganization": "erroridp.example.edu"})
+        self.assertTrue(res["error"])
+        res = self.post("/api/users/proxy_authz", response_status_code=500,
+                        body={"user_id": "urn:sarah",
+                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
+                              "issuer_id": "https://erroridp.example.edu",
+                              "uid": "sarah",
+                              "homeorganization": "erroridp.example.edu"})
+        self.assertTrue(res["error"])
