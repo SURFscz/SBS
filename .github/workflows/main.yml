@@ -217,7 +217,7 @@ jobs:
         if: "github.ref_type=='tag'"
         uses: softprops/action-gh-release@v1
         with:
-          files: "${{steps.fetch_artifact.outputs.download-path}}"
+          files: "${{steps.fetch_artifact.outputs.download-path}}/*"
 
       - name: Advance latest tag
         if: "github.ref_name=='main'"
@@ -227,6 +227,7 @@ jobs:
           description: "Latest commit in the main branch"
 
       - name: remove all previous "latest" releases
+        if: "github.ref_name=='main'"
         uses: dev-drprasad/delete-older-releases@v0.2.0
         with:
           keep_latest: 0
