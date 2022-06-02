@@ -62,9 +62,7 @@ class SecondFactorAuthentication extends React.Component {
                             qrCode: res.qr_code_base64,
                             idp_name: res.idp_name || I18n.t("mfa.register.unknownIdp"),
                             continueUrl: continueUrl
-                            // hier ssid_needed vars toevoegen in state
                         });
-                        // hier checken of we ssid moeten doen;  zo ja, rediretc url ophalen en op de een of andere manier original_destination in sessie zetten en user redirecten
                         this.focusCode();
                     }).catch(() => this.props.history.push(`/404?eo=${ErrorOrigins.invalidSecondFactorUUID}`))
             } else {
