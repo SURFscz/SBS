@@ -55,6 +55,7 @@ def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, iss
     if require_2fa:
         idp_allowed = mfa_idp_allowed(user, schac_home_organisation, issuer_id)
         ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
+        fallback_required = not idp_allowed and not ssid_required and current_app.app_config.mfa_fallback_enabled
 
         # this is a configuration conflict and should never happen!
         if idp_allowed and ssid_required:
@@ -62,7 +63,7 @@ def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, iss
 
         # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
         # also skip if user has already recently performed MFA
-        if not idp_allowed and not has_valid_mfa(user):
+        if not idp_allowed and (ssid_required or fallback_required) and not has_valid_mfa(user):
             base_url = current_app.app_config.base_url
             if ssid_required:
                 user.ssid_required = True
@@ -147,6 +148,7 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
     if require_2fa:
         idp_allowed = mfa_idp_allowed(user, schac_home_organisation, issuer_id)
         ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
+        fallback_required = not idp_allowed and not ssid_required and current_app.app_config.mfa_fallback_enabled
 
         # this is a configuration conflict and should never happen!
         if idp_allowed and ssid_required:
@@ -154,7 +156,7 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
 
         # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
         # also skip if user has already recently performed MFA
-        if not idp_allowed and not has_valid_mfa(user):
+        if not idp_allowed and (ssid_required or fallback_required) and not has_valid_mfa(user):
             if ssid_required:
                 user.ssid_required = True
                 user.home_organisation_uid = home_organisation_uid

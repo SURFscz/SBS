@@ -187,15 +187,20 @@ ldap:
   url: "ldap://ldap.example.com/dc=example,dc=com"
   bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"
 
-# Lower case schachome organisations / entity ID's allowed skipping MFA
+# A MFA login in a different flow is valid for X minutes
+mfa_sso_time_in_minutes: 10
+
+# whether to require TOTP for users form IdPs that match neither mfa_idp_allowed
+# nor ssid_identity_providers
+mfa_fallback_enabled: true
+
+# Lower case schachome organisations / entity ID's allowed skipping MFA;
+# MFA is supposed to be handled at the IdP for these entities
 mfa_idp_allowed:
   - schac_home: "idp.test"
     entity_id: "https://idp.test"
   - schac_home: "erroridp.example.edu"
     entity_id: "https://erroridp.example.edu"
-
-# A MFA login in a different flow is valid for X minutes
-mfa_sso_time_in_minutes: 10
 
 # Lower case schachome organisations / entity ID's where SURFSecure ID is used for step-up
 # If this feature is no longer needed, just replace the value with an empty list []
