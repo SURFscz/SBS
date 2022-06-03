@@ -230,7 +230,7 @@ def authorization():
 
 @user_api.route("/resume-session", strict_slashes=False)
 def resume_session():
-    logger = ctx_logger("oidc")
+    logger = ctx_logger("resume-session/oidc")
 
     cfg = current_app.app_config
     oidc_config = cfg.oidc
@@ -270,7 +270,7 @@ def resume_session():
     if response.status_code != 200:
         return _redirect_with_error(logger, f"Server error: User info endpoint error (http {response.status_code}")
 
-    logger = ctx_logger("user")
+    logger = ctx_logger("resume-session/user")
     user_info_json = response.json()
 
     logger.debug(f"Userinfo endpoint results {user_info_json}")
@@ -305,6 +305,10 @@ def resume_session():
         ssid_required = surf_secure_id_required(user=user, schac_home=schac_home_organisation)
         fallback_required = not idp_allowed and not ssid_required and current_app.app_config.mfa_fallback_enabled
 
+        logger.debug(f"SBS login for user {uid} MFA check: "
+                     f"idp_allowed={idp_allowed}, ssid={ssid_required}, fallback={fallback_required} "
+                     f"(sho={schac_home_organisation},uid={home_organisation_uid}")
+
         # this is a configuration conflict and should never happen!
         if idp_allowed and ssid_required:
             raise Exception(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
@@ -326,6 +330,7 @@ def resume_session():
         fallback_required = False
 
     if user.ssid_required:
+        logger.debug(f"Redirecting user {uid} to ssid")
         user = db.session.merge(user)
         db.session.commit()
         return redirect_to_surf_secure_id(user)
@@ -339,6 +344,8 @@ def resume_session():
 
 
 def _redirect_to_client(cfg, second_factor_confirmed, user):
+    logger = ctx_logger("redirect")
+
     user = db.session.merge(user)
     db.session.commit()
     user_accepted_aup = user.has_agreed_with_aup()
@@ -349,11 +356,15 @@ def _redirect_to_client(cfg, second_factor_confirmed, user):
         location = f"{cfg.base_url}/2fa"
     else:
         location = session.get("original_destination", cfg.base_url)
+
+    logger.debug(f"Redirecting user {user.uid} to {location}")
     return redirect(location)
 
 
 @user_api.route("/acs", methods=["POST"], strict_slashes=False)
 def acs():
+    logger = ctx_logger("acl")
+
     request_id = session.get(AUTHN_REQUEST_ID, None)
     auth = saml_auth()
     auth.process_response(request_id=request_id)
@@ -370,6 +381,9 @@ def acs():
     # There is no other way to get the status back
     status = OneLogin_Saml2_Utils.get_status(auth._last_response)
     second_factor_confirmed = OneLogin_Saml2_Constants.STATUS_SUCCESS == status["code"]
+
+    logger.debug(f"User {user_uid} got SSID response (status={status})")
+
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
     return _redirect_to_client(cfg, second_factor_confirmed, user)
