@@ -54,6 +54,7 @@ class SecondFactorAuthentication extends React.Component {
         console.log(update);
         console.log(match);
         if (user.guest) {
+            console.log("path 1");
             const second_fa_uuid = match.params.second_fa_uuid;
             const urlSearchParams = new URLSearchParams(window.location.search);
             const continueUrl = urlSearchParams.get("continue_url");
@@ -74,8 +75,10 @@ class SecondFactorAuthentication extends React.Component {
                 this.props.history.push("/landing");
             }
         } else if (user.second_factor_confirmed && !update) {
+            console.log("path 2");
             this.props.history.push("/home")
         } else if (!user.second_factor_auth || update) {
+            console.log("path 3");
             get2fa().then(res => {
                 this.setState({
                     qrCode: res.qr_code_base64,
@@ -85,6 +88,7 @@ class SecondFactorAuthentication extends React.Component {
                 this.focusCode();
             });
         } else {
+            console.log("path 4");
             this.setState({loading: false});
             this.focusCode();
         }
