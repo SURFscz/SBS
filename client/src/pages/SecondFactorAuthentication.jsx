@@ -52,6 +52,8 @@ class SecondFactorAuthentication extends React.Component {
         const {config, user, update, match} = this.props;
 
         const urlSearchParams = new URLSearchParams(window.location.search);
+        const second_fa_uuid = match.params.second_fa_uuid;
+
         const continueUrl = urlSearchParams.get("continue_url");
         const continueUrlTrusted = config.continue_eduteams_redirect_uri;
         if (continueUrl && !continueUrl.toLowerCase().startsWith(continueUrlTrusted.toLowerCase())) {
@@ -65,7 +67,6 @@ class SecondFactorAuthentication extends React.Component {
 
         if (user.guest) {
             console.log("path 1");
-            const second_fa_uuid = match.params.second_fa_uuid;
             if (second_fa_uuid && continueUrl) {
                 //We need to know if this is a new user. We use the second_fa_uuid for this
                 get2faProxyAuthz(second_fa_uuid)
@@ -95,6 +96,7 @@ class SecondFactorAuthentication extends React.Component {
         } else {
             console.log("path 4");
             this.setState({
+                secondFaUuid: second_fa_uuid,
                 continueUrl: continueUrl,
                 loading: false
             });
