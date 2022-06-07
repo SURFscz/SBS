@@ -354,8 +354,12 @@ def _redirect_to_client(cfg, second_factor_confirmed, user):
         location = f"{cfg.base_url}/aup"
     elif not second_factor_confirmed:
         location = f"{cfg.base_url}/2fa"
+    elif "ssid_original_destination" in session:
+        location = session.pop("ssid_original_destination")
+    elif "original_destination" in session:
+        location = session.pop("original_destination")
     else:
-        location = session.get("original_destination", cfg.base_url)
+        location = cfg.base_url
 
     logger.debug(f"Redirecting user {user.uid} to {location}")
     return redirect(location)

@@ -268,9 +268,9 @@ def do_ssid_redirect(second_fa_uuid):
     logger = ctx_logger("2fa")
 
     continue_url = query_param("continue_url", required=True)
-    session["original_destination"] = continue_url
+    session["ssid_original_destination"] = continue_url
     user = User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
 
-    logger.debug(f"do_ssid_redirect: continu{continue_url}, user={user}")
+    logger.debug(f"do_ssid_redirect: continu={continue_url}, user={user}")
 
     return redirect_to_surf_secure_id(user)
