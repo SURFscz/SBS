@@ -94,7 +94,10 @@ class SecondFactorAuthentication extends React.Component {
             });
         } else {
             console.log("path 4");
-            this.setState({loading: false});
+            this.setState({
+                continueUrl: continueUrl,
+                loading: false
+            });
             this.focusCode();
         }
     }
