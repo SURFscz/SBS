@@ -216,6 +216,7 @@ def proxy_authz():
         if status == SECOND_FA_REQUIRED:
             # Internal contract, in case of SECOND_FA_REQUIRED we get the User instance returned
             user = service_name
+            user.second_factor_confirmed = False
             user.second_fa_uuid = str(uuid.uuid4())
             db.session.merge(user)
             db.session.commit()
