@@ -43,6 +43,8 @@ custom_saml_mapping = {
 def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, issuer_id, require_2fa=True):
     logger = ctx_logger("user_api")
 
+    logger.debug("SBS login flow")
+
     user = User.query.filter(User.uid == uid).first()
     if not user:
         logger.debug("Creating new user in sram_login")
