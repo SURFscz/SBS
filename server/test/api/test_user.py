@@ -360,6 +360,18 @@ class TestUser(AbstractTest):
             john = self.find_entity_by_name(User, "urn:john")
             self.assertTrue(john.ssid_required)
 
+    @responses.activate
+    def test_resume_session_with_invalid_idp(self):
+        responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
+                      json={"access_token": "some_token", "id_token": self.sign_jwt({"acr": "nope"})},
+                      status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.userinfo_endpoint,
+                      json={"sub": "urn:john", "voperson_external_id": "test@erroridp.example.edu", "uid": "johnnie"},
+                      status=200)
+        responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
+                      read_file("test/data/public.json"), status=200)
+        res = self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=500)
+
     def test_query(self):
         res = self.get("/api/users/query", query_data={"q": "AMES"})
         self.assertEqual(1, len(res))

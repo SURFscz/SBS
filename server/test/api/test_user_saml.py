@@ -278,6 +278,7 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah",
                               "homeorganization": "erroridp.example.edu"})
         self.assertTrue(res["error"])
+
         res = self.post("/api/users/proxy_authz", response_status_code=500,
                         body={"user_id": "urn:sarah",
                               "service_id": self.app.app_config.oidc.sram_service_entity_id,

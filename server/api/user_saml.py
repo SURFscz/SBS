@@ -4,6 +4,7 @@ from datetime import datetime
 from urllib.parse import urlencode
 
 from flask import Blueprint, current_app, request as current_request
+from werkzeug.exceptions import InternalServerError
 
 from server.api.base import json_endpoint, send_error_mail
 from server.api.service_aups import has_agreed_with
@@ -154,7 +155,7 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
 
         # this is a configuration conflict and should never happen!
         if idp_allowed and ssid_required:
-            raise Exception(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
+            raise InternalServerError(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
 
         # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
         # also skip if user has already recently performed MFA

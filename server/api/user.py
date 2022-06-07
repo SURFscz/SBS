@@ -16,7 +16,7 @@ from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import joinedload, selectinload
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, InternalServerError
 
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
@@ -311,7 +311,7 @@ def resume_session():
 
         # this is a configuration conflict and should never happen!
         if idp_allowed and ssid_required:
-            raise Exception(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
+            raise InternalServerError(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
 
         # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
         # also skip if user has already recently performed MFA
