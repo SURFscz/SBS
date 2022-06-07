@@ -82,13 +82,6 @@ class SecondFactorAuthentication extends React.Component {
             } else {
                 this.props.history.push("/landing");
             }
-        } else if (user.second_factor_confirmed && !update) {
-            console.log("path 2");
-            if (continueUrl) {
-                window.location.href = continueUrl
-            } else {
-                this.props.history.push("/home")
-            }
         } else if (!user.second_factor_auth || update) {
             console.log("path 3");
             get2fa().then(res => {
