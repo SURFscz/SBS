@@ -15,89 +15,89 @@ on:
   workflow_dispatch:
 
 jobs:
-#  Server_tests:
-#    name: Server tests
-#    if: always()
-#
-#    runs-on: ubuntu-latest
-#
-#    # Test different python versions
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        python-version: ['3.7', '3.9', '3.10']
-#
-#    services:
-#      # How to use MySQL
-#      mysql:
-#        image: mysql:5.7
-#        env:
-#          MYSQL_ROOT_PASSWORD: root
-#        ports:
-#          - 3306:3306
-#        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-#      redis:
-#        # Docker Hub image
-#        image: redis
-#        # Set health checks to wait until redis has started
-#        options: >-
-#          --health-cmd "redis-cli ping"
-#          --health-interval 10s
-#          --health-timeout 5s
-#          --health-retries 5
-#        ports:
-#          # Maps port 6379 on service container to the host
-#          - 6379:6379
-#
-#    steps:
-#      - name: Setup mysql server
-#        run: >
-#          mysql -uroot -proot -h127.0.0.1 -e "
-#            DROP DATABASE IF EXISTS sbs_test;
-#            CREATE DATABASE IF NOT EXISTS sbs_test DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
-#            CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
-#            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
-#          "
-#      - name: Install SAML2 dependencies
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y libxml2-dev libxmlsec1-dev
-#      # Run Checkout code
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Set up Python ${{ matrix.python-version }}
-#        uses: actions/setup-python@v3
-#        with:
-#          python-version: ${{ matrix.python-version }}
-#          cache: 'pip'
-#          cache-dependency-path: 'server/requirements/*.txt'
-#
-#      - name: Display Python version
-#        run: python -c "import sys; print(sys.version)"
-#
-#      - name: Install dependencies
-#        run: |
-#          python -m pip install pip setuptools wheel
-#          pip install -r ./server/requirements/test.txt
-#          pip install codecov flake8
-#
-#      # Setup tmate session
-#      #- name: Setup tmate session
-#      #  uses: mxschmitt/action-tmate@v3
-#
-#      - name: Run flake8
-#        run: |
-#          flake8 ./server/
-#
-#      - name: Run tests
-#        run: |
-#          pytest --cov=server server/test
-#
-#      - name: The job has succeeded
-#        run: codecov --token=${{ secrets.CODECOV_TOKEN }}
-#        if: ${{ success() }}
-#
+  Server_tests:
+    name: Server tests
+    if: always()
+
+    runs-on: ubuntu-latest
+
+    # Test different python versions
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.7', '3.9', '3.10']
+
+    services:
+      # How to use MySQL
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
+
+    steps:
+      - name: Setup mysql server
+        run: >
+          mysql -uroot -proot -h127.0.0.1 -e "
+            DROP DATABASE IF EXISTS sbs_test;
+            CREATE DATABASE IF NOT EXISTS sbs_test DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+            CREATE USER 'sbs'@'%' IDENTIFIED BY 'sbs';
+            GRANT ALL PRIVILEGES ON *.* TO 'sbs'@'%' WITH GRANT OPTION;
+          "
+      - name: Install SAML2 dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxml2-dev libxmlsec1-dev
+      # Run Checkout code
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: 'server/requirements/*.txt'
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install pip setuptools wheel
+          pip install -r ./server/requirements/test.txt
+          pip install codecov flake8
+
+      # Setup tmate session
+      #- name: Setup tmate session
+      #  uses: mxschmitt/action-tmate@v3
+
+      - name: Run flake8
+        run: |
+          flake8 ./server/
+
+      - name: Run tests
+        run: |
+          pytest --cov=server server/test
+
+      - name: The job has succeeded
+        run: codecov --token=${{ secrets.CODECOV_TOKEN }}
+        if: ${{ success() }}
+
 
   Client_build:
     name: Client build
@@ -191,7 +191,7 @@ jobs:
       ( github.ref_type=='tag' || github.ref_name=='main' )
     needs:
       - "Client_build"
-#      - "Server_tests"
+      - "Server_tests"
 
     runs-on: ubuntu-latest
 
