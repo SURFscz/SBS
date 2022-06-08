@@ -292,6 +292,8 @@ def resume_session():
     id_token = decode_jwt_token(encoded_id_token)
 
     idp_mfa = id_token.get("acr") == ACR_VALUES
+    if idp_mfa:
+        logger.debug(f"user {uid}: idp_mfa={idp_mfa} (ACR = '{id_token.get('acr')}')")
 
     # we're repeating some of the logic of _perform_sram_login() here
     # at least until EduTEAMS has transitioned to inserting a call to proxy_authz in the login flow for SBS itself
