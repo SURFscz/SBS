@@ -3,8 +3,10 @@ import pyotp
 import responses
 from flask import current_app
 
+from server.auth.ssid import saml_auth
 from server.db.domain import User
 from server.test.abstract_test import AbstractTest
+from server.test.seed import service_mail_entity_id, sarah_name
 from server.tools import read_file
 
 
@@ -32,6 +34,29 @@ class TestMfa(AbstractTest):
 
         mary = User.query.filter(User.uid == "urn:mary").first()
         self.assertEqual(secret, mary.second_factor_auth)
+
+    def test_ssid_scenario(self):
+        # initiate proxy_authz call to initialize 2fa
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
+                              "uid": "sarah", "homeorganization": "ssid.org"})
+        sarah = self.find_entity_by_name(User, sarah_name)
+
+        # start the ssid
+        res = self.get(f"/api/mfa/ssid_start/{sarah.second_fa_uuid}", query_data={"continue_url": "https://foo.bar"},
+                       response_status_code=302)
+        saml_sso_url = saml_auth().get_sso_url()
+        self.assertTrue(res.location.startswith(saml_sso_url))
+
+        # ssid response
+        xml_authn_b64 = self.get_authn_response("response.ok.xml")
+        res = self.client.post("/api/users/acs", headers={},
+                               data={"SAMLResponse": xml_authn_b64,
+                                     "RelayState": "http://localhost:8080/api/users/acs"},
+                               content_type="application/x-www-form-urlencoded")
+
+        self.assertEqual(302, res.status_code)
+        self.assertEqual("https://foo.bar", res.location)
 
     def test_2fa_invalid_totp(self):
         AbstractTest.set_second_factor_auth("urn:mary")

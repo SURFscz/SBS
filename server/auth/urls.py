@@ -5,6 +5,7 @@ white_listing = [
     "/api/mfa/get2fa_proxy_authz",
     "/api/mfa/jwks",
     "/api/mfa/sfo",
+    "/api/mfa/ssid_start",
     "/api/mfa/verify2fa_proxy_authz",
     "/api/mock",
     "/api/organisation_invitations/find_by_hash",

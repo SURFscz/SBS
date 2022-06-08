@@ -47,11 +47,20 @@ class SecondFactorAuthentication extends React.Component {
     }
 
     componentDidMount() {
-        const {user, update, match} = this.props;
+        console.log("2fa start");
+
+        const {config, user, update, match} = this.props;
+
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const second_fa_uuid = match.params.second_fa_uuid;
+
+        const continueUrl = urlSearchParams.get("continue_url");
+        const continueUrlTrusted = config.continue_eduteams_redirect_uri;
+        if (continueUrl && !continueUrl.toLowerCase().startsWith(continueUrlTrusted.toLowerCase())) {
+            throw new Error(`Invalid continue url: '${continueUrl}'`)
+        }
+
         if (user.guest) {
-            const second_fa_uuid = match.params.second_fa_uuid;
-            const urlSearchParams = new URLSearchParams(window.location.search);
-            const continueUrl = urlSearchParams.get("continue_url");
             if (second_fa_uuid && continueUrl) {
                 //We need to know if this is a new user. We use the second_fa_uuid for this
                 get2faProxyAuthz(second_fa_uuid)
@@ -68,8 +77,6 @@ class SecondFactorAuthentication extends React.Component {
             } else {
                 this.props.history.push("/landing");
             }
-        } else if (user.second_factor_confirmed && !update) {
-            this.props.history.push("/home")
         } else if (!user.second_factor_auth || update) {
             get2fa().then(res => {
                 this.setState({
@@ -80,7 +87,11 @@ class SecondFactorAuthentication extends React.Component {
                 this.focusCode();
             });
         } else {
-            this.setState({loading: false});
+            this.setState({
+                secondFaUuid: second_fa_uuid,
+                continueUrl: continueUrl,
+                loading: false
+            });
             this.focusCode();
         }
     }

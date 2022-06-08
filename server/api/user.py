@@ -16,13 +16,14 @@ from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import joinedload, selectinload
-from werkzeug.exceptions import Forbidden
+from werkzeug.exceptions import Forbidden, InternalServerError
 
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.api.ipaddress import validate_ip_networks
 
-from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, mfa_idp_allowed
+from server.auth.mfa import ACR_VALUES, store_user_in_session, mfa_idp_allowed, \
+    surf_secure_id_required, has_valid_mfa, decode_jwt_token
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access
 from server.auth.ssid import AUTHN_REQUEST_ID, saml_auth, redirect_to_surf_secure_id, USER_UID
@@ -229,7 +230,7 @@ def authorization():
 
 @user_api.route("/resume-session", strict_slashes=False)
 def resume_session():
-    logger = ctx_logger("oidc")
+    logger = ctx_logger("resume-session/oidc")
 
     cfg = current_app.app_config
     oidc_config = cfg.oidc
@@ -269,7 +270,7 @@ def resume_session():
     if response.status_code != 200:
         return _redirect_with_error(logger, f"Server error: User info endpoint error (http {response.status_code}")
 
-    logger = ctx_logger("user")
+    logger = ctx_logger("resume-session/user")
     user_info_json = response.json()
 
     logger.debug(f"Userinfo endpoint results {user_info_json}")
@@ -287,20 +288,57 @@ def resume_session():
         logger.info(f"Updating user {user.uid} with new claims / updated at")
         add_user_claims(user_info_json, uid, user)
 
+    encoded_id_token = token_json["id_token"]
+    id_token = decode_jwt_token(encoded_id_token)
+
+    idp_mfa = id_token.get("acr") == ACR_VALUES
+    if idp_mfa:
+        logger.debug(f"user {uid}: idp_mfa={idp_mfa} (ACR = '{id_token.get('acr')}')")
+
+    # we're repeating some of the logic of _perform_sram_login() here
+    # at least until EduTEAMS has transitioned to inserting a call to proxy_authz in the login flow for SBS itself
+    #
+    # no need to repeat this logic if we already have made a decision before
+    if not idp_mfa and not user.ssid_required and not has_valid_mfa(user):
+        schac_home_organisation = user.schac_home_organisation
+        home_organisation_uid = user_info_json.get('uid', None)
+
+        idp_allowed = mfa_idp_allowed(user=user, schac_home=schac_home_organisation)
+        ssid_required = surf_secure_id_required(user=user, schac_home=schac_home_organisation)
+        fallback_required = not idp_allowed and not ssid_required and current_app.app_config.mfa_fallback_enabled
+
+        logger.debug(f"SBS login for user {uid} MFA check: "
+                     f"idp_allowed={idp_allowed}, ssid={ssid_required}, fallback={fallback_required} "
+                     f"(sho={schac_home_organisation},uid={home_organisation_uid}")
+
+        # this is a configuration conflict and should never happen!
+        if idp_allowed and ssid_required:
+            raise InternalServerError(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
+
+        # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
+        # also skip if user has already recently performed MFA
+        if not idp_allowed and (ssid_required or fallback_required) and not has_valid_mfa(user):
+            if ssid_required:
+                user.ssid_required = True
+                user.home_organisation_uid = home_organisation_uid
+                user.schac_home_organisation = schac_home_organisation
+
+            user.second_fa_uuid = str(uuid.uuid4())
+            user = db.session.merge(user)
+            db.session.commit()
+
+            logger.debug(f"Setting 2fa required for SBS login for user {uid} (ssid={ssid_required})")
+    else:
+        fallback_required = False
+
     if user.ssid_required:
+        logger.debug(f"Redirecting user {uid} to ssid")
         user = db.session.merge(user)
         db.session.commit()
         return redirect_to_surf_secure_id(user)
 
-    encoded_id_token = token_json["id_token"]
-    id_token = decode_jwt_token(encoded_id_token)
-
     no_mfa_required = not oidc_config.second_factor_authentication_required
-    idp_mfa = id_token.get("acr") == ACR_VALUES
-
-    idp_allowed = mfa_idp_allowed(user, user.schac_home_organisation, None)
-
-    second_factor_confirmed = no_mfa_required or idp_mfa or idp_allowed
+    second_factor_confirmed = no_mfa_required or not fallback_required
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
 
@@ -308,6 +346,8 @@ def resume_session():
 
 
 def _redirect_to_client(cfg, second_factor_confirmed, user):
+    logger = ctx_logger("redirect")
+
     user = db.session.merge(user)
     db.session.commit()
     user_accepted_aup = user.has_agreed_with_aup()
@@ -316,13 +356,21 @@ def _redirect_to_client(cfg, second_factor_confirmed, user):
         location = f"{cfg.base_url}/aup"
     elif not second_factor_confirmed:
         location = f"{cfg.base_url}/2fa"
+    elif "ssid_original_destination" in session:
+        location = session.pop("ssid_original_destination")
+    elif "original_destination" in session:
+        location = session.pop("original_destination")
     else:
-        location = session.get("original_destination", cfg.base_url)
+        location = cfg.base_url
+
+    logger.debug(f"Redirecting user {user.uid} to {location}")
     return redirect(location)
 
 
 @user_api.route("/acs", methods=["POST"], strict_slashes=False)
 def acs():
+    logger = ctx_logger("acl")
+
     request_id = session.get(AUTHN_REQUEST_ID, None)
     auth = saml_auth()
     auth.process_response(request_id=request_id)
@@ -339,6 +387,9 @@ def acs():
     # There is no other way to get the status back
     status = OneLogin_Saml2_Utils.get_status(auth._last_response)
     second_factor_confirmed = OneLogin_Saml2_Constants.STATUS_SUCCESS == status["code"]
+
+    logger.debug(f"User {user_uid} got SSID response (status={status})")
+
     if second_factor_confirmed:
         user.last_login_date = datetime.datetime.now()
     return _redirect_to_client(cfg, second_factor_confirmed, user)
