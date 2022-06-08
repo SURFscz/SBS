@@ -370,7 +370,7 @@ class TestUser(AbstractTest):
                       status=200)
         responses.add(responses.GET, current_app.app_config.oidc.jwks_endpoint,
                       read_file("test/data/public.json"), status=200)
-        res = self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=500)
+        self.get("/api/users/resume-session", query_data={"code": "123456"}, response_status_code=500)
 
     @responses.activate
     def test_authorization_resume_redirect(self):
