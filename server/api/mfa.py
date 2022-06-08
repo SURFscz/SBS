@@ -79,7 +79,6 @@ def _do_get2fa(schac_home_organisation, user_identifier):
     img.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
     idp_name = idp_display_name(schac_home_organisation, "en")
-    # hier ook ssid_required en sha en uid teruggeven
     return {"qr_code_base64": img_str, "secret": secret, "idp_name": idp_name}, 200
 
 
@@ -144,7 +143,6 @@ def get2fa_proxy_authz():
     user = User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
     if user.second_factor_auth:
         return {}, 200
-    # hier ook ssid_required teruggeven
     return _do_get2fa(user.schac_home_organisation, user.uid)
 
 
