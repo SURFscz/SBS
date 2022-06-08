@@ -62,7 +62,8 @@ def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, iss
 
         # this is a configuration conflict and should never happen!
         if idp_allowed and ssid_required:
-            raise Exception(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
+            raise InternalServerError("Both IdP-based MFA and SSID-based MFA configured "
+                                      f"for IdP '{schac_home_organisation}'")
 
         # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
         # also skip if user has already recently performed MFA
