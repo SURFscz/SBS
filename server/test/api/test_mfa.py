@@ -48,6 +48,16 @@ class TestMfa(AbstractTest):
         saml_sso_url = saml_auth().get_sso_url()
         self.assertTrue(res.location.startswith(saml_sso_url))
 
+        # ssid response
+        xml_authn_b64 = self.get_authn_response("response.ok.xml")
+        res = self.client.post("/api/users/acs", headers={},
+                               data={"SAMLResponse": xml_authn_b64,
+                                     "RelayState": "http://localhost:8080/api/users/acs"},
+                               content_type="application/x-www-form-urlencoded")
+
+        self.assertEqual(302, res.status_code)
+        self.assertEqual("https://foo.bar", res.location)
+
     def test_2fa_invalid_totp(self):
         AbstractTest.set_second_factor_auth("urn:mary")
 
