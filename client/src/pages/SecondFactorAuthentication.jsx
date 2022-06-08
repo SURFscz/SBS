@@ -60,13 +60,7 @@ class SecondFactorAuthentication extends React.Component {
             throw new Error(`Invalid continue url: '${continueUrl}'`)
         }
 
-        console.log(user);
-        console.log(update);
-        console.log(match);
-        console.log(config);
-
         if (user.guest) {
-            console.log("path 1");
             if (second_fa_uuid && continueUrl) {
                 //We need to know if this is a new user. We use the second_fa_uuid for this
                 get2faProxyAuthz(second_fa_uuid)
@@ -84,7 +78,6 @@ class SecondFactorAuthentication extends React.Component {
                 this.props.history.push("/landing");
             }
         } else if (!user.second_factor_auth || update) {
-            console.log("path 3");
             get2fa().then(res => {
                 this.setState({
                     qrCode: res.qr_code_base64,
@@ -94,7 +87,6 @@ class SecondFactorAuthentication extends React.Component {
                 this.focusCode();
             });
         } else {
-            console.log("path 4");
             this.setState({
                 secondFaUuid: second_fa_uuid,
                 continueUrl: continueUrl,
