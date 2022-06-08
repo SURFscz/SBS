@@ -17,6 +17,7 @@ from server.api.base import query_param, json_endpoint
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
 from server.auth.rate_limit import rate_limit_reached, clear_rate_limit
 from server.auth.security import current_user_id, generate_token, is_admin_user
+from server.auth.ssid import redirect_to_surf_secure_id
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.domain import User
@@ -258,3 +259,16 @@ def sfo():
 @json_endpoint
 def jwks():
     return _get_public_key(), 200
+
+
+@mfa_api.route("/ssid_start/<second_fa_uuid>", strict_slashes=False)
+def do_ssid_redirect(second_fa_uuid):
+    logger = ctx_logger("2fa")
+
+    continue_url = query_param("continue_url", required=True)
+    session["ssid_original_destination"] = continue_url
+    user = User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
+
+    logger.debug(f"do_ssid_redirect: continu={continue_url}, user={user}")
+
+    return redirect_to_surf_secure_id(user)

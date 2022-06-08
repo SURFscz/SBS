@@ -28,17 +28,6 @@ class TestUserSaml(AbstractTest):
         self.assertListEqual(["sarah"], attrs["uid"])
         self.assertIsNotNone(attrs["sshkey"][0])
 
-    def test_proxy_authz_ssid_required(self):
-        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
-
-        res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
-                              "uid": "sarah", "homeorganization": "ssid.org"})
-        self.assertEqual(res["status"]["result"], "interrupt")
-
-        sarah = self.find_entity_by_name(User, sarah_name)
-        self.assertTrue(sarah.ssid_required)
-
     def test_proxy_authz_including_groups(self):
         self.add_service_aup_to_user("urn:jane", service_network_entity_id)
         self.login_user_2fa("urn:jane")
@@ -101,23 +90,6 @@ class TestUserSaml(AbstractTest):
         parameters = urlencode({"service_id": network_service.uuid4, "service_name": network_service.name})
         self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/service-aup?{parameters}")
 
-    def test_proxy_authz_no_2fa(self):
-        res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "nope",
-                              "uid": "sarah", "homeorganization": "example.com"})
-        sarah = self.find_entity_by_name(User, sarah_name)
-        self.assertEqual(res["status"]["result"], "interrupt")
-        self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/2fa/{sarah.second_fa_uuid}")
-
-    def test_proxy_authz_allowed_idp(self):
-        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
-
-        res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id,
-                              "issuer_id": "https://idp.test", "uid": "sarah", "homeorganization": "example.com"})
-        attrs = res["attributes"]
-        self.assertListEqual(["sarah"], attrs["uid"])
-
     def test_proxy_authz_no_user(self):
         res = self.post("/api/users/proxy_authz", body={"user_id": "urn:nope", "service_id": service_mail_entity_id,
                                                         "issuer_id": "https://idp.test", "uid": "sarah",
@@ -142,7 +114,10 @@ class TestUserSaml(AbstractTest):
         self.assertEqual("unauthorized", res["status"]["result"])
         self.assertEqual(SERVICE_NOT_CONNECTED, res["status"]["error_status"])
 
-    def test_proxy_authz_sram_login(self):
+    #
+    # MFA scenarios:
+    # logins on SBS
+    def test_proxy_authz_mfa_sbs_totp(self):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:sarah",
                               "service_id": self.app.app_config.oidc.sram_service_entity_id,
@@ -156,7 +131,7 @@ class TestUserSaml(AbstractTest):
         self.assertEqual(status_["error_status"], SECOND_FA_REQUIRED)
         self.assertEqual(status_["redirect_url"], f"http://localhost:3000/2fa/{sarah.second_fa_uuid}")
 
-    def test_proxy_authz_sram_login_new_user(self):
+    def test_proxy_authz_mfa_sbs_totp_new_user(self):
         res = self.post("/api/users/proxy_authz", response_status_code=200,
                         body={"user_id": "urn:new_user",
                               "service_id": self.app.app_config.oidc.sram_service_entity_id,
@@ -169,22 +144,7 @@ class TestUserSaml(AbstractTest):
         self.assertEqual("example.com", new_user.schac_home_organisation)
         self.assertEqual("sarah", new_user.home_organisation_uid)
 
-    def test_proxy_authz_sram_login_ssid_required(self):
-        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
-
-        res = self.post("/api/users/proxy_authz", response_status_code=200,
-                        body={"user_id": "urn:sarah",
-                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
-                              "issuer_id": "idp",
-                              "uid": "sarah",
-                              "homeorganization": "ssid.org"})
-        status_ = res["status"]
-        self.assertEqual(status_["result"], "authorized")
-
-        sarah = self.find_entity_by_name(User, sarah_name)
-        self.assertTrue(sarah.ssid_required)
-
-    def test_proxy_authz_sram_login_no_2fa_required(self):
+    def test_proxy_authz_mfa_sbs_totp_sso(self):
         self.login_user_2fa("urn:sarah")
 
         res = self.post("/api/users/proxy_authz", response_status_code=200,
@@ -198,3 +158,131 @@ class TestUserSaml(AbstractTest):
 
         sarah = self.find_entity_by_name(User, sarah_name)
         self.assertFalse(sarah.ssid_required)
+
+    def test_proxy_authz_mfa_sbs_ssid(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
+                              "issuer_id": "https://ssid.org",
+                              "uid": "sarah",
+                              "homeorganization": "ssid.org"})
+        status_ = res["status"]
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.assertEqual(status_["result"], "interrupt")
+        self.assertEqual(res["status"]["redirect_url"],
+                         f"http://localhost:3000/api/mfa/ssid_start/{sarah.second_fa_uuid}")
+        self.assertTrue(sarah.ssid_required)
+
+    def test_proxy_authz_mfa_sbs_ssid_sso(self):
+        self.login_user_2fa("urn:sarah")
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
+                              "issuer_id": "https://ssid.org",
+                              "uid": "sarah",
+                              "homeorganization": "ssid.org"})
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.assertEqual(res["status"]["result"], "authorized")
+        self.assertFalse(sarah.ssid_required)
+
+    def test_proxy_authz_mfa_sbs_idp(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
+                              "issuer_id": "https://idp.test",
+                              "uid": "sarah",
+                              "homeorganization": "idp.test"})
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.assertEqual(res["status"]["result"], "authorized")
+        self.assertFalse(sarah.ssid_required)
+
+    # MFA scenarios:
+    # login on services
+    def test_proxy_authz_mfa_service_totp(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "nope",
+                              "uid": "sarah",
+                              "homeorganization": "example.com"})
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.assertEqual(res["status"]["result"], "interrupt")
+        self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/2fa/{sarah.second_fa_uuid}")
+
+    def test_proxy_authz_mfa_service_totp_sso(self):
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+        self.login_user_2fa("urn:sarah")
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "nope",
+                              "uid": "sarah",
+                              "homeorganization": "example.com"})
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.assertEqual(res["status"]["result"], "authorized")
+        self.assertFalse(sarah.ssid_required)
+
+    def test_proxy_authz_mfa_service_ssid(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "https://ssid.org",
+                              "uid": "sarah",
+                              "homeorganization": "ssid.org"})
+        sarah = self.find_entity_by_name(User, sarah_name)
+
+        self.assertEqual(res["status"]["result"], "interrupt")
+        self.assertEqual(res["status"]["redirect_url"],
+                         f"http://localhost:3000/api/mfa/ssid_start/{sarah.second_fa_uuid}")
+
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.assertTrue(sarah.ssid_required)
+        self.assertEqual("ssid.org", sarah.schac_home_organisation)
+        self.assertEqual("sarah", sarah.home_organisation_uid)
+
+    def test_proxy_authz_mfa_service_ssid_sso(self):
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+        self.login_user_2fa("urn:sarah")
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "https://ssid.org",
+                              "uid": "sarah",
+                              "homeorganization": "ssid.org"})
+        sarah = self.find_entity_by_name(User, sarah_name)
+
+        self.assertEqual(res["status"]["result"], "authorized")
+        self.assertFalse(sarah.ssid_required)
+
+    def test_proxy_authz_mfa_service_idp(self):
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "https://idp.test",
+                              "uid": "sarah",
+                              "homeorganization": "idp.test"})
+        self.assertEqual(res["status"]["result"], "authorized")
+        attrs = res["attributes"]
+        self.assertListEqual(["sarah"], attrs["uid"])
+
+    def test_proxy_authz_mfa_faulty_config(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=500,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "https://erroridp.example.edu",
+                              "uid": "sarah",
+                              "homeorganization": "erroridp.example.edu"})
+        self.assertTrue(res["error"])
+
+        res = self.post("/api/users/proxy_authz", response_status_code=500,
+                        body={"user_id": "urn:sarah",
+                              "service_id": self.app.app_config.oidc.sram_service_entity_id,
+                              "issuer_id": "https://erroridp.example.edu",
+                              "uid": "sarah",
+                              "homeorganization": "erroridp.example.edu"})
+        self.assertTrue(res["error"])
