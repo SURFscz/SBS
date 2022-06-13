@@ -226,9 +226,13 @@ class SecondFactorAuthentication extends React.Component {
         } else if (secondFaUuid && continueUrl) {
             verify2faProxyAuthz(totp.join(""), secondFaUuid, continueUrl).then(r => {
                 window.location.href = r.location;
-            }).catch(() => {
-                this.setState({busy: false, error: true, totp: Array(6).fill("")},
-                    () => this.totpRefs[0].focus());
+            }).catch(e => {
+                if (e.response && e.response.status === 429) {
+                    this.props.history.push("/landing?rate-limited=true");
+                } else {
+                    this.setState({busy: false, error: true, totp: Array(6).fill("")},
+                        () => this.totpRefs[0].focus());
+                }
             });
         } else {
             verify2fa(totp.join("")).then(r => {
