@@ -197,6 +197,31 @@ class TestMfa(AbstractTest):
         res = self.post("/api/mfa/verify2fa_proxy_authz", body, with_basic_auth=False)
         self.assertEqual(continue_url, res["location"])
 
+    def test_verify2fa_proxy_authz_rate_limit(self):
+        config = self.app.app_config
+        config.rate_limit_totp_guesses_per_30_seconds = 1
+
+        AbstractTest.set_second_factor_auth("urn:mary")
+        mary = self.add_totp_to_user("urn:mary")
+        totp = pyotp.TOTP(mary.second_factor_auth)
+        error_totp = "{:06d}".format((int(totp.now()) + 1) % 1_000_000)
+
+        payload = {
+            "totp": error_totp,
+            "second_fa_uuid": mary.second_fa_uuid,
+            "continue_url": current_app.app_config.oidc.continue_eduteams_redirect_uri + "hallo_foo",
+        }
+        self.post("/api/mfa/verify2fa_proxy_authz", payload, with_basic_auth=False, response_status_code=400)
+        self.post("/api/mfa/verify2fa_proxy_authz", payload, with_basic_auth=False, response_status_code=429)
+
+        res = self.get("/api/users/me", with_basic_auth=False)
+        self.assertTrue(res["guest"])
+
+        mary = User.query.filter(User.uid == "urn:mary").first()
+        self.assertTrue(mary.suspended)
+
+        config.rate_limit_totp_guesses_per_30_seconds = 10
+
     def test_verify2fa_wrong_totp(self):
         sarah = self.add_totp_to_user("urn:sarah")
         body = {"totp": "123456", "second_fa_uuid": sarah.second_fa_uuid, }

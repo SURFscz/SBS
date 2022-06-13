@@ -11,11 +11,11 @@ import pyotp
 import qrcode
 from authlib.jose import jwk
 from flask import Blueprint, current_app, redirect, session, request as current_request
-from werkzeug.exceptions import Forbidden, TooManyRequests
+from werkzeug.exceptions import Forbidden
 
 from server.api.base import query_param, json_endpoint
 from server.auth.mfa import ACR_VALUES, decode_jwt_token, store_user_in_session, eligible_users_to_reset_token
-from server.auth.rate_limit import rate_limit_reached, clear_rate_limit
+from server.auth.rate_limit import clear_rate_limit, check_rate_limit
 from server.auth.security import current_user_id, generate_token, is_admin_user
 from server.auth.ssid import redirect_to_surf_secure_id
 from server.cron.idp_metadata_parser import idp_display_name
@@ -150,13 +150,7 @@ def get2fa_proxy_authz():
 @json_endpoint
 def verify2fa():
     user = User.query.filter(User.id == current_user_id()).one()
-    if rate_limit_reached(user):
-        user.suspended = True
-        db.session.merge(user)
-        db.session.commit()
-        session.clear()
-
-        raise TooManyRequests(f"Suspended user {user.name} for rate limiting TOTP")
+    check_rate_limit(user)
 
     secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
     valid_totp = _do_verify_2fa(user, secret)
@@ -180,9 +174,12 @@ def verify2fa_proxy_authz():
     data = current_request.get_json()
     second_fa_uuid = data["second_fa_uuid"]
     user = User.query.filter(User.second_fa_uuid == second_fa_uuid).one()
+    check_rate_limit(user)
+
     secret = user.second_factor_auth if user.second_factor_auth else session["second_factor_auth"]
     valid_totp = _do_verify_2fa(user, secret)
     if valid_totp:
+        clear_rate_limit(user)
         continue_url = data["continue_url"]
         if not continue_url.lower().startswith(current_app.app_config.oidc.continue_eduteams_redirect_uri):
             raise Forbidden(f"Invalid continue_url: {continue_url}")
