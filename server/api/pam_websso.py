@@ -15,7 +15,7 @@ from server.db.db import db
 from server.db.domain import User, PamSSOSession
 from server.logger.context_logger import ctx_logger
 
-pam_websso_api = Blueprint("pam_websso_api", __name__, url_prefix="/pam-weblogin")
+pam_websso_api = Blueprint("pam_weblogin_api", __name__, url_prefix="/pam-weblogin")
 
 
 def _get_pam_sso_session(session_id):
@@ -63,7 +63,7 @@ def find_by_session_id(session_id):
 def start():
     service = validate_service_token("pam_web_sso_enabled")
 
-    logger = ctx_logger("pam_websso")
+    logger = ctx_logger("pam_weblogin")
 
     data = current_request.get_json()
     user_id = data["user_id"]
@@ -109,7 +109,7 @@ def start():
 def check_pin():
     service = validate_service_token("pam_web_sso_enabled")
 
-    logger = ctx_logger("pam_websso")
+    logger = ctx_logger("pam_weblogin")
 
     data = current_request.get_json()
     session_id = data["session_id"]
