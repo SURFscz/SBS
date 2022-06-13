@@ -1,8 +1,19 @@
 import json
 from datetime import datetime, timedelta
-from flask import current_app
+from flask import current_app, session
+from werkzeug.exceptions import TooManyRequests
 
+from server.db.db import db
 from server.db.domain import User
+
+
+def check_rate_limit(user):
+    if rate_limit_reached(user):
+        user.suspended = True
+        db.session.merge(user)
+        db.session.commit()
+        session.clear()
+        raise TooManyRequests(f"Suspended user {user.name} for rate limiting TOTP")
 
 
 def rate_limit_reached(user: User):
