@@ -286,3 +286,18 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah",
                               "homeorganization": "erroridp.example.edu"})
         self.assertTrue(res["error"])
+
+    def test_proxy_authz_mfa_no_ssid_attr(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id,
+                              "issuer_id": "nope"})
+        sarah = self.find_entity_by_name(User, sarah_name)
+        self.assertEqual(res["status"]["result"], "interrupt")
+        self.assertEqual(res["status"]["redirect_url"], f"http://localhost:3000/2fa/{sarah.second_fa_uuid}")
+
+    def test_proxy_authz_mfa_no_attr(self):
+        res = self.post("/api/users/proxy_authz", response_status_code=500,
+                        body={"user_id": "urn:sarah",
+                              "service_id": service_mail_entity_id})
+        self.assertTrue(res["error"])
