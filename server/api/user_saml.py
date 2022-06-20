@@ -204,8 +204,10 @@ def proxy_authz():
     uid = json_dict["user_id"]
     service_entity_id = json_dict["service_id"]
     issuer_id = json_dict["issuer_id"]
-    home_organisation_uid = json_dict["uid"]
-    schac_home_organisation = json_dict["homeorganization"]
+    # These are optional; they are only used to check for logins that should do SSID-SFO
+    # If the proxy doesn't send these, we can safely assume the user shouldn't be sent to SSID
+    home_organisation_uid = json_dict.get("uid", "[[UNKNOWN]]")
+    schac_home_organisation = json_dict.get("homeorganization", "[[UNKNOWN]]")
 
     logger = ctx_logger("user_api")
     logger.debug(f"proxy_authz called with {str(json_dict)}")
