@@ -12,7 +12,7 @@ from server.db.domain import Collaboration, Organisation, Invitation, Collaborat
 from server.db.models import flatten
 from server.test.abstract_test import AbstractTest, API_AUTH_HEADER
 from server.test.seed import collaboration_ai_computing_uuid, ai_computing_name, uva_research_name, john_name, \
-    ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid, service_group_wiki_name
+    ai_computing_short_name, uuc_teachers_name, read_image, collaboration_uva_researcher_uuid, service_group_wiki_name1
 from server.test.seed import uuc_secret, uuc_name
 
 
@@ -91,7 +91,7 @@ class TestCollaboration(AbstractTest):
             self.assertEqual(0, count)
 
     def test_collaboration_new_with_current_user_admin(self):
-        wiki_service_group = self.find_entity_by_name(ServiceGroup, service_group_wiki_name)
+        wiki_service_group = self.find_entity_by_name(ServiceGroup, service_group_wiki_name1)
         wiki_service_group.auto_provision_members = True
         db.session.merge(wiki_service_group)
         db.session.commit()

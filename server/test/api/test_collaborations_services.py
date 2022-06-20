@@ -5,7 +5,7 @@ from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.test.abstract_test import AbstractTest, BASIC_AUTH_HEADER
 from server.test.seed import service_mail_name, ai_computing_name, service_cloud_name, uva_research_name, \
-    service_network_name, service_wiki_name, uuc_secret, service_group_wiki_name
+    service_network_name, service_wiki_name, uuc_secret, service_group_wiki_name1, service_group_wiki_name2
 
 
 class TestCollaborationsServices(AbstractTest):
@@ -55,6 +55,7 @@ class TestCollaborationsServices(AbstractTest):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
         self.assertEqual(2, len(collaboration.groups))
         collaboration_id = collaboration.id
+
         service_wiki = self.find_entity_by_name(Service, service_wiki_name)
         service_wiki.automatic_connection_allowed = True
         db.session.merge(service_wiki)
@@ -68,9 +69,12 @@ class TestCollaborationsServices(AbstractTest):
         })
         # Reload
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
-        self.assertEqual(3, len(collaboration.groups))
-        group = list(filter(lambda item: item.name == service_group_wiki_name, collaboration.groups))[0]
-        self.assertEqual(0, len(group.collaboration_memberships))
+        self.assertEqual(4, len(collaboration.groups))
+        groups = list(filter(lambda item: item.name == service_group_wiki_name1, collaboration.groups))
+        self.assertEqual(1, len(groups))
+        self.assertEqual(0, len(groups[0].collaboration_memberships))
+        groups = list(filter(lambda item: item.name == service_group_wiki_name2, collaboration.groups))
+        self.assertEqual(1, len(groups))
 
     def test_add_collaborations_services_forbidden(self):
         self.login("urn:admin")
