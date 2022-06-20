@@ -83,7 +83,8 @@ service_ssh_uva_name = "SSH UvA"
 uuc_scheduler_name = "uuc_scheduler_name"
 
 service_group_mail_name = "service_group_mail_name"
-service_group_wiki_name = "service_group_wiki_name"
+service_group_wiki_name1 = "service_group_wiki_name_1"
+service_group_wiki_name2 = "service_group_wiki_name_2"
 
 ai_researchers_group = "AI researchers"
 ai_researchers_group_short_name = "ai_res"
@@ -357,12 +358,17 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                                       auto_provision_members=True,
                                       description="Mail group",
                                       service=mail)
-    service_group_wiki = ServiceGroup(name=service_group_wiki_name,
-                                      short_name="wiki",
+    service_group_wiki1 = ServiceGroup(name=service_group_wiki_name1,
+                                      short_name="wiki1",
                                       auto_provision_members=False,
-                                      description="Wiki group",
+                                      description="Wiki group 1",
                                       service=wiki)
-    _persist(db, service_group_mail, service_group_wiki)
+    service_group_wiki2 = ServiceGroup(name=service_group_wiki_name2,
+                                      short_name="wiki2",
+                                      auto_provision_members=False,
+                                      description="Wiki group 2",
+                                      service=wiki)
+    _persist(db, service_group_mail, service_group_wiki1, service_group_wiki2)
 
     service_iprange_cloud_v4 = IpNetwork(network_value="192.0.2.0/24", service=cloud)
     service_iprange_cloud_v6 = IpNetwork(network_value="2001:db8:0:0::/64", service=cloud)
