@@ -13,7 +13,7 @@ from server.auth.security import confirm_read_access
 from server.auth.user_claims import user_memberships
 from server.db.db import db
 from server.db.defaults import STATUS_ACTIVE
-from server.db.domain import User, Service
+from server.db.domain import User, Service, UserLogin
 from server.logger.context_logger import ctx_logger
 
 user_saml_api = Blueprint("user_saml_api", __name__, url_prefix="/api/users")
@@ -156,7 +156,8 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
 
         # this is a configuration conflict and should never happen!
         if idp_allowed and ssid_required:
-            raise InternalServerError(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
+            raise InternalServerError(
+                f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
 
         # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
         # also skip if user has already recently performed MFA
@@ -186,10 +187,14 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
     user.suspend_notifications = []
 
     user = db.session.merge(user)
-    db.session.commit()
 
     all_memberships = user_memberships(user, connected_collaborations)
     all_attributes, http_status = authorized_func(user, all_memberships)
+
+    # Keep track of user logins for audit / statistics reasons
+    user_login = UserLogin(service_id=service.id, user_id=user.id)
+    db.session.merge(user_login)
+    db.session.commit()
 
     logger.info(f"Returning attributes {all_attributes} for user {uid} and service_entity_id {service_entity_id}")
 

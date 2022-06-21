@@ -4,10 +4,10 @@ from urllib.parse import urlencode
 from server.api.user_saml import SERVICE_UNKNOWN, USER_UNKNOWN, SERVICE_NOT_CONNECTED, SECOND_FA_REQUIRED
 from server.db.db import db
 from server.db.defaults import STATUS_EXPIRED
-from server.db.domain import Collaboration, Service, User
+from server.db.domain import Collaboration, Service, User, UserLogin
 from server.test.abstract_test import AbstractTest
 from server.test.seed import john_name, service_network_entity_id, service_mail_entity_id, \
-    ai_computing_name, sarah_name
+    ai_computing_name, sarah_name, service_mail_name
 
 
 class TestUserSaml(AbstractTest):
@@ -27,6 +27,10 @@ class TestUserSaml(AbstractTest):
         self.assertListEqual(["sarah@test.sram.surf.nl"], attrs["eduPersonPrincipalName"])
         self.assertListEqual(["sarah"], attrs["uid"])
         self.assertIsNotNone(attrs["sshkey"][0])
+
+        user_login = UserLogin.query.first()
+        self.assertEqual(user_login.user_id, self.find_entity_by_name(User, sarah_name).id)
+        self.assertEqual(user_login.service_id, self.find_entity_by_name(Service, service_mail_name).id)
 
     def test_proxy_authz_including_groups(self):
         self.add_service_aup_to_user("urn:jane", service_network_entity_id)

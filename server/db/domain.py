@@ -669,3 +669,16 @@ class PamSSOSession(Base, db.Model):
                            nullable=False)
 
     audit_log_exclude = True
+
+
+class UserLogin(Base, db.Model):
+    __tablename__ = "user_logins"
+    id = db.Column("id", db.Integer(), primary_key=True, nullable=False, autoincrement=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"))
+    user = db.relationship("User")
+    service_id = db.Column(db.Integer(), db.ForeignKey("services.id"))
+    service = db.relationship("Service")
+    created_at = db.Column("created_at", db.DateTime(timezone=True), server_default=db.text("CURRENT_TIMESTAMP"),
+                           nullable=False)
+
+    audit_log_exclude = True

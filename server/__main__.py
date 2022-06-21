@@ -47,6 +47,7 @@ from server.api.system import system_api
 from server.api.tag import tag_api
 from server.api.token import token_api
 from server.api.user import user_api
+from server.api.user_login import user_login_api
 from server.api.user_saml import user_saml_api
 from server.api.user_token import user_token_api
 from server.cron.schedule import start_scheduling
@@ -112,7 +113,7 @@ blueprints = [
     collaborations_services_api, group_api, group_members_api, api_key_api, aup_api, collaboration_request_api,
     service_connection_request_api, audit_log_api, ipaddress_api, system_api, organisations_services_api, mock_user_api,
     plsc_api, image_api, service_group_api, service_invitations_api, service_membership_api, service_aups_api,
-    user_token_api, token_api, tag_api, swagger_specs, pam_websso_api
+    user_token_api, token_api, tag_api, swagger_specs, pam_websso_api, user_login_api
 ]
 
 for api_blueprint in blueprints:
