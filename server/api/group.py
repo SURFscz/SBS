@@ -96,8 +96,9 @@ def save_group():
     return res
 
 
-def create_group(collaboration_id, data):
-    cleanse_short_name(data)
+def create_group(collaboration_id, data, do_cleanse_short_name=True):
+    if do_cleanse_short_name:
+        cleanse_short_name(data)
     # Check uniqueness of name and short_name of group for the collaboration
     collaboration = Collaboration.query.get(collaboration_id)
     duplicates = [g.id for g in collaboration.groups if g.name == data["name"] or g.short_name == data["short_name"]]

@@ -24,7 +24,7 @@ def create_service_groups(service: Service, collaboration: Collaboration):
             "collaboration_id": collaboration.id,
             "auto_provision_members": service_group.auto_provision_members
         }
-        create_group(collaboration.id, data)
+        create_group(collaboration.id, data, do_cleanse_short_name=False)
 
 
 @service_group_api.route("/name_exists", strict_slashes=False)

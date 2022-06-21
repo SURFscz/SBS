@@ -114,12 +114,13 @@ class TestCollaboration(AbstractTest):
         service_groups = flatten([service.service_groups for service in organisation.services])
         collaboration_groups = self.find_entity_by_name(Collaboration, collaboration["name"]).groups
 
-        self.assertEqual(1, len(service_groups))
-        self.assertEqual(1, len(collaboration_groups))
-        co_group_name = collaboration_groups[0].name
-        self.assertEqual(service_groups[0].name, co_group_name)
+        self.assertEqual(2, len(service_groups))
+        self.assertEqual(2, len(collaboration_groups))
+        service_group_names = sorted([sg.name for sg in service_groups])
+        co_group_names = sorted([co.name for co in collaboration_groups])
+        self.assertListEqual(service_group_names, co_group_names)
 
-        wiki_group = self.find_entity_by_name(Group, co_group_name)
+        wiki_group = self.find_entity_by_name(Group, co_group_names[0])
         self.assertEqual(1, len(wiki_group.collaboration_memberships))
         self.assertEqual("urn:john", wiki_group.collaboration_memberships[0].user.uid)
 
