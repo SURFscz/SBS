@@ -115,7 +115,7 @@ class Entities extends React.Component {
     }
 
     renderEntities = (entities, sorted, reverse, modelName, tableClassName, columns, children,
-                      rowLinkMapper, customNoEntities) => {
+                      rowLinkMapper, customNoEntities, onHover) => {
         const hasEntities = !isEmpty(entities);
         return (
             <section className="entities-list">
@@ -135,9 +135,12 @@ class Entities extends React.Component {
                     <tbody>
                     {entities.map((entity, index) =>
                         <tr key={index}
+                            onMouseOver={() => onHover && onHover(true, entity)}
+                            onMouseOut={() => onHover && onHover(false, entity)}
                             className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""}`}>
                             {columns.map(column =>
                                 <td key={column.key}
+
                                     onClick={(column.key !== "check" && column.key !== "role" && !column.hasLink) ?
                                         this.onRowClick(rowLinkMapper, entity) : undefined}
                                     className={`${column.key} ${column.nonSortable ? "" : "sortable"} ${column.className ? column.className : ""}`}>
@@ -157,7 +160,7 @@ class Entities extends React.Component {
         const {
             modelName, entities, showNew, searchAttributes, columns, children, loading, customSearch,
             actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = "",
-            customNoEntities, hideTitle
+            customNoEntities, hideTitle, onHover
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -176,7 +179,7 @@ class Entities extends React.Component {
                 {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch, hideTitle)}
                 {actions}
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children,
-                    rowLinkMapper, customNoEntities)}
+                    rowLinkMapper, customNoEntities, onHover)}
                 <div>{this.props.children}</div>
             </div>);
     }
@@ -195,6 +198,7 @@ Entities.propTypes = {
     columns: PropTypes.array.isRequired,
     newEntityPath: PropTypes.string,
     newEntityFunc: PropTypes.func,
+    onHover: PropTypes.func,
     rowLinkMapper: PropTypes.func,
     searchCallback: PropTypes.func,
     customSearch: PropTypes.func,
