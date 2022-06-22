@@ -1629,7 +1629,7 @@ I18n.translations.nl = {
         memberships_expired: "Verlopen lidmaatschappen",
         memberships_warned: "Gewaarschuwde leden",
         runDbStatsInfo: "Databasetabellen en -aantallen",
-        userLoginInfo: "User login samenvatting",
+        userLoginInfo: "User login samenvatting (alleen proxy-authz)",
         runDbStats: "Haal op",
         name: "Tabelnaam",
         count: "Aantal records",
