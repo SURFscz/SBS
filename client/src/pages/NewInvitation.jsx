@@ -209,6 +209,22 @@ class NewInvitation extends React.Component {
         }
     };
 
+    getMembershipExpiryDate = () => {
+        const {expiry_date} = this.state;
+        const membershipExpiryDate = new Date(expiry_date.getTime());
+        membershipExpiryDate.setDate(membershipExpiryDate.getDate() + 1);
+        return membershipExpiryDate;
+    }
+
+    setInvitationExpiryDate = e => {
+        const {membership_expiry_date} = this.state;
+        this.setState({expiry_date: e}, () => {
+            if (membership_expiry_date && e >= membership_expiry_date) {
+                this.setState({membership_expiry_date: this.getMembershipExpiryDate()})
+            }
+        })
+    }
+
     tabChanged = activeTab => {
         this.setState({activeTab: activeTab});
         if (activeTab === "invitation_preview") {
@@ -278,6 +294,7 @@ class NewInvitation extends React.Component {
                        onChange={e => this.setState({membership_expiry_date: e})}
                        allowNull={true}
                        showYearDropdown={true}
+                       minDate={this.getMembershipExpiryDate()}
                        name={I18n.t("invitation.membershipExpiryDate")}
                        toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
 
@@ -289,7 +306,7 @@ class NewInvitation extends React.Component {
                         multiline={true}/>
 
             <DateField value={expiry_date}
-                       onChange={e => this.setState({expiry_date: e})}
+                       onChange={this.setInvitationExpiryDate}
                        maxDate={moment().add(31, "day").toDate()}
                        name={I18n.t("invitation.expiryDate")}
                        toolTip={I18n.t("invitation.expiryDateTooltip")}/>
