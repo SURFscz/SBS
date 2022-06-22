@@ -25,7 +25,7 @@
 
     .admin-actions {
         display: flex;
-
+        min-height: 32px;
         margin-bottom: 12px;
 
         div:not(:first-child) {
@@ -36,6 +36,24 @@
             margin-left: auto;
         }
 
+    }
+
+    .action-icons-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .admin-icons {
+        display: flex;
+        margin-left: auto;
+
+        svg {
+            color: $dark-grey;
+
+                cursor: pointer;
+
+            margin: 0 5px;
+        }
     }
 
     .member-filter {
@@ -133,7 +151,7 @@
                 }
 
                 &.impersonate {
-                    width: 40px;
+                    width: 85px;
                     text-align: right;
                 }
             }
