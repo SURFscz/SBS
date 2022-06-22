@@ -240,7 +240,9 @@ def proxy_authz():
             redirect_url = f"{base_url}/service-aup?{parameters}"
             result = "interrupt"
         else:
-            parameters = urlencode({"service_name": service_name, "error_status": status})
+            parameters = urlencode({"service_name": service_name, "error_status": status,
+                                    "entity_id": service_entity_id, "issuer_id": issuer_id,
+                                    "user_id": uid})
             redirect_url = f"{base_url}/service-denied?{parameters}"
             result = "unauthorized"
         return {

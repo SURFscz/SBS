@@ -21,11 +21,33 @@
             color: $primary-orange;
         }
 
-        span {
+        span.status {
             margin: 15px 0;
             font-size: 16px;
             line-height: 22px;
         }
 
+
     }
+
+    div.ticket {
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto;
+        padding: 15px;
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        span {
+            font-weight: bold;
+
+            &.value {
+                font-weight: normal;
+                margin-bottom: 10px;
+            }
+        }
+    }
+
 }
