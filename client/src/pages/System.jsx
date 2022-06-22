@@ -10,6 +10,7 @@ import {
     dbSeed,
     dbStats,
     composition,
+    userLoginsSummary,
     expireCollaborationMemberships,
     expireCollaborations,
     health,
@@ -59,6 +60,7 @@ class System extends React.Component {
             outstandingRequests: {},
             cleanedRequests: {},
             databaseStats: [],
+            userLoginStats: {c: "", cs: "", cu: ""},
             cronJobs: [],
             seedResult: null,
             confirmationDialogOpen: false,
@@ -291,6 +293,7 @@ class System extends React.Component {
         </div>)
 
     }
+
     getDatabaseTab = (databaseStats, config) => {
         return (<div key="database" name="database" label={I18n.t("home.tabs.database")}
                      icon={<FontAwesomeIcon icon="database"/>}>
@@ -308,6 +311,18 @@ class System extends React.Component {
         </div>)
     }
 
+    getUserLoginTab = userLoginStats => {
+        return (<div key="userlogins" name="userlogins" label={I18n.t("home.tabs.userlogins")}
+                     icon={<FontAwesomeIcon icon="users"/>}>
+            <div className="mod-system">
+                <section className={"info-block-container"}>
+                    {this.renderUserLoginStats()}
+                    {this.renderUserLoginResults(userLoginStats)}
+                </section>
+            </div>
+        </div>)
+    }
+
     activateUser = user => {
         this.setState({busy: true});
         activateUserForCollaboration(null, user.id).then(() => {
@@ -317,12 +332,13 @@ class System extends React.Component {
 
     getSuspendedUsersTab = currentlySuspendedUsers => {
         const zeroState = currentlySuspendedUsers.length === 0;
-        return (<div key="suspended-users" name="suspended-users"
+        return (<div key="suspended-users"
+                     name="suspended-users"
                      label={I18n.t("home.tabs.suspendedUsers")}
                      icon={<FontAwesomeIcon icon="user-lock"/>}>
             <div className="mod-system">
                 <section className={"info-block-container"}>
-                    <p>{I18n.t(`system.suspendedUsers.${zeroState ? "titleZeroState": "title"}`)}</p>
+                    <p>{I18n.t(`system.suspendedUsers.${zeroState ? "titleZeroState" : "title"}`)}</p>
                     {!zeroState && <table className={"suspended-users"}>
                         <thead>
                         <tr>
@@ -569,6 +585,13 @@ class System extends React.Component {
         );
     }
 
+    renderUserLoginStats = () => {
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.userLoginInfo")}</p>
+            </div>
+        );
+    }
     renderDbSeed = () => {
         const {seedResult} = this.state;
         return (
@@ -773,7 +796,36 @@ class System extends React.Component {
                         </tr>)}
                         </tbody>
                     </table>
-                </div>}</div>)
+                </div>}
+            </div>)
+    }
+
+    renderUserLoginResults = userLoginStats => {
+        return (<div className="results">
+            <table className="table-counts">
+                <thead>
+                <tr>
+                    <th>{I18n.t("system.userlogins.metric")}</th>
+                    <th>{I18n.t("system.userlogins.nbr")}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{I18n.t("system.userlogins.total")}</td>
+                    <td>{userLoginStats.c}</td>
+                </tr>
+                <tr>
+                    <td>{I18n.t("system.userlogins.users")}</td>
+                    <td>{userLoginStats.cu}</td>
+                </tr>
+                <tr>
+                    <td>{I18n.t("system.userlogins.services")}</td>
+                    <td>{userLoginStats.cs}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>)
+
     }
 
     tabChanged = name => {
@@ -810,6 +862,8 @@ class System extends React.Component {
             composition().then(res => this.setState({compositionData: res, busy: false}));
         } else if (name === "suspended-users") {
             getSuspendedUsers().then(res => this.setState({currentlySuspendedUsers: res, busy: false}));
+        } else if (name === "userlogins") {
+            userLoginsSummary().then(res => this.setState({userLoginStats: res, busy: false}))
         } else {
             this.setState({busy: false});
         }
@@ -825,7 +879,7 @@ class System extends React.Component {
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
             validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData, compositionData,
-            currentlySuspendedUsers
+            currentlySuspendedUsers, userLoginStats
         } = this.state;
         const {config} = this.props;
 
@@ -841,7 +895,8 @@ class System extends React.Component {
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables),
             this.getPlscTab(plscData),
             this.getCompositionTab(compositionData),
-            this.getSuspendedUsersTab(currentlySuspendedUsers)
+            this.getSuspendedUsersTab(currentlySuspendedUsers),
+            this.getUserLoginTab(userLoginStats)
         ]
         return (
             <div className="mod-system-container">

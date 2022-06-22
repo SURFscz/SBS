@@ -104,9 +104,10 @@ I18n.translations.en = {
             database: "Database",
             activity: "Activity",
             validation: "Actions",
-            plsc: "LDAP sync",
+            plsc: "LDAP",
             composition: "Config",
-            suspendedUsers: "Suspensions"
+            suspendedUsers: "Suspensions",
+            userlogins: "Logins"
         }
     },
     forms: {
@@ -1628,6 +1629,7 @@ I18n.translations.en = {
         memberships_expired: "Memberships expired",
         memberships_warned: "Membership users warned",
         runDbStatsInfo: "Database table counts",
+        userLoginInfo: "User login summary",
         runDbStats: "Fetch",
         name: "Table name",
         count: "Nbr of records",
@@ -1650,6 +1652,13 @@ I18n.translations.en = {
             lastLogin: "Last login",
             activate: "Activate"
         },
+        userlogins: {
+            total: "Logins",
+            users: "Unique users",
+            services: "Unique services",
+            metric: "Metric",
+            nbr: "#"
+        }
     },
     access: {
         full: "Full",
