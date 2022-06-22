@@ -169,6 +169,18 @@
                         background-color: $lightest-grey;
                     }
                 }
+
+                div.admin-icons {
+                    display: none;
+                }
+
+                &.hoverable {
+                    &:hover {
+                        div.admin-icons {
+                            display: flex;
+                        }
+                    }
+                }
             }
 
             td {

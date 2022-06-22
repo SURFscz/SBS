@@ -59,7 +59,6 @@ class CollaborationAdmins extends React.Component {
             hideInvitees: false,
             resultAfterSearch: false,
             openExpirationFields: {},
-            hoveredEntity: null,
             loading: true
         }
     }
@@ -241,6 +240,46 @@ class CollaborationAdmins extends React.Component {
         });
     }
 
+    tempRemove = (entityId, isInvite, showConfirmation) => {
+        const {user: currentUser, collaboration} = this.props;
+        const members = collaboration.collaboration_memberships;
+        const invites = collaboration.invitations || [];
+        const entity = isInvite ? invites.find(inv => inv.id === entityId) : members.find(m => m.id === entityId)
+        const currentUserDeleted = !entity.invite && entity.user.id === currentUser.id;
+        debugger;
+        if (showConfirmation) {
+            const lastAdminWarning = collaboration.collaboration_memberships
+                .filter(m => m.role === "admin")
+                .filter(m => !entity.user.id === m.id)
+                .length === 0;
+            this.setState({
+                confirmationDialogOpen: true,
+                isWarning: true,
+                lastAdminWarning: lastAdminWarning,
+                lastAdminWarningUser: currentUserDeleted,
+                confirmationDialogAction: () => this.tempRemove(entityId, isInvite, false),
+                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                confirmationQuestion: currentUserDeleted ? I18n.t("collaborationDetail.deleteYourselfMemberConfirmation") :
+                    entity.invite ? I18n.t("collaborationDetail.deleteInvitationConfirmation", {name: entity.user.name}) : I18n.t("collaborationDetail.deleteMemberConfirmation", {name: entity.invitee_email})
+            });
+        } else {
+            this.setState({confirmationDialogOpen: false, loading: true});
+            const promise = entity.invite ? invitationDelete(entity.id, false) :
+                    deleteCollaborationMembership(collaboration.id, entity.user.id, false);
+            promise.then(() => {
+                if (currentUserDeleted && !currentUser.admin) {
+                    this.props.refreshUser(() => this.props.history.push("/home"));
+                } else {
+                    this.props.refresh(this.componentDidMount);
+                    setFlash(entity.invite ? I18n.t("organisationDetail.flash.invitationDeleted", entity.invitee_email) : I18n.t("organisationDetail.flash.memberDeleted", {name: entity.user.name}));
+                }
+            }).catch(() => {
+                this.handle404("member");
+            });
+        }
+
+    }
     remove = showConfirmation => () => {
         const {selectedMembers} = this.state;
         const filteredSelectedMembers = this.getSelectedMembersWithFilteredSearch(selectedMembers);
@@ -314,36 +353,39 @@ class CollaborationAdmins extends React.Component {
     actionIcons = (entity, collaboration) => {
         const hrefValue = encodeURI(entity.invite ? entity.invitee_email : entity.user.email);
         const showResendInvite = entity.invite === true && isInvitationExpired(entity);
-        const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc="
+        const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc=";
+        //TODO rewrite remove, resendInvite to accept singleEntity instead of selectedEntities
         return (
             <div className="admin-icons">
-                <div data-tip data-for="delete-members">
-                    <FontAwesomeIcon icon="trash" onClick={this.remove(true)}/>
-                    <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
+                <div data-tip data-for={`delete-member-${entity.id}`} onClick={e => this.tempRemove(entity.id, entity.invite, true)}>
+                    <FontAwesomeIcon icon="trash"/>
+                    <ReactTooltip id={`delete-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: I18n.t("models.orgMembers.removeTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
+                                    I18n.t("models.orgMembers.removeMemberTooltip")}}/>
                     </ReactTooltip>
                 </div>
-                {collaboration.disclose_email_information &&
-                <div data-tip data-for="mail-members">
+
+                {
+                <div data-tip data-for={`mail-member-${entity.id}`}>
                     <a href={`mailto:${bcc}${hrefValue}`}
                        rel="noopener noreferrer">
-                        <FontAwesomeIcon icon="mail-bulk"/>
+                        <FontAwesomeIcon icon="envelope"/>
                     </a>
-                    <ReactTooltip id="mail-members" type="light" effect="solid" data-html={true}
+                    <ReactTooltip id={`mail-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: I18n.t("models.orgMembers.mailTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: entity.invite ? I18n.t("models.orgMembers.mailInvitationTooltip") :  I18n.t("models.orgMembers.mailMemberTooltip")}}/>
                     </ReactTooltip>
                 </div>}
                 {showResendInvite &&
-                <div data-tip data-for="resend-invites">
+                <div data-tip data-for={`resend-invite-${entity.id}`}>
                     <FontAwesomeIcon icon="voicemail" onClick={this.resend(true)}/>
-                    <ReactTooltip id="resend-invites" type="light" effect="solid" data-html={true}
+                    <ReactTooltip id={`resend-invite-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: I18n.t("models.orgMembers.resendTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: I18n.t("models.orgMembers.resendInvitationTooltip")}}/>
                     </ReactTooltip>
                 </div>}
 
@@ -430,15 +472,14 @@ class CollaborationAdmins extends React.Component {
     getImpersonateMapper = entity => {
         const {user: currentUser, showMemberView, collaboration} = this.props;
         const {impersonation_allowed} = this.props.config;
-        const {hoveredEntity} = this.state;
 
         const showImpersonation = currentUser.admin && entity.user.id !== currentUser.id && !showMemberView && impersonation_allowed && !entity.invite;
         return (<div className={"action-icons-container"}>
-            {(hoveredEntity && hoveredEntity.id === entity.id) && this.actionIcons(entity, collaboration)}
+            {this.actionIcons(entity, collaboration)}
             <div className="impersonation">
-            {showImpersonation && <HandIcon className="impersonate"
-                                            onClick={() => emitImpersonation(entity.user, this.props.history)}/>}
-        </div>
+                {showImpersonation && <HandIcon className="impersonate"
+                                                onClick={() => emitImpersonation(entity.user, this.props.history)}/>}
+            </div>
         </div>);
     }
 
@@ -560,10 +601,6 @@ class CollaborationAdmins extends React.Component {
         </div>)
     }
 
-    onHover = (hovering, selected) => {
-        this.setState({hoveredEntity: hovering ? selected : null})
-    }
-
     render() {
         const {user: currentUser, collaboration, isAdminView, showMemberView} = this.props;
         const {
@@ -672,7 +709,7 @@ class CollaborationAdmins extends React.Component {
                           modelName={isAdminView ? "coAdmins" : "members"}
                           searchAttributes={["user__name", "user__email", "invitee_email"]}
                           defaultSort="name"
-                          onHover={this.onHover}
+                          onHover={true}
                           searchCallback={this.searchCallback}
                           columns={(isAdminOfCollaboration || collaboration.disclose_email_information) ? columns : columns.slice(1)}
                           loading={false}
