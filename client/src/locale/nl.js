@@ -104,9 +104,10 @@ I18n.translations.nl = {
             database: "Database",
             activity: "Activiteit",
             validation: "Acties",
-            plsc: "LDAP sync",
+            plsc: "LDAP",
             composition: "Config",
-            suspendedUsers: "Suspensions"
+            suspendedUsers: "Suspensions",
+            userlogins: "Logins"
         }
     },
     forms: {
@@ -1628,6 +1629,7 @@ I18n.translations.nl = {
         memberships_expired: "Verlopen lidmaatschappen",
         memberships_warned: "Gewaarschuwde leden",
         runDbStatsInfo: "Databasetabellen en -aantallen",
+        userLoginInfo: "User login samenvatting",
         runDbStats: "Haal op",
         name: "Tabelnaam",
         count: "Aantal records",
@@ -1650,6 +1652,13 @@ I18n.translations.nl = {
             lastLogin: "Laatste login",
             activate: "Activeer"
         },
+        userlogins: {
+            total: "Logins",
+            users: "Unieke gebruikers",
+            services: "Unieke diensten",
+            metric: "Metriek",
+            nbr: "#"
+        }
     },
     access: {
         full: "Volledige",

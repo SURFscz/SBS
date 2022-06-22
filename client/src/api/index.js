@@ -695,6 +695,10 @@ export function dbStats() {
     return fetchJson("/api/system/db_stats");
 }
 
+export function userLoginsSummary() {
+    return fetchJson("/api/user_logins/summary");
+}
+
 export function composition() {
     return fetchJson("/api/system/composition");
 }
