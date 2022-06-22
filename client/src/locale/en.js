@@ -1629,7 +1629,7 @@ I18n.translations.en = {
         memberships_expired: "Memberships expired",
         memberships_warned: "Membership users warned",
         runDbStatsInfo: "Database table counts",
-        userLoginInfo: "User login summary",
+        userLoginInfo: "User login summary (only proxy-authz)",
         runDbStats: "Fetch",
         name: "Table name",
         count: "Nbr of records",
