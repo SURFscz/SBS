@@ -4,14 +4,7 @@
 .mod-entities {
     div.impersonation {
         display: flex;
-
-        a {
-            margin-left: 5px;
-
-            &.orphan {
-                margin-left: auto;
-            }
-        }
+        margin-left: auto;
     }
 
     svg.impersonate {
@@ -20,7 +13,6 @@
         cursor: pointer;
         background-color: #fedb03;
         padding: 5px;
-        margin-left: auto;
     }
 
     .admin-actions {
@@ -49,10 +41,11 @@
 
         svg {
             color: $dark-grey;
-
-                cursor: pointer;
-
+            cursor: pointer;
             margin: 0 5px;
+            &:hover {
+                color: black;
+            }
         }
     }
 
@@ -151,7 +144,7 @@
                 }
 
                 &.impersonate {
-                    width: 85px;
+                    width: 87px;
                     text-align: right;
                 }
             }

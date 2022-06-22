@@ -135,12 +135,9 @@ class Entities extends React.Component {
                     <tbody>
                     {entities.map((entity, index) =>
                         <tr key={index}
-                            onMouseOver={() => onHover && onHover(true, entity)}
-                            onMouseOut={() => onHover && onHover(false, entity)}
-                            className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""}`}>
+                            className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""} ${onHover ? "hoverable" : ""}`}>
                             {columns.map(column =>
                                 <td key={column.key}
-
                                     onClick={(column.key !== "check" && column.key !== "role" && !column.hasLink) ?
                                         this.onRowClick(rowLinkMapper, entity) : undefined}
                                     className={`${column.key} ${column.nonSortable ? "" : "sortable"} ${column.className ? column.className : ""}`}>
@@ -198,7 +195,7 @@ Entities.propTypes = {
     columns: PropTypes.array.isRequired,
     newEntityPath: PropTypes.string,
     newEntityFunc: PropTypes.func,
-    onHover: PropTypes.func,
+    onHover: PropTypes.bool,
     rowLinkMapper: PropTypes.func,
     searchCallback: PropTypes.func,
     customSearch: PropTypes.func,
