@@ -1878,7 +1878,12 @@ I18n.translations.en = {
         info3: "You are logged into SURF Research Access Management, but the service <i>{{name}}</i> is unknown.",
         info4: "<p>You are logged into SURF Research Access Management, but none of the collaborations you are member of grant you access to <i>{{name}}</i>.</p><p>Contact your admin(s) to enable access to this service.</p>",
         info5: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. The collaboration which is connected to service <i>{{name}}</i> is not active.</p><p>Contact your admin(s) to enable access to this service.</p>",
-        info6: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired.</p><p>Contact your admin(s) to enable access to this service.</p>"
+        info6: "<p>You are logged into SURF Research Access Management, but you don't have access to <i>{{name}}</i>. Your collaboration membership which grants you access to <i>{{name}}</i> is expired.</p><p>Contact your admin(s) to enable access to this service.</p>",
+        ticket: "Copy & paste the following information if you contact <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>",
+        entityId: "Entity ID",
+        issuerId: "Issuer ID",
+        userId: "User ID",
+        timestamp: "Timestamp"
     },
     unsuspend: {
         confirmation: "Are you sure you want to revert suspension this collaboration?",

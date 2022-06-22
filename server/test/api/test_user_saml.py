@@ -58,7 +58,8 @@ class TestUserSaml(AbstractTest):
                         response_status_code=200)
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service-denied?service_name=Network+Services&error_status=2")
+                         "http://localhost:3000/service-denied?service_name=Network+Services&error_status=2"
+                         "&entity_id=https%3A%2F%2Fnetwork&issuer_id=issuer.com&user_id=urn%3Ajohn")
 
     def test_proxy_authz_not_active_collaborations(self):
         collaboration = self.find_entity_by_name(Collaboration, ai_computing_name)
@@ -71,7 +72,8 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah", "homeorganization": "example.com"})
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=5")
+                         "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=5"
+                         "&entity_id=https%3A%2F%2Fmail&issuer_id=issuer.com&user_id=urn%3Asarah")
 
     def test_proxy_authz_not_active_membership(self):
         self.expire_all_collaboration_memberships(sarah_name)
@@ -80,7 +82,8 @@ class TestUserSaml(AbstractTest):
                               "uid": "sarah", "homeorganization": "example.com"})
         self.assertEqual(res["status"]["result"], "unauthorized")
         self.assertEqual(res["status"]["redirect_url"],
-                         "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=6")
+                         "http://localhost:3000/service-denied?service_name=Mail+Services&error_status=6"
+                         "&entity_id=https%3A%2F%2Fmail&issuer_id=issuer.com&user_id=urn%3Asarah")
 
     def test_proxy_authz_no_aup(self):
         self.login_user_2fa("urn:jane")

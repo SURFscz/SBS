@@ -1879,6 +1879,11 @@ I18n.translations.nl = {
         info4: "<p>Je bent ingelogd via SURF Research Access Management, maar de samenwerking(en) waar je lid van bent, geven geen toegang tot <i>{{name}}</i>.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
         info5: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i> omdat de samenwerking(en) waarvan je lid bent niet actief zijn.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
         info6: "<p>Je bent ingelogd via SURF Research Access Management, maar je hebt geen toegang tot <i>{{name}}</i>. Je lidmaatschap van de samenwerking(en) waar je momenteel lid van bent zijn verlopen.</p><p>Neem contact op met de beheerder(s) van jouw samenwerking(en) voor toegang tot deze dienst.</p>",
+        ticket: "Copy & paste de volgende informatie als je contact opneemt met <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>",
+        entityId: "Entity ID",
+        issuerId: "Issuer ID",
+        userId: "User ID",
+        timestamp: "Timestamp"
     },
     unsuspend: {
         confirmation: "Weet je zeker dat je de schorsing van deze samenwerking ongedaan wilt maken?",
