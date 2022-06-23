@@ -169,7 +169,7 @@ class Me extends React.Component {
     saveSshKeyValue = index => e => {
         const {ssh_keys} = this.state;
         const ssh_key = ssh_keys[index];
-        ssh_key.ssh_value = e.target.value;
+        ssh_key.ssh_value = e.target.value;//.replace(/[\n\t\r]/g,"");
         ssh_keys.splice(index, 1, ssh_key)
         this.setState({ssh_keys: [...ssh_keys]});
     }
