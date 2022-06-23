@@ -9,7 +9,7 @@ import CheckBox from "../CheckBox";
 import {
     deleteCollaborationMembership,
     invitationBulkResend,
-    invitationDelete,
+    invitationDelete, invitationResend,
     updateCollaborationMembershipExpiryDate,
     updateCollaborationMembershipRole
 } from "../../api";
@@ -240,33 +240,32 @@ class CollaborationAdmins extends React.Component {
         });
     }
 
-    tempRemove = (entityId, isInvite, showConfirmation) => {
+    removeFromActionIcon = (entityId, isInvite, showConfirmation) => {
         const {user: currentUser, collaboration} = this.props;
         const members = collaboration.collaboration_memberships;
         const invites = collaboration.invitations || [];
         const entity = isInvite ? invites.find(inv => inv.id === entityId) : members.find(m => m.id === entityId)
         const currentUserDeleted = !entity.invite && entity.user.id === currentUser.id;
-        debugger;
+        const lastAdminWarning = !isInvite && members
+            .filter(m => m.role === "admin")
+            .filter(m => !(entity.user.id === m.user.id))
+            .length === 0;
         if (showConfirmation) {
-            const lastAdminWarning = collaboration.collaboration_memberships
-                .filter(m => m.role === "admin")
-                .filter(m => !entity.user.id === m.id)
-                .length === 0;
             this.setState({
                 confirmationDialogOpen: true,
                 isWarning: true,
                 lastAdminWarning: lastAdminWarning,
-                lastAdminWarningUser: currentUserDeleted,
-                confirmationDialogAction: () => this.tempRemove(entityId, isInvite, false),
+                lastAdminWarningUser: currentUserDeleted && lastAdminWarning,
+                confirmationDialogAction: () => this.removeFromActionIcon(entityId, isInvite, false),
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
                 confirmationTxt: I18n.t("confirmationDialog.confirm"),
                 confirmationQuestion: currentUserDeleted ? I18n.t("collaborationDetail.deleteYourselfMemberConfirmation") :
-                    entity.invite ? I18n.t("collaborationDetail.deleteInvitationConfirmation", {name: entity.user.name}) : I18n.t("collaborationDetail.deleteMemberConfirmation", {name: entity.invitee_email})
+                    entity.invite ? I18n.t("collaborationDetail.deleteInvitationConfirmation", {name: entity.invitee_email}) : I18n.t("collaborationDetail.deleteMemberConfirmation", {name: entity.user.name})
             });
         } else {
             this.setState({confirmationDialogOpen: false, loading: true});
             const promise = entity.invite ? invitationDelete(entity.id, false) :
-                    deleteCollaborationMembership(collaboration.id, entity.user.id, false);
+                deleteCollaborationMembership(collaboration.id, entity.user.id, false);
             promise.then(() => {
                 if (currentUserDeleted && !currentUser.admin) {
                     this.props.refreshUser(() => this.props.history.push("/home"));
@@ -280,6 +279,30 @@ class CollaborationAdmins extends React.Component {
         }
 
     }
+
+    resendFromActionMenu = (entityId, showConfirmation) => () => {
+        const {collaboration} = this.props;
+        const invites = collaboration.invitations || [];
+        const entity = invites.find(inv => inv.id === entityId);
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                lastAdminWarning: false,
+                lastAdminWarningUser: false,
+                leavePage: false,
+                isWarning: false,
+                confirmationQuestion: I18n.t("invitation.resendInvitation"),
+                confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                cancelDialogAction: this.closeConfirmationDialog,
+                confirmationDialogAction: this.resendFromActionMenu(entityId, false)
+            });
+        } else {
+            this.refreshAndFlash(invitationResend(entity, false),
+                I18n.t("invitation.flash.inviteResend", {name: collaboration.name}),
+                this.closeConfirmationDialog);
+        }
+    };
+
     remove = showConfirmation => () => {
         const {selectedMembers} = this.state;
         const filteredSelectedMembers = this.getSelectedMembersWithFilteredSearch(selectedMembers);
@@ -357,31 +380,34 @@ class CollaborationAdmins extends React.Component {
         //TODO rewrite remove, resendInvite to accept singleEntity instead of selectedEntities
         return (
             <div className="admin-icons">
-                <div data-tip data-for={`delete-member-${entity.id}`} onClick={e => this.tempRemove(entity.id, entity.invite, true)}>
+                <div data-tip data-for={`delete-member-${entity.id}`}
+                     onClick={e => this.removeFromActionIcon(entity.id, entity.invite, true)}>
                     <FontAwesomeIcon icon="trash"/>
                     <ReactTooltip id={`delete-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
-                                    I18n.t("models.orgMembers.removeMemberTooltip")}}/>
+                            dangerouslySetInnerHTML={{
+                                __html: entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
+                                    I18n.t("models.orgMembers.removeMemberTooltip")
+                            }}/>
                     </ReactTooltip>
                 </div>
 
                 {
-                <div data-tip data-for={`mail-member-${entity.id}`}>
-                    <a href={`mailto:${bcc}${hrefValue}`}
-                       rel="noopener noreferrer">
-                        <FontAwesomeIcon icon="envelope"/>
-                    </a>
-                    <ReactTooltip id={`mail-member-${entity.id}`} type="light" effect="solid" data-html={true}
-                                  place="bottom">
+                    <div data-tip data-for={`mail-member-${entity.id}`}>
+                        <a href={`mailto:${bcc}${hrefValue}`}
+                           rel="noopener noreferrer">
+                            <FontAwesomeIcon icon="envelope"/>
+                        </a>
+                        <ReactTooltip id={`mail-member-${entity.id}`} type="light" effect="solid" data-html={true}
+                                      place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: entity.invite ? I18n.t("models.orgMembers.mailInvitationTooltip") :  I18n.t("models.orgMembers.mailMemberTooltip")}}/>
-                    </ReactTooltip>
-                </div>}
+                            dangerouslySetInnerHTML={{__html: entity.invite ? I18n.t("models.orgMembers.mailInvitationTooltip") : I18n.t("models.orgMembers.mailMemberTooltip")}}/>
+                        </ReactTooltip>
+                    </div>}
                 {showResendInvite &&
                 <div data-tip data-for={`resend-invite-${entity.id}`}>
-                    <FontAwesomeIcon icon="voicemail" onClick={this.resend(true)}/>
+                    <FontAwesomeIcon icon="voicemail" onClick={this.resendFromActionMenu(entity.id, true)}/>
                     <ReactTooltip id={`resend-invite-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
