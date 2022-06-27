@@ -727,7 +727,7 @@ export function feedback(message) {
 }
 
 export function plscSync() {
-    return fetchJson("/api/plsc/sync");
+    return fetchJson("/api/plsc/syncing");
 }
 
 //Service groups

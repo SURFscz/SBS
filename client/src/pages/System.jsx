@@ -18,7 +18,9 @@ import {
     scheduledJobs,
     suspendCollaborations,
     suspendUsers,
-    plscSync, getSuspendedUsers, activateUserForCollaboration
+    plscSync,
+    getSuspendedUsers,
+    activateUserForCollaboration
 } from "../api";
 import ReactJson from "react-json-view";
 import Button from "../components/Button";
@@ -894,10 +896,11 @@ class System extends React.Component {
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables),
             this.getPlscTab(plscData),
-            this.getCompositionTab(compositionData),
+            config.seed_allowed ? this.getCompositionTab(compositionData) : null,
             this.getSuspendedUsersTab(currentlySuspendedUsers),
             this.getUserLoginTab(userLoginStats)
         ]
+
         return (
             <div className="mod-system-container">
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
