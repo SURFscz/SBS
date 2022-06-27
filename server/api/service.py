@@ -392,7 +392,10 @@ def update_service():
 @service_api.route("/allowed_organisations/<service_id>", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def add_allowed_organisations(service_id):
-    confirm_write_access()
+    def override_func():
+        return is_service_admin(service_id)
+
+    confirm_write_access(override_func=override_func)
 
     service = Service.query.get(service_id)
     data = current_request.get_json()

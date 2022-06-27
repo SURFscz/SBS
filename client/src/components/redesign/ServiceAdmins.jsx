@@ -109,7 +109,7 @@ class ServiceAdmins extends React.Component {
         const invites = service.service_invitations || [];
         const entity = isInvite ? invites.find(inv => inv.id === entityId) : members.find(m => m.id === entityId)
         const currentUserDeleted = !isInvite && entity.user.id === currentUser.id;
-        const question = I18n.t(`organisationDetail.${currentUserDeleted ? "deleteYourselfMemberConfirmation" : isInvite ? "deleteSingleInvitationConfirmation" : "deleteSingleMemberConfirmation"}`)
+        const question = I18n.t(`serviceDetail.${currentUserDeleted ? "deleteYourselfMemberConfirmation" : isInvite ? "deleteSingleInvitationConfirmation" : "deleteSingleMemberConfirmation"}`)
         if (showConfirmation) {
             this.setState({
                 confirmationDialogOpen: true,

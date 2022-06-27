@@ -1918,6 +1918,7 @@ I18n.translations.en = {
     },
     serviceDetail: {
         deleteMemberConfirmation: "Are you sure you want to delete the selected service admins and invitations?",
+        deleteYourselfMemberConfirmation: "Are you sure you want to leave this service? You will have to be re-invited by an admin to rejoin.",
         resendInvitations: "Are you sure you want to resend all selected expired invitation?",
         flash: {
             entitiesDeleted: "Admins and invitations have been deleted",
