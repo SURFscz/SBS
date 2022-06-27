@@ -257,8 +257,10 @@ class TestService(AbstractTest):
     def test_add_allowed_organisations(self):
         service = self.find_entity_by_name(Service, service_network_name)
         uva = self.find_entity_by_name(Organisation, amsterdam_uva_name)
+        self.login("urn:service_admin")
         self.put(f"/api/services/allowed_organisations/{service.id}",
-                 body={"allowed_organisations": [{"organisation_id": uva.id}]})
+                 body={"allowed_organisations": [{"organisation_id": uva.id}]},
+                 with_basic_auth=False)
 
         service = self.find_entity_by_name(Service, service_network_name)
         allowed_organisations = service.allowed_organisations

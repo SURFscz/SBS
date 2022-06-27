@@ -17,6 +17,11 @@ from server.test.seed import seed
 system_api = Blueprint("system_api", __name__, url_prefix="/api/system")
 
 
+def check_seed_allowed(action):
+    if not current_app.app_config.feature.seed_allowed:
+        raise BadRequest(f"{action} not allowed in this environment")
+
+
 @system_api.route("/expire_collaborations", strict_slashes=False, methods=["PUT"])
 @json_endpoint
 def do_expire_collaboration():
@@ -98,8 +103,7 @@ def do_db_stats():
 def run_seed():
     confirm_write_access()
 
-    if not current_app.app_config.feature.seed_allowed:
-        raise BadRequest("seed not allowed in this environment")
+    check_seed_allowed("seed")
 
     seed(db, current_app.app_config, skip_seed=False, perf_test=True)
 
@@ -124,8 +128,7 @@ def scheduled_jobs():
 def clean_slate():
     confirm_write_access()
 
-    if not current_app.app_config.feature.seed_allowed:
-        raise BadRequest("clean_slate not allowed in this environment")
+    check_seed_allowed("clean_slate")
 
     seed(db, current_app.app_config, skip_seed=True)
 
@@ -137,8 +140,7 @@ def clean_slate():
 def composition():
     confirm_write_access()
 
-    if not current_app.app_config.feature.seed_allowed:
-        raise BadRequest("composition not allowed in this environment")
+    check_seed_allowed("composition")
 
     return current_app.app_config, 200
 
@@ -148,8 +150,7 @@ def composition():
 def clear_audit_logs():
     confirm_write_access()
 
-    if not current_app.app_config.feature.seed_allowed:
-        raise BadRequest("clear-audit-logs not allowed in this environment")
+    check_seed_allowed("clear_audit_logs")
 
     db.session.execute(text("DELETE FROM audit_logs"))
     return {}, 201
