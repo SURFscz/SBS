@@ -30,25 +30,6 @@
 
     }
 
-    .action-icons-container {
-        display: flex;
-        align-items: center;
-    }
-
-    .admin-icons {
-        display: flex;
-        margin-left: auto;
-
-        svg {
-            color: $dark-grey;
-            cursor: pointer;
-            margin: 0 5px;
-            &:hover {
-                color: black;
-            }
-        }
-    }
-
     .member-filter {
         display: flex;
         margin: 0 auto;

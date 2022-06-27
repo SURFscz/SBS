@@ -51,6 +51,7 @@ def info():
                "version": ip_network.version,
                "num_addresses": ip_network.num_addresses,
                "network_value": str(ip_network),
+               "global": ip_network.is_global,
                "lower": str(ip_network[0]),
                "higher": str(ip_network[-1]),
                "id": id

@@ -21,9 +21,9 @@ export default class CheckBox extends React.PureComponent {
     }
 
     render() {
-        const {name, value, readOnly = false, info, tooltip, className = "checkbox"} = this.props;
+        const {name, value, readOnly = false, info, tooltip, className = "checkbox", hide= false} = this.props;
         return (
-            <div className={className}>
+            <div className={`${className} ${hide ? "hide" : ""}`}>
                 <input type="checkbox" id={name} name={name} checked={value}
                        onChange={this.innerOnChange} disabled={readOnly}/>
                 <label htmlFor={name}>
@@ -47,6 +47,7 @@ CheckBox.propTypes = {
     value: PropTypes.bool.isRequired,
     onChange: PropTypes.func,
     readOnly: PropTypes.bool,
+    hide: PropTypes.bool,
     info: PropTypes.string,
     tooltip: PropTypes.string,
     className: PropTypes.string,

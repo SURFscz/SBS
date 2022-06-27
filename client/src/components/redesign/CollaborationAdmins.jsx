@@ -271,7 +271,7 @@ class CollaborationAdmins extends React.Component {
                     this.props.refreshUser(() => this.props.history.push("/home"));
                 } else {
                     this.props.refresh(this.componentDidMount);
-                    setFlash(entity.invite ? I18n.t("organisationDetail.flash.invitationDeleted", entity.invitee_email) : I18n.t("organisationDetail.flash.memberDeleted", {name: entity.user.name}));
+                    setFlash(entity.invite ? I18n.t("collaborationDetail.flash.invitationDeleted", entity.invitee_email) : I18n.t("collaborationDetail.flash.memberDeleted", {name: entity.user.name}));
                 }
             }).catch(() => {
                 this.handle404("member");
@@ -377,7 +377,6 @@ class CollaborationAdmins extends React.Component {
         const hrefValue = encodeURI(entity.invite ? entity.invitee_email : entity.user.email);
         const showResendInvite = entity.invite === true && isInvitationExpired(entity);
         const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc=";
-        //TODO rewrite remove, resendInvite to accept singleEntity instead of selectedEntities
         return (
             <div className="admin-icons">
                 <div data-tip data-for={`delete-member-${entity.id}`}
@@ -428,13 +427,16 @@ class CollaborationAdmins extends React.Component {
         const hrefValue = encodeURI(selected.map(v => v.ref.invite ? v.ref.invitee_email : v.ref.user.email).join(","));
         const disabled = selected.length === 0;
         const showResendInvite = selected.length > 0 && selected.every(s => s.invite === true && isInvitationExpired(s.ref));
-        const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc="
+        const bcc = (collaboration.disclose_email_information && collaboration.disclose_member_information) ? "" : "?bcc=";
+        if (!(any && isAdminOfCollaboration && !disabled) && !(any && (isAdminOfCollaboration || collaboration.disclose_email_information) && !disabled)
+            && !(any && isAdminOfCollaboration && showResendInvite)) {
+            return null;
+        }
         return (
             <div className="admin-actions">
                 {(any && isAdminOfCollaboration && !disabled) &&
                 <div data-tip data-for="delete-members">
                     <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
-                            disabled={disabled}
                             icon={<FontAwesomeIcon icon="trash"/>}/>
                     <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
                                   place="bottom">
@@ -446,7 +448,7 @@ class CollaborationAdmins extends React.Component {
                 &&
                 <div data-tip data-for="mail-members">
                     <a href={`${disabled ? "" : "mailto:"}${bcc}${hrefValue}`}
-                       className={`${disabled ? "disabled" : ""} button`}
+                       className="button"
                        rel="noopener noreferrer" onClick={e => {
                         if (disabled) {
                             stopEvent(e);
@@ -465,7 +467,6 @@ class CollaborationAdmins extends React.Component {
                 {(any && isAdminOfCollaboration && showResendInvite) &&
                 <div data-tip data-for="resend-invites">
                     <Button onClick={this.resend(true)} txt={I18n.t("models.orgMembers.resend")}
-                            disabled={!showResendInvite}
                             icon={<FontAwesomeIcon icon="voicemail"/>}/>
                     <ReactTooltip id="resend-invites" type="light" effect="solid" data-html={true}
                                   place="bottom">
@@ -500,13 +501,15 @@ class CollaborationAdmins extends React.Component {
         const {impersonation_allowed} = this.props.config;
 
         const showImpersonation = currentUser.admin && entity.user.id !== currentUser.id && !showMemberView && impersonation_allowed && !entity.invite;
-        return (<div className={"action-icons-container"}>
-            {this.actionIcons(entity, collaboration)}
-            <div className="impersonation">
-                {showImpersonation && <HandIcon className="impersonate"
-                                                onClick={() => emitImpersonation(entity.user, this.props.history)}/>}
+        return (
+            <div className={"action-icons-container"}>
+                {this.actionIcons(entity, collaboration)}
+                {showImpersonation && <div className="impersonation">
+                    <HandIcon className="impersonate"
+                                                    onClick={() => emitImpersonation(entity.user, this.props.history)}/>
+                </div>}
             </div>
-        </div>);
+        );
     }
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});

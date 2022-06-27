@@ -103,6 +103,63 @@ class ServiceAdmins extends React.Component {
         }
     }
 
+    removeFromActionIcon = (entityId, isInvite, showConfirmation) => {
+        const {user: currentUser, service} = this.props;
+        const members = service.service_memberships;
+        const invites = service.service_invitations || [];
+        const entity = isInvite ? invites.find(inv => inv.id === entityId) : members.find(m => m.id === entityId)
+        const currentUserDeleted = !isInvite && entity.user.id === currentUser.id;
+        const question = I18n.t(`organisationDetail.${currentUserDeleted ? "deleteYourselfMemberConfirmation" : isInvite ? "deleteSingleInvitationConfirmation" : "deleteSingleMemberConfirmation"}`)
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                isWarning: true,
+                confirmationDialogAction: () => this.removeFromActionIcon(entityId, isInvite, false),
+                cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+                confirmationQuestion: question,
+            });
+        } else {
+            this.setState({confirmationDialogOpen: false, loading: true});
+            const promise = isInvite ? serviceInvitationDelete(entityId, false) :
+                deleteServiceMembership(service.id, entity.user.id, false)
+            promise
+                .then(() => {
+                    if (currentUserDeleted && !currentUser.admin) {
+                        this.props.refreshUser(() => this.props.history.push("/home"));
+                    } else {
+                        this.props.refresh(this.componentDidMount);
+                        setFlash(entity.invite ? I18n.t("collaborationDetail.flash.invitationDeleted", entity.invitee_email) : I18n.t("collaborationDetail.flash.memberDeleted", {name: entity.user.name}));
+                    }
+                }).catch(() => {
+                this.handle404("member");
+            });
+        }
+    }
+
+    resendFromActionMenu = (entityId, showConfirmation) => () => {
+        const {service} = this.props;
+        const invites = service.service_invitations || [];
+        const entity = invites.find(inv => inv.id === entityId);
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                lastAdminWarning: false,
+                lastAdminWarningUser: false,
+                leavePage: false,
+                isWarning: false,
+                confirmationQuestion: I18n.t("invitation.resendInvitation"),
+                confirmationTxt: I18n.t("confirmationDialog.confirm"),
+                cancelDialogAction: this.closeConfirmationDialog,
+                confirmationDialogAction: this.resendFromActionMenu(entityId, false)
+            });
+        } else {
+            serviceInvitationBulkResend([entity], false).then(() => {
+                this.props.refresh(this.componentDidMount);
+                setFlash(I18n.t("invitation.flash.inviteResend", {name: service.name}));
+            });
+        }
+    };
+
     resend = showConfirmation => () => {
         if (showConfirmation) {
             this.setState({
@@ -142,11 +199,15 @@ class ServiceAdmins extends React.Component {
         const selected = Object.values(selectedMembers).filter(v => v.selected);
         const anySelected = selected.length > 0;
         const showResendInvite = anySelected && selected.every(s => s.invite && isInvitationExpired(s.ref));
+        if (!anySelected && !showResendInvite) {
+            return null;
+        }
+
+
         return (
             <div className="admin-actions">
-                <div data-tip data-for="delete-members">
+                {anySelected && <div data-tip data-for="delete-members">
                     <Button onClick={this.remove(true)} txt={I18n.t("models.orgMembers.remove")}
-                            disabled={!anySelected}
                             icon={<FontAwesomeIcon icon="trash"/>}/>
                     <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
                                   place="bottom">
@@ -157,20 +218,60 @@ class ServiceAdmins extends React.Component {
                                 I18n.t("models.orgMembers.removeTooltip")
                         }}/>
                     </ReactTooltip>
-                </div>
+                </div>}
 
-                <div data-tip data-for="resend-invites">
+                {showResendInvite && <div data-tip data-for="resend-invites">
                     <Button onClick={this.resend(true)} txt={I18n.t("models.orgMembers.resend")}
-                            disabled={!showResendInvite}
                             icon={<FontAwesomeIcon icon="voicemail"/>}/>
                     <ReactTooltip id="resend-invites" type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
                             dangerouslySetInnerHTML={{__html: !showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}}/>
                     </ReactTooltip>
-                </div>
+                </div>}
 
             </div>);
+    }
+
+    actionIcons = entity => {
+        const showResendInvite = entity.invite === true && isInvitationExpired(entity);
+        return (
+            <div className="admin-icons">
+                <div data-tip data-for={`delete-org-member-${entity.id}`}
+                     onClick={e => this.removeFromActionIcon(entity.id, entity.invite, true)}>
+                    <FontAwesomeIcon icon="trash"/>
+                    <ReactTooltip id={`delete-org-member-${entity.id}`} type="light" effect="solid" data-html={true}
+                                  place="bottom">
+                        <span dangerouslySetInnerHTML={{
+                            __html: entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
+                                I18n.t("models.orgMembers.removeMemberTooltip")
+                        }}/>
+                    </ReactTooltip>
+                </div>
+                {showResendInvite &&
+                <div data-tip data-for={`resend-invite-${entity.id}`}>
+                    <FontAwesomeIcon icon="voicemail" onClick={this.resendFromActionMenu(entity.id, true)}/>
+                    <ReactTooltip id={`resend-invite-${entity.id}`} type="light" effect="solid" data-html={true}
+                                  place="bottom">
+                        <span
+                            dangerouslySetInnerHTML={{__html: I18n.t("models.orgMembers.resendInvitationTooltip")}}/>
+                    </ReactTooltip>
+                </div>}
+
+            </div>);
+    }
+
+    getImpersonateMapper = (entity, currentUser, impersonation_allowed) => {
+        const showImpersonation = currentUser.admin && !entity.invite && entity.user.id !== currentUser.id && impersonation_allowed;
+        return (
+            <div className={"action-icons-container"}>
+                {this.actionIcons(entity)}
+                {showImpersonation && <div className="impersonation">
+                    <HandIcon className="impersonate"
+                              onClick={() => emitImpersonation(entity.user, this.props.history)}/>
+                </div>}
+            </div>
+        );
     }
 
     closeConfirmationDialog = () => this.setState({confirmationDialogOpen: false});
@@ -195,9 +296,15 @@ class ServiceAdmins extends React.Component {
             {
                 nonSortable: true,
                 key: "check",
+                header: <CheckBox value={false}
+                                  name={"allSelected"}
+                                  hide={true}
+                                  onChange={() => false}/>,
+
                 mapper: entity => {
                     return <div className="check">
-                        <CheckBox name={"" + ++i} onChange={this.onCheck(entity)}
+                        <CheckBox name={"" + ++i}
+                                  onChange={this.onCheck(entity)}
                                   value={(selectedMembers[this.getIdentifier(entity)] || {}).selected || false}/>
                     </div>
                 }
@@ -249,15 +356,7 @@ class ServiceAdmins extends React.Component {
                 nonSortable: true,
                 key: "impersonate",
                 header: "",
-                mapper: entity => {
-                    if (!currentUser.admin || entity.invite || entity.user.id === currentUser.id || !impersonation_allowed) {
-                        return null;
-                    }
-                    return (<div className="impersonate" onClick={() =>
-                        emitImpersonation(entity.user, this.props.history)}>
-                        <HandIcon/>
-                    </div>);
-                }
+                mapper: entity => this.getImpersonateMapper(entity, currentUser, impersonation_allowed)
             },
         ]
         const entities = admins.concat(invites);
@@ -276,6 +375,7 @@ class ServiceAdmins extends React.Component {
                           columns={columns}
                           loading={false}
                           hideTitle={true}
+                          onHover={true}
                           showNew={isAdmin}
                           actions={(isAdmin && entities.length > 0) ? this.actionButtons(selectedMembers) : null}
                           newEntityPath={`/new-service-invite/${service.id}`}

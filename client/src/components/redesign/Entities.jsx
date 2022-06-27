@@ -115,18 +115,22 @@ class Entities extends React.Component {
     }
 
     renderEntities = (entities, sorted, reverse, modelName, tableClassName, columns, children,
-                      rowLinkMapper, customNoEntities, onHover) => {
+                      rowLinkMapper, customNoEntities, onHover, actions) => {
         const hasEntities = !isEmpty(entities);
         return (
             <section className="entities-list">
+                {(hasEntities && actions) && <div className="actions-header">
+                    {actions}
+                </div>}
                 {hasEntities &&
                 <table className={tableClassName || modelName}>
                     <thead>
                     <tr>
-                        {columns.map(column =>
-                            <th key={column.key} className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"}`}
+                        {columns.map((column, i) =>
+                            <th key={column.key}
+                                className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"}`}
                                 onClick={this.setSorted(column.key)}>
-                                {column.header}
+                                {(!actions || i < 2) && column.header}
                                 {headerIcon(column, sorted, reverse)}
                             </th>
                         )}
@@ -174,9 +178,9 @@ class Entities extends React.Component {
                     {explain}
                 </Explain>}
                 {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch, hideTitle)}
-                {actions}
+
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children,
-                    rowLinkMapper, customNoEntities, onHover)}
+                    rowLinkMapper, customNoEntities, onHover, actions)}
                 <div>{this.props.children}</div>
             </div>);
     }
