@@ -22,8 +22,8 @@ class Tabs extends React.Component {
         const {children, className = ""} = this.props;
         let activeTab = this.props.activeTab || children[0].props.name;
         const filteredChildren = children.filter(child => child);
-        if (!children.some((child => child.props && child.props.name === activeTab))) {
-            activeTab = (children[0] || {props: {name: activeTab}}).props.name
+        if (!filteredChildren.some((child => child.props && child.props.name === activeTab))) {
+            activeTab = (filteredChildren[0] || {props: {name: activeTab}}).props.name
         }
         return (
             <>
