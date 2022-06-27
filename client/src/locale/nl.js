@@ -1064,6 +1064,8 @@ I18n.translations.nl = {
         update: "Opslaan",
         delete: "Verwijderen",
         deleteMemberConfirmation: "Weet je zeker dat je deze organisatiebeheerders en -managers wil verwijderen?",
+        deleteSingleMemberConfirmation: "Weet je zeker dat je dit lid wil verwijderen?",
+        deleteSingleInvitationConfirmation: "Weet je zeker dat je deze uitnodiging wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze organisatie wilt verlaten? Je kan dit niet terugdraaien.",
         deleteApiKeyConfirmation: "Weet je zeker dat je deze API-sleutel wilt verwijderen?",
         deleteCollaborationConfirmation: "Weet je zeker dat je samenwerking {{name}} wil verwijderen?",

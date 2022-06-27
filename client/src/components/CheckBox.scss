@@ -5,6 +5,10 @@ div.checkbox {
     display: flex;
     align-items: center;
 
+    &.hide {
+        opacity: 0;
+    }
+
     input[type="checkbox"] {
         display: none;
     }
