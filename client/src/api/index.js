@@ -279,7 +279,10 @@ export function createCollaboration(collaboration) {
     return postPutJson("/api/collaborations", collaboration, "post");
 }
 
-export function collaborationNameExists(name, organisationId, existingCollaboration = null) {
+export function collaborationNameExists(name, organisationId, existingCollaboration = "") {
+    if (isEmpty(existingCollaboration)) {
+        existingCollaboration = "";
+    }
     return fetchJson(`/api/collaborations/name_exists?name=${encodeURIComponent(name)}&organisation_id=${organisationId}&existing_collaboration=${encodeURIComponent(existingCollaboration)}`);
 }
 

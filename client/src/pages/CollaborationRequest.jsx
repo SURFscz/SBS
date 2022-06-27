@@ -75,12 +75,12 @@ class CollaborationRequest extends React.Component {
             }).catch(e => this.props.history.push("/"));
 
     validateCollaborationName = e =>
-        collaborationNameExists(sanitizeShortName(e.target.value), this.state.collaborationRequest.organisation.value).then(json => {
+        collaborationNameExists(e.target.value, this.state.collaborationRequest.organisation.id).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, name: json}});
         });
 
     validateCollaborationShortName = e =>
-        collaborationShortNameExists(e.target.value, this.state.collaborationRequest.organisation.value).then(json => {
+        collaborationShortNameExists(sanitizeShortName(e.target.value), this.state.collaborationRequest.organisation.id).then(json => {
             this.setState({alreadyExists: {...this.state.alreadyExists, short_name: json}});
         });
 
@@ -272,7 +272,7 @@ class CollaborationRequest extends React.Component {
                         {alreadyExists.name && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
                             attribute: I18n.t("collaboration.name").toLowerCase(),
                             value: collaborationRequest.name,
-                            organisation: collaborationRequest.organisation.label
+                            organisation: collaborationRequest.organisation.name
                         })}/>}
                         {(!initial && isEmpty(collaborationRequest.name)) &&
                         <ErrorIndicator msg={I18n.t("collaboration.required", {
@@ -298,7 +298,7 @@ class CollaborationRequest extends React.Component {
                         {alreadyExists.short_name && <ErrorIndicator msg={I18n.t("collaboration.alreadyExists", {
                             attribute: I18n.t("collaboration.shortName").toLowerCase(),
                             value: collaborationRequest.short_name,
-                            organisation: collaborationRequest.organisation.label
+                            organisation: collaborationRequest.organisation.name
                         })}/>}
                         {(!initial && isEmpty(collaborationRequest.short_name)) &&
                         <ErrorIndicator msg={I18n.t("collaboration.required", {
