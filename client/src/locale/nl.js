@@ -1918,6 +1918,7 @@ I18n.translations.nl = {
     },
     serviceDetail: {
         deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde beheerders en uitnodigingen wilt verwijderen?",
+        deleteYourselfMemberConfirmation: "Weet je zeker dat je deze dienst wilt verlaten? Je kan dit niet terugdraaien.",
         resendInvitations: "Weet je zeker dat je alle geselecteerde verlopen uitnodigingen opnieuw wil versturen?",
         flash: {
             entitiesDeleted: "Beheerders en uitnodigingen zijn verwijderd",
