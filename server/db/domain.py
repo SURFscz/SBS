@@ -571,6 +571,16 @@ class SchacHomeOrganisation(Base, db.Model):
                            nullable=False)
     updated_by = db.Column("updated_by", db.String(length=512), nullable=False)
 
+    @staticmethod
+    def organisations_by_user_schac_home(user: User):
+        schac_home_organisation = user.schac_home_organisation
+        if not schac_home_organisation:
+            return []
+        schac_homes = SchacHomeOrganisation.query.all()
+        return list(filter(
+            lambda schac_home: schac_home_organisation == schac_home.name or schac_home_organisation.endswith(
+                f".{schac_home.name}"), schac_homes))
+
 
 class SshKey(Base, db.Model):
     __tablename__ = "ssh_keys"
