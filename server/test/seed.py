@@ -540,7 +540,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
 
     if perf_test:
         users = []
-        for i in range(1, 84):
+        for i in range(1, 10_000):
             user = User(uid=f"urn:persoon:numero{i:03d}",
                         name=f"Piet Doe de {i}de",
                         email=f"pietdoe{i}@example.org",
@@ -549,13 +549,14 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             users.append(user)
         _persist(db, *users)
 
-        for i in range(1, 40):
+        for i in range(1, 1250):
+            image = read_image("computing.jpeg")
             co = Collaboration(name=f"Samenwerking Numero {i}",
                                identifier=str(uuid.uuid4()),
                                short_name=f"co_nr_{i:03d}",
                                global_urn=f"ucc:co_nr_{i:03d}",
                                description="Een van vele COs",
-                               logo=read_image("computing.jpeg"),
+                               logo=image,
                                organisation=uuc,
                                services=[mail, network],
                                join_requests=[],
@@ -570,4 +571,14 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
             _persist(db, CollaborationMembership(role="member", user=users[2 * i + 2], collaboration=co))
             _persist(db, CollaborationMembership(role="member", user=users[2 * i + 3], collaboration=co))
 
+        services = []
+        image = read_image("email.jpeg")
+        for i in range(1, 500):
+            services.append(Service(entity_id=f"https://entity{i}.com", name=f"service{i}",
+                                    contact_email=john.email, public_visible=True, automatic_connection_allowed=True,
+                                    logo=image, security_email=john.email,
+                                    support_email=john.email, accepted_user_policy="https://google.nl",
+                                    allowed_organisations=[uuc, uva], abbreviation="mail",
+                                    privacy_policy="https://privacy.org")
+                            )
     db.session.commit()
