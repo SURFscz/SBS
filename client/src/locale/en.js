@@ -929,7 +929,12 @@ I18n.translations.en = {
             flash: "Acceptance of the AUP for service {{name}} has been reset for all users"
         },
         contacts: "Contacts",
-
+        leave: "Leave service",
+        confirmation: {
+            leave: "Are you sure you don't want to be the admin of this service? You can not undo this.",
+            lastAdminWarning: "You are leaving this service without admins. After this, management of the service can only be carried out by the admins of SRAM",
+            lastAdminWarningUser: "You are the last admin in this service. After you leave, management of the service can only be carried out by the admins of SRAM",
+        }
     },
     organisation: {
         title: "Create new organisation",

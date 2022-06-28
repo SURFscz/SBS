@@ -1,6 +1,7 @@
 import React from "react";
 import {
     allServiceConnectionRequests,
+    deleteServiceMembership,
     resetLdapPassword,
     resetTokenValue,
     searchOrganisations,
@@ -33,6 +34,8 @@ import {setFlash} from "../utils/Flash";
 import ServiceWelcomeDialog from "../components/ServiceWelcomeDialog";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import InputField from "../components/InputField";
+import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
+import LastAdminWarning from "../components/redesign/LastAdminWarning";
 
 class ServiceDetail extends React.Component {
 
@@ -115,6 +118,7 @@ class ServiceDetail extends React.Component {
                 confirmationTxt: I18n.t("userTokens.reset.close"),
                 confirmationHeader: I18n.t("userTokens.reset.copy"),
                 cancelDialogAction: null,
+                lastAdminWarning: false,
                 confirmationDialogQuestion: I18n.t("userTokens.reset.info"),
                 tokenValue: res.token_value,
                 confirmationDialogAction: this.doCancelDialogAction
@@ -129,6 +133,7 @@ class ServiceDetail extends React.Component {
                 confirmationTxt: I18n.t("service.ldap.close"),
                 confirmationHeader: I18n.t("service.ldap.copy"),
                 cancelDialogAction: null,
+                lastAdminWarning: false,
                 confirmationDialogQuestion: I18n.t("service.ldap.info"),
                 ldapPassword: res.ldap_password,
                 confirmationDialogAction: this.doCancelDialogAction
@@ -351,9 +356,46 @@ class ServiceDetail extends React.Component {
         return I18n.t("service.compliancyLong", {compliant: compliant});
     }
 
+    doDeleteMe = () => {
+        this.setState({confirmationDialogOpen: false, loading: true});
+        const {user} = this.props;
+        const {service} = this.state;
+        deleteServiceMembership(service.id, user.id)
+            .then(() => {
+                this.props.refreshUser(() => {
+                    this.setState({confirmationDialogOpen: false, loading: false});
+                    setFlash(I18n.t("organisationDetail.flash.memberDeleted", {name: user.name}));
+                    if (user.admin) {
+                        this.componentDidMount();
+                    } else {
+                        this.props.history.push("/home");
+                    }
+                });
+            });
+    };
+
+    deleteMe = () => {
+        const {user} = this.props;
+        const {service} = this.state;
+        const admins = service.service_memberships.filter(m => m.role === "admin");
+        const lastAdminWarning = admins.length === 1 && admins[0].user_id === user.id;
+        this.setState({
+            confirmationDialogOpen: true,
+            confirmationTxt: I18n.t("confirmationDialog.confirm"),
+            confirmationHeader: I18n.t("confirmationDialog.title"),
+            lastAdminWarning: lastAdminWarning,
+            confirmationDialogQuestion: I18n.t("service.confirmation.leave"),
+            tokenValue: null,
+            isWarning: true,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationDialogAction: this.doDeleteMe
+        });
+    };
+
     getActions = (user, service) => {
         const actions = [];
-        if (user.admin || isUserServiceAdmin(user, service)) {
+        const serviceAdmin = isUserServiceAdmin(user, service);
+        if (user.admin || serviceAdmin) {
             actions.push({
                 icon: "pencil-alt",
                 name: I18n.t("home.edit"),
@@ -370,6 +412,7 @@ class ServiceDetail extends React.Component {
                         cancelDialogAction: this.doCancelDialogAction,
                         confirmationDialogAction: this.doLdapResetAction,
                         isWarning: false,
+                        lastAdminWarning: false,
                         confirmationHeader: I18n.t("confirmationDialog.title"),
                         confirmationDialogQuestion: I18n.t("service.ldap.confirmation", {name: service.name}),
                         confirmationTxt: I18n.t("confirmationDialog.confirm"),
@@ -388,6 +431,7 @@ class ServiceDetail extends React.Component {
                         isWarning: true,
                         confirmationDialogAction: this.resetAups,
                         confirmationHeader: I18n.t("confirmationDialog.title"),
+                        lastAdminWarning: false,
                         confirmationDialogQuestion: I18n.t("service.aup.confirmation", {name: service.name}),
                         confirmationTxt: I18n.t("confirmationDialog.confirm"),
                     });
@@ -405,12 +449,20 @@ class ServiceDetail extends React.Component {
                             isWarning: false,
                             confirmationDialogAction: this.doTokenResetAction,
                             confirmationHeader: I18n.t("confirmationDialog.title"),
+                            lastAdminWarning: false,
                             confirmationDialogQuestion: I18n.t("userTokens.reset.confirmation", {name: service.name}),
                             confirmationTxt: I18n.t("confirmationDialog.confirm"),
                         });
                     }
                 });
             }
+            if (serviceAdmin)
+                actions.push({
+                    svg: LeaveIcon,
+                    name: I18n.t("service.leave"),
+                    perform: this.deleteMe
+                });
+
         }
         return actions;
     }
@@ -427,7 +479,7 @@ class ServiceDetail extends React.Component {
         const {
             tabs, service, loading, tab, firstTime, ldapPassword, tokenValue,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
-            confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning
+            confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning, lastAdminWarning
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -449,6 +501,9 @@ class ServiceDetail extends React.Component {
                                     question={confirmationDialogQuestion}>
                     {ldapPassword && this.renderLdapPassword(ldapPassword)}
                     {tokenValue && this.renderLdapPassword(tokenValue)}
+                    {lastAdminWarning && <LastAdminWarning organisation={service}
+                                                           currentUserDeleted={true}
+                                                           localePrefix={"service.confirmation"}/>}
                 </ConfirmationDialog>
 
                 <UnitHeader obj={service}

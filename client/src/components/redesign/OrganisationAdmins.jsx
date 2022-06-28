@@ -295,9 +295,19 @@ class OrganisationAdmins extends React.Component {
     }
 
     actionIcons = entity => {
+        const {organisation} = this.props;
+        const {selectedMembers} = this.state;
         const showResendInvite = entity.invite === true && isInvitationExpired(entity);
+        const nbrOfAdmins = organisation.organisation_memberships.filter(m => m.role === "admin").length;
+        const oneAdminLeft = nbrOfAdmins < 2;
+        const selectedAdmins = Object.values(selectedMembers).filter(entry => entry.selected && entry.ref.role === "admin").length;
+        const noMoreAdminsToCheck = (selectedAdmins + 1) === nbrOfAdmins;
+
+        const showDelete = entity.invite || entity.role === "manager" || (!oneAdminLeft &&
+                        (!noMoreAdminsToCheck || selectedMembers[this.getIdentifier(entity)].selected));
         return (
             <div className="admin-icons">
+                {showDelete &&
                 <div data-tip data-for={`delete-org-member-${entity.id}`}
                      onClick={e => this.removeFromActionIcon(entity.id, entity.invite, true)}>
                     <FontAwesomeIcon icon="trash"/>
@@ -308,7 +318,7 @@ class OrganisationAdmins extends React.Component {
                                 I18n.t("models.orgMembers.removeMemberTooltip")
                         }}/>
                     </ReactTooltip>
-                </div>
+                </div>}
                 {showResendInvite &&
                 <div data-tip data-for={`resend-invite-${entity.id}`}>
                     <FontAwesomeIcon icon="voicemail" onClick={this.resendFromActionMenu(entity.id, true)}/>

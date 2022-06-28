@@ -928,7 +928,12 @@ I18n.translations.nl = {
             flash: "De acceptatie van de AUP voor dienst {{name}} is gereset voor alle gebruikers"
         },
         contacts: "Contactpersonen",
-
+        leave: "Verlaat dienst",
+        confirmation: {
+            leave: "Weet je zeker dat je niet meer de admin van deze dienst wilt zijn? Je kan dit niet ongedaan maken.",
+            lastAdminWarning: "Je laat deze dienst achter zonder beheerders. Hierna kan het beheer van de dienst alleen worden uitgevoerd door de beheerders van SRAM",
+            lastAdminWarningUser: "Je bent de laatste beheerder in deze dienst. Na je vertrek kan het beheer van de dienst alleen worden uitgevoerd door de beheerders van SRAM",
+        }
     },
     organisation: {
         title: "Nieuwe organisatie toevoegen",
