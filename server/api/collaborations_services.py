@@ -5,7 +5,8 @@ from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint
 from server.api.service_group import create_service_groups
-from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_write_access
+from server.auth.security import confirm_collaboration_admin, confirm_external_api_call, confirm_write_access, \
+    confirm_service_admin
 from server.db.db import db
 from server.db.domain import Service, Collaboration
 from server.schemas import json_schema_validator
@@ -115,7 +116,10 @@ def delete_all_services(collaboration_id):
 @collaborations_services_api.route("/<collaboration_id>/<service_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
 def delete_collaborations_services(collaboration_id, service_id):
-    confirm_collaboration_admin(collaboration_id)
+    try:
+        confirm_collaboration_admin(collaboration_id)
+    except Forbidden:
+        confirm_service_admin(service_id)
 
     collaboration = Collaboration.query.get(collaboration_id)
     if collaboration.organisation.services_restricted:

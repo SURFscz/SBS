@@ -34,13 +34,34 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
                 }
             }
 
+            &.check {
+                width: 30px;
+
+                svg.information-circle {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+
+            &.action-icons {
+                width: 40px;
+            }
+
             &.name {
                 width: 30%;
                 padding-left: 15px;
+
+                &.services {
+                    width: 40%;
+                }
             }
 
             &.organisation__name {
                 width: 20%;
+
+                &.services {
+                    width: 30%;
+                }
             }
 
             &.expiry_date {
@@ -53,6 +74,11 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
 
             &.fromCollaboration {
                 width: 8%;
+
+                &.services {
+                    width: 15%;
+                }
+
             }
 
             &.collaboration_memberships_count {
@@ -69,6 +95,11 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
                 width: 8%;
                 text-align: center;
             }
+
+            &.action_icons {
+                width: 8%;
+                text-align: center;
+            }
         }
     }
 
@@ -77,6 +108,13 @@ table.collaborations, table.serviceCollaborations, table.memberCollaborations {
             @media (max-width: $compact-medium) {
                 &.role {
                     display: none;
+                }
+            }
+
+            &.check {
+                svg.information-circle {
+                    width: 20px;
+                    height: 20px;
                 }
             }
 

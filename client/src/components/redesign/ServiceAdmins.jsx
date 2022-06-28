@@ -66,6 +66,7 @@ class ServiceAdmins extends React.Component {
         this.setState({selectedMembers: {...selectedMembers}});
     }
 
+
     remove = showConfirmation => () => {
         if (showConfirmation) {
             this.setState({
