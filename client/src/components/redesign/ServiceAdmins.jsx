@@ -20,6 +20,7 @@ import ReactTooltip from "react-tooltip";
 import InstituteColumn from "./InstitueColumn";
 import {isEmpty} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
+import LastAdminWarning from "./LastAdminWarning";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
@@ -37,6 +38,8 @@ class ServiceAdmins extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
             isWarning: false,
+            lastAdminWarning: false,
+            lastAdminWarningUser: false,
             loading: true
         }
     }
@@ -68,23 +71,30 @@ class ServiceAdmins extends React.Component {
 
 
     remove = showConfirmation => () => {
+        const {selectedMembers} = this.state;
+        const {user: currentUser, service} = this.props;
+        const nbrAdmins = service.service_memberships.filter(m => m.role === "admin").length;
+        const nbrAdminsRemoved = Object.values(selectedMembers)
+            .filter(sr => sr.selected && !sr.ref.invite && sr.ref.role === "admin").length;
+        const currentUserDeleted = Object.values(selectedMembers)
+                .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
+
+        const lastAdminWarning = nbrAdmins === nbrAdminsRemoved;
+        const lastAdminWarningUser = lastAdminWarning && currentUserDeleted;
         if (showConfirmation) {
             this.setState({
                 confirmationDialogOpen: true,
                 isWarning: true,
+                lastAdminWarning: lastAdminWarning,
+                lastAdminWarningUser: lastAdminWarningUser,
                 confirmationDialogAction: this.remove(false),
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
                 confirmationQuestion: I18n.t("serviceDetail.deleteMemberConfirmation"),
             });
         } else {
             this.setState({confirmationDialogOpen: false, loading: true});
-            const {selectedMembers} = this.state;
-            const {user: currentUser, service} = this.props;
-            const currentUserDeleted = Object.values(selectedMembers)
-                .some(sr => sr.selected && !sr.ref.invite && sr.ref.user.id === currentUser.id);
             const selected = Object.keys(selectedMembers)
                 .filter(id => selectedMembers[id].selected);
-
             const promises = selected.map(id => {
                 const ref = selectedMembers[id].ref;
                 return ref.invite ? serviceInvitationDelete(ref.id, false) :
@@ -110,11 +120,19 @@ class ServiceAdmins extends React.Component {
         const invites = service.service_invitations || [];
         const entity = isInvite ? invites.find(inv => inv.id === entityId) : members.find(m => m.id === entityId)
         const currentUserDeleted = !isInvite && entity.user.id === currentUser.id;
-        const question = I18n.t(`serviceDetail.${currentUserDeleted ? "deleteYourselfMemberConfirmation" : isInvite ? "deleteSingleInvitationConfirmation" : "deleteSingleMemberConfirmation"}`)
+
+        const question = I18n.t(`${currentUserDeleted ? "serviceDetail.deleteYourselfMemberConfirmation" : isInvite ? "organisationDetail.deleteSingleInvitationConfirmation" : "organisationDetail.deleteSingleMemberConfirmation"}`)
+
+        const nbrAdmins = service.service_memberships.filter(m => m.role === "admin").length;
+        const lastAdminWarning = nbrAdmins === 1 && !isInvite && entity.role === "admin"
+        const lastAdminWarningUser = lastAdminWarning && currentUserDeleted;
+
         if (showConfirmation) {
             this.setState({
                 confirmationDialogOpen: true,
                 isWarning: true,
+                lastAdminWarning: lastAdminWarning,
+                lastAdminWarningUser: lastAdminWarningUser,
                 confirmationDialogAction: () => this.removeFromActionIcon(entityId, isInvite, false),
                 cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
                 confirmationQuestion: question,
@@ -281,7 +299,8 @@ class ServiceAdmins extends React.Component {
         const {user: currentUser, service} = this.props;
         const {
             selectedMembers, confirmationDialogOpen, cancelDialogAction, isWarning,
-            confirmationDialogAction, confirmationQuestion, loading, confirmationTxt
+            confirmationDialogAction, confirmationQuestion, loading, confirmationTxt, lastAdminWarning,
+            lastAdminWarningUser
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -367,7 +386,11 @@ class ServiceAdmins extends React.Component {
                                     confirm={confirmationDialogAction}
                                     isWarning={isWarning}
                                     confirmationTxt={confirmationTxt}
-                                    question={confirmationQuestion}/>
+                                    question={confirmationQuestion}>
+                    {lastAdminWarning && <LastAdminWarning organisation={service}
+                                                           currentUserDeleted={lastAdminWarningUser}
+                                                           localePrefix={"service.confirmation"}/>}
+                </ConfirmationDialog>
 
                 <Entities entities={entities}
                           modelName="serviceAdmins"

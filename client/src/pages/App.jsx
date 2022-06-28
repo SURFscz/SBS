@@ -291,6 +291,7 @@ class App extends React.Component {
                         <Route exact path="/services/:id/:tab?"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}
+                                                                refreshUser={this.refreshUserMemberships}
                                                                 Component={ServiceDetail} {...props}/>}/>
 
                         <Route exact path="/edit-service/:id"
