@@ -115,11 +115,11 @@ class Entities extends React.Component {
     }
 
     renderEntities = (entities, sorted, reverse, modelName, tableClassName, columns, children,
-                      rowLinkMapper, customNoEntities, onHover, actions) => {
+                      rowLinkMapper, customNoEntities, onHover, actions, actionHeader) => {
         const hasEntities = !isEmpty(entities);
         return (
             <section className="entities-list">
-                {(hasEntities && actions) && <div className="actions-header">
+                {(hasEntities && actions) && <div className={`actions-header ${actionHeader}`}>
                     {actions}
                 </div>}
                 {hasEntities &&
@@ -161,7 +161,7 @@ class Entities extends React.Component {
         const {
             modelName, entities, showNew, searchAttributes, columns, children, loading, customSearch,
             actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = "",
-            customNoEntities, hideTitle, onHover
+            customNoEntities, hideTitle, onHover, actionHeader = ""
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
@@ -180,7 +180,7 @@ class Entities extends React.Component {
                 {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch, hideTitle)}
 
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children,
-                    rowLinkMapper, customNoEntities, onHover, actions)}
+                    rowLinkMapper, customNoEntities, onHover, actions, actionHeader)}
                 <div>{this.props.children}</div>
             </div>);
     }

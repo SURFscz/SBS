@@ -6,11 +6,18 @@ import {isEmpty, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import Button from "../Button";
-import {allCollaborations, mayRequestCollaboration, myCollaborations} from "../../api";
+import {allCollaborations, deleteCollaborationServices, mayRequestCollaboration, myCollaborations} from "../../api";
 import SpinnerField from "./SpinnerField";
 import {isUserAllowed, ROLES} from "../../utils/UserRole";
 import Logo from "./Logo";
 import moment from "moment";
+import CheckBox from "../CheckBox";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ReactTooltip from "react-tooltip";
+import ConfirmationDialog from "../ConfirmationDialog";
+import Tooltip from "./Tooltip";
+import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
+import {setFlash} from "../../utils/Flash";
 
 
 export default class Collaborations extends React.PureComponent {
@@ -21,6 +28,12 @@ export default class Collaborations extends React.PureComponent {
             standalone: false,
             collaborations: [],
             showRequestCollaboration: false,
+            selectedCollaborations: {},
+            confirmationDialogOpen: false,
+            confirmationTxt: I18n.t("confirmationDialog.confirm"),
+            confirmationDialogAction: () => true,
+            cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
+            confirmationQuestion: "",
             loading: true
         }
     }
@@ -59,6 +72,78 @@ export default class Collaborations extends React.PureComponent {
         )
     }
 
+    onCheck = collaboration => e => {
+        const {selectedCollaborations} = this.state;
+        selectedCollaborations[collaboration.id] = e.target.checked;
+        this.setState({selectedCollaborations: {...selectedCollaborations}});
+    }
+
+    removeCollaboration = (showConfirmation, entityId) => {
+        const {collaborations, service} = this.props;
+        const name = (collaborations.find(coll => coll.id === entityId) || {}).name;
+        if (showConfirmation) {
+            this.setState({
+                confirmationDialogOpen: true,
+                confirmationQuestion: I18n.t(`models.serviceCollaborations.confirmation.remove${entityId ? "One" : ""}`,
+                    {name: name}),
+                confirmationDialogAction: () => this.removeCollaboration(false, entityId),
+            });
+        } else {
+            const {selectedCollaborations} = this.state;
+            const collaborationIdentifiers = entityId ? [entityId] : Object.entries(selectedCollaborations)
+                .filter(l => l[1])
+                .map(e => parseInt(e[0], 10));
+            const promises = collaborationIdentifiers.map(id => deleteCollaborationServices(id, service.id));
+            Promise.all(promises).then(() => this.props.refresh(() => {
+                this.componentDidMount();
+                setFlash(I18n.t("models.serviceCollaborations.flash.removed"));
+            }));
+
+        }
+    }
+
+    actionButtons = selectedCollaborations => {
+        const selected = Object.values(selectedCollaborations).filter(v => v);
+        const anySelected = selected.length > 0;
+        if (!anySelected) {
+            return null;
+        }
+        return (
+            <div className="admin-actions">
+                <div data-tip data-for="remove-collaborations">
+                    <Button onClick={() => this.removeCollaboration(true)}
+                            txt={I18n.t("models.serviceCollaborations.disconnect")}
+                            icon={<FontAwesomeIcon icon="trash"/>}/>
+                    <ReactTooltip id="remove-collaborations" type="light" effect="solid" data-html={true}
+                                  place="bottom">
+                    <span
+                        dangerouslySetInnerHTML={{__html: I18n.t("models.serviceCollaborations.disconnectTooltip")}}/>
+                    </ReactTooltip>
+                </div>
+            </div>);
+    }
+
+    getActionIcons = entity => {
+        if (!entity.fromCollaboration) {
+            return null;
+        }
+        return (
+            <div className={"action-icons-container"}>
+                <div className="admin-icons">
+                    <div data-tip data-for={`delete-org-member-${entity.id}`}
+                         onClick={() => this.removeCollaboration(true, entity.id)}>
+                        <FontAwesomeIcon icon="trash"/>
+                        <ReactTooltip id={`delete-org-member-${entity.id}`} type="light" effect="solid" data-html={true}
+                                      place="bottom">
+                            <span
+                                dangerouslySetInnerHTML={{__html: I18n.t("models.serviceCollaborations.disconnectOneTooltip")}}/>
+                        </ReactTooltip>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     openCollaboration = collaboration => e => {
         if (e.metaKey || e.ctrlKey) {
             return;
@@ -68,14 +153,17 @@ export default class Collaborations extends React.PureComponent {
     };
 
     render() {
-        const {loading, standalone, showRequestCollaboration} = this.state;
+        const {
+            loading, standalone, showRequestCollaboration, selectedCollaborations,
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion, confirmationTxt
+        } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
         const {collaborations} = standalone ? this.state : this.props;
         const {
             modelName = "collaborations", organisation, mayCreate = true, showOrigin = false,
-            showExpiryDate = false, showLastActivityDate = false, userServiceAdmin = false
+            showExpiryDate = false, showLastActivityDate = false, userAdmin = false, userServiceAdmin = false
         } = this.props;
 
         if (isEmpty(collaborations) && !loading && modelName === "collaborations") {
@@ -85,7 +173,37 @@ export default class Collaborations extends React.PureComponent {
         const mayCreateCollaborations = isUserAllowed(ROLES.ORG_MANAGER, user);
         const organisationQueryParam = organisation ? `?organisationId=${organisation.id}` : "";
 
-        const columns = [
+        const columns = [];
+        const serviceModule = modelName === "serviceCollaborations";
+        const serviceKey = serviceModule ? " services" : "";
+        if (serviceModule) {
+            let i = 0;
+            columns.push({
+                nonSortable: true,
+                key: "check",
+                header: <CheckBox value={false}
+                                  name={"allSelected"}
+                                  hide={true}
+                                  onChange={() => false}/>,
+
+                mapper: entity => {
+                    if (entity.fromCollaboration) {
+                        return (
+                            <div className="check">
+                                <CheckBox name={"" + ++i}
+                                          onChange={this.onCheck(entity)}
+                                          value={(selectedCollaborations[entity.id]) || false}/>
+                            </div>)
+                    } else {
+                        return (
+                            <Tooltip children={<InformationCircle/>} id={"collaboration-warning" + ++i}
+                                     msg={I18n.t("models.serviceCollaborations.organisationWarningTooltip")}/>
+                        )
+                    }
+                }
+            });
+        }
+        columns.push(
             {
                 nonSortable: true,
                 key: "logo",
@@ -94,26 +212,31 @@ export default class Collaborations extends React.PureComponent {
             },
             {
                 key: "name",
+                class: serviceKey,
                 header: I18n.t("models.collaborations.name"),
-                mapper: collaboration => userServiceAdmin ? <span>{collaboration.name}</span> :
-                    <a href={`/collaborations/${collaboration.id}`} onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
+                mapper: collaboration => !userAdmin ? <span>{collaboration.name}</span> :
+                    <a href={`/collaborations/${collaboration.id}`}
+                       onClick={this.openCollaboration(collaboration)}>{collaboration.name}</a>,
             },
             {
                 key: "organisation__name",
+                class: serviceKey,
                 header: I18n.t("models.serviceCollaborations.organisationName"),
                 mapper: collaboration => organisation ? organisation.name : collaboration.organisation.name
             },
             {
                 nonSortable: true,
                 key: "role",
+                class: serviceKey,
                 header: "",// I18n.t("profile.yourRole"),
                 mapper: collaboration => {
                     const cm = user.collaboration_memberships.find(m => m.collaboration_id === collaboration.id);
                     return cm ?
                         <span className={`person-role ${cm.role}`}>{I18n.t(`profile.${cm.role}`)}</span> : null;
                 }
-            }];
-        if (modelName === "serviceCollaborations") {
+            }
+        );
+        if (serviceModule) {
             columns.push({
                 key: "short_name",
                 header: I18n.t("organisation.shortName"),
@@ -171,7 +294,16 @@ export default class Collaborations extends React.PureComponent {
                     I18n.t("models.serviceCollaborations.fromCollaboration") : I18n.t("models.serviceCollaborations.fromOrganisation")
             });
         }
-        const allColumns = columns.concat([{
+        if (serviceModule) {
+            columns.push({
+                    nonSortable: true,
+                    key: "action-icons",
+                    header: "",
+                    mapper: entity => this.getActionIcons(entity)
+                },
+            )
+        }
+        const allColumns = serviceModule ? columns : columns.concat([{
             key: "collaboration_memberships_count",
             header: I18n.t("models.collaborations.memberCount")
         },
@@ -180,18 +312,28 @@ export default class Collaborations extends React.PureComponent {
                 header: I18n.t("models.collaborations.invitationsCount")
             }]);
         return (
-            <Entities entities={collaborations}
-                      modelName={mayCreateCollaborations ? modelName : showRequestCollaboration ? "memberCollaborations" : modelName}
-                      searchAttributes={["name"]}
-                      defaultSort="name"
-                      hideTitle={true}
-                      rowLinkMapper={userServiceAdmin ? null : () => this.openCollaboration}
-                      columns={allColumns}
-                      showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
-                      newEntityPath={`/new-collaboration${organisationQueryParam}`}
-                      loading={loading}
-                      {...this.props}/>
-        )
+            <>
+                <ConfirmationDialog isOpen={confirmationDialogOpen}
+                                    cancel={cancelDialogAction}
+                                    confirm={confirmationDialogAction}
+                                    isWarning={true}
+                                    confirmationTxt={confirmationTxt}
+                                    question={confirmationQuestion}/>
+                <Entities entities={collaborations}
+                          modelName={mayCreateCollaborations ? modelName : showRequestCollaboration ? "memberCollaborations" : modelName}
+                          searchAttributes={["name"]}
+                          defaultSort="name"
+                          hideTitle={true}
+                          rowLinkMapper={userServiceAdmin ? null : () => this.openCollaboration}
+                          columns={allColumns}
+                          onHover={true}
+                          actionHeader={"collaboration-services"}
+                          actions={serviceModule ? this.actionButtons(selectedCollaborations) : null}
+                          showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
+                          newEntityPath={`/new-collaboration${organisationQueryParam}`}
+                          loading={loading}
+                          {...this.props}/>
+            </>)
     }
 
 }

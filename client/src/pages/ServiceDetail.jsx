@@ -295,9 +295,11 @@ class ServiceDetail extends React.Component {
                  icon={<CollaborationsIcon/>}>
                 <Collaborations mayCreate={false}
                                 showOrigin={true}
+                                service={service}
                                 collaborations={colls}
                                 userServiceAdmin={userServiceAdmin}
                                 userAdmin={userAdmin}
+                                refresh={this.refresh}
                                 modelName={"serviceCollaborations"}
                                 {...this.props} />
             </div>);

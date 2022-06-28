@@ -323,9 +323,20 @@ I18n.translations.nl = {
             title: "Samenwerkingen die deze dienst gebruiken",
             organisationName: "Organisatie",
             noEntities: "Er zijn geen samenwerkingen die deze dienst gebruiken",
+            organisationWarningTooltip: "Deze samenwerking heeft toegang, omdat de organisatie van deze samenwerking toegang heeft verleend tot alle samenwerkingen in deze organisatie.</br></br>Als je deze samenwerking wilt verbreken, verbied je de toegang tot de organisatie op het tabblad Organisatie.",
             origin: "Gekoppeld door",
             fromOrganisation: "Organisatie",
-            fromCollaboration: "Samenwerking"
+            fromCollaboration: "Samenwerking",
+            disconnect: "Ontkoppelen",
+            disconnectTooltip: "Ontkoppel alle geselecteerde samenwerkingen",
+            disconnectOneTooltip: "Ontkoppel samenwerking",
+            confirmation: {
+                remove: "Weet je zeker dat je de geselecteerde samenwerkingen wil ontkoppelen? Je kan dit niet ongedaan maken.",
+                removeOne: "Weet je zeker dat je de samenwerking {{name}} wil ontkoppelen? Je kan dit niet ongedaan maken.",
+            },
+            flash: {
+                removed: "De samenwerking(en) zijn ontkoppeld"
+            }
         },
         coAdmins: {
             searchPlaceHolder: "Zoek beheerders...",

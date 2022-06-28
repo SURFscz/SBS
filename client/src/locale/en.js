@@ -323,10 +323,22 @@ I18n.translations.en = {
             title: "Collaborations using this service",
             organisationName: "Organisation",
             noEntities: "There are no collaborations using this service",
+            organisationWarningTooltip: "This collaboration has access, because the organisation of this collaboration has granted access to all collaborations in this organization.</br></br>To disconnect this collaboration disallow access to the organisation in the organisation tab.",
             origin: "Enabled by",
             fromOrganisation: "Organisation",
-            fromCollaboration: "Collaboration"
-        },
+            fromCollaboration: "Collaboration",
+            disconnect: "Disconnect",
+            disconnectTooltip: "Disconnect all selected collaborations",
+            disconnectOneTooltip: "Disconnect collaboration",
+            confirmation: {
+                remove: "Are you sure you want to disconnect the selected collaborations from this service? This can not be undone.",
+                removeOne: "Are you sure you want to disconnect the collaboration {{name}} from this service? This can not be undone."
+            },
+            flash: {
+                removed: "The collaboration(s) are disconnected"
+            }
+        }
+        ,
         coAdmins: {
             searchPlaceHolder: "Search for admins...",
             title: "Admins",
@@ -1946,7 +1958,7 @@ I18n.translations.en = {
         introspectionEndpointToken: "Introspection endpoint bearer token",
         tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once here.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new token.",
         delete: "Remove token",
-        deleteConfirmation: "Are you sure you want to remove this token?  This action cannot be undone.",
+        deleteConfirmation: "Are you sure you want to remove this token? This action cannot be undone.",
         flash: {
             deleted: "Token {{name}} has been removed",
             reactivated: "Token {{name}} has been reactivated",

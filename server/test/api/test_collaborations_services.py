@@ -26,6 +26,15 @@ class TestCollaborationsServices(AbstractTest):
                                       content_type="application/json")
         self.assertEqual(204, response.status_code)
 
+    def test_delete_collaborations_services_by_service_admin(self):
+        self.login("urn:james")
+        service = self._find_service_by_name(service_cloud_name)
+        collaboration = self.find_entity_by_name(Collaboration, uva_research_name)
+        response = self.client.delete(f"api/collaborations_services/{collaboration.id}/{service['id']}",
+                                      headers=BASIC_AUTH_HEADER,
+                                      content_type="application/json")
+        self.assertEqual(204, response.status_code)
+
     def test_delete_collaborations_services_forbidden(self):
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
