@@ -43,7 +43,7 @@ class Aup extends React.Component {
         }
         return (
             <div className="mod-aup">
-                <h1>{I18n.t("aup.hi", {name: currentUser.given_name || currentUser.name})}</h1>
+                <h1>{I18n.t("aup.hi", {name: currentUser.given_name || currentUser.name || currentUser.email || ""})}</h1>
                 <div className="disclaimer">
                     <p dangerouslySetInnerHTML={{__html: I18n.t("aup.info")}}/>
                 </div>
