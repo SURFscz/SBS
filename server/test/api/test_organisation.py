@@ -57,7 +57,7 @@ class TestOrganisation(AbstractTest):
     def test_organisations_by_schac_home_organisation(self):
         self.login("urn:roger", schac_home_organisation)
         organisation = self.get("/api/organisations/find_by_schac_home_organisation",
-                                with_basic_auth=False)
+                                with_basic_auth=False)[0]
         self.assertEqual(False, organisation["collaboration_creation_allowed"])
         self.assertEqual(False, organisation["collaboration_creation_allowed_entitlement"])
         self.assertEqual(True, organisation["has_members"])
@@ -70,20 +70,21 @@ class TestOrganisation(AbstractTest):
 
         self.login("urn:roger", schac_home_organisation)
         organisation = self.get("/api/organisations/find_by_schac_home_organisation",
-                                with_basic_auth=False)
+                                with_basic_auth=False)[0]
         self.assertEqual(amsterdam_uva_name, organisation["name"])
+        self.assertListEqual(["example.org"], organisation["schac_home_organisations"])
 
     def test_organisations_by_schac_home_organisation_none(self):
         self.login("urn:harry")
-        organisation = self.get("/api/organisations/find_by_schac_home_organisation",
-                                with_basic_auth=False)
-        self.assertIsNone(organisation)
+        organisations = self.get("/api/organisations/find_by_schac_home_organisation",
+                                 with_basic_auth=False)
+        self.assertEqual(0, len(organisations))
 
     def test_organisations_by_schac_home_organisation_not_present(self):
         self.login("urn:mike")
-        organisation = self.get("/api/organisations/find_by_schac_home_organisation",
-                                with_basic_auth=False)
-        self.assertIsNone(organisation)
+        organisations = self.get("/api/organisations/find_by_schac_home_organisation",
+                                 with_basic_auth=False)
+        self.assertEqual(0, len(organisations))
 
     def test_organisation_by_id_with_api_user(self):
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
