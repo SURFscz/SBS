@@ -1,8 +1,8 @@
 APScheduler==3.9.1
 PyMySQL==1.0.2
 PyYAML==6.0
-SQLAlchemy==1.4.36
-cryptography==37.0.2
+SQLAlchemy==1.4.39
+cryptography==37.0.3
 flask-jsonschema-validator==0.0.4
 flask-mail==0.9.1
 flask==2.1.2
@@ -15,11 +15,11 @@ munch==2.5.0
 paho-mqtt==1.6.1
 python2-secrets==1.0.5
 pytz==2022.1
-requests==2.27.1
+requests==2.28.0
 uWSGI==2.0.20
 urllib3==1.26.9
 websockets==10.3
-redis==4.3.0
+redis==4.3.4
 pyotp==2.6.0
 qrcode==7.3.1
 Pillow==9.1.1
