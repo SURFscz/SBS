@@ -9,7 +9,7 @@ import {
     health,
     invitationAccept,
     invitationByHash,
-    organisationByUserSchacHomeOrganisation,
+    organisationsByUserSchacHomeOrganisation,
     unsuspendCollaboration,
     userTokensOfUser
 } from "../api";
@@ -49,7 +49,7 @@ import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
-import {ErrorOrigins, isEmpty, removeDuplicates} from "../utils/Utils";
+import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
 
 class CollaborationDetail extends React.Component {
@@ -110,14 +110,14 @@ class CollaborationDetail extends React.Component {
                 .then(json => {
                     const adminOfCollaboration = json.access === "full";
                     const promises = adminOfCollaboration ? [collaborationById(collaboration_id), userTokensOfUser()] :
-                        [collaborationLiteById(collaboration_id), organisationByUserSchacHomeOrganisation(), userTokensOfUser()];
+                        [collaborationLiteById(collaboration_id), organisationsByUserSchacHomeOrganisation(), userTokensOfUser()];
                     Promise.all(promises)
                         .then(res => {
                             const {user} = this.props;
                             const tab = params.tab || (adminOfCollaboration ? this.state.tab : "about");
                             const collaboration = res[0];
                             const userTokens = res[res.length - 1];
-                            const schacHomeOrganisation = adminOfCollaboration ? null : res[1];
+                            const schacHomeOrganisation = adminOfCollaboration ? null : getSchacHomeOrg(user, res[1]);
                             const orgManager = isUserAllowed(ROLES.ORG_MANAGER, user, collaboration.organisation_id, null);
                             const firstTime = getParameterByName("first", window.location.search) === "true";
                             this.showExpiryDateFlash(user, collaboration);

@@ -108,4 +108,9 @@ export const ErrorOrigins = {
     invalidPamWebSSO: "invalidPamWebSSO"
 }
 
+export const getSchacHomeOrg = (currentUser, organisations) => {
+    const organisation = organisations.find(org => org.schac_home_organisations.some(sho => sho === currentUser.schac_home_organisation));
+    return organisation;
+}
+
 

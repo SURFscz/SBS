@@ -51,6 +51,7 @@ class Entities extends React.Component {
     }
 
     renderSearch = (modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch, hideTitle) => {
+        const filterClassName = !hideTitle && filters ? "filters-with-title" : "";
         return (
             <section className="entities-search">
                 {showNew &&
@@ -58,9 +59,7 @@ class Entities extends React.Component {
                         txt={I18n.t(`models.${modelName}.new`)}/>
                 }
                 {!hideTitle && <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>}
-                {filters}
-
-
+                <div className={filterClassName}>{filters}</div>
                 <div className={`search ${showNew ? "" : "standalone"}`}>
                     {explain && <FontAwesomeIcon className="help" icon="question-circle"
                                                  id="impersonate_close_explanation"
@@ -127,7 +126,7 @@ class Entities extends React.Component {
                     <thead>
                     <tr>
                         {columns.map((column, i) =>
-                            <th key={column.key}
+                            <th key={`${column.key}-${i}`}
                                 className={`${column.key} ${column.class || ""} ${column.nonSortable ? "" : "sortable"}`}
                                 onClick={this.setSorted(column.key)}>
                                 {(!actions || i < 2) && column.header}
@@ -138,10 +137,10 @@ class Entities extends React.Component {
                     </thead>
                     <tbody>
                     {entities.map((entity, index) =>
-                        <tr key={index}
+                        <tr key={`${entity.id}-${index}`}
                             className={`${(typeof rowLinkMapper === "function" && rowLinkMapper(entity)) ? "clickable" : ""} ${onHover ? "hoverable" : ""}`}>
-                            {columns.map(column =>
-                                <td key={column.key}
+                            {columns.map((column, i) =>
+                                <td key={`${column.key}-${i}`}
                                     onClick={(column.key !== "check" && column.key !== "role" && !column.hasLink) ?
                                         this.onRowClick(rowLinkMapper, entity) : undefined}
                                     className={`${column.key} ${column.nonSortable ? "" : "sortable"} ${column.className ? column.className : ""}`}>

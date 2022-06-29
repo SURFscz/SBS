@@ -5,9 +5,9 @@ import "./Header.scss";
 import UserMenu from "./redesign/UserMenu";
 import {ReactComponent as ChevronDown} from "../icons/chevron-down.svg";
 import {ReactComponent as ChevronUp} from "../icons/chevron-up.svg";
-import {organisationByUserSchacHomeOrganisation} from "../api";
+import {organisationsByUserSchacHomeOrganisation} from "../api";
 import {emitter} from "../utils/Events";
-import {stopEvent} from "../utils/Utils";
+import {getSchacHomeOrg, stopEvent} from "../utils/Utils";
 import FeedbackDialog from "./Feedback";
 
 export default class Header extends React.PureComponent {
@@ -24,8 +24,8 @@ export default class Header extends React.PureComponent {
 
     UNSAFE_componentWillReceiveProps = nextProps => {
         if (nextProps.currentUser.user_accepted_aup) {
-            organisationByUserSchacHomeOrganisation()
-                .then(res => this.setState({organisation: res}));
+            organisationsByUserSchacHomeOrganisation()
+                .then(res => this.setState({organisation: getSchacHomeOrg(nextProps.currentUser, res)}));
         }
     };
 
@@ -33,8 +33,8 @@ export default class Header extends React.PureComponent {
         emitter.addListener("impersonation", this.impersonate);
         const {currentUser} = this.props;
         if (!currentUser.guest && currentUser.second_factor_confirmed && currentUser.user_accepted_aup) {
-            organisationByUserSchacHomeOrganisation()
-                .then(res => this.setState({organisation: res}));
+            organisationsByUserSchacHomeOrganisation()
+                .then(res => this.setState({organisation: getSchacHomeOrg(currentUser, res)}));
         }
 
     }
@@ -52,8 +52,8 @@ export default class Header extends React.PureComponent {
 
     impersonate = () => {
         //Need to ensure the API call is done with the impersonated user
-        setTimeout(() => organisationByUserSchacHomeOrganisation()
-            .then(res => this.setState({organisation: res})), 1500);
+        setTimeout(() => organisationsByUserSchacHomeOrganisation()
+            .then(res => this.setState({organisation: getSchacHomeOrg(this.props.currentUser, res)})), 1750);
     }
 
 

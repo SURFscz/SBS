@@ -8,7 +8,7 @@ import {
     createCollaboration,
     deleteCollaboration,
     myOrganisationsLite,
-    organisationByUserSchacHomeOrganisation,
+    organisationsByUserSchacHomeOrganisation,
     requestCollaboration, tagsByOrganisation,
     updateCollaboration
 } from "../api";
@@ -102,13 +102,13 @@ class CollaborationForm extends React.Component {
         } else {
             myOrganisationsLite().then(json => {
                 if (json.length === 0) {
-                    organisationByUserSchacHomeOrganisation().then(json => {
+                    organisationsByUserSchacHomeOrganisation().then(json => {
                         if (isEmpty(json)) {
                             this.updateBreadCrumb(null, null, false, false);
                             this.setState({noOrganisations: true, loading: false});
                         } else {
                             this.updateTags(json.id);
-                            const organisations = this.mapOrganisationsToOptions([json]);
+                            const organisations = this.mapOrganisationsToOptions(json);
                             const organisationId = getParameterByName("organisationId", window.location.search);
                             const organisation = organisations.find(org => org.value === parseInt(organisationId, 10));
                             const autoCreateCollaborationRequest = json.collaboration_creation_allowed || json.collaboration_creation_allowed_entitlement;

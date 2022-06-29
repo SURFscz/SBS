@@ -323,7 +323,7 @@ export function myOrganisationsLite() {
     return fetchJson(`/api/organisations/mine_lite`);
 }
 
-export function organisationByUserSchacHomeOrganisation() {
+export function organisationsByUserSchacHomeOrganisation() {
     return fetchJson(`/api/organisations/find_by_schac_home_organisation`);
 }
 

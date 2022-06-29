@@ -1,8 +1,8 @@
 import React from "react";
 import "./Welcome.scss";
 import I18n from "i18n-js";
-import {identityProviderDisplayName, organisationByUserSchacHomeOrganisation} from "../../api";
-import {isEmpty} from "../../utils/Utils";
+import {identityProviderDisplayName, organisationsByUserSchacHomeOrganisation} from "../../api";
+import {getSchacHomeOrg, isEmpty} from "../../utils/Utils";
 import {ReactComponent as InformationIcon} from "../../icons/informational.svg";
 import SpinnerField from "./SpinnerField";
 import "react-mde/lib/styles/css/react-mde-all.css";
@@ -29,10 +29,10 @@ class Welcome extends React.Component {
             this.props.history.push("/home");
             return;
         }
-        Promise.all([organisationByUserSchacHomeOrganisation(), identityProviderDisplayName()])
+        Promise.all([organisationsByUserSchacHomeOrganisation(), identityProviderDisplayName()])
             .then(res => {
                 this.setState({
-                    organisation: res[0],
+                    organisation: getSchacHomeOrg(user, res[0]),
                     idpDisplayName: res[1] ? res[1].display_name : this.state.idpDisplayName,
                     loading: false
                 });
