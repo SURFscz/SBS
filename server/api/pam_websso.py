@@ -35,16 +35,15 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
     service = pam_sso_session.service
 
     if validate_user and ("user" not in session or user.id != current_user_id()):
-        return {"result": "FAIL", "debug_msg": f"User {user.uid} is not authenticated"}
+        return {"result": "FAIL", "info": f"User {user.uid} is not authenticated"}
 
     if validate_user and not user_service(service.id, False):
-        return {"result": "FAIL", "debug_msg": f"User {user.uid} has no access to service {service.name}"}
+        return {"result": "FAIL", "info": f"User {user.uid} has no access to service {service.name}"}
 
     if validate_pin and pam_sso_session.pin != pin:
-        return {"result": "FAIL", "debug_msg": f"User {user.uid} has entered a pin ({pin}) "
-                                               f"different to the pin generated ({pam_sso_session.pin})"}
+        return {"result": "FAIL", "info": "Incorrect pin"}
 
-    return {"result": "SUCCESS", "debug_msg": f"User {user.uid} has authenticated successfully"}
+    return {"result": "SUCCESS", "info": f"User {user.uid} has authenticated successfully"}
 
 
 @pam_websso_api.route("/<session_id>", methods=["GET"], strict_slashes=False)
@@ -90,7 +89,8 @@ def start():
     if last_login_date and last_login_date > seconds_ago:
         logger.debug(f"PamWebSSO user {user.uid} SSO results")
 
-        return {"result": "OK", "cached": True}, 201
+        return {"result": "OK", "cached": True,
+                "info": f"User {user.uid} login was cached"}, 201
 
     pam_sso_session = PamSSOSession(session_id=str(uuid.uuid4()), attribute=attribute, user_id=user.id,
                                     service_id=service.id, pin="".join(random.sample(string.digits, k=4)))
@@ -100,7 +100,7 @@ def start():
 
     return {"result": "OK",
             "session_id": pam_sso_session.session_id,
-            "challenge": f"{current_app.app_config.base_url}/weblogin/{pam_sso_session.session_id}",
+            "challenge": f"Please sign in to: {current_app.app_config.base_url}/weblogin/{pam_sso_session.session_id}",
             "cached": False}, 201
 
 
@@ -117,7 +117,7 @@ def check_pin():
     try:
         pam_sso_session = _get_pam_sso_session(session_id)
     except NotFound:
-        return {"result": "TIMEOUT", "debug_msg": f"Pam session {session_id} has expired"}, 201
+        return {"result": "TIMEOUT", "info": f"Pam session {session_id} has expired"}, 201
 
     user = pam_sso_session.user
     validation = _validate_pam_sso_session(pam_sso_session, pin, True, False)
