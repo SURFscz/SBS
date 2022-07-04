@@ -858,6 +858,7 @@ I18n.translations.nl = {
         networkPlaceholder: "IPv4-of IPv6-adres met optioneel subnet",
         networkError: "Die {{prefix}} subnetomvang is niet toegestaan. Maximaal toegestane prefix voor IPv{{version}} is {{max}}",
         networkSyntaxError: "Dit is geen geldig IPv4- of IPv6-adres",
+        networkNotGlobal: "Alleen globale unicast-adressen kunnen worden ingevoerd",
         networkInfo: "Laagste IP: {lower}, hoogste IP: {higher}, # adressen: {num_addresses}, versie: IPv{version}",
         automaticConnectionAllowed: "Automatisch koppelen toestaan?",
         automaticConnectionAllowedTooltip: "Kunnen samenwerkingen deze dienst koppelen zonder expliciete toestemming van de diensteigenaar?",

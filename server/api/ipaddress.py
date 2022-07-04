@@ -16,7 +16,13 @@ def validate_ip_networks(data, networks_name="ip_networks"):
     ip_networks = data.get(networks_name, None)
     if ip_networks:
         for ip_network in ip_networks:
-            ipaddress.ip_network(ip_network["network_value"], False)
+            ip = ipaddress.ip_network(ip_network["network_value"], False)
+            _is4 = ip.version == 4
+            prefix = ip.prefixlen
+            if (_is4 and prefix < max_allowed_ipv4_sub_mask) or (not _is4 and prefix < max_allowed_ipv6_prefix):
+                raise ValueError(f"IP network {str(ip)} exceeds size")
+            if not _is4 and not ip.is_global:
+                raise ValueError(f"IP network {str(ip)} is not global")
 
 
 @ipaddress_api.route("/info", strict_slashes=False)

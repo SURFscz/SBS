@@ -37,6 +37,11 @@ class TestIpaddress(AbstractTest):
         self.assertEqual(res["network_value"], "2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128")
         self.assertEqual(res["global"], True)
 
+    def test_info_not_global_unicast_addresses(self):
+        res = self.get("/api/ipaddress/info", query_data={"address": "fd00:f9a8:ffff::257"})
+
+        self.assertEqual(res["global"], False)
+
     def test_info_ipv6_coerce_bits(self):
         res = self.get("/api/ipaddress/info", query_data={"address": "2001:db8:f00f:bab::"})
 
