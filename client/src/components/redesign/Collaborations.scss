@@ -24,6 +24,29 @@
     }
 }
 
+.mod-entities {
+    .collaborations-search-filters {
+        margin: 0 auto;
+    }
+
+    .collaboration-label-filter {
+        display: flex;
+        @media (max-width: $compact-medium) {
+            flex-direction: column;
+        }
+
+        .collaboration-label-filter-select {
+            width: 290px;
+            margin: 0 25px 0 0;
+            @media (max-width: $compact-medium) {
+                margin: 15px 0;
+            }
+
+        }
+    }
+
+}
+
 table.collaborations, table.serviceCollaborations, table.memberCollaborations {
 
     thead {

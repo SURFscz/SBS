@@ -16,7 +16,7 @@ from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
-    CollaborationRequest, SchacHomeOrganisation
+    CollaborationRequest, SchacHomeOrganisation, Collaboration
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation, mail_platform_admins
 
@@ -132,7 +132,8 @@ def organisation_by_id(organisation_id):
         .options(selectinload(Organisation.services)) \
         .options(selectinload(Organisation.collaboration_requests)
                  .selectinload(CollaborationRequest.requester)) \
-        .options(selectinload(Organisation.collaborations)) \
+        .options(selectinload(Organisation.collaborations)
+                 .selectinload(Collaboration.tags)) \
         .filter(Organisation.id == organisation_id)
 
     if not request_context.is_authorized_api_call:

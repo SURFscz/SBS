@@ -93,7 +93,7 @@ def eligible_users_to_reset_token(user):
     return user_information
 
 
-def _idp_configured(user, identity_providers, action, schac_home=None, entity_id=None):
+def _idp_configured(identity_providers, action, schac_home=None, entity_id=None):
     entity_id_allowed = entity_id and [idp for idp in identity_providers if idp.entity_id == entity_id.lower()]
     schac_home_allowed = schac_home and [idp for idp in identity_providers if idp.schac_home == schac_home.lower()]
 
@@ -118,11 +118,11 @@ def has_valid_mfa(user):
     return valid_mfa_sso
 
 
-def mfa_idp_allowed(user, schac_home=None, entity_id=None):
+def mfa_idp_allowed(schac_home=None, entity_id=None):
     allowed_identity_providers = current_app.app_config.mfa_idp_allowed
-    return _idp_configured(user, allowed_identity_providers, "mfa_idp_allowed", schac_home, entity_id)
+    return _idp_configured(allowed_identity_providers, "mfa_idp_allowed", schac_home, entity_id)
 
 
-def surf_secure_id_required(user, schac_home=None, entity_id=None):
+def surf_secure_id_required(schac_home=None, entity_id=None):
     ssid_identity_providers = current_app.app_config.ssid_identity_providers
-    return _idp_configured(user, ssid_identity_providers, "surf_secure_id_required", schac_home, entity_id)
+    return _idp_configured(ssid_identity_providers, "surf_secure_id_required", schac_home, entity_id)

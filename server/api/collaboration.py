@@ -154,6 +154,7 @@ def collaboration_all():
     confirm_authorized_api_call()
     collaborations = Collaboration.query \
         .options(selectinload(Collaboration.organisation)) \
+        .options(selectinload(Collaboration.tags)) \
         .all()
     return collaborations, 200
 
@@ -209,7 +210,8 @@ def my_collaborations_lite():
     user_id = current_user_id()
     query = Collaboration.query \
         .join(Collaboration.collaboration_memberships) \
-        .options(selectinload(Collaboration.organisation))
+        .options(selectinload(Collaboration.organisation)) \
+        .options(selectinload(Collaboration.tags))
     if include_services:
         query = query \
             .options(selectinload(Collaboration.services).selectinload(Service.allowed_organisations))

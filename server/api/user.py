@@ -303,8 +303,8 @@ def resume_session():
         schac_home_organisation = user.schac_home_organisation
         home_organisation_uid = user_info_json.get('uid', None)
 
-        idp_allowed = mfa_idp_allowed(user=user, schac_home=schac_home_organisation)
-        ssid_required = surf_secure_id_required(user=user, schac_home=schac_home_organisation)
+        idp_allowed = mfa_idp_allowed(schac_home=schac_home_organisation)
+        ssid_required = surf_secure_id_required(schac_home=schac_home_organisation)
         fallback_required = not idp_allowed and not ssid_required and current_app.app_config.mfa_fallback_enabled
 
         logger.debug(f"SBS login for user {uid} MFA check: "

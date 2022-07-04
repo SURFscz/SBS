@@ -56,8 +56,8 @@ def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, iss
 
     # TODO: lots of duplicated code below
     if require_2fa:
-        idp_allowed = mfa_idp_allowed(user, schac_home_organisation, issuer_id)
-        ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
+        idp_allowed = mfa_idp_allowed(schac_home_organisation, issuer_id)
+        ssid_required = surf_secure_id_required(schac_home_organisation, issuer_id)
         fallback_required = not idp_allowed and not ssid_required and current_app.app_config.mfa_fallback_enabled
 
         # this is a configuration conflict and should never happen!
@@ -150,8 +150,8 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
 
     # Leave the 2FA and AUP checks as the last checks as these are the only exceptions that can be recovered from
     if require_2fa:
-        idp_allowed = mfa_idp_allowed(user, schac_home_organisation, issuer_id)
-        ssid_required = surf_secure_id_required(user, schac_home_organisation, issuer_id)
+        idp_allowed = mfa_idp_allowed(schac_home_organisation, issuer_id)
+        ssid_required = surf_secure_id_required(schac_home_organisation, issuer_id)
         fallback_required = not idp_allowed and not ssid_required and current_app.app_config.mfa_fallback_enabled
 
         # this is a configuration conflict and should never happen!
