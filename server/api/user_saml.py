@@ -51,8 +51,10 @@ def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, iss
         logger.debug("Creating new user in sram_login")
         user = User(uid=uid, created_by="system", updated_by="system")
 
-    user.home_organisation_uid = home_organisation_uid
-    user.schac_home_organisation = schac_home_organisation
+    if home_organisation_uid:
+        user.home_organisation_uid = home_organisation_uid
+    if schac_home_organisation:
+        user.schac_home_organisation = schac_home_organisation
 
     # TODO: lots of duplicated code below
     if require_2fa:
@@ -71,8 +73,10 @@ def _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, iss
             base_url = current_app.app_config.base_url
             if ssid_required:
                 user.ssid_required = True
-                user.home_organisation_uid = home_organisation_uid
-                user.schac_home_organisation = schac_home_organisation
+                if home_organisation_uid:
+                    user.home_organisation_uid = home_organisation_uid
+                if schac_home_organisation:
+                    user.schac_home_organisation = schac_home_organisation
                 redirect_base_url = f"{base_url}/api/mfa/ssid_start"
             else:
                 redirect_base_url = f"{base_url}/2fa"
@@ -163,8 +167,10 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
         if not idp_allowed and (ssid_required or fallback_required) and not has_valid_mfa(user):
             if ssid_required:
                 user.ssid_required = True
-                user.home_organisation_uid = home_organisation_uid
-                user.schac_home_organisation = schac_home_organisation
+                if home_organisation_uid:
+                    user.home_organisation_uid = home_organisation_uid
+                if schac_home_organisation:
+                    user.schac_home_organisation = schac_home_organisation
                 user = db.session.merge(user)
                 db.session.commit()
 
@@ -206,8 +212,8 @@ def proxy_authz():
     issuer_id = json_dict["issuer_id"]
     # These are optional; they are only used to check for logins that should do SSID-SFO
     # If the proxy doesn't send these, we can safely assume the user shouldn't be sent to SSID
-    home_organisation_uid = json_dict.get("uid", "[[UNKNOWN]]")
-    schac_home_organisation = json_dict.get("homeorganization", "[[UNKNOWN]]")
+    home_organisation_uid = json_dict.get("uid", None)
+    schac_home_organisation = json_dict.get("homeorganization", None)
 
     logger = ctx_logger("user_api")
     logger.debug(f"proxy_authz called with {str(json_dict)}")
@@ -248,8 +254,10 @@ def proxy_authz():
 
     def authorized_func(user, memberships):
         eppn_scope = current_app.app_config.eppn_scope.strip()
-        user.home_organisation_uid = home_organisation_uid
-        user.schac_home_organisation = schac_home_organisation
+        if home_organisation_uid:
+            user.home_organisation_uid = home_organisation_uid
+        if schac_home_organisation:
+            user.schac_home_organisation = schac_home_organisation
         db.session.merge(user)
         return {
                    "status": {
