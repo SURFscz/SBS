@@ -164,6 +164,7 @@ class OrganisationDetail extends React.Component {
                             collaborations={organisation.collaborations}
                             organisation={organisation}
                             showExpiryDate={true}
+                            showTagFilter={true}
                             showLastActivityDate={true}/>
         </div>)
     }

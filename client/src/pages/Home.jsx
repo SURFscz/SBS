@@ -161,6 +161,7 @@ class Home extends React.Component {
             <Collaborations {...this.props}
                             platformAdmin={platformAdmin}
                             showExpiryDate={true}
+                            showTagFilter={true}
                             showLastActivityDate={true}/>
         </div>)
     }

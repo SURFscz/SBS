@@ -304,6 +304,7 @@ class ServiceDetail extends React.Component {
                                 collaborations={colls}
                                 userServiceAdmin={userServiceAdmin}
                                 userAdmin={userAdmin}
+                                showTagFilter={false}
                                 refresh={this.refresh}
                                 modelName={"serviceCollaborations"}
                                 {...this.props} />

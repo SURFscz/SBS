@@ -18,7 +18,9 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import Tooltip from "./Tooltip";
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 import {setFlash} from "../../utils/Flash";
+import Select from "react-select";
 
+const allValue = "all";
 
 export default class Collaborations extends React.PureComponent {
 
@@ -29,6 +31,8 @@ export default class Collaborations extends React.PureComponent {
             collaborations: [],
             showRequestCollaboration: false,
             selectedCollaborations: {},
+            filterOptions: [],
+            filterValue: {},
             confirmationDialogOpen: false,
             confirmationTxt: I18n.t("confirmationDialog.confirm"),
             confirmationDialogAction: () => true,
@@ -39,22 +43,59 @@ export default class Collaborations extends React.PureComponent {
     }
 
     componentDidMount = () => {
-        const {collaborations, platformAdmin = false} = this.props;
+        const {collaborations, showTagFilter = false, platformAdmin = false} = this.props;
         const promises = [mayRequestCollaboration()];
         if (collaborations === undefined) {
             Promise.all(promises.concat([platformAdmin ? allCollaborations() : myCollaborations()])).then(res => {
+                const allFilterOptions = this.allLabelFilterOptions(res[1], showTagFilter);
                 this.setState({
                     standalone: true,
                     collaborations: res[1],
                     showRequestCollaboration: res[0],
+                    filterOptions: allFilterOptions,
+                    filterValue: allFilterOptions[0],
                     loading: false
                 });
 
             })
         } else {
-            Promise.all(promises).then(res => this.setState({showRequestCollaboration: res, loading: false}))
+            const allFilterOptions = this.allLabelFilterOptions(collaborations, showTagFilter);
+            Promise.all(promises).then(res => {
+                this.setState({
+                    showRequestCollaboration: res,
+                    filterOptions: allFilterOptions,
+                    filterValue: allFilterOptions[0],
+                    loading: false
+                })
+            })
         }
 
+    }
+
+    allLabelFilterOptions = (collaborations, showTagFilter) => {
+        if (!showTagFilter) {
+            return [{}];
+        }
+        const filterOptions = [{
+            label: I18n.t("collaborationRequest.statuses.all", {nbr: collaborations.length}),
+            value: allValue
+        }];
+        const tagOptions = collaborations.reduce((acc, coll) => {
+            coll.tags.forEach(tag => {
+                const option = acc.find(opt => opt.val === tag.tag_value);
+                if (option) {
+                    ++option.nbr;
+                } else {
+                    acc.push({val: tag.tag_value, nbr: 1})
+                }
+            })
+            return acc;
+        }, []).map(option => ({
+            label: `${option.val} (${option.nbr})`,
+            value: option.val
+        })).sort((o1, o2) => o1.label.localeCompare(o2.label));
+
+        return filterOptions.concat(tagOptions);
     }
 
     noCollaborations = organisation => {
@@ -152,10 +193,38 @@ export default class Collaborations extends React.PureComponent {
         this.props.history.push(`/collaborations/${collaboration.id}`);
     };
 
+    filters = (filterOptions, filterValue, showTagFilter) => {
+        if (!showTagFilter) {
+            return null;
+        }
+        return (
+            <div className="collaboration-label-filter">
+                <Select
+                    className={"collaboration-label-filter-select"}
+                    value={filterValue}
+                    onChange={option => this.setState({filterValue: option})}
+                    options={filterOptions}
+                    isSearchable={false}
+                    isClearable={false}
+                />
+            </div>
+        );
+    }
+
     render() {
+        const {showTagFilter} = this.props;
         const {
-            loading, standalone, showRequestCollaboration, selectedCollaborations,
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, confirmationQuestion, confirmationTxt
+            loading,
+            standalone,
+            showRequestCollaboration,
+            selectedCollaborations,
+            filterOptions,
+            filterValue,
+            confirmationDialogOpen,
+            cancelDialogAction,
+            confirmationDialogAction,
+            confirmationQuestion,
+            confirmationTxt
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
@@ -311,6 +380,9 @@ export default class Collaborations extends React.PureComponent {
                 key: "invitations_count",
                 header: I18n.t("models.collaborations.invitationsCount")
             }]);
+
+        const filteredCollaborations = (filterValue.value === allValue || !showTagFilter) ? collaborations :
+            collaborations.filter(coll => coll.tags.some(tag => tag.tag_value === filterValue.value));
         return (
             <>
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
@@ -319,7 +391,7 @@ export default class Collaborations extends React.PureComponent {
                                     isWarning={true}
                                     confirmationTxt={confirmationTxt}
                                     question={confirmationQuestion}/>
-                <Entities entities={collaborations}
+                <Entities entities={filteredCollaborations}
                           modelName={mayCreateCollaborations ? modelName : showRequestCollaboration ? "memberCollaborations" : modelName}
                           searchAttributes={["name"]}
                           defaultSort="name"
@@ -327,6 +399,7 @@ export default class Collaborations extends React.PureComponent {
                           rowLinkMapper={userServiceAdmin ? null : () => this.openCollaboration}
                           columns={allColumns}
                           onHover={true}
+                          filters={this.filters(filterOptions, filterValue, showTagFilter)}
                           actionHeader={"collaboration-services"}
                           actions={serviceModule ? this.actionButtons(selectedCollaborations) : null}
                           showNew={(mayCreateCollaborations || showRequestCollaboration) && mayCreate}
