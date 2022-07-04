@@ -73,10 +73,10 @@ class TestPlsc(AbstractTest):
     def test_ipranges_fetch(self):
         res = self.get("/api/plsc/ip_ranges")
         self.assertTrue("service_ipranges" in res)
-        self.assertEqual(3, len(res["service_ipranges"]))
+        self.assertEqual(2, len(res["service_ipranges"]))
         self.assertTrue("192.0.2.0/24" in res["service_ipranges"])
-        self.assertTrue("2001:db8:0:0::/64" in res["service_ipranges"])
-        self.assertTrue("2001:db8:1:0::/64" in res["service_ipranges"])
+        self.assertTrue("2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128" in res["service_ipranges"])
+        self.assertTrue("2001:1c02:2b2f:be01:1cf0:fd5a:a548:1a16/128" in res["service_ipranges"])
 
     def test_ipranges_api_auth(self):
         res = self.get("/api/plsc/ip_ranges", headers=AUTH_HEADER_READ, with_basic_auth=False,

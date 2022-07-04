@@ -88,7 +88,8 @@ class TestService(AbstractTest):
                 "privacy_policy": "https://privacy.com",
                 "administrators": ["the@ex.org"],
                 "abbreviation": "12qw$%OOOKaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                "ip_networks": [{"network_value": "2001:db8:f00f:bab::/64"}, {"network_value": "192.0.2.0/24"}]
+                "ip_networks": [{"network_value": "2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128"},
+                                {"network_value": "192.0.2.0/24"}]
             })
             self.assertTrue(
                 "You have been invited by urn:john to become admin of service 'new_service'" in outbox[0].html)
@@ -97,7 +98,7 @@ class TestService(AbstractTest):
             self.assertEqual("new_service", service["name"])
             self.assertEqual("qwoookaaaaaaaaaa", service["abbreviation"])
             self.assertEqual(2, len(service["ip_networks"]))
-            self.assertEqual("2001:db8:f00f:bab::/64", service["ip_networks"][0]["network_value"])
+            self.assertEqual("2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service["ip_networks"][0]["network_value"])
 
     def test_service_invites(self):
         pre_count = ServiceInvitation.query.count()

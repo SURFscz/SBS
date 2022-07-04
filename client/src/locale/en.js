@@ -631,7 +631,7 @@ I18n.translations.en = {
             "For example: <ul>" +
             "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
             "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
-            "<li>IPv6 range 2001:db8:f00f:bab::/64. Maximal allowed subnet size for IPv6 is a /64</li>" +
+            "<li>IPv6 range 2001:db8:f00f:bab::/128. Maximal allowed subnet size for IPv6 is a /64</li>" +
             "</ul> ",
         networkExplanation: "Inform the service providers from which IP addresses you will be accessing their services. The service providers may allow access to your IP addresses if they support this."
     },
@@ -854,11 +854,12 @@ I18n.translations.en = {
             "For example: <ul>" +
             "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
             "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
-            "<li>IPv6 range 2001:db8:f00f:bab::/64. Maximal allowed subnet size for IPv6 is a /64</li>" +
+            "<li>IPv6 range 2001:db8:f00f:bab::/128. Maximal allowed subnet size for IPv6 is a /64</li>" +
             "</ul> ",
         networkPlaceholder: "IPv4 or IPv6 address with an optional subnet size",
         networkError: "Subnet size {{prefix}} is not allowed. Max prefix allowed for IPv{{version}} is {{max}}",
         networkSyntaxError: "This is not a valid IPv4 or IPv6 address.",
+        networkNotGlobal: "Only global unicast addresses can be entered",
         networkInfo: "Lower bound IP: {{lower}}, higher bound IP: {{higher}}, # addresses: {{num_addresses}}, version: IPv{{version}}",
         automaticConnectionAllowed: "Automatic connection allowed?",
         automaticConnectionAllowedTooltip: "Can collaborations use this service without explicit permission of the service contact person?",

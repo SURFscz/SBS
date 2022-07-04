@@ -371,9 +371,9 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
     _persist(db, service_group_mail, service_group_wiki1, service_group_wiki2)
 
     service_iprange_cloud_v4 = IpNetwork(network_value="192.0.2.0/24", service=cloud)
-    service_iprange_cloud_v6 = IpNetwork(network_value="2001:db8:0:0::/64", service=cloud)
+    service_iprange_cloud_v6 = IpNetwork(network_value="2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128", service=cloud)
     service_iprange_wiki_v4 = IpNetwork(network_value="192.0.2.0/24", service=wiki)
-    service_iprange_wiki_v6 = IpNetwork(network_value="2001:db8:1:0::/64", service=wiki)
+    service_iprange_wiki_v6 = IpNetwork(network_value="2001:1c02:2b2f:be01:1cf0:fd5a:a548:1a16/128", service=wiki)
     _persist(db, service_iprange_cloud_v4, service_iprange_cloud_v6, service_iprange_wiki_v4, service_iprange_wiki_v6)
 
     uuc.services.append(uuc_scheduler)

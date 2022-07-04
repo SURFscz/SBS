@@ -237,7 +237,7 @@ class Service extends React.Component {
             required.some(attr => isEmpty(this.state[attr])) ||
             Object.keys(invalidInputs).some(key => invalidInputs[key]);
         const contactEmailRequired = !hasAdministrators && isEmpty(contact_email);
-        const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error);
+        const invalidIpNetworks = ip_networks.some(ipNetwork => ipNetwork.error || (ipNetwork.version === 6 && !ipNetwork.global));
         return !inValid && !contactEmailRequired && !invalidIpNetworks;
     };
 
@@ -304,7 +304,7 @@ class Service extends React.Component {
                                     onChange={this.saveIpAddress(i)}
                                     onBlur={this.validateIpAddress(i)}
                                     placeholder={I18n.t("service.networkPlaceholder")}
-                                    error={network.error || network.syntax}
+                                    error={network.error || network.syntax || (network.higher && !network.global && network.version === 6)}
                                     disabled={!isAdmin && !isServiceAdmin}
                                     onEnter={e => {
                                         this.validateIpAddress(i);
@@ -319,6 +319,8 @@ class Service extends React.Component {
                     <ErrorIndicator msg={I18n.t("service.networkError", network)}/>}
                     {network.syntax && <ErrorIndicator msg={I18n.t("service.networkSyntaxError")}/>}
                     {network.higher && <span className="network-info">{I18n.t("service.networkInfo", network)}</span>}
+                    {(network.higher && network.version === 6 && !network.global) &&
+                    <ErrorIndicator msg={I18n.t("service.networkNotGlobal")}/>}
 
                 </div>
             )}
