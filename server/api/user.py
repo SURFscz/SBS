@@ -320,8 +320,10 @@ def resume_session():
         if not idp_allowed and (ssid_required or fallback_required) and not has_valid_mfa(user):
             if ssid_required:
                 user.ssid_required = True
-                user.home_organisation_uid = home_organisation_uid
-                user.schac_home_organisation = schac_home_organisation
+                if home_organisation_uid:
+                    user.home_organisation_uid = home_organisation_uid
+                if schac_home_organisation:
+                    user.schac_home_organisation = schac_home_organisation
 
             user.second_fa_uuid = str(uuid.uuid4())
             user = db.session.merge(user)
