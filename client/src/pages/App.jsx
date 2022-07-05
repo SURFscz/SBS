@@ -204,12 +204,8 @@ class App extends React.Component {
                     {reloading && <SpinnerField/>}
                     {!reloading &&
                     <Switch>
-                        <Route exact path="/" render={() => {
-                            return currentUser.guest ? <Redirect to="/landing"/> : <Redirect to="/home"/>;
-                        }}/>
-
-                        <Route exact path="/landing"
-                               render={props => {
+                        <Route exact path="/" render={props => {
+                            if (currentUser.guest) {
                                    const rateLimited = getParameterByName("rate-limited", window.location.search)
                                    if (currentUser.guest || rateLimited) {
                                        return <Login user={currentUser} {...props} rateLimited={rateLimited}/>;
@@ -219,7 +215,14 @@ class App extends React.Component {
                                        return <Redirect to="/home"/>;
                                    }
                                    return <Redirect to={decodeURIComponent(state)}/>
-                               }}/>
+                            } else {
+                                return <Redirect to="/home"/>;
+                            }
+                        }}/>
+
+                        <Route exact path="/landing" render={() => {
+                            return  <Redirect to={`/${window.location.search}`}/>
+                        }}/>
 
                         <Route exact path="/login"
                                render={props => {
