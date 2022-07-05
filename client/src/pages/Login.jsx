@@ -83,8 +83,8 @@ class Login extends React.Component {
                         <h2>{I18n.t("landing.works")}</h2>
                         {this.infoBlock("create", true, CreateLogo, true)}
                         {this.infoBlock("invite", true, InviteLogo, false)}
-                        {this.infoBlock("join", true, JoinLogo, true)}
-                        {this.infoBlock("collaborate", true, CollaborateLogo, false)}
+                        {this.infoBlock("join", false, JoinLogo, true)}
+                        {this.infoBlock("collaborate", false, CollaborateLogo, false)}
                         <div className={"landing-footer"}>
                             <p dangerouslySetInnerHTML={{__html: I18n.t(`landing.footer`)}}/>
                         </div>
