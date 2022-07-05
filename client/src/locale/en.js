@@ -1772,7 +1772,7 @@ I18n.translations.en = {
             "<p>They can also ask other administrators to join when groups get really big.</p>",
         join: "Join",
         joinInfo: "<p>Researchers join by logging in with their institution account (or eduID).</p><br/>" +
-            "<p>They will be to connect required services by visiting the catalog of connected services of SURF.</p>",
+            "<p>They will be able to connect required services by visiting the catalog of connected services of SURF.</p>",
         collaborate: "Collaborate",
         collaborateInfo: "<p>The secured collaboration-page shows all members and gives access to the research services.</p>",
         footer: "<p>SURF Research Access Management is a service for access management of Dutch led research collaborations.</p>" +
