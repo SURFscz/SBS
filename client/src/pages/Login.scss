@@ -13,168 +13,141 @@
         @media (max-width: $tablet-max) {
             padding: 0 15px;
         }
-
-
         background-color: white;
-
-        p.larger {
-            font-size: 18px;
-            line-height: 22px;
-        }
-
-        p.post-title {
-            margin-top: 25px;
-        }
-
-        ul {
-            list-style: initial;
-            padding: 25px 5px 0 25px;
-
-            li {
-                padding: 2px 0;
-            }
-        }
 
         &.bottom {
             background-color: $background;
-            margin-bottom: 25px;
         }
 
-        h1.logout-msg {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 25px;
-        }
-
-        @mixin grid-template {
-            display: grid;
-            grid-template-columns: 50% 50%;
-            grid-template-rows: auto;
-            column-gap: 25px;
-            row-gap: 25px;
+        .mod-login {
+            @media (max-width: $tablet-max) {
+                flex-direction: column;
+            }
+            margin: 60px auto 0;
             max-width: $compact-medium;
-            margin: 0 auto;
-
-            @media (max-width: $compact-medium) {
-                grid-template-columns: 100%;
-            }
-        }
-
-
-        .mod-login-top {
-            @include grid-template;
-            grid-template-areas:
-                "header-left header-right";
-
-            @media (max-width: $compact-medium) {
-                margin-top: 25px;
-                grid-template-areas:
-                "header-left"
-                "header-right";
-            }
-
-            margin-top: 25px;
-            padding-bottom: 25px;
-
-            h1 {
-                font-size: 34px;
-                line-height: 38px;
-                font-weight: bold;
-                margin-bottom: 25px;
-            }
-
-            a {
-                margin-top: 25px;
-                width: 280px;
-                padding: 15px 60px;
-                font-size: 22px;
-            }
-        }
-
-        .mod-login-bottom {
-            @include grid-template;
-            height: 100%;
-            flex-grow: 2;
-            margin-top: 25px;
-            grid-template-areas:
-                "pre-title pre-title"
-                "managers researchers"
-                "institutions service_providers"
-                "institutions help_support";
-
-            @media (max-width: $compact-medium) {
-                grid-template-areas:
-                    "pre-title"
-                    "managers"
-                    "researchers"
-                    "institutions"
-                    "service_providers"
-                    "help_support";
-            }
-
-
-            h1 {
-                color: $primary-orange;
-                font-size: 32px;
-                line-height: 36px;
-                margin-bottom: 20px;
-            }
-        }
-
-        .header-left {
-            grid-area: header-left;
-        }
-
-        .header-right {
-            grid-area: header-right;
             display: flex;
+            padding-bottom: 35px;
 
-            svg {
-                margin: auto;
-                width: 310px;
-                height: auto;
+            &.reversed {
+                flex-direction: row-reverse;
+                @media (max-width: $tablet-max) {
+                    flex-direction: column;
+                }
+            }
+
+            &.bottom {
+                flex-direction: column;
+                margin: 30px auto 0;
+            }
+
+            &.info {
+                background-color: white;
+                border-radius: 16px;
+                padding: 25px 40px;
+                margin: 30px auto 0;
+                min-height: 244px;
+            }
+
+            .header-left {
+                margin-right: 50px;
+                width: 50%;
+                @media (max-width: $tablet-max) {
+                    width: auto;
+                    margin: 25px auto;
+                }
+
+                &.info {
+                    width: 45%;
+                    @media (max-width: $tablet-max) {
+                        width: auto;
+                        margin: 25px auto;
+                    }
+                }
+            }
+
+            .header-right {
+                width: 50%;
+                @media (max-width: $tablet-max) {
+                    width: auto;
+                    margin: 25px auto;
+                }
+
+                img {
+                    width: 320px;
+                    height: auto;
+                }
+
+                &.info {
+                    display: flex;
+                    width: 55%;
+                    @media (max-width: $tablet-max) {
+                        width: auto;
+                        margin: 25px auto;
+                    }
+
+                    img {
+                        margin: 0 0 0 20px;
+                        width: 220px;
+                        height: auto;
+
+                        &.reversed {
+                            margin: 0 40px 0 0;
+                        }
+                    }
+                }
             }
         }
 
-        .pre-title {
-            grid-area: pre-title;
+        h1 {
+            font-size: 32px;
+            line-height: 38px;
+            font-weight: 700;
+            margin-bottom: 60px;
         }
 
-        .managers {
-            grid-area: managers;
+        h2 {
+            font-size: 32px;
+            line-height: 38px;
+            font-weight: 700;
+            color: $light-orange;
         }
 
-        .researchers {
-            grid-area: researchers;
+        .info-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+
+            .admin-function-container {
+                margin-left: auto;
+
+                span.admin-function {
+                    align-items: center;
+                    display: flex;
+                    background-color: #b2e4fe;
+                    border-radius: 40px;
+                    padding: 2px 8px;
+                    font-size: 13px;
+                }
+
+            }
         }
 
-        .institutions {
-            grid-area: institutions;
+        h3 {
+            font-size: 26px;
+            line-height: 34px;
+            font-weight: 700;
         }
 
-        .service_providers {
-            grid-area: service_providers;
+        p.sup {
+            margin-top: 20px;
+            font-size: 14px;
         }
 
-        .help_support {
-            grid-area: help_support;
-        }
-
-        .benefits {
+        .landing-footer {
             background-color: white;
-            border-radius: 6px;
-            padding: 15px;
-        }
-
-        .grey-block {
-            background-color: $lighter-grey;
-            border-radius: 6px;
-            padding: 15px;
-
-            h1 {
-                color: black;
-            }
+            border-radius: 16px;
+            padding: 15px 25px;
+            margin: 30px auto 0;
         }
     }
-
 }

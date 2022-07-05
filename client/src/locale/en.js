@@ -1758,50 +1758,25 @@ I18n.translations.en = {
     },
     landing: {
         header: {
-            title: "Ease collaboration with fellow researchers",
-            subTitle: "Spend less time managing infra-structure and access management, and more time on doing research."
+            title: "Easy and secure access to research services for research collaborations",
+            login: "Login for admins & members <sup>*</sup>",
+            sup: "<sup>*</sup><strong>Not a member?</strong> You will receive an invite via mail.",
         },
-        title: "<strong>SURF Research Access Management</strong> is a service for access management of Dutch led research collaborations. Non-commercial, open, standards-based, easy and secure.",
-        roles: {
-            teamManager: "team managers",
-            researchers: "researchers",
-            institutions: "institutions"
-        },
-        benefits: "Benefits for {{name}}",
-        managers: {
-            subTitle: "Spend less time managing infrastructure and access management",
-            features: [
-                "Create and manage teams with ease",
-                "Invite and onboard members",
-                "Manage access to services"
-            ],
-        },
-        researchers: {
-            subTitle: "Less time waiting for access to services, and more time for research",
-            features: [
-                "Get invited",
-                "Easy login with your institutional account",
-                "Guest accounts provided by eduID",
-                "Manage your profile (incl SSH-keys) once"
-            ],
-        },
-        institutions: {
-            subTitle: "<strong>Access as a service</strong> for all your research collaborations!",
-            features: [
-                "Improve your support to researchers",
-                "Improve security",
-                "No more zero hour contracts"
-            ],
-            postTitle: "Read more on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram</a>"
-        },
-        serviceProvider: {
-            title: "Are you a service provider?",
-            subTitle: "Do you want to reach thousands of researchers with your software. Join SURF Research Access Management now. Learn more about what we can do for you on <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
-        },
-        help: {
-            title: "Help & Support",
-            subTitle: "Feel free to reach out to <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
-        }
+        works: "How does it work?",
+        adminFunction: "admin function",
+        create: "Create",
+        createInfo: "<p>Administrators create a collaboration page for their community.</p>" +
+            "<p>They will be able to connect required services by visiting the catalog of connected services of SURF.</p>",
+        invite: "Invite",
+        inviteInfo: "<p>Administrators will invite fellow researchers to their collaboration-page via email.</p>" +
+            "<p>They can also ask other administrators to join when groups get really big.</p>",
+        join: "Join",
+        joinInfo: "<p>Researchers join by logging in with their institution account (or eduID).</p><br/>" +
+            "<p>They will be to connect required services by visiting the catalog of connected services of SURF.</p>",
+        collaborate: "Collaborate",
+        collaborateInfo: "<p>The secured collaboration-page shows all members and gives access to the research services.</p>",
+        footer: "<p>SURF Research Access Management is a service for access management of Dutch led research collaborations.</p>" +
+            "<p>Do you want to know more, please visit <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
     },
     tooltips: {
         members: "Composition of this collaboration",
@@ -1986,7 +1961,7 @@ I18n.translations.en = {
         enterPin: "Enter PIN",
         loggedIn: "You have successfully logged in.",
         enterPinInfo: "Please enter the PIN to the command line interface of {{service}}.",
-        afterPin: "Ater entering the PIN, it is safe to close this screen.",
+        afterPin: "After entering the PIN, it is safe to close this screen.",
         denied: "Permission denied",
         deniedInfo: "Unfortunately, you don't have access to this service.",
         contact: "Please contact <a href='mailto:{{support}}'>{{support}}</a> to arrange access to this service."
