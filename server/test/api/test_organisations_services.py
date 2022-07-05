@@ -42,7 +42,7 @@ class TestOrganisationsServices(AbstractTest):
         # We need to assert that for every collaboration in the organisation a (service) group was added: mail_mail
         for collaboration in organisation.collaborations:
             group = list(filter(lambda item: item.name == service_group_mail_name, collaboration.groups))[0]
-            self.assertEqual("mail_mail", group.short_name)
+            self.assertEqual("mail-mail", group.short_name)
 
     def test_delete_organisations_services(self):
         uuc = self.find_entity_by_name(Organisation, uuc_name)
