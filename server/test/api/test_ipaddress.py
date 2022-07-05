@@ -1,4 +1,5 @@
 # -*- coding: future_fstrings -*-
+from server.api.ipaddress import validate_ip_networks
 from server.test.abstract_test import AbstractTest
 
 
@@ -60,3 +61,24 @@ class TestIpaddress(AbstractTest):
         self.assertEqual(res["network_value"], "bogus")
         self.assertTrue(res["error"])
         self.assertTrue(res["syntax"])
+
+    def test_validate_max_ipv6(self):
+        with self.assertRaises(ValueError) as cm:
+            validate_ip_networks({"ip_networks": [
+                {"network_value": "2001:db8:f00f:bab::/32"}
+            ]})
+        self.assertEqual("IP network 2001:db8::/32 exceeds size", cm.exception.args[0])
+
+    def test_validate_max_ipv4(self):
+        with self.assertRaises(ValueError) as cm:
+            validate_ip_networks({"ip_networks": [
+                {"network_value": "192.0.2.1/12"}
+            ]})
+        self.assertEqual("IP network 192.0.0.0/12 exceeds size", cm.exception.args[0])
+
+    def test_validate_non_global_ipv6(self):
+        with self.assertRaises(ValueError) as cm:
+            validate_ip_networks({"ip_networks": [
+                {"network_value": "fd00:f9a8:ffff::257"}
+            ]})
+        self.assertEqual("IP network fd00:f9a8:ffff::257/128 is not global", cm.exception.args[0])

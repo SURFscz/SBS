@@ -577,9 +577,10 @@ class SchacHomeOrganisation(Base, db.Model):
         if not schac_home_organisation:
             return []
         schac_homes = SchacHomeOrganisation.query.all()
-        return list(filter(
+        hits = list(filter(
             lambda schac_home: schac_home_organisation == schac_home.name or schac_home_organisation.endswith(
                 f".{schac_home.name}"), schac_homes))
+        return [sho.organisation for sho in hits]
 
 
 class SshKey(Base, db.Model):

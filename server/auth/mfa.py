@@ -75,13 +75,9 @@ def eligible_users_to_reset_token(user):
                     user_information.append(mb.user)
 
     if not user_information and user.schac_home_organisation:
-        schac_homes = SchacHomeOrganisation.query.all()
-        schac_home_organisation = user.schac_home_organisation
-        hits = list(filter(
-            lambda schac_home: schac_home_organisation == schac_home.name or schac_home_organisation.endswith(
-                f".{schac_home.name}"), schac_homes))
-        if hits:
-            org = Organisation.query.get(hits[0].organisation_id)
+        organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
+        if organisations:
+            org = Organisation.query.get(organisations[0].id)
             for membership in org.organisation_memberships:
                 if membership.user != user:
                     user_information.append(membership.user)
