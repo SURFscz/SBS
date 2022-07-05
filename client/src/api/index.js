@@ -92,7 +92,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && true) {
+    if (config.local && false) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         // sub = "urn:peter"

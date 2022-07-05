@@ -1757,50 +1757,25 @@ I18n.translations.nl = {
     },
     landing: {
         header: {
-            title: "Werk makkelijker samen met collega-onderzoekers",
-            subTitle: "Besteed minder tijd aan het beheren van infrastructuur en toegangsbeheer, en meer tijd aan onderzoek."
+            title: "Eenvoudige en veilige toegang tot onderzoeksdiensten voor onderzoekssamenwerkingen",
+            login: "Inloggen voor beheerders & leden <sup>*</sup>",
+            sup: "<sup>*</sup><strong>Geen lid?</strong> Je ontvangt een uitnodiging via e-mail.",
         },
-        title: "<strong>SURF Research Access Management</strong> is een dienst voor toegangsbeheer van door Nederlandse instellingen geleide onderzoekssamenwerkingen. Niet-commercieel, open, op standaarden gebaseerd, gemakkelijk en veilig.",
-        roles: {
-            teamManager: "teammanagers",
-            researchers: "onderzoekers",
-            institutions: "instellingen"
-        },
-        benefits: "Voordelen voor {{name}}",
-        managers: {
-            subTitle: "Besteed minder tijd aan het beheren van infrastructuur en toegangsbeheer",
-            features: [
-                "Creëer en beheer gemakkelijk teams",
-                "Nodig leden uit en onboard",
-                "Beheer de toegang tot diensten"
-            ]
-        },
-        researchers: {
-            subTitle: "Minder tijd wachten op toegang tot diensten en meer tijd voor onderzoek",
-            features: [
-                "Word uitgenodigd",
-                "Gemakkelijk inloggen met je instellingsaccount",
-                "Gastaccounts geleverd door eduID",
-                "Beheer je profiel (incl. SSH-sleutels) één keer"
-            ]
-        },
-        institutions: {
-            subTitle: "<strong>Toegang als een dienst</strong> voor al je onderzoekssamenwerkingen!",
-            features: [
-                "Verbeter de steun aan onderzoekers",
-                "Verbeter de beveiliging",
-                "Geen nul-urencontracten meer"
-            ],
-            postTitle: "Lees meer op <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram</a>"
-        },
-        serviceProvider: {
-            title: "Ben je een dienstaanbieder?",
-            subTitle: "Wil je met jullie dienst duizenden onderzoekers bereiken? Koppel met SURF Research Access Management. Lees meer over wat we voor je kunnen doen op <a href=\"https://surf.nl/sram\" target=\"_blank\">surf.nl/sram/connect</a>."
-        },
-        help: {
-            title: "Help & ondersteuning",
-            subTitle: "Neem gerust contact op <a href='mailto:sram-support@surf.nl'>sram-support@surf.nl</a>."
-        }
+        works: "Hoe werkt het?",
+        adminFunction: "beheeders functie",
+        create: "Maken",
+        createInfo: "<p>Beheerders maken een samenwerkingspagina voor hun samenwerking.</p>" +
+            "<p>Ze kunnen de benodigde services koppelen door naar de catalogus met aangesloten services van SURF te gaan.</p>",
+        invite: "Uitnodigen",
+        inviteInfo: "<p>Beheerders zullen collega-onderzoekers via e-mail uitnodigen op hun samenwerkingspagina.</p>" +
+            "<p>Ze kunnen ook andere beheerders vragen om mee te doen als groepen erg groot worden.</p>",
+        join: "Doe mee",
+        joinInfo: "<p>Onderzoekers doen mee door in te loggen met hun instellingsaccount (of eduID).</p><br/>" +
+            "<p>Ze zullen de vereiste services verbinden door de catalogus met verbonden services van SURF te bezoeken.</p>",
+        collaborate: "Samenwerken",
+        collaborateInfo: "<p>De beveiligde samenwerkingspagina toont alle leden en geeft toegang tot de onderzoeksdiensten.</p>",
+        footer: "<p>SURF Research Access Management is een dienst voor toegangsbeheer van Nederlandse onderzoekssamenwerkingen.</p>" +
+            "<p>Wil je meer weten, ga dan naar <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
     },
     tooltips: {
         members: "Samenstelling van deze samenwerking",

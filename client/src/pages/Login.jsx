@@ -3,7 +3,11 @@ import "./Login.scss";
 import I18n from "i18n-js";
 import {health} from "../api";
 import {getParameterByName} from "../utils/QueryParameters";
-import {ReactComponent as IllustrationCO} from "../icons/illustration-CO.svg";
+import HappyLogo from "../icons/landing/happy.svg";
+import CreateLogo from "../icons/landing/sketch.svg";
+import InviteLogo from "../icons/landing/mail.svg";
+import CollaborateLogo from "../icons/landing/collaborate.svg";
+import JoinLogo from "../icons/landing/screen.svg";
 import Button from "../components/Button";
 import {login} from "../utils/Login";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -35,16 +39,21 @@ class Login extends React.Component {
         }
     });
 
-    benefitsBlock = name => <div key={name} className={`${name} benefits`}>
-        <h1>{I18n.t("landing.benefits", {name})}</h1>
-        <p dangerouslySetInnerHTML={{__html: I18n.t(`landing.${name}.subTitle`)}}/>
-        <ul>
-            {I18n.translations[I18n.locale].landing[name].features.map((feature, i) =>
-                <li key={i} dangerouslySetInnerHTML={{__html: feature}}/>)}
-        </ul>
-        {I18n.translations[I18n.locale].landing[name].postTitle &&
-        <p className="post-title" dangerouslySetInnerHTML={{__html: I18n.t(`landing.${name}.postTitle`)}}/>}
-    </div>
+    infoBlock = (name, isAdminFunction, Logo, reversed) =>
+        <div key={name} className={`mod-login info ${reversed ? "reversed" : ""}`}>
+            <div className="header-left info">
+                <div className={"info-title"}>
+                    <h3>{I18n.t(`landing.${name}`)}</h3>
+                    {isAdminFunction && <div className={"admin-function-container"}>
+                        <span className={"admin-function"}>{I18n.t("landing.adminFunction")}</span>
+                    </div>}
+                </div>
+                <p dangerouslySetInnerHTML={{__html: I18n.t(`landing.${name}Info`)}}/>
+            </div>
+            <div className="header-right info">
+                <img src={Logo} alt="logo" className={`${reversed ? "reversed" : ""}`}/>
+            </div>
+        </div>
 
     render() {
         const {confirmationDialogOpen, confirmationDialogAction, confirmationQuestion} = this.state;
@@ -55,31 +64,29 @@ class Login extends React.Component {
                                     confirmationTxt={I18n.t("confirmationDialog.ok")}
                                     question={confirmationQuestion}/>
                 <div className="mod-login-container">
-                    <div className="mod-login-top">
+                    <div className="mod-login">
                         <div className="header-left">
                             <h1 dangerouslySetInnerHTML={{__html: I18n.t("landing.header.title")}}/>
-                            <p className="larger"
-                               dangerouslySetInnerHTML={{__html: I18n.t("landing.header.subTitle")}}/>
-                            <Button txt={I18n.t("header.links.login")} onClick={login}/>
+                            <Button txt={"/Login"}
+                                    html={I18n.t("landing.header.login")}
+                                    onClick={login}/>
+                            <p className={"sup"}
+                               dangerouslySetInnerHTML={{__html: I18n.t("landing.header.sup")}}/>
                         </div>
                         <div className="header-right">
-                            <IllustrationCO/>
+                            <img src={HappyLogo} alt="logo"/>
                         </div>
                     </div>
                 </div>
                 <div className="mod-login-container bottom">
-                    <div className="mod-login-bottom">
-                        <div className="pre-title">
-                            <p className="larger" dangerouslySetInnerHTML={{__html: I18n.t("landing.title")}}/>
-                        </div>
-                        {["managers", "researchers", "institutions"].map(name => this.benefitsBlock(name))}
-                        <div className="service_providers grey-block">
-                            <h1 dangerouslySetInnerHTML={{__html: I18n.t("landing.serviceProvider.title")}}/>
-                            <p dangerouslySetInnerHTML={{__html: I18n.t("landing.serviceProvider.subTitle")}}/>
-                        </div>
-                        <div className="help_support grey-block">
-                            <h1 dangerouslySetInnerHTML={{__html: I18n.t("landing.help.title")}}/>
-                            <p dangerouslySetInnerHTML={{__html: I18n.t("landing.help.subTitle")}}/>
+                    <div className="mod-login bottom">
+                        <h2>{I18n.t("landing.works")}</h2>
+                        {this.infoBlock("create", true, CreateLogo, true)}
+                        {this.infoBlock("invite", true, InviteLogo, false)}
+                        {this.infoBlock("join", true, JoinLogo, true)}
+                        {this.infoBlock("collaborate", true, CollaborateLogo, false)}
+                        <div className={"landing-footer"}>
+                            <p dangerouslySetInnerHTML={{__html: I18n.t(`landing.footer`)}}/>
                         </div>
                     </div>
                 </div>
