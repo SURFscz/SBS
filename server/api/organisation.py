@@ -166,15 +166,7 @@ def my_organisations():
 @json_endpoint
 def organisation_by_schac_home():
     user = User.query.filter(User.id == current_user_id()).one()
-    schac_home_organisation = user.schac_home_organisation
-    if not schac_home_organisation:
-        return [], 200
-    # Because of subdomains we need the schac_home of which the users schac_home is a strict subdomain
-    schac_homes = SchacHomeOrganisation.query.all()
-    hits = list(filter(
-        lambda schac_home: schac_home_organisation == schac_home.name or schac_home_organisation.endswith(
-            f".{schac_home.name}"), schac_homes))
-    organisations = [sho.organisation for sho in hits]
+    organisations = SchacHomeOrganisation.organisations_by_user_schac_home(user)
 
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
     auto_aff = bool(user.entitlement) and entitlement in user.entitlement
