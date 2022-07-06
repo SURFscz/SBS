@@ -302,18 +302,21 @@ class ServiceOverview extends React.Component {
                     network.id = parseInt(network.id, 10)
                 }
             });
+            const {currentTab} = this.state;
             this.setState({service: {...service, ip_networks: strippedIpNetworks}}, () => {
-                updateService(this.state.service).then(() => this.afterUpdate(name, "updated"));
+                updateService(this.state.service).then(() => this.afterUpdate(name, "updated", currentTab));
             });
         } else {
             window.scrollTo(0, 0);
         }
     };
 
-    afterUpdate = (name, action) => {
+    afterUpdate = (name, action, currentTab) => {
         setFlash(I18n.t(`service.flash.${action}`, {name: name}));
         this.setState({loading: false});
-        this.props.refresh();
+        this.props.refresh(() => {
+            this.setState({currentTab: currentTab});
+        });
     };
 
     changeTab = tab => e => {
