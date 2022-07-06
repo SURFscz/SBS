@@ -231,6 +231,7 @@ class ServiceOverview extends React.Component {
             leavePage: false,
             confirmationDialogQuestion: I18n.t("service.deleteConfirmation", {name: service.name}),
             warning: true,
+            confirmationTxt: I18n.t("confirmationDialog.confirm"),
             cancelDialogAction: this.closeConfirmationDialog,
             confirmationHeader: I18n.t("confirmationDialog.title"),
             confirmationDialogAction: this.doDelete
@@ -361,16 +362,16 @@ class ServiceOverview extends React.Component {
                 {currentTab === "tokens" &&
                 <Button txt={I18n.t("userTokens.actionTitle")}
                         onClick={() => this.tokenResetAction(true)}/>}
-                <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
-                        onClick={this.submit}/>
                 {currentTab === "ldap" &&
                 <Button txt={I18n.t("service.ldap.title")}
                         onClick={() => this.ldapResetAction(true)}/>}
+                <Button disabled={disabledSubmit} txt={I18n.t("service.update")}
+                        onClick={this.submit}/>
             </section>}
         </>
     }
 
-    renderPamWebLogin = (service, isAdmin, isServiceAdmin, disabledSubmit) => {
+    renderPamWebLogin = (service, isAdmin) => {
         return <>
             <RadioButton label={I18n.t("userTokens.pamWebSSOEnabled")}
                          name={"pam_web_sso_enabled"}
@@ -381,7 +382,7 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderTokens = (config, service, isAdmin, isServiceAdmin, disabledSubmit) => {
+    renderTokens = (config, service, isAdmin) => {
         return <>
             <RadioButton label={I18n.t("userTokens.tokenEnabled")}
                          name={"token_enabled"}
@@ -415,7 +416,7 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderLdap = (config, service, isAdmin, isServiceAdmin, disabledSubmit) => {
+    renderLdap = (config, service, isAdmin, isServiceAdmin) => {
         const ldapBindAccount = config.ldap_bind_account;
         const {entity_id} = this.state.service;
         return <>
@@ -482,7 +483,7 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderPolicy = (service, isAdmin, isServiceAdmin, disabledSubmit) => {
+    renderPolicy = (service, isAdmin, isServiceAdmin) => {
         return <>
             <InputField value={service.privacy_policy}
                         name={I18n.t("service.privacy_policy")}
@@ -529,7 +530,7 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderContacts = (service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit, invalidInputs, hasAdministrators) => {
+    renderContacts = (service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, hasAdministrators) => {
         const contactEmailRequired = !hasAdministrators && isEmpty(service.contact_email);
 
         return <>
@@ -576,7 +577,7 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderConnection = (config, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit) => {
+    renderConnection = (config, service, alreadyExists, isAdmin, isServiceAdmin) => {
         const serviceRequestUrlValid = !isEmpty(service.uri) && service.automatic_connection_allowed;
         const serviceRequestUrl = serviceRequestUrlValid ?
             `${config.base_url}/service-request?entityID=${encodeURIComponent(service.entity_id)}&redirectUri=${encodeURIComponent(service.uri)}` :
@@ -636,7 +637,7 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderGeneral = (service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit) => {
+    renderGeneral = (service, alreadyExists, isAdmin, isServiceAdmin) => {
         return <>
             <InputField value={service.name}
                         onChange={this.changeServiceProperty("name", false, {...this.state.alreadyExists, name: false})}
@@ -703,19 +704,19 @@ class ServiceOverview extends React.Component {
                         invalidInputs, hasAdministrators) => {
         switch (currentTab) {
             case "general":
-                return this.renderGeneral(service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit);
+                return this.renderGeneral(service, alreadyExists, isAdmin, isServiceAdmin);
             case "connection":
-                return this.renderConnection(config, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit);
+                return this.renderConnection(config, service, alreadyExists, isAdmin, isServiceAdmin);
             case "contacts":
-                return this.renderContacts(service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit, invalidInputs, hasAdministrators);
+                return this.renderContacts(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, hasAdministrators);
             case "policy":
-                return this.renderPolicy(service, isAdmin, isServiceAdmin, disabledSubmit);
+                return this.renderPolicy(service, isAdmin, isServiceAdmin);
             case "ldap":
-                return this.renderLdap(config, service, isAdmin, isServiceAdmin, disabledSubmit);
+                return this.renderLdap(config, service, isAdmin, isServiceAdmin);
             case "tokens":
-                return this.renderTokens(config, service, isAdmin, isServiceAdmin, disabledSubmit);
+                return this.renderTokens(config, service, isAdmin);
             case "pamWebLogin":
-                return this.renderPamWebLogin(service, isAdmin, isServiceAdmin, disabledSubmit);
+                return this.renderPamWebLogin(service, isAdmin);
             default:
                 throw new Error("unknown-tab")
         }
