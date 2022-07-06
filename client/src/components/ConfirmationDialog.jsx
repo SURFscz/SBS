@@ -21,7 +21,7 @@ export default function ConfirmationDialog({
             contentLabel={I18n.t("confirmationDialog.title")}
             className={`confirmation-dialog-content ${largeWidth ? "large-width" : ""}`}
             overlayClassName="confirmation-dialog-overlay"
-            closeTimeoutMS={closeTimeoutMS}
+            closeTimeoutMS={0}
             ariaHideApp={false}>
             <section className={`dialog-header  ${className}`}>
                 {confirmationHeader}
