@@ -107,7 +107,8 @@ I18n.translations.en = {
             plsc: "LDAP",
             composition: "Config",
             suspendedUsers: "Suspensions",
-            userlogins: "Logins"
+            userlogins: "Logins",
+            details: "Details"
         }
     },
     forms: {
@@ -1965,6 +1966,18 @@ I18n.translations.en = {
         denied: "Permission denied",
         deniedInfo: "Unfortunately, you don't have access to this service.",
         contact: "Please contact <a href='mailto:{{support}}'>{{support}}</a> to arrange access to this service."
+    },
+    serviceDetails: {
+        details: "Service details",
+        toc: {
+            general: "General",
+            connection: "Connection",
+            contacts: "Contacts",
+            policy: "Policy & compliance",
+            ldap: "LDAP settings",
+            tokens: "Tokens",
+            pamWebLogin: "Pam web login"
+        },
     }
 
 };

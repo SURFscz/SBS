@@ -1,0 +1,170 @@
+@import "../stylesheets/vars.scss";
+@import "../stylesheets/forms";
+
+section.dialog-content {
+    .ldap-password {
+        margin: 5px 25px;
+    }
+}
+
+.service-overview {
+    max-width: $medium;
+    margin: 40px auto 25px auto;
+    width: 100%;
+    display: flex;
+
+    div.side-bar {
+        margin-right: 80px;
+
+        h3 {
+            font-weight: bold;
+            margin-bottom: 20px;
+            white-space: nowrap;
+        }
+
+        ul {
+            list-style: none;
+
+
+            li {
+                margin-bottom: 4px;
+
+                a {
+                    white-space: nowrap;
+
+                    &.active {
+                        font-weight: bold;
+                    }
+
+                    &.error {
+                        color: $error-red;
+                    }
+                }
+            }
+        }
+    }
+
+    .service {
+        width: 100%;
+        display: grid;
+        grid-template-columns: [first] 1fr [second] 1fr;
+        column-gap: 50px;
+
+        @media (max-width: $tablet-max) {
+            padding: 0 15px;
+        }
+
+        @media (max-width: $compact-medium) {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-field, .radio-button-container, .actions, div.checkbox, .select-field, .ip-networks, span.error,
+        div.email-invitations, div.compliance, div.ldap, div.contacts, div.tokens {
+            grid-column-start: first;
+        }
+
+        .section-separator {
+            grid-column: 1/-1;
+            color: $blue;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid $blue;
+            padding-bottom: 5px;
+
+            &.first {
+                margin-bottom: 10px;
+
+                &.last {
+                    margin-top: 10px
+                }
+            }
+        }
+
+        div.input-field, div.select-field {
+            margin-top: 15px;
+        }
+
+        div.ip-networks {
+            margin-top: 15px;
+
+            label.title {
+                display: flex;
+                align-items: center;
+                margin: 12px 0 6px 0;
+                min-width: 210px;
+                color: black;
+                position: relative;
+                font-weight: bold;
+            }
+
+            span.tool-tip-section {
+                font-size: 14px;
+                color: $lighter-grey;
+                cursor: pointer;
+                padding: 0 4px;
+
+                &:hover {
+                    color: darken($light-blue, 20%);
+                }
+            }
+
+            span.add-network {
+                color: $blue;
+                cursor: pointer;
+                padding: 0 4px;
+                font-size: 22px;
+                display: inline-block;
+                margin-left: auto;
+                margin-right: 10px;
+
+                &:hover {
+                    color: darken($blue, 10%);
+                }
+            }
+
+            .network-container {
+                margin: 15px 0 15px 0;
+            }
+
+            .network {
+                position: relative;
+
+                span.trash {
+                    position: absolute;
+                    right: 10px;
+                    top: 14px;
+                    color: $red;
+                    cursor: pointer;
+                    padding: 0 4px;
+                    font-size: 22px;
+                    display: inline-block;
+                    margin-left: 25px;
+
+                    &:hover {
+                        color: darken($red, 10%);
+                    }
+
+                }
+            }
+
+            span.network-info {
+                font-style: italic;
+                font-size: 14px;
+                display: inline-block;
+                margin-top: 2px;
+            }
+        }
+
+        .required-marker {
+            color: $red;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        div.checkbox {
+            margin: 20px 0 10px 0;
+        }
+
+    }
+}

@@ -107,7 +107,8 @@ I18n.translations.nl = {
             plsc: "LDAP",
             composition: "Config",
             suspendedUsers: "Suspensions",
-            userlogins: "Logins"
+            userlogins: "Logins",
+            details: "Details"
         }
     },
     forms: {
@@ -1964,6 +1965,18 @@ I18n.translations.nl = {
         denied: "Toegang geweigerd",
         deniedInfo: "Helaas heb je geen toegang tot de deze dienst.",
         contact: "Neem contact op met <a href='mailto:{{support}}'>{{support}}</a> voor toegang tot deze dienst."
+    },
+    serviceDetails: {
+        details: "Dienstgegevens",
+        toc: {
+            general: "Algemeen",
+            connection: "Aansluiting",
+            contacts: "Contacten",
+            policy: "Policy & compliance",
+            ldap: "LDAP-instellingen",
+            tokens: "Tokens",
+            pamWebLogin: "Pam web login"
+        },
     }
 
 };
