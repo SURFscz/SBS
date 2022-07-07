@@ -10,6 +10,7 @@ from server.cron.collaboration_expiration import expire_collaborations
 from server.cron.collaboration_inactivity_suspension import suspend_collaborations
 from server.cron.idp_metadata_parser import parse_idp_metadata
 from server.cron.membership_expiration import expire_memberships
+from server.cron.orphan_users import delete_orphan_users
 from server.cron.outstanding_requests import outstanding_requests
 from server.cron.user_suspending import suspend_users
 
@@ -32,6 +33,8 @@ def start_scheduling(app):
         scheduler.add_job(func=expire_memberships, hour=cfq.membership_expiration.cron_hour_of_day, **options)
     if cfq.user_requests_retention.enabled:
         scheduler.add_job(func=cleanup_non_open_requests, hour=cfq.user_requests_retention.cron_hour_of_day, **options)
+    if cfq.orphan_users.enabled:
+        scheduler.add_job(func=delete_orphan_users, hour=cfq.orphan_users.cron_hour_of_day, **options)
     scheduler.start()
 
     logger = logging.getLogger("scheduler")
