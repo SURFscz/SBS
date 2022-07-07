@@ -417,7 +417,7 @@ def mail_membership_expires_notification(membership, is_warning):
 def mail_membership_orphan_user_deleted(user):
     _store_mail(user, ORPHAN_USER_DELETED_MAIL, user.email)
     _do_send_mail(
-        subject=f"Account SRAM deleted",
+        subject="Account SRAM deleted",
         recipients=[user.email],
         template="orphan_user_delete",
         context={"salutation": f"Dear {user.name}",
