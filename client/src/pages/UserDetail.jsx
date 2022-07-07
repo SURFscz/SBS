@@ -16,6 +16,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import Tabs from "../components/Tabs";
 import Activity from "../components/Activity";
 import UserDetailSshDialog from "./UserDetailSshDialog";
+import {Link} from "react-router-dom";
 
 class UserDetail extends React.Component {
 
@@ -84,7 +85,9 @@ class UserDetail extends React.Component {
                     {isEmpty(user.organisation_memberships) && "-"}
                     {!isEmpty(user.organisation_memberships) && <ul>
                         {user.organisation_memberships.map(ms =>
-                            <li key={`organisation_membership_${ms.id}`}>{`${ms.organisation.name} (${I18n.t('profile.' + ms.role)})`}</li>)}
+                            <li key={`organisation_membership_${ms.id}`}>
+                                <Link to={`/organisations/${ms.organisation.id}`}>{`${ms.organisation.name} (${I18n.t('profile.' + ms.role)})`}</Link>
+                            </li>)}
                     </ul>}
                 </div>
                 <div className="input-field">
@@ -92,7 +95,9 @@ class UserDetail extends React.Component {
                     {isEmpty(user.collaboration_memberships) && "-"}
                     {!isEmpty(user.collaboration_memberships) && <ul>
                         {user.collaboration_memberships.map((ms, index) =>
-                            <li key={`${ms.role}_${index}`}>{`${ms.collaboration.name} (${I18n.t('profile.' + ms.role)})`}</li>)}
+                            <li key={`${ms.role}_${index}`}>
+                               <Link to={`/collaborations/${ms.collaboration.id}`}>{`${ms.collaboration.name} (${I18n.t('profile.' + ms.role)})`}</Link>
+                            </li>)}
                     </ul>}
                 </div>
                 <div className="input-field">
@@ -100,7 +105,11 @@ class UserDetail extends React.Component {
                     {isEmpty(user.join_requests) && "-"}
                     {!isEmpty(user.join_requests) && <ul>
                         {user.join_requests.map((jr, index) =>
-                            <li key={index}>{`${jr.collaboration.name} (${moment(jr.created_at * 1000).format("LLL")})`}</li>)}
+                            <li key={index}>
+                                <Link to={`/collaborations/${jr.collaboration.id}/joinrequests`}>
+                                    {`${jr.collaboration.name} (${moment(jr.created_at * 1000).format("LLL")})`}
+                                </Link>
+                            </li>)}
                     </ul>}
                 </div>
                 <div className="input-field">
@@ -108,7 +117,9 @@ class UserDetail extends React.Component {
                     {isEmpty(user.collaboration_requests) && "-"}
                     {!isEmpty(user.collaboration_requests) && <ul>
                         {user.collaboration_requests.map(cr =>
-                            <li key={`collaboration_request_${cr.id}`}>{`${cr.name} (${cr.status})`}</li>)}
+                            <li key={`collaboration_request_${cr.id}`}>
+                                <Link to={`/organisations/${cr.organisation.id}/collaboration_requests`}>{`${cr.name} (${cr.status})`}</Link>
+                            </li>)}
                     </ul>}
                 </div>
                 <div className="input-field">
@@ -116,7 +127,9 @@ class UserDetail extends React.Component {
                     {isEmpty(user.service_memberships) && "-"}
                     {!isEmpty(user.service_memberships) && <ul>
                         {user.service_memberships.map(sm =>
-                            <li key={`service_membership_${sm.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</li>)}
+                            <li key={`service_membership_${sm.id}`}>
+                               <Link to={`/services/${sm.service.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</Link>
+                            </li>)}
                     </ul>}
                 </div>
                 <div className="input-field">
@@ -132,7 +145,9 @@ class UserDetail extends React.Component {
                     {isEmpty(user.service_aups) && "-"}
                     {!isEmpty(user.service_aups) && <ul>
                         {user.service_aups.map(sm =>
-                            <li key={`service_aup_${sm.id}`}>{sm.service.name}</li>)}
+                            <li key={`service_aup_${sm.id}`}>
+                                <Link to={`/services/${sm.service.id}`}>{sm.service.name}</Link>
+                            </li>)}
                     </ul>}
                 </div>
             </div>
