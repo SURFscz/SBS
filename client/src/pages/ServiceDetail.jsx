@@ -2,10 +2,7 @@ import React from "react";
 import {
     allServiceConnectionRequests,
     deleteServiceMembership,
-    resetLdapPassword,
-    resetTokenValue,
     searchOrganisations,
-    serviceAupDelete,
     serviceById,
     serviceInvitationAccept,
     serviceInvitationByHash
@@ -16,7 +13,6 @@ import Tabs from "../components/Tabs";
 import {ReactComponent as OrganisationsIcon} from "../icons/organisations.svg";
 import {ReactComponent as DetailsIcon} from "../icons/services.svg";
 import {ReactComponent as CollaborationsIcon} from "../icons/collaborations.svg";
-import {ReactComponent as RefreshIcon} from "../icons/common-file-text-refresh.svg";
 import {ReactComponent as ServiceConnectionRequestsIcon} from "../icons/connections.svg";
 import UnitHeader from "../components/redesign/UnitHeader";
 import {AppStore} from "../stores/AppStore";
@@ -25,7 +21,7 @@ import {ReactComponent as UserAdminIcon} from "../icons/users.svg";
 import Collaborations from "../components/redesign/Collaborations";
 import ServiceOrganisations from "../components/redesign/ServiceOrganisations";
 import SpinnerField from "../components/redesign/SpinnerField";
-import {isEmpty, removeDuplicates} from "../utils/Utils";
+import {removeDuplicates} from "../utils/Utils";
 import {actionMenuUserRole, isUserServiceAdmin} from "../utils/UserRole";
 import ServiceConnectionRequests from "../components/redesign/ServiceConnectionRequests";
 import {ReactComponent as GroupsIcon} from "../icons/ticket-group.svg";
@@ -34,7 +30,6 @@ import ServiceAdmins from "../components/redesign/ServiceAdmins";
 import {setFlash} from "../utils/Flash";
 import ServiceWelcomeDialog from "../components/ServiceWelcomeDialog";
 import ConfirmationDialog from "../components/ConfirmationDialog";
-import InputField from "../components/InputField";
 import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";
@@ -59,8 +54,6 @@ class ServiceDetail extends React.Component {
             confirmationTxt: null,
             confirmationHeader: null,
             isWarning: false,
-            ldapPassword: null,
-            tokenValue: null,
         };
     }
 
@@ -113,52 +106,6 @@ class ServiceDetail extends React.Component {
             this.props.history.push("/404");
         }
     };
-
-    doTokenResetAction = () => {
-        const {service} = this.state;
-        resetTokenValue(service).then(res => {
-            this.setState({
-                confirmationTxt: I18n.t("userTokens.reset.close"),
-                confirmationHeader: I18n.t("userTokens.reset.copy"),
-                cancelDialogAction: null,
-                lastAdminWarning: false,
-                confirmationDialogQuestion: I18n.t("userTokens.reset.info"),
-                tokenValue: res.token_value,
-                confirmationDialogAction: this.doCancelDialogAction
-            });
-        })
-    }
-
-    doLdapResetAction = () => {
-        const {service} = this.state;
-        resetLdapPassword(service).then(res => {
-            this.setState({
-                confirmationTxt: I18n.t("service.ldap.close"),
-                confirmationHeader: I18n.t("service.ldap.copy"),
-                cancelDialogAction: null,
-                lastAdminWarning: false,
-                confirmationDialogQuestion: I18n.t("service.ldap.info"),
-                ldapPassword: res.ldap_password,
-                confirmationDialogAction: this.doCancelDialogAction
-            });
-        })
-    }
-
-    doCancelDialogAction = () => {
-        this.setState({confirmationDialogOpen: false},
-            () => setTimeout(() => this.setState({ldapPassword: null, tokenValue: null}), 75)
-        );
-    }
-
-    resetAups = () => {
-        this.doCancelDialogAction();
-        const {service} = this.state;
-        this.setState({loading: true});
-        serviceAupDelete(service).then(() => {
-            this.setState({loading: false});
-            setFlash(I18n.t("service.aup.flash", {name: service.name}));
-        })
-    }
 
     onBoarding = () => {
         this.setState({firstTime: true});
@@ -402,7 +349,6 @@ class ServiceDetail extends React.Component {
             confirmationHeader: I18n.t("confirmationDialog.title"),
             lastAdminWarning: lastAdminWarning,
             confirmationDialogQuestion: I18n.t("service.confirmation.leave"),
-            tokenValue: null,
             isWarning: true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationDialogAction: this.doDeleteMe
@@ -412,94 +358,20 @@ class ServiceDetail extends React.Component {
     getActions = (user, service) => {
         const actions = [];
         const serviceAdmin = isUserServiceAdmin(user, service);
-        const pmDecision = true;
         if (user.admin || serviceAdmin) {
-            // actions.push({
-            //     icon: "pencil-alt",
-            //     name: I18n.t("home.edit"),
-            //     perform: () => this.props.history.push("/edit-service/" + service.id)
-            // });
-            if (pmDecision) {
-                actions.push({
-                    icon: "key",
-                    name: I18n.t("service.ldap.title"),
-                    perform: () => {
-                        this.setState({
-                            ldapPassword: null,
-                            tokenValue: null,
-                            confirmationDialogOpen: true,
-                            cancelDialogAction: this.doCancelDialogAction,
-                            confirmationDialogAction: this.doLdapResetAction,
-                            isWarning: false,
-                            lastAdminWarning: false,
-                            confirmationHeader: I18n.t("confirmationDialog.title"),
-                            confirmationDialogQuestion: I18n.t("service.ldap.confirmation", {name: service.name}),
-                            confirmationTxt: I18n.t("confirmationDialog.confirm"),
-                        });
-                    }
-                });
-            }
-            if (pmDecision) {
-                actions.push({
-                    svg: RefreshIcon,
-                    name: I18n.t("service.aup.title"),
-                    perform: () => {
-                        this.setState({
-                            ldapPassword: null,
-                            tokenValue: null,
-                            confirmationDialogOpen: true,
-                            cancelDialogAction: this.doCancelDialogAction,
-                            isWarning: true,
-                            confirmationDialogAction: this.resetAups,
-                            confirmationHeader: I18n.t("confirmationDialog.title"),
-                            lastAdminWarning: false,
-                            confirmationDialogQuestion: I18n.t("service.aup.confirmation", {name: service.name}),
-                            confirmationTxt: I18n.t("confirmationDialog.confirm"),
-                        });
-                    }
-                });
-            }
-            if (pmDecision && (service.token_enabled || service.pam_web_sso_enabled)) {
-                actions.push({
-                    icon: "unlock",
-                    name: I18n.t("userTokens.actionTitle"),
-                    perform: () => {
-                        this.setState({
-                            tokenValue: null,
-                            confirmationDialogOpen: true,
-                            cancelDialogAction: this.doCancelDialogAction,
-                            isWarning: false,
-                            confirmationDialogAction: this.doTokenResetAction,
-                            confirmationHeader: I18n.t("confirmationDialog.title"),
-                            lastAdminWarning: false,
-                            confirmationDialogQuestion: I18n.t("userTokens.reset.confirmation", {name: service.name}),
-                            confirmationTxt: I18n.t("confirmationDialog.confirm"),
-                        });
-                    }
-                });
-            }
             if (serviceAdmin)
                 actions.push({
                     svg: LeaveIcon,
                     name: I18n.t("service.leave"),
                     perform: this.deleteMe
                 });
-
         }
         return actions;
     }
 
-    renderLdapPassword = ldapPassword => {
-        return (
-            <div className="ldap-password">
-                <InputField copyClipBoard={true} disabled={true} value={ldapPassword}/>
-            </div>
-        );
-    }
-
     render() {
         const {
-            tabs, service, loading, tab, firstTime, ldapPassword, tokenValue,
+            tabs, service, loading, tab, firstTime,
             confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
             confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning, lastAdminWarning
         } = this.state;
@@ -516,13 +388,10 @@ class ServiceDetail extends React.Component {
                 <ConfirmationDialog isOpen={confirmationDialogOpen}
                                     cancel={cancelDialogAction}
                                     isWarning={isWarning}
-                                    largeWidth={!isEmpty(tokenValue)}
                                     confirmationTxt={confirmationTxt}
                                     confirmationHeader={confirmationHeader}
                                     confirm={confirmationDialogAction}
                                     question={confirmationDialogQuestion}>
-                    {ldapPassword && this.renderLdapPassword(ldapPassword)}
-                    {tokenValue && this.renderLdapPassword(tokenValue)}
                     {lastAdminWarning && <LastAdminWarning organisation={service}
                                                            currentUserDeleted={true}
                                                            localePrefix={"service.confirmation"}/>}

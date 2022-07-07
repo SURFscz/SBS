@@ -20,7 +20,7 @@ import {
     suspendUsers,
     plscSync,
     getSuspendedUsers,
-    activateUserForCollaboration
+    activateUserForCollaboration, deleteOrphanUsers
 } from "../api";
 import ReactJson from "react-json-view";
 import Button from "../components/Button";
@@ -58,6 +58,7 @@ class System extends React.Component {
             suspendedUsers: {},
             suspendedCollaborations: {},
             expiredCollaborations: {},
+            deletedUsers: {},
             expiredMemberships: {},
             outstandingRequests: {},
             cleanedRequests: {},
@@ -104,6 +105,7 @@ class System extends React.Component {
             suspendedUsers: {},
             suspendedCollaborations: {},
             expiredCollaborations: {},
+            deletedUsers: {},
             expiredMemberships: {},
             outstandingRequests: {},
             cleanedRequests: {},
@@ -123,7 +125,7 @@ class System extends React.Component {
     }
 
     getCronTab = (suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations,
-                  expiredMemberships, cronJobs) => {
+                  expiredMemberships, deletedUsers, cronJobs) => {
         return (<div key="cron" name="cron" label={I18n.t("home.tabs.cron")}
                      icon={<FontAwesomeIcon icon="clock"/>}>
             <div className="mod-system">
@@ -136,6 +138,8 @@ class System extends React.Component {
                     {this.renderSuspendedCollaborationsResults(suspendedCollaborations)}
                     {this.renderExpiredMemberships()}
                     {this.renderExpiredMembershipsResults(expiredMemberships)}
+                    {this.renderOrphanUsers()}
+                    {this.renderOrphanUsersResults(deletedUsers)}
                     {this.renderOutstandingRequests()}
                     {this.renderOutstandingRequestsResults(outstandingRequests)}
                     {this.renderCleanedRequests()}
@@ -408,6 +412,13 @@ class System extends React.Component {
         });
     }
 
+    doOrphanUsers = () => {
+        this.setState({busy: true})
+        deleteOrphanUsers().then(res => {
+            this.setState({deletedUsers: res, busy: false});
+        });
+    }
+
     doSuspendCollaborations = () => {
         this.setState({busy: true})
         suspendCollaborations().then(res => {
@@ -513,6 +524,21 @@ class System extends React.Component {
                     {isEmpty(expiredMemberships) && <Button txt={I18n.t("system.runDailyJobs")}
                                                             onClick={this.doExpireMemberships}/>}
                     {!isEmpty(expiredMemberships) && <Button txt={I18n.t("system.clear")}
+                                                             onClick={this.clear} cancelButton={true}/>}
+                </div>
+            </div>
+        );
+    }
+
+    renderOrphanUsers = () => {
+        const {deletedUsers} = this.state;
+        return (
+            <div className="info-block">
+                <p>{I18n.t("system.runOrphanUsers")}</p>
+                <div className="actions">
+                    {isEmpty(deletedUsers) && <Button txt={I18n.t("system.runDailyJobs")}
+                                                            onClick={this.doOrphanUsers}/>}
+                    {!isEmpty(deletedUsers) && <Button txt={I18n.t("system.clear")}
                                                              onClick={this.clear} cancelButton={true}/>}
                 </div>
             </div>
@@ -637,6 +663,37 @@ class System extends React.Component {
                 </div>}
             </div>)
     }
+
+    renderOrphanUsersResults = deletedUsers => {
+            return (
+            <div className="results">
+                {!isEmpty(deletedUsers) && <div className="results">
+                    <table className="expired-memberships">
+                        <thead>
+                        <tr>
+                            <th>{I18n.t("system.action")}</th>
+                            <th>{I18n.t("system.results")}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {Object.keys(deletedUsers).map(key =>
+                            <tr key={key}>
+                                <td className="action">{I18n.t(`system.${key}`)}</td>
+                                <td>
+                                    {!isEmpty(deletedUsers[key]) && <ul>
+                                        {deletedUsers[key].map(email =>
+                                            <li>{email}</li>)}
+                                    </ul>}
+                                    {isEmpty(deletedUsers[key]) && <span>None</span>}
+                                </td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                </div>}
+            </div>)
+    }
+
 
     renderExpiredMembershipsResults = expiredMemberships => {
         return (
@@ -881,7 +938,7 @@ class System extends React.Component {
             confirmationDialogQuestion, busy, tab, filteredAuditLogs, databaseStats, suspendedUsers, cleanedRequests,
             limit, query, selectedTables, expiredCollaborations, suspendedCollaborations, expiredMemberships, cronJobs,
             validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin, plscData, compositionData,
-            currentlySuspendedUsers, userLoginStats
+            currentlySuspendedUsers, userLoginStats, deletedUsers
         } = this.state;
         const {config} = this.props;
 
@@ -890,8 +947,8 @@ class System extends React.Component {
         }
         const tabs = [
             this.getValidationTab(validationData, showOrganisationsWithoutAdmin, showServicesWithoutAdmin),
-            this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations, suspendedCollaborations, expiredMemberships,
-                cronJobs),
+            this.getCronTab(suspendedUsers, outstandingRequests, cleanedRequests, expiredCollaborations,
+                suspendedCollaborations, expiredMemberships, deletedUsers, cronJobs),
             config.seed_allowed ? this.getSeedTab(seedResult) : null,
             this.getDatabaseTab(databaseStats, config),
             this.getActivityTab(filteredAuditLogs, limit, query, config, selectedTables),

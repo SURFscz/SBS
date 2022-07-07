@@ -42,3 +42,5 @@ COLLABORATION_SUSPENDED_NOTIFICATION_MAIL = "collaboration_suspended_notificatio
 MEMBERSHIP_EXPIRES_WARNING_MAIL = "membership_expires_warning_mail"
 
 MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL = "membership_expired_notification_mail"
+
+ORPHAN_USER_DELETED_MAIL = "orphan_user_deleted_mail"

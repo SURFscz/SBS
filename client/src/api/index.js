@@ -480,6 +480,10 @@ export function expireCollaborationMemberships() {
     return postPutJson("/api/system/expire_memberships", {}, "PUT");
 }
 
+export function deleteOrphanUsers() {
+    return postPutJson("/api/system/orphan_users", {}, "PUT");
+}
+
 export function updateCollaborationMembershipRole(collaborationId, userId, role, showErrorDialog = true) {
     return postPutJson("/api/collaboration_memberships", {
         collaborationId: collaborationId,

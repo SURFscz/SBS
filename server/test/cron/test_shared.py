@@ -6,6 +6,7 @@ from server.cron.collaboration_expiration import expire_collaborations, collabor
 from server.cron.collaboration_inactivity_suspension import suspend_collaborations, \
     collaboration_inactivity_suspension_lock_name
 from server.cron.membership_expiration import membership_expiration_lock_name, expire_memberships
+from server.cron.orphan_users import orphan_users_lock_name, delete_orphan_users
 from server.cron.outstanding_requests import outstanding_requests_lock_name, outstanding_requests
 from server.cron.user_suspending import suspend_users
 from server.cron.user_suspending import suspend_users_lock_name
@@ -31,6 +32,7 @@ class TestShared(AbstractTest):
                            collaboration_expiration_lock_name: expire_collaborations,
                            collaboration_inactivity_suspension_lock_name: suspend_collaborations,
                            membership_expiration_lock_name: expire_memberships,
-                           suspend_users_lock_name: suspend_users}
+                           suspend_users_lock_name: suspend_users,
+                           orphan_users_lock_name: delete_orphan_users}
         for lock_name, method_to_test in locks_and_crons.items():
             self._do_schedule_lock(lock_name, method_to_test)

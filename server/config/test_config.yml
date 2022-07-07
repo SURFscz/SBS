@@ -183,6 +183,13 @@ membership_expiration:
   # How many days before actual expiration do we mail the co admin and member
   expired_warning_mail_days_threshold: 14
 
+orphan_users:
+  # Do we daily check for users that are orphans?
+  enabled: True
+  cron_hour_of_day: 10
+  # How long after created do we delete orphan users
+  delete_days_threshold: -1
+
 ldap:
   url: "ldap://ldap.example.com/dc=example,dc=com"
   bind_account: "cn=admin,dc=entity_id,dc=services,dc=sram-tst,dc=surf,dc=nl"

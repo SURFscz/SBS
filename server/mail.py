@@ -21,7 +21,7 @@ from server.mail_types.mail_types import COLLABORATION_REQUEST_MAIL, \
     RESET_MFA_TOKEN_MAIL, COLLABORATION_EXPIRES_WARNING_MAIL, \
     COLLABORATION_EXPIRED_NOTIFICATION_MAIL, COLLABORATION_SUSPENDED_NOTIFICATION_MAIL, \
     COLLABORATION_SUSPENSION_WARNING_MAIL, MEMBERSHIP_EXPIRED_NOTIFICATION_MAIL, MEMBERSHIP_EXPIRES_WARNING_MAIL, \
-    SERVICE_INVITATION_MAIL
+    SERVICE_INVITATION_MAIL, ORPHAN_USER_DELETED_MAIL
 
 
 def _send_async_email(ctx, msg, mail):
@@ -409,6 +409,19 @@ def mail_membership_expires_notification(membership, is_warning):
         context={"salutation": "Dear", "membership": membership,
                  "base_url": current_app.app_config.base_url,
                  "expiry_date": membership.expiry_date.strftime("%b %d %Y")},
+        preview=False,
+        working_outside_of_request_context=True
+    )
+
+
+def mail_membership_orphan_user_deleted(user):
+    _store_mail(user, ORPHAN_USER_DELETED_MAIL, user.email)
+    _do_send_mail(
+        subject=f"Account SRAM deleted",
+        recipients=[user.email],
+        template="orphan_user_delete",
+        context={"salutation": f"Dear {user.name}",
+                 "base_url": current_app.app_config.base_url},
         preview=False,
         working_outside_of_request_context=True
     )

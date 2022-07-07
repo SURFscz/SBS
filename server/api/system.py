@@ -52,6 +52,16 @@ def do_expire_memberships():
     return expire_memberships(current_app), 201
 
 
+@system_api.route("/orphan_users", strict_slashes=False, methods=["PUT"])
+@json_endpoint
+def do_orphan_users():
+    confirm_write_access()
+
+    from server.cron.orphan_users import delete_orphan_users
+
+    return delete_orphan_users(current_app), 201
+
+
 @system_api.route("/suspend_users", strict_slashes=False, methods=["PUT"])
 @json_endpoint
 def do_suspend_users():
