@@ -291,7 +291,7 @@ class App extends React.Component {
                                render={props => <ProtectedRoute
                                    currentUser={currentUser} Component={History} {...props}/>}/>
 
-                        <Route exact path="/services/:id/:tab?"
+                        <Route exact path="/services/:id/:tab?/:subTab?"
                                render={props => <ProtectedRoute config={config}
                                                                 currentUser={currentUser}
                                                                 refreshUser={this.refreshUserMemberships}

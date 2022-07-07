@@ -51,10 +51,13 @@ class ServiceOverview extends React.Component {
 
     componentDidMount = () => {
         const {service, serviceAdmin} = this.props;
+        const {params} = this.props.match;
+        const tab = params.subTab || this.state.currentTab;
         this.setState({
             service: {...service},
             hasAdministrators: service.service_memberships.length > 0,
             isServiceAdmin: serviceAdmin,
+            currentTab: tab,
             loading: false
         }, () => {
             const {ip_networks} = this.state.service;
@@ -302,26 +305,24 @@ class ServiceOverview extends React.Component {
                     network.id = parseInt(network.id, 10)
                 }
             });
-            const {currentTab} = this.state;
             this.setState({service: {...service, ip_networks: strippedIpNetworks}}, () => {
-                updateService(this.state.service).then(() => this.afterUpdate(name, "updated", currentTab));
+                updateService(this.state.service).then(() => this.afterUpdate(name, "updated"));
             });
         } else {
             window.scrollTo(0, 0);
         }
     };
 
-    afterUpdate = (name, action, currentTab) => {
+    afterUpdate = (name, action) => {
         setFlash(I18n.t(`service.flash.${action}`, {name: name}));
         this.setState({loading: false});
-        this.props.refresh(() => {
-            this.setState({currentTab: currentTab});
-        });
+        this.props.refresh();
     };
 
     changeTab = tab => e => {
         stopEvent(e);
-        this.setState({currentTab: tab})
+        this.setState({currentTab: tab}, () =>
+            this.props.history.replace(`/services/${this.state.service.id}/details/${tab}`));
     }
 
     sidebar = currentTab => {
