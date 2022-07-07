@@ -83,7 +83,7 @@ class ServiceOverview extends React.Component {
         if (showConfirmation) {
             this.setState({
                 confirmationDialogOpen: true,
-                cancelDialogAction: this.doCancelDialogAction,
+                cancelDialogAction: this.cancelDialogAction,
                 warning: true,
                 confirmationDialogAction: () => this.resetAups(false),
                 confirmationHeader: I18n.t("confirmationDialog.title"),
@@ -105,7 +105,7 @@ class ServiceOverview extends React.Component {
         if (showConfirmation) {
             this.setState({
                 confirmationDialogOpen: true,
-                cancelDialogAction: this.doCancelDialogAction,
+                cancelDialogAction: this.cancelDialogAction,
                 warningf: false,
                 confirmationDialogAction: () => this.tokenResetAction(false),
                 confirmationHeader: I18n.t("confirmationDialog.title"),
