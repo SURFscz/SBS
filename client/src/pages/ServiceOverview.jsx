@@ -245,9 +245,8 @@ class ServiceOverview extends React.Component {
         this.setState({loading: true});
         const {service} = this.state;
         deleteService(service.id).then(() => {
-            this.setState({loading: false});
-            this.props.refresh();
             setFlash(I18n.t("service.flash.deleted", {name: service.name}));
+            this.props.history.push("/home");
         });
     };
 
