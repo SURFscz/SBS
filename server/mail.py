@@ -153,7 +153,8 @@ def mail_collaboration_invitation(context, collaboration, recipients, preview=Fa
     if not preview:
         _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
     context = {**context, **{"expiry_period": calculate_expiry_period(context["invitation"])},
-               "collaboration": collaboration}
+               "collaboration": collaboration, "organisation_img": collaboration.organisation.raw_logo()}
+
     return _do_send_mail(
         subject=f"Invitation to join collaboration {collaboration.name}",
         recipients=recipients,
