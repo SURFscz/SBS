@@ -47,3 +47,6 @@ class LogoMixin(object):
         if name == "ldap_password" or name == "hashed_token":
             return None
         return object.__getattribute__(self, name)
+
+    def raw_logo(self):
+        return object.__getattribute__(self, "logo")
