@@ -388,14 +388,12 @@ class ServiceDetail extends React.Component {
     getActions = (user, service) => {
         const actions = [];
         const serviceAdmin = isUserServiceAdmin(user, service);
-        if (user.admin || serviceAdmin) {
-            if (serviceAdmin)
-                actions.push({
-                    svg: LeaveIcon,
-                    name: I18n.t("service.leave"),
-                    perform: this.deleteMe
-                });
-        }
+        if (serviceAdmin)
+            actions.push({
+                svg: LeaveIcon,
+                name: I18n.t("service.leave"),
+                perform: this.deleteMe
+            });
         return actions;
     }
 

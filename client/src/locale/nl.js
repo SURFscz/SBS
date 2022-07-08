@@ -306,7 +306,8 @@ I18n.translations.nl = {
         serviceOrganisations: {
             searchPlaceHolder: "Zoek organisaties",
             title: "Organisaties",
-            new: "Schakel alle in/uit",
+            availableForAll: "Maak automatisch beschikbaar voor alle organisaties",
+            notAvailableForAll: "Maak niet automatisch beschikbaar voor alle organisaties",
             disableAccessConfirmation: "Weet je zeker dat je voor deze dienst de toegang wilt verbieden?",
             disableAccessConsequences: "De volgende organisaties en samenwerkingen gebruiken deze dienst en zullen hierdoor de dienst niet meer kunnen gebruiken.",
             collaboration: "samenwerking",

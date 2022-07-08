@@ -13,9 +13,10 @@ class UnitHeaderActionMenu extends React.Component {
         this.ref.focus();
     }
 
-    performAction = func => e => {
+    performAction = action => e => {
         stopEvent(e);
-        func();
+        !action.disabled && action.perform();
+
     }
 
     render() {
@@ -24,7 +25,7 @@ class UnitHeaderActionMenu extends React.Component {
                     tabIndex={1}
                     onBlur={() => setTimeout(this.props.close, 250)}>
             <ul>
-                {actions.map(action => <li key={action.name} onClick={this.performAction(action.perform)}>
+                {actions.map(action => <li key={action.name} onClick={this.performAction(action)}>
                     {action.icon && <FontAwesomeIcon icon={action.icon}/>}
                     {action.svg && <action.svg/>}
                     <a href={"/" + action.name} >{action.name}</a>
@@ -37,7 +38,7 @@ class UnitHeaderActionMenu extends React.Component {
                     </Link>
                 </li>}
                 {firstTime &&
-                <li onClick={this.performAction(firstTime)}>
+                <li onClick={this.performAction({perform: firstTime})}>
                     <FontAwesomeIcon icon="plane-departure"/>
                     <a href={"/" + I18n.t("home.firstTime")} >
                         {I18n.t("home.firstTime")}
