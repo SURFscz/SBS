@@ -4,7 +4,7 @@ import {isEmpty, removeDuplicates, stopEvent} from "../../utils/Utils";
 import I18n from "i18n-js";
 import Entities from "./Entities";
 import ToggleSwitch from "./ToggleSwitch";
-import {allowedOrganisations} from "../../api";
+import {allowedOrganisations, toggleAccessAllowedForAll} from "../../api";
 import {setFlash} from "../../utils/Flash";
 import Logo from "./Logo";
 import ConfirmationDialog from "../ConfirmationDialog";
@@ -46,22 +46,12 @@ class ServiceOrganisations extends React.Component {
         this.props.history.push(`/organisations/${organisation.id}`);
     };
 
-    onToggleAll = () => {
-        const {organisations} = this.props;
-        const {toggleAll} = this.state;
-        const organisationsSelected = {...this.state.organisationsSelected};
-        const allValues = Object.values(organisationsSelected);
-        const allSelected = allValues.every(val => val);
-        const noneSelected = allValues.every(val => !val);
-        const newToggleAll = allSelected ? false : noneSelected ? true : !toggleAll;
-        const newOrganisationsSelected = organisations.reduce((acc, org) => {
-            acc[org.id] = newToggleAll;
-            return acc;
-        }, {});
-        const organisationsDeselected = Object.entries(newOrganisationsSelected)
-            .filter(e => !e[1])
-            .map(e => parseInt(e[0], 10));
-        this.submit(newOrganisationsSelected, organisationsDeselected, newToggleAll);
+    togglesAccessAllowedForAll = service => {
+        toggleAccessAllowedForAll(service.id, !service.access_allowed_for_all)
+            .then(() => this.props.refresh(() => {
+                this.componentDidMount();
+                setFlash(I18n.t("service.flash.updated", {name: service.name}));
+            }));
     }
 
     toggleChanged = organisation => value => {
@@ -152,8 +142,9 @@ class ServiceOrganisations extends React.Component {
             {
                 key: "name",
                 header: I18n.t("models.organisations.name"),
-                mapper: org => userAdmin ?  <a href={`/organisations/${org.id}`} onClick={this.openOrganisation(org)}>{org.name}</a> :
-                        <span>{org.name}</span> ,
+                mapper: org => userAdmin ?
+                    <a href={`/organisations/${org.id}`} onClick={this.openOrganisation(org)}>{org.name}</a> :
+                    <span>{org.name}</span>,
             },
             {
                 key: "short_name",
@@ -195,11 +186,9 @@ class ServiceOrganisations extends React.Component {
                           defaultSort="name"
                           hideTitle={true}
                           columns={columns}
-                          filters={service.access_allowed_for_all ?
-                              <span
-                                  className="access-allowed-for-all">{I18n.t("service.accessAllowedForAllInfo")}</span> : null}
-                          showNew={userAdmin && !service.access_allowed_for_all && organisations.length > 0}
-                          newEntityFunc={service.access_allowed_for_all ? () => true : this.onToggleAll}
+                          showNew={organisations.length > 0}
+                          newLabel={I18n.t(`models.serviceOrganisations.${service.access_allowed_for_all ? "notAvailableForAll" : "availableForAll"}`)}
+                          newEntityFunc={() => this.togglesAccessAllowedForAll(service)}
                           loading={false}
                           {...this.props}>
                 </Entities>

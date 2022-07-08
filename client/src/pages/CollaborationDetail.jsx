@@ -243,7 +243,7 @@ class CollaborationDetail extends React.Component {
     eyeView = () => {
         const {showMemberView, adminOfCollaboration} = this.state;
         return (
-            <div className={`eye-view ${showMemberView ? "admin" : "member"}`} onClick={() => {
+            <div className={`eye-view`} onClick={() => {
                 health().then(() => {
                     const {showMemberView, collaboration, schacHomeOrganisation, userTokens} = this.state;
                     const newTab = showMemberView ? "about" : "admins";
@@ -261,8 +261,8 @@ class CollaborationDetail extends React.Component {
                         });
                 });
             }}>
-                {
-                    <EyeViewIcon/>}<span>{I18n.t(`models.collaboration.${showMemberView ? "viewAsMember" : "viewAsAdmin"}`)}</span>
+                <EyeViewIcon/>
+                <span>{I18n.t(`models.collaboration.${showMemberView ? "viewAsMember" : "viewAsAdmin"}`)}</span>
             </div>
         );
     }

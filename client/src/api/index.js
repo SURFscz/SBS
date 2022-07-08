@@ -236,6 +236,10 @@ export function allowedOrganisations(serviceId, allowedOrganisations = {"allowed
     return postPutJson(`/api/services/allowed_organisations/${serviceId}`, allowedOrganisations, "put")
 }
 
+export function toggleAccessAllowedForAll(serviceId, allowedForAll) {
+    return postPutJson(`/api/services/toggle_access_allowed_for_all/${serviceId}`, {allowed_for_all: allowedForAll}, "put")
+}
+
 export function deleteService(id) {
     return fetchDelete(`/api/services/${id}`)
 }
@@ -839,6 +843,6 @@ export function tagsByOrganisation(organisationId) {
 
 //pam-weblogin
 export function pamWebSSOSession(sessionId) {
-    return fetchJson(`/pam-weblogin/${sessionId}`,{},{}, false)
+    return fetchJson(`/pam-weblogin/${sessionId}`, {}, {}, false)
 }
 

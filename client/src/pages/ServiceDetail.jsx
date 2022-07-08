@@ -1,7 +1,7 @@
 import React from "react";
 import {
     allServiceConnectionRequests,
-    deleteServiceMembership,
+    deleteServiceMembership, health,
     searchOrganisations,
     serviceById,
     serviceInvitationAccept,
@@ -33,6 +33,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";
+import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
 
 class ServiceDetail extends React.Component {
 
@@ -54,6 +55,7 @@ class ServiceDetail extends React.Component {
             confirmationTxt: null,
             confirmationHeader: null,
             isWarning: false,
+            showServiceAdminView: false
         };
     }
 
@@ -88,7 +90,7 @@ class ServiceDetail extends React.Component {
                             this.getAdminsTab(service),
                         ];
                         if (user.admin) {
-                            tabs.push(this.getServiceGroupsTab(service))
+                            tabs.push(this.getServiceGroupsTab(service));
                         }
                         if (serviceConnectionRequests.length > 0) {
                             tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
@@ -126,6 +128,7 @@ class ServiceDetail extends React.Component {
 
     updateBreadCrumb(service) {
         const currentService = service || this.state.service;
+        const {user} = this.props;
         AppStore.update(s => {
             s.breadcrumb.paths = [
                 {path: "/", value: I18n.t("breadcrumb.home")},
@@ -134,7 +137,34 @@ class ServiceDetail extends React.Component {
                     value: I18n.t("breadcrumb.service", {name: currentService.name})
                 },
             ];
+            s.sideComponent = user.admin ? this.eyeView() : null;
         });
+    }
+
+    eyeView = () => {
+        return (
+            <div className={`eye-view`} onClick={() => {
+                health().then(() => {
+                    const {showServiceAdminView, tab, tabs, service} = this.state;
+                    const newTab = tab === "groups" ? "details" : tab;
+                    const newTabs = showServiceAdminView ? tabs.concat([this.getServiceGroupsTab(service)]) : tabs.filter(t => t.key !== "groups");
+                    this.setState({
+                            showServiceAdminView: !showServiceAdminView,
+                            tabs: newTabs,
+                            tab: newTab
+                        },
+                        () => {
+                            AppStore.update(s => {
+                                s.sideComponent = this.eyeView();
+                            });
+
+                        });
+                });
+            }}>
+                <EyeViewIcon/>
+                <span>{I18n.t(`service.viewAs${this.state.showServiceAdminView ? "PlatformAdmin" : "ServiceAdmin"}`)}</span>
+            </div>
+        );
     }
 
     doAcceptInvitation = () => {

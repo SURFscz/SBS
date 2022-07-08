@@ -129,6 +129,18 @@ class TestService(AbstractTest):
         self.assertEqual("changed", service["name"])
         self.assertEqual(1, len(service["ip_networks"]))
 
+    def test_toggle_access_allowed_for_all(self):
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertFalse(service.access_allowed_for_all)
+
+        self.login("urn:james")
+        self.put(f"/api/services/toggle_access_allowed_for_all/{service.id}",
+                 body={"allowed_for_all": True},
+                 with_basic_auth=False)
+
+        service = self.find_entity_by_name(Service, service_cloud_name)
+        self.assertTrue(service.access_allowed_for_all)
+
     def test_service_update_do_not_clear_hashed_token_and_ldap_password(self):
         service = self._find_by_name(service_wiki_name)
 

@@ -20,8 +20,9 @@
         }
 
         .mod-login {
-            @media (max-width: $tablet-max) {
+            @media (max-width: $compact-medium) {
                 flex-direction: column;
+                width: 100%;
             }
             margin: 60px auto 0;
             max-width: $compact-medium;
@@ -30,7 +31,7 @@
 
             &.reversed {
                 flex-direction: row-reverse;
-                @media (max-width: $tablet-max) {
+                @media (max-width: $compact-medium) {
                     flex-direction: column;
                 }
             }
@@ -51,23 +52,24 @@
             .header-left {
                 margin-right: 50px;
                 width: 50%;
-                @media (max-width: $tablet-max) {
+                @media (max-width: $compact-medium) {
                     width: auto;
                     margin: 25px auto;
                 }
 
                 &.info {
                     width: 45%;
-                    @media (max-width: $tablet-max) {
+                    @media (max-width: $compact-medium) {
                         width: auto;
                         margin: 25px auto;
                     }
+
                 }
             }
 
             .header-right {
                 width: 50%;
-                @media (max-width: $tablet-max) {
+                @media (max-width: $compact-medium) {
                     width: auto;
                     margin: 25px auto;
                 }
@@ -75,12 +77,17 @@
                 img {
                     width: 310px;
                     height: auto;
+
+                    @media (max-width: $compact-medium) {
+                        width: 180px;
+                    }
+
                 }
 
                 &.info {
                     display: flex;
                     width: 55%;
-                    @media (max-width: $tablet-max) {
+                    @media (max-width: $compact-medium) {
                         width: auto;
                         margin: 25px auto;
                     }
@@ -93,6 +100,11 @@
                         &.reversed {
                             margin: 0 40px 0 0;
                         }
+
+                        @media (max-width: $compact-medium) {
+                            width: 180px;
+                        }
+
                     }
                 }
             }

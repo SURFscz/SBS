@@ -315,6 +315,21 @@ def save_service():
     return res
 
 
+@service_api.route("/toggle_access_allowed_for_all/<service_id>", methods=["PUT"], strict_slashes=False)
+@json_endpoint
+def toggle_access_allowed_for_all(service_id):
+    def override_func():
+        return is_service_admin(service_id)
+
+    confirm_write_access(override_func=override_func)
+    service = Service.query.get(service_id)
+    data = current_request.get_json()
+    allowed_for_all = data.get("allowed_for_all")
+    service.access_allowed_for_all = allowed_for_all
+    db.session.merge(service)
+    return None, 201
+
+
 @service_api.route("/invites", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def service_invites():
