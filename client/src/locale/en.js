@@ -306,7 +306,8 @@ I18n.translations.en = {
         serviceOrganisations: {
             searchPlaceHolder: "Search for organisations",
             title: "Organisations",
-            new: "Toggle all on/off",
+            availableForAll: "Make available for all organisations",
+            notAvailableForAll: "Do not make available for all organisations",
             disableAccessConfirmation: "Are you sure you want disable access for this service?",
             disableAccessConsequences: "The following organisations and collaborations are using this service and won't be able to use it anymore.",
             collaboration: "collaboration",
@@ -908,7 +909,7 @@ I18n.translations.en = {
         flash: {
             created: "Service {{name}} was created",
             updated: "Service {{name}} was updated",
-            deleted: "Service {{name}} was deleted"
+            deleted: "Service {{name}} was deleted",
         },
         ldap: {
             title: "Reset LDAP password",
@@ -936,7 +937,9 @@ I18n.translations.en = {
             leave: "Are you sure you don't want to be the admin of this service? You can not undo this.",
             lastAdminWarning: "You are leaving this service without admins. After this, management of the service can only be carried out by the admins of SRAM",
             lastAdminWarningUser: "You are the last admin in this service. After you leave, management of the service can only be carried out by the admins of SRAM",
-        }
+        },
+        viewAsServiceAdmin: "View as service admin",
+        viewAsPlatformAdmin: "View as platform admin",
     },
     organisation: {
         title: "Create new organisation",

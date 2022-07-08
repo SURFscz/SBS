@@ -356,8 +356,8 @@ class ServiceOverview extends React.Component {
         return <>
             {(isAdmin || isServiceAdmin) &&
             <section className="actions">
-                {isAdmin && <Button warningButton={true} txt={I18n.t("service.delete")}
-                                    onClick={this.delete}/>}
+                {(isAdmin && currentTab === "general") && <Button warningButton={true} txt={I18n.t("service.delete")}
+                                                                  onClick={this.delete}/>}
                 {currentTab === "policy" &&
                 <Button txt={I18n.t("service.aup.title")}
                         disabled={!validAcceptedUserPolicy}
@@ -428,17 +428,17 @@ class ServiceOverview extends React.Component {
                         toolTip={I18n.t("service.ldap.urlTooltip")}
                         copyClipBoard={true}
                         disabled={true}/>
-            <InputField value={ldapBindAccount.replace("entity_id", entity_id)}
-                        name={I18n.t("service.ldap.username")}
-                        toolTip={I18n.t("service.ldap.usernameTooltip")}
-                        copyClipBoard={true}
-                        disabled={true}/>
             <InputField
                 value={ldapBindAccount.substring(ldapBindAccount.indexOf(",") + 1).replace("entity_id", entity_id)}
                 name={I18n.t("service.ldap.basedn")}
                 toolTip={I18n.t("service.ldap.basednTooltip")}
                 copyClipBoard={true}
                 disabled={true}/>
+            <InputField value={ldapBindAccount.replace("entity_id", entity_id)}
+                        name={I18n.t("service.ldap.username")}
+                        toolTip={I18n.t("service.ldap.usernameTooltip")}
+                        copyClipBoard={true}
+                        disabled={true}/>
             <div className="ip-networks">
                 <label className="title" htmlFor={I18n.t("service.network")}>{I18n.t("service.network")}
                     <span className="tool-tip-section">
@@ -622,21 +622,17 @@ class ServiceOverview extends React.Component {
                       onChange={this.changeServiceProperty("automatic_connection_allowed", true)}
                       readOnly={!isAdmin && !isServiceAdmin}/>
 
-            <CheckBox name="access_allowed_for_all"
-                      value={service.access_allowed_for_all}
-                      info={I18n.t("service.accessAllowedForAll")}
-                      tooltip={I18n.t("service.accessAllowedForAllTooltip")}
-                      onChange={this.changeServiceProperty("access_allowed_for_all", true)}
-                      readOnly={!isAdmin && !isServiceAdmin}/>
+            {isAdmin && <CheckBox name="non_member_users_access_allowed"
+                                  value={service.non_member_users_access_allowed}
+                                  info={I18n.t("service.nonMemberUsersAccessAllowed")}
+                                  tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
+                                  onChange={this.changeServiceProperty("non_member_users_access_allowed", true)}/>}
 
             {isAdmin && <CheckBox name="white_listed"
                                   value={service.white_listed}
                                   info={I18n.t("service.whiteListed")}
                                   tooltip={I18n.t("service.whiteListedTooltip")}
-                                  onChange={this.changeServiceProperty("white_listed", true)}
-                                  readOnly={!isAdmin && !isServiceAdmin}/>}
-
-
+                                  onChange={this.changeServiceProperty("white_listed", true)}/>}
         </>
     }
 

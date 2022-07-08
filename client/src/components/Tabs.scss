@@ -9,8 +9,13 @@
         margin: 0 auto;
         display: flex;
 
+        @media (max-width: $tablet-max) {
+            padding: 0 15px;
+        }
+
         @media (max-width: $compact-medium) {
             flex-direction: column;
+            padding: 0;
         }
 
     }

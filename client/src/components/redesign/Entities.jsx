@@ -50,13 +50,13 @@ class Entities extends React.Component {
         }
     }
 
-    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch, hideTitle) => {
+    renderSearch = (modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, explain, customSearch, hideTitle) => {
         const filterClassName = !hideTitle && filters ? "filters-with-title" : `${modelName}-search-filters`;
         return (
             <section className="entities-search">
                 {showNew &&
                 <Button onClick={this.newEntity} className={`plus ${hideTitle && !filters ? "no-title" : ""}`}
-                        txt={I18n.t(`models.${modelName}.new`)}/>
+                        txt={newLabel || I18n.t(`models.${modelName}.new`)}/>
                 }
                 {!hideTitle && <h1>{title || `${I18n.t(`models.${modelName}.title`)} (${entities.length})`}</h1>}
                 <div className={filterClassName}>{filters}</div>
@@ -158,7 +158,7 @@ class Entities extends React.Component {
 
     render() {
         const {
-            modelName, entities, showNew, searchAttributes, columns, children, loading, customSearch,
+            modelName, entities, showNew, newLabel, searchAttributes, columns, children, loading, customSearch,
             actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = "",
             customNoEntities, hideTitle, onHover, actionHeader = ""
         } = this.props;
@@ -176,7 +176,7 @@ class Entities extends React.Component {
                     isVisible={showExplanation}>
                     {explain}
                 </Explain>}
-                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, filters, explain, customSearch, hideTitle)}
+                {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, explain, customSearch, hideTitle)}
 
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children,
                     rowLinkMapper, customNoEntities, onHover, actions, actionHeader)}
