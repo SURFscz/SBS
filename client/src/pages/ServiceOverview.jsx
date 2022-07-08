@@ -350,13 +350,14 @@ class ServiceOverview extends React.Component {
     }
 
 
-    renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab) => {
+    renderButtons = (isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView) => {
         const {accepted_user_policy} = this.state.service;
         const validAcceptedUserPolicy = validUrl.test(accepted_user_policy);
         return <>
             {(isAdmin || isServiceAdmin) &&
             <section className="actions">
-                {(isAdmin && currentTab === "general") && <Button warningButton={true} txt={I18n.t("service.delete")}
+                {(isAdmin && currentTab === "general" && !showServiceAdminView) &&
+                <Button warningButton={true} txt={I18n.t("service.delete")}
                                                                   onClick={this.delete}/>}
                 {currentTab === "policy" &&
                 <Button txt={I18n.t("service.aup.title")}
@@ -374,12 +375,12 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderPamWebLogin = (service, isAdmin) => {
+    renderPamWebLogin = (service, isAdmin, showServiceAdminView) => {
         return <>
             <RadioButton label={I18n.t("userTokens.pamWebSSOEnabled")}
                          name={"pam_web_sso_enabled"}
                          value={service.pam_web_sso_enabled}
-                         disabled={!isAdmin}
+                         disabled={!isAdmin || showServiceAdminView}
                          tooltip={I18n.t("userTokens.pamWebSSOEnabledTooltip")}
                          onChange={val => this.setState({"service": {...service, pam_web_sso_enabled: val}})}/>
         </>
@@ -580,7 +581,7 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderConnection = (config, service, alreadyExists, isAdmin, isServiceAdmin) => {
+    renderConnection = (config, service, alreadyExists, isAdmin, isServiceAdmin, showServiceAdminView) => {
         const serviceRequestUrlValid = !isEmpty(service.uri) && service.automatic_connection_allowed;
         const serviceRequestUrl = serviceRequestUrlValid ?
             `${config.base_url}/service-request?entityID=${encodeURIComponent(service.entity_id)}&redirectUri=${encodeURIComponent(service.uri)}` :
@@ -598,7 +599,7 @@ class ServiceOverview extends React.Component {
                         toolTip={I18n.t("service.entity_idTooltip")}
                         error={alreadyExists.entity_id || isEmpty(service.entity_id)}
                         copyClipBoard={true}
-                        disabled={!isAdmin}/>
+                        disabled={!isAdmin || showServiceAdminView}/>
             {alreadyExists.entity_id && <ErrorIndicator msg={I18n.t("service.alreadyExists", {
                 attribute: I18n.t("service.entity_id").toLowerCase(),
                 value: service.entity_id
@@ -607,7 +608,7 @@ class ServiceOverview extends React.Component {
                 attribute: I18n.t("service.entity_id").toLowerCase()
             })}/>}
 
-            {isAdmin && <InputField value={serviceRequestUrl}
+            {(isAdmin && !showServiceAdminView) && <InputField value={serviceRequestUrl}
                                     name={I18n.t("service.service_request")}
                                     toolTip={I18n.t("service.service_requestTooltip")}
                                     copyClipBoard={serviceRequestUrlValid}
@@ -622,13 +623,13 @@ class ServiceOverview extends React.Component {
                       onChange={this.changeServiceProperty("automatic_connection_allowed", true)}
                       readOnly={!isAdmin && !isServiceAdmin}/>
 
-            {isAdmin && <CheckBox name="non_member_users_access_allowed"
+            {(isAdmin && !showServiceAdminView) && <CheckBox name="non_member_users_access_allowed"
                                   value={service.non_member_users_access_allowed}
                                   info={I18n.t("service.nonMemberUsersAccessAllowed")}
                                   tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
                                   onChange={this.changeServiceProperty("non_member_users_access_allowed", true)}/>}
 
-            {isAdmin && <CheckBox name="white_listed"
+            {(isAdmin && !showServiceAdminView) && <CheckBox name="white_listed"
                                   value={service.white_listed}
                                   info={I18n.t("service.whiteListed")}
                                   tooltip={I18n.t("service.whiteListedTooltip")}
@@ -700,12 +701,12 @@ class ServiceOverview extends React.Component {
     }
 
     renderCurrentTab = (config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin, disabledSubmit,
-                        invalidInputs, hasAdministrators) => {
+                        invalidInputs, hasAdministrators, showServiceAdminView) => {
         switch (currentTab) {
             case "general":
                 return this.renderGeneral(service, alreadyExists, isAdmin, isServiceAdmin);
             case "connection":
-                return this.renderConnection(config, service, alreadyExists, isAdmin, isServiceAdmin);
+                return this.renderConnection(config, service, alreadyExists, isAdmin, isServiceAdmin, showServiceAdminView);
             case "contacts":
                 return this.renderContacts(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, hasAdministrators);
             case "policy":
@@ -715,7 +716,7 @@ class ServiceOverview extends React.Component {
             case "tokens":
                 return this.renderTokens(config, service, isAdmin);
             case "pamWebLogin":
-                return this.renderPamWebLogin(service, isAdmin);
+                return this.renderPamWebLogin(service, isAdmin, showServiceAdminView);
             default:
                 throw new Error("unknown-tab")
         }
@@ -744,7 +745,7 @@ class ServiceOverview extends React.Component {
             return <SpinnerField/>
         }
         const disabledSubmit = !this.isValid();
-        const {user, config} = this.props;
+        const {user, config, showServiceAdminView} = this.props;
         const isAdmin = user.admin;
         return (
             <div className="service-overview">
@@ -765,12 +766,12 @@ class ServiceOverview extends React.Component {
                     <h1 className="section-separator">{I18n.t(`serviceDetails.toc.${currentTab}`)}</h1>
                     {currentTab !== "general" && <div className={currentTab}>
                         {this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin,
-                            disabledSubmit, invalidInputs, hasAdministrators)}
+                            disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView)}
                     </div>}
                     {currentTab === "general" &&
                     this.renderCurrentTab(config, currentTab, service, alreadyExists, isAdmin, isServiceAdmin,
-                        disabledSubmit, invalidInputs, hasAdministrators)}
-                    {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab)}
+                        disabledSubmit, invalidInputs, hasAdministrators, showServiceAdminView)}
+                    {this.renderButtons(isAdmin, isServiceAdmin, disabledSubmit, currentTab, showServiceAdminView)}
                 </div>
             </div>
         );

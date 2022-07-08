@@ -940,6 +940,8 @@ I18n.translations.en = {
         },
         viewAsServiceAdmin: "View as service admin",
         viewAsPlatformAdmin: "View as platform admin",
+        fakeServiceAdmin: "You're service admin (not)",
+        addMe: "Make me service admin"
     },
     organisation: {
         title: "Create new organisation",

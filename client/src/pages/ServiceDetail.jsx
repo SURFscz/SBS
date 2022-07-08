@@ -1,7 +1,9 @@
 import React from "react";
 import {
     allServiceConnectionRequests,
-    deleteServiceMembership, health,
+    createServiceMembershipRole,
+    deleteServiceMembership,
+    health,
     searchOrganisations,
     serviceById,
     serviceInvitationAccept,
@@ -48,7 +50,6 @@ class ServiceDetail extends React.Component {
             firstTime: false,
             loading: true,
             tab: "details",
-            tabs: [],
             confirmationDialogOpen: false,
             cancelDialogAction: null,
             confirmationDialogAction: null,
@@ -69,7 +70,6 @@ class ServiceDetail extends React.Component {
                     loading: false,
                     firstTime: true,
                     isInvitation: true,
-                    tabs: [this.getAdminsTab(res.service)]
                 });
             }).catch(() => this.props.history.push("/404"));
 
@@ -83,25 +83,12 @@ class ServiceDetail extends React.Component {
                         const service = res[0];
                         const organisations = res[1];
                         const serviceConnectionRequests = res[2];
-                        const tabs = [
-                            this.getDetailsTab(service, user.admin, userServiceAdmin),
-                            this.getOrganisationsTab(service, organisations, user.admin, userServiceAdmin),
-                            this.getCollaborationsTab(service, user.admin, userServiceAdmin),
-                            this.getAdminsTab(service),
-                        ];
-                        if (user.admin) {
-                            tabs.push(this.getServiceGroupsTab(service));
-                        }
-                        if (serviceConnectionRequests.length > 0) {
-                            tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
-                        }
-                        this.afterFetch(params, service, organisations, serviceConnectionRequests, tabs);
+                        this.afterFetch(params, service, organisations, serviceConnectionRequests);
                     }).catch(e => this.props.history.push("/404"));
             } else {
                 serviceById(params.id)
                     .then(res => {
-                        const tabs = [];
-                        this.afterFetch(params, res, [], [], tabs);
+                        this.afterFetch(params, res, [], []);
                     }).catch(e => this.props.history.push("/404"));
             }
         } else {
@@ -113,7 +100,7 @@ class ServiceDetail extends React.Component {
         this.setState({firstTime: true});
     }
 
-    afterFetch = (params, service, organisations, serviceConnectionRequests, tabs) => {
+    afterFetch = (params, service, organisations, serviceConnectionRequests) => {
         const tab = params.tab || this.state.tab;
         this.tabChanged(tab, service);
         this.setState({
@@ -121,7 +108,6 @@ class ServiceDetail extends React.Component {
             organisations: organisations,
             serviceConnectionRequests: serviceConnectionRequests,
             tab: tab,
-            tabs: tabs,
             loading: false
         });
     }
@@ -145,12 +131,10 @@ class ServiceDetail extends React.Component {
         return (
             <div className={`eye-view`} onClick={() => {
                 health().then(() => {
-                    const {showServiceAdminView, tab, tabs, service} = this.state;
+                    const {showServiceAdminView, tab} = this.state;
                     const newTab = tab === "groups" ? "details" : tab;
-                    const newTabs = showServiceAdminView ? tabs.concat([this.getServiceGroupsTab(service)]) : tabs.filter(t => t.key !== "groups");
                     this.setState({
                             showServiceAdminView: !showServiceAdminView,
-                            tabs: newTabs,
                             tab: newTab
                         },
                         () => {
@@ -194,30 +178,14 @@ class ServiceDetail extends React.Component {
 
     refresh = callback => {
         const params = this.props.match.params;
-        const {organisations} = this.state;
         this.setState({loading: true});
-        const {user} = this.props;
-        const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
         Promise.all([serviceById(params.id), allServiceConnectionRequests(params.id)])
             .then(res => {
                 const service = res[0];
                 const serviceConnectionRequests = res[1];
-                const tabs = [
-                    this.getDetailsTab(service, user.admin, userServiceAdmin),
-                    this.getOrganisationsTab(service, organisations, user.admin, userServiceAdmin),
-                    this.getCollaborationsTab(service, user.admin, userServiceAdmin),
-                    this.getAdminsTab(service)
-                ];
-                if (user.admin) {
-                    tabs.push(this.getServiceGroupsTab(service))
-                }
-                if (serviceConnectionRequests.length > 0) {
-                    tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
-                }
                 this.setState({
                     service: service,
                     serviceConnectionRequests: serviceConnectionRequests,
-                    tabs: tabs,
                     loading: false
                 }, callback);
             }).catch(e => {
@@ -225,13 +193,14 @@ class ServiceDetail extends React.Component {
         });
     };
 
-    getDetailsTab = (service, userAdmin, serviceAdmin) => {
+    getDetailsTab = (service, userAdmin, serviceAdmin, showServiceAdminView) => {
         return (<div key="details" name="details"
                      label={I18n.t("home.tabs.details")}
                      icon={<DetailsIcon/>}>
             <ServiceOverview {...this.props}
                              refresh={this.refresh}
                              service={service}
+                             showServiceAdminView={showServiceAdminView}
                              userAdmin={userAdmin}
                              serviceAdmin={serviceAdmin}/>
         </div>)
@@ -385,28 +354,67 @@ class ServiceDetail extends React.Component {
         });
     };
 
-    getActions = (user, service) => {
+    getActions = (user, service, showServiceAdminView) => {
         const actions = [];
         const serviceAdmin = isUserServiceAdmin(user, service);
-        if (serviceAdmin)
+        if (serviceAdmin || showServiceAdminView)
             actions.push({
                 svg: LeaveIcon,
+                disabled: !serviceAdmin,
                 name: I18n.t("service.leave"),
                 perform: this.deleteMe
             });
+        if (user.admin && !serviceAdmin && !showServiceAdminView) {
+            actions.push({
+                icon: "plus-circle",
+                name: I18n.t("service.addMe"),
+                perform: this.addMe
+            })
+        }
         return actions;
+    }
+
+    addMe = () => {
+        const {service} = this.state;
+        this.setState({loading: true});
+        createServiceMembershipRole(service.id).then(() => {
+            this.props.refreshUser(() => {
+                this.setState({confirmationDialogOpen: false, loading: false});
+                this.componentDidMount();
+            });
+        })
     }
 
     render() {
         const {
-            tabs, service, loading, tab, firstTime,
-            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction,
+            service, loading, tab, firstTime, showServiceAdminView, serviceConnectionRequests,
+            confirmationDialogOpen, cancelDialogAction, confirmationDialogAction, organisations,
             confirmationDialogQuestion, confirmationTxt, confirmationHeader, isWarning, lastAdminWarning
         } = this.state;
         if (loading) {
             return <SpinnerField/>;
         }
         const {user} = this.props;
+        let tabs = [];
+        const params = this.props.match.params;
+        const userServiceAdmin = isUserServiceAdmin(user, {id: parseInt(params.id, 10)}) || user.admin;
+        if (params.hash) {
+            tabs = [this.getAdminsTab(service)];
+        } else if (userServiceAdmin) {
+            tabs = [
+                this.getDetailsTab(service, user.admin, userServiceAdmin, showServiceAdminView),
+                this.getOrganisationsTab(service, organisations, user.admin, userServiceAdmin),
+                this.getCollaborationsTab(service, user.admin, userServiceAdmin),
+                this.getAdminsTab(service)
+            ];
+            if (user.admin && !showServiceAdminView) {
+                tabs.push(this.getServiceGroupsTab(service))
+            }
+            if (serviceConnectionRequests.length > 0) {
+                tabs.push(this.getServiceConnectionRequestTab(service, serviceConnectionRequests));
+            }
+        }
+
         return (
             <div className="mod-service-container">
                 <ServiceWelcomeDialog name={service.name}
@@ -427,13 +435,13 @@ class ServiceDetail extends React.Component {
 
                 <UnitHeader obj={service}
                             mayEdit={user.admin || isUserServiceAdmin(user, service)}
-                            history={user.admin && this.props.history}
+                            history={user.admin && this.props.history && !showServiceAdminView}
                             auditLogPath={`services/${service.id}`}
                             breadcrumbName={I18n.t("breadcrumb.service", {name: service.name})}
                             name={service.name}
-                            firstTime={user.admin ? this.onBoarding : undefined}
-                            dropDownTitle={actionMenuUserRole(user, null, null, service, true)}
-                            actions={this.getActions(user, service)}>
+                            firstTime={(user.admin && !showServiceAdminView) ? this.onBoarding : undefined}
+                            dropDownTitle={showServiceAdminView ? I18n.t("service.fakeServiceAdmin") : actionMenuUserRole(user, null, null, service, true)}
+                            actions={this.getActions(user, service, showServiceAdminView)}>
                     <p>{service.description}</p>
                     <div className="org-attributes-container-grid">
                         <div className="org-attributes">

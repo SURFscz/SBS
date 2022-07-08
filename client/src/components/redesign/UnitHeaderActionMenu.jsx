@@ -25,11 +25,17 @@ class UnitHeaderActionMenu extends React.Component {
                     tabIndex={1}
                     onBlur={() => setTimeout(this.props.close, 250)}>
             <ul>
-                {actions.map(action => <li key={action.name} onClick={this.performAction(action)}>
-                    {action.icon && <FontAwesomeIcon icon={action.icon}/>}
-                    {action.svg && <action.svg/>}
-                    <a href={"/" + action.name} >{action.name}</a>
-                </li>)}
+                {actions.map(action =>
+                    <li key={action.name}
+                        className={`${action.disabled ? "disabled" : ""} `}
+                        onClick={this.performAction(action)}>
+                        {action.icon && <FontAwesomeIcon icon={action.icon}/>}
+                        {action.svg && <action.svg/>}
+                        <a href={"/" + action.name}
+                           className={`${action.disabled ? "disabled" : ""} `}>
+                            {action.name}
+                        </a>
+                    </li>)}
                 {(history && auditLogPath) &&
                 <li onClick={() => this.props.history.push(`/audit-logs/${auditLogPath}?${queryParam}`)}>
                     <FontAwesomeIcon icon="history"/>
@@ -40,7 +46,7 @@ class UnitHeaderActionMenu extends React.Component {
                 {firstTime &&
                 <li onClick={this.performAction({perform: firstTime})}>
                     <FontAwesomeIcon icon="plane-departure"/>
-                    <a href={"/" + I18n.t("home.firstTime")} >
+                    <a href={"/" + I18n.t("home.firstTime")}>
                         {I18n.t("home.firstTime")}
                     </a>
                 </li>}
