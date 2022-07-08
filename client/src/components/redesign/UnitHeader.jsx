@@ -48,7 +48,7 @@ class UnitHeader extends React.Component {
                             {children}
                         </div>
                     </div>
-                    {(!isEmpty(actions) || !isEmpty(history) || !isEmpty(auditLogPath)) &&
+                    {!isEmpty(actions) &&
                     <div className="action-menu-container">
                         {this.renderDropDownLink(showDropDown, dropDownTitle)}
                         {showDropDown && <UnitHeaderActionMenu actions={actions}

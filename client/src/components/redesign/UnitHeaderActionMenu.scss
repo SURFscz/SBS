@@ -42,13 +42,6 @@
             align-items: center;
             cursor: pointer;
 
-            a {
-                padding: 15px 15px 15px 15px;
-                color: $darker-grey;
-                text-decoration: none;
-                width: 100%;
-            }
-
             svg {
                 color: $darker-grey;
                 display: inline-block;
@@ -64,7 +57,27 @@
                 }
             }
 
-            &:hover {
+            &.disabled {
+                cursor: not-allowed;
+
+                svg {
+                    color: $medium-grey;
+                }
+            }
+
+            a {
+                padding: 15px 15px 15px 15px;
+                color: $darker-grey;
+                text-decoration: none;
+                width: 100%;
+
+                &.disabled {
+                    color: $medium-grey;
+                    cursor: not-allowed;
+                }
+            }
+
+            &:hover:not(.disabled) {
                 background-color: $lightest-grey;
 
                 a {

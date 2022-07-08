@@ -769,6 +769,12 @@ export function deleteServiceMembership(serviceId, userId, showErrorDialog = tru
     return fetchDelete(`/api/service_memberships/${serviceId}/${userId}`, showErrorDialog)
 }
 
+export function createServiceMembershipRole(serviceId) {
+    return postPutJson("/api/service_memberships", {
+        serviceId: serviceId
+    }, "post")
+}
+
 //ServiceInvitations
 export function serviceInvitationByHash(hash) {
     return fetchJson(`/api/service_invitations/find_by_hash?hash=${hash}`, {}, {}, false);

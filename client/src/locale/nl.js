@@ -939,6 +939,8 @@ I18n.translations.nl = {
         },
         viewAsServiceAdmin: "Bekijk als service beheerder",
         viewAsPlatformAdmin: "Bekijk als platform admin",
+        fakeServiceAdmin: "Je bent service admin (not)",
+        addMe: "Maak me dienst beheerder"
     },
     organisation: {
         title: "Nieuwe organisatie toevoegen",
