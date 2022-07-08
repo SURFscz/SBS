@@ -192,6 +192,13 @@ class ServiceOverview extends React.Component {
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
     };
 
+    validateURI = name => e => {
+        const uri = e.target.value;
+        const {invalidInputs} = this.state;
+        const inValid = !isEmpty(uri) && !validUrl.test(uri);
+        this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
+    };
+
     validateIpAddress = index => e => {
         const currentIpNetwork = this.state.ip_networks[index];
         const address = e.target.value;
@@ -346,7 +353,7 @@ class ServiceOverview extends React.Component {
         if (name === "abbreviation") {
             value = sanitizeShortName(value);
         }
-        this.setState({"service": {...service, [name]: value, alreadyExists, invalidInputs}});
+        this.setState({alreadyExists, invalidInputs, "service": {...service, [name]: value}});
     }
 
 
@@ -358,7 +365,7 @@ class ServiceOverview extends React.Component {
             <section className="actions">
                 {(isAdmin && currentTab === "general" && !showServiceAdminView) &&
                 <Button warningButton={true} txt={I18n.t("service.delete")}
-                                                                  onClick={this.delete}/>}
+                        onClick={this.delete}/>}
                 {currentTab === "policy" &&
                 <Button txt={I18n.t("service.aup.title")}
                         disabled={!validAcceptedUserPolicy}
@@ -542,7 +549,7 @@ class ServiceOverview extends React.Component {
                         name={I18n.t("service.contact_email")}
                         placeholder={I18n.t("service.contact_emailPlaceholder")}
                         onChange={e => this.changeServiceProperty("contact_email", false, alreadyExists,
-                            !isEmpty(e.target.value) ? invalidInputs : {...invalidInputs, email: false})(e)}
+                            {...invalidInputs, email: false})(e)}
                         toolTip={I18n.t("service.contact_emailTooltip")}
                         error={invalidInputs["email"] || contactEmailRequired}
                         onBlur={this.validateEmail("email")}
@@ -555,7 +562,7 @@ class ServiceOverview extends React.Component {
                         name={I18n.t("service.security_email")}
                         placeholder={I18n.t("service.security_emailPlaceholder")}
                         onChange={e => this.changeServiceProperty("security_email", false, alreadyExists,
-                            !isEmpty(e.target.value) ? invalidInputs : {...invalidInputs, security_email: false})(e)}
+                            {...invalidInputs, security_email: false})(e)}
                         toolTip={I18n.t("service.security_emailTooltip")}
                         error={isEmpty(service.security_email) || invalidInputs["security_email"]}
                         onBlur={this.validateEmail("security_email")}
@@ -571,7 +578,7 @@ class ServiceOverview extends React.Component {
                         name={I18n.t("service.support_email")}
                         placeholder={I18n.t("service.support_emailPlaceholder")}
                         onChange={e => this.changeServiceProperty("support_email", false, alreadyExists,
-                            !isEmpty(e.target.value) ? invalidInputs : {...invalidInputs, support_email: false})(e)}
+                            {...invalidInputs, support_email: false})(e)}
                         toolTip={I18n.t("service.support_emailTooltip")}
                         error={invalidInputs["support_email"]}
                         onBlur={this.validateEmail("support_email")}
@@ -590,8 +597,7 @@ class ServiceOverview extends React.Component {
         return <>
             <InputField value={service.entity_id}
                         onChange={this.changeServiceProperty("entity_id", false, {
-                            ...this.state.alreadyExists,
-                            entity_id: false
+                            ...alreadyExists, entity_id: false
                         })}
                         placeholder={I18n.t("service.entity_idPlaceHolder")}
                         onBlur={this.validateServiceEntityId}
@@ -609,11 +615,11 @@ class ServiceOverview extends React.Component {
             })}/>}
 
             {(isAdmin && !showServiceAdminView) && <InputField value={serviceRequestUrl}
-                                    name={I18n.t("service.service_request")}
-                                    toolTip={I18n.t("service.service_requestTooltip")}
-                                    copyClipBoard={serviceRequestUrlValid}
-                                    history={this.props.history}
-                                    disabled={true}
+                                                               name={I18n.t("service.service_request")}
+                                                               toolTip={I18n.t("service.service_requestTooltip")}
+                                                               copyClipBoard={serviceRequestUrlValid}
+                                                               history={this.props.history}
+                                                               disabled={true}
             />}
 
             <CheckBox name="automatic_connection_allowed"
@@ -624,23 +630,23 @@ class ServiceOverview extends React.Component {
                       readOnly={!isAdmin && !isServiceAdmin}/>
 
             {(isAdmin && !showServiceAdminView) && <CheckBox name="non_member_users_access_allowed"
-                                  value={service.non_member_users_access_allowed}
-                                  info={I18n.t("service.nonMemberUsersAccessAllowed")}
-                                  tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
-                                  onChange={this.changeServiceProperty("non_member_users_access_allowed", true)}/>}
+                                                             value={service.non_member_users_access_allowed}
+                                                             info={I18n.t("service.nonMemberUsersAccessAllowed")}
+                                                             tooltip={I18n.t("service.nonMemberUsersAccessAllowedTooltip")}
+                                                             onChange={this.changeServiceProperty("non_member_users_access_allowed", true)}/>}
 
             {(isAdmin && !showServiceAdminView) && <CheckBox name="white_listed"
-                                  value={service.white_listed}
-                                  info={I18n.t("service.whiteListed")}
-                                  tooltip={I18n.t("service.whiteListedTooltip")}
-                                  onChange={this.changeServiceProperty("white_listed", true)}/>}
+                                                             value={service.white_listed}
+                                                             info={I18n.t("service.whiteListed")}
+                                                             tooltip={I18n.t("service.whiteListedTooltip")}
+                                                             onChange={this.changeServiceProperty("white_listed", true)}/>}
         </>
     }
 
-    renderGeneral = (service, alreadyExists, isAdmin, isServiceAdmin) => {
+    renderGeneral = (service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs) => {
         return <>
             <InputField value={service.name}
-                        onChange={this.changeServiceProperty("name", false, {...this.state.alreadyExists, name: false})}
+                        onChange={this.changeServiceProperty("name", false, {alreadyExists, name: false})}
                         placeholder={I18n.t("service.namePlaceHolder")}
                         onBlur={this.validateServiceName}
                         error={alreadyExists.name}
@@ -664,8 +670,7 @@ class ServiceOverview extends React.Component {
 
             <InputField value={service.abbreviation}
                         onChange={this.changeServiceProperty("abbreviation", false, {
-                            ...this.state.alreadyExists,
-                            abbreviation: false
+                            alreadyExists, abbreviation: false
                         })}
                         placeholder={I18n.t("service.abbreviationPlaceHolder")}
                         onBlur={this.validateServiceAbbreviation}
@@ -689,14 +694,19 @@ class ServiceOverview extends React.Component {
                         multiline={true}
                         disabled={!isAdmin && !isServiceAdmin}/>
 
-
             <InputField value={service.uri}
                         name={I18n.t("service.uri")}
                         placeholder={I18n.t("service.uriPlaceholder")}
-                        onChange={this.changeServiceProperty("uri")}
+                        onChange={e => this.changeServiceProperty("uri", false, alreadyExists,
+                            {...invalidInputs, uri: false})(e)}
                         toolTip={I18n.t("service.uriTooltip")}
                         externalLink={true}
+                        error={invalidInputs.uri}
+                        onBlur={this.validateURI("uri")}
                         disabled={!isAdmin && !isServiceAdmin}/>
+            {invalidInputs.uri &&
+            <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+
         </>
     }
 
@@ -704,7 +714,7 @@ class ServiceOverview extends React.Component {
                         invalidInputs, hasAdministrators, showServiceAdminView) => {
         switch (currentTab) {
             case "general":
-                return this.renderGeneral(service, alreadyExists, isAdmin, isServiceAdmin);
+                return this.renderGeneral(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs);
             case "connection":
                 return this.renderConnection(config, service, alreadyExists, isAdmin, isServiceAdmin, showServiceAdminView);
             case "contacts":

@@ -44,3 +44,15 @@ def cleanse_short_name(data, attr="short_name"):
         short_name = short_name[1:]
 
     data[attr] = re.sub(r"[^a-zA-Z_0-9]+", "", short_name).lower()[:16]
+
+
+uri_re = re.compile("^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}" \
+                    "\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$")
+
+
+def valid_uri_attributes(data, uri_attributes):
+    for uri_attr in uri_attributes:
+        uri = data.get(uri_attr)
+        if uri and not bool(uri_re.match(uri)):
+            raise ValueError(f"{uri} is not a valid uri")
+    return True

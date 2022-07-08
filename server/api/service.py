@@ -15,7 +15,7 @@ from server.auth.security import confirm_write_access, current_user_id, confirm_
     is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin, secure_hash, \
     generate_token
 from server.db.db import db
-from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date
+from server.db.defaults import STATUS_ACTIVE, cleanse_short_name, default_expiry_date, valid_uri_attributes
 from server.db.domain import Service, Collaboration, CollaborationMembership, Organisation, OrganisationMembership, \
     User, ServiceInvitation, ServiceMembership
 from server.db.models import update, save, delete
@@ -280,7 +280,9 @@ def mine_services():
 @json_endpoint
 def save_service():
     data = current_request.get_json()
+
     validate_ip_networks(data)
+    valid_uri_attributes(data, ["uri", "privacy_policy", "accepted_user_policy"])
     _token_validity_days(data)
 
     data["status"] = STATUS_ACTIVE
@@ -374,6 +376,7 @@ def update_service():
     confirm_service_admin(service_id)
 
     validate_ip_networks(data)
+    valid_uri_attributes(data, ["uri", "privacy_policy", "accepted_user_policy"])
     _token_validity_days(data)
     cleanse_short_name(data, "abbreviation")
     service = Service.query.filter(Service.id == service_id).one()

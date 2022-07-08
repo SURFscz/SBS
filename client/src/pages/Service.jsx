@@ -17,7 +17,7 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import {sanitizeShortName, validEmailRegExp} from "../validations/regExps";
+import {sanitizeShortName, validEmailRegExp, validUrl} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
@@ -160,6 +160,13 @@ class Service extends React.Component {
         const email = e.target.value;
         const {invalidInputs} = this.state;
         const inValid = !isEmpty(email) && !validEmailRegExp.test(email);
+        this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
+    };
+
+    validateURI = name => e => {
+        const uri = e.target.value;
+        const {invalidInputs} = this.state;
+        const inValid = !isEmpty(uri) && !validUrl.test(uri);
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
     };
 
@@ -429,14 +436,21 @@ class Service extends React.Component {
                 <InputField value={privacy_policy}
                             name={I18n.t("service.privacy_policy")}
                             placeholder={I18n.t("service.privacy_policyPlaceholder")}
-                            onChange={e => this.setState({privacy_policy: e.target.value})}
+                            onChange={e => this.setState({
+                                privacy_policy: e.target.value,
+                                invalidInputs: {...invalidInputs, privacy_policy: false}
+                            })}
                             error={!initial && isEmpty(privacy_policy)}
                             toolTip={I18n.t("service.privacy_policyTooltip")}
                             externalLink={true}
+                            onBlur={this.validateURI("privacy_policy")}
                             disabled={!isAdmin && !isServiceAdmin}/>
                 {(!initial && isEmpty(privacy_policy)) && <ErrorIndicator msg={I18n.t("service.required", {
                     attribute: I18n.t("service.privacy_policy").toLowerCase()
                 })}/>}
+                {invalidInputs["privacy_policy"] &&
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+
 
                 {(!isNew && isAdmin) && <InputField value={serviceRequestUrl}
                                                     name={I18n.t("service.service_request")}
@@ -456,10 +470,17 @@ class Service extends React.Component {
                 <InputField value={uri}
                             name={I18n.t("service.uri")}
                             placeholder={I18n.t("service.uriPlaceholder")}
-                            onChange={e => this.setState({uri: e.target.value})}
+                            onChange={e => this.setState({
+                                uri: e.target.value,
+                                invalidInputs: {...invalidInputs, uri: false}
+                            })}
                             toolTip={I18n.t("service.uriTooltip")}
                             externalLink={true}
+                            onBlur={this.validateURI("uri")}
                             disabled={!isAdmin && !isServiceAdmin}/>
+                {invalidInputs["uri"] &&
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
+
 
                 <CheckBox name="automatic_connection_allowed" value={automatic_connection_allowed}
                           info={I18n.t("service.automaticConnectionAllowed")}
@@ -488,10 +509,16 @@ class Service extends React.Component {
                 <InputField value={accepted_user_policy}
                             name={I18n.t("service.accepted_user_policy")}
                             placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
-                            onChange={e => this.setState({accepted_user_policy: e.target.value})}
+                            onChange={e => this.setState({
+                                accepted_user_policy: e.target.value,
+                                invalidInputs: {...invalidInputs, accepted_user_policy: false}
+                            })}
                             toolTip={I18n.t("service.accepted_user_policyTooltip")}
                             externalLink={true}
+                            onBlur={this.validateURI("accepted_user_policy")}
                             disabled={!isAdmin && !isServiceAdmin}/>
+                {invalidInputs["accepted_user_policy"] &&
+                <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
 
                 {this.renderIpNetworks(ip_networks, isAdmin, isServiceAdmin)}
                 <div className="contacts">
