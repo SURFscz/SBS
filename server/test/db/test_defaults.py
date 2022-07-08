@@ -6,7 +6,7 @@ from unittest import TestCase
 from munch import munchify
 from werkzeug.exceptions import BadRequest
 
-from server.db.defaults import default_expiry_date, calculate_expiry_period, cleanse_short_name
+from server.db.defaults import default_expiry_date, calculate_expiry_period, cleanse_short_name, valid_uri_attributes
 from server.db.domain import Invitation
 
 
@@ -81,3 +81,11 @@ class TestDefaults(TestCase):
         _test_cleansing("1QWERTY", "qwerty")
         _test_cleansing("123456789012345678X", "x")
         _test_cleansing("1ABC!D@E#F&G(HIJ)KLMNO-PQRSTUVWYZ", "abcdefghijklmnop")
+
+    def test_valid_uri_attributes(self):
+        self.assertTrue(valid_uri_attributes({"url": "https://sram.org"}, ["url"]))
+
+        def invalid_uri():
+            valid_uri_attributes({"url": "nope"}, ["url"])
+
+        self.assertRaises(ValueError, invalid_uri)

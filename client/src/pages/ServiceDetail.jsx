@@ -96,6 +96,12 @@ class ServiceDetail extends React.Component {
         }
     };
 
+    componentWillUnmount() {
+        AppStore.update(s => {
+            s.sideComponent = null;
+        });
+    }
+
     onBoarding = () => {
         this.setState({firstTime: true});
     }

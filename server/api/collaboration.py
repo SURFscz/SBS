@@ -17,7 +17,7 @@ from server.auth.security import confirm_collaboration_admin, current_user_id, c
     is_organisation_admin_or_manager, is_application_admin
 from server.db.db import db
 from server.db.defaults import default_expiry_date, full_text_search_autocomplete_limit, cleanse_short_name, \
-    STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED
+    STATUS_ACTIVE, STATUS_EXPIRED, STATUS_SUSPENDED, valid_uri_attributes
 from server.db.domain import Collaboration, CollaborationMembership, JoinRequest, Group, User, Invitation, \
     Organisation, Service, ServiceConnectionRequest, SchacHomeOrganisation, Tag
 from server.db.models import update, save, delete
@@ -420,6 +420,8 @@ def do_save_collaboration(data, organisation, user, current_user_admin=True):
     administrators = data.get("administrators", [])
     message = data.get("message", None)
     tags = data.get("tags", None)
+
+    valid_uri_attributes(data, ["accepted_user_policy", "website_url"])
 
     data["identifier"] = str(uuid.uuid4())
     res = save(Collaboration, custom_json=data, allow_child_cascades=False)

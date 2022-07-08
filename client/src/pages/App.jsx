@@ -60,7 +60,7 @@ class App extends React.Component {
         super(props, context);
         this.state = {
             loading: true,
-            currentUser: {},
+            currentUser: {guest: true},
             aupConfig: {},
             config: {},
             impersonator: null,
@@ -206,22 +206,18 @@ class App extends React.Component {
                     <Switch>
                         <Route exact path="/" render={props => {
                             if (currentUser.guest) {
-                                   const rateLimited = getParameterByName("rate-limited", window.location.search)
-                                   if (currentUser.guest || rateLimited) {
-                                       return <Login user={currentUser} {...props} rateLimited={rateLimited}/>;
-                                   }
-                                   const state = getParameterByName("state", window.location.search);
-                                   if (isEmpty(state)) {
-                                       return <Redirect to="/home"/>;
-                                   }
-                                   return <Redirect to={decodeURIComponent(state)}/>
-                            } else {
+                                const rateLimited = getParameterByName("rate-limited", window.location.search)
+                                return <Login user={currentUser} {...props} rateLimited={rateLimited}/>;
+                            }
+                            const state = getParameterByName("state", window.location.search);
+                            if (isEmpty(state)) {
                                 return <Redirect to="/home"/>;
                             }
+                            return <Redirect to={decodeURIComponent(state)}/>
                         }}/>
 
                         <Route exact path="/landing" render={() => {
-                            return  <Redirect to={`/${window.location.search}`}/>
+                            return <Redirect to={`/${window.location.search}`}/>
                         }}/>
 
                         <Route exact path="/login"
