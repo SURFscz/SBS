@@ -115,36 +115,31 @@ class App extends React.Component {
 
     componentDidMount() {
         emitter.addListener("impersonation", this.impersonate);
-        const location = window.location;
-        if (location.href.indexOf("error") > -1) {
-            this.setState({loading: false});
-        } else {
-            Promise.all([config(), aupLinks()]).then(res => {
-                this.setState({config: res[0], aupConfig: res[1]},
-                    () => me(res[0]).then(results => {
-                        const currentUser = results;
-                        if (currentUser && currentUser.uid) {
-                            const user = this.markUserAdmin(currentUser);
-                            this.setState({currentUser: user, loading: false});
-                            if (currentUser.successfully_activated) {
-                                setFlash(I18n.t("login.successfullyActivated"))
-                            }
-                        } else {
-                            this.handleBackendDown();
+        Promise.all([config(), aupLinks()]).then(res => {
+            this.setState({config: res[0], aupConfig: res[1]},
+                () => me(res[0]).then(results => {
+                    const currentUser = results;
+                    if (currentUser && currentUser.uid) {
+                        const user = this.markUserAdmin(currentUser);
+                        this.setState({currentUser: user, loading: false});
+                        if (currentUser.successfully_activated) {
+                            setFlash(I18n.t("login.successfullyActivated"))
                         }
-                    }).catch(e => {
-                        if (e.response && e.response.status === 409) {
-                            this.setState({
-                                currentUser: {"uid": "anonymous", "guest": true, "admin": false},
-                                loading: false
-                            });
-                            setFlash(I18n.t("login.suspended"), "error");
-                        } else {
-                            this.handleBackendDown();
-                        }
-                    }));
-            }).catch(() => this.handleBackendDown());
-        }
+                    } else {
+                        this.handleBackendDown();
+                    }
+                }).catch(e => {
+                    if (e.response && e.response.status === 409) {
+                        this.setState({
+                            currentUser: {"uid": "anonymous", "guest": true, "admin": false},
+                            loading: false
+                        });
+                        setFlash(I18n.t("login.suspended"), "error");
+                    } else {
+                        this.handleBackendDown();
+                    }
+                }));
+        }).catch(() => this.handleBackendDown());
     }
 
     componentWillUnmount() {
