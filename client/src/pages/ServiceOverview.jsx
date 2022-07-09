@@ -278,13 +278,15 @@ class ServiceOverview extends React.Component {
 
         switch (tab) {
             case "general":
-                return !isEmpty(service.name) && !alreadyExists.name && !isEmpty(service.abbreviation) && !alreadyExists.abbreviation && !isEmpty(service.logo);
+                return !isEmpty(service.name) && !alreadyExists.name && !isEmpty(service.abbreviation)
+                    && !alreadyExists.abbreviation && !isEmpty(service.logo) && !invalidInputs.uri;
             case "connection":
                 return !isEmpty(service.entity_id) && !alreadyExists.entity_id;
             case "contacts":
-                return !isEmpty(service.security_email) && !contactEmailRequired && Object.keys(invalidInputs).filter(key => invalidInputs[key]).length === 0;
+                return !isEmpty(service.security_email) && !contactEmailRequired &&
+                    !invalidInputs.email && !invalidInputs.security_email && !invalidInputs.support_email
             case "policy":
-                return !isEmpty(service.privacy_policy);
+                return !isEmpty(service.privacy_policy) && !invalidInputs.privacy_policy && !invalidInputs.accepted_user_policy;
             case "ldap":
                 return !invalidIpNetworks;
             case "tokens":
@@ -494,27 +496,36 @@ class ServiceOverview extends React.Component {
         </>
     }
 
-    renderPolicy = (service, isAdmin, isServiceAdmin) => {
+    renderPolicy = (service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists) => {
         return <>
             <InputField value={service.privacy_policy}
                         name={I18n.t("service.privacy_policy")}
                         placeholder={I18n.t("service.privacy_policyPlaceholder")}
-                        onChange={this.changeServiceProperty("privacy_policy")}
-                        error={isEmpty(service.privacy_policy)}
+                        onChange={e => this.changeServiceProperty("privacy_policy", false, alreadyExists,
+                            {...invalidInputs, privacy_policy: false})(e)}
+                        error={isEmpty(service.privacy_policy) || invalidInputs.privacy_policy}
                         toolTip={I18n.t("service.privacy_policyTooltip")}
                         externalLink={true}
+                        onBlur={this.validateURI("privacy_policy")}
                         disabled={!isAdmin && !isServiceAdmin}/>
             {isEmpty(service.privacy_policy) && <ErrorIndicator msg={I18n.t("service.required", {
                 attribute: I18n.t("service.privacy_policy").toLowerCase()
             })}/>}
+            {invalidInputs.privacy_policy &&
+            <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
 
             <InputField value={service.accepted_user_policy}
                         name={I18n.t("service.accepted_user_policy")}
                         placeholder={I18n.t("service.accepted_user_policyPlaceholder")}
-                        onChange={this.changeServiceProperty("accepted_user_policy")}
+                        onChange={e => this.changeServiceProperty("accepted_user_policy", false, alreadyExists,
+                            {...invalidInputs, accepted_user_policy: false})(e)}
                         toolTip={I18n.t("service.accepted_user_policyTooltip")}
+                        error={invalidInputs.accepted_user_policy}
                         externalLink={true}
+                        onBlur={this.validateURI("accepted_user_policy")}
                         disabled={!isAdmin && !isServiceAdmin}/>
+            {invalidInputs.accepted_user_policy &&
+            <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
 
             <RadioButton label={I18n.t("service.sirtfiCompliant")}
                          name={"sirtfi_compliant"}
@@ -706,7 +717,6 @@ class ServiceOverview extends React.Component {
                         disabled={!isAdmin && !isServiceAdmin}/>
             {invalidInputs.uri &&
             <ErrorIndicator msg={I18n.t("forms.invalidInput", {name: "uri"})}/>}
-
         </>
     }
 
@@ -720,7 +730,7 @@ class ServiceOverview extends React.Component {
             case "contacts":
                 return this.renderContacts(service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs, hasAdministrators);
             case "policy":
-                return this.renderPolicy(service, isAdmin, isServiceAdmin);
+                return this.renderPolicy(service, isAdmin, isServiceAdmin, invalidInputs, alreadyExists);
             case "ldap":
                 return this.renderLdap(config, service, isAdmin, isServiceAdmin);
             case "tokens":
