@@ -4,6 +4,7 @@ import ReactTooltip from "react-tooltip";
 import "./InputField.scss";
 import {isEmpty} from "../utils/Utils";
 import ClipBoardCopy from "./redesign/ClipBoardCopy";
+import {validUrlRegExp} from "../validations/regExps";
 
 export default function InputField({
                                        onChange,
@@ -39,6 +40,7 @@ export default function InputField({
     if (error) {
         className += "error ";
     }
+    const validExternalLink = externalLink && !isEmpty(value) && validUrlRegExp.test(value);
     return (
         <div className="input-field">
             {(name && displayLabel) && <label htmlFor={name}>{name} {toolTip &&
@@ -83,9 +85,12 @@ export default function InputField({
                 {(link && history) && <div className="input-field-link"><FontAwesomeIcon icon="arrow-right"
                                                                                          onClick={() => history.push(link)}/>
                 </div>}
-                {(externalLink && value) &&
-                <div className="input-field-link"><a href={value} rel="noopener noreferrer"
-                                                     target="_blank"><FontAwesomeIcon icon="arrow-right"/></a></div>}
+                {validExternalLink &&
+                <div className={`input-field-link`}>
+                    <a href={value} rel="noopener noreferrer" target="_blank">
+                        <FontAwesomeIcon icon="arrow-right"/>
+                    </a>
+                </div>}
                 {noInput && <span className="no-input">{value}</span>}
                 {fileUpload && <div className="file-upload-button-container">
                     <section className="file-upload-container">
