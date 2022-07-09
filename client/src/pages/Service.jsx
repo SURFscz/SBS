@@ -17,7 +17,7 @@ import Button from "../components/Button";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import {setFlash} from "../utils/Flash";
 import {isEmpty, stopEvent} from "../utils/Utils";
-import {sanitizeShortName, validEmailRegExp, validUrl} from "../validations/regExps";
+import {sanitizeShortName, validEmailRegExp, validUrlRegExp} from "../validations/regExps";
 import CheckBox from "../components/CheckBox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
@@ -166,7 +166,7 @@ class Service extends React.Component {
     validateURI = name => e => {
         const uri = e.target.value;
         const {invalidInputs} = this.state;
-        const inValid = !isEmpty(uri) && !validUrl.test(uri);
+        const inValid = !isEmpty(uri) && !validUrlRegExp.test(uri);
         this.setState({invalidInputs: {...invalidInputs, [name]: inValid}});
     };
 
