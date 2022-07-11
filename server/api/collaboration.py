@@ -324,6 +324,11 @@ def collaboration_invites():
             "wiki_link": current_app.app_config.wiki_link,
             "recipient": administrator
         }, collaboration, [administrator])
+
+    print("emitting collaboration event - new invitation")
+    current_app.socket_io.emit(f"collaboration_{collaboration.id}",
+                               {"data": f"id: {collaboration.id} has new invitation"})
+
     return None, 201
 
 

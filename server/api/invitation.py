@@ -3,6 +3,7 @@ import datetime
 import re
 import uuid
 
+
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from sqlalchemy.orm import joinedload, selectinload
@@ -184,6 +185,8 @@ def invitations_accept():
         db.session.merge(group)
 
     add_user_aups(collaboration, user_id)
+
+    current_app.socket_io.emit("collaboration", {"id": collaboration.id})
 
     res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201
