@@ -74,7 +74,7 @@ def _do_send_mail(subject, recipients, template, context, preview, working_outsi
     if suppress_mail and not preview:
         logger.info(f"Sending mail {msg.html}")
 
-    if open_mail_in_browser and not preview:
+    if open_mail_in_browser and not preview and False:
         _open_mail_in_browser(msg.html)
     return msg.html
 

@@ -6,10 +6,13 @@ import time
 from datetime import timedelta
 from logging.handlers import TimedRotatingFileHandler
 
+import eventlet
 import yaml
-from flask import Flask, jsonify, request as current_request
+from flask import Flask, jsonify, request as current_request, current_app
+from flask_cors import CORS
 from flask_mail import Mail
 from flask_migrate import Migrate
+from flask_socketio import SocketIO, emit
 from munch import munchify
 from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
@@ -57,6 +60,8 @@ from server.mqtt.mqtt import MqttClient
 from server.swagger.conf import init_swagger, swagger_specs
 from server.templates import invitation_role
 from server.tools import read_file
+
+eventlet.monkey_patch()
 
 
 def _init_logging(is_test):
@@ -192,6 +197,35 @@ if not test:
     # Start scheduling
     start_scheduling(app)
 
+CORS(app, resources={r"/*": {"origins": "*"}})
+# socket_io = SocketIO(app, message_queue=f"redis://{config.redis.host}:{config.redis.port}", cors_allowed_origins="*")
+socket_io = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
+app.socket_io = socket_io
+
+@app.route("/http-call")
+def http_call():
+    """return JSON with string data as the value"""
+    data = {'data':'This text was fetched using an HTTP call to server on render'}
+    current_app.socket_io.emit("collaboration", {'data':'nice'})
+    return jsonify(data)
+
+
+@socket_io.on("connect")
+def connected():
+    """event listener when client connects to the server"""
+    print(current_request.sid)
+    print("client has connected")
+    app.socket_io.emit("collaboration", {"data": f"id: {current_request.sid} is connected"})
+
+
+@socket_io.on("disconnect")
+def disconnected():
+    """event listener when client disconnects to the server"""
+    print("user disconnected")
+    emit("disconnect", f"user {current_request.sid} disconnected", broadcast=True)
+
+
 # WSGI production mode dictates that no flask app is actually running
 if is_local:
-    app.run(port=8080, debug=False, host="localhost", threaded=True)
+    socket_io.run(app, debug=True, port=8080)
+    # app.run(port=8080, debug=False, host="localhost", threaded=True)

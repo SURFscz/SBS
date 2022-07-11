@@ -168,6 +168,7 @@ def config():
     base_url = base_url[:-1] if base_url.endswith("/") else base_url
     return {"local": current_app.config["LOCAL"],
             "base_url": base_url,
+            "socket_url": cfg.socket_url,
             "admin_users_upgrade": cfg.feature.admin_users_upgrade,
             "api_keys_enabled": cfg.feature.api_keys_enabled,
             "feedback_enabled": cfg.feature.feedback_enabled,
