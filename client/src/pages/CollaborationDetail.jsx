@@ -89,7 +89,7 @@ class CollaborationDetail extends React.Component {
         const params = this.props.match.params;
         if (params.id) {
             const collaboration_id = parseInt(params.id, 10);
-            socket.off(`collaboration_${collaboration_id}`);
+            socket.then(s => s.off(`collaboration_${collaboration_id}`));
         }
     }
 
@@ -120,10 +120,10 @@ class CollaborationDetail extends React.Component {
                     const adminOfCollaboration = json.access === "full";
                     const promises = adminOfCollaboration ? [collaborationById(collaboration_id), userTokensOfUser()] :
                         [collaborationLiteById(collaboration_id), organisationsByUserSchacHomeOrganisation(), userTokensOfUser()];
-                    socket.on(`collaboration_${collaboration_id}`, data => {
+                    socket.then(s => s.on(`collaboration_${collaboration_id}`, data => {
                         // debugger;
                         this.componentDidMount();
-                    });
+                    }));
                     Promise.all(promises)
                         .then(res => {
                             const {user} = this.props;
