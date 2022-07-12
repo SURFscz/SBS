@@ -23,7 +23,6 @@ white_listing = [
     "/config",
     "/health",
     "/info",
-    "/http-call"
     "/pam-weblogin"
 ]
 
