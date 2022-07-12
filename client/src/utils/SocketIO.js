@@ -1,8 +1,15 @@
-import { io } from "socket.io-client";
+import {io} from "socket.io-client";
+import {config} from "../api";
 
-export const socket = io("127.0.0.1:8080/", {
-                            transports: ["websocket"],
-                            cors: {
-                                origin: `${window.location.protocol}//${window.location.host}${window.location.port}/`,
-                            },
-                        });
+let initializedSocket = null;
+
+export const socket = initializedSocket ? Promise.resolve(initializedSocket) :
+    config().then(res => {
+        initializedSocket = io(res.socket_url, {
+            transports: ["websocket"],
+            cors: {
+                origin: `${window.location.protocol}//${window.location.host}${window.location.port}/`,
+            },
+        });
+        return initializedSocket;
+    });
