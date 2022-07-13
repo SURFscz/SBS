@@ -4,7 +4,7 @@ from flask import Blueprint, request as current_request, current_app
 from sqlalchemy.orm import contains_eager, load_only
 from werkzeug.exceptions import BadRequest
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, emit_socket
 from server.api.collaborations_services import connect_service_collaboration
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
     confirm_collaboration_member, generate_token, is_service_admin
@@ -50,6 +50,8 @@ def _do_service_connection_request(hash, approved):
                                                       [requester.email])
     db.session.delete(service_connection_request)
 
+    emit_socket(f"service_{service.id}", include_current_user_id=True)
+
     return {}, 201
 
 
@@ -92,6 +94,10 @@ def delete_service_request_connection(service_connection_request_id):
 
     confirm_collaboration_admin(service_connection_request.collaboration_id)
 
+    service = service_connection_request.service
+
+    emit_socket(f"service_{service.id}")
+
     return delete(ServiceConnectionRequest, service_connection_request_id)
 
 
@@ -129,6 +135,9 @@ def request_new_service_connection(collaboration, message, is_admin, service, us
                                                           updated_by=user.uid)
     db.session.merge(service_connection_request)
     db.session.commit()
+
+    emit_socket(f"service_{service.id}")
+
     _do_mail_request(collaboration, service, service_connection_request, is_admin, user)
 
 

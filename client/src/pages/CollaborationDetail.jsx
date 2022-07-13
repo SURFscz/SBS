@@ -51,7 +51,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
-import {socket} from "../utils/SocketIO";
+import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
+import Cookies from "js-cookie";
 
 class CollaborationDetail extends React.Component {
 
@@ -81,7 +82,8 @@ class CollaborationDetail extends React.Component {
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
             lastAdminWarning: "",
-            joinRequestDialogOpen: false
+            joinRequestDialogOpen: false,
+            socketSubscribed: false
         }
     }
 
@@ -120,10 +122,20 @@ class CollaborationDetail extends React.Component {
                     const adminOfCollaboration = json.access === "full";
                     const promises = adminOfCollaboration ? [collaborationById(collaboration_id), userTokensOfUser()] :
                         [collaborationLiteById(collaboration_id), organisationsByUserSchacHomeOrganisation(), userTokensOfUser()];
-                    socket.then(s => s.on(`collaboration_${collaboration_id}`, data => {
-                        // debugger;
-                        this.componentDidMount();
-                    }));
+                    const {socketSubscribed} = this.state;
+                    if (!socketSubscribed) {
+                        socket.then(s => s.on(`collaboration_${collaboration_id}`, data => {
+                            if (Cookies.get(subscriptionIdCookieName) !== data.subscription_id) {
+                                const {user} = this.props;
+                                if (data.current_user_id === user.id) {
+                                    this.props.refreshUser(this.componentDidMount);
+                                } else {
+                                    this.componentDidMount();
+                                }
+                            }
+                        }));
+                        this.setState({socketSubscribed: true})
+                    }
                     Promise.all(promises)
                         .then(res => {
                             const {user} = this.props;

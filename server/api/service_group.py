@@ -1,10 +1,10 @@
 # -*- coding: future_fstrings -*-
 
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy import func
 from sqlalchemy.orm import load_only
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.group import create_group
 from server.auth.security import confirm_write_access
 from server.db.defaults import cleanse_short_name
@@ -62,6 +62,11 @@ def save_service_group():
     data = current_request.get_json()
     confirm_write_access()
     cleanse_short_name(data)
+
+    service_id = data.get('service_id')
+
+    emit_socket(f"service_{service_id}")
+
     return save(ServiceGroup, custom_json=data, allow_child_cascades=False)
 
 
@@ -71,6 +76,11 @@ def update_service_group():
     data = current_request.get_json()
     confirm_write_access()
     cleanse_short_name(data)
+
+    service_id = data.get('service_id')
+
+    emit_socket(f"service_{service_id}")
+
     return update(ServiceGroup, custom_json=data, allow_child_cascades=False)
 
 
@@ -79,5 +89,8 @@ def update_service_group():
 def delete_service_group(service_group_id):
     confirm_write_access()
     # Return 404 if not found
-    ServiceGroup.query.filter(ServiceGroup.id == service_group_id).one()
+    service_group = ServiceGroup.query.filter(ServiceGroup.id == service_group_id).one()
+
+    emit_socket(f"service_{service_group.service_id}")
+
     return delete(ServiceGroup, service_group_id)

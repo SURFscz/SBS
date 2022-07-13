@@ -36,6 +36,8 @@ import {ReactComponent as LeaveIcon} from "../icons/safety-exit-door-left.svg";
 import LastAdminWarning from "../components/redesign/LastAdminWarning";
 import ServiceOverview from "./ServiceOverview";
 import {ReactComponent as EyeViewIcon} from "../icons/eye-svgrepo-com.svg";
+import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
+import Cookies from "js-cookie";
 
 class ServiceDetail extends React.Component {
 
@@ -56,9 +58,23 @@ class ServiceDetail extends React.Component {
             confirmationTxt: null,
             confirmationHeader: null,
             isWarning: false,
-            showServiceAdminView: false
+            showServiceAdminView: false,
+            socketSubscribed: false
         };
     }
+
+    componentWillUnmount = () => {
+        const params = this.props.match.params;
+        if (params.id) {
+            const service_id = parseInt(params.id, 10);
+            socket.then(s => s.off(`service_${service_id}`));
+        }
+        AppStore.update(s => {
+            s.sideComponent = null;
+        });
+
+    }
+
 
     componentDidMount = () => {
         const params = this.props.match.params;
@@ -84,23 +100,17 @@ class ServiceDetail extends React.Component {
                         const organisations = res[1];
                         const serviceConnectionRequests = res[2];
                         this.afterFetch(params, service, organisations, serviceConnectionRequests);
-                    }).catch(e => this.props.history.push("/404"));
+                    }).catch(() => this.props.history.push("/404"));
             } else {
                 serviceById(params.id)
                     .then(res => {
                         this.afterFetch(params, res, [], []);
-                    }).catch(e => this.props.history.push("/404"));
+                    }).catch(() => this.props.history.push("/404"));
             }
         } else {
             this.props.history.push("/404");
         }
     };
-
-    componentWillUnmount() {
-        AppStore.update(s => {
-            s.sideComponent = null;
-        });
-    }
 
     onBoarding = () => {
         this.setState({firstTime: true});
@@ -108,6 +118,20 @@ class ServiceDetail extends React.Component {
 
     afterFetch = (params, service, organisations, serviceConnectionRequests) => {
         const tab = params.tab || this.state.tab;
+        const {socketSubscribed} = this.state;
+        if (!socketSubscribed) {
+            socket.then(s => s.on(`service_${service.id}`, data => {
+                if (Cookies.get(subscriptionIdCookieName) !== data.subscription_id) {
+                    const {user} = this.props;
+                    if (data.current_user_id === user.id) {
+                        this.props.refreshUser(this.componentDidMount);
+                    } else {
+                        this.componentDidMount();
+                    }
+                }
+            }));
+            this.setState({socketSubscribed: true})
+        }
         this.tabChanged(tab, service);
         this.setState({
             service: service,

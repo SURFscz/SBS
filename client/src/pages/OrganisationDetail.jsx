@@ -6,6 +6,7 @@ import {
     organisationInvitationByHash
 } from "../api";
 import "./OrganisationDetail.scss";
+import Cookies from "js-cookie";
 import I18n from "i18n-js";
 import {isEmpty} from "../utils/Utils";
 import Tabs from "../components/Tabs";
@@ -28,6 +29,7 @@ import {actionMenuUserRole, ROLES} from "../utils/UserRole";
 import {getParameterByName} from "../utils/QueryParameters";
 import {setFlash} from "../utils/Flash";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 
 class OrganisationDetail extends React.Component {
 
@@ -44,7 +46,16 @@ class OrganisationDetail extends React.Component {
             confirmationDialogAction: () => true,
             cancelDialogAction: () => this.setState({confirmationDialogOpen: false}),
             confirmationQuestion: "",
+            socketSubscribed: false
         };
+    }
+
+    componentWillUnmount = () => {
+        const params = this.props.match.params;
+        if (params.id) {
+            const organisation_id = parseInt(params.id, 10);
+            socket.then(s => s.off(`organisation_${organisation_id}`));
+        }
     }
 
     componentDidMount = callBack => {
@@ -67,7 +78,8 @@ class OrganisationDetail extends React.Component {
                 this.props.history.push("/404")
             });
         } else if (params.id) {
-            organisationById(params.id)
+            const organisation_id = parseInt(params.id, 10);
+            organisationById(organisation_id)
                 .then(json => {
                     const {user, config} = this.props;
                     const member = (user.organisation_memberships || [])
@@ -75,6 +87,19 @@ class OrganisationDetail extends React.Component {
                     if (isEmpty(member) && !user.admin) {
                         this.props.history.push("/404");
                         return;
+                    }
+                    const {socketSubscribed} = this.state;
+                    if (!socketSubscribed) {
+                        socket.then(s => s.on(`organisation_${organisation_id}`, data => {
+                            if (Cookies.get(subscriptionIdCookieName) !== data.subscription_id) {
+                                if (data.current_user_id === user.id) {
+                                    this.props.refreshUser(this.componentDidMount);
+                                } else {
+                                    this.componentDidMount();
+                                }
+                            }
+                        }));
+                        this.setState({socketSubscribed: true})
                     }
                     const adminOfOrganisation = json.organisation_memberships
                         .some(member => member.role === "admin" && member.user_id === user.id) || user.admin;

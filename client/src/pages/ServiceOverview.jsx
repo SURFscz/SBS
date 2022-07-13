@@ -49,8 +49,15 @@ class ServiceOverview extends React.Component {
         }
     }
 
-    componentDidMount = () => {
-        const {service, serviceAdmin} = this.props;
+    UNSAFE_componentWillReceiveProps = nextProps => {
+        const {service} = this.props;
+        if (service !== nextProps.service) {
+            this.componentDidMount(nextProps);
+        }
+    }
+
+    componentDidMount = nextProps => {
+        const {service, serviceAdmin} = nextProps ? nextProps : this.props;
         const {params} = this.props.match;
         const tab = params.subTab || this.state.currentTab;
         this.validateService(service, () => {
@@ -683,7 +690,7 @@ class ServiceOverview extends React.Component {
     renderGeneral = (service, alreadyExists, isAdmin, isServiceAdmin, invalidInputs) => {
         return <>
             <InputField value={service.name}
-                        onChange={this.changeServiceProperty("name", false, {alreadyExists, name: false})}
+                        onChange={this.changeServiceProperty("name", false, {...alreadyExists, name: false})}
                         placeholder={I18n.t("service.namePlaceHolder")}
                         onBlur={this.validateServiceName}
                         error={alreadyExists.name}
@@ -707,7 +714,7 @@ class ServiceOverview extends React.Component {
 
             <InputField value={service.abbreviation}
                         onChange={this.changeServiceProperty("abbreviation", false, {
-                            alreadyExists, abbreviation: false
+                            ...alreadyExists, abbreviation: false
                         })}
                         placeholder={I18n.t("service.abbreviationPlaceHolder")}
                         onBlur={this.validateServiceAbbreviation}

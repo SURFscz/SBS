@@ -1,8 +1,8 @@
 # -*- coding: future_fstrings -*-
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, current_app
 from werkzeug.exceptions import BadRequest
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, emit_socket
 from server.api.service_group import create_service_groups
 from server.auth.security import confirm_organisation_admin_or_manager, confirm_write_access
 from server.db.db import db
@@ -43,6 +43,8 @@ def add_collaborations_services():
     for collaboration in organisation.collaborations:
         create_service_groups(service, collaboration)
 
+    emit_socket(f"organisation_{organisation_id}")
+
     return None, 201
 
 
@@ -58,5 +60,7 @@ def delete_organisations_services(organisation_id, service_id):
 
     organisation.services.remove(Service.query.get(service_id))
     db.session.merge(organisation)
+
+    emit_socket(f"organisation_{organisation_id}")
 
     return None, 204

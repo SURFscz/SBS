@@ -13,3 +13,5 @@ export const socket = initializedSocket ? Promise.resolve(initializedSocket) :
         });
         return initializedSocket;
     });
+
+export const subscriptionIdCookieName = "subscription_id";

@@ -1,11 +1,11 @@
 # -*- coding: future_fstrings -*-
 import uuid
 
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, current_app
 from sqlalchemy import func
 from sqlalchemy.orm import load_only
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.group_members import do_add_group_members
 from server.auth.security import confirm_collaboration_admin
 from server.db.db import db
@@ -108,6 +108,9 @@ def create_group(collaboration_id, data, do_cleanse_short_name=True):
     data["identifier"] = str(uuid.uuid4())
     res = save(Group, custom_json=data, allow_child_cascades=False)
     auto_provision_all_members_and_invites(res[0])
+
+    emit_socket(f"collaboration_{collaboration.id}")
+
     return res
 
 
@@ -130,6 +133,8 @@ def update_group():
 
     auto_provision_all_members_and_invites(res[0])
 
+    emit_socket(f"collaboration_{collaboration.id}")
+
     return res
 
 
@@ -139,4 +144,7 @@ def delete_group(group_id):
     group = Group.query.filter(Group.id == group_id).one()
 
     confirm_collaboration_admin(group.collaboration_id)
+
+    emit_socket(f"collaboration_{group.collaboration_id}")
+
     return delete(Group, group_id)

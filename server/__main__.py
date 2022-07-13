@@ -206,14 +206,7 @@ def connected():
     pass
 
 
-# @socket_io.on("disconnect")
-# def disconnected():
-#     """event listener when client disconnects to the server"""
-#     print("user disconnected")
-#     # emit("disconnect", f"user {current_request.sid} disconnected", broadcast=True)
-
-
 # WSGI production mode dictates that no flask app is actually running
 if is_local:
-    socket_io.run(app, debug=True, port=8080)
+    socket_io.run(app, debug=False, port=8080)
     # app.run(port=8080, debug=False, host="localhost", threaded=True)

@@ -8,7 +8,7 @@ from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only
 from sqlalchemy.orm import selectinload
 
-from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
+from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
     confirm_organisation_admin, generate_token, is_service_admin, confirm_external_api_call, confirm_read_access
 from server.cron.idp_metadata_parser import idp_display_name
@@ -253,6 +253,9 @@ def organisation_invites():
             "base_url": current_app.app_config.base_url,
             "recipient": administrator
         }, organisation, [administrator])
+
+    emit_socket(f"collaboration_{organisation.id}",  include_current_user_id=True)
+
     return None, 201
 
 
@@ -337,6 +340,8 @@ def update_organisation():
         if len([sho for sho in data["schac_home_organisations"] if
                 not sho.get("id") and sho["name"] in existing_names]) > 0:
             organisation.schac_home_organisations.clear()
+
+    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
 
     return update(Organisation, custom_json=data, allow_child_cascades=False,
                   allowed_child_collections=["schac_home_organisations"])
