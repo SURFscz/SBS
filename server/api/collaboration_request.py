@@ -6,7 +6,7 @@ from munch import munchify
 from sqlalchemy.orm import contains_eager
 from werkzeug.exceptions import BadRequest
 
-from server.api.base import json_endpoint, STATUS_OPEN, STATUS_APPROVED, STATUS_DENIED
+from server.api.base import json_endpoint, STATUS_OPEN, STATUS_APPROVED, STATUS_DENIED, emit_socket
 from server.api.collaboration import assign_global_urn_to_collaboration, do_save_collaboration
 from server.auth.security import current_user_id, current_user_name, \
     confirm_organisation_admin_or_manager
@@ -56,6 +56,9 @@ def request_collaboration():
     entitlement = current_app.app_config.collaboration_creation_allowed_entitlement
     auto_aff = user.entitlement and entitlement in user.entitlement
     recipients = list(map(lambda membership: membership.user.email, organisation.organisation_memberships))
+
+    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
+
     if auto_create or auto_aff:
         collaboration = do_save_collaboration(data, organisation, user, current_user_admin=True)[0]
         context = {"salutation": f"Dear {organisation.name} organisation admin,",
@@ -89,6 +92,10 @@ def delete_request_collaboration(collaboration_request_id):
     confirm_organisation_admin_or_manager(collaboration_request.organisation_id)
     if collaboration_request.status == STATUS_OPEN:
         raise BadRequest("Collaboration request with status 'open' can not be deleted")
+
+    organisation = collaboration_request.organisation
+    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
+
     return delete(CollaborationRequest, collaboration_request_id)
 
 
@@ -129,6 +136,10 @@ def approve_request(collaboration_request_id):
                                                  [user.email])
     collaboration_request.status = STATUS_APPROVED
     db.session.merge(collaboration_request)
+
+    organisation = collaboration_request.organisation
+    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
+
     return res
 
 
@@ -155,4 +166,9 @@ def deny_request(collaboration_request_id):
     collaboration_request.status = STATUS_DENIED
     collaboration_request.rejection_reason = rejection_reason
     db.session.merge(collaboration_request)
+
+    organisation = collaboration_request.organisation
+
+    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
+
     return None, 201

@@ -11,7 +11,7 @@ from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
-from server.auth.security import current_user
+from server.auth.security import current_user, current_user_id
 from server.auth.tokens import get_authorization_header
 from server.auth.urls import white_listing, mfa_listing, external_api_listing
 from server.db.db import db
@@ -24,6 +24,15 @@ base_api = Blueprint("base_api", __name__, url_prefix="/")
 STATUS_OPEN = "open"
 STATUS_DENIED = "denied"
 STATUS_APPROVED = "approved"
+
+
+def emit_socket(topic, include_current_user_id=False):
+    data = {"data": {
+        "subscription_id": current_request.cookies.get("subscription_id")
+    }}
+    if include_current_user_id:
+        data["current_user_id"] = current_user_id()
+    current_app.socket_io.emit(topic, data)
 
 
 def auth_filter(app_config):

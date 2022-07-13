@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
-from flask import Blueprint, request as current_request
+from flask import Blueprint, request as current_request, current_app
 
-from server.api.base import json_endpoint
+from server.api.base import json_endpoint, emit_socket
 from server.auth.security import confirm_organisation_admin, current_user_id
 from server.db.db import db
 from server.db.domain import OrganisationMembership
@@ -22,6 +22,9 @@ def delete_organisation_membership(organisation_id, user_id):
         .all()
     for membership in memberships:
         db.session.delete(membership)
+
+    emit_socket(f"organisation_{organisation_id}",  include_current_user_id=True)
+
     return (None, 204) if len(memberships) > 0 else (None, 404)
 
 
@@ -40,6 +43,8 @@ def update_organisation_membership_role():
         .filter(OrganisationMembership.user_id == user_id) \
         .one()
     organisation_membership.role = role
+
+    emit_socket(f"organisation_{organisation_id}",  include_current_user_id=True)
 
     db.session.merge(organisation_membership)
     return organisation_membership, 201

@@ -9,7 +9,7 @@ from sqlalchemy import text, func
 from sqlalchemy.orm import load_only, selectinload
 from werkzeug.exceptions import Forbidden
 
-from server.api.base import json_endpoint, query_param
+from server.api.base import json_endpoint, query_param, emit_socket
 from server.api.ipaddress import validate_ip_networks
 from server.auth.security import confirm_write_access, current_user_id, confirm_read_access, is_collaboration_admin, \
     is_organisation_admin_or_manager, is_application_admin, is_service_admin, confirm_service_admin, secure_hash, \
@@ -329,6 +329,9 @@ def toggle_access_allowed_for_all(service_id):
     allowed_for_all = data.get("allowed_for_all")
     service.access_allowed_for_all = allowed_for_all
     db.session.merge(service)
+
+    emit_socket(f"service_{service_id}")
+
     return None, 201
 
 
@@ -358,6 +361,9 @@ def service_invites():
             "wiki_link": current_app.app_config.wiki_link,
             "recipient": administrator
         }, service, [administrator])
+
+    emit_socket(f"service_{service_id}", include_current_user_id=True)
+
     return None, 201
 
 
@@ -403,6 +409,8 @@ def update_service():
     res = update(Service, custom_json=data, allow_child_cascades=False, allowed_child_collections=["ip_networks"])
     service = res[0]
     service.ip_networks
+
+    emit_socket(f"service_{service_id}")
 
     return res
 
@@ -450,6 +458,8 @@ def add_allowed_organisations(service_id):
     if need_to_delete:
         db.engine.execute(text(org_sql))
         db.engine.execute(text(coll_sql))
+
+    emit_socket(f"service_{service_id}")
 
     return None, 201
 
