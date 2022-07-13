@@ -80,7 +80,7 @@ def organisation_invitations_accept():
     organisation.organisation_memberships.append(organisation_membership)
     organisation.organisation_invitations.remove(organisation_invitation)
 
-    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
+    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 
     return None, 201
 
@@ -91,7 +91,7 @@ def organisation_invitations_decline():
     organisation_invitation = _organisation_invitation_query() \
         .filter(OrganisationInvitation.hash == current_request.get_json()["hash"]) \
         .one()
-    emit_socket(f"organisation_{organisation_invitation.organisation_id}",  include_current_user_id=True)
+    emit_socket(f"organisation_{organisation_invitation.organisation_id}", include_current_user_id=True)
 
     db.session.delete(organisation_invitation)
 

@@ -57,7 +57,7 @@ def request_collaboration():
     auto_aff = user.entitlement and entitlement in user.entitlement
     recipients = list(map(lambda membership: membership.user.email, organisation.organisation_memberships))
 
-    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
+    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 
     if auto_create or auto_aff:
         collaboration = do_save_collaboration(data, organisation, user, current_user_admin=True)[0]
@@ -94,7 +94,7 @@ def delete_request_collaboration(collaboration_request_id):
         raise BadRequest("Collaboration request with status 'open' can not be deleted")
 
     organisation = collaboration_request.organisation
-    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
+    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 
     return delete(CollaborationRequest, collaboration_request_id)
 
@@ -138,7 +138,7 @@ def approve_request(collaboration_request_id):
     db.session.merge(collaboration_request)
 
     organisation = collaboration_request.organisation
-    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
+    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 
     return res
 
@@ -169,6 +169,6 @@ def deny_request(collaboration_request_id):
 
     organisation = collaboration_request.organisation
 
-    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
+    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 
     return None, 201

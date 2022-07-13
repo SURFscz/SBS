@@ -3,7 +3,6 @@ import datetime
 import re
 import uuid
 
-
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context, jsonify
 from sqlalchemy.orm import joinedload, selectinload
@@ -52,7 +51,7 @@ def do_resend(invitation_id):
 
 def parse_date(val, default_date=None):
     return datetime.datetime.fromtimestamp(val / 1e3) if val and (
-            isinstance(val, float) or isinstance(val, int)) else default_date
+        isinstance(val, float) or isinstance(val, int)) else default_date
 
 
 @invitations_api.route("/find_by_hash", strict_slashes=False)
@@ -188,7 +187,7 @@ def invitations_accept():
 
     add_user_aups(collaboration, user_id)
 
-    emit_socket(f"collaboration_{collaboration.id}",  include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     res = {'collaboration_id': collaboration.id, 'user_id': user_id}
     return res, 201
@@ -203,7 +202,7 @@ def invitations_decline():
 
     collaboration = invitation.collaboration
 
-    emit_socket(f"collaboration_{collaboration.id}",  include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     db.session.delete(invitation)
     return None, 201
@@ -233,7 +232,7 @@ def delete_invitation(invitation_id):
     collaboration = invitation.collaboration
     confirm_collaboration_admin(collaboration.id)
 
-    emit_socket(f"collaboration_{collaboration.id}",  include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     return delete(Invitation, invitation_id)
 

@@ -1,6 +1,6 @@
 # -*- coding: future_fstrings -*-
 from flasgger import swag_from
-from flask import Blueprint, request as current_request, g as request_context, current_app
+from flask import Blueprint, request as current_request, g as request_context
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from server.api.base import json_endpoint, emit_socket
@@ -133,6 +133,6 @@ def delete_collaborations_services(collaboration_id, service_id):
     collaboration.services.remove(Service.query.get(service_id))
     db.session.merge(collaboration)
 
-    emit_socket(f"collaboration_{collaboration.id}",  include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     return {'collaboration_id': collaboration_id, 'service_id': service_id}, 204

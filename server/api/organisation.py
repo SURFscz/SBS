@@ -254,7 +254,7 @@ def organisation_invites():
             "recipient": administrator
         }, organisation, [administrator])
 
-    emit_socket(f"collaboration_{organisation.id}",  include_current_user_id=True)
+    emit_socket(f"collaboration_{organisation.id}", include_current_user_id=True)
 
     return None, 201
 
@@ -341,7 +341,7 @@ def update_organisation():
                 not sho.get("id") and sho["name"] in existing_names]) > 0:
             organisation.schac_home_organisations.clear()
 
-    emit_socket(f"organisation_{organisation.id}",  include_current_user_id=True)
+    emit_socket(f"organisation_{organisation.id}", include_current_user_id=True)
 
     return update(Organisation, custom_json=data, allow_child_cascades=False,
                   allowed_child_collections=["schac_home_organisations"])

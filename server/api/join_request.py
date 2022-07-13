@@ -89,7 +89,7 @@ def new_join_request():
         "join_request": join_request
     }, collaboration, admin_emails)
 
-    emit_socket(f"collaboration_{collaboration.id}",  include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     return {}, 201
 
@@ -132,7 +132,7 @@ def approve_join_request():
         group.collaboration_memberships.append(collaboration_membership)
         db.session.merge(group)
 
-    emit_socket(f"collaboration_{collaboration.id}",  include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     return {'collaboration_id': collaboration.id, 'user_id': user_id}, 201
 
@@ -160,7 +160,7 @@ def deny_join_request():
     join_request.rejection_reason = rejection_reason
     db.session.merge(join_request)
 
-    emit_socket(f"collaboration_{collaboration.id}",  include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     return None, 201
 
@@ -174,6 +174,6 @@ def delete_join_request(join_request_id):
         raise BadRequest("Join request with status 'open' can not be deleted")
 
     collaboration = join_request.collaboration
-    emit_socket(f"collaboration_{collaboration.id}",  include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     return delete(JoinRequest, join_request_id)

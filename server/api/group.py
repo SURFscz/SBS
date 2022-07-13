@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 import uuid
 
-from flask import Blueprint, request as current_request, current_app
+from flask import Blueprint, request as current_request
 from sqlalchemy import func
 from sqlalchemy.orm import load_only
 
