@@ -325,7 +325,7 @@ def collaboration_invites():
             "recipient": administrator
         }, collaboration, [administrator])
 
-    emit_socket(f"collaboration_{collaboration.id}",  include_current_user_id=True)
+    emit_socket(f"collaboration_{collaboration.id}", include_current_user_id=True)
 
     return None, 201
 

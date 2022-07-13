@@ -1,5 +1,5 @@
 # -*- coding: future_fstrings -*-
-from flask import Blueprint, request as current_request, current_app
+from flask import Blueprint, request as current_request
 
 from server.api.base import json_endpoint, emit_socket
 from server.auth.security import confirm_service_admin, confirm_write_access, current_user_id, current_user_uid

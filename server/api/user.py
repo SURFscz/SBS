@@ -21,7 +21,6 @@ from werkzeug.exceptions import Forbidden, InternalServerError
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
 from server.api.ipaddress import validate_ip_networks
-
 from server.auth.mfa import ACR_VALUES, store_user_in_session, mfa_idp_allowed, \
     surf_secure_id_required, has_valid_mfa, decode_jwt_token
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
@@ -313,7 +312,8 @@ def resume_session():
 
         # this is a configuration conflict and should never happen!
         if idp_allowed and ssid_required:
-            raise InternalServerError(f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
+            raise InternalServerError(
+                f"Both IdP-based MFA and SSID-based MFA configured for IdP '{schac_home_organisation}'")
 
         # if IdP-base MFA is set, we assume everything is handled by the IdP, and we skip all checks here
         # also skip if user has already recently performed MFA
