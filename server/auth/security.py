@@ -19,6 +19,8 @@ def is_admin_user(user):
 
 
 def _get_impersonated_session():
+    if "user" not in session:
+        return {"user": {"id": None}}
     if not session["user"]["admin"]:
         return session
 
