@@ -121,10 +121,11 @@ class ServiceDetail extends React.Component {
         const {socketSubscribed} = this.state;
         if (!socketSubscribed) {
             socket.then(s => s.on(`service_${service.id}`, data => {
-                if (Cookies.get(subscriptionIdCookieName) !== data.subscription_id) {
+                const subscriptionId = Cookies.get(subscriptionIdCookieName);
+                if (subscriptionId !== data.subscription_id) {
                     const {user} = this.props;
                     if (data.current_user_id === user.id) {
-                        this.props.refreshUser(this.componentDidMount);
+                        this.props.refreshUser(() => this.componentDidMount());
                     } else {
                         this.componentDidMount();
                     }
