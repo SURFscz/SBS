@@ -235,6 +235,7 @@ class Groups extends React.Component {
                 </div>
                 <Entities entities={selectedGroup.collaboration_memberships}
                           actions={actions}
+                          actionHeader={"collaboration-groups"}
                           modelName="groupMembers"
                           defaultSort="user__name"
                           searchAttributes={["user__name", "user__email"]}
