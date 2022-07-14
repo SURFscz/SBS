@@ -206,5 +206,7 @@ def connected():
     pass
 
 
-socket_io.run(app, debug=False, port=8080)
-# app.run(port=8080, debug=False, host="localhost", threaded=True)
+# In the WSGI production file the socket_io
+if is_local:
+    socket_io.run(app, debug=False, port=8080)
+    # app.run(port=8080, debug=False, host="localhost", threaded=True)
