@@ -207,6 +207,6 @@ def connected():
 
 
 # In the WSGI production file the socket_io
-if is_local:
+if __name__ == '__main__':
     socket_io.run(app, debug=False, port=8080)
     # app.run(port=8080, debug=False, host="localhost", threaded=True)
