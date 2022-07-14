@@ -8,7 +8,7 @@ export const socket = initializedSocket ? Promise.resolve(initializedSocket) :
         initializedSocket = io(res.socket_url, {
             transports: ["websocket"],
             cors: {
-                origin: `${window.location.protocol}//${window.location.host}${window.location.port}/`,
+                origin: `${window.location.protocol}//${window.location.host}/`,
             },
         });
         return initializedSocket;
