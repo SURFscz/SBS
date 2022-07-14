@@ -206,7 +206,5 @@ def connected():
     pass
 
 
-# WSGI production mode dictates that no flask app is actually running
-if is_local:
-    socket_io.run(app, debug=False, port=8080)
-    # app.run(port=8080, debug=False, host="localhost", threaded=True)
+socket_io.run(app, debug=False, port=8080)
+# app.run(port=8080, debug=False, host="localhost", threaded=True)
