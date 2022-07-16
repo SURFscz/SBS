@@ -16,12 +16,8 @@ export const validateSSHKey = sshKey => {
 }
 
 
+const shirtNameRegexp = /^[0-9]*|[^a-zA-Z_0-9]+/g;
+
 export const sanitizeShortName = shortName => {
-    if (!shortName) {
-        return shortName;
-    }
-    if (!isNaN(shortName.charAt(0))) {
-        shortName = shortName.substring(1);
-    }
-    return shortName.replace(/[^a-zA-Z_0-9]+/g, "").substring(0, 16).toLowerCase();
+    return shortName ? shortName.replace(shirtNameRegexp, "").substring(0, 16).toLowerCase() : shortName;
 }
