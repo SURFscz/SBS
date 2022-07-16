@@ -20,7 +20,7 @@ export const sanitizeShortName = shortName => {
     if (!shortName) {
         return shortName;
     }
-    while (!isNaN(shortName.charAt(0))) {
+    if (!isNaN(shortName.charAt(0))) {
         shortName = shortName.substring(1);
     }
     return shortName.replace(/[^a-zA-Z_0-9]+/g, "").substring(0, 16).toLowerCase();
