@@ -128,3 +128,4 @@ scraps
 venvbackup/
 .vscode
 server/requirements/pipdeptree
+.venv310/
