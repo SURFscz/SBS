@@ -22,8 +22,16 @@ class MissingServiceAup extends React.Component {
         this.setState({loading: true});
         const {user, reloadMe} = this.props;
         serviceAupBulkCreate(user.services_without_aup).then(res => {
-            const url = new URL(res.location);
-            reloadMe(() => this.props.history.push(url.pathname + url.search));
+            let path;
+            if (res.location) {
+                const url = new URL(res.location);
+                path = url.pathname + url.search;
+            } else {
+                //user was already logged in
+                const urlSearchParams = new URLSearchParams(window.location.search);
+                path = decodeURIComponent(urlSearchParams.get("state"))
+            }
+            reloadMe(() => this.props.history.push(path));
         });
     }
 
