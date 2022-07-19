@@ -339,8 +339,7 @@ I18n.translations.en = {
             flash: {
                 removed: "The collaboration(s) are disconnected"
             }
-        }
-        ,
+        },
         coAdmins: {
             searchPlaceHolder: "Search for admins...",
             title: "Admins",
@@ -739,7 +738,7 @@ I18n.translations.en = {
             expired: "Expired",
             activeTooltip: "This collaboration is active and ready for business.",
             suspendedTooltip: "This collaboration was suspended due to inactivity. It was last used on {{lastActivityDate}}.",
-            expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date. ",
+            expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date or clearing it. ",
             activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}. "
         },
         flash: {
