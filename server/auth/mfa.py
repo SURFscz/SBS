@@ -29,7 +29,7 @@ def _get_algorithm(jwk):
 
 def _refresh_public_keys():
     jwks_endpoint = current_app.app_config.oidc.jwks_endpoint
-    jwks = requests.get(jwks_endpoint).json()
+    jwks = requests.get(jwks_endpoint, verify=False).json()
 
     global public_keys
     public_keys = {jwk["kid"]: _get_algorithm(jwk).from_jwk(json.dumps(jwk)) for jwk in jwks["keys"]}
