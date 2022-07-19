@@ -738,7 +738,7 @@ I18n.translations.nl = {
             expired: "Verlopen",
             activeTooltip: "Deze samenwerking is actief.",
             suspendedTooltip: "Deze samenwerking is geschorst wegens inactiviteit. De laatste activiteit was op {{lastActivityDate}}. ",
-            expiredTooltip: "Deze samenwerking is verlopen op {{expiryDate}}. Heractiveren kan door een nieuwe einddatum in te stellen. ",
+            expiredTooltip: "Deze samenwerking is verlopen op {{expiryDate}}. Heractiveren kan de einddatum aan te passen of te wissen. ",
             activeWithExpiryDateTooltip: "Deze samenwerking verloopt op {{expiryDate}}. "
         },
         flash: {
