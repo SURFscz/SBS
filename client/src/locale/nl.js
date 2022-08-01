@@ -827,12 +827,12 @@ I18n.translations.nl = {
         namePlaceHolder: "De unieke naam van de dienst",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "De unieke entity ID van de dienst",
-        entity_idTooltip: "De unieke entity ID van de dienst koppelt de dienst in SURF Research Access Management aan de daadwerkelijke externe dienstaanbieder",
+        entity_idTooltip: "De unieke entity ID van de dienst koppelt deze aan de identity proxy",
         abbreviation: "Korte naam",
-        abbreviationPlaceHolder: "De korte naam van deze dienst",
+        abbreviationPlaceHolder: "De korte naam van de dienst",
         abbreviationTooltip: "De korte naam van een dienst wordt gebruikt als prefix voor groepen van deze dienst",
-        service_request: "Dienst request URL",
-        service_requestTooltip: "De URL van een dienst om een koppeling aan te vragen tussen een samenwerking en deze dienst als de gebruiker geen toegang heeft tot deze dienst",
+        service_request: "Link voor dienstverzoek",
+        service_requestTooltip: "De URL om een koppeling met de dienst aan te vragen door een lid van samenwerking",
         service_requestError: "Vereist een valide URL en automatisch koppelen moet toegestaan zijn",
         description: "Omschrijving",
         descriptionPlaceholder: "De omschrijving van de dienst",
@@ -842,18 +842,18 @@ I18n.translations.nl = {
         identity_typePlaceholder: "De identiteitsoort van een dienst",
         identity_typeTooltip: "De primaire manier om bij deze deze dienst te identificeren.",
         uri: "URL van de dienst",
-        uriPlaceholder: "De URL van de dienst",
-        uriTooltip: "URL waar meer informatie is te vinden over deze dienst.",
-        privacy_policy: "De URL van het privacybeleid",
+        uriPlaceholder: "De URI van de dienst",
+        uriTooltip: "URI waarop deze dienst te bereiken is",
+        privacy_policy: "Privacybeleid URL",
         privacy_policyPlaceholder: "De URL van het privacybeleid van deze dienst",
         privacy_policyTooltip: "De wet vereist een privacybeleid voor alle websites en apps die persoonlijke informatie van gebruikers verzamelen of gebruiken.",
-        accepted_user_policy: "Acceptable use policy",
+        accepted_user_policy: "Acceptable use policy URL",
         accepted_user_policyPlaceholder: "De acceptable use policy (AUP) van de dienst",
         accepted_user_policyTooltip: "Een acceptable use policy (AUP) is een document waarin staat wat een gebruiker wel en niet mag/hoort te doen en waarmee de gebruiker akkoord moet gaan om toegang te krijgen tot een dienst of systeem.",
         network: "ACL IP-ranges",
-        networkTooltip: "Configureer de ACL IP-bereiken voor deze dienst. Je kunt IPv4 en IPv6 network ranges toevoegen. " +
+        networkTooltip: "De IP-reeksen die deze dienst gebruikt om de LDAP-server van het platform te bereiken. Zowel IPv4- als IPv6-bereiken zijn toegestaan. " +
             "Bijvoorbeeld: <ul>" +
-            "<li>Enkelvoudig IPv4-adres 198.51.100.12 waar een /32 is aangenomen</li>" +
+            "<li>Enkelvoudig IPv4-adres 198.51.100.12 waarbij een /32 wordt aangenomen</li>" +
             "<li>IPv4-bereik 198.51.100.0/24. Maximaal toegestane omvang subnet voor IPv4 is een /24</li>" +
             "<li>IPv6-bereik 2001:db8:f00f:bab::/64. Maximaal toegestane omvang subnet voor IPv6 is een /64</li>" +
             "</ul> ",
@@ -867,8 +867,8 @@ I18n.translations.nl = {
         accessAllowedForAll: "Beschikbaar voor alle organisaties?",
         accessAllowedForAllTooltip: "Is deze dienst voor alle huidige en toekomstige organisaties standaard beschikbaar?",
         accessAllowedForAllInfo: "Alle organisaties zijn standaard beschikbaar voor deze dienst",
-        nonMemberUsersAccessAllowed: "Toegankelijk voor alle gebruikers?",
-        nonMemberUsersAccessAllowedTooltip: "Hebben alle gebruikers toegang tot deze dienst zonder lid te zijn van een gekoppelde samenwerking?",
+        nonMemberUsersAccessAllowed: "Toegankelijk zonder lidmaatschap van een samenwerking",
+        nonMemberUsersAccessAllowedTooltip: "Alle gebruikers van het platform hebben toegang tot deze dienst, ongeacht lidmaatschap van en koppelingen met samenwerkingen",
         whiteListed: "SURF-dienst",
         whiteListedTooltip: "Deze dienst mag gekoppeld worden aan samenwerkingen van een SURF-organisatie.",
         sirtfiCompliant: "Sirtfi compliant?",
@@ -919,11 +919,11 @@ I18n.translations.nl = {
             close: "Sluit",
             section: "LDAP-configuratie",
             url: "LDAP URL",
-            urlTooltip: "De URL van de LDAP-server",
-            username: "Bind dn",
-            usernameTooltip: "Dit is de dn waarmee bij de LDAP-server moet worden geauthenticeerd",
-            basedn: "Base dn",
-            basednTooltip: "Dit is de base dn van de LDAP-server",
+            urlTooltip: "De URL van de LDAP-server van het platform. Gebruik deze op de dienst of eigen LDAP-server om te synchroniseren",
+            username: "Bind DN",
+            usernameTooltip: "De bind DN om bij de LDAP-server van het platform te authenticeren",
+            basedn: "Base DN",
+            basednTooltip: "De base DN van de LDAP-server van het platform",
         },
         aup: {
             title: "Reset AUP",
@@ -1936,9 +1936,9 @@ I18n.translations.nl = {
         actionTitle: "API-token resetten",
         tokens: "Tokens",
         tokenEnabled: "Token-gebaseerde introspectie ingeschakeld?",
-        tokenEnabledTooltip: "Wanneer aangevinkt, mag deze dienst het introspection endpoint aanroepen om gebruikersinformatie te ontvangen",
-        pamWebSSOEnabled: "PAM weblogin ingeschakeld?",
-        pamWebSSOEnabledTooltip: "Wanneer aangevinkt, mag deze service de PAM-weblogin-eindpunten aanroepen om een gebruiker in te loggen op een op een terminal gebaseerde app (bijv. SSH)",
+        tokenEnabledTooltip: "Mag deze dienst het introspection endpoint aanroepen om gebruikersinformatie te ontvangen?",
+        pamWebSSOEnabled: "PAM web login ingeschakeld?",
+        pamWebSSOEnabledTooltip: "Mag deze dienst de PAM-web-login-eindpunten aanroepen om een gebruiker in te loggen op een op een terminalgebaseerde app (bijvoorbeeld een SSH-client)?",
         tokenValue: "One-way gehashte token",
         tokenValidityDays: "Geldigheidsduur token (dagen)",
         tokenValidityDaysTooltip: "Het aantal dagen dat de gebruikerstokens geldig zijn",
@@ -1980,12 +1980,11 @@ I18n.translations.nl = {
             connection: "Aansluiting",
             contacts: "Contacten",
             policy: "Policy & compliance",
-            ldap: "LDAP-instellingen",
+            ldap: "LDAP",
             tokens: "Tokens",
-            pamWebLogin: "Pam web login"
+            pamWebLogin: "PAM web login"
         },
     }
-
 };
 
 export default I18n.translations.nl;

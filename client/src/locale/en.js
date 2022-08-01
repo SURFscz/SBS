@@ -827,12 +827,12 @@ I18n.translations.en = {
         namePlaceHolder: "The unique name of the service",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "The unique entity ID of the service",
-        entity_idTooltip: "The unique entity ID of the service links the service in SURF Research Access Management to the actual external service Provider",
+        entity_idTooltip: "The unique entity ID of the service links it to the identity proxy",
         abbreviation: "Short name",
         abbreviationPlaceHolder: "The short name of this service",
         abbreviationTooltip: "The short name of the service is used as a prefix for any groups you create",
-        service_request: "Service Request URL",
-        service_requestTooltip: "The URL for a service to request a connection between a collaboration and this service if the User does not have access to this service",
+        service_request: "Link for service request",
+        service_requestTooltip: "The URL to request a connection with the service by a member of a collaboration",
         service_requestError: "Requires a valid URI and Automatic connection allowed set to True",
         description: "Description",
         descriptionPlaceholder: "The description of the service",
@@ -843,15 +843,15 @@ I18n.translations.en = {
         identity_typeTooltip: "The primary way of identification for this service",
         uri: "Service URL",
         uriPlaceholder: "The URI of the service",
-        uriTooltip: "URI containing information about this service",
+        uriTooltip: "URI where to reach this service",
         privacy_policy: "Privacy policy URL",
         privacy_policyPlaceholder: "The Private policy URL  of the service",
         privacy_policyTooltip: "A Privacy Policy is a legal requirement for all websites and apps that collect or use personal information from users.",
-        accepted_user_policy: "Acceptable use policy",
+        accepted_user_policy: "Acceptable use policy URL",
         accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the service",
         accepted_user_policyTooltip: "An acceptable use policy (AUP) is a document stipulating constraints and practices that a user must agree to for access to a corporate network or the Internet.",
-        network: "ACL IP ranges",
-        networkTooltip: "Configure the ACL IP ranges for this service. You can add IPv4 and IPv6 network ranges. " +
+        network: "LDAP ACL IP ranges",
+        networkTooltip: "The IP ranges this service uses to connect to the platform LDAP service. You can add IPv4 and IPv6 network ranges. " +
             "For example: <ul>" +
             "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
             "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
@@ -867,8 +867,8 @@ I18n.translations.en = {
         accessAllowedForAll: "Available for all organisations?",
         accessAllowedForAllTooltip: "Is this service available for all current and future organisations?",
         accessAllowedForAllInfo: "All organisations are enabled by default for this service",
-        nonMemberUsersAccessAllowed: "Accessible for all users?",
-        nonMemberUsersAccessAllowedTooltip: "Can all members access this service without being a member of a connected Collaboration",
+        nonMemberUsersAccessAllowed: "Accessible without membership of a collaboration",
+        nonMemberUsersAccessAllowedTooltip: "All users of the platform can access this service, regardless of membership of or connections to any collaboration",
         whiteListed: "SURF service",
         whiteListedTooltip: "Allow this service to be linked to collaborations of a SURF organisation.",
         sirtfiCompliant: "Sirtfi compliant?",
@@ -919,11 +919,11 @@ I18n.translations.en = {
             close: "Close",
             section: "LDAP settings",
             url: "LDAP URL",
-            urlTooltip: "The URL of the LDAP server",
-            username: "Bind dn",
-            usernameTooltip: "This is the bind dn used to authenticate to the LDAP server",
-            basedn: "Base dn",
-            basednTooltip: "This is the base dn of the LDAP server",
+            urlTooltip: "The URL of the platform LDAP server. Enter this on the service, or your LDAP server to synchronize.",
+            username: "Bind DN of the platform LDAP server",
+            usernameTooltip: "The bind DN used to authenticate to the platform LDAP server",
+            basedn: "Base DN",
+            basednTooltip: "The base DN of the platform LDAP server",
         },
         aup: {
             title: "Reset AUP",
@@ -1936,9 +1936,9 @@ I18n.translations.en = {
         actionTitle: "Reset API token",
         tokens: "Tokens",
         tokenEnabled: "Token-based introspection enabled?",
-        tokenEnabledTooltip: "When checked this service is allowed to call the introspection endpoint to receive user information",
-        pamWebSSOEnabled: "Enable PAM weblogin?",
-        pamWebSSOEnabledTooltip: "When checked this service is allowed to call the PAM weblogin endpoints to login an user on a terminal-based app (e.g. SSH)",
+        tokenEnabledTooltip: "Allow this service to call the introspection endpoint to receive user information?",
+        pamWebSSOEnabled: "Enable PAM web login?",
+        pamWebSSOEnabledTooltip: "Allow this service to call the PAM web login endpoints to login an user on a terminal-based app (e.g. an SSH client)?",
         tokenValue: "One-way hashed token",
         tokenValidityDays: "Token validity (days)",
         tokenValidityDaysTooltip: "The number of days the user tokens are valid validity",
@@ -1980,12 +1980,11 @@ I18n.translations.en = {
             connection: "Connection",
             contacts: "Contacts",
             policy: "Policy & compliance",
-            ldap: "LDAP settings",
+            ldap: "LDAP",
             tokens: "Tokens",
-            pamWebLogin: "Pam web login"
+            pamWebLogin: "PAM web login"
         },
     }
-
 };
 
 export default I18n.translations.en;
