@@ -512,7 +512,7 @@ I18n.translations.en = {
             edit: "Edit",
             name: "Name",
             description: "Description",
-            autoProvisioning: "Auto provisioning",
+            autoProvisioning: "Auto provision users",
             on: "On",
             off: "Off"
         },
