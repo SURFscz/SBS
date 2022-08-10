@@ -5,6 +5,7 @@ import {AppStore} from "../stores/AppStore";
 import {Link} from "react-router-dom";
 import {isEmpty} from "../utils/Utils";
 import {clearFlash} from "../utils/Flash";
+import DOMPurify from "dompurify";
 
 export const BreadCrumb = () => {
 
@@ -22,11 +23,13 @@ export const BreadCrumb = () => {
                     <div className="path" key={i}>
                         {i !== 0 && <ChevronRight/>}
                         {((i + 1) !== paths.length && p.path) &&
-                            <Link to={p.path} onClick={() => clearFlash()} className={"link"}>{<span dangerouslySetInnerHTML={{__html: p.value}}/>}</Link>}
+                            <Link to={p.path} onClick={() => clearFlash()} className={"link"}>
+                                {<span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(p.value)}}/>}
+                            </Link>}
                         {((i + 1) !== paths.length && !p.path) &&
-                        <span className={"last"} dangerouslySetInnerHTML={{__html: p.value}}/>}
+                        <span className={"last"} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(p.value)}}/>}
                         {(i + 1) === paths.length &&
-                        <span className={"last"} dangerouslySetInnerHTML={{__html: p.value}}/>}
+                        <span className={"last"} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(p.value)}}/>}
                     </div>)}
                 {sideComponent}
             </div>
