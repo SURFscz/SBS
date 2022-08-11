@@ -19,7 +19,7 @@ def create_service_groups(service: Service, collaboration: Collaboration):
     for service_group in service.service_groups:
         data = {
             "name": service_group.name,
-            "description": service_group.description,
+            "description": f"Provisioned by service {service.name} - {service_group.description}",
             "short_name": f"{service.abbreviation}-{service_group.short_name}",
             "collaboration_id": collaboration.id,
             "auto_provision_members": service_group.auto_provision_members
