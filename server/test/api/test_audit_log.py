@@ -121,5 +121,5 @@ class TestAuditLog(AbstractTest):
         tables = ["organisation_invitations", "users"]
         res = self.get("/api/audit_logs/activity", query_data={"tables": ",".join(tables)})
         self.assertEqual(3, len(res["audit_logs"]))
-        actual = list(set(sorted([audit_log["target_type"] for audit_log in res["audit_logs"]])))
+        actual = sorted(list(set([audit_log["target_type"] for audit_log in res["audit_logs"]])))
         self.assertEqual(tables, actual)
