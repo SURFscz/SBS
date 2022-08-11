@@ -11,12 +11,16 @@ table.serviceGroups {
                 padding-left: 15px;
             }
 
+            &.short_name {
+                width: 15%;
+            }
+
             &.description {
                 width: 45%;
             }
 
             &.auto_provision_members {
-                width: 20%;
+                width: 15%;
                 text-align: center;
             }
         }
