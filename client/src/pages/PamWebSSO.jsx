@@ -9,6 +9,7 @@ import {ErrorOrigins} from "../utils/Utils";
 import Logo from "../components/redesign/Logo";
 import {login} from "../utils/Login";
 import ClipBoardCopy from "../components/redesign/ClipBoardCopy";
+import DOMPurify from "dompurify";
 
 
 class PamWebSSO extends React.Component {
@@ -67,7 +68,7 @@ class PamWebSSO extends React.Component {
                 <h1>{I18n.t("pamWebSSO.denied", {service: service.name})}</h1>
                 <p className="info">{I18n.t("pamWebSSO.deniedInfo")}</p>
                 {this.renderService(service)}
-                <p dangerouslySetInnerHTML={{__html: I18n.t("pamWebSSO.contact", {support})}}/>
+                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("pamWebSSO.contact", {support}))}}/>
             </div>
         );
     }

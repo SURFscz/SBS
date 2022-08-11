@@ -4,6 +4,7 @@ import {Player} from "@lottiefiles/react-lottie-player";
 import service_denied from "../lotties/service-denied.json";
 import I18n from "i18n-js";
 import escape from "lodash.escape";
+import DOMPurify from "dompurify";
 
 export default function ServiceDenied() {
 
@@ -30,14 +31,14 @@ export default function ServiceDenied() {
     return (
         <div className="mod-service-denied">
             <div className="content">
-                <h1 dangerouslySetInnerHTML={{__html: I18n.t("sfo.title", {name: serviceName})}}/>
+                <h1 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize( I18n.t("sfo.title", {name: serviceName}))}}/>
                 <Player
                     autoplay
                     loop
                     src={service_denied}
                     style={{height: "auto", width: "85px", "maxWidth": "85px"}}/>
                 {<span className={"status"}
-                       dangerouslySetInnerHTML={{__html: I18n.t(`sfo.info${status || ""}`, {name: serviceName})}}/>}
+                       dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t(`sfo.info${status || ""}`, {name: serviceName}))}}/>}
             </div>
             <div className={"ticket"}>
                 <p dangerouslySetInnerHTML={{__html: I18n.t("sfo.ticket")}}/>
