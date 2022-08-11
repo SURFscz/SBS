@@ -195,7 +195,7 @@ class Groups extends React.Component {
         const options = collaboration.collaboration_memberships
             .filter(m => selectedGroup.collaboration_memberships.every(c => c.id !== m.id))
             .map(m => ({value: m.id, label: m.user.name}));
-        const actions = mayCreateGroups ? <div className="group-detail-actions">
+        const actions = (mayCreateGroups && options.length > 0) ? <div className="group-detail-actions">
             <Select
                 classNamePrefix="actions"
                 placeholder={I18n.t("models.groupMembers.addMembersPlaceholder")}
