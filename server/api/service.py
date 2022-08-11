@@ -101,7 +101,7 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
     def override_func():
         return is_collaboration_admin() or _is_org_member() or is_service_admin()
 
-    confirm_write_access(override_func=override_func)
+    confirm_read_access(override_func=override_func)
     query = Service.query \
         .options(selectinload(Service.allowed_organisations)) \
         .options(selectinload(Service.service_connection_requests)) \
