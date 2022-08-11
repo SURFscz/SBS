@@ -214,10 +214,10 @@ class Groups extends React.Component {
                     <div className="header-actions">
                         <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
                                 txt={I18n.t("models.groups.edit")}/>
-                        <span className="history"
+                        {currentUser.admin && <span className="history"
                               onClick={() => this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)}>
-                        <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
-                    </span>
+                            <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
+                        </span>}
                     </div>}
 
                 </section>

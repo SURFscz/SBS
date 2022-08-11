@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import {serviceAupBulkCreate} from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
 import CollaborationAupAcceptance from "../components/CollaborationAupAcceptance";
+import DOMPurify from "dompurify";
 
 
 class MissingServiceAup extends React.Component {
@@ -51,7 +52,7 @@ class MissingServiceAup extends React.Component {
                 <p className="info">{I18n.t(`aup.service.missing.${info}`)}</p>
                 {user.service_collaborations.map((collaboration, index) => <div className="collaboration-detail"
                                                                                 key={index}>
-                    <h2 dangerouslySetInnerHTML={{__html: I18n.t("aup.service.purposeOf", {name: collaboration.name})}}/>
+                    <h2 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.service.purposeOf", {name: collaboration.name}))}}/>
                     <p>{collaboration.description}</p>
                 </div>)}
                 <h2>{I18n.t(`aup.service.${services}`)}</h2>

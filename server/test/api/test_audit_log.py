@@ -5,9 +5,8 @@ from flask import jsonify
 from server.db.audit_mixin import ACTION_DELETE, ACTION_CREATE, ACTION_UPDATE
 from server.db.domain import User, Collaboration, Service, Organisation, Group
 from server.test.abstract_test import AbstractTest
-from server.test.seed import join_request_peter_hash, service_cloud_name, ai_computing_name, \
-    service_mail_name, invitation_hash_curious, organisation_invitation_hash, uuc_name, group_science_name, sarah_name, \
-    james_name
+from server.test.seed import service_cloud_name, ai_computing_name, \
+    service_mail_name, invitation_hash_curious, organisation_invitation_hash, uuc_name, group_science_name, sarah_name
 
 
 class TestAuditLog(AbstractTest):
@@ -17,31 +16,11 @@ class TestAuditLog(AbstractTest):
         audit_logs = res["audit_logs"]
         return list(filter(lambda audit_log: audit_log["target_type"] == target_type, audit_logs))
 
-    def test_me_join(self):
+    def test_me(self):
         self.login()
-        self.put("/api/join_requests/accept", body={"hash": join_request_peter_hash})
+        res = self.get("/api/audit_logs/me", with_basic_auth=False)
 
-        self.login("urn:peter")
-        res = self.get("/api/audit_logs/me")
-
-        self.assertEqual(ACTION_UPDATE, self.audit_log_by_target_type("join_requests", res)[0]["action"])
-        self.assertEqual(ACTION_CREATE, self.audit_log_by_target_type("collaboration_memberships", res)[0]["action"])
-
-    def test_me_profile(self):
-        sarah = self.find_entity_by_name(User, sarah_name)
-        self.login("urn:sarah")
-
-        body = {
-            "ssh_keys": [{"ssh_value": "some_ssh"}, {"ssh_value": "overwrite_existing", "id": sarah.ssh_keys[0].id}],
-            "user_ip_networks": [
-                {"network_value": sarah.user_ip_networks[0].network_value, "id": sarah.user_ip_networks[0].id}]
-        }
-
-        self.put("/api/users", body, with_basic_auth=False)
-        res = self.get("/api/audit_logs/me")
-
-        audit_logs = res["audit_logs"]
-        self.assertEqual(4, len(audit_logs))
+        self.assertEqual(ACTION_UPDATE, res["audit_logs"][0]["action"])
 
     def test_other_(self):
         sarah = self.find_entity_by_name(User, sarah_name)
@@ -84,6 +63,8 @@ class TestAuditLog(AbstractTest):
 
         self.login("urn:admin")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
+
+        self.login()
         res = self.get(f"/api/audit_logs/info/{collaboration_id}/collaborations")
 
         self.assertEqual(2, len(res["audit_logs"]))
@@ -99,6 +80,7 @@ class TestAuditLog(AbstractTest):
                  with_basic_auth=False)
 
         organisation_id = self.find_entity_by_name(Organisation, uuc_name).id
+        self.login()
         res = self.get(f"/api/audit_logs/info/{organisation_id}/organisations")
 
         self.assertEqual(2, len(res["audit_logs"]))
@@ -106,7 +88,7 @@ class TestAuditLog(AbstractTest):
         self.assertEqual(ACTION_CREATE, self.audit_log_by_target_type("organisation_memberships", res)[0]["action"])
 
     def test_groups(self):
-        self.login("urn:sarah")
+        self.login()
 
         group = jsonify(self.find_entity_by_name(Group, group_science_name)).json
 
@@ -127,8 +109,9 @@ class TestAuditLog(AbstractTest):
         self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
                  with_basic_auth=False)
 
+        self.login()
         res = self.get("/api/audit_logs/activity")
-        self.assertEqual(3, len(res["audit_logs"]))
+        self.assertEqual(4, len(res["audit_logs"]))
         self.assertEqual(1, len(res["organisations"]))
         self.assertEqual(2, len(res["users"]))
 
@@ -137,16 +120,6 @@ class TestAuditLog(AbstractTest):
 
         tables = ["organisation_invitations", "users"]
         res = self.get("/api/audit_logs/activity", query_data={"tables": ",".join(tables)})
-        self.assertEqual(2, len(res["audit_logs"]))
-        self.assertEqual(tables, sorted([audit_log["target_type"] for audit_log in res["audit_logs"]]))
-
-    def test_me_impersonate(self):
-        james = User.query.filter(User.uid == "urn:james").one()
-        self.login("urn:james")
-        body = {"ssh_keys": [{"ssh_value": "some_ssh"}]}
-        self.put("/api/users", body, with_basic_auth=False)
-
-        self.login("urn:john")
-        self.get("/api/audit_logs/me", with_basic_auth=False,
-                 headers={"X-IMPERSONATE-ID": james.id, "X-IMPERSONATE-UID": james.uid,
-                          "X-IMPERSONATE-NAME": james_name})
+        self.assertEqual(3, len(res["audit_logs"]))
+        actual = list(set(sorted([audit_log["target_type"] for audit_log in res["audit_logs"]])))
+        self.assertEqual(tables, actual)

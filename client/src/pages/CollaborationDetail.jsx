@@ -51,6 +51,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils/Utils";
 import UserTokens from "../components/redesign/UserTokens";
+import DOMPurify from "dompurify";
 
 class CollaborationDetail extends React.Component {
 
@@ -491,7 +492,7 @@ class CollaborationDetail extends React.Component {
                         <li>
                             <Tooltip children={<AdminIcon/>} id={"admins-icon"} msg={I18n.t("tooltips.admins")}/>
                             <span
-                                dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/>
+                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(this.getAdminHeader(collaboration))}}/>
                         </li>
                         {collaboration.website_url &&
                         <li className="collaboration-url">
@@ -647,8 +648,8 @@ class CollaborationDetail extends React.Component {
                             <ReactTooltip id="membership-status" type="light" effect="solid" data-html={true}>
                                 <span className="tooltip-wrapper-inner"
                                       dangerouslySetInnerHTML={{
-                                          __html: I18n.t(`organisationMembership.status.${status}Tooltip`,
-                                              {date: expiryDate})
+                                          __html: DOMPurify.sanitize(I18n.t(`organisationMembership.status.${status}Tooltip`,
+                                              {date: expiryDate}))
                                       }}/>
                             </ReactTooltip>
                     </span>
