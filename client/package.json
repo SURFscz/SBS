@@ -42,12 +42,13 @@
     "devDependencies": {
         "dot-prop": "^6.0.1",
         "react-scripts": "^5.0.1",
-        "sass": "^1.51.0"
+        "sass": "^1.51.0",
+        "http-proxy-middleware": "^2.0.6"
     },
     "scripts": {
-        "start": "HOST=localhost react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
+        "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true HOST=localhost react-scripts start",
+        "build": "DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts build",
+        "test": "DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts test",
         "analyze": "source-map-explorer build/static/js/main.*"
     },
     "proxy": "http://127.0.0.1:8080/",
