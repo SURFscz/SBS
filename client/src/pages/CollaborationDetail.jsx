@@ -355,7 +355,9 @@ class CollaborationDetail extends React.Component {
         if (collaboration.disable_join_requests) {
             return null;
         }
-        return (<div key="joinrequests" name="joinrequests" label={I18n.t("home.tabs.joinRequests")}
+        return (<div key="joinrequests"
+                     name="joinrequests"
+                     label={I18n.t("home.tabs.joinRequests", {count: (collaboration.join_requests || []).length})}
                      icon={<JoinRequestsIcon/>}
                      notifier={openJoinRequests > 0 ? openJoinRequests : null}>
             <JoinRequests collaboration={collaboration}

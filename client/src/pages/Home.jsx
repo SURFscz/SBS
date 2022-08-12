@@ -168,7 +168,9 @@ class Home extends React.Component {
 
     getMemberJoinRequestsTab = join_requests => {
         const openJoinRequests = (join_requests || []).filter(jr => jr.status === "open").length;
-        return (<div key="joinrequests" name="joinrequests" label={I18n.t("home.tabs.joinRequests")}
+        return (<div key="joinrequests"
+                     name="joinrequests"
+                     label={I18n.t("home.tabs.joinRequests", {count: (join_requests || []).length})}
                      icon={<JoinRequestsIcon/>}
                      notifier={openJoinRequests > 0 ? openJoinRequests : null}>
             <MemberJoinRequests join_requests={join_requests} {...this.props} />

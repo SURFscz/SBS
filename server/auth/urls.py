@@ -1,6 +1,5 @@
 # -*- coding: future_fstrings -*-
 white_listing = [
-    "/api/images/",
     "/api/invitations/find_by_hash",
     "/api/mfa/get2fa_proxy_authz",
     "/api/mfa/jwks",
