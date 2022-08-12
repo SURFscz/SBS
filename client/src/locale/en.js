@@ -1766,6 +1766,8 @@ I18n.translations.en = {
     landing: {
         header: {
             title: "Easy and secure access to research services for research collaborations",
+            login: "Login for admins & members <sup>*</sup>",
+            sup: "<sup>*</sup><strong>Not a member?</strong> You will receive an invite via mail.",
         },
         works: "How does it work?",
         adminFunction: "admin function",
