@@ -133,7 +133,7 @@ I18n.translations.en = {
         image: "Image must at least be 300x120 pixels and smaller then 2MB.",
         dragImage: "Drag and resize the crop area until you're happy with the result. Then hit apply.",
         imageToLarge: "Image is larger then 2MB.",
-        imageDeleteConfirmation: "Are you sure you want to delete this image? You cannot revert this and you'll have to select a new image",
+        imageDeleteConfirmation: "Are you sure you want to delete this image? This cannot be reverted, and you'll have to select a new image.",
         imageRequired: "Image is required",
         whiteSpace: "Fit the image",
         no: "No"
@@ -753,10 +753,10 @@ I18n.translations.en = {
         backToCollaborationDetail: "Back to my collaboration {{name}}",
         update: "Update",
         delete: "Delete",
-        deleteConfirmation: "Are you sure you want to delete this collaboration?",
+        deleteConfirmation: "Are you sure you want to delete this collaboration? This cannot be undone.",
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership of {{name}}?",
         deleteInvitationConfirmation: "Are you sure you want to delete the invitation for {{name}}?",
-        deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
+        deleteEntitiesConfirmation: "Are you sure you want to delete the checked members and invitations?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You will have to be re-invited by an admin to rejoin.",
         noBatchDeleteAllowed: "It is not possible to leave the collaboration as part of a batch delete. Please select only yourself to leave this collaboration, or select only other members to remove others from the group.",
         downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to revert this.",
@@ -802,7 +802,7 @@ I18n.translations.en = {
         collaborationRequests: "Collaboration requests",
         add: "Create new service",
         searchPlaceHolder: "Search for all organisations",
-        deleteConfirmation: "Are you sure you want to delete service {{name}}?"
+        deleteConfirmation: "Are you sure you want to delete service {{name}}? This cannot be undone."
     },
     services: {
         title: "Services",
@@ -900,7 +900,7 @@ I18n.translations.en = {
         statusPlaceholder: "The status of the service",
         alreadyExists: "A service with {{attribute}} {{value}} already exists.",
         required: "The {{attribute}} is required for a service",
-        deleteConfirmation: "Are you sure you want to delete service {{name}}?",
+        deleteConfirmation: "Are you sure you want to delete service {{name}}? This cannot be undone.",
         add: "Create",
         update: "Update",
         delete: "Delete",
@@ -1003,7 +1003,7 @@ I18n.translations.en = {
         yourself: "{{name}} (it's you)",
         logo: "Organisation image",
         anotherAdmin: "It is highly recommended to invite admins.",
-        deleteConfirmation: "Are you sure you want to delete this organisation?",
+        deleteConfirmation: "Are you sure you want to delete this organisation? This cannot be undone.",
         flash: {
             created: "Organisation {{name}} was created"
         },
@@ -1091,7 +1091,7 @@ I18n.translations.en = {
         deleteSingleInvitationConfirmation: "Are you sure you want to delete this invitation?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this organisation? You won't be able to revert this.",
         deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
-        deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}?",
+        deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}? This cannot be undone.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send them an email with an activation link.",
         flash: {
             updated: "Organisation {{name}} was updated.",
@@ -1278,8 +1278,8 @@ I18n.translations.en = {
         serviceConnectionRequestResend: "Resent request to connect service {{service}} to collaboration {{collaboration}}.",
         serviceRestrictedInfo: "This collaboration is service restricted. Only the platform admin can configure services to be used by this collaboration.",
         serviceDeleteConfirmation: "Are you sure you want to remove this service from collaboration {{collaboration}}?",
-        serviceConnectionRequestDeleteConfirmation: "Are you sure you want to delete this service Connection request?",
-        serviceConnectionRequestResendConfirmation: "Are you sure you want to resend this service Connection request?",
+        serviceConnectionRequestDeleteConfirmation: "Are you sure you want to delete this service connection request?",
+        serviceConnectionRequestResendConfirmation: "Are you sure you want to resend this service connection request?",
     },
     organisationServices: {
         title: "Services for service {{name}}",
@@ -1766,8 +1766,6 @@ I18n.translations.en = {
     landing: {
         header: {
             title: "Easy and secure access to research services for research collaborations",
-            login: "Login for admins & members <sup>*</sup>",
-            sup: "<sup>*</sup><strong>Not a member?</strong> You will receive an invite via mail.",
         },
         works: "How does it work?",
         adminFunction: "admin function",
@@ -1946,7 +1944,7 @@ I18n.translations.en = {
         introspectionEndpointToken: "Introspection endpoint bearer token",
         tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once here.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new token.",
         delete: "Remove token",
-        deleteConfirmation: "Are you sure you want to remove this token? This action cannot be undone.",
+        deleteConfirmation: "Are you sure you want to delete this token? This action cannot be undone.",
         flash: {
             deleted: "Token {{name}} has been removed",
             reactivated: "Token {{name}} has been reactivated",
