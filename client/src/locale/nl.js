@@ -133,7 +133,7 @@ I18n.translations.nl = {
         image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB zijn",
         dragImage: "Versleep de rechthoek en pas de grootte aan totdat je tevreden bent met het resultaat. Kies vervolgens voor toepassen",
         imageToLarge: "Afbeelding is groter 2MB",
-        imageDeleteConfirmation: "Ben je zeker dat je deze afbeelding wilt verwijderen? Dit kan niet worden teruggedraaid. Hierna zul je een nieuwe afbeelding moeten toevoegen.",
+        imageDeleteConfirmation: "Ben je zeker dat je deze afbeelding wil verwijderen? Dit kan niet worden teruggedraaid. Hierna zul je een nieuwe afbeelding moeten toevoegen.",
         imageRequired: "Afbeelding is verplicht",
         whiteSpace: "Afbeelding passend maken",
         no: "Nee"
@@ -308,7 +308,7 @@ I18n.translations.nl = {
             title: "Organisaties",
             availableForAll: "Maak automatisch beschikbaar voor alle organisaties",
             notAvailableForAll: "Maak niet automatisch beschikbaar voor alle organisaties",
-            disableAccessConfirmation: "Weet je zeker dat je voor deze dienst de toegang wilt verbieden?",
+            disableAccessConfirmation: "Weet je zeker dat je voor deze dienst de toegang wil verbieden?",
             disableAccessConsequences: "De volgende organisaties en samenwerkingen gebruiken deze dienst en zullen hierdoor de dienst niet meer kunnen gebruiken.",
             collaboration: "samenwerking",
             organisation: "organisatie",
@@ -325,7 +325,7 @@ I18n.translations.nl = {
             title: "Samenwerkingen die deze dienst gebruiken",
             organisationName: "Organisatie",
             noEntities: "Er zijn geen samenwerkingen die deze dienst gebruiken",
-            organisationWarningTooltip: "Deze samenwerking heeft toegang, omdat de organisatie van deze samenwerking toegang heeft verleend tot alle samenwerkingen in deze organisatie.</br></br>Als je deze samenwerking wilt verbreken, verbied je de toegang tot de organisatie op het tabblad Organisatie.",
+            organisationWarningTooltip: "Deze samenwerking heeft toegang, omdat de organisatie van deze samenwerking toegang heeft verleend tot alle samenwerkingen in deze organisatie.</br></br>Als je deze samenwerking wil verbreken, verbied je de toegang tot de organisatie op het tabblad Organisatie.",
             origin: "Gekoppeld door",
             fromOrganisation: "Organisatie",
             fromCollaboration: "Samenwerking",
@@ -379,7 +379,7 @@ I18n.translations.nl = {
             autoProvisioning: "Iedereen automatisch lid",
             on: "Aan",
             off: "Uit",
-            deleteMemberConfirmation: "Weet je zeker dat je de groep {{name}} wilt verwijderen?"
+            deleteMemberConfirmation: "Weet je zeker dat je de groep {{name}} wil verwijderen?"
         },
         groupMembers: {
             title: "Leden",
@@ -532,7 +532,7 @@ I18n.translations.nl = {
             namePlaceholder: "De naam van deze token",
             description: "Omschrijving",
             descriptionPlaceholder: "De omschrijving van deze token",
-            deleteConfirmation: "Weet je zeker dat je {{name}} wilt verwijderen?",
+            deleteConfirmation: "Weet je zeker dat je {{name}} wil verwijderen?",
             expiryDate: "Vervaldatum",
             expiredInfo: "Deze token is verlopen. Je kan deze token hieronder heractiveren",
             reactivate: "Heractiveren",
@@ -564,9 +564,9 @@ I18n.translations.nl = {
             updated: "Je profiel is bijgewerkt"
         },
         delete: "Verwijder",
-        deleteConfirmation: "Weet je zeker dat je je account voorgoed wilt verwijderen?",
+        deleteConfirmation: "Weet je zeker dat je je account voorgoed wil verwijderen?",
         deleteConfirmationWarning: "Al je lidmaatschappen worden verwijderd. Dit kan niet worden teruggedraaid.",
-        deleteConfirmationCheck: "Als je toch wilt doorgaan, typ dan ter bevestiging je volledige naam in."
+        deleteConfirmationCheck: "Als je toch wil doorgaan, typ dan ter bevestiging je volledige naam in."
     },
     impersonate: {
         title: "Wie wil je zijn?",
@@ -753,19 +753,19 @@ I18n.translations.nl = {
         backToCollaborationDetail: "Terug naar mijn samenwerking {{name}}",
         update: "Opslaan",
         delete: "Verwijderen",
-        deleteConfirmation: "Weet je zeker dat je deze samenwerking wilt verwijderen? Dit kan niet worden teruggedraaid.",
-        deleteMemberConfirmation: "Weet je zeker dat je {{name}} als lid voor deze samenwerking wilt verwijderen?",
-        deleteInvitationConfirmation: "Weet je zeker dat je de uitnodiging voor {{name}} wilt verwijderen?",
+        deleteConfirmation: "Weet je zeker dat je deze samenwerking wil verwijderen? Dit kan niet worden teruggedraaid.",
+        deleteMemberConfirmation: "Weet je zeker dat je {{name}} als lid voor deze samenwerking wil verwijderen?",
+        deleteInvitationConfirmation: "Weet je zeker dat je de uitnodiging voor {{name}} wil verwijderen?",
         deleteEntitiesConfirmation: "Weet je zeker dat je de gemarkeerde leden en uitnodigingen wil verwijderen?",
-        deleteYourselfMemberConfirmation: "Weet je zeker dat je deze samenwerking wilt verlaten? Je kan dit niet terugdraaien.",
+        deleteYourselfMemberConfirmation: "Weet je zeker dat je deze samenwerking wil verlaten? Je kan dit niet terugdraaien.",
         noBatchDeleteAllowed: "Het is niet mogelijk om de samenwerking te verlaten in een batchverwijdering. Selecteer alleen jezelf om deze samenwerking te verlaten of selecteer alleen andere leden om anderen uit de groep te verwijderen.",
-        downgradeYourselfMemberConfirmation: "Weet je zeker dat je geen beheerder meer wilt zijn? Je kan dit niet terugdraaien.",
+        downgradeYourselfMemberConfirmation: "Weet je zeker dat je geen beheerder meer wil zijn? Je kan dit niet terugdraaien.",
         activateMemberConfirmation: "Weet je zeker dat je lid {{name}} wil her-activeren? We zullen een e-mail met een activeringslink naar de gebruiker sturen.",
         lastAdminWarning: "Je laat deze samenwerking achter zonder beheerders. Hierna kan het beheer van de samenwerking alleen worden uitgevoerd door de beheerders van organisatie {{name}}",
         lastAdminWarningUser: "Je bent de laatste beheerder in deze samenwerking. Na je vertrek kan het beheer van de samenwerking alleen worden uitgevoerd door de beheerders van organisatie {{name}}",
         activateMemberTooltip: "Klik om de gedeactiveerde gebruiker weer te activeren. Gedeactiveerde gebruikers kunnen niet inloggen",
-        expiryDateChange: "Weet je zeker dat je de einddatum voor {{name}} wilt veranderen naar {{date}}?",
-        expiryDateReset: "Weet je zeker dat je de einddatum voor {{name}} wilt verwijderen?",
+        expiryDateChange: "Weet je zeker dat je de einddatum voor {{name}} wil veranderen naar {{date}}?",
+        expiryDateReset: "Weet je zeker dat je de einddatum voor {{name}} wil verwijderen?",
         flash: {
             updated: "Samenwerking {{name}} is bijgewerkt.",
             deleted: "Samenwerking {{name}} is verwijderd.",
@@ -912,7 +912,7 @@ I18n.translations.nl = {
         },
         ldap: {
             title: "Reset LDAP-wachtwoord",
-            confirmation: "Weet je zeker dat je het LDAP-wachtwoord wilt resetten voor {{name}}?",
+            confirmation: "Weet je zeker dat je het LDAP-wachtwoord wil resetten voor {{name}}?",
             success: "LDAP wachtwoord is gereset.",
             info: "Sla het wachtwoord veilig op. Hierna is het wachtwoord niet meer te zien.",
             copy: "Kopieer",
@@ -933,7 +933,7 @@ I18n.translations.nl = {
         contacts: "Contactpersonen",
         leave: "Verlaat dienst",
         confirmation: {
-            leave: "Weet je zeker dat je niet meer de admin van deze dienst wilt zijn? Je kan dit niet ongedaan maken.",
+            leave: "Weet je zeker dat je niet meer de admin van deze dienst wil zijn? Je kan dit niet ongedaan maken.",
             lastAdminWarning: "Je laat deze dienst achter zonder beheerders. Hierna kan het beheer van de dienst alleen worden uitgevoerd door de beheerders van SRAM",
             lastAdminWarningUser: "Je bent de laatste beheerder in deze dienst. Na je vertrek kan het beheer van de dienst alleen worden uitgevoerd door de beheerders van SRAM",
         },
@@ -1089,8 +1089,8 @@ I18n.translations.nl = {
         deleteMemberConfirmation: "Weet je zeker dat je deze organisatiebeheerders en -managers wil verwijderen?",
         deleteSingleMemberConfirmation: "Weet je zeker dat je dit lid wil verwijderen?",
         deleteSingleInvitationConfirmation: "Weet je zeker dat je deze uitnodiging wil verwijderen?",
-        deleteYourselfMemberConfirmation: "Weet je zeker dat je deze organisatie wilt verlaten? Je kan dit niet terugdraaien.",
-        deleteApiKeyConfirmation: "Weet je zeker dat je deze API-sleutel wilt verwijderen?",
+        deleteYourselfMemberConfirmation: "Weet je zeker dat je deze organisatie wil verlaten? Je kan dit niet terugdraaien.",
+        deleteApiKeyConfirmation: "Weet je zeker dat je deze API-sleutel wil verwijderen?",
         deleteCollaborationConfirmation: "Weet je zeker dat je samenwerking {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
         activateMemberConfirmation: "Weet je zeker dat je gebruiker {{name}} wil her-activeren? We zullen de gebruiker een e-mail sturen met activatie-link.",
         flash: {
@@ -1277,9 +1277,9 @@ I18n.translations.nl = {
         serviceConnectionRequestDeleted: "Het verzoek om dienst {{service}} te koppelen met samenwerking {{collaboration}} is verwijderd.",
         serviceConnectionRequestResend: "Het verzoek om dienst {{service}} te koppelen met samenwerking {{collaboration}} is opnieuw verstuurd.",
         serviceRestrictedInfo: "Deze samenwerking is beperkt in de diensten. Alleen de platformbeheerder kan diensten configureren die door deze samenwerking worden gebruikt.",
-        serviceDeleteConfirmation: "Weet je zeker dat je deze dienst uit de samenwerking {{collaboration}} wilt verwijderen?",
-        serviceConnectionRequestDeleteConfirmation: "Weet je zeker dat je dit koppelverzoek wilt verwijderen?",
-        serviceConnectionRequestResendConfirmation: "Weet je zeker dat je dit koppelverzoek opnieuw wilt versturen?",
+        serviceDeleteConfirmation: "Weet je zeker dat je deze dienst uit de samenwerking {{collaboration}} wil verwijderen?",
+        serviceConnectionRequestDeleteConfirmation: "Weet je zeker dat je dit koppelverzoek wil verwijderen?",
+        serviceConnectionRequestResendConfirmation: "Weet je zeker dat je dit koppelverzoek opnieuw wil versturen?",
     },
     organisationServices: {
         title: "Diensten voor organisatie {{name}}",
@@ -1302,7 +1302,7 @@ I18n.translations.nl = {
             entity_id: "Entity ID",
             description: "Omschrijving"
         },
-        serviceDeleteConfirmation: "Weet je zeker dat je deze dienst wilt verwijderen uit organisatie {{organisation}}",
+        serviceDeleteConfirmation: "Weet je zeker dat je deze dienst wil verwijderen uit organisatie {{organisation}}",
     },
     groups: {
         title: "Groepen in samenwerking {{name}}",
@@ -1448,8 +1448,8 @@ I18n.translations.nl = {
         requester: "Aanvrager",
         approved: "Goedgekeurd",
         rejectionReason: "Reden voor afwijzing",
-        denyConfirmation: "Weet je zeker dat je dit verzoek wilt afkeuren?",
-        deleteConfirmation: "Weet je zeker dat je dit verzoek wilt verwijderen?",
+        denyConfirmation: "Weet je zeker dat je dit verzoek wil afkeuren?",
+        deleteConfirmation: "Weet je zeker dat je dit verzoek wil verwijderen?",
         approve: "Goedkeuren",
         deny: "Afkeuren",
         status: "Status",
@@ -1475,8 +1475,8 @@ I18n.translations.nl = {
         requester: "Aanvrager",
         decline: "Afwijzen",
         accept: "Accepteren",
-        approveConfirmation: "Weet je zeker dat je dit verzoek wilt goedkeuren?",
-        declineConfirmation: "Weet je zeker dat je dit verzoek wilt afwijzen?",
+        approveConfirmation: "Weet je zeker dat je dit verzoek wil goedkeuren?",
+        declineConfirmation: "Weet je zeker dat je dit verzoek wil afwijzen?",
         flash: {
             declined: "Dienstkoppelverzoek voor {{name}} is afgewezen",
             accepted: "Dienstkoppelverzoek voor {{name}} is geaccepteerd",
@@ -1512,7 +1512,7 @@ I18n.translations.nl = {
         parentDeleted: "Bestaande {{collection}} verwijderd uit {{parent}}",
         activities: {
             tables: "Alle audit-logtabellen",
-            tablesTooltip: "Selecteer alle tabellen waarop je wilt filteren. Als je niets selecteert dan wordt er niet op tabellen gefilterd.",
+            tablesTooltip: "Selecteer alle tabellen waarop je wil filteren. Als je niets selecteert dan wordt er niet op tabellen gefilterd.",
             tablesPlaceHolder: "Selecteer tabellen",
             submit: "Haal op"
         },
@@ -1672,9 +1672,9 @@ I18n.translations.nl = {
         runDbSeedConfirmation: "Weet je het zeker? Hiermee worden alle huidige gegevens verwijderd",
         runDbSeedInfo: "Verwijder alle gegevens en voeg de testgegevens toe",
         runDbSeed: "Voer uit",
-        runClearAuditLogsConfirmation: "Weet je zeker dat je alle gegevens uit de audit-logs wilt verwijderen?",
+        runClearAuditLogsConfirmation: "Weet je zeker dat je alle gegevens uit de audit-logs wil verwijderen?",
         cleanSlate: "Verwijder alles",
-        runCleanSlate: "Weet je zeker dat je alle gegevens wilt verwijderen?",
+        runCleanSlate: "Weet je zeker dat je alle gegevens wil verwijderen?",
         clear: "Clear",
         reload: "Reload",
         seedResult: "Testgegevens toegevoegd in {{ms}} ms. Ververs deze pagina met een hard-reload om de cache te invalideren.",
@@ -1742,9 +1742,9 @@ I18n.translations.nl = {
         whatYouCanDo: "Hier is wat je kan doen:",
         instructions: "Instructies van <strong>{{name}}</strong>",
         createColl: "Creëer je eigen samenwerking",
-        startCreateColl: "Als je je eigen samenwerking wilt starten, kan je deze direct aanmaken.",
+        startCreateColl: "Als je je eigen samenwerking wil starten, kan je deze direct aanmaken.",
         createCollRequest: "Vraag je eigen samenwerking aan",
-        startCreateCollRequest: "Als je je eigen samenwerking wilt starten, kan je deze rechtstreeks aanvragen en zullen de beheerders deze controleren.",
+        startCreateCollRequest: "Als je je eigen samenwerking wil starten, kan je deze rechtstreeks aanvragen en zullen de beheerders deze controleren.",
         createCollTxt: "Creëer een samenwerking",
         createCollRequestTxt: "Start een samenwerking",
         contact: "Contact met de SURF Research Access Management helpdesk",
@@ -1829,7 +1829,7 @@ I18n.translations.nl = {
         },
         update: {
             info1: "Volg de onderstaande stappen om je tweefactorauthenticatie bij te werken.",
-            info2: "Je moet toegang hebben tot de authenticator-app die je momenteel gebruikt om in te loggen bij SURF Research Access Management, evenals tot de nieuwe authenticator-app die je wilt gebruiken voor toekomstige logins.",
+            info2: "Je moet toegang hebben tot de authenticator-app die je momenteel gebruikt om in te loggen bij SURF Research Access Management, evenals tot de nieuwe authenticator-app die je wil gebruiken voor toekomstige logins.",
             currentCode: "Voer de huidige authenticatiecode in",
             currentCodeInfo: "Voer de 6-cijferige authenticatiecode van je huidige authenticator-app in.",
             scanInfo: "Open je nieuwe authenticator-app en:",
@@ -1895,7 +1895,7 @@ I18n.translations.nl = {
         timestamp: "Timestamp"
     },
     unsuspend: {
-        confirmation: "Weet je zeker dat je de schorsing van deze samenwerking ongedaan wilt maken?",
+        confirmation: "Weet je zeker dat je de schorsing van deze samenwerking ongedaan wil maken?",
         flash: "Samenwerking {{name}} is weer actief"
     },
     organisationMembership: {
@@ -1917,8 +1917,8 @@ I18n.translations.nl = {
         }
     },
     serviceDetail: {
-        deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde beheerders en uitnodigingen wilt verwijderen?",
-        deleteYourselfMemberConfirmation: "Weet je zeker dat je deze dienst wilt verlaten? Je kan dit niet terugdraaien.",
+        deleteMemberConfirmation: "Weet je zeker dat je alle geselecteerde beheerders en uitnodigingen wil verwijderen?",
+        deleteYourselfMemberConfirmation: "Weet je zeker dat je deze dienst wil verlaten? Je kan dit niet terugdraaien.",
         resendInvitations: "Weet je zeker dat je alle geselecteerde verlopen uitnodigingen opnieuw wil versturen?",
         flash: {
             entitiesDeleted: "Beheerders en uitnodigingen zijn verwijderd",
@@ -1946,7 +1946,7 @@ I18n.translations.nl = {
         introspectionEndpointToken: "Introspection endpoint bearer token",
         tokenDisclaimer: "Kopieer de token en sla het veilig op. Je kunt deze token hier maar één keer bekijken.<br><br>Nadat je op 'Toevoegen' hebt gedrukt, kun je het niet meer zien, anders dan door het te verwijderen en opnieuw een nieuw token aan te maken.",
         delete: "Verwijder token",
-        deleteConfirmation: "Weet je zeker dat je dit token wilt verwijderen? Dit kan niet teruggedraaid worden.",
+        deleteConfirmation: "Weet je zeker dat je dit token wil verwijderen? Dit kan niet teruggedraaid worden.",
         flash: {
             deleted: "Het token {{name}} is verwijderd",
             reactivated: "Het token {{name}} is geheractiveerd",
@@ -1954,7 +1954,7 @@ I18n.translations.nl = {
             updated: "Token {{name}} aangepast",
         },
         reset: {
-            confirmation: "Weet je zeker dat je de token voor {{name}} wilt resetten?",
+            confirmation: "Weet je zeker dat je de token voor {{name}} wil resetten?",
             success: "Token is gereset.",
             info: "Kopieer en bewaar de token op een veilige plaats. Je kunt deze token hierna niet meer zien.",
             copy: "Copy",
