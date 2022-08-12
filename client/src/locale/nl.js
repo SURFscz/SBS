@@ -93,7 +93,7 @@ I18n.translations.nl = {
             serviceCollaborations: "Samenwerkingen ({{count}})",
             userTokens: "Tokens ({{count}})",
             collaborationRequests: "Samenwerkingsverzoeken",
-            joinRequests: "Lidmaatschapsverzoeken",
+            joinRequests: "Lidmaatschapsverzoeken ({{count}})",
             serviceConnectionRequests: "Koppelverzoeken",
             me: "Profiel",
             about: "Over",

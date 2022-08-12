@@ -5,6 +5,7 @@ import re
 import traceback
 from functools import wraps
 from pathlib import Path
+from urllib.parse import urlparse
 
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
@@ -30,11 +31,12 @@ def auth_filter(app_config):
     url = current_request.base_url
     oidc_config = current_app.app_config.oidc
 
+    url_path = urlparse(url).path
     is_whitelisted_url = False
-    for u in white_listing:
-        if u in url:
-            is_whitelisted_url = True
-            session["destination_url"] = url
+
+    if url_path in white_listing or url_path.startswith("/pam-weblogin"):
+        is_whitelisted_url = True
+        session["destination_url"] = url
 
     if "user" in session and "admin" in session["user"] and session["user"]["admin"]:
         request_context.is_authorized_api_call = False
@@ -53,12 +55,12 @@ def auth_filter(app_config):
         if not oidc_config.second_factor_authentication_required or session["user"].get("second_factor_confirmed"):
             request_context.is_authorized_api_call = False
             return
-        elif [u for u in mfa_listing if u in url]:
+        elif url_path in mfa_listing:
             return
 
     is_external_api_url = False
     for u in external_api_listing:
-        if u in url:
+        if url_path.startswith(u):
             is_external_api_url = True
 
     auth = current_request.authorization
