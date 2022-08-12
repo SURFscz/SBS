@@ -133,7 +133,7 @@ I18n.translations.nl = {
         image: "Afbeelding moet tenminste 300x120 pixels en kleiner dan 2MB zijn",
         dragImage: "Versleep de rechthoek en pas de grootte aan totdat je tevreden bent met het resultaat. Kies vervolgens voor toepassen",
         imageToLarge: "Afbeelding is groter 2MB",
-        imageDeleteConfirmation: "Weet je zeker dat je deze afbeelding wil verwijderen? Dit kan niet ongedaan worden gemaakt en je zult een nieuwe afbeeldinge moeten toevoegen.",
+        imageDeleteConfirmation: "Ben je zeker dat je deze afbeelding wilt verwijderen? Dit kan niet worden teruggedraaid. Hierna zul je een nieuwe afbeelding moeten toevoegen.",
         imageRequired: "Afbeelding is verplicht",
         whiteSpace: "Afbeelding passend maken",
         no: "Nee"
@@ -565,7 +565,7 @@ I18n.translations.nl = {
         },
         delete: "Verwijder",
         deleteConfirmation: "Weet je zeker dat je je account voorgoed wilt verwijderen?",
-        deleteConfirmationWarning: " Al je lidmaatschappen worden verwijderd. Dit kan niet worden hersteld.",
+        deleteConfirmationWarning: "Al je lidmaatschappen worden verwijderd. Dit kan niet worden teruggedraaid.",
         deleteConfirmationCheck: "Als je toch wilt doorgaan, typ dan ter bevestiging je volledige naam in."
     },
     impersonate: {
@@ -753,10 +753,10 @@ I18n.translations.nl = {
         backToCollaborationDetail: "Terug naar mijn samenwerking {{name}}",
         update: "Opslaan",
         delete: "Verwijderen",
-        deleteConfirmation: "Weet je zeker dat je deze samenwerking wilt verwijderen?",
+        deleteConfirmation: "Weet je zeker dat je deze samenwerking wilt verwijderen? Dit kan niet worden teruggedraaid.",
         deleteMemberConfirmation: "Weet je zeker dat je {{name}} als lid voor deze samenwerking wilt verwijderen?",
         deleteInvitationConfirmation: "Weet je zeker dat je de uitnodiging voor {{name}} wilt verwijderen?",
-        deleteEntitiesConfirmation: "Weet je zeker dat je de gemarkeerde leden / uitnodigingen wil verwijderen?",
+        deleteEntitiesConfirmation: "Weet je zeker dat je de gemarkeerde leden en uitnodigingen wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze samenwerking wilt verlaten? Je kan dit niet terugdraaien.",
         noBatchDeleteAllowed: "Het is niet mogelijk om de samenwerking te verlaten in een batchverwijdering. Selecteer alleen jezelf om deze samenwerking te verlaten of selecteer alleen andere leden om anderen uit de groep te verwijderen.",
         downgradeYourselfMemberConfirmation: "Weet je zeker dat je geen beheerder meer wilt zijn? Je kan dit niet terugdraaien.",
@@ -802,7 +802,7 @@ I18n.translations.nl = {
         collaborationRequests: "Samenwerkingsaanvragen",
         add: "Nieuwe organisatie maken",
         searchPlaceHolder: "Doorzoek alle organisaties",
-        deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen?"
+        deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen? Dit kan niet teruggedraaid worden."
     },
     services: {
         title: "Diensten",
@@ -900,7 +900,7 @@ I18n.translations.nl = {
         statusPlaceholder: "De status van de dienst",
         alreadyExists: "Een dienst met {{attribute}} {{value}} bestaat al.",
         required: "De dienst heeft {{attribute}} nodig.",
-        deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen?",
+        deleteConfirmation: "Weet je zeker dat je dienst {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
         add: "Aanmaken",
         update: "Opslaan",
         delete: "Verwijderen",
@@ -1003,7 +1003,7 @@ I18n.translations.nl = {
         yourself: "{{name}} (jijzelf dus)",
         logo: "Organisation image",
         anotherAdmin: "We raden aan meerdere beheerders uit te nodigen.",
-        deleteConfirmation: "Weet je zeker dat je deze organisatie wil verwijderen?",
+        deleteConfirmation: "Weet je zeker dat je deze organisatie wil verwijderen? Dit kan niet teruggedraaid worden.",
         flash: {
             created: "Organisatie {{name}} is aangemaakt."
         },
@@ -1091,7 +1091,7 @@ I18n.translations.nl = {
         deleteSingleInvitationConfirmation: "Weet je zeker dat je deze uitnodiging wil verwijderen?",
         deleteYourselfMemberConfirmation: "Weet je zeker dat je deze organisatie wilt verlaten? Je kan dit niet terugdraaien.",
         deleteApiKeyConfirmation: "Weet je zeker dat je deze API-sleutel wilt verwijderen?",
-        deleteCollaborationConfirmation: "Weet je zeker dat je samenwerking {{name}} wil verwijderen?",
+        deleteCollaborationConfirmation: "Weet je zeker dat je samenwerking {{name}} wil verwijderen? Dit kan niet teruggedraaid worden.",
         activateMemberConfirmation: "Weet je zeker dat je gebruiker {{name}} wil her-activeren? We zullen de gebruiker een e-mail sturen met activatie-link.",
         flash: {
             updated: "Organisatie {{name}} is bijgewerkt.",
@@ -1946,7 +1946,7 @@ I18n.translations.nl = {
         introspectionEndpointToken: "Introspection endpoint bearer token",
         tokenDisclaimer: "Kopieer de token en sla het veilig op. Je kunt deze token hier maar één keer bekijken.<br><br>Nadat je op 'Toevoegen' hebt gedrukt, kun je het niet meer zien, anders dan door het te verwijderen en opnieuw een nieuw token aan te maken.",
         delete: "Verwijder token",
-        deleteConfirmation: "Weet je zeker dat je dit token wilt verwijderen? Je kunt deze actie niet ongedaan maken.",
+        deleteConfirmation: "Weet je zeker dat je dit token wilt verwijderen? Dit kan niet teruggedraaid worden.",
         flash: {
             deleted: "Het token {{name}} is verwijderd",
             reactivated: "Het token {{name}} is geheractiveerd",
