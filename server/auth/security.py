@@ -147,7 +147,7 @@ def _has_organisation_role(organisation_id, roles):
     return query.count() > 0
 
 
-def confirm_organisation_admin(organisation_id):
+def confirm_organisation_admin(organisation_id=None):
     def override_func():
         return is_organisation_admin(organisation_id)
 

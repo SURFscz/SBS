@@ -162,28 +162,28 @@ def name_exists():
 @service_api.route("/entity_id_exists", strict_slashes=False)
 @json_endpoint
 def entity_id_exists():
+    confirm_service_admin()
+
     entity_id = query_param("entity_id")
     existing_service = query_param("existing_service", required=False, default="")
     service = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.entity_id) == func.lower(entity_id)) \
         .filter(func.lower(Service.entity_id) != func.lower(existing_service)) \
         .first()
-    if service:
-        confirm_service_admin(service.id)
     return service is not None, 200
 
 
 @service_api.route("/abbreviation_exists", strict_slashes=False)
 @json_endpoint
 def abbreviation_exists():
+    confirm_service_admin()
+
     abbreviation = query_param("abbreviation")
     existing_service = query_param("existing_service", required=False, default="")
     service = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.abbreviation) == func.lower(abbreviation)) \
         .filter(func.lower(Service.abbreviation) != func.lower(existing_service)) \
         .first()
-    if service:
-        confirm_service_admin(service.id)
     return service is not None, 200
 
 

@@ -6,7 +6,7 @@ from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param
 from server.api.group import create_group
-from server.auth.security import confirm_write_access
+from server.auth.security import confirm_write_access, confirm_service_admin
 from server.db.defaults import cleanse_short_name
 from server.db.domain import ServiceGroup, Service, Collaboration
 from server.db.models import update, save, delete
@@ -30,6 +30,8 @@ def create_service_groups(service: Service, collaboration: Collaboration):
 @service_group_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def service_group_name_exists():
+    confirm_service_admin()
+
     name = query_param("name")
     service_id = query_param("service_id")
     existing_service_group = query_param("existing_service_group", required=False, default="")
@@ -44,6 +46,8 @@ def service_group_name_exists():
 @service_group_api.route("/short_name_exists", strict_slashes=False)
 @json_endpoint
 def service_group_short_name_exists():
+    confirm_service_admin()
+
     short_name = query_param("short_name")
     service_id = query_param("service_id")
     existing_service_group = query_param("existing_service_group", required=False, default="")

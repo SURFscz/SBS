@@ -59,6 +59,9 @@ def auto_provision_all_members_and_invites(group: Group):
 def name_exists():
     name = query_param("name")
     collaboration_id = query_param("collaboration_id")
+
+    confirm_collaboration_admin(collaboration_id, True, True)
+
     existing_group = query_param("existing_group", required=False, default="")
     group = Group.query.options(load_only("id")) \
         .filter(func.lower(Group.name) == func.lower(name)) \
@@ -73,6 +76,9 @@ def name_exists():
 def short_name_exists():
     short_name = query_param("short_name")
     collaboration_id = query_param("collaboration_id")
+
+    confirm_collaboration_admin(collaboration_id, True, True)
+
     existing_group = query_param("existing_group", required=False, default="")
     group = Group.query.options(load_only("id")) \
         .filter(func.lower(Group.short_name) == func.lower(short_name)) \
