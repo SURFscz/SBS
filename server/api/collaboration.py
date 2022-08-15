@@ -101,6 +101,7 @@ def api_collaboration_by_identifier(identifier):
 @collaboration_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
+    # Regular members can create collaboration requests, soo access to all
     name = query_param("name")
     organisation_id = int(query_param("organisation_id"))
     existing_collaboration = query_param("existing_collaboration", required=False, default="")
@@ -120,6 +121,7 @@ def _do_name_exists(name, organisation_id, existing_collaboration=""):
 @collaboration_api.route("/short_name_exists", strict_slashes=False)
 @json_endpoint
 def short_name_exists():
+    # Regular members can create collaboration requests, soo access to all
     name = query_param("short_name")
     organisation_id = int(query_param("organisation_id"))
     existing_collaboration = query_param("existing_collaboration", required=False, default="")
