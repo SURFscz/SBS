@@ -28,7 +28,7 @@ def login_user():
     add_user_claims(data, sub, user, replace_none_values=False)
     db.session.merge(user)
 
-    res = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
+    res = {"admin": is_admin_user(user), "guest": False}
     session_data = {
         "id": user.id,
         "uid": user.uid,

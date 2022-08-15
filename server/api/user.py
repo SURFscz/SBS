@@ -16,7 +16,7 @@ from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import joinedload, selectinload
-from werkzeug.exceptions import Forbidden, InternalServerError
+from werkzeug.exceptions import InternalServerError
 
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
@@ -100,8 +100,7 @@ def _user_json_response(user, auto_set_second_factor_confirmed):
     is_admin = {"admin": is_admin_user(user),
                 "second_factor_confirmed": second_factor_confirmed,
                 "user_accepted_aup": user.has_agreed_with_aup(),
-                "guest": False,
-                "confirmed_admin": user.confirmed_super_user}
+                "guest": False}
     json_user = jsonify(user).json
     _add_counts(json_user)
     _add_service_aups(json_user, user)
@@ -217,10 +216,9 @@ def user_query():
 def get_platform_admins():
     confirm_write_access()
     config = current_app.app_config
-    admin_users_upgrade = config.feature.admin_users_upgrade
     admin_users = [u.uid for u in config.admin_users]
     platform_admins = User.query.filter(User.uid.in_(admin_users)).all()
-    return {"platform_admins": platform_admins, "admin_users_upgrade": admin_users_upgrade}, 200
+    return {"platform_admins": platform_admins}, 200
 
 
 @user_api.route("/authorization", strict_slashes=False)
@@ -594,28 +592,6 @@ def attribute_aggregation():
     user = users[0] if len(users) == 1 else users_eppn_match[0] if len(users_eppn_match) == 1 else users[0]
 
     return [cm.collaboration.name for cm in user.collaboration_memberships], 200
-
-
-@user_api.route("/upgrade_super_user", methods=["GET"], strict_slashes=False)
-def upgrade_super_user():
-    session.modified = True
-
-    user_id = current_user_id()
-    user = User.query.filter(User.id == user_id).one()
-
-    if not is_admin_user(user):
-        raise Forbidden("Must be admin user")
-
-    user.confirmed_super_user = True
-    user = db.session.merge(user)
-    db.session.commit()
-
-    store_user_in_session(user, True, user.has_agreed_with_aup())
-
-    response = redirect(current_app.app_config.feature.admin_users_upgrade_redirect_url)
-    response.headers.set("x-session-alive", "true")
-    response.headers["server"] = ""
-    return response
 
 
 @user_api.route("/logout", strict_slashes=False)
