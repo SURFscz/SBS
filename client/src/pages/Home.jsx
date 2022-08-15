@@ -45,10 +45,6 @@ class Home extends React.Component {
         const nbrOrganisations = user.organisation_memberships.length;
         const nbrCollaborations = user.collaboration_memberships.length;
         const nbrServices = user.service_memberships.length;
-        if (user.needsSuperUserConfirmation) {
-            this.props.history.push("/confirmation");
-            return;
-        }
         const canStayInHome = !isEmpty(user.collaboration_requests) || !isEmpty(user.join_requests) || nbrServices > 0;
         switch (role) {
             case ROLES.PLATFORM_ADMIN:

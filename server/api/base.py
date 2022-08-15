@@ -170,13 +170,11 @@ def config():
     base_url = base_url[:-1] if base_url.endswith("/") else base_url
     return {"local": current_app.config["LOCAL"],
             "base_url": base_url,
-            "admin_users_upgrade": cfg.feature.admin_users_upgrade,
             "api_keys_enabled": cfg.feature.api_keys_enabled,
             "feedback_enabled": cfg.feature.feedback_enabled,
             "seed_allowed": cfg.feature.seed_allowed,
             "organisation_categories": cfg.organisation_categories,
             "second_factor_authentication_required": cfg.oidc.second_factor_authentication_required,
-            "admin_users_upgrade_url": cfg.feature.admin_users_upgrade_url,
             "impersonation_allowed": cfg.feature.impersonation_allowed,
             "ldap_url": cfg.ldap.url,
             "ldap_bind_account": cfg.ldap.bind_account,

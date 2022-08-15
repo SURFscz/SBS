@@ -44,9 +44,6 @@ properties:
   scoped_affiliation:
     type: string
     example: "student@uva.nl"
-  confirmed_super_user:
-    type: boolean
-    example: false
   last_accessed_date:
     type: number
     description: "The last accessed date at in epoch seconds"
