@@ -126,11 +126,13 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
 
     connected_collaborations = []
     memberships = []
+    now = datetime.utcnow()
     for cm in user.collaboration_memberships:
-        connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
-        if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
-            connected_collaborations.append(cm.collaboration)
-            memberships.append(cm)
+        if not cm.collaboration.expiry_date or cm.collaboration.expiry_date > now:
+            connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
+            if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
+                connected_collaborations.append(cm.collaboration)
+                memberships.append(cm)
 
     if not connected_collaborations and no_free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"

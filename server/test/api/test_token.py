@@ -64,3 +64,12 @@ class TestToken(AbstractTest):
         self.assertEqual(200, res.status_code)
         self.assertEqual(res.json["status"], "token-expired")
         self.assertEqual(res.json["active"], False)
+
+    def test_introspect_expired_collaboration(self):
+        self.expire_collaborations(sarah_name)
+        res = self.client.post("/api/tokens/introspect", headers={"Authorization": f"bearer {network_cloud_token}"},
+                               data={"token": sarah_user_token}, content_type="application/x-www-form-urlencoded")
+
+        self.assertEqual(200, res.status_code)
+        self.assertEqual(res.json["active"], False)
+        self.assertEqual(res.json["status"], "token-not-connected")

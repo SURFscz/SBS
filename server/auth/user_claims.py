@@ -3,7 +3,7 @@ import random
 import re
 import string
 import unicodedata
-
+import datetime
 from flask import current_app
 
 from server.db.domain import User, UserNameHistory
@@ -83,14 +83,16 @@ def user_memberships(user, connected_collaborations):
     # Also, we omit the GROUP-AUTHORITY (and are therefore not completely compliant), as it complicates parsing the
     # entitlement, will confuse Services, and the spec fails to make clear what the usecase is, exactly.
     memberships = set()
+    now = datetime.datetime.utcnow()
     for collaboration in connected_collaborations:
-        # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
-        org_short_name = collaboration.organisation.short_name
-        coll_short_name = collaboration.short_name
+        if not collaboration.expiry_date or collaboration.expiry_date > now:
+            # add the CO itself, the Organisation this CO belongs to, and the groups within the CO
+            org_short_name = collaboration.organisation.short_name
+            coll_short_name = collaboration.short_name
 
-        memberships.add(f"{namespace}:group:{org_short_name}")
-        memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}")
-        for g in collaboration.groups:
-            if g.is_member(user.id):
-                memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}:{g.short_name}")
+            memberships.add(f"{namespace}:group:{org_short_name}")
+            memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}")
+            for g in collaboration.groups:
+                if g.is_member(user.id):
+                    memberships.add(f"{namespace}:group:{org_short_name}:{coll_short_name}:{g.short_name}")
     return memberships

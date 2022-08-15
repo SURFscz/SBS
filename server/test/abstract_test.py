@@ -70,6 +70,16 @@ class AbstractTest(TestCase):
     def find_entity_by_name(cls, name):
         return cls.query.filter(cls.name == name).first()
 
+    @staticmethod
+    def expire_collaborations(user_name):
+        user = AbstractTest.find_entity_by_name(User, user_name)
+        connected_collaborations = [cm.collaboration for cm in user.collaboration_memberships]
+        for collaboration in connected_collaborations:
+            collaboration.expiry_date = datetime.datetime.utcnow() - datetime.timedelta(days=50)
+            db.session.merge(collaboration)
+            db.session.commit()
+        return connected_collaborations
+
     @responses.activate
     def login(self, uid="urn:john", schac_home_organisation=None, user_info={}):
         responses.add(responses.POST, current_app.app_config.oidc.token_endpoint,
