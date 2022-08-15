@@ -219,7 +219,7 @@ def is_service_admin(service_id=None):
     return query.count() > 0
 
 
-def confirm_service_admin(service_id):
+def confirm_service_admin(service_id=None):
     def override_func():
         return is_service_admin(service_id)
 
