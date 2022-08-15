@@ -147,14 +147,15 @@ def _generate_ldap_password_with_hash():
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
+    confirm_service_admin()
+
     name = query_param("name")
     existing_service = query_param("existing_service", required=False, default="")
     service = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.name) == func.lower(name)) \
         .filter(func.lower(Service.name) != func.lower(existing_service)) \
         .first()
-    if service:
-        confirm_service_admin(service.id)
+
     return service is not None, 200
 
 
