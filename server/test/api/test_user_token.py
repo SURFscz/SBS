@@ -14,13 +14,14 @@ class TestUserToken(AbstractTest):
         self.login("urn:sarah")
         user_tokens = self.get("/api/user_tokens")
         self.assertEqual(1, len(user_tokens))
+        self.assertIsNone(user_tokens[0].get("hashed_token"))
 
         user_tokens[0]["name"] = "changed"
         self.put("/api/user_tokens", body=user_tokens[0])
 
         user_tokens_updated = self.get("/api/user_tokens")
         self.assertEqual("changed", user_tokens_updated[0]["name"])
-        self.assertEqual(user_tokens[0]["hashed_token"], user_tokens_updated[0]["hashed_token"])
+        self.assertIsNone(user_tokens[0].get("hashed_token"))
 
     def test_generate(self):
         self.login("urn:sarah")
@@ -94,4 +95,4 @@ class TestUserToken(AbstractTest):
         created_at = int(user_tokens_updated[0]["created_at"])
         one_day_ago = int((datetime.datetime.utcnow() - datetime.timedelta(days=1)).timestamp())
         self.assertTrue(created_at > one_day_ago)
-        self.assertEqual(user_tokens[0]["hashed_token"], user_tokens_updated[0]["hashed_token"])
+        self.assertIsNone(user_tokens[0].get("hashed_token"))
