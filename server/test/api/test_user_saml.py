@@ -308,3 +308,15 @@ class TestUserSaml(AbstractTest):
                         body={"user_id": "urn:sarah",
                               "service_id": service_mail_entity_id})
         self.assertTrue(res["error"])
+
+    def test_proxy_authz_expired_collaboration(self):
+        self.expire_collaborations(sarah_name)
+        self.add_service_aup_to_user("urn:sarah", service_mail_entity_id)
+        self.login_user_2fa("urn:sarah")
+
+        res = self.post("/api/users/proxy_authz", response_status_code=200,
+                        body={"user_id": "urn:sarah", "service_id": service_mail_entity_id, "issuer_id": "issuer.com",
+                              "uid": "sarah", "homeorganization": "example.com"})
+        status = res["status"]
+        self.assertEqual(4, status["error_status"])
+        self.assertEqual("unauthorized", status["result"])
