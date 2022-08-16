@@ -36,7 +36,7 @@ export default function OrganisationWelcomeDialog({
             shouldCloseOnOverlayClick={false}
             ariaHideApp={false}>
             {(isAdmin && !isInvitation) && <div className="toggle-role">
-                <ToggleSwitch value={toggleRole === ROLES.COLL_ADMIN} onChange={doToggleRole}/>
+                <ToggleSwitch value={toggleRole === ROLES.ORG_ADMIN} onChange={doToggleRole}/>
                 <span className="toggle-txt">{I18n.t("welcomeDialog.toggleRole")}</span>
             </div>}
             <h1>{I18n.t("welcomeDialog.title", {name: name})}</h1>
