@@ -940,7 +940,7 @@ I18n.translations.nl = {
         viewAsServiceAdmin: "Bekijk als service beheerder",
         viewAsPlatformAdmin: "Bekijk als platform admin",
         fakeServiceAdmin: "Je bent service admin (not)",
-        addMe: "Maak me dienst beheerder"
+        addMe: "Maak me dienstbeheerder"
     },
     organisation: {
         title: "Nieuwe organisatie toevoegen",
@@ -1323,7 +1323,7 @@ I18n.translations.nl = {
         namePlaceholder: "Naam van de groep",
         short_name: "Korte naam",
         shortNamePlaceHolder: "Korte naam van de groep",
-        shortNameTooltip: "De korte naam van een dienstgroep wordt gebruikt voor groepen aangemaakt in samenwerkingen, voorafgegaan door de korte naam van de dienst, gescheiden door een koppelteken '-'",
+        shortNameTooltip: "De korte naam van een dienstgroep wordt gebruikt (1) voor groepen aangemaakt in samenwerkingen, voorafgegaan door de korte naam van de dienst, gescheiden door een koppelteken '-' en (2) in de challenge URL gebruikt door PAM web login.",
         identifier: "Identifier",
         identifierTooltip: "Gegenereerde, unieke en niet aanpasbare identifier van een groep die wordt gebruikt als identifier voor externe systemen",
         collaboration: "Samenwerking",
