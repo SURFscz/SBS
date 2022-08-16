@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 import datetime
 
-from flask import Blueprint,jsonify, request as current_request
+from flask import Blueprint, jsonify, request as current_request
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
