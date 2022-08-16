@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from flask import Blueprint, request as current_request, current_app, session
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, Forbidden
 
 from server.api.base import json_endpoint
 from server.api.service import user_service
@@ -46,10 +46,14 @@ def _validate_pam_sso_session(pam_sso_session: PamSSOSession, pin, validate_pin,
     return {"result": "SUCCESS", "info": f"User {user.uid} has authenticated successfully"}
 
 
-@pam_websso_api.route("/<session_id>", methods=["GET"], strict_slashes=False)
+@pam_websso_api.route("/<service_shortname>/<session_id>", methods=["GET"], strict_slashes=False)
 @json_endpoint
-def find_by_session_id(session_id):
+def find_by_session_id(service_shortname, session_id):
     pam_sso_session = _get_pam_sso_session(session_id)
+
+    if pam_sso_session.service.abbreviation.lower() != service_shortname.lower():
+        raise Forbidden(f"Short name {service_shortname} is not correct")
+
     res = {"service": pam_sso_session.service}
     if "user" in session and not session["user"]["guest"]:
         res["validation"] = _validate_pam_sso_session(pam_sso_session, None, False, True)
