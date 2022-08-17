@@ -74,17 +74,20 @@ def start():
     cache_duration = int(data.get("cache_duration", 60 * 10))
     filters = {attribute: user_id}
 
-    logger.debug(f"Start PamWebSSO for service {service.name} with data {str(data)}")
+    logger.debug(f"Start PamWebSSO for service {service.name} with data {data}")
 
     user = User.query.filter_by(**filters).first()
     if not user:
-        logger.debug(f"PamWebSSO access to service {service.name} denied (user not found): {str(data)}")
+        logger.debug(f"PamWebSSO access to service {service.name} denied (user not found): {data}")
         raise NotFound(f"User {filters} not found")
 
+    # The user validations expect a logged in user
     session["user"] = {"id": user.id, "admin": False}
     if not user_service(service.id, False):
-        logger.debug(f"PamWebSSO access to service {service.name} denied (no CO access): {str(data)}")
+        logger.debug(f"PamWebSSO access to service {service.name} denied (no CO access): {data}")
         raise NotFound(f"User {filters} access denied")
+
+    # Now we can empty the session again, as we want to be stateless
     session.clear()
     session.modified = False
 
@@ -92,7 +95,6 @@ def start():
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
     if last_login_date and last_login_date > seconds_ago:
         logger.debug(f"PamWebSSO user {user.uid} SSO results")
-
         return {"result": "OK", "cached": True,
                 "info": f"User {user.uid} login was cached"}, 201
 
@@ -104,7 +106,8 @@ def start():
 
     return {"result": "OK",
             "session_id": pam_sso_session.session_id,
-            "challenge": f"Please sign in to: {current_app.app_config.base_url}/weblogin/{pam_sso_session.session_id}",
+            "challenge": f"Please sign in to: {current_app.app_config.base_url}/"
+                         f"weblogin/{service.abbreviation}/{pam_sso_session.session_id}",
             "cached": False}, 201
 
 
@@ -128,6 +131,6 @@ def check_pin():
     if validation["result"] == "SUCCESS":
         db.session.delete(pam_sso_session)
 
-    logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {str(validation)}")
+    logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {validation}")
 
     return validation, 201
