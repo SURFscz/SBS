@@ -1799,7 +1799,7 @@ I18n.translations.en = {
         oneAdminWarning: "An organisation requires at least one admin.",
     },
     notFound: {
-        invitationNotFound: "This invitiation does not exist (anymore). The invititation has probably already been used. Ask the person who invited you to send you a new one.",
+        invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used. Ask the person who invited you to send you a new one.",
         invalidSecondFactorUUID: "The redirect from eduTeams is expired. Please go back to the service where you we're trying to login and try again.",
         invalidPamWebSSO: "Your session has expired. Please go back to the service you were trying to login to and try again.",
         msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that " +
