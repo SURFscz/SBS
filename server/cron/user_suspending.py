@@ -25,7 +25,7 @@ def create_suspend_notification(user, retention, app, is_primary):
 
     logger = logging.getLogger("scheduler")
     logger.info(f"Sending {count} suspend notification to user {user.email} because last_login_date "
-                f"is {str(user.last_login_date)}")
+                f"is {user.last_login_date}")
 
     mail_suspend_notification({"salutation": f"Hi {user.given_name}",
                                "base_url": app.app_config.base_url,
@@ -79,7 +79,7 @@ def _do_suspend_users(app):
                     user.suspended = True
 
                     logger.info(f"Suspending user {user.email}, last suspend_notification.sent_at is "
-                                f"{str(suspend_notification.sent_at)} and before retention date {str(days_)}")
+                                f"{suspend_notification.sent_at} and before retention date {days_}")
 
                     db.session.merge(user)
                     results["suspended"].append(user.email)
