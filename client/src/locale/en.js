@@ -1813,7 +1813,7 @@ I18n.translations.en = {
             info1: "You have signed in with a username and password at {{name}}. SURF Research Access Management requires two-factor authentication. This means an extra check to verify it's you.",
             info2: "To setup two factor authentication, take the following steps:",
             step: "Stap {{nbr}}",
-            getApp: "1. Add SURF Research Access Maagement to your authenticator app",
+            getApp: "1. Add SURF Research Access Management to your authenticator app",
             unknownIdp: "an unknown organisation",
             getAppUpdate: "2. Add SURF Research Access Management to your authenticator app",
             new: "new ",
