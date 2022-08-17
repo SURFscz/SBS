@@ -113,6 +113,7 @@ feature:
   impersonation_allowed: True
   sbs_swagger_enabled: True
   admin_platform_backdoor_totp: True
+  past_dates_allowed: True
 
 # The retention config determines how long users may be inactive, how long the reminder magic link is valid and when do we resent the magic link
 retention:

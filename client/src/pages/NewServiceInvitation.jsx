@@ -166,6 +166,7 @@ class NewServiceInvitation extends React.Component {
 
             <DateField value={expiry_date}
                        onChange={e => this.setState({expiry_date: e})}
+                       pastDatesAllowed={this.props.config.past_dates_allowed}
                        maxDate={moment().add(31, "day").toDate()}
                        name={I18n.t("organisationInvitation.expiryDate")}
                        toolTip={I18n.t("organisationInvitation.expiryDateTooltip")}/>

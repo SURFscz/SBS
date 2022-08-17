@@ -294,6 +294,7 @@ class NewInvitation extends React.Component {
                        onChange={e => this.setState({membership_expiry_date: e})}
                        allowNull={true}
                        showYearDropdown={true}
+                       pastDatesAllowed={this.props.config.past_dates_allowed}
                        minDate={this.getMembershipExpiryDate()}
                        name={I18n.t("invitation.membershipExpiryDate")}
                        toolTip={I18n.t("invitation.membershipExpiryDateTooltip")}/>
@@ -307,6 +308,7 @@ class NewInvitation extends React.Component {
 
             <DateField value={expiry_date}
                        onChange={this.setInvitationExpiryDate}
+                       pastDatesAllowed={this.props.config.past_dates_allowed}
                        maxDate={moment().add(31, "day").toDate()}
                        name={I18n.t("invitation.expiryDate")}
                        toolTip={I18n.t("invitation.expiryDateTooltip")}/>

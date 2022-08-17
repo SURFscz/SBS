@@ -179,7 +179,8 @@ def config():
             "ldap_url": cfg.ldap.url,
             "ldap_bind_account": cfg.ldap.bind_account,
             "continue_eduteams_redirect_uri": cfg.oidc.continue_eduteams_redirect_uri,
-            "introspect_endpoint": f"{cfg.base_server_url}/api/tokens/introspect"
+            "introspect_endpoint": f"{cfg.base_server_url}/api/tokens/introspect",
+            "past_dates_allowed": cfg.feature.past_dates_allowed
             }, 200
 
 
