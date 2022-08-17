@@ -223,7 +223,7 @@ def proxy_authz():
     schac_home_organisation = json_dict.get("homeorganization", None)
 
     logger = ctx_logger("user_api")
-    logger.debug(f"proxy_authz called with {str(json_dict)}")
+    logger.debug(f"proxy_authz called with {json_dict}")
 
     if service_entity_id.lower() == current_app.app_config.oidc.sram_service_entity_id.lower():
         return _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, issuer_id)
