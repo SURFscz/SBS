@@ -22,7 +22,8 @@ export default class DateField extends React.Component {
     toggle = () => this.component.setOpen(true);
 
     validateOnBlur = e => {
-        const {onChange, maxDate = null, minDate = null, allowNull = false, performValidateOnBlur = true} = this.props;
+        const {onChange, maxDate = null, minDate = null, allowNull = false, performValidateOnBlur = true,
+        pastDatesAllowed = false} = this.props;
         if (!performValidateOnBlur) {
             stopEvent(e);
             return;
@@ -35,7 +36,7 @@ export default class DateField extends React.Component {
             if (value) {
                 const m = moment(value, "dd/MM/yyyy");
                 const d = m.toDate();
-                if (!m.isValid() || d > maximalDate || d < minimalDate) {
+                if (!pastDatesAllowed && (!m.isValid() || d > maximalDate || d < minimalDate)) {
                     setTimeout(() => onChange(moment().add(16, "days").toDate()), 250);
                 }
             } else {
@@ -50,7 +51,7 @@ export default class DateField extends React.Component {
     render() {
         const {
             onChange, name, value, disabled = false, maxDate = null, minDate = null, toolTip = null, allowNull = false,
-            showYearDropdown = false
+            showYearDropdown = false, pastDatesAllowed = false
         } = this.props;
         const minimalDate = minDate || moment().add(1, "day").endOf("day").toDate();
         return (
@@ -81,7 +82,7 @@ export default class DateField extends React.Component {
                         disabled={disabled}
                         todayButton={null}
                         maxDate={maxDate}
-                        minDate={minimalDate}
+                        minDate={pastDatesAllowed ? null : minimalDate}
                     />
                     <FontAwesomeIcon onClick={this.toggle} icon="calendar-alt"/>
                 </label>
@@ -99,6 +100,7 @@ DateField.propTypes = {
     isOpen: PropTypes.bool,
     maxDate: PropTypes.object,
     allowNull: PropTypes.bool,
+    pastDatesAllowed: PropTypes.bool,
     showYearDropdown: PropTypes.bool,
     tooltip: PropTypes.string,
     className: PropTypes.string,

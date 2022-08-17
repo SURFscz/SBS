@@ -295,16 +295,19 @@ class App extends React.Component {
 
                         <Route exact path="/new-organisation-invite/:organisation_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
+                                                                config={config}
                                                                 Component={NewOrganisationInvitation}
                                                                 {...props}/>}/>
 
                         <Route exact path="/new-invite/:collaboration_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
+                                                                config={config}
                                                                 Component={NewInvitation}
                                                                 {...props}/>}/>
 
                         <Route exact path="/new-service-invite/:service_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
+                                                                config={config}
                                                                 Component={NewServiceInvitation}
                                                                 {...props}/>}/>
 
