@@ -12,11 +12,11 @@ from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
-from server.auth.security import current_user
+from server.auth.security import current_user_id
 from server.auth.tokens import get_authorization_header
 from server.auth.urls import white_listing, mfa_listing, external_api_listing
 from server.db.db import db
-from server.db.domain import ApiKey
+from server.db.domain import ApiKey, User
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error
 
@@ -112,12 +112,17 @@ def _audit_trail():
         ctx_logger("base").info(f"Path {current_request.path} {method} {json.dumps(body, default=str)}")
 
 
-def send_error_mail(tb, session_exists=True):
+def send_error_mail(tb):
     mail_conf = current_app.app_config.mail
     if mail_conf.send_exceptions and not os.environ.get("TESTING"):
-        user = current_user() if session_exists else {}
-        user_id = user.get("email", user.get("name")) if "email" in user or "name" in user \
-            else request_context.api_user.name if request_context.is_authorized_api_call else "unknown"
+        if "user" in session and "id" in session["user"]:
+            user_id = User.query.get(current_user_id()).email
+        elif request_context.get("is_authorized_api_call"):
+            user_id = request_context.api_user.name
+        elif request_context.get("external_api_organisation"):
+            user_id = f"Organisation API call {request_context.get('external_api_organisation').name}"
+        else:
+            user_id = "unknown"
         mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, tb)
 
 
