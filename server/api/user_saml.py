@@ -111,7 +111,7 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
         msg = f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} " \
               f"as the service is unknown"
         logger.error(msg)
-        send_error_mail(tb=msg, session_exists=False)
+        send_error_mail(tb=msg)
         return not_authorized_func(service_entity_id, SERVICE_UNKNOWN)
     no_free_ride = not service.non_member_users_access_allowed
     user = User.query.filter(User.uid == uid).first()
