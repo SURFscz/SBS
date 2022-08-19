@@ -144,7 +144,6 @@ def json_endpoint(f):
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
                                error=True)
             response.status_code = 500
-            ctx_logger("base").exception(response)
             if isinstance(e, NoResultFound):
                 response.status_code = 404
             elif isinstance(e, HTTPException):
@@ -154,6 +153,7 @@ def json_endpoint(f):
             _add_custom_header(response)
             db.session.rollback()
             # We want to send emails if the exception is unexpected and validation errors should not happen server-side
+            ctx_logger("base").exception(response)
             if response.status_code == 500 or response.status_code == 400:
                 send_error_mail(tb=traceback.format_exc())
             return response
