@@ -5,17 +5,18 @@ import re
 import traceback
 from functools import wraps
 from pathlib import Path
+from urllib.parse import urlparse
 
 from flask import Blueprint, jsonify, current_app, request as current_request, session, g as request_context
 from jsonschema import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
-from server.auth.security import current_user, current_user_id
+from server.auth.security import current_user_id
 from server.auth.tokens import get_authorization_header
 from server.auth.urls import white_listing, mfa_listing, external_api_listing
 from server.db.db import db
-from server.db.domain import ApiKey
+from server.db.domain import ApiKey, User
 from server.logger.context_logger import ctx_logger
 from server.mail import mail_error
 
@@ -37,11 +38,12 @@ def auth_filter(app_config):
     url = current_request.base_url
     oidc_config = current_app.app_config.oidc
 
+    url_path = urlparse(url).path
     is_whitelisted_url = False
-    for u in white_listing:
-        if u in url:
-            is_whitelisted_url = True
-            session["destination_url"] = url
+
+    if url_path in white_listing or url_path.startswith("/pam-weblogin"):
+        is_whitelisted_url = True
+        session["destination_url"] = url
 
     if "user" in session and "admin" in session["user"] and session["user"]["admin"]:
         request_context.is_authorized_api_call = False
@@ -60,12 +62,12 @@ def auth_filter(app_config):
         if not oidc_config.second_factor_authentication_required or session["user"].get("second_factor_confirmed"):
             request_context.is_authorized_api_call = False
             return
-        elif [u for u in mfa_listing if u in url]:
+        elif url_path in mfa_listing:
             return
 
     is_external_api_url = False
     for u in external_api_listing:
-        if u in url:
+        if url_path.startswith(u):
             is_external_api_url = True
 
     auth = current_request.authorization
@@ -117,12 +119,17 @@ def _audit_trail():
         ctx_logger("base").info(f"Path {current_request.path} {method} {json.dumps(body, default=str)}")
 
 
-def send_error_mail(tb, session_exists=True):
+def send_error_mail(tb):
     mail_conf = current_app.app_config.mail
     if mail_conf.send_exceptions and not os.environ.get("TESTING"):
-        user = current_user() if session_exists else {}
-        user_id = user.get("email", user.get("name")) if "email" in user or "name" in user \
-            else request_context.api_user.name if request_context.is_authorized_api_call else "unknown"
+        if "user" in session and "id" in session["user"]:
+            user_id = User.query.get(current_user_id()).email
+        elif request_context.get("is_authorized_api_call"):
+            user_id = request_context.api_user.name
+        elif request_context.get("external_api_organisation"):
+            user_id = f"Organisation API call {request_context.get('external_api_organisation').name}"
+        else:
+            user_id = "unknown"
         mail_error(mail_conf.environment, user_id, mail_conf.send_exceptions_recipients, tb)
 
 
@@ -144,7 +151,6 @@ def json_endpoint(f):
             response = jsonify(message=e.description if isinstance(e, HTTPException) else str(e),
                                error=True)
             response.status_code = 500
-            ctx_logger("base").exception(response)
             if isinstance(e, NoResultFound):
                 response.status_code = 404
             elif isinstance(e, HTTPException):
@@ -154,6 +160,7 @@ def json_endpoint(f):
             _add_custom_header(response)
             db.session.rollback()
             # We want to send emails if the exception is unexpected and validation errors should not happen server-side
+            ctx_logger("base").exception(response)
             if response.status_code == 500 or response.status_code == 400:
                 send_error_mail(tb=traceback.format_exc())
             return response
@@ -176,18 +183,17 @@ def config():
     return {"local": current_app.config["LOCAL"],
             "base_url": base_url,
             "socket_url": cfg.socket_url,
-            "admin_users_upgrade": cfg.feature.admin_users_upgrade,
             "api_keys_enabled": cfg.feature.api_keys_enabled,
             "feedback_enabled": cfg.feature.feedback_enabled,
             "seed_allowed": cfg.feature.seed_allowed,
             "organisation_categories": cfg.organisation_categories,
             "second_factor_authentication_required": cfg.oidc.second_factor_authentication_required,
-            "admin_users_upgrade_url": cfg.feature.admin_users_upgrade_url,
             "impersonation_allowed": cfg.feature.impersonation_allowed,
             "ldap_url": cfg.ldap.url,
             "ldap_bind_account": cfg.ldap.bind_account,
             "continue_eduteams_redirect_uri": cfg.oidc.continue_eduteams_redirect_uri,
-            "introspect_endpoint": f"{cfg.base_server_url}/api/tokens/introspect"
+            "introspect_endpoint": f"{cfg.base_server_url}/api/tokens/introspect",
+            "past_dates_allowed": cfg.feature.past_dates_allowed
             }, 200
 
 

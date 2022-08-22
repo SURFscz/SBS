@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import {serviceAupBulkCreate} from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
 import CollaborationAupAcceptance from "../components/CollaborationAupAcceptance";
+import DOMPurify from "dompurify";
 
 
 class MissingServiceAup extends React.Component {
@@ -22,8 +23,18 @@ class MissingServiceAup extends React.Component {
         this.setState({loading: true});
         const {user, reloadMe} = this.props;
         serviceAupBulkCreate(user.services_without_aup).then(res => {
-            const url = new URL(res.location);
-            reloadMe(() => this.props.history.push(url.pathname + url.search));
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            let path = urlSearchParams.get("state");
+            if (path) {
+                //user was already logged in
+                path = decodeURIComponent(path);
+            } else if (res.location) {
+                const url = new URL(res.location);
+                path = url.pathname + url.search;
+            } else {
+                path = "/"
+            }
+            reloadMe(() => this.props.history.push(path));
         });
     }
 
@@ -41,7 +52,7 @@ class MissingServiceAup extends React.Component {
                 <p className="info">{I18n.t(`aup.service.missing.${info}`)}</p>
                 {user.service_collaborations.map((collaboration, index) => <div className="collaboration-detail"
                                                                                 key={index}>
-                    <h2 dangerouslySetInnerHTML={{__html: I18n.t("aup.service.purposeOf", {name: collaboration.name})}}/>
+                    <h2 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.service.purposeOf", {name: collaboration.name}))}}/>
                     <p>{collaboration.description}</p>
                 </div>)}
                 <h2>{I18n.t(`aup.service.${services}`)}</h2>

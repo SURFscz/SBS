@@ -101,7 +101,7 @@ def _do_get_services(restrict_for_current_user=False, include_counts=False):
     def override_func():
         return is_collaboration_admin() or _is_org_member() or is_service_admin()
 
-    confirm_write_access(override_func=override_func)
+    confirm_read_access(override_func=override_func)
     query = Service.query \
         .options(selectinload(Service.allowed_organisations)) \
         .options(selectinload(Service.service_connection_requests)) \
@@ -147,42 +147,43 @@ def _generate_ldap_password_with_hash():
 @service_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
+    confirm_service_admin()
+
     name = query_param("name")
     existing_service = query_param("existing_service", required=False, default="")
     service = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.name) == func.lower(name)) \
         .filter(func.lower(Service.name) != func.lower(existing_service)) \
         .first()
-    if service:
-        confirm_service_admin(service.id)
+
     return service is not None, 200
 
 
 @service_api.route("/entity_id_exists", strict_slashes=False)
 @json_endpoint
 def entity_id_exists():
+    confirm_service_admin()
+
     entity_id = query_param("entity_id")
     existing_service = query_param("existing_service", required=False, default="")
     service = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.entity_id) == func.lower(entity_id)) \
         .filter(func.lower(Service.entity_id) != func.lower(existing_service)) \
         .first()
-    if service:
-        confirm_service_admin(service.id)
     return service is not None, 200
 
 
 @service_api.route("/abbreviation_exists", strict_slashes=False)
 @json_endpoint
 def abbreviation_exists():
+    confirm_service_admin()
+
     abbreviation = query_param("abbreviation")
     existing_service = query_param("existing_service", required=False, default="")
     service = Service.query.options(load_only("id")) \
         .filter(func.lower(Service.abbreviation) == func.lower(abbreviation)) \
         .filter(func.lower(Service.abbreviation) != func.lower(existing_service)) \
         .first()
-    if service:
-        confirm_service_admin(service.id)
     return service is not None, 200
 
 

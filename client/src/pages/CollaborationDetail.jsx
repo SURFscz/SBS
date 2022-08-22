@@ -53,6 +53,7 @@ import {ErrorOrigins, getSchacHomeOrg, isEmpty, removeDuplicates} from "../utils
 import UserTokens from "../components/redesign/UserTokens";
 import {socket, subscriptionIdCookieName} from "../utils/SocketIO";
 import Cookies from "js-cookie";
+import DOMPurify from "dompurify";
 
 class CollaborationDetail extends React.Component {
 
@@ -382,7 +383,9 @@ class CollaborationDetail extends React.Component {
         if (collaboration.disable_join_requests) {
             return null;
         }
-        return (<div key="joinrequests" name="joinrequests" label={I18n.t("home.tabs.joinRequests")}
+        return (<div key="joinrequests"
+                     name="joinrequests"
+                     label={I18n.t("home.tabs.joinRequests", {count: (collaboration.join_requests || []).length})}
                      icon={<JoinRequestsIcon/>}
                      notifier={openJoinRequests > 0 ? openJoinRequests : null}>
             <JoinRequests collaboration={collaboration}
@@ -519,7 +522,7 @@ class CollaborationDetail extends React.Component {
                         <li>
                             <Tooltip children={<AdminIcon/>} id={"admins-icon"} msg={I18n.t("tooltips.admins")}/>
                             <span
-                                dangerouslySetInnerHTML={{__html: this.getAdminHeader(collaboration)}}/>
+                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(this.getAdminHeader(collaboration))}}/>
                         </li>
                         {collaboration.website_url &&
                         <li className="collaboration-url">
@@ -675,8 +678,8 @@ class CollaborationDetail extends React.Component {
                             <ReactTooltip id="membership-status" type="light" effect="solid" data-html={true}>
                                 <span className="tooltip-wrapper-inner"
                                       dangerouslySetInnerHTML={{
-                                          __html: I18n.t(`organisationMembership.status.${status}Tooltip`,
-                                              {date: expiryDate})
+                                          __html: DOMPurify.sanitize(I18n.t(`organisationMembership.status.${status}Tooltip`,
+                                              {date: expiryDate}))
                                       }}/>
                             </ReactTooltip>
                     </span>

@@ -195,7 +195,7 @@ class Groups extends React.Component {
         const options = collaboration.collaboration_memberships
             .filter(m => selectedGroup.collaboration_memberships.every(c => c.id !== m.id))
             .map(m => ({value: m.id, label: m.user.name}));
-        const actions = mayCreateGroups ? <div className="group-detail-actions">
+        const actions = (mayCreateGroups && options.length > 0) ? <div className="group-detail-actions">
             <Select
                 classNamePrefix="actions"
                 placeholder={I18n.t("models.groupMembers.addMembersPlaceholder")}
@@ -214,10 +214,10 @@ class Groups extends React.Component {
                     <div className="header-actions">
                         <Button onClick={() => this.setState(this.newGroupState(selectedGroup))}
                                 txt={I18n.t("models.groups.edit")}/>
-                        <span className="history"
+                        {currentUser.admin && <span className="history"
                               onClick={() => this.props.history.push(`/audit-logs/groups/${selectedGroup.id}?${queryParam}`)}>
-                        <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
-                    </span>
+                            <FontAwesomeIcon icon="history"/>{I18n.t("home.history")}
+                        </span>}
                     </div>}
 
                 </section>

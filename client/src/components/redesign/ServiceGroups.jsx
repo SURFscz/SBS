@@ -154,6 +154,10 @@ class ServiceGroups extends React.Component {
                         <span>{I18n.t("models.groups.autoProvisioning")}</span>
                         <span>{I18n.t(`models.groups.${selectedGroup.auto_provision_members ? "on" : "off"}`)}</span>
                     </div>
+                    <div className="org-attributes">
+                        <span>{I18n.t("groups.short_name")}</span>
+                        <span>{selectedGroup.short_name}</span>
+                    </div>
                 </div>
             </div>
         );
@@ -356,6 +360,11 @@ class ServiceGroups extends React.Component {
                 key: "name",
                 header: I18n.t("models.serviceGroups.name"),
                 mapper: group => <a href={`${group.name}`} onClick={this.gotoGroup(group)}>{group.name}</a>,
+            },
+            {
+                key: "short_name",
+                header: I18n.t("groups.short_name"),
+                mapper: group => <a href={`${group.short_name}`} onClick={this.gotoGroup(group)}>{group.short_name}</a>,
             },
             {
                 key: "description",

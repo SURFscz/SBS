@@ -584,6 +584,7 @@ class CollaborationForm extends React.Component {
                     {!isCollaborationRequest && <DateField value={expiry_date}
                                                            onChange={e => this.setState({expiry_date: e})}
                                                            allowNull={true}
+                                                           pastDatesAllowed={this.props.config.past_dates_allowed}
                                                            showYearDropdown={true}
                                                            name={I18n.t("collaboration.expiryDate")}
                                                            toolTip={I18n.t("collaboration.expiryDateTooltip")}/>}

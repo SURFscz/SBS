@@ -42,6 +42,22 @@ def _open_mail_in_browser(html):
     webbrowser.open("file://" + path)
 
 
+def _user_attributes(user: User):
+    return {
+        "uid": user.uid,
+        "name": user.name,
+        "username": user.username,
+        "affiliation": user.affiliation,
+        "scoped_affiliation": user.scoped_affiliation,
+        "entitlement": user.entitlement,
+        "schac_home_organisation": user.schac_home_organisation,
+        "family_name": user.family_name,
+        "given_name": user.given_name,
+        "email": user.email,
+        "eduperson_principal_name": user.eduperson_principal_name
+    }
+
+
 def _do_send_mail(subject, recipients, template, context, preview, working_outside_of_request_context=False):
     recipients = recipients if isinstance(recipients, list) else list(
         map(lambda x: x.strip(), recipients.split(",")))
@@ -312,31 +328,37 @@ def mail_outstanding_requests(collaboration_requests, collaboration_join_request
 
 def mail_account_deletion(user):
     mail_cfg = current_app.app_config.mail
+    recipients = [mail_cfg.eduteams_email]
     if mail_cfg.account_deletion_notifications_enabled:
-        _do_send_mail(
-            subject=f"User {user.email} has deleted their account in environment {mail_cfg.environment}",
-            recipients=[mail_cfg.beheer_email],
-            template="user_account_deleted",
-            context={"environment": mail_cfg.environment,
-                     "date": datetime.datetime.now(),
-                     "user": user},
-            preview=False
-        )
+        recipients.append(mail_cfg.beheer_email)
+    _do_send_mail(
+        subject=f"User {user.email} has deleted their account in environment {mail_cfg.environment}",
+        recipients=[mail_cfg.beheer_email],
+        template="user_account_deleted",
+        context={"environment": mail_cfg.environment,
+                 "date": datetime.datetime.now(),
+                 "attributes": _user_attributes(user),
+                 "user": user},
+        preview=False
+    )
 
 
 def mail_suspended_account_deletion(user):
     mail_cfg = current_app.app_config.mail
+    recipients = [mail_cfg.eduteams_email]
     if mail_cfg.account_deletion_notifications_enabled:
-        _do_send_mail(
-            subject=f"User {user.email} suspended account is deleted in environment {mail_cfg.environment}",
-            recipients=[mail_cfg.beheer_email],
-            template="suspended_user_account_deleted",
-            context={"environment": mail_cfg.environment,
-                     "date": datetime.datetime.now(),
-                     "user": user},
-            preview=False,
-            working_outside_of_request_context=True
-        )
+        recipients.append(mail_cfg.beheer_email)
+    _do_send_mail(
+        subject=f"User {user.email} suspended account is deleted in environment {mail_cfg.environment}",
+        recipients=[mail_cfg.beheer_email],
+        template="suspended_user_account_deleted",
+        context={"environment": mail_cfg.environment,
+                 "date": datetime.datetime.now(),
+                 "attributes": _user_attributes(user),
+                 "user": user},
+        preview=False,
+        working_outside_of_request_context=True
+    )
 
 
 def mail_reset_token(admin_email, user, message):

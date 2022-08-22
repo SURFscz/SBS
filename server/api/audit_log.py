@@ -4,11 +4,9 @@ from sqlalchemy import desc, or_, and_
 from sqlalchemy.orm import load_only
 
 from server.api.base import json_endpoint, query_param
-from server.auth.security import current_user_id, confirm_read_access, confirm_group_member, \
-    is_current_user_collaboration_admin, is_current_user_organisation_admin_or_manager, \
-    is_organisation_admin_or_manager, confirm_allow_impersonation, confirm_write_access
+from server.auth.security import current_user_id, confirm_allow_impersonation, confirm_write_access
 from server.db.audit_mixin import AuditLog
-from server.db.domain import User, Organisation, Collaboration, Group, Service
+from server.db.domain import User, Organisation, Collaboration, Service
 
 audit_log_api = Blueprint("audit_log_api", __name__, url_prefix="/api/audit_logs")
 
@@ -34,9 +32,9 @@ def _user_activity(user_id):
 @audit_log_api.route("/me", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def me():
+    confirm_write_access()
     headers = current_request.headers
     user_id = current_user_id()
-
     impersonate_id = headers.get("X-IMPERSONATE-ID", default=None, type=int)
     if impersonate_id:
         confirm_allow_impersonation(confirm_feature_impersonation_allowed=False)
@@ -54,6 +52,8 @@ def other(user_id):
 @audit_log_api.route("/activity", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def activity():
+    confirm_write_access()
+
     limit = int(query_param("limit", False, 0))
     tables = list(filter(lambda s: s.strip(), query_param("tables", False, "").split(",")))
     query = AuditLog.query.order_by(desc(AuditLog.created_at))
@@ -68,19 +68,7 @@ def activity():
 @audit_log_api.route("/info/<query_id>/<collection_name>", methods=["GET"], strict_slashes=False)
 @json_endpoint
 def info(query_id, collection_name):
-    def groups_permission(group_id):
-        coll_id = Group.query.get(group_id).collaboration_id
-        return confirm_group_member(group_id) or is_current_user_collaboration_admin(
-            coll_id) or is_current_user_organisation_admin_or_manager(coll_id)
-
-    def collaboration_permission(collaboration_id):
-        return is_current_user_collaboration_admin(collaboration_id) or is_current_user_organisation_admin_or_manager(
-            collaboration_id)
-
-    override_func = collaboration_permission if collection_name == "collaborations" \
-        else groups_permission if collection_name == "groups" \
-        else is_organisation_admin_or_manager if collection_name == "organisations" else None
-    confirm_read_access(query_id, override_func=override_func)
+    confirm_write_access()
 
     audit_logs = AuditLog.query \
         .filter(or_(and_(AuditLog.parent_id == query_id, AuditLog.parent_name == collection_name),

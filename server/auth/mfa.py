@@ -37,7 +37,7 @@ def _refresh_public_keys():
 
 def store_user_in_session(user, second_factor_confirmed, user_accepted_aup):
     # The session is stored as a cookie in the browser. We therefore minimize the content
-    res = {"admin": is_admin_user(user), "guest": False, "confirmed_admin": user.confirmed_super_user}
+    res = {"admin": is_admin_user(user), "guest": False}
     session_data = {
         "id": user.id,
         "uid": user.uid,

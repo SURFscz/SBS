@@ -111,7 +111,7 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
         msg = f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id} " \
               f"as the service is unknown"
         logger.error(msg)
-        send_error_mail(tb=msg, session_exists=False)
+        send_error_mail(tb=msg)
         return not_authorized_func(service_entity_id, SERVICE_UNKNOWN)
     no_free_ride = not service.non_member_users_access_allowed
     user = User.query.filter(User.uid == uid).first()
@@ -126,11 +126,13 @@ def _do_attributes(uid, service_entity_id, not_authorized_func, authorized_func,
 
     connected_collaborations = []
     memberships = []
+    now = datetime.utcnow()
     for cm in user.collaboration_memberships:
-        connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
-        if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
-            connected_collaborations.append(cm.collaboration)
-            memberships.append(cm)
+        if not cm.collaboration.expiry_date or cm.collaboration.expiry_date > now:
+            connected = list(filter(lambda s: s.id == service.id, cm.collaboration.services))
+            if connected or list(filter(lambda s: s.id == service.id, cm.collaboration.organisation.services)):
+                connected_collaborations.append(cm.collaboration)
+                memberships.append(cm)
 
     if not connected_collaborations and no_free_ride:
         logger.error(f"Returning unauthorized for user {uid} and service_entity_id {service_entity_id}"
@@ -221,7 +223,7 @@ def proxy_authz():
     schac_home_organisation = json_dict.get("homeorganization", None)
 
     logger = ctx_logger("user_api")
-    logger.debug(f"proxy_authz called with {str(json_dict)}")
+    logger.debug(f"proxy_authz called with {json_dict}")
 
     if service_entity_id.lower() == current_app.app_config.oidc.sram_service_entity_id.lower():
         return _perform_sram_login(uid, home_organisation_uid, schac_home_organisation, issuer_id)

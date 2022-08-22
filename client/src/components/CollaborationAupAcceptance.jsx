@@ -47,10 +47,10 @@ export default function CollaborationAupAcceptance({
                                         }
                                     </div>
                                     <div className="contact">
-                                        <a href={`mailto:${mails}`} rel="noopener noreferrer">
+                                        {mails && <a href={`mailto:${mails}`} rel="noopener noreferrer">
                                             <FontAwesomeIcon
                                                 icon="envelope"/><span>{I18n.t("aup.service.contact")}</span>
-                                        </a>
+                                        </a>}
                                     </div>
                                 </div>
                             </div>

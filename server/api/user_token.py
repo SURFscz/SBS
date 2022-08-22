@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 import datetime
 
-from flask import Blueprint, request as current_request
+from flask import Blueprint, jsonify, request as current_request
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
@@ -36,7 +36,10 @@ def _sanitize_and_verify(hash_token=True):
 @json_endpoint
 def user_tokens():
     user = User.query.get(current_user_id())
-    return user.user_tokens, 200
+    tokens = jsonify(user.user_tokens).json
+    for token in tokens:
+        del token["hashed_token"]
+    return tokens, 200
 
 
 @user_token_api.route("/generate_token", strict_slashes=False)
@@ -59,7 +62,8 @@ def update_token():
     user_token = UserToken.query.get(data["id"])
     user_token.name = data.get("name")
     user_token.description = data.get("description")
-    return db.session.merge(user_token), 201
+    db.session.merge(user_token)
+    return {}, 201
 
 
 @user_token_api.route("/renew_lease", methods=["PUT"], strict_slashes=False)
@@ -68,7 +72,8 @@ def renew_lease():
     data = _sanitize_and_verify(hash_token=False)
     user_token = UserToken.query.get(data["id"])
     user_token.created_at = datetime.datetime.utcnow()
-    return db.session.merge(user_token), 201
+    db.session.merge(user_token)
+    return {}, 201
 
 
 @user_token_api.route("/<user_token_id>", methods=["DELETE"], strict_slashes=False)
