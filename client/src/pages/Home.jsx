@@ -138,7 +138,8 @@ class Home extends React.Component {
         return (<div key="users" name="users"
                      label={I18n.t("home.tabs.users", {count: count})}
                      icon={<MembersIcon/>}>
-            <Users {...this.props}/>
+            <Users {...this.props}
+                   adminSearch={true}/>
         </div>)
     }
 
