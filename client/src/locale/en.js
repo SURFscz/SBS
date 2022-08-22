@@ -177,6 +177,7 @@ I18n.translations.en = {
             schac_home_organisation: "Institution",
             foundSingle: "{{count}} user found",
             found: "{{count}} users found",
+            organisation: "All collaboration users",
             title: "Users",
             last_login_date: "Last login date",
             affiliation: "Affiliation",

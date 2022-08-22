@@ -3,7 +3,7 @@ import "./Organisations.scss";
 import I18n from "i18n-js";
 import "./Entities.scss";
 import Entities from "./Entities";
-import {queryForUsers} from "../../api";
+import {queryForOrganisationInvites, queryForOrganisationUsers, queryForUsers} from "../../api";
 import {ReactComponent as UserIcon} from "../../icons/single-neutral.svg";
 import "./Users.scss";
 import UserColumn from "./UserColumn";
@@ -23,6 +23,7 @@ class Users extends React.Component {
         this.state = {
             searching: false,
             users: [],
+            invitations: [],
             moreToShow: false,
             noResults: false
         };
@@ -43,19 +44,37 @@ class Users extends React.Component {
             this.delayedAutocomplete(query);
         }
         if (isEmpty(query)) {
-            this.setState({users: [], moreToShow: false, noResults: false});
+            this.setState({users: [], invitations: [], moreToShow: false, noResults: false});
         }
     };
 
     delayedAutocomplete = debounce(query => {
-        queryForUsers(query).then(results => {
-            this.setState({
-                users: results,
-                searching: false,
-                moreToShow: false,
-                noResults: results.length === 0
+        const {adminSearch} = this.props;
+        if (adminSearch) {
+            queryForUsers(query).then(results => {
+                results.forEach(user => user.isUser = true)
+                this.setState({
+                    users: results,
+                    searching: false,
+                    moreToShow: false,
+                    noResults: results.length === 0
+                })
+            });
+        } else {
+            const {organisation} = this.props;
+            Promise.all([
+                queryForOrganisationInvites(organisation.id, query),
+                queryForOrganisationUsers(organisation.id, query)
+            ]).then(results => {
+                this.setState({
+                    invitations: results[0],
+                    users: results[1],
+                    searching: false,
+                    moreToShow: false,
+                    noResults: results[0].length === 0 && results[1].length === 0
+                })
             })
-        })
+        }
     }, 200);
 
     moreResultsAvailable = () => (<div className="more-results-available">
@@ -64,7 +83,7 @@ class Users extends React.Component {
 
     render() {
         const {searching, users, moreToShow, noResults} = this.state;
-        const {user: currentUser} = this.props;
+        const {user: currentUser, adminSearch} = this.props;
         const columns = [
             {
                 nonSortable: true,
@@ -104,7 +123,7 @@ class Users extends React.Component {
                 hasLink: true,
                 header: "",
                 mapper: user => currentUser.id !== user.id ? <HandIcon className="impersonate"
-                                          onClick={() => emitImpersonation(user, this.props.history)}/> : null
+                                                                       onClick={() => emitImpersonation(user, this.props.history)}/> : null
             })
         }
         const count = users.length;
