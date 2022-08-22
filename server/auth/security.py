@@ -38,8 +38,7 @@ def _get_impersonated_session():
                 "email": impersonate_mail,
                 "admin": is_admin_user({"uid": impersonate_uid}),
                 "second_factor_confirmed": True,
-                "guest": False,
-                "confirmed_admin": False
+                "guest": False
             }
         }
     return session
@@ -47,8 +46,6 @@ def _get_impersonated_session():
 
 def is_application_admin():
     impersonated_session = _get_impersonated_session()
-    if current_app.app_config.feature.admin_users_upgrade:
-        return impersonated_session["user"]["admin"] and impersonated_session["user"]["confirmed_admin"]
     return impersonated_session["user"]["admin"]
 
 
@@ -70,9 +67,6 @@ def current_user_name():
 
 def confirm_allow_impersonation(confirm_feature_impersonation_allowed=True):
     if "user" not in session or "admin" not in session["user"] or not session["user"]["admin"]:
-        raise Forbidden()
-    admin_users_upgrade = current_app.app_config.feature.admin_users_upgrade
-    if admin_users_upgrade and ("confirmed_admin" not in session["user"] or not session["user"]["confirmed_admin"]):
         raise Forbidden()
     if confirm_feature_impersonation_allowed and not current_app.app_config.feature.impersonation_allowed:
         raise Forbidden()
@@ -149,7 +143,7 @@ def _has_organisation_role(organisation_id, roles):
     return query.count() > 0
 
 
-def confirm_organisation_admin(organisation_id):
+def confirm_organisation_admin(organisation_id=None):
     def override_func():
         return is_organisation_admin(organisation_id)
 
@@ -221,7 +215,7 @@ def is_service_admin(service_id=None):
     return query.count() > 0
 
 
-def confirm_service_admin(service_id):
+def confirm_service_admin(service_id=None):
     def override_func():
         return is_service_admin(service_id)
 

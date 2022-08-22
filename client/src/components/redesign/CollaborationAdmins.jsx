@@ -620,6 +620,7 @@ class CollaborationAdmins extends React.Component {
                                   disabled={!adminOfCollaboration}
                                   onChange={e => this.updateExpiryDate(entity, e, true)}
                                   allowNull={true}
+                                  pastDatesAllowed={this.props.config.past_dates_allowed}
                                   performValidateOnBlur={false}
                                   isOpen={isOpen}
                                   showYearDropdown={true}/>}

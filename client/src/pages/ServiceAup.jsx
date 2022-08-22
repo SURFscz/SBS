@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import {serviceAupCreate, serviceByUuid4} from "../api";
 import SpinnerField from "../components/redesign/SpinnerField";
 import CollaborationAupAcceptance from "../components/CollaborationAupAcceptance";
+import DOMPurify from "dompurify";
 
 
 class ServiceAup extends React.Component {
@@ -62,7 +63,7 @@ class ServiceAup extends React.Component {
         return (
             <div className="mod-service-aup">
                 <h1>{I18n.t("aup.service.title")}</h1>
-                <p dangerouslySetInnerHTML={{__html: I18n.t("aup.service.info", serviceName)}}/>
+                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.service.info", serviceName))}}/>
                 {collaborations.length > 1 &&
                 <p className="multiple-collaborations">{I18n.t("aup.service.multipleCollaborations")}</p>
                 }
@@ -71,7 +72,7 @@ class ServiceAup extends React.Component {
                 }
                 <div>
                     {collaborations.map(collaboration => <div className="collaboration-detail">
-                        <h2 dangerouslySetInnerHTML={{__html: I18n.t("aup.service.purposeOf", {name: collaboration.name})}}/>
+                        <h2 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("aup.service.purposeOf", {name: collaboration.name}))}}/>
                         <p>{collaboration.description}</p>
                     </div>)}
                     <h2>{I18n.t("aup.service.informationService")}</h2>

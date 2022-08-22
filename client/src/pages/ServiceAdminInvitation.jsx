@@ -7,6 +7,7 @@ import moment from "moment";
 import {login} from "../utils/Login";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import SpinnerField from "../components/redesign/SpinnerField";
+import DOMPurify from "dompurify";
 
 class ServiceAdminInvitation extends React.Component {
 
@@ -66,6 +67,12 @@ class ServiceAdminInvitation extends React.Component {
         }
 
         const expiredMessage = I18n.t("invitation.expired", {expiry_date: moment(invite.expiry_date * 1000).format("LL")});
+        const html = DOMPurify.sanitize(I18n.t("models.invitation.invited", {
+            type: I18n.t("welcomeDialog.service"),
+            collaboration: invite.service.name,
+            inviter: invite.user.name,
+            email: invite.user.email
+        }));
         return (
             <div className="mod-service-admin-invitation">
                 {!errorOccurred &&
@@ -76,12 +83,7 @@ class ServiceAdminInvitation extends React.Component {
                     {!isExpired && <div className="invitation-inner">
                         <section className="invitation">
                             <span dangerouslySetInnerHTML={{
-                                __html: I18n.t("models.invitation.invited", {
-                                    type: I18n.t("welcomeDialog.service"),
-                                    collaboration: invite.service.name,
-                                    inviter: invite.user.name,
-                                    email: invite.user.email
-                                })
+                                __html: html
                             }}/>
                         </section>
                         {this.renderLoginStep()}

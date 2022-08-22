@@ -130,10 +130,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
         return
 
     john = User(uid="urn:john", name=john_name, email="john@example.org", username="john",
-                address="Postal 1234AA", confirmed_super_user=True)
-    unconfirmed_super_user_mike = User(uid="urn:mike", name=mike_name, email="mike@example.org", username="mike",
-                                       confirmed_super_user=False, application_uid="mike_application_uid",
-                                       schac_home_organisation="surfnet.nl")
+                address="Postal 1234AA")
     peter = User(uid="urn:peter", name="Peter Doe", email="peter@example.org", username="peter")
     mary = User(uid="urn:mary", name="Mary Doe", email="mary@example.org", username="mdoe",
                 schac_home_organisation=schac_home_organisation)
@@ -178,7 +175,7 @@ def seed(db, app_config, skip_seed=False, perf_test=False):
                               last_login_date=deletion_date, last_accessed_date=deletion_date, username="deleted",
                               suspended=True)
 
-    _persist(db, john, unconfirmed_super_user_mike, mary, peter, admin, roger, harry, james, sarah, betty, jane,
+    _persist(db, john, mary, peter, admin, roger, harry, james, sarah, betty, jane,
              user_inactive, user_one_suspend, user_two_suspend, user_suspended, user_to_be_deleted, paul,
              service_admin)
 

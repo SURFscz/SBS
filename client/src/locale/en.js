@@ -93,7 +93,7 @@ I18n.translations.en = {
             serviceCollaborations: "Collaborations ({{count}})",
             userTokens: "Tokens ({{count}})",
             collaborationRequests: "Collaboration requests",
-            joinRequests: "Join requests",
+            joinRequests: "Join requests ({{count}})",
             serviceConnectionRequests: "Connection requests",
             me: "Profile",
             about: "About",
@@ -133,7 +133,7 @@ I18n.translations.en = {
         image: "Image must at least be 300x120 pixels and smaller then 2MB.",
         dragImage: "Drag and resize the crop area until you're happy with the result. Then hit apply.",
         imageToLarge: "Image is larger then 2MB.",
-        imageDeleteConfirmation: "Are you sure you want to delete this image? You cannot revert this and you'll have to select a new image",
+        imageDeleteConfirmation: "Are you sure you want to delete this image? This cannot be reverted, and you'll have to select a new image.",
         imageRequired: "Image is required",
         whiteSpace: "Fit the image",
         no: "No"
@@ -269,7 +269,7 @@ I18n.translations.en = {
             titleUsedColl: "Used by this collaboration",
             titleUsedOrg: "Mandated by this organisation",
             awaitingApproval: "Connection awaiting approval",
-            automaticConnectionAllowed: "Automatic connection allowed",
+            automaticConnectionAllowed: "Collaborations can connect without approval",
             requiredByOrganisation: "Enabled by organisation",
             memberServiceRequest: "Member service connection request",
             removeFromCO: "Disconnect from collaboration",
@@ -339,8 +339,7 @@ I18n.translations.en = {
             flash: {
                 removed: "The collaboration(s) are disconnected"
             }
-        }
-        ,
+        },
         coAdmins: {
             searchPlaceHolder: "Search for admins...",
             title: "Admins",
@@ -513,7 +512,7 @@ I18n.translations.en = {
             edit: "Edit",
             name: "Name",
             description: "Description",
-            autoProvisioning: "Auto provisioning",
+            autoProvisioning: "Auto provision users",
             on: "On",
             off: "Off"
         },
@@ -739,7 +738,7 @@ I18n.translations.en = {
             expired: "Expired",
             activeTooltip: "This collaboration is active and ready for business.",
             suspendedTooltip: "This collaboration was suspended due to inactivity. It was last used on {{lastActivityDate}}.",
-            expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date. ",
+            expiredTooltip: "This collaboration has reached its expiration date of {{expiryDate}}. It can be activated by setting a new expiration date or clearing it. ",
             activeWithExpiryDateTooltip: "This collaboration will expire at {{expiryDate}}. "
         },
         flash: {
@@ -754,10 +753,10 @@ I18n.translations.en = {
         backToCollaborationDetail: "Back to my collaboration {{name}}",
         update: "Update",
         delete: "Delete",
-        deleteConfirmation: "Are you sure you want to delete this collaboration?",
+        deleteConfirmation: "Are you sure you want to delete this collaboration? This cannot be undone.",
         deleteMemberConfirmation: "Are you sure you want to delete the collaboration membership of {{name}}?",
         deleteInvitationConfirmation: "Are you sure you want to delete the invitation for {{name}}?",
-        deleteEntitiesConfirmation: "Are you sure you want to delete the checked members / invitations?",
+        deleteEntitiesConfirmation: "Are you sure you want to delete the checked members and invitations?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this collaboration? You will have to be re-invited by an admin to rejoin.",
         noBatchDeleteAllowed: "It is not possible to leave the collaboration as part of a batch delete. Please select only yourself to leave this collaboration, or select only other members to remove others from the group.",
         downgradeYourselfMemberConfirmation: "Are you sure you don't want to be an admin anymore? You won't be able to revert this.",
@@ -803,7 +802,7 @@ I18n.translations.en = {
         collaborationRequests: "Collaboration requests",
         add: "Create new service",
         searchPlaceHolder: "Search for all organisations",
-        deleteConfirmation: "Are you sure you want to delete service {{name}}?"
+        deleteConfirmation: "Are you sure you want to delete service {{name}}? This cannot be undone."
     },
     services: {
         title: "Services",
@@ -828,13 +827,13 @@ I18n.translations.en = {
         namePlaceHolder: "The unique name of the service",
         entity_id: "Entity ID",
         entity_idPlaceHolder: "The unique entity ID of the service",
-        entity_idTooltip: "The unique entity ID of the service links the service in SURF Research Access Management to the actual external service Provider",
+        entity_idTooltip: "The unique entity ID of the service links it to the identity proxy",
         abbreviation: "Short name",
         abbreviationPlaceHolder: "The short name of this service",
-        abbreviationTooltip: "The short name of the service is used as a prefix for any groups you create",
-        service_request: "Service Request URL",
-        service_requestTooltip: "The URL for a service to request a connection between a collaboration and this service if the User does not have access to this service",
-        service_requestError: "Requires a valid URI and Automatic connection allowed set to True",
+        abbreviationTooltip: "The short name of the service is used as a prefix for groups provisioned by this service's service groups",
+        service_request: "Link for service request",
+        service_requestTooltip: "The URL to request a connection with the service by a member of a collaboration",
+        service_requestError: "Requires a valid URI and collaborations must be allowed to connect without approval",
         description: "Description",
         descriptionPlaceholder: "The description of the service",
         address: "Address",
@@ -844,15 +843,15 @@ I18n.translations.en = {
         identity_typeTooltip: "The primary way of identification for this service",
         uri: "Service URL",
         uriPlaceholder: "The URI of the service",
-        uriTooltip: "URI containing information about this service",
+        uriTooltip: "URI where to reach this service",
         privacy_policy: "Privacy policy URL",
         privacy_policyPlaceholder: "The Private policy URL  of the service",
         privacy_policyTooltip: "A Privacy Policy is a legal requirement for all websites and apps that collect or use personal information from users.",
-        accepted_user_policy: "Acceptable use policy",
+        accepted_user_policy: "Acceptable use policy URL",
         accepted_user_policyPlaceholder: "The Acceptable Use Policy (AUP) of the service",
         accepted_user_policyTooltip: "An acceptable use policy (AUP) is a document stipulating constraints and practices that a user must agree to for access to a corporate network or the Internet.",
-        network: "ACL IP ranges",
-        networkTooltip: "Configure the ACL IP ranges for this service. You can add IPv4 and IPv6 network ranges. " +
+        network: "LDAP ACL IP ranges",
+        networkTooltip: "The IP ranges this service uses to connect to the platform LDAP service. You can add IPv4 and IPv6 network ranges. " +
             "For example: <ul>" +
             "<li>Single IPv4 address 198.51.100.12 where a /32 is implied</li>" +
             "<li>IPv4 range 198.51.100.0/24. Maximal allowed subnet size for IPv4 is a /24</li>" +
@@ -863,13 +862,13 @@ I18n.translations.en = {
         networkSyntaxError: "This is not a valid IPv4 or IPv6 address.",
         networkNotGlobal: "Only global unicast addresses can be entered",
         networkInfo: "Lower bound IP: {{lower}}, higher bound IP: {{higher}}, # addresses: {{num_addresses}}, version: IPv{{version}}",
-        automaticConnectionAllowed: "Automatic connection allowed?",
-        automaticConnectionAllowedTooltip: "Can collaborations use this service without explicit permission of the service contact person?",
+        automaticConnectionAllowed: "Collaborations can connect without approval",
+        automaticConnectionAllowedTooltip: "If enabled, a collaboration admin can connect to your service straightaway. No connection request is offered for approval to the service admin (you).",
         accessAllowedForAll: "Available for all organisations?",
         accessAllowedForAllTooltip: "Is this service available for all current and future organisations?",
         accessAllowedForAllInfo: "All organisations are enabled by default for this service",
-        nonMemberUsersAccessAllowed: "Accessible for all users?",
-        nonMemberUsersAccessAllowedTooltip: "Can all members access this service without being a member of a connected Collaboration",
+        nonMemberUsersAccessAllowed: "Accessible without membership of a collaboration",
+        nonMemberUsersAccessAllowedTooltip: "All users of the platform can access this service, regardless of membership of or connections to any collaboration",
         whiteListed: "SURF service",
         whiteListedTooltip: "Allow this service to be linked to collaborations of a SURF organisation.",
         sirtfiCompliant: "Sirtfi compliant?",
@@ -901,7 +900,7 @@ I18n.translations.en = {
         statusPlaceholder: "The status of the service",
         alreadyExists: "A service with {{attribute}} {{value}} already exists.",
         required: "The {{attribute}} is required for a service",
-        deleteConfirmation: "Are you sure you want to delete service {{name}}?",
+        deleteConfirmation: "Are you sure you want to delete service {{name}}? This cannot be undone.",
         add: "Create",
         update: "Update",
         delete: "Delete",
@@ -920,11 +919,11 @@ I18n.translations.en = {
             close: "Close",
             section: "LDAP settings",
             url: "LDAP URL",
-            urlTooltip: "The URL of the LDAP server",
-            username: "Bind dn",
-            usernameTooltip: "This is the bind dn used to authenticate to the LDAP server",
-            basedn: "Base dn",
-            basednTooltip: "This is the base dn of the LDAP server",
+            urlTooltip: "The URL of the platform LDAP server. Enter this on the service, or your LDAP server to synchronize.",
+            username: "Bind DN of the platform LDAP server",
+            usernameTooltip: "The bind DN used to authenticate to the platform LDAP server",
+            basedn: "Base DN",
+            basednTooltip: "The base DN of the platform LDAP server",
         },
         aup: {
             title: "Reset AUP",
@@ -1004,7 +1003,7 @@ I18n.translations.en = {
         yourself: "{{name}} (it's you)",
         logo: "Organisation image",
         anotherAdmin: "It is highly recommended to invite admins.",
-        deleteConfirmation: "Are you sure you want to delete this organisation?",
+        deleteConfirmation: "Are you sure you want to delete this organisation? This cannot be undone.",
         flash: {
             created: "Organisation {{name}} was created"
         },
@@ -1092,7 +1091,7 @@ I18n.translations.en = {
         deleteSingleInvitationConfirmation: "Are you sure you want to delete this invitation?",
         deleteYourselfMemberConfirmation: "Are you sure you want to leave this organisation? You won't be able to revert this.",
         deleteApiKeyConfirmation: "Are you sure you want to delete this API key?",
-        deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}?",
+        deleteCollaborationConfirmation: "Are you sure you want to delete collaboration {{name}}? This cannot be undone.",
         activateMemberConfirmation: "Are you sure you want to re-activate user {{name}}? We will send them an email with an activation link.",
         flash: {
             updated: "Organisation {{name}} was updated.",
@@ -1279,8 +1278,8 @@ I18n.translations.en = {
         serviceConnectionRequestResend: "Resent request to connect service {{service}} to collaboration {{collaboration}}.",
         serviceRestrictedInfo: "This collaboration is service restricted. Only the platform admin can configure services to be used by this collaboration.",
         serviceDeleteConfirmation: "Are you sure you want to remove this service from collaboration {{collaboration}}?",
-        serviceConnectionRequestDeleteConfirmation: "Are you sure you want to delete this service Connection request?",
-        serviceConnectionRequestResendConfirmation: "Are you sure you want to resend this service Connection request?",
+        serviceConnectionRequestDeleteConfirmation: "Are you sure you want to delete this service connection request?",
+        serviceConnectionRequestResendConfirmation: "Are you sure you want to resend this service connection request?",
     },
     organisationServices: {
         title: "Services for service {{name}}",
@@ -1324,7 +1323,7 @@ I18n.translations.en = {
         namePlaceholder: "Name of the group",
         short_name: "Short name",
         shortNamePlaceHolder: "Short name of the group",
-        shortNameTooltip: "Assign short names to groups so that these short names can be used in the LDAP services (like Linux group names)",
+        shortNameTooltip: "A service group's short name will be used (1) for groups provisioned to collaborations, prepended by short name of the service and separated by a hyphen '-' and (2) in the challenge URL generated by PAM web login.",
         identifier: "Identifier",
         identifierTooltip: "Generated, unique and immutable identifier of a group which is used as identifier for external systems",
         collaboration: "Collaboration",
@@ -1800,7 +1799,7 @@ I18n.translations.en = {
         oneAdminWarning: "An organisation requires at least one admin.",
     },
     notFound: {
-        invitationNotFound: "This invitiation does not exist (anymore). The invititation has probably already been used. Ask the person who invited you to send you a new one.",
+        invitationNotFound: "This invitation does not exist (anymore). The invitation has probably already been used. Ask the person who invited you to send you a new one.",
         invalidSecondFactorUUID: "The redirect from eduTeams is expired. Please go back to the service where you we're trying to login and try again.",
         invalidPamWebSSO: "Your session has expired. Please go back to the service you were trying to login to and try again.",
         msg: "Mmmm, seems you somehow ended up with a link that we can't help you with. Sorry for that " +
@@ -1814,7 +1813,7 @@ I18n.translations.en = {
             info1: "You have signed in with a username and password at {{name}}. SURF Research Access Management requires two-factor authentication. This means an extra check to verify it's you.",
             info2: "To setup two factor authentication, take the following steps:",
             step: "Stap {{nbr}}",
-            getApp: "1. Add SURF Research Access Maagement to your authenticator app",
+            getApp: "1. Add SURF Research Access Management to your authenticator app",
             unknownIdp: "an unknown organisation",
             getAppUpdate: "2. Add SURF Research Access Management to your authenticator app",
             new: "new ",
@@ -1937,9 +1936,9 @@ I18n.translations.en = {
         actionTitle: "Reset API token",
         tokens: "Tokens",
         tokenEnabled: "Token-based introspection enabled?",
-        tokenEnabledTooltip: "When checked this service is allowed to call the introspection endpoint to receive user information",
-        pamWebSSOEnabled: "Enable PAM weblogin?",
-        pamWebSSOEnabledTooltip: "When checked this service is allowed to call the PAM weblogin endpoints to login an user on a terminal-based app (e.g. SSH)",
+        tokenEnabledTooltip: "Allow this service to call the introspection endpoint to receive user information?",
+        pamWebSSOEnabled: "Enable PAM web login?",
+        pamWebSSOEnabledTooltip: "Allow this service to call the PAM web login endpoints to login an user on a terminal-based app (e.g. an SSH client)?",
         tokenValue: "One-way hashed token",
         tokenValidityDays: "Token validity (days)",
         tokenValidityDaysTooltip: "The number of days the user tokens are valid validity",
@@ -1947,7 +1946,7 @@ I18n.translations.en = {
         introspectionEndpointToken: "Introspection endpoint bearer token",
         tokenDisclaimer: "Copy the token and store it somewhere safe. You can view this token only once here.<br><br>After pressing 'Add' you won't be able to see it again, except by deleting it and recreating a new token.",
         delete: "Remove token",
-        deleteConfirmation: "Are you sure you want to remove this token? This action cannot be undone.",
+        deleteConfirmation: "Are you sure you want to delete this token? This action cannot be undone.",
         flash: {
             deleted: "Token {{name}} has been removed",
             reactivated: "Token {{name}} has been reactivated",
@@ -1981,12 +1980,11 @@ I18n.translations.en = {
             connection: "Connection",
             contacts: "Contacts",
             policy: "Policy & compliance",
-            ldap: "LDAP settings",
+            ldap: "LDAP",
             tokens: "Tokens",
-            pamWebLogin: "Pam web login"
+            pamWebLogin: "PAM web login"
         },
     }
-
 };
 
 export default I18n.translations.en;

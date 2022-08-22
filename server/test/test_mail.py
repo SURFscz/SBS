@@ -1,11 +1,12 @@
 # -*- coding: future_fstrings -*-
+import json
 import os
 
 from server.db.audit_mixin import AuditLog
 from server.db.domain import Collaboration, User
 from server.mail import mail_collaboration_join_request
 from server.test.abstract_test import AbstractTest
-from server.test.seed import collaboration_uva_researcher_uuid
+from server.test.seed import collaboration_uva_researcher_uuid, uuc_secret, uuc_name
 
 
 class TestMail(AbstractTest):
@@ -50,6 +51,23 @@ class TestMail(AbstractTest):
                 self.assertEqual(1, len(outbox))
                 html = outbox[0].html
                 self.assertTrue("An error occurred in local" in html)
+        finally:
+            os.environ["TESTING"] = "1"
+            self.app.app_config.mail.send_exceptions = False
+
+    def test_send_error_mail_in_api(self):
+        try:
+            del os.environ["TESTING"]
+            self.app.app_config.mail.send_exceptions = True
+            mail = self.app.mail
+            with mail.record_messages() as outbox:
+                self.client.post("/api/collaborations/v1",
+                                 headers={"Authorization": f"Bearer {uuc_secret}"},
+                                 data=json.dumps({}),
+                                 content_type="application/json")
+                self.assertEqual(1, len(outbox))
+                html = outbox[0].html
+                self.assertTrue(f"Organisation API call {uuc_name}" in html)
         finally:
             os.environ["TESTING"] = "1"
             self.app.app_config.mail.send_exceptions = False

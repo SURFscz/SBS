@@ -444,7 +444,7 @@ class ServiceOverview extends React.Component {
                                     token_validity_days: e.target.value.replace(/\D/, "")
                                 }
                             })}
-                            disabled={!service.token_enabled}/>
+                            disabled={!service.token_enabled || !isAdmin}/>
 
                 <InputField value={config.introspect_endpoint}
                             name={I18n.t("userTokens.introspectionEndpoint")}

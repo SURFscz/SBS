@@ -91,8 +91,9 @@ class TestService(AbstractTest):
                 "ip_networks": [{"network_value": "2001:1c02:2b2f:be00:1cf0:fd5a:a548:1a16/128"},
                                 {"network_value": "192.0.2.0/24"}]
             })
+
             self.assertTrue(
-                "You have been invited by urn:john to become admin of service 'new_service'" in outbox[0].html)
+                "urn:john invited you as an admin for service new_service" in outbox[0].html)
 
             self.assertIsNotNone(service["id"])
             self.assertEqual("new_service", service["name"])

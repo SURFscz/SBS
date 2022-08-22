@@ -33,7 +33,6 @@ import Profile from "./Profile";
 import CollaborationRequest from "./CollaborationRequest";
 import ServiceConnectionRequest from "./ServiceConnectionRequest";
 import ServiceRequest from "./ServiceRequest";
-import Confirmation from "./Confirmation";
 import {setFlash} from "../utils/Flash";
 import System from "./System";
 import {BreadCrumb} from "../components/BreadCrumb";
@@ -107,15 +106,6 @@ class App extends React.Component {
         }
     };
 
-    markUserAdmin = user => {
-        const {config} = this.state;
-        if (config.admin_users_upgrade && user.admin && !user.confirmed_super_user) {
-            user.admin = false;
-            user.needsSuperUserConfirmation = true;
-        }
-        return user;
-    }
-
     componentDidMount() {
         emitter.addListener("impersonation", this.impersonate);
         Promise.all([config(), aupLinks()]).then(res => {
@@ -123,8 +113,7 @@ class App extends React.Component {
                 () => me(res[0]).then(results => {
                     const currentUser = results;
                     if (currentUser && currentUser.uid) {
-                        const user = this.markUserAdmin(currentUser);
-                        this.setState({currentUser: user, loading: false});
+                        this.setState({currentUser: currentUser, loading: false});
                         if (currentUser.successfully_activated) {
                             setFlash(I18n.t("login.successfullyActivated"))
                         }
@@ -157,7 +146,7 @@ class App extends React.Component {
         if (isEmpty(selectedUser)) {
             me(this.state.config).then(currentUser => {
                 this.setState({
-                    currentUser: this.markUserAdmin(currentUser),
+                    currentUser: currentUser,
                     impersonator: null,
                     loading: false
                 }, callback);
@@ -165,9 +154,8 @@ class App extends React.Component {
         } else {
             other(selectedUser.uid).then(user => {
                 const {currentUser, impersonator} = this.state;
-                const newUser = this.markUserAdmin(user);
                 this.setState({
-                    currentUser: newUser,
+                    currentUser: currentUser,
                     impersonator: impersonator || currentUser,
                     loading: false
                 }, callback);
@@ -178,8 +166,7 @@ class App extends React.Component {
     refreshUserMemberships = callback => {
         refreshUser().then(json => {
             const {impersonator} = this.state;
-            const user = this.markUserAdmin(json);
-            this.setState({currentUser: user, impersonator: impersonator}, () => callback && callback(user));
+            this.setState({currentUser: json, impersonator: impersonator}, () => callback && callback(json));
         });
     };
 
@@ -314,16 +301,19 @@ class App extends React.Component {
 
                         <Route exact path="/new-organisation-invite/:organisation_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
+                                                                config={config}
                                                                 Component={NewOrganisationInvitation}
                                                                 {...props}/>}/>
 
                         <Route exact path="/new-invite/:collaboration_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
+                                                                config={config}
                                                                 Component={NewInvitation}
                                                                 {...props}/>}/>
 
                         <Route exact path="/new-service-invite/:service_id"
                                render={props => <ProtectedRoute currentUser={currentUser}
+                                                                config={config}
                                                                 Component={NewServiceInvitation}
                                                                 {...props}/>}/>
 
@@ -400,11 +390,6 @@ class App extends React.Component {
                                                                 render={props => <ProtectedRoute
                                                                     currentUser={currentUser} Component={Impersonate}
                                                                     impersonator={impersonator} {...props}/>}/>}
-
-                        <Route path="/confirmation"
-                               render={props => <ProtectedRoute
-                                   currentUser={currentUser} Component={Confirmation}
-                                   config={config} {...props}/>}/>
 
                         <Route path="/profile"
                                render={props => <ProtectedRoute

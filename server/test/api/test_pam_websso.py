@@ -10,33 +10,36 @@ from server.test.seed import pam_session_id, service_storage_name, service_stora
 class TestPamWebSSO(AbstractTest):
 
     def test_get(self):
-        res = self.get(f"/pam-weblogin/{pam_session_id}", with_basic_auth=False)
+        res = self.get(f"/pam-weblogin/storage/{pam_session_id}", with_basic_auth=False)
         self.assertEqual(res["service"]["name"], service_storage_name)
         self.assertFalse("validation" in res)
+
+    def test_get_invalid_short_name(self):
+        self.get(f"/pam-weblogin/nope/{pam_session_id}", with_basic_auth=False, response_status_code=403)
 
     def test_get_404(self):
         self.get("/pam-weblogin/nope", with_basic_auth=False, response_status_code=404)
 
     def test_get_with_pin(self):
         self.login("urn:peter")
-        res = self.get(f"/pam-weblogin/{pam_session_id}", with_basic_auth=False)
+        res = self.get(f"/pam-weblogin/storage/{pam_session_id}", with_basic_auth=False)
         self.assertEqual(service_storage_name, res["service"]["name"])
         self.assertEqual("1234", res["pin"])
         self.assertEqual("SUCCESS", res["validation"]["result"])
 
     def test_get_session_different_user(self):
         self.login("urn:sarah")
-        res = self.get(f"/pam-weblogin/{pam_session_id}", with_basic_auth=False)
+        res = self.get(f"/pam-weblogin/storage/{pam_session_id}", with_basic_auth=False)
         self.assertEqual("FAIL", res["validation"]["result"])
 
     def test_check_pin_no_service_access(self):
         self.login("urn:james")
-        res = self.get(f"/pam-weblogin/{invalid_service_pam_session_id}", with_basic_auth=False)
+        res = self.get(f"/pam-weblogin/storage/{invalid_service_pam_session_id}", with_basic_auth=False)
         self.assertEqual("FAIL", res["validation"]["result"])
 
     def test_get_expired(self):
         self.expire_pam_session(pam_session_id)
-        self.get(f"/pam-weblogin/{pam_session_id}", with_basic_auth=False, response_status_code=404)
+        self.get(f"/pam-weblogin/storage/{pam_session_id}", with_basic_auth=False, response_status_code=404)
 
     def test_start(self):
         res = self.post("/pam-weblogin/start",
@@ -49,9 +52,9 @@ class TestPamWebSSO(AbstractTest):
         self.assertEqual(res["result"], "OK")
         self.assertEqual(res["cached"], False)
         self.assertEqual(res["challenge"],
-                         f"Please sign in to: {self.app.app_config.base_url}/weblogin/{res['session_id']}")
+                         f"Please sign in to: {self.app.app_config.base_url}/weblogin/storage/{res['session_id']}")
 
-        res = self.get(f"/pam-weblogin/{res['session_id']}", with_basic_auth=False)
+        res = self.get(f"/pam-weblogin/storage/{res['session_id']}", with_basic_auth=False)
         self.assertEqual(res["service"]["name"], service_storage_name)
 
     def test_start_404(self):

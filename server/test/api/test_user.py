@@ -203,25 +203,10 @@ class TestUser(AbstractTest):
         res = self.put("/api/users", body=body)
         self.assertTrue(res["ssh_keys"][0]["ssh_value"].startswith("ssh-rsa"))
 
-    def test_upgrade_super_account(self):
-        self.login("urn:mike")
-        res = self.client.get("/api/users/upgrade_super_user")
-        self.assertEqual(302, res.status_code)
-        self.assertEqual("http://localhost:3000", res.location)
-
-        mike = User.query.filter(User.uid == "urn:mike").one()
-        self.assertEqual(True, mike.confirmed_super_user)
-
-    def test_upgrade_super_account_forbidden(self):
-        self.login("urn:sarah")
-        self.get("/api/users/upgrade_super_user", with_basic_auth=False, response_status_code=403)
-
     def test_platform_admins(self):
         self.login("urn:john")
         res = self.client.get("/api/users/platform_admins").json
-
-        self.assertTrue(res["admin_users_upgrade"])
-        self.assertEqual(2, len(res["platform_admins"]))
+        self.assertEqual(1, len(res["platform_admins"]))
 
     def test_platform_admins_forbidden(self):
         self.login("urn:sarah")
@@ -388,10 +373,10 @@ class TestUser(AbstractTest):
         self.assertEqual("james@example.org", res[0]["email"])
 
         res = self.get("/api/users/query", query_data={"q": "@EX"})
-        self.assertEqual(13, len(res))
+        self.assertEqual(12, len(res))
 
         res = self.get("/api/users/query", query_data={"q": "@"})
-        self.assertEqual(18, len(res))
+        self.assertEqual(17, len(res))
 
     def test_aup_agreed(self):
         sarah = self.find_entity_by_name(User, sarah_name)

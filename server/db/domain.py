@@ -56,7 +56,6 @@ class User(Base, db.Model):
                                    passive_deletes=True)
     user_tokens = db.relationship("UserToken", back_populates="user", cascade="all, delete-orphan",
                                   passive_deletes=True)
-    confirmed_super_user = db.Column("confirmed_super_user", db.Boolean(), nullable=True, default=False)
     eduperson_principal_name = db.Column("eduperson_principal_name", db.String(length=255), nullable=True)
     application_uid = db.Column("application_uid", db.String(length=255), nullable=True)
     last_accessed_date = db.Column("last_accessed_date", db.DateTime(timezone=True), nullable=False)

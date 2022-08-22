@@ -13,7 +13,7 @@ export function ProtectedRoute({currentUser, Component, redirectToLogin = true, 
         }
         //Ensure that we are not heading to service-aup which is initiated by eduTeams
         if (!isEmpty(currentUser.services_without_aup) && window.location.href.indexOf("service-aup") === -1) {
-            return <Redirect to="/missing-service-aup"/>;
+            return <Redirect to={`/missing-service-aup?state=${encodeURIComponent(res.location.pathname)}`}/>;
         }
         return <Route render={props => <Component user={currentUser} {...res} {...props}/>}/>;
     } else if (redirectToLogin) {

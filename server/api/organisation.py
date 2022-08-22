@@ -26,6 +26,8 @@ organisation_api = Blueprint("organisation_api", __name__, url_prefix="/api/orga
 @organisation_api.route("/name_exists", strict_slashes=False)
 @json_endpoint
 def name_exists():
+    confirm_organisation_admin()
+
     name = query_param("name")
     existing_organisation = query_param("existing_organisation", required=False, default="")
     org = Organisation.query.options(load_only("id")) \
@@ -38,6 +40,8 @@ def name_exists():
 @organisation_api.route("/short_name_exists", strict_slashes=False)
 @json_endpoint
 def short_name_exists():
+    confirm_organisation_admin()
+
     short_name = query_param("short_name")
     existing_organisation = query_param("existing_organisation", required=False, default="")
     org = Organisation.query.options(load_only("id")) \
@@ -50,6 +54,8 @@ def short_name_exists():
 @organisation_api.route("/schac_home_exists", strict_slashes=False)
 @json_endpoint
 def schac_home_exists():
+    confirm_organisation_admin()
+
     schac_home = query_param("schac_home")
     if not schac_home:
         return False, 200

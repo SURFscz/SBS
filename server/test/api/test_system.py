@@ -26,7 +26,7 @@ class TestSystem(AbstractTest):
 
     def test_db_stats(self):
         res = self.get("/api/system/db_stats")
-        self.assertDictEqual({"count": 18, "name": "users"}, res[0])
+        self.assertDictEqual({"count": 17, "name": "users"}, res[0])
         self.assertDictEqual({"count": 13, "name": "organisations_services"}, res[2])
 
     def test_db_seed(self):
@@ -76,10 +76,10 @@ class TestSystem(AbstractTest):
         self.put("/api/organisation_invitations/accept", body={"hash": organisation_invitation_hash},
                  with_basic_auth=False)
 
-        res = self.get("/api/audit_logs/activity")
-        self.assertEqual(3, len(res["audit_logs"]))
-
         self.login("urn:john")
+        res = self.get("/api/audit_logs/activity")
+        self.assertEqual(4, len(res["audit_logs"]))
+
         self.delete("/api/system/clear-audit-logs", response_status_code=201)
         res = self.get("/api/audit_logs/activity")
         self.assertEqual(0, len(res["audit_logs"]))
