@@ -89,6 +89,9 @@ class CollaborationDetail extends React.Component {
     }
 
     componentWillUnmount = () => {
+        AppStore.update(s => {
+            s.sideComponent = null;
+        });
         const params = this.props.match.params;
         if (params.id) {
             const collaboration_id = parseInt(params.id, 10);
@@ -243,12 +246,6 @@ class CollaborationDetail extends React.Component {
         if (!isEmpty(msg)) {
             setFlash(msg, "warning");
         }
-    }
-
-    componentWillUnmount() {
-        AppStore.update(s => {
-            s.sideComponent = null;
-        });
     }
 
     updateAppStore = (collaboration, adminOfCollaboration, orgManager) => {
