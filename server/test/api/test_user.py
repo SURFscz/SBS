@@ -143,6 +143,13 @@ class TestUser(AbstractTest):
         res = self.get("/api/users/find_by_id", query_data={"id": user_id})
         self.assertEqual("urn:mary", res["uid"])
 
+    def test_find_by_id_by_org_manager(self):
+        self.login("urn:john")
+        user_id = User.query.filter(User.uid == "urn:mary").one().id
+        res = self.get("/api/users/find_by_id", query_data={"id": user_id})
+        self.assertEqual("urn:mary", res["uid"])
+
+
     def test_attribute_aggregation_eppn(self):
         res = self.get("/api/users/attribute_aggregation",
                        query_data={"edu_person_principal_name": "urn:john"})
