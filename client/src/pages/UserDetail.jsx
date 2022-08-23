@@ -36,11 +36,16 @@ class UserDetail extends React.Component {
     }
 
     componentDidMount = () => {
+        const {user: currentUser} = this.props;
         const {id} = this.props.match.params;
-        Promise.all([findUserById(id), auditLogsUser(id)])
+        const promises = [findUserById(id)];
+        if (currentUser.admin) {
+            promises.push(auditLogsUser(id));
+        }
+        Promise.all(promises)
             .then(res => {
                 const user = res[0];
-                const auditLogs = res[1];
+                const auditLogs = currentUser.admin ? res[1] : [];
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
                         {path: "/", value: I18n.t("breadcrumb.home")},
@@ -50,7 +55,10 @@ class UserDetail extends React.Component {
                 });
                 const tab = this.props.match.params.tab || "details";
                 this.setState({
-                    loading: false, user: user, auditLogs: auditLogs, filteredAuditLogs: auditLogs,
+                    loading: false,
+                    user: user,
+                    auditLogs: auditLogs,
+                    filteredAuditLogs: auditLogs,
                     tab: tab
                 });
                 if (!isEmpty(res[0].user_ip_networks)) {
@@ -62,7 +70,16 @@ class UserDetail extends React.Component {
             })
     };
 
-    getDetailsTab = user => {
+    displayCollaboration = (collMembership, currentUser) => {
+        if (currentUser.admin) {
+            return true;
+        }
+        const organisationId = collMembership.collaboration.organisation_id;
+        const organisationIdentifiers = currentUser.organisation_memberships.map(orgMembership => orgMembership.organisation_id);
+        return organisationIdentifiers.includes(organisationId);
+    }
+
+    getDetailsTab = (user, currentUser) => {
         const attributes = ["name", "email", "username", "uid", "affiliation", "entitlement", "schac_home_organisation", "eduperson_principal_name"];
         return (<div key="details" name="details" label={I18n.t("home.details")}
                      icon={<FontAwesomeIcon icon="id-badge"/>}>
@@ -94,7 +111,9 @@ class UserDetail extends React.Component {
                     <label>{I18n.t("models.collaborations.title")}</label>
                     {isEmpty(user.collaboration_memberships) && "-"}
                     {!isEmpty(user.collaboration_memberships) && <ul>
-                        {user.collaboration_memberships.map((ms, index) =>
+                        {user.collaboration_memberships
+                            .filter(collMembership => this.displayCollaboration(collMembership, currentUser))
+                            .map((ms, index) =>
                             <li key={`${ms.role}_${index}`}>
                                <Link to={`/collaborations/${ms.collaboration.id}`}>{`${ms.collaboration.name} (${I18n.t('profile.' + ms.role)})`}</Link>
                             </li>)}
@@ -199,10 +218,11 @@ class UserDetail extends React.Component {
         if (loading) {
             return <SpinnerField/>
         }
-        const tabs = [
-            this.getDetailsTab(user),
-            this.getHistoryTab(filteredAuditLogs, query),
-        ]
+        const {user: currentUser} = this.props;
+        const tabs = [this.getDetailsTab(user, currentUser)];
+        if (currentUser.admin) {
+            tabs.push(this.getHistoryTab(filteredAuditLogs, query));
+        }
         return (
             <div className="mod-user-details">
                 <UnitHeader obj={({name: user.name, svg: PersonIcon})}

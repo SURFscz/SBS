@@ -50,6 +50,7 @@ import ServiceAdminInvitation from "./ServiceAdminInvitation";
 import ServiceAup from "./ServiceAup";
 import MissingServiceAup from "./MissingServiceAup";
 import PamWebSSO from "./PamWebSSO";
+import {isUserAllowed, ROLES} from "../utils/UserRole";
 
 addIcons();
 
@@ -149,7 +150,7 @@ class App extends React.Component {
             other(selectedUser.uid).then(user => {
                 const {currentUser, impersonator} = this.state;
                 this.setState({
-                    currentUser: currentUser,
+                    currentUser: user,
                     impersonator: impersonator || currentUser,
                     loading: false
                 }, callback);
@@ -393,7 +394,7 @@ class App extends React.Component {
                                    refreshUser={this.refreshUserMemberships}
                                    {...props}/>}/>
 
-                        {currentUser.admin && <Route exact path="/users/:id/:tab?"
+                        {isUserAllowed(ROLES.ORG_MANAGER, currentUser) && <Route exact path="/users/:id/:tab?"
                                                      render={props => <ProtectedRoute config={config}
                                                                                       currentUser={currentUser}
                                                                                       Component={UserDetail} {...props}/>}/>}
