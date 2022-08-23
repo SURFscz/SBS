@@ -18,7 +18,7 @@ class TestPamWebSSO(AbstractTest):
         self.get(f"/pam-weblogin/nope/{pam_session_id}", with_basic_auth=False, response_status_code=403)
 
     def test_get_404(self):
-        self.get("/pam-weblogin/nope", with_basic_auth=False, response_status_code=404)
+        self.get("/pam-weblogin/storage/nope", with_basic_auth=False, response_status_code=404)
 
     def test_get_with_pin(self):
         self.login("urn:peter")

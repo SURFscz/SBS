@@ -144,11 +144,15 @@ class TestUser(AbstractTest):
         self.assertEqual("urn:mary", res["uid"])
 
     def test_find_by_id_by_org_manager(self):
-        self.login("urn:john")
-        user_id = User.query.filter(User.uid == "urn:mary").one().id
+        self.login("urn:harry")
+        user_id = User.query.filter(User.uid == "urn:sarah").one().id
         res = self.get("/api/users/find_by_id", query_data={"id": user_id})
-        self.assertEqual("urn:mary", res["uid"])
+        self.assertEqual("urn:sarah", res["uid"])
 
+    def test_find_by_id_by_org_manager_not_allowed(self):
+        self.login("urn:harry")
+        user_id = User.query.filter(User.uid == "urn:roger").one().id
+        self.get("/api/users/find_by_id", query_data={"id": user_id}, response_status_code=403)
 
     def test_attribute_aggregation_eppn(self):
         res = self.get("/api/users/attribute_aggregation",
