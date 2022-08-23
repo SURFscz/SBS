@@ -12,13 +12,13 @@ export default function Pagination({currentPage, onChange, total}) {
         return null;
     }
 
-    const ranges = nbr => {
+    const ranges = (nbr, index) => {
         if (typeof nbr === "string" || nbr instanceof String) {
-            return <span key={nbr} className="link dots">{nbr}</span>
+            return <span key={index} className="link dots">{nbr}</span>
         } else if (nbr === currentPage) {
-            return <span className="link current">{nbr}</span>
+            return <span key={index} className="link current">{nbr}</span>
         } else {
-            return <span className="link" onClick={() => onChange(nbr)}>{nbr}</span>
+            return <span key={index} className="link" onClick={() => onChange(nbr)}>{nbr}</span>
         }
     }
 
@@ -31,12 +31,12 @@ export default function Pagination({currentPage, onChange, total}) {
                       aria-label="Previous page">
                     <ChevronLeft/>
                 </span>}
-                {rangeWithDots.map(nbr => ranges(nbr))}
+                {rangeWithDots.map((nbr, index) => ranges(nbr, index))}
                 {(nbrPages > 1 && currentPage !== nbrPages) &&
-                <span class="link chevron" onClick={() => onChange(currentPage + 1)} title="Next page"
+                <span className="link chevron" onClick={() => onChange(currentPage + 1)} title="Next page"
                       aria-label="Next page">
-                <ChevronRight/>
-                    </span>}
+                    <ChevronRight/>
+                </span>}
             </section>
         </section>
 

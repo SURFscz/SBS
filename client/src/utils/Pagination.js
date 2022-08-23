@@ -2,18 +2,16 @@ export const pageCount = 25;
 
 //https://gist.github.com/kottenator/9d936eb3e4e3c3e02598
 export const pagination = (page, totalResults) => {
-    const current = page,
-        last = totalResults,
-        delta = 2,
-        left = current - delta,
-        right = current + delta + 1,
+    const delta = 2,
+        left = page - delta,
+        right = page + delta + 1,
         range = [],
         rangeWithDots = []
     let l;
 
-    for (let i = 1; i <= last; i++) {
+    for (let i = 1; i <= totalResults; i++) {
         // eslint-disable-next-line
-        if (i === 1 || i === last || i >= left && i < right) {
+        if (i === 1 || i === totalResults || i >= left && i < right) {
             range.push(i);
         }
     }
