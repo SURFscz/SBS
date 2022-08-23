@@ -108,7 +108,8 @@ I18n.translations.en = {
             composition: "Config",
             suspendedUsers: "Suspensions",
             userlogins: "Logins",
-            details: "Details"
+            details: "Details",
+            orgUsers: "Users"
         }
     },
     forms: {
@@ -177,6 +178,10 @@ I18n.translations.en = {
             schac_home_organisation: "Institution",
             foundSingle: "{{count}} user found",
             found: "{{count}} users found",
+            foundSingleInvitation: "{{count}} invitation found",
+            foundInvitations: "{{count}} invitations found",
+            foundInvitationsUser: "{{count}} users and {{count}} invitations found",
+            organisation: "All collaboration users",
             title: "Users",
             last_login_date: "Last login date",
             affiliation: "Affiliation",
@@ -187,6 +192,7 @@ I18n.translations.en = {
             me: "You",
             moreResults: "There are more results then shown, please refine your search.",
             noResults: "No users were found...",
+            noResultsAdminSearch: "No users or invitations were found...",
             activity: "User history",
             showSsh: "Show",
             ssh: {

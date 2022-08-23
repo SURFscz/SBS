@@ -108,7 +108,8 @@ I18n.translations.nl = {
             composition: "Config",
             suspendedUsers: "Suspensions",
             userlogins: "Logins",
-            details: "Details"
+            details: "Details",
+            orgUsers: "Gebruikers"
         }
     },
     forms: {
@@ -177,6 +178,10 @@ I18n.translations.nl = {
             schac_home_organisation: "Instelling",
             foundSingle: "{{count}} gebruiker gevonden",
             found: "{{count}} gebruikers gevonden",
+            foundSingleInvitation: "{{count}} uitnodiging gevonden",
+            foundInvitations: "{{count}} uitnodigingen gevonden",
+            foundInvitationsUser: "{{count}} gebruikers en {{countInvitations}} uitnodigingen gevonden",
+            organisation: "Alle gebruikers in de samenwerkingen van deze organisatie",
             title: "Gebruikers",
             last_login_date: "Datum laatste inlog",
             affiliation: "Affiliatie",
@@ -187,6 +192,7 @@ I18n.translations.nl = {
             me: "Jij",
             moreResults: "Er zijn nog meer zoekresultaten, verfijn je zoekterm.",
             noResults: "Geen gebruikers gevonden...",
+            noResultsAdminSearch: "Geen gebruikers of uitnodigingen gevonden...",
             activity: "User-historie",
             showSsh: "Toon",
             ssh: {

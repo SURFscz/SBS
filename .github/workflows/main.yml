@@ -25,7 +25,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.9', '3.10']
+#        python-version: ['3.7', '3.9', '3.10']
+#       Socket-io is not compatible with 3.10, for now skip 3.10, untill we resolve this
+        python-version: ['3.7', '3.9']
 
     services:
       # How to use MySQL
