@@ -388,11 +388,11 @@ export function deleteOrganisation(id) {
 }
 
 export function queryForOrganisationUsers(organisationId, q) {
-    return fetchJson(`/api/organisations/${organisationId}/users/query?q=${encodeURIComponent(q)}`);
+    return fetchJson(`/api/organisations/${organisationId}/users?q=${encodeURIComponent(q)}`);
 }
 
 export function queryForOrganisationInvites(organisationId, q) {
-    return fetchJson(`/api/organisations/${organisationId}/invites/query?q=${encodeURIComponent(q)}`);
+    return fetchJson(`/api/organisations/${organisationId}/invites?q=${encodeURIComponent(q)}`);
 }
 
 //JoinRequests
