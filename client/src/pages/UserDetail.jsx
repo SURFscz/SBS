@@ -46,10 +46,18 @@ class UserDetail extends React.Component {
             .then(res => {
                 const user = res[0];
                 const auditLogs = currentUser.admin ? res[1] : [];
+                const {org_id} = this.props.match.params;
+                let middlePath;
+                if (org_id) {
+                    const org_membership = currentUser.organisation_memberships.find(om => om.organisation_id === parseInt(org_id, 10)) || {organisation: {name: org_id}};
+                    middlePath = {path: `/organisations/${org_id}/users`, value: I18n.t("breadcrumb.organisation", {name: org_membership.organisation.name})}
+                } else {
+                    middlePath = {path: "/home/users", value: I18n.t("breadcrumb.users")};
+                }
                 AppStore.update(s => {
                     s.breadcrumb.paths = [
                         {path: "/", value: I18n.t("breadcrumb.home")},
-                        {path: "/home/users", value: I18n.t("breadcrumb.users")},
+                        middlePath,
                         {path: "", value: user.name}
                     ];
                 });
@@ -98,25 +106,27 @@ class UserDetail extends React.Component {
                     <a href="/ssh" onClick={this.toggleSsh}>{I18n.t("models.allUsers.showSsh")}</a>}
                 </div>
                 <div className="input-field">
-                    <label>{I18n.t("models.organisations.title")}</label>
+                    <label>{I18n.t(`models.organisations.title`)}</label>
                     {isEmpty(user.organisation_memberships) && "-"}
                     {!isEmpty(user.organisation_memberships) && <ul>
                         {user.organisation_memberships.map(ms =>
                             <li key={`organisation_membership_${ms.id}`}>
-                                <Link to={`/organisations/${ms.organisation.id}`}>{`${ms.organisation.name} (${I18n.t('profile.' + ms.role)})`}</Link>
+                                <Link
+                                    to={`/organisations/${ms.organisation.id}`}>{`${ms.organisation.name} (${I18n.t('profile.' + ms.role)})`}</Link>
                             </li>)}
                     </ul>}
                 </div>
                 <div className="input-field">
-                    <label>{I18n.t("models.collaborations.title")}</label>
+                    <label>{I18n.t(`models.collaborations.${currentUser.admin ? "title" : "titleForOrgAdmin"}`)}</label>
                     {isEmpty(user.collaboration_memberships) && "-"}
                     {!isEmpty(user.collaboration_memberships) && <ul>
                         {user.collaboration_memberships
                             .filter(collMembership => this.displayCollaboration(collMembership, currentUser))
                             .map((ms, index) =>
-                            <li key={`${ms.role}_${index}`}>
-                               <Link to={`/collaborations/${ms.collaboration.id}`}>{`${ms.collaboration.name} (${I18n.t('profile.' + ms.role)})`}</Link>
-                            </li>)}
+                                <li key={`${ms.role}_${index}`}>
+                                    <Link
+                                        to={`/collaborations/${ms.collaboration.id}`}>{`${ms.collaboration.name} (${I18n.t('profile.' + ms.role)})`}</Link>
+                                </li>)}
                     </ul>}
                 </div>
                 <div className="input-field">
@@ -137,7 +147,8 @@ class UserDetail extends React.Component {
                     {!isEmpty(user.collaboration_requests) && <ul>
                         {user.collaboration_requests.map(cr =>
                             <li key={`collaboration_request_${cr.id}`}>
-                                <Link to={`/organisations/${cr.organisation.id}/collaboration_requests`}>{`${cr.name} (${cr.status})`}</Link>
+                                <Link
+                                    to={`/organisations/${cr.organisation.id}/collaboration_requests`}>{`${cr.name} (${cr.status})`}</Link>
                             </li>)}
                     </ul>}
                 </div>
@@ -147,7 +158,8 @@ class UserDetail extends React.Component {
                     {!isEmpty(user.service_memberships) && <ul>
                         {user.service_memberships.map(sm =>
                             <li key={`service_membership_${sm.id}`}>
-                               <Link to={`/services/${sm.service.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</Link>
+                                <Link
+                                    to={`/services/${sm.service.id}`}>{`${sm.service.name} (${I18n.t('profile.' + sm.role)})`}</Link>
                             </li>)}
                     </ul>}
                 </div>

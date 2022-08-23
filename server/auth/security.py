@@ -6,7 +6,7 @@ from flask import session, g as request_context, request as current_request, cur
 from sqlalchemy.orm import load_only
 from werkzeug.exceptions import Forbidden, SecurityError
 
-from server.db.domain import CollaborationMembership, OrganisationMembership, Group, Collaboration, User, \
+from server.db.domain import CollaborationMembership, OrganisationMembership, Collaboration, User, \
     ServiceMembership
 
 MIN_SECRET_LENGTH = 43
@@ -102,10 +102,6 @@ def confirm_ipaddress_access(*args, override_func=None):
     return confirm_scope_access(*args, override_func=override_func, scope="ipaddress")
 
 
-def is_current_user_collaboration_admin(collaboration_id):
-    return is_collaboration_admin(current_user_id(), collaboration_id)
-
-
 def is_current_user_organisation_admin_or_manager(collaboration_id):
     return is_organisation_admin_or_manager(Collaboration.query.get(collaboration_id).organisation_id)
 
@@ -190,17 +186,6 @@ def confirm_collaboration_member(collaboration_id):
         return is_organisation_admin_or_manager(collaboration.organisation_id)
 
     confirm_write_access(override_func=override_func)
-
-
-def confirm_group_member(group_id):
-    user_id = current_user_id()
-    count = Group.query \
-        .options(load_only("id")) \
-        .join(Group.collaboration_memberships) \
-        .filter(Group.id == group_id) \
-        .filter(CollaborationMembership.user_id == user_id) \
-        .count()
-    return count > 0
 
 
 def is_service_admin(service_id=None):
