@@ -9,6 +9,8 @@ import {headerIcon} from "../../forms/helpers";
 import "./Entities.scss";
 import SpinnerField from "./SpinnerField";
 import Explain from "../Explain";
+import Pagination from "../Pagination";
+import {pageCount} from "../../utils/Pagination";
 
 class Entities extends React.Component {
 
@@ -18,7 +20,8 @@ class Entities extends React.Component {
             query: "",
             sorted: props.defaultSort,
             reverse: false,
-            showExplanation: false
+            showExplanation: false,
+            page: 1
         }
     }
 
@@ -114,8 +117,13 @@ class Entities extends React.Component {
     }
 
     renderEntities = (entities, sorted, reverse, modelName, tableClassName, columns, children,
-                      rowLinkMapper, customNoEntities, onHover, actions, actionHeader) => {
+                      rowLinkMapper, customNoEntities, onHover, actions, actionHeader, page, pagination) => {
         const hasEntities = !isEmpty(entities);
+        const total = entities.length;
+        if (pagination) {
+            const minimalPage = Math.min(page, Math.ceil(entities.length / pageCount));
+            entities = entities.slice((minimalPage - 1) * pageCount, minimalPage * pageCount);
+        }
         return (
             <section className="entities-list">
                 {(hasEntities && actions) && <div className={`actions-header ${actionHeader}`}>
@@ -152,6 +160,9 @@ class Entities extends React.Component {
                 </table>}
                 {(!hasEntities && !children) &&
                 <p className="no-entities">{customNoEntities || I18n.t(`models.${modelName}.noEntities`)}</p>}
+                {pagination && <Pagination currentPage={page}
+                                           onChange={nbr => this.setState({page: nbr})}
+                                           total={total}/>}
             </section>
         );
     };
@@ -160,12 +171,12 @@ class Entities extends React.Component {
         const {
             modelName, entities, showNew, newLabel, searchAttributes, columns, children, loading, customSearch,
             actions, title, filters, explain, rowLinkMapper, tableClassName, explainTitle, className = "",
-            customNoEntities, hideTitle, onHover, actionHeader = ""
+            customNoEntities, hideTitle, onHover, actionHeader = "", pagination = true
         } = this.props;
         if (loading) {
             return <SpinnerField/>;
         }
-        const {query, sorted, reverse, showExplanation} = this.state;
+        const {query, sorted, reverse, page, showExplanation} = this.state;
         const filteredEntities = this.filterEntities(entities, query, searchAttributes, customSearch);
         const sortedEntities = sortObjects(filteredEntities, sorted, reverse);
         return (
@@ -179,7 +190,7 @@ class Entities extends React.Component {
                 {this.renderSearch(modelName, title, entities, query, searchAttributes, showNew, newLabel, filters, explain, customSearch, hideTitle)}
 
                 {this.renderEntities(sortedEntities, sorted, reverse, modelName, tableClassName, columns, children,
-                    rowLinkMapper, customNoEntities, onHover, actions, actionHeader)}
+                    rowLinkMapper, customNoEntities, onHover, actions, actionHeader, page, pagination)}
                 <div>{this.props.children}</div>
             </div>);
     }
