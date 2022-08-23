@@ -4,19 +4,21 @@ import uuid
 from flasgger import swag_from
 from flask import Blueprint, request as current_request, current_app, g as request_context
 from munch import munchify
+from sqlalchemy import or_
 from sqlalchemy import text, func, bindparam, String
 from sqlalchemy.orm import load_only
 from sqlalchemy.orm import selectinload
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars, emit_socket
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_organisation_admin, generate_token, is_service_admin, confirm_external_api_call, confirm_read_access
+    confirm_organisation_admin, generate_token, is_service_admin, confirm_external_api_call, confirm_read_access, \
+    confirm_organisation_admin_or_manager
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
 from server.db.defaults import full_text_search_autocomplete_limit
 from server.db.domain import Organisation, OrganisationMembership, OrganisationInvitation, User, \
-    CollaborationRequest, SchacHomeOrganisation, Collaboration
+    CollaborationRequest, SchacHomeOrganisation, Collaboration, CollaborationMembership, Invitation
 from server.db.models import update, save, delete
 from server.mail import mail_organisation_invitation, mail_platform_admins
 
@@ -353,8 +355,36 @@ def update_organisation():
                   allowed_child_collections=["schac_home_organisations"])
 
 
-@organisation_api.route("/<id>", methods=["DELETE"], strict_slashes=False)
+@organisation_api.route("/<organisation_id>", methods=["DELETE"], strict_slashes=False)
 @json_endpoint
-def delete_organisation(id):
+def delete_organisation(organisation_id):
     confirm_write_access()
-    return delete(Organisation, id)
+    return delete(Organisation, organisation_id)
+
+
+@organisation_api.route("/<organisation_id>/users", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def search_users(organisation_id):
+    confirm_organisation_admin_or_manager(organisation_id)
+    wildcard = f"%{query_param('q')}%"
+    conditions = [User.name.ilike(wildcard), User.username.ilike(wildcard), User.email.ilike(wildcard)]
+    return User.query \
+               .join(User.collaboration_memberships) \
+               .join(CollaborationMembership.collaboration) \
+               .join(Collaboration.organisation) \
+               .filter(Organisation.id == organisation_id) \
+               .filter(or_(*conditions)) \
+               .all(), 200
+
+
+@organisation_api.route("/<organisation_id>/invites", methods=["GET"], strict_slashes=False)
+@json_endpoint
+def search_invites(organisation_id):
+    confirm_organisation_admin_or_manager(organisation_id)
+    wildcard = f"%{query_param('q')}%"
+    return Invitation.query \
+               .join(Invitation.collaboration) \
+               .join(Collaboration.organisation) \
+               .filter(Organisation.id == organisation_id) \
+               .filter(Invitation.invitee_email.ilike(wildcard)) \
+               .all(), 200

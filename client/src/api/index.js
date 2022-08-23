@@ -387,6 +387,14 @@ export function deleteOrganisation(id) {
     return fetchDelete(`/api/organisations/${id}`)
 }
 
+export function queryForOrganisationUsers(organisationId, q) {
+    return fetchJson(`/api/organisations/${organisationId}/users?q=${encodeURIComponent(q)}`);
+}
+
+export function queryForOrganisationInvites(organisationId, q) {
+    return fetchJson(`/api/organisations/${organisationId}/invites?q=${encodeURIComponent(q)}`);
+}
+
 //JoinRequests
 export function joinRequestForCollaboration(clientData) {
     return postPutJson("/api/join_requests", clientData, "post", false);
