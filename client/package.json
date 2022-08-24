@@ -40,9 +40,9 @@
     },
     "devDependencies": {
         "dot-prop": "^7.2.0",
+        "http-proxy-middleware": "^2.0.6",
         "react-scripts": "^5.0.1",
-        "sass": "^1.54.4",
-        "http-proxy-middleware": "^2.0.6"
+        "sass": "^1.54.4"
     },
     "scripts": {
         "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true HOST=localhost react-scripts start",
