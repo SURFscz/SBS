@@ -24,8 +24,8 @@ class PamWebSSO extends React.Component {
     }
 
     componentDidMount = () => {
-        const {session_id} = this.props.match.params;
-        pamWebSSOSession(session_id)
+        const {service, session_id} = this.props.match.params;
+        pamWebSSOSession(service, session_id)
             .then(res => {
                 this.setState({
                     validation: res.validation,
