@@ -92,7 +92,7 @@ export function authorizationUrl(state) {
 }
 
 export function me(config) {
-    if (config.local && true) {
+    if (config.local && false) {
         let sub = "urn:service_admin";
         sub = "urn:john";
         // sub = "urn:peter"
@@ -856,7 +856,7 @@ export function tagsByOrganisation(organisationId) {
 }
 
 //pam-weblogin
-export function pamWebSSOSession(sessionId) {
-    return fetchJson(`/pam-weblogin/${sessionId}`, {}, {}, false)
+export function pamWebSSOSession(serviceAbbreviation, sessionId) {
+    return fetchJson(`/pam-weblogin/${serviceAbbreviation}/${sessionId}`, {}, {}, false)
 }
 
