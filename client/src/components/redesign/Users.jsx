@@ -31,17 +31,20 @@ class Users extends React.Component {
     }
 
     openUser = user => e => {
-        if (e.metaKey || e.ctrlKey) {
-            window.open(`/users/${user.id}`, '_blank');
-            return;
-        }
-        stopEvent(e);
+        const {organisation} = this.props;
+        let path;
         if (user.isUser) {
-            this.props.history.push(`/users/${user.id}`);
+            path = organisation ? `/users/${user.id}/details/${organisation.id}` : `/users/${user.id}`
         } else {
-            this.props.history.push(`/collaborations/${user.collaboration_id}`)
+            //user is an invitation instance
+            path = `/collaborations/${user.collaboration_id}`;
         }
-
+        if (e.metaKey || e.ctrlKey) {
+            window.open(path, '_blank');
+        } else {
+            stopEvent(e);
+            this.props.history.push(path);
+        }
     };
 
     search = query => {
@@ -149,15 +152,21 @@ class Users extends React.Component {
         }
         const countUsers = users.length;
         const countInvitations = invitations.length;
-        let title;
-        if (!adminSearch) {
-            title = I18n.t(`models.allUsers.${countUsers === 1 ? "foundSingle" : "found"}`, {count: countUsers})
-        } else {
-        if (countUsers.length > 0 && countInvitations.length > 0) {
-            title = I18n.t(`models.allUsers.${countUsers === 1 ? "foundSingle" : "found"}`, {count: countUsers})
-        } else if (countUsers.length === 0 && countInvitations.length === 0) {
-            title = I18n.t(`models.allUsers.${countUsers === 1 ? "foundSingle" : "found"}`, {count: countUsers})
-        }
+        const hasEntities = countUsers > 0 || countInvitations > 0;
+        let title = "";
+
+        if (hasEntities) {
+            title = I18n.t(`models.allUsers.found`, {
+                count: countUsers,
+                plural: I18n.t(`models.allUsers.${countUsers === 1 ? "singleUser" : "multipleUsers"}`)
+            })
+            if (!adminSearch) {
+                title += I18n.t("models.allUsers.and")
+                title += I18n.t(`models.allUsers.found`, {
+                    count: countInvitations,
+                    plural: I18n.t(`models.allUsers.${countInvitations === 1 ? "singleInvitation" : "multipleInvitations"}`)
+                })
+            }
         }
         return (<div className="mod-users">
             {searching && <SpinnerField/>}
@@ -167,7 +176,8 @@ class Users extends React.Component {
                       filters={moreToShow && this.moreResultsAvailable()}
                       columns={columns}
                       title={title}
-                      customNoEntities={noResults ? I18n.t("models.allUsers.noResults") : I18n.t("models.allUsers.noEntities")}
+                      hideTitle={!hasEntities || noResults}
+                      customNoEntities={I18n.t(`models.allUsers.${noResults ? "noResults" : "noEntities"}${adminSearch ? "" : "Invitations"}`)}
                       loading={false}
                       inputFocus={true}
                       customSearch={this.search}

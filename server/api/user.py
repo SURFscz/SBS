@@ -16,7 +16,7 @@ from onelogin.saml2.constants import OneLogin_Saml2_Constants
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from sqlalchemy import text, or_, bindparam, String
 from sqlalchemy.orm import joinedload, selectinload
-from werkzeug.exceptions import InternalServerError
+from werkzeug.exceptions import InternalServerError, Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.base import replace_full_text_search_boolean_mode_chars
@@ -25,7 +25,7 @@ from server.auth.mfa import ACR_VALUES, store_user_in_session, mfa_idp_allowed, 
     surf_secure_id_required, has_valid_mfa, decode_jwt_token
 from server.auth.security import confirm_allow_impersonation, is_admin_user, current_user_id, confirm_read_access, \
     confirm_collaboration_admin, confirm_organisation_admin, current_user, confirm_write_access, \
-    confirm_organisation_admin_or_manager
+    confirm_organisation_admin_or_manager, is_application_admin
 from server.auth.ssid import AUTHN_REQUEST_ID, saml_auth, redirect_to_surf_secure_id, USER_UID
 from server.auth.user_claims import add_user_claims
 from server.cron.user_suspending import create_suspend_notification
@@ -563,6 +563,13 @@ def find_by_id():
     confirm_organisation_admin_or_manager(organisation_id=None)
     user = _user_query().options(joinedload(User.service_aups).subqueryload(ServiceAup.service)).filter(
         User.id == query_param("id")).one()
+    if not is_application_admin():
+        # Ensure the user has a collaboration membership in an organisation the current_user is admin or manager of
+        curr_user = User.query.get(current_user_id())
+        current_user_organisation_identifiers = [om.organisation_id for om in curr_user.organisation_memberships]
+        user_organisation_identifiers = [cm.collaboration.organisation_id for cm in user.collaboration_memberships]
+        if not any([i in current_user_organisation_identifiers for i in user_organisation_identifiers]):
+            raise Forbidden()
     return user, 200
 
 
