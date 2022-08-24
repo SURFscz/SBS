@@ -23,6 +23,9 @@ export function isUserAllowed(minimalRole, user, organisation_id = null, collabo
     if (user.admin) {
         return true;
     }
+    if (user.guest) {
+        return false;
+    }
     const adminOrganisationMembership = organisation_id ?
         user.organisation_memberships.find(m => m.organisation_id === organisation_id && m.role === "admin") :
         user.organisation_memberships.find(m => m.role === "admin");

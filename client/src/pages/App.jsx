@@ -400,7 +400,7 @@ class App extends React.Component {
                                    refreshUser={this.refreshUserMemberships}
                                    {...props}/>}/>
 
-                        {isUserAllowed(ROLES.ORG_MANAGER, currentUser) && <Route exact path="/users/:id/:tab?"
+                        {isUserAllowed(ROLES.ORG_MANAGER, currentUser) && <Route exact path="/users/:id/:tab?/:org_id?"
                                                      render={props => <ProtectedRoute config={config}
                                                                                       currentUser={currentUser}
                                                                                       Component={UserDetail} {...props}/>}/>}

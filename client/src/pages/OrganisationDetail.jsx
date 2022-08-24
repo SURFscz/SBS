@@ -161,7 +161,7 @@ class OrganisationDetail extends React.Component {
                      label={I18n.t("home.tabs.orgUsers")}
                      icon={<MembersIcon/>}>
             <Users {...this.props}
-                    organisation={organisation}
+                   organisation={organisation}
                    adminSearch={false}/>
         </div>)
     }
