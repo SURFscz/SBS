@@ -2,9 +2,10 @@
 from datetime import datetime, timedelta
 
 from server.db.db import db
-from server.db.domain import PamSSOSession
+from server.db.domain import PamSSOSession, User
 from server.test.abstract_test import AbstractTest
-from server.test.seed import pam_session_id, service_storage_name, service_storage_token, invalid_service_pam_session_id
+from server.test.seed import pam_session_id, service_storage_name, service_storage_token, \
+    invalid_service_pam_session_id, roger_name
 
 
 class TestPamWebSSO(AbstractTest):
@@ -77,6 +78,11 @@ class TestPamWebSSO(AbstractTest):
 
     def test_start_cached_login(self):
         self.login_user_2fa("urn:roger")
+        roger = self.find_entity_by_name(User, roger_name)
+        roger.pam_last_login_date = datetime.now()
+        db.session.merge(roger)
+        db.session.commit()
+
         res = self.post("/pam-weblogin/start",
                         body={"user_id": "roger@example.org",
                               "attribute": "email",
@@ -96,6 +102,8 @@ class TestPamWebSSO(AbstractTest):
         self.assertEqual("SUCCESS", res["result"])
         # The session must be removed
         self.get(f"/pam-weblogin/{pam_session_id}", with_basic_auth=False, response_status_code=404)
+        peter = self.find_entity_by_name(User, "urn:peter")
+        self.assertIsNotNone(peter.pam_last_login_date)
 
     def test_check_pin_wrong_pin(self):
         self.login("urn:peter")

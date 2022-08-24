@@ -60,6 +60,7 @@ class User(Base, db.Model):
     application_uid = db.Column("application_uid", db.String(length=255), nullable=True)
     last_accessed_date = db.Column("last_accessed_date", db.DateTime(timezone=True), nullable=False)
     last_login_date = db.Column("last_login_date", db.DateTime(timezone=True), nullable=False)
+    pam_last_login_date = db.Column("pam_last_login_date", db.DateTime(timezone=True), nullable=False)
     suspended = db.Column("suspended", db.Boolean(), nullable=True, default=False)
     suspend_notifications = db.relationship("SuspendNotification", back_populates="user", cascade="all, delete-orphan",
                                             passive_deletes=True)
