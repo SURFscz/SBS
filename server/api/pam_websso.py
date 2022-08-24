@@ -91,9 +91,9 @@ def start():
     session.clear()
     session.modified = False
 
-    last_login_date = user.last_login_date
+    pam_last_login_date = user.pam_last_login_date
     seconds_ago = datetime.now() - timedelta(hours=0, minutes=0, seconds=cache_duration)
-    if last_login_date and last_login_date > seconds_ago:
+    if pam_last_login_date and pam_last_login_date > seconds_ago:
         logger.debug(f"PamWebSSO user {user.uid} SSO results")
         return {"result": "OK", "cached": True,
                 "info": f"User {user.uid} login was cached"}, 201
@@ -130,6 +130,8 @@ def check_pin():
     validation = _validate_pam_sso_session(pam_sso_session, pin, True, False)
     if validation["result"] == "SUCCESS":
         db.session.delete(pam_sso_session)
+        user.pam_last_login_date = datetime.now()
+        db.session.merge(user)
 
     logger.debug(f"PamWebSSO check-pin for service {service.name} for user {user.uid} with result {validation}")
 
