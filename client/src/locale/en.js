@@ -1775,24 +1775,23 @@ I18n.translations.en = {
     landing: {
         header: {
             title: "Easy and secure access to research services for research collaborations",
-            login: "Login for admins & members <sup>*</sup>",
-            sup: "<sup>*</sup><strong>Not a member?</strong> You will receive an invite via mail.",
+            login: "Login",
+            sup: "<strong>New to SURF Reseach Access Management?</strong>Login to find out what you can do.",
         },
         works: "How does it work?",
         adminFunction: "admin function",
         create: "Create",
         createInfo: "<p>Administrators create a collaboration page for their community.</p>" +
-            "<p>They will be able to connect required services by visiting the catalog of connected services of SURF.</p>",
+            "<p>They then select services from the catalog to make them available to collaboration members.</p>",
         invite: "Invite",
-        inviteInfo: "<p>Administrators will invite fellow researchers to their collaboration-page via email.</p>" +
-            "<p>They can also ask other administrators to join when groups get really big.</p>",
+        inviteInfo: "<p>Administrators invite fellow researchers to their collaboration page.</p>" +
+            "<p>They can also ask other administrators to help manage the collaboration.</p>",
         join: "Join",
-        joinInfo: "<p>Researchers join by logging in with their institution account (or eduID).</p><br/>" +
-            "<p>They will be able to connect required services by visiting the catalog of connected services of SURF.</p>",
+        joinInfo: "<p>Invited researchers join by logging in with their institutional account or eduID.nl.</p><br/>",
         collaborate: "Collaborate",
-        collaborateInfo: "<p>The secured collaboration-page shows all members and gives access to the research services.</p>",
+        collaborateInfo: "<p>The secured collaboration page shows all members and gives access to the research services.</p>",
         footer: "<p>SURF Research Access Management is a service for access management of Dutch led research collaborations.</p>" +
-            "<p>Do you want to know more, please visit <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
+            "<p>Do you want to know more? Please visit <a href='https://surf.nl/en/sram'>https://surf.nl/en/sram</a>.</p>"
     },
     tooltips: {
         members: "Composition of this collaboration",
