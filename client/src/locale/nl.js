@@ -1775,24 +1775,23 @@ I18n.translations.nl = {
     landing: {
         header: {
             title: "Eenvoudige en veilige toegang tot onderzoeksdiensten voor onderzoekssamenwerkingen",
-            login: "Inloggen voor beheerders & leden <sup>*</sup>",
-            sup: "<sup>*</sup><strong>Geen lid?</strong> Je ontvangt een uitnodiging via e-mail.",
+            login: "Inloggen",
+            sup: "<strong>Eerste keer hier?</strong>Log in om je mogelijkheden te zien.",
         },
         works: "Hoe werkt het?",
-        adminFunction: "beheeders functie",
-        create: "Maken",
-        createInfo: "<p>Beheerders maken een samenwerkingspagina voor hun samenwerking.</p>" +
-            "<p>Ze kunnen de benodigde services koppelen door naar de catalogus met aangesloten services van SURF te gaan.</p>",
+        adminFunction: "beheerdersfunctie",
+        create: "Aanmaken",
+        createInfo: "<p>Beheerders maken een pagina aan voor onderzoekers van hun samenwerking.</p>" +
+            "<p>Vervolgens selecteren zij diensten uit de catalogus om ze beschikbaar te maken voor de leden van de samenwerking.</p>",
         invite: "Uitnodigen",
-        inviteInfo: "<p>Beheerders zullen collega-onderzoekers via e-mail uitnodigen op hun samenwerkingspagina.</p>" +
-            "<p>Ze kunnen ook andere beheerders vragen om mee te doen als groepen erg groot worden.</p>",
-        join: "Doe mee",
-        joinInfo: "<p>Onderzoekers doen mee door in te loggen met hun instellingsaccount (of eduID).</p><br/>" +
-            "<p>Ze zullen de vereiste services verbinden door de catalogus met verbonden services van SURF te bezoeken.</p>",
+        inviteInfo: "<p>Beheerders nodige medeonderzoekers uit tot de samenwerkingspagina.</p>" +
+            "<p>Ze kunnen ook leden uitnodigen mee te helpen als beheerder.</p>",
+        join: "Meedoen",
+        joinInfo: "<p>Uitgenodigde onderzoekers loggen in via hun instelling of eduID.nl.</p>",
         collaborate: "Samenwerken",
         collaborateInfo: "<p>De beveiligde samenwerkingspagina toont alle leden en geeft toegang tot de onderzoeksdiensten.</p>",
         footer: "<p>SURF Research Access Management is een dienst voor toegangsbeheer van Nederlandse onderzoekssamenwerkingen.</p>" +
-            "<p>Wil je meer weten, ga dan naar <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
+            "<p>Wil je meer weten? Bezoek <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
     },
     tooltips: {
         members: "Samenstelling van deze samenwerking",
