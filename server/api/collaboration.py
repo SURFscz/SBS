@@ -26,15 +26,15 @@ from server.mail import mail_collaboration_invitation
 collaboration_api = Blueprint("collaboration_api", __name__, url_prefix="/api/collaborations")
 
 
-def _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=False):
+def _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=False, force=False):
     for cm in json_collaboration["collaboration_memberships"]:
-        if not collaboration.disclose_email_information and not cm["role"] == "admin" and allow_admins:
+        if force or (not collaboration.disclose_email_information and not cm["role"] == "admin" and allow_admins):
             del cm["user"]["email"]
-        if not collaboration.disclose_member_information and not cm["role"] == "admin" and allow_admins:
+        if force or (not collaboration.disclose_member_information and not cm["role"] == "admin" and allow_admins):
             del cm["user"]
     if "groups" in json_collaboration["groups"]:
         for gr in json_collaboration["groups"]:
-            _del_non_disclosure_info(collaboration, gr, allow_admins=False)
+            _del_non_disclosure_info(collaboration, gr, allow_admins=False, force=force)
 
 
 def _reconcile_tags(collaboration: Collaboration, tags):
@@ -66,20 +66,12 @@ def collaboration_by_identifier():
     identifier = query_param("identifier")
 
     collaboration = Collaboration.query \
-        .outerjoin(Collaboration.collaboration_memberships) \
-        .outerjoin(CollaborationMembership.user) \
-        .options(selectinload(Collaboration.organisation).selectinload(Organisation.services)) \
-        .options(selectinload(Collaboration.services)) \
         .options(selectinload(Collaboration.groups)) \
-        .options(selectinload(Collaboration.collaboration_memberships)
-                 .selectinload(CollaborationMembership.user)) \
+        .options(selectinload(Collaboration.collaboration_memberships))\
         .filter(Collaboration.identifier == identifier) \
         .one()
 
-    json_collaboration = jsonify(collaboration).json
-    _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=True)
-    service_emails = collaboration.service_emails()
-    return {"collaboration": json_collaboration, "service_emails": service_emails}, 200
+    return collaboration, 200
 
 
 @collaboration_api.route("/v1/<identifier>", strict_slashes=False)

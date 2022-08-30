@@ -405,6 +405,7 @@ I18n.translations.en = {
             about: "What our collaboration is about",
             services: "Where we collaborate ({{nbr}} services)",
             noServices: "There are no services available in this collaboration",
+            noServicesJoinRequest: "Services are only visible for members",
             servicesStart: "Click the button to start the service, or read the instructions first.",
             instructions: "Instructions",
             servicesHoover: "Visit this service at {{uri}}",

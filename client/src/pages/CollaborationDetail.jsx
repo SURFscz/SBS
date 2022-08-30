@@ -148,8 +148,7 @@ class CollaborationDetail extends React.Component {
             } else {
                 collaborationByIdentifier(collaborationIdentifier)
                     .then(res => {
-                        const collaboration = res["collaboration"];
-                        const serviceEmails = res["service_emails"];
+                        const collaboration = res;
                         if (collaboration.disable_join_requests) {
                             this.props.history.push("/404");
                         } else {
@@ -159,7 +158,6 @@ class CollaborationDetail extends React.Component {
                             }
                             this.setState({
                                 collaboration: collaboration,
-                                serviceEmails: serviceEmails,
                                 collaborationJoinRequest: true,
                                 alreadyMember: alreadyMember,
                                 adminOfCollaboration: false,
@@ -289,7 +287,7 @@ class CollaborationDetail extends React.Component {
                 this.getMembersTab(collaboration, showMemberView, isJoinRequest),
                 this.getGroupsTab(collaboration, showMemberView, isJoinRequest),
             ];
-        const services = removeDuplicates(collaboration.services.concat(collaboration.organisation.services).filter(s => s.token_enabled), "id");
+        const services = isJoinRequest ? [] : removeDuplicates(collaboration.services.concat(collaboration.organisation.services).filter(s => s.token_enabled), "id");
         if (userTokens) {
             userTokens = userTokens.filter(userToken => services.find(service => service.id === userToken.service_id));
             if (userTokens && !isJoinRequest && services.length > 0) {
@@ -460,11 +458,6 @@ class CollaborationDetail extends React.Component {
         });
     }
 
-    createCollaborationRequest = () => {
-        const {collaboration} = this.state;
-        this.props.history.push(`/new-collaboration?organisationId=${collaboration.organisation_id}`);
-    }
-
     collaborationJoinRequestAction = (collaboration, alreadyMember) => {
         return (
             <div className="join-request-action">
@@ -491,11 +484,11 @@ class CollaborationDetail extends React.Component {
                                 nbrMember: collaboration.collaboration_memberships.length,
                                 nbrGroups: collaboration.groups.length
                             })}</span></li>
-                        <li>
+                        {!collaborationJoinRequest && <li>
                             <Tooltip children={<AdminIcon/>} id={"admins-icon"} msg={I18n.t("tooltips.admins")}/>
                             <span
                                 dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(this.getAdminHeader(collaboration))}}/>
-                        </li>
+                        </li>}
                         {collaboration.website_url &&
                         <li className="collaboration-url">
                             <Tooltip children={<GlobeIcon/>} id={"collaboration-icon"}
@@ -719,18 +712,17 @@ class CollaborationDetail extends React.Component {
                 {(!showMemberView || !adminOfCollaboration) &&
                 this.getUnitHeaderForMemberNew(user, collaboration, allowedToEdit, showMemberView, collaborationJoinRequest, alreadyMember)}
 
-                <CollaborationWelcomeDialog name={collaboration.name}
+                {!collaborationJoinRequest && <CollaborationWelcomeDialog name={collaboration.name}
                                             isOpen={firstTime}
                                             role={role}
                                             serviceEmails={serviceEmails}
                                             collaboration={collaboration}
                                             isAdmin={user.admin}
                                             isInvitation={isInvitation}
-                                            close={this.doAcceptInvitation}/>
+                                            close={this.doAcceptInvitation}/>}
 
                 <JoinRequestDialog collaboration={collaboration}
                                    isOpen={joinRequestDialogOpen}
-                                   serviceEmails={serviceEmails}
                                    refresh={callback => refreshUser(callback)}
                                    history={this.props.history}
                                    close={() => this.setState({joinRequestDialogOpen: false})}/>
