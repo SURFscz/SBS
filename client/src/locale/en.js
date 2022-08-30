@@ -1776,7 +1776,7 @@ I18n.translations.en = {
         header: {
             title: "Easy and secure access to research services for research collaborations",
             login: "Login",
-            sup: "<strong>New to SURF Reseach Access Management?</strong>Login to find out what you can do.",
+            sup: "New to SURF Reseach Access Management? Login and see what you can do.",
         },
         works: "How does it work?",
         adminFunction: "admin function",
@@ -1789,7 +1789,7 @@ I18n.translations.en = {
         join: "Join",
         joinInfo: "<p>Invited researchers join by logging in with their institutional account or eduID.nl.</p><br/>",
         collaborate: "Collaborate",
-        collaborateInfo: "<p>The secured collaboration page shows all members and gives access to the research services.</p>",
+        collaborateInfo: "<p>The secured collaboration page shows its members and gives access to the research services.</p>",
         footer: "<p>SURF Research Access Management is a service for access management of Dutch led research collaborations.</p>" +
             "<p>Do you want to know more? Please visit <a href='https://surf.nl/en/sram'>https://surf.nl/en/sram</a>.</p>"
     },

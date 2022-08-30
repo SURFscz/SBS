@@ -1776,20 +1776,20 @@ I18n.translations.nl = {
         header: {
             title: "Eenvoudige en veilige toegang tot onderzoeksdiensten voor onderzoekssamenwerkingen",
             login: "Inloggen",
-            sup: "<strong>Eerste keer hier?</strong>Log in om je mogelijkheden te zien.",
+            sup: "Eerste keer bij SURF Reseach Access Management? Log in en bekijk je mogelijkheden.",
         },
         works: "Hoe werkt het?",
         adminFunction: "beheerdersfunctie",
         create: "Aanmaken",
-        createInfo: "<p>Beheerders maken een pagina aan voor onderzoekers van hun samenwerking.</p>" +
-            "<p>Vervolgens selecteren zij diensten uit de catalogus om ze beschikbaar te maken voor de leden van de samenwerking.</p>",
+        createInfo: "<p>Beheerders maken een pagina aan voor de onderzoekers van hun samenwerking.</p>" +
+            "<p>Vervolgens selecteren zij diensten uit de catalogus om ze beschikbaar te maken voor de samenwerking.</p>",
         invite: "Uitnodigen",
-        inviteInfo: "<p>Beheerders nodige medeonderzoekers uit tot de samenwerkingspagina.</p>" +
+        inviteInfo: "<p>Beheerders nodige medeonderzoekers uit voor de samenwerkingspagina.</p>" +
             "<p>Ze kunnen ook leden uitnodigen mee te helpen als beheerder.</p>",
         join: "Meedoen",
         joinInfo: "<p>Uitgenodigde onderzoekers loggen in via hun instelling of eduID.nl.</p>",
         collaborate: "Samenwerken",
-        collaborateInfo: "<p>De beveiligde samenwerkingspagina toont alle leden en geeft toegang tot de onderzoeksdiensten.</p>",
+        collaborateInfo: "<p>De beveiligde samenwerkingspagina toont de leden en geeft toegang tot de onderzoeksdiensten.</p>",
         footer: "<p>SURF Research Access Management is een dienst voor toegangsbeheer van Nederlandse onderzoekssamenwerkingen.</p>" +
             "<p>Wil je meer weten? Bezoek <a href='https://surf.nl/sram'>https://surf.nl/sram</a>.</p>"
     },
