@@ -334,7 +334,7 @@ I18n.translations.nl = {
             title: "Samenwerkingen die deze dienst gebruiken",
             organisationName: "Organisatie",
             noEntities: "Er zijn geen samenwerkingen die deze dienst gebruiken",
-            organisationWarningTooltip: "Deze samenwerking heeft toegang, omdat de organisatie van deze samenwerking toegang heeft verleend tot alle samenwerkingen in deze organisatie.</br></br>Als je deze samenwerking wil verbreken, verbied je de toegang tot de organisatie op het tabblad Organisatie.",
+            organisationWarningTooltip: "Deze samenwerking heeft toegang omdat de organisatie van deze samenwerking alle samenwerkingen in deze organisatie toegang tot de dienst heeft verleend.</br></br>Als je de toegang van deze samenwerking wil beëindigen, moet je de toegang van de organisatie op het tabblad Organisatie beëindigen.",
             origin: "Gekoppeld door",
             fromOrganisation: "Organisatie",
             fromCollaboration: "Samenwerking",
