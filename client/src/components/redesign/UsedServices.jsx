@@ -47,7 +47,7 @@ class UsedServices extends React.Component {
     }
 
     componentDidMount = () => {
-        const {collaboration, user} = this.props;
+        const {collaboration} = this.props;
         allServices().then(json => {
             const services = json;
             const requestedServices = collaboration.service_connection_requests

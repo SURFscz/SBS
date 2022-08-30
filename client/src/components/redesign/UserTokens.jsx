@@ -21,6 +21,7 @@ import {AppStore} from "../../stores/AppStore";
 import ErrorIndicator from "./ErrorIndicator";
 import {dateFromEpoch, isUserTokenExpired, userTokenExpiryDate} from "../../utils/Date";
 import SelectField from "../SelectField";
+import DOMPurify from "dompurify";
 
 class UserTokens extends React.Component {
 
@@ -155,7 +156,7 @@ class UserTokens extends React.Component {
                 <h1>{createNewUserToken ? I18n.t("models.userTokens.new") : name}</h1>
                 {createNewUserToken && <div>
                     <p className="disclaimer"
-                       dangerouslySetInnerHTML={{__html: I18n.t("models.userTokens.tokenDisclaimer")}}/>
+                       dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.userTokens.tokenDisclaimer"))}}/>
                     <InputField value={hashed_token}
                                 name={I18n.t("models.userTokens.hashedToken")}
                                 toolTip={I18n.t("models.userTokens.hashedTokenTooltip")}

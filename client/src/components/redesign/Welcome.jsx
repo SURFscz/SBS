@@ -10,6 +10,7 @@ import Button from "../Button";
 import {AppStore} from "../../stores/AppStore";
 import {convertToHtml} from "../../utils/Markdown";
 import {rawGlobalUserRole, ROLES} from "../../utils/UserRole";
+import DOMPurify from "dompurify";
 
 class Welcome extends React.Component {
 
@@ -56,13 +57,13 @@ class Welcome extends React.Component {
                     <h3 className="step">
                         <span>1.</span>
                         <span dangerouslySetInnerHTML={{
-                            __html: I18n.t("welcome.instructions", {name: organisation.name})
+                            __html: DOMPurify.sanitize(I18n.t("welcome.instructions", {name: organisation.name}))
                         }}/>
                     </h3>
                     <div className="instructions mde-preview">
                         <div className="mde-preview-content">
                             <p dangerouslySetInnerHTML={{
-                                __html: convertToHtml(organisation.on_boarding_msg)
+                                __html: DOMPurify.sanitize(convertToHtml(organisation.on_boarding_msg))
                             }}/>
                         </div>
                     </div>
@@ -92,7 +93,7 @@ class Welcome extends React.Component {
                 </h3>
                 <div className="welcome-unknown">
                     <p>{I18n.t("welcome.noMember")}</p>
-                    <p dangerouslySetInnerHTML={{__html: I18n.t("welcome.contactInfo")}}/>
+                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.contactInfo"))}}/>
                 </div>
             </div>
         );
@@ -114,7 +115,7 @@ class Welcome extends React.Component {
                     <p>{I18n.t("welcome.subTitle")}</p>
                     <div className="institution">
                         <InformationIcon/>
-                        <p dangerouslySetInnerHTML={{__html: I18n.t("welcome.institution", {name: idpDisplayName})}}/>
+                        <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcome.institution", {name: idpDisplayName}))}}/>
                     </div>
                     {orphanUser && this.unknownOrganisation()}
                     {!orphanUser && this.knownOrganisation(organisation)}

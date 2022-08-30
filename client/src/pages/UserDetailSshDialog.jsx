@@ -42,7 +42,7 @@ class UserDetailDialog extends React.Component {
 
                 </section>
             </Modal>);
-    };
+    }
 
 }
 

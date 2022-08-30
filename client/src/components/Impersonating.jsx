@@ -8,6 +8,7 @@ import {emitter} from "../utils/Events";
 import {setFlash} from "../utils/Flash";
 import "./Impersonating.scss";
 import {ReactComponent as HandIcon} from "../icons/toys-hand-ghost.svg";
+import DOMPurify from "dompurify";
 
 export default function Impersonating({impersonator, currentUser}) {
 
@@ -27,18 +28,18 @@ export default function Impersonating({impersonator, currentUser}) {
       <ReactTooltip id="impersonator" type="light" effect="solid" data-html={true}
                     place="bottom">
         <p dangerouslySetInnerHTML={{
-          __html: I18n.t("impersonate.impersonatorTooltip", {
+          __html: DOMPurify.sanitize(I18n.t("impersonate.impersonatorTooltip", {
             currentUser: currentUser.name,
             impersonator: impersonator.name
-          })
+          }))
         }}/>
       </ReactTooltip>
     </NavLink>
     <p dangerouslySetInnerHTML={{
-      __html: I18n.t("impersonate.impersonator", {
+      __html: DOMPurify.sanitize(I18n.t("impersonate.impersonator", {
         name: currentUser.name,
         role: globalUserRole(currentUser)
-      })
+      }))
     }}/>
     <Route render={({history}) => (
       <Button onClick={() => clearImpersonation(history)} txt={I18n.t("impersonate.exit")}/>

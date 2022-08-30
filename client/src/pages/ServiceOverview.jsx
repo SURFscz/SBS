@@ -25,6 +25,7 @@ import RadioButton from "../components/redesign/RadioButton";
 import CroppedImageField from "../components/redesign/CroppedImageField";
 import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
+import DOMPurify from "dompurify";
 
 class ServiceOverview extends React.Component {
 
@@ -475,7 +476,7 @@ class ServiceOverview extends React.Component {
                                 </span>
                                 <ReactTooltip id={I18n.t("service.network")} type="light" effect="solid"
                                               data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("service.networkTooltip")}}/>
+                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("service.networkTooltip"))}}/>
                                 </ReactTooltip>
                             </span>
                         {(isAdmin || isServiceAdmin) &&
@@ -816,7 +817,7 @@ class ServiceOverview extends React.Component {
                 </div>
             </div>
         );
-    };
+    }
 
 }
 

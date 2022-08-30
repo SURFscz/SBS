@@ -8,6 +8,7 @@ import {isEmpty} from "../utils/Utils";
 import {joinRequestForCollaboration} from "../api";
 import {ReactComponent as InformationIcon} from "../icons/informational.svg";
 import CollaborationAupAcceptance from "./CollaborationAupAcceptance";
+import DOMPurify from "dompurify";
 
 export default class JoinRequestDialog extends React.Component {
 
@@ -44,7 +45,7 @@ export default class JoinRequestDialog extends React.Component {
             <div>
                 <section className="explanation">
                     <span
-                        dangerouslySetInnerHTML={{__html: I18n.t("registration.explanation", {name: collaboration.name})}}/>
+                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("registration.explanation", {name: collaboration.name}))}}/>
                 </section>
                 <InputField name={I18n.t("registration.motivation", {name: collaboration.name})}
                             value={motivation}
@@ -73,9 +74,9 @@ export default class JoinRequestDialog extends React.Component {
                 <section className="explanation informational">
                     <InformationIcon/>
                     <span dangerouslySetInnerHTML={{
-                        __html: I18n.t("registration.feedback.info", {
+                        __html: DOMPurify.sanitize(I18n.t("registration.feedback.info", {
                             name: collaboration.name
-                        })
+                        }))
                     }}/>
                 </section>
                 <section className="actions">

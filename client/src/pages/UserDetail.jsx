@@ -251,7 +251,7 @@ class UserDetail extends React.Component {
                 </Tabs>
                 {showSshKeys && <UserDetailSshDialog user={user} toggle={this.toggleSsh}/>}
             </div>);
-    };
+    }
 
 }
 

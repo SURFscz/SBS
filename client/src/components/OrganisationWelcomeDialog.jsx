@@ -9,6 +9,7 @@ import OrganisationEn from "./welcome/OrganisationEn";
 import OrganisationNl from "./welcome/OrganisationNl";
 import {ROLES} from "../utils/UserRole";
 import ToggleSwitch from "./redesign/ToggleSwitch";
+import DOMPurify from "dompurify";
 
 export default function OrganisationWelcomeDialog({
                                           name,
@@ -43,7 +44,7 @@ export default function OrganisationWelcomeDialog({
             <section className="role">
                 <InformationIcon/>
                 <span
-                    dangerouslySetInnerHTML={{__html: I18n.t("welcomeDialog.role", {role: I18n.t(`access.${toggleRole}`).toLowerCase()})}}/>
+                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcomeDialog.role", {role: I18n.t(`access.${toggleRole}`).toLowerCase()}))}}/>
             </section>
             <section className="responsibilities">
                 {I18n.locale === "en" ? <OrganisationEn role={toggleRole}/> : <OrganisationNl role={toggleRole}/>}
