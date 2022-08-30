@@ -32,6 +32,9 @@ def _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=Fal
             del cm["user"]["email"]
         if not collaboration.disclose_member_information and not cm["role"] == "admin" and allow_admins:
             del cm["user"]
+    if "groups" in json_collaboration["groups"]:
+        for gr in json_collaboration["groups"]:
+            _del_non_disclosure_info(collaboration, gr, allow_admins=False)
 
 
 def _reconcile_tags(collaboration: Collaboration, tags):
@@ -70,11 +73,13 @@ def collaboration_by_identifier():
         .options(selectinload(Collaboration.groups)) \
         .options(selectinload(Collaboration.collaboration_memberships)
                  .selectinload(CollaborationMembership.user)) \
-        .filter(Collaboration.identifier == identifier).one()
+        .filter(Collaboration.identifier == identifier) \
+        .one()
 
-    collaboration_json = jsonify(collaboration).json
+    json_collaboration = jsonify(collaboration).json
+    _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=True)
     service_emails = collaboration.service_emails()
-    return {"collaboration": collaboration_json, "service_emails": service_emails}, 200
+    return {"collaboration": json_collaboration, "service_emails": service_emails}, 200
 
 
 @collaboration_api.route("/v1/<identifier>", strict_slashes=False)
@@ -240,8 +245,6 @@ def collaboration_lite_by_id(collaboration_id):
     if not collaboration.disclose_member_information or not collaboration.disclose_email_information:
         json_collaboration = jsonify(collaboration).json
         _del_non_disclosure_info(collaboration, json_collaboration, allow_admins=True)
-        for gr in json_collaboration["groups"]:
-            _del_non_disclosure_info(collaboration, gr, allow_admins=False)
         return json_collaboration, 200
 
     return collaboration, 200

@@ -208,7 +208,7 @@ class Home extends React.Component {
                     {tabs}
                 </Tabs>
             </div>);
-    };
+    }
 }
 
 export default Home;

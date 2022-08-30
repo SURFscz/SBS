@@ -5,6 +5,7 @@ import "./InputField.scss";
 import {isEmpty} from "../utils/Utils";
 import ClipBoardCopy from "./redesign/ClipBoardCopy";
 import {validUrlRegExp} from "../validations/regExps";
+import DOMPurify from "dompurify";
 
 export default function InputField({
                                        onChange,
@@ -47,7 +48,7 @@ export default function InputField({
             <span className="tool-tip-section">
                 <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
                 <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                    <p dangerouslySetInnerHTML={{__html: toolTip}}/>
+                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toolTip)}}/>
                 </ReactTooltip>
             </span>}
             </label>}

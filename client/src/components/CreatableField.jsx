@@ -3,6 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
 import "./CreatableField.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
+import DOMPurify from "dompurify";
 
 export default function CreatableField({
                                            onChange,
@@ -23,7 +24,7 @@ export default function CreatableField({
                 {toolTip && <span className="tool-tip-section">
                 <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
                 <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                    <p dangerouslySetInnerHTML={{__html: toolTip}}/>
+                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toolTip)}}/>
                 </ReactTooltip>
             </span>}
             </label>

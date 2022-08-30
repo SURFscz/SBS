@@ -9,6 +9,7 @@ import "react-mde/lib/styles/css/react-mde-all.css";
 import {ROLES} from "../utils/UserRole";
 import ToggleSwitch from "./redesign/ToggleSwitch";
 import CollaborationAupAcceptance from "./CollaborationAupAcceptance";
+import DOMPurify from "dompurify";
 
 export default function CollaborationWelcomeDialog({
                                                        name,
@@ -48,7 +49,7 @@ export default function CollaborationWelcomeDialog({
             <section className="role">
                 <InformationIcon/>
                 <span
-                    dangerouslySetInnerHTML={{__html: I18n.t("welcomeDialog.role", {role: I18n.t(`access.${toggleRole}`).toLowerCase()})}}/>
+                    dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("welcomeDialog.role", {role: I18n.t(`access.${toggleRole}`).toLowerCase()}))}}/>
             </section>
             <section className="responsibilities welcome">
                 <p>{I18n.t("welcomeDialog.info")}</p>

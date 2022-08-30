@@ -265,7 +265,7 @@ class Impersonate extends React.Component {
                     </div>
                 </div>
             </>);
-    };
+    }
 }
 
 export default Impersonate;

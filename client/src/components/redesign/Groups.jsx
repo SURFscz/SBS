@@ -417,7 +417,7 @@ class Groups extends React.Component {
                         collaboration_id: collaboration.id
                     }),
                     I18n.t("groups.flash.updated", {name: name}),
-                    res => this.gotoGroup({id: selectedGroupId, name: name})());
+                    () => this.gotoGroup({id: selectedGroupId, name: name})());
             }
         } else {
             window.scrollTo(0, 0);

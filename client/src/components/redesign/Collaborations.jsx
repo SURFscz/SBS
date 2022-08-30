@@ -19,6 +19,7 @@ import Tooltip from "./Tooltip";
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 import {setFlash} from "../../utils/Flash";
 import Select from "react-select";
+import DOMPurify from "dompurify";
 
 const allValue = "all";
 
@@ -158,7 +159,7 @@ export default class Collaborations extends React.PureComponent {
                     <ReactTooltip id="remove-collaborations" type="light" effect="solid" data-html={true}
                                   place="bottom">
                     <span
-                        dangerouslySetInnerHTML={{__html: I18n.t("models.serviceCollaborations.disconnectTooltip")}}/>
+                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.serviceCollaborations.disconnectTooltip"))}}/>
                     </ReactTooltip>
                 </div>
             </div>);
@@ -177,7 +178,7 @@ export default class Collaborations extends React.PureComponent {
                         <ReactTooltip id={`delete-org-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                       place="bottom">
                             <span
-                                dangerouslySetInnerHTML={{__html: I18n.t("models.serviceCollaborations.disconnectOneTooltip")}}/>
+                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.serviceCollaborations.disconnectOneTooltip"))}}/>
                         </ReactTooltip>
                     </div>
                 </div>

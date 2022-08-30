@@ -31,7 +31,7 @@ class ServiceAdminInvitation extends React.Component {
             serviceInvitationByHash(params.hash).then(res => {
                 const isExpired = today.isAfter(moment(res.expiry_date * 1000));
                 this.setState({invite: res, isExpired: isExpired, loading: false});
-            }).catch(e => {
+            }).catch(() => {
                 this.props.history.push("/404");
             });
         } else {
@@ -54,7 +54,7 @@ class ServiceAdminInvitation extends React.Component {
                     </div>
                 </div>
                 <p className="info"
-                   dangerouslySetInnerHTML={{__html: I18n.t("models.invitation.followingSteps")}}/>
+                   dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.invitation.followingSteps"))}}/>
                 <Button onClick={login} centralize={true} html={I18n.t("models.invitation.loginWithSub")} txt="login"/>
             </section>
         )
@@ -91,7 +91,7 @@ class ServiceAdminInvitation extends React.Component {
 
                 </div>}
             </div>);
-    };
+    }
 }
 
 export default ServiceAdminInvitation;

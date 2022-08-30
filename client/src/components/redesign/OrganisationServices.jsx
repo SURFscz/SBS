@@ -32,7 +32,7 @@ class OrganisationServices extends React.Component {
     }
 
     componentDidMount = () => {
-        const {organisation, user} = this.props;
+        const {organisation} = this.props;
         allServices().then(services => {
             services.forEach(service => {
                 const allowed = service.allowed_organisations.some(org => org.id === organisation.id);

@@ -84,12 +84,12 @@ class ServiceDetail extends React.Component {
                         const organisations = res[1];
                         const serviceConnectionRequests = res[2];
                         this.afterFetch(params, service, organisations, serviceConnectionRequests);
-                    }).catch(e => this.props.history.push("/404"));
+                    }).catch(() => this.props.history.push("/404"));
             } else {
                 serviceById(params.id)
                     .then(res => {
                         this.afterFetch(params, res, [], []);
-                    }).catch(e => this.props.history.push("/404"));
+                    }).catch(() => this.props.history.push("/404"));
             }
         } else {
             this.props.history.push("/404");
@@ -194,7 +194,7 @@ class ServiceDetail extends React.Component {
                     serviceConnectionRequests: serviceConnectionRequests,
                     loading: false
                 }, callback);
-            }).catch(e => {
+            }).catch(() => {
             this.props.history.push("/404")
         });
     };
@@ -236,7 +236,7 @@ class ServiceDetail extends React.Component {
         </div>)
     }
 
-    getTokenTab = (service, user) => {
+    getTokenTab = service => {
         const openInvitations = (service.service_invitations || []).length;
         return (<div key="admins" name="admins"
                      label={I18n.t("home.tabs.serviceAdmins", {count: service.service_memberships.length})}
@@ -501,7 +501,6 @@ class ServiceDetail extends React.Component {
                 </div>
             </div>);
     }
-    ;
 }
 
 export default ServiceDetail;

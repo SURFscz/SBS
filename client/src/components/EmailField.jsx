@@ -4,6 +4,7 @@ import ReactTooltip from "react-tooltip";
 import "./EmailField.scss";
 import {isEmpty, stopEvent} from "../utils/Utils";
 import I18n from "i18n-js";
+import DOMPurify from "dompurify";
 
 export default function EmailField({
                                        onChange,
@@ -24,7 +25,7 @@ export default function EmailField({
                 <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
                     <p dangerouslySetInnerHTML={{
                         __html:
-                            `${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`
+                            DOMPurify.sanitize(`${I18n.t("invitation.inviteesMessagesTooltip")}${isAdmin ? I18n.t("invitation.appendAdminNote") : ""}`)
                     }}/>
                 </ReactTooltip>
             </span>

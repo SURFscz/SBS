@@ -29,6 +29,7 @@ import SpinnerField from "../components/redesign/SpinnerField";
 import ErrorIndicator from "../components/redesign/ErrorIndicator";
 import EmailField from "../components/EmailField";
 import {isUserServiceAdmin} from "../utils/UserRole";
+import DOMPurify from "dompurify";
 
 class Service extends React.Component {
 
@@ -298,7 +299,7 @@ class Service extends React.Component {
                                 </span>
                                 <ReactTooltip id={I18n.t("service.network")} type="light" effect="solid"
                                               data-html={true}>
-                                    <p dangerouslySetInnerHTML={{__html: I18n.t("service.networkTooltip")}}/>
+                                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("service.networkTooltip"))}}/>
                                 </ReactTooltip>
                             </span>
                 {(isAdmin || isServiceAdmin) &&
@@ -757,7 +758,7 @@ class Service extends React.Component {
                         research_scholarship_compliant, config, ip_networks, administrators, message, email, logo, isServiceAdmin)}
                 </div>
             </>);
-    };
+    }
 
 }
 

@@ -33,6 +33,7 @@ import InstituteColumn from "./InstitueColumn";
 import {ReactComponent as ChevronUp} from "../../icons/chevron-up.svg";
 import {ReactComponent as ChevronDown} from "../../icons/chevron-down.svg";
 import {emitImpersonation} from "../../utils/Impersonation";
+import DOMPurify from "dompurify";
 
 const memberFilterValue = "members";
 
@@ -380,14 +381,14 @@ class CollaborationAdmins extends React.Component {
         return (
             <div className="admin-icons">
                 <div data-tip data-for={`delete-member-${entity.id}`}
-                     onClick={e => this.removeFromActionIcon(entity.id, entity.invite, true)}>
+                     onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
                     <FontAwesomeIcon icon="trash"/>
                     <ReactTooltip id={`delete-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
                             dangerouslySetInnerHTML={{
-                                __html: entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
-                                    I18n.t("models.orgMembers.removeMemberTooltip")
+                                __html: DOMPurify.sanitize(entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
+                                    I18n.t("models.orgMembers.removeMemberTooltip"))
                             }}/>
                     </ReactTooltip>
                 </div>
@@ -401,7 +402,7 @@ class CollaborationAdmins extends React.Component {
                         <ReactTooltip id={`mail-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                       place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: entity.invite ? I18n.t("models.orgMembers.mailInvitationTooltip") : I18n.t("models.orgMembers.mailMemberTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(entity.invite ? I18n.t("models.orgMembers.mailInvitationTooltip") : I18n.t("models.orgMembers.mailMemberTooltip"))}}/>
                         </ReactTooltip>
                     </div>}
                 {showResendInvite &&
@@ -410,7 +411,7 @@ class CollaborationAdmins extends React.Component {
                     <ReactTooltip id={`resend-invite-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: I18n.t("models.orgMembers.resendInvitationTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.orgMembers.resendInvitationTooltip"))}}/>
                     </ReactTooltip>
                 </div>}
 
@@ -441,7 +442,7 @@ class CollaborationAdmins extends React.Component {
                     <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(disabled ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip"))}}/>
                     </ReactTooltip>
                 </div>}
                 {(any && (isAdminOfCollaboration || collaboration.disclose_email_information) && !disabled)
@@ -461,7 +462,7 @@ class CollaborationAdmins extends React.Component {
                     <ReactTooltip id="mail-members" type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(disabled ? I18n.t("models.orgMembers.mailTooltipDisabled") : I18n.t("models.orgMembers.mailTooltip"))}}/>
                     </ReactTooltip>
                 </div>}
                 {(any && isAdminOfCollaboration && showResendInvite) &&
@@ -471,7 +472,7 @@ class CollaborationAdmins extends React.Component {
                     <ReactTooltip id="resend-invites" type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: disabled ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(disabled ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip"))}}/>
                     </ReactTooltip>
                 </div>}
 

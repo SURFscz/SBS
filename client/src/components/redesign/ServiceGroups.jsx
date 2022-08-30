@@ -312,7 +312,7 @@ class ServiceGroups extends React.Component {
                         service_id: service.id
                     }),
                     I18n.t("groups.flash.updated", {name: name}),
-                    res => this.setState({
+                    () => this.setState({
                         editGroup: false,
                         createNewGroup: false
                     }));

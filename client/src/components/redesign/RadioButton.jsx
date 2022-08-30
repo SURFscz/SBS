@@ -3,6 +3,7 @@ import "./RadioButton.scss";
 import I18n from "i18n-js";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactTooltip from "react-tooltip";
+import DOMPurify from "dompurify";
 
 export default function RadioButton({label, name, value, onChange, tooltip, disabled = false, tooltipOnHover = false}) {
 
@@ -16,7 +17,7 @@ export default function RadioButton({label, name, value, onChange, tooltip, disa
             <span className="tool-tip-section">
                 <span data-tip data-for={name}><FontAwesomeIcon icon="info-circle"/></span>
                 <ReactTooltip id={name} type="light" effect="solid" data-html={true}>
-                    <p dangerouslySetInnerHTML={{__html: tooltip}}/>
+                    <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(tooltip)}}/>
                 </ReactTooltip>
             </span>}</label>
             <div className="r-buttons">
@@ -30,7 +31,7 @@ export default function RadioButton({label, name, value, onChange, tooltip, disa
                         <label className={`value ${disabledClassName}`} htmlFor={id}>{I18n.t(`forms.${s}`)}</label>
                         {(tooltipOnHover && s === "yes" && disabled) &&
                             <ReactTooltip id={`${name}_${s}`} type="light" effect="solid" data-html={true}>
-                                <p dangerouslySetInnerHTML={{__html: tooltip}}/>
+                                <p dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(tooltip)}}/>
                             </ReactTooltip>}
                     </div>
                 })}

@@ -28,6 +28,7 @@ import InstituteColumn from "./InstitueColumn";
 import {ReactComponent as InformationCircle} from "../../icons/information-circle.svg";
 import {isEmpty} from "../../utils/Utils";
 import {emitImpersonation} from "../../utils/Impersonation";
+import DOMPurify from "dompurify";
 
 const INVITE_IDENTIFIER = "INVITE_IDENTIFIER";
 const MEMBER_IDENTIFIER = "MEMBER_IDENTIFIER";
@@ -258,7 +259,7 @@ class OrganisationAdmins extends React.Component {
                     <ReactTooltip id="delete-members" type="light" effect="solid" data-html={true}
                                   place="bottom">
                     <span
-                        dangerouslySetInnerHTML={{__html: !anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip")}}/>
+                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(!anySelected ? I18n.t("models.orgMembers.removeTooltipDisabled") : I18n.t("models.orgMembers.removeTooltip"))}}/>
                     </ReactTooltip>
                 </div>}
                 {showResendInvite &&
@@ -268,7 +269,7 @@ class OrganisationAdmins extends React.Component {
                     <ReactTooltip id="resend-invites" type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: !showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(!showResendInvite ? I18n.t("models.orgMembers.resendTooltipDisabled") : I18n.t("models.orgMembers.resendTooltip"))}}/>
                     </ReactTooltip>
                 </div>}
 
@@ -309,13 +310,13 @@ class OrganisationAdmins extends React.Component {
             <div className="admin-icons">
                 {showDelete &&
                 <div data-tip data-for={`delete-org-member-${entity.id}`}
-                     onClick={e => this.removeFromActionIcon(entity.id, entity.invite, true)}>
+                     onClick={() => this.removeFromActionIcon(entity.id, entity.invite, true)}>
                     <FontAwesomeIcon icon="trash"/>
                     <ReactTooltip id={`delete-org-member-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span dangerouslySetInnerHTML={{
-                            __html: entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
-                                I18n.t("models.orgMembers.removeMemberTooltip")
+                            __html: DOMPurify.sanitize(entity.invite ? I18n.t("models.orgMembers.removeInvitationTooltip") :
+                                I18n.t("models.orgMembers.removeMemberTooltip"))
                         }}/>
                     </ReactTooltip>
                 </div>}
@@ -325,7 +326,7 @@ class OrganisationAdmins extends React.Component {
                     <ReactTooltip id={`resend-invite-${entity.id}`} type="light" effect="solid" data-html={true}
                                   place="bottom">
                         <span
-                            dangerouslySetInnerHTML={{__html: I18n.t("models.orgMembers.resendInvitationTooltip")}}/>
+                            dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(I18n.t("models.orgMembers.resendInvitationTooltip"))}}/>
                     </ReactTooltip>
                 </div>}
 
