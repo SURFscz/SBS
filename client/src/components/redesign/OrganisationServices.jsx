@@ -39,7 +39,7 @@ class OrganisationServices extends React.Component {
                 service.allowedByService = allowed;
                 service.allowed = (allowed && service.automatic_connection_allowed) || service.access_allowed_for_all;
                 service.notAllowed = !service.allowed;
-                service.notAllowedServicesRestricted = !user.admin && organisation.services_restricted;
+                service.notAllowedServicesRestricted = !service.white_listed && organisation.services_restricted;
                 service.enabledByOrganisation = organisation.services.some(s => s.id === service.id);
             });
             this.setState({services: services, loading: false});
@@ -119,8 +119,10 @@ class OrganisationServices extends React.Component {
             <div>
                 <ToggleSwitch onChange={this.onToggle(service, organisation)} disabled={disabled}
                               value={service.enabledByOrganisation} animate={false} tooltip={tooltip}/>
-                {(disabled && service.notAllowedServicesRestricted) && <Tooltip children={<FontAwesomeIcon icon="info-circle"/>} id={`not-allowed-${service.id}`}
-                                      msg={tooltip}/>}
+                {(disabled && service.notAllowedServicesRestricted) &&
+                <Tooltip children={<FontAwesomeIcon icon="info-circle"/>}
+                         id={`not-allowed-${service.id}`}
+                         msg={tooltip}/>}
             </div>
         )
     }
