@@ -78,7 +78,7 @@ def invitations_by_hash():
 
 
 @invitations_api.route("/v1/collaboration_invites", methods=["PUT"], strict_slashes=False)
-@swag_from("../swagger/paths/put_new_invitations.yml")
+@swag_from("../swagger/public/paths/put_new_invitations.yml")
 @json_endpoint
 def collaboration_invites_api():
     confirm_external_api_call()
@@ -225,7 +225,7 @@ def delete_invitation(invitation_id):
 
 
 @invitations_api.route("/v1/<external_identifier>", strict_slashes=False)
-@swag_from("../swagger/paths/get_invitation_by_identifier.yml")
+@swag_from("../swagger/public/paths/get_invitation_by_identifier.yml")
 @json_endpoint
 def external_invitation(external_identifier):
     confirm_external_api_call()

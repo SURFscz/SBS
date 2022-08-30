@@ -83,7 +83,7 @@ def collaboration_by_identifier():
 
 
 @collaboration_api.route("/v1/<identifier>", strict_slashes=False)
-@swag_from("../swagger/paths/get_collaboration_by_identifier.yml")
+@swag_from("../swagger/public/paths/get_collaboration_by_identifier.yml")
 @json_endpoint
 def api_collaboration_by_identifier(identifier):
     confirm_external_api_call()
@@ -392,7 +392,7 @@ def save_collaboration():
 
 
 @collaboration_api.route("/v1", methods=["POST"], strict_slashes=False)
-@swag_from("../swagger/paths/post_new_collaboration.yml")
+@swag_from("../swagger/public/paths/post_new_collaboration.yml")
 @json_endpoint
 def save_collaboration_api():
     data = current_request.get_json()

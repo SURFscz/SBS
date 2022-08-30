@@ -118,7 +118,7 @@ def my_organisations_lite():
 
 
 @organisation_api.route("/v1", strict_slashes=False)
-@swag_from("../swagger/paths/get_collaborations_by_organisation.yml")
+@swag_from("../swagger/public/paths/get_collaborations_by_organisation.yml")
 @json_endpoint
 def api_organisation_details():
     confirm_external_api_call()

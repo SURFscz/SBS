@@ -56,7 +56,7 @@ def add_collaborations_services():
 
 
 @collaborations_services_api.route("/v1/connect_collaboration_service", methods=["PUT"], strict_slashes=False)
-@swag_from("../swagger/paths/connect_collaboration_service.yml")
+@swag_from("../swagger/public/paths/connect_collaboration_service.yml")
 @json_endpoint
 def connect_collaboration_service_api():
     confirm_external_api_call()
