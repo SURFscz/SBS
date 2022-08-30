@@ -35,15 +35,6 @@ class TestCollaborationsServices(AbstractTest):
                                       content_type="application/json")
         self.assertEqual(204, response.status_code)
 
-    def test_delete_collaborations_services_forbidden(self):
-        self.login("urn:admin")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self.mark_collaboration_service_restricted(collaboration_id)
-        service_id = self.find_entity_by_name(Service, service_mail_name).id
-
-        self.delete(f"api/collaborations_services/{collaboration_id}/{service_id}",
-                    with_basic_auth=False, response_status_code=403)
-
     def test_add_collaborations_services(self):
         self.login("urn:john")
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
@@ -91,10 +82,11 @@ class TestCollaborationsServices(AbstractTest):
         self.mark_collaboration_service_restricted(collaboration_id)
         service_cloud_id = self.find_entity_by_name(Service, service_cloud_name).id
 
-        self.put("/api/collaborations_services/", body={
+        res = self.put("/api/collaborations_services/", body={
             "collaboration_id": collaboration_id,
             "service_id": service_cloud_id
-        }, with_basic_auth=False, response_status_code=403)
+        }, with_basic_auth=False, response_status_code=400)
+        self.assertEqual("Organisation UUC can only be linked to SURF services", res["message"])
 
     def test_add_collaborations_not_correct_organisation_services(self):
         self.login("urn:john")
@@ -132,14 +124,6 @@ class TestCollaborationsServices(AbstractTest):
                     with_basic_auth=False)
         collaboration = self.get(f"/api/collaborations/{collaboration_id}")
         self.assertEqual(0, len(collaboration["services"]))
-
-    def test_delete_all_services_forbidden(self):
-        self.login("urn:admin")
-        collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
-        self.mark_collaboration_service_restricted(collaboration_id)
-
-        self.delete("/api/collaborations_services/delete_all_services", primary_key=collaboration_id,
-                    with_basic_auth=False, response_status_code=403)
 
     def test_connect_collaboration_service(self):
         collaboration_id = self.find_entity_by_name(Collaboration, ai_computing_name).id
