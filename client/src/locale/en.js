@@ -334,7 +334,7 @@ I18n.translations.en = {
             title: "Collaborations using this service",
             organisationName: "Organisation",
             noEntities: "There are no collaborations using this service",
-            organisationWarningTooltip: "This collaboration has access, because the organisation of this collaboration has granted access to all collaborations in this organization.</br></br>To disconnect this collaboration disallow access to the organisation in the organisation tab.",
+            organisationWarningTooltip: "This collaboration has access, because the organisation of this collaboration has granted access to all collaborations in this organization.</br></br>To disconnect this collaboration, disallow access to the organisation in the Organisation tab.",
             origin: "Enabled by",
             fromOrganisation: "Organisation",
             fromCollaboration: "Collaboration",
