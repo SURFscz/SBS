@@ -168,10 +168,11 @@ def mail_organisation_invitation(context, organisation, recipients, preview=Fals
 def mail_collaboration_invitation(context, collaboration, recipients, preview=False):
     if not preview:
         _store_mail(None, COLLABORATION_INVITATION_MAIL, recipients)
-    message = context["invitation"].message.replace("\n", "<br/>")
-    context = {**context, "expiry_period": calculate_expiry_period(context["invitation"]),
+    invitation = context["invitation"]
+    message = invitation.message.replace("\n", "<br/>") if invitation.message else None
+    context = {**context, "expiry_period": calculate_expiry_period(invitation),
                "collaboration": collaboration, "organisation_img": collaboration.organisation.raw_logo(),
-               message: message}
+               "message": message}
 
     return _do_send_mail(
         subject=f"Invitation to join collaboration {collaboration.name}",

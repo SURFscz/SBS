@@ -405,6 +405,7 @@ I18n.translations.nl = {
             about: "Over onze samenwerking",
             services: "Waar we samenwerken ({{nbr}} diensten)",
             noServices: "Er zijn nog geen diensten gekoppeld aan deze samenwerking",
+            noServicesJoinRequest: "Diensten zijn alleen zichtbaar voor leden",
             servicesStart: "Gebruik de knop om de dienst te starten, of lees eerst de instructies.",
             instructions: "Instructies",
             servicesHoover: "Bezoek deze dienst op {{uri}}",
