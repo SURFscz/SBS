@@ -19,21 +19,16 @@ from server.test.seed import uuc_secret, uuc_name
 class TestCollaboration(AbstractTest):
 
     def _find_by_identifier(self, with_basic_auth=True):
-        res = self.get("/api/collaborations/find_by_identifier",
-                       query_data={"identifier": collaboration_ai_computing_uuid},
-                       with_basic_auth=with_basic_auth)
-        return res["collaboration"]
+        return self.get("/api/collaborations/find_by_identifier",
+                        query_data={"identifier": collaboration_ai_computing_uuid},
+                        with_basic_auth=with_basic_auth)
 
     def test_find_by_identifier(self):
         self.login("urn:james")
-        res = self.get("/api/collaborations/find_by_identifier",
-                       query_data={"identifier": collaboration_ai_computing_uuid},
-                       with_basic_auth=False)
-        collaboration = res["collaboration"]
-        self.assertEqual(2, len(collaboration["services"]))
-
-        service_emails = res["service_emails"]
-        self.assertEqual(4, len(service_emails))
+        collaboration = self.get("/api/collaborations/find_by_identifier",
+                                 query_data={"identifier": collaboration_ai_computing_uuid},
+                                 with_basic_auth=False)
+        self.assertEqual(collaboration["identifier"], collaboration_ai_computing_uuid)
 
     def test_search(self):
         self.login("urn:john")
