@@ -88,7 +88,7 @@ class TestServiceConnectionRequest(AbstractTest):
             "message": "Pretty please"
         }
         res = self.post("/api/service_connection_requests", body=data, with_basic_auth=False, response_status_code=400)
-        self.assertTrue(res["message"].startswith("outstanding_service_connection_request"))
+        self.assertTrue("outstanding_service_connection_request" in res["message"])
 
     def test_service_connection_request_by_hash(self):
         res = self.get(f"/api/service_connection_requests/find_by_hash/{ssh_service_connection_request_hash}")
