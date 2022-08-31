@@ -194,7 +194,7 @@ class UserTokens extends React.Component {
                              options={serviceOptions}
                              name={I18n.t("models.userTokens.service")}
                              toolTip={I18n.t("models.userTokens.serviceTooltip")}
-                             onChange={selectedOption => this.setState({service: selectedOption})}
+                             onChange={this.serviceChanged}
                              searchable={false}
                 />
 
@@ -203,7 +203,7 @@ class UserTokens extends React.Component {
                     <Button warningButton={true} txt={I18n.t("userTokens.delete")}
                             onClick={this.delete}/>}
                     <Button cancelButton={true} txt={I18n.t("forms.cancel")}
-                            onClick={() => this.setState({editUserToken: false, createNewUserToken: false})}/>
+                            onClick={this.cancelSideScreen}/>
                     {expired && <Button txt={I18n.t(`models.userTokens.reactivate`)}
                                         onClick={this.reactivate}/>}
                     <Button disabled={disabledSubmit} txt={I18n.t(`forms.save`)}
@@ -213,6 +213,12 @@ class UserTokens extends React.Component {
             </div>
         );
         return this.renderUserTokenContainer(children);
+    }
+
+    serviceChanged = selectedOption => {
+        const userToken = this.getSelectedUserToken();
+        const newExpiryDate = userTokenExpiryDate(userToken ? userToken.created_at : new Date().getTime() / 1000, selectedOption);
+        this.setState({service: selectedOption, expiryDate: newExpiryDate});
     }
 
     cancel = () => {
@@ -343,7 +349,7 @@ class UserTokens extends React.Component {
                 mapper: userToken => {
                     const expired = isUserTokenExpired(userToken, service);
                     return <span className={`expiry_date ${expired ? "expired" : ""}`}>
-                        {userTokenExpiryDate(userToken.created_at, service)}
+                        {userTokenExpiryDate(userToken.created_at, this.getService(userToken))}
                     </span>
                 }
             },
