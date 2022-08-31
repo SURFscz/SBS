@@ -7,7 +7,8 @@ from werkzeug.exceptions import BadRequest
 from server.api.base import json_endpoint
 from server.api.collaborations_services import connect_service_collaboration
 from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_write_access, \
-    confirm_collaboration_member, generate_token, is_service_admin
+    confirm_collaboration_member, is_service_admin
+from server.auth.secrets import generate_token
 from server.db.domain import ServiceConnectionRequest, Service, Collaboration, db, User
 from server.db.models import delete
 from server.mail import mail_service_connection_request, mail_accepted_declined_service_connection_request

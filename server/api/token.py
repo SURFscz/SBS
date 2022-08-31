@@ -4,7 +4,7 @@ import datetime
 from flask import Blueprint, request as current_request, current_app
 
 from server.api.base import json_endpoint
-from server.auth.security import secure_hash
+from server.auth.secrets import secure_hash
 from server.auth.tokens import validate_service_token
 from server.auth.user_claims import user_memberships
 from server.db.db import db

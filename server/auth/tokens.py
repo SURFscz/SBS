@@ -1,7 +1,7 @@
 from flask import request as current_request, g as request_context
 from werkzeug.exceptions import Unauthorized
 
-from server.auth.security import secure_hash
+from server.auth.secrets import secure_hash
 from server.db.domain import Service
 
 

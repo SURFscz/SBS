@@ -1,7 +1,7 @@
 # -*- coding: future_fstrings -*-
 import datetime
 
-from server.auth.security import generate_token
+from server.auth.secrets import generate_token
 from server.db.domain import Service, User, UserToken
 from server.test.abstract_test import AbstractTest
 from server.test.seed import sarah_name, service_wiki_name, service_mail_name, service_cloud_name, sarah_user_token, \

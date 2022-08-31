@@ -10,7 +10,8 @@ from werkzeug.exceptions import Conflict, Forbidden
 
 from server.api.base import json_endpoint, query_param
 from server.api.service_aups import add_user_aups
-from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call, generate_token
+from server.auth.security import confirm_collaboration_admin, current_user_id, confirm_external_api_call
+from server.auth.secrets import generate_token
 from server.db.defaults import default_expiry_date
 from server.db.domain import Invitation, CollaborationMembership, Collaboration, db, User, Organisation
 from server.db.models import delete

@@ -11,8 +11,9 @@ from sqlalchemy.orm import selectinload
 
 from server.api.base import json_endpoint, query_param, replace_full_text_search_boolean_mode_chars
 from server.auth.security import confirm_write_access, current_user_id, is_application_admin, \
-    confirm_organisation_admin, generate_token, is_service_admin, confirm_external_api_call, confirm_read_access, \
+    confirm_organisation_admin, is_service_admin, confirm_external_api_call, confirm_read_access, \
     confirm_organisation_admin_or_manager
+from server.auth.secrets import generate_token
 from server.cron.idp_metadata_parser import idp_display_name
 from server.db.db import db
 from server.db.defaults import default_expiry_date, cleanse_short_name
