@@ -61,6 +61,7 @@ def save_token():
 def update_token():
     data = _sanitize_and_verify(hash_token=False)
     user_token = UserToken.query.get(data["id"])
+    user_token.service = Service.query.get(data["service_id"])
     user_token.name = data.get("name")
     user_token.description = data.get("description")
     db.session.merge(user_token)
