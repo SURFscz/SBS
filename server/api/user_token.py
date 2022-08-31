@@ -1,13 +1,13 @@
 # -*- coding: future_fstrings -*-
 import datetime
 
-from flask import Blueprint, jsonify, request as current_request
+from flask import Blueprint, jsonify, request as current_request, session
 from werkzeug.exceptions import Forbidden
 
 from server.api.base import json_endpoint
 from server.api.service import user_service
-from server.auth.security import current_user_id
 from server.auth.secrets import generate_token, hash_secret_key
+from server.auth.security import current_user_id
 from server.db.db import db
 from server.db.domain import UserToken, User, Service
 from server.db.models import save, delete
@@ -15,8 +15,7 @@ from server.db.models import save, delete
 user_token_api = Blueprint("user_token_api", __name__, url_prefix="/api/user_tokens")
 
 
-def _sanitize_and_verify(hash_token=True):
-    data = current_request.get_json()
+def _sanitize_and_verify(data, hash_token=True):
     if data["user_id"] != current_user_id():
         raise Forbidden("Can not create user_token for someone else")
     if hash_token:
@@ -46,20 +45,28 @@ def user_tokens():
 @user_token_api.route("/generate_token", strict_slashes=False)
 @json_endpoint
 def generate_random_token():
-    return {"value": generate_token()}, 200
+    generated_token = generate_token()
+    session["generated_token"] = generated_token
+    return {"value": generated_token}, 200
 
 
 @user_token_api.route("/", methods=["POST"], strict_slashes=False)
 @json_endpoint
 def save_token():
-    data = _sanitize_and_verify()
+    data = current_request.get_json()
+    generated_token = session.get("generated_token")
+    if not generated_token or generated_token != data["hashed_token"]:
+        raise Forbidden("Tampering with generated token is not allowed")
+    data["hashed_token"] = generated_token
+    data = _sanitize_and_verify(data)
+    del session["generated_token"]
     return save(UserToken, custom_json=data)
 
 
 @user_token_api.route("/", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def update_token():
-    data = _sanitize_and_verify(hash_token=False)
+    data = _sanitize_and_verify(current_request.get_json(), hash_token=False)
     user_token = UserToken.query.get(data["id"])
     user_token.service = Service.query.get(data["service_id"])
     user_token.name = data.get("name")
@@ -71,7 +78,7 @@ def update_token():
 @user_token_api.route("/renew_lease", methods=["PUT"], strict_slashes=False)
 @json_endpoint
 def renew_lease():
-    data = _sanitize_and_verify(hash_token=False)
+    data = _sanitize_and_verify(current_request.get_json(), hash_token=False)
     user_token = UserToken.query.get(data["id"])
     user_token.created_at = datetime.datetime.utcnow()
     db.session.merge(user_token)
